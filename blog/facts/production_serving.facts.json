@@ -2693,6 +2693,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-production_serving-block-71-related_to-production_serving-block-67",
+      "from": "production_serving-block-71",
+      "to": "production_serving-block-67",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-production_serving-block-72-part_of-production-serving",
       "from": "production_serving-block-72",
       "to": "production-serving",
@@ -2707,16 +2717,6 @@
       "from": "production_serving-block-71",
       "to": "production_serving-block-72",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-production_serving-block-72-related_to-production_serving-block-71",
-      "from": "production_serving-block-72",
-      "to": "production_serving-block-71",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2743,9 +2743,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-block-73-related_to-production_serving-block-71",
+      "id": "struct-production_serving-block-73-related_to-production_serving-block-72",
       "from": "production_serving-block-73",
-      "to": "production_serving-block-71",
+      "to": "production_serving-block-72",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2773,6 +2773,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-production_serving-block-74-related_to-production_serving-block-72",
+      "from": "production_serving-block-74",
+      "to": "production_serving-block-72",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-production_serving-block-75-part_of-production-serving",
       "from": "production_serving-block-75",
       "to": "production-serving",
@@ -2787,16 +2797,6 @@
       "from": "production_serving-block-74",
       "to": "production_serving-block-75",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-production_serving-block-75-related_to-production_serving-block-74",
-      "from": "production_serving-block-75",
-      "to": "production_serving-block-74",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2823,9 +2823,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-block-76-related_to-production_serving-block-74",
+      "id": "struct-production_serving-block-76-related_to-production_serving-block-75",
       "from": "production_serving-block-76",
-      "to": "production_serving-block-74",
+      "to": "production_serving-block-75",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2853,6 +2853,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-production_serving-block-77-related_to-production_serving-block-75",
+      "from": "production_serving-block-77",
+      "to": "production_serving-block-75",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-production_serving-block-78-part_of-production-serving",
       "from": "production_serving-block-78",
       "to": "production-serving",
@@ -2867,16 +2877,6 @@
       "from": "production_serving-block-77",
       "to": "production_serving-block-78",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-production_serving-block-78-related_to-production_serving-block-77",
-      "from": "production_serving-block-78",
-      "to": "production_serving-block-77",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2903,6 +2903,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-production_serving-block-79-related_to-production_serving-block-78",
+      "from": "production_serving-block-79",
+      "to": "production_serving-block-78",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-production_serving-block-80-part_of-production-serving",
       "from": "production_serving-block-80",
       "to": "production-serving",
@@ -2917,16 +2927,6 @@
       "from": "production_serving-block-79",
       "to": "production_serving-block-80",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-production_serving-block-80-related_to-production_serving-block-79",
-      "from": "production_serving-block-80",
-      "to": "production_serving-block-79",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2953,9 +2953,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-block-81-related_to-production_serving-block-79",
+      "id": "struct-production_serving-block-81-related_to-production_serving-block-80",
       "from": "production_serving-block-81",
-      "to": "production_serving-block-79",
+      "to": "production_serving-block-80",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2983,9 +2983,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-block-82-related_to-production_serving-block-79",
+      "id": "struct-production_serving-block-82-related_to-production_serving-block-80",
       "from": "production_serving-block-82",
-      "to": "production_serving-block-79",
+      "to": "production_serving-block-80",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3013,6 +3013,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-production_serving-block-83-related_to-production_serving-block-80",
+      "from": "production_serving-block-83",
+      "to": "production_serving-block-80",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-production_serving-block-84-part_of-production-serving",
       "from": "production_serving-block-84",
       "to": "production-serving",
@@ -3027,16 +3037,6 @@
       "from": "production_serving-block-83",
       "to": "production_serving-block-84",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-production_serving-block-84-related_to-production_serving-block-83",
-      "from": "production_serving-block-84",
-      "to": "production_serving-block-83",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3063,9 +3063,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-block-85-related_to-production_serving-block-83",
+      "id": "struct-production_serving-block-85-related_to-production_serving-block-84",
       "from": "production_serving-block-85",
-      "to": "production_serving-block-83",
+      "to": "production_serving-block-84",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3093,9 +3093,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-block-86-related_to-production_serving-block-83",
+      "id": "struct-production_serving-block-86-related_to-production_serving-block-84",
       "from": "production_serving-block-86",
-      "to": "production_serving-block-83",
+      "to": "production_serving-block-84",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3123,9 +3123,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-block-87-related_to-production_serving-block-83",
+      "id": "struct-production_serving-block-87-related_to-production_serving-block-84",
       "from": "production_serving-block-87",
-      "to": "production_serving-block-83",
+      "to": "production_serving-block-84",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3153,6 +3153,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-production_serving-block-88-related_to-production_serving-block-84",
+      "from": "production_serving-block-88",
+      "to": "production_serving-block-84",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-production_serving-block-89-part_of-production-serving",
       "from": "production_serving-block-89",
       "to": "production-serving",
@@ -3167,16 +3177,6 @@
       "from": "production_serving-block-88",
       "to": "production_serving-block-89",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-production_serving-block-89-related_to-production_serving-block-88",
-      "from": "production_serving-block-89",
-      "to": "production_serving-block-88",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3203,9 +3203,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-block-90-related_to-production_serving-block-88",
+      "id": "struct-production_serving-block-90-related_to-production_serving-block-89",
       "from": "production_serving-block-90",
-      "to": "production_serving-block-88",
+      "to": "production_serving-block-89",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3233,6 +3233,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-production_serving-block-91-related_to-production_serving-block-89",
+      "from": "production_serving-block-91",
+      "to": "production_serving-block-89",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-production_serving-block-92-part_of-production-serving",
       "from": "production_serving-block-92",
       "to": "production-serving",
@@ -3247,16 +3257,6 @@
       "from": "production_serving-block-91",
       "to": "production_serving-block-92",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-production_serving-block-92-related_to-production_serving-block-91",
-      "from": "production_serving-block-92",
-      "to": "production_serving-block-91",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3283,9 +3283,39 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-block-93-related_to-production_serving-block-91",
+      "id": "struct-production_serving-block-93-related_to-production_serving-block-92",
       "from": "production_serving-block-93",
-      "to": "production_serving-block-91",
+      "to": "production_serving-block-92",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-production_serving-block-94-part_of-production-serving",
+      "from": "production_serving-block-94",
+      "to": "production-serving",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-production_serving-block-93-before-production_serving-block-94",
+      "from": "production_serving-block-93",
+      "to": "production_serving-block-94",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-production_serving-block-94-related_to-production_serving-block-92",
+      "from": "production_serving-block-94",
+      "to": "production_serving-block-92",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -4043,9 +4073,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-76-part_of-production_serving-block-70",
+      "id": "struct-production_serving-stmt-76-part_of-production_serving-block-71",
       "from": "production_serving-stmt-76",
-      "to": "production_serving-block-70",
+      "to": "production_serving-block-71",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4053,9 +4083,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-77-part_of-production_serving-block-72",
+      "id": "struct-production_serving-stmt-77-part_of-production_serving-block-71",
       "from": "production_serving-stmt-77",
-      "to": "production_serving-block-72",
+      "to": "production_serving-block-71",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4063,9 +4093,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-78-part_of-production_serving-block-72",
+      "id": "struct-production_serving-stmt-78-part_of-production_serving-block-73",
       "from": "production_serving-stmt-78",
-      "to": "production_serving-block-72",
+      "to": "production_serving-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4073,9 +4103,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-79-part_of-production_serving-block-72",
+      "id": "struct-production_serving-stmt-79-part_of-production_serving-block-73",
       "from": "production_serving-stmt-79",
-      "to": "production_serving-block-72",
+      "to": "production_serving-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4083,9 +4113,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-80-part_of-production_serving-block-72",
+      "id": "struct-production_serving-stmt-80-part_of-production_serving-block-73",
       "from": "production_serving-stmt-80",
-      "to": "production_serving-block-72",
+      "to": "production_serving-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4093,9 +4123,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-81-part_of-production_serving-block-72",
+      "id": "struct-production_serving-stmt-81-part_of-production_serving-block-73",
       "from": "production_serving-stmt-81",
-      "to": "production_serving-block-72",
+      "to": "production_serving-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4113,9 +4143,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-83-part_of-production_serving-block-75",
+      "id": "struct-production_serving-stmt-83-part_of-production_serving-block-74",
       "from": "production_serving-stmt-83",
-      "to": "production_serving-block-75",
+      "to": "production_serving-block-74",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4123,9 +4153,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-84-part_of-production_serving-block-75",
+      "id": "struct-production_serving-stmt-84-part_of-production_serving-block-76",
       "from": "production_serving-stmt-84",
-      "to": "production_serving-block-75",
+      "to": "production_serving-block-76",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4133,9 +4163,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-85-part_of-production_serving-block-75",
+      "id": "struct-production_serving-stmt-85-part_of-production_serving-block-76",
       "from": "production_serving-stmt-85",
-      "to": "production_serving-block-75",
+      "to": "production_serving-block-76",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4143,9 +4173,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-86-part_of-production_serving-block-75",
+      "id": "struct-production_serving-stmt-86-part_of-production_serving-block-76",
       "from": "production_serving-stmt-86",
-      "to": "production_serving-block-75",
+      "to": "production_serving-block-76",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4153,9 +4183,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-87-part_of-production_serving-block-75",
+      "id": "struct-production_serving-stmt-87-part_of-production_serving-block-76",
       "from": "production_serving-stmt-87",
-      "to": "production_serving-block-75",
+      "to": "production_serving-block-76",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4163,9 +4193,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-88-part_of-production_serving-block-75",
+      "id": "struct-production_serving-stmt-88-part_of-production_serving-block-76",
       "from": "production_serving-stmt-88",
-      "to": "production_serving-block-75",
+      "to": "production_serving-block-76",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4173,9 +4203,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-89-part_of-production_serving-block-75",
+      "id": "struct-production_serving-stmt-89-part_of-production_serving-block-76",
       "from": "production_serving-stmt-89",
-      "to": "production_serving-block-75",
+      "to": "production_serving-block-76",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4183,9 +4213,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-90-part_of-production_serving-block-75",
+      "id": "struct-production_serving-stmt-90-part_of-production_serving-block-76",
       "from": "production_serving-stmt-90",
-      "to": "production_serving-block-75",
+      "to": "production_serving-block-76",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4193,9 +4223,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-91-part_of-production_serving-block-75",
+      "id": "struct-production_serving-stmt-91-part_of-production_serving-block-76",
       "from": "production_serving-stmt-91",
-      "to": "production_serving-block-75",
+      "to": "production_serving-block-76",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4213,9 +4243,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-93-part_of-production_serving-block-76",
+      "id": "struct-production_serving-stmt-93-part_of-production_serving-block-77",
       "from": "production_serving-stmt-93",
-      "to": "production_serving-block-76",
+      "to": "production_serving-block-77",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4223,9 +4253,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-94-part_of-production_serving-block-78",
+      "id": "struct-production_serving-stmt-94-part_of-production_serving-block-77",
       "from": "production_serving-stmt-94",
-      "to": "production_serving-block-78",
+      "to": "production_serving-block-77",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4233,9 +4263,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-95-part_of-production_serving-block-78",
+      "id": "struct-production_serving-stmt-95-part_of-production_serving-block-79",
       "from": "production_serving-stmt-95",
-      "to": "production_serving-block-78",
+      "to": "production_serving-block-79",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4243,9 +4273,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-96-part_of-production_serving-block-78",
+      "id": "struct-production_serving-stmt-96-part_of-production_serving-block-79",
       "from": "production_serving-stmt-96",
-      "to": "production_serving-block-78",
+      "to": "production_serving-block-79",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4253,9 +4283,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-97-part_of-production_serving-block-78",
+      "id": "struct-production_serving-stmt-97-part_of-production_serving-block-79",
       "from": "production_serving-stmt-97",
-      "to": "production_serving-block-78",
+      "to": "production_serving-block-79",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4263,9 +4293,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-98-part_of-production_serving-block-78",
+      "id": "struct-production_serving-stmt-98-part_of-production_serving-block-79",
       "from": "production_serving-stmt-98",
-      "to": "production_serving-block-78",
+      "to": "production_serving-block-79",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4273,9 +4303,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-99-part_of-production_serving-block-78",
+      "id": "struct-production_serving-stmt-99-part_of-production_serving-block-79",
       "from": "production_serving-stmt-99",
-      "to": "production_serving-block-78",
+      "to": "production_serving-block-79",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4283,9 +4313,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-100-part_of-production_serving-block-80",
+      "id": "struct-production_serving-stmt-100-part_of-production_serving-block-79",
       "from": "production_serving-stmt-100",
-      "to": "production_serving-block-80",
+      "to": "production_serving-block-79",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4303,9 +4333,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-102-part_of-production_serving-block-81",
+      "id": "struct-production_serving-stmt-102-part_of-production_serving-block-82",
       "from": "production_serving-stmt-102",
-      "to": "production_serving-block-81",
+      "to": "production_serving-block-82",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4323,9 +4353,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-104-part_of-production_serving-block-82",
+      "id": "struct-production_serving-stmt-104-part_of-production_serving-block-83",
       "from": "production_serving-stmt-104",
-      "to": "production_serving-block-82",
+      "to": "production_serving-block-83",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4333,9 +4363,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-105-part_of-production_serving-block-82",
+      "id": "struct-production_serving-stmt-105-part_of-production_serving-block-83",
       "from": "production_serving-stmt-105",
-      "to": "production_serving-block-82",
+      "to": "production_serving-block-83",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4343,9 +4373,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-106-part_of-production_serving-block-82",
+      "id": "struct-production_serving-stmt-106-part_of-production_serving-block-83",
       "from": "production_serving-stmt-106",
-      "to": "production_serving-block-82",
+      "to": "production_serving-block-83",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4353,9 +4383,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-107-part_of-production_serving-block-84",
+      "id": "struct-production_serving-stmt-107-part_of-production_serving-block-83",
       "from": "production_serving-stmt-107",
-      "to": "production_serving-block-84",
+      "to": "production_serving-block-83",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4373,9 +4403,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-109-part_of-production_serving-block-85",
+      "id": "struct-production_serving-stmt-109-part_of-production_serving-block-86",
       "from": "production_serving-stmt-109",
-      "to": "production_serving-block-85",
+      "to": "production_serving-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4383,9 +4413,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-110-part_of-production_serving-block-85",
+      "id": "struct-production_serving-stmt-110-part_of-production_serving-block-86",
       "from": "production_serving-stmt-110",
-      "to": "production_serving-block-85",
+      "to": "production_serving-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4393,9 +4423,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-111-part_of-production_serving-block-85",
+      "id": "struct-production_serving-stmt-111-part_of-production_serving-block-86",
       "from": "production_serving-stmt-111",
-      "to": "production_serving-block-85",
+      "to": "production_serving-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4403,9 +4433,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-112-part_of-production_serving-block-85",
+      "id": "struct-production_serving-stmt-112-part_of-production_serving-block-86",
       "from": "production_serving-stmt-112",
-      "to": "production_serving-block-85",
+      "to": "production_serving-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4433,9 +4463,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-115-part_of-production_serving-block-87",
+      "id": "struct-production_serving-stmt-115-part_of-production_serving-block-88",
       "from": "production_serving-stmt-115",
-      "to": "production_serving-block-87",
+      "to": "production_serving-block-88",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4443,9 +4473,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-116-part_of-production_serving-block-89",
+      "id": "struct-production_serving-stmt-116-part_of-production_serving-block-88",
       "from": "production_serving-stmt-116",
-      "to": "production_serving-block-89",
+      "to": "production_serving-block-88",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4463,9 +4493,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-118-part_of-production_serving-block-92",
+      "id": "struct-production_serving-stmt-118-part_of-production_serving-block-91",
       "from": "production_serving-stmt-118",
-      "to": "production_serving-block-92",
+      "to": "production_serving-block-91",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4473,9 +4503,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-119-part_of-production_serving-block-92",
+      "id": "struct-production_serving-stmt-119-part_of-production_serving-block-93",
       "from": "production_serving-stmt-119",
-      "to": "production_serving-block-92",
+      "to": "production_serving-block-93",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4493,9 +4523,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-production_serving-stmt-121-part_of-production_serving-block-93",
+      "id": "struct-production_serving-stmt-121-part_of-production_serving-block-94",
       "from": "production_serving-stmt-121",
-      "to": "production_serving-block-93",
+      "to": "production_serving-block-94",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-production_serving-stmt-122-part_of-production_serving-block-94",
+      "from": "production_serving-stmt-122",
+      "to": "production_serving-block-94",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5024,330 +5064,337 @@
     },
     {
       "id": "production_serving-stmt-75",
-      "quote": "A query is routed to the right model, filtered in, answered, filtered out, and checked; if it fails, the retry/fallback loop re-enters the model (dashed) with a different choice; every call is metered.",
+      "quote": "<rect x=\"8\" y=\"44\" width=\"66\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/> <text x=\"41\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">query</text> <rect x=\"90\" y=\"44\" width=\"70\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/> <text x=\"125\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">router</text> <rect x=\"176\" y=\"44\" width=\"70\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/> <text x=\"211\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">guard-rails</text> <rect x=\"262\" y=\"44\" width=\"60\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/> <text x=\"292\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">model</text> <rect x=\"338\" y=\"44\" width=\"70\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/> <text x=\"373\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">validate</text> <rect x=\"424\" y=\"44\" width=\"70\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/> <text x=\"459\" y=\"60\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text)\">retry /</text> <text x=\"459\" y=\"72\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text)\">fallback</text> <rect x=\"508\" y=\"44\" width=\"46\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/> <text x=\"531\" y=\"64\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text)\">cost</text> <line x1=\"74\" y1=\"60\" x2=\"88\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/> <line x1=\"160\" y1=\"60\" x2=\"174\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/> <line x1=\"246\" y1=\"60\" x2=\"260\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/> <line x1=\"322\" y1=\"60\" x2=\"336\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/> <line x1=\"408\" y1=\"60\" x2=\"422\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/> <line x1=\"494\" y1=\"60\" x2=\"506\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/> <line x1=\"459\" y1=\"76\" x2=\"292\" y2=\"76\" stroke=\"var(--mn-border)\" stroke-width=\"1\" stroke-dasharray=\"3 3\" marker-end=\"url(#pparrow)\"/>",
       "block_id": "production_serving-block-70",
       "section": "The reframe: services around a thing that sometimes fails",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-76",
-      "quote": "Each box is a service with its own failure mode.",
-      "block_id": "production_serving-block-70",
+      "quote": "A query is routed to the right model, filtered in, answered, filtered out, and checked; if it fails, the retry/fallback loop re-enters the model (dashed) with a different choice; every call is metered.",
+      "block_id": "production_serving-block-71",
       "section": "The reframe: services around a thing that sometimes fails",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-77",
-      "quote": "The cheapest and highest-leverage service is the **router**.",
-      "block_id": "production_serving-block-72",
-      "section": "The router: pick the model per query",
+      "quote": "Each box is a service with its own failure mode.",
+      "block_id": "production_serving-block-71",
+      "section": "The reframe: services around a thing that sometimes fails",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-78",
-      "quote": "Not every query needs the biggest, most expensive model.",
-      "block_id": "production_serving-block-72",
+      "quote": "The cheapest and highest-leverage service is the **router**.",
+      "block_id": "production_serving-block-73",
       "section": "The router: pick the model per query",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-79",
-      "quote": "A simple \"what's the weather?\" needs a small, fast model; a multi-step reasoning task needs a large one; a domain question needs a specialized or fine-tuned one.",
-      "block_id": "production_serving-block-72",
+      "quote": "Not every query needs the biggest, most expensive model.",
+      "block_id": "production_serving-block-73",
       "section": "The router: pick the model per query",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-80",
-      "quote": "A router inspects the query and dispatches it — for **cost, quality, and latency** at once — and the common pattern is **cheap-then-escalate**: answer with a small model, and only if it signals low confidence (or the query classifies as hard) do you *escalate* to the big one.",
-      "block_id": "production_serving-block-72",
+      "quote": "A simple \"what's the weather?\" needs a small, fast model; a multi-step reasoning task needs a large one; a domain question needs a specialized or fine-tuned one.",
+      "block_id": "production_serving-block-73",
       "section": "The router: pick the model per query",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-81",
-      "quote": "\\cite[Ong et al., RouteLLM (2024)]{routellm2024} make this concrete: a lightweight learner, trained on preference data, predicts which model a query needs, and routes the easy ones to the small model — saving the large model's cost on the queries it was never going to beat anyway.",
-      "block_id": "production_serving-block-72",
+      "quote": "A router inspects the query and dispatches it — for **cost, quality, and latency** at once — and the common pattern is **cheap-then-escalate**: answer with a small model, and only if it signals low confidence (or the query classifies as hard) do you *escalate* to the big one.",
+      "block_id": "production_serving-block-73",
       "section": "The router: pick the model per query",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-82",
-      "quote": "Routing is the first place the \"the model is a component\" reframe pays off: you are not *using* a model, you are *scheduling work across models*, exactly as a system schedules work across machines.",
+      "quote": "\\cite[Ong et al., RouteLLM (2024)]{routellm2024} make this concrete: a lightweight learner, trained on preference data, predicts which model a query needs, and routes the easy ones to the small model — saving the large model's cost on the queries it was never going to beat anyway.",
       "block_id": "production_serving-block-73",
       "section": "The router: pick the model per query",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-83",
-      "quote": "A guardrail is a check that runs **outside** the model, on its input or its output, that the model itself does not enforce.",
-      "block_id": "production_serving-block-75",
-      "section": "Guardrails: enforced layers, not prompts",
+      "quote": "Routing is the first place the \"the model is a component\" reframe pays off: you are not *using* a model, you are *scheduling work across models*, exactly as a system schedules work across machines.",
+      "block_id": "production_serving-block-74",
+      "section": "The router: pick the model per query",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-84",
-      "quote": "Input guardrails screen the query (is it in scope?",
-      "block_id": "production_serving-block-75",
+      "quote": "A guardrail is a check that runs **outside** the model, on its input or its output, that the model itself does not enforce.",
+      "block_id": "production_serving-block-76",
       "section": "Guardrails: enforced layers, not prompts",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-85",
-      "quote": "does it contain PII you are not allowed to process?",
-      "block_id": "production_serving-block-75",
+      "quote": "Input guardrails screen the query (is it in scope?",
+      "block_id": "production_serving-block-76",
       "section": "Guardrails: enforced layers, not prompts",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-86",
-      "quote": "is it a prompt-injection attempt?).",
-      "block_id": "production_serving-block-75",
+      "quote": "does it contain PII you are not allowed to process?",
+      "block_id": "production_serving-block-76",
       "section": "Guardrails: enforced layers, not prompts",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-87",
-      "quote": "Output guardrails screen the answer (does it actually answer the question?",
-      "block_id": "production_serving-block-75",
+      "quote": "is it a prompt-injection attempt?).",
+      "block_id": "production_serving-block-76",
       "section": "Guardrails: enforced layers, not prompts",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-88",
-      "quote": "does it contain a prohibited claim or a leaked secret?",
-      "block_id": "production_serving-block-75",
+      "quote": "Output guardrails screen the answer (does it actually answer the question?",
+      "block_id": "production_serving-block-76",
       "section": "Guardrails: enforced layers, not prompts",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-89",
-      "quote": "does it match the required format?).",
-      "block_id": "production_serving-block-75",
+      "quote": "does it contain a prohibited claim or a leaked secret?",
+      "block_id": "production_serving-block-76",
       "section": "Guardrails: enforced layers, not prompts",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-90",
-      "quote": "The key word is **enforced**: a guardrail is a *layer* the answer must pass, not a line in the system prompt asking the model to \"please be careful.\" A prompt is a *request* to a stochastic component; a guardrail is a *gate* in the deterministic system.",
-      "block_id": "production_serving-block-75",
+      "quote": "does it match the required format?).",
+      "block_id": "production_serving-block-76",
       "section": "Guardrails: enforced layers, not prompts",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-91",
-      "quote": "\\cite[Rebedea et al., NeMo Guardrails (2023)]{nemocguardrails} is the canonical framing of guardrails as programmable, checkable \"rails\" the model's output must follow — safety, factuality, format, and scope as *checks*, not *advice*.",
-      "block_id": "production_serving-block-75",
+      "quote": "The key word is **enforced**: a guardrail is a *layer* the answer must pass, not a line in the system prompt asking the model to \"please be careful.\" A prompt is a *request* to a stochastic component; a guardrail is a *gate* in the deterministic system.",
+      "block_id": "production_serving-block-76",
       "section": "Guardrails: enforced layers, not prompts",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-92",
-      "quote": "This is the same move as the entire course: you do not *trust* the stochastic part to do the thing you need; you *check* it.",
+      "quote": "\\cite[Rebedea et al., NeMo Guardrails (2023)]{nemocguardrails} is the canonical framing of guardrails as programmable, checkable \"rails\" the model's output must follow — safety, factuality, format, and scope as *checks*, not *advice*.",
       "block_id": "production_serving-block-76",
       "section": "Guardrails: enforced layers, not prompts",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-93",
-      "quote": "Guardrails are the deterministic system's way of holding the model to a contract the model alone would not keep.",
-      "block_id": "production_serving-block-76",
+      "quote": "This is the same move as the entire course: you do not *trust* the stochastic part to do the thing you need; you *check* it.",
+      "block_id": "production_serving-block-77",
       "section": "Guardrails: enforced layers, not prompts",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-94",
-      "quote": "When the model can act — read a file, call an API, run a function — the interface is a **schema**: a JSON description of the available tools, their arguments, and their types.",
-      "block_id": "production_serving-block-78",
-      "section": "The tool-calling schema: a specification the model fills",
+      "quote": "Guardrails are the deterministic system's way of holding the model to a contract the model alone would not keep.",
+      "block_id": "production_serving-block-77",
+      "section": "Guardrails: enforced layers, not prompts",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-95",
-      "quote": "The model does not \"use the tool\"; it *fills in the schema* — it emits a structured call (function name + arguments) that the *system* validates and executes.",
-      "block_id": "production_serving-block-78",
+      "quote": "When the model can act — read a file, call an API, run a function — the interface is a **schema**: a JSON description of the available tools, their arguments, and their types.",
+      "block_id": "production_serving-block-79",
       "section": "The tool-calling schema: a specification the model fills",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-96",
-      "quote": "This is the [tool use](agents.php) half, but the architectural point is that the schema is a **specification**: a typed contract between a stochastic emitter (the model) and a deterministic executor (your code).",
-      "block_id": "production_serving-block-78",
+      "quote": "The model does not \"use the tool\"; it *fills in the schema* — it emits a structured call (function name + arguments) that the *system* validates and executes.",
+      "block_id": "production_serving-block-79",
       "section": "The tool-calling schema: a specification the model fills",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-97",
-      "quote": "The executor does not trust the emitted arguments; it *validates* them against the schema, and if the arguments are malformed or out of range, it rejects them and re-prompts.",
-      "block_id": "production_serving-block-78",
+      "quote": "This is the [tool use](agents.php) half, but the architectural point is that the schema is a **specification**: a typed contract between a stochastic emitter (the model) and a deterministic executor (your code).",
+      "block_id": "production_serving-block-79",
       "section": "The tool-calling schema: a specification the model fills",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-98",
-      "quote": "The model proposes; the schema disposes.",
-      "block_id": "production_serving-block-78",
+      "quote": "The executor does not trust the emitted arguments; it *validates* them against the schema, and if the arguments are malformed or out of range, it rejects them and re-prompts.",
+      "block_id": "production_serving-block-79",
       "section": "The tool-calling schema: a specification the model fills",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-99",
-      "quote": "The [ReAct](react2022) pattern (\\cite[Yao et al., 2022]{react2022}) — reason, act, observe, repeat — is the loop this runs in, but the *contract* is the schema, and a schema is exactly the kind of written, checkable standard the [evaluation](evaluation.php) chapter keeps coming back to.",
-      "block_id": "production_serving-block-78",
+      "quote": "The model proposes; the schema disposes.",
+      "block_id": "production_serving-block-79",
       "section": "The tool-calling schema: a specification the model fills",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-100",
-      "quote": "Because the component is non-deterministic, the system must handle its failures *explicitly*, the way a distributed system handles a flaky dependency:",
-      "block_id": "production_serving-block-80",
-      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "quote": "The [ReAct](react2022) pattern (\\cite[Yao et al., 2022]{react2022}) — reason, act, observe, repeat — is the loop this runs in, but the *contract* is the schema, and a schema is exactly the kind of written, checkable standard the [evaluation](evaluation.php) chapter keeps coming back to.",
+      "block_id": "production_serving-block-79",
+      "section": "The tool-calling schema: a specification the model fills",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-101",
-      "quote": "The through-line: **determinism is a property you build, not one the model has.** The model gives you a distribution; the pipeline collapses it to a single, checkable, recoverable outcome.",
+      "quote": "Because the component is non-deterministic, the system must handle its failures *explicitly*, the way a distributed system handles a flaky dependency:",
       "block_id": "production_serving-block-81",
       "section": "Retry, fallback, and degradation: determinism is built, not had",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-102",
-      "quote": "The reliability the user experiences is engineered around the model, not supplied by it.",
-      "block_id": "production_serving-block-81",
+      "quote": "The through-line: **determinism is a property you build, not one the model has.** The model gives you a distribution; the pipeline collapses it to a single, checkable, recoverable outcome.",
+      "block_id": "production_serving-block-82",
       "section": "Retry, fallback, and degradation: determinism is built, not had",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-103",
-      "quote": "> A model is a component.",
+      "quote": "The reliability the user experiences is engineered around the model, not supplied by it.",
       "block_id": "production_serving-block-82",
       "section": "Retry, fallback, and degradation: determinism is built, not had",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-104",
-      "quote": "A product is a deterministic system that *schedules* a stochastic component (routing), *checks* it (guardrails), *contracts* with it (schemas), *recovers* from its failures (retry, fallback, degradation), and *sees* and *prices* everything it does (observability, cost).",
-      "block_id": "production_serving-block-82",
+      "quote": "> A model is a component.",
+      "block_id": "production_serving-block-83",
       "section": "Retry, fallback, and degradation: determinism is built, not had",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-105",
-      "quote": "The model is the only box in the diagram you did not design; every other box you did.",
-      "block_id": "production_serving-block-82",
+      "quote": "A product is a deterministic system that *schedules* a stochastic component (routing), *checks* it (guardrails), *contracts* with it (schemas), *recovers* from its failures (retry, fallback, degradation), and *sees* and *prices* everything it does (observability, cost).",
+      "block_id": "production_serving-block-83",
       "section": "Retry, fallback, and degradation: determinism is built, not had",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-106",
-      "quote": "That is the whole discipline, and it is why \"it works in the notebook\" and \"it works in production\" are two different sentences.",
-      "block_id": "production_serving-block-82",
+      "quote": "The model is the only box in the diagram you did not design; every other box you did.",
+      "block_id": "production_serving-block-83",
       "section": "Retry, fallback, and degradation: determinism is built, not had",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-107",
-      "quote": "A production LLM system needs:",
-      "block_id": "production_serving-block-84",
-      "section": "Observability: The Hidden Half",
+      "quote": "That is the whole discipline, and it is why \"it works in the notebook\" and \"it works in production\" are two different sentences.",
+      "block_id": "production_serving-block-83",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-108",
-      "quote": "The reason the first two alone are not enough is the shape of the failures: an LLM product fails **one in two hundred** requests, not one in a thousand.",
+      "quote": "A production LLM system needs:",
       "block_id": "production_serving-block-85",
       "section": "Observability: The Hidden Half",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-109",
-      "quote": "You cannot debug a failure you cannot *reproduce by name* — the only way to find the 1-in-200 is to have logged the exact prompt that produced the bad answer.",
-      "block_id": "production_serving-block-85",
+      "quote": "The reason the first two alone are not enough is the shape of the failures: an LLM product fails **one in two hundred** requests, not one in a thousand.",
+      "block_id": "production_serving-block-86",
       "section": "Observability: The Hidden Half",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-110",
-      "quote": "**Observability** is the record of *every call*: the prompt, the completion, tokens in and out, latency, which model it was routed to, which guardrail fired, whether it retried.",
-      "block_id": "production_serving-block-85",
+      "quote": "You cannot debug a failure you cannot *reproduce by name* — the only way to find the 1-in-200 is to have logged the exact prompt that produced the bad answer.",
+      "block_id": "production_serving-block-86",
       "section": "Observability: The Hidden Half",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-111",
-      "quote": "\\cite[OpenTelemetry GenAI (CNCF)]{otelgenai} standardizes exactly this — the GenAI semantic conventions for tracing LLM calls — so an LLM product has logs, metrics, and *traces* the way any other service does.",
-      "block_id": "production_serving-block-85",
+      "quote": "**Observability** is the record of *every call*: the prompt, the completion, tokens in and out, latency, which model it was routed to, which guardrail fired, whether it retried.",
+      "block_id": "production_serving-block-86",
       "section": "Observability: The Hidden Half",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-112",
-      "quote": "It is what makes a probabilistic system *debuggable* at all.",
-      "block_id": "production_serving-block-85",
+      "quote": "\\cite[OpenTelemetry GenAI (CNCF)]{otelgenai} standardizes exactly this — the GenAI semantic conventions for tracing LLM calls — so an LLM product has logs, metrics, and *traces* the way any other service does.",
+      "block_id": "production_serving-block-86",
       "section": "Observability: The Hidden Half",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-113",
-      "quote": "Tools: Langfuse, Helicone, LangSmith, Arize Phoenix, Honeycomb.",
+      "quote": "It is what makes a probabilistic system *debuggable* at all.",
       "block_id": "production_serving-block-86",
       "section": "Observability: The Hidden Half",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-114",
-      "quote": "A common production mistake: shipping an LLM endpoint without **cost attribution**.",
+      "quote": "Tools: Langfuse, Helicone, LangSmith, Arize Phoenix, Honeycomb.",
       "block_id": "production_serving-block-87",
       "section": "Observability: The Hidden Half",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-115",
-      "quote": "At scale, a single user can rack up thousands of dollars per session if the system prompt is bloated or the conversation loops.",
-      "block_id": "production_serving-block-87",
+      "quote": "A common production mistake: shipping an LLM endpoint without **cost attribution**.",
+      "block_id": "production_serving-block-88",
       "section": "Observability: The Hidden Half",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-116",
-      "quote": "A good production engineer knows when to skip the LLM entirely:",
-      "block_id": "production_serving-block-89",
-      "section": "When NOT to Use an LLM",
+      "quote": "At scale, a single user can rack up thousands of dollars per session if the system prompt is bloated or the conversation loops.",
+      "block_id": "production_serving-block-88",
+      "section": "Observability: The Hidden Half",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-117",
-      "quote": "Rule of thumb: prototype with the best model; measure cost; downgrade if necessary; cache aggressively; consider a hybrid pipeline (cheap heuristic + occasional LLM fallback).",
+      "quote": "A good production engineer knows when to skip the LLM entirely:",
       "block_id": "production_serving-block-90",
       "section": "When NOT to Use an LLM",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-118",
-      "quote": "Serving is only the start.",
-      "block_id": "production_serving-block-92",
-      "section": "MLOps / LLM-Ops: life after deployment",
+      "quote": "Rule of thumb: prototype with the best model; measure cost; downgrade if necessary; cache aggressively; consider a hybrid pipeline (cheap heuristic + occasional LLM fallback).",
+      "block_id": "production_serving-block-91",
+      "section": "When NOT to Use an LLM",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-119",
-      "quote": "In production a model is a **system** that drifts, regresses, and costs money:",
-      "block_id": "production_serving-block-92",
+      "quote": "Serving is only the start.",
+      "block_id": "production_serving-block-93",
       "section": "MLOps / LLM-Ops: life after deployment",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-120",
-      "quote": "The discipline borrows its bones from software **continuous delivery** \\cite[Wikipedia]{continuous_delivery_wiki} — build, test, ship, observe, repeat — now applied to a model whose \"code\" is a billion floating-point weights.",
+      "quote": "In production a model is a **system** that drifts, regresses, and costs money:",
       "block_id": "production_serving-block-93",
       "section": "MLOps / LLM-Ops: life after deployment",
       "kind": "statement"
     },
     {
       "id": "production_serving-stmt-121",
+      "quote": "The discipline borrows its bones from software **continuous delivery** \\cite[Wikipedia]{continuous_delivery_wiki} — build, test, ship, observe, repeat — now applied to a model whose \"code\" is a billion floating-point weights.",
+      "block_id": "production_serving-block-94",
+      "section": "MLOps / LLM-Ops: life after deployment",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-122",
       "quote": "The goal is the same as in the Evaluation chapter : a measurement loop tight enough that you learn, before a user does, when the model has started to fail.",
-      "block_id": "production_serving-block-93",
+      "block_id": "production_serving-block-94",
       "section": "MLOps / LLM-Ops: life after deployment",
       "kind": "statement"
     }
@@ -5769,144 +5816,150 @@
     },
     {
       "id": "production_serving-block-70",
-      "quote": "The pipeline. A query is routed to the right model, filtered in, answered, filtered out, and checked; if it fails, the retry/fallback loop re-enters the model (dashed) with a different choice; every call is metered. Each box is a service with its own failure mode.",
+      "quote": "<rect x=\"8\" y=\"44\" width=\"66\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/> <text x=\"41\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">query</text> <rect x=\"90\" y=\"44\" width=\"70\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/> <text x=\"125\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">router</text> <rect x=\"176\" y=\"44\" width=\"70\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/> <text x=\"211\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">guard-rails</text> <rect x=\"262\" y=\"44\" width=\"60\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/> <text x=\"292\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">model</text> <rect x=\"338\" y=\"44\" width=\"70\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/> <text x=\"373\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">validate</text> <rect x=\"424\" y=\"44\" width=\"70\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/> <text x=\"459\" y=\"60\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text)\">retry /</text> <text x=\"459\" y=\"72\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text)\">fallback</text> <rect x=\"508\" y=\"44\" width=\"46\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/> <text x=\"531\" y=\"64\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text)\">cost</text> <line x1=\"74\" y1=\"60\" x2=\"88\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/> <line x1=\"160\" y1=\"60\" x2=\"174\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/> <line x1=\"246\" y1=\"60\" x2=\"260\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/> <line x1=\"322\" y1=\"60\" x2=\"336\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/> <line x1=\"408\" y1=\"60\" x2=\"422\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/> <line x1=\"494\" y1=\"60\" x2=\"506\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/> <line x1=\"459\" y1=\"76\" x2=\"292\" y2=\"76\" stroke=\"var(--mn-border)\" stroke-width=\"1\" stroke-dasharray=\"3 3\" marker-end=\"url(#pparrow)\"/>",
       "kind": "paragraph",
       "section": "The reframe: services around a thing that sometimes fails"
     },
     {
       "id": "production_serving-block-71",
+      "quote": "The pipeline. A query is routed to the right model, filtered in, answered, filtered out, and checked; if it fails, the retry/fallback loop re-enters the model (dashed) with a different choice; every call is metered. Each box is a service with its own failure mode.",
+      "kind": "paragraph",
+      "section": "The reframe: services around a thing that sometimes fails"
+    },
+    {
+      "id": "production_serving-block-72",
       "quote": "The router: pick the model per query",
       "kind": "heading",
       "section": "The router: pick the model per query"
     },
     {
-      "id": "production_serving-block-72",
+      "id": "production_serving-block-73",
       "quote": "The cheapest and highest-leverage service is the **router**. Not every query needs the biggest, most expensive model. A simple \"what's the weather?\" needs a small, fast model; a multi-step reasoning task needs a large one; a domain question needs a specialized or fine-tuned one. A router inspects the query and dispatches it — for **cost, quality, and latency** at once — and the common pattern is **cheap-then-escalate**: answer with a small model, and only if it signals low confidence (or the query classifies as hard) do you *escalate* to the big one. \\cite[Ong et al., RouteLLM (2024)]{routellm2024} make this concrete: a lightweight learner, trained on preference data, predicts which model a query needs, and routes the easy ones to the small model — saving the large model's cost on the queries it was never going to beat anyway.",
       "kind": "paragraph",
       "section": "The router: pick the model per query"
     },
     {
-      "id": "production_serving-block-73",
+      "id": "production_serving-block-74",
       "quote": "Routing is the first place the \"the model is a component\" reframe pays off: you are not *using* a model, you are *scheduling work across models*, exactly as a system schedules work across machines.",
       "kind": "paragraph",
       "section": "The router: pick the model per query"
     },
     {
-      "id": "production_serving-block-74",
+      "id": "production_serving-block-75",
       "quote": "Guardrails: enforced layers, not prompts",
       "kind": "heading",
       "section": "Guardrails: enforced layers, not prompts"
     },
     {
-      "id": "production_serving-block-75",
+      "id": "production_serving-block-76",
       "quote": "A guardrail is a check that runs **outside** the model, on its input or its output, that the model itself does not enforce. Input guardrails screen the query (is it in scope? does it contain PII you are not allowed to process? is it a prompt-injection attempt?). Output guardrails screen the answer (does it actually answer the question? does it contain a prohibited claim or a leaked secret? does it match the required format?). The key word is **enforced**: a guardrail is a *layer* the answer must pass, not a line in the system prompt asking the model to \"please be careful.\" A prompt is a *request* to a stochastic component; a guardrail is a *gate* in the deterministic system. \\cite[Rebedea et al., NeMo Guardrails (2023)]{nemocguardrails} is the canonical framing of guardrails as programmable, checkable \"rails\" the model's output must follow — safety, factuality, format, and scope as *checks*, not *advice*.",
       "kind": "paragraph",
       "section": "Guardrails: enforced layers, not prompts"
     },
     {
-      "id": "production_serving-block-76",
+      "id": "production_serving-block-77",
       "quote": "This is the same move as the entire course: you do not *trust* the stochastic part to do the thing you need; you *check* it. Guardrails are the deterministic system's way of holding the model to a contract the model alone would not keep.",
       "kind": "paragraph",
       "section": "Guardrails: enforced layers, not prompts"
     },
     {
-      "id": "production_serving-block-77",
+      "id": "production_serving-block-78",
       "quote": "The tool-calling schema: a specification the model fills",
       "kind": "heading",
       "section": "The tool-calling schema: a specification the model fills"
     },
     {
-      "id": "production_serving-block-78",
+      "id": "production_serving-block-79",
       "quote": "When the model can act — read a file, call an API, run a function — the interface is a **schema**: a JSON description of the available tools, their arguments, and their types. The model does not \"use the tool\"; it *fills in the schema* — it emits a structured call (function name + arguments) that the *system* validates and executes. This is the [tool use](agents.php) half, but the architectural point is that the schema is a **specification**: a typed contract between a stochastic emitter (the model) and a deterministic executor (your code). The executor does not trust the emitted arguments; it *validates* them against the schema, and if the arguments are malformed or out of range, it rejects them and re-prompts. The model proposes; the schema disposes. The [ReAct](react2022) pattern (\\cite[Yao et al., 2022]{react2022}) — reason, act, observe, repeat — is the loop this runs in, but the *contract* is the schema, and a schema is exactly the kind of written, checkable standard the [evaluation](evaluation.php) chapter keeps coming back to.",
       "kind": "paragraph",
       "section": "The tool-calling schema: a specification the model fills"
     },
     {
-      "id": "production_serving-block-79",
+      "id": "production_serving-block-80",
       "quote": "Retry, fallback, and degradation: determinism is built, not had",
       "kind": "heading",
       "section": "Retry, fallback, and degradation: determinism is built, not had"
     },
     {
-      "id": "production_serving-block-80",
+      "id": "production_serving-block-81",
       "quote": "Because the component is non-deterministic, the system must handle its failures *explicitly*, the way a distributed system handles a flaky dependency:",
       "kind": "paragraph",
       "section": "Retry, fallback, and degradation: determinism is built, not had"
     },
     {
-      "id": "production_serving-block-81",
+      "id": "production_serving-block-82",
       "quote": "The through-line: **determinism is a property you build, not one the model has.** The model gives you a distribution; the pipeline collapses it to a single, checkable, recoverable outcome. The reliability the user experiences is engineered around the model, not supplied by it.",
       "kind": "paragraph",
       "section": "Retry, fallback, and degradation: determinism is built, not had"
     },
     {
-      "id": "production_serving-block-82",
+      "id": "production_serving-block-83",
       "quote": "> A model is a component. A product is a deterministic system that *schedules* a stochastic component (routing), *checks* it (guardrails), *contracts* with it (schemas), *recovers* from its failures (retry, fallback, degradation), and *sees* and *prices* everything it does (observability, cost). The model is the only box in the diagram you did not design; every other box you did. That is the whole discipline, and it is why \"it works in the notebook\" and \"it works in production\" are two different sentences.",
       "kind": "paragraph",
       "section": "Retry, fallback, and degradation: determinism is built, not had"
     },
     {
-      "id": "production_serving-block-83",
+      "id": "production_serving-block-84",
       "quote": "Observability: The Hidden Half",
       "kind": "heading",
       "section": "Observability: The Hidden Half"
     },
     {
-      "id": "production_serving-block-84",
+      "id": "production_serving-block-85",
       "quote": "A production LLM system needs:",
       "kind": "paragraph",
       "section": "Observability: The Hidden Half"
     },
     {
-      "id": "production_serving-block-85",
+      "id": "production_serving-block-86",
       "quote": "The reason the first two alone are not enough is the shape of the failures: an LLM product fails **one in two hundred** requests, not one in a thousand. You cannot debug a failure you cannot *reproduce by name* — the only way to find the 1-in-200 is to have logged the exact prompt that produced the bad answer. **Observability** is the record of *every call*: the prompt, the completion, tokens in and out, latency, which model it was routed to, which guardrail fired, whether it retried. \\cite[OpenTelemetry GenAI (CNCF)]{otelgenai} standardizes exactly this — the GenAI semantic conventions for tracing LLM calls — so an LLM product has logs, metrics, and *traces* the way any other service does. It is what makes a probabilistic system *debuggable* at all.",
       "kind": "paragraph",
       "section": "Observability: The Hidden Half"
     },
     {
-      "id": "production_serving-block-86",
+      "id": "production_serving-block-87",
       "quote": "Tools: Langfuse, Helicone, LangSmith, Arize Phoenix, Honeycomb.",
       "kind": "paragraph",
       "section": "Observability: The Hidden Half"
     },
     {
-      "id": "production_serving-block-87",
+      "id": "production_serving-block-88",
       "quote": "A common production mistake: shipping an LLM endpoint without **cost attribution**. At scale, a single user can rack up thousands of dollars per session if the system prompt is bloated or the conversation loops.",
       "kind": "paragraph",
       "section": "Observability: The Hidden Half"
     },
     {
-      "id": "production_serving-block-88",
+      "id": "production_serving-block-89",
       "quote": "When NOT to Use an LLM",
       "kind": "heading",
       "section": "When NOT to Use an LLM"
     },
     {
-      "id": "production_serving-block-89",
+      "id": "production_serving-block-90",
       "quote": "A good production engineer knows when to skip the LLM entirely:",
       "kind": "paragraph",
       "section": "When NOT to Use an LLM"
     },
     {
-      "id": "production_serving-block-90",
+      "id": "production_serving-block-91",
       "quote": "Rule of thumb: prototype with the best model; measure cost; downgrade if necessary; cache aggressively; consider a hybrid pipeline (cheap heuristic + occasional LLM fallback).",
       "kind": "paragraph",
       "section": "When NOT to Use an LLM"
     },
     {
-      "id": "production_serving-block-91",
+      "id": "production_serving-block-92",
       "quote": "MLOps / LLM-Ops: life after deployment",
       "kind": "heading",
       "section": "MLOps / LLM-Ops: life after deployment"
     },
     {
-      "id": "production_serving-block-92",
+      "id": "production_serving-block-93",
       "quote": "Serving is only the start. In production a model is a **system** that drifts, regresses, and costs money:",
       "kind": "paragraph",
       "section": "MLOps / LLM-Ops: life after deployment"
     },
     {
-      "id": "production_serving-block-93",
+      "id": "production_serving-block-94",
       "quote": "The discipline borrows its bones from software **continuous delivery** \\cite[Wikipedia]{continuous_delivery_wiki} — build, test, ship, observe, repeat — now applied to a model whose \"code\" is a billion floating-point weights. The goal is the same as in the Evaluation chapter : a measurement loop tight enough that you learn, before a user does, when the model has started to fail.",
       "kind": "paragraph",
       "section": "MLOps / LLM-Ops: life after deployment"

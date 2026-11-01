@@ -4983,16 +4983,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-112-related_to-language-block-109",
-      "from": "language-block-112",
-      "to": "language-block-109",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-language-block-113-part_of-language",
       "from": "language-block-113",
       "to": "language",
@@ -5007,6 +4997,16 @@
       "from": "language-block-112",
       "to": "language-block-113",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-block-113-related_to-language-block-112",
+      "from": "language-block-113",
+      "to": "language-block-112",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -5033,9 +5033,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-114-related_to-language-block-113",
+      "id": "struct-language-block-114-related_to-language-block-112",
       "from": "language-block-114",
-      "to": "language-block-113",
+      "to": "language-block-112",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5063,16 +5063,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-115-related_to-language-block-113",
-      "from": "language-block-115",
-      "to": "language-block-113",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-language-block-116-part_of-language",
       "from": "language-block-116",
       "to": "language",
@@ -5087,6 +5077,16 @@
       "from": "language-block-115",
       "to": "language-block-116",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-block-116-related_to-language-block-115",
+      "from": "language-block-116",
+      "to": "language-block-115",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -5113,9 +5113,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-117-related_to-language-block-116",
+      "id": "struct-language-block-117-related_to-language-block-115",
       "from": "language-block-117",
-      "to": "language-block-116",
+      "to": "language-block-115",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5143,9 +5143,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-118-related_to-language-block-116",
+      "id": "struct-language-block-118-related_to-language-block-115",
       "from": "language-block-118",
-      "to": "language-block-116",
+      "to": "language-block-115",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5167,16 +5167,6 @@
       "from": "language-block-118",
       "to": "language-block-119",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-block-119-related_to-language-block-116",
-      "from": "language-block-119",
-      "to": "language-block-116",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -5223,6 +5213,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-language-block-121-related_to-language-block-120",
+      "from": "language-block-121",
+      "to": "language-block-120",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-language-block-122-part_of-language",
       "from": "language-block-122",
       "to": "language",
@@ -5243,9 +5243,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-122-related_to-language-block-121",
+      "id": "struct-language-block-122-related_to-language-block-120",
       "from": "language-block-122",
-      "to": "language-block-121",
+      "to": "language-block-120",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5273,9 +5273,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-123-related_to-language-block-121",
+      "id": "struct-language-block-123-related_to-language-block-120",
       "from": "language-block-123",
-      "to": "language-block-121",
+      "to": "language-block-120",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5303,9 +5303,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-124-related_to-language-block-121",
+      "id": "struct-language-block-124-related_to-language-block-120",
       "from": "language-block-124",
-      "to": "language-block-121",
+      "to": "language-block-120",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5333,9 +5333,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-125-related_to-language-block-121",
+      "id": "struct-language-block-125-related_to-language-block-120",
       "from": "language-block-125",
-      "to": "language-block-121",
+      "to": "language-block-120",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5363,9 +5363,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-126-related_to-language-block-121",
+      "id": "struct-language-block-126-related_to-language-block-120",
       "from": "language-block-126",
-      "to": "language-block-121",
+      "to": "language-block-120",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5393,9 +5393,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-127-related_to-language-block-121",
+      "id": "struct-language-block-127-related_to-language-block-120",
       "from": "language-block-127",
-      "to": "language-block-121",
+      "to": "language-block-120",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5423,9 +5423,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-128-related_to-language-block-121",
+      "id": "struct-language-block-128-related_to-language-block-120",
       "from": "language-block-128",
-      "to": "language-block-121",
+      "to": "language-block-120",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5453,9 +5453,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-129-related_to-language-block-121",
+      "id": "struct-language-block-129-related_to-language-block-120",
       "from": "language-block-129",
-      "to": "language-block-121",
+      "to": "language-block-120",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5483,16 +5483,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-130-related_to-language-block-121",
-      "from": "language-block-130",
-      "to": "language-block-121",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-language-block-131-part_of-language",
       "from": "language-block-131",
       "to": "language",
@@ -5507,6 +5497,16 @@
       "from": "language-block-130",
       "to": "language-block-131",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-block-131-related_to-language-block-130",
+      "from": "language-block-131",
+      "to": "language-block-130",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -5533,9 +5533,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-132-related_to-language-block-131",
+      "id": "struct-language-block-132-related_to-language-block-130",
       "from": "language-block-132",
-      "to": "language-block-131",
+      "to": "language-block-130",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5563,9 +5563,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-133-related_to-language-block-131",
+      "id": "struct-language-block-133-related_to-language-block-130",
       "from": "language-block-133",
-      "to": "language-block-131",
+      "to": "language-block-130",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5593,16 +5593,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-134-related_to-language-block-131",
-      "from": "language-block-134",
-      "to": "language-block-131",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-language-block-135-part_of-language",
       "from": "language-block-135",
       "to": "language",
@@ -5617,6 +5607,16 @@
       "from": "language-block-134",
       "to": "language-block-135",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-block-135-related_to-language-block-134",
+      "from": "language-block-135",
+      "to": "language-block-134",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -5643,9 +5643,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-136-related_to-language-block-135",
+      "id": "struct-language-block-136-related_to-language-block-134",
       "from": "language-block-136",
-      "to": "language-block-135",
+      "to": "language-block-134",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5673,16 +5673,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-137-related_to-language-block-135",
-      "from": "language-block-137",
-      "to": "language-block-135",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-language-block-138-part_of-language",
       "from": "language-block-138",
       "to": "language",
@@ -5697,6 +5687,16 @@
       "from": "language-block-137",
       "to": "language-block-138",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-block-138-related_to-language-block-137",
+      "from": "language-block-138",
+      "to": "language-block-137",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -5723,9 +5723,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-139-related_to-language-block-138",
+      "id": "struct-language-block-139-related_to-language-block-137",
       "from": "language-block-139",
-      "to": "language-block-138",
+      "to": "language-block-137",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5753,9 +5753,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-140-related_to-language-block-138",
+      "id": "struct-language-block-140-related_to-language-block-137",
       "from": "language-block-140",
-      "to": "language-block-138",
+      "to": "language-block-137",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5783,9 +5783,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-141-related_to-language-block-138",
+      "id": "struct-language-block-141-related_to-language-block-137",
       "from": "language-block-141",
-      "to": "language-block-138",
+      "to": "language-block-137",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5813,9 +5813,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-142-related_to-language-block-138",
+      "id": "struct-language-block-142-related_to-language-block-137",
       "from": "language-block-142",
-      "to": "language-block-138",
+      "to": "language-block-137",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5843,9 +5843,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-143-related_to-language-block-138",
+      "id": "struct-language-block-143-related_to-language-block-137",
       "from": "language-block-143",
-      "to": "language-block-138",
+      "to": "language-block-137",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5873,9 +5873,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-144-related_to-language-block-138",
+      "id": "struct-language-block-144-related_to-language-block-137",
       "from": "language-block-144",
-      "to": "language-block-138",
+      "to": "language-block-137",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5903,39 +5903,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-block-145-related_to-language-block-138",
+      "id": "struct-language-block-145-related_to-language-block-137",
       "from": "language-block-145",
-      "to": "language-block-138",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-block-146-part_of-language",
-      "from": "language-block-146",
-      "to": "language",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-block-145-before-language-block-146",
-      "from": "language-block-145",
-      "to": "language-block-146",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-block-146-related_to-language-block-138",
-      "from": "language-block-146",
-      "to": "language-block-138",
+      "to": "language-block-137",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -8543,9 +8513,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-261-part_of-language-block-112",
+      "id": "struct-language-stmt-261-part_of-language-block-113",
       "from": "language-stmt-261",
-      "to": "language-block-112",
+      "to": "language-block-113",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8553,9 +8523,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-262-part_of-language-block-112",
+      "id": "struct-language-stmt-262-part_of-language-block-114",
       "from": "language-stmt-262",
-      "to": "language-block-112",
+      "to": "language-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8563,9 +8533,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-263-part_of-language-block-112",
+      "id": "struct-language-stmt-263-part_of-language-block-114",
       "from": "language-stmt-263",
-      "to": "language-block-112",
+      "to": "language-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8573,9 +8543,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-264-part_of-language-block-112",
+      "id": "struct-language-stmt-264-part_of-language-block-114",
       "from": "language-stmt-264",
-      "to": "language-block-112",
+      "to": "language-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8583,9 +8553,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-265-part_of-language-block-112",
+      "id": "struct-language-stmt-265-part_of-language-block-114",
       "from": "language-stmt-265",
-      "to": "language-block-112",
+      "to": "language-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8593,9 +8563,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-266-part_of-language-block-112",
+      "id": "struct-language-stmt-266-part_of-language-block-114",
       "from": "language-stmt-266",
-      "to": "language-block-112",
+      "to": "language-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8603,9 +8573,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-267-part_of-language-block-112",
+      "id": "struct-language-stmt-267-part_of-language-block-114",
       "from": "language-stmt-267",
-      "to": "language-block-112",
+      "to": "language-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8623,9 +8593,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-269-part_of-language-block-115",
+      "id": "struct-language-stmt-269-part_of-language-block-114",
       "from": "language-stmt-269",
-      "to": "language-block-115",
+      "to": "language-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8633,9 +8603,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-270-part_of-language-block-115",
+      "id": "struct-language-stmt-270-part_of-language-block-114",
       "from": "language-stmt-270",
-      "to": "language-block-115",
+      "to": "language-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8643,9 +8613,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-271-part_of-language-block-115",
+      "id": "struct-language-stmt-271-part_of-language-block-116",
       "from": "language-stmt-271",
-      "to": "language-block-115",
+      "to": "language-block-116",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8653,9 +8623,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-272-part_of-language-block-115",
+      "id": "struct-language-stmt-272-part_of-language-block-116",
       "from": "language-stmt-272",
-      "to": "language-block-115",
+      "to": "language-block-116",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8663,9 +8633,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-273-part_of-language-block-115",
+      "id": "struct-language-stmt-273-part_of-language-block-116",
       "from": "language-stmt-273",
-      "to": "language-block-115",
+      "to": "language-block-116",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8673,9 +8643,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-274-part_of-language-block-115",
+      "id": "struct-language-stmt-274-part_of-language-block-116",
       "from": "language-stmt-274",
-      "to": "language-block-115",
+      "to": "language-block-116",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8683,9 +8653,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-275-part_of-language-block-115",
+      "id": "struct-language-stmt-275-part_of-language-block-116",
       "from": "language-stmt-275",
-      "to": "language-block-115",
+      "to": "language-block-116",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8693,9 +8663,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-276-part_of-language-block-115",
+      "id": "struct-language-stmt-276-part_of-language-block-116",
       "from": "language-stmt-276",
-      "to": "language-block-115",
+      "to": "language-block-116",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8703,9 +8673,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-277-part_of-language-block-115",
+      "id": "struct-language-stmt-277-part_of-language-block-116",
       "from": "language-stmt-277",
-      "to": "language-block-115",
+      "to": "language-block-116",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8713,9 +8683,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-278-part_of-language-block-117",
+      "id": "struct-language-stmt-278-part_of-language-block-116",
       "from": "language-stmt-278",
-      "to": "language-block-117",
+      "to": "language-block-116",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8743,9 +8713,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-281-part_of-language-block-117",
+      "id": "struct-language-stmt-281-part_of-language-block-118",
       "from": "language-stmt-281",
-      "to": "language-block-117",
+      "to": "language-block-118",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8753,9 +8723,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-282-part_of-language-block-117",
+      "id": "struct-language-stmt-282-part_of-language-block-118",
       "from": "language-stmt-282",
-      "to": "language-block-117",
+      "to": "language-block-118",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8763,9 +8733,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-283-part_of-language-block-117",
+      "id": "struct-language-stmt-283-part_of-language-block-118",
       "from": "language-stmt-283",
-      "to": "language-block-117",
+      "to": "language-block-118",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8773,9 +8743,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-284-part_of-language-block-117",
+      "id": "struct-language-stmt-284-part_of-language-block-121",
       "from": "language-stmt-284",
-      "to": "language-block-117",
+      "to": "language-block-121",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8783,68 +8753,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-285-part_of-language-block-117",
+      "id": "struct-language-stmt-285-part_of-language-block-122",
       "from": "language-stmt-285",
-      "to": "language-block-117",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-286-part_of-language-block-118",
-      "from": "language-stmt-286",
-      "to": "language-block-118",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-287-part_of-language-block-118",
-      "from": "language-stmt-287",
-      "to": "language-block-118",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-288-part_of-language-block-119",
-      "from": "language-stmt-288",
-      "to": "language-block-119",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-289-part_of-language-block-119",
-      "from": "language-stmt-289",
-      "to": "language-block-119",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-290-part_of-language-block-119",
-      "from": "language-stmt-290",
-      "to": "language-block-119",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-291-part_of-language-block-122",
-      "from": "language-stmt-291",
       "to": "language-block-122",
       "kind": "part_of",
       "qualifiers": {},
@@ -8853,8 +8763,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-292-part_of-language-block-123",
-      "from": "language-stmt-292",
+      "id": "struct-language-stmt-286-part_of-language-block-123",
+      "from": "language-stmt-286",
       "to": "language-block-123",
       "kind": "part_of",
       "qualifiers": {},
@@ -8863,8 +8773,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-293-part_of-language-block-124",
-      "from": "language-stmt-293",
+      "id": "struct-language-stmt-287-part_of-language-block-124",
+      "from": "language-stmt-287",
       "to": "language-block-124",
       "kind": "part_of",
       "qualifiers": {},
@@ -8873,8 +8783,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-294-part_of-language-block-125",
-      "from": "language-stmt-294",
+      "id": "struct-language-stmt-288-part_of-language-block-125",
+      "from": "language-stmt-288",
       "to": "language-block-125",
       "kind": "part_of",
       "qualifiers": {},
@@ -8883,8 +8793,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-295-part_of-language-block-126",
-      "from": "language-stmt-295",
+      "id": "struct-language-stmt-289-part_of-language-block-126",
+      "from": "language-stmt-289",
       "to": "language-block-126",
       "kind": "part_of",
       "qualifiers": {},
@@ -8893,8 +8803,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-296-part_of-language-block-127",
-      "from": "language-stmt-296",
+      "id": "struct-language-stmt-290-part_of-language-block-127",
+      "from": "language-stmt-290",
       "to": "language-block-127",
       "kind": "part_of",
       "qualifiers": {},
@@ -8903,8 +8813,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-297-part_of-language-block-128",
-      "from": "language-stmt-297",
+      "id": "struct-language-stmt-291-part_of-language-block-128",
+      "from": "language-stmt-291",
       "to": "language-block-128",
       "kind": "part_of",
       "qualifiers": {},
@@ -8913,9 +8823,69 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-298-part_of-language-block-129",
+      "id": "struct-language-stmt-292-part_of-language-block-128",
+      "from": "language-stmt-292",
+      "to": "language-block-128",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-stmt-293-part_of-language-block-129",
+      "from": "language-stmt-293",
+      "to": "language-block-129",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-stmt-294-part_of-language-block-129",
+      "from": "language-stmt-294",
+      "to": "language-block-129",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-stmt-295-part_of-language-block-131",
+      "from": "language-stmt-295",
+      "to": "language-block-131",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-stmt-296-part_of-language-block-131",
+      "from": "language-stmt-296",
+      "to": "language-block-131",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-stmt-297-part_of-language-block-131",
+      "from": "language-stmt-297",
+      "to": "language-block-131",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-stmt-298-part_of-language-block-131",
       "from": "language-stmt-298",
-      "to": "language-block-129",
+      "to": "language-block-131",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8923,9 +8893,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-299-part_of-language-block-129",
+      "id": "struct-language-stmt-299-part_of-language-block-131",
       "from": "language-stmt-299",
-      "to": "language-block-129",
+      "to": "language-block-131",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8933,9 +8903,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-300-part_of-language-block-130",
+      "id": "struct-language-stmt-300-part_of-language-block-132",
       "from": "language-stmt-300",
-      "to": "language-block-130",
+      "to": "language-block-132",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8943,9 +8913,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-301-part_of-language-block-130",
+      "id": "struct-language-stmt-301-part_of-language-block-132",
       "from": "language-stmt-301",
-      "to": "language-block-130",
+      "to": "language-block-132",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8963,9 +8933,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-303-part_of-language-block-132",
+      "id": "struct-language-stmt-303-part_of-language-block-133",
       "from": "language-stmt-303",
-      "to": "language-block-132",
+      "to": "language-block-133",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8973,9 +8943,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-304-part_of-language-block-132",
+      "id": "struct-language-stmt-304-part_of-language-block-133",
       "from": "language-stmt-304",
-      "to": "language-block-132",
+      "to": "language-block-133",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8983,9 +8953,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-305-part_of-language-block-132",
+      "id": "struct-language-stmt-305-part_of-language-block-133",
       "from": "language-stmt-305",
-      "to": "language-block-132",
+      "to": "language-block-133",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8993,9 +8963,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-306-part_of-language-block-132",
+      "id": "struct-language-stmt-306-part_of-language-block-133",
       "from": "language-stmt-306",
-      "to": "language-block-132",
+      "to": "language-block-133",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9003,9 +8973,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-307-part_of-language-block-133",
+      "id": "struct-language-stmt-307-part_of-language-block-135",
       "from": "language-stmt-307",
-      "to": "language-block-133",
+      "to": "language-block-135",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9013,9 +8983,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-308-part_of-language-block-133",
+      "id": "struct-language-stmt-308-part_of-language-block-135",
       "from": "language-stmt-308",
-      "to": "language-block-133",
+      "to": "language-block-135",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9023,9 +8993,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-309-part_of-language-block-133",
+      "id": "struct-language-stmt-309-part_of-language-block-135",
       "from": "language-stmt-309",
-      "to": "language-block-133",
+      "to": "language-block-135",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9033,9 +9003,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-310-part_of-language-block-134",
+      "id": "struct-language-stmt-310-part_of-language-block-135",
       "from": "language-stmt-310",
-      "to": "language-block-134",
+      "to": "language-block-135",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9043,9 +9013,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-311-part_of-language-block-134",
+      "id": "struct-language-stmt-311-part_of-language-block-136",
       "from": "language-stmt-311",
-      "to": "language-block-134",
+      "to": "language-block-136",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9053,9 +9023,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-312-part_of-language-block-134",
+      "id": "struct-language-stmt-312-part_of-language-block-136",
       "from": "language-stmt-312",
-      "to": "language-block-134",
+      "to": "language-block-136",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9063,9 +9033,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-313-part_of-language-block-134",
+      "id": "struct-language-stmt-313-part_of-language-block-136",
       "from": "language-stmt-313",
-      "to": "language-block-134",
+      "to": "language-block-136",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9103,9 +9073,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-317-part_of-language-block-136",
+      "id": "struct-language-stmt-317-part_of-language-block-138",
       "from": "language-stmt-317",
-      "to": "language-block-136",
+      "to": "language-block-138",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9113,68 +9083,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-318-part_of-language-block-137",
+      "id": "struct-language-stmt-318-part_of-language-block-139",
       "from": "language-stmt-318",
-      "to": "language-block-137",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-319-part_of-language-block-137",
-      "from": "language-stmt-319",
-      "to": "language-block-137",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-320-part_of-language-block-137",
-      "from": "language-stmt-320",
-      "to": "language-block-137",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-321-part_of-language-block-137",
-      "from": "language-stmt-321",
-      "to": "language-block-137",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-322-part_of-language-block-137",
-      "from": "language-stmt-322",
-      "to": "language-block-137",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-323-part_of-language-block-137",
-      "from": "language-stmt-323",
-      "to": "language-block-137",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-324-part_of-language-block-139",
-      "from": "language-stmt-324",
       "to": "language-block-139",
       "kind": "part_of",
       "qualifiers": {},
@@ -9183,8 +9093,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-325-part_of-language-block-140",
-      "from": "language-stmt-325",
+      "id": "struct-language-stmt-319-part_of-language-block-140",
+      "from": "language-stmt-319",
       "to": "language-block-140",
       "kind": "part_of",
       "qualifiers": {},
@@ -9193,8 +9103,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-326-part_of-language-block-141",
-      "from": "language-stmt-326",
+      "id": "struct-language-stmt-320-part_of-language-block-141",
+      "from": "language-stmt-320",
       "to": "language-block-141",
       "kind": "part_of",
       "qualifiers": {},
@@ -9203,8 +9113,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-327-part_of-language-block-142",
-      "from": "language-stmt-327",
+      "id": "struct-language-stmt-321-part_of-language-block-142",
+      "from": "language-stmt-321",
       "to": "language-block-142",
       "kind": "part_of",
       "qualifiers": {},
@@ -9213,8 +9123,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-328-part_of-language-block-143",
-      "from": "language-stmt-328",
+      "id": "struct-language-stmt-322-part_of-language-block-143",
+      "from": "language-stmt-322",
       "to": "language-block-143",
       "kind": "part_of",
       "qualifiers": {},
@@ -9223,8 +9133,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-329-part_of-language-block-144",
-      "from": "language-stmt-329",
+      "id": "struct-language-stmt-323-part_of-language-block-144",
+      "from": "language-stmt-323",
       "to": "language-block-144",
       "kind": "part_of",
       "qualifiers": {},
@@ -9233,8 +9143,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-330-part_of-language-block-145",
-      "from": "language-stmt-330",
+      "id": "struct-language-stmt-324-part_of-language-block-145",
+      "from": "language-stmt-324",
       "to": "language-block-145",
       "kind": "part_of",
       "qualifiers": {},
@@ -9243,9 +9153,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-331-part_of-language-block-146",
-      "from": "language-stmt-331",
-      "to": "language-block-146",
+      "id": "struct-language-stmt-325-part_of-language-block-145",
+      "from": "language-stmt-325",
+      "to": "language-block-145",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9253,9 +9163,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-332-part_of-language-block-146",
-      "from": "language-stmt-332",
-      "to": "language-block-146",
+      "id": "struct-language-stmt-326-part_of-language-block-145",
+      "from": "language-stmt-326",
+      "to": "language-block-145",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9263,19 +9173,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-333-part_of-language-block-146",
-      "from": "language-stmt-333",
-      "to": "language-block-146",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-334-part_of-language-block-146",
-      "from": "language-stmt-334",
-      "to": "language-block-146",
+      "id": "struct-language-stmt-327-part_of-language-block-145",
+      "from": "language-stmt-327",
+      "to": "language-block-145",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -11106,519 +11006,470 @@
     },
     {
       "id": "language-stmt-261",
-      "quote": "The Phoenician alphabet did not emerge from a vacuum.",
-      "block_id": "language-block-112",
-      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "quote": "\\marginfig{history_of_a.png}{History of the letter A, from Ox to A \\cite[History of the letter A, from Ox to A]{history_of_a}.}",
+      "block_id": "language-block-113",
+      "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-262",
-      "quote": "Its roots lie in Semitic-speaking workers in contact with Egyptian scribal culture (\\cite{earliestalphabet}).",
-      "block_id": "language-block-112",
-      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "quote": "Around 1050 BCE, Phoenician traders along the eastern Mediterranean coast perfected what would become the most influential writing innovation in human history: a compact alphabet of just 22 consonantal signs.",
+      "block_id": "language-block-114",
+      "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-263",
-      "quote": "These writers took a small subset of Egyptian hieroglyphs and repurposed them acrophonically to represent the consonants of their own language: the hieroglyph for “water” became /m/ (from Semitic *mayim*), the hieroglyph for “house” became /b/ (from *bayt*).",
-      "block_id": "language-block-112",
-      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "quote": "Unlike the hundreds of symbols required by cuneiform or Egyptian hieroglyphics, the Phoenician system radically compressed the act of writing by applying the Acrophonic Principle, each letter was derived from a pictogram stripped down to represent only its initial sound.",
+      "block_id": "language-block-114",
+      "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-264",
-      "quote": "The best-known examples come from the turquoise mines at Serabit el-Khadim in the Sinai (c.",
-      "block_id": "language-block-112",
-      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "quote": "The letter *aleph* originally depicted an ox head and was reduced to a glottal stop, while *bet* depicted a house and was reduced to /b/ first described by \\citeauthor{acrophonic}.",
+      "block_id": "language-block-114",
+      "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-265",
-      "quote": "1700–1550 BCE), but the may push the invention back to approximately 1850 BCE, making them the oldest alphabetic texts yet found.",
-      "block_id": "language-block-112",
-      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "quote": "This was not merely a simplification; it was a cognitive revolution in economy.",
+      "block_id": "language-block-114",
+      "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-266",
-      "quote": "Their location deep within Egypt suggests the alphabet arose not in isolation but in a zone of intense Egyptian–Semitic contact.",
-      "block_id": "language-block-112",
-      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "quote": "For the first time, a merchant, a sailor, or a child could learn to read and write in days rather than years.",
+      "block_id": "language-block-114",
+      "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-267",
-      "quote": "Over the following centuries this rough, unstandardized script was gradually refined through Proto-Canaanite into the 22-letter Phoenician abjad.",
-      "block_id": "language-block-112",
-      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "quote": "The Phoenician abjad became the direct ancestor of the Greek, Latin, Arabic, and Hebrew scripts, meaning that virtually every alphabetic writing system in use today descends from this single innovation.",
+      "block_id": "language-block-114",
+      "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-268",
-      "quote": "\\marginfig{history_of_a.png}{History of the letter A, from Ox to A \\cite[History of the letter A, from Ox to A]{history_of_a}.}",
+      "quote": "In the broader arc of language history, it is the critical bridge between the Rebus Principle (c.",
       "block_id": "language-block-114",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-269",
-      "quote": "Around 1050 BCE, Phoenician traders along the eastern Mediterranean coast perfected what would become the most influential writing innovation in human history: a compact alphabet of just 22 consonantal signs.",
-      "block_id": "language-block-115",
+      "quote": "3500 BCE) and the formal grammars of \\citeauthor{panini_ashtadhyayi} and \\citeauthor{aristotle_categories}, the moment when writing became truly democratized and portable, setting the stage for the explosion of recorded thought that followed.",
+      "block_id": "language-block-114",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-270",
-      "quote": "Unlike the hundreds of symbols required by cuneiform or Egyptian hieroglyphics, the Phoenician system radically compressed the act of writing by applying the Acrophonic Principle, each letter was derived from a pictogram stripped down to represent only its initial sound.",
-      "block_id": "language-block-115",
+      "quote": "As \\citeauthor{zipf1949human} would later formalize, the pressure toward economy, 22 signs instead of hundreds, is a deep optimization that recurs at every scale of linguistic history, from ancient abjads to modern Byte-Pair Encoding tokenizers.",
+      "block_id": "language-block-114",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-271",
-      "quote": "The letter *aleph* originally depicted an ox head and was reduced to a glottal stop, while *bet* depicted a house and was reduced to /b/ first described by \\citeauthor{acrophonic}.",
-      "block_id": "language-block-115",
-      "section": "The Phoenician Alphabet (c. 1050 BCE)",
+      "quote": "When the Greeks adopted the Phoenician abjad around 800 BCE, they made a seemingly small but profoundly consequential modification: they repurposed several Phoenician consonant signs that had no equivalent in Greek to represent **vowel sounds**.",
+      "block_id": "language-block-116",
+      "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-272",
-      "quote": "This was not merely a simplification; it was a cognitive revolution in economy.",
-      "block_id": "language-block-115",
-      "section": "The Phoenician Alphabet (c. 1050 BCE)",
+      "quote": "Phoenician *aleph* (a glottal stop unused in Greek) became *alpha* (the vowel /a/); *he* became *epsilon* (/e/); *yod* became *iota* (/i/).",
+      "block_id": "language-block-116",
+      "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-273",
-      "quote": "For the first time, a merchant, a sailor, or a child could learn to read and write in days rather than years.",
-      "block_id": "language-block-115",
-      "section": "The Phoenician Alphabet (c. 1050 BCE)",
+      "quote": "The result was the world's first **true alphabet**, a writing system that explicitly represented both consonants and vowels, providing a near-complete phonetic transcription of speech.",
+      "block_id": "language-block-116",
+      "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-274",
-      "quote": "The Phoenician abjad became the direct ancestor of the Greek, Latin, Arabic, and Hebrew scripts, meaning that virtually every alphabetic writing system in use today descends from this single innovation.",
-      "block_id": "language-block-115",
-      "section": "The Phoenician Alphabet (c. 1050 BCE)",
+      "quote": "This mattered enormously because it eliminated the ambiguity inherent in abjads, where readers had to infer missing vowels from context.",
+      "block_id": "language-block-116",
+      "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-275",
-      "quote": "In the broader arc of language history, it is the critical bridge between the Rebus Principle (c.",
-      "block_id": "language-block-115",
-      "section": "The Phoenician Alphabet (c. 1050 BCE)",
+      "quote": "With vowels written out, texts could be read aloud accurately by someone with no prior knowledge of the content, a property that made Greek the ideal medium for philosophy, science, drama, and democratic law.",
+      "block_id": "language-block-116",
+      "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-276",
-      "quote": "3500 BCE) and the formal grammars of \\citeauthor{panini_ashtadhyayi} and \\citeauthor{aristotle_categories}, the moment when writing became truly democratized and portable, setting the stage for the explosion of recorded thought that followed.",
-      "block_id": "language-block-115",
-      "section": "The Phoenician Alphabet (c. 1050 BCE)",
+      "quote": "The Acrophonic Principle (\\cite[Gardiner, 1916]{acrophonic}) already traces the lineage from Phoenician *aleph* to Greek *alpha* and *bet* to *beta*, noting that this adaptation gave us the very word “alphabet” itself.",
+      "block_id": "language-block-116",
+      "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-277",
-      "quote": "As \\citeauthor{zipf1949human} would later formalize, the pressure toward economy, 22 signs instead of hundreds, is a deep optimization that recurs at every scale of linguistic history, from ancient abjads to modern Byte-Pair Encoding tokenizers.",
-      "block_id": "language-block-115",
-      "section": "The Phoenician Alphabet (c. 1050 BCE)",
+      "quote": "The Greek innovation represents the moment when writing achieved full phonetic transparency, the same transparency that modern tokenizers strive for when they decompose text into subword units that capture every nuance of pronunciation and meaning.",
+      "block_id": "language-block-116",
+      "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-278",
-      "quote": "When the Greeks adopted the Phoenician abjad around 800 BCE, they made a seemingly small but profoundly consequential modification: they repurposed several Phoenician consonant signs that had no equivalent in Greek to represent **vowel sounds**.",
-      "block_id": "language-block-117",
+      "quote": "It is also the precondition for \\citeauthor{saussure1916}'s insight about the arbitrariness of the sign: once letters are fully abstract and phonetic, the last residue of iconicity is severed, and the written word becomes a pure social convention.",
+      "block_id": "language-block-116",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-279",
-      "quote": "Phoenician *aleph* (a glottal stop unused in Greek) became *alpha* (the vowel /a/); *he* became *epsilon* (/e/); *yod* became *iota* (/i/).",
+      "quote": "The Rosetta Stone (196 BCE) is the first multi-lingual “parallel corpus”, a single decree inscribed in Egyptian hieroglyphics, Demotic script, and Greek, proving that distinct symbolic systems can map to the same underlying meaning.",
       "block_id": "language-block-117",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-280",
-      "quote": "The result was the world's first **true alphabet**, a writing system that explicitly represented both consonants and vowels, providing a near-complete phonetic transcription of speech.",
+      "quote": "When \\citeauthor{hieroglyphsdeciphered} deciphered Egyptian hieroglyphics in 1822, he did so by *aligning* the Greek text (which he could read) with the hieroglyphic text (which he could not), exploiting the assumption that both encoded the same content.",
       "block_id": "language-block-117",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-281",
-      "quote": "This mattered enormously because it eliminated the ambiguity inherent in abjads, where readers had to infer missing vowels from context.",
-      "block_id": "language-block-117",
+      "quote": "This is precisely the method that powered IBM's statistical machine translation models in the 1990s and that still underpins the training of modern multilingual LLMs: given two texts known to express the same meaning in different languages, the system learns a mapping between their symbolic systems.",
+      "block_id": "language-block-118",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-282",
-      "quote": "With vowels written out, texts could be read aloud accurately by someone with no prior knowledge of the content, a property that made Greek the ideal medium for philosophy, science, drama, and democratic law.",
-      "block_id": "language-block-117",
+      "quote": "The Rosetta Stone thus embodies a principle that connects directly to \\citeauthor{firth_context}'s distributional hypothesis and to the embedding spaces of modern Transformers: meaning is not locked inside any single symbol system but can be recovered from the *structural relationships* between symbols, whether those symbols are hieroglyphs, Greek letters, or high-dimensional vectors.",
+      "block_id": "language-block-118",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-283",
-      "quote": "The Acrophonic Principle (\\cite[Gardiner, 1916]{acrophonic}) already traces the lineage from Phoenician *aleph* to Greek *alpha* and *bet* to *beta*, noting that this adaptation gave us the very word “alphabet” itself.",
-      "block_id": "language-block-117",
+      "quote": "It is the ancient proof of concept for the idea that translation, and, by extension, understanding, is fundamentally an alignment problem.",
+      "block_id": "language-block-118",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-284",
-      "quote": "The Greek innovation represents the moment when writing achieved full phonetic transparency, the same transparency that modern tokenizers strive for when they decompose text into subword units that capture every nuance of pronunciation and meaning.",
-      "block_id": "language-block-117",
-      "section": "The Greek Addition of Vowels (c. 800 BCE)",
+      "quote": "The story of language is a single, unbroken thread:",
+      "block_id": "language-block-121",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
       "id": "language-stmt-285",
-      "quote": "It is also the precondition for \\citeauthor{saussure1916}'s insight about the arbitrariness of the sign: once letters are fully abstract and phonetic, the last residue of iconicity is severed, and the written word becomes a pure social convention.",
-      "block_id": "language-block-117",
-      "section": "The Greek Addition of Vowels (c. 800 BCE)",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-286",
-      "quote": "The Rosetta Stone (196 BCE) is the first multi-lingual “parallel corpus”, a single decree inscribed in Egyptian hieroglyphics, Demotic script, and Greek, proving that distinct symbolic systems can map to the same underlying meaning.",
-      "block_id": "language-block-118",
-      "section": "The Greek Addition of Vowels (c. 800 BCE)",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-287",
-      "quote": "When \\citeauthor{hieroglyphsdeciphered} deciphered Egyptian hieroglyphics in 1822, he did so by *aligning* the Greek text (which he could read) with the hieroglyphic text (which he could not), exploiting the assumption that both encoded the same content.",
-      "block_id": "language-block-118",
-      "section": "The Greek Addition of Vowels (c. 800 BCE)",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-288",
-      "quote": "This is precisely the method that powered IBM's statistical machine translation models in the 1990s and that still underpins the training of modern multilingual LLMs: given two texts known to express the same meaning in different languages, the system learns a mapping between their symbolic systems.",
-      "block_id": "language-block-119",
-      "section": "The Greek Addition of Vowels (c. 800 BCE)",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-289",
-      "quote": "The Rosetta Stone thus embodies a principle that connects directly to \\citeauthor{firth_context}'s distributional hypothesis and to the embedding spaces of modern Transformers: meaning is not locked inside any single symbol system but can be recovered from the *structural relationships* between symbols, whether those symbols are hieroglyphs, Greek letters, or high-dimensional vectors.",
-      "block_id": "language-block-119",
-      "section": "The Greek Addition of Vowels (c. 800 BCE)",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-290",
-      "quote": "It is the ancient proof of concept for the idea that translation, and, by extension, understanding, is fundamentally an alignment problem.",
-      "block_id": "language-block-119",
-      "section": "The Greek Addition of Vowels (c. 800 BCE)",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-291",
-      "quote": "The story of language is a single, unbroken thread:",
+      "quote": "**Biology** gave us the descended larynx and the cochlea -- an instrument and a listener.",
       "block_id": "language-block-122",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-292",
-      "quote": "**Biology** gave us the descended larynx and the cochlea -- an instrument and a listener.",
+      "id": "language-stmt-286",
+      "quote": "**Symbolic displacement** freed thought from the present moment, enabling abstraction.",
       "block_id": "language-block-123",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-293",
-      "quote": "**Symbolic displacement** freed thought from the present moment, enabling abstraction.",
+      "id": "language-stmt-287",
+      "quote": "**Writing** externalized memory, from tally bones to clay tokens to cuneiform.",
       "block_id": "language-block-124",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-294",
-      "quote": "**Writing** externalized memory, from tally bones to clay tokens to cuneiform.",
+      "id": "language-stmt-288",
+      "quote": "**Formalization** (Pāṇini, Aristotle, Wilkins) revealed that language obeys rules, and rules can be encoded.",
       "block_id": "language-block-125",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-295",
-      "quote": "**Formalization** (Pāṇini, Aristotle, Wilkins) revealed that language obeys rules, and rules can be encoded.",
+      "id": "language-stmt-289",
+      "quote": "**Mechanization** (Kempelen) proved that speech could be reproduced by machines.",
       "block_id": "language-block-126",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-296",
-      "quote": "**Mechanization** (Kempelen) proved that speech could be reproduced by machines.",
+      "id": "language-stmt-290",
+      "quote": "**Statistical geometry** (Firth → Transformers) showed that meaning itself can be computed.",
       "block_id": "language-block-127",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-297",
-      "quote": "**Statistical geometry** (Firth → Transformers) showed that meaning itself can be computed.",
+      "id": "language-stmt-291",
+      "quote": "Each step was a further **abstraction**: from vibrations in air, to marks on clay, to rules on paper, to vectors in silicon.",
       "block_id": "language-block-128",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-298",
-      "quote": "Each step was a further **abstraction**: from vibrations in air, to marks on clay, to rules on paper, to vectors in silicon.",
+      "id": "language-stmt-292",
+      "quote": "The LLM is not a break from this history, it is its latest chapter.",
+      "block_id": "language-block-128",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-293",
+      "quote": "If Pāṇini formalized grammar and Firth formalized context, what will the next formalization look like?",
       "block_id": "language-block-129",
       "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-294",
+      "quote": "Perhaps it will be the formalization of *reasoning itself*, closing the loop between the symbolic displacement that made us human and the artificial intelligence that now mirrors us.",
+      "block_id": "language-block-129",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-295",
+      "quote": "The title of Gleick's history carries an ambiguity that matters for LLMs.",
+      "block_id": "language-block-131",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-296",
+      "quote": "“The Information” names both the mathematical quantity Shannon isolated and the deluge of data, text, images, and messages in which modern life is immersed (\\cite[Gleick, 2011]{gleick2011information}).",
+      "block_id": "language-block-131",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-297",
+      "quote": "Gleick's closing chapters are about the second: an abundance of information does not automatically produce an abundance of understanding, and attention becomes the scarce resource.",
+      "block_id": "language-block-131",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-298",
+      "quote": "His epilogue is called “The Return of Meaning” for a reason.",
+      "block_id": "language-block-131",
+      "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
       "id": "language-stmt-299",
-      "quote": "The LLM is not a break from this history, it is its latest chapter.",
-      "block_id": "language-block-129",
-      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "quote": "After a century of measuring messages without interpreting them, the question of what they mean comes back.",
+      "block_id": "language-block-131",
+      "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
       "id": "language-stmt-300",
-      "quote": "If Pāṇini formalized grammar and Firth formalized context, what will the next formalization look like?",
-      "block_id": "language-block-130",
-      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "quote": "That distinction is the cleanest way to state what a language model does and does not do.",
+      "block_id": "language-block-132",
+      "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
       "id": "language-stmt-301",
-      "quote": "Perhaps it will be the formalization of *reasoning itself*, closing the loop between the symbolic displacement that made us human and the artificial intelligence that now mirrors us.",
-      "block_id": "language-block-130",
-      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "quote": "An LLM is a machine for estimating the probability of the next token from a vast corpus; it is exquisitely sensitive to the *statistical* structure of the flood, and it has no independent, non-statistical purchase on whether a sentence is true, important, or worth saying.",
+      "block_id": "language-block-132",
+      "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
       "id": "language-stmt-302",
-      "quote": "The title of Gleick's history carries an ambiguity that matters for LLMs.",
+      "quote": "Shannon deliberately excluded meaning from his theory, and the exclusion is still built into the objective: cross-entropy rewards a good guess about what comes next, not a good answer about what is the case.",
       "block_id": "language-block-132",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
       "id": "language-stmt-303",
-      "quote": "“The Information” names both the mathematical quantity Shannon isolated and the deluge of data, text, images, and messages in which modern life is immersed (\\cite[Gleick, 2011]{gleick2011information}).",
-      "block_id": "language-block-132",
+      "quote": "The history in this chapter therefore ends with a question rather than a triumph.",
+      "block_id": "language-block-133",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
       "id": "language-stmt-304",
-      "quote": "Gleick's closing chapters are about the second: an abundance of information does not automatically produce an abundance of understanding, and attention becomes the scarce resource.",
-      "block_id": "language-block-132",
+      "quote": "Writing externalized memory; printing and the telegraph externalized and accelerated its transmission; Shannon made its quantity measurable; the computer made it machine-processable; and the LLM has now made a statistical model of the whole archive.",
+      "block_id": "language-block-133",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
       "id": "language-stmt-305",
-      "quote": "His epilogue is called “The Return of Meaning” for a reason.",
-      "block_id": "language-block-132",
+      "quote": "What remains outside the model is the part the archive was always *for*: the act of a mind that means something by it.",
+      "block_id": "language-block-133",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
       "id": "language-stmt-306",
-      "quote": "After a century of measuring messages without interpreting them, the question of what they mean comes back.",
-      "block_id": "language-block-132",
+      "quote": "Whether that act can itself be captured by information, or whether it is the one thing the flood cannot carry, is the question the rest of this course takes up.",
+      "block_id": "language-block-133",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
       "id": "language-stmt-307",
-      "quote": "That distinction is the cleanest way to state what a language model does and does not do.",
-      "block_id": "language-block-133",
-      "section": "After the Flood: Information Is Not Meaning",
+      "quote": "But the linguistic thread is only one of several.",
+      "block_id": "language-block-135",
+      "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
       "id": "language-stmt-308",
-      "quote": "An LLM is a machine for estimating the probability of the next token from a vast corpus; it is exquisitely sensitive to the *statistical* structure of the flood, and it has no independent, non-statistical purchase on whether a sentence is true, important, or worth saying.",
-      "block_id": "language-block-133",
-      "section": "After the Flood: Information Is Not Meaning",
+      "quote": "It converges with a parallel history of **numeracy**, from tally marks to clay tokens to place-value arithmetic, that grounded equally abstract rules for quantity.",
+      "block_id": "language-block-135",
+      "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
       "id": "language-stmt-309",
-      "quote": "Shannon deliberately excluded meaning from his theory, and the exclusion is still built into the objective: cross-entropy rewards a good guess about what comes next, not a good answer about what is the case.",
-      "block_id": "language-block-133",
-      "section": "After the Flood: Information Is Not Meaning",
+      "quote": "It converges with **logic**, from Aristotle's syllogisms to Boole's algebra to Shannon's switching circuits, that reduced reasoning itself to a physical process.",
+      "block_id": "language-block-135",
+      "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
       "id": "language-stmt-310",
-      "quote": "The history in this chapter therefore ends with a question rather than a triumph.",
-      "block_id": "language-block-134",
-      "section": "After the Flood: Information Is Not Meaning",
+      "quote": "It converges with **mechanization**, from Jacquard's loom to Babbage's engine to the modern microprocessor, that gave these rules a substrate faster than any human mind.",
+      "block_id": "language-block-135",
+      "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
       "id": "language-stmt-311",
-      "quote": "Writing externalized memory; printing and the telegraph externalized and accelerated its transmission; Shannon made its quantity measurable; the computer made it machine-processable; and the LLM has now made a statistical model of the whole archive.",
-      "block_id": "language-block-134",
-      "section": "After the Flood: Information Is Not Meaning",
+      "quote": "The LLM is not the *only* possible outcome of this convergence.",
+      "block_id": "language-block-136",
+      "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
       "id": "language-stmt-312",
-      "quote": "What remains outside the model is the part the archive was always *for*: the act of a mind that means something by it.",
-      "block_id": "language-block-134",
-      "section": "After the Flood: Information Is Not Meaning",
+      "quote": "The digital computer, the scientific method, and the modern university are equally its products.",
+      "block_id": "language-block-136",
+      "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
       "id": "language-stmt-313",
-      "quote": "Whether that act can itself be captured by information, or whether it is the one thing the flood cannot carry, is the question the rest of this course takes up.",
-      "block_id": "language-block-134",
-      "section": "After the Flood: Information Is Not Meaning",
+      "quote": "But the LLM is the point where all the threads happen to meet: language, numeracy, logic, and mechanism woven into a single substrate.",
+      "block_id": "language-block-136",
+      "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
       "id": "language-stmt-314",
-      "quote": "But the linguistic thread is only one of several.",
+      "quote": "The next formalization may not be about language at all.",
       "block_id": "language-block-136",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
       "id": "language-stmt-315",
-      "quote": "It converges with a parallel history of **numeracy**, from tally marks to clay tokens to place-value arithmetic, that grounded equally abstract rules for quantity.",
+      "quote": "The threads diverge again as soon as they converge.",
       "block_id": "language-block-136",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
       "id": "language-stmt-316",
-      "quote": "It converges with **logic**, from Aristotle's syllogisms to Boole's algebra to Shannon's switching circuits, that reduced reasoning itself to a physical process.",
+      "quote": "What matters is the pattern: abstraction upon abstraction, each layer enabling the next, with no final destination in sight.",
       "block_id": "language-block-136",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
       "id": "language-stmt-317",
-      "quote": "It converges with **mechanization**, from Jacquard's loom to Babbage's engine to the modern microprocessor, that gave these rules a substrate faster than any human mind.",
-      "block_id": "language-block-136",
-      "section": "The Threads Are Many, Not One",
+      "quote": "For decades, natural-language processing was a **zoo**: one hand-built system per task, each with its own features, dataset, and state of the art.",
+      "block_id": "language-block-138",
+      "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
       "id": "language-stmt-318",
-      "quote": "The LLM is not the *only* possible outcome of this convergence.",
-      "block_id": "language-block-137",
-      "section": "The Threads Are Many, Not One",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-319",
-      "quote": "The digital computer, the scientific method, and the modern university are equally its products.",
-      "block_id": "language-block-137",
-      "section": "The Threads Are Many, Not One",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-320",
-      "quote": "But the LLM is the point where all the threads happen to meet: language, numeracy, logic, and mechanism woven into a single substrate.",
-      "block_id": "language-block-137",
-      "section": "The Threads Are Many, Not One",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-321",
-      "quote": "The next formalization may not be about language at all.",
-      "block_id": "language-block-137",
-      "section": "The Threads Are Many, Not One",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-322",
-      "quote": "The threads diverge again as soon as they converge.",
-      "block_id": "language-block-137",
-      "section": "The Threads Are Many, Not One",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-323",
-      "quote": "What matters is the pattern: abstraction upon abstraction, each layer enabling the next, with no final destination in sight.",
-      "block_id": "language-block-137",
-      "section": "The Threads Are Many, Not One",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-324",
-      "quote": "For decades, natural-language processing was a **zoo**: one hand-built system per task, each with its own features, dataset, and state of the art.",
+      "quote": "| Task | Question it answered | Classic tool |",
       "block_id": "language-block-139",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-325",
-      "quote": "| Task | Question it answered | Classic tool |",
+      "id": "language-stmt-319",
+      "quote": "| Machine translation | Translate between languages | statistical, phrase-based MT |",
       "block_id": "language-block-140",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-326",
-      "quote": "| Machine translation | Translate between languages | statistical, phrase-based MT |",
+      "id": "language-stmt-320",
+      "quote": "| Part-of-speech / parsing | Label words / build the tree | HMMs, CFGs, CRFs |",
       "block_id": "language-block-141",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-327",
-      "quote": "| Part-of-speech / parsing | Label words / build the tree | HMMs, CFGs, CRFs |",
+      "id": "language-stmt-321",
+      "quote": "| Named-entity recognition | Find people, places, dates | CRFs, sequence models |",
       "block_id": "language-block-142",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-328",
-      "quote": "| Named-entity recognition | Find people, places, dates | CRFs, sequence models |",
+      "id": "language-stmt-322",
+      "quote": "| Sentiment analysis | Classify polarity | SVMs on bag-of-words |",
       "block_id": "language-block-143",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-329",
-      "quote": "| Sentiment analysis | Classify polarity | SVMs on bag-of-words |",
+      "id": "language-stmt-323",
+      "quote": "| Question answering | Extract / generate an answer | retrieval + extraction |",
       "block_id": "language-block-144",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-330",
-      "quote": "| Question answering | Extract / generate an answer | retrieval + extraction |",
+      "id": "language-stmt-324",
+      "quote": "The Transformer **collapsed the zoo**.",
       "block_id": "language-block-145",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-331",
-      "quote": "The Transformer **collapsed the zoo**.",
-      "block_id": "language-block-146",
-      "section": "The NLP Task Landscape, Unified",
-      "kind": "statement"
-    },
-    {
-      "id": "language-stmt-332",
+      "id": "language-stmt-325",
       "quote": "One pre-trained model, fine-tuned, now performs *most* of these as a single next-token task (\\cite[Zhao et al., 2023]{zhao2023survey}).",
-      "block_id": "language-block-146",
+      "block_id": "language-block-145",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-333",
+      "id": "language-stmt-326",
       "quote": "The tasks did not vanish — they were **absorbed** into a general sequence model.",
-      "block_id": "language-block-146",
+      "block_id": "language-block-145",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-334",
+      "id": "language-stmt-327",
       "quote": "That absorption is the same gesture as every thread in this chapter: a specific, hand-built mechanism giving way to a general one that subsumes it.",
-      "block_id": "language-block-146",
+      "block_id": "language-block-145",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     }
@@ -12292,210 +12143,204 @@
     },
     {
       "id": "language-block-112",
-      "quote": "The Phoenician alphabet did not emerge from a vacuum. Its roots lie in Semitic-speaking workers in contact with Egyptian scribal culture (\\cite{earliestalphabet}). These writers took a small subset of Egyptian hieroglyphs and repurposed them acrophonically to represent the consonants of their own language: the hieroglyph for “water” became /m/ (from Semitic *mayim*), the hieroglyph for “house” became /b/ (from *bayt*). The best-known examples come from the turquoise mines at Serabit el-Khadim in the Sinai (c. 1700–1550 BCE), but the may push the invention back to approximately 1850 BCE, making them the oldest alphabetic texts yet found. Their location deep within Egypt suggests the alphabet arose not in isolation but in a zone of intense Egyptian–Semitic contact. Over the following centuries this rough, unstandardized script was gradually refined through Proto-Canaanite into the 22-letter Phoenician abjad.",
-      "kind": "paragraph",
-      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)"
-    },
-    {
-      "id": "language-block-113",
       "quote": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "heading",
       "section": "The Phoenician Alphabet (c. 1050 BCE)"
     },
     {
-      "id": "language-block-114",
+      "id": "language-block-113",
       "quote": "\\marginfig{history_of_a.png}{History of the letter A, from Ox to A \\cite[History of the letter A, from Ox to A]{history_of_a}.}",
       "kind": "paragraph",
       "section": "The Phoenician Alphabet (c. 1050 BCE)"
     },
     {
-      "id": "language-block-115",
+      "id": "language-block-114",
       "quote": "Around 1050 BCE, Phoenician traders along the eastern Mediterranean coast perfected what would become the most influential writing innovation in human history: a compact alphabet of just 22 consonantal signs. Unlike the hundreds of symbols required by cuneiform or Egyptian hieroglyphics, the Phoenician system radically compressed the act of writing by applying the Acrophonic Principle, each letter was derived from a pictogram stripped down to represent only its initial sound. The letter *aleph* originally depicted an ox head and was reduced to a glottal stop, while *bet* depicted a house and was reduced to /b/ first described by \\citeauthor{acrophonic}. This was not merely a simplification; it was a cognitive revolution in economy. For the first time, a merchant, a sailor, or a child could learn to read and write in days rather than years. The Phoenician abjad became the direct ancestor of the Greek, Latin, Arabic, and Hebrew scripts, meaning that virtually every alphabetic writing system in use today descends from this single innovation. In the broader arc of language history, it is the critical bridge between the Rebus Principle (c. 3500 BCE) and the formal grammars of \\citeauthor{panini_ashtadhyayi} and \\citeauthor{aristotle_categories}, the moment when writing became truly democratized and portable, setting the stage for the explosion of recorded thought that followed. As \\citeauthor{zipf1949human} would later formalize, the pressure toward economy, 22 signs instead of hundreds, is a deep optimization that recurs at every scale of linguistic history, from ancient abjads to modern Byte-Pair Encoding tokenizers.",
       "kind": "paragraph",
       "section": "The Phoenician Alphabet (c. 1050 BCE)"
     },
     {
-      "id": "language-block-116",
+      "id": "language-block-115",
       "quote": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "heading",
       "section": "The Greek Addition of Vowels (c. 800 BCE)"
     },
     {
-      "id": "language-block-117",
+      "id": "language-block-116",
       "quote": "When the Greeks adopted the Phoenician abjad around 800 BCE, they made a seemingly small but profoundly consequential modification: they repurposed several Phoenician consonant signs that had no equivalent in Greek to represent **vowel sounds**. Phoenician *aleph* (a glottal stop unused in Greek) became *alpha* (the vowel /a/); *he* became *epsilon* (/e/); *yod* became *iota* (/i/). The result was the world's first **true alphabet**, a writing system that explicitly represented both consonants and vowels, providing a near-complete phonetic transcription of speech. This mattered enormously because it eliminated the ambiguity inherent in abjads, where readers had to infer missing vowels from context. With vowels written out, texts could be read aloud accurately by someone with no prior knowledge of the content, a property that made Greek the ideal medium for philosophy, science, drama, and democratic law. The Acrophonic Principle (\\cite[Gardiner, 1916]{acrophonic}) already traces the lineage from Phoenician *aleph* to Greek *alpha* and *bet* to *beta*, noting that this adaptation gave us the very word “alphabet” itself. The Greek innovation represents the moment when writing achieved full phonetic transparency, the same transparency that modern tokenizers strive for when they decompose text into subword units that capture every nuance of pronunciation and meaning. It is also the precondition for \\citeauthor{saussure1916}'s insight about the arbitrariness of the sign: once letters are fully abstract and phonetic, the last residue of iconicity is severed, and the written word becomes a pure social convention.",
       "kind": "paragraph",
       "section": "The Greek Addition of Vowels (c. 800 BCE)"
     },
     {
-      "id": "language-block-118",
+      "id": "language-block-117",
       "quote": "The Rosetta Stone (196 BCE) is the first multi-lingual “parallel corpus”, a single decree inscribed in Egyptian hieroglyphics, Demotic script, and Greek, proving that distinct symbolic systems can map to the same underlying meaning. When \\citeauthor{hieroglyphsdeciphered} deciphered Egyptian hieroglyphics in 1822, he did so by *aligning* the Greek text (which he could read) with the hieroglyphic text (which he could not), exploiting the assumption that both encoded the same content.",
       "kind": "paragraph",
       "section": "The Greek Addition of Vowels (c. 800 BCE)"
     },
     {
-      "id": "language-block-119",
+      "id": "language-block-118",
       "quote": "This is precisely the method that powered IBM's statistical machine translation models in the 1990s and that still underpins the training of modern multilingual LLMs: given two texts known to express the same meaning in different languages, the system learns a mapping between their symbolic systems. The Rosetta Stone thus embodies a principle that connects directly to \\citeauthor{firth_context}'s distributional hypothesis and to the embedding spaces of modern Transformers: meaning is not locked inside any single symbol system but can be recovered from the *structural relationships* between symbols, whether those symbols are hieroglyphs, Greek letters, or high-dimensional vectors. It is the ancient proof of concept for the idea that translation, and, by extension, understanding, is fundamentally an alignment problem.",
       "kind": "paragraph",
       "section": "The Greek Addition of Vowels (c. 800 BCE)"
     },
     {
-      "id": "language-block-120",
+      "id": "language-block-119",
       "quote": "Conclusion and the NLP landscape",
       "kind": "heading",
       "section": "Conclusion and the NLP landscape"
     },
     {
-      "id": "language-block-121",
+      "id": "language-block-120",
       "quote": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "heading",
       "section": "Conclusion: 135,000 Years in a Single Thread"
     },
     {
-      "id": "language-block-122",
+      "id": "language-block-121",
       "quote": "The story of language is a single, unbroken thread:",
       "kind": "paragraph",
       "section": "Conclusion: 135,000 Years in a Single Thread"
     },
     {
-      "id": "language-block-123",
+      "id": "language-block-122",
       "quote": "1. **Biology** gave us the descended larynx and the cochlea -- an instrument and a listener.",
       "kind": "list-item",
       "section": "Conclusion: 135,000 Years in a Single Thread"
     },
     {
-      "id": "language-block-124",
+      "id": "language-block-123",
       "quote": "2. **Symbolic displacement** freed thought from the present moment, enabling abstraction.",
       "kind": "list-item",
       "section": "Conclusion: 135,000 Years in a Single Thread"
     },
     {
-      "id": "language-block-125",
+      "id": "language-block-124",
       "quote": "3. **Writing** externalized memory, from tally bones to clay tokens to cuneiform.",
       "kind": "list-item",
       "section": "Conclusion: 135,000 Years in a Single Thread"
     },
     {
-      "id": "language-block-126",
+      "id": "language-block-125",
       "quote": "4. **Formalization** (Pāṇini, Aristotle, Wilkins) revealed that language obeys rules, and rules can be encoded.",
       "kind": "list-item",
       "section": "Conclusion: 135,000 Years in a Single Thread"
     },
     {
-      "id": "language-block-127",
+      "id": "language-block-126",
       "quote": "5. **Mechanization** (Kempelen) proved that speech could be reproduced by machines.",
       "kind": "list-item",
       "section": "Conclusion: 135,000 Years in a Single Thread"
     },
     {
-      "id": "language-block-128",
+      "id": "language-block-127",
       "quote": "6. **Statistical geometry** (Firth → Transformers) showed that meaning itself can be computed.",
       "kind": "list-item",
       "section": "Conclusion: 135,000 Years in a Single Thread"
     },
     {
-      "id": "language-block-129",
+      "id": "language-block-128",
       "quote": "Each step was a further **abstraction**: from vibrations in air, to marks on clay, to rules on paper, to vectors in silicon. The LLM is not a break from this history, it is its latest chapter.",
       "kind": "paragraph",
       "section": "Conclusion: 135,000 Years in a Single Thread"
     },
     {
-      "id": "language-block-130",
+      "id": "language-block-129",
       "quote": "If Pāṇini formalized grammar and Firth formalized context, what will the next formalization look like? Perhaps it will be the formalization of *reasoning itself*, closing the loop between the symbolic displacement that made us human and the artificial intelligence that now mirrors us.",
       "kind": "paragraph",
       "section": "Conclusion: 135,000 Years in a Single Thread"
     },
     {
-      "id": "language-block-131",
+      "id": "language-block-130",
       "quote": "After the Flood: Information Is Not Meaning",
       "kind": "heading",
       "section": "After the Flood: Information Is Not Meaning"
     },
     {
-      "id": "language-block-132",
+      "id": "language-block-131",
       "quote": "The title of Gleick's history carries an ambiguity that matters for LLMs. “The Information” names both the mathematical quantity Shannon isolated and the deluge of data, text, images, and messages in which modern life is immersed (\\cite[Gleick, 2011]{gleick2011information}). Gleick's closing chapters are about the second: an abundance of information does not automatically produce an abundance of understanding, and attention becomes the scarce resource. His epilogue is called “The Return of Meaning” for a reason. After a century of measuring messages without interpreting them, the question of what they mean comes back.",
       "kind": "paragraph",
       "section": "After the Flood: Information Is Not Meaning"
     },
     {
-      "id": "language-block-133",
+      "id": "language-block-132",
       "quote": "That distinction is the cleanest way to state what a language model does and does not do. An LLM is a machine for estimating the probability of the next token from a vast corpus; it is exquisitely sensitive to the *statistical* structure of the flood, and it has no independent, non-statistical purchase on whether a sentence is true, important, or worth saying. Shannon deliberately excluded meaning from his theory, and the exclusion is still built into the objective: cross-entropy rewards a good guess about what comes next, not a good answer about what is the case.",
       "kind": "paragraph",
       "section": "After the Flood: Information Is Not Meaning"
     },
     {
-      "id": "language-block-134",
+      "id": "language-block-133",
       "quote": "The history in this chapter therefore ends with a question rather than a triumph. Writing externalized memory; printing and the telegraph externalized and accelerated its transmission; Shannon made its quantity measurable; the computer made it machine-processable; and the LLM has now made a statistical model of the whole archive. What remains outside the model is the part the archive was always *for*: the act of a mind that means something by it. Whether that act can itself be captured by information, or whether it is the one thing the flood cannot carry, is the question the rest of this course takes up.",
       "kind": "paragraph",
       "section": "After the Flood: Information Is Not Meaning"
     },
     {
-      "id": "language-block-135",
+      "id": "language-block-134",
       "quote": "The Threads Are Many, Not One",
       "kind": "heading",
       "section": "The Threads Are Many, Not One"
     },
     {
-      "id": "language-block-136",
+      "id": "language-block-135",
       "quote": "But the linguistic thread is only one of several. It converges with a parallel history of **numeracy**, from tally marks to clay tokens to place-value arithmetic, that grounded equally abstract rules for quantity. It converges with **logic**, from Aristotle's syllogisms to Boole's algebra to Shannon's switching circuits, that reduced reasoning itself to a physical process. It converges with **mechanization**, from Jacquard's loom to Babbage's engine to the modern microprocessor, that gave these rules a substrate faster than any human mind.",
       "kind": "paragraph",
       "section": "The Threads Are Many, Not One"
     },
     {
-      "id": "language-block-137",
+      "id": "language-block-136",
       "quote": "The LLM is not the *only* possible outcome of this convergence. The digital computer, the scientific method, and the modern university are equally its products. But the LLM is the point where all the threads happen to meet: language, numeracy, logic, and mechanism woven into a single substrate. The next formalization may not be about language at all. The threads diverge again as soon as they converge. What matters is the pattern: abstraction upon abstraction, each layer enabling the next, with no final destination in sight.",
       "kind": "paragraph",
       "section": "The Threads Are Many, Not One"
     },
     {
-      "id": "language-block-138",
+      "id": "language-block-137",
       "quote": "The NLP Task Landscape, Unified",
       "kind": "heading",
       "section": "The NLP Task Landscape, Unified"
     },
     {
-      "id": "language-block-139",
+      "id": "language-block-138",
       "quote": "For decades, natural-language processing was a **zoo**: one hand-built system per task, each with its own features, dataset, and state of the art.",
       "kind": "paragraph",
       "section": "The NLP Task Landscape, Unified"
     },
     {
-      "id": "language-block-140",
+      "id": "language-block-139",
       "quote": "| Task | Question it answered | Classic tool |",
       "kind": "table-row",
       "section": "The NLP Task Landscape, Unified"
     },
     {
-      "id": "language-block-141",
+      "id": "language-block-140",
       "quote": "| Machine translation | Translate between languages | statistical, phrase-based MT |",
       "kind": "table-row",
       "section": "The NLP Task Landscape, Unified"
     },
     {
-      "id": "language-block-142",
+      "id": "language-block-141",
       "quote": "| Part-of-speech / parsing | Label words / build the tree | HMMs, CFGs, CRFs |",
       "kind": "table-row",
       "section": "The NLP Task Landscape, Unified"
     },
     {
-      "id": "language-block-143",
+      "id": "language-block-142",
       "quote": "| Named-entity recognition | Find people, places, dates | CRFs, sequence models |",
       "kind": "table-row",
       "section": "The NLP Task Landscape, Unified"
     },
     {
-      "id": "language-block-144",
+      "id": "language-block-143",
       "quote": "| Sentiment analysis | Classify polarity | SVMs on bag-of-words |",
       "kind": "table-row",
       "section": "The NLP Task Landscape, Unified"
     },
     {
-      "id": "language-block-145",
+      "id": "language-block-144",
       "quote": "| Question answering | Extract / generate an answer | retrieval + extraction |",
       "kind": "table-row",
       "section": "The NLP Task Landscape, Unified"
     },
     {
-      "id": "language-block-146",
+      "id": "language-block-145",
       "quote": "The Transformer **collapsed the zoo**. One pre-trained model, fine-tuned, now performs *most* of these as a single next-token task (\\cite[Zhao et al., 2023]{zhao2023survey}). The tasks did not vanish — they were **absorbed** into a general sequence model. That absorption is the same gesture as every thread in this chapter: a specific, hand-built mechanism giving way to a general one that subsumes it.",
       "kind": "paragraph",
       "section": "The NLP Task Landscape, Unified"

@@ -549,16 +549,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-6-related_to-normalizationlab-block-5",
-      "from": "normalizationlab-block-6",
-      "to": "normalizationlab-block-5",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-normalizationlab-block-7-part_of-normalizationlab",
       "from": "normalizationlab-block-7",
       "to": "normalizationlab",
@@ -579,9 +569,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-7-related_to-normalizationlab-block-5",
+      "id": "struct-normalizationlab-block-7-related_to-normalizationlab-block-6",
       "from": "normalizationlab-block-7",
-      "to": "normalizationlab-block-5",
+      "to": "normalizationlab-block-6",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -609,9 +599,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-8-related_to-normalizationlab-block-5",
+      "id": "struct-normalizationlab-block-8-related_to-normalizationlab-block-6",
       "from": "normalizationlab-block-8",
-      "to": "normalizationlab-block-5",
+      "to": "normalizationlab-block-6",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -639,9 +629,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-9-related_to-normalizationlab-block-5",
+      "id": "struct-normalizationlab-block-9-related_to-normalizationlab-block-6",
       "from": "normalizationlab-block-9",
-      "to": "normalizationlab-block-5",
+      "to": "normalizationlab-block-6",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -669,16 +659,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-10-related_to-normalizationlab-block-5",
-      "from": "normalizationlab-block-10",
-      "to": "normalizationlab-block-5",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-normalizationlab-block-11-part_of-normalizationlab",
       "from": "normalizationlab-block-11",
       "to": "normalizationlab",
@@ -699,9 +679,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-11-related_to-normalizationlab-block-5",
+      "id": "struct-normalizationlab-block-11-related_to-normalizationlab-block-10",
       "from": "normalizationlab-block-11",
-      "to": "normalizationlab-block-5",
+      "to": "normalizationlab-block-10",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -729,9 +709,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-12-related_to-normalizationlab-block-5",
+      "id": "struct-normalizationlab-block-12-related_to-normalizationlab-block-10",
       "from": "normalizationlab-block-12",
-      "to": "normalizationlab-block-5",
+      "to": "normalizationlab-block-10",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -759,9 +739,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-13-related_to-normalizationlab-block-5",
+      "id": "struct-normalizationlab-block-13-related_to-normalizationlab-block-10",
       "from": "normalizationlab-block-13",
-      "to": "normalizationlab-block-5",
+      "to": "normalizationlab-block-10",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -789,16 +769,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-14-related_to-normalizationlab-block-5",
-      "from": "normalizationlab-block-14",
-      "to": "normalizationlab-block-5",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-normalizationlab-block-15-part_of-normalizationlab",
       "from": "normalizationlab-block-15",
       "to": "normalizationlab",
@@ -819,9 +789,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-15-related_to-normalizationlab-block-5",
+      "id": "struct-normalizationlab-block-15-related_to-normalizationlab-block-14",
       "from": "normalizationlab-block-15",
-      "to": "normalizationlab-block-5",
+      "to": "normalizationlab-block-14",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -849,9 +819,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-16-related_to-normalizationlab-block-5",
+      "id": "struct-normalizationlab-block-16-related_to-normalizationlab-block-14",
       "from": "normalizationlab-block-16",
-      "to": "normalizationlab-block-5",
+      "to": "normalizationlab-block-14",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -879,9 +849,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-17-related_to-normalizationlab-block-5",
+      "id": "struct-normalizationlab-block-17-related_to-normalizationlab-block-14",
       "from": "normalizationlab-block-17",
-      "to": "normalizationlab-block-5",
+      "to": "normalizationlab-block-14",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -909,6 +879,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-normalizationlab-block-18-related_to-normalizationlab-block-14",
+      "from": "normalizationlab-block-18",
+      "to": "normalizationlab-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-normalizationlab-block-19-part_of-normalizationlab",
       "from": "normalizationlab-block-19",
       "to": "normalizationlab",
@@ -929,9 +909,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-19-related_to-normalizationlab-block-18",
+      "id": "struct-normalizationlab-block-19-related_to-normalizationlab-block-14",
       "from": "normalizationlab-block-19",
-      "to": "normalizationlab-block-18",
+      "to": "normalizationlab-block-14",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -959,9 +939,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-20-related_to-normalizationlab-block-18",
+      "id": "struct-normalizationlab-block-20-related_to-normalizationlab-block-14",
       "from": "normalizationlab-block-20",
-      "to": "normalizationlab-block-18",
+      "to": "normalizationlab-block-14",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -989,9 +969,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-21-related_to-normalizationlab-block-18",
+      "id": "struct-normalizationlab-block-21-related_to-normalizationlab-block-14",
       "from": "normalizationlab-block-21",
-      "to": "normalizationlab-block-18",
+      "to": "normalizationlab-block-14",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1019,6 +999,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-normalizationlab-block-22-related_to-normalizationlab-block-14",
+      "from": "normalizationlab-block-22",
+      "to": "normalizationlab-block-14",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-normalizationlab-block-23-part_of-normalizationlab",
       "from": "normalizationlab-block-23",
       "to": "normalizationlab",
@@ -1039,359 +1029,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-block-23-related_to-normalizationlab-block-22",
+      "id": "struct-normalizationlab-block-23-related_to-normalizationlab-block-14",
       "from": "normalizationlab-block-23",
-      "to": "normalizationlab-block-22",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-24-part_of-normalizationlab",
-      "from": "normalizationlab-block-24",
-      "to": "normalizationlab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-23-before-normalizationlab-block-24",
-      "from": "normalizationlab-block-23",
-      "to": "normalizationlab-block-24",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-24-related_to-normalizationlab-block-22",
-      "from": "normalizationlab-block-24",
-      "to": "normalizationlab-block-22",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-25-part_of-normalizationlab",
-      "from": "normalizationlab-block-25",
-      "to": "normalizationlab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-24-before-normalizationlab-block-25",
-      "from": "normalizationlab-block-24",
-      "to": "normalizationlab-block-25",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-25-related_to-normalizationlab-block-22",
-      "from": "normalizationlab-block-25",
-      "to": "normalizationlab-block-22",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-26-part_of-normalizationlab",
-      "from": "normalizationlab-block-26",
-      "to": "normalizationlab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-25-before-normalizationlab-block-26",
-      "from": "normalizationlab-block-25",
-      "to": "normalizationlab-block-26",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-27-part_of-normalizationlab",
-      "from": "normalizationlab-block-27",
-      "to": "normalizationlab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-26-before-normalizationlab-block-27",
-      "from": "normalizationlab-block-26",
-      "to": "normalizationlab-block-27",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-27-related_to-normalizationlab-block-26",
-      "from": "normalizationlab-block-27",
-      "to": "normalizationlab-block-26",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-28-part_of-normalizationlab",
-      "from": "normalizationlab-block-28",
-      "to": "normalizationlab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-27-before-normalizationlab-block-28",
-      "from": "normalizationlab-block-27",
-      "to": "normalizationlab-block-28",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-28-related_to-normalizationlab-block-26",
-      "from": "normalizationlab-block-28",
-      "to": "normalizationlab-block-26",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-29-part_of-normalizationlab",
-      "from": "normalizationlab-block-29",
-      "to": "normalizationlab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-28-before-normalizationlab-block-29",
-      "from": "normalizationlab-block-28",
-      "to": "normalizationlab-block-29",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-29-related_to-normalizationlab-block-26",
-      "from": "normalizationlab-block-29",
-      "to": "normalizationlab-block-26",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-30-part_of-normalizationlab",
-      "from": "normalizationlab-block-30",
-      "to": "normalizationlab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-29-before-normalizationlab-block-30",
-      "from": "normalizationlab-block-29",
-      "to": "normalizationlab-block-30",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-30-related_to-normalizationlab-block-26",
-      "from": "normalizationlab-block-30",
-      "to": "normalizationlab-block-26",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-31-part_of-normalizationlab",
-      "from": "normalizationlab-block-31",
-      "to": "normalizationlab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-30-before-normalizationlab-block-31",
-      "from": "normalizationlab-block-30",
-      "to": "normalizationlab-block-31",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-31-related_to-normalizationlab-block-26",
-      "from": "normalizationlab-block-31",
-      "to": "normalizationlab-block-26",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-32-part_of-normalizationlab",
-      "from": "normalizationlab-block-32",
-      "to": "normalizationlab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-31-before-normalizationlab-block-32",
-      "from": "normalizationlab-block-31",
-      "to": "normalizationlab-block-32",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-32-related_to-normalizationlab-block-26",
-      "from": "normalizationlab-block-32",
-      "to": "normalizationlab-block-26",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-33-part_of-normalizationlab",
-      "from": "normalizationlab-block-33",
-      "to": "normalizationlab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-32-before-normalizationlab-block-33",
-      "from": "normalizationlab-block-32",
-      "to": "normalizationlab-block-33",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-33-related_to-normalizationlab-block-26",
-      "from": "normalizationlab-block-33",
-      "to": "normalizationlab-block-26",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-34-part_of-normalizationlab",
-      "from": "normalizationlab-block-34",
-      "to": "normalizationlab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-33-before-normalizationlab-block-34",
-      "from": "normalizationlab-block-33",
-      "to": "normalizationlab-block-34",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-34-related_to-normalizationlab-block-26",
-      "from": "normalizationlab-block-34",
-      "to": "normalizationlab-block-26",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-35-part_of-normalizationlab",
-      "from": "normalizationlab-block-35",
-      "to": "normalizationlab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-34-before-normalizationlab-block-35",
-      "from": "normalizationlab-block-34",
-      "to": "normalizationlab-block-35",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-block-35-related_to-normalizationlab-block-26",
-      "from": "normalizationlab-block-35",
-      "to": "normalizationlab-block-26",
+      "to": "normalizationlab-block-14",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1439,18 +1079,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-5-part_of-normalizationlab-block-6",
+      "id": "struct-normalizationlab-stmt-5-part_of-normalizationlab-block-7",
       "from": "normalizationlab-stmt-5",
-      "to": "normalizationlab-block-6",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-6-part_of-normalizationlab-block-7",
-      "from": "normalizationlab-stmt-6",
       "to": "normalizationlab-block-7",
       "kind": "part_of",
       "qualifiers": {},
@@ -1459,9 +1089,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-7-part_of-normalizationlab-block-8",
-      "from": "normalizationlab-stmt-7",
+      "id": "struct-normalizationlab-stmt-6-part_of-normalizationlab-block-8",
+      "from": "normalizationlab-stmt-6",
       "to": "normalizationlab-block-8",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-normalizationlab-stmt-7-part_of-normalizationlab-block-9",
+      "from": "normalizationlab-stmt-7",
+      "to": "normalizationlab-block-9",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1479,9 +1119,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-9-part_of-normalizationlab-block-10",
+      "id": "struct-normalizationlab-stmt-9-part_of-normalizationlab-block-9",
       "from": "normalizationlab-stmt-9",
-      "to": "normalizationlab-block-10",
+      "to": "normalizationlab-block-9",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1489,8 +1129,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-10-part_of-normalizationlab-block-11",
+      "id": "struct-normalizationlab-stmt-10-part_of-normalizationlab-block-9",
       "from": "normalizationlab-stmt-10",
+      "to": "normalizationlab-block-9",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-normalizationlab-stmt-11-part_of-normalizationlab-block-11",
+      "from": "normalizationlab-stmt-11",
       "to": "normalizationlab-block-11",
       "kind": "part_of",
       "qualifiers": {},
@@ -1499,8 +1149,28 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-11-part_of-normalizationlab-block-12",
-      "from": "normalizationlab-stmt-11",
+      "id": "struct-normalizationlab-stmt-12-part_of-normalizationlab-block-11",
+      "from": "normalizationlab-stmt-12",
+      "to": "normalizationlab-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-normalizationlab-stmt-13-part_of-normalizationlab-block-11",
+      "from": "normalizationlab-stmt-13",
+      "to": "normalizationlab-block-11",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-normalizationlab-stmt-14-part_of-normalizationlab-block-12",
+      "from": "normalizationlab-stmt-14",
       "to": "normalizationlab-block-12",
       "kind": "part_of",
       "qualifiers": {},
@@ -1509,8 +1179,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-12-part_of-normalizationlab-block-13",
-      "from": "normalizationlab-stmt-12",
+      "id": "struct-normalizationlab-stmt-15-part_of-normalizationlab-block-12",
+      "from": "normalizationlab-stmt-15",
+      "to": "normalizationlab-block-12",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-normalizationlab-stmt-16-part_of-normalizationlab-block-13",
+      "from": "normalizationlab-stmt-16",
       "to": "normalizationlab-block-13",
       "kind": "part_of",
       "qualifiers": {},
@@ -1519,9 +1199,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-13-part_of-normalizationlab-block-14",
-      "from": "normalizationlab-stmt-13",
-      "to": "normalizationlab-block-14",
+      "id": "struct-normalizationlab-stmt-17-part_of-normalizationlab-block-13",
+      "from": "normalizationlab-stmt-17",
+      "to": "normalizationlab-block-13",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1529,8 +1209,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-14-part_of-normalizationlab-block-15",
-      "from": "normalizationlab-stmt-14",
+      "id": "struct-normalizationlab-stmt-18-part_of-normalizationlab-block-15",
+      "from": "normalizationlab-stmt-18",
       "to": "normalizationlab-block-15",
       "kind": "part_of",
       "qualifiers": {},
@@ -1539,8 +1219,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-15-part_of-normalizationlab-block-16",
-      "from": "normalizationlab-stmt-15",
+      "id": "struct-normalizationlab-stmt-19-part_of-normalizationlab-block-15",
+      "from": "normalizationlab-stmt-19",
+      "to": "normalizationlab-block-15",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-normalizationlab-stmt-20-part_of-normalizationlab-block-16",
+      "from": "normalizationlab-stmt-20",
       "to": "normalizationlab-block-16",
       "kind": "part_of",
       "qualifiers": {},
@@ -1549,9 +1239,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-16-part_of-normalizationlab-block-17",
-      "from": "normalizationlab-stmt-16",
-      "to": "normalizationlab-block-17",
+      "id": "struct-normalizationlab-stmt-21-part_of-normalizationlab-block-18",
+      "from": "normalizationlab-stmt-21",
+      "to": "normalizationlab-block-18",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1559,8 +1249,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-17-part_of-normalizationlab-block-19",
-      "from": "normalizationlab-stmt-17",
+      "id": "struct-normalizationlab-stmt-22-part_of-normalizationlab-block-19",
+      "from": "normalizationlab-stmt-22",
       "to": "normalizationlab-block-19",
       "kind": "part_of",
       "qualifiers": {},
@@ -1569,8 +1259,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-18-part_of-normalizationlab-block-20",
-      "from": "normalizationlab-stmt-18",
+      "id": "struct-normalizationlab-stmt-23-part_of-normalizationlab-block-20",
+      "from": "normalizationlab-stmt-23",
       "to": "normalizationlab-block-20",
       "kind": "part_of",
       "qualifiers": {},
@@ -1579,59 +1269,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-19-part_of-normalizationlab-block-21",
-      "from": "normalizationlab-stmt-19",
-      "to": "normalizationlab-block-21",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-20-part_of-normalizationlab-block-21",
-      "from": "normalizationlab-stmt-20",
-      "to": "normalizationlab-block-21",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-21-part_of-normalizationlab-block-21",
-      "from": "normalizationlab-stmt-21",
-      "to": "normalizationlab-block-21",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-22-part_of-normalizationlab-block-21",
-      "from": "normalizationlab-stmt-22",
-      "to": "normalizationlab-block-21",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-23-part_of-normalizationlab-block-23",
-      "from": "normalizationlab-stmt-23",
-      "to": "normalizationlab-block-23",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-24-part_of-normalizationlab-block-23",
+      "id": "struct-normalizationlab-stmt-24-part_of-normalizationlab-block-21",
       "from": "normalizationlab-stmt-24",
-      "to": "normalizationlab-block-23",
+      "to": "normalizationlab-block-21",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1639,9 +1279,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-25-part_of-normalizationlab-block-23",
+      "id": "struct-normalizationlab-stmt-25-part_of-normalizationlab-block-21",
       "from": "normalizationlab-stmt-25",
-      "to": "normalizationlab-block-23",
+      "to": "normalizationlab-block-21",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1649,129 +1289,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-normalizationlab-stmt-26-part_of-normalizationlab-block-24",
+      "id": "struct-normalizationlab-stmt-26-part_of-normalizationlab-block-23",
       "from": "normalizationlab-stmt-26",
-      "to": "normalizationlab-block-24",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-27-part_of-normalizationlab-block-24",
-      "from": "normalizationlab-stmt-27",
-      "to": "normalizationlab-block-24",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-28-part_of-normalizationlab-block-25",
-      "from": "normalizationlab-stmt-28",
-      "to": "normalizationlab-block-25",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-29-part_of-normalizationlab-block-25",
-      "from": "normalizationlab-stmt-29",
-      "to": "normalizationlab-block-25",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-30-part_of-normalizationlab-block-27",
-      "from": "normalizationlab-stmt-30",
-      "to": "normalizationlab-block-27",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-31-part_of-normalizationlab-block-27",
-      "from": "normalizationlab-stmt-31",
-      "to": "normalizationlab-block-27",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-32-part_of-normalizationlab-block-28",
-      "from": "normalizationlab-stmt-32",
-      "to": "normalizationlab-block-28",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-33-part_of-normalizationlab-block-30",
-      "from": "normalizationlab-stmt-33",
-      "to": "normalizationlab-block-30",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-34-part_of-normalizationlab-block-31",
-      "from": "normalizationlab-stmt-34",
-      "to": "normalizationlab-block-31",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-35-part_of-normalizationlab-block-32",
-      "from": "normalizationlab-stmt-35",
-      "to": "normalizationlab-block-32",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-36-part_of-normalizationlab-block-33",
-      "from": "normalizationlab-stmt-36",
-      "to": "normalizationlab-block-33",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-37-part_of-normalizationlab-block-33",
-      "from": "normalizationlab-stmt-37",
-      "to": "normalizationlab-block-33",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-normalizationlab-stmt-38-part_of-normalizationlab-block-35",
-      "from": "normalizationlab-stmt-38",
-      "to": "normalizationlab-block-35",
+      "to": "normalizationlab-block-23",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1810,239 +1330,155 @@
     },
     {
       "id": "normalizationlab-stmt-5",
-      "quote": "display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; \">",
-      "block_id": "normalizationlab-block-6",
-      "section": "Usage in Other Model Types",
+      "quote": "- $\\gamma$ stretches or compresses the sphere along each axis (an anisotropic scaling)",
+      "block_id": "normalizationlab-block-7",
+      "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-6",
-      "quote": "position: relative; background: linear-gradient(160deg, rgba(99,102,241,0.08) 0%, rgba(16,185,129,0.05) 100%); backdrop-filter: blur(12px); padding: 24px; border-radius: 20px; border: 1px solid rgba(99,102,241,0.18); box-shadow: 0 4px 24px -4px rgba(0,0,0,0.06); overflow: hidden; \"> position: absolute; bottom: -20px; left: -20px; width: 80px; height: 80px; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%); border-radius: 50%; pointer-events: none; \">",
-      "block_id": "normalizationlab-block-7",
-      "section": "Usage in Other Model Types",
+      "quote": "- $\\beta$ shifts the entire sphere away from the origin",
+      "block_id": "normalizationlab-block-8",
+      "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-7",
-      "quote": "margin: 0 0 4px 0; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6366f1; \">Data Matrix Click cells to edit values interactively",
-      "block_id": "normalizationlab-block-8",
-      "section": "Usage in Other Model Types",
+      "quote": "The key insight: **LayerNorm separates direction from magnitude**.",
+      "block_id": "normalizationlab-block-9",
+      "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-8",
-      "quote": "width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; background: var(--mn-surface, white); border: 1px solid var(--mn-border, #e2e8f0); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); \">",
+      "quote": "Only the *direction* of the activation vector carries information about the token's identity and context.",
       "block_id": "normalizationlab-block-9",
-      "section": "Usage in Other Model Types",
+      "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-9",
-      "quote": "position: relative; background: linear-gradient(135deg, rgba(99,102,241,0.05) 0%, rgba(16,185,129,0.05) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 28px 32px; border-radius: 20px; border: 1px solid rgba(99,102,241,0.15); box-shadow: 0 4px 24px -4px rgba(99,102,241,0.10), 0 0 0 1px rgba(255,255,255,0.05) inset; overflow: hidden; display: flex; flex-direction: column; justify-content: center; \"> position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; \">",
-      "block_id": "normalizationlab-block-10",
-      "section": "Usage in Other Model Types",
+      "quote": "The *magnitude* is discarded because it's unreliable, it can vary due to accumulated activations, layer depth, or input length.",
+      "block_id": "normalizationlab-block-9",
+      "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-10",
-      "quote": "margin: 0 0 18px 0; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6366f1; \">Learnable Parameters",
-      "block_id": "normalizationlab-block-11",
-      "section": "Usage in Other Model Types",
+      "quote": "By projecting onto a sphere of radius $\\sqrt{d}$, LayerNorm forces the model to encode all information in angular relationships alone, making learning more stable and less sensitive to the absolute scale of activations.",
+      "block_id": "normalizationlab-block-9",
+      "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-11",
-      "quote": "display: block; font-size: 0.78rem; font-weight: 700; color: var(--mn-text-secondary); margin-bottom: 6px; letter-spacing: 0.03em; \">Gamma (γ) , Gain width: 100%; padding: 12px 14px; border: 2px solid rgba(99,102,241,0.2); border-radius: 12px; background: var(--mn-surface, rgba(255,255,255,0.8)); font-size: 1.05rem; font-weight: 600; color: var(--mn-text, #1e293b); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); outline: none; box-sizing: border-box;",
-      "block_id": "normalizationlab-block-12",
-      "section": "Usage in Other Model Types",
+      "quote": "If you open the weights of a model released after 2023, the `LayerNorm` you expect is often called `RMSNorm`.",
+      "block_id": "normalizationlab-block-11",
+      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-12",
-      "quote": "display: block; font-size: 0.78rem; font-weight: 700; color: var(--mn-text-secondary); margin-bottom: 6px; letter-spacing: 0.03em; \">Beta (β) , Bias width: 100%; padding: 12px 14px; border: 2px solid rgba(16,185,129,0.2); border-radius: 12px; background: var(--mn-surface, rgba(255,255,255,0.8)); font-size: 1.05rem; font-weight: 600; color: var(--mn-text, #1e293b); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); outline: none; box-sizing: border-box;",
-      "block_id": "normalizationlab-block-13",
-      "section": "Usage in Other Model Types",
+      "quote": "The change is small but it tells you what the field decided LayerNorm was actually for.",
+      "block_id": "normalizationlab-block-11",
+      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-13",
-      "quote": "display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 36px; \">",
-      "block_id": "normalizationlab-block-14",
-      "section": "Usage in Other Model Types",
+      "quote": "**Root mean square layer normalization** keeps the rescaling half of LayerNorm and throws away the re-centering half (\\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}).",
+      "block_id": "normalizationlab-block-11",
+      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-14",
-      "quote": "position: relative; background: linear-gradient(160deg, rgba(99,102,241,0.08) 0%, rgba(99,102,241,0.03) 100%); padding: 22px; border-radius: 20px; border: 1px solid rgba(99,102,241,0.2); box-shadow: 0 8px 32px -8px rgba(99,102,241,0.10), 0 2px 8px -2px rgba(0,0,0,0.04); overflow: hidden; \"> position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #6366f1, #8b5cf6, #a78bfa); border-radius: 20px 20px 0 0; \"> margin: 8px 0 12px 0; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6366f1; \">Input, Raw Magnitudes",
-      "block_id": "normalizationlab-block-15",
-      "section": "Usage in Other Model Types",
+      "quote": "Compare this with the LayerNorm equation above: there is **no mean subtraction** and **no learned shift** $\\beta$.",
+      "block_id": "normalizationlab-block-12",
+      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-15",
-      "quote": "position: relative; background: linear-gradient(160deg, rgba(16,185,129,0.08) 0%, rgba(16,185,129,0.03) 100%); padding: 22px; border-radius: 20px; border: 1px solid rgba(16,185,129,0.2); box-shadow: 0 8px 32px -8px rgba(16,185,129,0.10), 0 2px 8px -2px rgba(0,0,0,0.04); overflow: hidden; \"> position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7); border-radius: 20px 20px 0 0; \"> margin: 8px 0 12px 0; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #10b981; \">Output, Layer Normalized",
-      "block_id": "normalizationlab-block-16",
-      "section": "Usage in Other Model Types",
+      "quote": "LayerNorm needs two reductions over the feature dimension (mean, then variance) and four elementwise operations; RMSNorm needs one reduction (the mean of the squares) and two elementwise operations, and it carries only half the learned parameters.",
+      "block_id": "normalizationlab-block-12",
+      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-16",
-      "quote": "background: linear-gradient(160deg, rgba(99,102,241,0.06) 0%, rgba(99,102,241,0.02) 100%); padding: 32px; border-radius: 20px; border: 1px solid rgba(99,102,241,0.18); max-height: 550px; overflow-y: auto; box-shadow: 0 4px 24px -4px rgba(0,0,0,0.05); scrollbar-width: thin; scrollbar-color: #c7d2fe transparent; \">",
-      "block_id": "normalizationlab-block-17",
-      "section": "Usage in Other Model Types",
+      "quote": "The output's root mean square is exactly $1$, which is what the normalization promises, but its mean is $3.771/4 \\approx 0.943$, not zero.",
+      "block_id": "normalizationlab-block-13",
+      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-17",
-      "quote": "- $\\gamma$ stretches or compresses the sphere along each axis (an anisotropic scaling)",
-      "block_id": "normalizationlab-block-19",
-      "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
+      "quote": "RMSNorm fixes the **scale** of the vector and leaves its **offset** where it found it.",
+      "block_id": "normalizationlab-block-13",
+      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-18",
-      "quote": "- $\\beta$ shifts the entire sphere away from the origin",
-      "block_id": "normalizationlab-block-20",
-      "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
+      "quote": "The payoff: GN is **independent of the batch**, so it works at batch size 1 (essential for high-resolution image generation, where memory forces tiny batches), while still **preserving channel structure** that LayerNorm throws away.",
+      "block_id": "normalizationlab-block-15",
+      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-19",
-      "quote": "The key insight: **LayerNorm separates direction from magnitude**.",
-      "block_id": "normalizationlab-block-21",
-      "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
+      "quote": "This is why Stable Diffusion's ResBlocks are built from `GroupNorm → SiLU → Conv` (twice, with a residual add), rather than relying on batch statistics.",
+      "block_id": "normalizationlab-block-15",
+      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-20",
-      "quote": "Only the *direction* of the activation vector carries information about the token's identity and context.",
-      "block_id": "normalizationlab-block-21",
-      "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
+      "quote": "Drag the slider below and watch the same eight channels get regrouped.",
+      "block_id": "normalizationlab-block-16",
+      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-21",
-      "quote": "The *magnitude* is discarded because it's unreliable, it can vary due to accumulated activations, layer depth, or input length.",
-      "block_id": "normalizationlab-block-21",
-      "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
+      "quote": "① Input feature map (8 channels × 16 positions)",
+      "block_id": "normalizationlab-block-18",
+      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-22",
-      "quote": "By projecting onto a sphere of radius $\\sqrt{d}$, LayerNorm forces the model to encode all information in angular relationships alone, making learning more stable and less sensitive to the absolute scale of activations.",
-      "block_id": "normalizationlab-block-21",
-      "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
+      "quote": "② After GroupNorm (γ = 1, β = 0)",
+      "block_id": "normalizationlab-block-19",
+      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-23",
-      "quote": "If you open the weights of a model released after 2023, the `LayerNorm` you expect is often called `RMSNorm`.",
-      "block_id": "normalizationlab-block-23",
-      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
+      "quote": "③ One (μ, σ) per group, every cell in the group gets rescaled by it",
+      "block_id": "normalizationlab-block-20",
+      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-24",
-      "quote": "The change is small but it tells you what the field decided LayerNorm was actually for.",
-      "block_id": "normalizationlab-block-23",
-      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
+      "quote": "Hover any cell in ① to see the exact arithmetic $(x - \\mu_g) / \\sigma_g$.",
+      "block_id": "normalizationlab-block-21",
+      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-25",
-      "quote": "**Root mean square layer normalization** keeps the rescaling half of LayerNorm and throws away the re-centering half (\\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}).",
-      "block_id": "normalizationlab-block-23",
-      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
+      "quote": "Cells in the same colored group share a single μ and σ; cells in different groups are normalized independently.",
+      "block_id": "normalizationlab-block-21",
+      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
       "kind": "statement"
     },
     {
       "id": "normalizationlab-stmt-26",
-      "quote": "Compare this with the LayerNorm equation above: there is **no mean subtraction** and **no learned shift** $\\beta$.",
-      "block_id": "normalizationlab-block-24",
-      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
-      "kind": "statement"
-    },
-    {
-      "id": "normalizationlab-stmt-27",
-      "quote": "LayerNorm needs two reductions over the feature dimension (mean, then variance) and four elementwise operations; RMSNorm needs one reduction (the mean of the squares) and two elementwise operations, and it carries only half the learned parameters.",
-      "block_id": "normalizationlab-block-24",
-      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
-      "kind": "statement"
-    },
-    {
-      "id": "normalizationlab-stmt-28",
-      "quote": "The output's root mean square is exactly $1$, which is what the normalization promises, but its mean is $3.771/4 \\approx 0.943$, not zero.",
-      "block_id": "normalizationlab-block-25",
-      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
-      "kind": "statement"
-    },
-    {
-      "id": "normalizationlab-stmt-29",
-      "quote": "RMSNorm fixes the **scale** of the vector and leaves its **offset** where it found it.",
-      "block_id": "normalizationlab-block-25",
-      "section": "RMSNorm: The Normalizer Modern LLMs Actually Use",
-      "kind": "statement"
-    },
-    {
-      "id": "normalizationlab-stmt-30",
-      "quote": "The payoff: GN is **independent of the batch**, so it works at batch size 1 (essential for high-resolution image generation, where memory forces tiny batches), while still **preserving channel structure** that LayerNorm throws away.",
-      "block_id": "normalizationlab-block-27",
-      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
-      "kind": "statement"
-    },
-    {
-      "id": "normalizationlab-stmt-31",
-      "quote": "This is why Stable Diffusion's ResBlocks are built from `GroupNorm → SiLU → Conv` (twice, with a residual add), rather than relying on batch statistics.",
-      "block_id": "normalizationlab-block-27",
-      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
-      "kind": "statement"
-    },
-    {
-      "id": "normalizationlab-stmt-32",
-      "quote": "Drag the slider below and watch the same eight channels get regrouped.",
-      "block_id": "normalizationlab-block-28",
-      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
-      "kind": "statement"
-    },
-    {
-      "id": "normalizationlab-stmt-33",
-      "quote": "① Input feature map (8 channels × 16 positions)",
-      "block_id": "normalizationlab-block-30",
-      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
-      "kind": "statement"
-    },
-    {
-      "id": "normalizationlab-stmt-34",
-      "quote": "② After GroupNorm (γ = 1, β = 0)",
-      "block_id": "normalizationlab-block-31",
-      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
-      "kind": "statement"
-    },
-    {
-      "id": "normalizationlab-stmt-35",
-      "quote": "③ One (μ, σ) per group, every cell in the group gets rescaled by it",
-      "block_id": "normalizationlab-block-32",
-      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
-      "kind": "statement"
-    },
-    {
-      "id": "normalizationlab-stmt-36",
-      "quote": "Hover any cell in ① to see the exact arithmetic $(x - \\mu_g) / \\sigma_g$.",
-      "block_id": "normalizationlab-block-33",
-      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
-      "kind": "statement"
-    },
-    {
-      "id": "normalizationlab-stmt-37",
-      "quote": "Cells in the same colored group share a single μ and σ; cells in different groups are normalized independently.",
-      "block_id": "normalizationlab-block-33",
-      "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
-      "kind": "statement"
-    },
-    {
-      "id": "normalizationlab-stmt-38",
       "quote": "Then normalize and apply a per-channel affine (the only learnable parameters):",
-      "block_id": "normalizationlab-block-35",
+      "block_id": "normalizationlab-block-23",
       "section": "Group Normalization: Slice the Channels, Normalize Once per Slice",
       "kind": "statement"
     }
@@ -2080,180 +1516,108 @@
     },
     {
       "id": "normalizationlab-block-6",
-      "quote": "display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; \">",
-      "kind": "paragraph",
-      "section": "Usage in Other Model Types"
-    },
-    {
-      "id": "normalizationlab-block-7",
-      "quote": "position: relative; background: linear-gradient(160deg, rgba(99,102,241,0.08) 0%, rgba(16,185,129,0.05) 100%); backdrop-filter: blur(12px); padding: 24px; border-radius: 20px; border: 1px solid rgba(99,102,241,0.18); box-shadow: 0 4px 24px -4px rgba(0,0,0,0.06); overflow: hidden; \"> position: absolute; bottom: -20px; left: -20px; width: 80px; height: 80px; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%); border-radius: 50%; pointer-events: none; \">",
-      "kind": "paragraph",
-      "section": "Usage in Other Model Types"
-    },
-    {
-      "id": "normalizationlab-block-8",
-      "quote": "margin: 0 0 4px 0; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6366f1; \">Data Matrix Click cells to edit values interactively",
-      "kind": "paragraph",
-      "section": "Usage in Other Model Types"
-    },
-    {
-      "id": "normalizationlab-block-9",
-      "quote": "width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; background: var(--mn-surface, white); border: 1px solid var(--mn-border, #e2e8f0); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); \">",
-      "kind": "paragraph",
-      "section": "Usage in Other Model Types"
-    },
-    {
-      "id": "normalizationlab-block-10",
-      "quote": "position: relative; background: linear-gradient(135deg, rgba(99,102,241,0.05) 0%, rgba(16,185,129,0.05) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 28px 32px; border-radius: 20px; border: 1px solid rgba(99,102,241,0.15); box-shadow: 0 4px 24px -4px rgba(99,102,241,0.10), 0 0 0 1px rgba(255,255,255,0.05) inset; overflow: hidden; display: flex; flex-direction: column; justify-content: center; \"> position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; \">",
-      "kind": "paragraph",
-      "section": "Usage in Other Model Types"
-    },
-    {
-      "id": "normalizationlab-block-11",
-      "quote": "margin: 0 0 18px 0; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6366f1; \">Learnable Parameters",
-      "kind": "paragraph",
-      "section": "Usage in Other Model Types"
-    },
-    {
-      "id": "normalizationlab-block-12",
-      "quote": "display: block; font-size: 0.78rem; font-weight: 700; color: var(--mn-text-secondary); margin-bottom: 6px; letter-spacing: 0.03em; \">Gamma (γ) , Gain width: 100%; padding: 12px 14px; border: 2px solid rgba(99,102,241,0.2); border-radius: 12px; background: var(--mn-surface, rgba(255,255,255,0.8)); font-size: 1.05rem; font-weight: 600; color: var(--mn-text, #1e293b); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); outline: none; box-sizing: border-box;",
-      "kind": "paragraph",
-      "section": "Usage in Other Model Types"
-    },
-    {
-      "id": "normalizationlab-block-13",
-      "quote": "display: block; font-size: 0.78rem; font-weight: 700; color: var(--mn-text-secondary); margin-bottom: 6px; letter-spacing: 0.03em; \">Beta (β) , Bias width: 100%; padding: 12px 14px; border: 2px solid rgba(16,185,129,0.2); border-radius: 12px; background: var(--mn-surface, rgba(255,255,255,0.8)); font-size: 1.05rem; font-weight: 600; color: var(--mn-text, #1e293b); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); outline: none; box-sizing: border-box;",
-      "kind": "paragraph",
-      "section": "Usage in Other Model Types"
-    },
-    {
-      "id": "normalizationlab-block-14",
-      "quote": "display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 36px; \">",
-      "kind": "paragraph",
-      "section": "Usage in Other Model Types"
-    },
-    {
-      "id": "normalizationlab-block-15",
-      "quote": "position: relative; background: linear-gradient(160deg, rgba(99,102,241,0.08) 0%, rgba(99,102,241,0.03) 100%); padding: 22px; border-radius: 20px; border: 1px solid rgba(99,102,241,0.2); box-shadow: 0 8px 32px -8px rgba(99,102,241,0.10), 0 2px 8px -2px rgba(0,0,0,0.04); overflow: hidden; \"> position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #6366f1, #8b5cf6, #a78bfa); border-radius: 20px 20px 0 0; \"> margin: 8px 0 12px 0; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6366f1; \">Input, Raw Magnitudes",
-      "kind": "paragraph",
-      "section": "Usage in Other Model Types"
-    },
-    {
-      "id": "normalizationlab-block-16",
-      "quote": "position: relative; background: linear-gradient(160deg, rgba(16,185,129,0.08) 0%, rgba(16,185,129,0.03) 100%); padding: 22px; border-radius: 20px; border: 1px solid rgba(16,185,129,0.2); box-shadow: 0 8px 32px -8px rgba(16,185,129,0.10), 0 2px 8px -2px rgba(0,0,0,0.04); overflow: hidden; \"> position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7); border-radius: 20px 20px 0 0; \"> margin: 8px 0 12px 0; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #10b981; \">Output, Layer Normalized",
-      "kind": "paragraph",
-      "section": "Usage in Other Model Types"
-    },
-    {
-      "id": "normalizationlab-block-17",
-      "quote": "background: linear-gradient(160deg, rgba(99,102,241,0.06) 0%, rgba(99,102,241,0.02) 100%); padding: 32px; border-radius: 20px; border: 1px solid rgba(99,102,241,0.18); max-height: 550px; overflow-y: auto; box-shadow: 0 4px 24px -4px rgba(0,0,0,0.05); scrollbar-width: thin; scrollbar-color: #c7d2fe transparent; \">",
-      "kind": "paragraph",
-      "section": "Usage in Other Model Types"
-    },
-    {
-      "id": "normalizationlab-block-18",
       "quote": "Geometric Intuition: LayerNorm as Projection onto a Sphere",
       "kind": "heading",
       "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere"
     },
     {
-      "id": "normalizationlab-block-19",
+      "id": "normalizationlab-block-7",
       "quote": "- $\\gamma$ stretches or compresses the sphere along each axis (an anisotropic scaling)",
       "kind": "list-item",
       "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere"
     },
     {
-      "id": "normalizationlab-block-20",
+      "id": "normalizationlab-block-8",
       "quote": "- $\\beta$ shifts the entire sphere away from the origin",
       "kind": "list-item",
       "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere"
     },
     {
-      "id": "normalizationlab-block-21",
+      "id": "normalizationlab-block-9",
       "quote": "The key insight: **LayerNorm separates direction from magnitude**. Only the *direction* of the activation vector carries information about the token's identity and context. The *magnitude* is discarded because it's unreliable, it can vary due to accumulated activations, layer depth, or input length. By projecting onto a sphere of radius $\\sqrt{d}$, LayerNorm forces the model to encode all information in angular relationships alone, making learning more stable and less sensitive to the absolute scale of activations.",
       "kind": "paragraph",
       "section": "Geometric Intuition: LayerNorm as Projection onto a Sphere"
     },
     {
-      "id": "normalizationlab-block-22",
+      "id": "normalizationlab-block-10",
       "quote": "RMSNorm: The Normalizer Modern LLMs Actually Use",
       "kind": "heading",
       "section": "RMSNorm: The Normalizer Modern LLMs Actually Use"
     },
     {
-      "id": "normalizationlab-block-23",
+      "id": "normalizationlab-block-11",
       "quote": "If you open the weights of a model released after 2023, the `LayerNorm` you expect is often called `RMSNorm`. The change is small but it tells you what the field decided LayerNorm was actually for. **Root mean square layer normalization** keeps the rescaling half of LayerNorm and throws away the re-centering half (\\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}).",
       "kind": "paragraph",
       "section": "RMSNorm: The Normalizer Modern LLMs Actually Use"
     },
     {
-      "id": "normalizationlab-block-24",
+      "id": "normalizationlab-block-12",
       "quote": "Compare this with the LayerNorm equation above: there is **no mean subtraction** and **no learned shift** $\\beta$. LayerNorm needs two reductions over the feature dimension (mean, then variance) and four elementwise operations; RMSNorm needs one reduction (the mean of the squares) and two elementwise operations, and it carries only half the learned parameters.",
       "kind": "paragraph",
       "section": "RMSNorm: The Normalizer Modern LLMs Actually Use"
     },
     {
-      "id": "normalizationlab-block-25",
+      "id": "normalizationlab-block-13",
       "quote": "The output's root mean square is exactly $1$, which is what the normalization promises, but its mean is $3.771/4 \\approx 0.943$, not zero. RMSNorm fixes the **scale** of the vector and leaves its **offset** where it found it.",
       "kind": "paragraph",
       "section": "RMSNorm: The Normalizer Modern LLMs Actually Use"
     },
     {
-      "id": "normalizationlab-block-26",
+      "id": "normalizationlab-block-14",
       "quote": "Group Normalization: Slice the Channels, Normalize Once per Slice",
       "kind": "heading",
       "section": "Group Normalization: Slice the Channels, Normalize Once per Slice"
     },
     {
-      "id": "normalizationlab-block-27",
+      "id": "normalizationlab-block-15",
       "quote": "The payoff: GN is **independent of the batch**, so it works at batch size 1 (essential for high-resolution image generation, where memory forces tiny batches), while still **preserving channel structure** that LayerNorm throws away. This is why Stable Diffusion's ResBlocks are built from `GroupNorm → SiLU → Conv` (twice, with a residual add), rather than relying on batch statistics.",
       "kind": "paragraph",
       "section": "Group Normalization: Slice the Channels, Normalize Once per Slice"
     },
     {
-      "id": "normalizationlab-block-28",
+      "id": "normalizationlab-block-16",
       "quote": "Drag the slider below and watch the same eight channels get regrouped.",
       "kind": "paragraph",
       "section": "Group Normalization: Slice the Channels, Normalize Once per Slice"
     },
     {
-      "id": "normalizationlab-block-29",
+      "id": "normalizationlab-block-17",
       "quote": "Groups G = 4",
       "kind": "paragraph",
       "section": "Group Normalization: Slice the Channels, Normalize Once per Slice"
     },
     {
-      "id": "normalizationlab-block-30",
+      "id": "normalizationlab-block-18",
       "quote": "① Input feature map (8 channels × 16 positions)",
       "kind": "paragraph",
       "section": "Group Normalization: Slice the Channels, Normalize Once per Slice"
     },
     {
-      "id": "normalizationlab-block-31",
+      "id": "normalizationlab-block-19",
       "quote": "② After GroupNorm (γ = 1, β = 0)",
       "kind": "paragraph",
       "section": "Group Normalization: Slice the Channels, Normalize Once per Slice"
     },
     {
-      "id": "normalizationlab-block-32",
+      "id": "normalizationlab-block-20",
       "quote": "③ One (μ, σ) per group, every cell in the group gets rescaled by it",
       "kind": "paragraph",
       "section": "Group Normalization: Slice the Channels, Normalize Once per Slice"
     },
     {
-      "id": "normalizationlab-block-33",
+      "id": "normalizationlab-block-21",
       "quote": "Hover any cell in ① to see the exact arithmetic $(x - \\mu_g) / \\sigma_g$. Cells in the same colored group share a single μ and σ; cells in different groups are normalized independently.",
       "kind": "paragraph",
       "section": "Group Normalization: Slice the Channels, Normalize Once per Slice"
     },
     {
-      "id": "normalizationlab-block-34",
+      "id": "normalizationlab-block-22",
       "quote": "Show me the math",
       "kind": "paragraph",
       "section": "Group Normalization: Slice the Channels, Normalize Once per Slice"
     },
     {
-      "id": "normalizationlab-block-35",
+      "id": "normalizationlab-block-23",
       "quote": "Then normalize and apply a per-channel affine (the only learnable parameters):",
       "kind": "paragraph",
       "section": "Group Normalization: Slice the Channels, Normalize Once per Slice"

@@ -2685,8 +2685,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-27-part_of-computer_vision-block-18",
+      "id": "struct-computer_vision-stmt-27-part_of-computer_vision-block-17",
       "from": "computer_vision-stmt-27",
+      "to": "computer_vision-block-17",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-computer_vision-stmt-28-part_of-computer_vision-block-18",
+      "from": "computer_vision-stmt-28",
       "to": "computer_vision-block-18",
       "kind": "part_of",
       "qualifiers": {},
@@ -2695,19 +2705,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-28-part_of-computer_vision-block-20",
-      "from": "computer_vision-stmt-28",
-      "to": "computer_vision-block-20",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-computer_vision-stmt-29-part_of-computer_vision-block-22",
+      "id": "struct-computer_vision-stmt-29-part_of-computer_vision-block-20",
       "from": "computer_vision-stmt-29",
-      "to": "computer_vision-block-22",
+      "to": "computer_vision-block-20",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2725,8 +2725,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-31-part_of-computer_vision-block-23",
+      "id": "struct-computer_vision-stmt-31-part_of-computer_vision-block-22",
       "from": "computer_vision-stmt-31",
+      "to": "computer_vision-block-22",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-computer_vision-stmt-32-part_of-computer_vision-block-23",
+      "from": "computer_vision-stmt-32",
       "to": "computer_vision-block-23",
       "kind": "part_of",
       "qualifiers": {},
@@ -2735,8 +2745,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-32-part_of-computer_vision-block-26",
-      "from": "computer_vision-stmt-32",
+      "id": "struct-computer_vision-stmt-33-part_of-computer_vision-block-26",
+      "from": "computer_vision-stmt-33",
       "to": "computer_vision-block-26",
       "kind": "part_of",
       "qualifiers": {},
@@ -2745,19 +2755,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-33-part_of-computer_vision-block-32",
-      "from": "computer_vision-stmt-33",
-      "to": "computer_vision-block-32",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-computer_vision-stmt-34-part_of-computer_vision-block-34",
+      "id": "struct-computer_vision-stmt-34-part_of-computer_vision-block-32",
       "from": "computer_vision-stmt-34",
-      "to": "computer_vision-block-34",
+      "to": "computer_vision-block-32",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2785,9 +2785,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-37-part_of-computer_vision-block-36",
+      "id": "struct-computer_vision-stmt-37-part_of-computer_vision-block-34",
       "from": "computer_vision-stmt-37",
-      "to": "computer_vision-block-36",
+      "to": "computer_vision-block-34",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2805,9 +2805,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-39-part_of-computer_vision-block-37",
+      "id": "struct-computer_vision-stmt-39-part_of-computer_vision-block-36",
       "from": "computer_vision-stmt-39",
-      "to": "computer_vision-block-37",
+      "to": "computer_vision-block-36",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2825,9 +2825,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-41-part_of-computer_vision-block-38",
+      "id": "struct-computer_vision-stmt-41-part_of-computer_vision-block-37",
       "from": "computer_vision-stmt-41",
-      "to": "computer_vision-block-38",
+      "to": "computer_vision-block-37",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2835,9 +2835,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-42-part_of-computer_vision-block-40",
+      "id": "struct-computer_vision-stmt-42-part_of-computer_vision-block-38",
       "from": "computer_vision-stmt-42",
-      "to": "computer_vision-block-40",
+      "to": "computer_vision-block-38",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2855,9 +2855,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-44-part_of-computer_vision-block-42",
+      "id": "struct-computer_vision-stmt-44-part_of-computer_vision-block-40",
       "from": "computer_vision-stmt-44",
-      "to": "computer_vision-block-42",
+      "to": "computer_vision-block-40",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2865,9 +2865,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-45-part_of-computer_vision-block-43",
+      "id": "struct-computer_vision-stmt-45-part_of-computer_vision-block-42",
       "from": "computer_vision-stmt-45",
-      "to": "computer_vision-block-43",
+      "to": "computer_vision-block-42",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2885,9 +2885,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-47-part_of-computer_vision-block-44",
+      "id": "struct-computer_vision-stmt-47-part_of-computer_vision-block-43",
       "from": "computer_vision-stmt-47",
-      "to": "computer_vision-block-44",
+      "to": "computer_vision-block-43",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2895,9 +2895,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-48-part_of-computer_vision-block-45",
+      "id": "struct-computer_vision-stmt-48-part_of-computer_vision-block-44",
       "from": "computer_vision-stmt-48",
-      "to": "computer_vision-block-45",
+      "to": "computer_vision-block-44",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2925,9 +2925,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-51-part_of-computer_vision-block-48",
+      "id": "struct-computer_vision-stmt-51-part_of-computer_vision-block-45",
       "from": "computer_vision-stmt-51",
-      "to": "computer_vision-block-48",
+      "to": "computer_vision-block-45",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2945,9 +2945,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-53-part_of-computer_vision-block-49",
+      "id": "struct-computer_vision-stmt-53-part_of-computer_vision-block-48",
       "from": "computer_vision-stmt-53",
-      "to": "computer_vision-block-49",
+      "to": "computer_vision-block-48",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2975,8 +2975,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-56-part_of-computer_vision-block-50",
+      "id": "struct-computer_vision-stmt-56-part_of-computer_vision-block-49",
       "from": "computer_vision-stmt-56",
+      "to": "computer_vision-block-49",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-computer_vision-stmt-57-part_of-computer_vision-block-50",
+      "from": "computer_vision-stmt-57",
       "to": "computer_vision-block-50",
       "kind": "part_of",
       "qualifiers": {},
@@ -2985,19 +2995,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-57-part_of-computer_vision-block-51",
-      "from": "computer_vision-stmt-57",
-      "to": "computer_vision-block-51",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-computer_vision-stmt-58-part_of-computer_vision-block-52",
+      "id": "struct-computer_vision-stmt-58-part_of-computer_vision-block-51",
       "from": "computer_vision-stmt-58",
-      "to": "computer_vision-block-52",
+      "to": "computer_vision-block-51",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3015,8 +3015,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-60-part_of-computer_vision-block-54",
+      "id": "struct-computer_vision-stmt-60-part_of-computer_vision-block-52",
       "from": "computer_vision-stmt-60",
+      "to": "computer_vision-block-52",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-computer_vision-stmt-61-part_of-computer_vision-block-54",
+      "from": "computer_vision-stmt-61",
       "to": "computer_vision-block-54",
       "kind": "part_of",
       "qualifiers": {},
@@ -3025,8 +3035,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-61-part_of-computer_vision-block-55",
-      "from": "computer_vision-stmt-61",
+      "id": "struct-computer_vision-stmt-62-part_of-computer_vision-block-55",
+      "from": "computer_vision-stmt-62",
       "to": "computer_vision-block-55",
       "kind": "part_of",
       "qualifiers": {},
@@ -3035,19 +3045,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-62-part_of-computer_vision-block-56",
-      "from": "computer_vision-stmt-62",
-      "to": "computer_vision-block-56",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-computer_vision-stmt-63-part_of-computer_vision-block-57",
+      "id": "struct-computer_vision-stmt-63-part_of-computer_vision-block-56",
       "from": "computer_vision-stmt-63",
-      "to": "computer_vision-block-57",
+      "to": "computer_vision-block-56",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3065,9 +3065,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-65-part_of-computer_vision-block-59",
+      "id": "struct-computer_vision-stmt-65-part_of-computer_vision-block-57",
       "from": "computer_vision-stmt-65",
-      "to": "computer_vision-block-59",
+      "to": "computer_vision-block-57",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3075,9 +3075,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-66-part_of-computer_vision-block-60",
+      "id": "struct-computer_vision-stmt-66-part_of-computer_vision-block-59",
       "from": "computer_vision-stmt-66",
-      "to": "computer_vision-block-60",
+      "to": "computer_vision-block-59",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3095,9 +3095,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-68-part_of-computer_vision-block-63",
+      "id": "struct-computer_vision-stmt-68-part_of-computer_vision-block-60",
       "from": "computer_vision-stmt-68",
-      "to": "computer_vision-block-63",
+      "to": "computer_vision-block-60",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3145,9 +3145,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-73-part_of-computer_vision-block-65",
+      "id": "struct-computer_vision-stmt-73-part_of-computer_vision-block-63",
       "from": "computer_vision-stmt-73",
-      "to": "computer_vision-block-65",
+      "to": "computer_vision-block-63",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3165,8 +3165,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-computer_vision-stmt-75-part_of-computer_vision-block-66",
+      "id": "struct-computer_vision-stmt-75-part_of-computer_vision-block-65",
       "from": "computer_vision-stmt-75",
+      "to": "computer_vision-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-computer_vision-stmt-76-part_of-computer_vision-block-66",
+      "from": "computer_vision-stmt-76",
       "to": "computer_vision-block-66",
       "kind": "part_of",
       "qualifiers": {},
@@ -3360,342 +3370,349 @@
     },
     {
       "id": "computer_vision-stmt-27",
+      "quote": "Input · paint here <canvas data-cv=\"input\" aria-label=\"Input image, draw with mouse or finger\"></canvas> ⊛ edit the weights → Feature map <canvas data-cv=\"output\" aria-label=\"Feature map\"></canvas>",
+      "block_id": "computer_vision-block-17",
+      "section": "Paint your own convolution",
+      "kind": "statement"
+    },
+    {
+      "id": "computer_vision-stmt-28",
       "quote": "✏️ Draw 🧽 Erase 7 ☺ ■ Clear",
       "block_id": "computer_vision-block-18",
       "section": "Paint your own convolution",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-28",
+      "id": "computer_vision-stmt-29",
       "quote": "positive response negative response zero padding at the border · stride 1",
       "block_id": "computer_vision-block-20",
       "section": "Paint your own convolution",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-29",
+      "id": "computer_vision-stmt-30",
       "quote": "In traditional computer vision, engineers **manually designed** kernels (like Sobel, Gaussian, or Laplacian filters) to detect edges, blur noise, or sharpen details.",
       "block_id": "computer_vision-block-22",
       "section": "Why Does This Matter for AI?",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-30",
+      "id": "computer_vision-stmt-31",
       "quote": "These hand-crafted filters work well for specific tasks but cannot generalize.",
       "block_id": "computer_vision-block-22",
       "section": "Why Does This Matter for AI?",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-31",
+      "id": "computer_vision-stmt-32",
       "quote": "In **Deep Learning**, the paradigm shifts completely:",
       "block_id": "computer_vision-block-23",
       "section": "Why Does This Matter for AI?",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-32",
+      "id": "computer_vision-stmt-33",
       "quote": "Sharpen Blur Edge Identity Sobel Horizontal Sobel Vertical Emboss Gaussian",
       "block_id": "computer_vision-block-26",
       "section": "Understanding the Preset Filters",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-33",
+      "id": "computer_vision-stmt-34",
       "quote": "👆 Move your mouse over the source image to see the convolution math computed in real-time for each pixel...",
       "block_id": "computer_vision-block-32",
       "section": "Understanding the Preset Filters",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-34",
+      "id": "computer_vision-stmt-35",
       "quote": "A deep learning model doesn't identify a “stop sign” in a single leap.",
       "block_id": "computer_vision-block-34",
       "section": "The Power of Hierarchy: Building Complexity from Simplicity",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-35",
+      "id": "computer_vision-stmt-36",
       "quote": "Instead, it constructs an understanding through a **layered hierarchy of abstraction**, where each successive layer examines the output of the previous one to discover increasingly complex patterns.",
       "block_id": "computer_vision-block-34",
       "section": "The Power of Hierarchy: Building Complexity from Simplicity",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-36",
+      "id": "computer_vision-stmt-37",
       "quote": "This mirrors the architecture of the human visual cortex, where neurons in area V1 respond to simple oriented edges, while neurons in higher areas respond to faces and objects.",
       "block_id": "computer_vision-block-34",
       "section": "The Power of Hierarchy: Building Complexity from Simplicity",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-37",
+      "id": "computer_vision-stmt-38",
       "quote": "The first convolutional layer acts like a microscopic scanner.",
       "block_id": "computer_vision-block-36",
       "section": "Layer 1: Primitive Edge Detection",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-38",
+      "id": "computer_vision-stmt-39",
       "quote": "Each kernel examines a tiny local window of pixels (e.g., $3 \\times 3$) to detect basic **primitives**: horizontal lines, vertical lines, diagonal edges, and color gradients.",
       "block_id": "computer_vision-block-36",
       "section": "Layer 1: Primitive Edge Detection",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-39",
+      "id": "computer_vision-stmt-40",
       "quote": "At this stage, the network has no concept of a “sign”, it only knows that there is a strong vertical gradient at coordinate $(23, 41)$ or a diagonal edge at $(67, 12)$.",
       "block_id": "computer_vision-block-37",
       "section": "Layer 1: Primitive Edge Detection",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-40",
+      "id": "computer_vision-stmt-41",
       "quote": "These raw detections form **feature maps**, one per kernel.",
       "block_id": "computer_vision-block-37",
       "section": "Layer 1: Primitive Edge Detection",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-41",
+      "id": "computer_vision-stmt-42",
       "quote": "The four feature maps below show exactly this: each filter responds to edges at a different orientation.",
       "block_id": "computer_vision-block-38",
       "section": "Layer 1: Primitive Edge Detection",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-42",
+      "id": "computer_vision-stmt-43",
       "quote": "The second convolutional layer doesn't look at the original image at all.",
       "block_id": "computer_vision-block-40",
       "section": "Layer 2: Pattern Composition, Finding Corners and Curves",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-43",
+      "id": "computer_vision-stmt-44",
       "quote": "Instead, it looks at the **feature maps** produced by Layer 1.",
       "block_id": "computer_vision-block-40",
       "section": "Layer 2: Pattern Composition, Finding Corners and Curves",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-44",
+      "id": "computer_vision-stmt-45",
       "quote": "In a full-scale network (e.g., ResNet-50 with 50 layers, or VGG-16 with 16 layers), this process repeats:",
       "block_id": "computer_vision-block-42",
       "section": "Deeper Layers: From Parts to Objects",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-45",
+      "id": "computer_vision-stmt-46",
       "quote": "The more layers, the more abstract and complex the representations become.",
       "block_id": "computer_vision-block-43",
       "section": "Deeper Layers: From Parts to Objects",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-46",
+      "id": "computer_vision-stmt-47",
       "quote": "However, adding layers also increases the risk of **overfitting** (memorizing training data rather than learning general patterns) and **vanishing gradients** (where learning signals fade to zero in very deep networks, a problem addressed by skip connections in ResNets).",
       "block_id": "computer_vision-block-43",
       "section": "Deeper Layers: From Parts to Objects",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-47",
+      "id": "computer_vision-stmt-48",
       "quote": "Source Image (by \\citeauthor{stopsignimage})",
       "block_id": "computer_vision-block-44",
       "section": "Deeper Layers: From Parts to Objects",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-48",
+      "id": "computer_vision-stmt-49",
       "quote": "🔍 How to read the feature maps: Each matrix (kernel) acts as a specialized “eye” that searches for specific patterns.",
       "block_id": "computer_vision-block-45",
       "section": "Deeper Layers: From Parts to Objects",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-49",
+      "id": "computer_vision-stmt-50",
       "quote": "Bright pixels in the output mean the filter found a strong match at that location.",
       "block_id": "computer_vision-block-45",
       "section": "Deeper Layers: From Parts to Objects",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-50",
+      "id": "computer_vision-stmt-51",
       "quote": "Dark pixels mean no match was detected.",
       "block_id": "computer_vision-block-45",
       "section": "Deeper Layers: From Parts to Objects",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-51",
+      "id": "computer_vision-stmt-52",
       "quote": "The convolution explorer above shows a single filter.",
       "block_id": "computer_vision-block-48",
       "section": "Building the classifier: the full CNN pipeline",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-52",
+      "id": "computer_vision-stmt-53",
       "quote": "A real classifier stacks many of them, then bridges the gap from a 2D grid of features to a final class probability.",
       "block_id": "computer_vision-block-48",
       "section": "Building the classifier: the full CNN pipeline",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-53",
+      "id": "computer_vision-stmt-54",
       "quote": "The final decision layer (a **Dense** layer) wants a flat list of numbers, not a grid.",
       "block_id": "computer_vision-block-49",
       "section": "Building the classifier: the full CNN pipeline",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-54",
+      "id": "computer_vision-stmt-55",
       "quote": "A **Flatten** layer \"unrolls\" the feature maps — a $3 \\times 3$ map becomes a single vector of nine — so every feature found across the image can be combined into one score.",
       "block_id": "computer_vision-block-49",
       "section": "Building the classifier: the full CNN pipeline",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-55",
+      "id": "computer_vision-stmt-56",
       "quote": "Flatten has **no learnable parameters**; it is pure reshaping.",
       "block_id": "computer_vision-block-49",
       "section": "Building the classifier: the full CNN pipeline",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-56",
+      "id": "computer_vision-stmt-57",
       "quote": "The full flow, from raw image to probability:",
       "block_id": "computer_vision-block-50",
       "section": "Building the classifier: the full CNN pipeline",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-57",
+      "id": "computer_vision-stmt-58",
       "quote": "Every arrow is differentiable, so backpropagation trains the whole stack **end-to-end**.",
       "block_id": "computer_vision-block-51",
       "section": "Building the classifier: the full CNN pipeline",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-58",
+      "id": "computer_vision-stmt-59",
       "quote": "Both versions train with `python3 pytorch.py --mode train --path dataset` or `python3 tensorflow.py --mode train --path dataset` (one subfolder of images per class) and classify with `python3 pytorch.py --mode predict --path dataset/cat/1.jpg` or `python3 tensorflow.py --mode predict --path dataset/cat/1.jpg`, saving `classifier.pth` (PyTorch) or `classifier.keras` (TensorFlow).",
       "block_id": "computer_vision-block-52",
       "section": "Building the classifier: the full CNN pipeline",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-59",
+      "id": "computer_vision-stmt-60",
       "quote": "In one line the pipeline is: **normalize $\\to$ conv (features) $\\to$ pool (invariance) $\\to$ flatten $\\to$ dense + sigmoid (binary) or softmax (multi-class)** — each step differentiable, which is what makes end-to-end learning possible.",
       "block_id": "computer_vision-block-52",
       "section": "Building the classifier: the full CNN pipeline",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-60",
+      "id": "computer_vision-stmt-61",
       "quote": "| Family | Idea | Method |",
       "block_id": "computer_vision-block-54",
       "section": "From classification to detection",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-61",
+      "id": "computer_vision-stmt-62",
       "quote": "| Two-stage | Propose regions, then classify | **R-CNN** (\\cite[Girshick et al., 2014]{girshick2014rcnn}) → **Faster R-CNN** (learned proposals) (\\cite[Ren et al., 2015]{ren2015faster}) |",
       "block_id": "computer_vision-block-55",
       "section": "From classification to detection",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-62",
+      "id": "computer_vision-stmt-63",
       "quote": "| One-stage | Predict boxes in one pass | **YOLO** (\\cite[Redmon et al., 2016]{redmon2016yolo}) — detection as a single regression, fast enough for real time |",
       "block_id": "computer_vision-block-56",
       "section": "From classification to detection",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-63",
+      "id": "computer_vision-stmt-64",
       "quote": "Two-stage was more accurate; one-stage was faster.",
       "block_id": "computer_vision-block-57",
       "section": "From classification to detection",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-64",
+      "id": "computer_vision-stmt-65",
       "quote": "The gap closed as both scaled — the same lesson as everywhere in this book.",
       "block_id": "computer_vision-block-57",
       "section": "From classification to detection",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-65",
+      "id": "computer_vision-stmt-66",
       "quote": "**Segmentation** labels at the pixel level: **semantic** (each pixel → class), **instance** (each object separated), **panoptic** (both).",
       "block_id": "computer_vision-block-59",
       "section": "Segmentation: pixels, not boxes",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-66",
+      "id": "computer_vision-stmt-67",
       "quote": "One image, several prompts: SAM segments whatever you point at, zero-shot.",
       "block_id": "computer_vision-block-60",
       "section": "Segmentation: pixels, not boxes",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-67",
+      "id": "computer_vision-stmt-68",
       "quote": "\\cite[Image: Segment Anything Model demo]{sam_demo_img}",
       "block_id": "computer_vision-block-60",
       "section": "Segmentation: pixels, not boxes",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-68",
+      "id": "computer_vision-stmt-69",
       "quote": "The **Vision Transformer (ViT)** (\\cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit}) splits an image into 16×16 **patches**, treats them as tokens, and runs a plain Transformer.",
       "block_id": "computer_vision-block-63",
       "section": "ViTs: the Transformer arrives in vision",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-69",
+      "id": "computer_vision-stmt-70",
       "quote": "With enough data it matches or beats the best CNNs — the convolution's inductive bias is useful but not essential.",
       "block_id": "computer_vision-block-63",
       "section": "ViTs: the Transformer arrives in vision",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-70",
+      "id": "computer_vision-stmt-71",
       "quote": "Two companions completed the picture: **MAE** (\\cite[He et al., 2022]{he2021mae}), self-supervised pretraining by masking 75% of patches; and **CLIP** (\\cite[Radford et al., 2021]{radford2021clip}), contrastive pretraining on (image, caption) pairs, giving vision a *text* interface — the bridge to Multimodal and Diffusion .",
       "block_id": "computer_vision-block-63",
       "section": "ViTs: the Transformer arrives in vision",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-71",
+      "id": "computer_vision-stmt-72",
       "quote": "An audit of CLIP itself then uncovered **multimodal neurons** — individual units that fire for one concept (“spider web”, a celebrity's face) whether it appears in an image or in text, foreshadowing the mechanistic-interpretability work we meet later \\cite{goh2021multimodal}.",
       "block_id": "computer_vision-block-63",
       "section": "ViTs: the Transformer arrives in vision",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-72",
+      "id": "computer_vision-stmt-73",
       "quote": "A separate audit of ViTs found that the network quietly reserves a few high-norm **register** tokens as scratchpad working memory, the vision analogue of the attention sink (\\cite[Darcet et al., 2024]{darcet2024registers}) (see Attention ).",
       "block_id": "computer_vision-block-63",
       "section": "ViTs: the Transformer arrives in vision",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-73",
+      "id": "computer_vision-stmt-74",
       "quote": "Real vision is 3D and dynamic: **pose** (keypoints), **depth**, **point clouds**, and **NeRF**-style radiance fields that render novel views.",
       "block_id": "computer_vision-block-65",
       "section": "Beyond 2D: the world",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-74",
+      "id": "computer_vision-stmt-75",
       "quote": "Generative models now produce 3D and video, not just stills (see Diffusion ).",
       "block_id": "computer_vision-block-65",
       "section": "Beyond 2D: the world",
       "kind": "statement"
     },
     {
-      "id": "computer_vision-stmt-75",
+      "id": "computer_vision-stmt-76",
       "quote": "To see what this perception stack *assumes* when it builds images back up, continue to [Pixels and Checkerboards](deconvolution.php) and [Inceptionism](inceptionism.php): the same filters that recognize reality are perfectly happy to hallucinate it \\cite{mordvintsev2015inceptionism}.",
       "block_id": "computer_vision-block-66",
       "section": "Beyond 2D: the world",
@@ -3801,7 +3818,7 @@
     },
     {
       "id": "computer_vision-block-17",
-      "quote": "⊛ edit the weights →",
+      "quote": "Input · paint here <canvas data-cv=\"input\" aria-label=\"Input image, draw with mouse or finger\"></canvas> ⊛ edit the weights → Feature map <canvas data-cv=\"output\" aria-label=\"Feature map\"></canvas>",
       "kind": "paragraph",
       "section": "Paint your own convolution"
     },

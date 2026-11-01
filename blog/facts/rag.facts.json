@@ -2331,6 +2331,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-rag-block-66-related_to-rag-block-62",
+      "from": "rag-block-66",
+      "to": "rag-block-62",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-rag-block-67-part_of-rag",
       "from": "rag-block-67",
       "to": "rag",
@@ -2345,16 +2355,6 @@
       "from": "rag-block-66",
       "to": "rag-block-67",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-rag-block-67-related_to-rag-block-66",
-      "from": "rag-block-67",
-      "to": "rag-block-66",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2381,6 +2381,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-rag-block-68-related_to-rag-block-67",
+      "from": "rag-block-68",
+      "to": "rag-block-67",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-rag-block-69-part_of-rag",
       "from": "rag-block-69",
       "to": "rag",
@@ -2395,16 +2405,6 @@
       "from": "rag-block-68",
       "to": "rag-block-69",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-rag-block-69-related_to-rag-block-68",
-      "from": "rag-block-69",
-      "to": "rag-block-68",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2431,9 +2431,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-70-related_to-rag-block-68",
+      "id": "struct-rag-block-70-related_to-rag-block-69",
       "from": "rag-block-70",
-      "to": "rag-block-68",
+      "to": "rag-block-69",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2461,6 +2461,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-rag-block-71-related_to-rag-block-69",
+      "from": "rag-block-71",
+      "to": "rag-block-69",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-rag-block-72-part_of-rag",
       "from": "rag-block-72",
       "to": "rag",
@@ -2475,16 +2485,6 @@
       "from": "rag-block-71",
       "to": "rag-block-72",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-rag-block-72-related_to-rag-block-71",
-      "from": "rag-block-72",
-      "to": "rag-block-71",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2511,9 +2511,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-73-related_to-rag-block-71",
+      "id": "struct-rag-block-73-related_to-rag-block-72",
       "from": "rag-block-73",
-      "to": "rag-block-71",
+      "to": "rag-block-72",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2541,6 +2541,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-rag-block-74-related_to-rag-block-72",
+      "from": "rag-block-74",
+      "to": "rag-block-72",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-rag-block-75-part_of-rag",
       "from": "rag-block-75",
       "to": "rag",
@@ -2555,16 +2565,6 @@
       "from": "rag-block-74",
       "to": "rag-block-75",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-rag-block-75-related_to-rag-block-74",
-      "from": "rag-block-75",
-      "to": "rag-block-74",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2591,9 +2591,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-76-related_to-rag-block-74",
+      "id": "struct-rag-block-76-related_to-rag-block-75",
       "from": "rag-block-76",
-      "to": "rag-block-74",
+      "to": "rag-block-75",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2621,9 +2621,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-77-related_to-rag-block-74",
+      "id": "struct-rag-block-77-related_to-rag-block-75",
       "from": "rag-block-77",
-      "to": "rag-block-74",
+      "to": "rag-block-75",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2651,9 +2651,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-78-related_to-rag-block-74",
+      "id": "struct-rag-block-78-related_to-rag-block-75",
       "from": "rag-block-78",
-      "to": "rag-block-74",
+      "to": "rag-block-75",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2681,9 +2681,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-79-related_to-rag-block-74",
+      "id": "struct-rag-block-79-related_to-rag-block-75",
       "from": "rag-block-79",
-      "to": "rag-block-74",
+      "to": "rag-block-75",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2711,9 +2711,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-80-related_to-rag-block-74",
+      "id": "struct-rag-block-80-related_to-rag-block-75",
       "from": "rag-block-80",
-      "to": "rag-block-74",
+      "to": "rag-block-75",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2735,6 +2735,16 @@
       "from": "rag-block-80",
       "to": "rag-block-81",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-rag-block-81-related_to-rag-block-75",
+      "from": "rag-block-81",
+      "to": "rag-block-75",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2781,16 +2791,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-83-related_to-rag-block-82",
-      "from": "rag-block-83",
-      "to": "rag-block-82",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-rag-block-84-part_of-rag",
       "from": "rag-block-84",
       "to": "rag",
@@ -2811,9 +2811,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-84-related_to-rag-block-82",
+      "id": "struct-rag-block-84-related_to-rag-block-83",
       "from": "rag-block-84",
-      "to": "rag-block-82",
+      "to": "rag-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2841,9 +2841,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-85-related_to-rag-block-82",
+      "id": "struct-rag-block-85-related_to-rag-block-83",
       "from": "rag-block-85",
-      "to": "rag-block-82",
+      "to": "rag-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2871,9 +2871,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-86-related_to-rag-block-82",
+      "id": "struct-rag-block-86-related_to-rag-block-83",
       "from": "rag-block-86",
-      "to": "rag-block-82",
+      "to": "rag-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2901,9 +2901,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-87-related_to-rag-block-82",
+      "id": "struct-rag-block-87-related_to-rag-block-83",
       "from": "rag-block-87",
-      "to": "rag-block-82",
+      "to": "rag-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2931,9 +2931,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-88-related_to-rag-block-82",
+      "id": "struct-rag-block-88-related_to-rag-block-83",
       "from": "rag-block-88",
-      "to": "rag-block-82",
+      "to": "rag-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2961,9 +2961,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-89-related_to-rag-block-82",
+      "id": "struct-rag-block-89-related_to-rag-block-83",
       "from": "rag-block-89",
-      "to": "rag-block-82",
+      "to": "rag-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2991,9 +2991,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-90-related_to-rag-block-82",
+      "id": "struct-rag-block-90-related_to-rag-block-83",
       "from": "rag-block-90",
-      "to": "rag-block-82",
+      "to": "rag-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3021,9 +3021,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-91-related_to-rag-block-82",
+      "id": "struct-rag-block-91-related_to-rag-block-83",
       "from": "rag-block-91",
-      "to": "rag-block-82",
+      "to": "rag-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3051,9 +3051,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-92-related_to-rag-block-82",
+      "id": "struct-rag-block-92-related_to-rag-block-83",
       "from": "rag-block-92",
-      "to": "rag-block-82",
+      "to": "rag-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3081,9 +3081,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-93-related_to-rag-block-82",
+      "id": "struct-rag-block-93-related_to-rag-block-83",
       "from": "rag-block-93",
-      "to": "rag-block-82",
+      "to": "rag-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3111,9 +3111,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-94-related_to-rag-block-82",
+      "id": "struct-rag-block-94-related_to-rag-block-83",
       "from": "rag-block-94",
-      "to": "rag-block-82",
+      "to": "rag-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3141,9 +3141,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-95-related_to-rag-block-82",
+      "id": "struct-rag-block-95-related_to-rag-block-83",
       "from": "rag-block-95",
-      "to": "rag-block-82",
+      "to": "rag-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3171,6 +3171,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-rag-block-96-related_to-rag-block-83",
+      "from": "rag-block-96",
+      "to": "rag-block-83",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-rag-block-97-part_of-rag",
       "from": "rag-block-97",
       "to": "rag",
@@ -3185,16 +3195,6 @@
       "from": "rag-block-96",
       "to": "rag-block-97",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-rag-block-97-related_to-rag-block-96",
-      "from": "rag-block-97",
-      "to": "rag-block-96",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3221,6 +3221,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-rag-block-98-related_to-rag-block-97",
+      "from": "rag-block-98",
+      "to": "rag-block-97",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-rag-block-99-part_of-rag",
       "from": "rag-block-99",
       "to": "rag",
@@ -3235,16 +3245,6 @@
       "from": "rag-block-98",
       "to": "rag-block-99",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-rag-block-99-related_to-rag-block-98",
-      "from": "rag-block-99",
-      "to": "rag-block-98",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3271,6 +3271,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-rag-block-100-related_to-rag-block-99",
+      "from": "rag-block-100",
+      "to": "rag-block-99",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-rag-block-101-part_of-rag",
       "from": "rag-block-101",
       "to": "rag",
@@ -3285,16 +3295,6 @@
       "from": "rag-block-100",
       "to": "rag-block-101",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-rag-block-101-related_to-rag-block-100",
-      "from": "rag-block-101",
-      "to": "rag-block-100",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3321,6 +3321,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-rag-block-102-related_to-rag-block-101",
+      "from": "rag-block-102",
+      "to": "rag-block-101",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-rag-block-103-part_of-rag",
       "from": "rag-block-103",
       "to": "rag",
@@ -3341,9 +3351,29 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-block-103-related_to-rag-block-102",
+      "id": "struct-rag-block-104-part_of-rag",
+      "from": "rag-block-104",
+      "to": "rag",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-rag-block-103-before-rag-block-104",
       "from": "rag-block-103",
-      "to": "rag-block-102",
+      "to": "rag-block-104",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-rag-block-104-related_to-rag-block-103",
+      "from": "rag-block-104",
+      "to": "rag-block-103",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -4071,9 +4101,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-73-part_of-rag-block-65",
+      "id": "struct-rag-stmt-73-part_of-rag-block-66",
       "from": "rag-stmt-73",
-      "to": "rag-block-65",
+      "to": "rag-block-66",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4081,9 +4111,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-74-part_of-rag-block-67",
+      "id": "struct-rag-stmt-74-part_of-rag-block-66",
       "from": "rag-stmt-74",
-      "to": "rag-block-67",
+      "to": "rag-block-66",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4091,9 +4121,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-75-part_of-rag-block-67",
+      "id": "struct-rag-stmt-75-part_of-rag-block-68",
       "from": "rag-stmt-75",
-      "to": "rag-block-67",
+      "to": "rag-block-68",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4101,9 +4131,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-76-part_of-rag-block-67",
+      "id": "struct-rag-stmt-76-part_of-rag-block-68",
       "from": "rag-stmt-76",
-      "to": "rag-block-67",
+      "to": "rag-block-68",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4111,9 +4141,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-77-part_of-rag-block-69",
+      "id": "struct-rag-stmt-77-part_of-rag-block-68",
       "from": "rag-stmt-77",
-      "to": "rag-block-69",
+      "to": "rag-block-68",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4121,9 +4151,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-78-part_of-rag-block-69",
+      "id": "struct-rag-stmt-78-part_of-rag-block-70",
       "from": "rag-stmt-78",
-      "to": "rag-block-69",
+      "to": "rag-block-70",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4131,9 +4161,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-79-part_of-rag-block-69",
+      "id": "struct-rag-stmt-79-part_of-rag-block-70",
       "from": "rag-stmt-79",
-      "to": "rag-block-69",
+      "to": "rag-block-70",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4141,9 +4171,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-80-part_of-rag-block-69",
+      "id": "struct-rag-stmt-80-part_of-rag-block-70",
       "from": "rag-stmt-80",
-      "to": "rag-block-69",
+      "to": "rag-block-70",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4161,9 +4191,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-82-part_of-rag-block-70",
+      "id": "struct-rag-stmt-82-part_of-rag-block-71",
       "from": "rag-stmt-82",
-      "to": "rag-block-70",
+      "to": "rag-block-71",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4171,9 +4201,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-83-part_of-rag-block-72",
+      "id": "struct-rag-stmt-83-part_of-rag-block-71",
       "from": "rag-stmt-83",
-      "to": "rag-block-72",
+      "to": "rag-block-71",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4191,9 +4221,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-85-part_of-rag-block-73",
+      "id": "struct-rag-stmt-85-part_of-rag-block-74",
       "from": "rag-stmt-85",
-      "to": "rag-block-73",
+      "to": "rag-block-74",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4201,9 +4231,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-86-part_of-rag-block-76",
+      "id": "struct-rag-stmt-86-part_of-rag-block-74",
       "from": "rag-stmt-86",
-      "to": "rag-block-76",
+      "to": "rag-block-74",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4231,9 +4261,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-89-part_of-rag-block-78",
+      "id": "struct-rag-stmt-89-part_of-rag-block-79",
       "from": "rag-stmt-89",
-      "to": "rag-block-78",
+      "to": "rag-block-79",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4251,9 +4281,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-91-part_of-rag-block-79",
+      "id": "struct-rag-stmt-91-part_of-rag-block-80",
       "from": "rag-stmt-91",
-      "to": "rag-block-79",
+      "to": "rag-block-80",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4271,9 +4301,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-93-part_of-rag-block-80",
+      "id": "struct-rag-stmt-93-part_of-rag-block-81",
       "from": "rag-stmt-93",
-      "to": "rag-block-80",
+      "to": "rag-block-81",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4281,9 +4311,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-94-part_of-rag-block-80",
+      "id": "struct-rag-stmt-94-part_of-rag-block-81",
       "from": "rag-stmt-94",
-      "to": "rag-block-80",
+      "to": "rag-block-81",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4291,9 +4321,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-95-part_of-rag-block-83",
+      "id": "struct-rag-stmt-95-part_of-rag-block-81",
       "from": "rag-stmt-95",
-      "to": "rag-block-83",
+      "to": "rag-block-81",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4301,9 +4331,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-96-part_of-rag-block-83",
+      "id": "struct-rag-stmt-96-part_of-rag-block-84",
       "from": "rag-stmt-96",
-      "to": "rag-block-83",
+      "to": "rag-block-84",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4311,9 +4341,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-97-part_of-rag-block-83",
+      "id": "struct-rag-stmt-97-part_of-rag-block-84",
       "from": "rag-stmt-97",
-      "to": "rag-block-83",
+      "to": "rag-block-84",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4331,9 +4361,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-99-part_of-rag-block-84",
+      "id": "struct-rag-stmt-99-part_of-rag-block-85",
       "from": "rag-stmt-99",
-      "to": "rag-block-84",
+      "to": "rag-block-85",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4341,9 +4371,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-100-part_of-rag-block-84",
+      "id": "struct-rag-stmt-100-part_of-rag-block-85",
       "from": "rag-stmt-100",
-      "to": "rag-block-84",
+      "to": "rag-block-85",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4361,9 +4391,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-102-part_of-rag-block-85",
+      "id": "struct-rag-stmt-102-part_of-rag-block-86",
       "from": "rag-stmt-102",
-      "to": "rag-block-85",
+      "to": "rag-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4371,9 +4401,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-103-part_of-rag-block-85",
+      "id": "struct-rag-stmt-103-part_of-rag-block-86",
       "from": "rag-stmt-103",
-      "to": "rag-block-85",
+      "to": "rag-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4381,9 +4411,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-104-part_of-rag-block-85",
+      "id": "struct-rag-stmt-104-part_of-rag-block-86",
       "from": "rag-stmt-104",
-      "to": "rag-block-85",
+      "to": "rag-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4481,9 +4511,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-114-part_of-rag-block-94",
+      "id": "struct-rag-stmt-114-part_of-rag-block-95",
       "from": "rag-stmt-114",
-      "to": "rag-block-94",
+      "to": "rag-block-95",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4491,9 +4521,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-115-part_of-rag-block-94",
+      "id": "struct-rag-stmt-115-part_of-rag-block-95",
       "from": "rag-stmt-115",
-      "to": "rag-block-94",
+      "to": "rag-block-95",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4501,9 +4531,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-116-part_of-rag-block-94",
+      "id": "struct-rag-stmt-116-part_of-rag-block-95",
       "from": "rag-stmt-116",
-      "to": "rag-block-94",
+      "to": "rag-block-95",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4511,9 +4541,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-117-part_of-rag-block-94",
+      "id": "struct-rag-stmt-117-part_of-rag-block-95",
       "from": "rag-stmt-117",
-      "to": "rag-block-94",
+      "to": "rag-block-95",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4531,9 +4561,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-119-part_of-rag-block-95",
+      "id": "struct-rag-stmt-119-part_of-rag-block-96",
       "from": "rag-stmt-119",
-      "to": "rag-block-95",
+      "to": "rag-block-96",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4541,9 +4571,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-120-part_of-rag-block-95",
+      "id": "struct-rag-stmt-120-part_of-rag-block-96",
       "from": "rag-stmt-120",
-      "to": "rag-block-95",
+      "to": "rag-block-96",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4551,9 +4581,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-121-part_of-rag-block-97",
+      "id": "struct-rag-stmt-121-part_of-rag-block-96",
       "from": "rag-stmt-121",
-      "to": "rag-block-97",
+      "to": "rag-block-96",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4561,9 +4591,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-122-part_of-rag-block-97",
+      "id": "struct-rag-stmt-122-part_of-rag-block-98",
       "from": "rag-stmt-122",
-      "to": "rag-block-97",
+      "to": "rag-block-98",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4571,9 +4601,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-123-part_of-rag-block-97",
+      "id": "struct-rag-stmt-123-part_of-rag-block-98",
       "from": "rag-stmt-123",
-      "to": "rag-block-97",
+      "to": "rag-block-98",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4581,9 +4611,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-124-part_of-rag-block-97",
+      "id": "struct-rag-stmt-124-part_of-rag-block-98",
       "from": "rag-stmt-124",
-      "to": "rag-block-97",
+      "to": "rag-block-98",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4591,9 +4621,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-125-part_of-rag-block-99",
+      "id": "struct-rag-stmt-125-part_of-rag-block-98",
       "from": "rag-stmt-125",
-      "to": "rag-block-99",
+      "to": "rag-block-98",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4601,9 +4631,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-126-part_of-rag-block-99",
+      "id": "struct-rag-stmt-126-part_of-rag-block-100",
       "from": "rag-stmt-126",
-      "to": "rag-block-99",
+      "to": "rag-block-100",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4611,9 +4641,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-127-part_of-rag-block-99",
+      "id": "struct-rag-stmt-127-part_of-rag-block-100",
       "from": "rag-stmt-127",
-      "to": "rag-block-99",
+      "to": "rag-block-100",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4621,9 +4651,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-128-part_of-rag-block-99",
+      "id": "struct-rag-stmt-128-part_of-rag-block-100",
       "from": "rag-stmt-128",
-      "to": "rag-block-99",
+      "to": "rag-block-100",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4631,9 +4661,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-129-part_of-rag-block-101",
+      "id": "struct-rag-stmt-129-part_of-rag-block-100",
       "from": "rag-stmt-129",
-      "to": "rag-block-101",
+      "to": "rag-block-100",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4641,9 +4671,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-130-part_of-rag-block-101",
+      "id": "struct-rag-stmt-130-part_of-rag-block-102",
       "from": "rag-stmt-130",
-      "to": "rag-block-101",
+      "to": "rag-block-102",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4651,9 +4681,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-131-part_of-rag-block-101",
+      "id": "struct-rag-stmt-131-part_of-rag-block-102",
       "from": "rag-stmt-131",
-      "to": "rag-block-101",
+      "to": "rag-block-102",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4661,9 +4691,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-132-part_of-rag-block-101",
+      "id": "struct-rag-stmt-132-part_of-rag-block-102",
       "from": "rag-stmt-132",
-      "to": "rag-block-101",
+      "to": "rag-block-102",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4671,9 +4701,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-133-part_of-rag-block-103",
+      "id": "struct-rag-stmt-133-part_of-rag-block-102",
       "from": "rag-stmt-133",
-      "to": "rag-block-103",
+      "to": "rag-block-102",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4681,9 +4711,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-134-part_of-rag-block-103",
+      "id": "struct-rag-stmt-134-part_of-rag-block-104",
       "from": "rag-stmt-134",
-      "to": "rag-block-103",
+      "to": "rag-block-104",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4691,9 +4721,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-rag-stmt-135-part_of-rag-block-103",
+      "id": "struct-rag-stmt-135-part_of-rag-block-104",
       "from": "rag-stmt-135",
-      "to": "rag-block-103",
+      "to": "rag-block-104",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-rag-stmt-136-part_of-rag-block-104",
+      "from": "rag-stmt-136",
+      "to": "rag-block-104",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5201,449 +5241,456 @@
     },
     {
       "id": "rag-stmt-72",
-      "quote": "Cheap recall (BM25 + dense, fused by RRF) gathers a broad candidate set; an expensive cross-encoder then reads each (query, doc) pair and keeps only the best.",
+      "quote": "<rect x=\"20\" y=\"12\" width=\"120\" height=\"34\" rx=\"8\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/> <text x=\"80\" y=\"34\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">BM25 recall</text> <text x=\"80\" y=\"58\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text-secondary)\">top-50, cheap, lexical</text> <rect x=\"20\" y=\"98\" width=\"120\" height=\"34\" rx=\"8\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/> <text x=\"80\" y=\"120\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">dense recall</text> <text x=\"80\" y=\"144\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text-secondary)\">top-50, cheap, semantic</text> <rect x=\"220\" y=\"55\" width=\"120\" height=\"40\" rx=\"8\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/> <text x=\"280\" y=\"79\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">RRF fuse</text> <line x1=\"140\" y1=\"29\" x2=\"218\" y2=\"70\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\"/> <line x1=\"140\" y1=\"115\" x2=\"218\" y2=\"80\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\"/> <rect x=\"400\" y=\"55\" width=\"140\" height=\"40\" rx=\"8\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/> <text x=\"470\" y=\"73\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">cross-encoder</text> <text x=\"470\" y=\"90\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text-secondary)\">rescore, keep top-5</text> <line x1=\"340\" y1=\"75\" x2=\"398\" y2=\"75\" stroke=\"var(--mn-accent)\" stroke-width=\"1.5\" marker-end=\"url(#moearrow)\"/> <text x=\"370\" y=\"67\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text-secondary)\">~60 docs</text> <text x=\"470\" y=\"120\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text-secondary)\">expensive but precise</text>",
       "block_id": "rag-block-65",
       "section": "Hybrid search: BM25 and dense are different questions",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-73",
-      "quote": "You cannot run the cross-encoder first — it is too slow over the whole corpus.",
-      "block_id": "rag-block-65",
+      "quote": "Cheap recall (BM25 + dense, fused by RRF) gathers a broad candidate set; an expensive cross-encoder then reads each (query, doc) pair and keeps only the best.",
+      "block_id": "rag-block-66",
       "section": "Hybrid search: BM25 and dense are different questions",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-74",
-      "quote": "Dense and BM25 are **first-stage** retrievers: they are cheap, so they can score *all* of the corpus, but they do so *coarsely* — a dense model scores the query and a document *separately* (two encodings, one distance), so it never actually reads them together.",
-      "block_id": "rag-block-67",
-      "section": "Reranking: the expensive second look",
+      "quote": "You cannot run the cross-encoder first — it is too slow over the whole corpus.",
+      "block_id": "rag-block-66",
+      "section": "Hybrid search: BM25 and dense are different questions",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-75",
-      "quote": "A **cross-encoder** is the **second-stage** reranker: it takes the query *and* a candidate document as a single input, runs them through a transformer *jointly*, and outputs a relevance score for that pair.",
-      "block_id": "rag-block-67",
+      "quote": "Dense and BM25 are **first-stage** retrievers: they are cheap, so they can score *all* of the corpus, but they do so *coarsely* — a dense model scores the query and a document *separately* (two encodings, one distance), so it never actually reads them together.",
+      "block_id": "rag-block-68",
       "section": "Reranking: the expensive second look",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-76",
-      "quote": "Because it reads the pair, it is far more precise — it can tell that a chunk *mentions* the topic but does not *answer* the question, which a first-stage similarity cannot.",
-      "block_id": "rag-block-67",
+      "quote": "A **cross-encoder** is the **second-stage** reranker: it takes the query *and* a candidate document as a single input, runs them through a transformer *jointly*, and outputs a relevance score for that pair.",
+      "block_id": "rag-block-68",
       "section": "Reranking: the expensive second look",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-77",
-      "quote": "A recurring failure is that a chunk, *out of context*, is not retrievable.",
-      "block_id": "rag-block-69",
-      "section": "Contextual retrieval: fix the chunk at index time",
+      "quote": "Because it reads the pair, it is far more precise — it can tell that a chunk *mentions* the topic but does not *answer* the question, which a first-stage similarity cannot.",
+      "block_id": "rag-block-68",
+      "section": "Reranking: the expensive second look",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-78",
-      "quote": "A paragraph that says \"the failure mode was severe\" is a great answer — but if the word \"failure\" never appears in the query, no retriever finds it, because the chunk, standing alone, does not say what it is *about*.",
-      "block_id": "rag-block-69",
+      "quote": "A recurring failure is that a chunk, *out of context*, is not retrievable.",
+      "block_id": "rag-block-70",
       "section": "Contextual retrieval: fix the chunk at index time",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-79",
-      "quote": "**Contextual retrieval** \\cite[Ford, Anthropic (2024)]{contextualretrieval2024} addresses this at **index time**: before embedding a chunk, prepend a short piece of LLM-written context that orients the chunk (\"this paragraph is from a post-mortem about the checkout service's 2024-03-14 incident, and it describes the failure mode\"), so the *enriched* chunk is what gets embedded and retrieved.",
-      "block_id": "rag-block-69",
+      "quote": "A paragraph that says \"the failure mode was severe\" is a great answer — but if the word \"failure\" never appears in the query, no retriever finds it, because the chunk, standing alone, does not say what it is *about*.",
+      "block_id": "rag-block-70",
       "section": "Contextual retrieval: fix the chunk at index time",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-80",
-      "quote": "Reported to cut the retrieval-failure rate by roughly half \\cite[Ford, Anthropic (2024)]{contextualretrieval2024}.",
-      "block_id": "rag-block-69",
+      "quote": "**Contextual retrieval** \\cite[Ford, Anthropic (2024)]{contextualretrieval2024} addresses this at **index time**: before embedding a chunk, prepend a short piece of LLM-written context that orients the chunk (\"this paragraph is from a post-mortem about the checkout service's 2024-03-14 incident, and it describes the failure mode\"), so the *enriched* chunk is what gets embedded and retrieved.",
+      "block_id": "rag-block-70",
       "section": "Contextual retrieval: fix the chunk at index time",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-81",
-      "quote": "The idea generalizes: retrieval quality is set at **index time** as much as query time, and you can spend LLM compute at index time — once, per chunk — to make each chunk self-sufficient.",
+      "quote": "Reported to cut the retrieval-failure rate by roughly half \\cite[Ford, Anthropic (2024)]{contextualretrieval2024}.",
       "block_id": "rag-block-70",
       "section": "Contextual retrieval: fix the chunk at index time",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-82",
-      "quote": "It is the retrieval analog of doing the hard work up front.",
-      "block_id": "rag-block-70",
+      "quote": "The idea generalizes: retrieval quality is set at **index time** as much as query time, and you can spend LLM compute at index time — once, per chunk — to make each chunk self-sufficient.",
+      "block_id": "rag-block-71",
       "section": "Contextual retrieval: fix the chunk at index time",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-83",
-      "quote": "None of the above is a substitute for the fact that RAG *fails*, and the failure modes are structural (\\cite[Gao et al., 2023]{ragsurvey2023}):",
-      "block_id": "rag-block-72",
-      "section": "Why RAG underperforms: the honest half",
+      "quote": "It is the retrieval analog of doing the hard work up front.",
+      "block_id": "rag-block-71",
+      "section": "Contextual retrieval: fix the chunk at index time",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-84",
-      "quote": "The through-line: RAG is not a feature you add; it is a **pipeline with two failure points** (retrieval and integration), and each has its own diagnosis.",
+      "quote": "None of the above is a substitute for the fact that RAG *fails*, and the failure modes are structural (\\cite[Gao et al., 2023]{ragsurvey2023}):",
       "block_id": "rag-block-73",
       "section": "Why RAG underperforms: the honest half",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-85",
-      "quote": "\"Just add RAG\" is not a free lunch because the two halves fail independently, and the second hides the first — a confidently wrong answer from a *good* model over a *bad* context is the hardest failure to see, because everything in the model looks fine.",
-      "block_id": "rag-block-73",
+      "quote": "The through-line: RAG is not a feature you add; it is a **pipeline with two failure points** (retrieval and integration), and each has its own diagnosis.",
+      "block_id": "rag-block-74",
       "section": "Why RAG underperforms: the honest half",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-86",
-      "quote": "| Fetch relevant docs $\\rightarrow$ inject into prompt $\\rightarrow$ LLM answers grounded in evidence |",
-      "block_id": "rag-block-76",
-      "section": "Summary",
+      "quote": "\"Just add RAG\" is not a free lunch because the two halves fail independently, and the second hides the first — a confidently wrong answer from a *good* model over a *bad* context is the hardest failure to see, because everything in the model looks fine.",
+      "block_id": "rag-block-74",
+      "section": "Why RAG underperforms: the honest half",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-87",
-      "quote": "| As dense vectors in a vector DB, indexed with ANN algorithms like HNSW |",
+      "quote": "| Fetch relevant docs $\\rightarrow$ inject into prompt $\\rightarrow$ LLM answers grounded in evidence |",
       "block_id": "rag-block-77",
       "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-88",
-      "quote": "| ICL = manual prompt engineering.",
+      "quote": "| As dense vectors in a vector DB, indexed with ANN algorithms like HNSW |",
       "block_id": "rag-block-78",
       "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-89",
-      "quote": "RAG = automated retrieval that *feeds* ICL.",
-      "block_id": "rag-block-78",
+      "quote": "| ICL = manual prompt engineering.",
+      "block_id": "rag-block-79",
       "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-90",
-      "quote": "| RAG searches millions of docs cheaply.",
+      "quote": "RAG = automated retrieval that *feeds* ICL.",
       "block_id": "rag-block-79",
       "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-91",
-      "quote": "Long context holds ~1 book expensively.",
-      "block_id": "rag-block-79",
+      "quote": "| RAG searches millions of docs cheaply.",
+      "block_id": "rag-block-80",
       "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-92",
-      "quote": "| Are the LLM's weights changed?",
+      "quote": "Long context holds ~1 book expensively.",
       "block_id": "rag-block-80",
       "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-93",
-      "quote": "| **No.** RAG only changes the *input*.",
-      "block_id": "rag-block-80",
+      "quote": "| Are the LLM's weights changed?",
+      "block_id": "rag-block-81",
       "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-94",
-      "quote": "The model itself is untouched |",
-      "block_id": "rag-block-80",
+      "quote": "| **No.** RAG only changes the *input*.",
+      "block_id": "rag-block-81",
       "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-95",
-      "quote": "The RAG pipeline described in this chapter has a longer ancestry than 2020.",
-      "block_id": "rag-block-83",
-      "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
+      "quote": "The model itself is untouched |",
+      "block_id": "rag-block-81",
+      "section": "Summary",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-96",
-      "quote": "Its conceptual blueprint — a personal, queryable store of human knowledge with associative links between documents, retrieved at the moment of use to augment a human's thinking — was drawn in 1945 by \\citeauthor{bush1945aswemaythink} (\\citeyear{bush1945aswemaythink}) in *The Atlantic Monthly*, in an essay that became the founding text of hypertext and personal information retrieval.",
-      "block_id": "rag-block-83",
+      "quote": "The RAG pipeline described in this chapter has a longer ancestry than 2020.",
+      "block_id": "rag-block-84",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-97",
-      "quote": "\\citeauthor{bush1945aswemaythink} named the device the **memex** (\"memory extender\") and described it as a desk-sized electromechanical console that would store a personal library of microfilmed books and records, let the user consult them on translucent screens at will, and — this is the part the field remembered — allow the user to build **associative trails** between documents by stringing them together with named links, so that consulting one document would automatically pull up the next.",
-      "block_id": "rag-block-83",
+      "quote": "Its conceptual blueprint — a personal, queryable store of human knowledge with associative links between documents, retrieved at the moment of use to augment a human's thinking — was drawn in 1945 by \\citeauthor{bush1945aswemaythink} (\\citeyear{bush1945aswemaythink}) in *The Atlantic Monthly*, in an essay that became the founding text of hypertext and personal information retrieval.",
+      "block_id": "rag-block-84",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-98",
-      "quote": "The human mind operates by association.",
+      "quote": "\\citeauthor{bush1945aswemaythink} named the device the **memex** (\"memory extender\") and described it as a desk-sized electromechanical console that would store a personal library of microfilmed books and records, let the user consult them on translucent screens at will, and — this is the part the field remembered — allow the user to build **associative trails** between documents by stringing them together with named links, so that consulting one document would automatically pull up the next.",
       "block_id": "rag-block-84",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-99",
-      "quote": "With one item in its grasp, it snaps instantly to the next that is suggested by the association of thoughts, in accordance with some intricate web of trails carried by the cells of the brain.",
-      "block_id": "rag-block-84",
+      "quote": "The human mind operates by association.",
+      "block_id": "rag-block-85",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-100",
-      "quote": "[...] Selection by association, rather than indexing, may yet be mechanized.",
-      "block_id": "rag-block-84",
+      "quote": "With one item in its grasp, it snaps instantly to the next that is suggested by the association of thoughts, in accordance with some intricate web of trails carried by the cells of the brain.",
+      "block_id": "rag-block-85",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-101",
-      "quote": "Bush's diagnosis of why such a device was needed has aged remarkably well.",
+      "quote": "[...] Selection by association, rather than indexing, may yet be mechanized.",
       "block_id": "rag-block-85",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-102",
-      "quote": "He calls the problem the *crisis of selection*: the volume of published knowledge had grown past any human's ability to keep up with, and the existing tools for finding it — Dewey indices, the Library of Congress catalog, professional abstracting services — were optimised for *retrieval by metadata* (title, author, subject) and were useless for the question the working scholar actually asks, which is *what do I already have in my head that connects to this*.",
-      "block_id": "rag-block-85",
+      "quote": "Bush's diagnosis of why such a device was needed has aged remarkably well.",
+      "block_id": "rag-block-86",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-103",
-      "quote": "Bush's answer was to mechanise a different operation: not \"search by keyword\", but **\"follow a trail of associated items\"**, where each item can name the next.",
-      "block_id": "rag-block-85",
+      "quote": "He calls the problem the *crisis of selection*: the volume of published knowledge had grown past any human's ability to keep up with, and the existing tools for finding it — Dewey indices, the Library of Congress catalog, professional abstracting services — were optimised for *retrieval by metadata* (title, author, subject) and were useless for the question the working scholar actually asks, which is *what do I already have in my head that connects to this*.",
+      "block_id": "rag-block-86",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-104",
-      "quote": "The trail is the user's private graph of \"this reminds me of that\", which the memex stores and lets the user replay, share, and accumulate.",
-      "block_id": "rag-block-85",
+      "quote": "Bush's answer was to mechanise a different operation: not \"search by keyword\", but **\"follow a trail of associated items\"**, where each item can name the next.",
+      "block_id": "rag-block-86",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-105",
-      "quote": "Read against the present chapter, the mapping to RAG is exact:",
+      "quote": "The trail is the user's private graph of \"this reminds me of that\", which the memex stores and lets the user replay, share, and accumulate.",
       "block_id": "rag-block-86",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-106",
-      "quote": "| Memex (1945) | Modern RAG |",
+      "quote": "Read against the present chapter, the mapping to RAG is exact:",
       "block_id": "rag-block-87",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-107",
-      "quote": "| Personal library of microfilmed documents | A vector index of an organisation's documents |",
+      "quote": "| Memex (1945) | Modern RAG |",
       "block_id": "rag-block-88",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-108",
-      "quote": "| \"Selection by association\" | Embedding-based semantic search (or hybrid BM25 + dense) |",
+      "quote": "| Personal library of microfilmed documents | A vector index of an organisation's documents |",
       "block_id": "rag-block-89",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-109",
-      "quote": "| Stored, named **trails** linking documents | Stored, retrieved **chunks** injected into an LLM prompt |",
+      "quote": "| \"Selection by association\" | Embedding-based semantic search (or hybrid BM25 + dense) |",
       "block_id": "rag-block-90",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-110",
-      "quote": "| \"The human mind snaps instantly to the next item\" | The LLM attends over retrieved context to produce the next token |",
+      "quote": "| Stored, named **trails** linking documents | Stored, retrieved **chunks** injected into an LLM prompt |",
       "block_id": "rag-block-91",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-111",
-      "quote": "| Consulting a doc on the translucent screen | Reading a chunk out of a vector DB at query time |",
+      "quote": "| \"The human mind snaps instantly to the next item\" | The LLM attends over retrieved context to produce the next token |",
       "block_id": "rag-block-92",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-112",
-      "quote": "| The memex user's associative memory | The LLM's context window |",
+      "quote": "| Consulting a doc on the translucent screen | Reading a chunk out of a vector DB at query time |",
       "block_id": "rag-block-93",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-113",
-      "quote": "Three differences matter.",
+      "quote": "| The memex user's associative memory | The LLM's context window |",
       "block_id": "rag-block-94",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-114",
-      "quote": "First, Bush's \"association\" was *human-defined* — the user built the trails — whereas modern dense retrieval learns associations from co-occurrence statistics; this is Bush in spirit (associative access) but not in mechanism (machine-learned similarity).",
-      "block_id": "rag-block-94",
+      "quote": "Three differences matter.",
+      "block_id": "rag-block-95",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-115",
-      "quote": "Second, Bush's device **augmented a human reader**, not an LLM; the LLM is the new reader, and the augmentation has been upgraded from \"the user's cognition\" to \"the model's prompt\".",
-      "block_id": "rag-block-94",
+      "quote": "First, Bush's \"association\" was *human-defined* — the user built the trails — whereas modern dense retrieval learns associations from co-occurrence statistics; this is Bush in spirit (associative access) but not in mechanism (machine-learned similarity).",
+      "block_id": "rag-block-95",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-116",
-      "quote": "Third, and most strikingly, Bush's essay did **not** anticipate the cheapness constraint that defines modern RAG: he imagined dedicated microfilm hardware in every office, while contemporary RAG assumes the documents already live somewhere (the web, a wiki, an email archive) and only the *index* and the *retriever* are new.",
-      "block_id": "rag-block-94",
+      "quote": "Second, Bush's device **augmented a human reader**, not an LLM; the LLM is the new reader, and the augmentation has been upgraded from \"the user's cognition\" to \"the model's prompt\".",
+      "block_id": "rag-block-95",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-117",
-      "quote": "In every other respect — personal library, associative access, named links, retrieved at the moment of use to support the user's train of thought — \\citeauthor{bush1945aswemaythink}'s memex is the engineering plan a modern RAG system executes eighty years later.",
-      "block_id": "rag-block-94",
+      "quote": "Third, and most strikingly, Bush's essay did **not** anticipate the cheapness constraint that defines modern RAG: he imagined dedicated microfilm hardware in every office, while contemporary RAG assumes the documents already live somewhere (the web, a wiki, an email archive) and only the *index* and the *retriever* are new.",
+      "block_id": "rag-block-95",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-118",
-      "quote": "Two things did not have to wait eighty years.",
+      "quote": "In every other respect — personal library, associative access, named links, retrieved at the moment of use to support the user's train of thought — \\citeauthor{bush1945aswemaythink}'s memex is the engineering plan a modern RAG system executes eighty years later.",
       "block_id": "rag-block-95",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-119",
-      "quote": "\\citeauthor{bush1945aswemaythink}'s central *technical* prediction — that information would be retrieved by **associative** rather than by **alphabetical or categorical** links — is now the standard practice in retrieval: dense vectors retrieve by learned similarity, not by category.",
-      "block_id": "rag-block-95",
+      "quote": "Two things did not have to wait eighty years.",
+      "block_id": "rag-block-96",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-120",
-      "quote": "And his central *cultural* prediction — that the volume of human knowledge was about to outrun any individual's ability to navigate it without mechanical aid — is now the universal assumption of every knowledge-worker's morning.",
-      "block_id": "rag-block-95",
+      "quote": "\\citeauthor{bush1945aswemaythink}'s central *technical* prediction — that information would be retrieved by **associative** rather than by **alphabetical or categorical** links — is now the standard practice in retrieval: dense vectors retrieve by learned similarity, not by category.",
+      "block_id": "rag-block-96",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-121",
-      "quote": "Long before neural embeddings, retrieval was lexical and statistical.",
-      "block_id": "rag-block-97",
-      "section": "Before embeddings: SMART, tf-idf, and BM25",
+      "quote": "And his central *cultural* prediction — that the volume of human knowledge was about to outrun any individual's ability to navigate it without mechanical aid — is now the universal assumption of every knowledge-worker's morning.",
+      "block_id": "rag-block-96",
+      "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-122",
-      "quote": "Gerard Salton's SMART system represented documents as vectors of term weights and ranked them by cosine similarity, the direct ancestor of today's vector scoring.",
-      "block_id": "rag-block-97",
+      "quote": "Long before neural embeddings, retrieval was lexical and statistical.",
+      "block_id": "rag-block-98",
       "section": "Before embeddings: SMART, tf-idf, and BM25",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-123",
-      "quote": "The weighting scheme now called tf-idf — term frequency down-weighted by how rare a term is across the collection — grew out of that work, and the probabilistic Okapi BM25 ranker, developed in the 1990s, is still a hard baseline \\cite{salton1975vectorspace, salton1988termweighting, robertson2009bm25}.",
-      "block_id": "rag-block-97",
+      "quote": "Gerard Salton's SMART system represented documents as vectors of term weights and ranked them by cosine similarity, the direct ancestor of today's vector scoring.",
+      "block_id": "rag-block-98",
       "section": "Before embeddings: SMART, tf-idf, and BM25",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-124",
-      "quote": "Modern hybrid RAG runs this old machinery beside its embeddings.",
-      "block_id": "rag-block-97",
+      "quote": "The weighting scheme now called tf-idf — term frequency down-weighted by how rare a term is across the collection — grew out of that work, and the probabilistic Okapi BM25 ranker, developed in the 1990s, is still a hard baseline \\cite{salton1975vectorspace, salton1988termweighting, robertson2009bm25}.",
+      "block_id": "rag-block-98",
       "section": "Before embeddings: SMART, tf-idf, and BM25",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-125",
-      "quote": "Open-domain question answering turned retrieval into a benchmark problem.",
-      "block_id": "rag-block-99",
-      "section": "Open-domain QA: retrieve, then read",
+      "quote": "Modern hybrid RAG runs this old machinery beside its embeddings.",
+      "block_id": "rag-block-98",
+      "section": "Before embeddings: SMART, tf-idf, and BM25",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-126",
-      "quote": "The TREC QA tracks of the late 1990s asked systems to answer factoid questions from a large text collection, joining retrieval and answer extraction in one pipeline \\cite{voorhees1999trecqa}.",
-      "block_id": "rag-block-99",
+      "quote": "Open-domain question answering turned retrieval into a benchmark problem.",
+      "block_id": "rag-block-100",
       "section": "Open-domain QA: retrieve, then read",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-127",
-      "quote": "SQuAD (2016) then isolated the reading-comprehension half: given a paragraph, find the answer span \\cite{rajpurkar2016squad}.",
-      "block_id": "rag-block-99",
+      "quote": "The TREC QA tracks of the late 1990s asked systems to answer factoid questions from a large text collection, joining retrieval and answer extraction in one pipeline \\cite{voorhees1999trecqa}.",
+      "block_id": "rag-block-100",
       "section": "Open-domain QA: retrieve, then read",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-128",
-      "quote": "The two-stage pattern — retrieve passages, then read them — is exactly the shape of RAG.",
-      "block_id": "rag-block-99",
+      "quote": "SQuAD (2016) then isolated the reading-comprehension half: given a paragraph, find the answer span \\cite{rajpurkar2016squad}.",
+      "block_id": "rag-block-100",
       "section": "Open-domain QA: retrieve, then read",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-129",
-      "quote": "The neural turn came when retrieval itself was trained.",
-      "block_id": "rag-block-101",
-      "section": "Dense retrieval: DPR and REALM",
+      "quote": "The two-stage pattern — retrieve passages, then read them — is exactly the shape of RAG.",
+      "block_id": "rag-block-100",
+      "section": "Open-domain QA: retrieve, then read",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-130",
-      "quote": "Dense Passage Retrieval (DPR) replaced sparse term matching with two BERT encoders, one for questions and one for passages, trained so that a question's vector is close to its gold passage; it beat BM25 on open-domain QA \\cite{karpukhin2020dpr}.",
-      "block_id": "rag-block-101",
+      "quote": "The neural turn came when retrieval itself was trained.",
+      "block_id": "rag-block-102",
       "section": "Dense retrieval: DPR and REALM",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-131",
-      "quote": "REALM went further, pre-training a language model with a learned retriever and treating the retrieved document as a latent variable \\cite{guu2020realm}.",
-      "block_id": "rag-block-101",
+      "quote": "Dense Passage Retrieval (DPR) replaced sparse term matching with two BERT encoders, one for questions and one for passages, trained so that a question's vector is close to its gold passage; it beat BM25 on open-domain QA \\cite{karpukhin2020dpr}.",
+      "block_id": "rag-block-102",
       "section": "Dense retrieval: DPR and REALM",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-132",
-      "quote": "These papers made retrieval a differentiable, learned component rather than a fixed inverted index.",
-      "block_id": "rag-block-101",
+      "quote": "REALM went further, pre-training a language model with a learned retriever and treating the retrieved document as a latent variable \\cite{guu2020realm}.",
+      "block_id": "rag-block-102",
       "section": "Dense retrieval: DPR and REALM",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-133",
-      "quote": "Lewis et al.'s RAG (2020) paired a DPR retriever with a seq2seq generator and marginalised over retrieved passages during generation \\cite{lewis2020rag}.",
-      "block_id": "rag-block-103",
-      "section": "RAG, RETRO, Atlas, Self-RAG, GraphRAG",
+      "quote": "These papers made retrieval a differentiable, learned component rather than a fixed inverted index.",
+      "block_id": "rag-block-102",
+      "section": "Dense retrieval: DPR and REALM",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-134",
-      "quote": "RETRO retrieved from trillions of tokens at the level of token chunks and fused the retrieved neighbours into the transformer's attention \\cite{borgeaud2022retro}; Atlas showed that a strong retriever plus a modest reader could reach few-shot state of the art on knowledge-intensive tasks \\cite{izacard2022atlas}.",
-      "block_id": "rag-block-103",
+      "quote": "Lewis et al.'s RAG (2020) paired a DPR retriever with a seq2seq generator and marginalised over retrieved passages during generation \\cite{lewis2020rag}.",
+      "block_id": "rag-block-104",
       "section": "RAG, RETRO, Atlas, Self-RAG, GraphRAG",
       "kind": "statement"
     },
     {
       "id": "rag-stmt-135",
+      "quote": "RETRO retrieved from trillions of tokens at the level of token chunks and fused the retrieved neighbours into the transformer's attention \\cite{borgeaud2022retro}; Atlas showed that a strong retriever plus a modest reader could reach few-shot state of the art on knowledge-intensive tasks \\cite{izacard2022atlas}.",
+      "block_id": "rag-block-104",
+      "section": "RAG, RETRO, Atlas, Self-RAG, GraphRAG",
+      "kind": "statement"
+    },
+    {
+      "id": "rag-stmt-136",
       "quote": "Self-RAG later trained a model to emit reflection tokens that decide when to retrieve and whether a passage supports the claim \\cite{asai2023selfrag}, while GraphRAG built an entity-and-relation graph over the corpus and summarised its communities to answer global questions \\cite{edge2024graphrag}.",
-      "block_id": "rag-block-103",
+      "block_id": "rag-block-104",
       "section": "RAG, RETRO, Atlas, Self-RAG, GraphRAG",
       "kind": "statement"
     }
@@ -6035,234 +6082,240 @@
     },
     {
       "id": "rag-block-65",
-      "quote": "The two-stage funnel. Cheap recall (BM25 + dense, fused by RRF) gathers a broad candidate set; an expensive cross-encoder then reads each (query, doc) pair and keeps only the best. You cannot run the cross-encoder first — it is too slow over the whole corpus.",
+      "quote": "<rect x=\"20\" y=\"12\" width=\"120\" height=\"34\" rx=\"8\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/> <text x=\"80\" y=\"34\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">BM25 recall</text> <text x=\"80\" y=\"58\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text-secondary)\">top-50, cheap, lexical</text> <rect x=\"20\" y=\"98\" width=\"120\" height=\"34\" rx=\"8\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/> <text x=\"80\" y=\"120\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">dense recall</text> <text x=\"80\" y=\"144\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text-secondary)\">top-50, cheap, semantic</text> <rect x=\"220\" y=\"55\" width=\"120\" height=\"40\" rx=\"8\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/> <text x=\"280\" y=\"79\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">RRF fuse</text> <line x1=\"140\" y1=\"29\" x2=\"218\" y2=\"70\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\"/> <line x1=\"140\" y1=\"115\" x2=\"218\" y2=\"80\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\"/> <rect x=\"400\" y=\"55\" width=\"140\" height=\"40\" rx=\"8\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/> <text x=\"470\" y=\"73\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">cross-encoder</text> <text x=\"470\" y=\"90\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text-secondary)\">rescore, keep top-5</text> <line x1=\"340\" y1=\"75\" x2=\"398\" y2=\"75\" stroke=\"var(--mn-accent)\" stroke-width=\"1.5\" marker-end=\"url(#moearrow)\"/> <text x=\"370\" y=\"67\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text-secondary)\">~60 docs</text> <text x=\"470\" y=\"120\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text-secondary)\">expensive but precise</text>",
       "kind": "paragraph",
       "section": "Hybrid search: BM25 and dense are different questions"
     },
     {
       "id": "rag-block-66",
+      "quote": "The two-stage funnel. Cheap recall (BM25 + dense, fused by RRF) gathers a broad candidate set; an expensive cross-encoder then reads each (query, doc) pair and keeps only the best. You cannot run the cross-encoder first — it is too slow over the whole corpus.",
+      "kind": "paragraph",
+      "section": "Hybrid search: BM25 and dense are different questions"
+    },
+    {
+      "id": "rag-block-67",
       "quote": "Reranking: the expensive second look",
       "kind": "heading",
       "section": "Reranking: the expensive second look"
     },
     {
-      "id": "rag-block-67",
+      "id": "rag-block-68",
       "quote": "Dense and BM25 are **first-stage** retrievers: they are cheap, so they can score *all* of the corpus, but they do so *coarsely* — a dense model scores the query and a document *separately* (two encodings, one distance), so it never actually reads them together. A **cross-encoder** is the **second-stage** reranker: it takes the query *and* a candidate document as a single input, runs them through a transformer *jointly*, and outputs a relevance score for that pair. Because it reads the pair, it is far more precise — it can tell that a chunk *mentions* the topic but does not *answer* the question, which a first-stage similarity cannot.",
       "kind": "paragraph",
       "section": "Reranking: the expensive second look"
     },
     {
-      "id": "rag-block-68",
+      "id": "rag-block-69",
       "quote": "Contextual retrieval: fix the chunk at index time",
       "kind": "heading",
       "section": "Contextual retrieval: fix the chunk at index time"
     },
     {
-      "id": "rag-block-69",
+      "id": "rag-block-70",
       "quote": "A recurring failure is that a chunk, *out of context*, is not retrievable. A paragraph that says \"the failure mode was severe\" is a great answer — but if the word \"failure\" never appears in the query, no retriever finds it, because the chunk, standing alone, does not say what it is *about*. **Contextual retrieval** \\cite[Ford, Anthropic (2024)]{contextualretrieval2024} addresses this at **index time**: before embedding a chunk, prepend a short piece of LLM-written context that orients the chunk (\"this paragraph is from a post-mortem about the checkout service's 2024-03-14 incident, and it describes the failure mode\"), so the *enriched* chunk is what gets embedded and retrieved. Reported to cut the retrieval-failure rate by roughly half \\cite[Ford, Anthropic (2024)]{contextualretrieval2024}.",
       "kind": "paragraph",
       "section": "Contextual retrieval: fix the chunk at index time"
     },
     {
-      "id": "rag-block-70",
+      "id": "rag-block-71",
       "quote": "The idea generalizes: retrieval quality is set at **index time** as much as query time, and you can spend LLM compute at index time — once, per chunk — to make each chunk self-sufficient. It is the retrieval analog of doing the hard work up front.",
       "kind": "paragraph",
       "section": "Contextual retrieval: fix the chunk at index time"
     },
     {
-      "id": "rag-block-71",
+      "id": "rag-block-72",
       "quote": "Why RAG underperforms: the honest half",
       "kind": "heading",
       "section": "Why RAG underperforms: the honest half"
     },
     {
-      "id": "rag-block-72",
+      "id": "rag-block-73",
       "quote": "None of the above is a substitute for the fact that RAG *fails*, and the failure modes are structural (\\cite[Gao et al., 2023]{ragsurvey2023}):",
       "kind": "paragraph",
       "section": "Why RAG underperforms: the honest half"
     },
     {
-      "id": "rag-block-73",
+      "id": "rag-block-74",
       "quote": "The through-line: RAG is not a feature you add; it is a **pipeline with two failure points** (retrieval and integration), and each has its own diagnosis. \"Just add RAG\" is not a free lunch because the two halves fail independently, and the second hides the first — a confidently wrong answer from a *good* model over a *bad* context is the hardest failure to see, because everything in the model looks fine.",
       "kind": "paragraph",
       "section": "Why RAG underperforms: the honest half"
     },
     {
-      "id": "rag-block-74",
+      "id": "rag-block-75",
       "quote": "Summary",
       "kind": "heading",
       "section": "Summary"
     },
     {
-      "id": "rag-block-75",
+      "id": "rag-block-76",
       "quote": "| Question | Answer |",
       "kind": "table-row",
       "section": "Summary"
     },
     {
-      "id": "rag-block-76",
+      "id": "rag-block-77",
       "quote": "| What is RAG? | Fetch relevant docs $\\rightarrow$ inject into prompt $\\rightarrow$ LLM answers grounded in evidence |",
       "kind": "table-row",
       "section": "Summary"
     },
     {
-      "id": "rag-block-77",
+      "id": "rag-block-78",
       "quote": "| How is data stored? | As dense vectors in a vector DB, indexed with ANN algorithms like HNSW |",
       "kind": "table-row",
       "section": "Summary"
     },
     {
-      "id": "rag-block-78",
+      "id": "rag-block-79",
       "quote": "| RAG vs. ICL? | ICL = manual prompt engineering. RAG = automated retrieval that *feeds* ICL. Complementary |",
       "kind": "table-row",
       "section": "Summary"
     },
     {
-      "id": "rag-block-79",
+      "id": "rag-block-80",
       "quote": "| RAG vs. long context? | RAG searches millions of docs cheaply. Long context holds ~1 book expensively. Best used together |",
       "kind": "table-row",
       "section": "Summary"
     },
     {
-      "id": "rag-block-80",
+      "id": "rag-block-81",
       "quote": "| Are the LLM's weights changed? | **No.** RAG only changes the *input*. The model itself is untouched |",
       "kind": "table-row",
       "section": "Summary"
     },
     {
-      "id": "rag-block-81",
+      "id": "rag-block-82",
       "quote": "History",
       "kind": "heading",
       "section": "History"
     },
     {
-      "id": "rag-block-82",
+      "id": "rag-block-83",
       "quote": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval",
       "kind": "heading",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-83",
+      "id": "rag-block-84",
       "quote": "The RAG pipeline described in this chapter has a longer ancestry than 2020. Its conceptual blueprint — a personal, queryable store of human knowledge with associative links between documents, retrieved at the moment of use to augment a human's thinking — was drawn in 1945 by \\citeauthor{bush1945aswemaythink} (\\citeyear{bush1945aswemaythink}) in *The Atlantic Monthly*, in an essay that became the founding text of hypertext and personal information retrieval. \\citeauthor{bush1945aswemaythink} named the device the **memex** (\"memory extender\") and described it as a desk-sized electromechanical console that would store a personal library of microfilmed books and records, let the user consult them on translucent screens at will, and — this is the part the field remembered — allow the user to build **associative trails** between documents by stringing them together with named links, so that consulting one document would automatically pull up the next.",
       "kind": "paragraph",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-84",
+      "id": "rag-block-85",
       "quote": "The human mind operates by association. With one item in its grasp, it snaps instantly to the next that is suggested by the association of thoughts, in accordance with some intricate web of trails carried by the cells of the brain. [...] Selection by association, rather than indexing, may yet be mechanized.",
       "kind": "paragraph",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-85",
+      "id": "rag-block-86",
       "quote": "Bush's diagnosis of why such a device was needed has aged remarkably well. He calls the problem the *crisis of selection*: the volume of published knowledge had grown past any human's ability to keep up with, and the existing tools for finding it — Dewey indices, the Library of Congress catalog, professional abstracting services — were optimised for *retrieval by metadata* (title, author, subject) and were useless for the question the working scholar actually asks, which is *what do I already have in my head that connects to this*. Bush's answer was to mechanise a different operation: not \"search by keyword\", but **\"follow a trail of associated items\"**, where each item can name the next. The trail is the user's private graph of \"this reminds me of that\", which the memex stores and lets the user replay, share, and accumulate.",
       "kind": "paragraph",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-86",
+      "id": "rag-block-87",
       "quote": "Read against the present chapter, the mapping to RAG is exact:",
       "kind": "paragraph",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-87",
+      "id": "rag-block-88",
       "quote": "| Memex (1945) | Modern RAG |",
       "kind": "table-row",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-88",
+      "id": "rag-block-89",
       "quote": "| Personal library of microfilmed documents | A vector index of an organisation's documents |",
       "kind": "table-row",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-89",
+      "id": "rag-block-90",
       "quote": "| \"Selection by association\" | Embedding-based semantic search (or hybrid BM25 + dense) |",
       "kind": "table-row",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-90",
+      "id": "rag-block-91",
       "quote": "| Stored, named **trails** linking documents | Stored, retrieved **chunks** injected into an LLM prompt |",
       "kind": "table-row",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-91",
+      "id": "rag-block-92",
       "quote": "| \"The human mind snaps instantly to the next item\" | The LLM attends over retrieved context to produce the next token |",
       "kind": "table-row",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-92",
+      "id": "rag-block-93",
       "quote": "| Consulting a doc on the translucent screen | Reading a chunk out of a vector DB at query time |",
       "kind": "table-row",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-93",
+      "id": "rag-block-94",
       "quote": "| The memex user's associative memory | The LLM's context window |",
       "kind": "table-row",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-94",
+      "id": "rag-block-95",
       "quote": "Three differences matter. First, Bush's \"association\" was *human-defined* — the user built the trails — whereas modern dense retrieval learns associations from co-occurrence statistics; this is Bush in spirit (associative access) but not in mechanism (machine-learned similarity). Second, Bush's device **augmented a human reader**, not an LLM; the LLM is the new reader, and the augmentation has been upgraded from \"the user's cognition\" to \"the model's prompt\". Third, and most strikingly, Bush's essay did **not** anticipate the cheapness constraint that defines modern RAG: he imagined dedicated microfilm hardware in every office, while contemporary RAG assumes the documents already live somewhere (the web, a wiki, an email archive) and only the *index* and the *retriever* are new. In every other respect — personal library, associative access, named links, retrieved at the moment of use to support the user's train of thought — \\citeauthor{bush1945aswemaythink}'s memex is the engineering plan a modern RAG system executes eighty years later.",
       "kind": "paragraph",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-95",
+      "id": "rag-block-96",
       "quote": "Two things did not have to wait eighty years. \\citeauthor{bush1945aswemaythink}'s central *technical* prediction — that information would be retrieved by **associative** rather than by **alphabetical or categorical** links — is now the standard practice in retrieval: dense vectors retrieve by learned similarity, not by category. And his central *cultural* prediction — that the volume of human knowledge was about to outrun any individual's ability to navigate it without mechanical aid — is now the universal assumption of every knowledge-worker's morning.",
       "kind": "paragraph",
       "section": "Bush 1945: The Memex, Hypertext, and Personal Information Retrieval"
     },
     {
-      "id": "rag-block-96",
+      "id": "rag-block-97",
       "quote": "Before embeddings: SMART, tf-idf, and BM25",
       "kind": "heading",
       "section": "Before embeddings: SMART, tf-idf, and BM25"
     },
     {
-      "id": "rag-block-97",
+      "id": "rag-block-98",
       "quote": "Long before neural embeddings, retrieval was lexical and statistical. Gerard Salton's SMART system represented documents as vectors of term weights and ranked them by cosine similarity, the direct ancestor of today's vector scoring. The weighting scheme now called tf-idf — term frequency down-weighted by how rare a term is across the collection — grew out of that work, and the probabilistic Okapi BM25 ranker, developed in the 1990s, is still a hard baseline \\cite{salton1975vectorspace, salton1988termweighting, robertson2009bm25}. Modern hybrid RAG runs this old machinery beside its embeddings.",
       "kind": "paragraph",
       "section": "Before embeddings: SMART, tf-idf, and BM25"
     },
     {
-      "id": "rag-block-98",
+      "id": "rag-block-99",
       "quote": "Open-domain QA: retrieve, then read",
       "kind": "heading",
       "section": "Open-domain QA: retrieve, then read"
     },
     {
-      "id": "rag-block-99",
+      "id": "rag-block-100",
       "quote": "Open-domain question answering turned retrieval into a benchmark problem. The TREC QA tracks of the late 1990s asked systems to answer factoid questions from a large text collection, joining retrieval and answer extraction in one pipeline \\cite{voorhees1999trecqa}. SQuAD (2016) then isolated the reading-comprehension half: given a paragraph, find the answer span \\cite{rajpurkar2016squad}. The two-stage pattern — retrieve passages, then read them — is exactly the shape of RAG.",
       "kind": "paragraph",
       "section": "Open-domain QA: retrieve, then read"
     },
     {
-      "id": "rag-block-100",
+      "id": "rag-block-101",
       "quote": "Dense retrieval: DPR and REALM",
       "kind": "heading",
       "section": "Dense retrieval: DPR and REALM"
     },
     {
-      "id": "rag-block-101",
+      "id": "rag-block-102",
       "quote": "The neural turn came when retrieval itself was trained. Dense Passage Retrieval (DPR) replaced sparse term matching with two BERT encoders, one for questions and one for passages, trained so that a question's vector is close to its gold passage; it beat BM25 on open-domain QA \\cite{karpukhin2020dpr}. REALM went further, pre-training a language model with a learned retriever and treating the retrieved document as a latent variable \\cite{guu2020realm}. These papers made retrieval a differentiable, learned component rather than a fixed inverted index.",
       "kind": "paragraph",
       "section": "Dense retrieval: DPR and REALM"
     },
     {
-      "id": "rag-block-102",
+      "id": "rag-block-103",
       "quote": "RAG, RETRO, Atlas, Self-RAG, GraphRAG",
       "kind": "heading",
       "section": "RAG, RETRO, Atlas, Self-RAG, GraphRAG"
     },
     {
-      "id": "rag-block-103",
+      "id": "rag-block-104",
       "quote": "Lewis et al.'s RAG (2020) paired a DPR retriever with a seq2seq generator and marginalised over retrieved passages during generation \\cite{lewis2020rag}. RETRO retrieved from trillions of tokens at the level of token chunks and fused the retrieved neighbours into the transformer's attention \\cite{borgeaud2022retro}; Atlas showed that a strong retriever plus a modest reader could reach few-shot state of the art on knowledge-intensive tasks \\cite{izacard2022atlas}. Self-RAG later trained a model to emit reflection tokens that decide when to retrieve and whether a passage supports the claim \\cite{asai2023selfrag}, while GraphRAG built an entity-and-relation graph over the corpus and summarised its communities to answer global questions \\cite{edge2024graphrag}.",
       "kind": "paragraph",
       "section": "RAG, RETRO, Atlas, Self-RAG, GraphRAG"

@@ -14739,7 +14739,7 @@
     },
     {
       "id": "beyond_llms-stmt-253",
-      "quote": "In other words, \"decorrelate the neurons, spread out the representations\" is the same geometric recipe the href=\"deep_theory\">Why Do Networks Generalize?",
+      "quote": "In other words, \"decorrelate the neurons, spread out the representations\" is the same geometric recipe the population-geometry literature finds in trained feed-forward nets (see Why Do Networks Generalize?",
       "block_id": "beyond_llms-block-152",
       "section": "Reservoir Computing and Echo State Networks",
       "kind": "statement"
@@ -16816,7 +16816,7 @@
     },
     {
       "id": "beyond_llms-block-152",
-      "quote": "What makes a reservoir *work* is a question plasticity rules answer from the inside. \\cite[Morales, Mirasso & Soriano (2021)]{morales2021reservoir} add synaptic and non-synaptic plasticity to an Echo State Network and show the performance gain tracks two measurable geometry changes: the **pair-wise correlations between reservoir neurons fall** and each neuron becomes better at **separating similar inputs** in activity space. Optimal accuracy sits near the **edge of instability** — the recurrent analogue of the edge-of-chaos sweet spot above — and combining several plasticity rules beats any single one. In other words, \"decorrelate the neurons, spread out the representations\" is the same geometric recipe the href=\"deep_theory\">Why Do Networks Generalize? ).",
+      "quote": "What makes a reservoir *work* is a question plasticity rules answer from the inside. \\cite[Morales, Mirasso & Soriano (2021)]{morales2021reservoir} add synaptic and non-synaptic plasticity to an Echo State Network and show the performance gain tracks two measurable geometry changes: the **pair-wise correlations between reservoir neurons fall** and each neuron becomes better at **separating similar inputs** in activity space. Optimal accuracy sits near the **edge of instability** — the recurrent analogue of the edge-of-chaos sweet spot above — and combining several plasticity rules beats any single one. In other words, \"decorrelate the neurons, spread out the representations\" is the same geometric recipe the population-geometry literature finds in trained feed-forward nets (see Why Do Networks Generalize? ).",
       "kind": "paragraph",
       "section": "Reservoir Computing and Echo State Networks"
     },

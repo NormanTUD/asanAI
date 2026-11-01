@@ -1384,6 +1384,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-derivativelab-block-32-related_to-derivativelab-block-24",
+      "from": "derivativelab-block-32",
+      "to": "derivativelab-block-24",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-derivativelab-block-33-part_of-derivativelab",
       "from": "derivativelab-block-33",
       "to": "derivativelab",
@@ -1398,16 +1408,6 @@
       "from": "derivativelab-block-32",
       "to": "derivativelab-block-33",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-derivativelab-block-33-related_to-derivativelab-block-32",
-      "from": "derivativelab-block-33",
-      "to": "derivativelab-block-32",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1434,9 +1434,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-block-34-related_to-derivativelab-block-32",
+      "id": "struct-derivativelab-block-34-related_to-derivativelab-block-33",
       "from": "derivativelab-block-34",
-      "to": "derivativelab-block-32",
+      "to": "derivativelab-block-33",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1464,6 +1464,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-derivativelab-block-35-related_to-derivativelab-block-33",
+      "from": "derivativelab-block-35",
+      "to": "derivativelab-block-33",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-derivativelab-block-36-part_of-derivativelab",
       "from": "derivativelab-block-36",
       "to": "derivativelab",
@@ -1478,16 +1488,6 @@
       "from": "derivativelab-block-35",
       "to": "derivativelab-block-36",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-derivativelab-block-36-related_to-derivativelab-block-35",
-      "from": "derivativelab-block-36",
-      "to": "derivativelab-block-35",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1514,6 +1514,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-derivativelab-block-37-related_to-derivativelab-block-36",
+      "from": "derivativelab-block-37",
+      "to": "derivativelab-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-derivativelab-block-38-part_of-derivativelab",
       "from": "derivativelab-block-38",
       "to": "derivativelab",
@@ -1528,16 +1538,6 @@
       "from": "derivativelab-block-37",
       "to": "derivativelab-block-38",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-derivativelab-block-38-related_to-derivativelab-block-37",
-      "from": "derivativelab-block-38",
-      "to": "derivativelab-block-37",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1564,9 +1564,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-block-39-related_to-derivativelab-block-37",
+      "id": "struct-derivativelab-block-39-related_to-derivativelab-block-38",
       "from": "derivativelab-block-39",
-      "to": "derivativelab-block-37",
+      "to": "derivativelab-block-38",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1594,6 +1594,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-derivativelab-block-40-related_to-derivativelab-block-38",
+      "from": "derivativelab-block-40",
+      "to": "derivativelab-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-derivativelab-block-41-part_of-derivativelab",
       "from": "derivativelab-block-41",
       "to": "derivativelab",
@@ -1608,16 +1618,6 @@
       "from": "derivativelab-block-40",
       "to": "derivativelab-block-41",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-derivativelab-block-41-related_to-derivativelab-block-40",
-      "from": "derivativelab-block-41",
-      "to": "derivativelab-block-40",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1644,9 +1644,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-block-42-related_to-derivativelab-block-40",
+      "id": "struct-derivativelab-block-42-related_to-derivativelab-block-41",
       "from": "derivativelab-block-42",
-      "to": "derivativelab-block-40",
+      "to": "derivativelab-block-41",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1674,6 +1674,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-derivativelab-block-43-related_to-derivativelab-block-41",
+      "from": "derivativelab-block-43",
+      "to": "derivativelab-block-41",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-derivativelab-block-44-part_of-derivativelab",
       "from": "derivativelab-block-44",
       "to": "derivativelab",
@@ -1688,16 +1698,6 @@
       "from": "derivativelab-block-43",
       "to": "derivativelab-block-44",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-derivativelab-block-44-related_to-derivativelab-block-43",
-      "from": "derivativelab-block-44",
-      "to": "derivativelab-block-43",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1724,9 +1724,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-block-45-related_to-derivativelab-block-43",
+      "id": "struct-derivativelab-block-45-related_to-derivativelab-block-44",
       "from": "derivativelab-block-45",
-      "to": "derivativelab-block-43",
+      "to": "derivativelab-block-44",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1754,6 +1754,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-derivativelab-block-46-related_to-derivativelab-block-44",
+      "from": "derivativelab-block-46",
+      "to": "derivativelab-block-44",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-derivativelab-block-47-part_of-derivativelab",
       "from": "derivativelab-block-47",
       "to": "derivativelab",
@@ -1768,16 +1778,6 @@
       "from": "derivativelab-block-46",
       "to": "derivativelab-block-47",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-derivativelab-block-47-related_to-derivativelab-block-46",
-      "from": "derivativelab-block-47",
-      "to": "derivativelab-block-46",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1804,9 +1804,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-block-48-related_to-derivativelab-block-46",
+      "id": "struct-derivativelab-block-48-related_to-derivativelab-block-47",
       "from": "derivativelab-block-48",
-      "to": "derivativelab-block-46",
+      "to": "derivativelab-block-47",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1834,6 +1834,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-derivativelab-block-49-related_to-derivativelab-block-47",
+      "from": "derivativelab-block-49",
+      "to": "derivativelab-block-47",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-derivativelab-block-50-part_of-derivativelab",
       "from": "derivativelab-block-50",
       "to": "derivativelab",
@@ -1854,9 +1864,29 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-block-50-related_to-derivativelab-block-49",
+      "id": "struct-derivativelab-block-51-part_of-derivativelab",
+      "from": "derivativelab-block-51",
+      "to": "derivativelab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-derivativelab-block-50-before-derivativelab-block-51",
       "from": "derivativelab-block-50",
-      "to": "derivativelab-block-49",
+      "to": "derivativelab-block-51",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-derivativelab-block-51-related_to-derivativelab-block-50",
+      "from": "derivativelab-block-51",
+      "to": "derivativelab-block-50",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2174,9 +2204,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-32-part_of-derivativelab-block-30",
+      "id": "struct-derivativelab-stmt-32-part_of-derivativelab-block-29",
       "from": "derivativelab-stmt-32",
-      "to": "derivativelab-block-30",
+      "to": "derivativelab-block-29",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2194,9 +2224,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-34-part_of-derivativelab-block-31",
+      "id": "struct-derivativelab-stmt-34-part_of-derivativelab-block-32",
       "from": "derivativelab-stmt-34",
-      "to": "derivativelab-block-31",
+      "to": "derivativelab-block-32",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2204,9 +2234,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-35-part_of-derivativelab-block-31",
+      "id": "struct-derivativelab-stmt-35-part_of-derivativelab-block-32",
       "from": "derivativelab-stmt-35",
-      "to": "derivativelab-block-31",
+      "to": "derivativelab-block-32",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2214,9 +2244,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-36-part_of-derivativelab-block-31",
+      "id": "struct-derivativelab-stmt-36-part_of-derivativelab-block-32",
       "from": "derivativelab-stmt-36",
-      "to": "derivativelab-block-31",
+      "to": "derivativelab-block-32",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2224,9 +2254,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-37-part_of-derivativelab-block-31",
+      "id": "struct-derivativelab-stmt-37-part_of-derivativelab-block-32",
       "from": "derivativelab-stmt-37",
-      "to": "derivativelab-block-31",
+      "to": "derivativelab-block-32",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2234,9 +2264,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-38-part_of-derivativelab-block-33",
+      "id": "struct-derivativelab-stmt-38-part_of-derivativelab-block-32",
       "from": "derivativelab-stmt-38",
-      "to": "derivativelab-block-33",
+      "to": "derivativelab-block-32",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2254,9 +2284,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-40-part_of-derivativelab-block-34",
+      "id": "struct-derivativelab-stmt-40-part_of-derivativelab-block-35",
       "from": "derivativelab-stmt-40",
-      "to": "derivativelab-block-34",
+      "to": "derivativelab-block-35",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2264,9 +2294,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-41-part_of-derivativelab-block-34",
+      "id": "struct-derivativelab-stmt-41-part_of-derivativelab-block-35",
       "from": "derivativelab-stmt-41",
-      "to": "derivativelab-block-34",
+      "to": "derivativelab-block-35",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2274,9 +2304,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-42-part_of-derivativelab-block-34",
+      "id": "struct-derivativelab-stmt-42-part_of-derivativelab-block-35",
       "from": "derivativelab-stmt-42",
-      "to": "derivativelab-block-34",
+      "to": "derivativelab-block-35",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2284,9 +2314,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-43-part_of-derivativelab-block-36",
+      "id": "struct-derivativelab-stmt-43-part_of-derivativelab-block-35",
       "from": "derivativelab-stmt-43",
-      "to": "derivativelab-block-36",
+      "to": "derivativelab-block-35",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2294,9 +2324,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-44-part_of-derivativelab-block-38",
+      "id": "struct-derivativelab-stmt-44-part_of-derivativelab-block-37",
       "from": "derivativelab-stmt-44",
-      "to": "derivativelab-block-38",
+      "to": "derivativelab-block-37",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2314,9 +2344,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-46-part_of-derivativelab-block-41",
+      "id": "struct-derivativelab-stmt-46-part_of-derivativelab-block-40",
       "from": "derivativelab-stmt-46",
-      "to": "derivativelab-block-41",
+      "to": "derivativelab-block-40",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2334,9 +2364,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-48-part_of-derivativelab-block-42",
+      "id": "struct-derivativelab-stmt-48-part_of-derivativelab-block-43",
       "from": "derivativelab-stmt-48",
-      "to": "derivativelab-block-42",
+      "to": "derivativelab-block-43",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2344,9 +2374,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-49-part_of-derivativelab-block-44",
+      "id": "struct-derivativelab-stmt-49-part_of-derivativelab-block-43",
       "from": "derivativelab-stmt-49",
-      "to": "derivativelab-block-44",
+      "to": "derivativelab-block-43",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2354,9 +2384,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-50-part_of-derivativelab-block-44",
+      "id": "struct-derivativelab-stmt-50-part_of-derivativelab-block-45",
       "from": "derivativelab-stmt-50",
-      "to": "derivativelab-block-44",
+      "to": "derivativelab-block-45",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2364,9 +2394,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-51-part_of-derivativelab-block-44",
+      "id": "struct-derivativelab-stmt-51-part_of-derivativelab-block-45",
       "from": "derivativelab-stmt-51",
-      "to": "derivativelab-block-44",
+      "to": "derivativelab-block-45",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2384,9 +2414,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-53-part_of-derivativelab-block-47",
+      "id": "struct-derivativelab-stmt-53-part_of-derivativelab-block-46",
       "from": "derivativelab-stmt-53",
-      "to": "derivativelab-block-47",
+      "to": "derivativelab-block-46",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2404,9 +2434,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-55-part_of-derivativelab-block-50",
+      "id": "struct-derivativelab-stmt-55-part_of-derivativelab-block-49",
       "from": "derivativelab-stmt-55",
-      "to": "derivativelab-block-50",
+      "to": "derivativelab-block-49",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2414,9 +2444,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-56-part_of-derivativelab-block-50",
+      "id": "struct-derivativelab-stmt-56-part_of-derivativelab-block-51",
       "from": "derivativelab-stmt-56",
-      "to": "derivativelab-block-50",
+      "to": "derivativelab-block-51",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2424,9 +2454,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-derivativelab-stmt-57-part_of-derivativelab-block-50",
+      "id": "struct-derivativelab-stmt-57-part_of-derivativelab-block-51",
       "from": "derivativelab-stmt-57",
-      "to": "derivativelab-block-50",
+      "to": "derivativelab-block-51",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-derivativelab-stmt-58-part_of-derivativelab-block-51",
+      "from": "derivativelab-stmt-58",
+      "to": "derivativelab-block-51",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2647,190 +2687,197 @@
     },
     {
       "id": "derivativelab-stmt-31",
-      "quote": "Lift the fog ⟳ New mountain",
+      "quote": "<canvas data-fg=\"canvas\" aria-label=\"Foggy landscape: click to probe\"></canvas>",
       "block_id": "derivativelab-block-28",
       "section": "Mini game: the foggy mountain",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-32",
-      "quote": "Round 1 Lowest found – Personal best –",
-      "block_id": "derivativelab-block-30",
+      "quote": "Lift the fog ⟳ New mountain",
+      "block_id": "derivativelab-block-29",
       "section": "Mini game: the foggy mountain",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-33",
-      "quote": "The next leap came from the Kerala school on the Malabar coast.",
+      "quote": "Round 1 Lowest found – Personal best –",
       "block_id": "derivativelab-block-31",
       "section": "Mini game: the foggy mountain",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-34",
-      "quote": "Madhava of Sangamagrama (c.",
-      "block_id": "derivativelab-block-31",
+      "quote": "The next leap came from the Kerala school on the Malabar coast.",
+      "block_id": "derivativelab-block-32",
       "section": "Mini game: the foggy mountain",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-35",
-      "quote": "1350–1425) and his successors obtained infinite series for $\\pi$, sine and cosine around 1400, more than two centuries before Europe rediscovered them \\cite{madhava_mactutor}.",
-      "block_id": "derivativelab-block-31",
+      "quote": "Madhava of Sangamagrama (c.",
+      "block_id": "derivativelab-block-32",
       "section": "Mini game: the foggy mountain",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-36",
-      "quote": "1550) preserves the derivations, whose repeated summation of ever-smaller terms amounts to term-by-term integration (\\cite[Yuktibhāṣā]{madhava}).",
-      "block_id": "derivativelab-block-31",
+      "quote": "1350–1425) and his successors obtained infinite series for $\\pi$, sine and cosine around 1400, more than two centuries before Europe rediscovered them \\cite{madhava_mactutor}.",
+      "block_id": "derivativelab-block-32",
       "section": "Mini game: the foggy mountain",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-37",
-      "quote": "Their work was not a formal derivative, but it handled change and accumulation with infinite processes long before Newton and Leibniz made such processes a general method.",
-      "block_id": "derivativelab-block-31",
+      "quote": "1550) preserves the derivations, whose repeated summation of ever-smaller terms amounts to term-by-term integration (\\cite[Yuktibhāṣā]{madhava}).",
+      "block_id": "derivativelab-block-32",
       "section": "Mini game: the foggy mountain",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-38",
-      "quote": "The symbol $\\partial$ for partial derivatives appears in one of its first known uses in the work of the Marquis de Condorcet in \\citeyear{condorcet1770}; the modern partial-derivative notation $\\partial f/\\partial x$ was created by \\citeauthor{legendre1786} in \\citetitle{legendre1786} (\\citeyear{legendre1786}) — a suggestion he later abandoned — and was only popularized after Jacobi reintroduced it in 1841 (according to \\citeauthor{historyofmathematicalnotation}, Vol.",
-      "block_id": "derivativelab-block-33",
-      "section": "Understanding the Partial Derivative ($\\partial$)",
+      "quote": "Their work was not a formal derivative, but it handled change and accumulation with infinite processes long before Newton and Leibniz made such processes a general method.",
+      "block_id": "derivativelab-block-32",
+      "section": "Mini game: the foggy mountain",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-39",
-      "quote": "The modern definition is a limit, and that is a nineteenth-century achievement.",
+      "quote": "The symbol $\\partial$ for partial derivatives appears in one of its first known uses in the work of the Marquis de Condorcet in \\citeyear{condorcet1770}; the modern partial-derivative notation $\\partial f/\\partial x$ was created by \\citeauthor{legendre1786} in \\citetitle{legendre1786} (\\citeyear{legendre1786}) — a suggestion he later abandoned — and was only popularized after Jacobi reintroduced it in 1841 (according to \\citeauthor{historyofmathematicalnotation}, Vol.",
       "block_id": "derivativelab-block-34",
       "section": "Understanding the Partial Derivative ($\\partial$)",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-40",
-      "quote": "Cauchy treated the derivative as the limit of the difference quotient in his 1823 *Résumé des leçons sur le calcul infinitésimal* \\cite{cauchy1823resume}.",
-      "block_id": "derivativelab-block-34",
+      "quote": "The modern definition is a limit, and that is a nineteenth-century achievement.",
+      "block_id": "derivativelab-block-35",
       "section": "Understanding the Partial Derivative ($\\partial$)",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-41",
-      "quote": "Weierstrass went further, replacing talk of infinitely small quantities with the $\\varepsilon$–$\\delta$ inequalities that make “arbitrarily close” precise; his 1872 example of a continuous curve with no derivative anywhere showed why the rigor was needed \\cite{weierstrass_mactutor}.",
-      "block_id": "derivativelab-block-34",
+      "quote": "Cauchy treated the derivative as the limit of the difference quotient in his 1823 *Résumé des leçons sur le calcul infinitésimal* \\cite{cauchy1823resume}.",
+      "block_id": "derivativelab-block-35",
       "section": "Understanding the Partial Derivative ($\\partial$)",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-42",
-      "quote": "The secant in the lab is an approximation; the derivative is what those secants approach.",
-      "block_id": "derivativelab-block-34",
+      "quote": "Weierstrass went further, replacing talk of infinitely small quantities with the $\\varepsilon$–$\\delta$ inequalities that make “arbitrarily close” precise; his 1872 example of a continuous curve with no derivative anywhere showed why the rigor was needed \\cite{weierstrass_mactutor}.",
+      "block_id": "derivativelab-block-35",
       "section": "Understanding the Partial Derivative ($\\partial$)",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-43",
-      "quote": "The partial derivative is a way to measure how a single variable affects the final result while ignoring everything else.",
-      "block_id": "derivativelab-block-36",
-      "section": "The Theory: Isolation",
+      "quote": "The secant in the lab is an approximation; the derivative is what those secants approach.",
+      "block_id": "derivativelab-block-35",
+      "section": "Understanding the Partial Derivative ($\\partial$)",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-44",
-      "quote": "Let's define the **Loss Function** as:",
-      "block_id": "derivativelab-block-38",
-      "section": "The Practical Example: Minimizing Prediction Error",
+      "quote": "The partial derivative is a way to measure how a single variable affects the final result while ignoring everything else.",
+      "block_id": "derivativelab-block-37",
+      "section": "The Theory: Isolation",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-45",
-      "quote": "To reduce the error, the AI needs to know which direction to “step” by calculating partial derivatives.",
+      "quote": "Let's define the **Loss Function** as:",
       "block_id": "derivativelab-block-39",
       "section": "The Practical Example: Minimizing Prediction Error",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-46",
-      "quote": "At the current point $(x, y) = (4, 1)$, the AI combines these individual slopes into a **Gradient Vector**:",
-      "block_id": "derivativelab-block-41",
-      "section": "Why it Matters for AI",
+      "quote": "To reduce the error, the AI needs to know which direction to “step” by calculating partial derivatives.",
+      "block_id": "derivativelab-block-40",
+      "section": "The Practical Example: Minimizing Prediction Error",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-47",
-      "quote": "This vector gives the local direction and rate of steepest increase; the AI moves against it by a step set by the learning rate.",
+      "quote": "At the current point $(x, y) = (4, 1)$, the AI combines these individual slopes into a **Gradient Vector**:",
       "block_id": "derivativelab-block-42",
       "section": "Why it Matters for AI",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-48",
-      "quote": "Just like the **“Take 1 Step Down”** button, the AI uses these numbers to move toward the minimum error by updating each variable independently:",
-      "block_id": "derivativelab-block-42",
+      "quote": "This vector gives the local direction and rate of steepest increase; the AI moves against it by a step set by the learning rate.",
+      "block_id": "derivativelab-block-43",
       "section": "Why it Matters for AI",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-49",
-      "quote": "You've learned how to find the slope of one hill.",
-      "block_id": "derivativelab-block-44",
-      "section": "The “Backpropagation” Bridge: The Chain Rule",
+      "quote": "Just like the **“Take 1 Step Down”** button, the AI uses these numbers to move toward the minimum error by updating each variable independently:",
+      "block_id": "derivativelab-block-43",
+      "section": "Why it Matters for AI",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-50",
-      "quote": "But a Deep AI is like a **chain of hills**.",
-      "block_id": "derivativelab-block-44",
+      "quote": "You've learned how to find the slope of one hill.",
+      "block_id": "derivativelab-block-45",
       "section": "The “Backpropagation” Bridge: The Chain Rule",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-51",
-      "quote": "When the AI makes a mistake at the very end (the output), it has to figure out which “knob” at the very beginning (the input) caused it.",
-      "block_id": "derivativelab-block-44",
+      "quote": "But a Deep AI is like a **chain of hills**.",
+      "block_id": "derivativelab-block-45",
       "section": "The “Backpropagation” Bridge: The Chain Rule",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-52",
-      "quote": "This is called **Backpropagation**, and it relies on the **Chain Rule**.",
+      "quote": "When the AI makes a mistake at the very end (the output), it has to figure out which “knob” at the very beginning (the input) caused it.",
       "block_id": "derivativelab-block-45",
       "section": "The “Backpropagation” Bridge: The Chain Rule",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-53",
-      "quote": "Imagine three gears connected in a line: Gear A, Gear B, and Gear C.",
-      "block_id": "derivativelab-block-47",
-      "section": "The Message Passing",
+      "quote": "This is called **Backpropagation**, and it relies on the **Chain Rule**.",
+      "block_id": "derivativelab-block-46",
+      "section": "The “Backpropagation” Bridge: The Chain Rule",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-54",
-      "quote": "If you want to know how fast Gear C moves when you touch Gear A, you just multiply the ratios:",
+      "quote": "Imagine three gears connected in a line: Gear A, Gear B, and Gear C.",
       "block_id": "derivativelab-block-48",
       "section": "The Message Passing",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-55",
-      "quote": "In AI, we calculate the error at the end first.",
-      "block_id": "derivativelab-block-50",
-      "section": "Why “Back”?",
+      "quote": "If you want to know how fast Gear C moves when you touch Gear A, you just multiply the ratios:",
+      "block_id": "derivativelab-block-49",
+      "section": "The Message Passing",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-56",
-      "quote": "We then pass that “error message” backward through the chain.",
-      "block_id": "derivativelab-block-50",
+      "quote": "In AI, we calculate the error at the end first.",
+      "block_id": "derivativelab-block-51",
       "section": "Why “Back”?",
       "kind": "statement"
     },
     {
       "id": "derivativelab-stmt-57",
+      "quote": "We then pass that “error message” backward through the chain.",
+      "block_id": "derivativelab-block-51",
+      "section": "Why “Back”?",
+      "kind": "statement"
+    },
+    {
+      "id": "derivativelab-stmt-58",
       "quote": "Each layer multiplies the incoming message by its own local slope.",
-      "block_id": "derivativelab-block-50",
+      "block_id": "derivativelab-block-51",
       "section": "Why “Back”?",
       "kind": "statement"
     }
@@ -3000,138 +3047,144 @@
     },
     {
       "id": "derivativelab-block-28",
-      "quote": "Lift the fog ⟳ New mountain",
+      "quote": "<canvas data-fg=\"canvas\" aria-label=\"Foggy landscape: click to probe\"></canvas>",
       "kind": "paragraph",
       "section": "Mini game: the foggy mountain"
     },
     {
       "id": "derivativelab-block-29",
-      "quote": "↘ show slopes",
+      "quote": "Lift the fog ⟳ New mountain",
       "kind": "paragraph",
       "section": "Mini game: the foggy mountain"
     },
     {
       "id": "derivativelab-block-30",
-      "quote": "Round 1 Lowest found – Personal best –",
+      "quote": "↘ show slopes",
       "kind": "paragraph",
       "section": "Mini game: the foggy mountain"
     },
     {
       "id": "derivativelab-block-31",
-      "quote": "The next leap came from the Kerala school on the Malabar coast. Madhava of Sangamagrama (c. 1350–1425) and his successors obtained infinite series for $\\pi$, sine and cosine around 1400, more than two centuries before Europe rediscovered them \\cite{madhava_mactutor}. The *Yuktibhāṣā* (c. 1550) preserves the derivations, whose repeated summation of ever-smaller terms amounts to term-by-term integration (\\cite[Yuktibhāṣā]{madhava}). Their work was not a formal derivative, but it handled change and accumulation with infinite processes long before Newton and Leibniz made such processes a general method.",
+      "quote": "Round 1 Lowest found – Personal best –",
       "kind": "paragraph",
       "section": "Mini game: the foggy mountain"
     },
     {
       "id": "derivativelab-block-32",
+      "quote": "The next leap came from the Kerala school on the Malabar coast. Madhava of Sangamagrama (c. 1350–1425) and his successors obtained infinite series for $\\pi$, sine and cosine around 1400, more than two centuries before Europe rediscovered them \\cite{madhava_mactutor}. The *Yuktibhāṣā* (c. 1550) preserves the derivations, whose repeated summation of ever-smaller terms amounts to term-by-term integration (\\cite[Yuktibhāṣā]{madhava}). Their work was not a formal derivative, but it handled change and accumulation with infinite processes long before Newton and Leibniz made such processes a general method.",
+      "kind": "paragraph",
+      "section": "Mini game: the foggy mountain"
+    },
+    {
+      "id": "derivativelab-block-33",
       "quote": "Understanding the Partial Derivative ($\\partial$)",
       "kind": "heading",
       "section": "Understanding the Partial Derivative ($\\partial$)"
     },
     {
-      "id": "derivativelab-block-33",
+      "id": "derivativelab-block-34",
       "quote": "The symbol $\\partial$ for partial derivatives appears in one of its first known uses in the work of the Marquis de Condorcet in \\citeyear{condorcet1770}; the modern partial-derivative notation $\\partial f/\\partial x$ was created by \\citeauthor{legendre1786} in \\citetitle{legendre1786} (\\citeyear{legendre1786}) — a suggestion he later abandoned — and was only popularized after Jacobi reintroduced it in 1841 (according to \\citeauthor{historyofmathematicalnotation}, Vol. 2, p. 225).",
       "kind": "paragraph",
       "section": "Understanding the Partial Derivative ($\\partial$)"
     },
     {
-      "id": "derivativelab-block-34",
+      "id": "derivativelab-block-35",
       "quote": "The modern definition is a limit, and that is a nineteenth-century achievement. Cauchy treated the derivative as the limit of the difference quotient in his 1823 *Résumé des leçons sur le calcul infinitésimal* \\cite{cauchy1823resume}. Weierstrass went further, replacing talk of infinitely small quantities with the $\\varepsilon$–$\\delta$ inequalities that make “arbitrarily close” precise; his 1872 example of a continuous curve with no derivative anywhere showed why the rigor was needed \\cite{weierstrass_mactutor}. The secant in the lab is an approximation; the derivative is what those secants approach.",
       "kind": "paragraph",
       "section": "Understanding the Partial Derivative ($\\partial$)"
     },
     {
-      "id": "derivativelab-block-35",
+      "id": "derivativelab-block-36",
       "quote": "The Theory: Isolation",
       "kind": "heading",
       "section": "The Theory: Isolation"
     },
     {
-      "id": "derivativelab-block-36",
+      "id": "derivativelab-block-37",
       "quote": "The partial derivative is a way to measure how a single variable affects the final result while ignoring everything else.",
       "kind": "paragraph",
       "section": "The Theory: Isolation"
     },
     {
-      "id": "derivativelab-block-37",
+      "id": "derivativelab-block-38",
       "quote": "The Practical Example: Minimizing Prediction Error",
       "kind": "heading",
       "section": "The Practical Example: Minimizing Prediction Error"
     },
     {
-      "id": "derivativelab-block-38",
+      "id": "derivativelab-block-39",
       "quote": "Let's define the **Loss Function** as:",
       "kind": "paragraph",
       "section": "The Practical Example: Minimizing Prediction Error"
     },
     {
-      "id": "derivativelab-block-39",
+      "id": "derivativelab-block-40",
       "quote": "To reduce the error, the AI needs to know which direction to “step” by calculating partial derivatives.",
       "kind": "paragraph",
       "section": "The Practical Example: Minimizing Prediction Error"
     },
     {
-      "id": "derivativelab-block-40",
+      "id": "derivativelab-block-41",
       "quote": "Why it Matters for AI",
       "kind": "heading",
       "section": "Why it Matters for AI"
     },
     {
-      "id": "derivativelab-block-41",
+      "id": "derivativelab-block-42",
       "quote": "At the current point $(x, y) = (4, 1)$, the AI combines these individual slopes into a **Gradient Vector**:",
       "kind": "paragraph",
       "section": "Why it Matters for AI"
     },
     {
-      "id": "derivativelab-block-42",
+      "id": "derivativelab-block-43",
       "quote": "This vector gives the local direction and rate of steepest increase; the AI moves against it by a step set by the learning rate. Just like the **“Take 1 Step Down”** button, the AI uses these numbers to move toward the minimum error by updating each variable independently:",
       "kind": "paragraph",
       "section": "Why it Matters for AI"
     },
     {
-      "id": "derivativelab-block-43",
+      "id": "derivativelab-block-44",
       "quote": "The “Backpropagation” Bridge: The Chain Rule",
       "kind": "heading",
       "section": "The “Backpropagation” Bridge: The Chain Rule"
     },
     {
-      "id": "derivativelab-block-44",
+      "id": "derivativelab-block-45",
       "quote": "You've learned how to find the slope of one hill. But a Deep AI is like a **chain of hills**. When the AI makes a mistake at the very end (the output), it has to figure out which “knob” at the very beginning (the input) caused it.",
       "kind": "paragraph",
       "section": "The “Backpropagation” Bridge: The Chain Rule"
     },
     {
-      "id": "derivativelab-block-45",
+      "id": "derivativelab-block-46",
       "quote": "This is called **Backpropagation**, and it relies on the **Chain Rule**.",
       "kind": "paragraph",
       "section": "The “Backpropagation” Bridge: The Chain Rule"
     },
     {
-      "id": "derivativelab-block-46",
+      "id": "derivativelab-block-47",
       "quote": "The Message Passing",
       "kind": "heading",
       "section": "The Message Passing"
     },
     {
-      "id": "derivativelab-block-47",
+      "id": "derivativelab-block-48",
       "quote": "Imagine three gears connected in a line: Gear A, Gear B, and Gear C.",
       "kind": "paragraph",
       "section": "The Message Passing"
     },
     {
-      "id": "derivativelab-block-48",
+      "id": "derivativelab-block-49",
       "quote": "If you want to know how fast Gear C moves when you touch Gear A, you just multiply the ratios:",
       "kind": "paragraph",
       "section": "The Message Passing"
     },
     {
-      "id": "derivativelab-block-49",
+      "id": "derivativelab-block-50",
       "quote": "Why “Back”?",
       "kind": "heading",
       "section": "Why “Back”?"
     },
     {
-      "id": "derivativelab-block-50",
+      "id": "derivativelab-block-51",
       "quote": "In AI, we calculate the error at the end first. We then pass that “error message” backward through the chain. Each layer multiplies the incoming message by its own local slope.",
       "kind": "paragraph",
       "section": "Why “Back”?"

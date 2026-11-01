@@ -3794,6 +3794,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-math_ii-block-100-related_to-math_ii-block-97",
+      "from": "math_ii-block-100",
+      "to": "math_ii-block-97",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-math_ii-block-101-part_of-math-ii",
       "from": "math_ii-block-101",
       "to": "math-ii",
@@ -3814,9 +3824,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-101-related_to-math_ii-block-100",
+      "id": "struct-math_ii-block-101-related_to-math_ii-block-97",
       "from": "math_ii-block-101",
-      "to": "math_ii-block-100",
+      "to": "math_ii-block-97",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3844,16 +3854,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-102-related_to-math_ii-block-100",
-      "from": "math_ii-block-102",
-      "to": "math_ii-block-100",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-math_ii-block-103-part_of-math-ii",
       "from": "math_ii-block-103",
       "to": "math-ii",
@@ -3874,9 +3874,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-103-related_to-math_ii-block-100",
+      "id": "struct-math_ii-block-103-related_to-math_ii-block-102",
       "from": "math_ii-block-103",
-      "to": "math_ii-block-100",
+      "to": "math_ii-block-102",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3904,9 +3904,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-104-related_to-math_ii-block-100",
+      "id": "struct-math_ii-block-104-related_to-math_ii-block-102",
       "from": "math_ii-block-104",
-      "to": "math_ii-block-100",
+      "to": "math_ii-block-102",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3934,6 +3934,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-math_ii-block-105-related_to-math_ii-block-102",
+      "from": "math_ii-block-105",
+      "to": "math_ii-block-102",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-math_ii-block-106-part_of-math-ii",
       "from": "math_ii-block-106",
       "to": "math-ii",
@@ -3954,9 +3964,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-106-related_to-math_ii-block-105",
+      "id": "struct-math_ii-block-106-related_to-math_ii-block-102",
       "from": "math_ii-block-106",
-      "to": "math_ii-block-105",
+      "to": "math_ii-block-102",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3984,16 +3994,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-107-related_to-math_ii-block-105",
-      "from": "math_ii-block-107",
-      "to": "math_ii-block-105",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-math_ii-block-108-part_of-math-ii",
       "from": "math_ii-block-108",
       "to": "math-ii",
@@ -4014,9 +4014,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-108-related_to-math_ii-block-105",
+      "id": "struct-math_ii-block-108-related_to-math_ii-block-107",
       "from": "math_ii-block-108",
-      "to": "math_ii-block-105",
+      "to": "math_ii-block-107",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -4044,6 +4044,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-math_ii-block-109-related_to-math_ii-block-107",
+      "from": "math_ii-block-109",
+      "to": "math_ii-block-107",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-math_ii-block-110-part_of-math-ii",
       "from": "math_ii-block-110",
       "to": "math-ii",
@@ -4064,9 +4074,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-110-related_to-math_ii-block-109",
+      "id": "struct-math_ii-block-110-related_to-math_ii-block-107",
       "from": "math_ii-block-110",
-      "to": "math_ii-block-109",
+      "to": "math_ii-block-107",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -4094,16 +4104,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-111-related_to-math_ii-block-109",
-      "from": "math_ii-block-111",
-      "to": "math_ii-block-109",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-math_ii-block-112-part_of-math-ii",
       "from": "math_ii-block-112",
       "to": "math-ii",
@@ -4118,6 +4118,16 @@
       "from": "math_ii-block-111",
       "to": "math_ii-block-112",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-block-112-related_to-math_ii-block-111",
+      "from": "math_ii-block-112",
+      "to": "math_ii-block-111",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -4144,9 +4154,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-113-related_to-math_ii-block-112",
+      "id": "struct-math_ii-block-113-related_to-math_ii-block-111",
       "from": "math_ii-block-113",
-      "to": "math_ii-block-112",
+      "to": "math_ii-block-111",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -4224,16 +4234,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-116-related_to-math_ii-block-114",
-      "from": "math_ii-block-116",
-      "to": "math_ii-block-114",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-math_ii-block-117-part_of-math-ii",
       "from": "math_ii-block-117",
       "to": "math-ii",
@@ -4248,6 +4248,16 @@
       "from": "math_ii-block-116",
       "to": "math_ii-block-117",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-block-117-related_to-math_ii-block-116",
+      "from": "math_ii-block-117",
+      "to": "math_ii-block-116",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -4274,9 +4284,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-118-related_to-math_ii-block-117",
+      "id": "struct-math_ii-block-118-related_to-math_ii-block-116",
       "from": "math_ii-block-118",
-      "to": "math_ii-block-117",
+      "to": "math_ii-block-116",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -4304,16 +4314,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-119-related_to-math_ii-block-117",
-      "from": "math_ii-block-119",
-      "to": "math_ii-block-117",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-math_ii-block-120-part_of-math-ii",
       "from": "math_ii-block-120",
       "to": "math-ii",
@@ -4334,9 +4334,69 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-block-120-related_to-math_ii-block-117",
+      "id": "struct-math_ii-block-120-related_to-math_ii-block-119",
       "from": "math_ii-block-120",
-      "to": "math_ii-block-117",
+      "to": "math_ii-block-119",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-block-121-part_of-math-ii",
+      "from": "math_ii-block-121",
+      "to": "math-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-block-120-before-math_ii-block-121",
+      "from": "math_ii-block-120",
+      "to": "math_ii-block-121",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-block-121-related_to-math_ii-block-119",
+      "from": "math_ii-block-121",
+      "to": "math_ii-block-119",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-block-122-part_of-math-ii",
+      "from": "math_ii-block-122",
+      "to": "math-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-block-121-before-math_ii-block-122",
+      "from": "math_ii-block-121",
+      "to": "math_ii-block-122",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-block-122-related_to-math_ii-block-119",
+      "from": "math_ii-block-122",
+      "to": "math_ii-block-119",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5504,9 +5564,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-117-part_of-math_ii-block-101",
+      "id": "struct-math_ii-stmt-117-part_of-math_ii-block-103",
       "from": "math_ii-stmt-117",
-      "to": "math_ii-block-101",
+      "to": "math_ii-block-103",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5514,9 +5574,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-118-part_of-math_ii-block-101",
+      "id": "struct-math_ii-stmt-118-part_of-math_ii-block-103",
       "from": "math_ii-stmt-118",
-      "to": "math_ii-block-101",
+      "to": "math_ii-block-103",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5524,9 +5584,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-119-part_of-math_ii-block-102",
+      "id": "struct-math_ii-stmt-119-part_of-math_ii-block-104",
       "from": "math_ii-stmt-119",
-      "to": "math_ii-block-102",
+      "to": "math_ii-block-104",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5534,9 +5594,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-120-part_of-math_ii-block-102",
+      "id": "struct-math_ii-stmt-120-part_of-math_ii-block-104",
       "from": "math_ii-stmt-120",
-      "to": "math_ii-block-102",
+      "to": "math_ii-block-104",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5544,9 +5604,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-121-part_of-math_ii-block-102",
+      "id": "struct-math_ii-stmt-121-part_of-math_ii-block-104",
       "from": "math_ii-stmt-121",
-      "to": "math_ii-block-102",
+      "to": "math_ii-block-104",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5554,9 +5614,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-122-part_of-math_ii-block-102",
+      "id": "struct-math_ii-stmt-122-part_of-math_ii-block-104",
       "from": "math_ii-stmt-122",
-      "to": "math_ii-block-102",
+      "to": "math_ii-block-104",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5564,9 +5624,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-123-part_of-math_ii-block-103",
+      "id": "struct-math_ii-stmt-123-part_of-math_ii-block-105",
       "from": "math_ii-stmt-123",
-      "to": "math_ii-block-103",
+      "to": "math_ii-block-105",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5574,9 +5634,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-124-part_of-math_ii-block-103",
+      "id": "struct-math_ii-stmt-124-part_of-math_ii-block-105",
       "from": "math_ii-stmt-124",
-      "to": "math_ii-block-103",
+      "to": "math_ii-block-105",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5584,28 +5644,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-125-part_of-math_ii-block-104",
+      "id": "struct-math_ii-stmt-125-part_of-math_ii-block-106",
       "from": "math_ii-stmt-125",
-      "to": "math_ii-block-104",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_ii-stmt-126-part_of-math_ii-block-104",
-      "from": "math_ii-stmt-126",
-      "to": "math_ii-block-104",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_ii-stmt-127-part_of-math_ii-block-106",
-      "from": "math_ii-stmt-127",
       "to": "math_ii-block-106",
       "kind": "part_of",
       "qualifiers": {},
@@ -5614,9 +5654,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-128-part_of-math_ii-block-111",
-      "from": "math_ii-stmt-128",
-      "to": "math_ii-block-111",
+      "id": "struct-math_ii-stmt-126-part_of-math_ii-block-106",
+      "from": "math_ii-stmt-126",
+      "to": "math_ii-block-106",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5624,8 +5664,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-129-part_of-math_ii-block-113",
-      "from": "math_ii-stmt-129",
+      "id": "struct-math_ii-stmt-127-part_of-math_ii-block-108",
+      "from": "math_ii-stmt-127",
+      "to": "math_ii-block-108",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-stmt-128-part_of-math_ii-block-113",
+      "from": "math_ii-stmt-128",
       "to": "math_ii-block-113",
       "kind": "part_of",
       "qualifiers": {},
@@ -5634,8 +5684,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-130-part_of-math_ii-block-115",
-      "from": "math_ii-stmt-130",
+      "id": "struct-math_ii-stmt-129-part_of-math_ii-block-115",
+      "from": "math_ii-stmt-129",
       "to": "math_ii-block-115",
       "kind": "part_of",
       "qualifiers": {},
@@ -5644,48 +5694,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-131-part_of-math_ii-block-116",
+      "id": "struct-math_ii-stmt-130-part_of-math_ii-block-117",
+      "from": "math_ii-stmt-130",
+      "to": "math_ii-block-117",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-stmt-131-part_of-math_ii-block-118",
       "from": "math_ii-stmt-131",
-      "to": "math_ii-block-116",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_ii-stmt-132-part_of-math_ii-block-116",
-      "from": "math_ii-stmt-132",
-      "to": "math_ii-block-116",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_ii-stmt-133-part_of-math_ii-block-116",
-      "from": "math_ii-stmt-133",
-      "to": "math_ii-block-116",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_ii-stmt-134-part_of-math_ii-block-116",
-      "from": "math_ii-stmt-134",
-      "to": "math_ii-block-116",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_ii-stmt-135-part_of-math_ii-block-118",
-      "from": "math_ii-stmt-135",
       "to": "math_ii-block-118",
       "kind": "part_of",
       "qualifiers": {},
@@ -5694,9 +5714,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-136-part_of-math_ii-block-119",
-      "from": "math_ii-stmt-136",
-      "to": "math_ii-block-119",
+      "id": "struct-math_ii-stmt-132-part_of-math_ii-block-118",
+      "from": "math_ii-stmt-132",
+      "to": "math_ii-block-118",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5704,9 +5724,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-137-part_of-math_ii-block-119",
-      "from": "math_ii-stmt-137",
-      "to": "math_ii-block-119",
+      "id": "struct-math_ii-stmt-133-part_of-math_ii-block-118",
+      "from": "math_ii-stmt-133",
+      "to": "math_ii-block-118",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5714,9 +5734,49 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_ii-stmt-138-part_of-math_ii-block-120",
-      "from": "math_ii-stmt-138",
+      "id": "struct-math_ii-stmt-134-part_of-math_ii-block-118",
+      "from": "math_ii-stmt-134",
+      "to": "math_ii-block-118",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-stmt-135-part_of-math_ii-block-120",
+      "from": "math_ii-stmt-135",
       "to": "math_ii-block-120",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-stmt-136-part_of-math_ii-block-121",
+      "from": "math_ii-stmt-136",
+      "to": "math_ii-block-121",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-stmt-137-part_of-math_ii-block-121",
+      "from": "math_ii-stmt-137",
+      "to": "math_ii-block-121",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_ii-stmt-138-part_of-math_ii-block-122",
+      "from": "math_ii-stmt-138",
+      "to": "math_ii-block-122",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -6540,154 +6600,154 @@
     {
       "id": "math_ii-stmt-117",
       "quote": "The **Hadamard Product** ($\\odot$) was introduced by \\citeauthor{hadamardproduct} to study **singularities** in complex power series: the term-by-term product and the related **Hadamard multiplication theorem** belong to his 1899 *Acta Mathematica* paper \\citetitle{hadamard1899series}.",
-      "block_id": "math_ii-block-101",
+      "block_id": "math_ii-block-103",
       "section": "The Hadamard Product ($\\odot$)",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-118",
       "quote": "It is defined for vectors as $\\vec{a} \\odot \\vec{b} = (a_1 b_1, \\dots, a_n b_n)^T$ — the coefficients are multiplied term by term — which is exactly what lets one predict the analytic continuation and boundaries of functions derived from known ones.",
-      "block_id": "math_ii-block-101",
+      "block_id": "math_ii-block-103",
       "section": "The Hadamard Product ($\\odot$)",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-119",
       "quote": "The history is a little more tangled than the name suggests.",
-      "block_id": "math_ii-block-102",
+      "block_id": "math_ii-block-104",
       "section": "The Hadamard Product ($\\odot$)",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-120",
       "quote": "Hadamard's 1892 thesis was about Taylor series and analytic continuation; the term-by-term product and its multiplication theorem belong to his 1899 *Acta Mathematica* paper (\\cite[Hadamard, 1899]{hadamard1899series}).",
-      "block_id": "math_ii-block-102",
+      "block_id": "math_ii-block-104",
       "section": "The Hadamard Product ($\\odot$)",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-121",
       "quote": "For matrices the key result is Schur's: the Hadamard product of two positive-semidefinite matrices is positive-semidefinite, proved as Theorem VII of his 1911 paper (\\cite[Schur, 1911]{schur1911bilinear}).",
-      "block_id": "math_ii-block-102",
+      "block_id": "math_ii-block-104",
       "section": "The Hadamard Product ($\\odot$)",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-122",
       "quote": "The name \"Hadamard product\" for the matrix operation was popularised by Paul Halmos, who recalled that John von Neumann suggested it (\\cite[Hadamard product, Wikipedia]{hadamard_product_wiki}).",
-      "block_id": "math_ii-block-102",
+      "block_id": "math_ii-block-104",
       "section": "The Hadamard Product ($\\odot$)",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-123",
       "quote": "While standard matrix multiplication follows the “row-by-column” rule, the **Hadamard Product** (also known as the *element-wise product*) is much more straightforward.",
-      "block_id": "math_ii-block-103",
+      "block_id": "math_ii-block-105",
       "section": "The Hadamard Product ($\\odot$)",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-124",
       "quote": "It takes two matrices or vectors of the **same dimensions** and multiplies the elements that occupy the same position.",
-      "block_id": "math_ii-block-103",
+      "block_id": "math_ii-block-105",
       "section": "The Hadamard Product ($\\odot$)",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-125",
       "quote": "In the context of Deep Learning, the $\\odot$ symbol is ubiquitous.",
-      "block_id": "math_ii-block-104",
+      "block_id": "math_ii-block-106",
       "section": "The Hadamard Product ($\\odot$)",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-126",
       "quote": "It is used in **Layer Normalization** to scale normalized values by a learnable parameter $\\gamma$, and in **Gating Mechanisms** (like LSTMs or GRUs) to decide which information should pass through a “gate.”",
-      "block_id": "math_ii-block-104",
+      "block_id": "math_ii-block-106",
       "section": "The Hadamard Product ($\\odot$)",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-127",
       "quote": "Adjust the values in vectors $\\vec{a}$ and $\\vec{b}$ to see how the resulting vector is calculated element-by-element.",
-      "block_id": "math_ii-block-106",
+      "block_id": "math_ii-block-108",
       "section": "Mathematical Definition",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-128",
       "quote": "A matrix compounded with the transposed matrix gives rise to a symmetrical matrix.",
-      "block_id": "math_ii-block-111",
+      "block_id": "math_ii-block-113",
       "section": "Matrix Transposition",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-129",
       "quote": "Two vector operations appear so often in AI that they deserve explicit definitions here, even though they are first motivated in the Statistics and Loss chapters.",
-      "block_id": "math_ii-block-113",
+      "block_id": "math_ii-block-115",
       "section": "Softmax and Cross-Entropy",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-130",
       "quote": "Given a vector of real-valued scores $\\vec{z} \\in \\mathbb{R}^{K}$ (called **logits**), the **softmax** turns it into a vector of probabilities that sum to $1$:",
-      "block_id": "math_ii-block-115",
+      "block_id": "math_ii-block-117",
       "section": "Softmax: vector → probability distribution",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-131",
       "quote": "The formula is older than machine learning.",
-      "block_id": "math_ii-block-116",
+      "block_id": "math_ii-block-118",
       "section": "Softmax: vector → probability distribution",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-132",
       "quote": "It is the **Boltzmann distribution** of statistical mechanics — Boltzmann's 1868 paper, Gibbs's textbook of 1902 — with the logits playing the role of negative energies (\\cite[Boltzmann distribution]{boltzmann_distribution_wiki}).",
-      "block_id": "math_ii-block-116",
+      "block_id": "math_ii-block-118",
       "section": "Softmax: vector → probability distribution",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-133",
       "quote": "Duncan Luce derived it from his choice axiom in 1959 (\\cite[Luce, 1959]{luce1959individualchoice}).",
-      "block_id": "math_ii-block-116",
+      "block_id": "math_ii-block-118",
       "section": "Softmax: vector → probability distribution",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-134",
       "quote": "The name \"softmax\" is John Bridle's; he used it for a normalised exponential in a 1989 conference paper published in 1990 (\\cite[Bridle, 1990]{bridle1990softmax}).",
-      "block_id": "math_ii-block-116",
+      "block_id": "math_ii-block-118",
       "section": "Softmax: vector → probability distribution",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-135",
       "quote": "Given a true probability distribution $\\vec{y}$ (one-hot for a single correct class) and a predicted distribution $\\hat{\\vec{y}}$ (the model's softmax output), the **cross-entropy** is",
-      "block_id": "math_ii-block-118",
+      "block_id": "math_ii-block-120",
       "section": "Cross-entropy: measuring the gap between two distributions",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-136",
       "quote": "That is: cross-entropy loss for a single example is just the **negative log-probability the model assigned to the correct class**.",
-      "block_id": "math_ii-block-119",
+      "block_id": "math_ii-block-121",
       "section": "Cross-entropy: measuring the gap between two distributions",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-137",
       "quote": "This is the standard classification loss (see the Loss chapter) and, paired with softmax, has the elegant property",
-      "block_id": "math_ii-block-119",
+      "block_id": "math_ii-block-121",
       "section": "Cross-entropy: measuring the gap between two distributions",
       "kind": "statement"
     },
     {
       "id": "math_ii-stmt-138",
       "quote": "The $\\hat{y}_i$ factors from the softmax Jacobian cancel the $1/\\hat{y}_i$ factors from the cross-entropy gradient, leaving the remarkably simple \"predicted minus actual\" — which is precisely why softmax + cross-entropy is the canonical pairing.",
-      "block_id": "math_ii-block-120",
+      "block_id": "math_ii-block-122",
       "section": "Cross-entropy: measuring the gap between two distributions",
       "kind": "statement"
     }
@@ -7289,126 +7349,138 @@
     },
     {
       "id": "math_ii-block-100",
+      "quote": "<center>",
+      "kind": "paragraph",
+      "section": "Chaining Functions (Composition)"
+    },
+    {
+      "id": "math_ii-block-101",
+      "quote": "</center>",
+      "kind": "paragraph",
+      "section": "Chaining Functions (Composition)"
+    },
+    {
+      "id": "math_ii-block-102",
       "quote": "The Hadamard Product ($\\odot$)",
       "kind": "heading",
       "section": "The Hadamard Product ($\\odot$)"
     },
     {
-      "id": "math_ii-block-101",
+      "id": "math_ii-block-103",
       "quote": "The **Hadamard Product** ($\\odot$) was introduced by \\citeauthor{hadamardproduct} to study **singularities** in complex power series: the term-by-term product and the related **Hadamard multiplication theorem** belong to his 1899 *Acta Mathematica* paper \\citetitle{hadamard1899series}. It is defined for vectors as $\\vec{a} \\odot \\vec{b} = (a_1 b_1, \\dots, a_n b_n)^T$ — the coefficients are multiplied term by term — which is exactly what lets one predict the analytic continuation and boundaries of functions derived from known ones.",
       "kind": "paragraph",
       "section": "The Hadamard Product ($\\odot$)"
     },
     {
-      "id": "math_ii-block-102",
+      "id": "math_ii-block-104",
       "quote": "The history is a little more tangled than the name suggests. Hadamard's 1892 thesis was about Taylor series and analytic continuation; the term-by-term product and its multiplication theorem belong to his 1899 *Acta Mathematica* paper (\\cite[Hadamard, 1899]{hadamard1899series}). For matrices the key result is Schur's: the Hadamard product of two positive-semidefinite matrices is positive-semidefinite, proved as Theorem VII of his 1911 paper (\\cite[Schur, 1911]{schur1911bilinear}). The name \"Hadamard product\" for the matrix operation was popularised by Paul Halmos, who recalled that John von Neumann suggested it (\\cite[Hadamard product, Wikipedia]{hadamard_product_wiki}).",
       "kind": "paragraph",
       "section": "The Hadamard Product ($\\odot$)"
     },
     {
-      "id": "math_ii-block-103",
+      "id": "math_ii-block-105",
       "quote": "While standard matrix multiplication follows the “row-by-column” rule, the **Hadamard Product** (also known as the *element-wise product*) is much more straightforward. It takes two matrices or vectors of the **same dimensions** and multiplies the elements that occupy the same position.",
       "kind": "paragraph",
       "section": "The Hadamard Product ($\\odot$)"
     },
     {
-      "id": "math_ii-block-104",
+      "id": "math_ii-block-106",
       "quote": "In the context of Deep Learning, the $\\odot$ symbol is ubiquitous. It is used in **Layer Normalization** to scale normalized values by a learnable parameter $\\gamma$, and in **Gating Mechanisms** (like LSTMs or GRUs) to decide which information should pass through a “gate.”",
       "kind": "paragraph",
       "section": "The Hadamard Product ($\\odot$)"
     },
     {
-      "id": "math_ii-block-105",
+      "id": "math_ii-block-107",
       "quote": "Mathematical Definition",
       "kind": "heading",
       "section": "Mathematical Definition"
     },
     {
-      "id": "math_ii-block-106",
+      "id": "math_ii-block-108",
       "quote": "Adjust the values in vectors $\\vec{a}$ and $\\vec{b}$ to see how the resulting vector is calculated element-by-element.",
       "kind": "paragraph",
       "section": "Mathematical Definition"
     },
     {
-      "id": "math_ii-block-107",
+      "id": "math_ii-block-109",
       "quote": "Vector $\\vec{a}$",
       "kind": "paragraph",
       "section": "Mathematical Definition"
     },
     {
-      "id": "math_ii-block-108",
+      "id": "math_ii-block-110",
       "quote": "Vector $\\vec{b}$",
       "kind": "paragraph",
       "section": "Mathematical Definition"
     },
     {
-      "id": "math_ii-block-109",
+      "id": "math_ii-block-111",
       "quote": "Matrix Transposition",
       "kind": "heading",
       "section": "Matrix Transposition"
     },
     {
-      "id": "math_ii-block-110",
+      "id": "math_ii-block-112",
       "quote": "Example:",
       "kind": "paragraph",
       "section": "Matrix Transposition"
     },
     {
-      "id": "math_ii-block-111",
+      "id": "math_ii-block-113",
       "quote": "A matrix compounded with the transposed matrix gives rise to a symmetrical matrix.",
       "kind": "paragraph",
       "section": "Matrix Transposition"
     },
     {
-      "id": "math_ii-block-112",
+      "id": "math_ii-block-114",
       "quote": "Softmax and Cross-Entropy",
       "kind": "heading",
       "section": "Softmax and Cross-Entropy"
     },
     {
-      "id": "math_ii-block-113",
+      "id": "math_ii-block-115",
       "quote": "Two vector operations appear so often in AI that they deserve explicit definitions here, even though they are first motivated in the Statistics and Loss chapters.",
       "kind": "paragraph",
       "section": "Softmax and Cross-Entropy"
     },
     {
-      "id": "math_ii-block-114",
+      "id": "math_ii-block-116",
       "quote": "Softmax: vector → probability distribution",
       "kind": "heading",
       "section": "Softmax: vector → probability distribution"
     },
     {
-      "id": "math_ii-block-115",
+      "id": "math_ii-block-117",
       "quote": "Given a vector of real-valued scores $\\vec{z} \\in \\mathbb{R}^{K}$ (called **logits**), the **softmax** turns it into a vector of probabilities that sum to $1$:",
       "kind": "paragraph",
       "section": "Softmax: vector → probability distribution"
     },
     {
-      "id": "math_ii-block-116",
+      "id": "math_ii-block-118",
       "quote": "The formula is older than machine learning. It is the **Boltzmann distribution** of statistical mechanics — Boltzmann's 1868 paper, Gibbs's textbook of 1902 — with the logits playing the role of negative energies (\\cite[Boltzmann distribution]{boltzmann_distribution_wiki}). R. Duncan Luce derived it from his choice axiom in 1959 (\\cite[Luce, 1959]{luce1959individualchoice}). The name \"softmax\" is John Bridle's; he used it for a normalised exponential in a 1989 conference paper published in 1990 (\\cite[Bridle, 1990]{bridle1990softmax}).",
       "kind": "paragraph",
       "section": "Softmax: vector → probability distribution"
     },
     {
-      "id": "math_ii-block-117",
+      "id": "math_ii-block-119",
       "quote": "Cross-entropy: measuring the gap between two distributions",
       "kind": "heading",
       "section": "Cross-entropy: measuring the gap between two distributions"
     },
     {
-      "id": "math_ii-block-118",
+      "id": "math_ii-block-120",
       "quote": "Given a true probability distribution $\\vec{y}$ (one-hot for a single correct class) and a predicted distribution $\\hat{\\vec{y}}$ (the model's softmax output), the **cross-entropy** is",
       "kind": "paragraph",
       "section": "Cross-entropy: measuring the gap between two distributions"
     },
     {
-      "id": "math_ii-block-119",
+      "id": "math_ii-block-121",
       "quote": "That is: cross-entropy loss for a single example is just the **negative log-probability the model assigned to the correct class**. This is the standard classification loss (see the Loss chapter) and, paired with softmax, has the elegant property",
       "kind": "paragraph",
       "section": "Cross-entropy: measuring the gap between two distributions"
     },
     {
-      "id": "math_ii-block-120",
+      "id": "math_ii-block-122",
       "quote": "The $\\hat{y}_i$ factors from the softmax Jacobian cancel the $1/\\hat{y}_i$ factors from the cross-entropy gradient, leaving the remarkably simple \"predicted minus actual\" — which is precisely why softmax + cross-entropy is the canonical pairing.",
       "kind": "paragraph",
       "section": "Cross-entropy: measuring the gap between two distributions"

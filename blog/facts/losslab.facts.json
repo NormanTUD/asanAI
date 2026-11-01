@@ -1553,16 +1553,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-block-36-related_to-losslab-block-31",
-      "from": "losslab-block-36",
-      "to": "losslab-block-31",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-losslab-block-37-part_of-losslab",
       "from": "losslab-block-37",
       "to": "losslab",
@@ -1577,6 +1567,16 @@
       "from": "losslab-block-36",
       "to": "losslab-block-37",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-losslab-block-37-related_to-losslab-block-36",
+      "from": "losslab-block-37",
+      "to": "losslab-block-36",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1603,9 +1603,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-block-38-related_to-losslab-block-37",
+      "id": "struct-losslab-block-38-related_to-losslab-block-36",
       "from": "losslab-block-38",
-      "to": "losslab-block-37",
+      "to": "losslab-block-36",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1633,9 +1633,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-block-39-related_to-losslab-block-37",
+      "id": "struct-losslab-block-39-related_to-losslab-block-36",
       "from": "losslab-block-39",
-      "to": "losslab-block-37",
+      "to": "losslab-block-36",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1663,9 +1663,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-block-40-related_to-losslab-block-37",
+      "id": "struct-losslab-block-40-related_to-losslab-block-36",
       "from": "losslab-block-40",
-      "to": "losslab-block-37",
+      "to": "losslab-block-36",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1693,9 +1693,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-block-41-related_to-losslab-block-37",
+      "id": "struct-losslab-block-41-related_to-losslab-block-36",
       "from": "losslab-block-41",
-      "to": "losslab-block-37",
+      "to": "losslab-block-36",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1723,16 +1723,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-block-42-related_to-losslab-block-37",
-      "from": "losslab-block-42",
-      "to": "losslab-block-37",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-losslab-block-43-part_of-losslab",
       "from": "losslab-block-43",
       "to": "losslab",
@@ -1747,6 +1737,16 @@
       "from": "losslab-block-42",
       "to": "losslab-block-43",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-losslab-block-43-related_to-losslab-block-42",
+      "from": "losslab-block-43",
+      "to": "losslab-block-42",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1773,39 +1773,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-block-44-related_to-losslab-block-43",
+      "id": "struct-losslab-block-44-related_to-losslab-block-42",
       "from": "losslab-block-44",
-      "to": "losslab-block-43",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-losslab-block-45-part_of-losslab",
-      "from": "losslab-block-45",
-      "to": "losslab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-losslab-block-44-before-losslab-block-45",
-      "from": "losslab-block-44",
-      "to": "losslab-block-45",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-losslab-block-45-related_to-losslab-block-43",
-      "from": "losslab-block-45",
-      "to": "losslab-block-43",
+      "to": "losslab-block-42",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2333,9 +2303,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-stmt-53-part_of-losslab-block-34",
+      "id": "struct-losslab-stmt-53-part_of-losslab-block-37",
       "from": "losslab-stmt-53",
-      "to": "losslab-block-34",
+      "to": "losslab-block-37",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2343,9 +2313,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-stmt-54-part_of-losslab-block-35",
+      "id": "struct-losslab-stmt-54-part_of-losslab-block-37",
       "from": "losslab-stmt-54",
-      "to": "losslab-block-35",
+      "to": "losslab-block-37",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2353,9 +2323,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-stmt-55-part_of-losslab-block-35",
+      "id": "struct-losslab-stmt-55-part_of-losslab-block-38",
       "from": "losslab-stmt-55",
-      "to": "losslab-block-35",
+      "to": "losslab-block-38",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2373,9 +2343,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-stmt-57-part_of-losslab-block-38",
+      "id": "struct-losslab-stmt-57-part_of-losslab-block-39",
       "from": "losslab-stmt-57",
-      "to": "losslab-block-38",
+      "to": "losslab-block-39",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2383,9 +2353,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-stmt-58-part_of-losslab-block-39",
+      "id": "struct-losslab-stmt-58-part_of-losslab-block-40",
       "from": "losslab-stmt-58",
-      "to": "losslab-block-39",
+      "to": "losslab-block-40",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2393,9 +2363,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-stmt-59-part_of-losslab-block-39",
+      "id": "struct-losslab-stmt-59-part_of-losslab-block-40",
       "from": "losslab-stmt-59",
-      "to": "losslab-block-39",
+      "to": "losslab-block-40",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2413,9 +2383,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-stmt-61-part_of-losslab-block-41",
+      "id": "struct-losslab-stmt-61-part_of-losslab-block-40",
       "from": "losslab-stmt-61",
-      "to": "losslab-block-41",
+      "to": "losslab-block-40",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2443,9 +2413,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-stmt-64-part_of-losslab-block-41",
+      "id": "struct-losslab-stmt-64-part_of-losslab-block-43",
       "from": "losslab-stmt-64",
-      "to": "losslab-block-41",
+      "to": "losslab-block-43",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2453,28 +2423,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-stmt-65-part_of-losslab-block-42",
+      "id": "struct-losslab-stmt-65-part_of-losslab-block-44",
       "from": "losslab-stmt-65",
-      "to": "losslab-block-42",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-losslab-stmt-66-part_of-losslab-block-42",
-      "from": "losslab-stmt-66",
-      "to": "losslab-block-42",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-losslab-stmt-67-part_of-losslab-block-44",
-      "from": "losslab-stmt-67",
       "to": "losslab-block-44",
       "kind": "part_of",
       "qualifiers": {},
@@ -2483,19 +2433,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-losslab-stmt-68-part_of-losslab-block-45",
-      "from": "losslab-stmt-68",
-      "to": "losslab-block-45",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-losslab-stmt-69-part_of-losslab-block-45",
-      "from": "losslab-stmt-69",
-      "to": "losslab-block-45",
+      "id": "struct-losslab-stmt-66-part_of-losslab-block-44",
+      "from": "losslab-stmt-66",
+      "to": "losslab-block-44",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2856,134 +2796,113 @@
     },
     {
       "id": "losslab-stmt-51",
-      "quote": "To truly evaluate success, we must look beyond the loss curve and use diverse benchmarks: on the training set if the model just memorizes it; on held-out text, memorization does not help.",
+      "quote": "See the Evaluation & Benchmarks chapter for the full tour of MMLU, HumanEval, GSM8K, and the contamination crisis.",
       "block_id": "losslab-block-34",
       "section": "Beware of Goodhart's Law",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-52",
-      "quote": "fall victim to Goodhart's Law if the test data “leaks” into the training set.",
+      "quote": "The disease named here has many symptoms; that chapter is where you see them.",
       "block_id": "losslab-block-34",
       "section": "Beware of Goodhart's Law",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-53",
-      "quote": "it is actually helpful, safe, and accurate in real-world use.",
-      "block_id": "losslab-block-34",
-      "section": "Beware of Goodhart's Law",
+      "quote": "The connection between cross-entropy loss and information theory is not a superficial analogy: cross-entropy is the expected surprise under the true distribution plus the price of using the wrong distribution.",
+      "block_id": "losslab-block-37",
+      "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-54",
-      "quote": "See the Evaluation & Benchmarks chapter for the full tour of MMLU, HumanEval, GSM8K, and the contamination crisis.",
-      "block_id": "losslab-block-35",
-      "section": "Beware of Goodhart's Law",
+      "quote": "The loss that trains every LLM is built directly from it.",
+      "block_id": "losslab-block-37",
+      "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-55",
-      "quote": "The disease named here has many symptoms; that chapter is where you see them.",
-      "block_id": "losslab-block-35",
-      "section": "Beware of Goodhart's Law",
+      "quote": "The same fact is the heart of \\citetitle{colah2015visualinfo} (\\citeyear{colah2015visualinfo}): cross-entropy counts the bits you *waste* when you code the world with the wrong model of it.",
+      "block_id": "losslab-block-38",
+      "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-56",
-      "quote": "The connection between cross-entropy loss and information theory is not a superficial analogy: cross-entropy is the expected surprise under the true distribution plus the price of using the wrong distribution.",
+      "quote": "Entropy is the cost of the *right* code, cross-entropy is the cost of *your* code, and their difference is the KL divergence — the model's regret, paid in bits \\cite{colah2015visualinfo}.",
       "block_id": "losslab-block-38",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-57",
-      "quote": "The loss that trains every LLM is built directly from it.",
-      "block_id": "losslab-block-38",
+      "quote": "Cross-entropy loss for a classification task is:",
+      "block_id": "losslab-block-39",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-58",
-      "quote": "The same fact is the heart of \\citetitle{colah2015visualinfo} (\\citeyear{colah2015visualinfo}): cross-entropy counts the bits you *waste* when you code the world with the wrong model of it.",
-      "block_id": "losslab-block-39",
+      "quote": "The “aha-moment”: training an LLM is equivalent to building the world's best text compression algorithm.",
+      "block_id": "losslab-block-40",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-59",
-      "quote": "Entropy is the cost of the *right* code, cross-entropy is the cost of *your* code, and their difference is the KL divergence — the model's regret, paid in bits \\cite{colah2015visualinfo}.",
-      "block_id": "losslab-block-39",
+      "quote": "Every time the model computes cross-entropy loss, it is measuring how many extra bits it would need to encode the training text using its current beliefs.",
+      "block_id": "losslab-block-40",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-60",
-      "quote": "Cross-entropy loss for a classification task is:",
+      "quote": "Reducing the loss means finding a shorter description of the data.",
       "block_id": "losslab-block-40",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-61",
-      "quote": "The “aha-moment”: training an LLM is equivalent to building the world's best text compression algorithm.",
-      "block_id": "losslab-block-41",
+      "quote": "This is why scaling works: more parameters allow more compression (finding more patterns in the data), which requires more accurate world models (because the best compression of natural language requires modeling physics, psychology, and causality), which produces more “intelligent” behavior.",
+      "block_id": "losslab-block-40",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-62",
-      "quote": "Every time the model computes cross-entropy loss, it is measuring how many extra bits it would need to encode the training text using its current beliefs.",
+      "quote": "Intelligence, from this perspective, is not a separate objective, it is a side effect of optimal compression.",
       "block_id": "losslab-block-41",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-63",
-      "quote": "Reducing the loss means finding a shorter description of the data.",
+      "quote": "The connection to the Hutter Prize (\\cite{hutterprize}) — Marcus Hutter's compression prize, launched in 2006 on a 100 MB corpus and expanded in 2020 to a 1 GB text file — and the “intelligence is compression” thesis is direct: a model that achieves the minimal possible cross-entropy on human text has implicitly learned the causal structure of the world that generates that text.",
       "block_id": "losslab-block-41",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-64",
-      "quote": "This is why scaling works: more parameters allow more compression (finding more patterns in the data), which requires more accurate world models (because the best compression of natural language requires modeling physics, psychology, and causality), which produces more “intelligent” behavior.",
-      "block_id": "losslab-block-41",
-      "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
+      "quote": "The gradient of cross-entropy with softmax is beautifully simple:",
+      "block_id": "losslab-block-43",
+      "section": "Why Cross-Entropy Pairs Perfectly with Softmax",
       "kind": "statement"
     },
     {
       "id": "losslab-stmt-65",
-      "quote": "Intelligence, from this perspective, is not a separate objective, it is a side effect of optimal compression.",
-      "block_id": "losslab-block-42",
-      "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
-      "kind": "statement"
-    },
-    {
-      "id": "losslab-stmt-66",
-      "quote": "The connection to the Hutter Prize (\\cite{hutterprize}) — Marcus Hutter's compression prize, launched in 2006 on a 100 MB corpus and expanded in 2020 to a 1 GB text file — and the “intelligence is compression” thesis is direct: a model that achieves the minimal possible cross-entropy on human text has implicitly learned the causal structure of the world that generates that text.",
-      "block_id": "losslab-block-42",
-      "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
-      "kind": "statement"
-    },
-    {
-      "id": "losslab-stmt-67",
-      "quote": "The gradient of cross-entropy with softmax is beautifully simple:",
+      "quote": "The error signal is just “how wrong were you?”, the difference between prediction and truth.",
       "block_id": "losslab-block-44",
       "section": "Why Cross-Entropy Pairs Perfectly with Softmax",
       "kind": "statement"
     },
     {
-      "id": "losslab-stmt-68",
-      "quote": "The error signal is just “how wrong were you?”, the difference between prediction and truth.",
-      "block_id": "losslab-block-45",
-      "section": "Why Cross-Entropy Pairs Perfectly with Softmax",
-      "kind": "statement"
-    },
-    {
-      "id": "losslab-stmt-69",
+      "id": "losslab-stmt-66",
       "quote": "This simplicity is why this combination dominates classification: the gradient points directly from the prediction toward the target, with no complicating curvature or saturation effects (unlike MSE with softmax, which saturates when predictions are confidently wrong).",
-      "block_id": "losslab-block-45",
+      "block_id": "losslab-block-44",
       "section": "Why Cross-Entropy Pairs Perfectly with Softmax",
       "kind": "statement"
     }
@@ -3189,72 +3108,66 @@
     },
     {
       "id": "losslab-block-34",
-      "quote": "To truly evaluate success, we must look beyond the loss curve and use diverse benchmarks: on the training set if the model just memorizes it; on held-out text, memorization does not help. fall victim to Goodhart's Law if the test data “leaks” into the training set. it is actually helpful, safe, and accurate in real-world use.",
-      "kind": "paragraph",
-      "section": "Beware of Goodhart's Law"
-    },
-    {
-      "id": "losslab-block-35",
       "quote": "See the Evaluation & Benchmarks chapter for the full tour of MMLU, HumanEval, GSM8K, and the contamination crisis. The disease named here has many symptoms; that chapter is where you see them.",
       "kind": "paragraph",
       "section": "Beware of Goodhart's Law"
     },
     {
-      "id": "losslab-block-36",
+      "id": "losslab-block-35",
       "quote": "In this equation:",
       "kind": "paragraph",
       "section": "Beware of Goodhart's Law"
     },
     {
-      "id": "losslab-block-37",
+      "id": "losslab-block-36",
       "quote": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy",
       "kind": "heading",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy"
     },
     {
-      "id": "losslab-block-38",
+      "id": "losslab-block-37",
       "quote": "The connection between cross-entropy loss and information theory is not a superficial analogy: cross-entropy is the expected surprise under the true distribution plus the price of using the wrong distribution. The loss that trains every LLM is built directly from it.",
       "kind": "paragraph",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy"
     },
     {
-      "id": "losslab-block-39",
+      "id": "losslab-block-38",
       "quote": "The same fact is the heart of \\citetitle{colah2015visualinfo} (\\citeyear{colah2015visualinfo}): cross-entropy counts the bits you *waste* when you code the world with the wrong model of it. Entropy is the cost of the *right* code, cross-entropy is the cost of *your* code, and their difference is the KL divergence — the model's regret, paid in bits \\cite{colah2015visualinfo}.",
       "kind": "paragraph",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy"
     },
     {
-      "id": "losslab-block-40",
+      "id": "losslab-block-39",
       "quote": "Cross-entropy loss for a classification task is:",
       "kind": "paragraph",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy"
     },
     {
-      "id": "losslab-block-41",
+      "id": "losslab-block-40",
       "quote": "The “aha-moment”: training an LLM is equivalent to building the world's best text compression algorithm. Every time the model computes cross-entropy loss, it is measuring how many extra bits it would need to encode the training text using its current beliefs. Reducing the loss means finding a shorter description of the data. This is why scaling works: more parameters allow more compression (finding more patterns in the data), which requires more accurate world models (because the best compression of natural language requires modeling physics, psychology, and causality), which produces more “intelligent” behavior.",
       "kind": "paragraph",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy"
     },
     {
-      "id": "losslab-block-42",
+      "id": "losslab-block-41",
       "quote": "Intelligence, from this perspective, is not a separate objective, it is a side effect of optimal compression. The connection to the Hutter Prize (\\cite{hutterprize}) — Marcus Hutter's compression prize, launched in 2006 on a 100 MB corpus and expanded in 2020 to a 1 GB text file — and the “intelligence is compression” thesis is direct: a model that achieves the minimal possible cross-entropy on human text has implicitly learned the causal structure of the world that generates that text.",
       "kind": "paragraph",
       "section": "The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy"
     },
     {
-      "id": "losslab-block-43",
+      "id": "losslab-block-42",
       "quote": "Why Cross-Entropy Pairs Perfectly with Softmax",
       "kind": "heading",
       "section": "Why Cross-Entropy Pairs Perfectly with Softmax"
     },
     {
-      "id": "losslab-block-44",
+      "id": "losslab-block-43",
       "quote": "The gradient of cross-entropy with softmax is beautifully simple:",
       "kind": "paragraph",
       "section": "Why Cross-Entropy Pairs Perfectly with Softmax"
     },
     {
-      "id": "losslab-block-45",
+      "id": "losslab-block-44",
       "quote": "The error signal is just “how wrong were you?”, the difference between prediction and truth. This simplicity is why this combination dominates classification: the gradient points directly from the prediction toward the target, with no complicating curvature or saturation effects (unlike MSE with softmax, which saturates when predictions are confidently wrong).",
       "kind": "paragraph",
       "section": "Why Cross-Entropy Pairs Perfectly with Softmax"

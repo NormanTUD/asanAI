@@ -316,7 +316,7 @@
       "value": "H(P,Q) = H(P) + D_KL(P||Q)",
       "unit": "formula",
       "qualifiers": {},
-      "quote": "H(P,Q) = -\\sum_x P(x)\\log Q(x) = H(P) + D_{\\mathrm{KL}}(P\\|Q)",
+      "quote": "If the true distribution is $P$ and the model is $Q$, the cross-entropy",
       "citation_keys": [
         "leiblerkullback",
         "shannon1948communication"
@@ -1248,6 +1248,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-statistics_ii-block-25-related_to-statistics_ii-block-20",
+      "from": "statistics_ii-block-25",
+      "to": "statistics_ii-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-statistics_ii-block-26-part_of-statistics-ii",
       "from": "statistics_ii-block-26",
       "to": "statistics-ii",
@@ -1268,6 +1278,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-statistics_ii-block-26-related_to-statistics_ii-block-20",
+      "from": "statistics_ii-block-26",
+      "to": "statistics_ii-block-20",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-statistics_ii-block-27-part_of-statistics-ii",
       "from": "statistics_ii-block-27",
       "to": "statistics-ii",
@@ -1282,16 +1302,6 @@
       "from": "statistics_ii-block-26",
       "to": "statistics_ii-block-27",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-statistics_ii-block-27-related_to-statistics_ii-block-26",
-      "from": "statistics_ii-block-27",
-      "to": "statistics_ii-block-26",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1368,16 +1378,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-30-related_to-statistics_ii-block-28",
-      "from": "statistics_ii-block-30",
-      "to": "statistics_ii-block-28",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-statistics_ii-block-31-part_of-statistics-ii",
       "from": "statistics_ii-block-31",
       "to": "statistics-ii",
@@ -1398,9 +1398,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-31-related_to-statistics_ii-block-28",
+      "id": "struct-statistics_ii-block-31-related_to-statistics_ii-block-30",
       "from": "statistics_ii-block-31",
-      "to": "statistics_ii-block-28",
+      "to": "statistics_ii-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1428,9 +1428,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-32-related_to-statistics_ii-block-28",
+      "id": "struct-statistics_ii-block-32-related_to-statistics_ii-block-30",
       "from": "statistics_ii-block-32",
-      "to": "statistics_ii-block-28",
+      "to": "statistics_ii-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1458,9 +1458,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-33-related_to-statistics_ii-block-28",
+      "id": "struct-statistics_ii-block-33-related_to-statistics_ii-block-30",
       "from": "statistics_ii-block-33",
-      "to": "statistics_ii-block-28",
+      "to": "statistics_ii-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1488,9 +1488,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-34-related_to-statistics_ii-block-28",
+      "id": "struct-statistics_ii-block-34-related_to-statistics_ii-block-30",
       "from": "statistics_ii-block-34",
-      "to": "statistics_ii-block-28",
+      "to": "statistics_ii-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1518,9 +1518,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-35-related_to-statistics_ii-block-28",
+      "id": "struct-statistics_ii-block-35-related_to-statistics_ii-block-30",
       "from": "statistics_ii-block-35",
-      "to": "statistics_ii-block-28",
+      "to": "statistics_ii-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1548,9 +1548,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-36-related_to-statistics_ii-block-28",
+      "id": "struct-statistics_ii-block-36-related_to-statistics_ii-block-30",
       "from": "statistics_ii-block-36",
-      "to": "statistics_ii-block-28",
+      "to": "statistics_ii-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1578,9 +1578,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-37-related_to-statistics_ii-block-28",
+      "id": "struct-statistics_ii-block-37-related_to-statistics_ii-block-30",
       "from": "statistics_ii-block-37",
-      "to": "statistics_ii-block-28",
+      "to": "statistics_ii-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1608,6 +1608,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-statistics_ii-block-38-related_to-statistics_ii-block-30",
+      "from": "statistics_ii-block-38",
+      "to": "statistics_ii-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-statistics_ii-block-39-part_of-statistics-ii",
       "from": "statistics_ii-block-39",
       "to": "statistics-ii",
@@ -1628,9 +1638,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-39-related_to-statistics_ii-block-38",
+      "id": "struct-statistics_ii-block-39-related_to-statistics_ii-block-30",
       "from": "statistics_ii-block-39",
-      "to": "statistics_ii-block-38",
+      "to": "statistics_ii-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1708,16 +1718,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-42-related_to-statistics_ii-block-40",
-      "from": "statistics_ii-block-42",
-      "to": "statistics_ii-block-40",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-statistics_ii-block-43-part_of-statistics-ii",
       "from": "statistics_ii-block-43",
       "to": "statistics-ii",
@@ -1738,9 +1738,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-43-related_to-statistics_ii-block-40",
+      "id": "struct-statistics_ii-block-43-related_to-statistics_ii-block-42",
       "from": "statistics_ii-block-43",
-      "to": "statistics_ii-block-40",
+      "to": "statistics_ii-block-42",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1768,6 +1768,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-statistics_ii-block-44-related_to-statistics_ii-block-42",
+      "from": "statistics_ii-block-44",
+      "to": "statistics_ii-block-42",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-statistics_ii-block-45-part_of-statistics-ii",
       "from": "statistics_ii-block-45",
       "to": "statistics-ii",
@@ -1788,9 +1798,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-45-related_to-statistics_ii-block-44",
+      "id": "struct-statistics_ii-block-45-related_to-statistics_ii-block-42",
       "from": "statistics_ii-block-45",
-      "to": "statistics_ii-block-44",
+      "to": "statistics_ii-block-42",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1818,16 +1828,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-46-related_to-statistics_ii-block-44",
-      "from": "statistics_ii-block-46",
-      "to": "statistics_ii-block-44",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-statistics_ii-block-47-part_of-statistics-ii",
       "from": "statistics_ii-block-47",
       "to": "statistics-ii",
@@ -1848,9 +1848,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-47-related_to-statistics_ii-block-44",
+      "id": "struct-statistics_ii-block-47-related_to-statistics_ii-block-46",
       "from": "statistics_ii-block-47",
-      "to": "statistics_ii-block-44",
+      "to": "statistics_ii-block-46",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1878,9 +1878,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-48-related_to-statistics_ii-block-44",
+      "id": "struct-statistics_ii-block-48-related_to-statistics_ii-block-46",
       "from": "statistics_ii-block-48",
-      "to": "statistics_ii-block-44",
+      "to": "statistics_ii-block-46",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1908,6 +1908,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-statistics_ii-block-49-related_to-statistics_ii-block-46",
+      "from": "statistics_ii-block-49",
+      "to": "statistics_ii-block-46",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-statistics_ii-block-50-part_of-statistics-ii",
       "from": "statistics_ii-block-50",
       "to": "statistics-ii",
@@ -1922,6 +1932,16 @@
       "from": "statistics_ii-block-49",
       "to": "statistics_ii-block-50",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-block-50-related_to-statistics_ii-block-46",
+      "from": "statistics_ii-block-50",
+      "to": "statistics_ii-block-46",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1948,16 +1968,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-51-related_to-statistics_ii-block-50",
-      "from": "statistics_ii-block-51",
-      "to": "statistics_ii-block-50",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-statistics_ii-block-52-part_of-statistics-ii",
       "from": "statistics_ii-block-52",
       "to": "statistics-ii",
@@ -1972,16 +1982,6 @@
       "from": "statistics_ii-block-51",
       "to": "statistics_ii-block-52",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-statistics_ii-block-52-related_to-statistics_ii-block-50",
-      "from": "statistics_ii-block-52",
-      "to": "statistics_ii-block-50",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2008,9 +2008,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-53-related_to-statistics_ii-block-50",
+      "id": "struct-statistics_ii-block-53-related_to-statistics_ii-block-52",
       "from": "statistics_ii-block-53",
-      "to": "statistics_ii-block-50",
+      "to": "statistics_ii-block-52",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2038,6 +2038,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-statistics_ii-block-54-related_to-statistics_ii-block-52",
+      "from": "statistics_ii-block-54",
+      "to": "statistics_ii-block-52",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-statistics_ii-block-55-part_of-statistics-ii",
       "from": "statistics_ii-block-55",
       "to": "statistics-ii",
@@ -2058,9 +2068,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-55-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-55-related_to-statistics_ii-block-52",
       "from": "statistics_ii-block-55",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-52",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2088,16 +2098,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-56-related_to-statistics_ii-block-54",
-      "from": "statistics_ii-block-56",
-      "to": "statistics_ii-block-54",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-statistics_ii-block-57-part_of-statistics-ii",
       "from": "statistics_ii-block-57",
       "to": "statistics-ii",
@@ -2118,9 +2118,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-57-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-57-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-57",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2148,9 +2148,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-58-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-58-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-58",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2178,9 +2178,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-59-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-59-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-59",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2208,9 +2208,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-60-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-60-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-60",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2238,9 +2238,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-61-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-61-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-61",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2268,9 +2268,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-62-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-62-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-62",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2298,9 +2298,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-63-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-63-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-63",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2328,9 +2328,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-64-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-64-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-64",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2358,9 +2358,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-65-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-65-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-65",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2388,9 +2388,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-66-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-66-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-66",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2418,9 +2418,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-67-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-67-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-67",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2448,9 +2448,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-68-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-68-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-68",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2478,9 +2478,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-69-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-69-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-69",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2508,9 +2508,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-70-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-70-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-70",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2538,9 +2538,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-71-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-71-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-71",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2568,9 +2568,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-72-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-72-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-72",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2598,9 +2598,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-73-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-73-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-73",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2628,9 +2628,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-74-related_to-statistics_ii-block-54",
+      "id": "struct-statistics_ii-block-74-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-74",
-      "to": "statistics_ii-block-54",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2658,6 +2658,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-statistics_ii-block-75-related_to-statistics_ii-block-56",
+      "from": "statistics_ii-block-75",
+      "to": "statistics_ii-block-56",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-statistics_ii-block-76-part_of-statistics-ii",
       "from": "statistics_ii-block-76",
       "to": "statistics-ii",
@@ -2678,9 +2688,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-76-related_to-statistics_ii-block-75",
+      "id": "struct-statistics_ii-block-76-related_to-statistics_ii-block-56",
       "from": "statistics_ii-block-76",
-      "to": "statistics_ii-block-75",
+      "to": "statistics_ii-block-56",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2708,16 +2718,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-77-related_to-statistics_ii-block-75",
-      "from": "statistics_ii-block-77",
-      "to": "statistics_ii-block-75",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-statistics_ii-block-78-part_of-statistics-ii",
       "from": "statistics_ii-block-78",
       "to": "statistics-ii",
@@ -2738,9 +2738,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-78-related_to-statistics_ii-block-75",
+      "id": "struct-statistics_ii-block-78-related_to-statistics_ii-block-77",
       "from": "statistics_ii-block-78",
-      "to": "statistics_ii-block-75",
+      "to": "statistics_ii-block-77",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2768,6 +2768,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-statistics_ii-block-79-related_to-statistics_ii-block-77",
+      "from": "statistics_ii-block-79",
+      "to": "statistics_ii-block-77",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-statistics_ii-block-80-part_of-statistics-ii",
       "from": "statistics_ii-block-80",
       "to": "statistics-ii",
@@ -2788,9 +2798,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-80-related_to-statistics_ii-block-79",
+      "id": "struct-statistics_ii-block-80-related_to-statistics_ii-block-77",
       "from": "statistics_ii-block-80",
-      "to": "statistics_ii-block-79",
+      "to": "statistics_ii-block-77",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2818,16 +2828,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-81-related_to-statistics_ii-block-79",
-      "from": "statistics_ii-block-81",
-      "to": "statistics_ii-block-79",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-statistics_ii-block-82-part_of-statistics-ii",
       "from": "statistics_ii-block-82",
       "to": "statistics-ii",
@@ -2848,9 +2848,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-82-related_to-statistics_ii-block-79",
+      "id": "struct-statistics_ii-block-82-related_to-statistics_ii-block-81",
       "from": "statistics_ii-block-82",
-      "to": "statistics_ii-block-79",
+      "to": "statistics_ii-block-81",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2878,9 +2878,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-83-related_to-statistics_ii-block-79",
+      "id": "struct-statistics_ii-block-83-related_to-statistics_ii-block-81",
       "from": "statistics_ii-block-83",
-      "to": "statistics_ii-block-79",
+      "to": "statistics_ii-block-81",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2908,9 +2908,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-84-related_to-statistics_ii-block-79",
+      "id": "struct-statistics_ii-block-84-related_to-statistics_ii-block-81",
       "from": "statistics_ii-block-84",
-      "to": "statistics_ii-block-79",
+      "to": "statistics_ii-block-81",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2938,9 +2938,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-85-related_to-statistics_ii-block-79",
+      "id": "struct-statistics_ii-block-85-related_to-statistics_ii-block-81",
       "from": "statistics_ii-block-85",
-      "to": "statistics_ii-block-79",
+      "to": "statistics_ii-block-81",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2968,6 +2968,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-statistics_ii-block-86-related_to-statistics_ii-block-81",
+      "from": "statistics_ii-block-86",
+      "to": "statistics_ii-block-81",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-statistics_ii-block-87-part_of-statistics-ii",
       "from": "statistics_ii-block-87",
       "to": "statistics-ii",
@@ -2988,9 +2998,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-87-related_to-statistics_ii-block-86",
+      "id": "struct-statistics_ii-block-87-related_to-statistics_ii-block-81",
       "from": "statistics_ii-block-87",
-      "to": "statistics_ii-block-86",
+      "to": "statistics_ii-block-81",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3018,16 +3028,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-88-related_to-statistics_ii-block-86",
-      "from": "statistics_ii-block-88",
-      "to": "statistics_ii-block-86",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-statistics_ii-block-89-part_of-statistics-ii",
       "from": "statistics_ii-block-89",
       "to": "statistics-ii",
@@ -3048,9 +3048,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-89-related_to-statistics_ii-block-86",
+      "id": "struct-statistics_ii-block-89-related_to-statistics_ii-block-88",
       "from": "statistics_ii-block-89",
-      "to": "statistics_ii-block-86",
+      "to": "statistics_ii-block-88",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3078,9 +3078,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-90-related_to-statistics_ii-block-86",
+      "id": "struct-statistics_ii-block-90-related_to-statistics_ii-block-88",
       "from": "statistics_ii-block-90",
-      "to": "statistics_ii-block-86",
+      "to": "statistics_ii-block-88",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3108,9 +3108,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-91-related_to-statistics_ii-block-86",
+      "id": "struct-statistics_ii-block-91-related_to-statistics_ii-block-88",
       "from": "statistics_ii-block-91",
-      "to": "statistics_ii-block-86",
+      "to": "statistics_ii-block-88",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3138,9 +3138,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-92-related_to-statistics_ii-block-86",
+      "id": "struct-statistics_ii-block-92-related_to-statistics_ii-block-88",
       "from": "statistics_ii-block-92",
-      "to": "statistics_ii-block-86",
+      "to": "statistics_ii-block-88",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3168,6 +3168,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-statistics_ii-block-93-related_to-statistics_ii-block-88",
+      "from": "statistics_ii-block-93",
+      "to": "statistics_ii-block-88",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-statistics_ii-block-94-part_of-statistics-ii",
       "from": "statistics_ii-block-94",
       "to": "statistics-ii",
@@ -3188,9 +3198,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-94-related_to-statistics_ii-block-93",
+      "id": "struct-statistics_ii-block-94-related_to-statistics_ii-block-88",
       "from": "statistics_ii-block-94",
-      "to": "statistics_ii-block-93",
+      "to": "statistics_ii-block-88",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3218,16 +3228,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-95-related_to-statistics_ii-block-93",
-      "from": "statistics_ii-block-95",
-      "to": "statistics_ii-block-93",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-statistics_ii-block-96-part_of-statistics-ii",
       "from": "statistics_ii-block-96",
       "to": "statistics-ii",
@@ -3242,6 +3242,16 @@
       "from": "statistics_ii-block-95",
       "to": "statistics_ii-block-96",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-block-96-related_to-statistics_ii-block-95",
+      "from": "statistics_ii-block-96",
+      "to": "statistics_ii-block-95",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3268,9 +3278,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-97-related_to-statistics_ii-block-96",
+      "id": "struct-statistics_ii-block-97-related_to-statistics_ii-block-95",
       "from": "statistics_ii-block-97",
-      "to": "statistics_ii-block-96",
+      "to": "statistics_ii-block-95",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3298,16 +3308,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-98-related_to-statistics_ii-block-96",
-      "from": "statistics_ii-block-98",
-      "to": "statistics_ii-block-96",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-statistics_ii-block-99-part_of-statistics-ii",
       "from": "statistics_ii-block-99",
       "to": "statistics-ii",
@@ -3328,9 +3328,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-99-related_to-statistics_ii-block-96",
+      "id": "struct-statistics_ii-block-99-related_to-statistics_ii-block-98",
       "from": "statistics_ii-block-99",
-      "to": "statistics_ii-block-96",
+      "to": "statistics_ii-block-98",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3358,9 +3358,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-100-related_to-statistics_ii-block-96",
+      "id": "struct-statistics_ii-block-100-related_to-statistics_ii-block-98",
       "from": "statistics_ii-block-100",
-      "to": "statistics_ii-block-96",
+      "to": "statistics_ii-block-98",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3388,9 +3388,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-101-related_to-statistics_ii-block-96",
+      "id": "struct-statistics_ii-block-101-related_to-statistics_ii-block-98",
       "from": "statistics_ii-block-101",
-      "to": "statistics_ii-block-96",
+      "to": "statistics_ii-block-98",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3418,6 +3418,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-statistics_ii-block-102-related_to-statistics_ii-block-98",
+      "from": "statistics_ii-block-102",
+      "to": "statistics_ii-block-98",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-statistics_ii-block-103-part_of-statistics-ii",
       "from": "statistics_ii-block-103",
       "to": "statistics-ii",
@@ -3438,9 +3448,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-103-related_to-statistics_ii-block-102",
+      "id": "struct-statistics_ii-block-103-related_to-statistics_ii-block-98",
       "from": "statistics_ii-block-103",
-      "to": "statistics_ii-block-102",
+      "to": "statistics_ii-block-98",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3468,16 +3478,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-104-related_to-statistics_ii-block-102",
-      "from": "statistics_ii-block-104",
-      "to": "statistics_ii-block-102",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-statistics_ii-block-105-part_of-statistics-ii",
       "from": "statistics_ii-block-105",
       "to": "statistics-ii",
@@ -3498,9 +3498,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-105-related_to-statistics_ii-block-102",
+      "id": "struct-statistics_ii-block-105-related_to-statistics_ii-block-104",
       "from": "statistics_ii-block-105",
-      "to": "statistics_ii-block-102",
+      "to": "statistics_ii-block-104",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3528,9 +3528,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-106-related_to-statistics_ii-block-102",
+      "id": "struct-statistics_ii-block-106-related_to-statistics_ii-block-104",
       "from": "statistics_ii-block-106",
-      "to": "statistics_ii-block-102",
+      "to": "statistics_ii-block-104",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3558,9 +3558,69 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-block-107-related_to-statistics_ii-block-102",
+      "id": "struct-statistics_ii-block-107-related_to-statistics_ii-block-104",
       "from": "statistics_ii-block-107",
-      "to": "statistics_ii-block-102",
+      "to": "statistics_ii-block-104",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-block-108-part_of-statistics-ii",
+      "from": "statistics_ii-block-108",
+      "to": "statistics-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-block-107-before-statistics_ii-block-108",
+      "from": "statistics_ii-block-107",
+      "to": "statistics_ii-block-108",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-block-108-related_to-statistics_ii-block-104",
+      "from": "statistics_ii-block-108",
+      "to": "statistics_ii-block-104",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-block-109-part_of-statistics-ii",
+      "from": "statistics_ii-block-109",
+      "to": "statistics-ii",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-block-108-before-statistics_ii-block-109",
+      "from": "statistics_ii-block-108",
+      "to": "statistics_ii-block-109",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-block-109-related_to-statistics_ii-block-104",
+      "from": "statistics_ii-block-109",
+      "to": "statistics_ii-block-104",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3818,9 +3878,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-26-part_of-statistics_ii-block-24",
+      "id": "struct-statistics_ii-stmt-26-part_of-statistics_ii-block-22",
       "from": "statistics_ii-stmt-26",
-      "to": "statistics_ii-block-24",
+      "to": "statistics_ii-block-22",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3838,9 +3898,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-28-part_of-statistics_ii-block-24",
+      "id": "struct-statistics_ii-stmt-28-part_of-statistics_ii-block-26",
       "from": "statistics_ii-stmt-28",
-      "to": "statistics_ii-block-24",
+      "to": "statistics_ii-block-26",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3848,9 +3908,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-29-part_of-statistics_ii-block-27",
+      "id": "struct-statistics_ii-stmt-29-part_of-statistics_ii-block-26",
       "from": "statistics_ii-stmt-29",
-      "to": "statistics_ii-block-27",
+      "to": "statistics_ii-block-26",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3858,9 +3918,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-30-part_of-statistics_ii-block-27",
+      "id": "struct-statistics_ii-stmt-30-part_of-statistics_ii-block-26",
       "from": "statistics_ii-stmt-30",
-      "to": "statistics_ii-block-27",
+      "to": "statistics_ii-block-26",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3878,9 +3938,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-32-part_of-statistics_ii-block-30",
+      "id": "struct-statistics_ii-stmt-32-part_of-statistics_ii-block-29",
       "from": "statistics_ii-stmt-32",
-      "to": "statistics_ii-block-30",
+      "to": "statistics_ii-block-29",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3918,9 +3978,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-36-part_of-statistics_ii-block-33",
+      "id": "struct-statistics_ii-stmt-36-part_of-statistics_ii-block-34",
       "from": "statistics_ii-stmt-36",
-      "to": "statistics_ii-block-33",
+      "to": "statistics_ii-block-34",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3928,9 +3988,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-37-part_of-statistics_ii-block-34",
+      "id": "struct-statistics_ii-stmt-37-part_of-statistics_ii-block-35",
       "from": "statistics_ii-stmt-37",
-      "to": "statistics_ii-block-34",
+      "to": "statistics_ii-block-35",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3938,9 +3998,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-38-part_of-statistics_ii-block-34",
+      "id": "struct-statistics_ii-stmt-38-part_of-statistics_ii-block-35",
       "from": "statistics_ii-stmt-38",
-      "to": "statistics_ii-block-34",
+      "to": "statistics_ii-block-35",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3948,9 +4008,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-39-part_of-statistics_ii-block-39",
+      "id": "struct-statistics_ii-stmt-39-part_of-statistics_ii-block-36",
       "from": "statistics_ii-stmt-39",
-      "to": "statistics_ii-block-39",
+      "to": "statistics_ii-block-36",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3958,9 +4018,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-40-part_of-statistics_ii-block-39",
+      "id": "struct-statistics_ii-stmt-40-part_of-statistics_ii-block-36",
       "from": "statistics_ii-stmt-40",
-      "to": "statistics_ii-block-39",
+      "to": "statistics_ii-block-36",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3968,9 +4028,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-41-part_of-statistics_ii-block-39",
+      "id": "struct-statistics_ii-stmt-41-part_of-statistics_ii-block-41",
       "from": "statistics_ii-stmt-41",
-      "to": "statistics_ii-block-39",
+      "to": "statistics_ii-block-41",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3998,9 +4058,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-44-part_of-statistics_ii-block-42",
+      "id": "struct-statistics_ii-stmt-44-part_of-statistics_ii-block-43",
       "from": "statistics_ii-stmt-44",
-      "to": "statistics_ii-block-42",
+      "to": "statistics_ii-block-43",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4018,9 +4078,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-46-part_of-statistics_ii-block-45",
+      "id": "struct-statistics_ii-stmt-46-part_of-statistics_ii-block-44",
       "from": "statistics_ii-stmt-46",
-      "to": "statistics_ii-block-45",
+      "to": "statistics_ii-block-44",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4038,29 +4098,29 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-48-part_of-statistics_ii-block-46",
+      "id": "struct-statistics_ii-stmt-48-part_of-statistics_ii-block-47",
       "from": "statistics_ii-stmt-48",
-      "to": "statistics_ii-block-46",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-statistics_ii-stmt-49-part_of-statistics_ii-block-46",
-      "from": "statistics_ii-stmt-49",
-      "to": "statistics_ii-block-46",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-statistics_ii-stmt-50-part_of-statistics_ii-block-47",
-      "from": "statistics_ii-stmt-50",
       "to": "statistics_ii-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-stmt-49-part_of-statistics_ii-block-47",
+      "from": "statistics_ii-stmt-49",
+      "to": "statistics_ii-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-stmt-50-part_of-statistics_ii-block-48",
+      "from": "statistics_ii-stmt-50",
+      "to": "statistics_ii-block-48",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4078,9 +4138,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-52-part_of-statistics_ii-block-51",
+      "id": "struct-statistics_ii-stmt-52-part_of-statistics_ii-block-49",
       "from": "statistics_ii-stmt-52",
-      "to": "statistics_ii-block-51",
+      "to": "statistics_ii-block-49",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4088,9 +4148,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-53-part_of-statistics_ii-block-51",
+      "id": "struct-statistics_ii-stmt-53-part_of-statistics_ii-block-50",
       "from": "statistics_ii-stmt-53",
-      "to": "statistics_ii-block-51",
+      "to": "statistics_ii-block-50",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4098,9 +4158,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-54-part_of-statistics_ii-block-55",
+      "id": "struct-statistics_ii-stmt-54-part_of-statistics_ii-block-53",
       "from": "statistics_ii-stmt-54",
-      "to": "statistics_ii-block-55",
+      "to": "statistics_ii-block-53",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4108,9 +4168,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-55-part_of-statistics_ii-block-55",
+      "id": "struct-statistics_ii-stmt-55-part_of-statistics_ii-block-53",
       "from": "statistics_ii-stmt-55",
-      "to": "statistics_ii-block-55",
+      "to": "statistics_ii-block-53",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4118,9 +4178,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-56-part_of-statistics_ii-block-55",
+      "id": "struct-statistics_ii-stmt-56-part_of-statistics_ii-block-57",
       "from": "statistics_ii-stmt-56",
-      "to": "statistics_ii-block-55",
+      "to": "statistics_ii-block-57",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4128,9 +4188,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-57-part_of-statistics_ii-block-56",
+      "id": "struct-statistics_ii-stmt-57-part_of-statistics_ii-block-57",
       "from": "statistics_ii-stmt-57",
-      "to": "statistics_ii-block-56",
+      "to": "statistics_ii-block-57",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4158,8 +4218,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-60-part_of-statistics_ii-block-60",
+      "id": "struct-statistics_ii-stmt-60-part_of-statistics_ii-block-59",
       "from": "statistics_ii-stmt-60",
+      "to": "statistics_ii-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-stmt-61-part_of-statistics_ii-block-60",
+      "from": "statistics_ii-stmt-61",
       "to": "statistics_ii-block-60",
       "kind": "part_of",
       "qualifiers": {},
@@ -4168,39 +4238,29 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-61-part_of-statistics_ii-block-61",
-      "from": "statistics_ii-stmt-61",
-      "to": "statistics_ii-block-61",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-statistics_ii-stmt-62-part_of-statistics_ii-block-61",
+      "id": "struct-statistics_ii-stmt-62-part_of-statistics_ii-block-62",
       "from": "statistics_ii-stmt-62",
-      "to": "statistics_ii-block-61",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-statistics_ii-stmt-63-part_of-statistics_ii-block-61",
-      "from": "statistics_ii-stmt-63",
-      "to": "statistics_ii-block-61",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-statistics_ii-stmt-64-part_of-statistics_ii-block-62",
-      "from": "statistics_ii-stmt-64",
       "to": "statistics_ii-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-stmt-63-part_of-statistics_ii-block-63",
+      "from": "statistics_ii-stmt-63",
+      "to": "statistics_ii-block-63",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-stmt-64-part_of-statistics_ii-block-63",
+      "from": "statistics_ii-stmt-64",
+      "to": "statistics_ii-block-63",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4308,9 +4368,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-75-part_of-statistics_ii-block-76",
+      "id": "struct-statistics_ii-stmt-75-part_of-statistics_ii-block-73",
       "from": "statistics_ii-stmt-75",
-      "to": "statistics_ii-block-76",
+      "to": "statistics_ii-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4318,9 +4378,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-76-part_of-statistics_ii-block-77",
+      "id": "struct-statistics_ii-stmt-76-part_of-statistics_ii-block-74",
       "from": "statistics_ii-stmt-76",
-      "to": "statistics_ii-block-77",
+      "to": "statistics_ii-block-74",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4338,9 +4398,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-78-part_of-statistics_ii-block-80",
+      "id": "struct-statistics_ii-stmt-78-part_of-statistics_ii-block-79",
       "from": "statistics_ii-stmt-78",
-      "to": "statistics_ii-block-80",
+      "to": "statistics_ii-block-79",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4358,9 +4418,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-80-part_of-statistics_ii-block-81",
+      "id": "struct-statistics_ii-stmt-80-part_of-statistics_ii-block-82",
       "from": "statistics_ii-stmt-80",
-      "to": "statistics_ii-block-81",
+      "to": "statistics_ii-block-82",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4408,9 +4468,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-85-part_of-statistics_ii-block-87",
+      "id": "struct-statistics_ii-stmt-85-part_of-statistics_ii-block-86",
       "from": "statistics_ii-stmt-85",
-      "to": "statistics_ii-block-87",
+      "to": "statistics_ii-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4428,9 +4488,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-87-part_of-statistics_ii-block-87",
+      "id": "struct-statistics_ii-stmt-87-part_of-statistics_ii-block-89",
       "from": "statistics_ii-stmt-87",
-      "to": "statistics_ii-block-87",
+      "to": "statistics_ii-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4438,9 +4498,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-88-part_of-statistics_ii-block-88",
+      "id": "struct-statistics_ii-stmt-88-part_of-statistics_ii-block-89",
       "from": "statistics_ii-stmt-88",
-      "to": "statistics_ii-block-88",
+      "to": "statistics_ii-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4458,9 +4518,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-90-part_of-statistics_ii-block-94",
+      "id": "struct-statistics_ii-stmt-90-part_of-statistics_ii-block-90",
       "from": "statistics_ii-stmt-90",
-      "to": "statistics_ii-block-94",
+      "to": "statistics_ii-block-90",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4468,9 +4528,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-91-part_of-statistics_ii-block-97",
+      "id": "struct-statistics_ii-stmt-91-part_of-statistics_ii-block-91",
       "from": "statistics_ii-stmt-91",
-      "to": "statistics_ii-block-97",
+      "to": "statistics_ii-block-91",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4478,9 +4538,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-92-part_of-statistics_ii-block-97",
+      "id": "struct-statistics_ii-stmt-92-part_of-statistics_ii-block-96",
       "from": "statistics_ii-stmt-92",
-      "to": "statistics_ii-block-97",
+      "to": "statistics_ii-block-96",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4488,9 +4548,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-93-part_of-statistics_ii-block-98",
+      "id": "struct-statistics_ii-stmt-93-part_of-statistics_ii-block-99",
       "from": "statistics_ii-stmt-93",
-      "to": "statistics_ii-block-98",
+      "to": "statistics_ii-block-99",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4508,9 +4568,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-95-part_of-statistics_ii-block-99",
+      "id": "struct-statistics_ii-stmt-95-part_of-statistics_ii-block-100",
       "from": "statistics_ii-stmt-95",
-      "to": "statistics_ii-block-99",
+      "to": "statistics_ii-block-100",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4518,9 +4578,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-96-part_of-statistics_ii-block-100",
+      "id": "struct-statistics_ii-stmt-96-part_of-statistics_ii-block-101",
       "from": "statistics_ii-stmt-96",
-      "to": "statistics_ii-block-100",
+      "to": "statistics_ii-block-101",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4528,9 +4588,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-97-part_of-statistics_ii-block-100",
+      "id": "struct-statistics_ii-stmt-97-part_of-statistics_ii-block-101",
       "from": "statistics_ii-stmt-97",
-      "to": "statistics_ii-block-100",
+      "to": "statistics_ii-block-101",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4538,9 +4598,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-98-part_of-statistics_ii-block-101",
+      "id": "struct-statistics_ii-stmt-98-part_of-statistics_ii-block-102",
       "from": "statistics_ii-stmt-98",
-      "to": "statistics_ii-block-101",
+      "to": "statistics_ii-block-102",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4548,9 +4608,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-99-part_of-statistics_ii-block-101",
+      "id": "struct-statistics_ii-stmt-99-part_of-statistics_ii-block-102",
       "from": "statistics_ii-stmt-99",
-      "to": "statistics_ii-block-101",
+      "to": "statistics_ii-block-102",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4558,9 +4618,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-100-part_of-statistics_ii-block-101",
+      "id": "struct-statistics_ii-stmt-100-part_of-statistics_ii-block-103",
       "from": "statistics_ii-stmt-100",
-      "to": "statistics_ii-block-101",
+      "to": "statistics_ii-block-103",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4588,9 +4648,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-103-part_of-statistics_ii-block-104",
+      "id": "struct-statistics_ii-stmt-103-part_of-statistics_ii-block-105",
       "from": "statistics_ii-stmt-103",
-      "to": "statistics_ii-block-104",
+      "to": "statistics_ii-block-105",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4608,9 +4668,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-105-part_of-statistics_ii-block-105",
+      "id": "struct-statistics_ii-stmt-105-part_of-statistics_ii-block-106",
       "from": "statistics_ii-stmt-105",
-      "to": "statistics_ii-block-105",
+      "to": "statistics_ii-block-106",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4618,9 +4678,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-statistics_ii-stmt-106-part_of-statistics_ii-block-106",
+      "id": "struct-statistics_ii-stmt-106-part_of-statistics_ii-block-107",
       "from": "statistics_ii-stmt-106",
-      "to": "statistics_ii-block-106",
+      "to": "statistics_ii-block-107",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4631,6 +4691,26 @@
       "id": "struct-statistics_ii-stmt-107-part_of-statistics_ii-block-107",
       "from": "statistics_ii-stmt-107",
       "to": "statistics_ii-block-107",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-stmt-108-part_of-statistics_ii-block-108",
+      "from": "statistics_ii-stmt-108",
+      "to": "statistics_ii-block-108",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-statistics_ii-stmt-109-part_of-statistics_ii-block-109",
+      "from": "statistics_ii-stmt-109",
+      "to": "statistics_ii-block-109",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4816,575 +4896,589 @@
     },
     {
       "id": "statistics_ii-stmt-26",
-      "quote": "This concept is the backbone of modern AI.",
-      "block_id": "statistics_ii-block-24",
+      "quote": "<circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"#ffd700\" stroke=\"#b8860b\" stroke-width=\"3\" /> <circle cx=\"50\" cy=\"50\" r=\"38\" fill=\"none\" stroke=\"#b8860b\" stroke-width=\"1\" stroke-dasharray=\"2,2\" /> <text x=\"50\" y=\"65\" font-family=\"Arial\" font-size=\"40\" font-weight=\"bold\" fill=\"#b8860b\" text-anchor=\"middle\">🙂</text>",
+      "block_id": "statistics_ii-block-22",
       "section": "Entropy (The Messiness Scale)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-27",
-      "quote": "When a model like GPT predicts the next word, it calculates the **Cross-Entropy** between its guess and the actual word.",
+      "quote": "<circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"#ffd700\" stroke=\"#b8860b\" stroke-width=\"3\" /> <circle cx=\"50\" cy=\"50\" r=\"38\" fill=\"none\" stroke=\"#b8860b\" stroke-width=\"1\" stroke-dasharray=\"2,2\" /> <text x=\"50\" y=\"65\" font-family=\"Arial\" font-size=\"40\" font-weight=\"bold\" fill=\"#b8860b\" text-anchor=\"middle\">1€</text>",
       "block_id": "statistics_ii-block-24",
       "section": "Entropy (The Messiness Scale)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-28",
-      "quote": "The lower this cross-entropy, the more “certain” and accurate the model has become.",
-      "block_id": "statistics_ii-block-24",
+      "quote": "This concept is the backbone of modern AI.",
+      "block_id": "statistics_ii-block-26",
       "section": "Entropy (The Messiness Scale)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-29",
-      "quote": "While Zipf's Law tells us how common words are, it doesn't explain how they “clump” together.",
-      "block_id": "statistics_ii-block-27",
-      "section": "The Dirichlet Distribution: The Probability of Probabilities",
+      "quote": "When a model like GPT predicts the next word, it calculates the **Cross-Entropy** between its guess and the actual word.",
+      "block_id": "statistics_ii-block-26",
+      "section": "Entropy (The Messiness Scale)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-30",
-      "quote": "To understand how an AI chooses a “topic” before it chooses a word, we need the **Dirichlet Distribution**.",
-      "block_id": "statistics_ii-block-27",
-      "section": "The Dirichlet Distribution: The Probability of Probabilities",
+      "quote": "The lower this cross-entropy, the more “certain” and accurate the model has become.",
+      "block_id": "statistics_ii-block-26",
+      "section": "Entropy (The Messiness Scale)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-31",
-      "quote": "Named after **Peter Gustav Lejeune Dirichlet** in the 19th century, this distribution was a generalization of the Beta distribution.",
+      "quote": "While Zipf's Law tells us how common words are, it doesn't explain how they “clump” together.",
       "block_id": "statistics_ii-block-29",
-      "section": "History & The “Urn” Motivation",
+      "section": "The Dirichlet Distribution: The Probability of Probabilities",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-32",
-      "quote": "Where $\\alpha$ is the **concentration parameter**.",
-      "block_id": "statistics_ii-block-30",
-      "section": "History & The “Urn” Motivation",
+      "quote": "To understand how an AI chooses a “topic” before it chooses a word, we need the **Dirichlet Distribution**.",
+      "block_id": "statistics_ii-block-29",
+      "section": "The Dirichlet Distribution: The Probability of Probabilities",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-33",
-      "quote": "In topic models such as Latent Dirichlet Allocation (LDA), the Dirichlet distribution is used to model the “mixture” of topics in a document.",
+      "quote": "Named after **Peter Gustav Lejeune Dirichlet** in the 19th century, this distribution was a generalization of the Beta distribution.",
       "block_id": "statistics_ii-block-31",
       "section": "History & The “Urn” Motivation",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-34",
-      "quote": "A Transformer does not do this: it computes one deterministic distribution over the next token and, if sampling is enabled, draws from that distribution directly.",
+      "quote": "Where $\\alpha$ is the **concentration parameter**.",
       "block_id": "statistics_ii-block-32",
       "section": "History & The “Urn” Motivation",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-35",
-      "quote": "When $\\alpha < 1$, the distribution pushes probabilities toward the corners (the model becomes very “certain” and chooses one specific topic).",
+      "quote": "In topic models such as Latent Dirichlet Allocation (LDA), the Dirichlet distribution is used to model the “mixture” of topics in a document.",
       "block_id": "statistics_ii-block-33",
       "section": "History & The “Urn” Motivation",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-36",
-      "quote": "When $\\alpha > 1$, it pushes everything toward the center (a “vague” mixture of everything).",
-      "block_id": "statistics_ii-block-33",
+      "quote": "A Transformer does not do this: it computes one deterministic distribution over the next token and, if sampling is enabled, draws from that distribution directly.",
+      "block_id": "statistics_ii-block-34",
       "section": "History & The “Urn” Motivation",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-37",
-      "quote": "Adjust the $\\alpha$-parameters for three potential “Topics” (e.g., Science, Art, Sports).",
-      "block_id": "statistics_ii-block-34",
+      "quote": "When $\\alpha < 1$, the distribution pushes probabilities toward the corners (the model becomes very “certain” and chooses one specific topic).",
+      "block_id": "statistics_ii-block-35",
       "section": "History & The “Urn” Motivation",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-38",
-      "quote": "Watch how the “Probability Space” (represented as a 3D simplex) shifts.",
-      "block_id": "statistics_ii-block-34",
+      "quote": "When $\\alpha > 1$, it pushes everything toward the center (a “vague” mixture of everything).",
+      "block_id": "statistics_ii-block-35",
       "section": "History & The “Urn” Motivation",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-39",
-      "quote": "When an AI reads a word, it faces a **Disambiguation Problem**.",
-      "block_id": "statistics_ii-block-39",
-      "section": "Latent Variables: The Hidden Logic of Context",
+      "quote": "Adjust the $\\alpha$-parameters for three potential “Topics” (e.g., Science, Art, Sports).",
+      "block_id": "statistics_ii-block-36",
+      "section": "History & The “Urn” Motivation",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-40",
-      "quote": "In statistics, we model this using **Gaussian Mixture Models (GMMs)**.",
-      "block_id": "statistics_ii-block-39",
-      "section": "Latent Variables: The Hidden Logic of Context",
+      "quote": "Watch how the “Probability Space” (represented as a 3D simplex) shifts.",
+      "block_id": "statistics_ii-block-36",
+      "section": "History & The “Urn” Motivation",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-41",
-      "quote": "This theory suggests that the data we see (tokens) is actually generated by several hidden (latent) distributions.",
-      "block_id": "statistics_ii-block-39",
+      "quote": "When an AI reads a word, it faces a **Disambiguation Problem**.",
+      "block_id": "statistics_ii-block-41",
       "section": "Latent Variables: The Hidden Logic of Context",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-42",
-      "quote": "The algorithm used to solve this was formalized by **Arthur Dempster, Laird, and Rubin** in 1977; earlier special cases include Hartley (1958) and Sundberg (1974) (\\cite{em_algorithm_wiki}).",
+      "quote": "In statistics, we model this using **Gaussian Mixture Models (GMMs)**.",
       "block_id": "statistics_ii-block-41",
-      "section": "Expectation-Maximization (EM)",
+      "section": "Latent Variables: The Hidden Logic of Context",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-43",
-      "quote": "It works in two steps that mirror how a Transformer processes context:",
+      "quote": "This theory suggests that the data we see (tokens) is actually generated by several hidden (latent) distributions.",
       "block_id": "statistics_ii-block-41",
-      "section": "Expectation-Maximization (EM)",
+      "section": "Latent Variables: The Hidden Logic of Context",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-44",
-      "quote": "**Expectation (E):** Based on the current words, what is the probability that we are in “Topic A” vs “Topic B”?",
-      "block_id": "statistics_ii-block-42",
+      "quote": "The algorithm used to solve this was formalized by **Arthur Dempster, Laird, and Rubin** in 1977; earlier special cases include Hartley (1958) and Sundberg (1974) (\\cite{em_algorithm_wiki}).",
+      "block_id": "statistics_ii-block-43",
       "section": "Expectation-Maximization (EM)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-45",
-      "quote": "**Maximization (M):** Adjust the internal “weights” to favor the words that fit that topic.",
+      "quote": "It works in two steps that mirror how a Transformer processes context:",
       "block_id": "statistics_ii-block-43",
       "section": "Expectation-Maximization (EM)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-46",
-      "quote": "By analogy, this is why a prompt works.",
-      "block_id": "statistics_ii-block-45",
-      "section": "The Statistical “Vibe”",
+      "quote": "**Expectation (E):** Based on the current words, what is the probability that we are in “Topic A” vs “Topic B”?",
+      "block_id": "statistics_ii-block-44",
+      "section": "Expectation-Maximization (EM)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-47",
-      "quote": "Typing “Import torch” pushes the model's **hidden state** toward the “Coding” region, making “print” far more likely than “reproduction” (the biology cluster) — though a Transformer does not literally run EM.",
+      "quote": "**Maximization (M):** Adjust the internal “weights” to favor the words that fit that topic.",
       "block_id": "statistics_ii-block-45",
-      "section": "The Statistical “Vibe”",
+      "section": "Expectation-Maximization (EM)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-48",
-      "quote": "Adjust the “Cluster Separation.” When clusters overlap, the AI's “Choice” is statistically noisy (uncertain).",
-      "block_id": "statistics_ii-block-46",
-      "section": "The Statistical “Vibe”",
-      "kind": "statement"
-    },
-    {
-      "id": "statistics_ii-stmt-49",
-      "quote": "As the Transformer sees more context, it effectively “pushes” these distributions apart to make a clear choice.",
-      "block_id": "statistics_ii-block-46",
-      "section": "The Statistical “Vibe”",
-      "kind": "statement"
-    },
-    {
-      "id": "statistics_ii-stmt-50",
-      "quote": "Topic Separation (Distance):",
+      "quote": "By analogy, this is why a prompt works.",
       "block_id": "statistics_ii-block-47",
       "section": "The Statistical “Vibe”",
       "kind": "statement"
     },
     {
+      "id": "statistics_ii-stmt-49",
+      "quote": "Typing “Import torch” pushes the model's **hidden state** toward the “Coding” region, making “print” far more likely than “reproduction” (the biology cluster) — though a Transformer does not literally run EM.",
+      "block_id": "statistics_ii-block-47",
+      "section": "The Statistical “Vibe”",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-50",
+      "quote": "Adjust the “Cluster Separation.” When clusters overlap, the AI's “Choice” is statistically noisy (uncertain).",
+      "block_id": "statistics_ii-block-48",
+      "section": "The Statistical “Vibe”",
+      "kind": "statement"
+    },
+    {
       "id": "statistics_ii-stmt-51",
-      "quote": "Cluster Variance (Noise):",
+      "quote": "As the Transformer sees more context, it effectively “pushes” these distributions apart to make a clear choice.",
       "block_id": "statistics_ii-block-48",
       "section": "The Statistical “Vibe”",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-52",
-      "quote": "In the real world, language is a **Non-Stationary Process**.",
-      "block_id": "statistics_ii-block-51",
-      "section": "The Law of Large Numbers",
+      "quote": "Topic Separation (Distance):",
+      "block_id": "statistics_ii-block-49",
+      "section": "The Statistical “Vibe”",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-53",
-      "quote": "If you only read the first page of \\citetitle{nietzsche1883zarathustra}, your statistical “Prior” is heavily biased by the opening scene.",
-      "block_id": "statistics_ii-block-51",
-      "section": "The Law of Large Numbers",
+      "quote": "Cluster Variance (Noise):",
+      "block_id": "statistics_ii-block-50",
+      "section": "The Statistical “Vibe”",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-54",
-      "quote": "An LLM is not just a list of word counts; it is a map of **Conditional Probabilities**.",
-      "block_id": "statistics_ii-block-55",
-      "section": "Markovian Transitions (The Probability of “Next”)",
+      "quote": "In the real world, language is a **Non-Stationary Process**.",
+      "block_id": "statistics_ii-block-53",
+      "section": "The Law of Large Numbers",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-55",
-      "quote": "This is the logic of **Andrey Markov** (1906).",
-      "block_id": "statistics_ii-block-55",
-      "section": "Markovian Transitions (The Probability of “Next”)",
+      "quote": "If you only read the first page of \\citetitle{nietzsche1883zarathustra}, your statistical “Prior” is heavily biased by the opening scene.",
+      "block_id": "statistics_ii-block-53",
+      "section": "The Law of Large Numbers",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-56",
-      "quote": "He proposed that we can predict the future state of a system based solely on its current state.",
-      "block_id": "statistics_ii-block-55",
+      "quote": "An LLM is not just a list of word counts; it is a map of **Conditional Probabilities**.",
+      "block_id": "statistics_ii-block-57",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-57",
-      "quote": "In linguistics, we call this an **N-Gram**.",
-      "block_id": "statistics_ii-block-56",
+      "quote": "This is the logic of **Andrey Markov** (1906).",
+      "block_id": "statistics_ii-block-57",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-58",
-      "quote": "If Nietzsche wrote “Thus spake” 100 times, but “Thus thought” only 5 times, the Markov-Chain “chooses” based on this statistical skew.",
+      "quote": "He proposed that we can predict the future state of a system based solely on its current state.",
       "block_id": "statistics_ii-block-57",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-59",
-      "quote": "Select a word found in the \\citetitle{nietzsche1883zarathustra} by \\citeauthor{nietzsche1883zarathustra} to show you every word that ever followed it and how likely they are depending on their real statistics.",
+      "quote": "In linguistics, we call this an **N-Gram**.",
       "block_id": "statistics_ii-block-58",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-60",
-      "quote": "thus spake zarathustra and the world is the earth great will man",
-      "block_id": "statistics_ii-block-60",
+      "quote": "If Nietzsche wrote “Thus spake” 100 times, but “Thus thought” only 5 times, the Markov-Chain “chooses” based on this statistical skew.",
+      "block_id": "statistics_ii-block-59",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-61",
-      "quote": "When Zarathustra was thirty years old, he left his home and the lake of his home, and went into the mountains.",
-      "block_id": "statistics_ii-block-61",
+      "quote": "Select a word found in the \\citetitle{nietzsche1883zarathustra} by \\citeauthor{nietzsche1883zarathustra} to show you every word that ever followed it and how likely they are depending on their real statistics.",
+      "block_id": "statistics_ii-block-60",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-62",
-      "quote": "There he enjoyed his spirit and solitude, and for ten years did not weary of it.",
-      "block_id": "statistics_ii-block-61",
-      "section": "Markovian Transitions (The Probability of “Next”)",
-      "kind": "statement"
-    },
-    {
-      "id": "statistics_ii-stmt-63",
-      "quote": "But at last his heart changed, and rising one morning with the rosy dawn, he went before the sun, and spake thus unto it:",
-      "block_id": "statistics_ii-block-61",
-      "section": "Markovian Transitions (The Probability of “Next”)",
-      "kind": "statement"
-    },
-    {
-      "id": "statistics_ii-stmt-64",
-      "quote": "What would be thy happiness if thou hadst not those for whom thou shinest!",
+      "quote": "thus spake zarathustra and the world is the earth great will man",
       "block_id": "statistics_ii-block-62",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
+      "id": "statistics_ii-stmt-63",
+      "quote": "When Zarathustra was thirty years old, he left his home and the lake of his home, and went into the mountains.",
+      "block_id": "statistics_ii-block-63",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-64",
+      "quote": "There he enjoyed his spirit and solitude, and for ten years did not weary of it.",
+      "block_id": "statistics_ii-block-63",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
       "id": "statistics_ii-stmt-65",
-      "quote": "For ten years hast thou climbed hither unto my cave: thou wouldst have wearied of thy light and of the journey, had it not been for me, mine eagle, and my serpent.",
+      "quote": "But at last his heart changed, and rising one morning with the rosy dawn, he went before the sun, and spake thus unto it:",
       "block_id": "statistics_ii-block-63",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-66",
-      "quote": "But we awaited thee every morning, took from thee thine overflow and blessed thee for it.",
+      "quote": "What would be thy happiness if thou hadst not those for whom thou shinest!",
       "block_id": "statistics_ii-block-64",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-67",
-      "quote": "I am weary of my wisdom, like the bee that hath gathered too much honey; I need hands outstretched to take it.",
+      "quote": "For ten years hast thou climbed hither unto my cave: thou wouldst have wearied of thy light and of the journey, had it not been for me, mine eagle, and my serpent.",
       "block_id": "statistics_ii-block-65",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-68",
-      "quote": "I would fain bestow and distribute, until the wise have once more become joyous in their folly, and the poor happy in their riches.",
+      "quote": "But we awaited thee every morning, took from thee thine overflow and blessed thee for it.",
       "block_id": "statistics_ii-block-66",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-69",
-      "quote": "Therefore must I descend into the deep: as thou doest in the evening, when thou goest behind the sea, and givest light also to the nether-world, thou exuberant star!",
+      "quote": "I am weary of my wisdom, like the bee that hath gathered too much honey; I need hands outstretched to take it.",
       "block_id": "statistics_ii-block-67",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-70",
-      "quote": "Like thee must I GO DOWN, as men say, to whom I shall descend.",
+      "quote": "I would fain bestow and distribute, until the wise have once more become joyous in their folly, and the poor happy in their riches.",
       "block_id": "statistics_ii-block-68",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-71",
-      "quote": "Bless me, then, thou tranquil eye, that canst behold even the greatest happiness without envy!",
+      "quote": "Therefore must I descend into the deep: as thou doest in the evening, when thou goest behind the sea, and givest light also to the nether-world, thou exuberant star!",
       "block_id": "statistics_ii-block-69",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-72",
-      "quote": "Bless the cup that is about to overflow, that the water may flow golden out of it, and carry everywhere the reflection of thy bliss!",
+      "quote": "Like thee must I GO DOWN, as men say, to whom I shall descend.",
       "block_id": "statistics_ii-block-70",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-73",
-      "quote": "This cup is again going to empty itself, and Zarathustra is again going to be a man.",
+      "quote": "Bless me, then, thou tranquil eye, that canst behold even the greatest happiness without envy!",
       "block_id": "statistics_ii-block-71",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-74",
-      "quote": "Thus began Zarathustra's down-going.",
+      "quote": "Bless the cup that is about to overflow, that the water may flow golden out of it, and carry everywhere the reflection of thy bliss!",
       "block_id": "statistics_ii-block-72",
       "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-75",
-      "quote": "Developed in *Statistical Mechanics* to describe the **distribution of molecular velocities** in a gas — first derived by Maxwell (1860) and generalized by **\\citeauthor{boltzmann}** — it asks: in a room full of gas, how many molecules are moving fast versus slow?",
-      "block_id": "statistics_ii-block-76",
-      "section": "Boltzmann Distributions",
+      "quote": "This cup is again going to empty itself, and Zarathustra is again going to be a man.",
+      "block_id": "statistics_ii-block-73",
+      "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-76",
-      "quote": "- **The Graph:** Shows the probability of picking specific tokens.",
-      "block_id": "statistics_ii-block-77",
-      "section": "Boltzmann Distributions",
+      "quote": "Thus began Zarathustra's down-going.",
+      "block_id": "statistics_ii-block-74",
+      "section": "Markovian Transitions (The Probability of “Next”)",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-77",
-      "quote": "Enter 5 raw scores (Logits) separated by commas:",
+      "quote": "Developed in *Statistical Mechanics* to describe the **distribution of molecular velocities** in a gas — first derived by Maxwell (1860) and generalized by **\\citeauthor{boltzmann}** — it asks: in a room full of gas, how many molecules are moving fast versus slow?",
       "block_id": "statistics_ii-block-78",
       "section": "Boltzmann Distributions",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-78",
-      "quote": "Popularized by **Sir \\citeauthor{fisher1922}**, MLE was created to solve the problem of **Parameter Estimation**.",
-      "block_id": "statistics_ii-block-80",
-      "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
+      "quote": "- **The Graph:** Shows the probability of picking specific tokens.",
+      "block_id": "statistics_ii-block-79",
+      "section": "Boltzmann Distributions",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-79",
-      "quote": "If you see 10 tall people, what is the “most likely” average height of the whole population?",
+      "quote": "Enter 5 raw scores (Logits) separated by commas:",
       "block_id": "statistics_ii-block-80",
-      "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
+      "section": "Boltzmann Distributions",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-80",
-      "quote": "LLMs use this to find the best weights ($\\theta$) for the model.",
-      "block_id": "statistics_ii-block-81",
+      "quote": "Popularized by **Sir \\citeauthor{fisher1922}**, MLE was created to solve the problem of **Parameter Estimation**.",
+      "block_id": "statistics_ii-block-82",
       "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-81",
-      "quote": "- **The Graph:** The red dots are your “observed data.” The blue curve is your model.",
+      "quote": "If you see 10 tall people, what is the “most likely” average height of the whole population?",
       "block_id": "statistics_ii-block-82",
       "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-82",
-      "quote": "- **The Goal:** Move the slider to align the peak of the curve with the cluster of dots to maximize the “Likelihood” value.",
+      "quote": "LLMs use this to find the best weights ($\\theta$) for the model.",
       "block_id": "statistics_ii-block-83",
       "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-83",
-      "quote": "Enter your observed data points (e.g., -1, 0.5, 2):",
+      "quote": "- **The Graph:** The red dots are your “observed data.” The blue curve is your model.",
       "block_id": "statistics_ii-block-84",
       "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-84",
-      "quote": "Hypothesized Mean ($\\mu$):",
+      "quote": "- **The Goal:** Move the slider to align the peak of the curve with the cluster of dots to maximize the “Likelihood” value.",
       "block_id": "statistics_ii-block-85",
       "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-85",
-      "quote": "The **Chain Rule of Probability** follows directly from the definition of conditional probability, and sits within the rigorous axiomatic foundation of probability theory established by **\\citeauthor{kolmogorov1933}** in *\\citetitle{kolmogorov1933}* (\\citeyear{kolmogorov1933}).",
-      "block_id": "statistics_ii-block-87",
-      "section": "The Chain Rule of Probability: Kolmogorov's Logic",
+      "quote": "Enter your observed data points (e.g., -1, 0.5, 2):",
+      "block_id": "statistics_ii-block-86",
+      "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-86",
-      "quote": "It solves the problem of **Sequential Dependencies**.",
+      "quote": "Hypothesized Mean ($\\mu$):",
       "block_id": "statistics_ii-block-87",
-      "section": "The Chain Rule of Probability: Kolmogorov's Logic",
+      "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-87",
-      "quote": "(It is distinct from the calculus chain rule that powers backpropagation.) It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.",
-      "block_id": "statistics_ii-block-87",
+      "quote": "The **Chain Rule of Probability** follows directly from the definition of conditional probability, and sits within the rigorous axiomatic foundation of probability theory established by **\\citeauthor{kolmogorov1933}** in *\\citetitle{kolmogorov1933}* (\\citeyear{kolmogorov1933}).",
+      "block_id": "statistics_ii-block-89",
       "section": "The Chain Rule of Probability: Kolmogorov's Logic",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-88",
-      "quote": "In an LLM, the probability of the sentence “The cat sat” is calculated as:",
-      "block_id": "statistics_ii-block-88",
+      "quote": "It solves the problem of **Sequential Dependencies**.",
+      "block_id": "statistics_ii-block-89",
       "section": "The Chain Rule of Probability: Kolmogorov's Logic",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-89",
-      "quote": "Enter 3 conditional probabilities (e.g., 0.1 for a common word, 0.001 for rare):",
+      "quote": "(It is distinct from the calculus chain rule that powers backpropagation.) It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.",
       "block_id": "statistics_ii-block-89",
       "section": "The Chain Rule of Probability: Kolmogorov's Logic",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-90",
-      "quote": "- **The Graph:** Shows the overlap between P (Truth) and Q (Model).",
-      "block_id": "statistics_ii-block-94",
-      "section": "KL Divergence: Information Gain",
+      "quote": "In an LLM, the probability of the sentence “The cat sat” is calculated as:",
+      "block_id": "statistics_ii-block-90",
+      "section": "The Chain Rule of Probability: Kolmogorov's Logic",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-91",
-      "quote": "Shannon's entropy measures the uncertainty of a source.",
-      "block_id": "statistics_ii-block-97",
-      "section": "From entropy to learning: the information quantities every model uses",
+      "quote": "Enter 3 conditional probabilities (e.g., 0.1 for a common word, 0.001 for rare):",
+      "block_id": "statistics_ii-block-91",
+      "section": "The Chain Rule of Probability: Kolmogorov's Logic",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-92",
-      "quote": "Five quantities built from it connect that abstract measure to training, compression and representation learning.",
-      "block_id": "statistics_ii-block-97",
-      "section": "From entropy to learning: the information quantities every model uses",
+      "quote": "- **The Graph:** Shows the overlap between P (Truth) and Q (Model).",
+      "block_id": "statistics_ii-block-96",
+      "section": "KL Divergence: Information Gain",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-93",
-      "quote": "| Quantity | Question it answers | Where it appears |",
-      "block_id": "statistics_ii-block-98",
+      "quote": "Shannon's entropy measures the uncertainty of a source.",
+      "block_id": "statistics_ii-block-99",
       "section": "From entropy to learning: the information quantities every model uses",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-94",
-      "quote": "| MDL | Which model compresses the data best?",
+      "quote": "Five quantities built from it connect that abstract measure to training, compression and representation learning.",
       "block_id": "statistics_ii-block-99",
       "section": "From entropy to learning: the information quantities every model uses",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-95",
-      "quote": "| model selection, Occam's razor |",
-      "block_id": "statistics_ii-block-99",
+      "quote": "| Quantity | Question it answers | Where it appears |",
+      "block_id": "statistics_ii-block-100",
       "section": "From entropy to learning: the information quantities every model uses",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-96",
-      "quote": "| Rate-distortion | How much can we lose for a given rate?",
-      "block_id": "statistics_ii-block-100",
+      "quote": "| MDL | Which model compresses the data best?",
+      "block_id": "statistics_ii-block-101",
       "section": "From entropy to learning: the information quantities every model uses",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-97",
-      "quote": "| quantization, embeddings |",
-      "block_id": "statistics_ii-block-100",
+      "quote": "| model selection, Occam's razor |",
+      "block_id": "statistics_ii-block-101",
       "section": "From entropy to learning: the information quantities every model uses",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-98",
-      "quote": "The unifying point is that learning is compression under a loss.",
-      "block_id": "statistics_ii-block-101",
+      "quote": "| Rate-distortion | How much can we lose for a given rate?",
+      "block_id": "statistics_ii-block-102",
       "section": "From entropy to learning: the information quantities every model uses",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-99",
-      "quote": "A language model is a compressor of text; a classifier is a compressor of labels given inputs; an embedding is a lossy code of meaning.",
-      "block_id": "statistics_ii-block-101",
+      "quote": "| quantization, embeddings |",
+      "block_id": "statistics_ii-block-102",
       "section": "From entropy to learning: the information quantities every model uses",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-100",
-      "quote": "Shannon's 1948 paper gave the unit, the limit and the vocabulary for all three.",
-      "block_id": "statistics_ii-block-101",
+      "quote": "The unifying point is that learning is compression under a loss.",
+      "block_id": "statistics_ii-block-103",
       "section": "From entropy to learning: the information quantities every model uses",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-101",
-      "quote": "The “Distributional Hypothesis”, the idea that words occurring in similar contexts have similar meanings, was popularized by **\\citeauthor{zelligharris}** in his \\citeyear{zelligharris} article *\\citetitle{zelligharris}*.",
+      "quote": "A language model is a compressor of text; a classifier is a compressor of labels given inputs; an embedding is a lossy code of meaning.",
       "block_id": "statistics_ii-block-103",
-      "section": "Bag of Words (BoW): The Linguistic Atom",
+      "section": "From entropy to learning: the information quantities every model uses",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-102",
-      "quote": "It treats a document not as a sequence, but as a “bag”: you lose the grammar, the order, and the syntax, keeping only the raw counts.",
+      "quote": "Shannon's 1948 paper gave the unit, the limit and the vocabulary for all three.",
       "block_id": "statistics_ii-block-103",
-      "section": "Bag of Words (BoW): The Linguistic Atom",
+      "section": "From entropy to learning: the information quantities every model uses",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-103",
-      "quote": "This was the primary method for **Spam Filtering** and early **Search Engines** before LLMs.",
-      "block_id": "statistics_ii-block-104",
+      "quote": "The “Distributional Hypothesis”, the idea that words occurring in similar contexts have similar meanings, was popularized by **\\citeauthor{zelligharris}** in his \\citeyear{zelligharris} article *\\citetitle{zelligharris}*.",
+      "block_id": "statistics_ii-block-105",
       "section": "Bag of Words (BoW): The Linguistic Atom",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-104",
-      "quote": "- **The Graph:** Visualizes the “Vector” of your text.",
+      "quote": "It treats a document not as a sequence, but as a “bag”: you lose the grammar, the order, and the syntax, keeping only the raw counts.",
       "block_id": "statistics_ii-block-105",
       "section": "Bag of Words (BoW): The Linguistic Atom",
       "kind": "statement"
     },
     {
       "id": "statistics_ii-stmt-105",
-      "quote": "Each unique word is a dimension.",
-      "block_id": "statistics_ii-block-105",
-      "section": "Bag of Words (BoW): The Linguistic Atom",
-      "kind": "statement"
-    },
-    {
-      "id": "statistics_ii-stmt-106",
-      "quote": "- **Live Logic:** Watch how “The cat sat” and “Sat the cat” produce the exact same statistical signature, demonstrating the model's “blindness” to word order.",
+      "quote": "This was the primary method for **Spam Filtering** and early **Search Engines** before LLMs.",
       "block_id": "statistics_ii-block-106",
       "section": "Bag of Words (BoW): The Linguistic Atom",
       "kind": "statement"
     },
     {
-      "id": "statistics_ii-stmt-107",
-      "quote": "Type or paste text to see its “Bag of Words” representation:",
+      "id": "statistics_ii-stmt-106",
+      "quote": "- **The Graph:** Visualizes the “Vector” of your text.",
       "block_id": "statistics_ii-block-107",
+      "section": "Bag of Words (BoW): The Linguistic Atom",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-107",
+      "quote": "Each unique word is a dimension.",
+      "block_id": "statistics_ii-block-107",
+      "section": "Bag of Words (BoW): The Linguistic Atom",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-108",
+      "quote": "- **Live Logic:** Watch how “The cat sat” and “Sat the cat” produce the exact same statistical signature, demonstrating the model's “blindness” to word order.",
+      "block_id": "statistics_ii-block-108",
+      "section": "Bag of Words (BoW): The Linguistic Atom",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-109",
+      "quote": "Type or paste text to see its “Bag of Words” representation:",
+      "block_id": "statistics_ii-block-109",
       "section": "Bag of Words (BoW): The Linguistic Atom",
       "kind": "statement"
     }
@@ -5518,516 +5612,528 @@
     },
     {
       "id": "statistics_ii-block-22",
-      "quote": "Head: 50 / 100",
+      "quote": "<circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"#ffd700\" stroke=\"#b8860b\" stroke-width=\"3\" /> <circle cx=\"50\" cy=\"50\" r=\"38\" fill=\"none\" stroke=\"#b8860b\" stroke-width=\"1\" stroke-dasharray=\"2,2\" /> <text x=\"50\" y=\"65\" font-family=\"Arial\" font-size=\"40\" font-weight=\"bold\" fill=\"#b8860b\" text-anchor=\"middle\">🙂</text>",
       "kind": "paragraph",
       "section": "Entropy (The Messiness Scale)"
     },
     {
       "id": "statistics_ii-block-23",
-      "quote": "Tail: 50 / 100",
+      "quote": "Head: 50 / 100",
       "kind": "paragraph",
       "section": "Entropy (The Messiness Scale)"
     },
     {
       "id": "statistics_ii-block-24",
-      "quote": "This concept is the backbone of modern AI. When a model like GPT predicts the next word, it calculates the **Cross-Entropy** between its guess and the actual word. The lower this cross-entropy, the more “certain” and accurate the model has become.",
+      "quote": "<circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"#ffd700\" stroke=\"#b8860b\" stroke-width=\"3\" /> <circle cx=\"50\" cy=\"50\" r=\"38\" fill=\"none\" stroke=\"#b8860b\" stroke-width=\"1\" stroke-dasharray=\"2,2\" /> <text x=\"50\" y=\"65\" font-family=\"Arial\" font-size=\"40\" font-weight=\"bold\" fill=\"#b8860b\" text-anchor=\"middle\">1€</text>",
       "kind": "paragraph",
       "section": "Entropy (The Messiness Scale)"
     },
     {
       "id": "statistics_ii-block-25",
+      "quote": "Tail: 50 / 100",
+      "kind": "paragraph",
+      "section": "Entropy (The Messiness Scale)"
+    },
+    {
+      "id": "statistics_ii-block-26",
+      "quote": "This concept is the backbone of modern AI. When a model like GPT predicts the next word, it calculates the **Cross-Entropy** between its guess and the actual word. The lower this cross-entropy, the more “certain” and accurate the model has become.",
+      "kind": "paragraph",
+      "section": "Entropy (The Messiness Scale)"
+    },
+    {
+      "id": "statistics_ii-block-27",
       "quote": "Distributions and latent variables",
       "kind": "heading",
       "section": "Distributions and latent variables"
     },
     {
-      "id": "statistics_ii-block-26",
+      "id": "statistics_ii-block-28",
       "quote": "The Dirichlet Distribution: The Probability of Probabilities",
       "kind": "heading",
       "section": "The Dirichlet Distribution: The Probability of Probabilities"
     },
     {
-      "id": "statistics_ii-block-27",
+      "id": "statistics_ii-block-29",
       "quote": "While Zipf's Law tells us how common words are, it doesn't explain how they “clump” together. To understand how an AI chooses a “topic” before it chooses a word, we need the **Dirichlet Distribution**.",
       "kind": "paragraph",
       "section": "The Dirichlet Distribution: The Probability of Probabilities"
     },
     {
-      "id": "statistics_ii-block-28",
+      "id": "statistics_ii-block-30",
       "quote": "History & The “Urn” Motivation",
       "kind": "heading",
       "section": "History & The “Urn” Motivation"
     },
     {
-      "id": "statistics_ii-block-29",
+      "id": "statistics_ii-block-31",
       "quote": "Named after **Peter Gustav Lejeune Dirichlet** in the 19th century, this distribution was a generalization of the Beta distribution.",
       "kind": "paragraph",
       "section": "History & The “Urn” Motivation"
     },
     {
-      "id": "statistics_ii-block-30",
+      "id": "statistics_ii-block-32",
       "quote": "Where $\\alpha$ is the **concentration parameter**.",
       "kind": "paragraph",
       "section": "History & The “Urn” Motivation"
     },
     {
-      "id": "statistics_ii-block-31",
+      "id": "statistics_ii-block-33",
       "quote": "In topic models such as Latent Dirichlet Allocation (LDA), the Dirichlet distribution is used to model the “mixture” of topics in a document.",
       "kind": "paragraph",
       "section": "History & The “Urn” Motivation"
     },
     {
-      "id": "statistics_ii-block-32",
+      "id": "statistics_ii-block-34",
       "quote": "A Transformer does not do this: it computes one deterministic distribution over the next token and, if sampling is enabled, draws from that distribution directly.",
       "kind": "paragraph",
       "section": "History & The “Urn” Motivation"
     },
     {
-      "id": "statistics_ii-block-33",
+      "id": "statistics_ii-block-35",
       "quote": "When $\\alpha < 1$, the distribution pushes probabilities toward the corners (the model becomes very “certain” and chooses one specific topic). When $\\alpha > 1$, it pushes everything toward the center (a “vague” mixture of everything).",
       "kind": "paragraph",
       "section": "History & The “Urn” Motivation"
     },
     {
-      "id": "statistics_ii-block-34",
+      "id": "statistics_ii-block-36",
       "quote": "Adjust the $\\alpha$-parameters for three potential “Topics” (e.g., Science, Art, Sports). Watch how the “Probability Space” (represented as a 3D simplex) shifts.",
       "kind": "paragraph",
       "section": "History & The “Urn” Motivation"
     },
     {
-      "id": "statistics_ii-block-35",
+      "id": "statistics_ii-block-37",
       "quote": "Topic A Alpha (Science):",
       "kind": "paragraph",
       "section": "History & The “Urn” Motivation"
     },
     {
-      "id": "statistics_ii-block-36",
+      "id": "statistics_ii-block-38",
       "quote": "Topic B Alpha (Art):",
       "kind": "paragraph",
       "section": "History & The “Urn” Motivation"
     },
     {
-      "id": "statistics_ii-block-37",
+      "id": "statistics_ii-block-39",
       "quote": "Topic C Alpha (Sports):",
       "kind": "paragraph",
       "section": "History & The “Urn” Motivation"
     },
     {
-      "id": "statistics_ii-block-38",
+      "id": "statistics_ii-block-40",
       "quote": "Latent Variables: The Hidden Logic of Context",
       "kind": "heading",
       "section": "Latent Variables: The Hidden Logic of Context"
     },
     {
-      "id": "statistics_ii-block-39",
+      "id": "statistics_ii-block-41",
       "quote": "When an AI reads a word, it faces a **Disambiguation Problem**. In statistics, we model this using **Gaussian Mixture Models (GMMs)**. This theory suggests that the data we see (tokens) is actually generated by several hidden (latent) distributions.",
       "kind": "paragraph",
       "section": "Latent Variables: The Hidden Logic of Context"
     },
     {
-      "id": "statistics_ii-block-40",
+      "id": "statistics_ii-block-42",
       "quote": "Expectation-Maximization (EM)",
       "kind": "heading",
       "section": "Expectation-Maximization (EM)"
     },
     {
-      "id": "statistics_ii-block-41",
+      "id": "statistics_ii-block-43",
       "quote": "The algorithm used to solve this was formalized by **Arthur Dempster, Laird, and Rubin** in 1977; earlier special cases include Hartley (1958) and Sundberg (1974) (\\cite{em_algorithm_wiki}). It works in two steps that mirror how a Transformer processes context:",
       "kind": "paragraph",
       "section": "Expectation-Maximization (EM)"
     },
     {
-      "id": "statistics_ii-block-42",
+      "id": "statistics_ii-block-44",
       "quote": "1. **Expectation (E):** Based on the current words, what is the probability that we are in “Topic A” vs “Topic B”?",
       "kind": "list-item",
       "section": "Expectation-Maximization (EM)"
     },
     {
-      "id": "statistics_ii-block-43",
+      "id": "statistics_ii-block-45",
       "quote": "2. **Maximization (M):** Adjust the internal “weights” to favor the words that fit that topic.",
       "kind": "list-item",
       "section": "Expectation-Maximization (EM)"
     },
     {
-      "id": "statistics_ii-block-44",
+      "id": "statistics_ii-block-46",
       "quote": "The Statistical “Vibe”",
       "kind": "heading",
       "section": "The Statistical “Vibe”"
     },
     {
-      "id": "statistics_ii-block-45",
+      "id": "statistics_ii-block-47",
       "quote": "By analogy, this is why a prompt works. Typing “Import torch” pushes the model's **hidden state** toward the “Coding” region, making “print” far more likely than “reproduction” (the biology cluster) — though a Transformer does not literally run EM.",
       "kind": "paragraph",
       "section": "The Statistical “Vibe”"
     },
     {
-      "id": "statistics_ii-block-46",
+      "id": "statistics_ii-block-48",
       "quote": "Adjust the “Cluster Separation.” When clusters overlap, the AI's “Choice” is statistically noisy (uncertain). As the Transformer sees more context, it effectively “pushes” these distributions apart to make a clear choice.",
       "kind": "paragraph",
       "section": "The Statistical “Vibe”"
     },
     {
-      "id": "statistics_ii-block-47",
+      "id": "statistics_ii-block-49",
       "quote": "Topic Separation (Distance):",
       "kind": "paragraph",
       "section": "The Statistical “Vibe”"
     },
     {
-      "id": "statistics_ii-block-48",
+      "id": "statistics_ii-block-50",
       "quote": "Cluster Variance (Noise):",
       "kind": "paragraph",
       "section": "The Statistical “Vibe”"
     },
     {
-      "id": "statistics_ii-block-49",
+      "id": "statistics_ii-block-51",
       "quote": "Limits and transitions",
       "kind": "heading",
       "section": "Limits and transitions"
     },
     {
-      "id": "statistics_ii-block-50",
+      "id": "statistics_ii-block-52",
       "quote": "The Law of Large Numbers",
       "kind": "heading",
       "section": "The Law of Large Numbers"
     },
     {
-      "id": "statistics_ii-block-51",
+      "id": "statistics_ii-block-53",
       "quote": "In the real world, language is a **Non-Stationary Process**. If you only read the first page of \\citetitle{nietzsche1883zarathustra}, your statistical “Prior” is heavily biased by the opening scene.",
       "kind": "paragraph",
       "section": "The Law of Large Numbers"
     },
     {
-      "id": "statistics_ii-block-52",
+      "id": "statistics_ii-block-54",
       "quote": "Reading Window (Tokens):",
       "kind": "paragraph",
       "section": "The Law of Large Numbers"
     },
     {
-      "id": "statistics_ii-block-53",
+      "id": "statistics_ii-block-55",
       "quote": "500 / 0 words",
       "kind": "paragraph",
       "section": "The Law of Large Numbers"
     },
     {
-      "id": "statistics_ii-block-54",
+      "id": "statistics_ii-block-56",
       "quote": "Markovian Transitions (The Probability of “Next”)",
       "kind": "heading",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-55",
+      "id": "statistics_ii-block-57",
       "quote": "An LLM is not just a list of word counts; it is a map of **Conditional Probabilities**. This is the logic of **Andrey Markov** (1906). He proposed that we can predict the future state of a system based solely on its current state.",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-56",
+      "id": "statistics_ii-block-58",
       "quote": "In linguistics, we call this an **N-Gram**.",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-57",
+      "id": "statistics_ii-block-59",
       "quote": "If Nietzsche wrote “Thus spake” 100 times, but “Thus thought” only 5 times, the Markov-Chain “chooses” based on this statistical skew.",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-58",
+      "id": "statistics_ii-block-60",
       "quote": "Select a word found in the \\citetitle{nietzsche1883zarathustra} by \\citeauthor{nietzsche1883zarathustra} to show you every word that ever followed it and how likely they are depending on their real statistics.",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-59",
+      "id": "statistics_ii-block-61",
       "quote": "Select a “Current” Word:",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-60",
+      "id": "statistics_ii-block-62",
       "quote": "thus spake zarathustra and the world is the earth great will man",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-61",
+      "id": "statistics_ii-block-63",
       "quote": "When Zarathustra was thirty years old, he left his home and the lake of his home, and went into the mountains. There he enjoyed his spirit and solitude, and for ten years did not weary of it. But at last his heart changed, and rising one morning with the rosy dawn, he went before the sun, and spake thus unto it:",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-62",
+      "id": "statistics_ii-block-64",
       "quote": "Thou great star! What would be thy happiness if thou hadst not those for whom thou shinest!",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-63",
+      "id": "statistics_ii-block-65",
       "quote": "For ten years hast thou climbed hither unto my cave: thou wouldst have wearied of thy light and of the journey, had it not been for me, mine eagle, and my serpent.",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-64",
+      "id": "statistics_ii-block-66",
       "quote": "But we awaited thee every morning, took from thee thine overflow and blessed thee for it.",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-65",
+      "id": "statistics_ii-block-67",
       "quote": "Lo! I am weary of my wisdom, like the bee that hath gathered too much honey; I need hands outstretched to take it.",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-66",
+      "id": "statistics_ii-block-68",
       "quote": "I would fain bestow and distribute, until the wise have once more become joyous in their folly, and the poor happy in their riches.",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-67",
+      "id": "statistics_ii-block-69",
       "quote": "Therefore must I descend into the deep: as thou doest in the evening, when thou goest behind the sea, and givest light also to the nether-world, thou exuberant star!",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-68",
+      "id": "statistics_ii-block-70",
       "quote": "Like thee must I GO DOWN, as men say, to whom I shall descend.",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-69",
+      "id": "statistics_ii-block-71",
       "quote": "Bless me, then, thou tranquil eye, that canst behold even the greatest happiness without envy!",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-70",
+      "id": "statistics_ii-block-72",
       "quote": "Bless the cup that is about to overflow, that the water may flow golden out of it, and carry everywhere the reflection of thy bliss!",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-71",
+      "id": "statistics_ii-block-73",
       "quote": "Lo! This cup is again going to empty itself, and Zarathustra is again going to be a man.",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
-      "id": "statistics_ii-block-72",
-      "quote": "Thus began Zarathustra's down-going.",
-      "kind": "paragraph",
-      "section": "Markovian Transitions (The Probability of “Next”)"
-    },
-    {
-      "id": "statistics_ii-block-73",
-      "quote": "Predict Reset",
-      "kind": "paragraph",
-      "section": "Markovian Transitions (The Probability of “Next”)"
-    },
-    {
       "id": "statistics_ii-block-74",
-      "quote": "...",
+      "quote": "Thus began Zarathustra's down-going. </textarea>",
       "kind": "paragraph",
       "section": "Markovian Transitions (The Probability of “Next”)"
     },
     {
       "id": "statistics_ii-block-75",
+      "quote": "Predict Reset",
+      "kind": "paragraph",
+      "section": "Markovian Transitions (The Probability of “Next”)"
+    },
+    {
+      "id": "statistics_ii-block-76",
+      "quote": "...",
+      "kind": "paragraph",
+      "section": "Markovian Transitions (The Probability of “Next”)"
+    },
+    {
+      "id": "statistics_ii-block-77",
       "quote": "Boltzmann Distributions",
       "kind": "heading",
       "section": "Boltzmann Distributions"
     },
     {
-      "id": "statistics_ii-block-76",
+      "id": "statistics_ii-block-78",
       "quote": "Developed in *Statistical Mechanics* to describe the **distribution of molecular velocities** in a gas — first derived by Maxwell (1860) and generalized by **\\citeauthor{boltzmann}** — it asks: in a room full of gas, how many molecules are moving fast versus slow?",
       "kind": "paragraph",
       "section": "Boltzmann Distributions"
     },
     {
-      "id": "statistics_ii-block-77",
+      "id": "statistics_ii-block-79",
       "quote": "- **The Graph:** Shows the probability of picking specific tokens.",
       "kind": "list-item",
       "section": "Boltzmann Distributions"
     },
     {
-      "id": "statistics_ii-block-78",
+      "id": "statistics_ii-block-80",
       "quote": "Enter 5 raw scores (Logits) separated by commas:",
       "kind": "paragraph",
       "section": "Boltzmann Distributions"
     },
     {
-      "id": "statistics_ii-block-79",
+      "id": "statistics_ii-block-81",
       "quote": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
       "kind": "heading",
       "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit"
     },
     {
-      "id": "statistics_ii-block-80",
+      "id": "statistics_ii-block-82",
       "quote": "Popularized by **Sir \\citeauthor{fisher1922}**, MLE was created to solve the problem of **Parameter Estimation**. If you see 10 tall people, what is the “most likely” average height of the whole population?",
       "kind": "paragraph",
       "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit"
     },
     {
-      "id": "statistics_ii-block-81",
+      "id": "statistics_ii-block-83",
       "quote": "LLMs use this to find the best weights ($\\theta$) for the model.",
       "kind": "paragraph",
       "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit"
     },
     {
-      "id": "statistics_ii-block-82",
+      "id": "statistics_ii-block-84",
       "quote": "- **The Graph:** The red dots are your “observed data.” The blue curve is your model.",
       "kind": "list-item",
       "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit"
     },
     {
-      "id": "statistics_ii-block-83",
+      "id": "statistics_ii-block-85",
       "quote": "- **The Goal:** Move the slider to align the peak of the curve with the cluster of dots to maximize the “Likelihood” value.",
       "kind": "list-item",
       "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit"
     },
     {
-      "id": "statistics_ii-block-84",
+      "id": "statistics_ii-block-86",
       "quote": "Enter your observed data points (e.g., -1, 0.5, 2):",
       "kind": "paragraph",
       "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit"
     },
     {
-      "id": "statistics_ii-block-85",
+      "id": "statistics_ii-block-87",
       "quote": "Hypothesized Mean ($\\mu$):",
       "kind": "paragraph",
       "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit"
     },
     {
-      "id": "statistics_ii-block-86",
+      "id": "statistics_ii-block-88",
       "quote": "The Chain Rule of Probability: Kolmogorov's Logic",
       "kind": "heading",
       "section": "The Chain Rule of Probability: Kolmogorov's Logic"
     },
     {
-      "id": "statistics_ii-block-87",
+      "id": "statistics_ii-block-89",
       "quote": "The **Chain Rule of Probability** follows directly from the definition of conditional probability, and sits within the rigorous axiomatic foundation of probability theory established by **\\citeauthor{kolmogorov1933}** in *\\citetitle{kolmogorov1933}* (\\citeyear{kolmogorov1933}). It solves the problem of **Sequential Dependencies**. (It is distinct from the calculus chain rule that powers backpropagation.) It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.",
       "kind": "paragraph",
       "section": "The Chain Rule of Probability: Kolmogorov's Logic"
     },
     {
-      "id": "statistics_ii-block-88",
+      "id": "statistics_ii-block-90",
       "quote": "In an LLM, the probability of the sentence “The cat sat” is calculated as:",
       "kind": "paragraph",
       "section": "The Chain Rule of Probability: Kolmogorov's Logic"
     },
     {
-      "id": "statistics_ii-block-89",
+      "id": "statistics_ii-block-91",
       "quote": "Enter 3 conditional probabilities (e.g., 0.1 for a common word, 0.001 for rare):",
       "kind": "paragraph",
       "section": "The Chain Rule of Probability: Kolmogorov's Logic"
     },
     {
-      "id": "statistics_ii-block-90",
+      "id": "statistics_ii-block-92",
       "quote": "P(Word 1)",
       "kind": "paragraph",
       "section": "The Chain Rule of Probability: Kolmogorov's Logic"
     },
     {
-      "id": "statistics_ii-block-91",
+      "id": "statistics_ii-block-93",
       "quote": "P(Word 2 | W1)",
       "kind": "paragraph",
       "section": "The Chain Rule of Probability: Kolmogorov's Logic"
     },
     {
-      "id": "statistics_ii-block-92",
+      "id": "statistics_ii-block-94",
       "quote": "P(Word 3 | W1, W2)",
       "kind": "paragraph",
       "section": "The Chain Rule of Probability: Kolmogorov's Logic"
     },
     {
-      "id": "statistics_ii-block-93",
+      "id": "statistics_ii-block-95",
       "quote": "KL Divergence: Information Gain",
       "kind": "heading",
       "section": "KL Divergence: Information Gain"
     },
     {
-      "id": "statistics_ii-block-94",
+      "id": "statistics_ii-block-96",
       "quote": "- **The Graph:** Shows the overlap between P (Truth) and Q (Model).",
       "kind": "list-item",
       "section": "KL Divergence: Information Gain"
     },
     {
-      "id": "statistics_ii-block-95",
+      "id": "statistics_ii-block-97",
       "quote": "Shift Model (Q) Mean:",
       "kind": "paragraph",
       "section": "KL Divergence: Information Gain"
     },
     {
-      "id": "statistics_ii-block-96",
+      "id": "statistics_ii-block-98",
       "quote": "From entropy to learning: the information quantities every model uses",
       "kind": "heading",
       "section": "From entropy to learning: the information quantities every model uses"
     },
     {
-      "id": "statistics_ii-block-97",
+      "id": "statistics_ii-block-99",
       "quote": "Shannon's entropy measures the uncertainty of a source. Five quantities built from it connect that abstract measure to training, compression and representation learning.",
       "kind": "paragraph",
       "section": "From entropy to learning: the information quantities every model uses"
     },
     {
-      "id": "statistics_ii-block-98",
+      "id": "statistics_ii-block-100",
       "quote": "| Quantity | Question it answers | Where it appears |",
       "kind": "table-row",
       "section": "From entropy to learning: the information quantities every model uses"
     },
     {
-      "id": "statistics_ii-block-99",
+      "id": "statistics_ii-block-101",
       "quote": "| MDL | Which model compresses the data best? | model selection, Occam's razor |",
       "kind": "table-row",
       "section": "From entropy to learning: the information quantities every model uses"
     },
     {
-      "id": "statistics_ii-block-100",
+      "id": "statistics_ii-block-102",
       "quote": "| Rate-distortion | How much can we lose for a given rate? | quantization, embeddings |",
       "kind": "table-row",
       "section": "From entropy to learning: the information quantities every model uses"
     },
     {
-      "id": "statistics_ii-block-101",
+      "id": "statistics_ii-block-103",
       "quote": "The unifying point is that learning is compression under a loss. A language model is a compressor of text; a classifier is a compressor of labels given inputs; an embedding is a lossy code of meaning. Shannon's 1948 paper gave the unit, the limit and the vocabulary for all three.",
       "kind": "paragraph",
       "section": "From entropy to learning: the information quantities every model uses"
     },
     {
-      "id": "statistics_ii-block-102",
+      "id": "statistics_ii-block-104",
       "quote": "Bag of Words (BoW): The Linguistic Atom",
       "kind": "heading",
       "section": "Bag of Words (BoW): The Linguistic Atom"
     },
     {
-      "id": "statistics_ii-block-103",
+      "id": "statistics_ii-block-105",
       "quote": "The “Distributional Hypothesis”, the idea that words occurring in similar contexts have similar meanings, was popularized by **\\citeauthor{zelligharris}** in his \\citeyear{zelligharris} article *\\citetitle{zelligharris}*. It treats a document not as a sequence, but as a “bag”: you lose the grammar, the order, and the syntax, keeping only the raw counts.",
       "kind": "paragraph",
       "section": "Bag of Words (BoW): The Linguistic Atom"
     },
     {
-      "id": "statistics_ii-block-104",
+      "id": "statistics_ii-block-106",
       "quote": "This was the primary method for **Spam Filtering** and early **Search Engines** before LLMs.",
       "kind": "paragraph",
       "section": "Bag of Words (BoW): The Linguistic Atom"
     },
     {
-      "id": "statistics_ii-block-105",
+      "id": "statistics_ii-block-107",
       "quote": "- **The Graph:** Visualizes the “Vector” of your text. Each unique word is a dimension.",
       "kind": "list-item",
       "section": "Bag of Words (BoW): The Linguistic Atom"
     },
     {
-      "id": "statistics_ii-block-106",
+      "id": "statistics_ii-block-108",
       "quote": "- **Live Logic:** Watch how “The cat sat” and “Sat the cat” produce the exact same statistical signature, demonstrating the model's “blindness” to word order.",
       "kind": "list-item",
       "section": "Bag of Words (BoW): The Linguistic Atom"
     },
     {
-      "id": "statistics_ii-block-107",
+      "id": "statistics_ii-block-109",
       "quote": "Type or paste text to see its “Bag of Words” representation:",
       "kind": "paragraph",
       "section": "Bag of Words (BoW): The Linguistic Atom"

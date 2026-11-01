@@ -705,16 +705,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-3-related_to-positionalembeddingslab-block-1",
-      "from": "positionalembeddingslab-block-3",
-      "to": "positionalembeddingslab-block-1",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-positionalembeddingslab-block-4-part_of-positionalembeddingslab",
       "from": "positionalembeddingslab-block-4",
       "to": "positionalembeddingslab",
@@ -729,6 +719,16 @@
       "from": "positionalembeddingslab-block-3",
       "to": "positionalembeddingslab-block-4",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-positionalembeddingslab-block-4-related_to-positionalembeddingslab-block-3",
+      "from": "positionalembeddingslab-block-4",
+      "to": "positionalembeddingslab-block-3",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -755,16 +755,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-5-related_to-positionalembeddingslab-block-4",
-      "from": "positionalembeddingslab-block-5",
-      "to": "positionalembeddingslab-block-4",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-positionalembeddingslab-block-6-part_of-positionalembeddingslab",
       "from": "positionalembeddingslab-block-6",
       "to": "positionalembeddingslab",
@@ -779,6 +769,16 @@
       "from": "positionalembeddingslab-block-5",
       "to": "positionalembeddingslab-block-6",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-positionalembeddingslab-block-6-related_to-positionalembeddingslab-block-5",
+      "from": "positionalembeddingslab-block-6",
+      "to": "positionalembeddingslab-block-5",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -805,9 +805,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-7-related_to-positionalembeddingslab-block-6",
+      "id": "struct-positionalembeddingslab-block-7-related_to-positionalembeddingslab-block-5",
       "from": "positionalembeddingslab-block-7",
-      "to": "positionalembeddingslab-block-6",
+      "to": "positionalembeddingslab-block-5",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -835,9 +835,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-8-related_to-positionalembeddingslab-block-6",
+      "id": "struct-positionalembeddingslab-block-8-related_to-positionalembeddingslab-block-5",
       "from": "positionalembeddingslab-block-8",
-      "to": "positionalembeddingslab-block-6",
+      "to": "positionalembeddingslab-block-5",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -865,9 +865,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-9-related_to-positionalembeddingslab-block-6",
+      "id": "struct-positionalembeddingslab-block-9-related_to-positionalembeddingslab-block-5",
       "from": "positionalembeddingslab-block-9",
-      "to": "positionalembeddingslab-block-6",
+      "to": "positionalembeddingslab-block-5",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -895,9 +895,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-10-related_to-positionalembeddingslab-block-6",
+      "id": "struct-positionalembeddingslab-block-10-related_to-positionalembeddingslab-block-5",
       "from": "positionalembeddingslab-block-10",
-      "to": "positionalembeddingslab-block-6",
+      "to": "positionalembeddingslab-block-5",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -925,9 +925,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-11-related_to-positionalembeddingslab-block-6",
+      "id": "struct-positionalembeddingslab-block-11-related_to-positionalembeddingslab-block-5",
       "from": "positionalembeddingslab-block-11",
-      "to": "positionalembeddingslab-block-6",
+      "to": "positionalembeddingslab-block-5",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -955,9 +955,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-12-related_to-positionalembeddingslab-block-6",
+      "id": "struct-positionalembeddingslab-block-12-related_to-positionalembeddingslab-block-5",
       "from": "positionalembeddingslab-block-12",
-      "to": "positionalembeddingslab-block-6",
+      "to": "positionalembeddingslab-block-5",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -985,9 +985,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-13-related_to-positionalembeddingslab-block-6",
+      "id": "struct-positionalembeddingslab-block-13-related_to-positionalembeddingslab-block-5",
       "from": "positionalembeddingslab-block-13",
-      "to": "positionalembeddingslab-block-6",
+      "to": "positionalembeddingslab-block-5",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1009,16 +1009,6 @@
       "from": "positionalembeddingslab-block-13",
       "to": "positionalembeddingslab-block-14",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-positionalembeddingslab-block-14-related_to-positionalembeddingslab-block-6",
-      "from": "positionalembeddingslab-block-14",
-      "to": "positionalembeddingslab-block-6",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1065,6 +1055,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-positionalembeddingslab-block-16-related_to-positionalembeddingslab-block-15",
+      "from": "positionalembeddingslab-block-16",
+      "to": "positionalembeddingslab-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-positionalembeddingslab-block-17-part_of-positionalembeddingslab",
       "from": "positionalembeddingslab-block-17",
       "to": "positionalembeddingslab",
@@ -1085,9 +1085,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-17-related_to-positionalembeddingslab-block-16",
+      "id": "struct-positionalembeddingslab-block-17-related_to-positionalembeddingslab-block-15",
       "from": "positionalembeddingslab-block-17",
-      "to": "positionalembeddingslab-block-16",
+      "to": "positionalembeddingslab-block-15",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1115,9 +1115,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-18-related_to-positionalembeddingslab-block-16",
+      "id": "struct-positionalembeddingslab-block-18-related_to-positionalembeddingslab-block-15",
       "from": "positionalembeddingslab-block-18",
-      "to": "positionalembeddingslab-block-16",
+      "to": "positionalembeddingslab-block-15",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1145,16 +1145,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-19-related_to-positionalembeddingslab-block-16",
-      "from": "positionalembeddingslab-block-19",
-      "to": "positionalembeddingslab-block-16",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-positionalembeddingslab-block-20-part_of-positionalembeddingslab",
       "from": "positionalembeddingslab-block-20",
       "to": "positionalembeddingslab",
@@ -1169,6 +1159,16 @@
       "from": "positionalembeddingslab-block-19",
       "to": "positionalembeddingslab-block-20",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-positionalembeddingslab-block-20-related_to-positionalembeddingslab-block-19",
+      "from": "positionalembeddingslab-block-20",
+      "to": "positionalembeddingslab-block-19",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1195,9 +1195,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-21-related_to-positionalembeddingslab-block-20",
+      "id": "struct-positionalembeddingslab-block-21-related_to-positionalembeddingslab-block-19",
       "from": "positionalembeddingslab-block-21",
-      "to": "positionalembeddingslab-block-20",
+      "to": "positionalembeddingslab-block-19",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1225,16 +1225,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-22-related_to-positionalembeddingslab-block-20",
-      "from": "positionalembeddingslab-block-22",
-      "to": "positionalembeddingslab-block-20",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-positionalembeddingslab-block-23-part_of-positionalembeddingslab",
       "from": "positionalembeddingslab-block-23",
       "to": "positionalembeddingslab",
@@ -1249,6 +1239,16 @@
       "from": "positionalembeddingslab-block-22",
       "to": "positionalembeddingslab-block-23",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-positionalembeddingslab-block-23-related_to-positionalembeddingslab-block-22",
+      "from": "positionalembeddingslab-block-23",
+      "to": "positionalembeddingslab-block-22",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1275,9 +1275,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-24-related_to-positionalembeddingslab-block-23",
+      "id": "struct-positionalembeddingslab-block-24-related_to-positionalembeddingslab-block-22",
       "from": "positionalembeddingslab-block-24",
-      "to": "positionalembeddingslab-block-23",
+      "to": "positionalembeddingslab-block-22",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1305,9 +1305,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-25-related_to-positionalembeddingslab-block-23",
+      "id": "struct-positionalembeddingslab-block-25-related_to-positionalembeddingslab-block-22",
       "from": "positionalembeddingslab-block-25",
-      "to": "positionalembeddingslab-block-23",
+      "to": "positionalembeddingslab-block-22",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1335,9 +1335,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-26-related_to-positionalembeddingslab-block-23",
+      "id": "struct-positionalembeddingslab-block-26-related_to-positionalembeddingslab-block-22",
       "from": "positionalembeddingslab-block-26",
-      "to": "positionalembeddingslab-block-23",
+      "to": "positionalembeddingslab-block-22",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1365,16 +1365,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-27-related_to-positionalembeddingslab-block-23",
-      "from": "positionalembeddingslab-block-27",
-      "to": "positionalembeddingslab-block-23",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-positionalembeddingslab-block-28-part_of-positionalembeddingslab",
       "from": "positionalembeddingslab-block-28",
       "to": "positionalembeddingslab",
@@ -1389,6 +1379,16 @@
       "from": "positionalembeddingslab-block-27",
       "to": "positionalembeddingslab-block-28",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-positionalembeddingslab-block-28-related_to-positionalembeddingslab-block-27",
+      "from": "positionalembeddingslab-block-28",
+      "to": "positionalembeddingslab-block-27",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1415,9 +1415,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-29-related_to-positionalembeddingslab-block-28",
+      "id": "struct-positionalembeddingslab-block-29-related_to-positionalembeddingslab-block-27",
       "from": "positionalembeddingslab-block-29",
-      "to": "positionalembeddingslab-block-28",
+      "to": "positionalembeddingslab-block-27",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1445,16 +1445,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-30-related_to-positionalembeddingslab-block-28",
-      "from": "positionalembeddingslab-block-30",
-      "to": "positionalembeddingslab-block-28",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-positionalembeddingslab-block-31-part_of-positionalembeddingslab",
       "from": "positionalembeddingslab-block-31",
       "to": "positionalembeddingslab",
@@ -1469,6 +1459,16 @@
       "from": "positionalembeddingslab-block-30",
       "to": "positionalembeddingslab-block-31",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-positionalembeddingslab-block-31-related_to-positionalembeddingslab-block-30",
+      "from": "positionalembeddingslab-block-31",
+      "to": "positionalembeddingslab-block-30",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1495,9 +1495,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-32-related_to-positionalembeddingslab-block-31",
+      "id": "struct-positionalembeddingslab-block-32-related_to-positionalembeddingslab-block-30",
       "from": "positionalembeddingslab-block-32",
-      "to": "positionalembeddingslab-block-31",
+      "to": "positionalembeddingslab-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1525,9 +1525,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-33-related_to-positionalembeddingslab-block-31",
+      "id": "struct-positionalembeddingslab-block-33-related_to-positionalembeddingslab-block-30",
       "from": "positionalembeddingslab-block-33",
-      "to": "positionalembeddingslab-block-31",
+      "to": "positionalembeddingslab-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1555,16 +1555,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-34-related_to-positionalembeddingslab-block-31",
-      "from": "positionalembeddingslab-block-34",
-      "to": "positionalembeddingslab-block-31",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-positionalembeddingslab-block-35-part_of-positionalembeddingslab",
       "from": "positionalembeddingslab-block-35",
       "to": "positionalembeddingslab",
@@ -1585,6 +1575,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-positionalembeddingslab-block-35-related_to-positionalembeddingslab-block-34",
+      "from": "positionalembeddingslab-block-35",
+      "to": "positionalembeddingslab-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-positionalembeddingslab-block-36-part_of-positionalembeddingslab",
       "from": "positionalembeddingslab-block-36",
       "to": "positionalembeddingslab",
@@ -1599,16 +1599,6 @@
       "from": "positionalembeddingslab-block-35",
       "to": "positionalembeddingslab-block-36",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-positionalembeddingslab-block-36-related_to-positionalembeddingslab-block-35",
-      "from": "positionalembeddingslab-block-36",
-      "to": "positionalembeddingslab-block-35",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1675,6 +1665,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-positionalembeddingslab-block-39-related_to-positionalembeddingslab-block-38",
+      "from": "positionalembeddingslab-block-39",
+      "to": "positionalembeddingslab-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-positionalembeddingslab-block-40-part_of-positionalembeddingslab",
       "from": "positionalembeddingslab-block-40",
       "to": "positionalembeddingslab",
@@ -1695,9 +1695,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-40-related_to-positionalembeddingslab-block-39",
+      "id": "struct-positionalembeddingslab-block-40-related_to-positionalembeddingslab-block-38",
       "from": "positionalembeddingslab-block-40",
-      "to": "positionalembeddingslab-block-39",
+      "to": "positionalembeddingslab-block-38",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1725,9 +1725,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-41-related_to-positionalembeddingslab-block-39",
+      "id": "struct-positionalembeddingslab-block-41-related_to-positionalembeddingslab-block-38",
       "from": "positionalembeddingslab-block-41",
-      "to": "positionalembeddingslab-block-39",
+      "to": "positionalembeddingslab-block-38",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1755,9 +1755,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-42-related_to-positionalembeddingslab-block-39",
+      "id": "struct-positionalembeddingslab-block-42-related_to-positionalembeddingslab-block-38",
       "from": "positionalembeddingslab-block-42",
-      "to": "positionalembeddingslab-block-39",
+      "to": "positionalembeddingslab-block-38",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1785,9 +1785,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-43-related_to-positionalembeddingslab-block-39",
+      "id": "struct-positionalembeddingslab-block-43-related_to-positionalembeddingslab-block-38",
       "from": "positionalembeddingslab-block-43",
-      "to": "positionalembeddingslab-block-39",
+      "to": "positionalembeddingslab-block-38",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1815,39 +1815,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-block-44-related_to-positionalembeddingslab-block-39",
+      "id": "struct-positionalembeddingslab-block-44-related_to-positionalembeddingslab-block-38",
       "from": "positionalembeddingslab-block-44",
-      "to": "positionalembeddingslab-block-39",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-positionalembeddingslab-block-45-part_of-positionalembeddingslab",
-      "from": "positionalembeddingslab-block-45",
-      "to": "positionalembeddingslab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-positionalembeddingslab-block-44-before-positionalembeddingslab-block-45",
-      "from": "positionalembeddingslab-block-44",
-      "to": "positionalembeddingslab-block-45",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-positionalembeddingslab-block-45-related_to-positionalembeddingslab-block-39",
-      "from": "positionalembeddingslab-block-45",
-      "to": "positionalembeddingslab-block-39",
+      "to": "positionalembeddingslab-block-38",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1885,9 +1855,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-4-part_of-positionalembeddingslab-block-2",
+      "id": "struct-positionalembeddingslab-stmt-4-part_of-positionalembeddingslab-block-4",
       "from": "positionalembeddingslab-stmt-4",
-      "to": "positionalembeddingslab-block-2",
+      "to": "positionalembeddingslab-block-4",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1895,9 +1865,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-5-part_of-positionalembeddingslab-block-3",
+      "id": "struct-positionalembeddingslab-stmt-5-part_of-positionalembeddingslab-block-6",
       "from": "positionalembeddingslab-stmt-5",
-      "to": "positionalembeddingslab-block-3",
+      "to": "positionalembeddingslab-block-6",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1905,9 +1875,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-6-part_of-positionalembeddingslab-block-5",
+      "id": "struct-positionalembeddingslab-stmt-6-part_of-positionalembeddingslab-block-6",
       "from": "positionalembeddingslab-stmt-6",
-      "to": "positionalembeddingslab-block-5",
+      "to": "positionalembeddingslab-block-6",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1915,9 +1885,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-7-part_of-positionalembeddingslab-block-7",
+      "id": "struct-positionalembeddingslab-stmt-7-part_of-positionalembeddingslab-block-6",
       "from": "positionalembeddingslab-stmt-7",
-      "to": "positionalembeddingslab-block-7",
+      "to": "positionalembeddingslab-block-6",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1945,9 +1915,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-10-part_of-positionalembeddingslab-block-8",
+      "id": "struct-positionalembeddingslab-stmt-10-part_of-positionalembeddingslab-block-12",
       "from": "positionalembeddingslab-stmt-10",
-      "to": "positionalembeddingslab-block-8",
+      "to": "positionalembeddingslab-block-12",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1955,9 +1925,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-11-part_of-positionalembeddingslab-block-8",
+      "id": "struct-positionalembeddingslab-stmt-11-part_of-positionalembeddingslab-block-12",
       "from": "positionalembeddingslab-stmt-11",
-      "to": "positionalembeddingslab-block-8",
+      "to": "positionalembeddingslab-block-12",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1965,9 +1935,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-12-part_of-positionalembeddingslab-block-13",
+      "id": "struct-positionalembeddingslab-stmt-12-part_of-positionalembeddingslab-block-12",
       "from": "positionalembeddingslab-stmt-12",
-      "to": "positionalembeddingslab-block-13",
+      "to": "positionalembeddingslab-block-12",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1975,9 +1945,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-13-part_of-positionalembeddingslab-block-13",
+      "id": "struct-positionalembeddingslab-stmt-13-part_of-positionalembeddingslab-block-12",
       "from": "positionalembeddingslab-stmt-13",
-      "to": "positionalembeddingslab-block-13",
+      "to": "positionalembeddingslab-block-12",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1985,9 +1955,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-14-part_of-positionalembeddingslab-block-13",
+      "id": "struct-positionalembeddingslab-stmt-14-part_of-positionalembeddingslab-block-12",
       "from": "positionalembeddingslab-stmt-14",
-      "to": "positionalembeddingslab-block-13",
+      "to": "positionalembeddingslab-block-12",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2015,9 +1985,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-17-part_of-positionalembeddingslab-block-14",
+      "id": "struct-positionalembeddingslab-stmt-17-part_of-positionalembeddingslab-block-16",
       "from": "positionalembeddingslab-stmt-17",
-      "to": "positionalembeddingslab-block-14",
+      "to": "positionalembeddingslab-block-16",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2025,9 +1995,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-18-part_of-positionalembeddingslab-block-14",
+      "id": "struct-positionalembeddingslab-stmt-18-part_of-positionalembeddingslab-block-17",
       "from": "positionalembeddingslab-stmt-18",
-      "to": "positionalembeddingslab-block-14",
+      "to": "positionalembeddingslab-block-17",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2045,9 +2015,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-20-part_of-positionalembeddingslab-block-18",
+      "id": "struct-positionalembeddingslab-stmt-20-part_of-positionalembeddingslab-block-20",
       "from": "positionalembeddingslab-stmt-20",
-      "to": "positionalembeddingslab-block-18",
+      "to": "positionalembeddingslab-block-20",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2055,18 +2025,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-21-part_of-positionalembeddingslab-block-18",
+      "id": "struct-positionalembeddingslab-stmt-21-part_of-positionalembeddingslab-block-21",
       "from": "positionalembeddingslab-stmt-21",
-      "to": "positionalembeddingslab-block-18",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-positionalembeddingslab-stmt-22-part_of-positionalembeddingslab-block-21",
-      "from": "positionalembeddingslab-stmt-22",
       "to": "positionalembeddingslab-block-21",
       "kind": "part_of",
       "qualifiers": {},
@@ -2075,9 +2035,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-23-part_of-positionalembeddingslab-block-22",
+      "id": "struct-positionalembeddingslab-stmt-22-part_of-positionalembeddingslab-block-23",
+      "from": "positionalembeddingslab-stmt-22",
+      "to": "positionalembeddingslab-block-23",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-positionalembeddingslab-stmt-23-part_of-positionalembeddingslab-block-24",
       "from": "positionalembeddingslab-stmt-23",
-      "to": "positionalembeddingslab-block-22",
+      "to": "positionalembeddingslab-block-24",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2105,9 +2075,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-26-part_of-positionalembeddingslab-block-25",
+      "id": "struct-positionalembeddingslab-stmt-26-part_of-positionalembeddingslab-block-28",
       "from": "positionalembeddingslab-stmt-26",
-      "to": "positionalembeddingslab-block-25",
+      "to": "positionalembeddingslab-block-28",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2115,18 +2085,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-27-part_of-positionalembeddingslab-block-26",
+      "id": "struct-positionalembeddingslab-stmt-27-part_of-positionalembeddingslab-block-29",
       "from": "positionalembeddingslab-stmt-27",
-      "to": "positionalembeddingslab-block-26",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-positionalembeddingslab-stmt-28-part_of-positionalembeddingslab-block-29",
-      "from": "positionalembeddingslab-stmt-28",
       "to": "positionalembeddingslab-block-29",
       "kind": "part_of",
       "qualifiers": {},
@@ -2135,9 +2095,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-29-part_of-positionalembeddingslab-block-30",
-      "from": "positionalembeddingslab-stmt-29",
-      "to": "positionalembeddingslab-block-30",
+      "id": "struct-positionalembeddingslab-stmt-28-part_of-positionalembeddingslab-block-31",
+      "from": "positionalembeddingslab-stmt-28",
+      "to": "positionalembeddingslab-block-31",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2145,9 +2105,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-30-part_of-positionalembeddingslab-block-32",
+      "id": "struct-positionalembeddingslab-stmt-29-part_of-positionalembeddingslab-block-31",
+      "from": "positionalembeddingslab-stmt-29",
+      "to": "positionalembeddingslab-block-31",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-positionalembeddingslab-stmt-30-part_of-positionalembeddingslab-block-31",
       "from": "positionalembeddingslab-stmt-30",
-      "to": "positionalembeddingslab-block-32",
+      "to": "positionalembeddingslab-block-31",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2165,18 +2135,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-32-part_of-positionalembeddingslab-block-32",
+      "id": "struct-positionalembeddingslab-stmt-32-part_of-positionalembeddingslab-block-33",
       "from": "positionalembeddingslab-stmt-32",
-      "to": "positionalembeddingslab-block-32",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-positionalembeddingslab-stmt-33-part_of-positionalembeddingslab-block-33",
-      "from": "positionalembeddingslab-stmt-33",
       "to": "positionalembeddingslab-block-33",
       "kind": "part_of",
       "qualifiers": {},
@@ -2185,9 +2145,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-34-part_of-positionalembeddingslab-block-34",
-      "from": "positionalembeddingslab-stmt-34",
-      "to": "positionalembeddingslab-block-34",
+      "id": "struct-positionalembeddingslab-stmt-33-part_of-positionalembeddingslab-block-35",
+      "from": "positionalembeddingslab-stmt-33",
+      "to": "positionalembeddingslab-block-35",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2195,9 +2155,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-35-part_of-positionalembeddingslab-block-36",
+      "id": "struct-positionalembeddingslab-stmt-34-part_of-positionalembeddingslab-block-39",
+      "from": "positionalembeddingslab-stmt-34",
+      "to": "positionalembeddingslab-block-39",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-positionalembeddingslab-stmt-35-part_of-positionalembeddingslab-block-39",
       "from": "positionalembeddingslab-stmt-35",
-      "to": "positionalembeddingslab-block-36",
+      "to": "positionalembeddingslab-block-39",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2225,9 +2195,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-38-part_of-positionalembeddingslab-block-41",
+      "id": "struct-positionalembeddingslab-stmt-38-part_of-positionalembeddingslab-block-40",
       "from": "positionalembeddingslab-stmt-38",
-      "to": "positionalembeddingslab-block-41",
+      "to": "positionalembeddingslab-block-40",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2245,18 +2215,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-40-part_of-positionalembeddingslab-block-41",
+      "id": "struct-positionalembeddingslab-stmt-40-part_of-positionalembeddingslab-block-42",
       "from": "positionalembeddingslab-stmt-40",
-      "to": "positionalembeddingslab-block-41",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-positionalembeddingslab-stmt-41-part_of-positionalembeddingslab-block-42",
-      "from": "positionalembeddingslab-stmt-41",
       "to": "positionalembeddingslab-block-42",
       "kind": "part_of",
       "qualifiers": {},
@@ -2265,9 +2225,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-42-part_of-positionalembeddingslab-block-43",
-      "from": "positionalembeddingslab-stmt-42",
+      "id": "struct-positionalembeddingslab-stmt-41-part_of-positionalembeddingslab-block-43",
+      "from": "positionalembeddingslab-stmt-41",
       "to": "positionalembeddingslab-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-positionalembeddingslab-stmt-42-part_of-positionalembeddingslab-block-44",
+      "from": "positionalembeddingslab-stmt-42",
+      "to": "positionalembeddingslab-block-44",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2285,9 +2255,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-44-part_of-positionalembeddingslab-block-45",
+      "id": "struct-positionalembeddingslab-stmt-44-part_of-positionalembeddingslab-block-44",
       "from": "positionalembeddingslab-stmt-44",
-      "to": "positionalembeddingslab-block-45",
+      "to": "positionalembeddingslab-block-44",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2295,29 +2265,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-positionalembeddingslab-stmt-45-part_of-positionalembeddingslab-block-45",
+      "id": "struct-positionalembeddingslab-stmt-45-part_of-positionalembeddingslab-block-44",
       "from": "positionalembeddingslab-stmt-45",
-      "to": "positionalembeddingslab-block-45",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-positionalembeddingslab-stmt-46-part_of-positionalembeddingslab-block-45",
-      "from": "positionalembeddingslab-stmt-46",
-      "to": "positionalembeddingslab-block-45",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-positionalembeddingslab-stmt-47-part_of-positionalembeddingslab-block-45",
-      "from": "positionalembeddingslab-stmt-47",
-      "to": "positionalembeddingslab-block-45",
+      "to": "positionalembeddingslab-block-44",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2328,330 +2278,316 @@
   "statements": [
     {
       "id": "positionalembeddingslab-stmt-1",
-      "quote": "Since our model contains no recurrence and no convolution, in order for the model to make use of the order of the sequence, we must inject some information about the relative or absolute position of the tokens in the sequence.",
+      "quote": "In a Transformer, words are processed in parallel.",
       "block_id": "positionalembeddingslab-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-2",
-      "quote": "To this end, we add “positional encodings” to the input embeddings at the as the embeddings, so that the two can be summed.",
+      "quote": "Without **Positional Encoding (PE)**, the model would treat the sentence *“The dog bit the man”* exactly the same as *“The man bit the dog”* (and also the same as *“dog the The man bit”* and all other combinations of these words).",
       "block_id": "positionalembeddingslab-block-1",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-3",
-      "quote": "In a Transformer, words are processed in parallel.",
+      "quote": "To fix this, we **add** a unique mathematical “signature” to each word's vector based on its position ($\\text{pos}$), with on sine and cosine.",
       "block_id": "positionalembeddingslab-block-2",
       "section": "",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-4",
-      "quote": "Without **Positional Encoding (PE)**, the model would treat the sentence *“The dog bit the man”* exactly the same as *“The man bit the dog”* (and also the same as *“dog the The man bit”* and all other combinations of these words).",
-      "block_id": "positionalembeddingslab-block-2",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "positionalembeddingslab-stmt-5",
-      "quote": "To fix this, we **add** a unique mathematical “signature” to each word's vector based on its position ($\\text{pos}$), with on sine and cosine.",
-      "block_id": "positionalembeddingslab-block-3",
-      "section": "",
-      "kind": "statement"
-    },
-    {
-      "id": "positionalembeddingslab-stmt-6",
       "quote": "The challenge of processing text in parallel (instead of word-by-word like older RNNs) required a new way to inject “time” or “order” into the model.",
-      "block_id": "positionalembeddingslab-block-5",
+      "block_id": "positionalembeddingslab-block-4",
       "section": "The Invention of the Transformer & Positional Encoding",
       "kind": "statement"
     },
     {
-      "id": "positionalembeddingslab-stmt-7",
+      "id": "positionalembeddingslab-stmt-5",
       "quote": "Imagine a circle with radius $1$ centered at the origin (the **unit circle**).",
-      "block_id": "positionalembeddingslab-block-7",
+      "block_id": "positionalembeddingslab-block-6",
+      "section": "Sine and Cosine",
+      "kind": "statement"
+    },
+    {
+      "id": "positionalembeddingslab-stmt-6",
+      "quote": "Pick a point on it by sweeping an angle $\\theta$ counter-clockwise from the right.",
+      "block_id": "positionalembeddingslab-block-6",
+      "section": "Sine and Cosine",
+      "kind": "statement"
+    },
+    {
+      "id": "positionalembeddingslab-stmt-7",
+      "quote": "The coordinates of that point are:",
+      "block_id": "positionalembeddingslab-block-6",
       "section": "Sine and Cosine",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-8",
-      "quote": "Pick a point on it by sweeping an angle $\\theta$ counter-clockwise from the right.",
+      "quote": "That's it: $\\cos\\theta$ is the horizontal position, $\\sin\\theta$ is the vertical position.",
       "block_id": "positionalembeddingslab-block-7",
       "section": "Sine and Cosine",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-9",
-      "quote": "The coordinates of that point are:",
+      "quote": "They convert an **angle** into **coordinates**.",
       "block_id": "positionalembeddingslab-block-7",
       "section": "Sine and Cosine",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-10",
-      "quote": "That's it: $\\cos\\theta$ is the horizontal position, $\\sin\\theta$ is the vertical position.",
-      "block_id": "positionalembeddingslab-block-8",
+      "quote": "The concept originates in ancient Indian astronomy.",
+      "block_id": "positionalembeddingslab-block-12",
       "section": "Sine and Cosine",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-11",
-      "quote": "They convert an **angle** into **coordinates**.",
-      "block_id": "positionalembeddingslab-block-8",
+      "quote": "Indian Astronomer \\citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* (“bowstring”) for a chord; its half, *ardha-jyā* (“half-chord”), is exactly what sine measures geometrically.",
+      "block_id": "positionalembeddingslab-block-12",
       "section": "Sine and Cosine",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-12",
-      "quote": "The concept originates in ancient Indian astronomy.",
-      "block_id": "positionalembeddingslab-block-13",
+      "quote": "He needed it to compute planetary positions and predict eclipses in his treatise *\\citetitle{indianastronomer}* (\\citetitle{indianastronomer}, ch.",
+      "block_id": "positionalembeddingslab-block-12",
       "section": "Sine and Cosine",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-13",
-      "quote": "Indian Astronomer \\citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* (“bowstring”) for a chord; its half, *ardha-jyā* (“half-chord”), is exactly what sine measures geometrically.",
-      "block_id": "positionalembeddingslab-block-13",
+      "quote": "Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* (“pocket” or “fold”).",
+      "block_id": "positionalembeddingslab-block-12",
       "section": "Sine and Cosine",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-14",
-      "quote": "He needed it to compute planetary positions and predict eclipses in his treatise *\\citetitle{indianastronomer}* (\\citetitle{indianastronomer}, ch.",
-      "block_id": "positionalembeddingslab-block-13",
+      "quote": "See the paper \\citetitle{indianastronomerconstruction} if you want to know how \\citeauthor{indianastronomer} constructed his tables.",
+      "block_id": "positionalembeddingslab-block-12",
       "section": "Sine and Cosine",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-15",
-      "quote": "Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* (“pocket” or “fold”).",
+      "quote": "In \\citeyear{chester1145}, \\citeauthor{chester1145} produced the first Latin translation of \\citealternativetitle{alkwarizma}'s foundational work on algebra, which gave English the term *algebra* (from 'Al-Jabr'; Al-Khwarizmi's own name gave us *algorithm*).",
       "block_id": "positionalembeddingslab-block-13",
       "section": "Sine and Cosine",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-16",
-      "quote": "See the paper \\citetitle{indianastronomerconstruction} if you want to know how \\citeauthor{indianastronomer} constructed his tables.",
+      "quote": "In his translation of al-Khwarizmi's astronomical tables he rendered the Arabic *jayb* as the Latin ***sinus*** (“curve,” “bay,” or “fold”).",
       "block_id": "positionalembeddingslab-block-13",
       "section": "Sine and Cosine",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-17",
-      "quote": "In \\citeyear{chester1145}, \\citeauthor{chester1145} produced the first Latin translation of \\citealternativetitle{alkwarizma}'s foundational work on algebra, which gave English the term *algebra* (from 'Al-Jabr'; Al-Khwarizmi's own name gave us *algorithm*).",
-      "block_id": "positionalembeddingslab-block-14",
-      "section": "Sine and Cosine",
+      "quote": "Calculators and math libraries usually evaluate sine and cosine with CORDIC or minimax polynomial approximations; the **Taylor series** below is the simplest polynomial approximation to reason about, not necessarily the algorithm your CPU runs:",
+      "block_id": "positionalembeddingslab-block-16",
+      "section": "How are Sine and Cosine calculated?",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-18",
-      "quote": "In his translation of al-Khwarizmi's astronomical tables he rendered the Arabic *jayb* as the Latin ***sinus*** (“curve,” “bay,” or “fold”).",
-      "block_id": "positionalembeddingslab-block-14",
-      "section": "Sine and Cosine",
+      "quote": "The more terms you include, the better the approximation.",
+      "block_id": "positionalembeddingslab-block-17",
+      "section": "How are Sine and Cosine calculated?",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-19",
-      "quote": "Calculators and math libraries usually evaluate sine and cosine with CORDIC or minimax polynomial approximations; the **Taylor series** below is the simplest polynomial approximation to reason about, not necessarily the algorithm your CPU runs:",
+      "quote": "You can explore this below.",
       "block_id": "positionalembeddingslab-block-17",
       "section": "How are Sine and Cosine calculated?",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-20",
-      "quote": "The more terms you include, the better the approximation.",
-      "block_id": "positionalembeddingslab-block-18",
-      "section": "How are Sine and Cosine calculated?",
+      "quote": "The original Transformer paper (\\citetitle{vaswani2017attention}) uses sine and cosine to create a unique positional fingerprint based on their position in the text:",
+      "block_id": "positionalembeddingslab-block-20",
+      "section": "Positional Embeddings with Sine and Cosine",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-21",
-      "quote": "You can explore this below.",
-      "block_id": "positionalembeddingslab-block-18",
-      "section": "How are Sine and Cosine calculated?",
-      "kind": "statement"
-    },
-    {
-      "id": "positionalembeddingslab-stmt-22",
-      "quote": "The original Transformer paper (\\citetitle{vaswani2017attention}) uses sine and cosine to create a unique positional fingerprint based on their position in the text:",
+      "quote": "This gives each position a distinct pattern the model can learn to interpret.",
       "block_id": "positionalembeddingslab-block-21",
       "section": "Positional Embeddings with Sine and Cosine",
       "kind": "statement"
     },
     {
+      "id": "positionalembeddingslab-stmt-22",
+      "quote": "Let's say, the word **“king”** is represented by the vector:",
+      "block_id": "positionalembeddingslab-block-23",
+      "section": "Concrete Example: Nudging the “King”",
+      "kind": "statement"
+    },
+    {
       "id": "positionalembeddingslab-stmt-23",
-      "quote": "This gives each position a distinct pattern the model can learn to interpret.",
-      "block_id": "positionalembeddingslab-block-22",
-      "section": "Positional Embeddings with Sine and Cosine",
+      "quote": "When “king” is at **Position 1**, we calculate a PE vector and add it.",
+      "block_id": "positionalembeddingslab-block-24",
+      "section": "Concrete Example: Nudging the “King”",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-24",
-      "quote": "Let's say, the word **“king”** is represented by the vector:",
+      "quote": "This “nudges” the king's position in 4D space.",
       "block_id": "positionalembeddingslab-block-24",
       "section": "Concrete Example: Nudging the “King”",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-25",
-      "quote": "When “king” is at **Position 1**, we calculate a PE vector and add it.",
+      "quote": "Move “king” to a different position:",
       "block_id": "positionalembeddingslab-block-25",
       "section": "Concrete Example: Nudging the “King”",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-26",
-      "quote": "This “nudges” the king's position in 4D space.",
-      "block_id": "positionalembeddingslab-block-25",
-      "section": "Concrete Example: Nudging the “King”",
+      "quote": "You might notice that **Dim 0** and **Dim 1** wiggle quickly, while **Dim 2** and **Dim 3** look like nearly straight lines.",
+      "block_id": "positionalembeddingslab-block-28",
+      "section": "Why do some lines seem straight?",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-27",
-      "quote": "Move “king” to a different position:",
-      "block_id": "positionalembeddingslab-block-26",
-      "section": "Concrete Example: Nudging the “King”",
-      "kind": "statement"
-    },
-    {
-      "id": "positionalembeddingslab-stmt-28",
-      "quote": "You might notice that **Dim 0** and **Dim 1** wiggle quickly, while **Dim 2** and **Dim 3** look like nearly straight lines.",
+      "quote": "If you were to expand the slider to **Position 1000**, you would see those straight lines finally start to curve into waves!",
       "block_id": "positionalembeddingslab-block-29",
       "section": "Why do some lines seem straight?",
       "kind": "statement"
     },
     {
+      "id": "positionalembeddingslab-stmt-28",
+      "quote": "The wave plots above show each dimension's projection individually, flat curves on a screen.",
+      "block_id": "positionalembeddingslab-block-31",
+      "section": "Positional Encoding Creates a Manifold, Not Just Labels",
+      "kind": "statement"
+    },
+    {
       "id": "positionalembeddingslab-stmt-29",
-      "quote": "If you were to expand the slider to **Position 1000**, you would see those straight lines finally start to curve into waves!",
-      "block_id": "positionalembeddingslab-block-30",
-      "section": "Why do some lines seem straight?",
+      "quote": "But the PE formula actually maps each position to a point on a **high-dimensional helix**.",
+      "block_id": "positionalembeddingslab-block-31",
+      "section": "Positional Encoding Creates a Manifold, Not Just Labels",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-30",
-      "quote": "The wave plots above show each dimension's projection individually, flat curves on a screen.",
-      "block_id": "positionalembeddingslab-block-32",
+      "quote": "The visualization below reconstructs this by plotting the first three PE dimensions as 3D coordinates:",
+      "block_id": "positionalembeddingslab-block-31",
       "section": "Positional Encoding Creates a Manifold, Not Just Labels",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-31",
-      "quote": "But the PE formula actually maps each position to a point on a **high-dimensional helix**.",
+      "quote": "- **Dims 0, 1** (fastest sin/cos pair) trace a **circle**, the cross-section of the helix",
       "block_id": "positionalembeddingslab-block-32",
       "section": "Positional Encoding Creates a Manifold, Not Just Labels",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-32",
-      "quote": "The visualization below reconstructs this by plotting the first three PE dimensions as 3D coordinates:",
-      "block_id": "positionalembeddingslab-block-32",
-      "section": "Positional Encoding Creates a Manifold, Not Just Labels",
-      "kind": "statement"
-    },
-    {
-      "id": "positionalembeddingslab-stmt-33",
-      "quote": "- **Dims 0, 1** (fastest sin/cos pair) trace a **circle**, the cross-section of the helix",
+      "quote": "- **Dim 2** (next slower frequency) provides **axial drift**, stretching the circle into a helix",
       "block_id": "positionalembeddingslab-block-33",
       "section": "Positional Encoding Creates a Manifold, Not Just Labels",
       "kind": "statement"
     },
     {
-      "id": "positionalembeddingslab-stmt-34",
-      "quote": "- **Dim 2** (next slower frequency) provides **axial drift**, stretching the circle into a helix",
-      "block_id": "positionalembeddingslab-block-34",
-      "section": "Positional Encoding Creates a Manifold, Not Just Labels",
-      "kind": "statement"
-    },
-    {
-      "id": "positionalembeddingslab-stmt-35",
+      "id": "positionalembeddingslab-stmt-33",
       "quote": "Recall the rotation matrix for each sine-cosine pair at frequency $\\omega$:",
-      "block_id": "positionalembeddingslab-block-36",
+      "block_id": "positionalembeddingslab-block-35",
       "section": "The PE Rotation Group",
       "kind": "statement"
     },
     {
-      "id": "positionalembeddingslab-stmt-36",
+      "id": "positionalembeddingslab-stmt-34",
       "quote": "What happens when you repeat the same word hundreds of times in a sequence?",
+      "block_id": "positionalembeddingslab-block-39",
+      "section": "The Repetition Starburst: One Word, Many Positions",
+      "kind": "statement"
+    },
+    {
+      "id": "positionalembeddingslab-stmt-35",
+      "quote": "The **semantic embedding** is identical every time, but the **positional encoding** nudges each copy to a slightly different point in space.",
+      "block_id": "positionalembeddingslab-block-39",
+      "section": "The Repetition Starburst: One Word, Many Positions",
+      "kind": "statement"
+    },
+    {
+      "id": "positionalembeddingslab-stmt-36",
+      "quote": "The plot below places the **raw embedding** of “king” (with no positional encoding) at the center.",
       "block_id": "positionalembeddingslab-block-40",
       "section": "The Repetition Starburst: One Word, Many Positions",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-37",
-      "quote": "The **semantic embedding** is identical every time, but the **positional encoding** nudges each copy to a slightly different point in space.",
+      "quote": "From it, **hundreds of lines** radiate outward to the final embedding of “king” at each position (0 through 199).",
       "block_id": "positionalembeddingslab-block-40",
       "section": "The Repetition Starburst: One Word, Many Positions",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-38",
-      "quote": "The plot below places the **raw embedding** of “king” (with no positional encoding) at the center.",
-      "block_id": "positionalembeddingslab-block-41",
+      "quote": "The result is a starburst that reveals the geometry of positional encoding itself:",
+      "block_id": "positionalembeddingslab-block-40",
       "section": "The Repetition Starburst: One Word, Many Positions",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-39",
-      "quote": "From it, **hundreds of lines** radiate outward to the final embedding of “king” at each position (0 through 199).",
+      "quote": "- **Short lines** mean the PE at that position barely moved the vector.",
       "block_id": "positionalembeddingslab-block-41",
       "section": "The Repetition Starburst: One Word, Many Positions",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-40",
-      "quote": "The result is a starburst that reveals the geometry of positional encoding itself:",
-      "block_id": "positionalembeddingslab-block-41",
-      "section": "The Repetition Starburst: One Word, Many Positions",
-      "kind": "statement"
-    },
-    {
-      "id": "positionalembeddingslab-stmt-41",
-      "quote": "- **Short lines** mean the PE at that position barely moved the vector.",
+      "quote": "- **The pattern of directions** shows how the sine/cosine waves systematically sweep the word through embedding space.",
       "block_id": "positionalembeddingslab-block-42",
       "section": "The Repetition Starburst: One Word, Many Positions",
       "kind": "statement"
     },
     {
-      "id": "positionalembeddingslab-stmt-42",
-      "quote": "- **The pattern of directions** shows how the sine/cosine waves systematically sweep the word through embedding space.",
+      "id": "positionalembeddingslab-stmt-41",
+      "quote": "- **No two endpoints are the same**: Every position is unique, even though the word is identical.",
       "block_id": "positionalembeddingslab-block-43",
       "section": "The Repetition Starburst: One Word, Many Positions",
       "kind": "statement"
     },
     {
+      "id": "positionalembeddingslab-stmt-42",
+      "quote": "The need to encode sequential order is as old as neural sequence modeling itself.",
+      "block_id": "positionalembeddingslab-block-44",
+      "section": "The Repetition Starburst: One Word, Many Positions",
+      "kind": "statement"
+    },
+    {
       "id": "positionalembeddingslab-stmt-43",
-      "quote": "- **No two endpoints are the same**: Every position is unique, even though the word is identical.",
+      "quote": "**Recurrent networks** like the \\citetitle{lstm} and \\citealternativetitle{elman1990finding} encoded position *implicitly*, the hidden state accumulated positional context step by step.",
       "block_id": "positionalembeddingslab-block-44",
       "section": "The Repetition Starburst: One Word, Many Positions",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-44",
-      "quote": "The need to encode sequential order is as old as neural sequence modeling itself.",
-      "block_id": "positionalembeddingslab-block-45",
+      "quote": "**Time-Delay Neural Networks** (Waibel et al., 1989) hard-coded local temporal structure through fixed delay windows.",
+      "block_id": "positionalembeddingslab-block-44",
       "section": "The Repetition Starburst: One Word, Many Positions",
       "kind": "statement"
     },
     {
       "id": "positionalembeddingslab-stmt-45",
-      "quote": "**Recurrent networks** like the \\citetitle{lstm} and \\citealternativetitle{elman1990finding} encoded position *implicitly*, the hidden state accumulated positional context step by step.",
-      "block_id": "positionalembeddingslab-block-45",
-      "section": "The Repetition Starburst: One Word, Many Positions",
-      "kind": "statement"
-    },
-    {
-      "id": "positionalembeddingslab-stmt-46",
-      "quote": "**Time-Delay Neural Networks** (Waibel et al., 1989) hard-coded local temporal structure through fixed delay windows.",
-      "block_id": "positionalembeddingslab-block-45",
-      "section": "The Repetition Starburst: One Word, Many Positions",
-      "kind": "statement"
-    },
-    {
-      "id": "positionalembeddingslab-stmt-47",
       "quote": "When convolutional models entered sequence tasks, \\cite[Gehring et al.]{gehring2017convs2s} added learned position embeddings to compensate for convolution's shift-invariance, among the earliest *explicit, additive* position embeddings.",
-      "block_id": "positionalembeddingslab-block-45",
+      "block_id": "positionalembeddingslab-block-44",
       "section": "The Repetition Starburst: One Word, Many Positions",
       "kind": "statement"
     }
@@ -2659,270 +2595,264 @@
   "blocks": [
     {
       "id": "positionalembeddingslab-block-1",
-      "quote": "Since our model contains no recurrence and no convolution, in order for the model to make use of the order of the sequence, we must inject some information about the relative or absolute position of the tokens in the sequence. To this end, we add “positional encodings” to the input embeddings at the as the embeddings, so that the two can be summed.",
-      "kind": "paragraph",
-      "section": ""
-    },
-    {
-      "id": "positionalembeddingslab-block-2",
       "quote": "In a Transformer, words are processed in parallel. Without **Positional Encoding (PE)**, the model would treat the sentence *“The dog bit the man”* exactly the same as *“The man bit the dog”* (and also the same as *“dog the The man bit”* and all other combinations of these words).",
       "kind": "paragraph",
       "section": ""
     },
     {
-      "id": "positionalembeddingslab-block-3",
+      "id": "positionalembeddingslab-block-2",
       "quote": "To fix this, we **add** a unique mathematical “signature” to each word's vector based on its position ($\\text{pos}$), with on sine and cosine.",
       "kind": "paragraph",
       "section": ""
     },
     {
-      "id": "positionalembeddingslab-block-4",
+      "id": "positionalembeddingslab-block-3",
       "quote": "The Invention of the Transformer & Positional Encoding",
       "kind": "heading",
       "section": "The Invention of the Transformer & Positional Encoding"
     },
     {
-      "id": "positionalembeddingslab-block-5",
+      "id": "positionalembeddingslab-block-4",
       "quote": "The challenge of processing text in parallel (instead of word-by-word like older RNNs) required a new way to inject “time” or “order” into the model.",
       "kind": "paragraph",
       "section": "The Invention of the Transformer & Positional Encoding"
     },
     {
-      "id": "positionalembeddingslab-block-6",
+      "id": "positionalembeddingslab-block-5",
       "quote": "Sine and Cosine",
       "kind": "heading",
       "section": "Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-7",
+      "id": "positionalembeddingslab-block-6",
       "quote": "Imagine a circle with radius $1$ centered at the origin (the **unit circle**). Pick a point on it by sweeping an angle $\\theta$ counter-clockwise from the right. The coordinates of that point are:",
       "kind": "paragraph",
       "section": "Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-8",
+      "id": "positionalembeddingslab-block-7",
       "quote": "That's it: $\\cos\\theta$ is the horizontal position, $\\sin\\theta$ is the vertical position. They convert an **angle** into **coordinates**.",
       "kind": "paragraph",
       "section": "Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-9",
+      "id": "positionalembeddingslab-block-8",
       "quote": "Angle $\\theta$:",
       "kind": "paragraph",
       "section": "Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-10",
+      "id": "positionalembeddingslab-block-9",
       "quote": "0.78 rad ( 44.7° )",
       "kind": "paragraph",
       "section": "Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-11",
+      "id": "positionalembeddingslab-block-10",
       "quote": "Frequency $\\omega$: 1.0",
       "kind": "paragraph",
       "section": "Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-12",
+      "id": "positionalembeddingslab-block-11",
       "quote": "Phase $\\varphi$: 0.0",
       "kind": "paragraph",
       "section": "Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-13",
+      "id": "positionalembeddingslab-block-12",
       "quote": "The concept originates in ancient Indian astronomy. Indian Astronomer \\citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* (“bowstring”) for a chord; its half, *ardha-jyā* (“half-chord”), is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\\citetitle{indianastronomer}* (\\citetitle{indianastronomer}, ch. 1-2). Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* (“pocket” or “fold”). See the paper \\citetitle{indianastronomerconstruction} if you want to know how \\citeauthor{indianastronomer} constructed his tables.",
       "kind": "paragraph",
       "section": "Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-14",
+      "id": "positionalembeddingslab-block-13",
       "quote": "In \\citeyear{chester1145}, \\citeauthor{chester1145} produced the first Latin translation of \\citealternativetitle{alkwarizma}'s foundational work on algebra, which gave English the term *algebra* (from 'Al-Jabr'; Al-Khwarizmi's own name gave us *algorithm*). In his translation of al-Khwarizmi's astronomical tables he rendered the Arabic *jayb* as the Latin ***sinus*** (“curve,” “bay,” or “fold”).",
       "kind": "paragraph",
       "section": "Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-15",
+      "id": "positionalembeddingslab-block-14",
       "quote": "Key Properties of Sine and Cosine",
       "kind": "heading",
       "section": "Key Properties of Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-16",
+      "id": "positionalembeddingslab-block-15",
       "quote": "How are Sine and Cosine calculated?",
       "kind": "heading",
       "section": "How are Sine and Cosine calculated?"
     },
     {
-      "id": "positionalembeddingslab-block-17",
+      "id": "positionalembeddingslab-block-16",
       "quote": "Calculators and math libraries usually evaluate sine and cosine with CORDIC or minimax polynomial approximations; the **Taylor series** below is the simplest polynomial approximation to reason about, not necessarily the algorithm your CPU runs:",
       "kind": "paragraph",
       "section": "How are Sine and Cosine calculated?"
     },
     {
-      "id": "positionalembeddingslab-block-18",
+      "id": "positionalembeddingslab-block-17",
       "quote": "The more terms you include, the better the approximation. You can explore this below.",
       "kind": "paragraph",
       "section": "How are Sine and Cosine calculated?"
     },
     {
-      "id": "positionalembeddingslab-block-19",
+      "id": "positionalembeddingslab-block-18",
       "quote": "1",
       "kind": "paragraph",
       "section": "How are Sine and Cosine calculated?"
     },
     {
-      "id": "positionalembeddingslab-block-20",
+      "id": "positionalembeddingslab-block-19",
       "quote": "Positional Embeddings with Sine and Cosine",
       "kind": "heading",
       "section": "Positional Embeddings with Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-21",
+      "id": "positionalembeddingslab-block-20",
       "quote": "The original Transformer paper (\\citetitle{vaswani2017attention}) uses sine and cosine to create a unique positional fingerprint based on their position in the text:",
       "kind": "paragraph",
       "section": "Positional Embeddings with Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-22",
+      "id": "positionalembeddingslab-block-21",
       "quote": "This gives each position a distinct pattern the model can learn to interpret.",
       "kind": "paragraph",
       "section": "Positional Embeddings with Sine and Cosine"
     },
     {
-      "id": "positionalembeddingslab-block-23",
+      "id": "positionalembeddingslab-block-22",
       "quote": "Concrete Example: Nudging the “King”",
       "kind": "heading",
       "section": "Concrete Example: Nudging the “King”"
     },
     {
-      "id": "positionalembeddingslab-block-24",
+      "id": "positionalembeddingslab-block-23",
       "quote": "Let's say, the word **“king”** is represented by the vector:",
       "kind": "paragraph",
       "section": "Concrete Example: Nudging the “King”"
     },
     {
-      "id": "positionalembeddingslab-block-25",
+      "id": "positionalembeddingslab-block-24",
       "quote": "When “king” is at **Position 1**, we calculate a PE vector and add it. This “nudges” the king's position in 4D space.",
       "kind": "paragraph",
       "section": "Concrete Example: Nudging the “King”"
     },
     {
-      "id": "positionalembeddingslab-block-26",
+      "id": "positionalembeddingslab-block-25",
       "quote": "Move “king” to a different position:",
       "kind": "paragraph",
       "section": "Concrete Example: Nudging the “King”"
     },
     {
-      "id": "positionalembeddingslab-block-27",
+      "id": "positionalembeddingslab-block-26",
       "quote": "Position 1",
       "kind": "paragraph",
       "section": "Concrete Example: Nudging the “King”"
     },
     {
-      "id": "positionalembeddingslab-block-28",
+      "id": "positionalembeddingslab-block-27",
       "quote": "Why do some lines seem straight?",
       "kind": "heading",
       "section": "Why do some lines seem straight?"
     },
     {
-      "id": "positionalembeddingslab-block-29",
+      "id": "positionalembeddingslab-block-28",
       "quote": "You might notice that **Dim 0** and **Dim 1** wiggle quickly, while **Dim 2** and **Dim 3** look like nearly straight lines. This is intentional:",
       "kind": "paragraph",
       "section": "Why do some lines seem straight?"
     },
     {
-      "id": "positionalembeddingslab-block-30",
+      "id": "positionalembeddingslab-block-29",
       "quote": "If you were to expand the slider to **Position 1000**, you would see those straight lines finally start to curve into waves!",
       "kind": "paragraph",
       "section": "Why do some lines seem straight?"
     },
     {
-      "id": "positionalembeddingslab-block-31",
+      "id": "positionalembeddingslab-block-30",
       "quote": "Positional Encoding Creates a Manifold, Not Just Labels",
       "kind": "heading",
       "section": "Positional Encoding Creates a Manifold, Not Just Labels"
     },
     {
-      "id": "positionalembeddingslab-block-32",
+      "id": "positionalembeddingslab-block-31",
       "quote": "The wave plots above show each dimension's projection individually, flat curves on a screen. But the PE formula actually maps each position to a point on a **high-dimensional helix**. The visualization below reconstructs this by plotting the first three PE dimensions as 3D coordinates:",
       "kind": "paragraph",
       "section": "Positional Encoding Creates a Manifold, Not Just Labels"
     },
     {
-      "id": "positionalembeddingslab-block-33",
+      "id": "positionalembeddingslab-block-32",
       "quote": "- **Dims 0, 1** (fastest sin/cos pair) trace a **circle**, the cross-section of the helix",
       "kind": "list-item",
       "section": "Positional Encoding Creates a Manifold, Not Just Labels"
     },
     {
-      "id": "positionalembeddingslab-block-34",
+      "id": "positionalembeddingslab-block-33",
       "quote": "- **Dim 2** (next slower frequency) provides **axial drift**, stretching the circle into a helix",
       "kind": "list-item",
       "section": "Positional Encoding Creates a Manifold, Not Just Labels"
     },
     {
-      "id": "positionalembeddingslab-block-35",
+      "id": "positionalembeddingslab-block-34",
       "quote": "The PE Rotation Group",
       "kind": "heading",
       "section": "The PE Rotation Group"
     },
     {
-      "id": "positionalembeddingslab-block-36",
+      "id": "positionalembeddingslab-block-35",
       "quote": "Recall the rotation matrix for each sine-cosine pair at frequency $\\omega$:",
       "kind": "paragraph",
       "section": "The PE Rotation Group"
     },
     {
-      "id": "positionalembeddingslab-block-37",
+      "id": "positionalembeddingslab-block-36",
       "quote": "Why the Group Structure Matters for Attention",
       "kind": "heading",
       "section": "Why the Group Structure Matters for Attention"
     },
     {
-      "id": "positionalembeddingslab-block-38",
+      "id": "positionalembeddingslab-block-37",
       "quote": "Reading the Compass Plot",
       "kind": "heading",
       "section": "Reading the Compass Plot"
     },
     {
-      "id": "positionalembeddingslab-block-39",
+      "id": "positionalembeddingslab-block-38",
       "quote": "The Repetition Starburst: One Word, Many Positions",
       "kind": "heading",
       "section": "The Repetition Starburst: One Word, Many Positions"
     },
     {
-      "id": "positionalembeddingslab-block-40",
+      "id": "positionalembeddingslab-block-39",
       "quote": "What happens when you repeat the same word hundreds of times in a sequence? The **semantic embedding** is identical every time, but the **positional encoding** nudges each copy to a slightly different point in space.",
       "kind": "paragraph",
       "section": "The Repetition Starburst: One Word, Many Positions"
     },
     {
-      "id": "positionalembeddingslab-block-41",
+      "id": "positionalembeddingslab-block-40",
       "quote": "The plot below places the **raw embedding** of “king” (with no positional encoding) at the center. From it, **hundreds of lines** radiate outward to the final embedding of “king” at each position (0 through 199). The result is a starburst that reveals the geometry of positional encoding itself:",
       "kind": "paragraph",
       "section": "The Repetition Starburst: One Word, Many Positions"
     },
     {
-      "id": "positionalembeddingslab-block-42",
+      "id": "positionalembeddingslab-block-41",
       "quote": "- **Short lines** mean the PE at that position barely moved the vector.",
       "kind": "list-item",
       "section": "The Repetition Starburst: One Word, Many Positions"
     },
     {
-      "id": "positionalembeddingslab-block-43",
+      "id": "positionalembeddingslab-block-42",
       "quote": "- **The pattern of directions** shows how the sine/cosine waves systematically sweep the word through embedding space.",
       "kind": "list-item",
       "section": "The Repetition Starburst: One Word, Many Positions"
     },
     {
-      "id": "positionalembeddingslab-block-44",
+      "id": "positionalembeddingslab-block-43",
       "quote": "- **No two endpoints are the same**: Every position is unique, even though the word is identical.",
       "kind": "list-item",
       "section": "The Repetition Starburst: One Word, Many Positions"
     },
     {
-      "id": "positionalembeddingslab-block-45",
+      "id": "positionalembeddingslab-block-44",
       "quote": "The need to encode sequential order is as old as neural sequence modeling itself. **Recurrent networks** like the \\citetitle{lstm} and \\citealternativetitle{elman1990finding} encoded position *implicitly*, the hidden state accumulated positional context step by step. **Time-Delay Neural Networks** (Waibel et al., 1989) hard-coded local temporal structure through fixed delay windows. When convolutional models entered sequence tasks, \\cite[Gehring et al.]{gehring2017convs2s} added learned position embeddings to compensate for convolution's shift-invariance, among the earliest *explicit, additive* position embeddings.",
       "kind": "paragraph",
       "section": "The Repetition Starburst: One Word, Many Positions"

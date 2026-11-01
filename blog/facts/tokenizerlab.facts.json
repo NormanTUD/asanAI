@@ -1407,16 +1407,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-tokenizerlab-block-32-related_to-tokenizerlab-block-1",
-      "from": "tokenizerlab-block-32",
-      "to": "tokenizerlab-block-1",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-tokenizerlab-block-33-part_of-tokenizerlab",
       "from": "tokenizerlab-block-33",
       "to": "tokenizerlab",
@@ -1431,6 +1421,16 @@
       "from": "tokenizerlab-block-32",
       "to": "tokenizerlab-block-33",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-tokenizerlab-block-33-related_to-tokenizerlab-block-32",
+      "from": "tokenizerlab-block-33",
+      "to": "tokenizerlab-block-32",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1457,16 +1457,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-tokenizerlab-block-34-related_to-tokenizerlab-block-33",
-      "from": "tokenizerlab-block-34",
-      "to": "tokenizerlab-block-33",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-tokenizerlab-block-35-part_of-tokenizerlab",
       "from": "tokenizerlab-block-35",
       "to": "tokenizerlab",
@@ -1481,6 +1471,16 @@
       "from": "tokenizerlab-block-34",
       "to": "tokenizerlab-block-35",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-tokenizerlab-block-35-related_to-tokenizerlab-block-34",
+      "from": "tokenizerlab-block-35",
+      "to": "tokenizerlab-block-34",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1507,9 +1507,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-tokenizerlab-block-36-related_to-tokenizerlab-block-35",
+      "id": "struct-tokenizerlab-block-36-related_to-tokenizerlab-block-34",
       "from": "tokenizerlab-block-36",
-      "to": "tokenizerlab-block-35",
+      "to": "tokenizerlab-block-34",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1537,9 +1537,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-tokenizerlab-block-37-related_to-tokenizerlab-block-35",
+      "id": "struct-tokenizerlab-block-37-related_to-tokenizerlab-block-34",
       "from": "tokenizerlab-block-37",
-      "to": "tokenizerlab-block-35",
+      "to": "tokenizerlab-block-34",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1567,9 +1567,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-tokenizerlab-block-38-related_to-tokenizerlab-block-35",
+      "id": "struct-tokenizerlab-block-38-related_to-tokenizerlab-block-34",
       "from": "tokenizerlab-block-38",
-      "to": "tokenizerlab-block-35",
+      "to": "tokenizerlab-block-34",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3307,9 +3307,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-tokenizerlab-stmt-50-part_of-tokenizerlab-block-32",
+      "id": "struct-tokenizerlab-stmt-50-part_of-tokenizerlab-block-33",
       "from": "tokenizerlab-stmt-50",
-      "to": "tokenizerlab-block-32",
+      "to": "tokenizerlab-block-33",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3317,9 +3317,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-tokenizerlab-stmt-51-part_of-tokenizerlab-block-34",
+      "id": "struct-tokenizerlab-stmt-51-part_of-tokenizerlab-block-33",
       "from": "tokenizerlab-stmt-51",
-      "to": "tokenizerlab-block-34",
+      "to": "tokenizerlab-block-33",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3327,9 +3327,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-tokenizerlab-stmt-52-part_of-tokenizerlab-block-34",
+      "id": "struct-tokenizerlab-stmt-52-part_of-tokenizerlab-block-33",
       "from": "tokenizerlab-stmt-52",
-      "to": "tokenizerlab-block-34",
+      "to": "tokenizerlab-block-33",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3337,9 +3337,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-tokenizerlab-stmt-53-part_of-tokenizerlab-block-34",
+      "id": "struct-tokenizerlab-stmt-53-part_of-tokenizerlab-block-33",
       "from": "tokenizerlab-stmt-53",
-      "to": "tokenizerlab-block-34",
+      "to": "tokenizerlab-block-33",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3347,9 +3347,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-tokenizerlab-stmt-54-part_of-tokenizerlab-block-34",
+      "id": "struct-tokenizerlab-stmt-54-part_of-tokenizerlab-block-33",
       "from": "tokenizerlab-stmt-54",
-      "to": "tokenizerlab-block-34",
+      "to": "tokenizerlab-block-33",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3357,9 +3357,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-tokenizerlab-stmt-55-part_of-tokenizerlab-block-34",
+      "id": "struct-tokenizerlab-stmt-55-part_of-tokenizerlab-block-35",
       "from": "tokenizerlab-stmt-55",
-      "to": "tokenizerlab-block-34",
+      "to": "tokenizerlab-block-35",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3367,9 +3367,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-tokenizerlab-stmt-56-part_of-tokenizerlab-block-36",
+      "id": "struct-tokenizerlab-stmt-56-part_of-tokenizerlab-block-35",
       "from": "tokenizerlab-stmt-56",
-      "to": "tokenizerlab-block-36",
+      "to": "tokenizerlab-block-35",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4301,7 +4301,7 @@
     },
     {
       "id": "tokenizerlab-stmt-4",
-      "quote": "aria-label=\"Text to tokenize\" autocomplete=\"off\" spellcheck=\"false\">",
+      "quote": "<polyline points=\"4 7 4 4 20 4 20 7\"></polyline> <line x1=\"9\" y1=\"20\" x2=\"15\" y2=\"20\"></line> <line x1=\"12\" y1=\"4\" x2=\"12\" y2=\"20\"></line>",
       "block_id": "tokenizerlab-block-2",
       "section": "",
       "kind": "statement"
@@ -4623,56 +4623,56 @@
     },
     {
       "id": "tokenizerlab-stmt-50",
-      "quote": "aria-label=\"Word whose tokenization you want to inspect\" autocomplete=\"off\" spellcheck=\"false\">",
-      "block_id": "tokenizerlab-block-32",
-      "section": "",
+      "quote": "The first part of this chapter showed you the *mechanism*: how a stream of characters is chopped into a fixed vocabulary of subwords so a discrete, finite model can process open-ended text.",
+      "block_id": "tokenizerlab-block-33",
+      "section": "The Consequence: Tokenization as a Bias",
       "kind": "statement"
     },
     {
       "id": "tokenizerlab-stmt-51",
-      "quote": "The first part of this chapter showed you the *mechanism*: how a stream of characters is chopped into a fixed vocabulary of subwords so a discrete, finite model can process open-ended text.",
-      "block_id": "tokenizerlab-block-34",
+      "quote": "This second part is the *consequence* of that mechanism — the part that is easy to miss because it is invisible in a single-language demo.",
+      "block_id": "tokenizerlab-block-33",
       "section": "The Consequence: Tokenization as a Bias",
       "kind": "statement"
     },
     {
       "id": "tokenizerlab-stmt-52",
-      "quote": "This second part is the *consequence* of that mechanism — the part that is easy to miss because it is invisible in a single-language demo.",
-      "block_id": "tokenizerlab-block-34",
+      "quote": "A tokenizer is not a neutral preprocessing step.",
+      "block_id": "tokenizerlab-block-33",
       "section": "The Consequence: Tokenization as a Bias",
       "kind": "statement"
     },
     {
       "id": "tokenizerlab-stmt-53",
-      "quote": "A tokenizer is not a neutral preprocessing step.",
-      "block_id": "tokenizerlab-block-34",
+      "quote": "It is a **bias**, baked into the model before a single weight is trained, and it prices every language differently.",
+      "block_id": "tokenizerlab-block-33",
       "section": "The Consequence: Tokenization as a Bias",
       "kind": "statement"
     },
     {
       "id": "tokenizerlab-stmt-54",
-      "quote": "It is a **bias**, baked into the model before a single weight is trained, and it prices every language differently.",
-      "block_id": "tokenizerlab-block-34",
+      "quote": "Two of the most consequential, least-discussed properties of a modern LLM — why it costs more to speak in one language than another, and why it sometimes fails in exactly the ways the Strawberry demo above hinted at — live here.",
+      "block_id": "tokenizerlab-block-33",
       "section": "The Consequence: Tokenization as a Bias",
       "kind": "statement"
     },
     {
       "id": "tokenizerlab-stmt-55",
-      "quote": "Two of the most consequential, least-discussed properties of a modern LLM — why it costs more to speak in one language than another, and why it sometimes fails in exactly the ways the Strawberry demo above hinted at — live here.",
-      "block_id": "tokenizerlab-block-34",
-      "section": "The Consequence: Tokenization as a Bias",
+      "quote": "Building a vocabulary is a decision, not a default.",
+      "block_id": "tokenizerlab-block-35",
+      "section": "The choices that were never obvious",
       "kind": "statement"
     },
     {
       "id": "tokenizerlab-stmt-56",
-      "quote": "Building a vocabulary is a decision, not a default.",
-      "block_id": "tokenizerlab-block-36",
+      "quote": "The options form a spectrum, and each one optimizes a different trade-off:",
+      "block_id": "tokenizerlab-block-35",
       "section": "The choices that were never obvious",
       "kind": "statement"
     },
     {
       "id": "tokenizerlab-stmt-57",
-      "quote": "The options form a spectrum, and each one optimizes a different trade-off:",
+      "quote": "<line x1=\"20\" y1=\"45\" x2=\"540\" y2=\"45\" stroke=\"var(--mn-border)\" stroke-width=\"2\"/> <circle cx=\"40\" cy=\"45\" r=\"7\" fill=\"var(--mn-accent)\"/> <text x=\"40\" y=\"75\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">word-level</text> <text x=\"40\" y=\"24\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text-secondary)\">small vocab, many unknowns</text> <circle cx=\"190\" cy=\"45\" r=\"7\" fill=\"var(--mn-accent)\"/> <text x=\"190\" y=\"75\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">BPE</text> <text x=\"190\" y=\"24\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text-secondary)\">merge frequent pairs</text> <circle cx=\"340\" cy=\"45\" r=\"7\" fill=\"var(--mn-accent)\"/> <text x=\"340\" y=\"75\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">unigram</text> <text x=\"340\" y=\"24\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text-secondary)\">LM-pruned, stochastic</text> <circle cx=\"490\" cy=\"45\" r=\"7\" fill=\"var(--mn-accent)\"/> <text x=\"490\" y=\"75\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">byte-level</text> <text x=\"490\" y=\"24\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text-secondary)\">never an unknown</text>",
       "block_id": "tokenizerlab-block-36",
       "section": "The choices that were never obvious",
       "kind": "statement"
@@ -5310,7 +5310,7 @@
     },
     {
       "id": "tokenizerlab-block-2",
-      "quote": "aria-label=\"Text to tokenize\" autocomplete=\"off\" spellcheck=\"false\">",
+      "quote": "<polyline points=\"4 7 4 4 20 4 20 7\"></polyline> <line x1=\"9\" y1=\"20\" x2=\"15\" y2=\"20\"></line> <line x1=\"12\" y1=\"4\" x2=\"12\" y2=\"20\"></line>",
       "kind": "paragraph",
       "section": ""
     },
@@ -5490,31 +5490,31 @@
     },
     {
       "id": "tokenizerlab-block-32",
-      "quote": "aria-label=\"Word whose tokenization you want to inspect\" autocomplete=\"off\" spellcheck=\"false\">",
-      "kind": "paragraph",
-      "section": ""
-    },
-    {
-      "id": "tokenizerlab-block-33",
       "quote": "The Consequence: Tokenization as a Bias",
       "kind": "heading",
       "section": "The Consequence: Tokenization as a Bias"
     },
     {
-      "id": "tokenizerlab-block-34",
+      "id": "tokenizerlab-block-33",
       "quote": "The first part of this chapter showed you the *mechanism*: how a stream of characters is chopped into a fixed vocabulary of subwords so a discrete, finite model can process open-ended text. This second part is the *consequence* of that mechanism — the part that is easy to miss because it is invisible in a single-language demo. A tokenizer is not a neutral preprocessing step. It is a **bias**, baked into the model before a single weight is trained, and it prices every language differently. Two of the most consequential, least-discussed properties of a modern LLM — why it costs more to speak in one language than another, and why it sometimes fails in exactly the ways the Strawberry demo above hinted at — live here.",
       "kind": "paragraph",
       "section": "The Consequence: Tokenization as a Bias"
     },
     {
-      "id": "tokenizerlab-block-35",
+      "id": "tokenizerlab-block-34",
       "quote": "The choices that were never obvious",
       "kind": "heading",
       "section": "The choices that were never obvious"
     },
     {
-      "id": "tokenizerlab-block-36",
+      "id": "tokenizerlab-block-35",
       "quote": "Building a vocabulary is a decision, not a default. The options form a spectrum, and each one optimizes a different trade-off:",
+      "kind": "paragraph",
+      "section": "The choices that were never obvious"
+    },
+    {
+      "id": "tokenizerlab-block-36",
+      "quote": "<line x1=\"20\" y1=\"45\" x2=\"540\" y2=\"45\" stroke=\"var(--mn-border)\" stroke-width=\"2\"/> <circle cx=\"40\" cy=\"45\" r=\"7\" fill=\"var(--mn-accent)\"/> <text x=\"40\" y=\"75\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">word-level</text> <text x=\"40\" y=\"24\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text-secondary)\">small vocab, many unknowns</text> <circle cx=\"190\" cy=\"45\" r=\"7\" fill=\"var(--mn-accent)\"/> <text x=\"190\" y=\"75\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">BPE</text> <text x=\"190\" y=\"24\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text-secondary)\">merge frequent pairs</text> <circle cx=\"340\" cy=\"45\" r=\"7\" fill=\"var(--mn-accent)\"/> <text x=\"340\" y=\"75\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">unigram</text> <text x=\"340\" y=\"24\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text-secondary)\">LM-pruned, stochastic</text> <circle cx=\"490\" cy=\"45\" r=\"7\" fill=\"var(--mn-accent)\"/> <text x=\"490\" y=\"75\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">byte-level</text> <text x=\"490\" y=\"24\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text-secondary)\">never an unknown</text>",
       "kind": "paragraph",
       "section": "The choices that were never obvious"
     },

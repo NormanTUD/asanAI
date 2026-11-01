@@ -1710,6 +1710,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-math_i-block-22-related_to-math_i-block-4",
+      "from": "math_i-block-22",
+      "to": "math_i-block-4",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-math_i-block-23-part_of-math-i",
       "from": "math_i-block-23",
       "to": "math-i",
@@ -1724,16 +1734,6 @@
       "from": "math_i-block-22",
       "to": "math_i-block-23",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-block-23-related_to-math_i-block-22",
-      "from": "math_i-block-23",
-      "to": "math_i-block-22",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1760,9 +1760,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-block-24-related_to-math_i-block-22",
+      "id": "struct-math_i-block-24-related_to-math_i-block-23",
       "from": "math_i-block-24",
-      "to": "math_i-block-22",
+      "to": "math_i-block-23",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1790,9 +1790,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-block-25-related_to-math_i-block-22",
+      "id": "struct-math_i-block-25-related_to-math_i-block-23",
       "from": "math_i-block-25",
-      "to": "math_i-block-22",
+      "to": "math_i-block-23",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1820,9 +1820,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-block-26-related_to-math_i-block-22",
+      "id": "struct-math_i-block-26-related_to-math_i-block-23",
       "from": "math_i-block-26",
-      "to": "math_i-block-22",
+      "to": "math_i-block-23",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1850,9 +1850,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-block-27-related_to-math_i-block-22",
+      "id": "struct-math_i-block-27-related_to-math_i-block-23",
       "from": "math_i-block-27",
-      "to": "math_i-block-22",
+      "to": "math_i-block-23",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1874,6 +1874,16 @@
       "from": "math_i-block-27",
       "to": "math_i-block-28",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-block-28-related_to-math_i-block-23",
+      "from": "math_i-block-28",
+      "to": "math_i-block-23",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1920,16 +1930,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-block-30-related_to-math_i-block-29",
-      "from": "math_i-block-30",
-      "to": "math_i-block-29",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-math_i-block-31-part_of-math-i",
       "from": "math_i-block-31",
       "to": "math-i",
@@ -1950,9 +1950,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-block-31-related_to-math_i-block-29",
+      "id": "struct-math_i-block-31-related_to-math_i-block-30",
       "from": "math_i-block-31",
-      "to": "math_i-block-29",
+      "to": "math_i-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1980,9 +1980,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-block-32-related_to-math_i-block-29",
+      "id": "struct-math_i-block-32-related_to-math_i-block-30",
       "from": "math_i-block-32",
-      "to": "math_i-block-29",
+      "to": "math_i-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2010,6 +2010,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-math_i-block-33-related_to-math_i-block-30",
+      "from": "math_i-block-33",
+      "to": "math_i-block-30",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-math_i-block-34-part_of-math-i",
       "from": "math_i-block-34",
       "to": "math-i",
@@ -2024,16 +2034,6 @@
       "from": "math_i-block-33",
       "to": "math_i-block-34",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-block-34-related_to-math_i-block-33",
-      "from": "math_i-block-34",
-      "to": "math_i-block-33",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2060,6 +2060,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-math_i-block-35-related_to-math_i-block-34",
+      "from": "math_i-block-35",
+      "to": "math_i-block-34",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-math_i-block-36-part_of-math-i",
       "from": "math_i-block-36",
       "to": "math-i",
@@ -2074,16 +2084,6 @@
       "from": "math_i-block-35",
       "to": "math_i-block-36",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-block-36-related_to-math_i-block-35",
-      "from": "math_i-block-36",
-      "to": "math_i-block-35",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2110,6 +2110,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-math_i-block-37-related_to-math_i-block-36",
+      "from": "math_i-block-37",
+      "to": "math_i-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-math_i-block-38-part_of-math-i",
       "from": "math_i-block-38",
       "to": "math-i",
@@ -2124,16 +2134,6 @@
       "from": "math_i-block-37",
       "to": "math_i-block-38",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-block-38-related_to-math_i-block-37",
-      "from": "math_i-block-38",
-      "to": "math_i-block-37",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2160,9 +2160,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-block-39-related_to-math_i-block-37",
+      "id": "struct-math_i-block-39-related_to-math_i-block-38",
       "from": "math_i-block-39",
-      "to": "math_i-block-37",
+      "to": "math_i-block-38",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2190,6 +2190,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-math_i-block-40-related_to-math_i-block-38",
+      "from": "math_i-block-40",
+      "to": "math_i-block-38",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-math_i-block-41-part_of-math-i",
       "from": "math_i-block-41",
       "to": "math-i",
@@ -2204,16 +2214,6 @@
       "from": "math_i-block-40",
       "to": "math_i-block-41",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-block-41-related_to-math_i-block-40",
-      "from": "math_i-block-41",
-      "to": "math_i-block-40",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2240,6 +2240,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-math_i-block-42-related_to-math_i-block-41",
+      "from": "math_i-block-42",
+      "to": "math_i-block-41",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-math_i-block-43-part_of-math-i",
       "from": "math_i-block-43",
       "to": "math-i",
@@ -2254,16 +2264,6 @@
       "from": "math_i-block-42",
       "to": "math_i-block-43",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-block-43-related_to-math_i-block-42",
-      "from": "math_i-block-43",
-      "to": "math_i-block-42",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2290,6 +2290,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-math_i-block-44-related_to-math_i-block-43",
+      "from": "math_i-block-44",
+      "to": "math_i-block-43",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-math_i-block-45-part_of-math-i",
       "from": "math_i-block-45",
       "to": "math-i",
@@ -2304,16 +2314,6 @@
       "from": "math_i-block-44",
       "to": "math_i-block-45",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-block-45-related_to-math_i-block-44",
-      "from": "math_i-block-45",
-      "to": "math_i-block-44",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2340,9 +2340,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-block-46-related_to-math_i-block-44",
+      "id": "struct-math_i-block-46-related_to-math_i-block-45",
       "from": "math_i-block-46",
-      "to": "math_i-block-44",
+      "to": "math_i-block-45",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2370,6 +2370,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-math_i-block-47-related_to-math_i-block-45",
+      "from": "math_i-block-47",
+      "to": "math_i-block-45",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-math_i-block-48-part_of-math-i",
       "from": "math_i-block-48",
       "to": "math-i",
@@ -2384,16 +2394,6 @@
       "from": "math_i-block-47",
       "to": "math_i-block-48",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-block-48-related_to-math_i-block-47",
-      "from": "math_i-block-48",
-      "to": "math_i-block-47",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2420,9 +2420,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-block-49-related_to-math_i-block-47",
+      "id": "struct-math_i-block-49-related_to-math_i-block-48",
       "from": "math_i-block-49",
-      "to": "math_i-block-47",
+      "to": "math_i-block-48",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3430,9 +3430,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-17-part_of-math_i-block-8",
+      "id": "struct-math_i-stmt-17-part_of-math_i-block-9",
       "from": "math_i-stmt-17",
-      "to": "math_i-block-8",
+      "to": "math_i-block-9",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3440,9 +3440,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-18-part_of-math_i-block-8",
+      "id": "struct-math_i-stmt-18-part_of-math_i-block-9",
       "from": "math_i-stmt-18",
-      "to": "math_i-block-8",
+      "to": "math_i-block-9",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3480,9 +3480,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-22-part_of-math_i-block-13",
+      "id": "struct-math_i-stmt-22-part_of-math_i-block-12",
       "from": "math_i-stmt-22",
-      "to": "math_i-block-13",
+      "to": "math_i-block-12",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3490,9 +3490,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-23-part_of-math_i-block-13",
+      "id": "struct-math_i-stmt-23-part_of-math_i-block-14",
       "from": "math_i-stmt-23",
-      "to": "math_i-block-13",
+      "to": "math_i-block-14",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3500,9 +3500,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-24-part_of-math_i-block-13",
+      "id": "struct-math_i-stmt-24-part_of-math_i-block-14",
       "from": "math_i-stmt-24",
-      "to": "math_i-block-13",
+      "to": "math_i-block-14",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3510,9 +3510,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-25-part_of-math_i-block-13",
+      "id": "struct-math_i-stmt-25-part_of-math_i-block-14",
       "from": "math_i-stmt-25",
-      "to": "math_i-block-13",
+      "to": "math_i-block-14",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3520,9 +3520,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-26-part_of-math_i-block-13",
+      "id": "struct-math_i-stmt-26-part_of-math_i-block-14",
       "from": "math_i-stmt-26",
-      "to": "math_i-block-13",
+      "to": "math_i-block-14",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3560,9 +3560,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-30-part_of-math_i-block-16",
+      "id": "struct-math_i-stmt-30-part_of-math_i-block-17",
       "from": "math_i-stmt-30",
-      "to": "math_i-block-16",
+      "to": "math_i-block-17",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3570,9 +3570,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-31-part_of-math_i-block-16",
+      "id": "struct-math_i-stmt-31-part_of-math_i-block-17",
       "from": "math_i-stmt-31",
-      "to": "math_i-block-16",
+      "to": "math_i-block-17",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3590,9 +3590,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-33-part_of-math_i-block-17",
+      "id": "struct-math_i-stmt-33-part_of-math_i-block-18",
       "from": "math_i-stmt-33",
-      "to": "math_i-block-17",
+      "to": "math_i-block-18",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3600,9 +3600,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-34-part_of-math_i-block-17",
+      "id": "struct-math_i-stmt-34-part_of-math_i-block-18",
       "from": "math_i-stmt-34",
-      "to": "math_i-block-17",
+      "to": "math_i-block-18",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3620,9 +3620,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-36-part_of-math_i-block-18",
+      "id": "struct-math_i-stmt-36-part_of-math_i-block-19",
       "from": "math_i-stmt-36",
-      "to": "math_i-block-18",
+      "to": "math_i-block-19",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3630,9 +3630,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-37-part_of-math_i-block-18",
+      "id": "struct-math_i-stmt-37-part_of-math_i-block-19",
       "from": "math_i-stmt-37",
-      "to": "math_i-block-18",
+      "to": "math_i-block-19",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3650,9 +3650,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-39-part_of-math_i-block-19",
+      "id": "struct-math_i-stmt-39-part_of-math_i-block-20",
       "from": "math_i-stmt-39",
-      "to": "math_i-block-19",
+      "to": "math_i-block-20",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3660,9 +3660,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-40-part_of-math_i-block-19",
+      "id": "struct-math_i-stmt-40-part_of-math_i-block-20",
       "from": "math_i-stmt-40",
-      "to": "math_i-block-19",
+      "to": "math_i-block-20",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3670,9 +3670,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-41-part_of-math_i-block-19",
+      "id": "struct-math_i-stmt-41-part_of-math_i-block-20",
       "from": "math_i-stmt-41",
-      "to": "math_i-block-19",
+      "to": "math_i-block-20",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3680,9 +3680,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-42-part_of-math_i-block-19",
+      "id": "struct-math_i-stmt-42-part_of-math_i-block-20",
       "from": "math_i-stmt-42",
-      "to": "math_i-block-19",
+      "to": "math_i-block-20",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3700,9 +3700,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-44-part_of-math_i-block-20",
+      "id": "struct-math_i-stmt-44-part_of-math_i-block-21",
       "from": "math_i-stmt-44",
-      "to": "math_i-block-20",
+      "to": "math_i-block-21",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3710,9 +3710,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-45-part_of-math_i-block-20",
+      "id": "struct-math_i-stmt-45-part_of-math_i-block-21",
       "from": "math_i-stmt-45",
-      "to": "math_i-block-20",
+      "to": "math_i-block-21",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3720,9 +3720,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-46-part_of-math_i-block-20",
+      "id": "struct-math_i-stmt-46-part_of-math_i-block-21",
       "from": "math_i-stmt-46",
-      "to": "math_i-block-20",
+      "to": "math_i-block-21",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3740,9 +3740,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-48-part_of-math_i-block-21",
+      "id": "struct-math_i-stmt-48-part_of-math_i-block-22",
       "from": "math_i-stmt-48",
-      "to": "math_i-block-21",
+      "to": "math_i-block-22",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3750,9 +3750,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-49-part_of-math_i-block-21",
+      "id": "struct-math_i-stmt-49-part_of-math_i-block-22",
       "from": "math_i-stmt-49",
-      "to": "math_i-block-21",
+      "to": "math_i-block-22",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3760,9 +3760,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-50-part_of-math_i-block-21",
+      "id": "struct-math_i-stmt-50-part_of-math_i-block-22",
       "from": "math_i-stmt-50",
-      "to": "math_i-block-21",
+      "to": "math_i-block-22",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3770,9 +3770,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-51-part_of-math_i-block-23",
+      "id": "struct-math_i-stmt-51-part_of-math_i-block-22",
       "from": "math_i-stmt-51",
-      "to": "math_i-block-23",
+      "to": "math_i-block-22",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3790,9 +3790,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-53-part_of-math_i-block-24",
+      "id": "struct-math_i-stmt-53-part_of-math_i-block-25",
       "from": "math_i-stmt-53",
-      "to": "math_i-block-24",
+      "to": "math_i-block-25",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3810,9 +3810,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-55-part_of-math_i-block-25",
+      "id": "struct-math_i-stmt-55-part_of-math_i-block-26",
       "from": "math_i-stmt-55",
-      "to": "math_i-block-25",
+      "to": "math_i-block-26",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3820,9 +3820,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-56-part_of-math_i-block-25",
+      "id": "struct-math_i-stmt-56-part_of-math_i-block-26",
       "from": "math_i-stmt-56",
-      "to": "math_i-block-25",
+      "to": "math_i-block-26",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3830,9 +3830,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-57-part_of-math_i-block-25",
+      "id": "struct-math_i-stmt-57-part_of-math_i-block-26",
       "from": "math_i-stmt-57",
-      "to": "math_i-block-25",
+      "to": "math_i-block-26",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3840,9 +3840,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-58-part_of-math_i-block-25",
+      "id": "struct-math_i-stmt-58-part_of-math_i-block-26",
       "from": "math_i-stmt-58",
-      "to": "math_i-block-25",
+      "to": "math_i-block-26",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3850,9 +3850,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-59-part_of-math_i-block-25",
+      "id": "struct-math_i-stmt-59-part_of-math_i-block-26",
       "from": "math_i-stmt-59",
-      "to": "math_i-block-25",
+      "to": "math_i-block-26",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3860,9 +3860,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-60-part_of-math_i-block-25",
+      "id": "struct-math_i-stmt-60-part_of-math_i-block-26",
       "from": "math_i-stmt-60",
-      "to": "math_i-block-25",
+      "to": "math_i-block-26",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3880,9 +3880,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-62-part_of-math_i-block-26",
+      "id": "struct-math_i-stmt-62-part_of-math_i-block-27",
       "from": "math_i-stmt-62",
-      "to": "math_i-block-26",
+      "to": "math_i-block-27",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3900,9 +3900,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-64-part_of-math_i-block-27",
+      "id": "struct-math_i-stmt-64-part_of-math_i-block-28",
       "from": "math_i-stmt-64",
-      "to": "math_i-block-27",
+      "to": "math_i-block-28",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3910,9 +3910,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-65-part_of-math_i-block-30",
+      "id": "struct-math_i-stmt-65-part_of-math_i-block-28",
       "from": "math_i-stmt-65",
-      "to": "math_i-block-30",
+      "to": "math_i-block-28",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3920,9 +3920,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-66-part_of-math_i-block-30",
+      "id": "struct-math_i-stmt-66-part_of-math_i-block-31",
       "from": "math_i-stmt-66",
-      "to": "math_i-block-30",
+      "to": "math_i-block-31",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3940,9 +3940,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-68-part_of-math_i-block-31",
+      "id": "struct-math_i-stmt-68-part_of-math_i-block-32",
       "from": "math_i-stmt-68",
-      "to": "math_i-block-31",
+      "to": "math_i-block-32",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3960,9 +3960,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-70-part_of-math_i-block-34",
+      "id": "struct-math_i-stmt-70-part_of-math_i-block-33",
       "from": "math_i-stmt-70",
-      "to": "math_i-block-34",
+      "to": "math_i-block-33",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3970,9 +3970,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-71-part_of-math_i-block-36",
+      "id": "struct-math_i-stmt-71-part_of-math_i-block-35",
       "from": "math_i-stmt-71",
-      "to": "math_i-block-36",
+      "to": "math_i-block-35",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3980,9 +3980,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-72-part_of-math_i-block-38",
+      "id": "struct-math_i-stmt-72-part_of-math_i-block-37",
       "from": "math_i-stmt-72",
-      "to": "math_i-block-38",
+      "to": "math_i-block-37",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3990,9 +3990,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-73-part_of-math_i-block-38",
+      "id": "struct-math_i-stmt-73-part_of-math_i-block-39",
       "from": "math_i-stmt-73",
-      "to": "math_i-block-38",
+      "to": "math_i-block-39",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4010,9 +4010,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-75-part_of-math_i-block-41",
+      "id": "struct-math_i-stmt-75-part_of-math_i-block-40",
       "from": "math_i-stmt-75",
-      "to": "math_i-block-41",
+      "to": "math_i-block-40",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4020,9 +4020,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-76-part_of-math_i-block-43",
+      "id": "struct-math_i-stmt-76-part_of-math_i-block-42",
       "from": "math_i-stmt-76",
-      "to": "math_i-block-43",
+      "to": "math_i-block-42",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4030,9 +4030,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-77-part_of-math_i-block-43",
+      "id": "struct-math_i-stmt-77-part_of-math_i-block-44",
       "from": "math_i-stmt-77",
-      "to": "math_i-block-43",
+      "to": "math_i-block-44",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4040,9 +4040,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-78-part_of-math_i-block-45",
+      "id": "struct-math_i-stmt-78-part_of-math_i-block-44",
       "from": "math_i-stmt-78",
-      "to": "math_i-block-45",
+      "to": "math_i-block-44",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4060,9 +4060,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-80-part_of-math_i-block-46",
+      "id": "struct-math_i-stmt-80-part_of-math_i-block-47",
       "from": "math_i-stmt-80",
-      "to": "math_i-block-46",
+      "to": "math_i-block-47",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4070,9 +4070,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-81-part_of-math_i-block-46",
+      "id": "struct-math_i-stmt-81-part_of-math_i-block-47",
       "from": "math_i-stmt-81",
-      "to": "math_i-block-46",
+      "to": "math_i-block-47",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4080,9 +4080,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-82-part_of-math_i-block-48",
+      "id": "struct-math_i-stmt-82-part_of-math_i-block-47",
       "from": "math_i-stmt-82",
-      "to": "math_i-block-48",
+      "to": "math_i-block-47",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4100,48 +4100,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-84-part_of-math_i-block-49",
+      "id": "struct-math_i-stmt-84-part_of-math_i-block-51",
       "from": "math_i-stmt-84",
-      "to": "math_i-block-49",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-85-part_of-math_i-block-49",
-      "from": "math_i-stmt-85",
-      "to": "math_i-block-49",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-86-part_of-math_i-block-49",
-      "from": "math_i-stmt-86",
-      "to": "math_i-block-49",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-87-part_of-math_i-block-49",
-      "from": "math_i-stmt-87",
-      "to": "math_i-block-49",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-88-part_of-math_i-block-51",
-      "from": "math_i-stmt-88",
       "to": "math_i-block-51",
       "kind": "part_of",
       "qualifiers": {},
@@ -4150,8 +4110,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-89-part_of-math_i-block-53",
-      "from": "math_i-stmt-89",
+      "id": "struct-math_i-stmt-85-part_of-math_i-block-53",
+      "from": "math_i-stmt-85",
       "to": "math_i-block-53",
       "kind": "part_of",
       "qualifiers": {},
@@ -4160,9 +4120,49 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-90-part_of-math_i-block-54",
+      "id": "struct-math_i-stmt-86-part_of-math_i-block-54",
+      "from": "math_i-stmt-86",
+      "to": "math_i-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-stmt-87-part_of-math_i-block-54",
+      "from": "math_i-stmt-87",
+      "to": "math_i-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-stmt-88-part_of-math_i-block-54",
+      "from": "math_i-stmt-88",
+      "to": "math_i-block-54",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-stmt-89-part_of-math_i-block-55",
+      "from": "math_i-stmt-89",
+      "to": "math_i-block-55",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-stmt-90-part_of-math_i-block-55",
       "from": "math_i-stmt-90",
-      "to": "math_i-block-54",
+      "to": "math_i-block-55",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4170,9 +4170,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-91-part_of-math_i-block-54",
+      "id": "struct-math_i-stmt-91-part_of-math_i-block-56",
       "from": "math_i-stmt-91",
-      "to": "math_i-block-54",
+      "to": "math_i-block-56",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4180,9 +4180,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-92-part_of-math_i-block-54",
+      "id": "struct-math_i-stmt-92-part_of-math_i-block-56",
       "from": "math_i-stmt-92",
-      "to": "math_i-block-54",
+      "to": "math_i-block-56",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4190,9 +4190,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-93-part_of-math_i-block-55",
+      "id": "struct-math_i-stmt-93-part_of-math_i-block-56",
       "from": "math_i-stmt-93",
-      "to": "math_i-block-55",
+      "to": "math_i-block-56",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4200,9 +4200,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-94-part_of-math_i-block-55",
+      "id": "struct-math_i-stmt-94-part_of-math_i-block-58",
       "from": "math_i-stmt-94",
-      "to": "math_i-block-55",
+      "to": "math_i-block-58",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4210,9 +4210,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-95-part_of-math_i-block-56",
+      "id": "struct-math_i-stmt-95-part_of-math_i-block-58",
       "from": "math_i-stmt-95",
-      "to": "math_i-block-56",
+      "to": "math_i-block-58",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4220,48 +4220,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-96-part_of-math_i-block-56",
+      "id": "struct-math_i-stmt-96-part_of-math_i-block-59",
       "from": "math_i-stmt-96",
-      "to": "math_i-block-56",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-97-part_of-math_i-block-56",
-      "from": "math_i-stmt-97",
-      "to": "math_i-block-56",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-98-part_of-math_i-block-58",
-      "from": "math_i-stmt-98",
-      "to": "math_i-block-58",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-99-part_of-math_i-block-58",
-      "from": "math_i-stmt-99",
-      "to": "math_i-block-58",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-100-part_of-math_i-block-59",
-      "from": "math_i-stmt-100",
       "to": "math_i-block-59",
       "kind": "part_of",
       "qualifiers": {},
@@ -4270,8 +4230,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-101-part_of-math_i-block-60",
-      "from": "math_i-stmt-101",
+      "id": "struct-math_i-stmt-97-part_of-math_i-block-60",
+      "from": "math_i-stmt-97",
       "to": "math_i-block-60",
       "kind": "part_of",
       "qualifiers": {},
@@ -4280,9 +4240,49 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-102-part_of-math_i-block-61",
+      "id": "struct-math_i-stmt-98-part_of-math_i-block-61",
+      "from": "math_i-stmt-98",
+      "to": "math_i-block-61",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-stmt-99-part_of-math_i-block-61",
+      "from": "math_i-stmt-99",
+      "to": "math_i-block-61",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-stmt-100-part_of-math_i-block-62",
+      "from": "math_i-stmt-100",
+      "to": "math_i-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-stmt-101-part_of-math_i-block-62",
+      "from": "math_i-stmt-101",
+      "to": "math_i-block-62",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-stmt-102-part_of-math_i-block-63",
       "from": "math_i-stmt-102",
-      "to": "math_i-block-61",
+      "to": "math_i-block-63",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4290,9 +4290,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-103-part_of-math_i-block-61",
+      "id": "struct-math_i-stmt-103-part_of-math_i-block-63",
       "from": "math_i-stmt-103",
-      "to": "math_i-block-61",
+      "to": "math_i-block-63",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4300,48 +4300,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-104-part_of-math_i-block-62",
+      "id": "struct-math_i-stmt-104-part_of-math_i-block-65",
       "from": "math_i-stmt-104",
-      "to": "math_i-block-62",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-105-part_of-math_i-block-62",
-      "from": "math_i-stmt-105",
-      "to": "math_i-block-62",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-106-part_of-math_i-block-63",
-      "from": "math_i-stmt-106",
-      "to": "math_i-block-63",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-107-part_of-math_i-block-63",
-      "from": "math_i-stmt-107",
-      "to": "math_i-block-63",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-108-part_of-math_i-block-65",
-      "from": "math_i-stmt-108",
       "to": "math_i-block-65",
       "kind": "part_of",
       "qualifiers": {},
@@ -4350,8 +4310,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-109-part_of-math_i-block-66",
-      "from": "math_i-stmt-109",
+      "id": "struct-math_i-stmt-105-part_of-math_i-block-66",
+      "from": "math_i-stmt-105",
       "to": "math_i-block-66",
       "kind": "part_of",
       "qualifiers": {},
@@ -4360,8 +4320,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-110-part_of-math_i-block-66",
-      "from": "math_i-stmt-110",
+      "id": "struct-math_i-stmt-106-part_of-math_i-block-66",
+      "from": "math_i-stmt-106",
       "to": "math_i-block-66",
       "kind": "part_of",
       "qualifiers": {},
@@ -4370,8 +4330,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-111-part_of-math_i-block-66",
-      "from": "math_i-stmt-111",
+      "id": "struct-math_i-stmt-107-part_of-math_i-block-66",
+      "from": "math_i-stmt-107",
       "to": "math_i-block-66",
       "kind": "part_of",
       "qualifiers": {},
@@ -4380,8 +4340,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-112-part_of-math_i-block-67",
-      "from": "math_i-stmt-112",
+      "id": "struct-math_i-stmt-108-part_of-math_i-block-67",
+      "from": "math_i-stmt-108",
       "to": "math_i-block-67",
       "kind": "part_of",
       "qualifiers": {},
@@ -4390,8 +4350,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-113-part_of-math_i-block-68",
-      "from": "math_i-stmt-113",
+      "id": "struct-math_i-stmt-109-part_of-math_i-block-68",
+      "from": "math_i-stmt-109",
       "to": "math_i-block-68",
       "kind": "part_of",
       "qualifiers": {},
@@ -4400,8 +4360,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-114-part_of-math_i-block-69",
-      "from": "math_i-stmt-114",
+      "id": "struct-math_i-stmt-110-part_of-math_i-block-69",
+      "from": "math_i-stmt-110",
       "to": "math_i-block-69",
       "kind": "part_of",
       "qualifiers": {},
@@ -4410,8 +4370,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-115-part_of-math_i-block-69",
-      "from": "math_i-stmt-115",
+      "id": "struct-math_i-stmt-111-part_of-math_i-block-69",
+      "from": "math_i-stmt-111",
       "to": "math_i-block-69",
       "kind": "part_of",
       "qualifiers": {},
@@ -4420,8 +4380,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-116-part_of-math_i-block-70",
-      "from": "math_i-stmt-116",
+      "id": "struct-math_i-stmt-112-part_of-math_i-block-70",
+      "from": "math_i-stmt-112",
       "to": "math_i-block-70",
       "kind": "part_of",
       "qualifiers": {},
@@ -4430,9 +4390,49 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-117-part_of-math_i-block-71",
+      "id": "struct-math_i-stmt-113-part_of-math_i-block-71",
+      "from": "math_i-stmt-113",
+      "to": "math_i-block-71",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-stmt-114-part_of-math_i-block-71",
+      "from": "math_i-stmt-114",
+      "to": "math_i-block-71",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-stmt-115-part_of-math_i-block-72",
+      "from": "math_i-stmt-115",
+      "to": "math_i-block-72",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-stmt-116-part_of-math_i-block-72",
+      "from": "math_i-stmt-116",
+      "to": "math_i-block-72",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-math_i-stmt-117-part_of-math_i-block-73",
       "from": "math_i-stmt-117",
-      "to": "math_i-block-71",
+      "to": "math_i-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4440,9 +4440,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-118-part_of-math_i-block-71",
+      "id": "struct-math_i-stmt-118-part_of-math_i-block-73",
       "from": "math_i-stmt-118",
-      "to": "math_i-block-71",
+      "to": "math_i-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4450,9 +4450,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-119-part_of-math_i-block-72",
+      "id": "struct-math_i-stmt-119-part_of-math_i-block-73",
       "from": "math_i-stmt-119",
-      "to": "math_i-block-72",
+      "to": "math_i-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4460,9 +4460,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-120-part_of-math_i-block-72",
+      "id": "struct-math_i-stmt-120-part_of-math_i-block-73",
       "from": "math_i-stmt-120",
-      "to": "math_i-block-72",
+      "to": "math_i-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4470,9 +4470,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-121-part_of-math_i-block-73",
+      "id": "struct-math_i-stmt-121-part_of-math_i-block-75",
       "from": "math_i-stmt-121",
-      "to": "math_i-block-73",
+      "to": "math_i-block-75",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4480,9 +4480,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-122-part_of-math_i-block-73",
+      "id": "struct-math_i-stmt-122-part_of-math_i-block-75",
       "from": "math_i-stmt-122",
-      "to": "math_i-block-73",
+      "to": "math_i-block-75",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4490,9 +4490,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-123-part_of-math_i-block-73",
+      "id": "struct-math_i-stmt-123-part_of-math_i-block-75",
       "from": "math_i-stmt-123",
-      "to": "math_i-block-73",
+      "to": "math_i-block-75",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4500,9 +4500,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-124-part_of-math_i-block-73",
+      "id": "struct-math_i-stmt-124-part_of-math_i-block-77",
       "from": "math_i-stmt-124",
-      "to": "math_i-block-73",
+      "to": "math_i-block-77",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4510,9 +4510,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-125-part_of-math_i-block-75",
+      "id": "struct-math_i-stmt-125-part_of-math_i-block-77",
       "from": "math_i-stmt-125",
-      "to": "math_i-block-75",
+      "to": "math_i-block-77",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4520,9 +4520,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-126-part_of-math_i-block-75",
+      "id": "struct-math_i-stmt-126-part_of-math_i-block-77",
       "from": "math_i-stmt-126",
-      "to": "math_i-block-75",
+      "to": "math_i-block-77",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4530,9 +4530,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-127-part_of-math_i-block-75",
+      "id": "struct-math_i-stmt-127-part_of-math_i-block-78",
       "from": "math_i-stmt-127",
-      "to": "math_i-block-75",
+      "to": "math_i-block-78",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4540,9 +4540,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-128-part_of-math_i-block-77",
+      "id": "struct-math_i-stmt-128-part_of-math_i-block-78",
       "from": "math_i-stmt-128",
-      "to": "math_i-block-77",
+      "to": "math_i-block-78",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4550,9 +4550,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-129-part_of-math_i-block-77",
+      "id": "struct-math_i-stmt-129-part_of-math_i-block-78",
       "from": "math_i-stmt-129",
-      "to": "math_i-block-77",
+      "to": "math_i-block-78",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4560,9 +4560,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-130-part_of-math_i-block-77",
+      "id": "struct-math_i-stmt-130-part_of-math_i-block-78",
       "from": "math_i-stmt-130",
-      "to": "math_i-block-77",
+      "to": "math_i-block-78",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4590,48 +4590,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-133-part_of-math_i-block-78",
+      "id": "struct-math_i-stmt-133-part_of-math_i-block-79",
       "from": "math_i-stmt-133",
-      "to": "math_i-block-78",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-134-part_of-math_i-block-78",
-      "from": "math_i-stmt-134",
-      "to": "math_i-block-78",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-135-part_of-math_i-block-78",
-      "from": "math_i-stmt-135",
-      "to": "math_i-block-78",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-136-part_of-math_i-block-78",
-      "from": "math_i-stmt-136",
-      "to": "math_i-block-78",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-math_i-stmt-137-part_of-math_i-block-79",
-      "from": "math_i-stmt-137",
       "to": "math_i-block-79",
       "kind": "part_of",
       "qualifiers": {},
@@ -4640,8 +4600,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-math_i-stmt-138-part_of-math_i-block-79",
-      "from": "math_i-stmt-138",
+      "id": "struct-math_i-stmt-134-part_of-math_i-block-79",
+      "from": "math_i-stmt-134",
       "to": "math_i-block-79",
       "kind": "part_of",
       "qualifiers": {},
@@ -4751,867 +4711,839 @@
     },
     {
       "id": "math_i-stmt-15",
-      "quote": "You can also use more variables, like the next example uses $ y $, which, in turn, uses the value of $ x $ to print $ 3 $ after calculating its values.",
+      "quote": "The line with <tt>print</tt> then prints out this value to the command line.",
       "block_id": "math_i-block-7",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-16",
-      "quote": "Let's now introduce **functions**.",
+      "quote": "You can also use more variables, like the next example uses $ y $, which, in turn, uses the value of $ x $ to print $ 3 $ after calculating its values.",
       "block_id": "math_i-block-8",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-17",
-      "quote": "A function is something that accepts inputs and calculates an output, where the rules are specified from how to get from the inputs to the outputs.",
-      "block_id": "math_i-block-8",
+      "quote": "Let's now introduce **functions**.",
+      "block_id": "math_i-block-9",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-18",
-      "quote": "Functions are useful, as they model reality.",
-      "block_id": "math_i-block-8",
+      "quote": "A function is something that accepts inputs and calculates an output, where the rules are specified from how to get from the inputs to the outputs.",
+      "block_id": "math_i-block-9",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-19",
-      "quote": "You can see how the parameters affect the plot by changing them with the sliders:",
+      "quote": "Functions are useful, as they model reality.",
       "block_id": "math_i-block-9",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-20",
-      "quote": "We can use this $\\text{add}$ function in the code, similar to what we had before.",
+      "quote": "You can see how the parameters affect the plot by changing them with the sliders:",
       "block_id": "math_i-block-10",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-21",
-      "quote": "We can also use other functions, like $\\sin$ (the sine) in our functions, and we can also parameterize them to get more complex patterns:",
+      "quote": "We can use this $\\text{add}$ function in the code, similar to what we had before.",
       "block_id": "math_i-block-11",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-22",
-      "quote": "Sets do not need to contain only numbers, though.",
-      "block_id": "math_i-block-13",
+      "quote": "We can also use other functions, like $\\sin$ (the sine) in our functions, and we can also parameterize them to get more complex patterns:",
+      "block_id": "math_i-block-12",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-23",
-      "quote": "Sets can contain sets, or sets can contain images, or people, or whatever else that can be listed.",
-      "block_id": "math_i-block-13",
+      "quote": "Sets do not need to contain only numbers, though.",
+      "block_id": "math_i-block-14",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-24",
-      "quote": "The *set* of jobs could be something like this: $\\left\\{\\text{programmer}, \\text{janitor}, \\text{cashier}, \\dots\\right\\}$.",
-      "block_id": "math_i-block-13",
+      "quote": "Sets can contain sets, or sets can contain images, or people, or whatever else that can be listed.",
+      "block_id": "math_i-block-14",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-25",
-      "quote": "Sets can have a limited number of elements (and even be empty), or have an unlimited amount of elements, like the set of all numbers.",
-      "block_id": "math_i-block-13",
+      "quote": "The *set* of jobs could be something like this: $\\left\\{\\text{programmer}, \\text{janitor}, \\text{cashier}, \\dots\\right\\}$.",
+      "block_id": "math_i-block-14",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-26",
-      "quote": "Since, for each number, there's always a larger number, the set never ends.",
-      "block_id": "math_i-block-13",
+      "quote": "Sets can have a limited number of elements (and even be empty), or have an unlimited amount of elements, like the set of all numbers.",
+      "block_id": "math_i-block-14",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-27",
-      "quote": "There are certain sets that are useful to know, like $\\mathbb{N}$, which is the set of all natural numbers, or $\\mathbb{R}$, which is the set of all real numbers (i.e. all numbers we use in every day life when not simply counting, e.g. $1.8$ or $3.14$, but also every number from $\\mathbb{N}$, or the set of so-called **boolean values** $\\mathbb{B} = \\left\\{\\text{True}, \\text{False}\\right\\}$, but a set does not need to be any of them.",
+      "quote": "Since, for each number, there's always a larger number, the set never ends.",
       "block_id": "math_i-block-14",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-28",
-      "quote": "A function defines a rule such that, for each element of a set, applying that rule yields an element of another (or the same) set.",
+      "quote": "There are certain sets that are useful to know, like $\\mathbb{N}$, which is the set of all natural numbers, or $\\mathbb{R}$, which is the set of all real numbers (i.e. all numbers we use in every day life when not simply counting, e.g. $1.8$ or $3.14$, but also every number from $\\mathbb{N}$, or the set of so-called **boolean values** $\\mathbb{B} = \\left\\{\\text{True}, \\text{False}\\right\\}$, but a set does not need to be any of them.",
       "block_id": "math_i-block-15",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-29",
-      "quote": "Some books define the natural numbers as $\\{1, 2, 3, \\ldots\\}$ (excluding $0$).",
+      "quote": "A function defines a rule such that, for each element of a set, applying that rule yields an element of another (or the same) set.",
       "block_id": "math_i-block-16",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-30",
-      "quote": "Both conventions are common.",
-      "block_id": "math_i-block-16",
+      "quote": "Some books define the natural numbers as $\\{1, 2, 3, \\ldots\\}$ (excluding $0$).",
+      "block_id": "math_i-block-17",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-31",
-      "quote": "Throughout this course we use the inclusive convention $\\mathbb{N} = \\{0, 1, 2, \\ldots\\}$, matching the convention most programming languages (and most AI libraries) use.",
-      "block_id": "math_i-block-16",
+      "quote": "Both conventions are common.",
+      "block_id": "math_i-block-17",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-32",
-      "quote": "Zero entered mathematics twice, and the two entries are easy to confuse.",
+      "quote": "Throughout this course we use the inclusive convention $\\mathbb{N} = \\{0, 1, 2, \\ldots\\}$, matching the convention most programming languages (and most AI libraries) use.",
       "block_id": "math_i-block-17",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-33",
-      "quote": "Babylonian scribes used a pair of wedges as an **empty-place marker** from about 400 BCE, but they did not treat it as a number, and they did not use it at the right-hand end of a numeral (\\cite[MacTutor: A History of Zero]{macTutorZero}).",
-      "block_id": "math_i-block-17",
+      "quote": "Zero entered mathematics twice, and the two entries are easy to confuse.",
+      "block_id": "math_i-block-18",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-34",
-      "quote": "The decisive step is Brahmagupta's *Brāhmasphuṭasiddhānta* (628 CE), which gives rules for calculating with zero and negatives; his rule for a finite number divided by zero survives in Colebrooke's translation as \"A definite quantity divided by cipher, is the submultiple of nought\" (\\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}).",
-      "block_id": "math_i-block-17",
+      "quote": "Babylonian scribes used a pair of wedges as an **empty-place marker** from about 400 BCE, but they did not treat it as a number, and they did not use it at the right-hand end of a numeral (\\cite[MacTutor: A History of Zero]{macTutorZero}).",
+      "block_id": "math_i-block-18",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-35",
-      "quote": "Negative numbers appear first as **bookkeeping**, not as abstract objects.",
+      "quote": "The decisive step is Brahmagupta's *Brāhmasphuṭasiddhānta* (628 CE), which gives rules for calculating with zero and negatives; his rule for a finite number divided by zero survives in Colebrooke's translation as \"A definite quantity divided by cipher, is the submultiple of nought\" (\\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}).",
       "block_id": "math_i-block-18",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-36",
-      "quote": "The Chinese *Nine Chapters on the Mathematical Art*, compiled in the Han dynasty, uses positive and negative quantities in systems of linear equations, and Liu Hui (3rd century CE) states rules for adding and subtracting them (\\cite[Han-dynasty compilers, 1st c.",
-      "block_id": "math_i-block-18",
+      "quote": "Negative numbers appear first as **bookkeeping**, not as abstract objects.",
+      "block_id": "math_i-block-19",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-37",
-      "quote": "Brahmagupta then gives the rule in words that still sound modern: \"the difference of an affirmative and a negative quantity is their addition\" (\\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}).",
-      "block_id": "math_i-block-18",
+      "quote": "The Chinese *Nine Chapters on the Mathematical Art*, compiled in the Han dynasty, uses positive and negative quantities in systems of linear equations, and Liu Hui (3rd century CE) states rules for adding and subtracting them (\\cite[Han-dynasty compilers, 1st c.",
+      "block_id": "math_i-block-19",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-38",
-      "quote": "The discovery that a square's diagonal is **incommensurable** with its side broke the Pythagorean programme that \"all is number\".",
+      "quote": "Brahmagupta then gives the rule in words that still sound modern: \"the difference of an affirmative and a negative quantity is their addition\" (\\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}).",
       "block_id": "math_i-block-19",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-39",
-      "quote": "The proof is traditionally attributed to Hippasus (5th century BCE); Theodorus of Cyrene extended it to surds up to √17, and Eudoxus of Cnidus (c.",
-      "block_id": "math_i-block-19",
+      "quote": "The discovery that a square's diagonal is **incommensurable** with its side broke the Pythagorean programme that \"all is number\".",
+      "block_id": "math_i-block-20",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-40",
-      "quote": "408–355 BCE) rebuilt proportion so that incommensurable magnitudes could be handled without pretending they were ratios of integers (\\cite[MacTutor: Real Numbers]{macTutorRealNumbers}).",
-      "block_id": "math_i-block-19",
+      "quote": "The proof is traditionally attributed to Hippasus (5th century BCE); Theodorus of Cyrene extended it to surds up to √17, and Eudoxus of Cnidus (c.",
+      "block_id": "math_i-block-20",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-41",
-      "quote": "Euclid's *Elements* Book X organises the result (\\cite{euclidelements}).",
-      "block_id": "math_i-block-19",
+      "quote": "408–355 BCE) rebuilt proportion so that incommensurable magnitudes could be handled without pretending they were ratios of integers (\\cite[MacTutor: Real Numbers]{macTutorRealNumbers}).",
+      "block_id": "math_i-block-20",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-42",
-      "quote": "Only in 1872 did Dedekind give the modern definition: an irrational is a **cut** in the rationals (\\cite[Dedekind, 1872]{dedekind1872}).",
-      "block_id": "math_i-block-19",
+      "quote": "Euclid's *Elements* Book X organises the result (\\cite{euclidelements}).",
+      "block_id": "math_i-block-20",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-43",
-      "quote": "Cantor's 1895 definition is the source of the modern notation: \"Unter einer 'Menge' verstehen wir jede Zusammenfassung M von bestimmten wohlunterschiedenen Objecten m unsrer Anschauung oder unseres Denkens ...",
+      "quote": "Only in 1872 did Dedekind give the modern definition: an irrational is a **cut** in the rationals (\\cite[Dedekind, 1872]{dedekind1872}).",
       "block_id": "math_i-block-20",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-44",
-      "quote": "zu einem Ganzen\" — a set is any collection of definite, distinct objects of our intuition or thought into a whole (\\cite[Cantor, 1895]{cantor1895}).",
-      "block_id": "math_i-block-20",
+      "quote": "Cantor's 1895 definition is the source of the modern notation: \"Unter einer 'Menge' verstehen wir jede Zusammenfassung M von bestimmten wohlunterschiedenen Objecten m unsrer Anschauung oder unseres Denkens ...",
+      "block_id": "math_i-block-21",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-45",
-      "quote": "The symbol $\\in$ is younger: Peano introduced it in 1889, taking the first letter of the Greek *esti* (\"is\") (\\cite[MacTutor: Set Theory]{macTutorSetTheory}).",
-      "block_id": "math_i-block-20",
+      "quote": "zu einem Ganzen\" — a set is any collection of definite, distinct objects of our intuition or thought into a whole (\\cite[Cantor, 1895]{cantor1895}).",
+      "block_id": "math_i-block-21",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-46",
-      "quote": "Cantor's unrestricted \"any collection\" later forced axiomatisation after Russell's paradox (discovered around 1901–02) (\\cite[MacTutor: Set Theory]{macTutorSetTheory}).",
-      "block_id": "math_i-block-20",
+      "quote": "The symbol $\\in$ is younger: Peano introduced it in 1889, taking the first letter of the Greek *esti* (\"is\") (\\cite[MacTutor: Set Theory]{macTutorSetTheory}).",
+      "block_id": "math_i-block-21",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-47",
-      "quote": "> **The number line was not given; it was built.** Tally marks (c.",
+      "quote": "Cantor's unrestricted \"any collection\" later forced axiomatisation after Russell's paradox (discovered around 1901–02) (\\cite[MacTutor: Set Theory]{macTutorSetTheory}).",
       "block_id": "math_i-block-21",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-48",
-      "quote": "42,000 BP) externalised counting; Babylon added place-value (c.",
-      "block_id": "math_i-block-21",
+      "quote": "> **The number line was not given; it was built.** Tally marks (c.",
+      "block_id": "math_i-block-22",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-49",
-      "quote": "2000 BCE); Brahmagupta made zero a number (628 CE); Dedekind made the irrationals rigorous (1872).",
-      "block_id": "math_i-block-21",
+      "quote": "42,000 BP) externalised counting; Babylon added place-value (c.",
+      "block_id": "math_i-block-22",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-50",
-      "quote": "Each step turned a practical trick into an object mathematics could calculate with.",
-      "block_id": "math_i-block-21",
+      "quote": "2000 BCE); Brahmagupta made zero a number (628 CE); Dedekind made the irrationals rigorous (1872).",
+      "block_id": "math_i-block-22",
       "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-51",
-      "quote": "In classical programming, you would specify each step by hand to define a function, but for some functions, this is barely possible since the problem is ill-defined or way too complex.",
-      "block_id": "math_i-block-23",
-      "section": "Classical programming vs. AI",
+      "quote": "Each step turned a practical trick into an object mathematics could calculate with.",
+      "block_id": "math_i-block-22",
+      "section": "Programming",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-52",
-      "quote": "For example, imagine you need a program to tell images of cats and dogs apart.",
+      "quote": "In classical programming, you would specify each step by hand to define a function, but for some functions, this is barely possible since the problem is ill-defined or way too complex.",
       "block_id": "math_i-block-24",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-53",
-      "quote": "You cannot simply write a function that checks for every single pixel value, because then you'd need to know every single possible image of a cat or a dog, which is an infinite amount.",
-      "block_id": "math_i-block-24",
+      "quote": "For example, imagine you need a program to tell images of cats and dogs apart.",
+      "block_id": "math_i-block-25",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-54",
-      "quote": "This is where AI comes in.",
+      "quote": "You cannot simply write a function that checks for every single pixel value, because then you'd need to know every single possible image of a cat or a dog, which is an infinite amount.",
       "block_id": "math_i-block-25",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-55",
-      "quote": "AI replaces the idea of a hand-written *function* with a *model* that does what you want, and doesn't do it by a list of handwritten rules, but learns how to do it by example.",
-      "block_id": "math_i-block-25",
+      "quote": "This is where AI comes in.",
+      "block_id": "math_i-block-26",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-56",
-      "quote": "For example, you may have a large set of images of cats and dogs, and the information for each image, if it shows a cat or a dog.",
-      "block_id": "math_i-block-25",
+      "quote": "AI replaces the idea of a hand-written *function* with a *model* that does what you want, and doesn't do it by a list of handwritten rules, but learns how to do it by example.",
+      "block_id": "math_i-block-26",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-57",
-      "quote": "Then, you'd have 2 sets, one, the set of all images, and the set of results like $\\left\\{\\text{cat}, \\text{dog}\\right\\}$, where each Image is mapped to one of those results, ie.",
-      "block_id": "math_i-block-25",
+      "quote": "For example, you may have a large set of images of cats and dogs, and the information for each image, if it shows a cat or a dog.",
+      "block_id": "math_i-block-26",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-58",
-      "quote": "you know that you want $\\text{function}\\left(\\text{Image of a cat}\\right) \\rightarrow \\text{cat}$ and $\\text{function}\\left(\\text{Image of a dog}\\right) \\rightarrow \\text{dog}$.",
-      "block_id": "math_i-block-25",
+      "quote": "Then, you'd have 2 sets, one, the set of all images, and the set of results like $\\left\\{\\text{cat}, \\text{dog}\\right\\}$, where each Image is mapped to one of those results, ie.",
+      "block_id": "math_i-block-26",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-59",
-      "quote": "AI then learns how to get from that input to that output.",
-      "block_id": "math_i-block-25",
+      "quote": "you know that you want $\\text{function}\\left(\\text{Image of a cat}\\right) \\rightarrow \\text{cat}$ and $\\text{function}\\left(\\text{Image of a dog}\\right) \\rightarrow \\text{dog}$.",
+      "block_id": "math_i-block-26",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-60",
-      "quote": "You only provide basic building blocks it should use, which depend on the type of task you want it to solve.",
-      "block_id": "math_i-block-25",
+      "quote": "AI then learns how to get from that input to that output.",
+      "block_id": "math_i-block-26",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-61",
-      "quote": "This model will (most probably) not be perfect.",
+      "quote": "You only provide basic building blocks it should use, which depend on the type of task you want it to solve.",
       "block_id": "math_i-block-26",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-62",
-      "quote": "But it can be **good enough** to be useful.",
-      "block_id": "math_i-block-26",
+      "quote": "This model will (most probably) not be perfect.",
+      "block_id": "math_i-block-27",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-63",
-      "quote": "Throughout this course, we will look into these building blocks and how the computer then creates this model, and how these building blocks work.",
+      "quote": "But it can be **good enough** to be useful.",
       "block_id": "math_i-block-27",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-64",
-      "quote": "We'll start with very simple building blocks for simple numbers, and then go to building blocks to classify images, and end up with Transformers, which are the basic structure for chatGPT, which all take ideas from each other.",
-      "block_id": "math_i-block-27",
+      "quote": "Throughout this course, we will look into these building blocks and how the computer then creates this model, and how these building blocks work.",
+      "block_id": "math_i-block-28",
       "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-65",
-      "quote": "> Euler's Σ (1755) was an indefinite sum; the definite Σ with limits is 19th-century (Fourier, 1820).",
-      "block_id": "math_i-block-30",
-      "section": "The Sum Symbol $ \\sum $",
+      "quote": "We'll start with very simple building blocks for simple numbers, and then go to building blocks to classify images, and end up with Transformers, which are the basic structure for chatGPT, which all take ideas from each other.",
+      "block_id": "math_i-block-28",
+      "section": "Classical programming vs. AI",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-66",
-      "quote": "Cajori credits Gauss with ∏ (1812), Kramp with n!",
-      "block_id": "math_i-block-30",
+      "quote": "> Euler's Σ (1755) was an indefinite sum; the definite Σ with limits is 19th-century (Fourier, 1820).",
+      "block_id": "math_i-block-31",
       "section": "The Sum Symbol $ \\sum $",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-67",
-      "quote": "Quemadmodum ad differentiam denotandam vsi sumus signo Δ, ita summam indicabimus signo Σ.",
+      "quote": "Cajori credits Gauss with ∏ (1812), Kramp with n!",
       "block_id": "math_i-block-31",
       "section": "The Sum Symbol $ \\sum $",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-68",
-      "quote": "Just as we use Δ for the difference, we shall denote the sum by Σ.",
-      "block_id": "math_i-block-31",
+      "quote": "Quemadmodum ad differentiam denotandam vsi sumus signo Δ, ita summam indicabimus signo Σ.",
+      "block_id": "math_i-block-32",
       "section": "The Sum Symbol $ \\sum $",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-69",
-      "quote": "Think of $\\sum$ as a **“for-loop”** for addition.",
+      "quote": "Just as we use Δ for the difference, we shall denote the sum by Σ.",
       "block_id": "math_i-block-32",
       "section": "The Sum Symbol $ \\sum $",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-70",
-      "quote": "A typical summation looks like this:",
-      "block_id": "math_i-block-34",
-      "section": "How to read the symbol",
+      "quote": "Think of $\\sum$ as a **“for-loop”** for addition.",
+      "block_id": "math_i-block-33",
+      "section": "The Sum Symbol $ \\sum $",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-71",
-      "quote": "If we have a vector $\\vec{v} = \\begin{pmatrix} 10 \\\\ 20 \\\\ 30 \\\\ 40 \\end{pmatrix}$, and we want to find the sum of all its elements, we write:",
-      "block_id": "math_i-block-36",
-      "section": "A Concrete Example",
+      "quote": "A typical summation looks like this:",
+      "block_id": "math_i-block-35",
+      "section": "How to read the symbol",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-72",
-      "quote": "The most common use of the sum symbol in AI is the **Weighted Sum**.",
-      "block_id": "math_i-block-38",
-      "section": "Why AI needs this: Weighted Sums",
+      "quote": "If we have a vector $\\vec{v} = \\begin{pmatrix} 10 \\\\ 20 \\\\ 30 \\\\ 40 \\end{pmatrix}$, and we want to find the sum of all its elements, we write:",
+      "block_id": "math_i-block-37",
+      "section": "A Concrete Example",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-73",
-      "quote": "When a Neural Network makes a decision, it looks at different inputs (like pixels) and assigns each one a “weight” based on its importance.",
-      "block_id": "math_i-block-38",
+      "quote": "The most common use of the sum symbol in AI is the **Weighted Sum**.",
+      "block_id": "math_i-block-39",
       "section": "Why AI needs this: Weighted Sums",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-74",
-      "quote": "This is just a compact way of saying: $(w_1 \\cdot x_1) + (w_2 \\cdot x_2) + \\dots + (w_n \\cdot x_n)$.",
+      "quote": "When a Neural Network makes a decision, it looks at different inputs (like pixels) and assigns each one a “weight” based on its importance.",
       "block_id": "math_i-block-39",
       "section": "Why AI needs this: Weighted Sums",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-75",
-      "quote": "In classical programming, the summation symbol $\\sum$ is written as a simple loop:",
-      "block_id": "math_i-block-41",
-      "section": "Implementation in Code",
+      "quote": "This is just a compact way of saying: $(w_1 \\cdot x_1) + (w_2 \\cdot x_2) + \\dots + (w_n \\cdot x_n)$.",
+      "block_id": "math_i-block-40",
+      "section": "Why AI needs this: Weighted Sums",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-76",
-      "quote": "The Greek **capital Pi** ($\\prod$) is the mathematical shorthand for repeated multiplication.",
-      "block_id": "math_i-block-43",
-      "section": "The Product Symbol $\\prod$",
+      "quote": "In classical programming, the summation symbol $\\sum$ is written as a simple loop:",
+      "block_id": "math_i-block-42",
+      "section": "Implementation in Code",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-77",
-      "quote": "It works similarly to the $\\sum$:",
-      "block_id": "math_i-block-43",
+      "quote": "The Greek **capital Pi** ($\\prod$) is the mathematical shorthand for repeated multiplication.",
+      "block_id": "math_i-block-44",
       "section": "The Product Symbol $\\prod$",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-78",
-      "quote": "In programming, we can define this function using **recursion**, where a function calls itself to solve smaller versions of the same problem:",
-      "block_id": "math_i-block-45",
-      "section": "The Factorial",
+      "quote": "It works similarly to the $\\sum$:",
+      "block_id": "math_i-block-44",
+      "section": "The Product Symbol $\\prod$",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-79",
-      "quote": "The factorial grows extremely quickly, much faster than exponential functions.",
+      "quote": "In programming, we can define this function using **recursion**, where a function calls itself to solve smaller versions of the same problem:",
       "block_id": "math_i-block-46",
       "section": "The Factorial",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-80",
-      "quote": "This growth is essential when calculating the number of possible permutations (orderings) of a set of objects (\\cite[Lang, Basic Mathematics, Ch.",
-      "block_id": "math_i-block-46",
+      "quote": "The factorial grows extremely quickly, much faster than exponential functions.",
+      "block_id": "math_i-block-47",
       "section": "The Factorial",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-81",
-      "quote": "359]{lang2005basicmath}).",
-      "block_id": "math_i-block-46",
+      "quote": "This growth is essential when calculating the number of possible permutations (orderings) of a set of objects (\\cite[Lang, Basic Mathematics, Ch.",
+      "block_id": "math_i-block-47",
       "section": "The Factorial",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-82",
-      "quote": "In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:",
-      "block_id": "math_i-block-48",
-      "section": "Arithmetic with $\\infty$ in Computing",
+      "quote": "359]{lang2005basicmath}).",
+      "block_id": "math_i-block-47",
+      "section": "The Factorial",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-83",
-      "quote": "Any finite number divided by infinity approaches zero.",
+      "quote": "In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:",
       "block_id": "math_i-block-49",
       "section": "Arithmetic with $\\infty$ in Computing",
       "kind": "statement"
     },
     {
       "id": "math_i-stmt-84",
-      "quote": "This is crucial for normalization, helping the model turn massive raw scores into manageable probabilities.",
-      "block_id": "math_i-block-49",
-      "section": "Arithmetic with $\\infty$ in Computing",
-      "kind": "statement"
-    },
-    {
-      "id": "math_i-stmt-85",
-      "quote": "The exponential of negative infinity is exactly zero.",
-      "block_id": "math_i-block-49",
-      "section": "Arithmetic with $\\infty$ in Computing",
-      "kind": "statement"
-    },
-    {
-      "id": "math_i-stmt-86",
-      "quote": "This is useful in machine learning: it lets us “mask” certain pieces of data by assigning them a value of $-\\infty$, which makes them effectively ignored.",
-      "block_id": "math_i-block-49",
-      "section": "Arithmetic with $\\infty$ in Computing",
-      "kind": "statement"
-    },
-    {
-      "id": "math_i-stmt-87",
-      "quote": "This becomes important later in the chapter on Transformers.",
-      "block_id": "math_i-block-49",
-      "section": "Arithmetic with $\\infty$ in Computing",
-      "kind": "statement"
-    },
-    {
-      "id": "math_i-stmt-88",
       "quote": "In computing, we treat $\\infty$ as a value, but in mathematics, we use limits to describe behavior.",
       "block_id": "math_i-block-51",
       "section": "The Concept of Limits ($\\lim$)",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-89",
+      "id": "math_i-stmt-85",
       "quote": "Imagine you have 1.00 Euro in a bank that gives you 100% interest per year.",
       "block_id": "math_i-block-53",
       "section": "Exponentials and logarithms",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-90",
+      "id": "math_i-stmt-86",
       "quote": "The idea of summing infinite series to achieve finite results dates back to antiquity, notably Zeno's paradox, later addressed through Archimedes's method of exhaustion.",
       "block_id": "math_i-block-54",
       "section": "Exponentials and logarithms",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-91",
+      "id": "math_i-stmt-87",
       "quote": "In the 14th century, the Indian mathematician Madhava of Sangamagrama gave the earliest known examples of specific Taylor series, for sine, cosine, and arctangent, though not the general method.",
       "block_id": "math_i-block-54",
       "section": "Exponentials and logarithms",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-92",
+      "id": "math_i-stmt-88",
       "quote": "His followers in the Kerala school, recorded in works such as the \\citetitle{madhava}, developed further expansions over the following two centuries.",
       "block_id": "math_i-block-54",
       "section": "Exponentials and logarithms",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-93",
+      "id": "math_i-stmt-89",
       "quote": "In early 1671, James Gregory independently discovered something like the general Maclaurin series (see \\citetitle{gregoryachievements}), but never published his method, believing he had merely rediscovered work by Isaac Newton.",
       "block_id": "math_i-block-55",
       "section": "Exponentials and logarithms",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-94",
+      "id": "math_i-stmt-90",
       "quote": "In 1691–1692, Newton wrote down an explicit general formulation in an unpublished draft of \\citetitle{newtonquadratura}, but the relevant sections were omitted from the 1704 publication.",
       "block_id": "math_i-block-55",
       "section": "Exponentials and logarithms",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-95",
+      "id": "math_i-stmt-91",
       "quote": "It was not until 1715 that \\citeauthor{taylor1715} published the first general method for constructing these series (pp.",
       "block_id": "math_i-block-56",
       "section": "Exponentials and logarithms",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-96",
+      "id": "math_i-stmt-92",
       "quote": "21–23), after whom they are now named.",
       "block_id": "math_i-block-56",
       "section": "Exponentials and logarithms",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-97",
+      "id": "math_i-stmt-93",
       "quote": "The special case centered at zero was later named after \\citeauthor{maclaurin}, who published the relevant work in 1742.",
       "block_id": "math_i-block-56",
       "section": "Exponentials and logarithms",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-98",
+      "id": "math_i-stmt-94",
       "quote": "In its simplest form, exponentiation is repeated multiplication (\\cite[Lang, Basic Mathematics, Ch.",
       "block_id": "math_i-block-58",
       "section": "Exponentiation",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-99",
+      "id": "math_i-stmt-95",
       "quote": "If we ask, “What is 2 to the power of 3?” ($2^3$), we mean:",
       "block_id": "math_i-block-58",
       "section": "Exponentiation",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-100",
+      "id": "math_i-stmt-96",
       "quote": "The reason $2^{0.5}$ (or $2^{1/2}$) equals $\\sqrt{2}$ comes from the fundamental rule of exponents: when you multiply two powers with the same base, you add the exponents (\\cite[Lang, Basic Mathematics, Ch.",
       "block_id": "math_i-block-59",
       "section": "Exponentiation",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-101",
+      "id": "math_i-stmt-97",
       "quote": "If we multiply $2^{0.5}$ by itself, the rule says:",
       "block_id": "math_i-block-60",
       "section": "Exponentiation",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-102",
+      "id": "math_i-stmt-98",
       "quote": "Since $2^{0.5}$ is a number that, when multiplied by itself, results in $2$, it fits the literal definition of a square root.",
       "block_id": "math_i-block-61",
       "section": "Exponentiation",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-103",
+      "id": "math_i-stmt-99",
       "quote": "This logic extends to any floating-point number; for instance, $2^{0.333}$ is approximately the cube root ($\\sqrt[3]{2}$) because adding $0.333 + 0.333 + 0.333$ brings us back to roughly $2^1$.",
       "block_id": "math_i-block-61",
       "section": "Exponentiation",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-104",
+      "id": "math_i-stmt-100",
       "quote": "Negative exponents do not mean the result becomes negative; instead, they represent the **reciprocal** (division) (\\cite[Lang, Basic Mathematics, Ch.",
       "block_id": "math_i-block-62",
       "section": "Exponentiation",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-105",
+      "id": "math_i-stmt-101",
       "quote": "A negative exponent tells you to “divide” instead of “multiply.”",
       "block_id": "math_i-block-62",
       "section": "Exponentiation",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-106",
+      "id": "math_i-stmt-102",
       "quote": "In the context of the continuous curve, as the exponent moves into negative territory, the result simply gets closer and closer to zero, but never quite touches it.",
       "block_id": "math_i-block-63",
       "section": "Exponentiation",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-107",
+      "id": "math_i-stmt-103",
       "quote": "This is why logarithms (the inverse) are so useful, they allow us to work with these tiny, microscopic fractions by looking at the exponent instead of the decimal.",
       "block_id": "math_i-block-63",
       "section": "Exponentiation",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-108",
+      "id": "math_i-stmt-104",
       "quote": "For example, if we ask “To what power must we raise 2 to get 8?” ($\\log_2(8) = ?$), the answer is 3.",
       "block_id": "math_i-block-65",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-109",
+      "id": "math_i-stmt-105",
       "quote": "Abstractly, a logarithm transforms a scale of growth (multiplicative) into a scale of steps (additive) (\\cite[Lang, Basic Mathematics, Ch.",
       "block_id": "math_i-block-66",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-110",
+      "id": "math_i-stmt-106",
       "quote": "339]{lang2005basicmath}).",
       "block_id": "math_i-block-66",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-111",
+      "id": "math_i-stmt-107",
       "quote": "It tells you the “size” or “order of magnitude” of a number rather than just its value.",
       "block_id": "math_i-block-66",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-112",
+      "id": "math_i-stmt-108",
       "quote": "Logarithms were introduced in \\citeyear{napier1614} by the Scottish mathematician John Napier in his landmark work \\citealternativetitle{napier1614}.",
       "block_id": "math_i-block-67",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-113",
+      "id": "math_i-stmt-109",
       "quote": "\\citealternativetitle{napier_portrait}.",
       "block_id": "math_i-block-68",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-114",
+      "id": "math_i-stmt-110",
       "quote": "Jost Bürgi reached logarithms independently around 1588 and published them in 1620; Kepler wrote that Bürgi had them \"many years before Napier's system appeared\" (\\cite[MacTutor: Jost Bürgi]{macTutorBurgi}).",
       "block_id": "math_i-block-69",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-115",
+      "id": "math_i-stmt-111",
       "quote": "Kepler's *Chilias logarithmorum* (1624) supplied the first proof of why the method works, based on Euclid's Book V (\\cite[Kepler, 1624]{kepler1624chilias}).",
       "block_id": "math_i-block-69",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-116",
+      "id": "math_i-stmt-112",
       "quote": "Napier's breakthrough allowed researchers to perform **multiplication by simply adding**:",
       "block_id": "math_i-block-70",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-117",
+      "id": "math_i-stmt-113",
       "quote": "By using “Log Tables,” an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding “anti-logarithm” to get the product.",
       "block_id": "math_i-block-71",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-118",
+      "id": "math_i-stmt-114",
       "quote": "This revolutionary efficiency led the mathematician \\citeauthor{laplace1821} to write in \\citeyear{laplace1821} that logarithms were *“an admirable artifice which, by reducing to a few days the labour of many months, doubles the life of the astronomer”* (p.",
       "block_id": "math_i-block-71",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-119",
+      "id": "math_i-stmt-115",
       "quote": "Historically, one of the most fundamental tools is the **Mercator series** \\citealternativetitle{mercator1668} (p.",
       "block_id": "math_i-block-72",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-120",
+      "id": "math_i-stmt-116",
       "quote": "32f) for the natural logarithm ($\\ln$):",
       "block_id": "math_i-block-72",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-121",
+      "id": "math_i-stmt-117",
       "quote": "This is the series that taught mathematicians to think of $\\ln$ as a limit of polynomials.",
       "block_id": "math_i-block-73",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-122",
+      "id": "math_i-stmt-118",
       "quote": "Modern floating-point units, however, do not evaluate it term-by-term in the hot path — the alternating series converges slowly and accumulates rounding error badly.",
       "block_id": "math_i-block-73",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-123",
+      "id": "math_i-stmt-119",
       "quote": "Instead, math libraries reduce the problem to a small interval (e.g., $\\ln(x) = \\ln(x/2^k) + k\\ln 2$), then approximate on that interval with a **rational function** (a Padé / Remez minimax polynomial), a **CORDIC** iteration in hardware, or a short **table lookup with interpolation**.",
       "block_id": "math_i-block-73",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-124",
+      "id": "math_i-stmt-120",
       "quote": "The Mercator series is the historical and didactic root; the polynomial a CPU actually evaluates on a single call is much shorter, of higher degree, and tuned for the working interval.",
       "block_id": "math_i-block-73",
       "section": "Logarithms: Reversing the Process",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-125",
+      "id": "math_i-stmt-121",
       "quote": "While logarithms were born from the needs of 17th-century astronomers, they are essential for Artificial Intelligence today.",
       "block_id": "math_i-block-75",
       "section": "The Change of Base",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-126",
+      "id": "math_i-stmt-122",
       "quote": "In neural networks, we use them to prevent numerical errors when dealing with tiny probabilities and to calculate how “wrong” a model is during training.",
       "block_id": "math_i-block-75",
       "section": "The Change of Base",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-127",
+      "id": "math_i-stmt-123",
       "quote": "We will dive deeper into “Log Loss” and “Softmax” in the upcoming sections.",
       "block_id": "math_i-block-75",
       "section": "The Change of Base",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-128",
+      "id": "math_i-stmt-124",
       "quote": "While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool.",
       "block_id": "math_i-block-77",
       "section": "The Mathematical Concept: The Role of $\\infty$",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-129",
+      "id": "math_i-stmt-125",
       "quote": "It allows systems to handle “impossible” states or “hidden” information without crashing the underlying logic.",
       "block_id": "math_i-block-77",
       "section": "The Mathematical Concept: The Role of $\\infty$",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-130",
+      "id": "math_i-stmt-126",
       "quote": "The use of the symbol $\\infty$ for the concept of infinity dates back to \\citeyear{wallis1655}, according to \\citeauthor{historyofmathematicalnotation} (Vol.",
       "block_id": "math_i-block-77",
       "section": "The Mathematical Concept: The Role of $\\infty$",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-131",
+      "id": "math_i-stmt-127",
       "quote": "Wallis introduced the **symbol**, not the concept.",
       "block_id": "math_i-block-78",
       "section": "The Mathematical Concept: The Role of $\\infty$",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-132",
+      "id": "math_i-stmt-128",
       "quote": "Aristotle denied the **actual infinite** and allowed only the **potential infinite**: the natural numbers can always be extended, but never completed (*Physics* III.4–8) (\\cite[MacTutor: Infinity]{macTutorInfinity}; \\cite[Physics]{aristotlephysics}).",
       "block_id": "math_i-block-78",
       "section": "The Mathematical Concept: The Role of $\\infty$",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-133",
+      "id": "math_i-stmt-129",
       "quote": "Grosseteste's *De luce* (c.",
       "block_id": "math_i-block-78",
       "section": "The Mathematical Concept: The Role of $\\infty$",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-134",
+      "id": "math_i-stmt-130",
       "quote": "1225) takes the opposite risk: light \"multiplied itself by its very nature an infinite number of times on all sides\", and \"the multiplication of a simple being an infinite number of times must produce a finite quantity\" (\\cite[Grosseteste, trans.",
       "block_id": "math_i-block-78",
       "section": "The Mathematical Concept: The Role of $\\infty$",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-135",
+      "id": "math_i-stmt-131",
       "quote": "1942]{grosseteste_on_light}).",
       "block_id": "math_i-block-78",
       "section": "The Mathematical Concept: The Role of $\\infty$",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-136",
+      "id": "math_i-stmt-132",
       "quote": "Wallis gave the concept its symbol: he introduced $\\infty$ in 1655 and used it again in the *Arithmetica infinitorum* (1656) (\\cite[Wallis, 1655]{wallis1655}; \\cite[MacTutor: Infinity]{macTutorInfinity}).",
       "block_id": "math_i-block-78",
       "section": "The Mathematical Concept: The Role of $\\infty$",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-137",
+      "id": "math_i-stmt-133",
       "quote": "> **Potential, actual, symbolic.** Aristotle allowed only a potential infinite; Grosseteste argued that infinite multiplication produces a finite magnitude; Wallis gave the result its symbol, ∞ (1655).",
       "block_id": "math_i-block-79",
       "section": "The Mathematical Concept: The Role of $\\infty$",
       "kind": "statement"
     },
     {
-      "id": "math_i-stmt-138",
+      "id": "math_i-stmt-134",
       "quote": "Mathematics kept all three ideas and learned to distinguish them.",
       "block_id": "math_i-block-79",
       "section": "The Mathematical Concept: The Role of $\\infty$",
@@ -5657,259 +5589,259 @@
     },
     {
       "id": "math_i-block-7",
-      "quote": "You can also use more variables, like the next example uses $ y $, which, in turn, uses the value of $ x $ to print $ 3 $ after calculating its values.",
+      "quote": "The line with <tt>print</tt> then prints out this value to the command line.",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-8",
-      "quote": "Let's now introduce **functions**. A function is something that accepts inputs and calculates an output, where the rules are specified from how to get from the inputs to the outputs. Functions are useful, as they model reality.",
+      "quote": "You can also use more variables, like the next example uses $ y $, which, in turn, uses the value of $ x $ to print $ 3 $ after calculating its values.",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-9",
-      "quote": "You can see how the parameters affect the plot by changing them with the sliders:",
+      "quote": "Let's now introduce **functions**. A function is something that accepts inputs and calculates an output, where the rules are specified from how to get from the inputs to the outputs. Functions are useful, as they model reality.",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-10",
-      "quote": "We can use this $\\text{add}$ function in the code, similar to what we had before.",
+      "quote": "You can see how the parameters affect the plot by changing them with the sliders:",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-11",
-      "quote": "We can also use other functions, like $\\sin$ (the sine) in our functions, and we can also parameterize them to get more complex patterns:",
+      "quote": "We can use this $\\text{add}$ function in the code, similar to what we had before.",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-12",
-      "quote": "Amplitude: Frequency:",
+      "quote": "We can also use other functions, like $\\sin$ (the sine) in our functions, and we can also parameterize them to get more complex patterns:",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-13",
-      "quote": "Sets do not need to contain only numbers, though. A set can be *anything*. Sets can contain sets, or sets can contain images, or people, or whatever else that can be listed. The *set* of jobs could be something like this: $\\left\\{\\text{programmer}, \\text{janitor}, \\text{cashier}, \\dots\\right\\}$. Sets can have a limited number of elements (and even be empty), or have an unlimited amount of elements, like the set of all numbers. Since, for each number, there's always a larger number, the set never ends.",
+      "quote": "Amplitude: Frequency:",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-14",
-      "quote": "There are certain sets that are useful to know, like $\\mathbb{N}$, which is the set of all natural numbers, or $\\mathbb{R}$, which is the set of all real numbers (i.e. all numbers we use in every day life when not simply counting, e.g. $1.8$ or $3.14$, but also every number from $\\mathbb{N}$, or the set of so-called **boolean values** $\\mathbb{B} = \\left\\{\\text{True}, \\text{False}\\right\\}$, but a set does not need to be any of them.",
+      "quote": "Sets do not need to contain only numbers, though. A set can be *anything*. Sets can contain sets, or sets can contain images, or people, or whatever else that can be listed. The *set* of jobs could be something like this: $\\left\\{\\text{programmer}, \\text{janitor}, \\text{cashier}, \\dots\\right\\}$. Sets can have a limited number of elements (and even be empty), or have an unlimited amount of elements, like the set of all numbers. Since, for each number, there's always a larger number, the set never ends.",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-15",
-      "quote": "A function defines a rule such that, for each element of a set, applying that rule yields an element of another (or the same) set.",
+      "quote": "There are certain sets that are useful to know, like $\\mathbb{N}$, which is the set of all natural numbers, or $\\mathbb{R}$, which is the set of all real numbers (i.e. all numbers we use in every day life when not simply counting, e.g. $1.8$ or $3.14$, but also every number from $\\mathbb{N}$, or the set of so-called **boolean values** $\\mathbb{B} = \\left\\{\\text{True}, \\text{False}\\right\\}$, but a set does not need to be any of them.",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-16",
-      "quote": "Some books define the natural numbers as $\\{1, 2, 3, \\ldots\\}$ (excluding $0$). Both conventions are common. Throughout this course we use the inclusive convention $\\mathbb{N} = \\{0, 1, 2, \\ldots\\}$, matching the convention most programming languages (and most AI libraries) use.",
+      "quote": "A function defines a rule such that, for each element of a set, applying that rule yields an element of another (or the same) set.",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-17",
-      "quote": "Zero entered mathematics twice, and the two entries are easy to confuse. Babylonian scribes used a pair of wedges as an **empty-place marker** from about 400 BCE, but they did not treat it as a number, and they did not use it at the right-hand end of a numeral (\\cite[MacTutor: A History of Zero]{macTutorZero}). The decisive step is Brahmagupta's *Brāhmasphuṭasiddhānta* (628 CE), which gives rules for calculating with zero and negatives; his rule for a finite number divided by zero survives in Colebrooke's translation as \"A definite quantity divided by cipher, is the submultiple of nought\" (\\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}).",
+      "quote": "Some books define the natural numbers as $\\{1, 2, 3, \\ldots\\}$ (excluding $0$). Both conventions are common. Throughout this course we use the inclusive convention $\\mathbb{N} = \\{0, 1, 2, \\ldots\\}$, matching the convention most programming languages (and most AI libraries) use.",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-18",
-      "quote": "Negative numbers appear first as **bookkeeping**, not as abstract objects. The Chinese *Nine Chapters on the Mathematical Art*, compiled in the Han dynasty, uses positive and negative quantities in systems of linear equations, and Liu Hui (3rd century CE) states rules for adding and subtracting them (\\cite[Han-dynasty compilers, 1st c. BCE]{jiuzhangsuanshu}). Brahmagupta then gives the rule in words that still sound modern: \"the difference of an affirmative and a negative quantity is their addition\" (\\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}).",
+      "quote": "Zero entered mathematics twice, and the two entries are easy to confuse. Babylonian scribes used a pair of wedges as an **empty-place marker** from about 400 BCE, but they did not treat it as a number, and they did not use it at the right-hand end of a numeral (\\cite[MacTutor: A History of Zero]{macTutorZero}). The decisive step is Brahmagupta's *Brāhmasphuṭasiddhānta* (628 CE), which gives rules for calculating with zero and negatives; his rule for a finite number divided by zero survives in Colebrooke's translation as \"A definite quantity divided by cipher, is the submultiple of nought\" (\\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}).",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-19",
-      "quote": "The discovery that a square's diagonal is **incommensurable** with its side broke the Pythagorean programme that \"all is number\". The proof is traditionally attributed to Hippasus (5th century BCE); Theodorus of Cyrene extended it to surds up to √17, and Eudoxus of Cnidus (c. 408–355 BCE) rebuilt proportion so that incommensurable magnitudes could be handled without pretending they were ratios of integers (\\cite[MacTutor: Real Numbers]{macTutorRealNumbers}). Euclid's *Elements* Book X organises the result (\\cite{euclidelements}). Only in 1872 did Dedekind give the modern definition: an irrational is a **cut** in the rationals (\\cite[Dedekind, 1872]{dedekind1872}).",
+      "quote": "Negative numbers appear first as **bookkeeping**, not as abstract objects. The Chinese *Nine Chapters on the Mathematical Art*, compiled in the Han dynasty, uses positive and negative quantities in systems of linear equations, and Liu Hui (3rd century CE) states rules for adding and subtracting them (\\cite[Han-dynasty compilers, 1st c. BCE]{jiuzhangsuanshu}). Brahmagupta then gives the rule in words that still sound modern: \"the difference of an affirmative and a negative quantity is their addition\" (\\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}).",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-20",
-      "quote": "Cantor's 1895 definition is the source of the modern notation: \"Unter einer 'Menge' verstehen wir jede Zusammenfassung M von bestimmten wohlunterschiedenen Objecten m unsrer Anschauung oder unseres Denkens ... zu einem Ganzen\" — a set is any collection of definite, distinct objects of our intuition or thought into a whole (\\cite[Cantor, 1895]{cantor1895}). The symbol $\\in$ is younger: Peano introduced it in 1889, taking the first letter of the Greek *esti* (\"is\") (\\cite[MacTutor: Set Theory]{macTutorSetTheory}). Cantor's unrestricted \"any collection\" later forced axiomatisation after Russell's paradox (discovered around 1901–02) (\\cite[MacTutor: Set Theory]{macTutorSetTheory}).",
+      "quote": "The discovery that a square's diagonal is **incommensurable** with its side broke the Pythagorean programme that \"all is number\". The proof is traditionally attributed to Hippasus (5th century BCE); Theodorus of Cyrene extended it to surds up to √17, and Eudoxus of Cnidus (c. 408–355 BCE) rebuilt proportion so that incommensurable magnitudes could be handled without pretending they were ratios of integers (\\cite[MacTutor: Real Numbers]{macTutorRealNumbers}). Euclid's *Elements* Book X organises the result (\\cite{euclidelements}). Only in 1872 did Dedekind give the modern definition: an irrational is a **cut** in the rationals (\\cite[Dedekind, 1872]{dedekind1872}).",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-21",
-      "quote": "> **The number line was not given; it was built.** Tally marks (c. 42,000 BP) externalised counting; Babylon added place-value (c. 2000 BCE); Brahmagupta made zero a number (628 CE); Dedekind made the irrationals rigorous (1872). Each step turned a practical trick into an object mathematics could calculate with.",
+      "quote": "Cantor's 1895 definition is the source of the modern notation: \"Unter einer 'Menge' verstehen wir jede Zusammenfassung M von bestimmten wohlunterschiedenen Objecten m unsrer Anschauung oder unseres Denkens ... zu einem Ganzen\" — a set is any collection of definite, distinct objects of our intuition or thought into a whole (\\cite[Cantor, 1895]{cantor1895}). The symbol $\\in$ is younger: Peano introduced it in 1889, taking the first letter of the Greek *esti* (\"is\") (\\cite[MacTutor: Set Theory]{macTutorSetTheory}). Cantor's unrestricted \"any collection\" later forced axiomatisation after Russell's paradox (discovered around 1901–02) (\\cite[MacTutor: Set Theory]{macTutorSetTheory}).",
       "kind": "paragraph",
       "section": "Programming"
     },
     {
       "id": "math_i-block-22",
+      "quote": "> **The number line was not given; it was built.** Tally marks (c. 42,000 BP) externalised counting; Babylon added place-value (c. 2000 BCE); Brahmagupta made zero a number (628 CE); Dedekind made the irrationals rigorous (1872). Each step turned a practical trick into an object mathematics could calculate with.",
+      "kind": "paragraph",
+      "section": "Programming"
+    },
+    {
+      "id": "math_i-block-23",
       "quote": "Classical programming vs. AI",
       "kind": "heading",
       "section": "Classical programming vs. AI"
     },
     {
-      "id": "math_i-block-23",
+      "id": "math_i-block-24",
       "quote": "In classical programming, you would specify each step by hand to define a function, but for some functions, this is barely possible since the problem is ill-defined or way too complex.",
       "kind": "paragraph",
       "section": "Classical programming vs. AI"
     },
     {
-      "id": "math_i-block-24",
+      "id": "math_i-block-25",
       "quote": "For example, imagine you need a program to tell images of cats and dogs apart. Where do you start? You cannot simply write a function that checks for every single pixel value, because then you'd need to know every single possible image of a cat or a dog, which is an infinite amount.",
       "kind": "paragraph",
       "section": "Classical programming vs. AI"
     },
     {
-      "id": "math_i-block-25",
+      "id": "math_i-block-26",
       "quote": "This is where AI comes in. AI replaces the idea of a hand-written *function* with a *model* that does what you want, and doesn't do it by a list of handwritten rules, but learns how to do it by example. For example, you may have a large set of images of cats and dogs, and the information for each image, if it shows a cat or a dog. Then, you'd have 2 sets, one, the set of all images, and the set of results like $\\left\\{\\text{cat}, \\text{dog}\\right\\}$, where each Image is mapped to one of those results, ie. you know that you want $\\text{function}\\left(\\text{Image of a cat}\\right) \\rightarrow \\text{cat}$ and $\\text{function}\\left(\\text{Image of a dog}\\right) \\rightarrow \\text{dog}$. AI then learns how to get from that input to that output. You only provide basic building blocks it should use, which depend on the type of task you want it to solve.",
       "kind": "paragraph",
       "section": "Classical programming vs. AI"
     },
     {
-      "id": "math_i-block-26",
+      "id": "math_i-block-27",
       "quote": "This model will (most probably) not be perfect. But it can be **good enough** to be useful.",
       "kind": "paragraph",
       "section": "Classical programming vs. AI"
     },
     {
-      "id": "math_i-block-27",
+      "id": "math_i-block-28",
       "quote": "Throughout this course, we will look into these building blocks and how the computer then creates this model, and how these building blocks work. We'll start with very simple building blocks for simple numbers, and then go to building blocks to classify images, and end up with Transformers, which are the basic structure for chatGPT, which all take ideas from each other.",
       "kind": "paragraph",
       "section": "Classical programming vs. AI"
     },
     {
-      "id": "math_i-block-28",
+      "id": "math_i-block-29",
       "quote": "Mathematical notation",
       "kind": "heading",
       "section": "Mathematical notation"
     },
     {
-      "id": "math_i-block-29",
+      "id": "math_i-block-30",
       "quote": "The Sum Symbol $ \\sum $",
       "kind": "heading",
       "section": "The Sum Symbol $ \\sum $"
     },
     {
-      "id": "math_i-block-30",
+      "id": "math_i-block-31",
       "quote": "> Euler's Σ (1755) was an indefinite sum; the definite Σ with limits is 19th-century (Fourier, 1820). Cajori credits Gauss with ∏ (1812), Kramp with n! (1808).",
       "kind": "paragraph",
       "section": "The Sum Symbol $ \\sum $"
     },
     {
-      "id": "math_i-block-31",
+      "id": "math_i-block-32",
       "quote": "Quemadmodum ad differentiam denotandam vsi sumus signo Δ, ita summam indicabimus signo Σ. Just as we use Δ for the difference, we shall denote the sum by Σ.",
       "kind": "paragraph",
       "section": "The Sum Symbol $ \\sum $"
     },
     {
-      "id": "math_i-block-32",
+      "id": "math_i-block-33",
       "quote": "Think of $\\sum$ as a **“for-loop”** for addition.",
       "kind": "paragraph",
       "section": "The Sum Symbol $ \\sum $"
     },
     {
-      "id": "math_i-block-33",
+      "id": "math_i-block-34",
       "quote": "How to read the symbol",
       "kind": "heading",
       "section": "How to read the symbol"
     },
     {
-      "id": "math_i-block-34",
+      "id": "math_i-block-35",
       "quote": "A typical summation looks like this:",
       "kind": "paragraph",
       "section": "How to read the symbol"
     },
     {
-      "id": "math_i-block-35",
+      "id": "math_i-block-36",
       "quote": "A Concrete Example",
       "kind": "heading",
       "section": "A Concrete Example"
     },
     {
-      "id": "math_i-block-36",
+      "id": "math_i-block-37",
       "quote": "If we have a vector $\\vec{v} = \\begin{pmatrix} 10 \\\\ 20 \\\\ 30 \\\\ 40 \\end{pmatrix}$, and we want to find the sum of all its elements, we write:",
       "kind": "paragraph",
       "section": "A Concrete Example"
     },
     {
-      "id": "math_i-block-37",
+      "id": "math_i-block-38",
       "quote": "Why AI needs this: Weighted Sums",
       "kind": "heading",
       "section": "Why AI needs this: Weighted Sums"
     },
     {
-      "id": "math_i-block-38",
+      "id": "math_i-block-39",
       "quote": "The most common use of the sum symbol in AI is the **Weighted Sum**. When a Neural Network makes a decision, it looks at different inputs (like pixels) and assigns each one a “weight” based on its importance.",
       "kind": "paragraph",
       "section": "Why AI needs this: Weighted Sums"
     },
     {
-      "id": "math_i-block-39",
+      "id": "math_i-block-40",
       "quote": "This is just a compact way of saying: $(w_1 \\cdot x_1) + (w_2 \\cdot x_2) + \\dots + (w_n \\cdot x_n)$.",
       "kind": "paragraph",
       "section": "Why AI needs this: Weighted Sums"
     },
     {
-      "id": "math_i-block-40",
+      "id": "math_i-block-41",
       "quote": "Implementation in Code",
       "kind": "heading",
       "section": "Implementation in Code"
     },
     {
-      "id": "math_i-block-41",
+      "id": "math_i-block-42",
       "quote": "In classical programming, the summation symbol $\\sum$ is written as a simple loop:",
       "kind": "paragraph",
       "section": "Implementation in Code"
     },
     {
-      "id": "math_i-block-42",
+      "id": "math_i-block-43",
       "quote": "The Product Symbol $\\prod$",
       "kind": "heading",
       "section": "The Product Symbol $\\prod$"
     },
     {
-      "id": "math_i-block-43",
+      "id": "math_i-block-44",
       "quote": "The Greek **capital Pi** ($\\prod$) is the mathematical shorthand for repeated multiplication. It works similarly to the $\\sum$:",
       "kind": "paragraph",
       "section": "The Product Symbol $\\prod$"
     },
     {
-      "id": "math_i-block-44",
+      "id": "math_i-block-45",
       "quote": "The Factorial",
       "kind": "heading",
       "section": "The Factorial"
     },
     {
-      "id": "math_i-block-45",
+      "id": "math_i-block-46",
       "quote": "In programming, we can define this function using **recursion**, where a function calls itself to solve smaller versions of the same problem:",
       "kind": "paragraph",
       "section": "The Factorial"
     },
     {
-      "id": "math_i-block-46",
+      "id": "math_i-block-47",
       "quote": "The factorial grows extremely quickly, much faster than exponential functions. This growth is essential when calculating the number of possible permutations (orderings) of a set of objects (\\cite[Lang, Basic Mathematics, Ch. 14, §3, p. 359]{lang2005basicmath}).",
       "kind": "paragraph",
       "section": "The Factorial"
     },
     {
-      "id": "math_i-block-47",
+      "id": "math_i-block-48",
       "quote": "Arithmetic with $\\infty$ in Computing",
       "kind": "heading",
       "section": "Arithmetic with $\\infty$ in Computing"
     },
     {
-      "id": "math_i-block-48",
-      "quote": "In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:",
-      "kind": "paragraph",
-      "section": "Arithmetic with $\\infty$ in Computing"
-    },
-    {
       "id": "math_i-block-49",
-      "quote": "Any finite number divided by infinity approaches zero. This is crucial for normalization, helping the model turn massive raw scores into manageable probabilities. The exponential of negative infinity is exactly zero. This is useful in machine learning: it lets us “mask” certain pieces of data by assigning them a value of $-\\infty$, which makes them effectively ignored. This becomes important later in the chapter on Transformers.",
+      "quote": "In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:",
       "kind": "paragraph",
       "section": "Arithmetic with $\\infty$ in Computing"
     },

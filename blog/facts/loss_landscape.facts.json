@@ -1067,16 +1067,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-19-related_to-loss_landscape-block-5",
-      "from": "loss_landscape-block-19",
-      "to": "loss_landscape-block-5",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-loss_landscape-block-20-part_of-loss-landscape",
       "from": "loss_landscape-block-20",
       "to": "loss-landscape",
@@ -1091,6 +1081,16 @@
       "from": "loss_landscape-block-19",
       "to": "loss_landscape-block-20",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-loss_landscape-block-20-related_to-loss_landscape-block-19",
+      "from": "loss_landscape-block-20",
+      "to": "loss_landscape-block-19",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1117,16 +1117,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-21-related_to-loss_landscape-block-20",
-      "from": "loss_landscape-block-21",
-      "to": "loss_landscape-block-20",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-loss_landscape-block-22-part_of-loss-landscape",
       "from": "loss_landscape-block-22",
       "to": "loss-landscape",
@@ -1141,6 +1131,16 @@
       "from": "loss_landscape-block-21",
       "to": "loss_landscape-block-22",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-loss_landscape-block-22-related_to-loss_landscape-block-21",
+      "from": "loss_landscape-block-22",
+      "to": "loss_landscape-block-21",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1167,9 +1167,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-23-related_to-loss_landscape-block-22",
+      "id": "struct-loss_landscape-block-23-related_to-loss_landscape-block-21",
       "from": "loss_landscape-block-23",
-      "to": "loss_landscape-block-22",
+      "to": "loss_landscape-block-21",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1197,16 +1197,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-24-related_to-loss_landscape-block-22",
-      "from": "loss_landscape-block-24",
-      "to": "loss_landscape-block-22",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-loss_landscape-block-25-part_of-loss-landscape",
       "from": "loss_landscape-block-25",
       "to": "loss-landscape",
@@ -1221,6 +1211,16 @@
       "from": "loss_landscape-block-24",
       "to": "loss_landscape-block-25",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-loss_landscape-block-25-related_to-loss_landscape-block-24",
+      "from": "loss_landscape-block-25",
+      "to": "loss_landscape-block-24",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1247,16 +1247,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-26-related_to-loss_landscape-block-25",
-      "from": "loss_landscape-block-26",
-      "to": "loss_landscape-block-25",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-loss_landscape-block-27-part_of-loss-landscape",
       "from": "loss_landscape-block-27",
       "to": "loss-landscape",
@@ -1271,6 +1261,16 @@
       "from": "loss_landscape-block-26",
       "to": "loss_landscape-block-27",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-loss_landscape-block-27-related_to-loss_landscape-block-26",
+      "from": "loss_landscape-block-27",
+      "to": "loss_landscape-block-26",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1297,9 +1297,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-28-related_to-loss_landscape-block-27",
+      "id": "struct-loss_landscape-block-28-related_to-loss_landscape-block-26",
       "from": "loss_landscape-block-28",
-      "to": "loss_landscape-block-27",
+      "to": "loss_landscape-block-26",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1327,9 +1327,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-29-related_to-loss_landscape-block-27",
+      "id": "struct-loss_landscape-block-29-related_to-loss_landscape-block-26",
       "from": "loss_landscape-block-29",
-      "to": "loss_landscape-block-27",
+      "to": "loss_landscape-block-26",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1357,16 +1357,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-30-related_to-loss_landscape-block-27",
-      "from": "loss_landscape-block-30",
-      "to": "loss_landscape-block-27",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-loss_landscape-block-31-part_of-loss-landscape",
       "from": "loss_landscape-block-31",
       "to": "loss-landscape",
@@ -1381,6 +1371,16 @@
       "from": "loss_landscape-block-30",
       "to": "loss_landscape-block-31",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-loss_landscape-block-31-related_to-loss_landscape-block-30",
+      "from": "loss_landscape-block-31",
+      "to": "loss_landscape-block-30",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1407,9 +1407,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-32-related_to-loss_landscape-block-31",
+      "id": "struct-loss_landscape-block-32-related_to-loss_landscape-block-30",
       "from": "loss_landscape-block-32",
-      "to": "loss_landscape-block-31",
+      "to": "loss_landscape-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1437,9 +1437,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-33-related_to-loss_landscape-block-31",
+      "id": "struct-loss_landscape-block-33-related_to-loss_landscape-block-30",
       "from": "loss_landscape-block-33",
-      "to": "loss_landscape-block-31",
+      "to": "loss_landscape-block-30",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1461,16 +1461,6 @@
       "from": "loss_landscape-block-33",
       "to": "loss_landscape-block-34",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-loss_landscape-block-34-related_to-loss_landscape-block-31",
-      "from": "loss_landscape-block-34",
-      "to": "loss_landscape-block-31",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1517,6 +1507,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-loss_landscape-block-36-related_to-loss_landscape-block-35",
+      "from": "loss_landscape-block-36",
+      "to": "loss_landscape-block-35",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-loss_landscape-block-37-part_of-loss-landscape",
       "from": "loss_landscape-block-37",
       "to": "loss-landscape",
@@ -1537,9 +1537,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-37-related_to-loss_landscape-block-36",
+      "id": "struct-loss_landscape-block-37-related_to-loss_landscape-block-35",
       "from": "loss_landscape-block-37",
-      "to": "loss_landscape-block-36",
+      "to": "loss_landscape-block-35",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1567,16 +1567,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-38-related_to-loss_landscape-block-36",
-      "from": "loss_landscape-block-38",
-      "to": "loss_landscape-block-36",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-loss_landscape-block-39-part_of-loss-landscape",
       "from": "loss_landscape-block-39",
       "to": "loss-landscape",
@@ -1591,6 +1581,16 @@
       "from": "loss_landscape-block-38",
       "to": "loss_landscape-block-39",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-loss_landscape-block-39-related_to-loss_landscape-block-38",
+      "from": "loss_landscape-block-39",
+      "to": "loss_landscape-block-38",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1617,9 +1617,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-40-related_to-loss_landscape-block-39",
+      "id": "struct-loss_landscape-block-40-related_to-loss_landscape-block-38",
       "from": "loss_landscape-block-40",
-      "to": "loss_landscape-block-39",
+      "to": "loss_landscape-block-38",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1647,9 +1647,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-41-related_to-loss_landscape-block-39",
+      "id": "struct-loss_landscape-block-41-related_to-loss_landscape-block-38",
       "from": "loss_landscape-block-41",
-      "to": "loss_landscape-block-39",
+      "to": "loss_landscape-block-38",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1677,16 +1677,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-42-related_to-loss_landscape-block-39",
-      "from": "loss_landscape-block-42",
-      "to": "loss_landscape-block-39",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-loss_landscape-block-43-part_of-loss-landscape",
       "from": "loss_landscape-block-43",
       "to": "loss-landscape",
@@ -1701,6 +1691,16 @@
       "from": "loss_landscape-block-42",
       "to": "loss_landscape-block-43",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-loss_landscape-block-43-related_to-loss_landscape-block-42",
+      "from": "loss_landscape-block-43",
+      "to": "loss_landscape-block-42",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1727,16 +1727,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-44-related_to-loss_landscape-block-43",
-      "from": "loss_landscape-block-44",
-      "to": "loss_landscape-block-43",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-loss_landscape-block-45-part_of-loss-landscape",
       "from": "loss_landscape-block-45",
       "to": "loss-landscape",
@@ -1751,6 +1741,16 @@
       "from": "loss_landscape-block-44",
       "to": "loss_landscape-block-45",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-loss_landscape-block-45-related_to-loss_landscape-block-44",
+      "from": "loss_landscape-block-45",
+      "to": "loss_landscape-block-44",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1777,9 +1777,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-46-related_to-loss_landscape-block-45",
+      "id": "struct-loss_landscape-block-46-related_to-loss_landscape-block-44",
       "from": "loss_landscape-block-46",
-      "to": "loss_landscape-block-45",
+      "to": "loss_landscape-block-44",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1807,9 +1807,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-47-related_to-loss_landscape-block-45",
+      "id": "struct-loss_landscape-block-47-related_to-loss_landscape-block-44",
       "from": "loss_landscape-block-47",
-      "to": "loss_landscape-block-45",
+      "to": "loss_landscape-block-44",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1837,9 +1837,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-48-related_to-loss_landscape-block-45",
+      "id": "struct-loss_landscape-block-48-related_to-loss_landscape-block-44",
       "from": "loss_landscape-block-48",
-      "to": "loss_landscape-block-45",
+      "to": "loss_landscape-block-44",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1867,9 +1867,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-49-related_to-loss_landscape-block-45",
+      "id": "struct-loss_landscape-block-49-related_to-loss_landscape-block-44",
       "from": "loss_landscape-block-49",
-      "to": "loss_landscape-block-45",
+      "to": "loss_landscape-block-44",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1897,9 +1897,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-50-related_to-loss_landscape-block-45",
+      "id": "struct-loss_landscape-block-50-related_to-loss_landscape-block-44",
       "from": "loss_landscape-block-50",
-      "to": "loss_landscape-block-45",
+      "to": "loss_landscape-block-44",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1927,9 +1927,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-51-related_to-loss_landscape-block-45",
+      "id": "struct-loss_landscape-block-51-related_to-loss_landscape-block-44",
       "from": "loss_landscape-block-51",
-      "to": "loss_landscape-block-45",
+      "to": "loss_landscape-block-44",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1957,9 +1957,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-52-related_to-loss_landscape-block-45",
+      "id": "struct-loss_landscape-block-52-related_to-loss_landscape-block-44",
       "from": "loss_landscape-block-52",
-      "to": "loss_landscape-block-45",
+      "to": "loss_landscape-block-44",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1987,39 +1987,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-block-53-related_to-loss_landscape-block-45",
+      "id": "struct-loss_landscape-block-53-related_to-loss_landscape-block-44",
       "from": "loss_landscape-block-53",
-      "to": "loss_landscape-block-45",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-loss_landscape-block-54-part_of-loss-landscape",
-      "from": "loss_landscape-block-54",
-      "to": "loss-landscape",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-loss_landscape-block-53-before-loss_landscape-block-54",
-      "from": "loss_landscape-block-53",
-      "to": "loss_landscape-block-54",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-loss_landscape-block-54-related_to-loss_landscape-block-45",
-      "from": "loss_landscape-block-54",
-      "to": "loss_landscape-block-45",
+      "to": "loss_landscape-block-44",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2127,9 +2097,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-11-part_of-loss_landscape-block-10",
+      "id": "struct-loss_landscape-stmt-11-part_of-loss_landscape-block-13",
       "from": "loss_landscape-stmt-11",
-      "to": "loss_landscape-block-10",
+      "to": "loss_landscape-block-13",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2137,9 +2107,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-12-part_of-loss_landscape-block-14",
+      "id": "struct-loss_landscape-stmt-12-part_of-loss_landscape-block-17",
       "from": "loss_landscape-stmt-12",
-      "to": "loss_landscape-block-14",
+      "to": "loss_landscape-block-17",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2147,9 +2117,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-13-part_of-loss_landscape-block-18",
+      "id": "struct-loss_landscape-stmt-13-part_of-loss_landscape-block-20",
       "from": "loss_landscape-stmt-13",
-      "to": "loss_landscape-block-18",
+      "to": "loss_landscape-block-20",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2157,9 +2127,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-14-part_of-loss_landscape-block-21",
+      "id": "struct-loss_landscape-stmt-14-part_of-loss_landscape-block-20",
       "from": "loss_landscape-stmt-14",
-      "to": "loss_landscape-block-21",
+      "to": "loss_landscape-block-20",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2167,9 +2137,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-15-part_of-loss_landscape-block-21",
+      "id": "struct-loss_landscape-stmt-15-part_of-loss_landscape-block-20",
       "from": "loss_landscape-stmt-15",
-      "to": "loss_landscape-block-21",
+      "to": "loss_landscape-block-20",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2177,9 +2147,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-16-part_of-loss_landscape-block-21",
+      "id": "struct-loss_landscape-stmt-16-part_of-loss_landscape-block-20",
       "from": "loss_landscape-stmt-16",
-      "to": "loss_landscape-block-21",
+      "to": "loss_landscape-block-20",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2187,9 +2157,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-17-part_of-loss_landscape-block-21",
+      "id": "struct-loss_landscape-stmt-17-part_of-loss_landscape-block-20",
       "from": "loss_landscape-stmt-17",
-      "to": "loss_landscape-block-21",
+      "to": "loss_landscape-block-20",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2197,9 +2167,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-18-part_of-loss_landscape-block-21",
+      "id": "struct-loss_landscape-stmt-18-part_of-loss_landscape-block-22",
       "from": "loss_landscape-stmt-18",
-      "to": "loss_landscape-block-21",
+      "to": "loss_landscape-block-22",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2207,9 +2177,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-19-part_of-loss_landscape-block-23",
+      "id": "struct-loss_landscape-stmt-19-part_of-loss_landscape-block-22",
       "from": "loss_landscape-stmt-19",
-      "to": "loss_landscape-block-23",
+      "to": "loss_landscape-block-22",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2217,9 +2187,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-20-part_of-loss_landscape-block-23",
+      "id": "struct-loss_landscape-stmt-20-part_of-loss_landscape-block-22",
       "from": "loss_landscape-stmt-20",
-      "to": "loss_landscape-block-23",
+      "to": "loss_landscape-block-22",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2237,9 +2207,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-22-part_of-loss_landscape-block-24",
+      "id": "struct-loss_landscape-stmt-22-part_of-loss_landscape-block-23",
       "from": "loss_landscape-stmt-22",
-      "to": "loss_landscape-block-24",
+      "to": "loss_landscape-block-23",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2247,9 +2217,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-23-part_of-loss_landscape-block-24",
+      "id": "struct-loss_landscape-stmt-23-part_of-loss_landscape-block-23",
       "from": "loss_landscape-stmt-23",
-      "to": "loss_landscape-block-24",
+      "to": "loss_landscape-block-23",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2257,9 +2227,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-24-part_of-loss_landscape-block-24",
+      "id": "struct-loss_landscape-stmt-24-part_of-loss_landscape-block-23",
       "from": "loss_landscape-stmt-24",
-      "to": "loss_landscape-block-24",
+      "to": "loss_landscape-block-23",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2267,9 +2237,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-25-part_of-loss_landscape-block-24",
+      "id": "struct-loss_landscape-stmt-25-part_of-loss_landscape-block-23",
       "from": "loss_landscape-stmt-25",
-      "to": "loss_landscape-block-24",
+      "to": "loss_landscape-block-23",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2277,9 +2247,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-26-part_of-loss_landscape-block-24",
+      "id": "struct-loss_landscape-stmt-26-part_of-loss_landscape-block-25",
       "from": "loss_landscape-stmt-26",
-      "to": "loss_landscape-block-24",
+      "to": "loss_landscape-block-25",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2287,9 +2257,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-27-part_of-loss_landscape-block-26",
+      "id": "struct-loss_landscape-stmt-27-part_of-loss_landscape-block-25",
       "from": "loss_landscape-stmt-27",
-      "to": "loss_landscape-block-26",
+      "to": "loss_landscape-block-25",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2297,9 +2267,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-28-part_of-loss_landscape-block-26",
+      "id": "struct-loss_landscape-stmt-28-part_of-loss_landscape-block-25",
       "from": "loss_landscape-stmt-28",
-      "to": "loss_landscape-block-26",
+      "to": "loss_landscape-block-25",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2307,9 +2277,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-29-part_of-loss_landscape-block-26",
+      "id": "struct-loss_landscape-stmt-29-part_of-loss_landscape-block-27",
       "from": "loss_landscape-stmt-29",
-      "to": "loss_landscape-block-26",
+      "to": "loss_landscape-block-27",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2317,9 +2287,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-30-part_of-loss_landscape-block-28",
+      "id": "struct-loss_landscape-stmt-30-part_of-loss_landscape-block-27",
       "from": "loss_landscape-stmt-30",
-      "to": "loss_landscape-block-28",
+      "to": "loss_landscape-block-27",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2337,9 +2307,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-32-part_of-loss_landscape-block-29",
+      "id": "struct-loss_landscape-stmt-32-part_of-loss_landscape-block-28",
       "from": "loss_landscape-stmt-32",
-      "to": "loss_landscape-block-29",
+      "to": "loss_landscape-block-28",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2347,9 +2317,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-33-part_of-loss_landscape-block-29",
+      "id": "struct-loss_landscape-stmt-33-part_of-loss_landscape-block-28",
       "from": "loss_landscape-stmt-33",
-      "to": "loss_landscape-block-29",
+      "to": "loss_landscape-block-28",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2357,9 +2327,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-34-part_of-loss_landscape-block-29",
+      "id": "struct-loss_landscape-stmt-34-part_of-loss_landscape-block-28",
       "from": "loss_landscape-stmt-34",
-      "to": "loss_landscape-block-29",
+      "to": "loss_landscape-block-28",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2367,9 +2337,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-35-part_of-loss_landscape-block-29",
+      "id": "struct-loss_landscape-stmt-35-part_of-loss_landscape-block-28",
       "from": "loss_landscape-stmt-35",
-      "to": "loss_landscape-block-29",
+      "to": "loss_landscape-block-28",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2377,9 +2347,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-36-part_of-loss_landscape-block-29",
+      "id": "struct-loss_landscape-stmt-36-part_of-loss_landscape-block-28",
       "from": "loss_landscape-stmt-36",
-      "to": "loss_landscape-block-29",
+      "to": "loss_landscape-block-28",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2397,9 +2367,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-38-part_of-loss_landscape-block-30",
+      "id": "struct-loss_landscape-stmt-38-part_of-loss_landscape-block-29",
       "from": "loss_landscape-stmt-38",
-      "to": "loss_landscape-block-30",
+      "to": "loss_landscape-block-29",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2407,9 +2377,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-39-part_of-loss_landscape-block-30",
+      "id": "struct-loss_landscape-stmt-39-part_of-loss_landscape-block-29",
       "from": "loss_landscape-stmt-39",
-      "to": "loss_landscape-block-30",
+      "to": "loss_landscape-block-29",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2417,9 +2387,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-40-part_of-loss_landscape-block-30",
+      "id": "struct-loss_landscape-stmt-40-part_of-loss_landscape-block-31",
       "from": "loss_landscape-stmt-40",
-      "to": "loss_landscape-block-30",
+      "to": "loss_landscape-block-31",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2427,9 +2397,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-41-part_of-loss_landscape-block-32",
+      "id": "struct-loss_landscape-stmt-41-part_of-loss_landscape-block-31",
       "from": "loss_landscape-stmt-41",
-      "to": "loss_landscape-block-32",
+      "to": "loss_landscape-block-31",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2437,9 +2407,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-42-part_of-loss_landscape-block-32",
+      "id": "struct-loss_landscape-stmt-42-part_of-loss_landscape-block-31",
       "from": "loss_landscape-stmt-42",
-      "to": "loss_landscape-block-32",
+      "to": "loss_landscape-block-31",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2447,9 +2417,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-43-part_of-loss_landscape-block-32",
+      "id": "struct-loss_landscape-stmt-43-part_of-loss_landscape-block-31",
       "from": "loss_landscape-stmt-43",
-      "to": "loss_landscape-block-32",
+      "to": "loss_landscape-block-31",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2467,9 +2437,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-45-part_of-loss_landscape-block-33",
+      "id": "struct-loss_landscape-stmt-45-part_of-loss_landscape-block-32",
       "from": "loss_landscape-stmt-45",
-      "to": "loss_landscape-block-33",
+      "to": "loss_landscape-block-32",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2487,9 +2457,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-47-part_of-loss_landscape-block-34",
+      "id": "struct-loss_landscape-stmt-47-part_of-loss_landscape-block-33",
       "from": "loss_landscape-stmt-47",
-      "to": "loss_landscape-block-34",
+      "to": "loss_landscape-block-33",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2497,9 +2467,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-48-part_of-loss_landscape-block-34",
+      "id": "struct-loss_landscape-stmt-48-part_of-loss_landscape-block-33",
       "from": "loss_landscape-stmt-48",
-      "to": "loss_landscape-block-34",
+      "to": "loss_landscape-block-33",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2507,9 +2477,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-49-part_of-loss_landscape-block-34",
+      "id": "struct-loss_landscape-stmt-49-part_of-loss_landscape-block-33",
       "from": "loss_landscape-stmt-49",
-      "to": "loss_landscape-block-34",
+      "to": "loss_landscape-block-33",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2517,9 +2487,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-50-part_of-loss_landscape-block-34",
+      "id": "struct-loss_landscape-stmt-50-part_of-loss_landscape-block-33",
       "from": "loss_landscape-stmt-50",
-      "to": "loss_landscape-block-34",
+      "to": "loss_landscape-block-33",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2527,9 +2497,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-51-part_of-loss_landscape-block-34",
+      "id": "struct-loss_landscape-stmt-51-part_of-loss_landscape-block-36",
       "from": "loss_landscape-stmt-51",
-      "to": "loss_landscape-block-34",
+      "to": "loss_landscape-block-36",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2537,9 +2507,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-52-part_of-loss_landscape-block-37",
+      "id": "struct-loss_landscape-stmt-52-part_of-loss_landscape-block-36",
       "from": "loss_landscape-stmt-52",
-      "to": "loss_landscape-block-37",
+      "to": "loss_landscape-block-36",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2547,9 +2517,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-53-part_of-loss_landscape-block-37",
+      "id": "struct-loss_landscape-stmt-53-part_of-loss_landscape-block-36",
       "from": "loss_landscape-stmt-53",
-      "to": "loss_landscape-block-37",
+      "to": "loss_landscape-block-36",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2557,9 +2527,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-54-part_of-loss_landscape-block-37",
+      "id": "struct-loss_landscape-stmt-54-part_of-loss_landscape-block-36",
       "from": "loss_landscape-stmt-54",
-      "to": "loss_landscape-block-37",
+      "to": "loss_landscape-block-36",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2567,9 +2537,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-55-part_of-loss_landscape-block-37",
+      "id": "struct-loss_landscape-stmt-55-part_of-loss_landscape-block-36",
       "from": "loss_landscape-stmt-55",
-      "to": "loss_landscape-block-37",
+      "to": "loss_landscape-block-36",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2587,9 +2557,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-57-part_of-loss_landscape-block-38",
+      "id": "struct-loss_landscape-stmt-57-part_of-loss_landscape-block-37",
       "from": "loss_landscape-stmt-57",
-      "to": "loss_landscape-block-38",
+      "to": "loss_landscape-block-37",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2597,9 +2567,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-58-part_of-loss_landscape-block-38",
+      "id": "struct-loss_landscape-stmt-58-part_of-loss_landscape-block-37",
       "from": "loss_landscape-stmt-58",
-      "to": "loss_landscape-block-38",
+      "to": "loss_landscape-block-37",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2607,9 +2577,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-59-part_of-loss_landscape-block-38",
+      "id": "struct-loss_landscape-stmt-59-part_of-loss_landscape-block-39",
       "from": "loss_landscape-stmt-59",
-      "to": "loss_landscape-block-38",
+      "to": "loss_landscape-block-39",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2617,9 +2587,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-60-part_of-loss_landscape-block-40",
+      "id": "struct-loss_landscape-stmt-60-part_of-loss_landscape-block-39",
       "from": "loss_landscape-stmt-60",
-      "to": "loss_landscape-block-40",
+      "to": "loss_landscape-block-39",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2627,9 +2597,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-61-part_of-loss_landscape-block-40",
+      "id": "struct-loss_landscape-stmt-61-part_of-loss_landscape-block-39",
       "from": "loss_landscape-stmt-61",
-      "to": "loss_landscape-block-40",
+      "to": "loss_landscape-block-39",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2637,9 +2607,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-62-part_of-loss_landscape-block-40",
+      "id": "struct-loss_landscape-stmt-62-part_of-loss_landscape-block-39",
       "from": "loss_landscape-stmt-62",
-      "to": "loss_landscape-block-40",
+      "to": "loss_landscape-block-39",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2657,9 +2627,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-64-part_of-loss_landscape-block-41",
+      "id": "struct-loss_landscape-stmt-64-part_of-loss_landscape-block-40",
       "from": "loss_landscape-stmt-64",
-      "to": "loss_landscape-block-41",
+      "to": "loss_landscape-block-40",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2667,9 +2637,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-65-part_of-loss_landscape-block-41",
+      "id": "struct-loss_landscape-stmt-65-part_of-loss_landscape-block-40",
       "from": "loss_landscape-stmt-65",
-      "to": "loss_landscape-block-41",
+      "to": "loss_landscape-block-40",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2677,9 +2647,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-66-part_of-loss_landscape-block-41",
+      "id": "struct-loss_landscape-stmt-66-part_of-loss_landscape-block-40",
       "from": "loss_landscape-stmt-66",
-      "to": "loss_landscape-block-41",
+      "to": "loss_landscape-block-40",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2687,9 +2657,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-67-part_of-loss_landscape-block-41",
+      "id": "struct-loss_landscape-stmt-67-part_of-loss_landscape-block-40",
       "from": "loss_landscape-stmt-67",
-      "to": "loss_landscape-block-41",
+      "to": "loss_landscape-block-40",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2707,9 +2677,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-69-part_of-loss_landscape-block-42",
+      "id": "struct-loss_landscape-stmt-69-part_of-loss_landscape-block-41",
       "from": "loss_landscape-stmt-69",
-      "to": "loss_landscape-block-42",
+      "to": "loss_landscape-block-41",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2717,9 +2687,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-70-part_of-loss_landscape-block-42",
+      "id": "struct-loss_landscape-stmt-70-part_of-loss_landscape-block-41",
       "from": "loss_landscape-stmt-70",
-      "to": "loss_landscape-block-42",
+      "to": "loss_landscape-block-41",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2727,9 +2697,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-71-part_of-loss_landscape-block-42",
+      "id": "struct-loss_landscape-stmt-71-part_of-loss_landscape-block-41",
       "from": "loss_landscape-stmt-71",
-      "to": "loss_landscape-block-42",
+      "to": "loss_landscape-block-41",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2737,9 +2707,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-72-part_of-loss_landscape-block-42",
+      "id": "struct-loss_landscape-stmt-72-part_of-loss_landscape-block-41",
       "from": "loss_landscape-stmt-72",
-      "to": "loss_landscape-block-42",
+      "to": "loss_landscape-block-41",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2747,9 +2717,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-73-part_of-loss_landscape-block-42",
+      "id": "struct-loss_landscape-stmt-73-part_of-loss_landscape-block-43",
       "from": "loss_landscape-stmt-73",
-      "to": "loss_landscape-block-42",
+      "to": "loss_landscape-block-43",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2757,9 +2727,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-74-part_of-loss_landscape-block-44",
+      "id": "struct-loss_landscape-stmt-74-part_of-loss_landscape-block-43",
       "from": "loss_landscape-stmt-74",
-      "to": "loss_landscape-block-44",
+      "to": "loss_landscape-block-43",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2767,9 +2737,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-75-part_of-loss_landscape-block-44",
+      "id": "struct-loss_landscape-stmt-75-part_of-loss_landscape-block-43",
       "from": "loss_landscape-stmt-75",
-      "to": "loss_landscape-block-44",
+      "to": "loss_landscape-block-43",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2777,9 +2747,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-76-part_of-loss_landscape-block-44",
+      "id": "struct-loss_landscape-stmt-76-part_of-loss_landscape-block-45",
       "from": "loss_landscape-stmt-76",
-      "to": "loss_landscape-block-44",
+      "to": "loss_landscape-block-45",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2797,9 +2767,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-78-part_of-loss_landscape-block-47",
+      "id": "struct-loss_landscape-stmt-78-part_of-loss_landscape-block-46",
       "from": "loss_landscape-stmt-78",
-      "to": "loss_landscape-block-47",
+      "to": "loss_landscape-block-46",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2807,9 +2777,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-79-part_of-loss_landscape-block-47",
+      "id": "struct-loss_landscape-stmt-79-part_of-loss_landscape-block-46",
       "from": "loss_landscape-stmt-79",
-      "to": "loss_landscape-block-47",
+      "to": "loss_landscape-block-46",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2817,9 +2787,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-80-part_of-loss_landscape-block-47",
+      "id": "struct-loss_landscape-stmt-80-part_of-loss_landscape-block-46",
       "from": "loss_landscape-stmt-80",
-      "to": "loss_landscape-block-47",
+      "to": "loss_landscape-block-46",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2837,9 +2807,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-82-part_of-loss_landscape-block-48",
+      "id": "struct-loss_landscape-stmt-82-part_of-loss_landscape-block-47",
       "from": "loss_landscape-stmt-82",
-      "to": "loss_landscape-block-48",
+      "to": "loss_landscape-block-47",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2847,9 +2817,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-83-part_of-loss_landscape-block-48",
+      "id": "struct-loss_landscape-stmt-83-part_of-loss_landscape-block-47",
       "from": "loss_landscape-stmt-83",
-      "to": "loss_landscape-block-48",
+      "to": "loss_landscape-block-47",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2867,9 +2837,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-85-part_of-loss_landscape-block-49",
+      "id": "struct-loss_landscape-stmt-85-part_of-loss_landscape-block-48",
       "from": "loss_landscape-stmt-85",
-      "to": "loss_landscape-block-49",
+      "to": "loss_landscape-block-48",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2887,9 +2857,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-87-part_of-loss_landscape-block-50",
+      "id": "struct-loss_landscape-stmt-87-part_of-loss_landscape-block-49",
       "from": "loss_landscape-stmt-87",
-      "to": "loss_landscape-block-50",
+      "to": "loss_landscape-block-49",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2897,9 +2867,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-88-part_of-loss_landscape-block-50",
+      "id": "struct-loss_landscape-stmt-88-part_of-loss_landscape-block-49",
       "from": "loss_landscape-stmt-88",
-      "to": "loss_landscape-block-50",
+      "to": "loss_landscape-block-49",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2917,9 +2887,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-90-part_of-loss_landscape-block-51",
+      "id": "struct-loss_landscape-stmt-90-part_of-loss_landscape-block-50",
       "from": "loss_landscape-stmt-90",
-      "to": "loss_landscape-block-51",
+      "to": "loss_landscape-block-50",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2937,9 +2907,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-92-part_of-loss_landscape-block-52",
+      "id": "struct-loss_landscape-stmt-92-part_of-loss_landscape-block-51",
       "from": "loss_landscape-stmt-92",
-      "to": "loss_landscape-block-52",
+      "to": "loss_landscape-block-51",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2947,9 +2917,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-93-part_of-loss_landscape-block-52",
+      "id": "struct-loss_landscape-stmt-93-part_of-loss_landscape-block-51",
       "from": "loss_landscape-stmt-93",
-      "to": "loss_landscape-block-52",
+      "to": "loss_landscape-block-51",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2967,9 +2937,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-95-part_of-loss_landscape-block-53",
+      "id": "struct-loss_landscape-stmt-95-part_of-loss_landscape-block-52",
       "from": "loss_landscape-stmt-95",
-      "to": "loss_landscape-block-53",
+      "to": "loss_landscape-block-52",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2987,9 +2957,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-97-part_of-loss_landscape-block-54",
+      "id": "struct-loss_landscape-stmt-97-part_of-loss_landscape-block-53",
       "from": "loss_landscape-stmt-97",
-      "to": "loss_landscape-block-54",
+      "to": "loss_landscape-block-53",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2997,19 +2967,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-loss_landscape-stmt-98-part_of-loss_landscape-block-54",
+      "id": "struct-loss_landscape-stmt-98-part_of-loss_landscape-block-53",
       "from": "loss_landscape-stmt-98",
-      "to": "loss_landscape-block-54",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-loss_landscape-stmt-99-part_of-loss_landscape-block-54",
-      "from": "loss_landscape-stmt-99",
-      "to": "loss_landscape-block-54",
+      "to": "loss_landscape-block-53",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3083,631 +3043,624 @@
     },
     {
       "id": "loss_landscape-stmt-10",
-      "quote": "Data x (comma-separated): y (comma-separated):",
+      "quote": "Line (y=2x+1) Line (y=-0.5x-0.8) Parabola (y=x²) Sine",
       "block_id": "loss_landscape-block-9",
       "section": "See it: walk a 2-D loss landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-11",
-      "quote": "Line (y=2x+1) Line (y=-0.5x-0.8) Parabola (y=x²) Sine",
-      "block_id": "loss_landscape-block-10",
+      "quote": "SGD Momentum Adam RMSProp",
+      "block_id": "loss_landscape-block-13",
       "section": "See it: walk a 2-D loss landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-12",
-      "quote": "SGD Momentum Adam RMSProp",
-      "block_id": "loss_landscape-block-14",
+      "quote": "3-D view Isometric Top Front Side Reset drag = rotate · scroll = zoom · shift-drag = pan Log z Linear z",
+      "block_id": "loss_landscape-block-17",
       "section": "See it: walk a 2-D loss landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-13",
-      "quote": "3-D view Isometric Top Front Side Reset drag = rotate · scroll = zoom · shift-drag = pan Log z Linear z",
-      "block_id": "loss_landscape-block-18",
-      "section": "See it: walk a 2-D loss landscape",
+      "quote": "The function is identical.",
+      "block_id": "loss_landscape-block-20",
+      "section": "Why naive plots of the landscape lie",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-14",
-      "quote": "The function is identical.",
-      "block_id": "loss_landscape-block-21",
+      "quote": "The two parameterizations sit at the *same point* on the landscape (same training loss, same outputs), but a plot of $\\mathcal{L}(\\theta + \\alpha\\,d)$ around them looks completely different: one appears \"sharp\", the other \"flat\", at random.",
+      "block_id": "loss_landscape-block-20",
       "section": "Why naive plots of the landscape lie",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-15",
-      "quote": "The two parameterizations sit at the *same point* on the landscape (same training loss, same outputs), but a plot of $\\mathcal{L}(\\theta + \\alpha\\,d)$ around them looks completely different: one appears \"sharp\", the other \"flat\", at random.",
-      "block_id": "loss_landscape-block-21",
+      "quote": "\\citeauthor{dinh2017sharpness} (\\citeyear{dinh2017sharpness}) exploited this to build equivalent networks with arbitrarily large \"sharpness\".",
+      "block_id": "loss_landscape-block-20",
       "section": "Why naive plots of the landscape lie",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-16",
-      "quote": "\\citeauthor{dinh2017sharpness} (\\citeyear{dinh2017sharpness}) exploited this to build equivalent networks with arbitrarily large \"sharpness\".",
-      "block_id": "loss_landscape-block-21",
+      "quote": "The standard sharpness measure was broken.",
+      "block_id": "loss_landscape-block-20",
       "section": "Why naive plots of the landscape lie",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-17",
-      "quote": "The standard sharpness measure was broken.",
-      "block_id": "loss_landscape-block-21",
+      "quote": "BatchNorm \\cite{ioffe2015batchnorm} makes the symmetry even stronger: rescaling any filter by any positive factor leaves the network unchanged.",
+      "block_id": "loss_landscape-block-20",
       "section": "Why naive plots of the landscape lie",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-18",
-      "quote": "BatchNorm \\cite{ioffe2015batchnorm} makes the symmetry even stronger: rescaling any filter by any positive factor leaves the network unchanged.",
-      "block_id": "loss_landscape-block-21",
-      "section": "Why naive plots of the landscape lie",
+      "quote": "A purely linear deep network, just stacked matrices with no activation function between them, has a loss surface with no spurious local minima at all.",
+      "block_id": "loss_landscape-block-22",
+      "section": "Non-convexity comes from the non-linearities, not from depth",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-19",
-      "quote": "A purely linear deep network, just stacked matrices with no activation function between them, has a loss surface with no spurious local minima at all.",
-      "block_id": "loss_landscape-block-23",
+      "quote": "Every critical point is either a global minimum or a saddle.",
+      "block_id": "loss_landscape-block-22",
       "section": "Non-convexity comes from the non-linearities, not from depth",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-20",
-      "quote": "Every critical point is either a global minimum or a saddle.",
-      "block_id": "loss_landscape-block-23",
+      "quote": "\\citeauthor{saxe2014deep} (\\citeyear{saxe2014deep}) showed this analytically for deep linear networks; \\citeauthor{kawaguchi2016deep} (\\citeyear{kawaguchi2016deep}) extended the result to deep nonlinear networks.",
+      "block_id": "loss_landscape-block-22",
       "section": "Non-convexity comes from the non-linearities, not from depth",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-21",
-      "quote": "\\citeauthor{saxe2014deep} (\\citeyear{saxe2014deep}) showed this analytically for deep linear networks; \\citeauthor{kawaguchi2016deep} (\\citeyear{kawaguchi2016deep}) extended the result to deep nonlinear networks.",
+      "quote": "So where does the non-convexity of real networks come from?",
       "block_id": "loss_landscape-block-23",
       "section": "Non-convexity comes from the non-linearities, not from depth",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-22",
-      "quote": "So where does the non-convexity of real networks come from?",
-      "block_id": "loss_landscape-block-24",
+      "quote": "From the activation functions.",
+      "block_id": "loss_landscape-block-23",
       "section": "Non-convexity comes from the non-linearities, not from depth",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-23",
-      "quote": "From the activation functions.",
-      "block_id": "loss_landscape-block-24",
+      "quote": "ReLU, sigmoid, GELU: every nonlinearity bends the function and creates the possibility of bad local minima.",
+      "block_id": "loss_landscape-block-23",
       "section": "Non-convexity comes from the non-linearities, not from depth",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-24",
-      "quote": "ReLU, sigmoid, GELU: every nonlinearity bends the function and creates the possibility of bad local minima.",
-      "block_id": "loss_landscape-block-24",
+      "quote": "This is why residual connections help so much: each residual block is asked to learn only a small adjustment to the running state, so the overall transformation stays close to linear, and the loss surface stays well-behaved.",
+      "block_id": "loss_landscape-block-23",
       "section": "Non-convexity comes from the non-linearities, not from depth",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-25",
-      "quote": "This is why residual connections help so much: each residual block is asked to learn only a small adjustment to the running state, so the overall transformation stays close to linear, and the loss surface stays well-behaved.",
-      "block_id": "loss_landscape-block-24",
+      "quote": "\\citeauthor{lu2017expressive} (\\citeyear{lu2017expressive}) reviews the broader picture.",
+      "block_id": "loss_landscape-block-23",
       "section": "Non-convexity comes from the non-linearities, not from depth",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-26",
-      "quote": "\\citeauthor{lu2017expressive} (\\citeyear{lu2017expressive}) reviews the broader picture.",
-      "block_id": "loss_landscape-block-24",
-      "section": "Non-convexity comes from the non-linearities, not from depth",
+      "quote": "For a long time, the worry was that local minima would trap gradient descent.",
+      "block_id": "loss_landscape-block-25",
+      "section": "Saddles outnumber minima in high dimensions",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-27",
-      "quote": "For a long time, the worry was that local minima would trap gradient descent.",
-      "block_id": "loss_landscape-block-26",
+      "quote": "\\citeauthor{dauphin2014saddle} (\\citeyear{dauphin2014saddle}) showed this worry is mostly backwards.",
+      "block_id": "loss_landscape-block-25",
       "section": "Saddles outnumber minima in high dimensions",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-28",
-      "quote": "\\citeauthor{dauphin2014saddle} (\\citeyear{dauphin2014saddle}) showed this worry is mostly backwards.",
-      "block_id": "loss_landscape-block-26",
+      "quote": "In a high-dimensional non-convex function:",
+      "block_id": "loss_landscape-block-25",
       "section": "Saddles outnumber minima in high dimensions",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-29",
-      "quote": "In a high-dimensional non-convex function:",
-      "block_id": "loss_landscape-block-26",
-      "section": "Saddles outnumber minima in high dimensions",
+      "quote": "The intuition is old: a minimum inside a wide, flat basin should generalize, because small perturbations of $\\theta$ keep the loss low.",
+      "block_id": "loss_landscape-block-27",
+      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-30",
-      "quote": "The intuition is old: a minimum inside a wide, flat basin should generalize, because small perturbations of $\\theta$ keep the loss low.",
-      "block_id": "loss_landscape-block-28",
+      "quote": "A narrow, sharp minimum memorizes the training set but blows up on test.",
+      "block_id": "loss_landscape-block-27",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-31",
-      "quote": "A narrow, sharp minimum memorizes the training set but blows up on test.",
+      "quote": "\\citetitle{keskar2016largebatch} (\\citeyear{keskar2016largebatch}) sharpened this empirically: large-batch SGD finds sharper minima than small-batch SGD, and the sharp-minimum runs generalize *worse* on CIFAR-10, CIFAR-100, MNIST, and TIMIT.",
       "block_id": "loss_landscape-block-28",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-32",
-      "quote": "\\citetitle{keskar2016largebatch} (\\citeyear{keskar2016largebatch}) sharpened this empirically: large-batch SGD finds sharper minima than small-batch SGD, and the sharp-minimum runs generalize *worse* on CIFAR-10, CIFAR-100, MNIST, and TIMIT.",
-      "block_id": "loss_landscape-block-29",
+      "quote": "The story is not so clean once \\citeauthor{dinh2017sharpness} (\\citeyear{dinh2017sharpness}) is added.",
+      "block_id": "loss_landscape-block-28",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-33",
-      "quote": "The story is not so clean once \\citeauthor{dinh2017sharpness} (\\citeyear{dinh2017sharpness}) is added.",
-      "block_id": "loss_landscape-block-29",
+      "quote": "Because of the ReLU and BatchNorm rescaling symmetry above, every sharp minimum can be reparameterized into an equivalent flat one.",
+      "block_id": "loss_landscape-block-28",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-34",
-      "quote": "Because of the ReLU and BatchNorm rescaling symmetry above, every sharp minimum can be reparameterized into an equivalent flat one.",
-      "block_id": "loss_landscape-block-29",
+      "quote": "\"Sharp\" was not a property of the minimum.",
+      "block_id": "loss_landscape-block-28",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-35",
-      "quote": "\"Sharp\" was not a property of the minimum.",
-      "block_id": "loss_landscape-block-29",
+      "quote": "It was an artifact of the parameterization.",
+      "block_id": "loss_landscape-block-28",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-36",
-      "quote": "It was an artifact of the parameterization.",
-      "block_id": "loss_landscape-block-29",
+      "quote": "\\citeauthor{smithle2018bayesian} (\\citeyear{smithle2018bayesian}) reframed SGD as approximate Bayesian inference: small-batch noise is not a bug but a prior that biases the trajectory toward wide valleys.",
+      "block_id": "loss_landscape-block-28",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-37",
-      "quote": "\\citeauthor{smithle2018bayesian} (\\citeyear{smithle2018bayesian}) reframed SGD as approximate Bayesian inference: small-batch noise is not a bug but a prior that biases the trajectory toward wide valleys.",
+      "quote": "The live descendants of this debate are **Sharpness-Aware Minimization** \\cite{foret2021sam}, which explicitly adds a \"be flat\" penalty to the loss.",
       "block_id": "loss_landscape-block-29",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-38",
-      "quote": "The live descendants of this debate are **Sharpness-Aware Minimization** \\cite{foret2021sam}, which explicitly adds a \"be flat\" penalty to the loss.",
-      "block_id": "loss_landscape-block-30",
+      "quote": "Too flat, and the gradient signal vanishes; too sharp, and the optimizer oscillates.",
+      "block_id": "loss_landscape-block-29",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-39",
-      "quote": "Too flat, and the gradient signal vanishes; too sharp, and the optimizer oscillates.",
-      "block_id": "loss_landscape-block-30",
+      "quote": "SAM works because the loss depends on the data and parameters; a step that is locally flat on the training set may not be flat on the test set, so SAM evaluates the loss at a small perturbation around the current point and descends from there.",
+      "block_id": "loss_landscape-block-29",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-40",
-      "quote": "SAM works because the loss depends on the data and parameters; a step that is locally flat on the training set may not be flat on the test set, so SAM evaluates the loss at a small perturbation around the current point and descends from there.",
-      "block_id": "loss_landscape-block-30",
-      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
+      "quote": "The two surface plots at the top of this chapter are the same architecture, ResNet-56 on CIFAR-10, trained the same way.",
+      "block_id": "loss_landscape-block-31",
+      "section": "Skip connections reshape the landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-41",
-      "quote": "The two surface plots at the top of this chapter are the same architecture, ResNet-56 on CIFAR-10, trained the same way.",
-      "block_id": "loss_landscape-block-32",
+      "quote": "The only difference is whether the residual connections are present.",
+      "block_id": "loss_landscape-block-31",
       "section": "Skip connections reshape the landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-42",
-      "quote": "The only difference is whether the residual connections are present.",
-      "block_id": "loss_landscape-block-32",
+      "quote": "With them, the landscape is a single smooth basin.",
+      "block_id": "loss_landscape-block-31",
       "section": "Skip connections reshape the landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-43",
-      "quote": "With them, the landscape is a single smooth basin.",
-      "block_id": "loss_landscape-block-32",
+      "quote": "Without them, the landscape is chaotic, full of competing peaks, and the test error roughly *doubles*.",
+      "block_id": "loss_landscape-block-31",
       "section": "Skip connections reshape the landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-44",
-      "quote": "Without them, the landscape is chaotic, full of competing peaks, and the test error roughly *doubles*.",
+      "quote": "The mechanism is concrete.",
       "block_id": "loss_landscape-block-32",
       "section": "Skip connections reshape the landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-45",
-      "quote": "The mechanism is concrete.",
-      "block_id": "loss_landscape-block-33",
+      "quote": "A residual block computes",
+      "block_id": "loss_landscape-block-32",
       "section": "Skip connections reshape the landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-46",
-      "quote": "A residual block computes",
+      "quote": "\\citetitle{li2018losslandscape}'s contribution was to see the consequence on the landscape.",
       "block_id": "loss_landscape-block-33",
       "section": "Skip connections reshape the landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-47",
-      "quote": "\\citetitle{li2018losslandscape}'s contribution was to see the consequence on the landscape.",
-      "block_id": "loss_landscape-block-34",
+      "quote": "A 110-layer ResNet and a 20-layer ResNet have nearly the same low-loss contour width when skip connections are present.",
+      "block_id": "loss_landscape-block-33",
       "section": "Skip connections reshape the landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-48",
-      "quote": "A 110-layer ResNet and a 20-layer ResNet have nearly the same low-loss contour width when skip connections are present.",
-      "block_id": "loss_landscape-block-34",
+      "quote": "Without skips, the 110-layer net can still be trained (to ~16% test error on CIFAR-10), but its basin is far sharper and less usable — and a 156-layer net without skips does not train at all.",
+      "block_id": "loss_landscape-block-33",
       "section": "Skip connections reshape the landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-49",
-      "quote": "Without skips, the 110-layer net can still be trained (to ~16% test error on CIFAR-10), but its basin is far sharper and less usable — and a 156-layer net without skips does not train at all.",
-      "block_id": "loss_landscape-block-34",
+      "quote": "The skip connection does not just help optimization.",
+      "block_id": "loss_landscape-block-33",
       "section": "Skip connections reshape the landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-50",
-      "quote": "The skip connection does not just help optimization.",
-      "block_id": "loss_landscape-block-34",
+      "quote": "It changes the geometry of the surface the optimizer walks on.",
+      "block_id": "loss_landscape-block-33",
       "section": "Skip connections reshape the landscape",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-51",
-      "quote": "It changes the geometry of the surface the optimizer walks on.",
-      "block_id": "loss_landscape-block-34",
-      "section": "Skip connections reshape the landscape",
+      "quote": "Train two ResNets independently on CIFAR-10 from different random initializations.",
+      "block_id": "loss_landscape-block-36",
+      "section": "Minima are connected by flat paths",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-52",
-      "quote": "Train two ResNets independently on CIFAR-10 from different random initializations.",
-      "block_id": "loss_landscape-block-37",
+      "quote": "They land in *different* minima, with different test errors and different predictions on hard examples.",
+      "block_id": "loss_landscape-block-36",
       "section": "Minima are connected by flat paths",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-53",
-      "quote": "They land in *different* minima, with different test errors and different predictions on hard examples.",
-      "block_id": "loss_landscape-block-37",
+      "quote": "Now draw a straight line between them in weight space and plot the loss along the line.",
+      "block_id": "loss_landscape-block-36",
       "section": "Minima are connected by flat paths",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-54",
-      "quote": "Now draw a straight line between them in weight space and plot the loss along the line.",
-      "block_id": "loss_landscape-block-37",
+      "quote": "\\citeauthor{garipov2018mode} (\\citeyear{garipov2018mode}) showed that the loss along this straight line is *high* — the two minima are separated by a barrier — but that with a small bend in the line (a \"polygonal chain\"), every point along the curved path has nearly training-set error.",
+      "block_id": "loss_landscape-block-36",
       "section": "Minima are connected by flat paths",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-55",
-      "quote": "\\citeauthor{garipov2018mode} (\\citeyear{garipov2018mode}) showed that the loss along this straight line is *high* — the two minima are separated by a barrier — but that with a small bend in the line (a \"polygonal chain\"), every point along the curved path has nearly training-set error.",
-      "block_id": "loss_landscape-block-37",
+      "quote": "The minima are *mode-connected*: not by a straight valley, but by a low-loss curved path.",
+      "block_id": "loss_landscape-block-36",
       "section": "Minima are connected by flat paths",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-56",
-      "quote": "The minima are *mode-connected*: not by a straight valley, but by a low-loss curved path.",
+      "quote": "The set of well-performing weights is connected.",
       "block_id": "loss_landscape-block-37",
       "section": "Minima are connected by flat paths",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-57",
-      "quote": "The set of well-performing weights is connected.",
-      "block_id": "loss_landscape-block-38",
+      "quote": "The landscape is one big basin, full of curvature ripples and small ridges but without barriers.",
+      "block_id": "loss_landscape-block-37",
       "section": "Minima are connected by flat paths",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-58",
-      "quote": "The landscape is one big basin, full of curvature ripples and small ridges but without barriers.",
-      "block_id": "loss_landscape-block-38",
+      "quote": "This is also why \"model ensembling\", averaging several independently-trained nets, works so well: every ensemble member is somewhere along this single low-loss manifold, and their disagreements are just different local orientations.",
+      "block_id": "loss_landscape-block-37",
       "section": "Minima are connected by flat paths",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-59",
-      "quote": "This is also why \"model ensembling\", averaging several independently-trained nets, works so well: every ensemble member is somewhere along this single low-loss manifold, and their disagreements are just different local orientations.",
-      "block_id": "loss_landscape-block-38",
-      "section": "Minima are connected by flat paths",
+      "quote": "This shows two things about the landscape.",
+      "block_id": "loss_landscape-block-39",
+      "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-60",
-      "quote": "This shows two things about the landscape.",
-      "block_id": "loss_landscape-block-40",
+      "quote": "First, the same initialization sits inside the catchment of many basins, some sharp, some flat, with barriers between them.",
+      "block_id": "loss_landscape-block-39",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-61",
-      "quote": "First, the same initialization sits inside the catchment of many basins, some sharp, some flat, with barriers between them.",
-      "block_id": "loss_landscape-block-40",
+      "quote": "Second, weight decay (the only thing distinguishing the two basins in this experiment) is what biases the long-time trajectory toward the flat basin.",
+      "block_id": "loss_landscape-block-39",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-62",
-      "quote": "Second, weight decay (the only thing distinguishing the two basins in this experiment) is what biases the long-time trajectory toward the flat basin.",
-      "block_id": "loss_landscape-block-40",
+      "quote": "The geometry is fixed; the optimizer's path through it is shaped by regularizers.",
+      "block_id": "loss_landscape-block-39",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-63",
-      "quote": "The geometry is fixed; the optimizer's path through it is shaped by regularizers.",
+      "quote": "The \"one big valley\" claim needs a caveat.",
       "block_id": "loss_landscape-block-40",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-64",
-      "quote": "The \"one big valley\" claim needs a caveat.",
-      "block_id": "loss_landscape-block-41",
+      "quote": "Swap two neurons in any hidden layer and the network computes exactly the same function, but its position in weight space changes by a large distance.",
+      "block_id": "loss_landscape-block-40",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-65",
-      "quote": "Swap two neurons in any hidden layer and the network computes exactly the same function, but its position in weight space changes by a large distance.",
-      "block_id": "loss_landscape-block-41",
+      "quote": "This permutation symmetry means every \"true\" minimum corresponds to an astronomical number of equivalent positions in raw weight space.",
+      "block_id": "loss_landscape-block-40",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-66",
-      "quote": "This permutation symmetry means every \"true\" minimum corresponds to an astronomical number of equivalent positions in raw weight space.",
-      "block_id": "loss_landscape-block-41",
+      "quote": "A 50-layer net with 256 neurons per layer has roughly $(256!)^{50}$ equivalent positions for each minimum, more than the number of atoms in the observable universe.",
+      "block_id": "loss_landscape-block-40",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-67",
-      "quote": "A 50-layer net with 256 neurons per layer has roughly $(256!)^{50}$ equivalent positions for each minimum, more than the number of atoms in the observable universe.",
-      "block_id": "loss_landscape-block-41",
+      "quote": "The landscape is full of copies of the same minimum, scattered across weight space like reflections in a hall of mirrors.",
+      "block_id": "loss_landscape-block-40",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-68",
-      "quote": "The landscape is full of copies of the same minimum, scattered across weight space like reflections in a hall of mirrors.",
+      "quote": "This is why a raw straight-line interpolation between two independently trained networks is high-loss: without accounting for the copies, the line passes through garbage (random mismatches between equivalent copies), not through the low-loss valley.",
       "block_id": "loss_landscape-block-41",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-69",
-      "quote": "This is why a raw straight-line interpolation between two independently trained networks is high-loss: without accounting for the copies, the line passes through garbage (random mismatches between equivalent copies), not through the low-loss valley.",
-      "block_id": "loss_landscape-block-42",
+      "quote": "\\citeauthor{garipov2018mode} (\\citeyear{garipov2018mode}) sidestepped this by searching for a low-loss *curved* path between the two minima; aligning permutations is a later technique for testing *linear* mode connectivity.",
+      "block_id": "loss_landscape-block-41",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-70",
-      "quote": "\\citeauthor{garipov2018mode} (\\citeyear{garipov2018mode}) sidestepped this by searching for a low-loss *curved* path between the two minima; aligning permutations is a later technique for testing *linear* mode connectivity.",
-      "block_id": "loss_landscape-block-42",
+      "quote": "The \"one connected valley\" claim is true in the symmetry-reduced parameter space, where equivalent copies are identified as the same point.",
+      "block_id": "loss_landscape-block-41",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-71",
-      "quote": "The \"one connected valley\" claim is true in the symmetry-reduced parameter space, where equivalent copies are identified as the same point.",
-      "block_id": "loss_landscape-block-42",
+      "quote": "In raw parameter space the same statement is false; the same minimum has many disconnected copies.",
+      "block_id": "loss_landscape-block-41",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-72",
-      "quote": "In raw parameter space the same statement is false; the same minimum has many disconnected copies.",
-      "block_id": "loss_landscape-block-42",
+      "quote": "\\citeauthor{amit1989modeling} (\\citeyear{amit1989modeling}) reviews the broader symmetry structure of neural-network landscapes.",
+      "block_id": "loss_landscape-block-41",
       "section": "Grokking: the optimizer slowly switches basins",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-73",
-      "quote": "\\citeauthor{amit1989modeling} (\\citeyear{amit1989modeling}) reviews the broader symmetry structure of neural-network landscapes.",
-      "block_id": "loss_landscape-block-42",
-      "section": "Grokking: the optimizer slowly switches basins",
+      "quote": "PCA on the iterates $\\theta_0, \\theta_1, \\ldots, \\theta_T$ recovers what is actually happening.",
+      "block_id": "loss_landscape-block-43",
+      "section": "SGD travels in an almost one-dimensional subspace",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-74",
-      "quote": "PCA on the iterates $\\theta_0, \\theta_1, \\ldots, \\theta_T$ recovers what is actually happening.",
-      "block_id": "loss_landscape-block-44",
+      "quote": "For both SGD and Adam on VGG-9, the first **two** PCA directions capture between **40% and 90%** of the variation in the descent path; the remaining directions are nearly silent.",
+      "block_id": "loss_landscape-block-43",
       "section": "SGD travels in an almost one-dimensional subspace",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-75",
-      "quote": "For both SGD and Adam on VGG-9, the first **two** PCA directions capture between **40% and 90%** of the variation in the descent path; the remaining directions are nearly silent.",
-      "block_id": "loss_landscape-block-44",
+      "quote": "Gradient descent is effectively low-dimensional.",
+      "block_id": "loss_landscape-block-43",
       "section": "SGD travels in an almost one-dimensional subspace",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-76",
-      "quote": "Gradient descent is effectively low-dimensional.",
-      "block_id": "loss_landscape-block-44",
-      "section": "SGD travels in an almost one-dimensional subspace",
+      "quote": "The picture that survives the most careful empirical work \\cite{li2018losslandscape,garipov2018mode,choromanska2015loss} is roughly this:",
+      "block_id": "loss_landscape-block-45",
+      "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-77",
-      "quote": "The picture that survives the most careful empirical work \\cite{li2018losslandscape,garipov2018mode,choromanska2015loss} is roughly this:",
+      "quote": "The landscape is one connected valley.",
       "block_id": "loss_landscape-block-46",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-78",
-      "quote": "The landscape is one connected valley.",
-      "block_id": "loss_landscape-block-47",
+      "quote": "Local minima are exponentially rare.",
+      "block_id": "loss_landscape-block-46",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-79",
-      "quote": "Local minima are exponentially rare.",
-      "block_id": "loss_landscape-block-47",
+      "quote": "Saddles dominate but are easy to escape with stochastic noise.",
+      "block_id": "loss_landscape-block-46",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-80",
-      "quote": "Saddles dominate but are easy to escape with stochastic noise.",
-      "block_id": "loss_landscape-block-47",
+      "quote": "Independent runs find different points, all connected by low-loss paths (once permutation symmetries are factored out).",
+      "block_id": "loss_landscape-block-46",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-81",
-      "quote": "Independent runs find different points, all connected by low-loss paths (once permutation symmetries are factored out).",
+      "quote": "Skip connections reshape the topology.",
       "block_id": "loss_landscape-block-47",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-82",
-      "quote": "Skip connections reshape the topology.",
-      "block_id": "loss_landscape-block-48",
+      "quote": "They replace chaotic multi-basin terrain with one smooth basin.",
+      "block_id": "loss_landscape-block-47",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-83",
-      "quote": "They replace chaotic multi-basin terrain with one smooth basin.",
-      "block_id": "loss_landscape-block-48",
+      "quote": "As a side effect, trainable 100-layer nets exist.",
+      "block_id": "loss_landscape-block-47",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-84",
-      "quote": "As a side effect, trainable 100-layer nets exist.",
+      "quote": "Wider networks have wider basins.",
       "block_id": "loss_landscape-block-48",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-85",
-      "quote": "Wider networks have wider basins.",
-      "block_id": "loss_landscape-block-49",
+      "quote": "Sharpness and generalization error track each other when measured with filter normalization.",
+      "block_id": "loss_landscape-block-48",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-86",
-      "quote": "Sharpness and generalization error track each other when measured with filter normalization.",
+      "quote": "Optimizers are nearly one-dimensional.",
       "block_id": "loss_landscape-block-49",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-87",
-      "quote": "Optimizers are nearly one-dimensional.",
-      "block_id": "loss_landscape-block-50",
+      "quote": "The trajectory lives in a subspace spanned by a handful of PCA directions; the other $10^{10}$ coordinates are nearly constant.",
+      "block_id": "loss_landscape-block-49",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-88",
-      "quote": "The trajectory lives in a subspace spanned by a handful of PCA directions; the other $10^{10}$ coordinates are nearly constant.",
-      "block_id": "loss_landscape-block-50",
+      "quote": "The optimizer sees a noise-smoothed version of the surface, not the raw one, which is why small batches help \\cite{mandt2017variational}.",
+      "block_id": "loss_landscape-block-49",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-89",
-      "quote": "The optimizer sees a noise-smoothed version of the surface, not the raw one, which is why small batches help \\cite{mandt2017variational}.",
+      "quote": "Flat generalizes, sharp memorizes, but only when \"flat/sharp\" is defined by a scale-invariant measure (filter-normalized Hessian, local entropy \\cite{chaudhari2016entropysgd}, or SAM \\cite{foret2021sam}).",
       "block_id": "loss_landscape-block-50",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-90",
-      "quote": "Flat generalizes, sharp memorizes, but only when \"flat/sharp\" is defined by a scale-invariant measure (filter-normalized Hessian, local entropy \\cite{chaudhari2016entropysgd}, or SAM \\cite{foret2021sam}).",
-      "block_id": "loss_landscape-block-51",
+      "quote": "The naive measures are broken by ReLU rescaling.",
+      "block_id": "loss_landscape-block-50",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-91",
-      "quote": "The naive measures are broken by ReLU rescaling.",
+      "quote": "Architecture determines what basins exist.",
       "block_id": "loss_landscape-block-51",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-92",
-      "quote": "Architecture determines what basins exist.",
-      "block_id": "loss_landscape-block-52",
+      "quote": "A plain feedforward net and a ResNet have different loss surfaces over the same data, because they have different reachable weight configurations.",
+      "block_id": "loss_landscape-block-51",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-93",
-      "quote": "A plain feedforward net and a ResNet have different loss surfaces over the same data, because they have different reachable weight configurations.",
-      "block_id": "loss_landscape-block-52",
+      "quote": "Choosing an architecture is choosing which family of basins the optimizer can land in.",
+      "block_id": "loss_landscape-block-51",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-94",
-      "quote": "Choosing an architecture is choosing which family of basins the optimizer can land in.",
+      "quote": "The same basin can be reached by very different paths.",
       "block_id": "loss_landscape-block-52",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-95",
-      "quote": "The same basin can be reached by very different paths.",
-      "block_id": "loss_landscape-block-53",
+      "quote": "SGD, Adam, momentum, and SAM all settle into basins of comparable quality on a given architecture; the regularizer (weight decay) and the noise (mini-batch size) decide which basin wins over long training \\cite{grokking}.",
+      "block_id": "loss_landscape-block-52",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-96",
-      "quote": "SGD, Adam, momentum, and SAM all settle into basins of comparable quality on a given architecture; the regularizer (weight decay) and the noise (mini-batch size) decide which basin wins over long training \\cite{grokking}.",
+      "quote": "The energy-landscape concept in physics is much older — suggested by René Marcelin in 1913 and given its first quantitative potential-energy surface for H + H₂ by Eyring and Polanyi in 1931; \\citeauthor{wales2003energy}'s \\citeyear{wales2003energy} book is a modern synthesis.",
       "block_id": "loss_landscape-block-53",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-97",
-      "quote": "The energy-landscape concept in physics is much older — suggested by René Marcelin in 1913 and given its first quantitative potential-energy surface for H + H₂ by Eyring and Polanyi in 1931; \\citeauthor{wales2003energy}'s \\citeyear{wales2003energy} book is a modern synthesis.",
-      "block_id": "loss_landscape-block-54",
+      "quote": "It was first applied to neural networks by \\citeauthor{hopfield1982} (\\citeyear{hopfield1982}), whose associative-memory networks literally used the energy of a physical spin system as the loss function.",
+      "block_id": "loss_landscape-block-53",
       "section": "Putting it together",
       "kind": "statement"
     },
     {
       "id": "loss_landscape-stmt-98",
-      "quote": "It was first applied to neural networks by \\citeauthor{hopfield1982} (\\citeyear{hopfield1982}), whose associative-memory networks literally used the energy of a physical spin system as the loss function.",
-      "block_id": "loss_landscape-block-54",
-      "section": "Putting it together",
-      "kind": "statement"
-    },
-    {
-      "id": "loss_landscape-stmt-99",
       "quote": "The systematic 2-D visualization that turned the metaphor into a diagnostic tool is \\citeauthor{li2018losslandscape} (\\citeyear{li2018losslandscape}); their `tomgoldstein/loss-landscape` GitHub repo is the de-facto standard for loss-landscape plots today.",
-      "block_id": "loss_landscape-block-54",
+      "block_id": "loss_landscape-block-53",
       "section": "Putting it together",
       "kind": "statement"
     }
@@ -3763,276 +3716,270 @@
     },
     {
       "id": "loss_landscape-block-9",
-      "quote": "Data x (comma-separated): y (comma-separated):",
-      "kind": "paragraph",
-      "section": "See it: walk a 2-D loss landscape"
-    },
-    {
-      "id": "loss_landscape-block-10",
       "quote": "Line (y=2x+1) Line (y=-0.5x-0.8) Parabola (y=x²) Sine",
       "kind": "paragraph",
       "section": "See it: walk a 2-D loss landscape"
     },
     {
-      "id": "loss_landscape-block-11",
+      "id": "loss_landscape-block-10",
       "quote": "Model Activation:",
       "kind": "paragraph",
       "section": "See it: walk a 2-D loss landscape"
     },
     {
-      "id": "loss_landscape-block-12",
+      "id": "loss_landscape-block-11",
       "quote": "Linear ReLU Tanh Sigmoid",
       "kind": "paragraph",
       "section": "See it: walk a 2-D loss landscape"
     },
     {
-      "id": "loss_landscape-block-13",
+      "id": "loss_landscape-block-12",
       "quote": "Optimizers",
       "kind": "paragraph",
       "section": "See it: walk a 2-D loss landscape"
     },
     {
-      "id": "loss_landscape-block-14",
+      "id": "loss_landscape-block-13",
       "quote": "SGD Momentum Adam RMSProp",
       "kind": "paragraph",
       "section": "See it: walk a 2-D loss landscape"
     },
     {
-      "id": "loss_landscape-block-15",
+      "id": "loss_landscape-block-14",
       "quote": "Learning rate:",
       "kind": "paragraph",
       "section": "See it: walk a 2-D loss landscape"
     },
     {
-      "id": "loss_landscape-block-16",
+      "id": "loss_landscape-block-15",
       "quote": "Epochs:",
       "kind": "paragraph",
       "section": "See it: walk a 2-D loss landscape"
     },
     {
-      "id": "loss_landscape-block-17",
+      "id": "loss_landscape-block-16",
       "quote": "Trained models",
       "kind": "paragraph",
       "section": "See it: walk a 2-D loss landscape"
     },
     {
-      "id": "loss_landscape-block-18",
+      "id": "loss_landscape-block-17",
       "quote": "3-D view Isometric Top Front Side Reset drag = rotate · scroll = zoom · shift-drag = pan Log z Linear z",
       "kind": "paragraph",
       "section": "See it: walk a 2-D loss landscape"
     },
     {
-      "id": "loss_landscape-block-19",
+      "id": "loss_landscape-block-18",
       "quote": "Start Stop Ready.",
       "kind": "paragraph",
       "section": "See it: walk a 2-D loss landscape"
     },
     {
-      "id": "loss_landscape-block-20",
+      "id": "loss_landscape-block-19",
       "quote": "Why naive plots of the landscape lie",
       "kind": "heading",
       "section": "Why naive plots of the landscape lie"
     },
     {
-      "id": "loss_landscape-block-21",
+      "id": "loss_landscape-block-20",
       "quote": "The function is identical. The two parameterizations sit at the *same point* on the landscape (same training loss, same outputs), but a plot of $\\mathcal{L}(\\theta + \\alpha\\,d)$ around them looks completely different: one appears \"sharp\", the other \"flat\", at random. \\citeauthor{dinh2017sharpness} (\\citeyear{dinh2017sharpness}) exploited this to build equivalent networks with arbitrarily large \"sharpness\". The standard sharpness measure was broken. BatchNorm \\cite{ioffe2015batchnorm} makes the symmetry even stronger: rescaling any filter by any positive factor leaves the network unchanged.",
       "kind": "paragraph",
       "section": "Why naive plots of the landscape lie"
     },
     {
-      "id": "loss_landscape-block-22",
+      "id": "loss_landscape-block-21",
       "quote": "Non-convexity comes from the non-linearities, not from depth",
       "kind": "heading",
       "section": "Non-convexity comes from the non-linearities, not from depth"
     },
     {
-      "id": "loss_landscape-block-23",
+      "id": "loss_landscape-block-22",
       "quote": "A purely linear deep network, just stacked matrices with no activation function between them, has a loss surface with no spurious local minima at all. Every critical point is either a global minimum or a saddle. \\citeauthor{saxe2014deep} (\\citeyear{saxe2014deep}) showed this analytically for deep linear networks; \\citeauthor{kawaguchi2016deep} (\\citeyear{kawaguchi2016deep}) extended the result to deep nonlinear networks.",
       "kind": "paragraph",
       "section": "Non-convexity comes from the non-linearities, not from depth"
     },
     {
-      "id": "loss_landscape-block-24",
+      "id": "loss_landscape-block-23",
       "quote": "So where does the non-convexity of real networks come from? From the activation functions. ReLU, sigmoid, GELU: every nonlinearity bends the function and creates the possibility of bad local minima. Depth alone is harmless. This is why residual connections help so much: each residual block is asked to learn only a small adjustment to the running state, so the overall transformation stays close to linear, and the loss surface stays well-behaved. \\citeauthor{lu2017expressive} (\\citeyear{lu2017expressive}) reviews the broader picture.",
       "kind": "paragraph",
       "section": "Non-convexity comes from the non-linearities, not from depth"
     },
     {
-      "id": "loss_landscape-block-25",
+      "id": "loss_landscape-block-24",
       "quote": "Saddles outnumber minima in high dimensions",
       "kind": "heading",
       "section": "Saddles outnumber minima in high dimensions"
     },
     {
-      "id": "loss_landscape-block-26",
+      "id": "loss_landscape-block-25",
       "quote": "For a long time, the worry was that local minima would trap gradient descent. \\citeauthor{dauphin2014saddle} (\\citeyear{dauphin2014saddle}) showed this worry is mostly backwards. In a high-dimensional non-convex function:",
       "kind": "paragraph",
       "section": "Saddles outnumber minima in high dimensions"
     },
     {
-      "id": "loss_landscape-block-27",
+      "id": "loss_landscape-block-26",
       "quote": "Sharp minima, flat minima, and the oldest debate in deep learning",
       "kind": "heading",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning"
     },
     {
-      "id": "loss_landscape-block-28",
+      "id": "loss_landscape-block-27",
       "quote": "The intuition is old: a minimum inside a wide, flat basin should generalize, because small perturbations of $\\theta$ keep the loss low. A narrow, sharp minimum memorizes the training set but blows up on test.",
       "kind": "paragraph",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning"
     },
     {
-      "id": "loss_landscape-block-29",
+      "id": "loss_landscape-block-28",
       "quote": "\\citetitle{keskar2016largebatch} (\\citeyear{keskar2016largebatch}) sharpened this empirically: large-batch SGD finds sharper minima than small-batch SGD, and the sharp-minimum runs generalize *worse* on CIFAR-10, CIFAR-100, MNIST, and TIMIT. The story is not so clean once \\citeauthor{dinh2017sharpness} (\\citeyear{dinh2017sharpness}) is added. Because of the ReLU and BatchNorm rescaling symmetry above, every sharp minimum can be reparameterized into an equivalent flat one. \"Sharp\" was not a property of the minimum. It was an artifact of the parameterization. \\citeauthor{smithle2018bayesian} (\\citeyear{smithle2018bayesian}) reframed SGD as approximate Bayesian inference: small-batch noise is not a bug but a prior that biases the trajectory toward wide valleys.",
       "kind": "paragraph",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning"
     },
     {
-      "id": "loss_landscape-block-30",
+      "id": "loss_landscape-block-29",
       "quote": "The live descendants of this debate are **Sharpness-Aware Minimization** \\cite{foret2021sam}, which explicitly adds a \"be flat\" penalty to the loss. Too flat, and the gradient signal vanishes; too sharp, and the optimizer oscillates. SAM works because the loss depends on the data and parameters; a step that is locally flat on the training set may not be flat on the test set, so SAM evaluates the loss at a small perturbation around the current point and descends from there.",
       "kind": "paragraph",
       "section": "Sharp minima, flat minima, and the oldest debate in deep learning"
     },
     {
-      "id": "loss_landscape-block-31",
+      "id": "loss_landscape-block-30",
       "quote": "Skip connections reshape the landscape",
       "kind": "heading",
       "section": "Skip connections reshape the landscape"
     },
     {
-      "id": "loss_landscape-block-32",
+      "id": "loss_landscape-block-31",
       "quote": "The two surface plots at the top of this chapter are the same architecture, ResNet-56 on CIFAR-10, trained the same way. The only difference is whether the residual connections are present. With them, the landscape is a single smooth basin. Without them, the landscape is chaotic, full of competing peaks, and the test error roughly *doubles*.",
       "kind": "paragraph",
       "section": "Skip connections reshape the landscape"
     },
     {
-      "id": "loss_landscape-block-33",
+      "id": "loss_landscape-block-32",
       "quote": "The mechanism is concrete. A residual block computes",
       "kind": "paragraph",
       "section": "Skip connections reshape the landscape"
     },
     {
-      "id": "loss_landscape-block-34",
+      "id": "loss_landscape-block-33",
       "quote": "\\citetitle{li2018losslandscape}'s contribution was to see the consequence on the landscape. A 110-layer ResNet and a 20-layer ResNet have nearly the same low-loss contour width when skip connections are present. Without skips, the 110-layer net can still be trained (to ~16% test error on CIFAR-10), but its basin is far sharper and less usable — and a 156-layer net without skips does not train at all. The skip connection does not just help optimization. It changes the geometry of the surface the optimizer walks on.",
       "kind": "paragraph",
       "section": "Skip connections reshape the landscape"
     },
     {
-      "id": "loss_landscape-block-35",
+      "id": "loss_landscape-block-34",
       "quote": "Wide networks have flatter landscapes",
       "kind": "heading",
       "section": "Wide networks have flatter landscapes"
     },
     {
-      "id": "loss_landscape-block-36",
+      "id": "loss_landscape-block-35",
       "quote": "Minima are connected by flat paths",
       "kind": "heading",
       "section": "Minima are connected by flat paths"
     },
     {
-      "id": "loss_landscape-block-37",
+      "id": "loss_landscape-block-36",
       "quote": "Train two ResNets independently on CIFAR-10 from different random initializations. They land in *different* minima, with different test errors and different predictions on hard examples. Now draw a straight line between them in weight space and plot the loss along the line. \\citeauthor{garipov2018mode} (\\citeyear{garipov2018mode}) showed that the loss along this straight line is *high* — the two minima are separated by a barrier — but that with a small bend in the line (a \"polygonal chain\"), every point along the curved path has nearly training-set error. The minima are *mode-connected*: not by a straight valley, but by a low-loss curved path.",
       "kind": "paragraph",
       "section": "Minima are connected by flat paths"
     },
     {
-      "id": "loss_landscape-block-38",
+      "id": "loss_landscape-block-37",
       "quote": "The set of well-performing weights is connected. The landscape is one big basin, full of curvature ripples and small ridges but without barriers. This is also why \"model ensembling\", averaging several independently-trained nets, works so well: every ensemble member is somewhere along this single low-loss manifold, and their disagreements are just different local orientations.",
       "kind": "paragraph",
       "section": "Minima are connected by flat paths"
     },
     {
-      "id": "loss_landscape-block-39",
+      "id": "loss_landscape-block-38",
       "quote": "Grokking: the optimizer slowly switches basins",
       "kind": "heading",
       "section": "Grokking: the optimizer slowly switches basins"
     },
     {
-      "id": "loss_landscape-block-40",
+      "id": "loss_landscape-block-39",
       "quote": "This shows two things about the landscape. First, the same initialization sits inside the catchment of many basins, some sharp, some flat, with barriers between them. Second, weight decay (the only thing distinguishing the two basins in this experiment) is what biases the long-time trajectory toward the flat basin. The geometry is fixed; the optimizer's path through it is shaped by regularizers.",
       "kind": "paragraph",
       "section": "Grokking: the optimizer slowly switches basins"
     },
     {
-      "id": "loss_landscape-block-41",
+      "id": "loss_landscape-block-40",
       "quote": "The \"one big valley\" claim needs a caveat. Swap two neurons in any hidden layer and the network computes exactly the same function, but its position in weight space changes by a large distance. This permutation symmetry means every \"true\" minimum corresponds to an astronomical number of equivalent positions in raw weight space. A 50-layer net with 256 neurons per layer has roughly $(256!)^{50}$ equivalent positions for each minimum, more than the number of atoms in the observable universe. The landscape is full of copies of the same minimum, scattered across weight space like reflections in a hall of mirrors.",
       "kind": "paragraph",
       "section": "Grokking: the optimizer slowly switches basins"
     },
     {
-      "id": "loss_landscape-block-42",
+      "id": "loss_landscape-block-41",
       "quote": "This is why a raw straight-line interpolation between two independently trained networks is high-loss: without accounting for the copies, the line passes through garbage (random mismatches between equivalent copies), not through the low-loss valley. \\citeauthor{garipov2018mode} (\\citeyear{garipov2018mode}) sidestepped this by searching for a low-loss *curved* path between the two minima; aligning permutations is a later technique for testing *linear* mode connectivity. The \"one connected valley\" claim is true in the symmetry-reduced parameter space, where equivalent copies are identified as the same point. In raw parameter space the same statement is false; the same minimum has many disconnected copies. \\citeauthor{amit1989modeling} (\\citeyear{amit1989modeling}) reviews the broader symmetry structure of neural-network landscapes.",
       "kind": "paragraph",
       "section": "Grokking: the optimizer slowly switches basins"
     },
     {
-      "id": "loss_landscape-block-43",
+      "id": "loss_landscape-block-42",
       "quote": "SGD travels in an almost one-dimensional subspace",
       "kind": "heading",
       "section": "SGD travels in an almost one-dimensional subspace"
     },
     {
-      "id": "loss_landscape-block-44",
+      "id": "loss_landscape-block-43",
       "quote": "PCA on the iterates $\\theta_0, \\theta_1, \\ldots, \\theta_T$ recovers what is actually happening. For both SGD and Adam on VGG-9, the first **two** PCA directions capture between **40% and 90%** of the variation in the descent path; the remaining directions are nearly silent. Gradient descent is effectively low-dimensional.",
       "kind": "paragraph",
       "section": "SGD travels in an almost one-dimensional subspace"
     },
     {
-      "id": "loss_landscape-block-45",
+      "id": "loss_landscape-block-44",
       "quote": "Putting it together",
       "kind": "heading",
       "section": "Putting it together"
     },
     {
-      "id": "loss_landscape-block-46",
+      "id": "loss_landscape-block-45",
       "quote": "The picture that survives the most careful empirical work \\cite{li2018losslandscape,garipov2018mode,choromanska2015loss} is roughly this:",
       "kind": "paragraph",
       "section": "Putting it together"
     },
     {
-      "id": "loss_landscape-block-47",
+      "id": "loss_landscape-block-46",
       "quote": "1. The landscape is one connected valley. Local minima are exponentially rare. Saddles dominate but are easy to escape with stochastic noise. Independent runs find different points, all connected by low-loss paths (once permutation symmetries are factored out).",
       "kind": "list-item",
       "section": "Putting it together"
     },
     {
-      "id": "loss_landscape-block-48",
+      "id": "loss_landscape-block-47",
       "quote": "2. Skip connections reshape the topology. They replace chaotic multi-basin terrain with one smooth basin. As a side effect, trainable 100-layer nets exist.",
       "kind": "list-item",
       "section": "Putting it together"
     },
     {
-      "id": "loss_landscape-block-49",
+      "id": "loss_landscape-block-48",
       "quote": "3. Width flattens. Wider networks have wider basins. Sharpness and generalization error track each other when measured with filter normalization.",
       "kind": "list-item",
       "section": "Putting it together"
     },
     {
-      "id": "loss_landscape-block-50",
+      "id": "loss_landscape-block-49",
       "quote": "4. Optimizers are nearly one-dimensional. The trajectory lives in a subspace spanned by a handful of PCA directions; the other $10^{10}$ coordinates are nearly constant. The optimizer sees a noise-smoothed version of the surface, not the raw one, which is why small batches help \\cite{mandt2017variational}.",
       "kind": "list-item",
       "section": "Putting it together"
     },
     {
-      "id": "loss_landscape-block-51",
+      "id": "loss_landscape-block-50",
       "quote": "5. Flat generalizes, sharp memorizes, but only when \"flat/sharp\" is defined by a scale-invariant measure (filter-normalized Hessian, local entropy \\cite{chaudhari2016entropysgd}, or SAM \\cite{foret2021sam}). The naive measures are broken by ReLU rescaling.",
       "kind": "list-item",
       "section": "Putting it together"
     },
     {
-      "id": "loss_landscape-block-52",
+      "id": "loss_landscape-block-51",
       "quote": "6. Architecture determines what basins exist. A plain feedforward net and a ResNet have different loss surfaces over the same data, because they have different reachable weight configurations. Choosing an architecture is choosing which family of basins the optimizer can land in.",
       "kind": "list-item",
       "section": "Putting it together"
     },
     {
-      "id": "loss_landscape-block-53",
+      "id": "loss_landscape-block-52",
       "quote": "7. The same basin can be reached by very different paths. SGD, Adam, momentum, and SAM all settle into basins of comparable quality on a given architecture; the regularizer (weight decay) and the noise (mini-batch size) decide which basin wins over long training \\cite{grokking}.",
       "kind": "list-item",
       "section": "Putting it together"
     },
     {
-      "id": "loss_landscape-block-54",
+      "id": "loss_landscape-block-53",
       "quote": "The energy-landscape concept in physics is much older — suggested by René Marcelin in 1913 and given its first quantitative potential-energy surface for H + H₂ by Eyring and Polanyi in 1931; \\citeauthor{wales2003energy}'s \\citeyear{wales2003energy} book is a modern synthesis. It was first applied to neural networks by \\citeauthor{hopfield1982} (\\citeyear{hopfield1982}), whose associative-memory networks literally used the energy of a physical spin system as the loss function. The systematic 2-D visualization that turned the metaphor into a diagnostic tool is \\citeauthor{li2018losslandscape} (\\citeyear{li2018losslandscape}); their `tomgoldstein/loss-landscape` GitHub repo is the de-facto standard for loss-landscape plots today.",
       "kind": "paragraph",
       "section": "Putting it together"

@@ -751,6 +751,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-intro-block-18-related_to-intro-block-15",
+      "from": "intro-block-18",
+      "to": "intro-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-intro-block-19-part_of-intro",
       "from": "intro-block-19",
       "to": "intro",
@@ -765,16 +775,6 @@
       "from": "intro-block-18",
       "to": "intro-block-19",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intro-block-19-related_to-intro-block-18",
-      "from": "intro-block-19",
-      "to": "intro-block-18",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -801,9 +801,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-block-20-related_to-intro-block-18",
+      "id": "struct-intro-block-20-related_to-intro-block-19",
       "from": "intro-block-20",
-      "to": "intro-block-18",
+      "to": "intro-block-19",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -831,6 +831,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-intro-block-21-related_to-intro-block-19",
+      "from": "intro-block-21",
+      "to": "intro-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-intro-block-22-part_of-intro",
       "from": "intro-block-22",
       "to": "intro",
@@ -845,16 +855,6 @@
       "from": "intro-block-21",
       "to": "intro-block-22",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intro-block-22-related_to-intro-block-21",
-      "from": "intro-block-22",
-      "to": "intro-block-21",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -881,9 +881,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-block-23-related_to-intro-block-21",
+      "id": "struct-intro-block-23-related_to-intro-block-22",
       "from": "intro-block-23",
-      "to": "intro-block-21",
+      "to": "intro-block-22",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -911,6 +911,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-intro-block-24-related_to-intro-block-22",
+      "from": "intro-block-24",
+      "to": "intro-block-22",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-intro-block-25-part_of-intro",
       "from": "intro-block-25",
       "to": "intro",
@@ -925,16 +935,6 @@
       "from": "intro-block-24",
       "to": "intro-block-25",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intro-block-25-related_to-intro-block-24",
-      "from": "intro-block-25",
-      "to": "intro-block-24",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -961,6 +961,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-intro-block-26-related_to-intro-block-25",
+      "from": "intro-block-26",
+      "to": "intro-block-25",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-intro-block-27-part_of-intro",
       "from": "intro-block-27",
       "to": "intro",
@@ -981,9 +991,29 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-block-27-related_to-intro-block-26",
+      "id": "struct-intro-block-28-part_of-intro",
+      "from": "intro-block-28",
+      "to": "intro",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-27-before-intro-block-28",
       "from": "intro-block-27",
-      "to": "intro-block-26",
+      "to": "intro-block-28",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-block-28-related_to-intro-block-27",
+      "from": "intro-block-28",
+      "to": "intro-block-27",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1231,9 +1261,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-stmt-25-part_of-intro-block-17",
+      "id": "struct-intro-stmt-25-part_of-intro-block-16",
       "from": "intro-stmt-25",
-      "to": "intro-block-17",
+      "to": "intro-block-16",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1241,9 +1271,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-stmt-26-part_of-intro-block-17",
+      "id": "struct-intro-stmt-26-part_of-intro-block-16",
       "from": "intro-stmt-26",
-      "to": "intro-block-17",
+      "to": "intro-block-16",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1251,8 +1281,28 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-stmt-27-part_of-intro-block-17",
+      "id": "struct-intro-stmt-27-part_of-intro-block-16",
       "from": "intro-stmt-27",
+      "to": "intro-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-28-part_of-intro-block-16",
+      "from": "intro-stmt-28",
+      "to": "intro-block-16",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-29-part_of-intro-block-17",
+      "from": "intro-stmt-29",
       "to": "intro-block-17",
       "kind": "part_of",
       "qualifiers": {},
@@ -1261,9 +1311,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-stmt-28-part_of-intro-block-19",
-      "from": "intro-stmt-28",
-      "to": "intro-block-19",
+      "id": "struct-intro-stmt-30-part_of-intro-block-18",
+      "from": "intro-stmt-30",
+      "to": "intro-block-18",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1271,8 +1321,28 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-stmt-29-part_of-intro-block-20",
-      "from": "intro-stmt-29",
+      "id": "struct-intro-stmt-31-part_of-intro-block-18",
+      "from": "intro-stmt-31",
+      "to": "intro-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-32-part_of-intro-block-18",
+      "from": "intro-stmt-32",
+      "to": "intro-block-18",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-33-part_of-intro-block-20",
+      "from": "intro-stmt-33",
       "to": "intro-block-20",
       "kind": "part_of",
       "qualifiers": {},
@@ -1281,9 +1351,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-stmt-30-part_of-intro-block-22",
-      "from": "intro-stmt-30",
-      "to": "intro-block-22",
+      "id": "struct-intro-stmt-34-part_of-intro-block-21",
+      "from": "intro-stmt-34",
+      "to": "intro-block-21",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1291,8 +1361,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-stmt-31-part_of-intro-block-23",
-      "from": "intro-stmt-31",
+      "id": "struct-intro-stmt-35-part_of-intro-block-23",
+      "from": "intro-stmt-35",
       "to": "intro-block-23",
       "kind": "part_of",
       "qualifiers": {},
@@ -1301,9 +1371,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-stmt-32-part_of-intro-block-25",
-      "from": "intro-stmt-32",
-      "to": "intro-block-25",
+      "id": "struct-intro-stmt-36-part_of-intro-block-24",
+      "from": "intro-stmt-36",
+      "to": "intro-block-24",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1311,9 +1381,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-stmt-33-part_of-intro-block-25",
-      "from": "intro-stmt-33",
-      "to": "intro-block-25",
+      "id": "struct-intro-stmt-37-part_of-intro-block-26",
+      "from": "intro-stmt-37",
+      "to": "intro-block-26",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1321,9 +1391,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-stmt-34-part_of-intro-block-27",
-      "from": "intro-stmt-34",
-      "to": "intro-block-27",
+      "id": "struct-intro-stmt-38-part_of-intro-block-26",
+      "from": "intro-stmt-38",
+      "to": "intro-block-26",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1331,9 +1401,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intro-stmt-35-part_of-intro-block-27",
-      "from": "intro-stmt-35",
-      "to": "intro-block-27",
+      "id": "struct-intro-stmt-39-part_of-intro-block-28",
+      "from": "intro-stmt-39",
+      "to": "intro-block-28",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intro-stmt-40-part_of-intro-block-28",
+      "from": "intro-stmt-40",
+      "to": "intro-block-28",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1505,85 +1585,120 @@
     },
     {
       "id": "intro-stmt-24",
-      "quote": "The fastest start: pick the type you're most like, or open the detailed settings and tune every topic by hand:",
+      "quote": "This course is too long to consume in one shape, so it adapts to **you**.",
       "block_id": "intro-block-16",
       "section": "A Course That Adapts to You",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-25",
-      "quote": "Toggle individual topics to fine-tune (click several at once — it's pure set logic, and the page reacts live).",
-      "block_id": "intro-block-17",
+      "quote": "Look for the <circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\"/> button top-right and pick your *profile* (Curious / Student / Engineer / Researcher) and *level* (High School / Undergrad / Grad / PhD); each combination loads a curated topic set.",
+      "block_id": "intro-block-16",
       "section": "A Course That Adapts to You",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-26",
-      "quote": "The **tone** chips switch off whatever feels heavy in one click; sections that no longer match recede behind a soft banner that tells you *why*, partially-matching ones fade back but stay readable, and home-page tiles dim in step so you can always see what exists.",
-      "block_id": "intro-block-17",
+      "quote": "**Math is split into Math I / II / III** and **Statistics into Stats I / II**, so a high-school reader is never shoved into graduate-level integrals.",
+      "block_id": "intro-block-16",
       "section": "A Course That Adapts to You",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-27",
-      "quote": "Your choices are saved in a cookie and survive reloads.",
-      "block_id": "intro-block-17",
+      "quote": "If you identify more with *being* a certain kind of reader than with what you do, the picker also offers the **classic types** — the mathematician who wants the math but not the history, the builder, the historian, the philosopher — and, if you refuse to skip anything, the **polymath**, who loads everything.",
+      "block_id": "intro-block-16",
       "section": "A Course That Adapts to You",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-28",
-      "quote": "By the time you reach the end of this journey, you will have moved from basic arithmetic to a deep technical understanding of modern Large Language Models.",
-      "block_id": "intro-block-19",
-      "section": "What You Will Achieve",
+      "quote": "You can also choose how *heavy* to go: **tone** dials mute the dense math, formal logic, linguistics, or code, and **interested layman** mode keeps only the accessible, jargon-free core.",
+      "block_id": "intro-block-16",
+      "section": "A Course That Adapts to You",
       "kind": "statement"
     },
     {
       "id": "intro-stmt-29",
-      "quote": "You will see that AI is not a sudden magic invention, but the technical and philosophical culmination of centuries of human inquiry.",
+      "quote": "The fastest start: pick the type you're most like, or open the detailed settings and tune every topic by hand:",
+      "block_id": "intro-block-17",
+      "section": "A Course That Adapts to You",
+      "kind": "statement"
+    },
+    {
+      "id": "intro-stmt-30",
+      "quote": "Toggle individual topics to fine-tune (click several at once — it's pure set logic, and the page reacts live).",
+      "block_id": "intro-block-18",
+      "section": "A Course That Adapts to You",
+      "kind": "statement"
+    },
+    {
+      "id": "intro-stmt-31",
+      "quote": "The **tone** chips switch off whatever feels heavy in one click; sections that no longer match recede behind a soft banner that tells you *why*, partially-matching ones fade back but stay readable, and home-page tiles dim in step so you can always see what exists.",
+      "block_id": "intro-block-18",
+      "section": "A Course That Adapts to You",
+      "kind": "statement"
+    },
+    {
+      "id": "intro-stmt-32",
+      "quote": "Your choices are saved in a cookie and survive reloads.",
+      "block_id": "intro-block-18",
+      "section": "A Course That Adapts to You",
+      "kind": "statement"
+    },
+    {
+      "id": "intro-stmt-33",
+      "quote": "By the time you reach the end of this journey, you will have moved from basic arithmetic to a deep technical understanding of modern Large Language Models.",
       "block_id": "intro-block-20",
       "section": "What You Will Achieve",
       "kind": "statement"
     },
     {
-      "id": "intro-stmt-30",
-      "quote": "To truly grasp the nature of Artificial Intelligence, I will move through various levels of abstraction, much like the framework described by \\citeauthor{hayakawa} — and I will train myself to climb up and down this \"ladder\" fluently:",
-      "block_id": "intro-block-22",
-      "section": "Navigating the Ladder of Abstraction",
+      "id": "intro-stmt-34",
+      "quote": "You will see that AI is not a sudden magic invention, but the technical and philosophical culmination of centuries of human inquiry.",
+      "block_id": "intro-block-21",
+      "section": "What You Will Achieve",
       "kind": "statement"
     },
     {
-      "id": "intro-stmt-31",
-      "quote": "This text is designed to carry you through those shifts: I constantly move from a philosophical \"why\" down to a mathematical \"how\", keeping even the most abstract concepts tied to concrete reality.",
+      "id": "intro-stmt-35",
+      "quote": "To truly grasp the nature of Artificial Intelligence, I will move through various levels of abstraction, much like the framework described by \\citeauthor{hayakawa} — and I will train myself to climb up and down this \"ladder\" fluently:",
       "block_id": "intro-block-23",
       "section": "Navigating the Ladder of Abstraction",
       "kind": "statement"
     },
     {
-      "id": "intro-stmt-32",
+      "id": "intro-stmt-36",
+      "quote": "This text is designed to carry you through those shifts: I constantly move from a philosophical \"why\" down to a mathematical \"how\", keeping even the most abstract concepts tied to concrete reality.",
+      "block_id": "intro-block-24",
+      "section": "Navigating the Ladder of Abstraction",
+      "kind": "statement"
+    },
+    {
+      "id": "intro-stmt-37",
       "quote": "This interactive textbook was built with the help of Google Gemini, Claude, ChatGPT and other LLM systems.",
-      "block_id": "intro-block-25",
+      "block_id": "intro-block-26",
       "section": "Disclaimer",
       "kind": "statement"
     },
     {
-      "id": "intro-stmt-33",
+      "id": "intro-stmt-38",
       "quote": "I've done my best to verify the code and info, but please double-check before using it in production.",
-      "block_id": "intro-block-25",
+      "block_id": "intro-block-26",
       "section": "Disclaimer",
       "kind": "statement"
     },
     {
-      "id": "intro-stmt-34",
+      "id": "intro-stmt-39",
       "quote": "Please report errors to my email .",
-      "block_id": "intro-block-27",
+      "block_id": "intro-block-28",
       "section": "Please report Errors!",
       "kind": "statement"
     },
     {
-      "id": "intro-stmt-35",
+      "id": "intro-stmt-40",
       "quote": "I try my best to keep this site as factually correct as possible, but I may get things wrong or incomplete — so I am happy to get any feedback.",
-      "block_id": "intro-block-27",
+      "block_id": "intro-block-28",
       "section": "Please report Errors!",
       "kind": "statement"
     }
@@ -1681,72 +1796,78 @@
     },
     {
       "id": "intro-block-16",
-      "quote": "The fastest start: pick the type you're most like, or open the detailed settings and tune every topic by hand:",
+      "quote": "This course is too long to consume in one shape, so it adapts to **you**. Look for the <circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\"/> button top-right and pick your *profile* (Curious / Student / Engineer / Researcher) and *level* (High School / Undergrad / Grad / PhD); each combination loads a curated topic set. **Math is split into Math I / II / III** and **Statistics into Stats I / II**, so a high-school reader is never shoved into graduate-level integrals. If you identify more with *being* a certain kind of reader than with what you do, the picker also offers the **classic types** — the mathematician who wants the math but not the history, the builder, the historian, the philosopher — and, if you refuse to skip anything, the **polymath**, who loads everything. You can also choose how *heavy* to go: **tone** dials mute the dense math, formal logic, linguistics, or code, and **interested layman** mode keeps only the accessible, jargon-free core.",
       "kind": "paragraph",
       "section": "A Course That Adapts to You"
     },
     {
       "id": "intro-block-17",
-      "quote": "Toggle individual topics to fine-tune (click several at once — it's pure set logic, and the page reacts live). The **tone** chips switch off whatever feels heavy in one click; sections that no longer match recede behind a soft banner that tells you *why*, partially-matching ones fade back but stay readable, and home-page tiles dim in step so you can always see what exists. Your choices are saved in a cookie and survive reloads.",
+      "quote": "The fastest start: pick the type you're most like, or open the detailed settings and tune every topic by hand:",
       "kind": "paragraph",
       "section": "A Course That Adapts to You"
     },
     {
       "id": "intro-block-18",
+      "quote": "Toggle individual topics to fine-tune (click several at once — it's pure set logic, and the page reacts live). The **tone** chips switch off whatever feels heavy in one click; sections that no longer match recede behind a soft banner that tells you *why*, partially-matching ones fade back but stay readable, and home-page tiles dim in step so you can always see what exists. Your choices are saved in a cookie and survive reloads.",
+      "kind": "paragraph",
+      "section": "A Course That Adapts to You"
+    },
+    {
+      "id": "intro-block-19",
       "quote": "What You Will Achieve",
       "kind": "heading",
       "section": "What You Will Achieve"
     },
     {
-      "id": "intro-block-19",
+      "id": "intro-block-20",
       "quote": "By the time you reach the end of this journey, you will have moved from basic arithmetic to a deep technical understanding of modern Large Language Models. You will be able to:",
       "kind": "paragraph",
       "section": "What You Will Achieve"
     },
     {
-      "id": "intro-block-20",
+      "id": "intro-block-21",
       "quote": "You will see that AI is not a sudden magic invention, but the technical and philosophical culmination of centuries of human inquiry.",
       "kind": "paragraph",
       "section": "What You Will Achieve"
     },
     {
-      "id": "intro-block-21",
+      "id": "intro-block-22",
       "quote": "Navigating the Ladder of Abstraction",
       "kind": "heading",
       "section": "Navigating the Ladder of Abstraction"
     },
     {
-      "id": "intro-block-22",
+      "id": "intro-block-23",
       "quote": "To truly grasp the nature of Artificial Intelligence, I will move through various levels of abstraction, much like the framework described by \\citeauthor{hayakawa} — and I will train myself to climb up and down this \"ladder\" fluently:",
       "kind": "paragraph",
       "section": "Navigating the Ladder of Abstraction"
     },
     {
-      "id": "intro-block-23",
+      "id": "intro-block-24",
       "quote": "This text is designed to carry you through those shifts: I constantly move from a philosophical \"why\" down to a mathematical \"how\", keeping even the most abstract concepts tied to concrete reality.",
       "kind": "paragraph",
       "section": "Navigating the Ladder of Abstraction"
     },
     {
-      "id": "intro-block-24",
+      "id": "intro-block-25",
       "quote": "Disclaimer",
       "kind": "heading",
       "section": "Disclaimer"
     },
     {
-      "id": "intro-block-25",
+      "id": "intro-block-26",
       "quote": "This interactive textbook was built with the help of Google Gemini, Claude, ChatGPT and other LLM systems. I've done my best to verify the code and info, but please double-check before using it in production.",
       "kind": "paragraph",
       "section": "Disclaimer"
     },
     {
-      "id": "intro-block-26",
+      "id": "intro-block-27",
       "quote": "Please report Errors!",
       "kind": "heading",
       "section": "Please report Errors!"
     },
     {
-      "id": "intro-block-27",
+      "id": "intro-block-28",
       "quote": "Please report errors to my email . I try my best to keep this site as factually correct as possible, but I may get things wrong or incomplete — so I am happy to get any feedback.",
       "kind": "paragraph",
       "section": "Please report Errors!"

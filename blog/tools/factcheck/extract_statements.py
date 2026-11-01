@@ -25,7 +25,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from facts_lib import canon_subject, lesson_files, save_json, strip_html_tags  # noqa: E402
+from facts_lib import canon_subject, lesson_files, normalize_source, save_json, strip_html_tags  # noqa: E402
 
 HEADING_RE = re.compile(r"^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$")
 LIST_RE = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+")
@@ -88,8 +88,10 @@ def prose_blocks(text: str):
             continue
         if re.search(r"\$[A-Za-z_]|strpos\(|preg_match\(|=>|->|<\?", line):
             continue
-        if re.search(r"<[A-Za-z/]|on[a-z]+=|(?:class|id|style|value|placeholder)=", line):
+        if re.search(r"on[a-z]+=|(?:class|id|style|value|placeholder)=", line):
             continue
+        if re.match(r"^[a-z-]+\s*:\s*.+;$", line):
+            continue  # CSS declarations from inline widgets
         if re.match(r"^\|?\s*:?-{3,}", line):
             continue
         heading = HEADING_RE.match(line)
@@ -112,9 +114,16 @@ def build(slug: str, path: Path) -> tuple[list[dict], list[dict]]:
     statements: list[dict] = []
     seen_blocks = set()
     seen_statements = set()
-    for section, kind, quote in prose_blocks(path.read_text(encoding="utf-8")):
+    raw = path.read_text(encoding="utf-8")
+    norm_source = normalize_source(raw)
+    for section, kind, quote in prose_blocks(raw):
         if not quote or quote in seen_blocks:
             continue
+        if quote not in norm_source:
+            normalized = normalize_source(quote)
+            if normalized not in norm_source:
+                continue
+            quote = normalized
         seen_blocks.add(quote)
         block_id = f"{slug}-block-{len(blocks) + 1}"
         blocks.append({"id": block_id, "quote": quote, "kind": kind, "section": section})
@@ -123,6 +132,11 @@ def build(slug: str, path: Path) -> tuple[list[dict], list[dict]]:
         for sentence in _split_sentences(quote):
             if sentence in seen_statements:
                 continue
+            if sentence not in norm_source:
+                normalized = normalize_source(sentence)
+                if normalized not in norm_source:
+                    continue
+                sentence = normalized
             seen_statements.add(sentence)
             statements.append({
                 "id": f"{slug}-stmt-{len(statements) + 1}",

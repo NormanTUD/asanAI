@@ -1305,16 +1305,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-31-related_to-overandunderfittinglab-block-20",
-      "from": "overandunderfittinglab-block-31",
-      "to": "overandunderfittinglab-block-20",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-overandunderfittinglab-block-32-part_of-overandunderfittinglab",
       "from": "overandunderfittinglab-block-32",
       "to": "overandunderfittinglab",
@@ -1335,9 +1325,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-32-related_to-overandunderfittinglab-block-20",
+      "id": "struct-overandunderfittinglab-block-32-related_to-overandunderfittinglab-block-31",
       "from": "overandunderfittinglab-block-32",
-      "to": "overandunderfittinglab-block-20",
+      "to": "overandunderfittinglab-block-31",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1365,9 +1355,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-33-related_to-overandunderfittinglab-block-20",
+      "id": "struct-overandunderfittinglab-block-33-related_to-overandunderfittinglab-block-31",
       "from": "overandunderfittinglab-block-33",
-      "to": "overandunderfittinglab-block-20",
+      "to": "overandunderfittinglab-block-31",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1395,6 +1385,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-overandunderfittinglab-block-34-related_to-overandunderfittinglab-block-31",
+      "from": "overandunderfittinglab-block-34",
+      "to": "overandunderfittinglab-block-31",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-overandunderfittinglab-block-35-part_of-overandunderfittinglab",
       "from": "overandunderfittinglab-block-35",
       "to": "overandunderfittinglab",
@@ -1415,9 +1415,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-35-related_to-overandunderfittinglab-block-34",
+      "id": "struct-overandunderfittinglab-block-35-related_to-overandunderfittinglab-block-31",
       "from": "overandunderfittinglab-block-35",
-      "to": "overandunderfittinglab-block-34",
+      "to": "overandunderfittinglab-block-31",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1445,9 +1445,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-36-related_to-overandunderfittinglab-block-34",
+      "id": "struct-overandunderfittinglab-block-36-related_to-overandunderfittinglab-block-31",
       "from": "overandunderfittinglab-block-36",
-      "to": "overandunderfittinglab-block-34",
+      "to": "overandunderfittinglab-block-31",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1475,16 +1475,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-37-related_to-overandunderfittinglab-block-34",
-      "from": "overandunderfittinglab-block-37",
-      "to": "overandunderfittinglab-block-34",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-overandunderfittinglab-block-38-part_of-overandunderfittinglab",
       "from": "overandunderfittinglab-block-38",
       "to": "overandunderfittinglab",
@@ -1499,16 +1489,6 @@
       "from": "overandunderfittinglab-block-37",
       "to": "overandunderfittinglab-block-38",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-block-38-related_to-overandunderfittinglab-block-34",
-      "from": "overandunderfittinglab-block-38",
-      "to": "overandunderfittinglab-block-34",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1535,9 +1515,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-39-related_to-overandunderfittinglab-block-34",
+      "id": "struct-overandunderfittinglab-block-39-related_to-overandunderfittinglab-block-38",
       "from": "overandunderfittinglab-block-39",
-      "to": "overandunderfittinglab-block-34",
+      "to": "overandunderfittinglab-block-38",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1585,6 +1565,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-overandunderfittinglab-block-41-related_to-overandunderfittinglab-block-40",
+      "from": "overandunderfittinglab-block-41",
+      "to": "overandunderfittinglab-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-overandunderfittinglab-block-42-part_of-overandunderfittinglab",
       "from": "overandunderfittinglab-block-42",
       "to": "overandunderfittinglab",
@@ -1605,9 +1595,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-42-related_to-overandunderfittinglab-block-41",
+      "id": "struct-overandunderfittinglab-block-42-related_to-overandunderfittinglab-block-40",
       "from": "overandunderfittinglab-block-42",
-      "to": "overandunderfittinglab-block-41",
+      "to": "overandunderfittinglab-block-40",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1635,6 +1625,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-overandunderfittinglab-block-43-related_to-overandunderfittinglab-block-40",
+      "from": "overandunderfittinglab-block-43",
+      "to": "overandunderfittinglab-block-40",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-overandunderfittinglab-block-44-part_of-overandunderfittinglab",
       "from": "overandunderfittinglab-block-44",
       "to": "overandunderfittinglab",
@@ -1655,9 +1655,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-44-related_to-overandunderfittinglab-block-43",
+      "id": "struct-overandunderfittinglab-block-44-related_to-overandunderfittinglab-block-40",
       "from": "overandunderfittinglab-block-44",
-      "to": "overandunderfittinglab-block-43",
+      "to": "overandunderfittinglab-block-40",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1685,16 +1685,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-45-related_to-overandunderfittinglab-block-43",
-      "from": "overandunderfittinglab-block-45",
-      "to": "overandunderfittinglab-block-43",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-overandunderfittinglab-block-46-part_of-overandunderfittinglab",
       "from": "overandunderfittinglab-block-46",
       "to": "overandunderfittinglab",
@@ -1715,9 +1705,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-46-related_to-overandunderfittinglab-block-43",
+      "id": "struct-overandunderfittinglab-block-46-related_to-overandunderfittinglab-block-45",
       "from": "overandunderfittinglab-block-46",
-      "to": "overandunderfittinglab-block-43",
+      "to": "overandunderfittinglab-block-45",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1745,9 +1735,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-47-related_to-overandunderfittinglab-block-43",
+      "id": "struct-overandunderfittinglab-block-47-related_to-overandunderfittinglab-block-45",
       "from": "overandunderfittinglab-block-47",
-      "to": "overandunderfittinglab-block-43",
+      "to": "overandunderfittinglab-block-45",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1905,16 +1895,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-53-related_to-overandunderfittinglab-block-51",
-      "from": "overandunderfittinglab-block-53",
-      "to": "overandunderfittinglab-block-51",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-overandunderfittinglab-block-54-part_of-overandunderfittinglab",
       "from": "overandunderfittinglab-block-54",
       "to": "overandunderfittinglab",
@@ -1929,6 +1909,16 @@
       "from": "overandunderfittinglab-block-53",
       "to": "overandunderfittinglab-block-54",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-overandunderfittinglab-block-54-related_to-overandunderfittinglab-block-53",
+      "from": "overandunderfittinglab-block-54",
+      "to": "overandunderfittinglab-block-53",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -1955,9 +1945,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-55-related_to-overandunderfittinglab-block-54",
+      "id": "struct-overandunderfittinglab-block-55-related_to-overandunderfittinglab-block-53",
       "from": "overandunderfittinglab-block-55",
-      "to": "overandunderfittinglab-block-54",
+      "to": "overandunderfittinglab-block-53",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -1985,6 +1975,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-overandunderfittinglab-block-56-related_to-overandunderfittinglab-block-53",
+      "from": "overandunderfittinglab-block-56",
+      "to": "overandunderfittinglab-block-53",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-overandunderfittinglab-block-57-part_of-overandunderfittinglab",
       "from": "overandunderfittinglab-block-57",
       "to": "overandunderfittinglab",
@@ -2005,9 +2005,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-57-related_to-overandunderfittinglab-block-56",
+      "id": "struct-overandunderfittinglab-block-57-related_to-overandunderfittinglab-block-53",
       "from": "overandunderfittinglab-block-57",
-      "to": "overandunderfittinglab-block-56",
+      "to": "overandunderfittinglab-block-53",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2035,9 +2035,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-58-related_to-overandunderfittinglab-block-56",
+      "id": "struct-overandunderfittinglab-block-58-related_to-overandunderfittinglab-block-53",
       "from": "overandunderfittinglab-block-58",
-      "to": "overandunderfittinglab-block-56",
+      "to": "overandunderfittinglab-block-53",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2065,9 +2065,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-59-related_to-overandunderfittinglab-block-56",
+      "id": "struct-overandunderfittinglab-block-59-related_to-overandunderfittinglab-block-53",
       "from": "overandunderfittinglab-block-59",
-      "to": "overandunderfittinglab-block-56",
+      "to": "overandunderfittinglab-block-53",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2095,16 +2095,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-60-related_to-overandunderfittinglab-block-56",
-      "from": "overandunderfittinglab-block-60",
-      "to": "overandunderfittinglab-block-56",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-overandunderfittinglab-block-61-part_of-overandunderfittinglab",
       "from": "overandunderfittinglab-block-61",
       "to": "overandunderfittinglab",
@@ -2125,9 +2115,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-61-related_to-overandunderfittinglab-block-56",
+      "id": "struct-overandunderfittinglab-block-61-related_to-overandunderfittinglab-block-60",
       "from": "overandunderfittinglab-block-61",
-      "to": "overandunderfittinglab-block-56",
+      "to": "overandunderfittinglab-block-60",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2155,16 +2145,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-62-related_to-overandunderfittinglab-block-56",
-      "from": "overandunderfittinglab-block-62",
-      "to": "overandunderfittinglab-block-56",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-overandunderfittinglab-block-63-part_of-overandunderfittinglab",
       "from": "overandunderfittinglab-block-63",
       "to": "overandunderfittinglab",
@@ -2179,6 +2159,16 @@
       "from": "overandunderfittinglab-block-62",
       "to": "overandunderfittinglab-block-63",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-overandunderfittinglab-block-63-related_to-overandunderfittinglab-block-62",
+      "from": "overandunderfittinglab-block-63",
+      "to": "overandunderfittinglab-block-62",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2205,9 +2195,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-64-related_to-overandunderfittinglab-block-63",
+      "id": "struct-overandunderfittinglab-block-64-related_to-overandunderfittinglab-block-62",
       "from": "overandunderfittinglab-block-64",
-      "to": "overandunderfittinglab-block-63",
+      "to": "overandunderfittinglab-block-62",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2235,6 +2225,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-overandunderfittinglab-block-65-related_to-overandunderfittinglab-block-62",
+      "from": "overandunderfittinglab-block-65",
+      "to": "overandunderfittinglab-block-62",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-overandunderfittinglab-block-66-part_of-overandunderfittinglab",
       "from": "overandunderfittinglab-block-66",
       "to": "overandunderfittinglab",
@@ -2255,9 +2255,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-66-related_to-overandunderfittinglab-block-65",
+      "id": "struct-overandunderfittinglab-block-66-related_to-overandunderfittinglab-block-62",
       "from": "overandunderfittinglab-block-66",
-      "to": "overandunderfittinglab-block-65",
+      "to": "overandunderfittinglab-block-62",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2285,99 +2285,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-block-67-related_to-overandunderfittinglab-block-65",
+      "id": "struct-overandunderfittinglab-block-67-related_to-overandunderfittinglab-block-62",
       "from": "overandunderfittinglab-block-67",
-      "to": "overandunderfittinglab-block-65",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-block-68-part_of-overandunderfittinglab",
-      "from": "overandunderfittinglab-block-68",
-      "to": "overandunderfittinglab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-block-67-before-overandunderfittinglab-block-68",
-      "from": "overandunderfittinglab-block-67",
-      "to": "overandunderfittinglab-block-68",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-block-68-related_to-overandunderfittinglab-block-65",
-      "from": "overandunderfittinglab-block-68",
-      "to": "overandunderfittinglab-block-65",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-block-69-part_of-overandunderfittinglab",
-      "from": "overandunderfittinglab-block-69",
-      "to": "overandunderfittinglab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-block-68-before-overandunderfittinglab-block-69",
-      "from": "overandunderfittinglab-block-68",
-      "to": "overandunderfittinglab-block-69",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-block-69-related_to-overandunderfittinglab-block-65",
-      "from": "overandunderfittinglab-block-69",
-      "to": "overandunderfittinglab-block-65",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-block-70-part_of-overandunderfittinglab",
-      "from": "overandunderfittinglab-block-70",
-      "to": "overandunderfittinglab",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-block-69-before-overandunderfittinglab-block-70",
-      "from": "overandunderfittinglab-block-69",
-      "to": "overandunderfittinglab-block-70",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-block-70-related_to-overandunderfittinglab-block-65",
-      "from": "overandunderfittinglab-block-70",
-      "to": "overandunderfittinglab-block-65",
+      "to": "overandunderfittinglab-block-62",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2725,28 +2635,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-35-part_of-overandunderfittinglab-block-28",
+      "id": "struct-overandunderfittinglab-stmt-35-part_of-overandunderfittinglab-block-33",
       "from": "overandunderfittinglab-stmt-35",
-      "to": "overandunderfittinglab-block-28",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-36-part_of-overandunderfittinglab-block-32",
-      "from": "overandunderfittinglab-stmt-36",
-      "to": "overandunderfittinglab-block-32",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-37-part_of-overandunderfittinglab-block-33",
-      "from": "overandunderfittinglab-stmt-37",
       "to": "overandunderfittinglab-block-33",
       "kind": "part_of",
       "qualifiers": {},
@@ -2755,9 +2645,29 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-38-part_of-overandunderfittinglab-block-36",
+      "id": "struct-overandunderfittinglab-stmt-36-part_of-overandunderfittinglab-block-33",
+      "from": "overandunderfittinglab-stmt-36",
+      "to": "overandunderfittinglab-block-33",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-overandunderfittinglab-stmt-37-part_of-overandunderfittinglab-block-34",
+      "from": "overandunderfittinglab-stmt-37",
+      "to": "overandunderfittinglab-block-34",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-overandunderfittinglab-stmt-38-part_of-overandunderfittinglab-block-35",
       "from": "overandunderfittinglab-stmt-38",
-      "to": "overandunderfittinglab-block-36",
+      "to": "overandunderfittinglab-block-35",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2765,8 +2675,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-39-part_of-overandunderfittinglab-block-36",
+      "id": "struct-overandunderfittinglab-stmt-39-part_of-overandunderfittinglab-block-35",
       "from": "overandunderfittinglab-stmt-39",
+      "to": "overandunderfittinglab-block-35",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-overandunderfittinglab-stmt-40-part_of-overandunderfittinglab-block-36",
+      "from": "overandunderfittinglab-stmt-40",
       "to": "overandunderfittinglab-block-36",
       "kind": "part_of",
       "qualifiers": {},
@@ -2775,19 +2695,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-40-part_of-overandunderfittinglab-block-37",
-      "from": "overandunderfittinglab-stmt-40",
-      "to": "overandunderfittinglab-block-37",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-41-part_of-overandunderfittinglab-block-38",
+      "id": "struct-overandunderfittinglab-stmt-41-part_of-overandunderfittinglab-block-36",
       "from": "overandunderfittinglab-stmt-41",
-      "to": "overandunderfittinglab-block-38",
+      "to": "overandunderfittinglab-block-36",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2795,9 +2705,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-42-part_of-overandunderfittinglab-block-38",
+      "id": "struct-overandunderfittinglab-stmt-42-part_of-overandunderfittinglab-block-39",
       "from": "overandunderfittinglab-stmt-42",
-      "to": "overandunderfittinglab-block-38",
+      "to": "overandunderfittinglab-block-39",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2805,9 +2715,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-43-part_of-overandunderfittinglab-block-39",
+      "id": "struct-overandunderfittinglab-stmt-43-part_of-overandunderfittinglab-block-41",
       "from": "overandunderfittinglab-stmt-43",
-      "to": "overandunderfittinglab-block-39",
+      "to": "overandunderfittinglab-block-41",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2815,9 +2725,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-44-part_of-overandunderfittinglab-block-39",
+      "id": "struct-overandunderfittinglab-stmt-44-part_of-overandunderfittinglab-block-42",
       "from": "overandunderfittinglab-stmt-44",
-      "to": "overandunderfittinglab-block-39",
+      "to": "overandunderfittinglab-block-42",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2835,8 +2745,28 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-46-part_of-overandunderfittinglab-block-44",
+      "id": "struct-overandunderfittinglab-stmt-46-part_of-overandunderfittinglab-block-43",
       "from": "overandunderfittinglab-stmt-46",
+      "to": "overandunderfittinglab-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-overandunderfittinglab-stmt-47-part_of-overandunderfittinglab-block-43",
+      "from": "overandunderfittinglab-stmt-47",
+      "to": "overandunderfittinglab-block-43",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-overandunderfittinglab-stmt-48-part_of-overandunderfittinglab-block-44",
+      "from": "overandunderfittinglab-stmt-48",
       "to": "overandunderfittinglab-block-44",
       "kind": "part_of",
       "qualifiers": {},
@@ -2845,29 +2775,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-47-part_of-overandunderfittinglab-block-45",
-      "from": "overandunderfittinglab-stmt-47",
-      "to": "overandunderfittinglab-block-45",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-48-part_of-overandunderfittinglab-block-45",
-      "from": "overandunderfittinglab-stmt-48",
-      "to": "overandunderfittinglab-block-45",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-49-part_of-overandunderfittinglab-block-46",
+      "id": "struct-overandunderfittinglab-stmt-49-part_of-overandunderfittinglab-block-44",
       "from": "overandunderfittinglab-stmt-49",
-      "to": "overandunderfittinglab-block-46",
+      "to": "overandunderfittinglab-block-44",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2905,8 +2815,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-53-part_of-overandunderfittinglab-block-49",
+      "id": "struct-overandunderfittinglab-stmt-53-part_of-overandunderfittinglab-block-47",
       "from": "overandunderfittinglab-stmt-53",
+      "to": "overandunderfittinglab-block-47",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-overandunderfittinglab-stmt-54-part_of-overandunderfittinglab-block-49",
+      "from": "overandunderfittinglab-stmt-54",
       "to": "overandunderfittinglab-block-49",
       "kind": "part_of",
       "qualifiers": {},
@@ -2915,19 +2835,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-54-part_of-overandunderfittinglab-block-50",
-      "from": "overandunderfittinglab-stmt-54",
-      "to": "overandunderfittinglab-block-50",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-55-part_of-overandunderfittinglab-block-50",
+      "id": "struct-overandunderfittinglab-stmt-55-part_of-overandunderfittinglab-block-49",
       "from": "overandunderfittinglab-stmt-55",
-      "to": "overandunderfittinglab-block-50",
+      "to": "overandunderfittinglab-block-49",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2935,9 +2845,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-56-part_of-overandunderfittinglab-block-50",
+      "id": "struct-overandunderfittinglab-stmt-56-part_of-overandunderfittinglab-block-49",
       "from": "overandunderfittinglab-stmt-56",
-      "to": "overandunderfittinglab-block-50",
+      "to": "overandunderfittinglab-block-49",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2945,9 +2855,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-57-part_of-overandunderfittinglab-block-52",
+      "id": "struct-overandunderfittinglab-stmt-57-part_of-overandunderfittinglab-block-50",
       "from": "overandunderfittinglab-stmt-57",
-      "to": "overandunderfittinglab-block-52",
+      "to": "overandunderfittinglab-block-50",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2965,9 +2875,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-59-part_of-overandunderfittinglab-block-52",
+      "id": "struct-overandunderfittinglab-stmt-59-part_of-overandunderfittinglab-block-54",
       "from": "overandunderfittinglab-stmt-59",
-      "to": "overandunderfittinglab-block-52",
+      "to": "overandunderfittinglab-block-54",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2975,9 +2885,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-60-part_of-overandunderfittinglab-block-53",
+      "id": "struct-overandunderfittinglab-stmt-60-part_of-overandunderfittinglab-block-54",
       "from": "overandunderfittinglab-stmt-60",
-      "to": "overandunderfittinglab-block-53",
+      "to": "overandunderfittinglab-block-54",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -2995,9 +2905,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-62-part_of-overandunderfittinglab-block-57",
+      "id": "struct-overandunderfittinglab-stmt-62-part_of-overandunderfittinglab-block-56",
       "from": "overandunderfittinglab-stmt-62",
-      "to": "overandunderfittinglab-block-57",
+      "to": "overandunderfittinglab-block-56",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3035,9 +2945,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-66-part_of-overandunderfittinglab-block-60",
+      "id": "struct-overandunderfittinglab-stmt-66-part_of-overandunderfittinglab-block-59",
       "from": "overandunderfittinglab-stmt-66",
-      "to": "overandunderfittinglab-block-60",
+      "to": "overandunderfittinglab-block-59",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3045,8 +2955,28 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-67-part_of-overandunderfittinglab-block-61",
+      "id": "struct-overandunderfittinglab-stmt-67-part_of-overandunderfittinglab-block-59",
       "from": "overandunderfittinglab-stmt-67",
+      "to": "overandunderfittinglab-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-overandunderfittinglab-stmt-68-part_of-overandunderfittinglab-block-59",
+      "from": "overandunderfittinglab-stmt-68",
+      "to": "overandunderfittinglab-block-59",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-overandunderfittinglab-stmt-69-part_of-overandunderfittinglab-block-61",
+      "from": "overandunderfittinglab-stmt-69",
       "to": "overandunderfittinglab-block-61",
       "kind": "part_of",
       "qualifiers": {},
@@ -3055,29 +2985,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-68-part_of-overandunderfittinglab-block-62",
-      "from": "overandunderfittinglab-stmt-68",
-      "to": "overandunderfittinglab-block-62",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-69-part_of-overandunderfittinglab-block-62",
-      "from": "overandunderfittinglab-stmt-69",
-      "to": "overandunderfittinglab-block-62",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-70-part_of-overandunderfittinglab-block-62",
+      "id": "struct-overandunderfittinglab-stmt-70-part_of-overandunderfittinglab-block-61",
       "from": "overandunderfittinglab-stmt-70",
-      "to": "overandunderfittinglab-block-62",
+      "to": "overandunderfittinglab-block-61",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3085,9 +2995,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-71-part_of-overandunderfittinglab-block-62",
+      "id": "struct-overandunderfittinglab-stmt-71-part_of-overandunderfittinglab-block-63",
       "from": "overandunderfittinglab-stmt-71",
-      "to": "overandunderfittinglab-block-62",
+      "to": "overandunderfittinglab-block-63",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3115,8 +3025,28 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-74-part_of-overandunderfittinglab-block-66",
+      "id": "struct-overandunderfittinglab-stmt-74-part_of-overandunderfittinglab-block-65",
       "from": "overandunderfittinglab-stmt-74",
+      "to": "overandunderfittinglab-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-overandunderfittinglab-stmt-75-part_of-overandunderfittinglab-block-65",
+      "from": "overandunderfittinglab-stmt-75",
+      "to": "overandunderfittinglab-block-65",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-overandunderfittinglab-stmt-76-part_of-overandunderfittinglab-block-66",
+      "from": "overandunderfittinglab-stmt-76",
       "to": "overandunderfittinglab-block-66",
       "kind": "part_of",
       "qualifiers": {},
@@ -3125,29 +3055,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-75-part_of-overandunderfittinglab-block-67",
-      "from": "overandunderfittinglab-stmt-75",
-      "to": "overandunderfittinglab-block-67",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-76-part_of-overandunderfittinglab-block-67",
-      "from": "overandunderfittinglab-stmt-76",
-      "to": "overandunderfittinglab-block-67",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-77-part_of-overandunderfittinglab-block-68",
+      "id": "struct-overandunderfittinglab-stmt-77-part_of-overandunderfittinglab-block-66",
       "from": "overandunderfittinglab-stmt-77",
-      "to": "overandunderfittinglab-block-68",
+      "to": "overandunderfittinglab-block-66",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3155,9 +3065,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-78-part_of-overandunderfittinglab-block-68",
+      "id": "struct-overandunderfittinglab-stmt-78-part_of-overandunderfittinglab-block-66",
       "from": "overandunderfittinglab-stmt-78",
-      "to": "overandunderfittinglab-block-68",
+      "to": "overandunderfittinglab-block-66",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3165,9 +3075,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-79-part_of-overandunderfittinglab-block-69",
+      "id": "struct-overandunderfittinglab-stmt-79-part_of-overandunderfittinglab-block-66",
       "from": "overandunderfittinglab-stmt-79",
-      "to": "overandunderfittinglab-block-69",
+      "to": "overandunderfittinglab-block-66",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3175,9 +3085,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-80-part_of-overandunderfittinglab-block-69",
+      "id": "struct-overandunderfittinglab-stmt-80-part_of-overandunderfittinglab-block-67",
       "from": "overandunderfittinglab-stmt-80",
-      "to": "overandunderfittinglab-block-69",
+      "to": "overandunderfittinglab-block-67",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3185,39 +3095,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-overandunderfittinglab-stmt-81-part_of-overandunderfittinglab-block-69",
+      "id": "struct-overandunderfittinglab-stmt-81-part_of-overandunderfittinglab-block-67",
       "from": "overandunderfittinglab-stmt-81",
-      "to": "overandunderfittinglab-block-69",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-82-part_of-overandunderfittinglab-block-69",
-      "from": "overandunderfittinglab-stmt-82",
-      "to": "overandunderfittinglab-block-69",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-83-part_of-overandunderfittinglab-block-70",
-      "from": "overandunderfittinglab-stmt-83",
-      "to": "overandunderfittinglab-block-70",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-overandunderfittinglab-stmt-84-part_of-overandunderfittinglab-block-70",
-      "from": "overandunderfittinglab-stmt-84",
-      "to": "overandunderfittinglab-block-70",
+      "to": "overandunderfittinglab-block-67",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -3466,351 +3346,330 @@
     },
     {
       "id": "overandunderfittinglab-stmt-35",
-      "quote": "display:flex; flex-direction:column; justify-content:center; gap:10px;\">",
-      "block_id": "overandunderfittinglab-block-28",
-      "section": "Try It Yourself",
+      "quote": "| **Blue-shaded region**, *Training Window* | The slice of reality the model is allowed to observe.",
+      "block_id": "overandunderfittinglab-block-33",
+      "section": "What You're Seeing",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-36",
-      "quote": "border-radius:8px; cursor:pointer; font-weight:bold; font-size:1rem;\"> 🚀 Start Training",
-      "block_id": "overandunderfittinglab-block-32",
-      "section": "Try It Yourself",
+      "quote": "In practice we never have *all* the data, only a small, noisy sample.",
+      "block_id": "overandunderfittinglab-block-33",
+      "section": "What You're Seeing",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-37",
-      "quote": "border-radius:8px; cursor:pointer; font-weight:bold; font-size:1rem;\" title=\"Reset model & data\"> 🔄 Reset",
-      "block_id": "overandunderfittinglab-block-33",
-      "section": "Try It Yourself",
+      "quote": "| **Black dots**, *Noisy Observations* | The specific data points the AI can “see.” Notice they scatter around the true curve; real-world measurements are never perfect.",
+      "block_id": "overandunderfittinglab-block-34",
+      "section": "What You're Seeing",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-38",
-      "quote": "| **Blue-shaded region**, *Training Window* | The slice of reality the model is allowed to observe.",
-      "block_id": "overandunderfittinglab-block-36",
+      "quote": "| **Red line**, *AI's Hypothesis* | The model's current best guess.",
+      "block_id": "overandunderfittinglab-block-35",
       "section": "What You're Seeing",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-39",
-      "quote": "In practice we never have *all* the data, only a small, noisy sample.",
-      "block_id": "overandunderfittinglab-block-36",
+      "quote": "It tries to draw a curve that passes as close to the black dots as possible.",
+      "block_id": "overandunderfittinglab-block-35",
       "section": "What You're Seeing",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-40",
-      "quote": "| **Black dots**, *Noisy Observations* | The specific data points the AI can “see.” Notice they scatter around the true curve; real-world measurements are never perfect.",
-      "block_id": "overandunderfittinglab-block-37",
+      "quote": "| **Green dots**, *Test Data* | Data points the model has **never** seen during training.",
+      "block_id": "overandunderfittinglab-block-36",
       "section": "What You're Seeing",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-41",
-      "quote": "| **Red line**, *AI's Hypothesis* | The model's current best guess.",
-      "block_id": "overandunderfittinglab-block-38",
+      "quote": "The test MSE measures how well the model generalises.",
+      "block_id": "overandunderfittinglab-block-36",
       "section": "What You're Seeing",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-42",
-      "quote": "It tries to draw a curve that passes as close to the black dots as possible.",
-      "block_id": "overandunderfittinglab-block-38",
-      "section": "What You're Seeing",
-      "kind": "statement"
-    },
-    {
-      "id": "overandunderfittinglab-stmt-43",
-      "quote": "| **Green dots**, *Test Data* | Data points the model has **never** seen during training.",
-      "block_id": "overandunderfittinglab-block-39",
-      "section": "What You're Seeing",
-      "kind": "statement"
-    },
-    {
-      "id": "overandunderfittinglab-stmt-44",
-      "quote": "The test MSE measures how well the model generalises.",
-      "block_id": "overandunderfittinglab-block-39",
-      "section": "What You're Seeing",
-      "kind": "statement"
-    },
-    {
-      "id": "overandunderfittinglab-stmt-45",
       "quote": "Look at how the **Red Line** behaves *outside* the **Blue Training Zone**:",
-      "block_id": "overandunderfittinglab-block-42",
+      "block_id": "overandunderfittinglab-block-39",
       "section": "The Extrapolation Failure",
       "kind": "statement"
     },
     {
-      "id": "overandunderfittinglab-stmt-46",
+      "id": "overandunderfittinglab-stmt-43",
       "quote": "| Regime | Degree | Training MSE | Test MSE | Behaviour |",
-      "block_id": "overandunderfittinglab-block-44",
+      "block_id": "overandunderfittinglab-block-41",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-44",
+      "quote": "| **Underfitting** (High Bias) | 1 – 3 | High | High | The curve is too stiff to follow the sine wave.",
+      "block_id": "overandunderfittinglab-block-42",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-45",
+      "quote": "Both training and test error are large.",
+      "block_id": "overandunderfittinglab-block-42",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-46",
+      "quote": "| **Reasonable fit** | 4 – 6 | Low | Low | Acceptable inside the training window.",
+      "block_id": "overandunderfittinglab-block-43",
       "section": "Underfitting vs. Overfitting",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-47",
-      "quote": "| **Underfitting** (High Bias) | 1 – 3 | High | High | The curve is too stiff to follow the sine wave.",
-      "block_id": "overandunderfittinglab-block-45",
+      "quote": "Test MSE is close to training MSE.",
+      "block_id": "overandunderfittinglab-block-43",
       "section": "Underfitting vs. Overfitting",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-48",
-      "quote": "Both training and test error are large.",
-      "block_id": "overandunderfittinglab-block-45",
+      "quote": "| **Overfitting** (High Variance) | 7 – 10 | Very low | High | The curve contorts wildly to pass through every noisy dot.",
+      "block_id": "overandunderfittinglab-block-44",
       "section": "Underfitting vs. Overfitting",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-49",
-      "quote": "| **Reasonable fit** | 4 – 6 | Low | Low | Acceptable inside the training window.",
-      "block_id": "overandunderfittinglab-block-46",
+      "quote": "Training MSE drops but test MSE climbs, the classic signature of overfitting.",
+      "block_id": "overandunderfittinglab-block-44",
       "section": "Underfitting vs. Overfitting",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-50",
-      "quote": "Test MSE is close to training MSE.",
+      "quote": "We use polynomial regression, but the lessons apply directly to neural networks.",
       "block_id": "overandunderfittinglab-block-46",
-      "section": "Underfitting vs. Overfitting",
+      "section": "From Polynomial Regression to Neural Networks",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-51",
-      "quote": "| **Overfitting** (High Variance) | 7 – 10 | Very low | High | The curve contorts wildly to pass through every noisy dot.",
+      "quote": "Large Language Models (LLMs) are neural networks with billions of parameters, polynomial degree cranked to an astronomical level.",
       "block_id": "overandunderfittinglab-block-47",
-      "section": "Underfitting vs. Overfitting",
+      "section": "From Polynomial Regression to Neural Networks",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-52",
-      "quote": "Training MSE drops but test MSE climbs, the classic signature of overfitting.",
+      "quote": "They perform brilliantly on tasks similar to their training data (*interpolation*) but can produce plausible-sounding nonsense on topics outside that distribution (*extrapolation*).",
       "block_id": "overandunderfittinglab-block-47",
-      "section": "Underfitting vs. Overfitting",
+      "section": "From Polynomial Regression to Neural Networks",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-53",
-      "quote": "We use polynomial regression, but the lessons apply directly to neural networks.",
-      "block_id": "overandunderfittinglab-block-49",
+      "quote": "The red line rocketing to $\\pm\\infty$ outside the blue box is a visual metaphor for hallucination.",
+      "block_id": "overandunderfittinglab-block-47",
       "section": "From Polynomial Regression to Neural Networks",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-54",
-      "quote": "Large Language Models (LLMs) are neural networks with billions of parameters, polynomial degree cranked to an astronomical level.",
-      "block_id": "overandunderfittinglab-block-50",
-      "section": "From Polynomial Regression to Neural Networks",
+      "quote": "When you use high-degree polynomials to fit data, you often see violent oscillations near the edges of the training interval.",
+      "block_id": "overandunderfittinglab-block-49",
+      "section": "Runge's Phenomenon",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-55",
-      "quote": "They perform brilliantly on tasks similar to their training data (*interpolation*) but can produce plausible-sounding nonsense on topics outside that distribution (*extrapolation*).",
-      "block_id": "overandunderfittinglab-block-50",
-      "section": "From Polynomial Regression to Neural Networks",
+      "quote": "This is known as \\citealternativetitle{rungesphenomenon} (pp.",
+      "block_id": "overandunderfittinglab-block-49",
+      "section": "Runge's Phenomenon",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-56",
-      "quote": "The red line rocketing to $\\pm\\infty$ outside the blue box is a visual metaphor for hallucination.",
-      "block_id": "overandunderfittinglab-block-50",
-      "section": "From Polynomial Regression to Neural Networks",
+      "quote": "Even when the fit is excellent in the center, the tails of the polynomial whip around unpredictably, rendering the model useless for prediction beyond its training window.",
+      "block_id": "overandunderfittinglab-block-49",
+      "section": "Runge's Phenomenon",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-57",
-      "quote": "When you use high-degree polynomials to fit data, you often see violent oscillations near the edges of the training interval.",
-      "block_id": "overandunderfittinglab-block-52",
+      "quote": "\\citeauthor{rungesphenomenon} demonstrated the phenomenon using the innocent-looking function",
+      "block_id": "overandunderfittinglab-block-50",
       "section": "Runge's Phenomenon",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-58",
-      "quote": "This is known as \\citealternativetitle{rungesphenomenon} (pp.",
-      "block_id": "overandunderfittinglab-block-52",
-      "section": "Runge's Phenomenon",
-      "kind": "statement"
-    },
-    {
-      "id": "overandunderfittinglab-stmt-59",
-      "quote": "Even when the fit is excellent in the center, the tails of the polynomial whip around unpredictably, rendering the model useless for prediction beyond its training window.",
-      "block_id": "overandunderfittinglab-block-52",
-      "section": "Runge's Phenomenon",
-      "kind": "statement"
-    },
-    {
-      "id": "overandunderfittinglab-stmt-60",
-      "quote": "\\citeauthor{rungesphenomenon} demonstrated the phenomenon using the innocent-looking function",
-      "block_id": "overandunderfittinglab-block-53",
-      "section": "Runge's Phenomenon",
-      "kind": "statement"
-    },
-    {
-      "id": "overandunderfittinglab-stmt-61",
       "quote": "To prevent a model from chasing noise or exhibiting \\citealternativetitle{rungesphenomenon}, developers impose mathematical constraints that reward *simplicity* over perfect memorization.",
-      "block_id": "overandunderfittinglab-block-55",
+      "block_id": "overandunderfittinglab-block-52",
       "section": "Taming the “Wiggle”: Regularization & Dropout",
       "kind": "statement"
     },
     {
-      "id": "overandunderfittinglab-stmt-62",
+      "id": "overandunderfittinglab-stmt-59",
       "quote": "Without constraints, the weight vector $\\mathbf{w}$ can explode to enormous values just to force the curve through every noisy dot.",
-      "block_id": "overandunderfittinglab-block-57",
+      "block_id": "overandunderfittinglab-block-54",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-60",
+      "quote": "Regularization adds a **penalty term** to the loss:",
+      "block_id": "overandunderfittinglab-block-54",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-61",
+      "quote": "| Method | Penalty | Effect |",
+      "block_id": "overandunderfittinglab-block-55",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-62",
+      "quote": "| **L1, Lasso** (\\citeauthor{tibshirani1996lasso}, \\citeyear{tibshirani1996lasso}) | $\\lambda \\sum_{j} \\| w_j \\|$ | Drives unimportant weights to **exactly zero** → automatic feature selection.",
+      "block_id": "overandunderfittinglab-block-56",
       "section": "L1 & L2 Regularization (Weight Penalties)",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-63",
-      "quote": "Regularization adds a **penalty term** to the loss:",
+      "quote": "| **L2, Ridge** (first described by \\citeauthor{hoerl1970ridge} in \\citeyear{hoerl1970ridge}) | $\\lambda \\displaystyle\\sum_{j} w_j^{2}$ | Shrinks all weights toward zero → produces a **smoother** curve.",
       "block_id": "overandunderfittinglab-block-57",
       "section": "L1 & L2 Regularization (Weight Penalties)",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-64",
-      "quote": "| Method | Penalty | Effect |",
+      "quote": "The regularized losses therefore become:",
       "block_id": "overandunderfittinglab-block-58",
       "section": "L1 & L2 Regularization (Weight Penalties)",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-65",
-      "quote": "| **L1, Lasso** (\\citeauthor{tibshirani1996lasso}, \\citeyear{tibshirani1996lasso}) | $\\lambda \\sum_{j} \\| w_j \\|$ | Drives unimportant weights to **exactly zero** → automatic feature selection.",
+      "quote": "The idea of penalizing solution complexity predates machine learning by decades.",
       "block_id": "overandunderfittinglab-block-59",
       "section": "L1 & L2 Regularization (Weight Penalties)",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-66",
-      "quote": "| **L2, Ridge** (first described by \\citeauthor{hoerl1970ridge} in \\citeyear{hoerl1970ridge}) | $\\lambda \\displaystyle\\sum_{j} w_j^{2}$ | Shrinks all weights toward zero → produces a **smoother** curve.",
-      "block_id": "overandunderfittinglab-block-60",
+      "quote": "**\\citeauthor{earlyl2}** (\\citeyear{earlyl2}) independently developed what we now call L2 regularization in the context of solving ill-posed integral equations, problems where small perturbations in the input cause enormous changes in the output.",
+      "block_id": "overandunderfittinglab-block-59",
       "section": "L1 & L2 Regularization (Weight Penalties)",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-67",
-      "quote": "The regularized losses therefore become:",
-      "block_id": "overandunderfittinglab-block-61",
+      "quote": "In statistics, \\citeauthor{hoerl1970ridge} and Kennard reintroduced the technique in \\citeyear{hoerl1970ridge} as **Ridge Regression**.",
+      "block_id": "overandunderfittinglab-block-59",
       "section": "L1 & L2 Regularization (Weight Penalties)",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-68",
-      "quote": "The idea of penalizing solution complexity predates machine learning by decades.",
-      "block_id": "overandunderfittinglab-block-62",
+      "quote": "\\citeauthor{tibshirani1996lasso}'s **LASSO** (\\citeyear{tibshirani1996lasso}) added the L1 variant, whose key innovation was producing *sparse* solutions, models that automatically ignore irrelevant features by setting their weights to exactly zero.",
+      "block_id": "overandunderfittinglab-block-59",
       "section": "L1 & L2 Regularization (Weight Penalties)",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-69",
-      "quote": "**\\citeauthor{earlyl2}** (\\citeyear{earlyl2}) independently developed what we now call L2 regularization in the context of solving ill-posed integral equations, problems where small perturbations in the input cause enormous changes in the output.",
-      "block_id": "overandunderfittinglab-block-62",
-      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "quote": "Because the model must learn the pattern with only *partial* information at every step, the resulting approximation is far more robust, and far less likely to “freak out” when it leaves the training window.",
+      "block_id": "overandunderfittinglab-block-61",
+      "section": "Dropout",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-70",
-      "quote": "In statistics, \\citeauthor{hoerl1970ridge} and Kennard reintroduced the technique in \\citeyear{hoerl1970ridge} as **Ridge Regression**.",
-      "block_id": "overandunderfittinglab-block-62",
-      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "quote": "The trade-off: dropout requires **more training data** and **longer training** to converge.",
+      "block_id": "overandunderfittinglab-block-61",
+      "section": "Dropout",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-71",
-      "quote": "\\citeauthor{tibshirani1996lasso}'s **LASSO** (\\citeyear{tibshirani1996lasso}) added the L1 variant, whose key innovation was producing *sparse* solutions, models that automatically ignore irrelevant features by setting their weights to exactly zero.",
-      "block_id": "overandunderfittinglab-block-62",
-      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "quote": "The curve's behaviour outside the blue box mirrors a core challenge of modern AI:",
+      "block_id": "overandunderfittinglab-block-63",
+      "section": "Over- and Underfitting in LLMs & Modern AI",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-72",
-      "quote": "Because the model must learn the pattern with only *partial* information at every step, the resulting approximation is far more robust, and far less likely to “freak out” when it leaves the training window.",
+      "quote": "The classical bias–variance tradeoff predicts a clean U-shaped test-error curve: error falls as complexity increases, hits a minimum, then rises as the model overfits.",
       "block_id": "overandunderfittinglab-block-64",
-      "section": "Dropout",
+      "section": "Over- and Underfitting in LLMs & Modern AI",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-73",
-      "quote": "The trade-off: dropout requires **more training data** and **longer training** to converge.",
+      "quote": "But recent research has revealed a surprising twist called **double descent**.",
       "block_id": "overandunderfittinglab-block-64",
-      "section": "Dropout",
+      "section": "Over- and Underfitting in LLMs & Modern AI",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-74",
-      "quote": "The curve's behaviour outside the blue box mirrors a core challenge of modern AI:",
-      "block_id": "overandunderfittinglab-block-66",
+      "quote": "When models become *extremely* overparameterized, far past the point where they can perfectly interpolate the training data, test error can start *decreasing again*.",
+      "block_id": "overandunderfittinglab-block-65",
       "section": "Over- and Underfitting in LLMs & Modern AI",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-75",
-      "quote": "The classical bias–variance tradeoff predicts a clean U-shaped test-error curve: error falls as complexity increases, hits a minimum, then rises as the model overfits.",
-      "block_id": "overandunderfittinglab-block-67",
+      "quote": "This has been observed in deep neural networks, random forests, and even simple linear models.",
+      "block_id": "overandunderfittinglab-block-65",
       "section": "Over- and Underfitting in LLMs & Modern AI",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-76",
-      "quote": "But recent research has revealed a surprising twist called **double descent**.",
-      "block_id": "overandunderfittinglab-block-67",
+      "quote": "The intuition: once a model has vastly more parameters than data points, there are many possible perfect-fit solutions, and gradient descent tends to find the “simplest” one (in a minimum-norm sense), which generalises well.",
+      "block_id": "overandunderfittinglab-block-66",
       "section": "Over- and Underfitting in LLMs & Modern AI",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-77",
-      "quote": "When models become *extremely* overparameterized, far past the point where they can perfectly interpolate the training data, test error can start *decreasing again*.",
-      "block_id": "overandunderfittinglab-block-68",
+      "quote": "This challenges the simple “more parameters = more overfitting” narrative.",
+      "block_id": "overandunderfittinglab-block-66",
       "section": "Over- and Underfitting in LLMs & Modern AI",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-78",
-      "quote": "This has been observed in deep neural networks, random forests, and even simple linear models.",
-      "block_id": "overandunderfittinglab-block-68",
+      "quote": "A rigorous explanation now exists: if the network's weights remain small — as standard initialization and weight decay ensure — then the network is automatically Lipschitz-continuous with a constant **independent of its parameter count**, and the generalization bound depends on that Lipschitz constant, not on the number of weights \\cite{petersen2024mathdl}.",
+      "block_id": "overandunderfittinglab-block-66",
       "section": "Over- and Underfitting in LLMs & Modern AI",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-79",
-      "quote": "The intuition: once a model has vastly more parameters than data points, there are many possible perfect-fit solutions, and gradient descent tends to find the “simplest” one (in a minimum-norm sense), which generalises well.",
-      "block_id": "overandunderfittinglab-block-69",
+      "quote": "Adding parameters in the overparameterized regime therefore no longer increases the generalization error.",
+      "block_id": "overandunderfittinglab-block-66",
       "section": "Over- and Underfitting in LLMs & Modern AI",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-80",
-      "quote": "This challenges the simple “more parameters = more overfitting” narrative.",
-      "block_id": "overandunderfittinglab-block-69",
+      "quote": "Here, double descent is not visible because our polynomial degrees stay low.",
+      "block_id": "overandunderfittinglab-block-67",
       "section": "Over- and Underfitting in LLMs & Modern AI",
       "kind": "statement"
     },
     {
       "id": "overandunderfittinglab-stmt-81",
-      "quote": "A rigorous explanation now exists: if the network's weights remain small — as standard initialization and weight decay ensure — then the network is automatically Lipschitz-continuous with a constant **independent of its parameter count**, and the generalization bound depends on that Lipschitz constant, not on the number of weights \\cite{petersen2024mathdl}.",
-      "block_id": "overandunderfittinglab-block-69",
-      "section": "Over- and Underfitting in LLMs & Modern AI",
-      "kind": "statement"
-    },
-    {
-      "id": "overandunderfittinglab-stmt-82",
-      "quote": "Adding parameters in the overparameterized regime therefore no longer increases the generalization error.",
-      "block_id": "overandunderfittinglab-block-69",
-      "section": "Over- and Underfitting in LLMs & Modern AI",
-      "kind": "statement"
-    },
-    {
-      "id": "overandunderfittinglab-stmt-83",
-      "quote": "Here, double descent is not visible because our polynomial degrees stay low.",
-      "block_id": "overandunderfittinglab-block-70",
-      "section": "Over- and Underfitting in LLMs & Modern AI",
-      "kind": "statement"
-    },
-    {
-      "id": "overandunderfittinglab-stmt-84",
       "quote": "But it explains why modern LLMs with billions of parameters can generalise well despite being massively overparameterized, provided they are trained with enough data and appropriate regularization.",
-      "block_id": "overandunderfittinglab-block-70",
+      "block_id": "overandunderfittinglab-block-67",
       "section": "Over- and Underfitting in LLMs & Modern AI",
       "kind": "statement"
     }
@@ -3980,258 +3839,240 @@
     },
     {
       "id": "overandunderfittinglab-block-28",
-      "quote": "display:flex; flex-direction:column; justify-content:center; gap:10px;\">",
-      "kind": "paragraph",
-      "section": "Try It Yourself"
-    },
-    {
-      "id": "overandunderfittinglab-block-29",
       "quote": "Training MSE: 0.000000",
       "kind": "paragraph",
       "section": "Try It Yourself"
     },
     {
-      "id": "overandunderfittinglab-block-30",
+      "id": "overandunderfittinglab-block-29",
       "quote": "Test MSE: 0.000000",
       "kind": "paragraph",
       "section": "Try It Yourself"
     },
     {
-      "id": "overandunderfittinglab-block-31",
+      "id": "overandunderfittinglab-block-30",
       "quote": "Epochs: 0",
       "kind": "paragraph",
       "section": "Try It Yourself"
     },
     {
-      "id": "overandunderfittinglab-block-32",
-      "quote": "border-radius:8px; cursor:pointer; font-weight:bold; font-size:1rem;\"> 🚀 Start Training",
-      "kind": "paragraph",
-      "section": "Try It Yourself"
-    },
-    {
-      "id": "overandunderfittinglab-block-33",
-      "quote": "border-radius:8px; cursor:pointer; font-weight:bold; font-size:1rem;\" title=\"Reset model & data\"> 🔄 Reset",
-      "kind": "paragraph",
-      "section": "Try It Yourself"
-    },
-    {
-      "id": "overandunderfittinglab-block-34",
+      "id": "overandunderfittinglab-block-31",
       "quote": "What You're Seeing",
       "kind": "heading",
       "section": "What You're Seeing"
     },
     {
-      "id": "overandunderfittinglab-block-35",
+      "id": "overandunderfittinglab-block-32",
       "quote": "| Element | Meaning |",
       "kind": "table-row",
       "section": "What You're Seeing"
     },
     {
-      "id": "overandunderfittinglab-block-36",
+      "id": "overandunderfittinglab-block-33",
       "quote": "| **Blue-shaded region**, *Training Window* | The slice of reality the model is allowed to observe. In practice we never have *all* the data, only a small, noisy sample. |",
       "kind": "table-row",
       "section": "What You're Seeing"
     },
     {
-      "id": "overandunderfittinglab-block-37",
+      "id": "overandunderfittinglab-block-34",
       "quote": "| **Black dots**, *Noisy Observations* | The specific data points the AI can “see.” Notice they scatter around the true curve; real-world measurements are never perfect. |",
       "kind": "table-row",
       "section": "What You're Seeing"
     },
     {
-      "id": "overandunderfittinglab-block-38",
+      "id": "overandunderfittinglab-block-35",
       "quote": "| **Red line**, *AI's Hypothesis* | The model's current best guess. It tries to draw a curve that passes as close to the black dots as possible. |",
       "kind": "table-row",
       "section": "What You're Seeing"
     },
     {
-      "id": "overandunderfittinglab-block-39",
+      "id": "overandunderfittinglab-block-36",
       "quote": "| **Green dots**, *Test Data* | Data points the model has **never** seen during training. The test MSE measures how well the model generalises. |",
       "kind": "table-row",
       "section": "What You're Seeing"
     },
     {
-      "id": "overandunderfittinglab-block-40",
+      "id": "overandunderfittinglab-block-37",
       "quote": "Understanding the Results",
       "kind": "heading",
       "section": "Understanding the Results"
     },
     {
-      "id": "overandunderfittinglab-block-41",
+      "id": "overandunderfittinglab-block-38",
       "quote": "The Extrapolation Failure",
       "kind": "heading",
       "section": "The Extrapolation Failure"
     },
     {
-      "id": "overandunderfittinglab-block-42",
+      "id": "overandunderfittinglab-block-39",
       "quote": "Look at how the **Red Line** behaves *outside* the **Blue Training Zone**:",
       "kind": "paragraph",
       "section": "The Extrapolation Failure"
     },
     {
-      "id": "overandunderfittinglab-block-43",
+      "id": "overandunderfittinglab-block-40",
       "quote": "Underfitting vs. Overfitting",
       "kind": "heading",
       "section": "Underfitting vs. Overfitting"
     },
     {
-      "id": "overandunderfittinglab-block-44",
+      "id": "overandunderfittinglab-block-41",
       "quote": "| Regime | Degree | Training MSE | Test MSE | Behaviour |",
       "kind": "table-row",
       "section": "Underfitting vs. Overfitting"
     },
     {
-      "id": "overandunderfittinglab-block-45",
+      "id": "overandunderfittinglab-block-42",
       "quote": "| **Underfitting** (High Bias) | 1 – 3 | High | High | The curve is too stiff to follow the sine wave. Both training and test error are large. |",
       "kind": "table-row",
       "section": "Underfitting vs. Overfitting"
     },
     {
-      "id": "overandunderfittinglab-block-46",
+      "id": "overandunderfittinglab-block-43",
       "quote": "| **Reasonable fit** | 4 – 6 | Low | Low | Acceptable inside the training window. Test MSE is close to training MSE. |",
       "kind": "table-row",
       "section": "Underfitting vs. Overfitting"
     },
     {
-      "id": "overandunderfittinglab-block-47",
+      "id": "overandunderfittinglab-block-44",
       "quote": "| **Overfitting** (High Variance) | 7 – 10 | Very low | High | The curve contorts wildly to pass through every noisy dot. Training MSE drops but test MSE climbs, the classic signature of overfitting. |",
       "kind": "table-row",
       "section": "Underfitting vs. Overfitting"
     },
     {
-      "id": "overandunderfittinglab-block-48",
+      "id": "overandunderfittinglab-block-45",
       "quote": "From Polynomial Regression to Neural Networks",
       "kind": "heading",
       "section": "From Polynomial Regression to Neural Networks"
     },
     {
-      "id": "overandunderfittinglab-block-49",
+      "id": "overandunderfittinglab-block-46",
       "quote": "We use polynomial regression, but the lessons apply directly to neural networks. Here's why:",
       "kind": "paragraph",
       "section": "From Polynomial Regression to Neural Networks"
     },
     {
-      "id": "overandunderfittinglab-block-50",
+      "id": "overandunderfittinglab-block-47",
       "quote": "Large Language Models (LLMs) are neural networks with billions of parameters, polynomial degree cranked to an astronomical level. They perform brilliantly on tasks similar to their training data (*interpolation*) but can produce plausible-sounding nonsense on topics outside that distribution (*extrapolation*). The red line rocketing to $\\pm\\infty$ outside the blue box is a visual metaphor for hallucination.",
       "kind": "paragraph",
       "section": "From Polynomial Regression to Neural Networks"
     },
     {
-      "id": "overandunderfittinglab-block-51",
+      "id": "overandunderfittinglab-block-48",
       "quote": "Runge's Phenomenon",
       "kind": "heading",
       "section": "Runge's Phenomenon"
     },
     {
-      "id": "overandunderfittinglab-block-52",
+      "id": "overandunderfittinglab-block-49",
       "quote": "When you use high-degree polynomials to fit data, you often see violent oscillations near the edges of the training interval. This is known as \\citealternativetitle{rungesphenomenon} (pp. 224–243). Even when the fit is excellent in the center, the tails of the polynomial whip around unpredictably, rendering the model useless for prediction beyond its training window.",
       "kind": "paragraph",
       "section": "Runge's Phenomenon"
     },
     {
-      "id": "overandunderfittinglab-block-53",
+      "id": "overandunderfittinglab-block-50",
       "quote": "\\citeauthor{rungesphenomenon} demonstrated the phenomenon using the innocent-looking function",
       "kind": "paragraph",
       "section": "Runge's Phenomenon"
     },
     {
-      "id": "overandunderfittinglab-block-54",
+      "id": "overandunderfittinglab-block-51",
       "quote": "Taming the “Wiggle”: Regularization & Dropout",
       "kind": "heading",
       "section": "Taming the “Wiggle”: Regularization & Dropout"
     },
     {
-      "id": "overandunderfittinglab-block-55",
+      "id": "overandunderfittinglab-block-52",
       "quote": "To prevent a model from chasing noise or exhibiting \\citealternativetitle{rungesphenomenon}, developers impose mathematical constraints that reward *simplicity* over perfect memorization.",
       "kind": "paragraph",
       "section": "Taming the “Wiggle”: Regularization & Dropout"
     },
     {
-      "id": "overandunderfittinglab-block-56",
+      "id": "overandunderfittinglab-block-53",
       "quote": "L1 & L2 Regularization (Weight Penalties)",
       "kind": "heading",
       "section": "L1 & L2 Regularization (Weight Penalties)"
     },
     {
-      "id": "overandunderfittinglab-block-57",
+      "id": "overandunderfittinglab-block-54",
       "quote": "Without constraints, the weight vector $\\mathbf{w}$ can explode to enormous values just to force the curve through every noisy dot. Regularization adds a **penalty term** to the loss:",
       "kind": "paragraph",
       "section": "L1 & L2 Regularization (Weight Penalties)"
     },
     {
-      "id": "overandunderfittinglab-block-58",
+      "id": "overandunderfittinglab-block-55",
       "quote": "| Method | Penalty | Effect |",
       "kind": "table-row",
       "section": "L1 & L2 Regularization (Weight Penalties)"
     },
     {
-      "id": "overandunderfittinglab-block-59",
+      "id": "overandunderfittinglab-block-56",
       "quote": "| **L1, Lasso** (\\citeauthor{tibshirani1996lasso}, \\citeyear{tibshirani1996lasso}) | $\\lambda \\sum_{j} \\| w_j \\|$ | Drives unimportant weights to **exactly zero** → automatic feature selection. |",
       "kind": "table-row",
       "section": "L1 & L2 Regularization (Weight Penalties)"
     },
     {
-      "id": "overandunderfittinglab-block-60",
+      "id": "overandunderfittinglab-block-57",
       "quote": "| **L2, Ridge** (first described by \\citeauthor{hoerl1970ridge} in \\citeyear{hoerl1970ridge}) | $\\lambda \\displaystyle\\sum_{j} w_j^{2}$ | Shrinks all weights toward zero → produces a **smoother** curve. |",
       "kind": "table-row",
       "section": "L1 & L2 Regularization (Weight Penalties)"
     },
     {
-      "id": "overandunderfittinglab-block-61",
+      "id": "overandunderfittinglab-block-58",
       "quote": "The regularized losses therefore become:",
       "kind": "paragraph",
       "section": "L1 & L2 Regularization (Weight Penalties)"
     },
     {
-      "id": "overandunderfittinglab-block-62",
+      "id": "overandunderfittinglab-block-59",
       "quote": "The idea of penalizing solution complexity predates machine learning by decades. **\\citeauthor{earlyl2}** (\\citeyear{earlyl2}) independently developed what we now call L2 regularization in the context of solving ill-posed integral equations, problems where small perturbations in the input cause enormous changes in the output. In statistics, \\citeauthor{hoerl1970ridge} and Kennard reintroduced the technique in \\citeyear{hoerl1970ridge} as **Ridge Regression**. \\citeauthor{tibshirani1996lasso}'s **LASSO** (\\citeyear{tibshirani1996lasso}) added the L1 variant, whose key innovation was producing *sparse* solutions, models that automatically ignore irrelevant features by setting their weights to exactly zero.",
       "kind": "paragraph",
       "section": "L1 & L2 Regularization (Weight Penalties)"
     },
     {
-      "id": "overandunderfittinglab-block-63",
+      "id": "overandunderfittinglab-block-60",
       "quote": "Dropout",
       "kind": "heading",
       "section": "Dropout"
     },
     {
-      "id": "overandunderfittinglab-block-64",
+      "id": "overandunderfittinglab-block-61",
       "quote": "Because the model must learn the pattern with only *partial* information at every step, the resulting approximation is far more robust, and far less likely to “freak out” when it leaves the training window. The trade-off: dropout requires **more training data** and **longer training** to converge.",
       "kind": "paragraph",
       "section": "Dropout"
     },
     {
-      "id": "overandunderfittinglab-block-65",
+      "id": "overandunderfittinglab-block-62",
       "quote": "Over- and Underfitting in LLMs & Modern AI",
       "kind": "heading",
       "section": "Over- and Underfitting in LLMs & Modern AI"
     },
     {
-      "id": "overandunderfittinglab-block-66",
+      "id": "overandunderfittinglab-block-63",
       "quote": "The curve's behaviour outside the blue box mirrors a core challenge of modern AI:",
       "kind": "paragraph",
       "section": "Over- and Underfitting in LLMs & Modern AI"
     },
     {
-      "id": "overandunderfittinglab-block-67",
+      "id": "overandunderfittinglab-block-64",
       "quote": "The classical bias–variance tradeoff predicts a clean U-shaped test-error curve: error falls as complexity increases, hits a minimum, then rises as the model overfits. But recent research has revealed a surprising twist called **double descent**.",
       "kind": "paragraph",
       "section": "Over- and Underfitting in LLMs & Modern AI"
     },
     {
-      "id": "overandunderfittinglab-block-68",
+      "id": "overandunderfittinglab-block-65",
       "quote": "When models become *extremely* overparameterized, far past the point where they can perfectly interpolate the training data, test error can start *decreasing again*. This has been observed in deep neural networks, random forests, and even simple linear models.",
       "kind": "paragraph",
       "section": "Over- and Underfitting in LLMs & Modern AI"
     },
     {
-      "id": "overandunderfittinglab-block-69",
+      "id": "overandunderfittinglab-block-66",
       "quote": "The intuition: once a model has vastly more parameters than data points, there are many possible perfect-fit solutions, and gradient descent tends to find the “simplest” one (in a minimum-norm sense), which generalises well. This challenges the simple “more parameters = more overfitting” narrative. A rigorous explanation now exists: if the network's weights remain small — as standard initialization and weight decay ensure — then the network is automatically Lipschitz-continuous with a constant **independent of its parameter count**, and the generalization bound depends on that Lipschitz constant, not on the number of weights \\cite{petersen2024mathdl}. Adding parameters in the overparameterized regime therefore no longer increases the generalization error.",
       "kind": "paragraph",
       "section": "Over- and Underfitting in LLMs & Modern AI"
     },
     {
-      "id": "overandunderfittinglab-block-70",
+      "id": "overandunderfittinglab-block-67",
       "quote": "Here, double descent is not visible because our polynomial degrees stay low. But it explains why modern LLMs with billions of parameters can generalise well despite being massively overparameterized, provided they are trained with enough data and appropriate regularization.",
       "kind": "paragraph",
       "section": "Over- and Underfitting in LLMs & Modern AI"
