@@ -30,6 +30,14 @@ Stage 3: **Reasoning RL** (optional) teaches it to think longer on hard problems
 The post-training **compute** is typically **1–10% of pretraining**; once data and human labour are included, the total budget is often closer to **10–30%** — and it produces most of the perceived improvement in helpfulness.
 </div>
 
+<div class="md">
+## Where the recipe came from: GPT-1
+
+The modern pipeline is a descendant of a 2018 experiment. \cite[Radford et al. (2018)]{firstgpt} pretrained a 12-layer decoder-only Transformer — 768-dimensional states, 12 heads, about 117 million parameters — on **BooksCorpus**, more than 7,000 unpublished books, using a standard left-to-right language-model objective. Then they fine-tuned the *whole* model on each downstream task, adding only a small linear output layer. The trick that made one architecture serve many tasks was **task-aware input transformation**: entailment became the premise followed by a **delimiter token** and the hypothesis; similarity became two orderings of the same pair; and multiple-choice QA became the document, the question, the delimiter, and each candidate answer, in that order. Learned start and end tokens told the model where the input began and ended. They also kept the language-model loss as an auxiliary objective during fine-tuning, weighted by a coefficient of 0.5, which improved generalization on larger datasets and sped up convergence.
+
+The results were the proof of concept for everything that follows. The fine-tuned model set the state of the art on **9 of 12** benchmarks — including absolute gains of **8.9** points on the Stories Cloze Test and **5.7** on RACE — and reached **72.8** on GLUE against a previous best of **68.9**. Removing pretraining cost **14.8** points on the paper's average; replacing the Transformer with an LSTM cost **5.6**. That the pretrained model already carried task structure was visible even without fine-tuning: simple probability heuristics on its outputs improved steadily over pretraining, the first hint of the zero-shot behaviour GPT-2 would make explicit. The recipe — generative pretraining, then discriminative fine-tuning with minimal architectural change — is the direct ancestor of the SFT stage below.
+</div>
+
 <div class="md" data-mathlevel="60">
 ## Stage 1: Supervised Fine-Tuning (SFT)
 

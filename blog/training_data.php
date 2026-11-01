@@ -36,6 +36,14 @@ The **Chinchilla scaling law** (\cite[Hoffmann et al., 2022]{hoffmann2022chinchi
 </div>
 
 <div class="md">
+### Before Common Crawl Was Filtered: WebText
+
+The modern habit of filtering the web for quality has a concrete ancestor. For GPT-2, OpenAI did not scrape the open web and then filter it; it used humans as the filter first (\cite[Radford et al., 2019]{gpt2}). The team collected every outbound link posted to Reddit that had received at least **3 karma**, producing about **45 million links**. After extracting the text with the Dragnet and Newspaper content extractors, deduplicating, and cleaning heuristically, the corpus — **WebText** — held slightly over **8 million documents**, about **40 GB** of text. Links created after **December 2017** were excluded, and every Wikipedia document was removed so that evaluation sets built on Wikipedia would not overlap with training data.
+
+The karma threshold was a cheap proxy for "other users found this link interesting, educational, or just funny." WebText is the bridge between Common Crawl's everything and today's classifier-filtered corpora: its quality signal was human curation at the *link* level, not a model's judgment of the page. The \cite[Nooscope essay]{joler2020nooscope} makes the general point that a training set is a **cultural construct**, not a neutral sample of the world: its production, capture, formatting, and labelling are human interventions, and the choice of source is itself an argument about what counts as knowledge. The karma threshold is exactly such an argument. It is also a biased one — it over-represents what Reddit users upvote — which is why later pipelines moved to learned quality classifiers. But it worked well enough to train a model that transferred across domains zero-shot; see [Unexpected Capabilities](unexpected_capabilities.php).
+</div>
+
+<div class="md">
 ### Common Crawl: The Foundation
 
 **Common Crawl** (commoncrawl.org) is a non-profit that has been archiving web pages since 2008. Each month, it crawls ~3 billion URLs, producing ~300 TB of raw HTML. After deduplication and WARC-packaging, this yields ~30 TB of useful text per month.
@@ -112,6 +120,10 @@ A document in the training set may **contain benchmark items verbatim**. Models 
 1. Build a list of benchmark items (questions, options, answers, code stubs).
 2. **n-gram overlap**: for each training document, compute the longest common n-gram with any benchmark item. If $> k$ (typically $k = 8$ for words, $k = 50$ for characters), drop or rewrite the document.
 3. **Suffix array approach**: index all benchmark items as substrings; find all training documents containing them.
+
+#### An early example: GPT-2's 8-gram audit
+
+The practice is older than the modern tooling. GPT-2's authors built Bloom filters over **8-grams** of WebText and measured how much of each benchmark's test set also appeared in training. Common language-modelling test sets overlapped by **1–6%**, with an average of **3.2%**; several datasets overlapped more with their own training splits. The paper used the audit to argue that the model's zero-shot gains were not mainly memorization — and to recommend n-gram overlap checks as a standard sanity check for new datasets (\cite[Radford et al., 2019]{gpt2}).
 
 #### Limitations
 
