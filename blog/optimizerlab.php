@@ -128,27 +128,81 @@ Each optimizer uses a different **update rule** to decide how to change the weig
 
 #### SGD (Stochastic Gradient Descent)
 The simplest rule. Compute the gradient $g_t$ and step in the opposite direction:
-$$x_{t+1} = x_t - \eta \cdot g_t$$
+$$
+\underbrace{
+  \underbrace{x_{t+1}}_{\text{next weight}}
+  = \underbrace{x_t}_{\text{current weight}}
+  - \underbrace{\eta}_{\text{learning rate}}
+  \cdot \underbrace{g_t}_{\text{gradient}}
+}_{\text{step directly opposite the gradient}}
+$$
 where $\eta$ is the learning rate (written `lr` in the interactive demo above). That's it, no memory, no adaptation.
 
 #### SGD with Momentum
 Momentum introduces a **velocity** term $v_t$ that accumulates past gradients, smoothing out noisy updates:
-$$v_t = \beta \cdot v_{t-1} + (1 - \beta) \cdot g_t$$
-$$x_{t+1} = x_t - \eta \cdot v_t$$
+$$
+\underbrace{
+  \underbrace{v_t}_{\text{velocity}}
+  = \underbrace{\beta}_{\text{memory}}
+  \cdot \underbrace{v_{t-1}}_{\text{previous velocity}}
+  + (1 - \beta) \cdot \underbrace{g_t}_{\text{current gradient}}
+}_{\text{keep a decaying average of past gradients}}
+$$
+$$
+\underbrace{
+  \underbrace{x_{t+1}}_{\text{next weight}}
+  = \underbrace{x_t}_{\text{current weight}}
+  - \underbrace{\eta}_{\text{learning rate}}
+  \cdot \underbrace{v_t}_{\text{smoothed gradient}}
+}_{\text{step in the smoothed direction}}
+$$
 The hyperparameter $\beta$ (typically 0.9) controls how much “inertia” the optimizer has. A higher $\beta$ means the optimizer remembers more of its past trajectory and is harder to deflect.
 
 The rule has a precise origin. \cite[Polyak (1964)]{momentum} introduced the heavy-ball method as $x_{k+1}=x_k-\alpha\nabla f(x_k)+\beta(x_k-x_{k-1})$: the new step keeps a fraction of the previous displacement, not of the gradient. The $v_t=\beta v_{t-1}+(1-\beta)g_t$ form above is the same algorithm after a constant rescaling of velocity and learning rate, which is why the two versions look different but follow the same path when $\eta$ is adjusted. Polyak's motivation was the slow zig-zag of steepest descent in ill-conditioned valleys — exactly the ravine in the lab.
 
 #### Adam (Adaptive Moment Estimation)
-Adam tracks *two* exponential moving averages, the **first moment** $m_t$ (mean of gradients) and the **second moment** $v_t$ (mean of squared gradients):
-$$m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t$$
-$$v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2$$
+Adam (\cite[Kingma & Ba, 2015]{adam}) tracks *two* exponential moving averages, the **first moment** $m_t$ (mean of gradients) and the **second moment** $v_t$ (mean of squared gradients):
+$$
+\underbrace{
+  \underbrace{m_t}_{\text{smoothed gradient}}
+  = \underbrace{\beta_1}_{\text{memory}}
+  \cdot \underbrace{m_{t-1}}_{\text{previous average}}
+  + (1 - \beta_1)\underbrace{g_t}_{\text{current gradient}}
+}_{\text{average the gradient direction over time}}
+$$
+$$
+\underbrace{
+  \underbrace{v_t}_{\text{smoothed squared gradient}}
+  = \underbrace{\beta_2}_{\text{memory}}
+  \cdot \underbrace{v_{t-1}}_{\text{previous average}}
+  + (1 - \beta_2)\underbrace{g_t^2}_{\text{current gradient squared}}
+}_{\text{remember how large recent gradients were}}
+$$
 
 Because these are initialized at zero, they are **bias-corrected**:
-$$\hat{m}_t = \frac{m_t}{1 - \beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1 - \beta_2^t}$$
+$$
+\underbrace{
+  \underbrace{\hat{m}_t}_{\text{corrected mean}}
+  = \frac{\underbrace{m_t}_{\text{raw mean}}}{1 - \beta_1^t},
+  \quad
+  \underbrace{\hat{v}_t}_{\text{corrected scale}}
+  = \frac{\underbrace{v_t}_{\text{raw scale}}}{1 - \beta_2^t}
+}_{\text{undo the zero-initialisation bias}}
+$$
 
 The final update divides the corrected first moment by the square root of the corrected second moment:
-$$x_{t+1} = x_t - \eta \cdot \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}$$
+$$
+\underbrace{
+  \underbrace{x_{t+1}}_{\text{next weight}}
+  = \underbrace{x_t}_{\text{current weight}}
+  - \underbrace{\eta}_{\text{learning rate}}
+  \cdot
+  \frac{\underbrace{\hat{m}_t}_{\text{trusted direction}}}
+       {\underbrace{\sqrt{\hat{v}_t} + \epsilon}_{\text{per-parameter scale}}}
+}_{\text{step downhill, sized by gradient consistency}}
+$$
+
+The paper's recommended learning rate is $\alpha = 0.001$; the interactive example below uses a larger $\eta = 0.1$ only so the steps are easy to see.
 
 This division is the key insight: parameters with large, consistent gradients get *smaller* effective steps (because $\sqrt{\hat{v}_t}$ is large), while parameters with small or rare gradients get *larger* effective steps. The optimizer automatically adapts.
 
