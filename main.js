@@ -182,6 +182,7 @@ function init_tabs () {
 
 			if (ui.newPanel.attr("id") == "gradient_flow") {
 				window.__gradient_flow_visible = true;
+				window.__gradient_flow_enabled = true;
 				gradientFlowToSummary();
 			}
 

@@ -8,19 +8,19 @@
 		<br>
 		<div id="training_content">
 			<div id="training_live_metrics" class="training-live-metrics" style="display: none">
-				<div class="tlm-heading TRANSLATEME_training_live_title"></div>
+				<div class="TRANSLATEME_training_live_title tlm-heading"></div>
 				<div class="tlm-card">
-					<span class="tlm-label TRANSLATEME_training_live_epoch"></span>
+					<span class="TRANSLATEME_training_live_epoch tlm-label"></span>
 					<span class="tlm-value" id="tlm_epoch">—</span>
 					<div class="tlm-progress"><div id="tlm_progress_fill"></div></div>
 				</div>
 				<div class="tlm-card">
-					<span class="tlm-label TRANSLATEME_loss"></span>
+					<span class="TRANSLATEME_loss tlm-label"></span>
 					<span class="tlm-value" id="tlm_loss">—</span>
 					<span class="tlm-sub" id="tlm_loss_sub"></span>
 				</div>
 				<div class="tlm-card">
-					<span class="tlm-label TRANSLATEME_training_live_val_loss"></span>
+					<span class="TRANSLATEME_training_live_val_loss tlm-label"></span>
 					<span class="tlm-value" id="tlm_val_loss">—</span>
 					<span class="tlm-sub" id="tlm_val_loss_sub"></span>
 				</div>
@@ -35,7 +35,7 @@
 					<span class="tlm-sub" id="tlm_best_sub"></span>
 				</div>
 				<div class="tlm-card">
-					<span class="tlm-label TRANSLATEME_training_live_time_left"></span>
+					<span class="TRANSLATEME_training_live_time_left tlm-label"></span>
 					<span class="tlm-value" id="tlm_time_left">—</span>
 				</div>
 			</div>

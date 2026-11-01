@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2587;
+var DEFAULT_EXPECTED_TEST_COUNT = 2590;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -3875,6 +3875,11 @@ async function test_training_live_metrics_panel () {
 		val_metric_value: 0.7
 	});
 
+	var labels_ok = $("#training_live_metrics .tlm-label, #training_live_metrics .tlm-heading").filter(function () {
+		return $(this).text().trim() === "";
+	}).length === 0;
+	test_equal("training live metrics have translated labels", labels_ok, true);
+
 	var metric_ok = $("#tlm_metric").text() === "80.0%" && $("#tlm_metric_sub").text().indexOf("70.0%") !== -1;
 	test_equal("training live metrics show a real metric", metric_ok, true);
 
@@ -3887,7 +3892,7 @@ async function test_training_live_metrics_panel () {
 	_clear_plotly_metric_history();
 	$("#training_live_metrics").hide();
 
-	return epoch_ok && loss_ok && val_ok && time_ok && best_ok && metric_ok && chart_ok;
+	return epoch_ok && loss_ok && val_ok && time_ok && best_ok && labels_ok && metric_ok && chart_ok;
 }
 
 async function test_gradient_flow_tab_is_available_for_ffnn () {
@@ -3901,9 +3906,28 @@ async function test_gradient_flow_tab_is_available_for_ffnn () {
 
 	test_equal("gradient flow tab is available for FF-NN", visible, true);
 
+	$("#visualization_tab_label").click();
+	await delay(300);
+	$("#gradient_flow_tab_label").click();
+	await delay(500);
+
+	var enabled_ok = window.__gradient_flow_enabled === true && typeof gradientFlow.record === "function";
+	var format_ok = gradientFlow.formatNumber(0.1231) === "0.1231" &&
+		gradientFlow.formatNumber(0.09975) === "0.09975" &&
+		gradientFlow.formatNumber(0.00001) === "1.00e-5";
+
+	test_equal("gradient flow is enabled and formats normal values as decimals", enabled_ok && format_ok, true);
+
+	await get_x_and_y();
+	var history_before = gradientFlow.getHistory().length;
+	gradientFlow.record();
+	var recorded = gradientFlow.getHistory().length > history_before;
+
+	test_equal("gradient flow records samples when enabled", recorded, true);
+
 	$("#beginner").click();
 
-	return visible;
+	return visible && enabled_ok && format_ok && recorded;
 }
 
 async function test_dataset_switch_keeps_overlay_until_data_ready () {

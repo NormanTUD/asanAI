@@ -628,7 +628,24 @@ var GradientFlowHeatmap = (function () {
 	function _gflow_num(value) {
 		if (typeof value !== "number" || !isFinite(value)) return "—";
 		if (value === 0) return "0";
+
+		var abs = Math.abs(value);
+
+		if (abs >= 0.001 && abs < 10000000) {
+			var digits = abs >= 1 ? 4 : (abs >= 0.01 ? 5 : 6);
+			return value.toFixed(digits).replace(/0+$/, "").replace(/\.$/, "");
+		}
+
+		if (abs >= 0.0001) {
+			return value.toFixed(6).replace(/0+$/, "").replace(/\.$/, "");
+		}
+
 		return value.toExponential(2);
+	}
+
+	function _gflow_ratio(value) {
+		if (typeof value !== "number" || !isFinite(value)) return "—";
+		return _gflow_num(value) + "\u00d7";
 	}
 
 	function _gflow_ensure_tooltip() {
@@ -944,13 +961,13 @@ var GradientFlowHeatmap = (function () {
 			message = "All layers have zero gradients. The network is completely unable to learn. Check for dying ReLU, extreme bias values, or disconnected layers.";
 		} else if (maxNorm > 1e4) {
 			status = "exploding";
-			message = "Gradient magnitudes are extremely large (max: " + maxNorm.toExponential(2) + "). Consider reducing learning rate or adding gradient clipping.";
+			message = "Gradient magnitudes are extremely large (max: " + _gflow_num(maxNorm) + "). Consider reducing learning rate or adding gradient clipping.";
 		} else if (minNorm < 1e-8 && maxNorm > 1e-2) {
 			status = "vanishing";
-			message = "Some layers have near-zero gradients (min: " + minNorm.toExponential(2) + "). Consider using residual connections, batch normalization, or different activation functions.";
+			message = "Some layers have near-zero gradients (min: " + _gflow_num(minNorm) + "). Consider using residual connections, batch normalization, or different activation functions.";
 		} else if (ratio > 1e4) {
 			status = "vanishing";
-			message = "Gradient ratio across layers is " + ratio.toExponential(1) + "\u00d7. Early layers may not be learning effectively.";
+			message = "Gradient ratio across layers is " + _gflow_ratio(ratio) + ". Early layers may not be learning effectively.";
 		} else if (fractionDead > 0) {
 			// Catch edge case: some layers are near-zero but didn't trigger above
 			status = "vanishing";
@@ -1026,10 +1043,10 @@ var GradientFlowHeatmap = (function () {
 		var avgN = norms.reduce(function (a, b) { return a + b; }, 0) / norms.length;
 
 		var statValues = [
-			maxN.toExponential(3),
-			minN.toExponential(3),
-			avgN.toExponential(3),
-			diagnosis ? diagnosis.ratio.toExponential(2) + "\u00d7" : "N/A"
+			_gflow_num(maxN),
+			_gflow_num(minN),
+			_gflow_num(avgN),
+			diagnosis ? _gflow_ratio(diagnosis.ratio) : "N/A"
 		];
 		var statLabels = [
 			"<span class='TRANSLATEME_gflow_max_norm_label'></span>",
@@ -1154,7 +1171,7 @@ var GradientFlowHeatmap = (function () {
 				row.className = "gflow_layer_row";
 				row.innerHTML = "<span class='gflow_layer_name' title='" + layer.name + " (" + layer.type + ")'>" + layer.name + "</span>" +
 					"<div class='gflow_layer_bar_outer'><div class='gflow_layer_bar_inner' data-gflow-bar='" + i + "' style='width:" + pct.toFixed(1) + "%;background:" + barColor + ";'></div></div>" +
-					"<span class='gflow_layer_val' data-gflow-val='" + i + "'>" + layerNorm.toExponential(2) + "</span>";
+					"<span class='gflow_layer_val' data-gflow-val='" + i + "'>" + _gflow_num(layerNorm) + "</span>";
 				layerBarsEl.appendChild(row);
 			}
 		} else {
@@ -1172,7 +1189,7 @@ var GradientFlowHeatmap = (function () {
 					barEl.style.backgroundColor = barColor;
 				}
 				if (valEl) {
-					var newText = layerNorm.toExponential(2);
+					var newText = _gflow_num(layerNorm);
 					if (valEl.textContent !== newText) {
 						valEl.textContent = newText;
 					}
@@ -1290,12 +1307,7 @@ var GradientFlowHeatmap = (function () {
 	// RENDER — MAIN ENTRY POINT
 	// ============================================================
 
-	function _render(divOrId) {
-		var container = _getOrCreateContainer(divOrId);
-		if (!container) return null;
-
-		_injectStyles();
-
+	function _appendRecord() {
 		// Attempt gradient computation
 		var newRecord = _computeGradients();
 		if (newRecord && newRecord.layers && newRecord.layers.length > 0) {
@@ -1318,6 +1330,17 @@ var GradientFlowHeatmap = (function () {
 
 			_state.consecutiveFailures = 0;
 		}
+
+		return newRecord;
+	}
+
+	function _render(divOrId) {
+		var container = _getOrCreateContainer(divOrId);
+		if (!container) return null;
+
+		_injectStyles();
+
+		_appendRecord();
 
 		// Build or repair skeleton
 		if (!_isDomIntact(container)) {
@@ -1415,6 +1438,13 @@ var GradientFlowHeatmap = (function () {
 		return _render(divOrId);
 	};
 
+	// Record a gradient sample without touching the DOM. Used while the tab is
+	// hidden after the reader has opened it once, so the heatmap has the full
+	// history when they come back.
+	gradientFlow.record = _appendRecord;
+
+	gradientFlow.formatNumber = _gflow_num;
+
 	return gradientFlow;
 
 })();
@@ -1431,8 +1461,19 @@ if (typeof window !== "undefined") {
 // tab on boot, so a gradient_flow tab that's active on load gets the flag
 // set automatically.
 window.__gradient_flow_visible = false;
+// Set when the reader has opened the tab at least once. From then on we keep
+// recording one gradient sample per epoch even while the tab is hidden, so the
+// time axis grows during short trainings too.
+window.__gradient_flow_enabled = false;
 
 function gradientFlowToSummary() {
-	if (!window.__gradient_flow_visible) return;
+	if (!window.__gradient_flow_visible) {
+		if (window.__gradient_flow_enabled && typeof gradientFlow.record === "function") {
+			gradientFlow.record();
+		}
+		return;
+	}
+
+	window.__gradient_flow_enabled = true;
 	gradientFlow("gradient_flow");
 }
