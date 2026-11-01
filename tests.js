@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2566;
+var DEFAULT_EXPECTED_TEST_COUNT = 2569;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -10670,6 +10670,119 @@ async function test_translation_cache () {
 	return translated;
 }
 
+async function test_all_tabs_can_be_opened () {
+	var containers = [];
+	$(".ui-tabs").each(function () {
+		if (containers.indexOf(this) === -1) {
+			containers.push(this);
+		}
+	});
+	containers.sort(function (a, b) {
+		return $(a).parents().length - $(b).parents().length;
+	});
+
+	for (var container_idx = 0; container_idx < containers.length; container_idx++) {
+		var $container = $(containers[container_idx]);
+
+		if (!$container.is(":visible")) {
+			var container_id = $container.attr("id");
+			var $parent_link = $(".ui-tabs-nav a").filter(function () {
+				return $(this).attr("href") === "#" + container_id;
+			}).first();
+
+			if ($parent_link.length) {
+				$parent_link.trigger("click");
+				await delay(300);
+			}
+		}
+
+		var $labels = $container.find(
+			"> .ui-tabs-nav > li > a[id$='_tab_label'], " +
+			"> .navi_list > li > a[id$='_tab_label']"
+		);
+
+		for (var label_idx = 0; label_idx < $labels.length; label_idx++) {
+			var $label = $($labels[label_idx]);
+
+			if ($label.parent().css("display") === "none") {
+				continue;
+			}
+
+			var href = $label.attr("href");
+			var $panel = $(href);
+
+			if ($panel.length !== 1) {
+				err("Tab " + $label.attr("id") + " has " + $panel.length + " panels for " + href);
+				return false;
+			}
+
+			$label.trigger("click");
+			await delay(200);
+
+			if (!$panel.is(":visible")) {
+				err("Tab " + $label.attr("id") + " did not show its panel " + href);
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+async function wait_until (predicate, timeout_ms, interval_ms = 100) {
+	const deadline = performance.now() + timeout_ms;
+
+	while (performance.now() < deadline) {
+		if (predicate()) {
+			return true;
+		}
+		await delay(interval_ms);
+	}
+
+	return predicate();
+}
+
+async function test_pyodide_does_not_autostart_on_tab_show () {
+	if (PyodideEditor.isReady() || PyodideEditor.isLoading()) {
+		dbg("[test_pyodide_does_not_autostart_on_tab_show] Pyodide was already initialized; skipping");
+		return true;
+	}
+
+	$("#code_tab_label").click();
+	await delay(500);
+
+	$("#html_tab_label").click();
+	await delay(500);
+
+	$("#pyodide_editor_tab_label").click();
+
+	// Opening the tab must not start the ~9 MB runtime. Before the fix an
+	// idle callback compiled Pyodide on the main thread, so returning to the
+	// HTML tab froze the page for several seconds.
+	const started = await wait_until(function () {
+		return PyodideEditor.isReady() || PyodideEditor.isLoading();
+	}, 2000);
+
+	const before_html_click = performance.now();
+	$("#html_tab_label").click();
+	const html_click_ms = performance.now() - before_html_click;
+
+	test_equal("pyodide does not auto-initialize when its tab is shown", started, false);
+	test_equal("switching back to the HTML tab is not blocked", html_click_ms < 1000, true);
+
+	if(started) {
+		err("pyodide auto-initialized when its tab was shown");
+		return false;
+	}
+
+	if(!$("#html_tab").is(":visible")) {
+		err("#html_tab is not visible after switching back from the Python tab");
+		return false;
+	}
+
+	return true;
+}
+
 async function run_python_code_tests() {
 	async function load_python_code_tab() {
 		$("#code_tab_label").click();
@@ -10688,21 +10801,25 @@ async function run_python_code_tests() {
 		return true;
 	}
 
+	function pyodide_console () {
+		return $("#pyodide_console_output").text();
+	}
+
+	async function run_and_wait_for_console (expected_text, timeout_ms) {
+		var before = pyodide_console();
+		$("#pyodide_run_btn").click();
+
+		return await wait_until(function () {
+			var text = pyodide_console();
+			return text !== before && text.includes(expected_text);
+		}, timeout_ms);
+	}
+
 	await set_dataset_and_wait("signs");
 	await delay(3000);
 
 	if(!(await load_python_code_tab())) {
 		err("Could not load python code tab after loading signs");
-		return false;
-	}
-
-	if(!$("#pyodide_console_output").text().includes("Python environment ready")) {
-		err(`pyodide_console_output does not contain 'Python environment ready'`);
-		return false;
-	}
-
-	if($("#pyodide_console_output").text().includes("Pyodide failed to initialize")) {
-		err("pyodide_console_output contains a false 'Pyodide failed to initialize' error although the runtime is ready");
 		return false;
 	}
 
@@ -10716,20 +10833,27 @@ async function run_python_code_tests() {
 	pyodideEditorClear();
 	await delay(1000);
 
-	if($("#pyodide_console_output").text() != "") {
+	if(pyodide_console() != "") {
 		err(`pyodideEditorClear() didn't clean the console`);
 		return false;
 	}
 
-	$("#pyodide_run_btn").click();
-	await delay(5000);
-
-	if(!$("#pyodide_console_output").text().includes("Hello, World")) {
+	if(!(await run_and_wait_for_console("Hello, World", 60000))) {
 		err("#pyodide_console_output does not contain 'Hello, World' after clicking 'Run' for default program");
 		return false;
 	}
 
-	if(!/Done \([0-9.]+ s\)/.test($("#pyodide_console_output").text())) {
+	if(!pyodide_console().includes("Python environment ready")) {
+		err(`pyodide_console_output does not contain 'Python environment ready'`);
+		return false;
+	}
+
+	if(pyodide_console().includes("Pyodide failed to initialize")) {
+		err("pyodide_console_output contains a false 'Pyodide failed to initialize' error although the runtime is ready");
+		return false;
+	}
+
+	if(!/Done \([0-9.]+ s\)/.test(pyodide_console())) {
 		err("pyodide_console_output does not show the run duration in the Done line");
 		return false;
 	}
@@ -10748,16 +10872,13 @@ async function run_python_code_tests() {
 	pyodideEditorClear();
 	await delay(1000);
 
-	$("#pyodide_run_btn").click();
-	await delay(1000);
-
-	if(!$("#pyodide_console_output").text().includes("Model Architecture")) {
-		err("#pyodide_console_output does not contain 'Model Architecture' after running HTML Table example");
+	if(!(await run_and_wait_for_console("Table rendered", 30000))) {
+		err("#pyodide_console_output does not contain 'Table rendered' after running HTML Table example");
 		return false;
 	}
 
-	if(!$("#pyodide_console_output").text().includes("Table rendered")) {
-		err("#pyodide_console_output does not contain 'Table rendered' after running HTML Table example");
+	if(!pyodide_console().includes("Model Architecture")) {
+		err("#pyodide_console_output does not contain 'Model Architecture' after running HTML Table example");
 		return false;
 	}
 
@@ -12877,6 +12998,8 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_if_plotter_is_shown()", await test_if_plotter_is_shown(), true);
 
 		test_equal("test_math_editable_system()", await test_math_editable_system(), true);
+		test_equal("test_all_tabs_can_be_opened()", await test_all_tabs_can_be_opened(), true);
+		test_equal("test_pyodide_does_not_autostart_on_tab_show()", await test_pyodide_does_not_autostart_on_tab_show(), true);
 		test_equal("run_python_code_tests()", await run_python_code_tests(), true);
 
 		test_equal("test_activation_atlas()", await test_activation_atlas(), true);

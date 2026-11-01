@@ -71,7 +71,6 @@
 	var _scrollRAF = null;
 	var _examplesToggling = false;
 	var _examplesTranslated = false;
-	var _tabObserver = null;
 
 	var _scrollPending = false;
 
@@ -3565,27 +3564,10 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 	// INITIALIZATION ON DOM READY
 	// =========================================================================
 
-	function shouldAutoInitPyodide() {
-		if (pyodideReady || pyodideLoading) return false;
-		var tab = document.getElementById("pyodide_editor_tab");
-		return !!tab && tab.style.display !== "none" && tab.offsetParent !== null;
-	}
-
-	function handleTabMutation(mutation) {
-		if (mutation.type !== "attributes" || mutation.attributeName !== "style") return;
-		if (!shouldAutoInitPyodide()) return;
-
-		if (window.requestIdleCallback) {
-			requestIdleCallback(function() {
-				if (shouldAutoInitPyodide()) initPyodide();
-			}, { timeout: 5000 });
-		} else {
-			setTimeout(function() {
-				if (shouldAutoInitPyodide()) initPyodide();
-			}, 500);
-		}
-	}
-
+	// Pyodide is loaded lazily on an explicit action (Run, webcam, snapshot,
+	// reset). Loading it when the tab merely becomes visible compiled the
+	// ~9 MB WASM runtime on the main thread; switching back to another tab
+	// during that compile froze the whole page for several seconds.
 	function initWhenReady() {
 		injectScrollPerformanceCSS();
 		applyScrollPerformanceHints();
@@ -3597,30 +3579,6 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 		requestAnimationFrame(function() {
 			requestAnimationFrame(cacheEditorLayout);
 		});
-
-		// Watch for tab visibility to auto-init Pyodide IN THE BACKGROUND
-		_tabObserver = new MutationObserver(function (mutations) {
-			for (var i = 0; i < mutations.length; i++) {
-				handleTabMutation(mutations[i]);
-			}
-		});
-
-		var pyodideTab = document.getElementById("pyodide_editor_tab");
-		if (pyodideTab) {
-			_tabObserver.observe(pyodideTab, { attributes: true, attributeFilter: ["style"] });
-
-			if (shouldAutoInitPyodide()) {
-				if (window.requestIdleCallback) {
-					requestIdleCallback(function() {
-						if (shouldAutoInitPyodide()) initPyodide();
-					}, { timeout: 2000 });
-				} else {
-					setTimeout(function() {
-						if (shouldAutoInitPyodide()) initPyodide();
-					}, 100);
-				}
-			}
-		}
 
 		// Auto-save every 30 seconds
 		setInterval(saveEditorContent, 30000);
@@ -4133,6 +4091,10 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 		return pyodideReady;
 	}
 
+	function isPyodideLoading() {
+		return pyodideLoading;
+	}
+
 	function isPyodideRunning() {
 		return isRunning;
 	}
@@ -4515,6 +4477,7 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 		getLastPrediction: getLastPyodidePrediction,
 		clearPrediction: clearPyodidePrediction,
 		isReady: isPyodideReady,
+		isLoading: isPyodideLoading,
 		isRunning: isPyodideRunning,
 		runCode: runPythonCode,
 		loadPackage: loadPyodidePackage,
