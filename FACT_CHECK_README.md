@@ -88,6 +88,10 @@ Beispiele: `blog/facts/backproplab.facts.json` und
 `blog/facts/security_inference.facts.json`.
 
 ```bash
+# Everything in one command:
+./blog/tests/factcheck_all.py
+
+# Individual checks:
 uv run blog/tools/factcheck/check_facts.py blog/
 uv run blog/tests/fact_ledger_test.py
 ```

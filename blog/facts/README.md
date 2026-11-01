@@ -13,6 +13,17 @@ Nicht-Lektionen (`index.php`, `index_full.php`, `functions.php`,
 Der Checker ist deterministisch: kein LLM, kein Netz, keine Embeddings.
 Er vergleicht normalisierte Claims über alle Dateien und meldet Widersprüche.
 
+## Ein Befehl für alles
+
+```bash
+./blog/tests/factcheck_all.py          # alle Prüfungen + FINDINGS + Exit-Code
+./blog/tests/factcheck_all.py --quiet  # nur FINDINGS + Summary
+```
+
+Exit 0 = alle Gates grün; Exit 1 = mindestens ein Fehler. Der Report listet
+Widersprüche, fehlende/veraltete Statements, unregistrierte Jahre/Quantitäten,
+Citation-Probleme, Relations- und Range-Probleme.
+
 ## Befehle
 
 ```bash

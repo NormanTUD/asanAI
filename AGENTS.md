@@ -883,6 +883,11 @@ files without a fact file are the non-lesson entry points (`index.php`,
 Adding a lesson means adding its fact file in the same commit; deleting or
 renaming a lesson means deleting or renaming its fact file.
 
+**One command for everything.** `./blog/tests/factcheck_all.py` runs the
+ledger checks, sentence-contradiction report, statement freshness, content
+claims, deep audit and ledger unit tests; it prints a FINDINGS list and exits
+1 if any gate fails. `--quiet` prints only findings and the summary.
+
 **Commands (from the repository root).**
 
 ```bash
