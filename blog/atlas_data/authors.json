@@ -85818,5 +85818,346 @@
   "cited_in": [
    "reliability"
   ]
+ },
+ {
+  "name": "Rowland Hill",
+  "canon": "Rowland Hill",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1837,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hill1837postal"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Universal Postal Union",
+  "canon": "Universal Postal Union",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "upu1874"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Suetonius (trans. Alexander Thomson)",
+  "canon": "Suetonius",
+  "alias": "trans. Alexander Thomson",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2006,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "suetoniusaugustus"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Simon Nora",
+  "canon": "Simon Nora",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1978,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "nora1978informatisation"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Alain Minc",
+  "canon": "Alain Minc",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1978,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "nora1978informatisation"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "British Telecom",
+  "canon": "British Telecom",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1982,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "prestel1982gateway",
+   "prestel1984briefing"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Deutscher Bundestag",
+  "canon": "Deutscher Bundestag",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1984,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "btx1984drucksache"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Deutsche Bundespost",
+  "canon": "Deutsche Bundespost",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1989,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "datexphandbuch1989"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Bundesrepublik Deutschland",
+  "canon": "Bundesrepublik Deutschland",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1994,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "postumwg1994"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Deutsche Telekom",
+  "canon": "Deutsche Telekom",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "telekomhistory"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Direction Générale des Télécommunications",
+  "canon": "Direction Générale des Télécommunications",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1986,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "minitel1986spec"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Christophe Cariou",
+  "canon": "Christophe Cariou",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ina2012minitel"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Morgane Gaulon-Brain",
+  "canon": "Morgane Gaulon-Brain",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ina2012minitel"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "United States Postal Service",
+  "canon": "United States Postal Service",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2008,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "usps_ecom"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "M. Butler",
+  "canon": "M. Butler",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1985,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc937"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "J. Postel",
+  "canon": "J. Postel",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1985,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc937"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "D. Chase",
+  "canon": "D. Chase",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1985,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc937"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "J. Goldberger",
+  "canon": "J. Goldberger",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1985,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc937"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "J. K. Reynolds",
+  "canon": "J. K. Reynolds",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1985,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc937"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Jonathan B. Postel",
+  "canon": "Jonathan B. Postel",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1982,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc821"
+  ],
+  "cited_in": [
+   "untold_history_iii"
+  ]
  }
 ]

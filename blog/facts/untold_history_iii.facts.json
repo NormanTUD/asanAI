@@ -20840,6 +20840,19 @@
         "rfc821"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-upu-renamed-year",
+      "subject": "universal-postal-union",
+      "predicate": "renamed_year",
+      "value": 1878,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "renamed the Universal Postal Union in 1878",
+      "citation_keys": [
+        "upu1874"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -36405,7 +36418,7 @@
     },
     {
       "id": "untold_history_iii-stmt-478",
-      "quote": "For the first time, an ordinary person could send an arbitrary message to an arbitrary address at a predictable price, and the state had a daily, nationwide flow of ordinary writing.",
+      "quote": "Now an ordinary person could send an arbitrary message to an arbitrary address at a predictable price, and the state had a daily, nationwide flow of ordinary writing.",
       "section": "The Postal Network: The First Store-and-Forward System",
       "kind": "statement"
     },
@@ -36453,7 +36466,7 @@
     },
     {
       "id": "untold_history_iii-stmt-486",
-      "quote": "France's PTT turned the Nora--Minc report's *télématique* into the **Minitel**: a cheap terminal, the Télétel network, the Transpac X.25 backbone, and a 1200-baud PAD connection; the Saint-Malo electronic-directory trial opened in July 1980 (\\cite[Nora and Minc, 1978]{nora1978informatisation}; \\cite[DGT, 1986]{minitel1986spec}; \\cite[INA, 2012]{ina2012minitel}).",
+      "quote": "France's PTT turned the Nora--Minc report's *télématique* into the **Minitel**: a cheap terminal, the Télétel network, the Transpac X.25 backbone, and a 1,200-baud PAD connection; the Saint-Malo electronic-directory trial opened in July 1980 (\\cite[Nora and Minc, 1978]{nora1978informatisation}; \\cite[DGT, 1986]{minitel1986spec}; \\cite[INA, 2012]{ina2012minitel}).",
       "section": "The Post Office Becomes the Internet",
       "kind": "statement"
     },
@@ -36513,7 +36526,7 @@
     },
     {
       "id": "untold_history_iii-stmt-496",
-      "quote": "The post did not cause the internet, but it supplied the template and the personnel: a state institution that already knew how to address, route, price and deliver messages to everyone, and a public accustomed to using it.",
+      "quote": "The post did not cause the internet, but it supplied the template: a state institution that already knew how to address, route, price and deliver messages to everyone, and a public accustomed to using it.",
       "section": "The Post Office Becomes the Internet",
       "kind": "statement"
     },

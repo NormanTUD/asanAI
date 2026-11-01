@@ -1,14 +1,14 @@
 # Deep fact audit
 
 - lessons: 99
-- claims: 7166
-- statements: 20571
-- relations: 5352
+- claims: 7185
+- statements: 20601
+- relations: 5371
 - uncovered years: 27
 - uncovered quantities: 4
 - uncited specific claims: 306
 - citation keys not found in lesson: 0
-- relation grounding issues: 67
+- relation grounding issues: 70
 - numeric range issues: 0
 - normalised year conflicts: 0
 
@@ -111,7 +111,7 @@
 | unexpected_capabilities | 23 | 248 | 16 | 6 | 0 |
 | untold_history_i | 501 | 254 | 505 | 0 | 0 |
 | untold_history_ii | 648 | 439 | 607 | 0 | 0 |
-| untold_history_iii | 1620 | 748 | 1113 | 1 | 0 |
+| untold_history_iii | 1639 | 778 | 1132 | 1 | 0 |
 | vectorsearch | 31 | 178 | 22 | 0 | 0 |
 | vibe_coding | 35 | 178 | 14 | 0 | 0 |
 | websearch | 23 | 133 | 18 | 4 | 0 |

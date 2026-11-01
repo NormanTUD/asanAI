@@ -20369,6 +20369,96 @@
    "author": "Laura Weidinger, Maribeth Rauh, Nahema Marchal, et al.",
    "year": "2023",
    "url": "https://arxiv.org/abs/2310.11986"
+  },
+  "hill1837postal": {
+   "title": "Post Office Reform: Its Importance and Practicability",
+   "author": "Rowland Hill",
+   "year": "1837",
+   "url": "https://archive.org/details/ldpd_6404161_000"
+  },
+  "upu1874": {
+   "title": "History of the Universal Postal Union",
+   "author": "Universal Postal Union",
+   "year": "2024",
+   "url": "https://www.upu.int/en/universal-postal-union/about-upu/history"
+  },
+  "suetoniusaugustus": {
+   "title": "The Lives of the Twelve Caesars: Augustus",
+   "author": "Suetonius (trans. Alexander Thomson)",
+   "year": "2006",
+   "url": "https://en.wikisource.org/wiki/The_Lives_of_the_Twelve_Caesars/Augustus"
+  },
+  "nora1978informatisation": {
+   "title": "L'informatisation de la société: rapport à M. le Président de la République",
+   "author": "Simon Nora, Alain Minc",
+   "year": "1978",
+   "url": "https://www.vie-publique.fr/rapport/34772-linformatisation-de-la-societe"
+  },
+  "prestel1982gateway": {
+   "title": "Welcome to Prestel Gateway",
+   "author": "British Telecom",
+   "year": "1982",
+   "url": "https://archive.org/details/Welcome-to-Prestel-Gateway"
+  },
+  "prestel1984briefing": {
+   "title": "Prestel Briefing, Issue 2",
+   "author": "British Telecom",
+   "year": "1984",
+   "url": "https://archive.org/details/prestel-briefing-issue-2"
+  },
+  "btx1984drucksache": {
+   "title": "Bildschirmtext und Datenschutz (Drucksache 10/2582)",
+   "author": "Deutscher Bundestag",
+   "year": "1984",
+   "url": "https://archive.org/details/ger-bt-drucksache-10-2582"
+  },
+  "datexphandbuch1989": {
+   "title": "DATEX-P-Handbuch",
+   "author": "Deutsche Bundespost",
+   "year": "1989",
+   "url": "https://archive.org/details/datex-p-handbuch"
+  },
+  "postumwg1994": {
+   "title": "Gesetz zur Umwandlung der Unternehmen der Deutschen Bundespost in die Rechtsform der Aktiengesellschaft (Postumwandlungsgesetz -- PostUmwG)",
+   "author": "Bundesrepublik Deutschland",
+   "year": "1994",
+   "url": "https://www.gesetze-im-internet.de/postumwg/PostUmwG.pdf"
+  },
+  "telekomhistory": {
+   "title": "Company History: Milestones since 1995",
+   "author": "Deutsche Telekom",
+   "year": "2026",
+   "url": "https://www.telekom.com/en/about-us/company-history"
+  },
+  "minitel1986spec": {
+   "title": "Spécifications techniques d'utilisation du Minitel 1B",
+   "author": "Direction Générale des Télécommunications",
+   "year": "1986",
+   "url": "https://archive.org/details/minitel-stum1b"
+  },
+  "ina2012minitel": {
+   "title": "Du Minitel à l'Internet",
+   "author": "Christophe Cariou, Morgane Gaulon-Brain",
+   "year": "2012",
+   "url": "https://larevuedesmedias.ina.fr/du-minitel-linternet"
+  },
+  "usps_ecom": {
+   "title": "E-COM, Electronic Computer Originated Mail",
+   "author": "United States Postal Service",
+   "year": "2008",
+   "url": "https://web.archive.org/web/20220319163356/https://about.usps.com/who/profile/history/pdf/ecom.pdf"
+  },
+  "rfc937": {
+   "title": "Post Office Protocol - Version 2",
+   "author": "M. Butler, J. Postel, D. Chase, J. Goldberger, J. K. Reynolds",
+   "year": "1985",
+   "url": "https://www.rfc-editor.org/rfc/rfc937.txt"
+  },
+  "rfc821": {
+   "title": "Simple Mail Transfer Protocol",
+   "author": "Jonathan B. Postel",
+   "year": "1982",
+   "url": "https://www.rfc-editor.org/rfc/rfc821.txt"
   }
  },
  "cites": {
@@ -27695,6 +27785,51 @@
    "untold_history_iii"
   ],
   "richardson1922weather": [
+   "untold_history_iii"
+  ],
+  "suetoniusaugustus": [
+   "untold_history_iii"
+  ],
+  "hill1837postal": [
+   "untold_history_iii"
+  ],
+  "upu1874": [
+   "untold_history_iii"
+  ],
+  "prestel1982gateway": [
+   "untold_history_iii"
+  ],
+  "prestel1984briefing": [
+   "untold_history_iii"
+  ],
+  "nora1978informatisation": [
+   "untold_history_iii"
+  ],
+  "minitel1986spec": [
+   "untold_history_iii"
+  ],
+  "ina2012minitel": [
+   "untold_history_iii"
+  ],
+  "btx1984drucksache": [
+   "untold_history_iii"
+  ],
+  "datexphandbuch1989": [
+   "untold_history_iii"
+  ],
+  "postumwg1994": [
+   "untold_history_iii"
+  ],
+  "telekomhistory": [
+   "untold_history_iii"
+  ],
+  "usps_ecom": [
+   "untold_history_iii"
+  ],
+  "rfc821": [
+   "untold_history_iii"
+  ],
+  "rfc937": [
    "untold_history_iii"
   ],
   "aswemaythink": [
@@ -70569,6 +70704,167 @@
    "maxyear": 2023,
    "keys": [
     "weidinger2023sociotechnical"
+   ]
+  },
+  "Rowland Hill": {
+   "count": 1,
+   "minyear": 1837,
+   "maxyear": 1837,
+   "keys": [
+    "hill1837postal"
+   ]
+  },
+  "Universal Postal Union": {
+   "count": 1,
+   "minyear": 2024,
+   "maxyear": 2024,
+   "keys": [
+    "upu1874"
+   ]
+  },
+  "Suetonius (trans. Alexander Thomson)": {
+   "count": 1,
+   "minyear": 2006,
+   "maxyear": 2006,
+   "keys": [
+    "suetoniusaugustus"
+   ]
+  },
+  "Simon Nora": {
+   "count": 1,
+   "minyear": 1978,
+   "maxyear": 1978,
+   "keys": [
+    "nora1978informatisation"
+   ]
+  },
+  "Alain Minc": {
+   "count": 1,
+   "minyear": 1978,
+   "maxyear": 1978,
+   "keys": [
+    "nora1978informatisation"
+   ]
+  },
+  "British Telecom": {
+   "count": 2,
+   "minyear": 1982,
+   "maxyear": 1984,
+   "keys": [
+    "prestel1982gateway",
+    "prestel1984briefing"
+   ]
+  },
+  "Deutscher Bundestag": {
+   "count": 1,
+   "minyear": 1984,
+   "maxyear": 1984,
+   "keys": [
+    "btx1984drucksache"
+   ]
+  },
+  "Deutsche Bundespost": {
+   "count": 1,
+   "minyear": 1989,
+   "maxyear": 1989,
+   "keys": [
+    "datexphandbuch1989"
+   ]
+  },
+  "Bundesrepublik Deutschland": {
+   "count": 1,
+   "minyear": 1994,
+   "maxyear": 1994,
+   "keys": [
+    "postumwg1994"
+   ]
+  },
+  "Deutsche Telekom": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "telekomhistory"
+   ]
+  },
+  "Direction Générale des Télécommunications": {
+   "count": 1,
+   "minyear": 1986,
+   "maxyear": 1986,
+   "keys": [
+    "minitel1986spec"
+   ]
+  },
+  "Christophe Cariou": {
+   "count": 1,
+   "minyear": 2012,
+   "maxyear": 2012,
+   "keys": [
+    "ina2012minitel"
+   ]
+  },
+  "Morgane Gaulon-Brain": {
+   "count": 1,
+   "minyear": 2012,
+   "maxyear": 2012,
+   "keys": [
+    "ina2012minitel"
+   ]
+  },
+  "United States Postal Service": {
+   "count": 1,
+   "minyear": 2008,
+   "maxyear": 2008,
+   "keys": [
+    "usps_ecom"
+   ]
+  },
+  "M. Butler": {
+   "count": 1,
+   "minyear": 1985,
+   "maxyear": 1985,
+   "keys": [
+    "rfc937"
+   ]
+  },
+  "J. Postel": {
+   "count": 1,
+   "minyear": 1985,
+   "maxyear": 1985,
+   "keys": [
+    "rfc937"
+   ]
+  },
+  "D. Chase": {
+   "count": 1,
+   "minyear": 1985,
+   "maxyear": 1985,
+   "keys": [
+    "rfc937"
+   ]
+  },
+  "J. Goldberger": {
+   "count": 1,
+   "minyear": 1985,
+   "maxyear": 1985,
+   "keys": [
+    "rfc937"
+   ]
+  },
+  "J. K. Reynolds": {
+   "count": 1,
+   "minyear": 1985,
+   "maxyear": 1985,
+   "keys": [
+    "rfc937"
+   ]
+  },
+  "Jonathan B. Postel": {
+   "count": 1,
+   "minyear": 1982,
+   "maxyear": 1982,
+   "keys": [
+    "rfc821"
    ]
   }
  }
