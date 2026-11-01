@@ -331,11 +331,18 @@ async function chose_dataset(no_set_config) {
 
 	model_is_trained = false;
 	if (!no_set_config) {
-		await set_config();
+		// Keep set_config's loading overlay up until chose_dataset() has also
+		// loaded and plotted the new dataset; otherwise the overlay disappears
+		// a couple of seconds before the data tab has content.
+		await set_config(undefined, true);
 	}
 	is_setting_config = false;
 
-	$("#data_origin").trigger("change");
+	// Await the data-origin switch instead of only firing its change handler.
+	// The handler loads and plots the new dataset; firing it without waiting
+	// let chose_dataset() remove the loading overlay while the data tab was
+	// still empty.
+	await change_data_origin();
 
 	reset_predict_error();
 	$("#prediction").html("");
