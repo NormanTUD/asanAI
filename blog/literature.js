@@ -24500,4 +24500,115 @@ window.bibData = {
 	"quach2023conformal": {"title":"Conformal Language Modeling","author":"Victor Quach, Adam Fisch, Tal Schuster, et al.","year":2023,"url":"https://arxiv.org/abs/2306.10193","alternativetitle":"Conformal language modeling (Quach et al., 2023)"},
 	"weidinger2023sociotechnical": {"title":"Sociotechnical Safety Evaluation of Generative AI Systems","author":"Laura Weidinger, Maribeth Rauh, Nahema Marchal, et al.","year":2023,"url":"https://arxiv.org/abs/2310.11986","alternativetitle":"Sociotechnical safety evaluation (Weidinger et al., 2023)"},
 
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The postal network and the first public data services
+	 *  (untold_history_iii.php) -- primary sources.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"hill1837postal": {
+		title: "Post Office Reform: Its Importance and Practicability",
+		author: "Rowland Hill",
+		year: 1837,
+		url: "https://archive.org/details/ldpd_6404161_000",
+		alternativetitle: "Hill, Post Office Reform (1837)"
+	},
+	"upu1874": {
+		title: "History of the Universal Postal Union",
+		author: "Universal Postal Union",
+		year: 2024,
+		url: "https://www.upu.int/en/universal-postal-union/about-upu/history",
+		alternativetitle: "UPU, History (Treaty of Bern, 1874)"
+	},
+	"suetoniusaugustus": {
+		title: "The Lives of the Twelve Caesars: Augustus",
+		author: "Suetonius (trans. Alexander Thomson)",
+		year: 2006,
+		url: "https://en.wikisource.org/wiki/The_Lives_of_the_Twelve_Caesars/Augustus",
+		alternativetitle: "Suetonius, Augustus 49"
+	},
+	"nora1978informatisation": {
+		title: "L'informatisation de la société: rapport à M. le Président de la République",
+		author: "Simon Nora, Alain Minc",
+		year: 1978,
+		url: "https://www.vie-publique.fr/rapport/34772-linformatisation-de-la-societe",
+		alternativetitle: "Nora and Minc, L'informatisation de la société (1978)"
+	},
+	"prestel1982gateway": {
+		title: "Welcome to Prestel Gateway",
+		author: "British Telecom",
+		year: 1982,
+		url: "https://archive.org/details/Welcome-to-Prestel-Gateway",
+		alternativetitle: "Prestel Gateway (1982)"
+	},
+	"prestel1984briefing": {
+		title: "Prestel Briefing, Issue 2",
+		author: "British Telecom",
+		year: 1984,
+		url: "https://archive.org/details/prestel-briefing-issue-2",
+		alternativetitle: "Prestel Briefing (1984)"
+	},
+	"btx1984drucksache": {
+		title: "Bildschirmtext und Datenschutz (Drucksache 10/2582)",
+		author: "Deutscher Bundestag",
+		year: 1984,
+		url: "https://archive.org/details/ger-bt-drucksache-10-2582",
+		alternativetitle: "Deutscher Bundestag, Drucksache 10/2582 (1984)"
+	},
+	"datexphandbuch1989": {
+		title: "DATEX-P-Handbuch",
+		author: "Deutsche Bundespost",
+		year: 1989,
+		url: "https://archive.org/details/datex-p-handbuch",
+		alternativetitle: "Deutsche Bundespost, DATEX-P-Handbuch (1989)"
+	},
+	"postumwg1994": {
+		title: "Gesetz zur Umwandlung der Unternehmen der Deutschen Bundespost in die Rechtsform der Aktiengesellschaft (Postumwandlungsgesetz -- PostUmwG)",
+		author: "Bundesrepublik Deutschland",
+		year: 1994,
+		url: "https://www.gesetze-im-internet.de/postumwg/PostUmwG.pdf",
+		alternativetitle: "Postumwandlungsgesetz (1994)"
+	},
+	"telekomhistory": {
+		title: "Company History: Milestones since 1995",
+		author: "Deutsche Telekom",
+		year: 2026,
+		url: "https://www.telekom.com/en/about-us/company-history",
+		alternativetitle: "Deutsche Telekom, Company History"
+	},
+	"minitel1986spec": {
+		title: "Spécifications techniques d'utilisation du Minitel 1B",
+		author: "Direction Générale des Télécommunications",
+		year: 1986,
+		url: "https://archive.org/details/minitel-stum1b",
+		alternativetitle: "DGT, Spécifications du Minitel 1B (1986)"
+	},
+	"ina2012minitel": {
+		title: "Du Minitel à l'Internet",
+		author: "Christophe Cariou, Morgane Gaulon-Brain",
+		year: 2012,
+		url: "https://larevuedesmedias.ina.fr/du-minitel-linternet",
+		alternativetitle: "INA, Du Minitel à l'Internet (2012)"
+	},
+	"usps_ecom": {
+		title: "E-COM, Electronic Computer Originated Mail",
+		author: "United States Postal Service",
+		year: 2008,
+		url: "https://web.archive.org/web/20220319163356/https://about.usps.com/who/profile/history/pdf/ecom.pdf",
+		alternativetitle: "USPS, E-COM (2008)"
+	},
+	"rfc937": {
+		title: "Post Office Protocol - Version 2",
+		author: "M. Butler, J. Postel, D. Chase, J. Goldberger, J. K. Reynolds",
+		year: 1985,
+		url: "https://www.rfc-editor.org/rfc/rfc937.txt",
+		alternativetitle: "RFC 937, Post Office Protocol (1985)"
+	},
+	"rfc821": {
+		title: "Simple Mail Transfer Protocol",
+		author: "Jonathan B. Postel",
+		year: 1982,
+		url: "https://www.rfc-editor.org/rfc/rfc821.txt",
+		alternativetitle: "RFC 821, SMTP (1982)"
+	},
+
 };

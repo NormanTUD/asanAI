@@ -1362,6 +1362,32 @@ Two geophysical problems helped build the market for large-scale numerical compu
 
 </div>
 
+<div class="md" data-depth="60">
+### The Postal Network: The First Store-and-Forward System
+
+Before packets, there were letters. A postal system is a network with addresses, routes, tariffs, timetables and relay points, and its core operation is **store-and-forward**. The pattern is old: Augustus set up posts of young men at moderate distances along the military roads, later regular couriers with fast vehicles, so that dispatches could travel and the bearers could be questioned about the business (\cite[Suetonius, Augustus 49]{suetoniusaugustus}). The Roman system later called the *cursus publicus* was a state relay, not a public mail service, but it already had the essential shape: a message is handed from node to node, and each node holds it until the next link is ready.
+
+The decisive change was institutional rather than technical: make the network cheap, uniform and prepaid. Rowland Hill's 1837 pamphlet *Post Office Reform* argued for "a very low rate of postage" and "a uniform rate of postage" independent of distance, because the cost of transit was trivial compared with the cost of collecting, sorting and accounting for letters (\cite[Hill, 1837]{hill1837postal}). The reform that followed turned the post into a mass medium. For the first time, an ordinary person could send an arbitrary message to an arbitrary address at a predictable price, and the state had a daily, nationwide flow of ordinary writing.
+
+International mail remained a maze of bilateral treaties until 1874. At the suggestion of Heinrich von Stephan, the Swiss government convened 22 nations in Bern; the Treaty of Bern created the General Postal Union, renamed the Universal Postal Union in 1878, and turned "a confusing international maze of postal services and regulations into a single postal territory for the reciprocal exchange of letters" (\cite[UPU, History]{upu1874}). The post had standardized the two things every network needs: an address and an interchange rule.
+
+</div>
+
+<div class="md" data-depth="20">
+### The Post Office Becomes the Internet
+
+In Europe the post office did not remain a letter carrier. It was the state's communications monopoly, and it ran the telegraph and the telephone as well. That is why the first public data services were launched by postal administrations rather than by computer companies. The UK Post Office's telecom arm opened **Prestel** in September 1979, the first public viewdata service in the world; by 1984 its Mailbox service let 47,000 terminals send messages to mailbox numbers, "like an electronic pigeonhole" (\cite[Prestel Gateway, 1982]{prestel1982gateway}; \cite[Prestel Briefing, 1984]{prestel1984briefing}). France's PTT turned the Nora--Minc report's *télématique* into the **Minitel**: a cheap terminal, the Télétel network, the Transpac X.25 backbone, and a 1200-baud PAD connection; the Saint-Malo electronic-directory trial opened in July 1980 (\cite[Nora and Minc, 1978]{nora1978informatisation}; \cite[DGT, 1986]{minitel1986spec}; \cite[INA, 2012]{ina2012minitel}).
+
+Germany is the clearest case. The Deutsche Bundespost presented **Bildschirmtext** (BTX) to the public in 1977 and introduced it generally six years later, in 1983; BTX offered information and data-processing services over the ordinary telephone line (\cite[Deutscher Bundestag, Drucksache 10/2582]{btx1984drucksache}). The same Bundespost ran **Datex-P**, its public packet-switched network: X.25, 300 to 64,000 bit/s, up to 255 logical channels, with PADs for ordinary terminals (\cite[Deutsche Bundespost, 1989]{datexphandbuch1989}). Postreform I (1990) split the Bundespost into Postdienst, Postbank and Telekom; Postreform II (1995) turned Telekom into a stock corporation, and the old BTX line became T-Online (\cite[PostUmwG, 1994]{postumwg1994}; \cite[Deutsche Telekom, Company History]{telekomhistory}).
+
+The United States tried the hybrid route. The Postal Service's **E-COM** (1982--1985) let business mailers send messages from their own computers to 25 serving post offices, which printed, folded, sealed and delivered them within two days; it handled 23 million messages in fiscal 1984 before it was discontinued (\cite[USPS, E-COM]{usps_ecom}).
+
+The vocabulary survived the infrastructure. Email is not a letter, but its protocols are named after the post: the Simple Mail Transfer Protocol (SMTP) posts mail (\cite[RFC 821]{rfc821}); the Post Office Protocol lets a workstation "access mail from a mailbox server" (\cite[RFC 937]{rfc937}). The post's store-and-forward logic reappears at every scale: in the telegraph relay, in the packet switch, in the mail server, in delay-tolerant networking. The post did not cause the internet, but it supplied the template and the personnel: a state institution that already knew how to address, route, price and deliver messages to everyone, and a public accustomed to using it.
+
+None of this was designed for machine learning. But it built the social substrate the web later mined: a literate public that wrote things down and sent them to strangers, a state that standardized addresses and tariffs, and a communications monopoly that could fund a public data network before it was profitable. The training corpus is the descendant of that habit. The post taught the modern world how a network of strangers should feel: cheap, regular, addressable and ordinary.
+
+</div>
+
 <div class="md" data-depth="20">
 ### The Internet and the Web: The Training Corpus
 

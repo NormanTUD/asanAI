@@ -237,7 +237,22 @@
     "companiesact1856",
     "sbic1958",
     "google2004s1",
-    "adwords2003patent"
+    "adwords2003patent",
+    "hill1837postal",
+    "upu1874",
+    "suetoniusaugustus",
+    "nora1978informatisation",
+    "prestel1982gateway",
+    "prestel1984briefing",
+    "btx1984drucksache",
+    "datexphandbuch1989",
+    "postumwg1994",
+    "telekomhistory",
+    "minitel1986spec",
+    "ina2012minitel",
+    "usps_ecom",
+    "rfc937",
+    "rfc821"
   ],
   "claims": [
     {
@@ -20588,6 +20603,243 @@
         "pixar_ourstory"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-postal-network-name",
+      "subject": "postal-network",
+      "predicate": "name",
+      "value": "postal network",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A postal system is a network with addresses, routes, tariffs, timetables and relay points",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-cursus-publicus-established-by",
+      "subject": "cursus-publicus",
+      "predicate": "established_by",
+      "value": "Augustus",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Augustus set up posts of young men at moderate distances along the military roads",
+      "citation_keys": [
+        "suetoniusaugustus"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-rowland-hill-year",
+      "subject": "rowland-hill-post-office-reform",
+      "predicate": "year",
+      "value": 1837,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Rowland Hill's 1837 pamphlet *Post Office Reform*",
+      "citation_keys": [
+        "hill1837postal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-rowland-hill-rate",
+      "subject": "rowland-hill-post-office-reform",
+      "predicate": "rate_principle",
+      "value": "uniform rate independent of distance",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "\"a very low rate of postage\" and \"a uniform rate of postage\" independent of distance",
+      "citation_keys": [
+        "hill1837postal"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-upu-year",
+      "subject": "universal-postal-union",
+      "predicate": "year",
+      "value": 1874,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the Treaty of Bern created the General Postal Union",
+      "citation_keys": [
+        "upu1874"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-upu-members",
+      "subject": "universal-postal-union",
+      "predicate": "member_states",
+      "value": 22,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "the Swiss government convened 22 nations in Bern",
+      "citation_keys": [
+        "upu1874"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-prestel-year",
+      "subject": "prestel",
+      "predicate": "year",
+      "value": 1979,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "opened **Prestel** in September 1979",
+      "citation_keys": [
+        "prestel1982gateway"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-prestel-mailbox-terminals",
+      "subject": "prestel-mailbox",
+      "predicate": "terminals",
+      "value": 47000,
+      "unit": "count",
+      "qualifiers": {
+        "year": 1984
+      },
+      "quote": "by 1984 its Mailbox service let 47,000 terminals send messages",
+      "citation_keys": [
+        "prestel1984briefing"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-minitel-year",
+      "subject": "minitel",
+      "predicate": "year",
+      "value": 1980,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "the Saint-Malo electronic-directory trial opened in July 1980",
+      "citation_keys": [
+        "ina2012minitel"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-minitel-network",
+      "subject": "minitel",
+      "predicate": "network",
+      "value": "Transpac X.25",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the Transpac X.25 backbone",
+      "citation_keys": [
+        "ina2012minitel"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-btx-year",
+      "subject": "bildschirmtext",
+      "predicate": "year",
+      "value": 1983,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "introduced it generally six years later, in 1983",
+      "citation_keys": [
+        "btx1984drucksache"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-datex-p-protocol",
+      "subject": "datex-p",
+      "predicate": "protocol",
+      "value": "X.25",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "its public packet-switched network: X.25",
+      "citation_keys": [
+        "datexphandbuch1989"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-datex-p-channels",
+      "subject": "datex-p",
+      "predicate": "logical_channels",
+      "value": 255,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "up to 255 logical channels",
+      "citation_keys": [
+        "datexphandbuch1989"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-deutsche-telekom-year",
+      "subject": "deutsche-telekom",
+      "predicate": "year",
+      "value": 1995,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "Postreform II (1995) turned Telekom into a stock corporation",
+      "citation_keys": [
+        "postumwg1994",
+        "telekomhistory"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-ecom-start-year",
+      "subject": "e-com",
+      "predicate": "start_year",
+      "value": 1982,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**E-COM** (1982--1985)",
+      "citation_keys": [
+        "usps_ecom"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-ecom-messages",
+      "subject": "e-com",
+      "predicate": "messages",
+      "value": 23000000,
+      "unit": "count",
+      "qualifiers": {
+        "year": 1984
+      },
+      "quote": "handled 23 million messages in fiscal 1984",
+      "citation_keys": [
+        "usps_ecom"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-post-office-protocol-name",
+      "subject": "post-office-protocol",
+      "predicate": "name",
+      "value": "Post Office Protocol",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the Post Office Protocol lets a workstation",
+      "citation_keys": [
+        "rfc937"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "untold-iii-smtp-name",
+      "subject": "smtp",
+      "predicate": "name",
+      "value": "Simple Mail Transfer Protocol",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "the Simple Mail Transfer Protocol (SMTP) posts mail",
+      "citation_keys": [
+        "rfc821"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -33058,6 +33310,233 @@
       "quote": "part: 6",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "rel-postal-prestel-part",
+      "from": "prestel",
+      "to": "postal-network",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "The UK Post Office's telecom arm opened **Prestel**",
+      "citation_keys": [
+        "prestel1982gateway"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rel-postal-minitel-part",
+      "from": "minitel",
+      "to": "postal-network",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "France's PTT turned the Nora--Minc report's *télématique* into the **Minitel**",
+      "citation_keys": [
+        "nora1978informatisation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rel-postal-btx-part",
+      "from": "bildschirmtext",
+      "to": "postal-network",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "The Deutsche Bundespost presented **Bildschirmtext** (BTX)",
+      "citation_keys": [
+        "btx1984drucksache"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rel-postal-datex-part",
+      "from": "datex-p",
+      "to": "postal-network",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "The same Bundespost ran **Datex-P**",
+      "citation_keys": [
+        "datexphandbuch1989"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rel-postal-ecom-part",
+      "from": "e-com",
+      "to": "postal-network",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "The Postal Service's **E-COM**",
+      "citation_keys": [
+        "usps_ecom"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "rel-postal-telekom-derived",
+      "from": "deutsche-telekom",
+      "to": "postal-network",
+      "kind": "derived_from",
+      "qualifiers": {},
+      "quote": "Postreform II (1995) turned Telekom into a stock corporation",
+      "citation_keys": [
+        "telekomhistory"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "prov-untold_history_iii-postal-network",
+      "from": "postal-network",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A postal system is a network with addresses, routes, tariffs, timetables and relay points",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_iii-cursus-publicus",
+      "from": "cursus-publicus",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Augustus set up posts of young men at moderate distances along the military roads",
+      "citation_keys": [
+        "suetoniusaugustus"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_iii-rowland-hill-post-office-reform",
+      "from": "rowland-hill-post-office-reform",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Rowland Hill's 1837 pamphlet *Post Office Reform*",
+      "citation_keys": [
+        "hill1837postal"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_iii-universal-postal-union",
+      "from": "universal-postal-union",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Treaty of Bern created the General Postal Union",
+      "citation_keys": [
+        "upu1874"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_iii-prestel",
+      "from": "prestel",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "opened **Prestel** in September 1979",
+      "citation_keys": [
+        "prestel1982gateway"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_iii-prestel-mailbox",
+      "from": "prestel-mailbox",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "by 1984 its Mailbox service let 47,000 terminals send messages",
+      "citation_keys": [
+        "prestel1984briefing"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_iii-minitel",
+      "from": "minitel",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Saint-Malo electronic-directory trial opened in July 1980",
+      "citation_keys": [
+        "ina2012minitel"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_iii-bildschirmtext",
+      "from": "bildschirmtext",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "introduced it generally six years later, in 1983",
+      "citation_keys": [
+        "btx1984drucksache"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_iii-datex-p",
+      "from": "datex-p",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "its public packet-switched network: X.25",
+      "citation_keys": [
+        "datexphandbuch1989"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_iii-deutsche-telekom",
+      "from": "deutsche-telekom",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Postreform II (1995) turned Telekom into a stock corporation",
+      "citation_keys": [
+        "postumwg1994",
+        "telekomhistory"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_iii-e-com",
+      "from": "e-com",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**E-COM** (1982--1985)",
+      "citation_keys": [
+        "usps_ecom"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_iii-post-office-protocol",
+      "from": "post-office-protocol",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Post Office Protocol lets a workstation",
+      "citation_keys": [
+        "rfc937"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-untold_history_iii-smtp",
+      "from": "smtp",
+      "to": "untold-history-iii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the Simple Mail Transfer Protocol (SMTP) posts mail",
+      "citation_keys": [
+        "rfc821"
+      ],
+      "confidence": "provenance"
     }
   ],
   "deep_audit": true,
@@ -35884,1668 +36363,1848 @@
     },
     {
       "id": "untold_history_iii-stmt-471",
+      "quote": "Before packets, there were letters.",
+      "section": "The Postal Network: The First Store-and-Forward System",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-472",
+      "quote": "A postal system is a network with addresses, routes, tariffs, timetables and relay points, and its core operation is **store-and-forward**.",
+      "section": "The Postal Network: The First Store-and-Forward System",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-473",
+      "quote": "The pattern is old: Augustus set up posts of young men at moderate distances along the military roads, later regular couriers with fast vehicles, so that dispatches could travel and the bearers could be questioned about the business (\\cite[Suetonius, Augustus 49]{suetoniusaugustus}).",
+      "section": "The Postal Network: The First Store-and-Forward System",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-474",
+      "quote": "The Roman system later called the *cursus publicus* was a state relay, not a public mail service, but it already had the essential shape: a message is handed from node to node, and each node holds it until the next link is ready.",
+      "section": "The Postal Network: The First Store-and-Forward System",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-475",
+      "quote": "The decisive change was institutional rather than technical: make the network cheap, uniform and prepaid.",
+      "section": "The Postal Network: The First Store-and-Forward System",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-476",
+      "quote": "Rowland Hill's 1837 pamphlet *Post Office Reform* argued for \"a very low rate of postage\" and \"a uniform rate of postage\" independent of distance, because the cost of transit was trivial compared with the cost of collecting, sorting and accounting for letters (\\cite[Hill, 1837]{hill1837postal}).",
+      "section": "The Postal Network: The First Store-and-Forward System",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-477",
+      "quote": "The reform that followed turned the post into a mass medium.",
+      "section": "The Postal Network: The First Store-and-Forward System",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-478",
+      "quote": "For the first time, an ordinary person could send an arbitrary message to an arbitrary address at a predictable price, and the state had a daily, nationwide flow of ordinary writing.",
+      "section": "The Postal Network: The First Store-and-Forward System",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-479",
+      "quote": "International mail remained a maze of bilateral treaties until 1874.",
+      "section": "The Postal Network: The First Store-and-Forward System",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-480",
+      "quote": "At the suggestion of Heinrich von Stephan, the Swiss government convened 22 nations in Bern; the Treaty of Bern created the General Postal Union, renamed the Universal Postal Union in 1878, and turned \"a confusing international maze of postal services and regulations into a single postal territory for the reciprocal exchange of letters\" (\\cite[UPU, History]{upu1874}).",
+      "section": "The Postal Network: The First Store-and-Forward System",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-481",
+      "quote": "The post had standardized the two things every network needs: an address and an interchange rule.",
+      "section": "The Postal Network: The First Store-and-Forward System",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-482",
+      "quote": "In Europe the post office did not remain a letter carrier.",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-483",
+      "quote": "It was the state's communications monopoly, and it ran the telegraph and the telephone as well.",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-484",
+      "quote": "That is why the first public data services were launched by postal administrations rather than by computer companies.",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-485",
+      "quote": "The UK Post Office's telecom arm opened **Prestel** in September 1979, the first public viewdata service in the world; by 1984 its Mailbox service let 47,000 terminals send messages to mailbox numbers, \"like an electronic pigeonhole\" (\\cite[Prestel Gateway, 1982]{prestel1982gateway}; \\cite[Prestel Briefing, 1984]{prestel1984briefing}).",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-486",
+      "quote": "France's PTT turned the Nora--Minc report's *télématique* into the **Minitel**: a cheap terminal, the Télétel network, the Transpac X.25 backbone, and a 1200-baud PAD connection; the Saint-Malo electronic-directory trial opened in July 1980 (\\cite[Nora and Minc, 1978]{nora1978informatisation}; \\cite[DGT, 1986]{minitel1986spec}; \\cite[INA, 2012]{ina2012minitel}).",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-487",
+      "quote": "Germany is the clearest case.",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-488",
+      "quote": "The Deutsche Bundespost presented **Bildschirmtext** (BTX) to the public in 1977 and introduced it generally six years later, in 1983; BTX offered information and data-processing services over the ordinary telephone line (\\cite[Deutscher Bundestag, Drucksache 10/2582]{btx1984drucksache}).",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-489",
+      "quote": "The same Bundespost ran **Datex-P**, its public packet-switched network: X.25, 300 to 64,000 bit/s, up to 255 logical channels, with PADs for ordinary terminals (\\cite[Deutsche Bundespost, 1989]{datexphandbuch1989}).",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-490",
+      "quote": "Postreform I (1990) split the Bundespost into Postdienst, Postbank and Telekom; Postreform II (1995) turned Telekom into a stock corporation, and the old BTX line became T-Online (\\cite[PostUmwG, 1994]{postumwg1994}; \\cite[Deutsche Telekom, Company History]{telekomhistory}).",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-491",
+      "quote": "The United States tried the hybrid route.",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-492",
+      "quote": "The Postal Service's **E-COM** (1982--1985) let business mailers send messages from their own computers to 25 serving post offices, which printed, folded, sealed and delivered them within two days; it handled 23 million messages in fiscal 1984 before it was discontinued (\\cite[USPS, E-COM]{usps_ecom}).",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-493",
+      "quote": "The vocabulary survived the infrastructure.",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-494",
+      "quote": "Email is not a letter, but its protocols are named after the post: the Simple Mail Transfer Protocol (SMTP) posts mail (\\cite[RFC 821]{rfc821}); the Post Office Protocol lets a workstation \"access mail from a mailbox server\" (\\cite[RFC 937]{rfc937}).",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-495",
+      "quote": "The post's store-and-forward logic reappears at every scale: in the telegraph relay, in the packet switch, in the mail server, in delay-tolerant networking.",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-496",
+      "quote": "The post did not cause the internet, but it supplied the template and the personnel: a state institution that already knew how to address, route, price and deliver messages to everyone, and a public accustomed to using it.",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-497",
+      "quote": "None of this was designed for machine learning.",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-498",
+      "quote": "But it built the social substrate the web later mined: a literate public that wrote things down and sent them to strangers, a state that standardized addresses and tariffs, and a communications monopoly that could fund a public data network before it was profitable.",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-499",
+      "quote": "The training corpus is the descendant of that habit.",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-500",
+      "quote": "The post taught the modern world how a network of strangers should feel: cheap, regular, addressable and ordinary.",
+      "section": "The Post Office Becomes the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_iii-stmt-501",
       "quote": "Before there was an *internet*, there was a **vision** of what a linked, machine-augmented information system should be — drawn, not built, for two decades.",
       "section": "The pre-history: the Memex and hypertext (1945–1968)",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-472",
+      "id": "untold_history_iii-stmt-502",
       "quote": "It is the direct prehistory of the web, and of the training corpus the web made.",
       "section": "The pre-history: the Memex and hypertext (1945–1968)",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-473",
+      "id": "untold_history_iii-stmt-503",
       "quote": "**Vannevar Bush — \"As We May Think\" (1945).** In July 1945 the American engineer and science administrator Vannevar Bush published \\cite[As We May Think (1945)]{aswemaythink} in *The Atlantic Monthly*.",
       "section": "The pre-history: the Memex and hypertext (1945–1968)",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-474",
+      "id": "untold_history_iii-stmt-504",
       "quote": "Its central image was the **\\cite[Memex]{memex}**: a desk-sized device holding the *entire record* of a person's books, letters, and notes as microfilm — plus, the crucial part, a way to **link** any one item to any other by laying down a \"trail\" through them.",
       "section": "The pre-history: the Memex and hypertext (1945–1968)",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-475",
+      "id": "untold_history_iii-stmt-505",
       "quote": "You did not merely find a document; you could follow the associative trail you had previously laid, exactly the way you follow a hyperlink today.",
       "section": "The pre-history: the Memex and hypertext (1945–1968)",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-476",
+      "id": "untold_history_iii-stmt-506",
       "quote": "The Memex was not a search engine; it was a *library that remembered your paths through it* \\cite[As We May Think (1945)]{aswemaythink}.",
       "section": "The pre-history: the Memex and hypertext (1945–1968)",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-477",
+      "id": "untold_history_iii-stmt-507",
       "quote": "The Memex, as illustrated in *Life* magazine (September 10, 1945): microfilm banks holding a person's complete record, with a desk and a mechanism for laying down \"trails\" that link one item to another.",
       "section": "The pre-history: the Memex and hypertext (1945–1968)",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-478",
+      "id": "untold_history_iii-stmt-508",
       "quote": "Public domain (Life / Time Inc.",
       "section": "The pre-history: the Memex and hypertext (1945–1968)",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-479",
+      "id": "untold_history_iii-stmt-509",
       "quote": "The \\citealternativetitle{arpanet_map}: the logical topology of the ARPANET in March 1977.",
       "section": "The pre-history: the Memex and hypertext (1945–1968)",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-480",
+      "id": "untold_history_iii-stmt-510",
       "quote": "What began as a four-node experimental network in 1969 would, a generation later, become the technical substrate of the modern Internet, and thus of every web-scale corpus on which an LLM is trained.",
       "section": "The pre-history: the Memex and hypertext (1945–1968)",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-481",
+      "id": "untold_history_iii-stmt-511",
       "quote": "The \\citealternativetitle{first_web_browser}: a screenshot of the WorldWideWeb browser running on a NeXT workstation in December 1990.",
       "section": "The pre-history: the Memex and hypertext (1945–1968)",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-482",
+      "id": "untold_history_iii-stmt-512",
       "quote": "Built by Tim Berners-Lee at CERN, it was simultaneously editor and viewer for the world's first hypertext web pages.",
       "section": "The pre-history: the Memex and hypertext (1945–1968)",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-483",
+      "id": "untold_history_iii-stmt-513",
       "quote": "A dataset is not found; it is made.",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-484",
+      "id": "untold_history_iii-stmt-514",
       "quote": "ImageNet reports 12 subtrees with 5,247 synsets and 3.2 million images, each concept quality-controlled and human-annotated, and its construction explicitly relied on Amazon Mechanical Turk (\\cite[Deng et al., 2009]{deng2009imagenet}).",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-485",
+      "id": "untold_history_iii-stmt-515",
       "quote": "The same pattern recurs at the frontier: InstructGPT began with labeler-written prompts and prompts submitted through the OpenAI API, collected labeler demonstrations of desired behaviour, and used human feedback to fine-tune the model (\\cite[Ouyang et al., 2022]{ouyang2022instructgpt}).",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-486",
+      "id": "untold_history_iii-stmt-516",
       "quote": "The \"human in the loop\" is not a metaphor.",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-487",
+      "id": "untold_history_iii-stmt-517",
       "quote": "It is a workforce, often invisible in the final paper, whose judgements become the labels and preferences that shape the model.",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-488",
+      "id": "untold_history_iii-stmt-518",
       "quote": "The name of the best-known labeling platform is itself a confession.",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-489",
+      "id": "untold_history_iii-stmt-519",
       "quote": "**Amazon Mechanical Turk**, launched in 2005, was named after Kempelen's chess automaton, and Jeff Bezos described its workers as \"artificial artificial intelligence\" — people doing, behind an interface, the work the machine appeared to do alone (\\cite[Pew Research Center, 2016]{pew2016mturk}).",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-490",
+      "id": "untold_history_iii-stmt-520",
       "quote": "The platform distributed \"human intelligence tasks\" — captioning an image, judging a search result, transcribing a snippet of audio — to an anonymous crowd, paid per task.",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-491",
+      "id": "untold_history_iii-stmt-521",
       "quote": "A task-level study of 2,676 workers and 3.8 million tasks found a median wage of about **$2 per hour**, with only 4 percent earning more than the U.S.",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-492",
+      "id": "untold_history_iii-stmt-522",
       "quote": "federal minimum wage of $7.25 (\\cite[Hara et al., 2018]{hara2018turkerwages}).",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-493",
+      "id": "untold_history_iii-stmt-523",
       "quote": "Mary Gray and Siddharth Suri call this **ghost work**: the human labor that makes an automated service appear automatic, kept invisible by design (\\cite[Gray & Suri, 2019]{gray2019ghostwork}).",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-494",
+      "id": "untold_history_iii-stmt-524",
       "quote": "The figure inside the cabinet has not disappeared.",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-495",
+      "id": "untold_history_iii-stmt-525",
       "quote": "It has been multiplied, distributed across a global crowd, and given a task queue.",
       "section": "Labeling: The Invisible Workforce",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-496",
+      "id": "untold_history_iii-stmt-526",
       "quote": "Shared benchmarks turned machine learning from a collection of demonstrations into a scoreboard.",
       "section": "Benchmarks: How Progress Became Measurable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-497",
+      "id": "untold_history_iii-stmt-527",
       "quote": "GLUE offered nine diverse natural-language-understanding tasks, a diagnostic dataset and an online evaluation platform (\\cite[Wang et al., 2018]{wang2018glue}).",
       "section": "Benchmarks: How Progress Became Measurable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-498",
+      "id": "untold_history_iii-stmt-528",
       "quote": "SQuAD contributed more than 100,000 questions posed by crowdworkers on Wikipedia articles, with the answer required to be a segment of the passage; human performance was 86.8 F1 against a logistic-regression baseline of 51.0 (\\cite[Rajpurkar et al., 2016]{rajpurkar2016squad}).",
       "section": "Benchmarks: How Progress Became Measurable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-499",
+      "id": "untold_history_iii-stmt-529",
       "quote": "MMLU then measured 57 tasks across elementary mathematics, US history, computer science, law and more (\\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}).",
       "section": "Benchmarks: How Progress Became Measurable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-500",
+      "id": "untold_history_iii-stmt-530",
       "quote": "HELM added a multi-metric evaluation of 30 models on 16 core scenarios, measuring accuracy, calibration, robustness, fairness, bias, toxicity and efficiency (\\cite[Liang et al., 2022]{liang2022helm}), while Chatbot Arena evaluated models by pairwise human preference and had amassed more than 240,000 votes (\\cite[Chiang et al., 2024]{chiang2024arena}).",
       "section": "Benchmarks: How Progress Became Measurable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-501",
+      "id": "untold_history_iii-stmt-531",
       "quote": "Benchmarks make progress comparable, but they also decide which progress counts.",
       "section": "Benchmarks: How Progress Became Measurable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-502",
+      "id": "untold_history_iii-stmt-532",
       "quote": "The web is raw material, not a dataset.",
       "section": "The Data Pipeline: Crawl, Clean, Deduplicate",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-503",
+      "id": "untold_history_iii-stmt-533",
       "quote": "C4, the Colossal Clean Crawled Corpus, was built for a systematic study of transfer learning and text-to-text unification (\\cite[Raffel et al., 2020]{raffel2020c4}).",
       "section": "The Data Pipeline: Crawl, Clean, Deduplicate",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-504",
+      "id": "untold_history_iii-stmt-534",
       "quote": "The Pile assembled an 825 GiB English corpus from 22 diverse, high-quality subsets, many from academic or professional sources, on the argument that dataset diversity improves cross-domain generalisation (\\cite[Gao et al., 2020]{gao2020pile}).",
       "section": "The Data Pipeline: Crawl, Clean, Deduplicate",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-505",
+      "id": "untold_history_iii-stmt-535",
       "quote": "Deduplication then turns a pile into a training set: Lee et al. found duplicates in all four common NLP datasets they studied, proposed exact substring matching and approximate document matching, and showed that deduplication reduces verbatim memorisation and train-test overlap (\\cite[Lee et al., 2022]{lee2022dedup}).",
       "section": "The Data Pipeline: Crawl, Clean, Deduplicate",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-506",
+      "id": "untold_history_iii-stmt-536",
       "quote": "Crawl, filter, deduplicate, document: the corpus is an engineered object at every stage.",
       "section": "The Data Pipeline: Crawl, Clean, Deduplicate",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-507",
+      "id": "untold_history_iii-stmt-537",
       "quote": "Training data is also a legal object.",
       "section": "Copyright and Text Mining",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-508",
+      "id": "untold_history_iii-stmt-538",
       "quote": "The EU Directive 2019/790 created a mandatory exception for text and data mining for research organisations (Article 3) and a broader exception for reproductions and extractions of lawfully accessible works for text and data mining, unless the rightholders have expressly reserved the use in an appropriate machine-readable manner (Article 4) (\\cite[European Union, 2019]{eu2019dsm}).",
       "section": "Copyright and Text Mining",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-509",
+      "id": "untold_history_iii-stmt-539",
       "quote": "In the United States, the Second Circuit held in *Authors Guild v.",
       "section": "Copyright and Text Mining",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-510",
+      "id": "untold_history_iii-stmt-540",
       "quote": "Google* that Google's unauthorised digitisation of copyright-protected books, its search functionality and its snippet display were non-infringing fair uses, because the purpose was highly transformative, the display was limited and the result was not a significant market substitute (\\cite[Second Circuit, 2015]{authorsguild2015google}).",
       "section": "Copyright and Text Mining",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-511",
+      "id": "untold_history_iii-stmt-541",
       "quote": "The permission layer does not determine what is technically possible; it determines what may be kept long enough to train on.",
       "section": "Copyright and Text Mining",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-512",
+      "id": "untold_history_iii-stmt-542",
       "quote": "The GDPR governs personal data.",
       "section": "Privacy and Data Protection",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-513",
+      "id": "untold_history_iii-stmt-543",
       "quote": "It requires processing to be lawful, fair and transparent, collected for specified purposes, adequate and limited to what is necessary, accurate and kept no longer than necessary (Article 5), and it permits processing only on a lawful basis such as consent, contract, legal obligation or legitimate interests (Article 6) (\\cite[European Union, 2016]{eu2016gdpr}).",
       "section": "Privacy and Data Protection",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-514",
+      "id": "untold_history_iii-stmt-544",
       "quote": "It also grants a right to erasure, the \"right to be forgotten\" (Article 17) (\\cite[European Union, 2016]{eu2016gdpr}).",
       "section": "Privacy and Data Protection",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-515",
+      "id": "untold_history_iii-stmt-545",
       "quote": "A web-scale corpus inevitably contains personal data, so the legal question is not whether privacy applies but how the training pipeline handles it.",
       "section": "Privacy and Data Protection",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-516",
+      "id": "untold_history_iii-stmt-546",
       "quote": "At the hardware layer, permission is geopolitical.",
       "section": "Export Controls and the Geopolitics of Compute",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-517",
+      "id": "untold_history_iii-stmt-547",
       "quote": "Bureau of Industry and Security states that a licence is required to export advanced computing items to entities headquartered in Country Group D:5 or Macau, or with an ultimate parent company headquartered there, even if the entities themselves are located outside those regions; it also describes rules for authorised integrated-circuit designers (\\cite[BIS, 2026]{bis2026advancedcomputing}).",
       "section": "Export Controls and the Geopolitics of Compute",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-518",
+      "id": "untold_history_iii-stmt-548",
       "quote": "Compute is therefore not a neutral commodity.",
       "section": "Export Controls and the Geopolitics of Compute",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-519",
+      "id": "untold_history_iii-stmt-549",
       "quote": "The fastest chips are subject to export controls, and the map of who can train what is drawn partly by trade law.",
       "section": "Export Controls and the Geopolitics of Compute",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-520",
+      "id": "untold_history_iii-stmt-550",
       "quote": "A model is trained on text, but the text was written by people who had learned to read and write.",
       "section": "The School: Mass Literacy and the Human-Capital Budget",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-521",
+      "id": "untold_history_iii-stmt-551",
       "quote": "The school system is therefore a prerequisite of the corpus, and the university is a prerequisite of the research community.",
       "section": "The School: Mass Literacy and the Human-Capital Budget",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-522",
+      "id": "untold_history_iii-stmt-552",
       "quote": "This section traces the institutional machinery that produces literate, numerate, specialised people.",
       "section": "The School: Mass Literacy and the Human-Capital Budget",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-523",
+      "id": "untold_history_iii-stmt-553",
       "quote": "Luther's 1524 letter to the councillors of all German cities is an early call for public schooling: its title asks the city fathers to establish and maintain Christian schools (\\cite[Luther, 1524]{luther1524schools}).",
       "section": "The School Before the State",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-524",
+      "id": "untold_history_iii-stmt-554",
       "quote": "A century later, the Massachusetts Bay Colony ordered every township of fifty households to appoint a teacher of reading and writing, and every township of one hundred households to set up a grammar school able to prepare youth for the university, with a fine for towns that neglected the order (\\cite[Massachusetts Bay Colony, 1647]{mass1647deluder}).",
       "section": "The School Before the State",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-525",
+      "id": "untold_history_iii-stmt-555",
       "quote": "These schools were religious and civic in purpose, not economic; but they created a reading population, and a reading population is the raw material of a text corpus.",
       "section": "The School Before the State",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-526",
+      "id": "untold_history_iii-stmt-556",
       "quote": "The modern school system is a creation of the nineteenth century.",
       "section": "The Common School and Compulsory Education",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-527",
+      "id": "untold_history_iii-stmt-557",
       "quote": "The Elementary Education Act 1870 was \"an Act to provide for public Elementary Education in England and Wales\"; it created school boards, tied school provision to the local rate, and made the state responsible for elementary education (\\cite[Parliament of the United Kingdom, 1870]{uk1870education}).",
       "section": "The Common School and Compulsory Education",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-528",
+      "id": "untold_history_iii-stmt-558",
       "quote": "Mass schooling standardised literacy and numeracy, created a common curriculum, and produced the clerks, teachers, technicians and readers on whom industry and administration depend.",
       "section": "The Common School and Compulsory Education",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-529",
+      "id": "untold_history_iii-stmt-559",
       "quote": "The school is the institution that turns a population into a workforce and an audience.",
       "section": "The Common School and Compulsory Education",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-530",
+      "id": "untold_history_iii-stmt-560",
       "quote": "Schooling is the floor, not the ceiling.",
       "section": "The Public Library",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-531",
+      "id": "untold_history_iii-stmt-561",
       "quote": "The Public Libraries Act 1850 enabled town councils to establish public libraries and museums, and it made admission to them free (\\cite[Parliament of the United Kingdom, 1850]{uk1850libraries}).",
       "section": "The Public Library",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-532",
+      "id": "untold_history_iii-stmt-562",
       "quote": "The public library extended reading beyond the years of formal schooling and beyond the ability to buy books; it was a self-education institution.",
       "section": "The Public Library",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-533",
+      "id": "untold_history_iii-stmt-563",
       "quote": "For a technical civilisation, the library is a distributed memory.",
       "section": "The Public Library",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-534",
+      "id": "untold_history_iii-stmt-564",
       "quote": "A school system produces human capital nationally, but AI research is international.",
       "section": "The Immigration Valve",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-535",
+      "id": "untold_history_iii-stmt-565",
       "quote": "The Immigration and Nationality Act of 1965 removed national-origin, race and sex discrimination from visa issuance and created preferences for members of the professions and for people of exceptional ability in the sciences or arts (\\cite[U.S.",
       "section": "The Immigration Valve",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-536",
+      "id": "untold_history_iii-stmt-566",
       "quote": "Congress, 1965]{us1965immigration}).",
       "section": "The Immigration Valve",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-537",
+      "id": "untold_history_iii-stmt-567",
       "quote": "The Immigration Act of 1990 created the H-1B category for temporary workers in a \"specialty occupation\" requiring specialised knowledge and at least a bachelor's degree, with an annual cap (\\cite[U.S.",
       "section": "The Immigration Valve",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-538",
+      "id": "untold_history_iii-stmt-568",
       "quote": "Congress, 1990]{us1990h1b}).",
       "section": "The Immigration Valve",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-539",
+      "id": "untold_history_iii-stmt-569",
       "quote": "The result is a global labour market for scientists and engineers: the school systems of many countries feed the research labs of a few.",
       "section": "The Immigration Valve",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-540",
+      "id": "untold_history_iii-stmt-570",
       "quote": "> **Open questions.** Who gets educated, and who is excluded?",
       "section": "The Immigration Valve",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-541",
+      "id": "untold_history_iii-stmt-571",
       "quote": "What curriculum produces a person who can read a paper, write code, and label data?",
       "section": "The Immigration Valve",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-542",
+      "id": "untold_history_iii-stmt-572",
       "quote": "How much of AI's human capital is imported?",
       "section": "The Immigration Valve",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-543",
+      "id": "untold_history_iii-stmt-573",
       "quote": "What happens to the pipeline when borders close?",
       "section": "The Immigration Valve",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-544",
+      "id": "untold_history_iii-stmt-574",
       "quote": "Modern AI is a scientific community before it is a product.",
       "section": "The University and the Grant",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-545",
+      "id": "untold_history_iii-stmt-575",
       "quote": "National Science Foundation was established in 1950, after Vannevar Bush's 1945 report *Science: The Endless Frontier* envisioned a federal agency that would promote the progress of science by supporting basic research at colleges and universities (\\cite[NSF, 2026]{nsf_history}).",
       "section": "The University and the Grant",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-546",
+      "id": "untold_history_iii-stmt-576",
       "quote": "Before the Second World War the federal government played a minor role in supporting research at American universities; the postwar arrangement made curiosity-driven research a permanent, publicly funded institution (\\cite[NSF, 2026]{nsf_history}).",
       "section": "The University and the Grant",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-547",
+      "id": "untold_history_iii-stmt-577",
       "quote": "The grant, the peer-review panel and the university laboratory are therefore part of the technical stack, even though they produce no electrons.",
       "section": "The University and the Grant",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-548",
+      "id": "untold_history_iii-stmt-578",
       "quote": "The preprint server shortened the feedback loop.",
       "section": "The Preprint",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-549",
+      "id": "untold_history_iii-stmt-579",
       "quote": "arXiv was founded by Paul Ginsparg in 1991 and now hosts more than three million scholarly articles in eight subject areas; it is a curated research-sharing platform, not a peer-reviewed journal, and its submissions are checked for topicality and scholarly value but not for correctness (\\cite[arXiv, 2026]{arxiv_about}).",
       "section": "The Preprint",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-550",
+      "id": "untold_history_iii-stmt-580",
       "quote": "That distinction matters: the preprint made results visible before review, and the machine-learning community built its rapid iteration on that visibility.",
       "section": "The Preprint",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-551",
+      "id": "untold_history_iii-stmt-581",
       "quote": "The conference paper and the arXiv posting, not the journal article, became the working memory of the field.",
       "section": "The Preprint",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-552",
+      "id": "untold_history_iii-stmt-582",
       "quote": "The software stack is a commons.",
       "section": "Open Source: The Commons That Runs the Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-553",
+      "id": "untold_history_iii-stmt-583",
       "quote": "Git began in 2005, when the Linux kernel community's free use of the proprietary BitKeeper was revoked and Linus Torvalds built a replacement with speed, simple design, strong support for non-linear development, full distribution and efficient handling of large projects as goals (\\cite[Chacon and Straub, 2014]{git_history}).",
       "section": "Open Source: The Commons That Runs the Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-554",
+      "id": "untold_history_iii-stmt-584",
       "quote": "The Linux kernel itself had been maintained through patches and archived files since 1991, and Git made the distributed collaboration that followed practical (\\cite[Chacon and Straub, 2014]{git_history}).",
       "section": "Open Source: The Commons That Runs the Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-555",
+      "id": "untold_history_iii-stmt-585",
       "quote": "The GNU General Public License supplied the legal machinery: it grants the freedoms to use, study, modify and share the software, provided the same freedoms are preserved downstream (\\cite[Free Software Foundation, 1991]{spdx_gpl2}).",
       "section": "Open Source: The Commons That Runs the Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-556",
+      "id": "untold_history_iii-stmt-586",
       "quote": "PyTorch, TensorFlow, NumPy and Linux are not incidental tools; they are the shared infrastructure on which reproducible AI depends.",
       "section": "Open Source: The Commons That Runs the Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-557",
+      "id": "untold_history_iii-stmt-587",
       "quote": "The final layer is the committee.",
       "section": "Standards Bodies",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-558",
+      "id": "untold_history_iii-stmt-588",
       "quote": "RFC 2026 documents the Internet standards process: it defines the stages by which a specification moves from proposed standard to draft standard to Internet standard, the types of documents used, and the intellectual-property and copyright rules that accompany the process (\\cite[Bradner, 1996]{rfc2026}).",
       "section": "Standards Bodies",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-559",
+      "id": "untold_history_iii-stmt-589",
       "quote": "The Unicode Consortium performs the same function for text, maintaining a single character set and encoding model so that a document written on one system can be read on another (\\cite[Unicode Consortium, 2022]{unicode2022standard}).",
       "section": "Standards Bodies",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-560",
+      "id": "untold_history_iii-stmt-590",
       "quote": "Standards are slow, boring and indispensable: they are how a heterogeneous world agrees on the shape of the bits.",
       "section": "Standards Bodies",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-561",
+      "id": "untold_history_iii-stmt-591",
       "quote": "The previous part followed the budgets of matter and energy.",
       "section": "The Body, the City, and the State: The Human and Political Budgets",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-562",
+      "id": "untold_history_iii-stmt-592",
       "quote": "This part follows the budgets of people, places and permission: the health that lets children survive to become workers and readers, the city that concentrates them, the census that makes them legible, the trial that turns experience into evidence, the spectrum that carries signals, and the thermodynamic bill that every computation must pay.",
       "section": "The Body, the City, and the State: The Human and Political Budgets",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-563",
+      "id": "untold_history_iii-stmt-593",
       "quote": "Before a society can have schools, laboratories or data centers, its children have to survive.",
       "section": "The Clinic: Public Health and the Demographic Budget",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-564",
+      "id": "untold_history_iii-stmt-594",
       "quote": "Snow's 1855 investigation of cholera in Broad Street traced the outbreak to a single water pump and used a map of deaths to show that the cases clustered around it; the lesson was that epidemic disease is a problem of infrastructure, not fate (\\cite[Snow, 1855]{snow1855cholera}).",
       "section": "The Clinic: Public Health and the Demographic Budget",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-565",
+      "id": "untold_history_iii-stmt-595",
       "quote": "The demographic result is stark: the UN's 2024 World Population Prospects puts the global population at 8.2 billion in 2024 and projects about 10.3 billion in the mid-2080s, with global life expectancy at birth at 73.3 years in 2024, 8.4 years more than in 1995 (\\cite[UN DESA, 2024]{un2024wpp}).",
       "section": "The Clinic: Public Health and the Demographic Budget",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-566",
+      "id": "untold_history_iii-stmt-596",
       "quote": "Public health and sanitation, together with later vaccines and antibiotics, were part of the mortality decline that produced the population which staffs the schools and laboratories.",
       "section": "The Clinic: Public Health and the Demographic Budget",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-567",
+      "id": "untold_history_iii-stmt-597",
       "quote": "The clinic is therefore a prerequisite of the human-capital budget, not a separate story.",
       "section": "The Clinic: Public Health and the Demographic Budget",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-568",
+      "id": "untold_history_iii-stmt-598",
       "quote": "> **Open questions.** How much of the AI workforce exists because of the mortality decline?",
       "section": "The Clinic: Public Health and the Demographic Budget",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-569",
+      "id": "untold_history_iii-stmt-599",
       "quote": "Which public-health failures still constrain the talent pool?",
       "section": "The Clinic: Public Health and the Demographic Budget",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-570",
+      "id": "untold_history_iii-stmt-600",
       "quote": "What is the demographic bill of an ageing research population?",
       "section": "The Clinic: Public Health and the Demographic Budget",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-571",
+      "id": "untold_history_iii-stmt-601",
       "quote": "Public health became an urban problem because the city concentrates people and waste.",
       "section": "The City: Density, Sanitation, and the Urban Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-572",
+      "id": "untold_history_iii-stmt-602",
       "quote": "The Public Health Act 1848 was \"An Act for promoting the Public Health\" and placed the supply of water, sewerage, drainage, cleansing and paving under a local board of health (\\cite[Parliament of the United Kingdom, 1848]{uk1848publichealth}).",
       "section": "The City: Density, Sanitation, and the Urban Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-573",
+      "id": "untold_history_iii-stmt-603",
       "quote": "The city also had to regulate vertical space: New York's 1916 Building Zone Resolution regulated the height and bulk of buildings, the area of yards and courts, and the location of trades and industries, creating the modern zoning map (\\cite[New York City, 1916]{nyc1916zoning}).",
       "section": "The City: Density, Sanitation, and the Urban Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-574",
+      "id": "untold_history_iii-stmt-604",
       "quote": "Density is what makes networks, markets, universities and data centers possible; it is also what makes them vulnerable.",
       "section": "The City: Density, Sanitation, and the Urban Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-575",
+      "id": "untold_history_iii-stmt-605",
       "quote": "The city is a machine for concentrating people, and computation inherits its concentration.",
       "section": "The City: Density, Sanitation, and the Urban Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-576",
+      "id": "untold_history_iii-stmt-606",
       "quote": "> **Open questions.** Why do data centers cluster where they do?",
       "section": "The City: Density, Sanitation, and the Urban Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-577",
+      "id": "untold_history_iii-stmt-607",
       "quote": "What is the urban footprint of a cloud region?",
       "section": "The City: Density, Sanitation, and the Urban Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-578",
+      "id": "untold_history_iii-stmt-608",
       "quote": "Can the city be made resilient without making it exclusionary?",
       "section": "The City: Density, Sanitation, and the Urban Stack",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-579",
+      "id": "untold_history_iii-stmt-609",
       "quote": "A state that cannot count its people cannot tax, conscript, educate or plan for them.",
       "section": "The Census: The State as a Data Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-580",
+      "id": "untold_history_iii-stmt-610",
       "quote": "The United States has collected population data since 1790 and every ten years since (\\cite[U.S.",
       "section": "The Census: The State as a Data Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-581",
+      "id": "untold_history_iii-stmt-611",
       "quote": "Census Bureau, 2026]{uscensus1790}).",
       "section": "The Census: The State as a Data Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-582",
+      "id": "untold_history_iii-stmt-612",
       "quote": "The 1890 census was the occasion for Hollerith's punched-card tabulator, which turned a constitutional headcount into a data-processing problem (\\cite[Hollerith, 1890]{hollerith1890}).",
       "section": "The Census: The State as a Data Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-583",
+      "id": "untold_history_iii-stmt-613",
       "quote": "The census is the state's data machine: it standardises categories, defines populations, and produces the statistical substrate on which policy, markets and research depend.",
       "section": "The Census: The State as a Data Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-584",
+      "id": "untold_history_iii-stmt-614",
       "quote": "The data center is, in part, the descendant of the census office.",
       "section": "The Census: The State as a Data Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-585",
+      "id": "untold_history_iii-stmt-615",
       "quote": "> **Open questions.** Who is counted, and who is missed?",
       "section": "The Census: The State as a Data Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-586",
+      "id": "untold_history_iii-stmt-616",
       "quote": "How do categories shape policy?",
       "section": "The Census: The State as a Data Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-587",
+      "id": "untold_history_iii-stmt-617",
       "quote": "What would a census of machine-generated text look like?",
       "section": "The Census: The State as a Data Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-588",
+      "id": "untold_history_iii-stmt-618",
       "quote": "Medicine had to learn how to compare.",
       "section": "The Trial: Randomization and Causal Inference",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-589",
+      "id": "untold_history_iii-stmt-619",
       "quote": "Fisher's *The Design of Experiments* (1935) formalised randomisation, replication and the analysis of variance as the basis for causal inference (\\cite[Fisher, 1935]{fisher1935design}).",
       "section": "The Trial: Randomization and Causal Inference",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-590",
+      "id": "untold_history_iii-stmt-620",
       "quote": "The 1948 Medical Research Council trial of streptomycin in pulmonary tuberculosis is the canonical early randomised controlled trial: it allocated patients to treatment and control groups and compared outcomes (\\cite[Medical Research Council, 1948]{mrc1948streptomycin}).",
       "section": "The Trial: Randomization and Causal Inference",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-591",
+      "id": "untold_history_iii-stmt-621",
       "quote": "The randomised trial turned medicine from anecdote into evidence and gave the world a template for testing interventions under uncertainty.",
       "section": "The Trial: Randomization and Causal Inference",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-592",
+      "id": "untold_history_iii-stmt-622",
       "quote": "The same logic underlies A/B testing, benchmark evaluation and the controlled experiments of machine learning.",
       "section": "The Trial: Randomization and Causal Inference",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-593",
+      "id": "untold_history_iii-stmt-623",
       "quote": "> **Open questions.** When is a benchmark a controlled experiment?",
       "section": "The Trial: Randomization and Causal Inference",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-594",
+      "id": "untold_history_iii-stmt-624",
       "quote": "What does randomisation buy, and what does it hide?",
       "section": "The Trial: Randomization and Causal Inference",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-595",
+      "id": "untold_history_iii-stmt-625",
       "quote": "Can alignment be tested like a drug?",
       "section": "The Trial: Randomization and Causal Inference",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-596",
+      "id": "untold_history_iii-stmt-626",
       "quote": "Computation is not only silicon; it is also the electromagnetic spectrum.",
       "section": "The Spectrum: Maxwell, Hertz, and the Allocation of the Air",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-597",
+      "id": "untold_history_iii-stmt-627",
       "quote": "Maxwell's 1865 paper unified electricity, magnetism and light in a single field theory and predicted electromagnetic waves (\\cite[Maxwell, 1865]{maxwell1865}).",
       "section": "The Spectrum: Maxwell, Hertz, and the Allocation of the Air",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-598",
+      "id": "untold_history_iii-stmt-628",
       "quote": "Hertz's experiments confirmed the prediction, and Marconi turned it into signalling.",
       "section": "The Spectrum: Maxwell, Hertz, and the Allocation of the Air",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-599",
+      "id": "untold_history_iii-stmt-629",
       "quote": "Because the spectrum is finite and shared, it had to be allocated: the ITU Radio Regulations contain the complete texts adopted by the World Radiocommunication Conference and define how frequencies are used internationally (\\cite[ITU, 2024]{itu_radio_regulations}).",
       "section": "The Spectrum: Maxwell, Hertz, and the Allocation of the Air",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-600",
+      "id": "untold_history_iii-stmt-630",
       "quote": "Wi-Fi, cellular, radar, satellite and radio astronomy are all users of a governed resource.",
       "section": "The Spectrum: Maxwell, Hertz, and the Allocation of the Air",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-601",
+      "id": "untold_history_iii-stmt-631",
       "quote": "The air is a commons with a rulebook.",
       "section": "The Spectrum: Maxwell, Hertz, and the Allocation of the Air",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-602",
+      "id": "untold_history_iii-stmt-632",
       "quote": "> **Open questions.** Which bands are still available?",
       "section": "The Spectrum: Maxwell, Hertz, and the Allocation of the Air",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-603",
+      "id": "untold_history_iii-stmt-633",
       "quote": "How does spectrum policy shape the cost of connectivity?",
       "section": "The Spectrum: Maxwell, Hertz, and the Allocation of the Air",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-604",
+      "id": "untold_history_iii-stmt-634",
       "quote": "Every computation is a physical process, and physics sends a bill.",
       "section": "The Thermodynamic Bill: Carnot, Landauer, and the Cost of a Bit",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-605",
+      "id": "untold_history_iii-stmt-635",
       "quote": "Carnot's 1824 reflections on the motive power of fire founded the theory of heat engines and the limit on how much work can be extracted from a temperature difference (\\cite[Carnot, 1824]{carnot1824}).",
       "section": "The Thermodynamic Bill: Carnot, Landauer, and the Cost of a Bit",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-606",
+      "id": "untold_history_iii-stmt-636",
       "quote": "Clausius formulated the second law and introduced entropy (\\cite[Clausius, 1865]{clausius1865}).",
       "section": "The Thermodynamic Bill: Carnot, Landauer, and the Cost of a Bit",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-607",
+      "id": "untold_history_iii-stmt-637",
       "quote": "Landauer applied the lesson to computing: logical irreversibility is associated with physical irreversibility and requires a minimal heat generation of order kT per irreversible operation (\\cite[Landauer, 1961]{landauer1961}).",
       "section": "The Thermodynamic Bill: Carnot, Landauer, and the Cost of a Bit",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-608",
+      "id": "untold_history_iii-stmt-638",
       "quote": "The IEA's projection of data-centre electricity demand doubling to 950 TWh by 2030 is the macroscopic version of Landauer's bill (\\cite[IEA, 2026]{iea2026energyai}).",
       "section": "The Thermodynamic Bill: Carnot, Landauer, and the Cost of a Bit",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-609",
+      "id": "untold_history_iii-stmt-639",
       "quote": "The thermodynamic bill cannot be negotiated away; it can only be paid with better materials, better cooling, or reversible computing.",
       "section": "The Thermodynamic Bill: Carnot, Landauer, and the Cost of a Bit",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-610",
+      "id": "untold_history_iii-stmt-640",
       "quote": "> **Open questions.** What is the minimum energy per useful floating-point operation?",
       "section": "The Thermodynamic Bill: Carnot, Landauer, and the Cost of a Bit",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-611",
+      "id": "untold_history_iii-stmt-641",
       "quote": "How close is a GPU to the Landauer limit?",
       "section": "The Thermodynamic Bill: Carnot, Landauer, and the Cost of a Bit",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-612",
+      "id": "untold_history_iii-stmt-642",
       "quote": "Could reversible computing change the energy budget of AI?",
       "section": "The Thermodynamic Bill: Carnot, Landauer, and the Cost of a Bit",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-613",
+      "id": "untold_history_iii-stmt-643",
       "quote": "The previous part followed the budgets of body, city and state.",
       "section": "The Instruments of Power and Production: Fiscal, Imperial, Metric, Industrial",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-614",
+      "id": "untold_history_iii-stmt-644",
       "quote": "This part follows the instruments that turn those budgets into capacity: the fiscal-military state that can tax, borrow and conscript; the empire that takes territory, classifies people and extracts resources; the metrological system that makes units mean the same thing everywhere; the assembly line and the control chart; the telephone switch; the map; the sound record; and the render farm.",
       "section": "The Instruments of Power and Production: Fiscal, Imperial, Metric, Industrial",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-615",
+      "id": "untold_history_iii-stmt-645",
       "quote": "War is expensive, and the modern state was built to pay for it.",
       "section": "The Fiscal-Military State: Taxation, Debt, and Conscription",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-616",
+      "id": "untold_history_iii-stmt-646",
       "quote": "The Bank of England Act 1694 granted duties on tonnage, beer and ale to secure £1,500,000 towards \"the carrying on the Warr against France\" and to induce persons to advance that sum (\\cite[Parliament of England, 1694]{boe1694}).",
       "section": "The Fiscal-Military State: Taxation, Debt, and Conscription",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-617",
+      "id": "untold_history_iii-stmt-647",
       "quote": "The Income Tax Act 1842 gave the British state a direct tax on income (\\cite[Parliament of the United Kingdom, 1842]{incometax1842}).",
       "section": "The Fiscal-Military State: Taxation, Debt, and Conscription",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-618",
+      "id": "untold_history_iii-stmt-648",
       "quote": "The Selective Service Act of 1917 authorised the President to raise troops temporarily for the emergency (\\cite[U.S.",
       "section": "The Fiscal-Military State: Taxation, Debt, and Conscription",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-619",
+      "id": "untold_history_iii-stmt-649",
       "quote": "Congress, 1917]{selectiveservice1917}).",
       "section": "The Fiscal-Military State: Taxation, Debt, and Conscription",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-620",
+      "id": "untold_history_iii-stmt-650",
       "quote": "Taxation, public debt, conscription and logistics are the four fiscal-military instruments; the military-industrial-academic complex that later funded computing is their descendant.",
       "section": "The Fiscal-Military State: Taxation, Debt, and Conscription",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-621",
+      "id": "untold_history_iii-stmt-651",
       "quote": "> **Open questions.** Who pays for the next war?",
       "section": "The Fiscal-Military State: Taxation, Debt, and Conscription",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-622",
+      "id": "untold_history_iii-stmt-652",
       "quote": "What is the fiscal capacity of a digital state?",
       "section": "The Fiscal-Military State: Taxation, Debt, and Conscription",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-623",
+      "id": "untold_history_iii-stmt-653",
       "quote": "How does public debt shape which research agendas survive?",
       "section": "The Fiscal-Military State: Taxation, Debt, and Conscription",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-624",
+      "id": "untold_history_iii-stmt-654",
       "quote": "Empire was a machine for taking territory, classifying people and extracting resources.",
       "section": "The Empire: Occupation, Census, and Extraction",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-625",
+      "id": "untold_history_iii-stmt-655",
       "quote": "The General Act of the Berlin Conference (1885) laid down \"rules for future occupation on the coast of the African continent\": any power taking possession had to notify the others, and was obliged to establish authority sufficient to protect existing rights and freedom of trade (\\cite[Berlin Conference, 1885]{berlinact1885}).",
       "section": "The Empire: Occupation, Census, and Extraction",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-626",
+      "id": "untold_history_iii-stmt-656",
       "quote": "The Census of British India of 1871-72 classified the population by religion, nationality, language, caste, occupation and infirmities (\\cite[Waterfield, 1875]{indiancensus1871}).",
       "section": "The Empire: Occupation, Census, and Extraction",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-627",
+      "id": "untold_history_iii-stmt-657",
       "quote": "Mapping, counting and classifying are data practices; empire was one of their largest and most violent applications.",
       "section": "The Empire: Occupation, Census, and Extraction",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-628",
+      "id": "untold_history_iii-stmt-658",
       "quote": "The global networks of telegraph, shipping and botanical exchange that carried resources and information were built inside that system.",
       "section": "The Empire: Occupation, Census, and Extraction",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-629",
+      "id": "untold_history_iii-stmt-659",
       "quote": "> **Open questions.** Who owns the data extracted from the periphery?",
       "section": "The Empire: Occupation, Census, and Extraction",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-630",
+      "id": "untold_history_iii-stmt-660",
       "quote": "What does decolonising the stack mean?",
       "section": "The Empire: Occupation, Census, and Extraction",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-631",
+      "id": "untold_history_iii-stmt-661",
       "quote": "Which maps and categories still carry imperial assumptions?",
       "section": "The Empire: Occupation, Census, and Extraction",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-632",
+      "id": "untold_history_iii-stmt-662",
       "quote": "Interchangeable parts, global science and semiconductor manufacturing all depend on units that mean the same thing everywhere.",
       "section": "The Measure: The Metre Convention and the SI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-633",
+      "id": "untold_history_iii-stmt-663",
       "quote": "The Metre Convention (1875) created the BIPM and the machinery of international metrology (\\cite[BIPM, 1875]{metre_convention1875}).",
       "section": "The Measure: The Metre Convention and the SI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-634",
+      "id": "untold_history_iii-stmt-664",
       "quote": "The SI Brochure defines the International System of Units in terms of seven defining constants and describes the CGPM, CIPM and consultative committees that maintain it (\\cite[BIPM, 2019]{si_brochure2019}).",
       "section": "The Measure: The Metre Convention and the SI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-635",
+      "id": "untold_history_iii-stmt-665",
       "quote": "A nanometre is a useful unit only because the world has agreed on the metre and can realise it.",
       "section": "The Measure: The Metre Convention and the SI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-636",
+      "id": "untold_history_iii-stmt-666",
       "quote": "Metrology is the invisible standard underneath the fab.",
       "section": "The Measure: The Metre Convention and the SI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-637",
+      "id": "untold_history_iii-stmt-667",
       "quote": "> **Open questions.** Who calibrates the calibrators?",
       "section": "The Measure: The Metre Convention and the SI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-638",
+      "id": "untold_history_iii-stmt-668",
       "quote": "What happens when a base unit is redefined?",
       "section": "The Measure: The Metre Convention and the SI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-639",
+      "id": "untold_history_iii-stmt-669",
       "quote": "How does metrology set the limits of manufacturing?",
       "section": "The Measure: The Metre Convention and the SI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-640",
+      "id": "untold_history_iii-stmt-670",
       "quote": "Mass production is a system, not a machine.",
       "section": "The Assembly Line: Ford, Shewhart, and Quality Control",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-641",
+      "id": "untold_history_iii-stmt-671",
       "quote": "Ford's *My Life and Work* describes the moving assembly line: drawing the chassis with a rope and windlass reduced assembly time from twelve hours and twenty-eight minutes to five hours fifty minutes; the elevated line and further subdivision cut it to one hour thirty-three minutes; the line ran at forty-four inches per minute and had forty-five stations (\\cite[Ford and Crowther, 1922]{ford1922mylife}).",
       "section": "The Assembly Line: Ford, Shewhart, and Quality Control",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-642",
+      "id": "untold_history_iii-stmt-672",
       "quote": "Shewhart's 1930 paper on economic quality control gave the statistical basis for deciding when a process is in control and how much variation to leave to chance (\\cite[Shewhart, 1930]{shewhart1930quality}).",
       "section": "The Assembly Line: Ford, Shewhart, and Quality Control",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-643",
+      "id": "untold_history_iii-stmt-673",
       "quote": "The assembly line and the control chart are the ancestors of the modern production line, the supply chain and the benchmark.",
       "section": "The Assembly Line: Ford, Shewhart, and Quality Control",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-644",
+      "id": "untold_history_iii-stmt-674",
       "quote": "> **Open questions.** What is the human cost of the line?",
       "section": "The Assembly Line: Ford, Shewhart, and Quality Control",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-645",
+      "id": "untold_history_iii-stmt-675",
       "quote": "Can quality control be automated?",
       "section": "The Assembly Line: Ford, Shewhart, and Quality Control",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-646",
+      "id": "untold_history_iii-stmt-676",
       "quote": "What does \"in control\" mean for a model?",
       "section": "The Assembly Line: Ford, Shewhart, and Quality Control",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-647",
+      "id": "untold_history_iii-stmt-677",
       "quote": "The telephone network was the first real-time switched network.",
       "section": "The Switch: Bell, Strowger, and the Telephone Network",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-648",
+      "id": "untold_history_iii-stmt-678",
       "quote": "Bell's 1876 patent, \"Improvement in Telegraphy,\" described the transmission of vocal sounds by undulating currents (\\cite[Bell, 1876]{bell1876telephone}).",
       "section": "The Switch: Bell, Strowger, and the Telephone Network",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-649",
+      "id": "untold_history_iii-stmt-679",
       "quote": "Strowger's 1891 \"Automatic Telephone-Exchange\" replaced the human operator with an electromechanical switch (\\cite[Strowger, 1891]{strowger1891exchange}).",
       "section": "The Switch: Bell, Strowger, and the Telephone Network",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-650",
+      "id": "untold_history_iii-stmt-680",
       "quote": "Erlang's 1922 paper applied probability to telephone trunking problems, creating the traffic engineering that dimensioned the network (\\cite[Erlang, 1922]{erlang1922trunking}).",
       "section": "The Switch: Bell, Strowger, and the Telephone Network",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-651",
+      "id": "untold_history_iii-stmt-681",
       "quote": "The switch, the trunk and the Erlang are the ancestors of the router, the packet switch and the capacity planner.",
       "section": "The Switch: Bell, Strowger, and the Telephone Network",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-652",
+      "id": "untold_history_iii-stmt-682",
       "quote": "> **Open questions.** Who controls the switch?",
       "section": "The Switch: Bell, Strowger, and the Telephone Network",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-653",
+      "id": "untold_history_iii-stmt-683",
       "quote": "How does network architecture shape power?",
       "section": "The Switch: Bell, Strowger, and the Telephone Network",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-654",
+      "id": "untold_history_iii-stmt-684",
       "quote": "What is the Erlang of an LLM serving system?",
       "section": "The Switch: Bell, Strowger, and the Telephone Network",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-655",
+      "id": "untold_history_iii-stmt-685",
       "quote": "A map is a data structure with a coordinate system.",
       "section": "The Map: The Ordnance Survey and the Coordinate Grid",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-656",
+      "id": "untold_history_iii-stmt-686",
       "quote": "The Ordnance Survey Act 1841 provided for a trigonometrical survey of Great Britain (\\cite[Parliament of the United Kingdom, 1841]{os1841}).",
       "section": "The Map: The Ordnance Survey and the Coordinate Grid",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-657",
+      "id": "untold_history_iii-stmt-687",
       "quote": "The 1884 International Meridian Conference adopted Greenwich as the initial meridian and proposed a universal day (\\cite[International Meridian Conference, 1884]{meridian1884proceedings}).",
       "section": "The Map: The Ordnance Survey and the Coordinate Grid",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-658",
+      "id": "untold_history_iii-stmt-688",
       "quote": "Geodesy turns territory into coordinates; coordinates turn territory into a database.",
       "section": "The Map: The Ordnance Survey and the Coordinate Grid",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-659",
+      "id": "untold_history_iii-stmt-689",
       "quote": "Navigation, logistics, GPS and the spatial joins of a modern map all rest on that conversion.",
       "section": "The Map: The Ordnance Survey and the Coordinate Grid",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-660",
+      "id": "untold_history_iii-stmt-690",
       "quote": "> **Open questions.** Who is on the map, and who is off it?",
       "section": "The Map: The Ordnance Survey and the Coordinate Grid",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-661",
+      "id": "untold_history_iii-stmt-691",
       "quote": "How does the coordinate system shape what can be seen?",
       "section": "The Map: The Ordnance Survey and the Coordinate Grid",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-662",
+      "id": "untold_history_iii-stmt-692",
       "quote": "What is the map of the training corpus?",
       "section": "The Map: The Ordnance Survey and the Coordinate Grid",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-663",
+      "id": "untold_history_iii-stmt-693",
       "quote": "Sound became a medium for machines when it became a physical record.",
       "section": "The Record: The Phonograph, the Gramophone, and MPEG Audio",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-664",
+      "id": "untold_history_iii-stmt-694",
       "quote": "Edison's 1877 phonograph patent described recording the human voice and other sounds in permanent characters from which they could be reproduced (\\cite[Edison, 1877]{edison1877phonograph}).",
       "section": "The Record: The Phonograph, the Gramophone, and MPEG Audio",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-665",
+      "id": "untold_history_iii-stmt-695",
       "quote": "Berliner's 1887 gramophone patent introduced the disc and stylus (\\cite[Berliner, 1887]{berliner1887gramophone}).",
       "section": "The Record: The Phonograph, the Gramophone, and MPEG Audio",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-666",
+      "id": "untold_history_iii-stmt-696",
       "quote": "A century later, MPEG audio standardised high-quality digital audio coding at low bit rates (\\cite[Brandenburg, 1993]{mpeg_audio1993}).",
       "section": "The Record: The Phonograph, the Gramophone, and MPEG Audio",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-667",
+      "id": "untold_history_iii-stmt-697",
       "quote": "Recording created the sound corpus; compression made it transportable; streaming made it a training stream.",
       "section": "The Record: The Phonograph, the Gramophone, and MPEG Audio",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-668",
+      "id": "untold_history_iii-stmt-698",
       "quote": "> **Open questions.** Who owns the sound?",
       "section": "The Record: The Phonograph, the Gramophone, and MPEG Audio",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-669",
+      "id": "untold_history_iii-stmt-699",
       "quote": "What is lost in compression?",
       "section": "The Record: The Phonograph, the Gramophone, and MPEG Audio",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-670",
+      "id": "untold_history_iii-stmt-700",
       "quote": "Computer graphics became an industry when a single image required more computation than one machine could deliver.",
       "section": "The Render Farm: Catmull, RenderMan, and the Industrialization of Pixels",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-671",
+      "id": "untold_history_iii-stmt-701",
       "quote": "Catmull's 1974 work on computer display of curved surfaces introduced the subdivision methods that made smooth surfaces tractable (\\cite[Catmull, 1974]{catmull1974}).",
       "section": "The Render Farm: Catmull, RenderMan, and the Industrialization of Pixels",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-672",
+      "id": "untold_history_iii-stmt-702",
       "quote": "Hanrahan and Lawson's 1990 shading language let artists and programmers describe light and surface reflectance in a portable language (\\cite[Hanrahan and Lawson, 1990]{hanrahan1990shading}).",
       "section": "The Render Farm: Catmull, RenderMan, and the Industrialization of Pixels",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-673",
+      "id": "untold_history_iii-stmt-703",
       "quote": "Pixar's *Toy Story* (1995) was the first computer-animated feature film, and its production pipeline turned rendering into an industrial parallel workload (\\cite[Pixar, 2026]{pixar_ourstory}).",
       "section": "The Render Farm: Catmull, RenderMan, and the Industrialization of Pixels",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-674",
+      "id": "untold_history_iii-stmt-704",
       "quote": "The render farm is the ancestor of the GPU cluster: many machines, one frame, a deadline.",
       "section": "The Render Farm: Catmull, RenderMan, and the Industrialization of Pixels",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-675",
+      "id": "untold_history_iii-stmt-705",
       "quote": "> **Open questions.** How much energy does a frame cost?",
       "section": "The Render Farm: Catmull, RenderMan, and the Industrialization of Pixels",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-676",
+      "id": "untold_history_iii-stmt-706",
       "quote": "What is the boundary between simulation and synthesis?",
       "section": "The Render Farm: Catmull, RenderMan, and the Industrialization of Pixels",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-677",
+      "id": "untold_history_iii-stmt-707",
       "quote": "What would a render farm for world models look like?",
       "section": "The Render Farm: Catmull, RenderMan, and the Industrialization of Pixels",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-678",
+      "id": "untold_history_iii-stmt-708",
       "quote": "Every prerequisite described so far is paid for out of a budget.",
       "section": "The Deep Stack: The Budgets Behind the Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-679",
+      "id": "untold_history_iii-stmt-709",
       "quote": "This closing part zooms out from the individual invention to the planetary and civilizational accounts that make the whole chain possible: the solar energy stored by plants, the nitrogen that grows the population, the fresh water that cools and cleans, the minerals concentrated by geology, the capital that finances the fab, and the attention that pays for the free web.",
       "section": "The Deep Stack: The Budgets Behind the Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-680",
+      "id": "untold_history_iii-stmt-710",
       "quote": "None of these budgets was created for AI.",
       "section": "The Deep Stack: The Budgets Behind the Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-681",
+      "id": "untold_history_iii-stmt-711",
       "quote": "All of them are drawn down by it.",
       "section": "The Deep Stack: The Budgets Behind the Machine",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-682",
+      "id": "untold_history_iii-stmt-712",
       "quote": "Photosynthesis is the original energy-storage technology.",
       "section": "The Solar Budget: From Photosynthesis to the Coal Seam",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-683",
+      "id": "untold_history_iii-stmt-713",
       "quote": "Priestley's experiments on air and Ingenhousz's demonstration that plants purify the common air in sunlight established that the atmosphere is not a fixed medium but a cycle maintained by living things (\\cite[Priestley, 1772]{priestley1772air}; \\cite[Ingenhousz, 1779]{ingenhousz1779vegetables}).",
       "section": "The Solar Budget: From Photosynthesis to the Coal Seam",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-684",
+      "id": "untold_history_iii-stmt-714",
       "quote": "Calvin and Benson then traced the path of carbon in photosynthesis, showing how light-driven chemistry fixes carbon into organic molecules (\\cite[Calvin and Benson, 1948]{calvin1948photosynthesis}).",
       "section": "The Solar Budget: From Photosynthesis to the Coal Seam",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-685",
+      "id": "untold_history_iii-stmt-715",
       "quote": "Coal is the geological savings account of that process: the EIA describes coal as containing the energy stored by plants that lived hundreds of millions of years ago, compressed and heated under layers of rock (\\cite[EIA, 2026]{eia_coal}).",
       "section": "The Solar Budget: From Photosynthesis to the Coal Seam",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-686",
+      "id": "untold_history_iii-stmt-716",
       "quote": "The Industrial Revolution was, in energy terms, a withdrawal from that account.",
       "section": "The Solar Budget: From Photosynthesis to the Coal Seam",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-687",
+      "id": "untold_history_iii-stmt-717",
       "quote": "The grid, the fab and the data center are later withdrawals from the same account; the IEA's projection of data-centre demand doubling from 485 TWh in 2025 to 950 TWh in 2030 is a statement about how much of the planetary energy budget is being redirected into computation (\\cite[IEA, 2026]{iea2026energyai}).",
       "section": "The Solar Budget: From Photosynthesis to the Coal Seam",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-688",
+      "id": "untold_history_iii-stmt-718",
       "quote": "> **Open questions.** How many years of ancient sunlight are stored in a barrel of oil?",
       "section": "The Solar Budget: From Photosynthesis to the Coal Seam",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-689",
+      "id": "untold_history_iii-stmt-719",
       "quote": "What would a fab powered only by current sunlight require?",
       "section": "The Solar Budget: From Photosynthesis to the Coal Seam",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-690",
+      "id": "untold_history_iii-stmt-720",
       "quote": "Can the grid decarbonise at the speed at which AI demand is growing?",
       "section": "The Solar Budget: From Photosynthesis to the Coal Seam",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-691",
+      "id": "untold_history_iii-stmt-721",
       "quote": "Plants cannot use the nitrogen that makes up most of the atmosphere; they need it fixed as nitrate or ammonia.",
       "section": "The Nitrogen Budget: From Malthus to Haber-Bosch",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-692",
+      "id": "untold_history_iii-stmt-722",
       "quote": "Haber's Nobel lecture explains the problem: industrial societies move food far from where it is grown, so the bound nitrogen is not returned to the soil, creating a worldwide economic necessity for synthetic fixed nitrogen (\\cite[Haber, 1920]{haber1920ammonia}).",
       "section": "The Nitrogen Budget: From Malthus to Haber-Bosch",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-693",
+      "id": "untold_history_iii-stmt-723",
       "quote": "Haber-Bosch synthesised ammonia from nitrogen and hydrogen, and Borlaug's Green Revolution relied on that fertiliser: the new high-yielding varieties responded to much heavier nitrogen doses, producing twenty to twenty-five kilos of additional grain per kilo of nitrogen instead of ten (\\cite[Borlaug, 1970]{borlaug1970green}).",
       "section": "The Nitrogen Budget: From Malthus to Haber-Bosch",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-694",
+      "id": "untold_history_iii-stmt-724",
       "quote": "Malthus had argued that population grows geometrically while subsistence grows arithmetically, imposing a check (\\cite[Malthus, 1798]{malthus1798population}).",
       "section": "The Nitrogen Budget: From Malthus to Haber-Bosch",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-695",
+      "id": "untold_history_iii-stmt-725",
       "quote": "Synthetic nitrogen postponed that check; it also fed the population that staffs the laboratories, factories and data centers.",
       "section": "The Nitrogen Budget: From Malthus to Haber-Bosch",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-696",
+      "id": "untold_history_iii-stmt-726",
       "quote": "The nitrogen budget is therefore a hidden input to the human-capital budget.",
       "section": "The Nitrogen Budget: From Malthus to Haber-Bosch",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-697",
+      "id": "untold_history_iii-stmt-727",
       "quote": "> **Open questions.** How many people does synthetic nitrogen feed?",
       "section": "The Nitrogen Budget: From Malthus to Haber-Bosch",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-698",
+      "id": "untold_history_iii-stmt-728",
       "quote": "What is the energy cost of a kilogram of ammonia?",
       "section": "The Nitrogen Budget: From Malthus to Haber-Bosch",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-699",
+      "id": "untold_history_iii-stmt-729",
       "quote": "What happens to the nitrogen cycle if fertiliser is diverted to fuel crops?",
       "section": "The Nitrogen Budget: From Malthus to Haber-Bosch",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-700",
+      "id": "untold_history_iii-stmt-730",
       "quote": "Water is a managed resource before it is a natural one.",
       "section": "The Water Budget: From the Aqueduct to the Cooling Tower",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-701",
+      "id": "untold_history_iii-stmt-731",
       "quote": "Frontinus, appointed water commissioner of Rome, wrote a treatise on the aqueducts because the supply concerned the convenience, health and safety of the city; he measured what each aqueduct delivered and how it was distributed (\\cite[Frontinus, 97]{frontinus97aqueducts}).",
       "section": "The Water Budget: From the Aqueduct to the Cooling Tower",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-702",
+      "id": "untold_history_iii-stmt-732",
       "quote": "Modern water use is measured at the same planetary scale: the USGS estimates total withdrawals of about 322 billion gallons per day in 2015, with thermoelectric power and irrigation the two largest uses, and freshwater making up 281 billion gallons per day (\\cite[Dieter et al., 2018]{usgs2015wateruse}).",
       "section": "The Water Budget: From the Aqueduct to the Cooling Tower",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-703",
+      "id": "untold_history_iii-stmt-733",
       "quote": "Computation adds a demand for water that is easy to overlook: ultrapure water is used in semiconductor manufacturing, where ultrafiltration and leak detection are prerequisites for defect-free production (\\cite[Ruth and Berndt, 2016]{ruth2016ultrapure}).",
       "section": "The Water Budget: From the Aqueduct to the Cooling Tower",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-704",
+      "id": "untold_history_iii-stmt-734",
       "quote": "A data center is a water consumer twice over: directly for cooling and indirectly through the electricity system.",
       "section": "The Water Budget: From the Aqueduct to the Cooling Tower",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-705",
+      "id": "untold_history_iii-stmt-735",
       "quote": "> **Open questions.** How much water does a data center consume per megawatt-hour?",
       "section": "The Water Budget: From the Aqueduct to the Cooling Tower",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-706",
+      "id": "untold_history_iii-stmt-736",
       "quote": "Can cooling be closed-loop?",
       "section": "The Water Budget: From the Aqueduct to the Cooling Tower",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-707",
+      "id": "untold_history_iii-stmt-737",
       "quote": "Who has priority in a drought: a city, a farm, or a fab?",
       "section": "The Water Budget: From the Aqueduct to the Cooling Tower",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-708",
+      "id": "untold_history_iii-stmt-738",
       "quote": "Mining is one of the oldest knowledge systems.",
       "section": "The Mineral Budget: From the Ore to the Wafer",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-709",
+      "id": "untold_history_iii-stmt-739",
       "quote": "Agricola's *De Re Metallica* (1556) described mining methods, metallurgical processes, geology and mining law, and remained the standard text for 180 years (\\cite[Agricola, 1556]{agricola1556demetallica}).",
       "section": "The Mineral Budget: From the Ore to the Wafer",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-710",
+      "id": "untold_history_iii-stmt-740",
       "quote": "The geological distribution of the elements is not uniform: the USGS notes that rare earths are relatively abundant in the Earth's crust but minable concentrations are less common than for most other commodities, and that the United States relies on imports for more than one-half of its lithium and more than two-thirds of its rare-earth compounds and metals (\\cite[USGS, 2026]{usgs2026mcs}).",
       "section": "The Mineral Budget: From the Ore to the Wafer",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-711",
+      "id": "untold_history_iii-stmt-741",
       "quote": "Copper, cobalt, gallium and germanium have their own bottlenecks.",
       "section": "The Mineral Budget: From the Ore to the Wafer",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-712",
+      "id": "untold_history_iii-stmt-742",
       "quote": "A fab is therefore downstream of a mine and a refinery; the periodic table is not a catalogue of equally available materials but a map of geological scarcity and political geography.",
       "section": "The Mineral Budget: From the Ore to the Wafer",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-713",
+      "id": "untold_history_iii-stmt-743",
       "quote": "> **Open questions.** Which elements have no substitute?",
       "section": "The Mineral Budget: From the Ore to the Wafer",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-714",
+      "id": "untold_history_iii-stmt-744",
       "quote": "What is the lead time from discovery to production?",
       "section": "The Mineral Budget: From the Ore to the Wafer",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-715",
+      "id": "untold_history_iii-stmt-745",
       "quote": "How much of the periodic table does a single accelerator require?",
       "section": "The Mineral Budget: From the Ore to the Wafer",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-716",
+      "id": "untold_history_iii-stmt-746",
       "quote": "Computation is capital-intensive.",
       "section": "The Capital Budget: From the Ledger to the Venture Fund",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-717",
+      "id": "untold_history_iii-stmt-747",
       "quote": "The institutions that make large capital possible are therefore part of the stack.",
       "section": "The Capital Budget: From the Ledger to the Venture Fund",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-718",
+      "id": "untold_history_iii-stmt-748",
       "quote": "Double-entry bookkeeping made a business auditable (\\cite[Pacioli, 1494]{paciolisumma}).",
       "section": "The Capital Budget: From the Ledger to the Venture Fund",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-719",
+      "id": "untold_history_iii-stmt-749",
       "quote": "The joint-stock company pooled capital from strangers; the Companies Act 1856 gave investors limited liability, separating the risk of the enterprise from the personal fortune of the investor (\\cite[Parliament of the United Kingdom, 1856]{companiesact1856}).",
       "section": "The Capital Budget: From the Ledger to the Venture Fund",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-720",
+      "id": "untold_history_iii-stmt-750",
       "quote": "In the twentieth century, the Small Business Investment Act of 1958 made equity capital and long-term credit more readily available for small-business concerns and created small business investment companies, a public-policy ancestor of the venture fund (\\cite[U.S.",
       "section": "The Capital Budget: From the Ledger to the Venture Fund",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-721",
+      "id": "untold_history_iii-stmt-751",
       "quote": "Congress, 1958]{sbic1958}).",
       "section": "The Capital Budget: From the Ledger to the Venture Fund",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-722",
+      "id": "untold_history_iii-stmt-752",
       "quote": "A leading-edge fab costs billions and a frontier training run costs millions; the capital budget decides which of them gets built.",
       "section": "The Capital Budget: From the Ledger to the Venture Fund",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-723",
+      "id": "untold_history_iii-stmt-753",
       "quote": "The venture fund and the limited-liability company are as much prerequisites of the GPU cluster as the transistor.",
       "section": "The Capital Budget: From the Ledger to the Venture Fund",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-724",
+      "id": "untold_history_iii-stmt-754",
       "quote": "> **Open questions.** Who owns the model?",
       "section": "The Capital Budget: From the Ledger to the Venture Fund",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-725",
+      "id": "untold_history_iii-stmt-755",
       "quote": "What is the cost of capital for a ten-year fab versus a six-month training run?",
       "section": "The Capital Budget: From the Ledger to the Venture Fund",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-726",
+      "id": "untold_history_iii-stmt-756",
       "quote": "How does the venture model shape which research gets funded?",
       "section": "The Capital Budget: From the Ledger to the Venture Fund",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-727",
+      "id": "untold_history_iii-stmt-757",
       "quote": "The free web was not free; it was paid for by advertising.",
       "section": "The Attention Budget: From the Ad to the Corpus",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-728",
+      "id": "untold_history_iii-stmt-758",
       "quote": "Google's 2004 registration statement says that most services are provided for free and that advertising is the company's principal source of revenue (\\cite[Google, 2004]{google2004s1}).",
       "section": "The Attention Budget: From the Ad to the Corpus",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-729",
+      "id": "untold_history_iii-stmt-759",
       "quote": "The technical counterpart was targeted advertising: Google's patent on increasing the number of relevant advertisements describes matching ads to search queries and scoring them by relevance and performance (\\cite[Bem, 2007]{adwords2003patent}).",
       "section": "The Attention Budget: From the Ad to the Corpus",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-730",
+      "id": "untold_history_iii-stmt-760",
       "quote": "The result was a self-reinforcing loop: free services attracted users, users produced attention and data, advertising converted attention into revenue, and the resulting pages became the corpus.",
       "section": "The Attention Budget: From the Ad to the Corpus",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-731",
+      "id": "untold_history_iii-stmt-761",
       "quote": "The training text of a large model is therefore a by-product of an attention economy, not a neutral sample of human writing.",
       "section": "The Attention Budget: From the Ad to the Corpus",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-732",
+      "id": "untold_history_iii-stmt-762",
       "quote": "> **Open questions.** What would the web look like with subscriptions instead of ads?",
       "section": "The Attention Budget: From the Ad to the Corpus",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-733",
+      "id": "untold_history_iii-stmt-763",
       "quote": "How does advertising shape what gets written and indexed?",
       "section": "The Attention Budget: From the Ad to the Corpus",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-734",
+      "id": "untold_history_iii-stmt-764",
       "quote": "Who owns the attention that trains the model?",
       "section": "The Attention Budget: From the Ad to the Corpus",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-735",
+      "id": "untold_history_iii-stmt-765",
       "quote": "The chain is not finished.",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-736",
+      "id": "untold_history_iii-stmt-766",
       "quote": "These are the questions this page cannot answer, and the ones a reader should carry forward:",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-737",
+      "id": "untold_history_iii-stmt-767",
       "quote": "- What is the minimum energy per useful floating-point operation, and what does thermodynamics forbid?",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-738",
+      "id": "untold_history_iii-stmt-768",
       "quote": "- Which parts of the stack are irreplaceable, and which are historical accidents?",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-739",
+      "id": "untold_history_iii-stmt-769",
       "quote": "- How much of AI's cost is energy, water, land, materials, labour, capital, and attention?",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-740",
+      "id": "untold_history_iii-stmt-770",
       "quote": "- What would a post-silicon substrate require?",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-741",
+      "id": "untold_history_iii-stmt-771",
       "quote": "- Which institutions are load-bearing, and which are contingent?",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-742",
+      "id": "untold_history_iii-stmt-772",
       "quote": "- What would a civilisation without cheap fossil fuel have computed?",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-743",
+      "id": "untold_history_iii-stmt-773",
       "quote": "- How would the chain change if copyright law had been different?",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-744",
+      "id": "untold_history_iii-stmt-774",
       "quote": "- What is the role of war and state capacity?",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-745",
+      "id": "untold_history_iii-stmt-775",
       "quote": "- What is the role of open source and standards?",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-746",
+      "id": "untold_history_iii-stmt-776",
       "quote": "- What would a non-human intelligence's prerequisites look like?",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-747",
+      "id": "untold_history_iii-stmt-777",
       "quote": "- Which displaced prerequisites are still invisible today?",
       "section": "Open Questions",
       "kind": "statement"
     },
     {
-      "id": "untold_history_iii-stmt-748",
+      "id": "untold_history_iii-stmt-778",
       "quote": "- What is the next displaced prerequisite being created now?",
       "section": "Open Questions",
       "kind": "statement"
