@@ -1,9 +1,9 @@
 # Deep fact audit
 
 - lessons: 99
-- claims: 7185
+- claims: 7198
 - statements: 20660
-- relations: 5371
+- relations: 5383
 - uncovered years: 40
 - uncovered quantities: 4
 - uncited specific claims: 306
@@ -41,7 +41,7 @@
 | differentiation | 21 | 98 | 18 | 0 | 0 |
 | diffusion | 28 | 166 | 21 | 0 | 0 |
 | embeddinglab | 25 | 531 | 20 | 0 | 0 |
-| evaluation | 31 | 198 | 19 | 2 | 0 |
+| evaluation | 36 | 198 | 24 | 2 | 0 |
 | fact_lookup | 37 | 297 | 27 | 0 | 0 |
 | finetuninglab | 36 | 138 | 27 | 0 | 0 |
 | foam_of_meaning | 16 | 711 | 12 | 0 | 0 |
@@ -52,7 +52,7 @@
 | global_ai_ecosystem | 30 | 149 | 25 | 0 | 0 |
 | hallucinations | 25 | 60 | 17 | 0 | 0 |
 | history | 1391 | 622 | 814 | 0 | 0 |
-| human_mind | 41 | 302 | 34 | 5 | 0 |
+| human_mind | 45 | 302 | 37 | 5 | 0 |
 | hyperparameters | 25 | 82 | 22 | 0 | 0 |
 | inceptionism | 14 | 35 | 10 | 0 | 0 |
 | inference_optimization | 41 | 147 | 24 | 0 | 0 |
@@ -99,7 +99,7 @@
 | software | 64 | 476 | 57 | 0 | 0 |
 | speech_audio | 23 | 63 | 17 | 1 | 0 |
 | statistics_i | 51 | 346 | 27 | 1 | 0 |
-| statistics_ii | 23 | 117 | 15 | 11 | 0 |
+| statistics_ii | 27 | 117 | 19 | 11 | 0 |
 | symbolic_ai | 39 | 142 | 37 | 0 | 0 |
 | tokenizerlab | 20 | 175 | 18 | 4 | 0 |
 | topology | 25 | 208 | 23 | 0 | 1 |
