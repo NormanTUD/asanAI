@@ -469,6 +469,37 @@ Thus began Zarathustra's down-going.
     </div>
 </div>
 
+<div class="md" data-mathlevel="55">
+## From entropy to learning: the information quantities every model uses
+
+Shannon's entropy measures the uncertainty of a source. Five quantities built from it connect that abstract measure to training, compression and representation learning.
+
+**Cross-entropy.** If the true distribution is $P$ and the model is $Q$, the cross-entropy
+
+<div>$$H(P,Q) = -\sum_x P(x)\log Q(x) = H(P) + D_{\mathrm{KL}}(P\|Q)$$</div>
+
+is the average code length when $Q$ is used to code data from $P$. A language model's training loss is exactly this quantity, averaged over tokens (in nats or bits depending on the logarithm). It is not a distance: it is a cost, and it is bounded below by $H(P)$.
+
+**Kullback-Leibler divergence.** $D_{\mathrm{KL}}(P\|Q)$ is the extra cost of using $Q$ instead of $P$; it is zero only when $P=Q$ almost everywhere, and it is not symmetric (\cite[Kullback and Leibler, 1951]{leiblerkullback}). The asymmetry is useful: $D_{\mathrm{KL}}(P\|Q)$ punishes a model that assigns near-zero probability to events that actually occur, while $D_{\mathrm{KL}}(Q\|P)$ punishes a different failure. This is why the direction of the KL matters in variational inference and in policy optimization.
+
+**Mutual information.** $I(X;Y)=D_{\mathrm{KL}}(P(x,y)\|P(x)P(y))$ measures how much knowing $Y$ reduces uncertainty about $X$ (\cite[Shannon, 1948]{shannon1948communication}). It is zero exactly when $X$ and $Y$ are independent. In representation learning it is the quantity behind the information bottleneck, feature selection and many contrastive objectives: a representation is useful when it keeps the information about the target and discards the rest.
+
+**Minimum description length.** MDL turns learning into compression: the best model is the one that lets you describe the data in the fewest bits, including the bits needed to describe the model itself (\cite[Rissanen, 1978]{rissanen1978mdl}; \cite[Grünwald, 2007]{grunwald2007mdl}). This is the formal version of Occam's razor, and it explains why a model that memorizes noise is a bad compressor: it pays for the noise in the model description without shrinking the data description.
+
+**Rate-distortion.** When exact reconstruction is impossible or unnecessary, Shannon's rate-distortion theory asks for the smallest rate $R$ that keeps the expected distortion below $D$ (\cite[Shannon, 1959]{shannon1959rate}; \cite[Cover and Thomas, 2006]{cover2006elements}). This is the theory behind lossy compression, quantization and dimensionality reduction: embeddings, tokenizers and vector databases all choose a point on a rate-distortion curve, whether or not they use the name.
+
+| Quantity | Question it answers | Where it appears |
+|---|---|---|
+| Entropy $H(P)$ | How uncertain is the source? | compression limit, loss floor |
+| Cross-entropy $H(P,Q)$ | What does it cost to code $P$ with $Q$? | language-model loss |
+| KL $D_{\mathrm{KL}}(P\|Q)$ | How much extra does $Q$ cost? | variational inference, RLHF |
+| Mutual information $I(X;Y)$ | How much does $Y$ tell us about $X$? | representation learning, feature selection |
+| MDL | Which model compresses the data best? | model selection, Occam's razor |
+| Rate-distortion | How much can we lose for a given rate? | quantization, embeddings |
+
+The unifying point is that learning is compression under a loss. A language model is a compressor of text; a classifier is a compressor of labels given inputs; an embedding is a lossy code of meaning. Shannon's 1948 paper gave the unit, the limit and the vocabulary for all three.
+</div>
+
 <div class="statlab-section">
     <div class="md" data-mathlevel="45">
         ## Bag of Words (BoW): The Linguistic Atom
