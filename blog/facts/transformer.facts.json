@@ -24,7 +24,9 @@
     "gpt2",
     "safetyheads",
     "belrose2023tunedlens",
-    "nostalgebraist2020logitlens"
+    "nostalgebraist2020logitlens",
+    "michel2019sixteen",
+    "shazeer2020talkingheads"
   ],
   "claims": [
     {
@@ -412,6 +414,49 @@
         "gpt2"
       ],
       "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-gqa-uptraining",
+      "subject": "grouped-query-attention",
+      "predicate": "uptraining_compute",
+      "value": 5,
+      "unit": "%",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "continuing pretraining for roughly 5 percent of the original compute",
+      "citation_keys": [
+        "ainslie2023gqa"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-mla-kv-reduction",
+      "subject": "multi-head-latent-attention",
+      "predicate": "kv_cache_reduction",
+      "value": 90,
+      "unit": "%",
+      "qualifiers": {
+        "comparison": "at_least"
+      },
+      "quote": "it reported a KV cache over 90 percent smaller than an equivalent MHA configuration",
+      "citation_keys": [
+        "deepseek2024v2"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "transformer-mqa-bandwidth",
+      "subject": "multi-query-attention",
+      "predicate": "bottleneck",
+      "value": "memory bandwidth",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "incremental decoding is bound not by arithmetic but by **memory bandwidth**",
+      "citation_keys": [
+        "shazeer2019mqa"
+      ],
       "confidence": "stated"
     }
   ],
@@ -8752,6 +8797,39 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "transformer-rel-mqa-part-of-transformer",
+      "from": "multi-query-attention",
+      "to": "transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "Multi-query attention (MQA) keeps all query heads but shares one K/V head across them",
+      "citation_keys": [
+        "shazeer2019mqa"
+      ]
+    },
+    {
+      "id": "transformer-rel-gqa-part-of-transformer",
+      "from": "grouped-query-attention",
+      "to": "transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "grouped-query attention (GQA) shares one per group and became the mainstream compromise",
+      "citation_keys": [
+        "ainslie2023gqa"
+      ]
+    },
+    {
+      "id": "transformer-rel-mla-part-of-transformer",
+      "from": "multi-head-latent-attention",
+      "to": "transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "DeepSeek-V2 went further with **multi-head latent attention** (MLA)",
+      "citation_keys": [
+        "deepseek2024v2"
+      ]
     }
   ],
   "statements": [
