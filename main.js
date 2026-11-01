@@ -175,6 +175,9 @@ function init_tabs () {
 
 			if (ui.newPanel.attr("id") == "weight_surfaces") {
 				window.__weight_surfaces_visible = true;
+				if (typeof render_weight_surfaces_if_dirty === "function") {
+					render_weight_surfaces_if_dirty();
+				}
 			}
 
 			if (ui.newPanel.attr("id") == "gradient_flow") {

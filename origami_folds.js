@@ -3433,7 +3433,7 @@ var OrigamiFolds = (function (global) {
 		_state.dataDirty = true;
 		_state.pendingRender = true;
 		_scheduleRender();
-		_warn("Plotly pick crash, plot rebuilt (" + _state.pickRecoveryCount + "/10)");
+		_warn("Pick-Crash: Plotly pick crash, plot rebuilt (" + _state.pickRecoveryCount + "/10)");
 	}
 
 	function _setupPickRecoveryGuard() {
@@ -4146,6 +4146,35 @@ var OrigamiFolds = (function (global) {
 		return OrigamiFolds;
 	}
 
+	// Lightweight re-render used when the tab is opened again. Unlike update(),
+	// it does not mark the data dirty: the render pass already compares the
+	// weight fingerprint and skips when nothing changed.
+	function refresh() {
+		if (!_state.initialized) {
+			var tabPlot = document.getElementById("origami_folds_plot");
+			init(tabPlot || undefined);
+			return OrigamiFolds;
+		}
+
+		if (!_state.container || !_state.container.parentNode) {
+			_state.initialized = false;
+			_state.plotlyInitialized = false;
+			_state.observer = null;
+			_state.resizeObserver = null;
+			var target = _state.parentId || _state.parentElement || null;
+			init(target);
+			return OrigamiFolds;
+		}
+
+		if (!_isVisibleNow()) {
+			_state.pendingRender = true;
+			return OrigamiFolds;
+		}
+
+		_scheduleRender();
+		return OrigamiFolds;
+	}
+
 	function getConfig() {
 		try { return JSON.parse(JSON.stringify(_state.config)); }
 		catch (e) { return {}; }
@@ -4190,6 +4219,7 @@ var OrigamiFolds = (function (global) {
 	var OrigamiFolds = {
 		init:        init,
 		update:      update,
+		refresh:     refresh,
 		forceUpdate: forceUpdate,
 		destroy:     destroy,
 		getConfig:   getConfig,
@@ -4405,8 +4435,9 @@ function update_origami_folds() {
 		if (plotDiv && !_state_initialised_in_tab) {
 			OrigamiFolds.init(plotDiv);
 			_state_initialised_in_tab = true;
+			return OrigamiFolds;
 		}
-		return OrigamiFolds.update();
+		return OrigamiFolds.refresh();
 	} catch (e) {
 		if (typeof wrn === "function") {
 			wrn("[origami_folds] update_origami_folds failed: " + e);

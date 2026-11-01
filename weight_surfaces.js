@@ -10,6 +10,11 @@ window.__tfjs_weights_plot_cameras = window.__tfjs_weights_plot_cameras || new M
 // layout read at all).
 window.__tfjs_weights_resizers = window.__tfjs_weights_resizers || [];
 window.__weight_surfaces_visible = false;
+// Set whenever new weights or a new model structure may exist. Re-opening the
+// tab re-renders only when this is true; otherwise the existing Plotly scene is
+// reused. Clicking the tab used to force a full 3-D re-render every time (each
+// run slower than the last because Plotly kept the old scenes alive).
+window.__weight_surfaces_dirty = true;
 
 function destroy_weight_surfaces_resizers() {
 	(window.__tfjs_weights_resizers || []).forEach(function(ro) {
@@ -1117,6 +1122,8 @@ function get_model_structure_string() {
 // ─── Entry point: create or update weight surfaces ───────────────────────────
 
 function create_weight_surfaces(force = false) {
+	window.__weight_surfaces_dirty = true;
+
 	try {
 		// Keep the RO visibility flag in sync. #weight_surfaces is the jQuery UI
 		// tab panel: :visible is true only while this tab is the active one.
@@ -1133,8 +1140,37 @@ function create_weight_surfaces(force = false) {
 
 		last_model_structure_string = current_model_structure_string;
 
+		// While the tab is hidden the plots cannot be laid out; defer the whole
+		// render to the next activation instead of doing it into a display:none
+		// container.
+		if (!window.__weight_surfaces_visible) {
+			return;
+		}
+
 		visualize_model_weights('weight_surfaces_content', {}, !!force);
+		window.__weight_surfaces_dirty = false;
 	} catch (e) {
 		console.error("create_weight_surfaces error:", e);
+	}
+}
+
+function render_weight_surfaces_if_dirty() {
+	try {
+		const container = document.getElementById("weight_surfaces_content");
+		const has_content = !!container && container.children.length > 0;
+
+		if (!window.__weight_surfaces_dirty && has_content) {
+			return;
+		}
+
+		// The tab's activate event fires before jQuery UI has laid the panel
+		// out, so :visible is still false here. Wait for the next frame before
+		// asking create_weight_surfaces() to measure it.
+		requestAnimationFrame(function () {
+			if (!window.__weight_surfaces_visible) return;
+			create_weight_surfaces(true);
+		});
+	} catch (e) {
+		console.error("render_weight_surfaces_if_dirty error:", e);
 	}
 }
