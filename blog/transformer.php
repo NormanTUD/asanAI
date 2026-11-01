@@ -468,7 +468,7 @@ $$z_{0} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0}))$$
 </div>
 
 <div class="md" data-mathlevel="50">
-This Layer Normalization ensures that the values don't 'explode' and get too large, since they are, after being normalized, always in around 0 with a variance of 1. Without it, the values might get bigger and bigger with many layers.
+LayerNorm normalizes the features of **one token**: it subtracts that token's feature mean, divides by its feature standard deviation, then applies a learned scale $\gamma$ and shift $\beta$ (\cite[Ba et al., 2016]{ba2016layernorm}). This keeps each sublayer's input at a controlled scale, which makes the optimization landscape better behaved and allows higher learning rates. It does **not** guarantee that the residual stream stays at mean zero and variance one: the affine transform can rescale and re-center the normalized output, and the residual stream is a running sum whose norm can grow or shrink across layers. The stability of a pre-norm Transformer comes from the combination of per-token normalization, the identity path of the residual connection, and careful initialization -- not from a global invariant enforced by LayerNorm alone (\cite[Xiong et al., 2020]{xiong2020}).
 
 * $B = \text{Batch Size}$ (The number of independent sequences processed in a single forward pass)
 * $T = \text{Sequence Length}$ (The number of tokens/words in each sequence; **note**: $T$ is reused as the *temperature* symbol in the Sampling section, context disambiguates.)
@@ -808,9 +808,9 @@ This single row $h_{\text{last}}$ is a vector in $d_{\text{model}}$ space. When 
 </div>
 
 <div class="optional md" data-headline="The Unembedding Matrix as a Dual Space">
-The unembedding matrix $W_U$ (often identical to $W_E$ due to weight tying) does more than just produce logits. It defines a **dual space** where every direction in the residual stream has a direct linguistic interpretation. Each row of $W_U$ is a “detector” for a specific token: moving the residual stream vector in the direction of $W_U[\text{“Paris”}]$ literally increases the probability of outputting “Paris.”
+The unembedding matrix $W_U$ (often identical to $W_E$ due to weight tying) gives a **linear readout** of the residual stream: each row is a direction whose dot product with the stream contributes to one token's logit. Moving the stream along the direction of $W_U[\text{“Paris”}]$ increases the logit of “Paris,” but that does not make every direction a word, and it does not make every intermediate state a proposition or a belief.
 
-This leads to the **logit lens** technique: by applying $W_U$ to the residual stream at any intermediate layer (not just the final one), you can see what the model “would predict” at that point. Research shows that the model's belief about the next token evolves continuously through the layers, often settling on the correct answer many layers before the output. The attention heads and FFN layers are not performing abstract, uninterpretable operations, they are nudging the residual stream toward or away from specific words, and the unembedding matrix lets us read off what they are doing at every step.
+This is the careful way to read the **logit lens**. Applying $W_U$ to an intermediate residual stream answers a conditional question: *if the forward pass stopped here, what would this linear readout favor?* It does not tell you what the model “thinks,” because the model never outputs at that layer, earlier layers use bases the unembedding was not trained for, and the readout can be systematically biased. The **tuned lens** learns a small per-layer affine correction to reduce that bias (\cite[Belrose et al., 2023]{belrose2023tunedlens}). Use the logit lens as a diagnostic of how the next-token distribution is forming, not as direct access to internal language-like beliefs (\cite[nostalgebraist, 2020]{nostalgebraist2020logitlens}).
 </div>
 
 <div class="optional md" data-headline="From Logits to Probabilities: A numerically stable Softmax">
