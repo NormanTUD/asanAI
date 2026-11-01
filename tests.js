@@ -3896,12 +3896,12 @@ async function test_training_live_metrics_panel () {
 }
 
 function test_training_tab_content_order () {
-	var expected = ["canvas_grid_visualization", "plotly_epoch_history_div", "confusion_matrix_training", "training_content"];
-	var actual = $("#training_tab").find("#canvas_grid_visualization, #plotly_epoch_history_div, #confusion_matrix_training, #training_content").toArray().map(function (element) {
+	var expected = ["training_live_metrics", "canvas_grid_visualization", "plotly_epoch_history_div", "confusion_matrix_training", "training_content"];
+	var actual = $("#training_tab").find("#training_live_metrics, #canvas_grid_visualization, #plotly_epoch_history_div, #confusion_matrix_training, #training_content").toArray().map(function (element) {
 		return element.id;
 	});
 
-	test_equal("training tab order is image grid, loss, confusion matrix, then the rest", actual.join(","), expected.join(","));
+	test_equal("training tab order is live metrics, image grid, loss, confusion matrix, then the rest", actual.join(","), expected.join(","));
 
 	return actual.join(",") === expected.join(",");
 }
