@@ -104,12 +104,16 @@ $$
 \text{KV Cache Size} = 2 \times n_{\text{layers}} \times n_{\text{heads}} \times d_{\text{head}} \times n_{\text{tokens}} \times \text{bytes per element}
 $$
 
-For a 70B parameter model with 128K context:
+For a 70B parameter model with 80 layers, 64 key/value heads, head dimension 128, and 128K context:
 $$
 2 \times 80 \times 64 \times 128 \times 128{,}000 \times 2 \text{ bytes} \approx 335 \text{ GB}
 $$
 
-This is why long-context inference requires enormous GPU memory; the KV cache alone can exceed the model weights.
+That figure assumes one key/value head per query head. Switch to grouped-query attention with 8 key/value heads — the configuration of Llama 3 70B — and the same context needs only
+$$
+2 \times 80 \times 8 \times 128 \times 128{,}000 \times 2 \text{ bytes} \approx 42 \text{ GB}
+$$
+per sequence, roughly one-eighth as much (\cite[Llama Team, 2024]{llama3herd2024}). The gap between the two numbers is the reason GQA is standard in served models: the cache, not the weights, caps concurrency.
 
 ### 2. Flash Attention: Taming the Quadratic Beast
 

@@ -24281,6 +24281,34 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1508.04025",
 		alternativetitle: "Luong attention"
 	},
+	"cheng2016": {
+		title: "Long Short-Term Memory-Networks for Machine Reading",
+		author: "Jianpeng Cheng, Li Dong, Mirella Lapata",
+		year: 2016,
+		url: "https://arxiv.org/abs/1601.06733",
+		alternativetitle: "intra-attention"
+	},
+	"parikh2016": {
+		title: "A Decomposable Attention Model for Natural Language Inference",
+		author: "Ankur P. Parikh, Oscar Täckström, Dipanjan Das, Jakob Uszkoreit",
+		year: 2016,
+		url: "https://arxiv.org/abs/1606.01933",
+		alternativetitle: "decomposable attention"
+	},
+	"lin2017selfattentive": {
+		title: "A Structured Self-attentive Sentence Embedding",
+		author: "Zhouhan Lin, Minwei Feng, Cicero Nogueira dos Santos, Mo Yu, Bing Xiang, Bowen Zhou, Yoshua Bengio",
+		year: 2017,
+		url: "https://arxiv.org/abs/1703.03130",
+		alternativetitle: "self-attentive sentence embedding"
+	},
+	"jain2019attention": {
+		title: "Attention is not Explanation",
+		author: "Sarthak Jain, Byron C. Wallace",
+		year: 2019,
+		url: "https://arxiv.org/abs/1902.10186",
+		alternativetitle: "attention weights are not explanations"
+	},
 	"tsai2019kernel": {
 		title: "Transformer Dissection: A Unified Understanding of Transformer's Attention via the Lens of Kernel",
 		author: "Yao-Hung Hubert Tsai, Shaojie Bai, Makoto Yamada, Louis-Philippe Morency, Ruslan Salakhutdinov",
