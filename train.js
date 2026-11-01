@@ -773,11 +773,7 @@ async function get_fit_data () {
 
 		set_tiny_graph_training_info(tiny_graph_data);
 		reset_training_live_metrics({
-			total_epochs: epochs,
-			started_at: this_training_start_time,
-			train_count: train_val_split_info ? train_val_split_info.train_count : null,
-			val_count: train_val_split_info ? train_val_split_info.val_count : null,
-			total_params: (model && typeof model.countParams === "function") ? model.countParams() : null
+			total_epochs: epochs
 		});
 
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
@@ -835,8 +831,7 @@ async function get_fit_data () {
 			epoch: current_epoch,
 			total_epochs: max_number_epochs,
 			progress: percentage,
-			eta_ms: seconds_left * 1000,
-			elapsed_ms: current_time - this_training_start_time
+			eta_ms: seconds_left * 1000
 		});
 		confusion_matrix_and_grid_cache = {};
 
@@ -942,7 +937,6 @@ async function get_fit_data () {
 			metric_key: live_metric_key,
 			metric_value: live_metric_value,
 			val_metric_value: live_val_metric_value,
-			elapsed_ms: Date.now() - this_training_start_time,
 			progress: epochs ? Math.round((epochNr / epochs) * 100) : undefined
 		});
 		if(live_metric_key) {
@@ -1073,7 +1067,6 @@ async function get_fit_data () {
 			total_epochs: epochs,
 			progress: epochs ? Math.round((current_epoch / epochs) * 100) : 100,
 			eta_ms: 0,
-			elapsed_ms: Date.now() - this_training_start_time,
 			done: true
 		});
 
@@ -1359,10 +1352,6 @@ function model_shape_to_string (model_shape) {
 
 var _training_live_state = {
 	total_epochs: 0,
-	started_at: null,
-	train_count: null,
-	val_count: null,
-	total_params: null,
 	metric_key: null,
 	metric_label: "",
 	last_loss: null,
@@ -1428,18 +1417,36 @@ function _format_live_duration (ms) {
 	return Math.round(Number(ms) / 1000) + " s";
 }
 
+function _normalize_metric_name (name) {
+	if(!name) {
+		return "";
+	}
+
+	var normalized = String(name).toLowerCase().replace(/[^a-z0-9]/g, "");
+	var aliases = {
+		mse: "meansquarederror",
+		mae: "meanabsoluteerror",
+		mape: "meanabsolutepercentageerror"
+	};
+
+	return aliases[normalized] || normalized;
+}
+
 function _training_metric_is_loss_like (key) {
 	if(!key) {
 		return true;
 	}
 
+	var metric_name = _normalize_metric_name(key);
+	var loss_name = "";
+
 	try {
-		if(typeof get_loss === "function" && key === get_loss()) {
-			return true;
+		if(typeof get_loss === "function") {
+			loss_name = _normalize_metric_name(get_loss());
 		}
 	} catch (e) { /* ignore */ }
 
-	return false;
+	return metric_name === loss_name;
 }
 
 function _training_metric_display_name (key) {
@@ -1526,28 +1533,8 @@ function _update_training_metric_plot (epoch, metric_key, metric_value, val_metr
 }
 
 function reset_training_live_metrics (config={}) {
-	var data_count = 0;
-
-	try {
-		if(xy_data_global && xy_data_global.x && xy_data_global.x.shape) {
-			data_count = xy_data_global.x.shape[0] || 0;
-		}
-	} catch (e) { /* ignore */ }
-
-	var val_count = config.val_count;
-	var train_count = config.train_count;
-
-	if((val_count === null || val_count === undefined) && data_count) {
-		val_count = Math.floor(data_count * (parse_float($("#validationSplit").val()) / 100));
-		train_count = data_count - val_count;
-	}
-
 	_training_live_state = {
 		total_epochs: config.total_epochs || 0,
-		started_at: config.started_at || null,
-		train_count: (train_count === undefined ? null : train_count),
-		val_count: (val_count === undefined ? null : val_count),
-		total_params: config.total_params || null,
 		metric_key: null,
 		metric_label: "",
 		last_loss: null,
@@ -1560,41 +1547,24 @@ function reset_training_live_metrics (config={}) {
 	_clear_plotly_metric_history();
 
 	$("#training_live_metrics").show();
-	$("#tlm_epoch").text("0 / " + (_training_live_state.total_epochs || "—"));
+	$("#tlm_epoch").text("0 / " + (_training_live_state.total_epochs || "—") + (_training_live_state.total_epochs ? " " + _training_live_label("epochs", "Epochs") : ""));
 	$("#tlm_progress_fill").css("width", "0%");
-	$("#tlm_epoch_sub").text("");
 	$("#tlm_loss").text("—");
 	$("#tlm_loss_sub").text("").removeClass("tlm-better tlm-worse");
 	$("#tlm_val_loss").text("—");
 	$("#tlm_val_loss_sub").text("").removeClass("tlm-better tlm-worse");
-		var configured_metric = get_metric();
-		var show_metric_card = !_training_metric_is_loss_like(configured_metric);
 
-		$("#tlm_metric_card").toggle(show_metric_card);
-		$("#tlm_metric_label").text(show_metric_card ? _training_metric_display_name(configured_metric) : "—");
-		$("#tlm_metric").text("—");
+	var configured_metric = get_metric();
+	var show_metric_card = !_training_metric_is_loss_like(configured_metric);
+
+	$("#tlm_metric_card").toggle(show_metric_card);
+	$("#tlm_metric_label").text(show_metric_card ? _training_metric_display_name(configured_metric) : "—");
+	$("#tlm_metric").text("—");
 	$("#tlm_metric_sub").text("").removeClass("tlm-better tlm-worse");
 	$("#tlm_best_label").text(_training_live_label("training_live_best_loss", "Best loss"));
 	$("#tlm_best").text("—");
 	$("#tlm_best_sub").text("");
 	$("#tlm_time_left").text("—");
-	$("#tlm_time_sub").text("");
-
-	var samples_label = (train_count !== null && train_count !== undefined)
-		? (train_count + " / " + ((val_count === null || val_count === undefined) ? 0 : val_count) + " " + _training_live_label("training_live_samples", "samples"))
-		: "—";
-	var params_label = (_training_live_state.total_params !== null)
-		? (Number(_training_live_state.total_params).toLocaleString() + " " + _training_live_label("training_live_params", "params"))
-		: "";
-	var backend_label = "";
-
-	try {
-		if(typeof tf !== "undefined" && typeof tf.getBackend === "function") {
-			backend_label = tf.getBackend();
-		}
-	} catch (e) { /* ignore */ }
-
-	$("#tlm_data_model").text([samples_label, params_label, backend_label].filter(function(part) { return part && part !== "—"; }).join(" · ") || "—");
 }
 
 function _set_training_live_delta ($element, delta, lower_is_better) {
@@ -1624,17 +1594,11 @@ function update_training_live_metrics (state={}) {
 			? state.progress
 			: (live.total_epochs ? Math.round((state.epoch / live.total_epochs) * 100) : 0);
 
-		$("#tlm_epoch").text(state.epoch + " / " + total);
+		$("#tlm_epoch").text(state.epoch + " / " + total + (live.total_epochs ? " " + _training_live_label("epochs", "Epochs") : ""));
 		$("#tlm_progress_fill").css("width", Math.max(0, Math.min(100, progress)) + "%");
 
 		if(state.eta_ms !== undefined) {
 			$("#tlm_time_left").text(state.done ? _training_live_label("training_live_done", "Done") : _format_live_duration(state.eta_ms));
-		}
-
-		if(state.elapsed_ms !== undefined && state.epoch > 0) {
-			var epoch_time = state.elapsed_ms / state.epoch;
-			$("#tlm_time_sub").text(_training_live_label("training_live_epoch_time", "Epoch time") + ": " + _format_live_duration(epoch_time));
-			$("#tlm_epoch_sub").text(_format_live_duration(state.elapsed_ms) + " " + _training_live_label("training_live_total_time", "total"));
 		}
 	}
 

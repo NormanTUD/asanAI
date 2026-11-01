@@ -15,7 +15,7 @@
 		<li class="expert_visualization_tab"><a id="dimensionality_river_tab_label" href="#dimensionality_river"><span class="TRANSLATEME_dimensionality_river"></span></a></li>
 		<li class="expert_visualization_tab"><a id="activation_atlas_tab_label" class="hide_when_no_image" href="#activation_atlas"><span class="TRANSLATEME_activation_atlas"></span></a></li>
 		<li class="expert_visualization_tab"><a id="adversarial_tab_label" class="hide_when_no_image" href="#adversarial" onclick="if(typeof AdversarialExamples!=='undefined'){AdversarialExamples.init('adversarial_content');}"><span class="TRANSLATEME_adversarial"></span></a></li>
-		<li class="expert_visualization_tab"><a id="gradient_flow_tab_label" class="hide_when_no_image" href="#gradient_flow"><span class="TRANSLATEME_gradient_flow"></span></a></li>
+		<li class="expert_visualization_tab"><a id="gradient_flow_tab_label" href="#gradient_flow"><span class="TRANSLATEME_gradient_flow"></span></a></li>
 		<li class="expert_visualization_tab"><a id="representation_tab_label" href="#representation" onclick="if(typeof RepresentationAnalysis!=='undefined'){RepresentationAnalysis.init('representation_content');}"><span class="TRANSLATEME_representation"></span></a></li>
 		<li class="expert_visualization_tab"><a id="topological_data_analysis_tab_label" class="hide_when_no_image" href="#topological_data_analysis"><span class="TRANSLATEME_topological_data_analysis"></span></a></li>
 		<li class="expert_visualization_tab"><a onclick="WeightAnalysis.weight_analysis_render('weight_analysis');" id="weight_analysis_tab_label" href="#weight_analysis"><span class="TRANSLATEME_weight_analysis"></span></a></li>

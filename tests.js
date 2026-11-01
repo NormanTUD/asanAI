@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2583;
+var DEFAULT_EXPECTED_TEST_COUNT = 2587;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -3839,11 +3839,7 @@ async function test_training_live_metrics_panel () {
 	await delay(300);
 
 	reset_training_live_metrics({
-		total_epochs: 5,
-		train_count: 100,
-		val_count: 20,
-		total_params: 12345,
-		started_at: Date.now()
+		total_epochs: 5
 	});
 
 	update_training_live_metrics({
@@ -3863,14 +3859,13 @@ async function test_training_live_metrics_panel () {
 		progress: 40
 	});
 
-	var epoch_ok = $("#tlm_epoch").text() === "2 / 5";
+	var epoch_ok = $("#tlm_epoch").text().indexOf("2 / 5") === 0 && $("#tlm_epoch").text().indexOf(language[lang]["epochs"]) !== -1;
 	var loss_ok = $("#tlm_loss").text() === "0.4000" && $("#tlm_loss_sub").text().indexOf("0.1000") !== -1;
 	var val_ok = $("#tlm_val_loss").text() === "0.5000";
-	var time_ok = $("#tlm_time_left").text() !== "—" && $("#tlm_time_sub").text().indexOf(":") !== -1;
+	var time_ok = $("#tlm_time_left").text() !== "—";
 	var best_ok = $("#tlm_best_label").text().length > 0 && $("#tlm_best").text() === "0.5000" && $("#tlm_best_sub").text().indexOf("2") !== -1;
-	var data_ok = $("#tlm_data_model").text().indexOf("100") !== -1 && $("#tlm_data_model").text().indexOf("20") !== -1;
 
-	test_equal("training live metrics show epoch, losses, time and data", epoch_ok && loss_ok && val_ok && time_ok && data_ok, true);
+	test_equal("training live metrics show epoch, losses and time", epoch_ok && loss_ok && val_ok && time_ok, true);
 	test_equal("training live metrics show the best epoch", best_ok, true);
 
 	update_training_live_metrics({
@@ -3892,7 +3887,64 @@ async function test_training_live_metrics_panel () {
 	_clear_plotly_metric_history();
 	$("#training_live_metrics").hide();
 
-	return epoch_ok && loss_ok && val_ok && time_ok && data_ok && best_ok && metric_ok && chart_ok;
+	return epoch_ok && loss_ok && val_ok && time_ok && best_ok && metric_ok && chart_ok;
+}
+
+async function test_gradient_flow_tab_is_available_for_ffnn () {
+	set_mode_to_expert();
+	await delay(300);
+
+	await set_dataset_and_wait("and_xor");
+	await delay(500);
+
+	var visible = $("#gradient_flow_tab_label").parent().css("display") !== "none";
+
+	test_equal("gradient flow tab is available for FF-NN", visible, true);
+
+	$("#beginner").click();
+
+	return visible;
+}
+
+async function test_dataset_switch_keeps_overlay_until_data_ready () {
+	await set_dataset_and_wait("signs");
+	await delay(500);
+
+	return await (async function () {
+		var overlay_gone_at = null;
+		var plot_ready_at = null;
+		var data_ready_at = null;
+		var started_at = performance.now();
+
+		$("#dataset").val("and_xor").trigger("change");
+
+		while (performance.now() - started_at < 20000) {
+			var now = performance.now() - started_at;
+
+			if (overlay_gone_at === null && document.querySelectorAll(".overlay").length === 0) {
+				overlay_gone_at = now;
+			}
+			if (plot_ready_at === null && $("#xy_2d_plot .plotly").length > 0 && $("#xy_2d_plot").is(":visible")) {
+				plot_ready_at = now;
+			}
+			if (data_ready_at === null && $("#xy_display_data").is(":visible") && $("#xy_display_data").text().length > 0) {
+				data_ready_at = now;
+			}
+
+			if (overlay_gone_at !== null && plot_ready_at !== null && data_ready_at !== null) {
+				break;
+			}
+
+			await delay(20);
+		}
+
+		var ok = plot_ready_at !== null && data_ready_at !== null &&
+			(overlay_gone_at === null || (plot_ready_at <= overlay_gone_at + 300 && data_ready_at <= overlay_gone_at + 300));
+
+		test_equal("dataset switch keeps the loading overlay until the data tab is ready", ok, true);
+
+		return ok;
+	})();
 }
 
 async function test_model_xor () {
@@ -13151,6 +13203,8 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
 		test_equal("test_model_xor()", await test_model_xor(), true);
 		test_equal("test_training_live_metrics_panel()", await test_training_live_metrics_panel(), true);
+		test_equal("test_dataset_switch_keeps_overlay_until_data_ready()", await test_dataset_switch_keeps_overlay_until_data_ready(), true);
+		test_equal("test_gradient_flow_tab_is_available_for_ffnn()", await test_gradient_flow_tab_is_available_for_ffnn(), true);
 		test_equal("cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
 
 		await test_initializer();
