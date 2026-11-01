@@ -4,10 +4,6 @@ function reset_gradient_flow_history() {
 	if (typeof gradientFlow !== "undefined" && typeof gradientFlow.reset === "function") {
 		gradientFlow.reset();
 	}
-
-	if (typeof reset_training_analysis_history === "function") {
-		reset_training_analysis_history();
-	}
 }
 
 async function change_data_origin() {

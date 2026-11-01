@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2640;
+var DEFAULT_EXPECTED_TEST_COUNT = 2593;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -1701,10 +1701,6 @@ async function test_custom_drawn_images_with_augmentation() {
 	if(!is_valid_ret_object(ret, wanted_epochs)) {
 		return false;
 	}
-
-	test_equal("custom image training records per-class history", training_analysis_history.kind === "classification" && training_analysis_history.epochs.length >= 2, true);
-	test_equal("custom image training renders the class chart", document.querySelectorAll("#plotly_training_class_history .plotly").length >= 1, true);
-	test_equal("custom image training renders hard examples", document.querySelectorAll("#training_hard_examples .training-hard-example").length >= 1, true);
 
 	if($("#sketcher").is(":visible")) {
 		return true;
@@ -3899,6 +3895,17 @@ async function test_training_live_metrics_panel () {
 	return epoch_ok && loss_ok && val_ok && time_ok && best_ok && labels_ok && metric_ok && chart_ok;
 }
 
+function test_training_tab_content_order () {
+	var expected = ["canvas_grid_visualization", "plotly_epoch_history_div", "confusion_matrix_training", "training_content"];
+	var actual = $("#training_tab").find("#canvas_grid_visualization, #plotly_epoch_history_div, #confusion_matrix_training, #training_content").toArray().map(function (element) {
+		return element.id;
+	});
+
+	test_equal("training tab order is image grid, loss, confusion matrix, then the rest", actual.join(","), expected.join(","));
+
+	return actual.join(",") === expected.join(",");
+}
+
 async function test_gradient_flow_tab_is_available_for_ffnn () {
 	set_mode_to_expert();
 	await delay(300);
@@ -3983,185 +3990,6 @@ async function test_dataset_switch_keeps_overlay_until_data_ready () {
 	})();
 }
 
-function test_training_analysis_helpers () {
-	var counts = training_analysis_per_class_counts([0, 0, 1, 2, 2, 2, 3, -1, 9], [0, 1, 1, 2, 0, 2, 3, 0, 0], 5, null);
-
-	test_equal("training analysis counts support", JSON.stringify(counts.support), JSON.stringify([2, 1, 3, 1, 0]));
-	test_equal("training analysis counts correct", JSON.stringify(counts.correct), JSON.stringify([1, 1, 2, 1, 0]));
-	test_equal("training analysis returns null for empty classes", counts.accuracy[4], null);
-
-	var subset_counts = training_analysis_per_class_counts([0, 0, 1, 2], [0, 1, 1, 2], 4, function (i) { return i < 3; });
-	test_equal("training analysis subset support", JSON.stringify(subset_counts.support), JSON.stringify([2, 1, 0, 0]));
-	test_equal("training analysis subset accuracy", subset_counts.accuracy[2], null);
-
-	var top = training_analysis_top_k_classification(
-		[[0.9, 0.1], [0.4, 0.6], [0.5, 0.5], [NaN, NaN], [0.2, 0.8]],
-		[0, 0, 1, 1, 1],
-		3,
-		["a", "b"]
-	);
-
-	test_equal("training analysis top-k length", top.length, 3);
-	test_equal("training analysis top-k sorts by loss", top.map(function (e) { return e.index; }).join(","), "1,2,4");
-	test_equal("training analysis top-k marks correctness", top.map(function (e) { return e.correct; }).join(","), "false,false,true");
-	test_equal("training analysis top-k labels", top[0].true_label + "->" + top[0].predicted_label, "a->b");
-	test_equal("training analysis top-k ignores NaN rows", top.every(function (e) { return e.index !== 3; }), true);
-
-	var tie = training_analysis_top_k_classification([[0.5, 0.5], [0.5, 0.5]], [0, 1], 2, ["a", "b"]);
-	test_equal("training analysis top-k breaks ties by index", tie.map(function (e) { return e.index; }).join(","), "0,1");
-	test_equal("training analysis top-k handles empty input", training_analysis_top_k_classification([], [], 3, []).length, 0);
-	test_equal("training analysis top-k ignores invalid true classes", training_analysis_top_k_classification([[0.9, 0.1]], [-1], 3, ["a", "b"]).length, 0);
-
-	var regression_top = training_analysis_top_k_regression([1, 2, 3, NaN], [1, 5, 0, 4], 2);
-	test_equal("training analysis regression top-k length", regression_top.length, 2);
-	test_equal("training analysis regression top-k sorts by error", regression_top.map(function (e) { return e.index; }).join(","), "1,2");
-	test_equal("training analysis regression top-k error", regression_top[0].error, 3);
-	test_equal("training analysis regression top-k handles empty input", training_analysis_top_k_regression([], [], 2).length, 0);
-
-	return true;
-}
-
-async function test_training_analysis_history_and_render () {
-	reset_training_analysis_history();
-	await show_tab_label("training_tab_label", 1);
-	await delay(300);
-
-	function classification_analysis (all, hard_example) {
-		return {
-			kind: "classification",
-			labels: ["a", "b", "a"],
-			per_class: {
-				labels: ["a", "b", "a"],
-				all: all,
-				train: all,
-				val: [all[0], all[1], null],
-				support: {
-					all: [10, 10, 5],
-					train: [6, 6, 3],
-					val: [4, 4, 0]
-				}
-			},
-			hard_examples: [hard_example],
-			timestamp: Date.now()
-		};
-	}
-
-	var hard_1 = { index: 0, true_label: "a", predicted_label: "b", confidence: 0.6, loss: 0.5, correct: false };
-	window.__last_training_analysis = classification_analysis([0.5, 0.8, 0.2], hard_1);
-	record_training_analysis(1);
-
-	test_equal("training analysis records the epoch", training_analysis_history.epochs.join(","), "1");
-	test_equal("training analysis deduplicates class labels", training_analysis_history.class_labels.join(","), "a (#1),b,a (#3)");
-	test_equal("training analysis prefers validation split", training_analysis_history.split, "val");
-	test_equal("training analysis records class accuracies", JSON.stringify(training_analysis_history.per_class.val[0]), JSON.stringify([0.5, 0.8, null]));
-	test_equal("training analysis records support counts", JSON.stringify(training_analysis_history.support.val[0]), JSON.stringify([4, 4, 0]));
-
-	var hard_2 = { index: 1, true_label: "b", predicted_label: "b", confidence: 0.9, loss: 0.1, correct: true };
-	window.__last_training_analysis = classification_analysis([0.6, 0.7, 0.3], hard_2);
-	record_training_analysis(1);
-
-	test_equal("training analysis replaces a duplicate epoch", training_analysis_history.epochs.join(","), "1");
-	test_equal("training analysis replacement updates values", JSON.stringify(training_analysis_history.per_class.val[0]), JSON.stringify([0.6, 0.7, null]));
-
-	window.__last_training_analysis = classification_analysis([0.7, 0.8, 0.4], hard_2);
-	record_training_analysis(2);
-
-	test_equal("training analysis appends a new epoch", training_analysis_history.epochs.join(","), "1,2");
-	test_equal("training analysis keeps previous hard examples", training_analysis_history.previous_hard_examples[0].index, 1);
-
-	window.__last_training_analysis = null;
-	record_training_analysis(3);
-	test_equal("training analysis ignores missing data", training_analysis_history.epochs.join(","), "1,2");
-
-	render_training_class_history();
-	render_training_hard_examples();
-	await delay(400);
-
-	test_equal("training analysis renders the class chart", document.querySelectorAll("#plotly_training_class_history .plotly").length >= 1, true);
-	test_equal("training analysis limits class traces", (document.getElementById("plotly_training_class_history").data || []).length <= TRAINING_ANALYSIS_MAX_CLASSES, true);
-	test_equal("training analysis renders hard examples", document.querySelectorAll("#training_hard_examples .training-hard-example").length, 1);
-	test_equal("training analysis marks persistent hard examples", document.querySelectorAll("#training_hard_examples .training-hard-example.is-persistent").length, 1);
-
-	window.__last_training_analysis = { kind: "classification" };
-	record_training_analysis(3);
-	test_equal("training analysis ignores malformed classification data", training_analysis_history.epochs.join(","), "1,2");
-
-	window.__last_training_analysis = {
-		kind: "classification",
-		per_class: { labels: ["a", "b"], all: "not-an-array", train: null, val: undefined, support: null },
-		hard_examples: "not-an-array"
-	};
-	record_training_analysis(4);
-	test_equal("training analysis survives malformed arrays", training_analysis_history.epochs.length >= 1, true);
-
-	var many_labels = [];
-	var many_values = [];
-	var many_support = [];
-	for (var many_i = 0; many_i < 15; many_i++) {
-		many_labels.push("class-" + many_i);
-		many_values.push(many_i / 15);
-		many_support.push(5);
-	}
-
-	window.__last_training_analysis = {
-		kind: "classification",
-		per_class: {
-			labels: many_labels,
-			all: many_values,
-			train: many_values,
-			val: many_labels.map(function () { return null; }),
-			support: { all: many_support, train: many_support, val: many_labels.map(function () { return 0; }) }
-		},
-		hard_examples: []
-	};
-	record_training_analysis(5);
-	render_training_class_history();
-	await delay(400);
-	test_equal("training analysis limits class traces for many classes", (document.getElementById("plotly_training_class_history").data || []).length <= TRAINING_ANALYSIS_MAX_CLASSES, true);
-
-	window.__last_training_analysis = classification_analysis([0.7, 0.8, 0.4], hard_2);
-	var old_is_classification = is_classification;
-	var original_predict = model && typeof model.predict === "function" ? model.predict : null;
-	var predict_calls = 0;
-
-	if (original_predict) {
-		is_classification = true;
-		model.predict = function () {
-			predict_calls++;
-			throw new Error("unexpected predict during classification analysis");
-		};
-	}
-
-	await refresh_training_analysis(2);
-
-	if (original_predict) {
-		model.predict = original_predict;
-		is_classification = old_is_classification;
-	}
-
-	test_equal("training analysis reuses classification predictions", predict_calls, 0);
-
-	reset_training_analysis_history();
-	test_equal("training analysis reset clears epochs", training_analysis_history.epochs.length, 0);
-	test_equal("training analysis reset hides class history", $("#training_class_history_div").css("display"), "none");
-
-	window.__last_training_analysis = { kind: "regression", hard_examples: [{ index: 2, true_value: 1, predicted_value: 2.5, error: 1.5, loss: 1.5 }] };
-	record_training_analysis(0);
-	test_equal("training analysis records regression hard examples", training_analysis_history.kind, "regression");
-	test_equal("training analysis hides class history for regression", $("#training_class_history_div").css("display"), "none");
-	test_equal("training analysis renders regression hard examples", document.querySelectorAll("#training_hard_examples .training-hard-example").length, 1);
-
-	var previous_xy = window.xy_data_global;
-	window.xy_data_global = null;
-	var regression_analysis = await compute_regression_training_analysis();
-	window.xy_data_global = previous_xy;
-	test_equal("training analysis regression sampling handles missing data", regression_analysis, null);
-
-	reset_training_analysis_history();
-
-	return true;
-}
-
 async function test_model_xor () {
 	log_test("Test Training Logic");
 
@@ -4186,10 +4014,6 @@ async function test_model_xor () {
 	if(!is_valid_ret_object(ret, wanted_epochs)) {
 		return false;
 	}
-
-	test_equal("regression training records hard examples", training_analysis_history.kind === "regression" && training_analysis_history.hard_examples.length > 0, true);
-	test_equal("regression training hides the class chart", $("#training_class_history_div").css("display"), "none");
-	test_equal("regression training renders hard examples", document.querySelectorAll("#training_hard_examples .training-hard-example").length >= 1, true);
 
 	enable_or_disable_show_layer_data(false);
 
@@ -13422,8 +13246,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
 		test_equal("test_model_xor()", await test_model_xor(), true);
 		test_equal("test_training_live_metrics_panel()", await test_training_live_metrics_panel(), true);
-		test_equal("test_training_analysis_helpers()", test_training_analysis_helpers(), true);
-		test_equal("test_training_analysis_history_and_render()", await test_training_analysis_history_and_render(), true);
+		test_equal("test_training_tab_content_order()", test_training_tab_content_order(), true);
 		test_equal("test_dataset_switch_keeps_overlay_until_data_ready()", await test_dataset_switch_keeps_overlay_until_data_ready(), true);
 		test_equal("test_gradient_flow_tab_is_available_for_ffnn()", await test_gradient_flow_tab_is_available_for_ffnn(), true);
 		test_equal("cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);

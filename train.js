@@ -775,7 +775,6 @@ async function get_fit_data () {
 		reset_training_live_metrics({
 			total_epochs: epochs
 		});
-		reset_training_analysis_history();
 
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
@@ -783,7 +782,6 @@ async function get_fit_data () {
 
 		await visualize_train();
 		await confusion_matrix_to_page();
-		await refresh_training_analysis(0);
 
 		confusion_matrix_and_grid_cache = {};
 
@@ -1013,7 +1011,6 @@ async function get_fit_data () {
 
 		if (!is_last_epoch) {
 			await confusion_matrix_to_page();
-			await refresh_training_analysis(epochNr);
 		}
 
 		confusion_matrix_and_grid_cache = {};
@@ -1062,7 +1059,6 @@ async function get_fit_data () {
 		$("#network_has_seen_msg").hide();
 
 		await confusion_matrix_to_page();
-		await refresh_training_analysis(current_epoch);
 
 		confusion_matrix_and_grid_cache = {};
 
@@ -1670,368 +1666,6 @@ function update_training_live_metrics (state={}) {
 
 	if(state.done) {
 		$("#tlm_time_left").text(_training_live_label("training_live_done", "Done"));
-	}
-}
-
-var TRAINING_ANALYSIS_MAX_CLASSES = 12;
-var TRAINING_ANALYSIS_MAX_EPOCHS = 500;
-
-var training_analysis_history = {
-	kind: null,
-	epochs: [],
-	class_labels: [],
-	split: "all",
-	per_class: { all: [], train: [], val: [] },
-	support: { all: [], train: [], val: [] },
-	hard_examples: [],
-	previous_hard_examples: []
-};
-
-function _training_analysis_label (key, fallback) {
-	try {
-		return (language && language[lang] && language[lang][key]) || fallback || key;
-	} catch (e) {
-		return fallback || key;
-	}
-}
-
-function _training_analysis_array (value) {
-	return Array.isArray(value) ? value : [];
-}
-
-function _training_analysis_format_number (value) {
-	if (value === null || value === undefined || !isFinite(Number(value))) return "—";
-
-	var number = Number(value);
-	var abs = Math.abs(number);
-
-	if (abs === 0) return "0";
-	if (abs >= 0.001 && abs < 10000000) {
-		var digits = abs >= 1 ? 4 : (abs >= 0.01 ? 5 : 6);
-		return number.toFixed(digits).replace(/0+$/, "").replace(/\.$/, "");
-	}
-
-	return number.toExponential(2);
-}
-
-function _training_analysis_display_labels (raw_labels) {
-	var labels_array = Array.isArray(raw_labels) ? raw_labels : [];
-	var counts = {};
-
-	labels_array.forEach(function (label) {
-		var text = (label === undefined || label === null || String(label).trim() === "") ? "?" : String(label);
-		counts[text] = (counts[text] || 0) + 1;
-	});
-
-	return labels_array.map(function (label, index) {
-		var text = (label === undefined || label === null || String(label).trim() === "") ? ("Class " + index) : String(label);
-		if (counts[text] > 1) return text + " (#" + (index + 1) + ")";
-		return text;
-	});
-}
-
-function reset_training_analysis_history () {
-	training_analysis_history = {
-		kind: null,
-		epochs: [],
-		class_labels: [],
-		split: "all",
-		per_class: { all: [], train: [], val: [] },
-		support: { all: [], train: [], val: [] },
-		hard_examples: [],
-		previous_hard_examples: []
-	};
-
-	try {
-		$("#training_class_history_div").hide();
-		$("#plotly_training_class_history").html("");
-		$("#training_hard_examples_div").hide();
-		$("#training_hard_examples").html("");
-	} catch (e) { /* ignore */ }
-
-	try {
-		if (typeof _cm_rendered_sample_cache !== "undefined") {
-			_cm_rendered_sample_cache = {};
-		}
-	} catch (e) { /* ignore */ }
-}
-
-function _training_analysis_latest_accuracy (split, class_index) {
-	var rows = training_analysis_history.per_class[split] || [];
-	var latest = rows.length ? rows[rows.length - 1] : null;
-	return latest && latest[class_index] !== undefined ? latest[class_index] : null;
-}
-
-function _training_analysis_latest_support (split, class_index) {
-	var rows = training_analysis_history.support[split] || [];
-	var latest = rows.length ? rows[rows.length - 1] : null;
-	return latest && latest[class_index] !== undefined ? latest[class_index] : 0;
-}
-
-function render_training_class_history () {
-	try {
-		var history = training_analysis_history;
-
-		if (history.kind !== "classification" || !history.epochs.length || !history.class_labels.length) {
-			$("#training_class_history_div").hide();
-			return;
-		}
-
-		var split = history.split || "all";
-		var candidates = [];
-
-		for (var class_index = 0; class_index < history.class_labels.length; class_index++) {
-			var latest_accuracy = _training_analysis_latest_accuracy(split, class_index);
-			var latest_support = _training_analysis_latest_support(split, class_index);
-			if (latest_support > 0 && latest_accuracy !== null) {
-				candidates.push({
-					index: class_index,
-					accuracy: latest_accuracy
-				});
-			}
-		}
-
-		if (!candidates.length) {
-			$("#training_class_history_div").hide();
-			return;
-		}
-
-		candidates.sort(function (a, b) {
-			if (a.accuracy !== b.accuracy) return a.accuracy - b.accuracy;
-			return a.index - b.index;
-		});
-
-		candidates = candidates.slice(0, TRAINING_ANALYSIS_MAX_CLASSES);
-		candidates.sort(function (a, b) { return a.index - b.index; });
-
-		var traces = candidates.map(function (candidate) {
-			var values = history.per_class[split].map(function (row) {
-				return row && row[candidate.index] !== null && row[candidate.index] !== undefined ? row[candidate.index] * 100 : null;
-			});
-			var support = history.support[split].map(function (row) {
-				return row && row[candidate.index] !== undefined ? row[candidate.index] : 0;
-			});
-
-			return {
-				x: history.epochs,
-				y: values,
-				customdata: support,
-				type: get_scatter_type(),
-				mode: "lines+markers",
-				name: history.class_labels[candidate.index],
-				hovertemplate: "%{name}<br>Epoch %{x}<br>Accuracy: %{y:.1f}%<br>Samples: %{customdata}<extra></extra>"
-			};
-		});
-
-		var layout = get_plotly_layout(_training_analysis_label("epochs", "Epochs"), _training_analysis_label("accuracy", "Accuracy") + " (%)");
-		layout.yaxis = layout.yaxis || {};
-		layout.yaxis.range = [0, 100];
-
-		$("#training_class_history_div").show();
-		$("#training_class_history_split").text(_training_analysis_label(split === "val" ? "training_split_validation" : "training_split_training", split === "val" ? "Validation" : "Training"));
-
-		if (!training_analysis_history._plot_initialized) {
-			Plotly.newPlot("plotly_training_class_history", traces, layout, { responsive: true });
-			training_analysis_history._plot_initialized = true;
-		} else {
-			Plotly.react("plotly_training_class_history", traces, layout, { responsive: true });
-		}
-	} catch (e) {
-		dbg("[training_analysis] class history render failed: " + e);
-		$("#training_class_history_div").hide();
-	}
-}
-
-function _training_analysis_hard_example_line (label, value) {
-	var line = document.createElement("div");
-	line.className = "training-hard-example-line";
-	var label_span = document.createElement("span");
-	label_span.className = "training-hard-example-label";
-	label_span.textContent = label;
-	var value_span = document.createElement("span");
-	value_span.className = "training-hard-example-value";
-	value_span.textContent = value;
-	line.appendChild(label_span);
-	line.appendChild(value_span);
-	return line;
-}
-
-function render_training_hard_examples () {
-	try {
-		var history = training_analysis_history;
-		var examples = _training_analysis_array(history.hard_examples);
-
-		if (!examples.length) {
-			$("#training_hard_examples_div").hide();
-			return;
-		}
-
-		var container = document.getElementById("training_hard_examples");
-		if (!container) return;
-
-		container.innerHTML = "";
-		var is_image = typeof input_shape_is_image === "function" && input_shape_is_image();
-		var previous_indices = {};
-
-		(history.previous_hard_examples || []).forEach(function (example) {
-			if (example && example.index !== undefined) previous_indices[example.index] = true;
-		});
-
-		examples.forEach(function (example) {
-			var card = document.createElement("div");
-			card.className = "training-hard-example";
-			if (previous_indices[example.index]) card.className += " is-persistent";
-
-			if (is_image && xy_data_global && xy_data_global.x && !xy_data_global.x.isDisposed) {
-				try {
-					var src = _cm_render_sample_data_url(example.index, xy_data_global.x);
-					if (src) {
-						var img = document.createElement("img");
-						img.className = "training-hard-example-thumb";
-						img.src = src;
-						img.alt = "";
-						card.appendChild(img);
-					}
-				} catch (e) { /* thumbnail is optional */ }
-			}
-
-			var info = document.createElement("div");
-			info.className = "training-hard-example-info";
-
-			info.appendChild(_training_analysis_hard_example_line(
-				_training_analysis_label("training_hard_sample", "Sample"),
-				String((example.index !== undefined ? example.index : 0) + 1)
-			));
-
-			if (history.kind === "regression") {
-				info.appendChild(_training_analysis_hard_example_line(_training_analysis_label("training_hard_true", "True"), _training_analysis_format_number(example.true_value)));
-				info.appendChild(_training_analysis_hard_example_line(_training_analysis_label("training_hard_predicted", "Predicted"), _training_analysis_format_number(example.predicted_value)));
-				info.appendChild(_training_analysis_hard_example_line(_training_analysis_label("training_hard_error", "Error"), _training_analysis_format_number(example.error)));
-			} else {
-				info.appendChild(_training_analysis_hard_example_line(_training_analysis_label("training_hard_true", "True"), example.true_label));
-				info.appendChild(_training_analysis_hard_example_line(_training_analysis_label("training_hard_predicted", "Predicted"), example.predicted_label));
-				info.appendChild(_training_analysis_hard_example_line(_training_analysis_label("training_hard_confidence", "Confidence"), (Number(example.confidence) * 100).toFixed(1) + "%"));
-				info.appendChild(_training_analysis_hard_example_line(_training_analysis_label("training_hard_error", "Loss"), _training_analysis_format_number(example.loss)));
-			}
-
-			if (previous_indices[example.index]) {
-				var persistent = document.createElement("div");
-				persistent.className = "training-hard-example-persistent";
-				persistent.textContent = _training_analysis_label("training_hard_persistent", "Also hard in the previous epoch");
-				info.appendChild(persistent);
-			}
-
-			card.appendChild(info);
-			container.appendChild(card);
-		});
-
-		$("#training_hard_examples_div").show();
-		update_translations(); // await not possible here
-	} catch (e) {
-		dbg("[training_analysis] hard examples render failed: " + e);
-		$("#training_hard_examples_div").hide();
-	}
-}
-
-function record_training_analysis (epoch) {
-	try {
-		var analysis = window.__last_training_analysis;
-
-		if (!analysis || (analysis.kind !== "classification" && analysis.kind !== "regression")) {
-			return;
-		}
-
-		if (analysis.kind === "classification") {
-			if (!analysis.per_class || !Array.isArray(analysis.per_class.labels)) {
-				return;
-			}
-
-			var labels_for_display = _training_analysis_display_labels(analysis.per_class.labels);
-
-			if (training_analysis_history.kind !== "classification" || training_analysis_history.class_labels.join("|") !== labels_for_display.join("|")) {
-				reset_training_analysis_history();
-			}
-
-			training_analysis_history.kind = "classification";
-			training_analysis_history.class_labels = labels_for_display;
-
-			var has_validation = Array.isArray(analysis.per_class.val) && analysis.per_class.val.some(function (value) { return value !== null && value !== undefined; });
-			training_analysis_history.split = has_validation ? "val" : "all";
-		} else {
-			if (training_analysis_history.kind !== "regression") {
-				reset_training_analysis_history();
-			}
-			training_analysis_history.kind = "regression";
-		}
-
-		var numeric_epoch = Number(epoch);
-		if (!isFinite(numeric_epoch)) numeric_epoch = 0;
-
-		var replace_last = training_analysis_history.epochs.length > 0 &&
-			training_analysis_history.epochs[training_analysis_history.epochs.length - 1] === numeric_epoch;
-		var previous_hard_examples = training_analysis_history.hard_examples.slice();
-
-		if (replace_last) {
-			training_analysis_history.epochs[training_analysis_history.epochs.length - 1] = numeric_epoch;
-
-			if (analysis.kind === "classification") {
-				["all", "train", "val"].forEach(function (split) {
-					var rows = training_analysis_history.per_class[split];
-					rows[rows.length - 1] = _training_analysis_array(analysis.per_class[split]).slice();
-					var support_rows = training_analysis_history.support[split];
-					var support_source = analysis.per_class.support && analysis.per_class.support[split];
-					support_rows[support_rows.length - 1] = _training_analysis_array(support_source).slice();
-				});
-			}
-		} else {
-			training_analysis_history.epochs.push(numeric_epoch);
-
-			if (analysis.kind === "classification") {
-				["all", "train", "val"].forEach(function (split) {
-					training_analysis_history.per_class[split].push(_training_analysis_array(analysis.per_class[split]).slice());
-					var support_source = analysis.per_class.support && analysis.per_class.support[split];
-					training_analysis_history.support[split].push(_training_analysis_array(support_source).slice());
-				});
-			}
-
-			training_analysis_history.previous_hard_examples = previous_hard_examples;
-		}
-
-		training_analysis_history.hard_examples = _training_analysis_array(analysis.hard_examples).slice();
-
-		while (training_analysis_history.epochs.length > TRAINING_ANALYSIS_MAX_EPOCHS) {
-			training_analysis_history.epochs.shift();
-			["all", "train", "val"].forEach(function (split) {
-				training_analysis_history.per_class[split].shift();
-				training_analysis_history.support[split].shift();
-			});
-		}
-
-		if (analysis.kind === "classification") {
-			render_training_class_history();
-		} else {
-			$("#training_class_history_div").hide();
-		}
-
-		render_training_hard_examples();
-	} catch (e) {
-		dbg("[training_analysis] record failed: " + e);
-	}
-}
-
-async function refresh_training_analysis (epoch) {
-	try {
-		if (typeof is_classification !== "undefined" && is_classification) {
-			if (!window.__last_training_analysis || window.__last_training_analysis.kind !== "classification") {
-				return;
-			}
-		} else {
-			await compute_regression_training_analysis();
-		}
-
-		record_training_analysis(epoch);
-	} catch (e) {
-		dbg("[training_analysis] refresh failed: " + e);
 	}
 }
 
@@ -3160,7 +2794,6 @@ async function multi_train_neural_network(num_runs) {
 	// single-run live panel from displaying stale values from an earlier run.
 	$("#training_live_metrics").hide();
 	_clear_plotly_metric_history();
-	reset_training_analysis_history();
 
 	for (var run = 1; run <= num_runs; run++) {
 		l("[multi-train] === Starting run " + run + "/" + num_runs + " ===");

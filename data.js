@@ -3934,331 +3934,83 @@ function _add_cm_example(cell, correct, predicted, idx) {
 	}
 }
 
-function _training_analysis_number(value) {
-	var number = Number(value);
-	return isFinite(number) ? number : null;
-}
+async function compute_confusion_table_data() {
+	var x_tensor = xy_data_global["x"];
+	var y_tensor = xy_data_global["y"];
+	var original_indices = xy_data_global["original_indices"] || Array.from({length: x_tensor.shape[0]}, (_, i) => i);
 
-function _training_analysis_argmax(row) {
-	if (!Array.isArray(row) || row.length === 0) return -1;
+	// The default prediction batch size is 32, which splits even a small
+	// dataset into four graph executions. A larger batch keeps the full-data
+	// confusion matrix fresh every epoch while cutting that overhead.
+	const PREDICT_BATCH_SIZE = 128;
 
-	var best = -Infinity;
-	var best_index = -1;
+	var predictions;
+	try {
+		predictions = tidy(() => {
+			var pd = model.predict(x_tensor, { batchSize: PREDICT_BATCH_SIZE });
+			var res = array_sync(pd);
+			dispose(pd);
+			return res;
+		});
+	} catch (e) {
+		dbg("[confusion_matrix] model.predict failed: " + e);
+		return { all: "", train: "", val: "" };
+	}
 
-	for (var i = 0; i < row.length; i++) {
-		var value = Number(row[i]);
-		if (isFinite(value) && value > best) {
-			best = value;
-			best_index = i;
+	var true_labels = _y_tensor_to_labels(y_tensor);
+	var pred_labels = predictions.map(function(row) {
+		var max_idx = 0;
+		for (var j = 1; j < row.length; j++) {
+			if (row[j] > row[max_idx]) max_idx = j;
 		}
-	}
-
-	return best_index;
-}
-
-function training_analysis_per_class_counts(true_indices, predicted_indices, num_classes, include_index) {
-	var support = [];
-	var correct = [];
-
-	for (var c = 0; c < num_classes; c++) {
-		support.push(0);
-		correct.push(0);
-	}
-
-	for (var i = 0; i < true_indices.length; i++) {
-		if (include_index && !include_index(i)) continue;
-
-		var true_index = true_indices[i];
-		var predicted_index = predicted_indices[i];
-
-		if (!Number.isInteger(true_index) || true_index < 0 || true_index >= num_classes) continue;
-
-		support[true_index]++;
-		if (Number.isInteger(predicted_index) && predicted_index === true_index) {
-			correct[true_index]++;
-		}
-	}
-
-	var accuracy = support.map(function (total, index) {
-		return total > 0 ? correct[index] / total : null;
+		return labels[max_idx] || ("" + max_idx);
 	});
 
-	return { support: support, correct: correct, accuracy: accuracy };
-}
+	var is_image = x_tensor.shape && x_tensor.shape.length > 2;
 
-function _training_analysis_push_top(list, item, limit) {
-	if (!item || item.loss === null || item.loss === undefined || !isFinite(item.loss)) return;
+	var total = true_labels.length;
+	var all_table = {};
+	var train_table = {};
+	var val_table = {};
+	var ex_all = {};
+	var ex_train = {};
+	var ex_val = {};
 
-	var insert_at = list.length;
-	while (insert_at > 0) {
-		var previous = list[insert_at - 1];
-		if (item.loss < previous.loss || (item.loss === previous.loss && item.index >= previous.index)) break;
-		insert_at--;
-	}
+	var train_set = new Set(train_val_split_info ? train_val_split_info.train_indices : []);
+	var val_set = new Set(train_val_split_info ? train_val_split_info.val_indices : []);
+	var has_split = train_set.size > 0;
 
-	if (insert_at >= limit) return;
+	for (var i = 0; i < total; i++) {
+		var correct = true_labels[i];
+		var predicted = pred_labels[i];
+		var orig = original_indices[i];
 
-	list.splice(insert_at, 0, item);
-	if (list.length > limit) list.pop();
-}
-
-function training_analysis_top_k_classification(predictions, true_indices, limit, label_list) {
-	var top = [];
-
-	if (!Array.isArray(predictions) || !Array.isArray(true_indices) || !limit) return top;
-
-	for (var i = 0; i < predictions.length && i < true_indices.length; i++) {
-		var row = predictions[i];
-		if (!Array.isArray(row) || row.length === 0) continue;
-
-		var predicted_index = _training_analysis_argmax(row);
-		if (predicted_index < 0) continue;
-
-		var true_index = true_indices[i];
-		var labels_for_display = Array.isArray(label_list) ? label_list : [];
-
-		if (!Number.isInteger(true_index) || true_index < 0) continue;
-		if (labels_for_display.length > 0 && true_index >= labels_for_display.length) continue;
-
-		var confidence = _training_analysis_number(row[predicted_index]);
-		if (confidence === null || confidence < 0) confidence = 0;
-		if (confidence > 1) confidence = 1;
-
-		var true_probability = _training_analysis_number(row[true_index]);
-		if (true_probability === null || true_probability < 0) true_probability = 0;
-		true_probability = Math.max(true_probability, 1e-12);
-
-		var true_label = labels_for_display[true_index] !== undefined ? labels_for_display[true_index] : ("Class " + true_index);
-		var predicted_label = labels_for_display[predicted_index] !== undefined ? labels_for_display[predicted_index] : ("Class " + predicted_index);
-
-		_training_analysis_push_top(top, {
-			index: i,
-			true_index: true_index,
-			predicted_index: predicted_index,
-			true_label: String(true_label),
-			predicted_label: String(predicted_label),
-			confidence: confidence,
-			loss: -Math.log(true_probability),
-			correct: true_index === predicted_index
-		}, limit);
-	}
-
-	return top;
-}
-
-function training_analysis_top_k_regression(predicted_values, true_values, limit) {
-	var top = [];
-
-	if (!Array.isArray(predicted_values) || !Array.isArray(true_values) || !limit) return top;
-
-	for (var i = 0; i < predicted_values.length && i < true_values.length; i++) {
-		var predicted = _training_analysis_number(predicted_values[i]);
-		var actual = _training_analysis_number(true_values[i]);
-		if (predicted === null || actual === null) continue;
-
-		var error = Math.abs(predicted - actual);
-		_training_analysis_push_top(top, {
-			index: i,
-			true_value: actual,
-			predicted_value: predicted,
-			error: error,
-			loss: error
-		}, limit);
-	}
-
-	return top;
-}
-
-async function compute_confusion_table_data() {
-	try {
-		var x_tensor = xy_data_global["x"];
-		var y_tensor = xy_data_global["y"];
-		var original_indices = xy_data_global["original_indices"] || Array.from({length: x_tensor.shape[0]}, (_, i) => i);
-
-		// The default prediction batch size is 32, which splits even a small
-		// dataset into four graph executions. A larger batch keeps the full-data
-		// confusion matrix fresh every epoch while cutting that overhead.
-		const PREDICT_BATCH_SIZE = 128;
-
-		var predictions;
-		var y_arr;
-
-		try {
-			y_arr = array_sync(y_tensor);
-			predictions = tidy(() => {
-				var pd = model.predict(x_tensor, { batchSize: PREDICT_BATCH_SIZE });
-				var res = array_sync(pd);
-				dispose(pd);
-				return res;
-			});
-		} catch (e) {
-			dbg("[confusion_matrix] model.predict failed: " + e);
-			return { all: "", train: "", val: "", per_class: null, hard_examples: [] };
+		_add_to_table(all_table, correct, predicted);
+		if (is_image) {
+			_add_cm_example(ex_all, correct, predicted, i);
 		}
 
-		if (!Array.isArray(predictions)) {
-			return { all: "", train: "", val: "", per_class: null, hard_examples: [] };
-		}
-
-		var true_indices = y_tensor.shape.length === 1
-			? y_arr.map(function (value) {
-				var number = Number(value);
-				return Number.isFinite(number) ? Math.round(number) : -1;
-			})
-			: y_arr.map(function (row) { return _training_analysis_argmax(row); });
-
-		var predicted_indices = predictions.map(function (row) {
-			return _training_analysis_argmax(row);
-		});
-
-		var label_names = Array.isArray(labels) ? labels : [];
-		var max_index = -1;
-
-		for (var index_i = 0; index_i < true_indices.length; index_i++) {
-			if (true_indices[index_i] > max_index) max_index = true_indices[index_i];
-		}
-		for (var index_p = 0; index_p < predicted_indices.length; index_p++) {
-			if (predicted_indices[index_p] > max_index) max_index = predicted_indices[index_p];
-		}
-
-		var num_classes = Math.max(label_names.length, max_index + 1, 1);
-		if (num_classes > 4096) num_classes = 4096;
-
-		var true_labels = true_indices.map(function (index) {
-			return label_names[index] !== undefined ? label_names[index] : ("Class " + index);
-		});
-		var pred_labels = predicted_indices.map(function (index) {
-			return index >= 0 ? (label_names[index] !== undefined ? label_names[index] : ("Class " + index)) : "?";
-		});
-
-		var is_image = x_tensor.shape && x_tensor.shape.length > 2;
-
-		var total = true_labels.length;
-		var all_table = {};
-		var train_table = {};
-		var val_table = {};
-		var ex_all = {};
-		var ex_train = {};
-		var ex_val = {};
-
-		var train_set = new Set(train_val_split_info ? train_val_split_info.train_indices : []);
-		var val_set = new Set(train_val_split_info ? train_val_split_info.val_indices : []);
-		var has_split = train_set.size > 0;
-
-		for (var i = 0; i < total; i++) {
-			var correct = true_labels[i];
-			var predicted = pred_labels[i];
-			var orig = original_indices[i];
-
-			_add_to_table(all_table, correct, predicted);
-			if (is_image) {
-				_add_cm_example(ex_all, correct, predicted, i);
-			}
-
-			if (has_split) {
-				if (train_set.has(orig)) {
-					_add_to_table(train_table, correct, predicted);
-					if (is_image) {
-						_add_cm_example(ex_train, correct, predicted, i);
-					}
-				} else if (val_set.has(orig)) {
-					_add_to_table(val_table, correct, predicted);
-					if (is_image) {
-						_add_cm_example(ex_val, correct, predicted, i);
-					}
+		if (has_split) {
+			if (train_set.has(orig)) {
+				_add_to_table(train_table, correct, predicted);
+				if (is_image) {
+					_add_cm_example(ex_train, correct, predicted, i);
+				}
+			} else if (val_set.has(orig)) {
+				_add_to_table(val_table, correct, predicted);
+				if (is_image) {
+					_add_cm_example(ex_val, correct, predicted, i);
 				}
 			}
 		}
-
-		var all_counts = training_analysis_per_class_counts(true_indices, predicted_indices, num_classes, null);
-		var train_counts = has_split
-			? training_analysis_per_class_counts(true_indices, predicted_indices, num_classes, function (i) { return train_set.has(original_indices[i]); })
-			: training_analysis_per_class_counts([], [], num_classes, null);
-		var val_counts = has_split
-			? training_analysis_per_class_counts(true_indices, predicted_indices, num_classes, function (i) { return val_set.has(original_indices[i]); })
-			: training_analysis_per_class_counts([], [], num_classes, null);
-
-		return {
-			all: all_table,
-			train: train_table,
-			val: val_table,
-			examples: { all: ex_all, train: ex_train, val: ex_val },
-			per_class: {
-				labels: label_names.slice(),
-				all: all_counts.accuracy,
-				train: train_counts.accuracy,
-				val: val_counts.accuracy,
-				support: { all: all_counts.support, train: train_counts.support, val: val_counts.support }
-			},
-			hard_examples: training_analysis_top_k_classification(predictions, true_indices, 6, label_names)
-		};
-	} catch (e) {
-		dbg("[confusion_matrix] training analysis failed: " + e);
-		return { all: "", train: "", val: "", per_class: null, hard_examples: [] };
 	}
-}
 
-async function compute_regression_training_analysis(limit=6) {
-	try {
-		if (!model || typeof model.predict !== "function") return null;
-		if (!xy_data_global || !xy_data_global.x || !xy_data_global.y) return null;
-
-		var x_tensor = xy_data_global.x;
-		var y_tensor = xy_data_global.y;
-
-		if (!x_tensor || x_tensor.isDisposed || !y_tensor || y_tensor.isDisposed) return null;
-		if (!x_tensor.shape || !x_tensor.shape[0]) return null;
-
-		var total = x_tensor.shape[0];
-		var sample_size = Math.min(64, total);
-		var indices = [];
-
-		for (var i = 0; i < sample_size; i++) {
-			indices.push(Math.min(total - 1, Math.floor((i * total) / sample_size)));
-		}
-
-		var sampled = tidy(function () {
-			var x_sample = tf.gather(x_tensor, indices);
-			var y_sample = tf.gather(y_tensor, indices);
-			var predictions = model.predict(x_sample, { batchSize: 128 });
-
-			if (Array.isArray(predictions)) predictions = predictions[0];
-
-			return {
-				predicted: array_sync(predictions),
-				actual: array_sync(y_sample)
-			};
-		});
-
-		if (!sampled || !Array.isArray(sampled.predicted) || !Array.isArray(sampled.actual)) {
-			return null;
-		}
-
-		var predicted_values = sampled.predicted.map(function (row) {
-			return Array.isArray(row) ? row[0] : row;
-		});
-		var actual_values = sampled.actual.map(function (row) {
-			return Array.isArray(row) ? row[0] : row;
-		});
-
-		var hard_examples = training_analysis_top_k_regression(predicted_values, actual_values, limit);
-
-		for (var example_idx = 0; example_idx < hard_examples.length; example_idx++) {
-			hard_examples[example_idx].index = indices[hard_examples[example_idx].index];
-		}
-
-		window.__last_training_analysis = {
-			kind: "regression",
-			hard_examples: hard_examples,
-			timestamp: Date.now()
-		};
-
-		return window.__last_training_analysis;
-	} catch (e) {
-		dbg("[training_analysis] regression sampling failed: " + e);
-		window.__last_training_analysis = null;
-		return null;
-	}
+	return {
+		all: all_table,
+		train: train_table,
+		val: val_table,
+		examples: { all: ex_all, train: ex_train, val: ex_val }
+	};
 }
 
 function _add_to_table(table, correct, predicted) {
@@ -4270,6 +4022,20 @@ function _add_to_table(table, correct, predicted) {
 	} else {
 		table[correct][predicted] = 1;
 	}
+}
+
+function _y_tensor_to_labels(y_tensor) {
+	var y_arr = array_sync(y_tensor);
+	if (y_tensor.shape.length === 1) {
+		return y_arr.map(function(v) { return labels[v] || ("" + v); });
+	}
+	return y_arr.map(function(row) {
+		var max_idx = 0;
+		for (var j = 1; j < row.length; j++) {
+			if (row[j] > row[max_idx]) max_idx = j;
+		}
+		return labels[max_idx] || ("" + max_idx);
+	});
 }
 
 var _confusion_cell_examples = {};
@@ -4540,7 +4306,6 @@ async function confusion_matrix_to_page () {
 	if(!status) {
 		$("#confusion_matrix").html("");
 		$("#confusion_matrix_training").html("");
-		window.__last_training_analysis = null;
 		return;
 	}
 
@@ -4549,20 +4314,7 @@ async function confusion_matrix_to_page () {
 	if(!tables.all || (typeof tables.all === "object" && Object.keys(tables.all).length === 0)) {
 		$("#confusion_matrix").html("");
 		$("#confusion_matrix_training").html("");
-		window.__last_training_analysis = null;
 		return;
-	}
-
-	if(tables.per_class) {
-		window.__last_training_analysis = {
-			kind: "classification",
-			labels: (tables.per_class.labels || []).slice(),
-			per_class: tables.per_class,
-			hard_examples: tables.hard_examples || [],
-			timestamp: Date.now()
-		};
-	} else {
-		window.__last_training_analysis = null;
 	}
 
 	var has_split = train_val_split_info && train_val_split_info.val_count > 0;

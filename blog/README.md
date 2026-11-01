@@ -63,6 +63,52 @@ meaning in a high-dimensional space.
 - Every factual claim and every image is **cited** — sources live in
   [`literature.js`](literature.js) and are link-checked in CI.
 
+## Run every check with one command
+
+`blog/tools/check_all.py` is the single blog gate. It runs the cheapest static
+checks first, then the fact ledger, then rebuilds the semantic, RAG and Atlas
+indexes, and finally verifies freshness. It stops at the first failure, so one
+failed stage fails the whole run.
+
+```bash
+# from the repository root
+uv run blog/tools/check_all.py          # local: build indexes + verify everything
+uv run blog/tools/check_all.py --fast   # no builds; quick checks + freshness smoke
+uv run blog/tools/check_all.py --ci     # CI smoke: no builds, no browser/network
+uv run blog/tools/check_all.py --full   # also render, link and typo checks
+```
+
+It also works without an explicit `uv run`, and from inside `blog/`:
+
+```bash
+cd blog
+python3 tools/check_all.py --fast
+./tools/check_all.py --fast
+```
+
+The script re-executes itself through `uv` (PEP 723) when it is started with a
+plain `python3`, so `rich` and the Python version are bootstrapped automatically.
+Direct execution uses the shebang and the executable bit.
+
+Useful flags:
+
+| flag | effect |
+|---|---|
+| `--list` | show every stage and exit |
+| `--only NAME[,NAME]` | run only matching stages or groups |
+| `--skip NAME[,NAME]` | skip matching stages or groups |
+| `--build-indexes` / `--no-build-indexes` | force or skip the semantic/RAG builds |
+| `--build-atlas` / `--no-build-atlas` | force or skip the Atlas rebuild |
+| `--render [--render-mode changed\|index\|all]` | run the Chromium render validator |
+| `--links` / `--typos` | opt into the slow network/language checks |
+| `--dry-run` | print the commands without running them |
+| `--verbose` | stream command output instead of capturing it |
+
+CI runs `uv run blog/tools/check_all.py --ci --no-node`: indexes are **verified**
+but never built there, and the render, link, typo and browser jobs stay separate.
+`bash blog/tests/run_fact_audit.sh` is kept as a compatibility shim for the same
+runner.
+
 ## Search
 
 The course has two search layers, both entirely local:

@@ -128,7 +128,10 @@ class FakeEmbedder:
         if "perceptron" in lower:
             vector[0] = 1.0
         elif "derivative" in lower:
+            seed = int(hashlib.sha1(text.encode("utf-8")).hexdigest()[:8], 16)
             vector[1] = 1.0
+            vector[2 + seed % (self.dims - 2)] = 1.0
+            vector[2 + (seed // (self.dims - 2)) % (self.dims - 2)] = 0.7
         else:
             seed = int(hashlib.sha1(text.encode("utf-8")).hexdigest()[:8], 16)
             vector[2 + seed % (self.dims - 2)] = 1.0
@@ -525,7 +528,7 @@ def main():
             check(first_job.get("position") == 1, "the first job is first in the queue")
             check(first_job.get("eta_seconds", 0) >= 40, "queued job includes the 15 s ETA buffer")
 
-            status, second_job = post(base, {"question": f"what is a widget {time.time_ns()}", "lang": "en"},
+            status, second_job = post(base, {"question": f"what is a derivative {time.time_ns()}", "lang": "en"},
                                       ip="10.0.0.2")
             check(status == 200 and second_job.get("position") == 2,
                   "the second job reports its queue position", str(second_job))
@@ -725,7 +728,7 @@ def main():
                       "public health does not leak service internals", str(health))
                 status, job = post(
                     php_base,
-                    {"question": f"what is a widget {time.time_ns()}", "lang": "en"},
+                    {"question": f"what is a derivative {time.time_ns()}", "lang": "en"},
                     ip="10.0.0.3",
                     path="/ask.php",
                 )
@@ -741,7 +744,7 @@ def main():
                       "PHP proxy returns the finished answer", str(final))
                 status, job = post(
                     php_base,
-                    {"question": f"what is a widget {time.time_ns()}", "lang": "en",
+                    {"question": f"what is a derivative {time.time_ns()}", "lang": "en",
                      "page": "history#x"},
                     ip="10.0.0.3",
                     path="/ask.php",

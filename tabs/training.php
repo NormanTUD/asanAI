@@ -6,6 +6,10 @@
 		<span id="show_after_training" style="display: none" class="TRANSLATEME_training_done_text"></span>
 		<span id="canvas_grid_visualization"></span>
 		<br>
+		<div id="plotly_epoch_history_div" style="display: none">
+			<div id="plotly_epoch_history"></div>
+		</div>
+		<div id="confusion_matrix_training"></div>
 		<div id="training_content">
 			<div id="training_live_metrics" class="training-live-metrics" style="display: none">
 				<div class="TRANSLATEME_training_live_title tlm-heading"></div>
@@ -44,32 +48,16 @@
 				<div id="plotly_metric_history"></div>
 			</div>
 
-			<div id="training_class_history_div" style="display: none">
-				<div class="TRANSLATEME_training_class_history_title tlm-heading"></div>
-				<div id="training_class_history_split" class="tlm-sub"></div>
-				<div id="plotly_training_class_history"></div>
-			</div>
-
-			<div id="training_hard_examples_div" style="display: none">
-				<div class="TRANSLATEME_training_hard_examples_title tlm-heading"></div>
-				<div id="training_hard_examples" class="training-hard-examples"></div>
-			</div>
-
 			<div id="simplest_training_data_visualization" style="display: none"></div>
 
 			<div id="bend_graph"></div>
 
 			<div id="training_history_tabs" style="display: none"></div>
 
-			<div id="plotly_epoch_history_div" style="display: none">
-				<div id="plotly_epoch_history"></div>
-			</div>
-
 			<div id="auto_loss_landscape"></div>
 		</div>
 	</div>
 	<div id="multi_run_stats"></div>
 	<div id="neural_organism"></div>
-	<div id="confusion_matrix_training"></div>
 </div>
 
