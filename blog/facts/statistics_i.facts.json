@@ -27,7 +27,8 @@
     "zipf_law_wiki",
     "zipf1949human",
     "design_of_experiments_wiki",
-    "rct1948"
+    "rct1948",
+    "ethayarajh2019contextual"
   ],
   "claims": [
     {
@@ -2558,534 +2559,540 @@
     },
     {
       "id": "statistics_i-stmt-257",
-      "quote": "A cosine similarity of $1.0$ means the vectors point in the same direction (semantically identical), $0$ means orthogonal (unrelated), and $-1$ means opposite.",
+      "quote": "A cosine similarity of $1.0$ means the vectors point in the same direction, $0$ means they are orthogonal, and $-1$ means they point in opposite directions.",
       "section": "Pearson's Biological Link: The Father-Son Study",
       "kind": "statement"
     },
     {
       "id": "statistics_i-stmt-258",
-      "quote": "This is why “king” and “monarch” score high similarity despite being different strings: their embedding vectors, shaped by billions of training examples, point in nearly the same direction.",
+      "quote": "The semantic reading is a *model-dependent hypothesis*, not a theorem: in a trained embedding space, direction often correlates with meaning, but “same direction” need not mean “same meaning,” and orthogonality need not mean “unrelated.” Anisotropy compresses the useful range, and antonyms can sit close together because they share contexts (\\cite[Ethayarajh, 2019]{ethayarajh2019contextual}).",
       "section": "Pearson's Biological Link: The Father-Son Study",
       "kind": "statement"
     },
     {
       "id": "statistics_i-stmt-259",
-      "quote": "Pearson's standardization now underlies every RAG pipeline, recommendation engine, and vector database in modern AI.",
+      "quote": "Read the number as a geometric similarity that a particular model has learned to make useful, not as a semantic identity.",
       "section": "Pearson's Biological Link: The Father-Son Study",
       "kind": "statement"
     },
     {
       "id": "statistics_i-stmt-260",
+      "quote": "Pearson's standardization now underlies every RAG pipeline, recommendation engine, and vector database in modern AI.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-261",
       "quote": "Z-scores standardize a value to the standard Normal:",
       "section": "Standardizing: Z-Scores & The Pearson Problem",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-261",
+      "id": "statistics_i-stmt-262",
       "quote": "A value with $z = 1.5$ is 1.5 standard deviations above the mean.",
       "section": "Standardizing: Z-Scores & The Pearson Problem",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-262",
+      "id": "statistics_i-stmt-263",
       "quote": "By convention, $|z| > 2$ is “unusual” and $|z| > 3$ is “rare”.",
       "section": "Standardizing: Z-Scores & The Pearson Problem",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-263",
+      "id": "statistics_i-stmt-264",
       "quote": "**Pearson's problem**: how do you standardize when you don't know $\\mu$ and $\\sigma$?",
       "section": "Standardizing: Z-Scores & The Pearson Problem",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-264",
+      "id": "statistics_i-stmt-265",
       "quote": "Replace them with sample estimates $\\bar x$ and $s$.",
       "section": "Standardizing: Z-Scores & The Pearson Problem",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-265",
+      "id": "statistics_i-stmt-266",
       "quote": "The result is approximately standard Normal by the CLT.",
       "section": "Standardizing: Z-Scores & The Pearson Problem",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-266",
+      "id": "statistics_i-stmt-267",
       "quote": "In machine learning, **batch normalization** and **layer normalization** are continuous z-scoring applied to activations.",
       "section": "Standardizing: Z-Scores & The Pearson Problem",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-267",
+      "id": "statistics_i-stmt-268",
       "quote": "This is what makes training deep networks tractable.",
       "section": "Standardizing: Z-Scores & The Pearson Problem",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-268",
+      "id": "statistics_i-stmt-269",
       "quote": "The chi-square distribution arises as the sum of $k$ squared standard Normal variables:",
       "section": "Chi-Square ($\\chi^2$): The Test of Independence",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-269",
+      "id": "statistics_i-stmt-270",
       "quote": "It has one parameter, $k$ (degrees of freedom), and is **asymmetric**, bounded below at 0, with a long right tail.",
       "section": "Chi-Square ($\\chi^2$): The Test of Independence",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-270",
+      "id": "statistics_i-stmt-271",
       "quote": "The chi-square statistic measures how far observed counts are from expected counts:",
       "section": "The Equation of “Surprise”",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-271",
+      "id": "statistics_i-stmt-272",
       "quote": "where $O_i$ is observed count and $E_i$ is expected count under the null hypothesis.",
       "section": "The Equation of “Surprise”",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-272",
+      "id": "statistics_i-stmt-273",
       "quote": "Small $\\chi^2$ = data consistent with hypothesis; large $\\chi^2$ = data inconsistent.",
       "section": "The Equation of “Surprise”",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-273",
+      "id": "statistics_i-stmt-274",
       "quote": "For a test with $k = 2$ categories and $\\alpha = 0.05$ significance level, the critical value is $\\chi^2_{1, 0.05} = 3.841$.",
       "section": "Why 3.84?",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-274",
+      "id": "statistics_i-stmt-275",
       "quote": "This is the **magic number** for the famous “p < 0.05” threshold.",
       "section": "Why 3.84?",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-275",
+      "id": "statistics_i-stmt-276",
       "quote": "If your $\\chi^2$ exceeds 3.84, you reject the null hypothesis at the 5% level.",
       "section": "Why 3.84?",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-276",
+      "id": "statistics_i-stmt-277",
       "quote": "The 3.84 comes from inverting the chi-square CDF at the 95th percentile with 1 degree of freedom:",
       "section": "Why 3.84?",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-277",
+      "id": "statistics_i-stmt-278",
       "quote": "For $k$ degrees of freedom and significance level $\\alpha$:",
       "section": "The General Critical Value Equation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-278",
+      "id": "statistics_i-stmt-279",
       "quote": "(where $\\text{icdf}$ is the inverse CDF).",
       "section": "The General Critical Value Equation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-279",
+      "id": "statistics_i-stmt-280",
       "quote": "Tables or software give the values.",
       "section": "The General Critical Value Equation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-280",
+      "id": "statistics_i-stmt-281",
       "quote": "The error function is closely related to the Normal distribution:",
       "section": "Deep Dive: The Error Function ($erf$)",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-281",
+      "id": "statistics_i-stmt-282",
       "quote": "It has no closed form, it must be computed numerically or via series.",
       "section": "Deep Dive: The Error Function ($erf$)",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-282",
+      "id": "statistics_i-stmt-283",
       "quote": "Its derivative is $\\frac{2}{\\sqrt{\\pi}} e^{-x^2}$, a scaled Gaussian.",
       "section": "Deep Dive: The Error Function ($erf$)",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-283",
+      "id": "statistics_i-stmt-284",
       "quote": "The complementary error function $\\text{erfc}(x) = 1 - \\text{erf}(x)$ appears in diffusion models (see the Diffusion chapter), where the noise schedule often involves erfc.",
       "section": "Deep Dive: The Error Function ($erf$)",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-284",
+      "id": "statistics_i-stmt-285",
       "quote": "You now hold both ingredients — a standard Normal in the numerator, a $\\chi^2$ in the denominator — for the most-used significance test in science.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-285",
+      "id": "statistics_i-stmt-286",
       "quote": "Its origin is one of the strangest in the history of statistics: not a university, but an Irish **brewery**.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-286",
+      "id": "statistics_i-stmt-287",
       "quote": "In \\citeyear{student1908probableerror}, the journal *Biometrika* published \"The Probable Error of a Mean\" under the pseudonym **\"Student\"** \\cite{student1908probableerror}.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-287",
+      "id": "statistics_i-stmt-288",
       "quote": "The author was **William Sealy Gosset** (1876–1937), a chemist who joined the Arthur Guinness & Son brewery in Dublin in 1899 and spent his whole career there \\cite{pearson1990studentbio}.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-288",
+      "id": "statistics_i-stmt-289",
       "quote": "Guinness was the world's largest brewery, and its quality control had grown beyond the eye and the nose: to judge a shipment of barley, malt, or hops from a **small sample** — testing the whole harvest was too costly and too destructive.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-289",
+      "id": "statistics_i-stmt-290",
       "quote": "In an internal report from 1904 he noticed that the usual \"law of error\" machinery was unreliable with only a handful of observations, and in 1906–07 the company sent him for two terms to **Karl Pearson's** Biometric Laboratory in London \\cite{studentstest_wiki}.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-290",
+      "id": "statistics_i-stmt-291",
       "quote": "Gosset's problem: the Z-score trick above is only approximately right, because the true $\\sigma$ is unknown and the sample standard deviation $s$ standing in for it is itself a noisy estimate.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-291",
+      "id": "statistics_i-stmt-292",
       "quote": "He worked out what happens when you divide a standard Normal $Z$ by the square root of an independent $\\chi^2$ variable with $\\nu$ degrees of freedom:",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-292",
+      "id": "statistics_i-stmt-293",
       "quote": "The result is the **t-distribution**: bell-shaped like the Normal, but with **heavier tails** — with little data, an extreme sample mean is more plausible, so a larger deviation is needed before a difference counts as \"real\".",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-293",
+      "id": "statistics_i-stmt-294",
       "quote": "As $n$ grows, $t$ converges to the Normal; the brewery's small-sample correction dissolves into the bell curve you already know.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-294",
+      "id": "statistics_i-stmt-295",
       "quote": "(The shape itself was older — it had appeared in 1876 as a posterior distribution and in Pearson's 1895 Type IV family — but the test as a working tool is Gosset's.)",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-295",
+      "id": "statistics_i-stmt-296",
       "quote": "The pseudonym had a commercial reason: after one of the lab's papers revealed details that might serve competitors, Guinness forbade its staff from mentioning beer, the brewery, or their real names in print \\cite{ziliak2008guinnessometrics}.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-296",
+      "id": "statistics_i-stmt-297",
       "quote": "The method therefore carried a false name for a century.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-297",
+      "id": "statistics_i-stmt-298",
       "quote": "It stayed obscure until **Ronald Fisher** — whom Gosset corresponded with in more than 150 letters between 1912 and 1934 — recognized what he had done: in a 1912 letter he pointed out that the scaling should use degrees of freedom, the corrected **Student's t** tables appeared in a 1925 special issue of *Metron*, and Fisher's applications of the test to regression appeared in the same volume \\cite{studentstest_wiki}.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-298",
+      "id": "statistics_i-stmt-299",
       "quote": "Fisher called it a \"logical revolution\"; Gosset's dry reply to an admirer was: \"Fisher would have discovered it all anyway.\" The brewery's barley trials also seeded the field's first great design debate — Gosset's **balanced** layouts (matching plots by soil and climate) against Fisher's **randomization**, a rivalry that shaped experimental design for decades \\cite{ziliak2008guinnessometrics}.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-299",
+      "id": "statistics_i-stmt-300",
       "quote": "**Why it matters for AI:** the t-test (and Welch's variant for unequal variances) is the workhorse of **model comparison** — \"is variant A really better than B, or is the difference noise?\" — and of testing whether individual regression coefficients are significant.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-300",
+      "id": "statistics_i-stmt-301",
       "quote": "Every time a team compares two models on a holdout set, or decides whether a new feature \"helps\", this is the arithmetic doing the accounting, a century after it was invented to judge a handful of barley samples \\cite{murtagh2024guinness}.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-301",
+      "id": "statistics_i-stmt-302",
       "quote": "And the Poisson connection is not coincidental: in 1907, \"Student\" had already published a counting-paper that unknowingly **rediscovered the Poisson distribution** you met earlier in this chapter \\cite{student1907haemocytometer}.",
       "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-302",
+      "id": "statistics_i-stmt-303",
       "quote": "Testing a difference is only half the discipline.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-303",
+      "id": "statistics_i-stmt-304",
       "quote": "The other half — the one that actually *creates* trustworthy evidence — is **designing an experiment** that produces a difference you can trust.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-304",
+      "id": "statistics_i-stmt-305",
       "quote": "That design was invented in three stages, and each is a direct ancestor of something you do in ML.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-305",
+      "id": "statistics_i-stmt-306",
       "quote": "The first stage was the **control group**.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-306",
+      "id": "statistics_i-stmt-307",
       "quote": "In 1747, the Royal Navy surgeon James Lind split twelve scorbutic sailors on the warship *Salisbury* into pairs, each pair given a different treatment — one pair took two oranges and a lemon a day.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-307",
+      "id": "statistics_i-stmt-308",
       "quote": "Within days, one of them was fit for duty and the other \"almost recovered\"; the pair on cider also improved, but the four other pairs — vitriol, vinegar, sea-water, and a balsam-of-Peru/garlic/myrrh/mustard/radish mixture — showed no improvement at all \\cite[Lind, *A Treatise of the Scurvy* (1753)]{lind1747scurvy} \\cite{scurvy_wiki}.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-308",
+      "id": "statistics_i-stmt-309",
       "quote": "Nobody *proved* citrus cured scurvy (the sample was tiny), but the **design** — pair the patients, give different treatments, compare — is the exact shape of a control group.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-309",
+      "id": "statistics_i-stmt-310",
       "quote": "\\marginfig{james_lind.jpg}{James Lind (1716–1794), whose 1747 scurvy trial was among the first controlled trials.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-310",
+      "id": "statistics_i-stmt-311",
       "quote": "Public domain (Chalmers, 1783).}",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-311",
+      "id": "statistics_i-stmt-312",
       "quote": "The second stage, and the one that matters most, was **randomization**, and it came from \\cite[Ronald Fisher, *The Design of Experiments* (1935)]{fisher1935design}.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-312",
+      "id": "statistics_i-stmt-313",
       "quote": "The problem Lind faced but could not fully solve: even with pairs, the two patients might differ in age, diet, or constitution, so *who* receives which treatment leaks into the comparison.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-313",
+      "id": "statistics_i-stmt-314",
       "quote": "Fisher's answer was to **assign treatments by chance**.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-314",
+      "id": "statistics_i-stmt-315",
       "quote": "Randomization does not remove hidden confounders; it *distributes* them across the groups on average, so the only systematic difference between the groups is the treatment itself.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-315",
+      "id": "statistics_i-stmt-316",
       "quote": "The book gave the null hypothesis its canonical exposition; randomization had already appeared in *Statistical Methods for Research Workers* (1925) and \"The Arrangement of Field Experiments\" (1926), and replication and factorial design were not new in 1935 (\\cite{design_of_experiments_wiki}).",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-316",
+      "id": "statistics_i-stmt-317",
       "quote": "The third stage was the **double-blind** procedure: neither the person giving the treatment nor the one receiving it knows who is in the control group, so that expectation — the experimenter's *or* the subject's — cannot tint the result \\cite[the double-blind study]{doubleblind}.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-317",
+      "id": "statistics_i-stmt-318",
       "quote": "It matured alongside the first large **randomized controlled trials**, the 1948 streptomycin studies that set the template for medical evidence \\cite[randomized controlled trial]{rct1948}.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-318",
+      "id": "statistics_i-stmt-319",
       "quote": "Now map it onto what you do.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-319",
+      "id": "statistics_i-stmt-320",
       "quote": "An **A/B test** — ship variant A of a page to half your users, variant B to the other half, compare the metric — is Fisher's randomization applied to software.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-320",
+      "id": "statistics_i-stmt-321",
       "quote": "And an **ablation study** — remove one component of the model and measure what the metric does — is Lind's control group applied to architecture: the full model is the control, the ablated model is the \"treatment\", and the question *is the drop from removing this layer real, or noise?* is answered by the t-test from the last section.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-321",
+      "id": "statistics_i-stmt-322",
       "quote": "The whole discipline of judging a model by **deliberately breaking it and measuring** descends, step for step, from a surgeon pairing up scurvy sailors on a warship.",
       "section": "The controlled experiment: from scurvy to ablation",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-322",
+      "id": "statistics_i-stmt-323",
       "quote": "Real-world datasets are rarely perfectly Normal.",
       "section": "The Statistical Soul: Dataset Distributions",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-323",
+      "id": "statistics_i-stmt-324",
       "quote": "* **Long-tailed**: power-law distributions where most values are small, a few are huge (income, city size, social network followers).",
       "section": "The Statistical Soul: Dataset Distributions",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-324",
+      "id": "statistics_i-stmt-325",
       "quote": "* **Multimodal**: two or more peaks (heights of mixed populations).",
       "section": "The Statistical Soul: Dataset Distributions",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-325",
+      "id": "statistics_i-stmt-326",
       "quote": "* **Heavy-tailed**: more extreme values than a Gaussian predicts (financial returns).",
       "section": "The Statistical Soul: Dataset Distributions",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-326",
+      "id": "statistics_i-stmt-327",
       "quote": "* **Sparse**: many zeros, a few large values (word counts in documents).",
       "section": "The Statistical Soul: Dataset Distributions",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-327",
+      "id": "statistics_i-stmt-328",
       "quote": "* **Discrete**: counts or categories, not continuous (clicks, votes, ratings).",
       "section": "The Statistical Soul: Dataset Distributions",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-328",
+      "id": "statistics_i-stmt-329",
       "quote": "Recognizing the distribution of your data is the first step in choosing the right model.",
       "section": "The Statistical Soul: Dataset Distributions",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-329",
+      "id": "statistics_i-stmt-330",
       "quote": "A Naive Bayes classifier assumes features are conditionally independent (often violated).",
       "section": "The Statistical Soul: Dataset Distributions",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-330",
+      "id": "statistics_i-stmt-331",
       "quote": "A linear regression assumes Gaussian residuals (often violated).",
       "section": "The Statistical Soul: Dataset Distributions",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-331",
+      "id": "statistics_i-stmt-332",
       "quote": "Knowing when these assumptions break down is essential in practice.",
       "section": "The Statistical Soul: Dataset Distributions",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-332",
+      "id": "statistics_i-stmt-333",
       "quote": "In any natural-language corpus, the $k$-th most frequent word has frequency approximately:",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-333",
+      "id": "statistics_i-stmt-334",
       "quote": "This is **Zipf's Law**, which Zipf had already described in 1932 (crediting Estoup, 1916); 1949 is the date of *Human Behavior and the Principle of Least Effort*, and Auerbach (1913) had noted the analogous city-size regularity (\\cite{zipf_law_wiki}; \\cite{zipf1949human}).",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-334",
+      "id": "statistics_i-stmt-335",
       "quote": "For English, “the” appears ~7% of the time, “of” ~3.5%, “and” ~2.5%, and the 100th most common word ~0.05%.",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-335",
+      "id": "statistics_i-stmt-336",
       "quote": "Zipf's law is observed in many seemingly unrelated domains: city populations, income, web traffic, and more.",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-336",
+      "id": "statistics_i-stmt-337",
       "quote": "The mathematical reason is debated; competing theories include preferential attachment (“the rich get richer”), information-theoretic optimization, and self-organized criticality.",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-337",
+      "id": "statistics_i-stmt-338",
       "quote": "For LLMs, Zipf's law has two practical consequences:",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-338",
+      "id": "statistics_i-stmt-339",
       "quote": "* **Token imbalance**: a few tokens dominate training.",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-339",
+      "id": "statistics_i-stmt-340",
       "quote": "Effective sampling and loss weighting must account for this.",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-340",
+      "id": "statistics_i-stmt-341",
       "quote": "* **Long tail of rare words**: the model rarely sees most words.",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-341",
+      "id": "statistics_i-stmt-342",
       "quote": "Performance on the long tail is consistently worse.",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-342",
+      "id": "statistics_i-stmt-343",
       "quote": "The **Dirichlet distribution** (next chapter) is a natural prior over categorical distributions; on its own it does not reproduce a Zipfian tail.",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-343",
+      "id": "statistics_i-stmt-344",
       "quote": "Below, we analyze the actual word distribution of \\citetitle{nietzsche1883zarathustra}.",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-344",
+      "id": "statistics_i-stmt-345",
       "quote": "- **Linear Scale:** Shows the “Long Tail” (a few words dominate everything).",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"
     },
     {
-      "id": "statistics_i-stmt-345",
+      "id": "statistics_i-stmt-346",
       "quote": "- **Log-Log Scale:** Reveals the underlying mathematical “straight line” of the language.",
       "section": "Zipf's Law: The Physics of Language",
       "kind": "statement"

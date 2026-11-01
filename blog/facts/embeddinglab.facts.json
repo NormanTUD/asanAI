@@ -24,7 +24,8 @@
     "bojanowski2017fasttext",
     "elmo",
     "devlin2019bert",
-    "bronstein2021geometric"
+    "bronstein2021geometric",
+    "ethayarajh2019contextual"
   ],
   "claims": [
     {
@@ -1282,2472 +1283,2496 @@
     },
     {
       "id": "embeddinglab-stmt-116",
-      "quote": "* **High Positive Number:** The arrows point in roughly the same direction (They are “Similar”).",
+      "quote": "* **High Positive Number:** The arrows point in roughly the same direction.",
       "section": "Similarity",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-117",
-      "quote": "* **Zero:** The arrows are at a right angle (They are “Unrelated”).",
+      "quote": "In a trained embedding space this often correlates with similarity, but the semantic label is an interpretation, not a geometric theorem.",
       "section": "Similarity",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-118",
-      "quote": "* **Negative Number:** The arrows point in opposite directions (They are “Opposites”).",
+      "quote": "* **Zero:** The arrows are at a right angle.",
       "section": "Similarity",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-119",
-      "quote": "In a Transformer (like ChatGPT), this is the “Handshake.” When a word “looks” at another word, it calculates the Dot Product.",
+      "quote": "That is orthogonality; whether the model treats the two tokens as unrelated is an empirical property of the learned space.",
       "section": "Similarity",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-120",
-      "quote": "If the result is high, the AI knows those words are contextually related.",
+      "quote": "* **Negative Number:** The arrows point in opposite directions.",
       "section": "Similarity",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-121",
-      "quote": "This will be explained in more detail later on.",
+      "quote": "This often correlates with opposition or antonymy, but it can also reflect other contrastive contexts.",
       "section": "Similarity",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-122",
-      "quote": "There's a subtle but critical property that explains *why* cosine similarity is preferred over Euclidean distance in most embedding applications: **scale invariance**.",
-      "section": "Scale Invariance: Direction Is Meaning, Magnitude Is Noise",
+      "quote": "In a Transformer (like ChatGPT), this is the “Handshake.” When a word “looks” at another word, it calculates the Dot Product.",
+      "section": "Similarity",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-123",
-      "quote": "Two vectors can point in exactly the same direction, encoding the same semantic content, but differ wildly in magnitude.",
-      "section": "Scale Invariance: Direction Is Meaning, Magnitude Is Noise",
+      "quote": "A high result means the model has learned to associate the two representations in context.",
+      "section": "Similarity",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-124",
-      "quote": "Euclidean distance would call them “far apart.” Cosine similarity correctly identifies them as identical in meaning.",
-      "section": "Scale Invariance: Direction Is Meaning, Magnitude Is Noise",
+      "quote": "This will be explained in more detail later on.",
+      "section": "Similarity",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-125",
-      "quote": "During training, tokens that appear more frequently accumulate more gradient updates, inflating their vector norms.",
-      "section": "Scale Invariance: Direction Is Meaning, Magnitude Is Noise",
+      "quote": "There's a subtle but critical property that explains *why* cosine similarity is preferred over Euclidean distance in many embedding applications: **scale invariance**.",
+      "section": "Scale Invariance: Direction Is Often the Useful Signal",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-126",
-      "quote": "A rare synonym of “King” might encode the same directional relationships but have a much shorter vector.",
-      "section": "Scale Invariance: Direction Is Meaning, Magnitude Is Noise",
+      "quote": "Two vectors can point in the same direction but differ wildly in magnitude.",
+      "section": "Scale Invariance: Direction Is Often the Useful Signal",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-127",
-      "quote": "Cosine similarity is blind to this artifact; Euclidean distance is fooled by it.",
-      "section": "Scale Invariance: Direction Is Meaning, Magnitude Is Noise",
+      "quote": "Euclidean distance calls them far apart; cosine similarity treats them as identical in direction.",
+      "section": "Scale Invariance: Direction Is Often the Useful Signal",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-128",
-      "quote": "Below, drag the **magnitude slider** to stretch or shrink a token's vector without changing its direction.",
-      "section": "Scale Invariance: Direction Is Meaning, Magnitude Is Noise",
+      "quote": "Whether that direction also means “the same thing” is a property of the trained space, not a consequence of the cosine.",
+      "section": "Scale Invariance: Direction Is Often the Useful Signal",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-129",
-      "quote": "Watch how Euclidean distance changes dramatically while cosine similarity stays perfectly constant.",
-      "section": "Scale Invariance: Direction Is Meaning, Magnitude Is Noise",
+      "quote": "During training, tokens that appear more frequently can accumulate more gradient updates, inflating their vector norms.",
+      "section": "Scale Invariance: Direction Is Often the Useful Signal",
       "kind": "statement"
     },
     {
       "id": "embeddinglab-stmt-130",
+      "quote": "A rare synonym of “King” might encode similar directional relationships but have a much shorter vector.",
+      "section": "Scale Invariance: Direction Is Often the Useful Signal",
+      "kind": "statement"
+    },
+    {
+      "id": "embeddinglab-stmt-131",
+      "quote": "Cosine similarity is blind to this scale artifact; Euclidean distance is not.",
+      "section": "Scale Invariance: Direction Is Often the Useful Signal",
+      "kind": "statement"
+    },
+    {
+      "id": "embeddinglab-stmt-132",
+      "quote": "Below, drag the **magnitude slider** to stretch or shrink a token's vector without changing its direction.",
+      "section": "Scale Invariance: Direction Is Often the Useful Signal",
+      "kind": "statement"
+    },
+    {
+      "id": "embeddinglab-stmt-133",
+      "quote": "Watch how Euclidean distance changes dramatically while cosine similarity stays perfectly constant.",
+      "section": "Scale Invariance: Direction Is Often the Useful Signal",
+      "kind": "statement"
+    },
+    {
+      "id": "embeddinglab-stmt-134",
       "quote": "It is tempting to label specific axes as “Gender,” “Power,” or “Temperature,” but this is often a human-imposed simplification.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-131",
+      "id": "embeddinglab-stmt-135",
       "quote": "In modern LLMs, dimensions are **latent features**, mathematical patterns discovered through statistical co-occurrence rather than human-defined categories.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-132",
+      "id": "embeddinglab-stmt-136",
       "quote": "While we can find “directions” in the vector space that correlate with human concepts, most of the 768+ dimensions do not have a name in any human language.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-133",
+      "id": "embeddinglab-stmt-137",
       "quote": "* **Meaning is Simulated:** The computer does not “understand” what a King is; it only understands that the token “King” consistently appears in specific geometric relationships with other tokens.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-134",
+      "id": "embeddinglab-stmt-138",
       "quote": "* **No Inherent Soul:** The coordinates are products of linear algebra, not internal experience.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-135",
+      "id": "embeddinglab-stmt-139",
       "quote": "Meaning is a human concept we project onto the model's output; the machine is simply navigating a continuous geometric manifold.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-136",
+      "id": "embeddinglab-stmt-140",
       "quote": "While the semantic manifold relies on “use” to define meaning, the system falters when a word lacks a statistical history.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-137",
+      "id": "embeddinglab-stmt-141",
       "quote": "[**Hapax legomena**](https://en.wikipedia.org/wiki/Hapax_legomenon), terms that appear only once in an entire corpus, present a unique challenge for embedding spaces.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-138",
+      "id": "embeddinglab-stmt-142",
       "quote": "Because a token's identity is defined entirely by its context, a single occurrence provides insufficient data points to anchor it.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-139",
+      "id": "embeddinglab-stmt-143",
       "quote": "In a high-dimensional space, these words become “homeless”; the model cannot triangulate their coordinates through repeated relationships.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-140",
+      "id": "embeddinglab-stmt-144",
       "quote": "Without the “gravity” of multiple linguistic environments to pull them into a meaningful neighborhood, their vectors often reside in noisy, semi-random locations, rendering them mathematically isolated from the manifold of human knowledge.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-141",
+      "id": "embeddinglab-stmt-145",
       "quote": "Even more disruptive are **Glitch Tokens** (described by Yuxi Li et al. in \\citeyear{glitchtokens}), which reveal the cracks in the machine's geometric logic.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-142",
+      "id": "embeddinglab-stmt-146",
       "quote": "These often arise from anomalies like the Reddit username `SolidGoldMagikarp`, a user who posted prolifically in the r/counting subreddit.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-143",
+      "id": "embeddinglab-stmt-147",
       "quote": "Because these strings appeared frequently enough to be assigned a dedicated token but lacked varied, human-semantic context, they do not possess a stable “positional relationship” in the space.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-144",
+      "id": "embeddinglab-stmt-148",
       "quote": "When an LLM encounters these tokens, it often suffers a “hallucination of meaning” or total logic failure.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-145",
+      "id": "embeddinglab-stmt-149",
       "quote": "In the geometry of meaning, these tokens act like “voids” or “gravity wells”, they are products of statistical co-occurrence that do not correlate with any human concept.",
       "section": "The Illusion of Interpretability",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-146",
+      "id": "embeddinglab-stmt-150",
       "quote": "A critical property of embedding spaces is their **rotational invariance**.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-147",
+      "id": "embeddinglab-stmt-151",
       "quote": "If you take an entire embedding space and rotate it, spinning every single vector by the same angle, nothing changes semantically.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-148",
+      "id": "embeddinglab-stmt-152",
       "quote": "“King” is still near “Queen,” “Cat” is still far from “Democracy.” This is because meaning in these spaces is not encoded in absolute coordinates, but in the **\\cite[relational geometry]{smith2017orthogonal}** between points: their distances, angles, and cluster structures.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-149",
+      "id": "embeddinglab-stmt-153",
       "quote": "This has a profound implication for **cross-lingual translation**.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-150",
+      "id": "embeddinglab-stmt-154",
       "quote": "When two monolingual models are trained separately on different languages, each develops its own embedding space.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-151",
+      "id": "embeddinglab-stmt-155",
       "quote": "Remarkably, these spaces tend to be **isomorphic**, they share the same internal geometric structure, \\cite[just rotated and scaled relative to each other]{mikolov2013exploiting}.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-152",
+      "id": "embeddinglab-stmt-156",
       "quote": "The word for “king” in French and the word for “king” in English occupy analogous positions within their respective manifolds.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-153",
+      "id": "embeddinglab-stmt-157",
       "quote": "Aligning two such spaces often requires nothing more than a linear transformation, a rotation matrix and a scaling factor, because the underlying topology of human concepts is, to a significant degree, \\cite[language-invariant]{conneau2018word}.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-154",
+      "id": "embeddinglab-stmt-158",
       "quote": "The same \"many inputs, one shared space\" move is what makes it possible to put two languages — or an image and a word — into a single embedding at all:",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-155",
+      "id": "embeddinglab-stmt-159",
       "quote": "> by mapping words from two languages into one representation, we can find",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-156",
+      "id": "embeddinglab-stmt-160",
       "quote": "> corresponding words that we didn't know were translations when we started.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-157",
+      "id": "embeddinglab-stmt-161",
       "quote": "> And by mapping images and words into the same representation, we can",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-158",
+      "id": "embeddinglab-stmt-162",
       "quote": "> classify images of classes we've never seen!",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-159",
+      "id": "embeddinglab-stmt-163",
       "quote": "(\\cite[Olah, 2015]{colah2015types}) — and the first half of that, forcing known translations to line up so that *unknown* ones get dragged into place, is exactly what bilingual word embeddings show (\\cite[Olah, 2014]{colah2014nlp}).",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-160",
+      "id": "embeddinglab-stmt-164",
       "quote": "A **translation Transformer** can therefore be *viewed through a geometric lens* as performing a kind of path-finding.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-161",
+      "id": "embeddinglab-stmt-165",
       "quote": "Given a sequence of tokens in the source language, the encoder produces a sequence of hidden states that can be pictured as a trajectory weaving through clusters of meaning; the decoder's task can be pictured as finding a **corresponding path** in the target language's embedding space that preserves the same relational structure: the same turns, the same cluster transitions, the same semantic “shape.” To be clear, this is a metaphor, an aid to intuition rather than a literal mechanism: there is no formally defined “meaning manifold” that the encoder actually traverses, and the picture is not a theorem about how Transformers compute translations.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-162",
+      "id": "embeddinglab-stmt-166",
       "quote": "In other words, a translation Transformer can be described as translating **paths through meaning-space**, identifying the geometric signature of the input, which clusters were visited, in what order, with what transitions, and reconstructing an analogous trajectory in the output space.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-163",
+      "id": "embeddinglab-stmt-167",
       "quote": "Used this way, the image is genuinely useful: it captures why translations can be fluent even when there is no one-to-one word correspondence between languages, and why the model is matching *shapes*, not *points*.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-164",
+      "id": "embeddinglab-stmt-168",
       "quote": "But it remains a geometric metaphor for representation learning, not an established description of the translation mechanism.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-165",
+      "id": "embeddinglab-stmt-169",
       "quote": "This is also why the Attention mechanism is so central.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-166",
+      "id": "embeddinglab-stmt-170",
       "quote": "Attention computes pairwise relationships (via dot products) between all tokens in a sequence, effectively building a map of the local geometry, which points are near each other, which are aligned, which are **orthogonal** (\\cite[Vaswani et al., 2017]{vaswani2017attention}).",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-167",
+      "id": "embeddinglab-stmt-171",
       "quote": "This relational map is what gets preserved and transferred, **not any individual coordinate** (\\cite[Elhage et al., 2021]{elhage2021mathematical}).",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-168",
+      "id": "embeddinglab-stmt-172",
       "quote": "The real magic is in the **transformation itself**.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-169",
+      "id": "embeddinglab-stmt-173",
       "quote": "You can watch Japanese's embedding space smoothly rotate and scale to align with English.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-170",
+      "id": "embeddinglab-stmt-174",
       "quote": "This is exactly what algorithms like Procrustes alignment do: they find the optimal rotation matrix $\\mathbf{W}$ such that $\\mathbf{X}_B \\mathbf{W} \\approx \\mathbf{X}_A$, minimizing the distance between corresponding word pairs across languages (\\cite{smith2017orthogonal}, \\citeauthorlastnameand{conneau2018word}).",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-171",
+      "id": "embeddinglab-stmt-175",
       "quote": "Click **“Align”** to animate the transformation.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-172",
+      "id": "embeddinglab-stmt-176",
       "quote": "Notice how the internal structure, the distances between King/Queen, Man/Woman, is perfectly preserved.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-173",
+      "id": "embeddinglab-stmt-177",
       "quote": "Only the orientation changes.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-174",
+      "id": "embeddinglab-stmt-178",
       "quote": "This is rotational invariance made visible.",
       "section": "Rotational Invariance and Translation as Path-Finding",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-175",
+      "id": "embeddinglab-stmt-179",
       "quote": "While the cross-lingual alignment story is compelling, the isomorphism between language embedding spaces is not perfect.",
       "section": "The Limits of Isomorphism",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-176",
+      "id": "embeddinglab-stmt-180",
       "quote": "The alignment quality degrades significantly for typologically distant language pairs, English to Japanese, for instance, is far harder to align than \\cite[English to Spanish]{sogaard2018limitations}.",
       "section": "The Limits of Isomorphism",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-177",
+      "id": "embeddinglab-stmt-181",
       "quote": "This suggests that the “universal geometric structure of human concepts” has real limits.",
       "section": "The Limits of Isomorphism",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-178",
+      "id": "embeddinglab-stmt-182",
       "quote": "Languages don't just rotate the same space; they can **warp** it.",
       "section": "The Limits of Isomorphism",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-179",
+      "id": "embeddinglab-stmt-183",
       "quote": "Cultures that carve up semantic space differently, languages with different color term boundaries, or kinship systems, produce embedding geometries that are locally similar but globally distorted.",
       "section": "The Limits of Isomorphism",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-180",
+      "id": "embeddinglab-stmt-184",
       "quote": "The rotation-plus-scaling model is a first-order approximation, not the full story.",
       "section": "The Limits of Isomorphism",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-181",
+      "id": "embeddinglab-stmt-185",
       "quote": "The deeper theoretical reason the path-finding framing works is the **\\cite[Manifold Hypothesis]{bengio2013representation}**: the idea that high-dimensional data, like language, actually lies on or near a much lower-dimensional manifold embedded in the high-dimensional space.",
       "section": "The Manifold Hypothesis",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-182",
+      "id": "embeddinglab-stmt-186",
       "quote": "If sentences trace paths on a manifold, then translation is literally a mapping between two manifolds that share the same topology.",
       "section": "The Manifold Hypothesis",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-183",
+      "id": "embeddinglab-stmt-187",
       "quote": "The Transformer's attention layers can be seen as learning the **local coordinate charts** of these manifolds, the rules for how to navigate the surface at each point.",
       "section": "The Manifold Hypothesis",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-184",
+      "id": "embeddinglab-stmt-188",
       "quote": "This works because the real world structures the language first, and thus, “dog” has similar relations to cat, pet, horse, mouse, ..., as “Hund” (german for dog) has to “Katze” (cat), “Haustier” (pet), “Pferd” (horse), mouse (“Maus”) and so on.",
       "section": "The Manifold Hypothesis",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-185",
+      "id": "embeddinglab-stmt-189",
       "quote": "The language model the real world, and the models the language, and thus, it's an abstracted model of the real world.",
       "section": "The Manifold Hypothesis",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-186",
+      "id": "embeddinglab-stmt-190",
       "quote": "It's all about the relations to each other.",
       "section": "The Manifold Hypothesis",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-187",
+      "id": "embeddinglab-stmt-191",
       "quote": "There is an even more geometric way to think about attention.",
       "section": "Attention as Metric Tensor",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-188",
+      "id": "embeddinglab-stmt-192",
       "quote": "In differential geometry, a **metric tensor** defines how distances are measured locally on a manifold, it tells you the “shape” of space at each point.",
       "section": "Attention as Metric Tensor",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-189",
+      "id": "embeddinglab-stmt-193",
       "quote": "The attention matrix in a Transformer does something analogous: it dynamically redefines which tokens are “close” to which other tokens at each layer, effectively warping the local geometry of the embedding space as the representation is processed.",
       "section": "Attention as Metric Tensor",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-190",
+      "id": "embeddinglab-stmt-194",
       "quote": "This is an analogy, not a theorem: Geometric Deep Learning (\\cite[Bronstein et al., 2021]{bronstein2021geometric}) places attention among relational, permutation-equivariant operations, but it does not derive attention as a metric tensor.",
       "section": "Attention as Metric Tensor",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-191",
+      "id": "embeddinglab-stmt-195",
       "quote": "Building on \\cite[the mechanistic analysis of Transformer circuits]{elhage2021mathematical}, there is an elegant way to think about the **residual stream**.",
       "section": "The Residual Stream as Geodesic",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-192",
+      "id": "embeddinglab-stmt-196",
       "quote": "Each layer of the Transformer adds a small update to the residual, it does not replace the representation, it *nudges* it.",
       "section": "The Residual Stream as Geodesic",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-193",
+      "id": "embeddinglab-stmt-197",
       "quote": "This is structurally identical to how a **geodesic**, the shortest path on a curved surface, is computed: you take small steps, each determined by the local curvature.",
       "section": "The Residual Stream as Geodesic",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-194",
+      "id": "embeddinglab-stmt-198",
       "quote": "The residual stream, then, traces something like a geodesic through meaning-space, with each attention head and MLP layer contributing a local correction based on the geometry it perceives.",
       "section": "The Residual Stream as Geodesic",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-195",
+      "id": "embeddinglab-stmt-199",
       "quote": "The Transformer does not jump from input to output.",
       "section": "The Residual Stream as Geodesic",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-196",
+      "id": "embeddinglab-stmt-200",
       "quote": "It *walks* there, one careful step at a time, along the surface of the manifold.",
       "section": "The Residual Stream as Geodesic",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-197",
+      "id": "embeddinglab-stmt-201",
       "quote": "Rotational invariance tells us that spinning the entire space preserves meaning.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-198",
+      "id": "embeddinglab-stmt-202",
       "quote": "But there's a second, equally profound invariance: **translation invariance of relational offsets**.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-199",
+      "id": "embeddinglab-stmt-203",
       "quote": "The vector from “Man” to “King”, the “royalty direction”, is approximately the same as the vector from “Woman” to “Queen.” This isn't a coincidence; it's a geometric regularity that \\cite[emerges from training on co-occurrence statistics]{mikolov2013word2vec}).",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-200",
+      "id": "embeddinglab-stmt-204",
       "quote": "This means concepts like “royalty,” “gender,” or “youth” aren't points in the space, they're **directions**.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-201",
+      "id": "embeddinglab-stmt-205",
       "quote": "And those directions are consistent everywhere.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-202",
+      "id": "embeddinglab-stmt-206",
       "quote": "You can pick up the “royalty” vector from one pair and transplant it onto another.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-203",
+      "id": "embeddinglab-stmt-207",
       "quote": "This is the **parallelogram law** of analogies, and it's what makes vector arithmetic on words possible at all.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-204",
+      "id": "embeddinglab-stmt-208",
       "quote": "Below, you can explore this interactively.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-205",
+      "id": "embeddinglab-stmt-209",
       "quote": "Select different “concept directions” and watch the same offset vector produce valid analogies across multiple word pairs, forming perfect parallelograms in the embedding space.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-206",
+      "id": "embeddinglab-stmt-210",
       "quote": "Perhaps the most provocative recent finding is \\citetitle{huh2024platonic}: different models trained on completely different data modalities, text, images, audio, appear to be converging toward the same underlying representation of reality.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-207",
+      "id": "embeddinglab-stmt-211",
       "quote": "Vision models and language models, when aligned, share similar geometric structures.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-208",
+      "id": "embeddinglab-stmt-212",
       "quote": "This suggests that there may be a “platonic” embedding space, an optimal geometry for representing the statistical structure of the real world, and that all sufficiently powerful models are independently discovering it.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-209",
+      "id": "embeddinglab-stmt-213",
       "quote": "The idea that an image and a word can even *share* a single representation — so that a model classifies images of classes it has never been shown, by landing them near the right word vector — is older than the hypothesis (\\cite[Olah, 2014]{colah2014nlp}).",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-210",
+      "id": "embeddinglab-stmt-214",
       "quote": "The analogy to Plato's theory of Forms is deliberate.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-211",
+      "id": "embeddinglab-stmt-215",
       "quote": "Just as Plato argued that the physical world is a shadow of a more perfect realm of ideal Forms, the Platonic Representation Hypothesis suggests that all model embeddings are **projections**, different rotations and scalings of a single, underlying geometric truth.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-212",
+      "id": "embeddinglab-stmt-216",
       "quote": "A vision model that learns “dog” from millions of photographs, a language model that learns “dog” from billions of sentences, and an audio model that learns “dog” from spectrograms of barking, all three converge to place “dog” in the *same neighborhood*, near “cat” and “wolf,” far from “piano” and “thunder.” The internal distances and angles between concepts are preserved across modalities, even though no model ever saw another's training data.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-213",
+      "id": "embeddinglab-stmt-217",
       "quote": "This would explain why cross-lingual alignment works (as we saw above): not just because human languages share syntactic structure, but because **the world they describe has a fixed geometry**.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-214",
+      "id": "embeddinglab-stmt-218",
       "quote": "French and English converge not merely because both are human languages, but because both are attempting to model the same underlying reality, and that reality has a unique optimal embedding.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-215",
+      "id": "embeddinglab-stmt-219",
       "quote": "As models grow more powerful and see more data, they are all climbing the same mountain from different sides, converging toward the summit: the platonic representation.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-216",
+      "id": "embeddinglab-stmt-220",
       "quote": "Below, three independently trained models, a **Language model** (●), a **Vision model** (◆), and an **Audio model** (■), have each learned to embed the same real-world concepts.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-217",
+      "id": "embeddinglab-stmt-221",
       "quote": "Each model lives in its own rotated coordinate frame.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-218",
+      "id": "embeddinglab-stmt-222",
       "quote": "But the **internal geometry**, which concepts are near which, what clusters form, what distances separate them, is identical across all three.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-219",
+      "id": "embeddinglab-stmt-223",
       "quote": "Click **Align** to watch all three modalities converge onto a single shared structure, revealing the “platonic” geometry underneath.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-220",
+      "id": "embeddinglab-stmt-224",
       "quote": "This hypothesis allows so-called **Brain-Swapping**: since models learn similar representation when trained on data about the same real world, their embedding spaces have similar manifolds in them, and can be changed after being rotated without too big of an impact on the validity of the results.",
       "section": "Translation Invariance: The Parallelogram Law",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-221",
+      "id": "embeddinglab-stmt-225",
       "quote": "Embedding spaces are typically **anisotropic**, the vectors are not uniformly distributed through the space but instead cluster in a narrow cone or occupy only a subregion of the available volume.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-222",
+      "id": "embeddinglab-stmt-226",
       "quote": "\\citeauthor{ethayarajh2019contextual} (\\citeyear{ethayarajh2019contextual}) showed that in models like BERT and GPT-2, embeddings at later layers become increasingly anisotropic, meaning the average cosine similarity between random word pairs is surprisingly high (often 0.5–0.9).",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-223",
+      "id": "embeddinglab-stmt-227",
       "quote": "This is problematic because it compresses the effective range of cosine similarity, making it harder to distinguish genuinely similar words from merely average ones.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-224",
+      "id": "embeddinglab-stmt-228",
       "quote": "Techniques like **whitening** or **isotropy calibration** are used to counteract this.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-225",
+      "id": "embeddinglab-stmt-229",
       "quote": "To understand why this matters, consider the geometry.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-226",
+      "id": "embeddinglab-stmt-230",
       "quote": "In a perfectly **isotropic** space, word vectors are scattered uniformly across all directions.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-227",
+      "id": "embeddinglab-stmt-231",
       "quote": "A random pair of words would have an expected cosine similarity near zero, leaving the full range from $-1$ to $+1$ available to encode genuine semantic relationships.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-228",
+      "id": "embeddinglab-stmt-232",
       "quote": "But when the distribution collapses into a narrow cone, as it does in the deeper layers of most Transformers, even unrelated words end up pointing in roughly the same direction.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-229",
+      "id": "embeddinglab-stmt-233",
       "quote": "The cosine similarity between “Democracy” and “Sandwich” might be $0.7$, while the similarity between “King” and “Queen” might be $0.85$.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-230",
+      "id": "embeddinglab-stmt-234",
       "quote": "The *absolute* numbers look high in both cases; only a narrow band of $0.15$ separates meaningful relatedness from noise.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-231",
+      "id": "embeddinglab-stmt-235",
       "quote": "This is the anisotropy problem: the metric that is supposed to measure “how similar are these concepts?” becomes almost useless when the entire vocabulary is squeezed into a small angular region of the space.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-232",
+      "id": "embeddinglab-stmt-236",
       "quote": "Anisotropy is not only a diagnosis; it is something practitioners *remove*.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-233",
+      "id": "embeddinglab-stmt-237",
       "quote": "\\citeauthor{mu2018allbutthetop} showed that subtracting the mean vector and discarding the top few principal directions — **all-but-the-top** postprocessing — restores much of the isotropy and improves word-similarity and analogy benchmarks without retraining (\\cite[Mu et al., 2018]{mu2018allbutthetop}).",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-234",
+      "id": "embeddinglab-stmt-238",
       "quote": "The same geometry recurs in contextual models: \\citeauthor{ethayarajh2019contextual} found that later layers of BERT, ELMo, and GPT-2 occupy an increasingly narrow cone, so cosine similarities between random words drift upward.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-235",
+      "id": "embeddinglab-stmt-239",
       "quote": "Anisotropy is therefore a structural property of learned representations, not a bug of one embedding table.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-236",
+      "id": "embeddinglab-stmt-240",
       "quote": "Below, drag the **anisotropy slider** from isotropic (vectors spread uniformly) to highly anisotropic (vectors crushed into a narrow cone).",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-237",
+      "id": "embeddinglab-stmt-241",
       "quote": "Watch how the histogram of pairwise cosine similarities collapses from a wide distribution into a tight spike, and how the effective discriminative range shrinks to almost nothing.",
       "section": "Anisotropy",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-238",
+      "id": "embeddinglab-stmt-242",
       "quote": "Modern research into Transformers reveals that the brain-inspired “one neuron, one concept” model, often critiqued as the **“Grandmother Neuron”** (coined by \\cite[Jerome Lettvin]{grandmotherneuron} in 1969), is an illusion.",
       "section": "Polysemanticity and the Superposition Hypothesis",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-239",
+      "id": "embeddinglab-stmt-243",
       "quote": "Instead, models utilize two critical phenomena to represent information:",
       "section": "Polysemanticity and the Superposition Hypothesis",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-240",
+      "id": "embeddinglab-stmt-244",
       "quote": "A concept like “cat” is not stored in a single neuron.",
       "section": "Distributed Representations",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-241",
+      "id": "embeddinglab-stmt-245",
       "quote": "Instead, it is a **direction** in a high-dimensional vector space.",
       "section": "Distributed Representations",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-242",
+      "id": "embeddinglab-stmt-246",
       "quote": "To represent a specific concept, the model activates a pattern across dozens of neurons.",
       "section": "Distributed Representations",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-243",
+      "id": "embeddinglab-stmt-247",
       "quote": "Shifting a single activation in this ensemble slightly alters the meaning (e.g., from “cat” to “kitten”).",
       "section": "Distributed Representations",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-244",
+      "id": "embeddinglab-stmt-248",
       "quote": "The observable consequence of this structure is **polysemanticity**: individual neurons fire in response to multiple, seemingly unrelated concepts.",
       "section": "Polysemanticity (The Multi-Tasking Neuron)",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-245",
+      "id": "embeddinglab-stmt-249",
       "quote": "For example, a single neuron might activate for:",
       "section": "Polysemanticity (The Multi-Tasking Neuron)",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-246",
+      "id": "embeddinglab-stmt-250",
       "quote": "* Text related to the Golden Gate Bridge.",
       "section": "Polysemanticity (The Multi-Tasking Neuron)",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-247",
+      "id": "embeddinglab-stmt-251",
       "quote": "* Mathematical formulas involving integers.",
       "section": "Polysemanticity (The Multi-Tasking Neuron)",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-248",
+      "id": "embeddinglab-stmt-252",
       "quote": "* The concept of “reliability” or “French cuisine.”",
       "section": "Polysemanticity (The Multi-Tasking Neuron)",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-249",
+      "id": "embeddinglab-stmt-253",
       "quote": "Polysemanticity is not a training failure; it is a predictable result of the model compressing $M$ features into $N$ dimensions where $M \\gg N$ (analogous to the **Pigeonhole Principle**).",
       "section": "Why Superposition Happens",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-250",
+      "id": "embeddinglab-stmt-254",
       "quote": "The core mechanism is **\\cite[Superposition]{elhage2022superposition}**.",
       "section": "Why Superposition Happens",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-251",
+      "id": "embeddinglab-stmt-255",
       "quote": "The model exploits the **sparsity** of natural language, the fact that “legal terminology” and “French cuisine” rarely co-occur in the same context.",
       "section": "Why Superposition Happens",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-252",
+      "id": "embeddinglab-stmt-256",
       "quote": "By assigning concepts to nearly orthogonal directions in high-dimensional space, the model packs exponentially more features than it has physical neurons, accepting occasional “crosstalk” (interference) as a tolerable trade-off for massive representational capacity.",
       "section": "Why Superposition Happens",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-253",
+      "id": "embeddinglab-stmt-257",
       "quote": "A vivid demonstration of these principles is \\citetitle{goldengateclaude}, in which researchers from Anthropic used \\cite[Sparse Autoencoders]{sparseautoencoders} to isolate a specific feature direction within Claude Sonnet's activation space corresponding to the concept of the Golden Gate Bridge.",
       "section": "Golden-Gate-Claude",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-254",
+      "id": "embeddinglab-stmt-258",
       "quote": "By artificially amplifying this single direction during inference, the model became fixated on the bridge, mentioning it in nearly every response regardless of topic.",
       "section": "Golden-Gate-Claude",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-255",
+      "id": "embeddinglab-stmt-259",
       "quote": "This confirms that concepts are encoded as **directions** in high-dimensional space, not in individual neurons, and that these directions are causally active: amplifying one is sufficient to dominate the model's output.",
       "section": "Golden-Gate-Claude",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-256",
+      "id": "embeddinglab-stmt-260",
       "quote": "It is also a direct consequence of superposition, because “Golden Gate Bridge” shares neuronal substrate with countless other features via near-orthogonal packing, isolating it required the decomposition tools described above rather than simply toggling a single neuron.",
       "section": "Golden-Gate-Claude",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-257",
+      "id": "embeddinglab-stmt-261",
       "quote": "**The Dimensionality Trade-off:** In a 2D space, you can only have two perfectly orthogonal (zero interference) features.",
       "section": "Golden-Gate-Claude",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-258",
+      "id": "embeddinglab-stmt-262",
       "quote": "In a 768+ dimensional model, thousands of “near-orthogonal” features can coexist, though this proximity is exactly why individual neurons appear polysemantic.",
       "section": "Golden-Gate-Claude",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-259",
+      "id": "embeddinglab-stmt-263",
       "quote": "One of the most active research frontiers concerns what happens when you give a model a handful of examples directly in the prompt.",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-260",
+      "id": "embeddinglab-stmt-264",
       "quote": "Rather than updating any weights, the model appears to construct an implicit **task vector** in activation space on the fly.",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-261",
+      "id": "embeddinglab-stmt-265",
       "quote": "\\citeauthor{hendel2023incontext} demonstrated in \\citeyear{hendel2023incontext} that the function learned via in-context learning can be compressed into a single vector, extracted by computing the difference between the model's internal activations *with* the few-shot examples and *without* them, and then **injected** into a blank prompt to reproduce the same behavior.",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-262",
+      "id": "embeddinglab-stmt-266",
       "quote": "To see this concretely, imagine prompting a model with:",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-263",
+      "id": "embeddinglab-stmt-267",
       "quote": "*Q: What is the capital of France?",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-264",
+      "id": "embeddinglab-stmt-268",
       "quote": "*Q: What is the capital of Germany?",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-265",
+      "id": "embeddinglab-stmt-269",
       "quote": "*Q: What is the capital of Japan?",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-266",
+      "id": "embeddinglab-stmt-270",
       "quote": "*Q: What is the capital of Italy?",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-267",
+      "id": "embeddinglab-stmt-271",
       "quote": "Each example pair creates an **offset vector** in the model's internal activation space, a directional arrow pointing from where “France” lives to where “Paris” lives.",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-268",
+      "id": "embeddinglab-stmt-272",
       "quote": "These individual arrows are noisy: the *France → Paris* offset is not identical to the *Germany → Berlin* offset because each word occupies a slightly different region of the high-dimensional manifold.",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-269",
+      "id": "embeddinglab-stmt-273",
       "quote": "But when the model averages across all the examples, a single coherent **task direction** emerges, a vector that encodes “move from a country token to its capital-city token.” When the query token “Italy” enters the residual stream, this task direction **steers** it toward the correct answer region, landing it near “Rome”, without any weight update whatsoever.",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-270",
+      "id": "embeddinglab-stmt-274",
       "quote": "This is why in-context learning is so powerful and so mysterious: the model is not being retrained.",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-271",
+      "id": "embeddinglab-stmt-275",
       "quote": "It is performing a geometric operation, constructing a direction from examples and applying it to a query, entirely within the forward pass.",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-272",
+      "id": "embeddinglab-stmt-276",
       "quote": "The task vector is not stored in any weight matrix; it exists only as a transient pattern in the activation geometry, assembled and discarded with each new prompt.",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-273",
+      "id": "embeddinglab-stmt-277",
       "quote": "Below, you can watch this process unfold.",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-274",
+      "id": "embeddinglab-stmt-278",
       "quote": "The **left panel** shows the geometric view: each **colored arrow** connects a country to its capital in activation space, and the **right panel** shows the actual prompt the model receives, color-coded to match.",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-275",
+      "id": "embeddinglab-stmt-279",
       "quote": "The arrows are averaged into a single **task vector** (blue).",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-276",
+      "id": "embeddinglab-stmt-280",
       "quote": "Use the slider to add or remove examples and watch the task vector stabilize, with too few examples the averaged direction is noisy and may miss the answer region; with enough examples, it converges precisely on the correct answer.",
       "section": "The Geometry of In-Context Learning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-277",
+      "id": "embeddinglab-stmt-281",
       "quote": "Classical statistics tells us that fitting a model with $P$ parameters to $N$ data",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-278",
+      "id": "embeddinglab-stmt-282",
       "quote": "points requires $N \\gg P$ to avoid overfitting.",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-279",
+      "id": "embeddinglab-stmt-283",
       "quote": "GPT-3 has **175 billion parameters**",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-280",
+      "id": "embeddinglab-stmt-284",
       "quote": "but was trained on **~300 billion tokens**, roughly **1.7 tokens per parameter**, which",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-281",
+      "id": "embeddinglab-stmt-285",
       "quote": "classical theory says should catastrophically overfit.",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-282",
+      "id": "embeddinglab-stmt-286",
       "quote": "The resolution is the **Manifold Hypothesis**: although the parameter space is",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-283",
+      "id": "embeddinglab-stmt-287",
       "quote": "175-billion-dimensional, the data lives on a much **lower-dimensional manifold**.",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-284",
+      "id": "embeddinglab-stmt-288",
       "quote": "The effective dimensionality of the problem is determined by the *intrinsic",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-285",
+      "id": "embeddinglab-stmt-289",
       "quote": "dimension* of the data manifold, not the ambient parameter space.",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-286",
+      "id": "embeddinglab-stmt-290",
       "quote": "despite its surface complexity, has a much lower intrinsic dimension because of the",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-287",
+      "id": "embeddinglab-stmt-291",
       "quote": "constraints of grammar, logic, physics, and human cognition.",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-288",
+      "id": "embeddinglab-stmt-292",
       "quote": "LLMs don't overfit despite having 175 billion parameters for only ~300 billion training tokens — because the data constrains them to a low-dimensional manifold in parameter space.",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-289",
+      "id": "embeddinglab-stmt-293",
       "quote": "The 175 billion parameters are not 175 billion independent degrees of",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-290",
+      "id": "embeddinglab-stmt-294",
       "quote": "freedom, they're 175 billion coordinates describing a position on a manifold",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-291",
+      "id": "embeddinglab-stmt-295",
       "quote": "whose intrinsic dimension might be **orders of magnitude smaller**.",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-292",
+      "id": "embeddinglab-stmt-296",
       "quote": "This is why **scaling works**: adding more parameters doesn't add proportionally more",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-293",
+      "id": "embeddinglab-stmt-297",
       "quote": "degrees of freedom, it adds more *resolution* for describing the same",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-294",
+      "id": "embeddinglab-stmt-298",
       "quote": "low-dimensional structure.",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-295",
+      "id": "embeddinglab-stmt-299",
       "quote": "It's like going from a 100×100 pixel image to a",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-296",
+      "id": "embeddinglab-stmt-300",
       "quote": "1000×1000 pixel image of the same scene, more numbers, but the same underlying",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-297",
+      "id": "embeddinglab-stmt-301",
       "quote": "A precise, checkable condition under which the curse of dimensionality is provably overcome — the **Barron class**: functions whose Fourier transform has a finite first moment $\\int_{\\mathbb{R}^d} \\|\\xi\\|\\,|\\hat{g}(\\xi)|\\,d\\xi < \\infty$ — is in \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), Ch.\\ 8.2.",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-298",
+      "id": "embeddinglab-stmt-302",
       "quote": "The related phenomenon of **double descent** — test error falling again once a model is large enough to interpolate its training data — was described by \\citeauthorlastnameand{belkin2019}.",
       "section": "The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-299",
+      "id": "embeddinglab-stmt-303",
       "quote": "One of the most counter-intuitive failures of embedding spaces is that **negation doesn't work geometrically** the way you'd expect.",
       "section": "The Geometry of Negation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-300",
+      "id": "embeddinglab-stmt-304",
       "quote": "The vector for “not happy” is closer to “happy” than to “sad”, because “not” and “happy” co-occur in the same sentences, and distributional semantics encodes co-occurrence, not logical opposition.",
       "section": "The Geometry of Negation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-301",
+      "id": "embeddinglab-stmt-305",
       "quote": "This is a deep structural limitation: embedding spaces capture **associative similarity**, not **logical relationships**.",
       "section": "The Geometry of Negation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-302",
+      "id": "embeddinglab-stmt-306",
       "quote": "In a distributional model, the meaning of “not” is itself a vector, learned from all the contexts where “not” appears.",
       "section": "The Geometry of Negation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-303",
+      "id": "embeddinglab-stmt-307",
       "quote": "When you compose “not happy” (by adding the vectors), the “not” component provides only a small perturbation, a slight directional nudge, rather than a $180°$ reversal to the antonym.",
       "section": "The Geometry of Negation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-304",
+      "id": "embeddinglab-stmt-308",
       "quote": "The result is a vector that still sits firmly in the neighborhood of “happy,” surrounded by words like “cheerful,” “pleased,” and “joyful.” The actual antonym, “sad,” remains far away in a completely different region of the space.",
       "section": "The Geometry of Negation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-305",
+      "id": "embeddinglab-stmt-309",
       "quote": "This negation problem has been \\cite[extensively studied]{kassner2020negated} and remains partially unsolved even in large contextual models like BERT and GPT.",
       "section": "The Geometry of Negation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-306",
+      "id": "embeddinglab-stmt-310",
       "quote": "While Transformers with attention can handle negation better than static embeddings, because the surrounding context modulates the representation across layers, the underlying geometric limitation persists in the embedding layers themselves.",
       "section": "The Geometry of Negation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-307",
+      "id": "embeddinglab-stmt-311",
       "quote": "The word “not” simply does not encode a logical inversion operator in vector space; it encodes “the kinds of sentences where 'not' appears,” which overwhelmingly co-occur with the very concepts being negated.",
       "section": "The Geometry of Negation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-308",
+      "id": "embeddinglab-stmt-312",
       "quote": "Below, select any word (or type “not X”) and observe how “not X” drifts only slightly from X in embedding space, rather than jumping to its logical antonym.",
       "section": "The Geometry of Negation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-309",
+      "id": "embeddinglab-stmt-313",
       "quote": "The faded circle marks where “not X” *should* land if geometry respected logic.",
       "section": "The Geometry of Negation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-310",
+      "id": "embeddinglab-stmt-314",
       "quote": "Standard embedding spaces use Euclidean geometry, but human language is rife with hierarchical structure, taxonomies (animal → mammal → dog → poodle), hypernymy chains, parse trees, organizational hierarchies.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-311",
+      "id": "embeddinglab-stmt-315",
       "quote": "Euclidean space is fundamentally ill-suited for representing trees: the number of nodes at depth $d$ in a tree with branching factor $b$ grows as $\\mathcal{O}(b^d)$, exponentially, but the volume of a Euclidean ball of radius $r$ in $n$ dimensions grows only polynomially as $\\mathcal{O}(r^n)$.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-312",
+      "id": "embeddinglab-stmt-316",
       "quote": "This mismatch means that as a tree grows deeper, a Euclidean embedding must either introduce severe distance distortion or consume prohibitively many dimensions to accommodate the exponential proliferation of leaf nodes.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-313",
+      "id": "embeddinglab-stmt-317",
       "quote": "**Hyperbolic space** resolves this tension.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-314",
+      "id": "embeddinglab-stmt-318",
       "quote": "Spaces of constant negative curvature exhibit **exponential volume growth**, the circumference of a hyperbolic circle of radius $r$ grows as $\\sim e^r$, not $\\sim r$, making them the natural geometric habitat for embedding hierarchies with minimal distortion.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-315",
+      "id": "embeddinglab-stmt-319",
       "quote": "In the **\\cite[Poincaré disk model]{nickel2017poincare}**, the entire hyperbolic plane is mapped to the interior of a unit disk.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-316",
+      "id": "embeddinglab-stmt-320",
       "quote": "Points near the **center** represent general, high-level concepts (“entity”), while points near the **boundary** represent increasingly specific leaves (“golden retriever”).",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-317",
+      "id": "embeddinglab-stmt-321",
       "quote": "The metric that governs this world is:",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-318",
+      "id": "embeddinglab-stmt-322",
       "quote": "Notice the denominator: as either point approaches the boundary ($\\|\\mathbf{u}\\| \\to 1$), the distance **explodes**, even for vanishingly small Euclidean displacements.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-319",
+      "id": "embeddinglab-stmt-323",
       "quote": "This is the geometric mechanism behind the informal idea of “exponential room” near the edge: hyperbolic volumes grow far faster than Euclidean ones, so deep hierarchies can be embedded with less distortion.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-320",
+      "id": "embeddinglab-stmt-324",
       "quote": "That phrasing is a helpful intuition rather than a precise statement, leaves do not literally need to crowd the boundary, and how much “room” is actually required depends on the specific data and embedding.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-321",
+      "id": "embeddinglab-stmt-325",
       "quote": "Geodesics in the Poincaré disk are **arcs of circles orthogonal to the boundary** (straight diameters through the center being the degenerate case), curving inward through the disk, \\cite[a striking visual signature of negative curvature]{nickel2017poincare}.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-322",
+      "id": "embeddinglab-stmt-326",
       "quote": "Below, a taxonomy tree is embedded in the Poincaré disk.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-323",
+      "id": "embeddinglab-stmt-327",
       "quote": "The **highlighted chain** traces Entity → Animal → Mammal → Dog → Poodle from center to boundary.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-324",
+      "id": "embeddinglab-stmt-328",
       "quote": "Drag the **curvature slider** from Euclidean (flat, uniformly spaced depth rings, straight edges) to Hyperbolic (exponentially compressed rings, inward-curving geodesics) and watch the geometry transform, a stark contrast to the flat Euclidean grids explored above.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-325",
+      "id": "embeddinglab-stmt-329",
       "quote": "\\citeauthorlastnameand{poincareembeddings} showed empirically, on WordNet taxonomies, that hyperbolic embeddings can reach the same embedding quality as Euclidean embeddings with substantially fewer dimensions *in those experiments*.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-326",
+      "id": "embeddinglab-stmt-330",
       "quote": "The benefit is data-dependent, it does not mean hyperbolic geometry generally “drastically” lowers the required dimensionality, only that it can do so for suitably hierarchical data.",
       "section": "Hyperbolic Embeddings",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-327",
+      "id": "embeddinglab-stmt-331",
       "quote": "So far, we've treated the embedding space as a smooth, continuous manifold where words drift through a uniform fog of dimensions.",
       "section": "Topology: Clumps and Branches",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-328",
+      "id": "embeddinglab-stmt-332",
       "quote": "But the actual *topology* of the feature space tells a different story.",
       "section": "Topology: Clumps and Branches",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-329",
+      "id": "embeddinglab-stmt-333",
       "quote": "It is not a uniform fog at all, it is **highly structured**, full of empty voids and narrow corridors.",
       "section": "Topology: Clumps and Branches",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-330",
+      "id": "embeddinglab-stmt-334",
       "quote": "In a 768-dimensional space, you might expect data points to spread out evenly in all directions.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-331",
+      "id": "embeddinglab-stmt-335",
       "quote": "Empirically, the data concentrates in **narrow cones**, thin, elongated regions that radiate outward from the origin like the spines of a sea urchin.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-332",
+      "id": "embeddinglab-stmt-336",
       "quote": "The vast majority of the theoretical volume is *empty*.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-333",
+      "id": "embeddinglab-stmt-337",
       "quote": "No sentence ever visits it.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-334",
+      "id": "embeddinglab-stmt-338",
       "quote": "This is a direct consequence of the **concentration of measure** phenomenon in high-dimensional geometry: in $n$ dimensions, almost all the volume of a hypersphere is concentrated in a thin shell near the surface, and almost all pairs of random vectors are nearly orthogonal.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-335",
+      "id": "embeddinglab-stmt-339",
       "quote": "The result is that meaningful data doesn't fill the space, it clings to a sparse skeleton of low-dimensional structures threading through the void.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-336",
+      "id": "embeddinglab-stmt-340",
       "quote": "This has practical consequences:",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-337",
+      "id": "embeddinglab-stmt-341",
       "quote": "* **Nearest-neighbor search** is harder than it looks, because “nearest” in 768 dimensions doesn't mean what your 3D intuition suggests.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-338",
+      "id": "embeddinglab-stmt-342",
       "quote": "Most of the space between any two points is empty.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-339",
+      "id": "embeddinglab-stmt-343",
       "quote": "* **Clustering** reveals that the space is not a single blob but a network of **filaments and clumps**, dense knots of semantically related tokens connected by thin bridges, surrounded by vast uninhabited regions.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-340",
+      "id": "embeddinglab-stmt-344",
       "quote": "* **Interpolation** between two tokens (e.g., averaging their vectors) can land you in one of these empty voids, producing a vector that corresponds to *no* meaningful concept, a “semantic vacuum.”",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-341",
+      "id": "embeddinglab-stmt-345",
       "quote": "The visualization below gives you an intuition for this.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-342",
+      "id": "embeddinglab-stmt-346",
       "quote": "In 2D, points can spread out uniformly.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-343",
+      "id": "embeddinglab-stmt-347",
       "quote": "But as you increase the effective dimensionality (simulated here by compressing the angular distribution), the points collapse into narrow cones, and the fraction of “occupied” space shrinks dramatically.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-344",
+      "id": "embeddinglab-stmt-348",
       "quote": "The **gray region** represents the empty void, the space where no data lives.",
       "section": "High-Dimensional Narrow Cones",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-345",
+      "id": "embeddinglab-stmt-349",
       "quote": "How does a model that operates in a fixed-size vector space manage to encode hierarchies that are, in principle, arbitrarily deep?",
       "section": "Semantic Folding & Fractal Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-346",
+      "id": "embeddinglab-stmt-350",
       "quote": "The answer appears to involve a form of **geometric folding**: the model reuses the same spatial logic at every level of abstraction, nesting finer distinctions inside coarser ones like a fractal.",
       "section": "Semantic Folding & Fractal Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-347",
+      "id": "embeddinglab-stmt-351",
       "quote": "Consider the concept “Dog.” In the embedding space, “Dog” occupies a region, a neighborhood of vectors that all relate to dog-ness.",
       "section": "The Geometry of the Niche",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-348",
+      "id": "embeddinglab-stmt-352",
       "quote": "But zoom into that region and you find it is not a featureless blob.",
       "section": "The Geometry of the Niche",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-349",
+      "id": "embeddinglab-stmt-353",
       "quote": "Inside it, the vectors for “Dachshund,” “Shepherd,” and “Poodle” are arranged relative to each other using the same geometric principles that organize the level above.",
       "section": "The Geometry of the Niche",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-350",
+      "id": "embeddinglab-stmt-354",
       "quote": "The axis that separates “domestic” from “wild” at the Animal level reappears, at a smaller scale, to separate “lap dog” from “working dog” at the Breed level.",
       "section": "The Geometry of the Niche",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-351",
+      "id": "embeddinglab-stmt-355",
       "quote": "The axis that separates “large” from “small” among Mammals reappears to separate “Great Dane” from “Chihuahua” among Dogs.",
       "section": "The Geometry of the Niche",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-352",
+      "id": "embeddinglab-stmt-356",
       "quote": "This is **self-similarity**, the hallmark of fractal structure.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-353",
+      "id": "embeddinglab-stmt-357",
       "quote": "The model applies the same set of learned distinction directions (size, danger, domestication, function) at every hierarchical level, each time at a smaller spatial scale.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-354",
+      "id": "embeddinglab-stmt-358",
       "quote": "The result is a space that is “folded” in on itself: what looks like a single point at a coarse zoom level unfolds, upon magnification, into a rich sub-structure that mirrors the parent geometry.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-355",
+      "id": "embeddinglab-stmt-359",
       "quote": "where $\\alpha < 1$ is a spatial scaling factor, the sub-structure is a shrunken copy of the super-structure.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-356",
+      "id": "embeddinglab-stmt-360",
       "quote": "* **Few-shot generalization**: Because the same geometric logic repeats at every level, a model that has learned to distinguish “domestic vs. wild” at the Animal level can immediately apply that distinction at the Breed level, even for breeds it has rarely seen.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-357",
+      "id": "embeddinglab-stmt-361",
       "quote": "* **Compositionality**: Hierarchical concepts can be navigated by composing coarse and fine direction vectors, move to “Dog” first (coarse), then move along the “small + domestic” direction within that region (fine).",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-358",
+      "id": "embeddinglab-stmt-362",
       "quote": "* **Compression**: A fractal structure is extraordinarily efficient.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-359",
+      "id": "embeddinglab-stmt-363",
       "quote": "Instead of learning a unique geometry for every sub-category, the model reuses a small set of distinction templates, scaled and translated, at every depth.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-360",
+      "id": "embeddinglab-stmt-364",
       "quote": "Below, you can explore this fractal folding interactively.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-361",
+      "id": "embeddinglab-stmt-365",
       "quote": "The visualization shows a three-level hierarchy: **Animals → Species → Breeds**.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-362",
+      "id": "embeddinglab-stmt-366",
       "quote": "At **Zoom Level 1**, you see the coarse structure, clusters of Animals.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-363",
+      "id": "embeddinglab-stmt-367",
       "quote": "Zoom in to Level 2 and the “Dog” cluster unfolds into individual species.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-364",
+      "id": "embeddinglab-stmt-368",
       "quote": "Zoom to Level 3 and individual breeds appear inside each species, arranged in a geometry that mirrors the level above.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-365",
+      "id": "embeddinglab-stmt-369",
       "quote": "The **distinction axes** (size, domestication) are drawn at each level to show how they repeat at smaller scales.",
       "section": "Self-Similarity",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-366",
+      "id": "embeddinglab-stmt-370",
       "quote": "There is a deep analogy between how LLMs store information in their embedding spaces and how **holograms** store images.",
       "section": "Holographic Information Storage",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-367",
+      "id": "embeddinglab-stmt-371",
       "quote": "In a photograph, each pixel records a single point of the scene, scratch the photo and you lose that point forever.",
       "section": "Holographic Information Storage",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-368",
+      "id": "embeddinglab-stmt-372",
       "quote": "In a hologram, every part of the recording medium stores information about the **entire scene** from a slightly different angle.",
       "section": "Holographic Information Storage",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-369",
+      "id": "embeddinglab-stmt-373",
       "quote": "Cut a hologram in half and you don't lose half the image, you lose half the *resolution*.",
       "section": "Holographic Information Storage",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-370",
+      "id": "embeddinglab-stmt-374",
       "quote": "Both halves still contain the full picture, just blurrier.",
       "section": "Holographic Information Storage",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-371",
+      "id": "embeddinglab-stmt-375",
       "quote": "Neural network embeddings work the same way.",
       "section": "Distributed, Not Localized",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-372",
+      "id": "embeddinglab-stmt-376",
       "quote": "The concept “Dog” is not stored in dimension 42, or in any single neuron.",
       "section": "Distributed, Not Localized",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-373",
+      "id": "embeddinglab-stmt-377",
       "quote": "It is stored as a **pattern across all dimensions simultaneously**, a direction in the full 768-dimensional space.",
       "section": "Distributed, Not Localized",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-374",
+      "id": "embeddinglab-stmt-378",
       "quote": "Every dimension participates in encoding every concept, just as every point on a holographic plate participates in encoding every part of the scene.",
       "section": "Distributed, Not Localized",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-375",
+      "id": "embeddinglab-stmt-379",
       "quote": "This is why you can't point to a single weight and say “this is where the model knows about dogs.” The knowledge is *everywhere and nowhere*, distributed holographically across the entire vector.",
       "section": "Distributed, Not Localized",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-376",
+      "id": "embeddinglab-stmt-380",
       "quote": "This has a remarkable consequence: **graceful degradation**.",
       "section": "Graceful Degradation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-377",
+      "id": "embeddinglab-stmt-381",
       "quote": "If you zero out a random subset of dimensions in an embedding vector, the concept doesn't vanish, it gets noisier, like a scratched hologram.",
       "section": "Graceful Degradation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-378",
+      "id": "embeddinglab-stmt-382",
       "quote": "The remaining dimensions still carry partial information about the full pattern.",
       "section": "Graceful Degradation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-379",
+      "id": "embeddinglab-stmt-383",
       "quote": "This is fundamentally different from a lookup table, where deleting an entry destroys the information completely.",
       "section": "Graceful Degradation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-380",
+      "id": "embeddinglab-stmt-384",
       "quote": "The fraction of information retained scales smoothly with the fraction of dimensions preserved:",
       "section": "Graceful Degradation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-381",
+      "id": "embeddinglab-stmt-385",
       "quote": "where $k$ is the number of surviving dimensions and $d$ is the total dimensionality.",
       "section": "Graceful Degradation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-382",
+      "id": "embeddinglab-stmt-386",
       "quote": "Even with half the dimensions zeroed out, you retain roughly $\\sqrt{0.5} \\approx 71\\%$ of the signal, enough to still identify the concept.",
       "section": "Graceful Degradation",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-383",
+      "id": "embeddinglab-stmt-387",
       "quote": "The flip side of holographic storage is **interference**.",
       "section": "Interference as the Price of Compression",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-384",
+      "id": "embeddinglab-stmt-388",
       "quote": "Because every concept is spread across every dimension, concepts inevitably overlap.",
       "section": "Interference as the Price of Compression",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-385",
+      "id": "embeddinglab-stmt-389",
       "quote": "The dot product between “Dog” and “Cat” is not zero, their patterns share components, just as two holograms recorded on the same plate create ghost images of each other.",
       "section": "Interference as the Price of Compression",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-386",
+      "id": "embeddinglab-stmt-390",
       "quote": "This is the same superposition phenomenon we explored earlier, but seen from the holographic perspective: the embedding space is a shared recording medium, and every concept is written across its entire volume.",
       "section": "Interference as the Price of Compression",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-387",
+      "id": "embeddinglab-stmt-391",
       "quote": "Below, you can explore this holographic property directly.",
       "section": "Interference as the Price of Compression",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-388",
+      "id": "embeddinglab-stmt-392",
       "quote": "A set of concept vectors are embedded in a simulated space.",
       "section": "Interference as the Price of Compression",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-389",
+      "id": "embeddinglab-stmt-393",
       "quote": "Use the **Damage slider** to randomly zero out increasing fractions of the dimensions.",
       "section": "Interference as the Price of Compression",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-390",
+      "id": "embeddinglab-stmt-394",
       "quote": "Watch how the **pairwise similarity structure**, which concepts are near which, degrades gracefully rather than catastrophically.",
       "section": "Interference as the Price of Compression",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-391",
+      "id": "embeddinglab-stmt-395",
       "quote": "The **similarity matrix** on the right preserves its overall pattern even under severe damage, just as a scratched hologram preserves the full scene at lower resolution.",
       "section": "Interference as the Price of Compression",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-392",
+      "id": "embeddinglab-stmt-396",
       "quote": "Imagine the embedding space as a vast, empty continent.",
       "section": "Voronoi Cells: The Territories of Meaning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-393",
+      "id": "embeddinglab-stmt-397",
       "quote": "Each token the model knows, every word, subword, and symbol, plants a flag at its vector position.",
       "section": "Voronoi Cells: The Territories of Meaning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-394",
+      "id": "embeddinglab-stmt-398",
       "quote": "Now ask: **for every possible point in the space, which token's flag is closest?** The answer carves the entire space into territories, one per token, where every point inside a territory is closer to that territory's token than to any other.",
       "section": "Voronoi Cells: The Territories of Meaning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-395",
+      "id": "embeddinglab-stmt-399",
       "quote": "These territories are called **Voronoi cells**.",
       "section": "Voronoi Cells: The Territories of Meaning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-396",
+      "id": "embeddinglab-stmt-400",
       "quote": "Formally, given a set of seed points $S = \\{s_1, s_2, \\ldots, s_n\\}$, the Voronoi cell for seed $s_i$ is the set of all points closer to $s_i$ than to any other seed:",
       "section": "What Is a Voronoi Diagram?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-397",
+      "id": "embeddinglab-stmt-401",
       "quote": "The boundaries between cells are **equidistant surfaces**, the set of points exactly halfway between two neighboring seeds.",
       "section": "What Is a Voronoi Diagram?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-398",
+      "id": "embeddinglab-stmt-402",
       "quote": "In 2D, these boundaries are line segments; in 768 dimensions, they are high-dimensional hyperplanes.",
       "section": "What Is a Voronoi Diagram?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-399",
+      "id": "embeddinglab-stmt-403",
       "quote": "This is not just a mathematical curiosity.",
       "section": "What Is a Voronoi Diagram?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-400",
+      "id": "embeddinglab-stmt-404",
       "quote": "The Voronoi tessellation is **mathematically equivalent to the decision boundary of a nearest-neighbor classifier**: any new point that lands in a cell gets assigned to that cell's token.",
       "section": "What Is a Voronoi Diagram?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-401",
+      "id": "embeddinglab-stmt-405",
       "quote": "When an LLM's decoder maps a hidden state back to a token, it is essentially asking “which token's Voronoi cell does this vector fall into?”",
       "section": "What Is a Voronoi Diagram?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-402",
+      "id": "embeddinglab-stmt-406",
       "quote": "* **Decoding as territory lookup:** The final layer of a language model computes a score for each token in the vocabulary.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-403",
+      "id": "embeddinglab-stmt-407",
       "quote": "The token with the highest score wins.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-404",
+      "id": "embeddinglab-stmt-408",
       "quote": "Geometrically, this is the Voronoi picture of a nearest-neighbor lookup — exact when the token vectors have comparable lengths, so that the highest dot product really is the closest seed — and in that case the cell boundaries *are* the decision boundaries.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-405",
+      "id": "embeddinglab-stmt-409",
       "quote": "* **Cell size is a geometric, not linguistic, property:** A cell's volume depends only on the positions of the neighboring seeds and the chosen metric.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-406",
+      "id": "embeddinglab-stmt-410",
       "quote": "Frequency does not automatically inflate a cell.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-407",
+      "id": "embeddinglab-stmt-411",
       "quote": "Whether common words like “the” end up with large cells, making them easier to “land in”, is an *empirical* question about the learned embedding geometry, not a consequence of the Voronoi construction itself.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-408",
+      "id": "embeddinglab-stmt-412",
       "quote": "* **Neighbors may reflect semantics, but only if the embedding is well-trained:** Sharing a boundary merely means geometric closeness under the chosen metric.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-409",
+      "id": "embeddinglab-stmt-413",
       "quote": "It translates into semantic relatedness only insofar as the trained embedding geometry actually groups related words together, which is true of well-trained models but is not guaranteed by the Voronoi construction.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-410",
+      "id": "embeddinglab-stmt-414",
       "quote": "“Dog” and “Cat” may share a boundary in a good embedding; nothing in the geometry *requires* it.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-411",
+      "id": "embeddinglab-stmt-415",
       "quote": "* **Interpolation risks:** When you average two token vectors (e.g., for smoothing or mixing), the result might land in a *third* token's Voronoi cell entirely, a concept that is neither of the two you intended.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-412",
+      "id": "embeddinglab-stmt-416",
       "quote": "The Voronoi structure explains why naive interpolation in embedding space can produce surprising results.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-413",
+      "id": "embeddinglab-stmt-417",
       "quote": "Below, you can explore a 2D Voronoi diagram that simulates how an embedding space is partitioned into token territories.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-414",
+      "id": "embeddinglab-stmt-418",
       "quote": "**Drag tokens** to see how the boundaries shift in real time.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-415",
+      "id": "embeddinglab-stmt-419",
       "quote": "**Click anywhere** in empty space to see which token “owns” that point and how far it is from the boundary.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-416",
+      "id": "embeddinglab-stmt-420",
       "quote": "Toggle between different example configurations to see how the geometry changes for different semantic neighborhoods.",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-417",
+      "id": "embeddinglab-stmt-421",
       "quote": "The same geometry, pushed further — the latent semantic manifold, the Voronoi *margin* as a measure of genuine ambiguity, the linear growth of the expressibility gap, and the convexity of natural properties (criterion P) — is developed in [The foam of meaning](foam_of_meaning).",
       "section": "Why This Matters for LLMs",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-418",
+      "id": "embeddinglab-stmt-422",
       "quote": "The embedding space is not a solid block of uniformly packed vectors.",
       "section": "High-Dimensional Holes: The Swiss Cheese of Meaning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-419",
+      "id": "embeddinglab-stmt-423",
       "quote": "It is more like **Swiss cheese**, riddled with holes, voids, and cavities where no token ever lives.",
       "section": "High-Dimensional Holes: The Swiss Cheese of Meaning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-420",
+      "id": "embeddinglab-stmt-424",
       "quote": "These are not random gaps; they are structurally meaningful absences.",
       "section": "High-Dimensional Holes: The Swiss Cheese of Meaning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-421",
+      "id": "embeddinglab-stmt-425",
       "quote": "Researchers use a technique from algebraic topology called **Persistent Homology** to detect and measure these holes systematically.",
       "section": "High-Dimensional Holes: The Swiss Cheese of Meaning",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-422",
+      "id": "embeddinglab-stmt-426",
       "quote": "Persistent Homology is an algebraic method for detecting topological features, connected components, loops, cavities, in discrete point cloud data.",
       "section": "What Is Persistent Homology?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-423",
+      "id": "embeddinglab-stmt-427",
       "quote": "The core idea is beautifully simple:",
       "section": "What Is Persistent Homology?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-424",
+      "id": "embeddinglab-stmt-428",
       "quote": "**Start with your data points** (token vectors in the embedding space).",
       "section": "What Is Persistent Homology?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-425",
+      "id": "embeddinglab-stmt-429",
       "quote": "**Grow a ball** around each point, starting at radius $r = 0$.",
       "section": "What Is Persistent Homology?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-426",
+      "id": "embeddinglab-stmt-430",
       "quote": "**As $r$ increases**, balls begin to overlap, forming connections.",
       "section": "What Is Persistent Homology?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-427",
+      "id": "embeddinglab-stmt-431",
       "quote": "At some radius, a loop appears, a ring of connected points surrounding an empty region.",
       "section": "What Is Persistent Homology?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-428",
+      "id": "embeddinglab-stmt-432",
       "quote": "At a larger radius, the loop might fill in and disappear.",
       "section": "What Is Persistent Homology?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-429",
+      "id": "embeddinglab-stmt-433",
       "quote": "**Track the birth and death** of each topological feature.",
       "section": "What Is Persistent Homology?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-430",
+      "id": "embeddinglab-stmt-434",
       "quote": "Features that persist across a wide range of radii are “real” structure; features that flicker in and out are noise.",
       "section": "What Is Persistent Homology?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-431",
+      "id": "embeddinglab-stmt-435",
       "quote": "The result is a **persistence diagram**: a scatter plot where each point represents a topological feature (a hole), with its birth radius on one axis and death radius on the other.",
       "section": "What Is Persistent Homology?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-432",
+      "id": "embeddinglab-stmt-436",
       "quote": "Points far from the diagonal represent **robust, persistent holes**, genuine voids in the data.",
       "section": "What Is Persistent Homology?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-433",
+      "id": "embeddinglab-stmt-437",
       "quote": "A feature with high persistence is a real structural void, not an artifact of sparse sampling.",
       "section": "What Is Persistent Homology?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-434",
+      "id": "embeddinglab-stmt-438",
       "quote": "The holes in the embedding space are not just geometric curiosities.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-435",
+      "id": "embeddinglab-stmt-439",
       "quote": "They mark regions where the **sampled points leave a gap** — a sparse region, a genuine low-dimensional manifold, or a separation between clusters.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-436",
+      "id": "embeddinglab-stmt-440",
       "quote": "Reading a hole as a logical impossibility is an interpretation, not a result:",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-437",
+      "id": "embeddinglab-stmt-441",
       "quote": "* **Semantic voids:** A hole in the filtration means the sample leaves that region empty.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-438",
+      "id": "embeddinglab-stmt-442",
       "quote": "That can reflect sparse sampling, a genuine low-dimensional manifold, or a gap between clusters; it is evidence about the *geometry of the sample*, not by itself a proof that the corresponding concept is logically impossible.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-439",
+      "id": "embeddinglab-stmt-443",
       "quote": "* **The negative image of knowledge:** If the filled regions of the space represent everything the model *can* express, the holes represent everything it *cannot*.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-440",
+      "id": "embeddinglab-stmt-444",
       "quote": "They are the **negative imprint of our world-understanding**, the shape of the unsayable.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-441",
+      "id": "embeddinglab-stmt-445",
       "quote": "* **Forbidden interpolations:** These holes explain why you can't smoothly interpolate between certain concepts.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-442",
+      "id": "embeddinglab-stmt-446",
       "quote": "The path from “alive” to “dead” doesn't pass through a smooth gradient, it passes through a void, because there is no coherent concept “half-alive-half-dead” (at least not in the way the model has learned to organize meaning).",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-443",
+      "id": "embeddinglab-stmt-447",
       "quote": "* **Structural constraints:** Some holes reflect grammatical or logical constraints.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-444",
+      "id": "embeddinglab-stmt-448",
       "quote": "There is no token that functions simultaneously as a noun, verb, adjective, and preposition, that region of the space is necessarily empty.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-445",
+      "id": "embeddinglab-stmt-449",
       "quote": "The visualization below lets you explore this.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-446",
+      "id": "embeddinglab-stmt-450",
       "quote": "A 2D point cloud represents token vectors.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-447",
+      "id": "embeddinglab-stmt-451",
       "quote": "As you increase the **radius parameter $r$**, connections form between nearby points, loops appear around empty regions, and the persistent homology algorithm detects and highlights the **holes**, the voids that persist across a wide range of radii.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-448",
+      "id": "embeddinglab-stmt-452",
       "quote": "The **persistence diagram** on the right separates real structure from noise.",
       "section": "What the Holes Mean",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-449",
+      "id": "embeddinglab-stmt-453",
       "quote": "In geometry, a **polytope** is the high-dimensional generalization of a polygon.",
       "section": "Polytope Hulls: The Boundaries of the Conceivable",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-450",
+      "id": "embeddinglab-stmt-454",
       "quote": "In 2D, it's a polygon; in 3D, a polyhedron; in 768 dimensions, it's a shape with thousands of facets that no human can visualize directly.",
       "section": "Polytope Hulls: The Boundaries of the Conceivable",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-451",
+      "id": "embeddinglab-stmt-455",
       "quote": "Formally, a polytope can be defined as the **convex hull** of a finite set of points, the smallest convex body that encloses all of them.",
       "section": "Polytope Hulls: The Boundaries of the Conceivable",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-452",
+      "id": "embeddinglab-stmt-456",
       "quote": "Now apply this to the embedding space.",
       "section": "Polytope Hulls: The Boundaries of the Conceivable",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-453",
+      "id": "embeddinglab-stmt-457",
       "quote": "Take every concept the model associates with “morally good”, kindness, honesty, generosity, courage, compassion, and compute their convex hull.",
       "section": "Polytope Hulls: The Boundaries of the Conceivable",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-454",
+      "id": "embeddinglab-stmt-458",
       "quote": "You get a polytope: the **geometric territory of moral goodness** in the embedding space.",
       "section": "Polytope Hulls: The Boundaries of the Conceivable",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-455",
+      "id": "embeddinglab-stmt-459",
       "quote": "Do the same for “morally bad”, cruelty, deception, greed, cowardice, and you get a second polytope.",
       "section": "Polytope Hulls: The Boundaries of the Conceivable",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-456",
+      "id": "embeddinglab-stmt-460",
       "quote": "The fascinating part is what happens **between** these polytopes:",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-457",
+      "id": "embeddinglab-stmt-461",
       "quote": "* **Wide separation:** Where the “good” and “bad” hulls are far apart, the model is **morally decisive**.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-458",
+      "id": "embeddinglab-stmt-462",
       "quote": "“Kindness” is unambiguously inside the good hull and far from the bad one.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-459",
+      "id": "embeddinglab-stmt-463",
       "quote": "* **Overlap zone:** Where the hulls **interpenetrate**, you find concepts that the model cannot cleanly classify, **moral dilemmas**.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-460",
+      "id": "embeddinglab-stmt-464",
       "quote": "“Mercy killing,” “white lies,” “civil disobedience,” “necessary violence”, these concepts live in the geometric intersection of good and bad.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-461",
+      "id": "embeddinglab-stmt-465",
       "quote": "The overlap *is* the dilemma, rendered as geometry.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-462",
+      "id": "embeddinglab-stmt-466",
       "quote": "* **Boundary zone:** Concepts near the surface of a hull but not deep inside it are **borderline cases**, the model is uncertain.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-463",
+      "id": "embeddinglab-stmt-467",
       "quote": "The distance from a point to the hull surface is a geometric measure of moral confidence.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-464",
+      "id": "embeddinglab-stmt-468",
       "quote": "This generalizes far beyond morality.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-465",
+      "id": "embeddinglab-stmt-469",
       "quote": "You can compute polytope hulls for any pair of categories:",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-466",
+      "id": "embeddinglab-stmt-470",
       "quote": "* **“Science” vs. “Pseudoscience”**, the overlap contains contested concepts like certain alternative medicine claims.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-467",
+      "id": "embeddinglab-stmt-471",
       "quote": "* **“Formal” vs. “Informal” language**, the overlap contains registers that shift depending on context.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-468",
+      "id": "embeddinglab-stmt-472",
       "quote": "* **“Alive” vs. “Dead”**, the overlap contains viruses, dormant seeds, philosophical zombies.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-469",
+      "id": "embeddinglab-stmt-473",
       "quote": "The volume of the intersection is a **geometric measure of conceptual ambiguity** between two categories.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-470",
+      "id": "embeddinglab-stmt-474",
       "quote": "Two conceptual categories are represented as polytope hulls (convex envelopes) in 2D.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-471",
+      "id": "embeddinglab-stmt-475",
       "quote": "**Drag individual concept points** to reshape the hulls.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-472",
+      "id": "embeddinglab-stmt-476",
       "quote": "Watch the **overlap zone**, the geometric dilemma, grow and shrink in real time.",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-473",
+      "id": "embeddinglab-stmt-477",
       "quote": "Switch between different category pairs to see how the model's “moral geometry” differs from its “linguistic geometry” or its “ontological geometry.”",
       "section": "Where Polytopes Overlap: The Geometry of Dilemmas",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-474",
+      "id": "embeddinglab-stmt-478",
       "quote": "One of the more elegant ways to *model* grammatical transformations in embedding spaces is to treat them not as **translations** (shifting a vector in a direction) but approximately as **rotations** (spinning a vector around an axis).",
       "section": "Vector Rotations as Grammar Operators",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-475",
+      "id": "embeddinglab-stmt-479",
       "quote": "Grammar, in this view, is not a push but a turn, an idealization that captures many inflections surprisingly well.",
       "section": "Vector Rotations as Grammar Operators",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-476",
+      "id": "embeddinglab-stmt-480",
       "quote": "Take a cloud of present-tense verb vectors: “run,” “eat,” “write,” “speak,” “build.” They form a cluster in the embedding space.",
       "section": "The Carousel of Tense",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-477",
+      "id": "embeddinglab-stmt-481",
       "quote": "Now take their past-tense counterparts: “ran,” “ate,” “wrote,” “spoke,” “built.” These form a second cluster.",
       "section": "The Carousel of Tense",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-478",
+      "id": "embeddinglab-stmt-482",
       "quote": "The relationship between the two clusters is not a simple offset vector (like the famous “king − man + woman = queen” analogy).",
       "section": "The Carousel of Tense",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-479",
+      "id": "embeddinglab-stmt-483",
       "quote": "Instead, the shift can be approximated by rotating the entire cloud by a roughly consistent angle around an axis in the high-dimensional space, again an approximation, since real inflections are rarely perfectly uniform across the vocabulary.",
       "section": "The Carousel of Tense",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-480",
+      "id": "embeddinglab-stmt-484",
       "quote": "where $\\mathbf{R}_{\\text{tense}}$ is a **rotation matrix**, the same matrix applied to every verb.",
       "section": "The Carousel of Tense",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-481",
+      "id": "embeddinglab-stmt-485",
       "quote": "This equation is best read as an *analytical model* rather than a literal geometric law: the approximation holds reasonably well for many common verb pairs, but real embeddings are noisy and no single rotation maps every inflection exactly.",
       "section": "The Carousel of Tense",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-482",
+      "id": "embeddinglab-stmt-486",
       "quote": "Calling tense a “rotational symmetry” of language is a useful simplification that captures a statistical tendency, not an exact symmetry.",
       "section": "The Carousel of Tense",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-483",
+      "id": "embeddinglab-stmt-487",
       "quote": "This makes deep geometric sense:",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-484",
+      "id": "embeddinglab-stmt-488",
       "quote": "* **Tense is cyclical:** Languages often treat time as having a cyclical quality, past patterns repeat, future expectations echo past experiences.",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-485",
+      "id": "embeddinglab-stmt-489",
       "quote": "A rotation naturally encodes cyclical structure, while a translation implies a one-way shift.",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-486",
+      "id": "embeddinglab-stmt-490",
       "quote": "* **Meaning preservation:** A rotation preserves the **magnitude** (length) of a vector, the “importance” or “activation strength” of the concept doesn't change when you change its tense.",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-487",
+      "id": "embeddinglab-stmt-491",
       "quote": "Only its **direction** changes.",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-488",
+      "id": "embeddinglab-stmt-492",
       "quote": "“Run” and “ran” are equally “verb-like”; they just point in slightly different directions.",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-489",
+      "id": "embeddinglab-stmt-493",
       "quote": "* **Composability:** Rotations compose cleanly.",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-490",
+      "id": "embeddinglab-stmt-494",
       "quote": "Applying the tense rotation twice doesn't send you to nonsense, it might approximate another grammatical form (e.g., past → pluperfect).",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-491",
+      "id": "embeddinglab-stmt-495",
       "quote": "Translations, by contrast, would drift further and further from meaningful regions.",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-492",
+      "id": "embeddinglab-stmt-496",
       "quote": "This generalizes beyond tense.",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-493",
+      "id": "embeddinglab-stmt-497",
       "quote": "Other grammatical operations that behave as rotations include:",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-494",
+      "id": "embeddinglab-stmt-498",
       "quote": "* **Singular → Plural** (nouns rotate by a consistent angle)",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-495",
+      "id": "embeddinglab-stmt-499",
       "quote": "* **Active → Passive** voice",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-496",
+      "id": "embeddinglab-stmt-500",
       "quote": "* **Positive → Comparative → Superlative** (adjectives)",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-497",
+      "id": "embeddinglab-stmt-501",
       "quote": "* **Nominalization** (verb → noun: “discover” → “discovery”)",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-498",
+      "id": "embeddinglab-stmt-502",
       "quote": "The embedding space is, in a sense, a **grammar carousel**: each grammatical transformation is a specific rotation, and the model has learned these rotations purely from statistical co-occurrence, nobody programmed the rotation matrices.",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-499",
+      "id": "embeddinglab-stmt-503",
       "quote": "A cloud of verbs is shown in their present-tense positions.",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-500",
+      "id": "embeddinglab-stmt-504",
       "quote": "Apply the **tense rotation** to watch the entire cloud spin to its past-tense configuration.",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-501",
+      "id": "embeddinglab-stmt-505",
       "quote": "Adjust the **rotation angle** to see how the transformation works, and toggle between different grammatical operations to see that each one is a distinct rotation around a different axis.",
       "section": "Why Rotation, Not Translation?",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-502",
+      "id": "embeddinglab-stmt-506",
       "quote": "When a language model stops treating a word like",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-503",
+      "id": "embeddinglab-stmt-507",
       "quote": "as a mere symbol and instead represents it internally as a vector, you get something like",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-504",
+      "id": "embeddinglab-stmt-508",
       "quote": "and suddenly relationships can be expressed geometrically:",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-505",
+      "id": "embeddinglab-stmt-509",
       "quote": "Read out loud, left to right: *“the distance from cat to dog is less than the distance from cat to quasar.”* Each `d(·,·)` is a plain Euclidean distance, the same formula as the straight-line gap between two points on a map, except measured between two high-dimensional vectors instead.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-506",
+      "id": "embeddinglab-stmt-510",
       "quote": "The whole sentence, in plain English, is just: **cats are semantically closer to dogs than to quasars.** Geometry is doing nothing more than letting us *write that down* in a form a computer can optimize.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-507",
+      "id": "embeddinglab-stmt-511",
       "quote": "Geometry also gives us **directions that encode semantic shifts**.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-508",
+      "id": "embeddinglab-stmt-512",
       "quote": "Add a vector to a word and you get a different word.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-509",
+      "id": "embeddinglab-stmt-513",
       "quote": "Add the *same* vector to a different starting word and you get yet another word.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-510",
+      "id": "embeddinglab-stmt-514",
       "quote": "If both results make sense, that vector is doing real work: it encodes a specific kind of transformation.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-511",
+      "id": "embeddinglab-stmt-515",
       "quote": "The offset from “Man” to “King” is roughly the same as the offset from “Woman” to “Queen.” That shared displacement, the “royalty” direction, is something the model inferred from usage, not something anyone wrote down.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-512",
+      "id": "embeddinglab-stmt-516",
       "quote": "The same logic governs grammar.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-513",
+      "id": "embeddinglab-stmt-517",
       "quote": "Rotate the cloud of present-tense verbs (“run,” “eat,” “write”) by a fixed angle and you land in the cloud of past-tense verbs (“ran,” “ate,” “wrote”).",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-514",
+      "id": "embeddinglab-stmt-518",
       "quote": "Apply that rotation to “run” and you arrive near “ran”; apply it to “eat” and you arrive near “ate.” Distances measure *where* a word is; directions show you how to *move* one word into another.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-515",
+      "id": "embeddinglab-stmt-519",
       "quote": "This isn't magic because “the universe is secretly one giant vector space.” It isn't a metaphysical claim that reality has some hidden geometric structure.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-516",
+      "id": "embeddinglab-stmt-520",
       "quote": "The trick is simpler than that: **geometry gives us a language in which relationships can be represented continuously and compositionally.**",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-517",
+      "id": "embeddinglab-stmt-521",
       "quote": "* **Continuous**, because similarity becomes a *degree* rather than a binary flag.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-518",
+      "id": "embeddinglab-stmt-522",
       "quote": "Two concepts can be almost-similar, very-similar, or barely-related, and that gradient is preserved.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-519",
+      "id": "embeddinglab-stmt-523",
       "quote": "* **Compositional**, because concepts combine through vector arithmetic, and addition is precisely the operation geometry already supports natively.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-520",
+      "id": "embeddinglab-stmt-524",
       "quote": "A “royalty” direction, applied anywhere, transforms Man into King.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-521",
+      "id": "embeddinglab-stmt-525",
       "quote": "A “tense” rotation, applied anywhere, transforms run into ran.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-522",
+      "id": "embeddinglab-stmt-526",
       "quote": "This is enormously practical for learning.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-523",
+      "id": "embeddinglab-stmt-527",
       "quote": "Optimization is well-defined.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-524",
+      "id": "embeddinglab-stmt-528",
       "quote": "A model whose representations live in a continuous space can be *tuned*, nudged by gradient descent the way a sculptor tunes a shape.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-525",
+      "id": "embeddinglab-stmt-529",
       "quote": "Discrete symbols offer no such handle: you cannot take a half-step from “cat” toward “dog,” and there is no meaningful direction in which to descend.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-526",
+      "id": "embeddinglab-stmt-530",
       "quote": "The power of the embedding space isn't that language *is* geometry.",
       "section": "Why Geometry Works",
       "kind": "statement"
     },
     {
-      "id": "embeddinglab-stmt-527",
+      "id": "embeddinglab-stmt-531",
       "quote": "It's that geometry happens to be exactly the right mathematical structure for representing *relations*, and language, as Saussure understood a century before any of this existed, is nothing if not a system of differences.",
       "section": "Why Geometry Works",
       "kind": "statement"

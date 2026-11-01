@@ -32,7 +32,14 @@
     "chomsky1959review",
     "chm",
     "emergenceofmodernhumanbehaviour",
-    "picamundurucu2004"
+    "picamundurucu2004",
+    "newell1976empirical",
+    "rumelhart1986pdp",
+    "knill2004bayesian",
+    "clark2013whatevernext",
+    "baddeley1974workingmemory",
+    "squire2004memorysystems",
+    "hickok2007cortical"
   ],
   "claims": [
     {
@@ -575,6 +582,58 @@
         "picamundurucu2004"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "human-mind-symbol-system-definition",
+      "subject": "physical-symbol-system",
+      "predicate": "definition",
+      "value": "a physical symbol system has the necessary and sufficient means for general intelligent action",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "a physical symbol system has the necessary and sufficient means for general intelligent action",
+      "citation_keys": [
+        "newell1976empirical"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human-mind-working-memory-components",
+      "subject": "working-memory",
+      "predicate": "components",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "split working memory into a central executive, a phonological loop and a visuospatial sketchpad",
+      "citation_keys": [
+        "baddeley1974workingmemory"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human-mind-long-term-memory-systems",
+      "subject": "long-term-memory",
+      "predicate": "systems",
+      "value": "declarative and nondeclarative",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "declarative memory (facts and events) is distinguished from nondeclarative memory",
+      "citation_keys": [
+        "squire2004memorysystems"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "human-mind-language-streams",
+      "subject": "language-processing",
+      "predicate": "streams",
+      "value": 2,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "the dual-stream model describes a ventral stream that maps sound to meaning and a dorsal stream that maps sound to articulation",
+      "citation_keys": [
+        "hickok2007cortical"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -975,6 +1034,42 @@
       "citation_keys": [
         "piraha2004",
         "picamundurucu2004"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-physical-symbol-system",
+      "from": "physical-symbol-system",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a physical symbol system has the necessary and sufficient means for general intelligent action",
+      "citation_keys": [
+        "newell1976empirical"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-long-term-memory",
+      "from": "long-term-memory",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "declarative memory (facts and events) is distinguished from nondeclarative memory",
+      "citation_keys": [
+        "squire2004memorysystems"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-human_mind-language-processing",
+      "from": "language-processing",
+      "to": "human-mind",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "the dual-stream model describes a ventral stream that maps sound to meaning and a dorsal stream that maps sound to articulation",
+      "citation_keys": [
+        "hickok2007cortical"
       ],
       "confidence": "provenance"
     }
@@ -1894,798 +1989,900 @@
     },
     {
       "id": "human_mind-stmt-153",
+      "quote": "The cognitive revolution gave AI its first working ontology: **symbols**.",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-154",
+      "quote": "Newell and Simon's *Physical Symbol System Hypothesis* made the claim explicit -- a physical symbol system has the necessary and sufficient means for general intelligent action (\\cite[Newell and Simon, 1976]{newell1976empirical}).",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-155",
+      "quote": "Symbols are discrete, compositional and manipulable; a program that searches a symbol tree is, on this view, a model of thought.",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-156",
+      "quote": "Connectionism offered the other ontology: **distributed vectors**.",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-157",
+      "quote": "In *Parallel Distributed Processing*, Rumelhart, McClelland and the PDP group argued that knowledge is stored in the weights of a network, that representations are patterns of activation rather than discrete tokens, and that learning is a gradual adjustment of those weights (\\cite[Rumelhart et al., 1986]{rumelhart1986pdp}).",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-158",
+      "quote": "The two programs disagreed about almost everything -- the unit of representation, the role of rules, the plausibility of learning from experience -- and the disagreement is still live.",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-159",
+      "quote": "Modern LLMs are connectionist machines that can nevertheless implement symbol-like algorithms: they learn to copy, sort, bind and compose, but they do it with vectors and attention rather than with an explicit symbol table.",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-160",
+      "quote": "The lesson is not that one side won; it is that the mind supports both descriptions at different levels, and AI inherited the tension.",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-161",
+      "quote": "The **Bayesian brain** is the third strand.",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-162",
+      "quote": "Perception is underdetermined by the senses, so the brain must combine noisy evidence with prior expectations.",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-163",
+      "quote": "Knill and Pouget describe the brain as performing probabilistic inference, with neural populations representing probability distributions and combining them according to Bayes' rule (\\cite[Knill and Pouget, 2004]{knill2004bayesian}).",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-164",
+      "quote": "Predictive processing extends this to action and learning: the brain minimizes prediction error, and the model is updated when the error is large (\\cite[Clark, 2013]{clark2013whatevernext}).",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-165",
+      "quote": "This is the cognitive-science ancestor of the loss function: a mind that minimizes surprise is doing something formally similar to a model that minimizes cross-entropy.",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-166",
+      "quote": "Baddeley and Hitch's multicomponent model split working memory into a central executive, a phonological loop and a visuospatial sketchpad, replacing the single short-term box (\\cite[Baddeley and Hitch, 1974]{baddeley1974workingmemory}).",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-167",
+      "quote": "Long-term memory is likewise plural: declarative memory (facts and events) is distinguished from nondeclarative memory (skills, habits, priming), and within declarative memory, episodic memory (what happened to me) is distinguished from semantic memory (what I know) (\\cite[Squire, 2004]{squire2004memorysystems}).",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-168",
+      "quote": "Language, too, is not a single module: the dual-stream model describes a ventral stream that maps sound to meaning and a dorsal stream that maps sound to articulation (\\cite[Hickok and Poeppel, 2007]{hickok2007cortical}).",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-169",
+      "quote": "These distinctions matter for AI because they mark the different jobs a model must do: hold a context, retrieve a fact, learn a skill, and turn a string into a meaning and an action.",
+      "section": "Symbols, vectors, and the Bayesian brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-170",
       "quote": "No single human, in a million years, would have invented a transistor.",
       "section": "Cumulative Cultural Evolution and the Ratchet",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-154",
+      "id": "human_mind-stmt-171",
       "quote": "The mind that built AI is not one brain; it is a **culture**, and the distinctive human trait is not that our brains are large but that our cultures **accumulate**.",
       "section": "Cumulative Cultural Evolution and the Ratchet",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-155",
+      "id": "human_mind-stmt-172",
       "quote": "\\citeauthor{henrich2016secret} argues in \\citetitle{henrich2016secret} that human \"smarts\" are mostly **cultural**, that we are, in his phrase, \"cognitively niche-constructing\" animals who build an external world of tools and ideas, and that the individual human brain has *evolved* in part to make use of that accumulated knowledge.",
       "section": "Cumulative Cultural Evolution and the Ratchet",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-156",
+      "id": "human_mind-stmt-173",
       "quote": "The key mechanism is the **ratchet effect**: an innovation, once made, can be kept, copied, improved, and passed on, so that each generation starts from where the last one *ended* rather than from scratch.",
       "section": "Cumulative Cultural Evolution and the Ratchet",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-157",
+      "id": "human_mind-stmt-174",
       "quote": "This is the \"iterative innovation\" that makes AI possible, and it is a cultural, not a biological, fact.",
       "section": "Cumulative Cultural Evolution and the Ratchet",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-158",
+      "id": "human_mind-stmt-175",
       "quote": "A chimpanzee population does not ratchet: a clever trick dies with the chimp who invented it.",
       "section": "Cumulative Cultural Evolution and the Ratchet",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-159",
+      "id": "human_mind-stmt-176",
       "quote": "The \"training data\" of a modern model is, in the deepest sense, the **ratcheted output of hundreds of thousands of generations** of human iteration, all of it compressed into a corpus.",
       "section": "Cumulative Cultural Evolution and the Ratchet",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-160",
+      "id": "human_mind-stmt-177",
       "quote": "The model is not learning *from nothing*; it is learning from the accumulated, ratcheted, improved-upon work of the species.",
       "section": "Cumulative Cultural Evolution and the Ratchet",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-161",
+      "id": "human_mind-stmt-178",
       "quote": "The \"cultural brain\" is the first and most important \"data set\" in the history of intelligence.",
       "section": "Cumulative Cultural Evolution and the Ratchet",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-162",
+      "id": "human_mind-stmt-179",
       "quote": "\\citeauthorlastnameand{tomasello2014thinking} argues that the specifically human kind of thinking is not just *individual* cognition but **shared** intentionality: the ability to engage with others in a common goal, a common attention, a \"we\" project, rather than just a parallel set of \"I\" projects.",
       "section": "Shared Intentionality and \"We-Mode\" Thinking",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-163",
+      "id": "human_mind-stmt-180",
       "quote": "A human does not just *see* the same thing as a fellow human; she sees it **with** them, and the act of joint attention creates a common ground from which new, collaborative thought can grow.",
       "section": "Shared Intentionality and \"We-Mode\" Thinking",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-164",
+      "id": "human_mind-stmt-181",
       "quote": "It is this \"we-mode\" that makes **teaching, learning from others, and cumulative culture** possible in the first place.",
       "section": "Shared Intentionality and \"We-Mode\" Thinking",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-165",
+      "id": "human_mind-stmt-182",
       "quote": "For AI, the relevance is the \"social\" in \"social learning\" and the \"shared\" in \"shared representations\".",
       "section": "Shared Intentionality and \"We-Mode\" Thinking",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-166",
+      "id": "human_mind-stmt-183",
       "quote": "A model trained on the output of many minds is, in a sense, a **collective mind**: it carries the shared biases, the common ground, the \"we\" assumptions of the culture that produced its training data.",
       "section": "Shared Intentionality and \"We-Mode\" Thinking",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-167",
+      "id": "human_mind-stmt-184",
       "quote": "The \"alignment\" problem, the problem of making a model *share* a community's values and goals, is a direct descendant of the problem of shared intentionality: how do two minds, or a mind and a machine, get to the same \"we\"?",
       "section": "Shared Intentionality and \"We-Mode\" Thinking",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-168",
+      "id": "human_mind-stmt-185",
       "quote": "The fact that the human mind was built to *coordinate with other minds* is what makes the \"interface\" between a model and its users even possible, and it is why a model that \"gets\" the user is not just pattern-matching but, in a loose and important sense, **reading a mind**.",
       "section": "Shared Intentionality and \"We-Mode\" Thinking",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-169",
+      "id": "human_mind-stmt-186",
       "quote": "The final, and perhaps deepest, move is the **externalization** of the mind.",
       "section": "Externalized Memory and the Extended Mind",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-170",
+      "id": "human_mind-stmt-187",
       "quote": "\\citeauthorlastnameand{clarkchalmers1998extended} proposed the \"extended mind\" thesis: that the boundary of a mind does not have to be the skull, that a notebook, a set of notes, a physical artifact that a person *reliably* uses as a part of her thinking, can count as a genuine part of her cognition, on a par with a memory in the head.",
       "section": "Externalized Memory and the Extended Mind",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-171",
+      "id": "human_mind-stmt-188",
       "quote": "The **abacus** in [the untold history](untold_history_ii), the **writing system**, the **book**, the **map** and the **ledger** are all, on this account, parts of the mind that have been placed outside the body.",
       "section": "Externalized Memory and the Extended Mind",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-172",
+      "id": "human_mind-stmt-189",
       "quote": "This is the direct intellectual ancestor of the **vector database** and the **retrieval** system.",
       "section": "Externalized Memory and the Extended Mind",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-173",
+      "id": "human_mind-stmt-190",
       "quote": "A large language model with a memory, an RAG setup, a \"context\" that reaches outside the model into a corpus, is a **Clark-and-Chalmers extended mind** made literal: a mind whose scratch space is not just a few tokens but a searchable archive of the species' accumulated ratcheted work.",
       "section": "Externalized Memory and the Extended Mind",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-174",
+      "id": "human_mind-stmt-191",
       "quote": "The trajectory is continuous: from the ochre mark on the cave wall (externalized memory of a single image), to the clay tablet (externalized memory of an account), to the printed book (externalized, distributed, ratcheted memory), to the web (externalized, global, searchable memory), to the model (a *mind* that reads and reasons over that memory).",
       "section": "Externalized Memory and the Extended Mind",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-175",
+      "id": "human_mind-stmt-192",
       "quote": "The \"context window\" is the modern form of the \"notebook on the table\"; the only thing that has changed is that the notebook is now a civilization, and the mind reading it is now made of transistors.",
       "section": "Externalized Memory and the Extended Mind",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-176",
+      "id": "human_mind-stmt-193",
       "quote": "Before the book, before the punch card, before the vector database, there was a problem: the human brain holds very little at once.",
       "section": "The Memory Palace: memory as a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-177",
+      "id": "human_mind-stmt-194",
       "quote": "We covered this bottleneck earlier in this chapter — working memory is a handful of slots, the \\cite[magical number seven, plus or minus two]{miller1956magicalnumber}.",
       "section": "The Memory Palace: memory as a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-178",
+      "id": "human_mind-stmt-195",
       "quote": "Yet for a thousand years before writing was cheap, humans had to *hold* enormous amounts of information in their heads: a lawyer's precedents, an orator's speech, a monk's whole scripture, a merchant's prices across a continent.",
       "section": "The Memory Palace: memory as a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-179",
+      "id": "human_mind-stmt-196",
       "quote": "They did not solve it with a better brain.",
       "section": "The Memory Palace: memory as a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-180",
+      "id": "human_mind-stmt-197",
       "quote": "They solved it with a **technique** — the first time in the story of this book that a human extended the mind *not with a tool that does the work, but with a structure that organizes remembering itself*.",
       "section": "The Memory Palace: memory as a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-181",
+      "id": "human_mind-stmt-198",
       "quote": "That technique is the memory palace.",
       "section": "The Memory Palace: memory as a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-182",
+      "id": "human_mind-stmt-199",
       "quote": "And its logic, which looks like a parlor trick, turns out to be the exact logic that an [embedding](embeddinglab.php) runs two thousand years later.",
       "section": "The Memory Palace: memory as a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-183",
+      "id": "human_mind-stmt-200",
       "quote": "The origin story is a tragedy.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-184",
+      "id": "human_mind-stmt-201",
       "quote": "After a great feast, the hall at Larissa in Thessaly collapsed on its guests.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-185",
+      "id": "human_mind-stmt-202",
       "quote": "The only person who escaped unharmed was the poet \\cite[Simonides of Ceos]{simonidesofceos} — because two young men had just stepped out to fetch him, and he had followed them outside.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-186",
+      "id": "human_mind-stmt-203",
       "quote": "When the hall came down on top of the crowd, the bodies were a heap.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-187",
+      "id": "human_mind-stmt-204",
       "quote": "But Simonides was able to identify each one, one by one, by the place each had been **seated** \\cite[Method of loci]{methodofloci}.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-188",
+      "id": "human_mind-stmt-205",
       "quote": "The place did the remembering for him.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-189",
+      "id": "human_mind-stmt-206",
       "quote": "Content was recoverable because it had a *location*.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-190",
+      "id": "human_mind-stmt-207",
       "quote": "That single observation is the seed of the entire technique: **attach what you want to remember to a place you already know, and retrieve it by going back to the place.**",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-191",
+      "id": "human_mind-stmt-208",
       "quote": "The Greeks and Romans had a name for the places, and for the method: the *loci* (the \"places\") of the *method of loci* \\cite[Method of loci]{methodofloci}.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-192",
+      "id": "human_mind-stmt-209",
       "quote": "A *locus* is any spot in a route you can walk reliably — the front door, the hall, the window, the garden, the roof.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-193",
+      "id": "human_mind-stmt-210",
       "quote": "You already know them in the order you walk them.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-194",
+      "id": "human_mind-stmt-211",
       "quote": "That order is free: it costs you nothing to recall \"door, then hall, then window,\" because your body has walked it ten thousand times.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-195",
+      "id": "human_mind-stmt-212",
       "quote": "The genius is that the technique borrows a structure you *already have* — the spatial map of a building you know — and re-uses it to store *new, unrelated* information.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-196",
+      "id": "human_mind-stmt-213",
       "quote": "You are not strengthening the memory of the building.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-197",
+      "id": "human_mind-stmt-214",
       "quote": "You are using the building as a **filing cabinet** for something else entirely.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-198",
+      "id": "human_mind-stmt-215",
       "quote": "A \"memory wheel\" from \\cite[Giordano Bruno]{giordanobruno}'s mnemonic practice (Paris, 1582): images laid out around a set of fixed *places*, so that walking the wheel in order walks the content.",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-199",
+      "id": "human_mind-stmt-216",
       "quote": "Public domain, from *Cantus Circæus* (1582).",
       "section": "The method of loci",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-200",
+      "id": "human_mind-stmt-217",
       "quote": "Reduce the method to its mechanism and there are exactly **two moves**.",
       "section": "How it actually works: two moves",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-201",
+      "id": "human_mind-stmt-218",
       "quote": "**Move one: the spatial index.** Pick a familiar route with distinct landmarks — your home is the classic choice.",
       "section": "How it actually works: two moves",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-202",
+      "id": "human_mind-stmt-219",
       "quote": "This is the *scaffold*: a sequence of locations in a fixed, free, easily-traversed order.",
       "section": "How it actually works: two moves",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-203",
+      "id": "human_mind-stmt-220",
       "quote": "The landmarks do the work of keeping the content in sequence.",
       "section": "How it actually works: two moves",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-204",
+      "id": "human_mind-stmt-221",
       "quote": "**Move two: the encoding.** At each location, place a **vivid, exaggerated, slightly absurd image** of the thing you want to remember.",
       "section": "How it actually works: two moves",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-205",
+      "id": "human_mind-stmt-222",
       "quote": "The stranger and more active the image, the more it \"hooks\" onto the place.",
       "section": "How it actually works: two moves",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-206",
+      "id": "human_mind-stmt-223",
       "quote": "To recall, you *walk the route* and read off the image at each stop.",
       "section": "How it actually works: two moves",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-207",
+      "id": "human_mind-stmt-224",
       "quote": "That second move is not decoration.",
       "section": "How it actually works: two moves",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-208",
+      "id": "human_mind-stmt-225",
       "quote": "A bland fact — \"item three is *cinnamon*\" — barely attaches to a location.",
       "section": "How it actually works: two moves",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-209",
+      "id": "human_mind-stmt-226",
       "quote": "But an image — \"a giant cinnamon stick the size of a door, someone is rolling it\" — is dramatic, and dramatic things are the things the visual memory grabs and keeps.",
       "section": "How it actually works: two moves",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-210",
+      "id": "human_mind-stmt-227",
       "quote": "The method does two jobs at once: it gives each item a **position**, and it re-encodes the item into a form that the brain stores well.",
       "section": "How it actually works: two moves",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-211",
+      "id": "human_mind-stmt-228",
       "quote": "So the memory palace is not \"a picture of a house.\" It is a **data structure**: a pre-built, ordered set of slots (the loci), into which you have written transformed copies of your data (the images), to be read back by traversal (the walk).",
       "section": "How it actually works: two moves",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-212",
+      "id": "human_mind-stmt-229",
       "quote": "Now the point of this whole chapter.",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-213",
+      "id": "human_mind-stmt-230",
       "quote": "Read the two structures side by side, and the resemblance stops being a metaphor.",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-214",
+      "id": "human_mind-stmt-231",
       "quote": "| Memory palace | A vector space / retrieval |",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-215",
+      "id": "human_mind-stmt-232",
       "quote": "| A *locus* — a spot on a known route | A coordinate — a point in space |",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-216",
+      "id": "human_mind-stmt-233",
       "quote": "| The item you want to remember | The content you store |",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-217",
+      "id": "human_mind-stmt-234",
       "quote": "| \"Place item *x* at locus *i*\" | \"Assign content *x* to index *i*\" (the embedding) |",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-218",
+      "id": "human_mind-stmt-235",
       "quote": "| The vivid, bizarre image | A feature encoding that makes the item *retrievable* |",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-219",
+      "id": "human_mind-stmt-236",
       "quote": "| Walking the route to recall | Traversing the space — nearest-neighbour search |",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-220",
+      "id": "human_mind-stmt-237",
       "quote": "| A faded or weak image | A low-confidence retrieval, or a miss |",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-221",
+      "id": "human_mind-stmt-238",
       "quote": "The memory palace is the oldest instance of a very general idea: **store information by giving it a location in space, and find it by travelling to that location.** An [embedding](embeddinglab.php) is the same idea at industrial scale.",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-222",
+      "id": "human_mind-stmt-239",
       "quote": "When you embed a sentence, you are producing its *locus* — a point in a high-dimensional space, chosen so that *similar* sentences land *nearby*.",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-223",
+      "id": "human_mind-stmt-240",
       "quote": "When you retrieve, you are not scanning a list; you are *walking the space toward the neighbourhood* of your query.",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-224",
+      "id": "human_mind-stmt-241",
       "quote": "That is exactly the \"walk the route and read off the image\" move, except the route is now a geometric distance and the \"image\" is the vector itself.",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-225",
+      "id": "human_mind-stmt-242",
       "quote": "This is why the analogy is load-bearing, not cute.",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-226",
+      "id": "human_mind-stmt-243",
       "quote": "The memory palace is a **hand-built vector space**, and the person who built it had no idea they were building one.",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-227",
+      "id": "human_mind-stmt-244",
       "quote": "They had only noticed, the way Simonides did, that *a thing you can place is a thing you can find again.*",
       "section": "The payoff: a memory palace is a hand-built vector space",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-228",
+      "id": "human_mind-stmt-245",
       "quote": "The Romans turned the trick into a professional art — the *ars memoriae*, the \"art of memory.\" Rhetoricians built elaborate palaces on purpose: an auditor with a long list of arguments walked a purpose-designed building, each room a *locus*, each wall a shelf of images.",
       "section": "A millennium of the *ars memoriae*",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-229",
+      "id": "human_mind-stmt-246",
       "quote": "The art spread through the middle ages, where it became less a lawyer's tool than a **monastic technology of devotion**: the structure of a church, the order of the liturgy, the arrangement of figures on a painted panel — all were mnemonically loaded, so that walking the church *was* reciting the doctrine.",
       "section": "A millennium of the *ars memoriae*",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-230",
+      "id": "human_mind-stmt-247",
       "quote": "The spatial map of a sacred building and the logical map of the faith were deliberately made the same map.",
       "section": "A millennium of the *ars memoriae*",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-231",
+      "id": "human_mind-stmt-248",
       "quote": "For most of this time the technique was a craft, not a science — something masters demonstrated to students, not something anyone had analyzed.",
       "section": "A millennium of the *ars memoriae*",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-232",
+      "id": "human_mind-stmt-249",
       "quote": "The most radical practitioner was \\cite[Giordano Bruno]{giordanobruno} (1548–1600), who pushed the method past the flat \"walk a room\" into **three-dimensional space**.",
       "section": "Giordano Bruno: memory made three-dimensional",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-233",
+      "id": "human_mind-stmt-250",
       "quote": "He described a *spacemem*: a vast space of locations — levels, directions, a whole architecture of positions — in which images were distributed, so that to recall was to *navigate a volume*, not just a hallway.",
       "section": "Giordano Bruno: memory made three-dimensional",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-234",
+      "id": "human_mind-stmt-251",
       "quote": "His mnemonic devices, the famous **memory wheels**, were printed diagrams you could literally rotate and consult \\cite[De umbris idearum (1582)]{brunodeumbris1582} \\cite[Giordano Bruno]{giordanobruno}.",
       "section": "Giordano Bruno: memory made three-dimensional",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-235",
+      "id": "human_mind-stmt-252",
       "quote": "Bruno used it the way we would use a database: to hold *whole books* in his head, and to generate arguments by recombining what was stored.",
       "section": "Giordano Bruno: memory made three-dimensional",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-236",
+      "id": "human_mind-stmt-253",
       "quote": "He claimed the system let him remember \"innumerable\" things, and he performed memory feats before kings that read, to a modern audience, like a live demo of a key-value store \\cite[Giordano Bruno]{giordanobruno}.",
       "section": "Giordano Bruno: memory made three-dimensional",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-237",
+      "id": "human_mind-stmt-254",
       "quote": "\\marginfig{giordano_bruno_portrait.jpg}{\\cite[Giordano Bruno (1548–1600)]{giordanobruno}, from an 18th-century engraving (N.",
       "section": "Giordano Bruno: memory made three-dimensional",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-238",
+      "id": "human_mind-stmt-255",
       "quote": "Gundling, *Neue Bibliothec*, 1715).",
       "section": "Giordano Bruno: memory made three-dimensional",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-239",
+      "id": "human_mind-stmt-256",
       "quote": "The art also travelled as a **teaching technology**.",
       "section": "Matteo Ricci: the art carried to China",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-240",
+      "id": "human_mind-stmt-257",
       "quote": "In the late 1500s the Jesuit missionary **Matteo Ricci** wrote a treatise on the memory art — *Xiguo jifa* (《西國記法》, \"The Art of Memory of the Western Country\"), completed in 1595 — partly to give Chinese students a practical method for memorizing the Latin and Italian they were learning.",
       "section": "Matteo Ricci: the art carried to China",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-241",
+      "id": "human_mind-stmt-258",
       "quote": "The memory palace, invented in a Greek hall, was now a piece of pedagogy on a mission in China: a spatial index for foreign words.",
       "section": "Matteo Ricci: the art carried to China",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-242",
+      "id": "human_mind-stmt-259",
       "quote": "It is a small, concrete example of the general pattern of this course — a technique invented to *extend the mind* crossing every boundary there is.",
       "section": "Matteo Ricci: the art carried to China",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-243",
+      "id": "human_mind-stmt-260",
       "quote": "The thread was not seriously studied until 1966, when the historian \\citeauthor{artofmemoryyates} (\\citeyear{artofmemoryyates}) published \\cite[The Art of Memory]{artofmemoryyates}.",
       "section": "Frances Yates: the scholarly spine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-244",
+      "id": "human_mind-stmt-261",
       "quote": "Yates traced the art from the classical *loci* of Simonides, through the medieval *ars memoriae*, to the Renaissance — and showed that its flowering in the hands of Bruno and others was bound up with the Hermetic and magical image of the imagination as a *creative, world-generating* power.",
       "section": "Frances Yates: the scholarly spine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-245",
+      "id": "human_mind-stmt-262",
       "quote": "The memory palace was not, for the Renaissance mind, a dry mnemonic trick; it was a model of how the mind holds and *produces* the world.",
       "section": "Frances Yates: the scholarly spine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-246",
+      "id": "human_mind-stmt-263",
       "quote": "That book is still the place to start, and it is what turned the parlor trick back into a subject of study.",
       "section": "Frances Yates: the scholarly spine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-247",
+      "id": "human_mind-stmt-264",
       "quote": "\\marginfig{frances_yates.jpg}{Frances A.",
       "section": "Frances Yates: the scholarly spine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-248",
+      "id": "human_mind-stmt-265",
       "quote": "Step back and the memory palace sits exactly where you would expect in this course.",
       "section": "The bridge forward: from a palace to a corpus",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-249",
+      "id": "human_mind-stmt-266",
       "quote": "It is the **internal** twin of everything the external-memory sections above have been about.",
       "section": "The bridge forward: from a palace to a corpus",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-250",
+      "id": "human_mind-stmt-267",
       "quote": "Earlier in this chapter we met the idea of a *mind plus a library* — the ratchet of cumulative knowledge, where the library is the external palace.",
       "section": "The bridge forward: from a palace to a corpus",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-251",
+      "id": "human_mind-stmt-268",
       "quote": "The method of loci is what a *single* mind does when it is its own library: it builds a palace *inside* its head and files the world in it.",
       "section": "The bridge forward: from a palace to a corpus",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-252",
+      "id": "human_mind-stmt-269",
       "quote": "And two thousand years later the external version is back, at a scale no palace could hold.",
       "section": "The bridge forward: from a palace to a corpus",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-253",
+      "id": "human_mind-stmt-270",
       "quote": "A [vector database](vectorsearch.php) is a memory palace for the entire written world: every document is *placed* (embedded) at a location in a high-dimensional space, and a query *walks the space* to the neighbourhood it wants.",
       "section": "The bridge forward: from a palace to a corpus",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-254",
+      "id": "human_mind-stmt-271",
       "quote": "[Retrieval-Augmented Generation](rag.php) is the modern \"walk the route and read off what is there\" — except the route is a metric on vectors, and the library is the whole of the web.",
       "section": "The bridge forward: from a palace to a corpus",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-255",
+      "id": "human_mind-stmt-272",
       "quote": "The monk walking his church, the lawyer walking his hall, and the LLM fetching a relevant passage are all doing the same two moves this chapter has been about: **give the thing a place, then go find it.**",
       "section": "The bridge forward: from a palace to a corpus",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-256",
+      "id": "human_mind-stmt-273",
       "quote": "> A memory palace is a hand-built vector space.",
       "section": "The bridge forward: from a palace to a corpus",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-257",
+      "id": "human_mind-stmt-274",
       "quote": "You store meaning by giving it a *location*, and you retrieve it by *travelling to that location*.",
       "section": "The bridge forward: from a palace to a corpus",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-258",
+      "id": "human_mind-stmt-275",
       "quote": "The human who invented it and the machine that scaled it made the same discovery: a thing you can place is a thing you can find again.",
       "section": "The bridge forward: from a palace to a corpus",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-259",
+      "id": "human_mind-stmt-276",
       "quote": "A mind that only learns while it is awake would learn very little.",
       "section": "Sleep as \"Offline Training\"",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-260",
+      "id": "human_mind-stmt-277",
       "quote": "The human mind does most of its **consolidation** while it is *asleep*.",
       "section": "Sleep as \"Offline Training\"",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-261",
+      "id": "human_mind-stmt-278",
       "quote": "\\citeauthorlastnameand{diekelmann2010sleep} review the evidence that during sleep the brain **replays** the day's experiences, transferring them from a fast, volatile storage into a slow, stable one, and that this \"replay\" is what makes a memory durable and, importantly, what lets the brain **generalize** from it.",
       "section": "Sleep as \"Offline Training\"",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-262",
+      "id": "human_mind-stmt-279",
       "quote": "The sleep is, in effect, an **offline training phase**: a batch job that runs in the background, on the day's \"data\", while the \"foreground\" process (waking life) is idle.",
       "section": "Sleep as \"Offline Training\"",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-263",
+      "id": "human_mind-stmt-280",
       "quote": "The parallel to machine learning is close, and it is not new: the \"offline\" phase, the \"consolidation\" of a day's updates, the \"replay\" that stabilizes a network, the \"dreaming\" that is the brain's self-generated, low-stakes rehearsal (the \"self-play\" of the earlier section).",
       "section": "Sleep as \"Offline Training\"",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-264",
+      "id": "human_mind-stmt-281",
       "quote": "A forager's brain was, every night, running a training loop on the day's experience, and the \"sleep\" that the model does not have — but that its biological ancestor did — is one of the quiet, taken-for-granted mechanisms on which the whole edifice of \"learning from data\" was built.",
       "section": "Sleep as \"Offline Training\"",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-265",
+      "id": "human_mind-stmt-282",
       "quote": "We built a machine that learns while it is \"on\"; our ancestor's brain learned while it was \"off\".",
       "section": "Sleep as \"Offline Training\"",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-266",
+      "id": "human_mind-stmt-283",
       "quote": "The mind's relationship to **uncertain reward** is tuned by the same dynamics that run a casino.",
       "section": "The Slot Machine in the Skull",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-267",
+      "id": "human_mind-stmt-284",
       "quote": "The psychologist \\citeauthor{schultz1997dopamine} and the behaviorists before him found that the most \"addictive\" schedule of reinforcement is the **variable-ratio** one, the one in which the reward comes after an unpredictable number of tries, the exact schedule of a slot machine, and the one that produces the most persistent, \"unbreakable\" behavior.",
       "section": "The Slot Machine in the Skull",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-268",
+      "id": "human_mind-stmt-285",
       "quote": "The dopamine system is, as we saw, a **reward-prediction** system, and the interplay of *exploration* (try a new thing, maybe it pays) and *exploitation* (keep doing the thing that pays) is the brain's native form of the **bandit problem** that now decides whether an agent should try a new action or repeat a known good one.",
       "section": "The Slot Machine in the Skull",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-269",
+      "id": "human_mind-stmt-286",
       "quote": "\\citealternativetitle{slotmachine_image} — the variable-ratio machine the brain's dopamine system runs on: the reward comes after an unpredictable number of tries, which is why the behavior never breaks.",
       "section": "The Slot Machine in the Skull",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-270",
+      "id": "human_mind-stmt-287",
       "quote": "\\citealternativetitle{freud_image} — Sigmund Freud, who made the inner, uncommanded life of the mind an object of study at all.",
       "section": "The Slot Machine in the Skull",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-271",
+      "id": "human_mind-stmt-288",
       "quote": "\\citealternativetitle{jung_image} — Carl Gustav Jung, who mapped the interior as a landscape with its own inherited structures, the archetypes.",
       "section": "The Slot Machine in the Skull",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-272",
+      "id": "human_mind-stmt-289",
       "quote": "\\citealternativetitle{heidegger_image} — Martin Heidegger, for whom the \"interior\" is not a private room but the way existing discloses itself from within (Dasein, being-in-the-world).",
       "section": "The Slot Machine in the Skull",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-273",
+      "id": "human_mind-stmt-290",
       "quote": "\\citealternativetitle{schmitz_image} — Hermann Schmitz, whose pathos-phenomenology treats the interior as an intensive, irreducible dimension of reality.",
       "section": "The Slot Machine in the Skull",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-274",
+      "id": "human_mind-stmt-291",
       "quote": "\\citealternativetitle{mirrorselfrecognition_image} — an orangutan meeting its own reflection, the classic mirror test: the behavioral signature of a self-model, a representation of the agent that is doing the modeling.",
       "section": "The Slot Machine in the Skull",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-275",
+      "id": "human_mind-stmt-292",
       "quote": "\\citealternativetitle{dawkins_image} — Richard Dawkins, who named the \"meme\", the cultural unit that copies and varies the way a gene does.",
       "section": "The Slot Machine in the Skull",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-276",
+      "id": "human_mind-stmt-293",
       "quote": "Step back and the four \"legs\" of a large language model line up, and the fourth, the one this chapter has been tracing, is the one that is easiest to forget and the one that is doing the most invisible work.",
       "section": "VII. Synthesis: The Convergence of Mind and Machine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-277",
+      "id": "human_mind-stmt-294",
       "quote": "* **Energy**: the caloric surplus of the hearth, ratcheted through the grid, that *paid for* the thinking.",
       "section": "VII. Synthesis: The Convergence of Mind and Machine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-278",
+      "id": "human_mind-stmt-295",
       "quote": "* **Matter**: the sand, the wire, the silicon, the substrate on which the thinking was *placed*.",
       "section": "VII. Synthesis: The Convergence of Mind and Machine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-279",
+      "id": "human_mind-stmt-296",
       "quote": "* **Information**: the number, the word, the book, the web, the corpus from which the thinking was *fed*.",
       "section": "VII. Synthesis: The Convergence of Mind and Machine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-280",
+      "id": "human_mind-stmt-297",
       "quote": "* **Mind**: the forager's, social, playful, wondering, compressing, exapted organ that did all the *thinking*, and that, at the end, built the machine.",
       "section": "VII. Synthesis: The Convergence of Mind and Machine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-281",
+      "id": "human_mind-stmt-298",
       "quote": "The brain is the first AI, and the LLM is its **externalization**, its **emulation**, and its **satisficing** (good-enough) **descendant**.",
       "section": "VII. Synthesis: The Convergence of Mind and Machine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-282",
+      "id": "human_mind-stmt-299",
       "quote": "The brain is a predictive, generative, loss-minimizing, embodied, social, world-modeling engine that runs on a few tens of watts; the LLM is the same engine, built from the same handful of deep ideas — compress the world into chunks, model it as a probability, minimize the surprise, read the social intent, externalize the memory, and let the *good enough* beat the *optimal* — re-implemented in silicon and scaled, at last, past anything that a gut-shrinking, fire-making, story-telling primate could afford.",
       "section": "VII. Synthesis: The Convergence of Mind and Machine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-283",
+      "id": "human_mind-stmt-300",
       "quote": "Nothing in this chain was designed for the machine.",
       "section": "VII. Synthesis: The Convergence of Mind and Machine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-284",
+      "id": "human_mind-stmt-301",
       "quote": "Every link is an exaptation: the cooking that paid for the brain, the social brain that was aimed at the stars, the forager's curiosity that became the scientist's drive, the \"good enough\" that became the engineering, the cultural ratchet that became the corpus, the extended mind that became the context window, and the hyperactive mind-reader that now, whenever a machine says something clever, cannot help suspecting — against all the evidence, and against the better part of itself — that *something is there*.",
       "section": "VII. Synthesis: The Convergence of Mind and Machine",
       "kind": "statement"
     },
     {
-      "id": "human_mind-stmt-285",
+      "id": "human_mind-stmt-302",
       "quote": "The mind that built the machine is, in the end, the machine's oldest and most invisible author, and the whole of this course, from the first stone tool to the last token, is the story of that mind slowly learning to build itself.",
       "section": "VII. Synthesis: The Convergence of Mind and Machine",
       "kind": "statement"

@@ -19,7 +19,13 @@
     "liang2023helm",
     "goodhartslaw",
     "clark2018arc",
-    "zellers2019hellaswag"
+    "zellers2019hellaswag",
+    "hastie2009elements",
+    "quinonero2009datasetshift",
+    "kapoor2023leakage",
+    "meyes2019ablation",
+    "pineau2021reproducibility",
+    "hernan2020causal"
   ],
   "claims": [
     {
@@ -423,6 +429,71 @@
         "hendrycks2021math"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "evaluation-generalization-definition",
+      "subject": "generalization",
+      "predicate": "definition",
+      "value": "gap between fitting and generalization",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "The train/validation/test split exists to estimate the gap between fitting and generalization",
+      "citation_keys": [
+        "hastie2009elements"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-distribution-shift-definition",
+      "subject": "distribution-shift",
+      "predicate": "definition",
+      "value": "benchmark and deployment distributions differ",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A benchmark is a sample from one distribution; deployment is a sample from another",
+      "citation_keys": [
+        "quinonero2009datasetshift"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-ablation-definition",
+      "subject": "ablation-study",
+      "predicate": "definition",
+      "value": "remove or replace one component and measure the change",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "An ablation removes or replaces one component, retrains, and measures the change",
+      "citation_keys": [
+        "meyes2019ablation"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-reproducibility-definition",
+      "subject": "reproducibility",
+      "predicate": "definition",
+      "value": "a result that can be repeated",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "A number that cannot be reproduced is an anecdote",
+      "citation_keys": [
+        "pineau2021reproducibility"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "evaluation-causation-definition",
+      "subject": "causal-inference",
+      "predicate": "definition",
+      "value": "intervention or natural experiment",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Causal claims need an intervention, a natural experiment or an explicit causal model",
+      "citation_keys": [
+        "hernan2020causal"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -638,6 +709,66 @@
       "qualifiers": {},
       "quote": "GPT-4's pretraining data cuts off in September 2021",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-generalization",
+      "from": "generalization",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The train/validation/test split exists to estimate the gap between fitting and generalization",
+      "citation_keys": [
+        "hastie2009elements"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-distribution-shift",
+      "from": "distribution-shift",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A benchmark is a sample from one distribution; deployment is a sample from another",
+      "citation_keys": [
+        "quinonero2009datasetshift"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-ablation-study",
+      "from": "ablation-study",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "An ablation removes or replaces one component, retrains, and measures the change",
+      "citation_keys": [
+        "meyes2019ablation"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-reproducibility",
+      "from": "reproducibility",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "A number that cannot be reproduced is an anecdote",
+      "citation_keys": [
+        "pineau2021reproducibility"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-evaluation-causal-inference",
+      "from": "causal-inference",
+      "to": "evaluation",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Causal claims need an intervention, a natural experiment or an explicit causal model",
+      "citation_keys": [
+        "hernan2020causal"
+      ],
       "confidence": "provenance"
     }
   ],
@@ -1696,6 +1827,138 @@
       "id": "evaluation-stmt-176",
       "quote": "The whole discipline of building an eval is: write the standard down, verify two people can read it the same way, calibrate the cheap judge against the careful one, and refuse to act on a number smaller than the noise.",
       "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-177",
+      "quote": "Benchmarks and judge calibration are the visible part of evaluation.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-178",
+      "quote": "The invisible part is the set of habits that make a number mean something.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-179",
+      "quote": "**Generalization is not memorization.** A model that fits its training set has not necessarily learned a rule.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-180",
+      "quote": "The train/validation/test split exists to estimate the gap between fitting and generalization, and the gap is the thing you care about (\\cite[Hastie et al., 2009]{hastie2009elements}).",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-181",
+      "quote": "Report the split, not just the score.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-182",
+      "quote": "**Distribution shift is the default.** A benchmark is a sample from one distribution; deployment is a sample from another.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-183",
+      "quote": "Covariate shift, label shift and concept drift can all make a model that looked good in the lab fail in the field (\\cite[Quiñonero-Candela et al., 2009]{quinonero2009datasetshift}).",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-184",
+      "quote": "A robust evaluation includes a stress set that deliberately differs from the training distribution.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-185",
+      "quote": "**Leakage is contamination's general form.** Benchmark contamination is one case; the broader failure is any information from the test target entering training, preprocessing or model selection.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-186",
+      "quote": "Leakage inflates performance and is often invisible without an audit of the pipeline (\\cite[Kapoor and Narayanan, 2023]{kapoor2023leakage}).",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-187",
+      "quote": "Split by entity, not only by row, when the same patient, user or document can appear on both sides.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-188",
+      "quote": "**Ablation is the intervention.** A benchmark correlation across models cannot tell you which component caused the gain.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-189",
+      "quote": "An ablation removes or replaces one component, retrains, and measures the change; it is the closest thing to a controlled experiment in architecture research (\\cite[Meyes et al., 2019]{meyes2019ablation}).",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-190",
+      "quote": "Ablate the component you claim matters, not a convenient proxy.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-191",
+      "quote": "**Reproducibility is part of the result.** A number that cannot be reproduced is an anecdote.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-192",
+      "quote": "Report seeds, code, data version, hardware and the number of runs; the NeurIPS reproducibility programme found that many published results lacked the information needed to repeat them (\\cite[Pineau et al., 2021]{pineau2021reproducibility}).",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-193",
+      "quote": "**Correlation is not causation.** Two models that differ in one benchmark also differ in size, data, training compute and post-training recipe.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-194",
+      "quote": "Observing that the better model has a property does not show that the property caused the advantage.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-195",
+      "quote": "Causal claims need an intervention, a natural experiment or an explicit causal model (\\cite[Hernán and Robins, 2020]{hernan2020causal}).",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-196",
+      "quote": "This is the difference between \"models with more data score higher\" and \"more data causes higher scores.\"",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-197",
+      "quote": "The checklist is not a bureaucratic ritual.",
+      "section": "The rest of the scientific checklist",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-198",
+      "quote": "Each item removes a way for a number to lie: the split removes memorization, the stress set removes distribution optimism, the leakage audit removes contamination, the ablation removes confounding, the reproducibility report removes luck, and the causal design removes the temptation to tell a story from a correlation.",
+      "section": "The rest of the scientific checklist",
       "kind": "statement"
     }
   ]

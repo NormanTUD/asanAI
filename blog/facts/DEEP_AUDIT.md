@@ -2,9 +2,9 @@
 
 - lessons: 99
 - claims: 7185
-- statements: 20601
+- statements: 20660
 - relations: 5371
-- uncovered years: 27
+- uncovered years: 40
 - uncovered quantities: 4
 - uncited specific claims: 306
 - citation keys not found in lesson: 0
@@ -40,8 +40,8 @@
 | derivativelab | 22 | 96 | 16 | 0 | 0 |
 | differentiation | 21 | 98 | 18 | 0 | 0 |
 | diffusion | 28 | 166 | 21 | 0 | 0 |
-| embeddinglab | 25 | 527 | 20 | 0 | 0 |
-| evaluation | 31 | 176 | 19 | 0 | 0 |
+| embeddinglab | 25 | 531 | 20 | 0 | 0 |
+| evaluation | 31 | 198 | 19 | 2 | 0 |
 | fact_lookup | 37 | 297 | 27 | 0 | 0 |
 | finetuninglab | 36 | 138 | 27 | 0 | 0 |
 | foam_of_meaning | 16 | 711 | 12 | 0 | 0 |
@@ -52,7 +52,7 @@
 | global_ai_ecosystem | 30 | 149 | 25 | 0 | 0 |
 | hallucinations | 25 | 60 | 17 | 0 | 0 |
 | history | 1391 | 622 | 814 | 0 | 0 |
-| human_mind | 41 | 285 | 34 | 0 | 0 |
+| human_mind | 41 | 302 | 34 | 5 | 0 |
 | hyperparameters | 25 | 82 | 22 | 0 | 0 |
 | inceptionism | 14 | 35 | 10 | 0 | 0 |
 | inference_optimization | 41 | 147 | 24 | 0 | 0 |
@@ -69,7 +69,7 @@
 | math_ii | 41 | 163 | 34 | 0 | 0 |
 | math_iii | 53 | 364 | 41 | 0 | 0 |
 | math_iv | 34 | 165 | 28 | 0 | 0 |
-| mechanistic_interpretability | 32 | 627 | 26 | 0 | 0 |
+| mechanistic_interpretability | 32 | 628 | 26 | 0 | 0 |
 | metaphysics_of_ai | 18 | 72 | 13 | 0 | 0 |
 | minimalneuron | 25 | 135 | 22 | 0 | 0 |
 | mirror_in_machine | 27 | 86 | 24 | 0 | 0 |
@@ -98,8 +98,8 @@
 | security_inference | 10 | 30 | 10 | 0 | 0 |
 | software | 64 | 476 | 57 | 0 | 0 |
 | speech_audio | 23 | 63 | 17 | 1 | 0 |
-| statistics_i | 51 | 345 | 27 | 0 | 0 |
-| statistics_ii | 23 | 114 | 15 | 6 | 0 |
+| statistics_i | 51 | 346 | 27 | 1 | 0 |
+| statistics_ii | 23 | 117 | 15 | 11 | 0 |
 | symbolic_ai | 39 | 142 | 37 | 0 | 0 |
 | tokenizerlab | 20 | 175 | 18 | 4 | 0 |
 | topology | 25 | 208 | 23 | 0 | 1 |
@@ -107,9 +107,9 @@
 | training_infrastructure | 32 | 107 | 15 | 0 | 0 |
 | trainingdynamics | 23 | 59 | 17 | 0 | 0 |
 | traininglab | 15 | 10 | 11 | 0 | 0 |
-| transformer | 25 | 517 | 18 | 0 | 0 |
+| transformer | 25 | 519 | 18 | 0 | 0 |
 | unexpected_capabilities | 23 | 248 | 16 | 6 | 0 |
-| untold_history_i | 501 | 254 | 505 | 0 | 0 |
+| untold_history_i | 501 | 263 | 505 | 0 | 0 |
 | untold_history_ii | 648 | 439 | 607 | 0 | 0 |
 | untold_history_iii | 1639 | 778 | 1132 | 1 | 0 |
 | vectorsearch | 31 | 178 | 22 | 0 | 0 |
@@ -118,18 +118,31 @@
 
 ## Uncovered years
 
+- evaluation.php: 2009
+- evaluation.php: 2020
+- human_mind.php: 1974
+- human_mind.php: 1976
+- human_mind.php: 1986
+- human_mind.php: 2007
+- human_mind.php: 2013
 - reinforcement_learning.php: 2025
 - reliability.php: 2021
 - reliability.php: 2022
 - reliability.php: 2023
 - reliability.php: 2024
 - speech_audio.php: 2016
+- statistics_i.php: 2019
 - statistics_ii.php: 1915
 - statistics_ii.php: 1920
 - statistics_ii.php: 1924
+- statistics_ii.php: 1951
 - statistics_ii.php: 1952
 - statistics_ii.php: 1958
+- statistics_ii.php: 1959
 - statistics_ii.php: 1974
+- statistics_ii.php: 1978
+- statistics_ii.php: 2006
+- statistics_ii.php: 2007
 - tokenizerlab.php: 1234
 - tokenizerlab.php: 1235
 - tokenizerlab.php: 2024
@@ -140,11 +153,7 @@
 - unexpected_capabilities.php: 2019
 - unexpected_capabilities.php: 2021
 - unexpected_capabilities.php: 2026
-- untold_history_iii.php: 1191
-- websearch.php: 2009
-- websearch.php: 2019
-- websearch.php: 2020
-- websearch.php: 2021
+- … and 5 more
 
 ## Uncovered quantities
 

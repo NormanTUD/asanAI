@@ -17,7 +17,11 @@
     "boltzmann",
     "fisher1922",
     "kolmogorov1933",
-    "colah2015visualinfo"
+    "colah2015visualinfo",
+    "rissanen1978mdl",
+    "grunwald2007mdl",
+    "shannon1959rate",
+    "cover2006elements"
   ],
   "claims": [
     {
@@ -304,6 +308,61 @@
       "quote": "In topic models such as Latent Dirichlet Allocation (LDA), the Dirichlet distribution is used",
       "citation_keys": [],
       "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-cross-entropy-formula",
+      "subject": "cross-entropy",
+      "predicate": "formula",
+      "value": "H(P,Q) = H(P) + D_KL(P||Q)",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "H(P,Q) = -\\sum_x P(x)\\log Q(x) = H(P) + D_{\\mathrm{KL}}(P\\|Q)",
+      "citation_keys": [
+        "leiblerkullback",
+        "shannon1948communication"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-mutual-information-formula",
+      "subject": "mutual-information",
+      "predicate": "formula",
+      "value": "I(X;Y) = D_KL(P(x,y)||P(x)P(y))",
+      "unit": "formula",
+      "qualifiers": {},
+      "quote": "I(X;Y)=D_{\\mathrm{KL}}(P(x,y)\\|P(x)P(y))",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-mdl-definition",
+      "subject": "minimum-description-length",
+      "predicate": "definition",
+      "value": "shortest description of the data plus the model",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "MDL turns learning into compression: the best model is the one that lets you describe the data in the fewest bits",
+      "citation_keys": [
+        "rissanen1978mdl",
+        "grunwald2007mdl"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "statistics-ii-rate-distortion-definition",
+      "subject": "rate-distortion",
+      "predicate": "definition",
+      "value": "smallest rate for a given distortion",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "rate-distortion theory asks for the smallest rate $R$ that keeps the expected distortion below $D$",
+      "citation_keys": [
+        "shannon1959rate",
+        "cover2006elements"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -475,6 +534,57 @@
       "qualifiers": {},
       "quote": "In topic models such as Latent Dirichlet Allocation (LDA), the Dirichlet distribution is used",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-cross-entropy",
+      "from": "cross-entropy",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "H(P,Q) = -\\sum_x P(x)\\log Q(x) = H(P) + D_{\\mathrm{KL}}(P\\|Q)",
+      "citation_keys": [
+        "leiblerkullback",
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-mutual-information",
+      "from": "mutual-information",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "I(X;Y)=D_{\\mathrm{KL}}(P(x,y)\\|P(x)P(y))",
+      "citation_keys": [
+        "shannon1948communication"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-minimum-description-length",
+      "from": "minimum-description-length",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "MDL turns learning into compression: the best model is the one that lets you describe the data in the fewest bits",
+      "citation_keys": [
+        "rissanen1978mdl",
+        "grunwald2007mdl"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-statistics_ii-rate-distortion",
+      "from": "rate-distortion",
+      "to": "statistics-ii",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "rate-distortion theory asks for the smallest rate $R$ that keeps the expected distortion below $D$",
+      "citation_keys": [
+        "shannon1959rate",
+        "cover2006elements"
+      ],
       "confidence": "provenance"
     }
   ],
@@ -1129,36 +1239,54 @@
     },
     {
       "id": "statistics_ii-stmt-109",
+      "quote": "Shannon's entropy measures the uncertainty of a source.",
+      "section": "From entropy to learning: the information quantities every model uses",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-110",
+      "quote": "Four quantities built from it connect that abstract measure to training, compression and representation learning.",
+      "section": "From entropy to learning: the information quantities every model uses",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-111",
+      "quote": "**Cross-entropy.** If the true distribution is $P$ and the model is $Q$, the cross-entropy",
+      "section": "From entropy to learning: the information quantities every model uses",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-112",
       "quote": "The “Distributional Hypothesis”, the idea that words occurring in similar contexts have similar meanings, was popularized by **\\citeauthor{zelligharris}** in his \\citeyear{zelligharris} article *\\citetitle{zelligharris}*.",
       "section": "Bag of Words (BoW): The Linguistic Atom",
       "kind": "statement"
     },
     {
-      "id": "statistics_ii-stmt-110",
+      "id": "statistics_ii-stmt-113",
       "quote": "It treats a document not as a sequence, but as a “bag”: you lose the grammar, the order, and the syntax, keeping only the raw counts.",
       "section": "Bag of Words (BoW): The Linguistic Atom",
       "kind": "statement"
     },
     {
-      "id": "statistics_ii-stmt-111",
+      "id": "statistics_ii-stmt-114",
       "quote": "This was the primary method for **Spam Filtering** and early **Search Engines** before LLMs.",
       "section": "Bag of Words (BoW): The Linguistic Atom",
       "kind": "statement"
     },
     {
-      "id": "statistics_ii-stmt-112",
+      "id": "statistics_ii-stmt-115",
       "quote": "- **The Graph:** Visualizes the “Vector” of your text.",
       "section": "Bag of Words (BoW): The Linguistic Atom",
       "kind": "statement"
     },
     {
-      "id": "statistics_ii-stmt-113",
+      "id": "statistics_ii-stmt-116",
       "quote": "Each unique word is a dimension.",
       "section": "Bag of Words (BoW): The Linguistic Atom",
       "kind": "statement"
     },
     {
-      "id": "statistics_ii-stmt-114",
+      "id": "statistics_ii-stmt-117",
       "quote": "- **Live Logic:** Watch how “The cat sat” and “Sat the cat” produce the exact same statistical signature, demonstrating the model's “blindness” to word order.",
       "section": "Bag of Words (BoW): The Linguistic Atom",
       "kind": "statement"
