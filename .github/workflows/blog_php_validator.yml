@@ -74,6 +74,16 @@ jobs:
         run: |
           uv run blog/tests/fact_ledger_test.py
 
+      - name: Test Sentence Contradiction Report
+        run: |
+          uv run blog/tests/sentence_conflict_test.py
+
+      - name: Check Sentence Contradictions
+        # Prints sentence-level pairs on failure:
+        # sentence "..." (a.php) contradicts sentence "..." (b.php)
+        run: |
+          uv run blog/tools/factcheck/check_sentence_conflicts.py blog/ --strict
+
       - name: Check Blog Fact Ledger
         # One fact file per lesson, schema validation, and cross-lesson
         # numeric/date/unit/model-spec conflicts.

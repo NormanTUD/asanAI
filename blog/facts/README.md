@@ -435,6 +435,24 @@ uv run blog/tools/factcheck/extract_statements.py blog/ --check
 Statement-Liste veraltet ist. Statements sind die Vollständigkeits- und
 Provenienzschicht; numerische Konflikte werden über `claims` geprüft.
 
+## Satz-Konflikte
+
+```bash
+# Nur faktische Widersprüche (Claim-Werte)
+uv run blog/tools/factcheck/check_sentence_conflicts.py blog/ --strict
+
+# Zusätzlich explizite `contradicts`-Relationen (historische/ideelle Gegensätze)
+uv run blog/tools/factcheck/check_sentence_conflicts.py blog/ --include-relations
+```
+
+Ausgabe:
+
+```text
+sentence 'GPT-3 has 175 billion parameters.' (transformer.php) contradicts
+sentence 'GPT-3, with 170 billion parameters.' (history.php)
+  because subject=gpt-3 predicate=parameters has 1.75e11 count vs 1.7e11 count
+```
+
 ## Tiefen-Audit und Konfliktliste
 
 ```bash
