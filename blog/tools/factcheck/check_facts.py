@@ -31,6 +31,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from facts_lib import (  # noqa: E402
     ACYCLIC_KINDS,
     KNOWN_RELATION_KINDS,
+    canon_ref,
     canon_subject,
     normalize_source,
     claim_normalized,
@@ -240,7 +241,11 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
     all_claims: list[dict] = []
     relations: list[dict] = []
     quote_warnings: list[str] = []
-    statement_count = 0
+    statement_count = block_count = 0
+    block_ids: set[str] = set()
+    statement_ids: set[str] = set()
+    statement_block: dict[str, str] = {}
+    block_owner: dict[str, str] = {}
     documents: dict[str, dict] = {}
     files_without_claims: list[str] = []
     unregistered: list[str] = []
@@ -277,9 +282,30 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
             if not quote or slug.startswith("_"):
                 return True
             raw_source, norm_source = source_cache.get(slug, ("", ""))
-            return quote in raw_source or _normalize_source(quote) in norm_source
+            return quote in raw_source or quote in norm_source or _normalize_source(quote) in norm_source
 
         documents[slug] = document if isinstance(document, dict) else {}
+        seen_block_ids: set[str] = set()
+        for block in document.get("blocks", []) if isinstance(document, dict) else []:
+            if not isinstance(block, dict):
+                errors.append(f"{path}: malformed block entry")
+                continue
+            bid = block.get("id", "")
+            quote = block.get("quote", "")
+            block_count += 1
+            if not bid:
+                errors.append(f"{path}: block without id")
+            elif bid in seen_block_ids:
+                errors.append(f"{path}: duplicate block id {bid!r}")
+            else:
+                bid_c = canon_ref(bid)
+                seen_block_ids.add(bid_c)
+                block_ids.add(bid_c)
+                block_owner[bid_c] = slug
+            if not quote:
+                errors.append(f"{path}: block {bid or '?'} has no quote")
+            elif not quote_ok(quote):
+                errors.append(f"{path}: block {bid or '?'} quote not found in source")
         seen_statement_ids: set[str] = set()
         for statement in document.get("statements", []) if isinstance(document, dict) else []:
             if not isinstance(statement, dict):
@@ -292,10 +318,16 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
                 errors.append(f"{path}: statement {sid or '?'} has no quote")
             elif not quote_ok(quote):
                 errors.append(f"{path}: statement {sid or '?'} quote not found in source")
+            block_id = canon_ref(statement.get("block_id", ""))
+            if block_id and block_id not in seen_block_ids:
+                errors.append(f"{path}: statement {sid or '?'} references unknown block {block_id!r}")
             if sid:
-                if sid in seen_statement_ids:
+                sid_c = canon_ref(sid)
+                if sid_c in seen_statement_ids:
                     errors.append(f"{path}: duplicate statement id {sid!r}")
-                seen_statement_ids.add(sid)
+                seen_statement_ids.add(sid_c)
+                statement_ids.add(sid_c)
+                statement_block[sid_c] = block_id
         for raw_rel in iter_relations(document):
             if "line" in raw_rel:
                 errors.append(f"{path}: relation {raw_rel.get('id', '?')} has a line field; use quote only")
@@ -373,10 +405,12 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
     # ---- relations: endpoints, cycles, temporal and same_as compatibility ----
     fact_ids = {c["id"]: c for c in all_claims if c.get("id")}
     subject_ids = {c["subject"] for c in all_claims}
+    known_ids = set(fact_ids) | subject_ids | block_ids | statement_ids
 
     def ref_subject(ref: str) -> str:
         return fact_ids[ref]["subject"] if ref in fact_ids else ref
 
+    relation_pairs: set[tuple[str, str, str]] = set()
     seen_relation_ids: set[str] = set()
     edge_sources: dict[tuple[str, str, str], set[str]] = defaultdict(set)
     relation_warnings: list[str] = []
@@ -388,6 +422,7 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
         else:
             seen_relation_ids.add(rel["id"])
         edge = (rel["from"], rel["to"], rel["kind"])
+        relation_pairs.add(edge)
         if rel["source"] in edge_sources[edge]:
             relation_warnings.append(
                 f"{rel['source']}: duplicate relation edge {rel['from']} -[{rel['kind']}]-> {rel['to']}"
@@ -399,13 +434,22 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
                 f"(use one of {', '.join(sorted(KNOWN_RELATION_KINDS))})"
             )
         for endpoint in (rel["from"], rel["to"]):
-            if endpoint not in fact_ids and endpoint not in subject_ids:
+            if endpoint not in known_ids:
                 errors.append(
                     f"{rel['source']}: relation {rel['id'] or rel['kind']} endpoint "
-                    f"{endpoint!r} is neither a fact id nor a subject id"
+                    f"{endpoint!r} is not a known fact/block/statement/subject id"
                 )
         if rel["from"] == rel["to"] and rel["kind"] != "same_as":
             errors.append(f"{rel['source']}: self-loop relation {rel['id'] or rel['kind']}")
+
+    # Every block must belong to its lesson, every statement to its block.
+    for block_id, slug in block_owner.items():
+        lesson_subject = canon_subject(slug)
+        if (canon_ref(block_id), lesson_subject, "part_of") not in relation_pairs:
+            errors.append(f"{slug}.facts.json: block {block_id} has no part_of relation to {lesson_subject}")
+    for statement_id, block_id in statement_block.items():
+        if block_id and (canon_ref(statement_id), canon_ref(block_id), "part_of") not in relation_pairs:
+            errors.append(f"statement {statement_id} has no part_of relation to block {block_id}")
 
     # Relation coverage: which non-metadata subjects are isolated?
     relation_subjects: set[str] = set()
@@ -431,9 +475,8 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
 
     edges_by_kind: dict[str, list[tuple[str, str]]] = defaultdict(list)
     for rel in relations:
-        if rel["from"] in fact_ids or rel["from"] in subject_ids:
-            if rel["to"] in fact_ids or rel["to"] in subject_ids:
-                edges_by_kind[rel["kind"]].append((rel["from"], rel["to"]))
+        if rel["from"] in known_ids and rel["to"] in known_ids:
+            edges_by_kind[rel["kind"]].append((rel["from"], rel["to"]))
 
     for kind in sorted(ACYCLIC_KINDS & set(edges_by_kind)):
         cycle = _has_cycle(edges_by_kind[kind])
@@ -591,8 +634,8 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
 
     print(
         f"[{'FAIL' if (errors or conflicts) else 'PASS'}] "
-        f"{len(facts)} fact files, {len(all_claims)} claims, {statement_count} statements, "
-        f"{len(relations)} relations, "
+        f"{len(facts)} fact files, {len(all_claims)} claims, {block_count} blocks, "
+        f"{statement_count} statements, {len(relations)} relations, "
         f"{len(isolated)} isolated subject(s), {len(files_without_claims)} metadata-only lesson(s), "
         f"{len(unregistered)} unregistered year(s), {len(quote_warnings)} quote warning(s), "
         f"{len(conflicts)} conflict(s), {len(errors)} error(s)"
