@@ -270,11 +270,11 @@ The Dot Product $\vec{A} \cdot \vec{B}$ is:
 $$\vec{A} \cdot \vec{B} = (a_1 \times b_1) + (a_2 \times b_2)$$
 
 The Dot Product has a beautiful geometric property:
-* **High Positive Number:** The arrows point in roughly the same direction (They are “Similar”).
-* **Zero:** The arrows are at a right angle (They are “Unrelated”).
-* **Negative Number:** The arrows point in opposite directions (They are “Opposites”).
+* **High Positive Number:** The arrows point in roughly the same direction. In a trained embedding space this often correlates with similarity, but the semantic label is an interpretation, not a geometric theorem.
+* **Zero:** The arrows are at a right angle. That is orthogonality; whether the model treats the two tokens as unrelated is an empirical property of the learned space.
+* **Negative Number:** The arrows point in opposite directions. This often correlates with opposition or antonymy, but it can also reflect other contrastive contexts.
 
-In a Transformer (like ChatGPT), this is the “Handshake.” When a word “looks” at another word, it calculates the Dot Product. If the result is high, the AI knows those words are contextually related. This will be explained in more detail later on.
+In a Transformer (like ChatGPT), this is the “Handshake.” When a word “looks” at another word, it calculates the Dot Product. A high result means the model has learned to associate the two representations in context. This will be explained in more detail later on.
 </div>
 
 <div class="lab-container">
@@ -288,11 +288,11 @@ In a Transformer (like ChatGPT), this is the “Handshake.” When a word “loo
 </div>
 
 <div class="md" data-mathlevel="45">
-### Scale Invariance: Direction Is Meaning, Magnitude Is Noise
+### Scale Invariance: Direction Is Often the Useful Signal
 
-There's a subtle but critical property that explains *why* cosine similarity is preferred over Euclidean distance in most embedding applications: **scale invariance**. Two vectors can point in exactly the same direction, encoding the same semantic content, but differ wildly in magnitude. Euclidean distance would call them “far apart.” Cosine similarity correctly identifies them as identical in meaning.
+There's a subtle but critical property that explains *why* cosine similarity is preferred over Euclidean distance in many embedding applications: **scale invariance**. Two vectors can point in the same direction but differ wildly in magnitude. Euclidean distance calls them far apart; cosine similarity treats them as identical in direction. Whether that direction also means “the same thing” is a property of the trained space, not a consequence of the cosine.
 
-Why does magnitude vary? During training, tokens that appear more frequently accumulate more gradient updates, inflating their vector norms. A rare synonym of “King” might encode the same directional relationships but have a much shorter vector. Cosine similarity is blind to this artifact; Euclidean distance is fooled by it.
+Why does magnitude vary? During training, tokens that appear more frequently can accumulate more gradient updates, inflating their vector norms. A rare synonym of “King” might encode similar directional relationships but have a much shorter vector. Cosine similarity is blind to this scale artifact; Euclidean distance is not.
 
 Below, drag the **magnitude slider** to stretch or shrink a token's vector without changing its direction. Watch how Euclidean distance changes dramatically while cosine similarity stays perfectly constant.
 </div>
@@ -308,7 +308,7 @@ Below, drag the **magnitude slider** to stretch or shrink a token's vector witho
     </div>
     <div id="scale-invariance-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 500px; margin: 0 auto;"></div>
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
-        <b>Key insight:</b> As you drag the slider, Token B (the diamond) moves along its direction ray, getting closer or farther from the origin. The <span style="color:#ef4444; font-weight:bold;">Euclidean distance</span> (dashed line) changes dramatically. But the <span style="color:#10b981; font-weight:bold;">cosine similarity</span> (the angle between the vectors) stays <i>perfectly constant</i>. This is why cosine similarity is the standard metric in embedding spaces: it measures <b>what</b> a token means, not <b>how often</b> it was seen during training.
+        <b>Key insight:</b> As you drag the slider, Token B (the diamond) moves along its direction ray, getting closer or farther from the origin. The <span style="color:#ef4444; font-weight:bold;">Euclidean distance</span> (dashed line) changes dramatically. But the <span style="color:#10b981; font-weight:bold;">cosine similarity</span> (the angle between the vectors) stays <i>perfectly constant</i>. That is why cosine similarity is a common metric in embedding spaces: it ignores the length of the vector and compares direction. It does <b>not</b> by itself establish that two tokens mean the same thing; that is an empirical claim about the learned space.
     </div>
 </section>
 
