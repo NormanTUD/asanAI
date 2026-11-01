@@ -78,7 +78,7 @@
 					📚 <span class="TRANSLATEME_pe_examples"></span>
 				</button>
 				<button onclick="pyodideInsertModelInfo()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Insert a model summary snippet">
-					🧠 <span class="TRANSLATEME_pe_model_info"></span>
+					📇 <span class="TRANSLATEME_pe_model_info"></span>
 				</button>
 				<button id="pyodide_webcam_btn_simple" onclick="pyodideStartWebcam()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Ctrl+Shift+W">
 					📷 <span class="TRANSLATEME_pe_webcam"></span>
