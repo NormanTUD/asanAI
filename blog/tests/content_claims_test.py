@@ -59,8 +59,16 @@ def main() -> None:
         if "line" in document:
             failures.append(f"{slug}: top-level line field")
         statements = document.get("statements", []) if isinstance(document, dict) else []
+        blocks = document.get("blocks", []) if isinstance(document, dict) else []
         if slug not in statement_exempt and not statements:
             failures.append(f"{slug}: no statements (prose not protocolled)")
+        if slug not in statement_exempt and not blocks:
+            failures.append(f"{slug}: no blocks (paragraphs not protocolled)")
+        for block in blocks:
+            if not block.get("quote"):
+                failures.append(f"{slug}: block {block.get('id')} has no quote")
+            if "line" in block:
+                failures.append(f"{slug}: block {block.get('id')} has a line field")
         for statement in statements:
             if not statement.get("quote"):
                 failures.append(f"{slug}: statement {statement.get('id')} has no quote")
@@ -133,6 +141,7 @@ def main() -> None:
 
     print(
         f"[PASS] content claims: {len(LESSONS)} lessons, {len(all_claims)} claims, "
+        f"{sum(len(d.get('blocks', [])) for d, _ in data.values())} blocks, "
         f"{sum(len(d.get('statements', [])) for d, _ in data.values())} statements, "
         f"{sum(len(d.get('relations', [])) for d, _ in data.values())} relations"
     )

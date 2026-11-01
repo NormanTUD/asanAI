@@ -421,6 +421,33 @@ uv run blog/tools/factcheck/check_facts.py blog/ \
 1986, H100 80 GB / 989 TFLOPS, AlexNet 2012, Transformer 2017, Chinchilla
 20 Tokens/Parameter), Tiefe der Geschichtskapitel und Quote/Einheit-Pflicht.
 
+## Block- und Statement-Ledger — jeder Absatz, jeder Satz
+
+Jede nicht-leere Prosa-Zeile/jeder Absatz steht in `blocks`:
+
+```json
+{"id":"tokenizerlab-block-12","quote":"...","kind":"paragraph","section":"Tokenization"}
+```
+
+Jeder Satz steht in `statements` und verweist über `block_id` auf seinen Block.
+Strukturelle Relationen werden automatisch erzeugt:
+
+- `block → lesson` (`part_of`)
+- `statement → block` (`part_of`)
+- `block → nächster Block` (`before`)
+- `block → Abschnittsanker` (`related_to`)
+
+Nach jeder Lektionsänderung:
+
+```bash
+./blog/tools/factcheck/extract_statements.py blog/
+./blog/tools/factcheck/extract_statements.py blog/ --only <slug>
+./blog/tools/factcheck/sync_blocks.py blog/
+```
+
+`--check` ist das CI-Gate; fehlende/geänderte Blöcke, Sätze oder
+Strukturrelationen lassen den Lauf fehlschlagen.
+
 ## Statement-Ledger — jeder Satz
 
 Zusätzlich zu den strukturierten `claims` enthält jede Fact-Datei ein

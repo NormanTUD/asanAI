@@ -998,8 +998,10 @@ legacy files, not as a style choice.
 
 **When you change a lesson.** Any new or changed number, date, unit, model
 spec or formula must be added or updated in that lesson's fact file. Run
-`check_facts.py` before committing. A genuine intentional difference gets a
-qualifier (precision, variant, parameter kind, event), not an allowlist.
+`extract_statements.py` (blocks/statements) and `check_facts.py` before
+committing. A genuine intentional difference gets a qualifier (precision,
+variant, parameter kind, event), not an allowlist. The single gate is
+`./blog/tests/factcheck_all.py`.
 
 **Relations and traces.** A fact file may also carry a `relations` array.
 Each edge is `{id, from, to, kind, qualifiers, quote, citation_keys}`;
@@ -1067,6 +1069,22 @@ uv run blog/tools/factcheck/extract_statements.py blog/ --check
 `--check` is a CI gate: a changed lesson whose statement list is stale fails
 immediately. Statements are not used for numeric conflicts (they are
 multi-valued); they are the coverage/provenance layer.
+
+**Blocks are mandatory too.** Every non-empty prose paragraph/line is stored
+in `blocks`; every sentence inside it in `statements`. Every block gets
+structural relations (`part_of` to its lesson, `before` to the next block,
+`related_to` to its section anchor), and every statement gets a `part_of`
+relation to its block. After editing any lesson run
+
+```bash
+./blog/tools/factcheck/extract_statements.py blog/          # all
+./blog/tools/factcheck/extract_statements.py blog/ --only <slug>
+./blog/tools/factcheck/sync_blocks.py blog/                 # after relation cleanup
+```
+
+`extract_statements.py --check` is a CI gate: a changed sentence, paragraph,
+block or structural relation fails immediately. Do not hand-write blocks or
+statements.
 
 **How the content claims are tested.** Two independent gates run in CI:
 
