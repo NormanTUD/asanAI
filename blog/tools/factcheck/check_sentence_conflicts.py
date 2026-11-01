@@ -50,10 +50,13 @@ def main() -> None:
 
     groups: dict[tuple[str, str, str], list[dict]] = defaultdict(list)
     relation_conflicts: list[str] = []
+    quote_by_subject: dict[str, tuple[str, str]] = {}
     for path in sorted(fact_files(blog).values()):
         document, claims = load_fact_file(path)
         for claim in claims:
             claim["source"] = path.name
+            if claim.get("quote") and claim["subject"] not in quote_by_subject:
+                quote_by_subject[claim["subject"]] = (claim["quote"], _lesson_of(claim))
             if is_functional(claim):
                 groups[(claim["subject"], claim["predicate"], scope_key(claim))].append(claim)
         for raw in iter_relations(document):
@@ -61,10 +64,21 @@ def main() -> None:
             if rel and rel["kind"] == "contradicts":
                 rel["source"] = path.name
                 lesson = rel["source"][: -len(".facts.json")] + ".php"
+                from_q = quote_by_subject.get(rel["from"])
+                to_q = quote_by_subject.get(rel["to"])
+                from_line = (
+                    f"  sentence A ({rel['from']}): {from_q[0]!r} ({from_q[1]})"
+                    if from_q else f"  sentence A ({rel['from']}): (no anchored sentence)"
+                )
+                to_line = (
+                    f"  sentence B ({rel['to']}): {to_q[0]!r} ({to_q[1]})"
+                    if to_q else f"  sentence B ({rel['to']}): (no anchored sentence)"
+                )
                 relation_conflicts.append(
                     f"relation {rel['id']!r} in {lesson}: "
                     f"{rel['from']} contradicts {rel['to']}\n"
-                    f"  anchor: {rel['quote']!r}"
+                    f"{from_line}\n{to_line}\n"
+                    f"  note: explicit entity/theory opposition, not a factual sentence conflict"
                 )
 
     pairs: list[str] = []

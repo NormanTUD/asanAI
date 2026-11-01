@@ -126,7 +126,9 @@ def main() -> None:
         assert "no sentence-level factual contradictions" in result.stdout
         result = run(root, "--include-relations")
         assert "relation 'rel-entity-a-entity-b'" in result.stdout
-        assert "sentence 'Entity A has" not in result.stdout
+        assert "sentence A (entity-a)" in result.stdout
+        assert "sentence B (entity-b)" in result.stdout
+        assert "note: explicit entity/theory opposition" in result.stdout
         assert "contradicts sentence" not in result.stdout
 
     print("[PASS] sentence-conflict report: contradiction detected; explicit relation not misreported")
