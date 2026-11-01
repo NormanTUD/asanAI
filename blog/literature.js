@@ -4577,6 +4577,20 @@ window.bibData = {
 		author: "Elena Voita, David Talbot, Fedor Moiseev, Rico Sennrich, Ivan Titov",
 		year: 2019
 	},
+	"michel2019sixteen": {
+		url: "https://arxiv.org/abs/1905.10650",
+		alternativetitle: "Are Sixteen Heads Really Better than One?",
+		title: "Are Sixteen Heads Really Better than One?",
+		author: "Paul Michel, Omer Levy, Graham Neubig",
+		year: 2019
+	},
+	"shazeer2020talkingheads": {
+		url: "https://arxiv.org/abs/2003.02436",
+		alternativetitle: "Talking-Heads Attention",
+		title: "Talking-Heads Attention",
+		author: "Noam Shazeer, Zhenzhong Lan, Youlong Cheng, Nan Ding, Le Hou",
+		year: 2020
+	},
 	"bart": {
 		title: "BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation, Translation, and Comprehension",
 		url: "https://arxiv.org/abs/1910.13461",
