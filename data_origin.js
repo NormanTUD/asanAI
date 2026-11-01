@@ -192,6 +192,10 @@ async function set_input_shape_from_config_if_applicable(_config) {
 }
 
 function sync_last_layer_units_with_output_shape(_config) {
+	if(!_config || typeof _config !== "object") {
+		return;
+	}
+
 	if(Object.keys(_config).includes("output_shape")) {
 		dbg("[change_data_origin] Output shape detect as: " + _config.output_shape);
 

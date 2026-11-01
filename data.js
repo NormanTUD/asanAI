@@ -1166,7 +1166,14 @@ async function handleImageDownload(url, url_idx, urls, percentage, percentage_di
 
 		return await enqueue_tf_task(url, dont_load_into_tf);
 	} catch (e) {
-		err("Failed to load training image " + url + ": " + (e && e.message ? e.message : e));
+		if (typeof navigator !== "undefined" && navigator.onLine === false) {
+			if (typeof show_offline_data_message === "function") {
+				show_offline_data_message($("#dataset").val(), "image");
+			}
+			dbg("[offline] Failed to load training image " + url);
+		} else {
+			err("Failed to load training image " + url + ": " + (e && e.message ? e.message : e));
+		}
 		return null;
 	}
 }
@@ -1217,8 +1224,15 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
 
 	let [urls, keys, data] = await _get_urls_and_keys();
 
-	if (urls === undefined || keys === undefined || data === undefined) {
-		err("download_image_data failed: data is urls, keys or data is undefined");
+	if (!urls || !keys || !data) {
+		if (typeof navigator !== "undefined" && navigator.onLine === false) {
+			if (typeof show_offline_data_message === "function") {
+				show_offline_data_message($("#dataset").val(), "dataset");
+			}
+			dbg("[offline] download_image_data has no dataset listing");
+		} else {
+			err("download_image_data failed: data is urls, keys or data is undefined");
+		}
 		return {};
 	}
 
@@ -1965,11 +1979,19 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 			}
 		}
 
-		if (show_error) {
+		var offline_failure = typeof navigator !== "undefined" && navigator.onLine === false;
+
+		if (offline_failure && typeof show_offline_data_message === "function") {
+			show_offline_data_message($("#dataset").val(), "x/y");
+		}
+
+		if (show_error && !offline_failure) {
 			err("" + errorContent +
 				"\nTraining data load state: x.txt=" + (x_loaded ? "loaded" : (x_attempted ? "failed" : "not attempted")) +
 				", y.txt=" + (y_loaded ? "loaded" : (y_attempted ? "failed" : "not attempted")));
 			console.trace();
+		} else if (offline_failure) {
+			dbg("[offline] Training data for " + $("#dataset").val() + " is not cached");
 		}
 
 		wrn('[get_x_and_y_from_txt_files] falling back to empty x/y tensors (x.txt="' +

@@ -108,6 +108,43 @@ function set_last_layer_activation_function (activation_function) {
 	}
 }
 
+var _offline_data_message_shown = "";
+
+function show_offline_data_message (dataset_name, detail) {
+	var dataset = dataset_name || ($("#dataset").val() || "");
+	var key = "offline-data:" + dataset;
+
+	if (_offline_data_message_shown === key) {
+		return;
+	}
+
+	_offline_data_message_shown = key;
+
+	var title = (typeof language !== "undefined" && language[lang] && language[lang]["offline_data_title"]) || "Offline: data not cached";
+	var text = (typeof language !== "undefined" && language[lang] && language[lang]["offline_data_text"]) || "The training data for \"%s\" is not cached yet. Reconnect, reload the page and open this dataset once while online.";
+	text = text.replace("%s", dataset || "?");
+
+	try {
+		if (typeof Swal !== "undefined" && typeof Swal.fire === "function") {
+			Swal.fire({
+				icon: "info",
+				title: title,
+				text: text
+			});
+		} else if (window.console && console.warn) {
+			console.warn("[offline] " + title + " " + text + (detail ? " (" + detail + ")" : ""));
+		}
+	} catch (e) {
+		// Never let the notification break the page.
+	}
+}
+
+if (typeof window !== "undefined") {
+	window.addEventListener("online", function () {
+		_offline_data_message_shown = "";
+	});
+}
+
 async function get_json(url) {
 	try {
 		var data = await $.getJSON(url);
@@ -135,6 +172,8 @@ async function get_cached_json(url) {
 		});
 		if (worked) {
 			_cached_json[url] = data;
+		} else if (typeof navigator !== "undefined" && navigator.onLine === false && typeof show_offline_data_message === "function") {
+			show_offline_data_message($("#dataset").val(), url);
 		}
 
 		return data;

@@ -13,7 +13,10 @@ const PRECACHE_URLS = [
 	new URL("manifest.json", self.location.href).href,
 	new URL("offline.html", self.location.href).href,
 	new URL("favicon.ico", self.location.href).href,
-	new URL("_gui/logo_small.png", self.location.href).href
+	new URL("_gui/logo_small.png", self.location.href).href,
+	new URL("_gui/red.svg", self.location.href).href,
+	new URL("_gui/green.svg", self.location.href).href,
+	new URL("_gui/orange.svg", self.location.href).href
 ];
 
 const DENY_PREFIXES = [
@@ -122,7 +125,7 @@ async function cacheFirst(request) {
 
 		if (fallback) return fallback;
 
-		throw e;
+		return new Response("", { status: 503, statusText: "Offline" });
 	}
 }
 
@@ -218,7 +221,10 @@ async function cacheUrls(urls) {
 
 				const response = await fetch(url, { credentials: "same-origin" });
 
-				if (response.ok) await cache.put(cache_key, response.clone());
+				if (response.ok) {
+					await cache.put(cache_key, response.clone());
+					maybePrefetchDataset({ url: url }, response);
+				}
 			} catch (e) {
 				// A single missing asset must not abort the rest.
 			}

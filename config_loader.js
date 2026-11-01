@@ -492,6 +492,14 @@ async function error_if_keras_layers_not_defined(keras_layers) {
 }
 
 async function set_weights_if_exists_or_error(config){
+	if (!config || typeof config !== "object") {
+		if (typeof navigator !== "undefined" && navigator.onLine === false && typeof show_offline_data_message === "function") {
+			show_offline_data_message($("#dataset").val(), "config");
+		}
+		dbg("[config_loader] No configuration available (offline or missing file)");
+		return false;
+	}
+
 	try {
 		if (config["weights"]) {
 			l(language[lang]["setting_weights_from_config_weights"]);

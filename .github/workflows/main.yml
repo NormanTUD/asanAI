@@ -170,6 +170,16 @@ jobs:
             --enable-fake-media \
             --fake-video tests/fake.y4m 2>&1 | tee browser-tests.log
 
+          browser_status=${PIPESTATUS[0]}
+          pwa_status=0
+          python tests/pwa_offline_test.py --url http://127.0.0.1:1122/index.php || pwa_status=$?
+
+          if [ "$browser_status" -ne 0 ]; then
+            exit "$browser_status"
+          fi
+
+          exit "$pwa_status"
+
       - name: Upload JavaScript coverage
         if: always()
         uses: actions/upload-artifact@v4

@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2601;
+var DEFAULT_EXPECTED_TEST_COUNT = 2606;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -3986,7 +3986,45 @@ async function test_pwa_assets_and_registration () {
 	var page_cached = await wait_for(function () { return is_cached(location.pathname); }, 5000);
 	test_equal("current page is cached", page_cached, true);
 
-	return !!registration && scope_ok && has_cache && offline_cached && page_cached;
+	var dataset = $("#dataset").val();
+	var dataset_config_cached = await wait_for(function () { return is_cached("traindata/" + dataset + ".json"); }, 10000);
+	test_equal("service worker prefetches the current dataset configuration", dataset_config_cached, true);
+
+	var blog_cached = false;
+
+	try {
+		await fetch("blog/", { cache: "no-store" });
+		blog_cached = await is_cached("blog/");
+	} catch (e) { /* the course is optional */ }
+
+	test_equal("service worker does not cache the course", blog_cached, false);
+
+	var captured_message = null;
+	var original_swal = window.Swal;
+
+	try {
+		window.Swal = { fire: function (options) { captured_message = options; return Promise.resolve(); } };
+		_offline_data_message_shown = "";
+		show_offline_data_message("signs", "test");
+	} finally {
+		window.Swal = original_swal;
+		_offline_data_message_shown = "";
+	}
+
+	test_equal("offline data message names the affected dataset", !!captured_message && captured_message.text.indexOf("signs") !== -1, true);
+
+	var missing_config_ok = true;
+
+	try {
+		sync_last_layer_units_with_output_shape(undefined);
+	} catch (e) {
+		missing_config_ok = false;
+	}
+
+	test_equal("missing config does not break output-shape syncing", missing_config_ok, true);
+	test_equal("missing config is handled while loading weights", await set_weights_if_exists_or_error(undefined), false);
+
+	return !!registration && scope_ok && has_cache && offline_cached && page_cached && dataset_config_cached && !blog_cached && !!captured_message && missing_config_ok;
 }
 
 async function test_gradient_flow_tab_is_available_for_ffnn () {
