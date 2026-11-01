@@ -3750,7 +3750,9 @@ async function get_x_y_from_csv (parsed_data = null) {
 	var x_headers = headers_data["x"];
 	var y_headers = headers_data["y"];
 
-	await set_labels(y_headers);
+	if (Array.isArray(y_headers) && y_headers.length > 0) {
+		await set_labels(y_headers);
+	}
 
 	var parsed = parsed_data || parse_csv_file(csv);
 

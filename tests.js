@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2606;
+var DEFAULT_EXPECTED_TEST_COUNT = 2608;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -4439,6 +4439,28 @@ async function test_custom_csv_preview_updates_immediately () {
 	}
 
 	return called_synchronously;
+}
+
+async function test_custom_csv_empty_headers_do_not_warn () {
+	var old_labels = labels.slice();
+	var $selects = $(".header_select");
+	var old_values = $selects.map(function () { return $(this).val(); }).get();
+	var warnings_before = num_wrns;
+
+	$selects.val("none");
+
+	try {
+		await get_x_y_from_csv(parse_csv_file(""));
+	} finally {
+		$selects.each(function (index) {
+			$(this).val(old_values[index]);
+		});
+		labels = old_labels;
+	}
+
+	test_equal("CSV without headers does not warn", num_wrns, warnings_before);
+
+	return num_wrns === warnings_before;
 }
 
 async function test_custom_csv_parses_once () {
@@ -13390,6 +13412,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_x_y_warning_does_not_download_tensors()", test_x_y_warning_does_not_download_tensors(), true);
 		test_equal("test_custom_csv_preview_updates_immediately()", await test_custom_csv_preview_updates_immediately(), true);
 		test_equal("test_custom_csv_parses_once()", await test_custom_csv_parses_once(), true);
+		test_equal("test_custom_csv_empty_headers_do_not_warn()", await test_custom_csv_empty_headers_do_not_warn(), true);
 		test_equal("cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
 		test_equal("test_custom_tensor()", await test_custom_tensor(), true);
 		test_equal("test_image_map_dense()", await test_image_map_dense(), true);
