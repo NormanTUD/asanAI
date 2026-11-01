@@ -7289,7 +7289,7 @@
       "id": "rel-untold-i-antcliffe-contradicts-otavia",
       "from": "antcliffe-2014",
       "to": "otavia-antiqua",
-      "kind": "contradicts",
+      "kind": "critiques",
       "qualifiers": {},
       "quote": "argued that the structures are non-biological concretions",
       "citation_keys": [
@@ -7783,7 +7783,7 @@
       "id": "rel-untold-i-aristotelian-cosmology-blocked-revolution",
       "from": "meteorologica",
       "to": "scientific-revolution",
-      "kind": "contradicts",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "This cosmology blocked the scientific revolution for two millennia",
       "citation_keys": [
@@ -7882,7 +7882,7 @@
       "id": "rel-untold-i-de-revolutionibus-broke-chain",
       "from": "de-revolutionibus",
       "to": "great-chain-of-being",
-      "kind": "contradicts",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "the Great Chain of Being, which had placed humanity at the navel of creation, is broken",
       "citation_keys": [
@@ -7953,7 +7953,7 @@
       "id": "rel-untold-i-galileo-dialogue-against-aristotle",
       "from": "galileo-dialogue",
       "to": "aristotle",
-      "kind": "contradicts",
+      "kind": "critiques",
       "qualifiers": {},
       "quote": "against the Aristotelian physics of natural places and uniform circular motion",
       "citation_keys": [

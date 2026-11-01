@@ -408,6 +408,9 @@ RELATION_KIND_ALIASES = {
     "discovered": "discovered",
     "invented": "invented",
     "founded": "founded",
+    "critiques": "critiques",
+    "criticizes": "critiques",
+    "opposes": "critiques",
 }
 
 # Reverse an edge so that all ordering/influence/authorship edges point in a
@@ -539,7 +542,7 @@ KNOWN_RELATION_KINDS = {
     "influenced", "before", "caused", "wrote", "part_of", "same_as",
     "derived_from", "located_in", "uses", "supports", "contradicts",
     "cites", "related_to", "instance_of", "discovered", "invented",
-    "founded", "mentioned_in",
+    "founded", "mentioned_in", "critiques",
 }
 
 def normalize_source(text: str) -> str:

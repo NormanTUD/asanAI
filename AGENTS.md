@@ -1002,7 +1002,9 @@ Each edge is `{id, from, to, kind, qualifiers, quote, citation_keys}`;
 Canonical kinds: `influenced`/`influenced_by`, `before`/`after`/
 `preceded_by`/`followed_by`, `caused`/`caused_by`, `authored_by`/`wrote`,
 `part_of`, `same_as`/`alias_of`, `derived_from`, `located_in`, `uses`/
-`used_by`, `supports`, `contradicts`, `cites`, `related_to`, `mentioned_in`.
+`used_by`, `supports`, `contradicts`, `critiques`, `cites`, `related_to`,
+`mentioned_in`. `critiques` is a person/work challenging a theory; use
+`contradicts` only for a genuine theory-vs-theory opposition.
 `mentioned_in` is the provenance backbone (entity → lesson); it is added by
 `link_provenance.py` and guarantees every fact entry is reachable in traces. The checker
 normalises inverse pairs, rejects missing endpoints and self-loops, requires

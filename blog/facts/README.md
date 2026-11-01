@@ -294,6 +294,7 @@ enthalten:
 | `located_in` | Ort | Ding → Ort |
 | `uses` / `used_by` | Verwendung | Nutzer → Werkzeug |
 | `supports`, `contradicts`, `cites`, `related_to` | Evidenz/Assoziation | frei |
+| `critiques` | Person/Werk kritisiert eine Theorie | Person/Werk → Theorie |
 | `mentioned_in` | Provenienz: Entität kommt in dieser Lektion vor | Entität → Lektion |
 
 `mentioned_in` ist die **Provenienz-Rückgrat**-Kante: Sie behauptet keine
