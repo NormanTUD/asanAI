@@ -5303,7 +5303,8 @@ window.bibData = {
 	"leiblerkullback": {
 		title: "On Information and Sufficiency",
 		author: "Solomon Kullback, Richard Leibler",
-		year: 1951
+		year: 1951,
+		url: "https://doi.org/10.1214/aoms/1177729694"
 	},
 	"kolmogorov1933": {
 		author: "Andrey Kolmogorov",
@@ -24609,6 +24610,109 @@ window.bibData = {
 		year: 1982,
 		url: "https://www.rfc-editor.org/rfc/rfc821.txt",
 		alternativetitle: "RFC 821, SMTP (1982)"
+	},
+
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Information theory, cognitive science and evaluation
+	 *  (statistics_ii, human_mind, evaluation) -- primary and authoritative
+	 *  sources.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"rissanen1978mdl": {
+		title: "Modeling by shortest data description",
+		author: "Jorma Rissanen",
+		year: 1978,
+		url: "https://doi.org/10.1016/0005-1098(78)90005-5",
+		alternativetitle: "Rissanen, MDL (1978)"
+	},
+	"grunwald2007mdl": {
+		title: "The Minimum Description Length Principle",
+		author: "Peter D. Grünwald",
+		year: 2007,
+		url: "https://ir.cwi.nl/pub/11997/11997D.pdf",
+		alternativetitle: "Grünwald, The Minimum Description Length Principle (2007)"
+	},
+	"shannon1959rate": {
+		title: "Coding Theorems for a Discrete Source With a Fidelity Criterion",
+		author: "Claude E. Shannon",
+		year: 1959,
+		alternativetitle: "Shannon, Rate-Distortion (1959)"
+	},
+	"cover2006elements": {
+		title: "Elements of Information Theory",
+		author: "Thomas M. Cover, Joy A. Thomas",
+		year: 2006,
+		alternativetitle: "Cover & Thomas, Elements of Information Theory (2006)"
+	},
+	"knill2004bayesian": {
+		title: "The Bayesian brain: the role of uncertainty in neural coding and computation",
+		author: "David C. Knill, Alexandre Pouget",
+		year: 2004,
+		url: "https://doi.org/10.1016/j.tins.2004.10.007",
+		alternativetitle: "Knill & Pouget, The Bayesian Brain (2004)"
+	},
+	"hickok2007cortical": {
+		title: "The cortical organization of speech processing",
+		author: "Gregory Hickok, David Poeppel",
+		year: 2007,
+		url: "https://doi.org/10.1038/nrn2113",
+		alternativetitle: "Hickok & Poeppel, The Cortical Organization of Speech Processing (2007)"
+	},
+	"baddeley1974workingmemory": {
+		title: "Working Memory",
+		author: "Alan D. Baddeley, Graham Hitch",
+		year: 1974,
+		url: "https://doi.org/10.1016/S0079-7421(08)60452-1",
+		alternativetitle: "Baddeley & Hitch, Working Memory (1974)"
+	},
+	"squire2004memorysystems": {
+		title: "Memory systems of the brain: a brief history and current perspective",
+		author: "Larry R. Squire",
+		year: 2004,
+		url: "https://doi.org/10.1016/j.nlm.2004.06.005",
+		alternativetitle: "Squire, Memory Systems of the Brain (2004)"
+	},
+	"hastie2009elements": {
+		title: "The Elements of Statistical Learning: Data Mining, Inference, and Prediction",
+		author: "Trevor Hastie, Robert Tibshirani, Jerome Friedman",
+		year: 2009,
+		url: "https://hastie.su.domains/ElemStatLearn/",
+		alternativetitle: "Hastie, Tibshirani & Friedman, The Elements of Statistical Learning (2009)"
+	},
+	"quinonero2009datasetshift": {
+		title: "Dataset Shift in Machine Learning",
+		author: "Joaquin Quiñonero-Candela, Masashi Sugiyama, Anton Schwaighofer, Neil D. Lawrence",
+		year: 2009,
+		url: "https://doi.org/10.7551/mitpress/9780262170055.001.0001",
+		alternativetitle: "Quiñonero-Candela et al., Dataset Shift (2009)"
+	},
+	"kapoor2023leakage": {
+		title: "Leakage and the reproducibility crisis in machine-learning-based science",
+		author: "Sayash Kapoor, Arvind Narayanan",
+		year: 2023,
+		url: "https://doi.org/10.1016/j.patter.2023.100804",
+		alternativetitle: "Kapoor & Narayanan, Leakage and the Reproducibility Crisis (2023)"
+	},
+	"meyes2019ablation": {
+		title: "Ablation Studies in Artificial Neural Networks",
+		author: "Richard Meyes, Melanie Lu, Constantin Waubert de Puiseau, Tobias Meisen",
+		year: 2019,
+		url: "https://arxiv.org/abs/1901.08644",
+		alternativetitle: "Meyes et al., Ablation Studies (2019)"
+	},
+	"pineau2021reproducibility": {
+		title: "Improving Reproducibility in Machine Learning Research (A Report from the NeurIPS 2019 Reproducibility Program)",
+		author: "Joelle Pineau, Philippe Vincent-Lamarre, Koustuv Sinha, Vincent Larivière, Alina Beygelzimer, Florence d'Alché-Buc, Emily Fox, Hugo Larochelle",
+		year: 2021,
+		url: "https://jmlr.org/papers/v22/20-303.html",
+		alternativetitle: "Pineau et al., Improving Reproducibility (2021)"
+	},
+	"hernan2020causal": {
+		title: "Causal Inference: What If",
+		author: "Miguel A. Hernán, James M. Robins",
+		year: 2020,
+		url: "https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/",
+		alternativetitle: "Hernán & Robins, Causal Inference: What If (2020)"
 	},
 
 };
