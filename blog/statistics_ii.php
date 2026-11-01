@@ -476,7 +476,16 @@ Shannon's entropy measures the uncertainty of a source. Five quantities built fr
 
 **Cross-entropy.** If the true distribution is $P$ and the model is $Q$, the cross-entropy
 
-<div>$$H(P,Q) = -\sum_x P(x)\log Q(x) = H(P) + D_{\mathrm{KL}}(P\|Q)$$</div>
+<div>
+$$
+\underbrace{
+  \underbrace{H(P,Q)}_{\text{cost of coding data from }P\text{ with a code built for }Q}
+  = \underbrace{-\sum_x \underbrace{P(x)}_{\text{how often symbol }x\text{ occurs}} \underbrace{\log Q(x)}_{\text{code length }Q\text{ assigns to }x}}_{\text{average code length under the true distribution }P}
+  = \underbrace{H(P)}_{\text{irreducible cost of coding with the true }P}
+  + \underbrace{D_{\mathrm{KL}}(P\|Q)}_{\text{extra cost because }Q\text{ is not }P}
+}_{\text{cross-entropy = entropy plus the price of using the wrong model}}
+$$
+</div>
 
 is the average code length when $Q$ is used to code data from $P$. A language model's training loss is exactly this quantity, averaged over tokens (in nats or bits depending on the logarithm). It is not a distance: it is a cost, and it is bounded below by $H(P)$.
 
