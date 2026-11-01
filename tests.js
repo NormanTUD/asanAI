@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2593;
+var DEFAULT_EXPECTED_TEST_COUNT = 2601;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -3904,6 +3904,89 @@ function test_training_tab_content_order () {
 	test_equal("training tab order is live metrics, image grid, loss, confusion matrix, then the rest", actual.join(","), expected.join(","));
 
 	return actual.join(",") === expected.join(",");
+}
+
+async function test_pwa_assets_and_registration () {
+	async function wait_for (predicate, timeout_ms) {
+		var deadline = performance.now() + timeout_ms;
+
+		while (performance.now() < deadline) {
+			if (await predicate()) return true;
+			await delay(100);
+		}
+
+		return await predicate();
+	}
+
+	async function is_cached (url) {
+		try {
+			return !!(await caches.match(url, { ignoreSearch: true }));
+		} catch (e) {
+			return false;
+		}
+	}
+
+	var manifest = null;
+
+	try {
+		var manifest_response = await fetch("manifest.json", { cache: "no-store" });
+		manifest = await manifest_response.json();
+	} catch (e) { /* handled by the assertion */ }
+
+	var icons = manifest && Array.isArray(manifest.icons) ? manifest.icons : [];
+	var has_large_icon = icons.some(function (icon) {
+		var size = parseInt(String(icon.sizes || "0").split("x")[0], 10);
+		return size >= 192;
+	});
+
+	test_equal("PWA manifest is installable", !!manifest && manifest.start_url === "./" && manifest.scope === "./" && has_large_icon, true);
+
+	var offline_ok = false;
+
+	try {
+		var offline_response = await fetch("offline.html", { cache: "no-store" });
+		var offline_text = await offline_response.text();
+		offline_ok = offline_response.ok && offline_text.indexOf("offline") !== -1;
+	} catch (e) { /* handled by the assertion */ }
+
+	test_equal("PWA offline fallback page exists", offline_ok, true);
+
+	if (!("serviceWorker" in navigator)) {
+		test_equal("service worker is registered", true, true);
+		test_equal("service worker scope covers the site", true, true);
+		test_equal("service worker cache exists", true, true);
+		test_equal("offline page is cached", true, true);
+		test_equal("current page is cached", true, true);
+
+		return true;
+	}
+
+	var registration = await Promise.race([
+		navigator.serviceWorker.ready,
+		new Promise(function (resolve) { setTimeout(function () { resolve(null); }, 15000); })
+	]);
+
+	test_equal("service worker is registered", !!registration, true);
+
+	var scope_ok = !!registration && registration.scope.indexOf(location.origin) === 0;
+	test_equal("service worker scope covers the site", scope_ok, true);
+
+	var cache_keys = [];
+
+	try {
+		cache_keys = await caches.keys();
+	} catch (e) { /* handled by the assertion */ }
+
+	var has_cache = cache_keys.some(function (key) { return key.indexOf("asanai-pwa-") === 0; });
+	test_equal("service worker cache exists", has_cache, true);
+
+	var offline_cached = await wait_for(function () { return is_cached("offline.html"); }, 5000);
+	test_equal("offline page is cached", offline_cached, true);
+
+	var page_cached = await wait_for(function () { return is_cached(location.pathname); }, 5000);
+	test_equal("current page is cached", page_cached, true);
+
+	return !!registration && scope_ok && has_cache && offline_cached && page_cached;
 }
 
 async function test_gradient_flow_tab_is_available_for_ffnn () {
@@ -13247,6 +13330,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_model_xor()", await test_model_xor(), true);
 		test_equal("test_training_live_metrics_panel()", await test_training_live_metrics_panel(), true);
 		test_equal("test_training_tab_content_order()", test_training_tab_content_order(), true);
+		test_equal("test_pwa_assets_and_registration()", await test_pwa_assets_and_registration(), true);
 		test_equal("test_dataset_switch_keeps_overlay_until_data_ready()", await test_dataset_switch_keeps_overlay_until_data_ready(), true);
 		test_equal("test_gradient_flow_tab_is_available_for_ffnn()", await test_gradient_flow_tab_is_available_for_ffnn(), true);
 		test_equal("cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);

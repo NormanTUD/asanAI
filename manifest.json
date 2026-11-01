@@ -1,13 +1,26 @@
 {
   "short_name": "asanAI",
-  "name": "asanAI",
-  "start_url": "asanai.scads.ai",
+  "name": "asanAI — Machine Learning Toolkit",
+  "description": "Build, train and inspect neural networks in the browser without writing code.",
+  "lang": "en",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff",
-  "permissions": {
-    "video-capture": {
-      "description": "Camera is needed for getting training data"
+  "orientation": "any",
+  "theme_color": "#7299d2",
+  "background_color": "#FAF8F1",
+  "icons": [
+    {
+      "src": "_gui/logo_small.png",
+      "sizes": "200x200",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon.ico",
+      "sizes": "576x576",
+      "type": "image/png",
+      "purpose": "any"
     }
-  }
+  ]
 }

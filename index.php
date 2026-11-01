@@ -20,6 +20,8 @@
 		<title>asanAI</title>
 		<meta charset="utf-8">
 		<link rel="manifest" href="manifest.json">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-title" content="asanAI">
 		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 		<meta http-equiv="Pragma" content="no-cache">
 		<meta http-equiv="Expires" content="0">
@@ -162,6 +164,7 @@
 		_js("organic-network.js");
 		_js("loader-network.js");
 		_js("main.js");
+		_js("pwa.js", 0, 1);
 
 		_js("fn_profiler.js");
 
