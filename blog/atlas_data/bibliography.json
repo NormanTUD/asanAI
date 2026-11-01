@@ -4122,6 +4122,24 @@
    "year": "2019",
    "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
   },
+  "openai2019betterlms": {
+   "title": "Better Language Models and Their Implications",
+   "author": "OpenAI",
+   "year": "2019",
+   "url": "https://web.archive.org/web/20191108210402/https://openai.com/blog/better-language-models/"
+  },
+  "openai2019gpt2release": {
+   "title": "GPT-2: 1.5B Release",
+   "author": "OpenAI",
+   "year": "2019",
+   "url": "https://web.archive.org/web/20191111001547/https://openai.com/blog/gpt-2-1-5b-release/"
+  },
+  "joler2020nooscope": {
+   "title": "The Nooscope Manifested: AI as Instrument of Knowledge Extractivism",
+   "author": "Vladan Joler, Matteo Pasquinelli",
+   "year": "2020",
+   "url": "https://kim.hfg-karlsruhe.de/nooscope.ai/"
+  },
   "rush2018annotatedtransformer": {
    "title": "The Annotated Transformer",
    "author": "Alexander Rush, Vincent Nguyen, Guillaume Klein",
@@ -4588,7 +4606,7 @@
    "title": "On Information and Sufficiency",
    "author": "Solomon Kullback, Richard Leibler",
    "year": "1951",
-   "url": ""
+   "url": "https://doi.org/10.1214/aoms/1177729694"
   },
   "kolmogorov1933": {
    "title": "Foundations of the theory of probability",
@@ -5615,6 +5633,30 @@
    "author": "Nitish Srivastava, Geoffrey Everest Hinton, Alex Krizhevsky, Ilya Sutskever, Ruslan Salakhutdinov",
    "year": "2014",
    "url": "https://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf?utm_content=buffer79b4"
+  },
+  "hinton2012dropout": {
+   "title": "Improving neural networks by preventing co-adaptation of feature detectors",
+   "author": "Geoffrey E. Hinton, Nitish Srivastava, Alex Krizhevsky, Ilya Sutskever, Ruslan R. Salakhutdinov",
+   "year": "2012",
+   "url": "https://arxiv.org/abs/1207.0580"
+  },
+  "wan2013dropconnect": {
+   "title": "Regularization of Neural Networks using DropConnect",
+   "author": "Li Wan, Matthew Zeiler, Sixin Zhang, Yann LeCun, Rob Fergus",
+   "year": "2013",
+   "url": "https://proceedings.mlr.press/v28/wan13.html"
+  },
+  "gal2016variationaldropout": {
+   "title": "A Theoretically Grounded Application of Dropout in Recurrent Neural Networks",
+   "author": "Yarin Gal, Zoubin Ghahramani",
+   "year": "2016",
+   "url": "https://arxiv.org/abs/1512.05287"
+  },
+  "gal2016dropoutbayesian": {
+   "title": "Dropout as a Bayesian Approximation: Representing Model Uncertainty in Deep Learning",
+   "author": "Yarin Gal, Zoubin Ghahramani",
+   "year": "2016",
+   "url": "https://arxiv.org/abs/1506.02142"
   },
   "tibshirani1996lasso": {
    "title": "Regression Shrinkage and Selection via the Lasso",
@@ -20459,6 +20501,90 @@
    "author": "Jonathan B. Postel",
    "year": "1982",
    "url": "https://www.rfc-editor.org/rfc/rfc821.txt"
+  },
+  "rissanen1978mdl": {
+   "title": "Modeling by shortest data description",
+   "author": "Jorma Rissanen",
+   "year": "1978",
+   "url": "https://doi.org/10.1016/0005-1098(78)90005-5"
+  },
+  "grunwald2007mdl": {
+   "title": "The Minimum Description Length Principle",
+   "author": "Peter D. Grünwald",
+   "year": "2007",
+   "url": "https://ir.cwi.nl/pub/11997/11997D.pdf"
+  },
+  "shannon1959rate": {
+   "title": "Coding Theorems for a Discrete Source With a Fidelity Criterion",
+   "author": "Claude E. Shannon",
+   "year": "1959",
+   "url": ""
+  },
+  "cover2006elements": {
+   "title": "Elements of Information Theory",
+   "author": "Thomas M. Cover, Joy A. Thomas",
+   "year": "2006",
+   "url": ""
+  },
+  "knill2004bayesian": {
+   "title": "The Bayesian brain: the role of uncertainty in neural coding and computation",
+   "author": "David C. Knill, Alexandre Pouget",
+   "year": "2004",
+   "url": "https://doi.org/10.1016/j.tins.2004.10.007"
+  },
+  "hickok2007cortical": {
+   "title": "The cortical organization of speech processing",
+   "author": "Gregory Hickok, David Poeppel",
+   "year": "2007",
+   "url": "https://doi.org/10.1038/nrn2113"
+  },
+  "baddeley1974workingmemory": {
+   "title": "Working Memory",
+   "author": "Alan D. Baddeley, Graham Hitch",
+   "year": "1974",
+   "url": "https://doi.org/10.1016/S0079-7421(08)60452-1"
+  },
+  "squire2004memorysystems": {
+   "title": "Memory systems of the brain: a brief history and current perspective",
+   "author": "Larry R. Squire",
+   "year": "2004",
+   "url": "https://doi.org/10.1016/j.nlm.2004.06.005"
+  },
+  "hastie2009elements": {
+   "title": "The Elements of Statistical Learning: Data Mining, Inference, and Prediction",
+   "author": "Trevor Hastie, Robert Tibshirani, Jerome Friedman",
+   "year": "2009",
+   "url": "https://hastie.su.domains/ElemStatLearn/"
+  },
+  "quinonero2009datasetshift": {
+   "title": "Dataset Shift in Machine Learning",
+   "author": "Joaquin Quiñonero-Candela, Masashi Sugiyama, Anton Schwaighofer, Neil D. Lawrence",
+   "year": "2009",
+   "url": "https://doi.org/10.7551/mitpress/9780262170055.001.0001"
+  },
+  "kapoor2023leakage": {
+   "title": "Leakage and the reproducibility crisis in machine-learning-based science",
+   "author": "Sayash Kapoor, Arvind Narayanan",
+   "year": "2023",
+   "url": "https://doi.org/10.1016/j.patter.2023.100804"
+  },
+  "meyes2019ablation": {
+   "title": "Ablation Studies in Artificial Neural Networks",
+   "author": "Richard Meyes, Melanie Lu, Constantin Waubert de Puiseau, Tobias Meisen",
+   "year": "2019",
+   "url": "https://arxiv.org/abs/1901.08644"
+  },
+  "pineau2021reproducibility": {
+   "title": "Improving Reproducibility in Machine Learning Research (A Report from the NeurIPS 2019 Reproducibility Program)",
+   "author": "Joelle Pineau, Philippe Vincent-Lamarre, Koustuv Sinha, Vincent Larivière, Alina Beygelzimer, Florence d'Alché-Buc, Emily Fox, Hugo Larochelle",
+   "year": "2021",
+   "url": "https://jmlr.org/papers/v22/20-303.html"
+  },
+  "hernan2020causal": {
+   "title": "Causal Inference: What If",
+   "author": "Miguel A. Hernán, James M. Robins",
+   "year": "2020",
+   "url": "https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/"
   }
  },
  "cites": {
@@ -20523,6 +20649,18 @@
   ],
   "colah2015visualinfo": [
    "losslab",
+   "statistics_ii"
+  ],
+  "rissanen1978mdl": [
+   "statistics_ii"
+  ],
+  "grunwald2007mdl": [
+   "statistics_ii"
+  ],
+  "shannon1959rate": [
+   "statistics_ii"
+  ],
+  "cover2006elements": [
    "statistics_ii"
   ],
   "zelligharris": [
@@ -20713,6 +20851,7 @@
    "math_iv",
    "music_video_generation",
    "origami",
+   "overandunderfittinglab",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -22016,7 +22155,9 @@
    "philosophy",
    "positionalembeddingslab",
    "tokenizerlab",
+   "training_data",
    "transformer",
+   "unexpected_capabilities",
    "untold_history_iii"
   ],
   "wang2019preln": [
@@ -22138,6 +22279,16 @@
    "transformer",
    "untold_history_iii"
   ],
+  "belrose2023tunedlens": [
+   "fact_lookup",
+   "mechanistic_interpretability",
+   "transformer"
+  ],
+  "nostalgebraist2020logitlens": [
+   "fact_lookup",
+   "mechanistic_interpretability",
+   "transformer"
+  ],
   "logitorigin": [
    "transformer"
   ],
@@ -22229,6 +22380,12 @@
   ],
   "floridi2011information": [
    "metaphysics_of_ai"
+  ],
+  "joler2020nooscope": [
+   "history",
+   "metaphysics_of_ai",
+   "training_data",
+   "unexpected_capabilities"
   ],
   "piccinini2015computation": [
    "metaphysics_of_ai"
@@ -22433,6 +22590,7 @@
    "symbolic_ai"
   ],
   "newell1976empirical": [
+   "human_mind",
    "symbolic_ai"
   ],
   "brooks1990elephants": [
@@ -23563,6 +23721,7 @@
    "mirror_in_machine"
   ],
   "clark2013whatevernext": [
+   "human_mind",
    "mirror_in_machine"
   ],
   "keller2018canonical": [
@@ -23781,8 +23940,10 @@
    "recurrent_networks"
   ],
   "firstgpt": [
+   "finetuninglab",
    "history",
-   "positionalembeddingslab"
+   "positionalembeddingslab",
+   "tokenizerlab"
   ],
   "shaw2018relative": [
    "positionalembeddingslab"
@@ -24420,6 +24581,24 @@
    "evaluation"
   ],
   "helm2022": [
+   "evaluation"
+  ],
+  "hastie2009elements": [
+   "evaluation"
+  ],
+  "quinonero2009datasetshift": [
+   "evaluation"
+  ],
+  "kapoor2023leakage": [
+   "evaluation"
+  ],
+  "meyes2019ablation": [
+   "evaluation"
+  ],
+  "pineau2021reproducibility": [
+   "evaluation"
+  ],
+  "hernan2020causal": [
    "evaluation"
   ],
   "diffusion_astronaut_img": [
@@ -25780,6 +25959,7 @@
   ],
   "rumelhart1986pdp": [
    "history",
+   "human_mind",
    "minimalneuron"
   ],
   "collobert2002": [
@@ -25821,6 +26001,12 @@
    "history"
   ],
   "schmidhuber1996nplm": [
+   "history"
+  ],
+  "openai2019betterlms": [
+   "history"
+  ],
+  "openai2019gpt2release": [
    "history"
   ],
   "howard2018ulmfit": [
@@ -26187,6 +26373,18 @@
   "simonnewell_image": [
    "human_mind",
    "people_of_ai"
+  ],
+  "knill2004bayesian": [
+   "human_mind"
+  ],
+  "baddeley1974workingmemory": [
+   "human_mind"
+  ],
+  "squire2004memorysystems": [
+   "human_mind"
+  ],
+  "hickok2007cortical": [
+   "human_mind"
   ],
   "henrich2016secret": [
    "human_mind"
@@ -28578,14 +28776,6 @@
    "intuition",
    "mechanistic_interpretability"
   ],
-  "nostalgebraist2020logitlens": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ],
-  "belrose2023tunedlens": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ],
   "meng2022memit": [
    "fact_lookup",
    "mechanistic_interpretability"
@@ -29029,7 +29219,8 @@
    "embeddinglab"
   ],
   "ethayarajh2019contextual": [
-   "embeddinglab"
+   "embeddinglab",
+   "statistics_i"
   ],
   "mu2018allbutthetop": [
    "embeddinglab"
@@ -29981,7 +30172,19 @@
   "earlyl2": [
    "overandunderfittinglab"
   ],
+  "hinton2012dropout": [
+   "overandunderfittinglab"
+  ],
   "srivastava2014dropout": [
+   "overandunderfittinglab"
+  ],
+  "wan2013dropconnect": [
+   "overandunderfittinglab"
+  ],
+  "gal2016variationaldropout": [
+   "overandunderfittinglab"
+  ],
+  "gal2016dropoutbayesian": [
    "overandunderfittinglab"
   ],
   "shelley1818frankenstein": [
@@ -31370,11 +31573,12 @@
    ]
   },
   "Thomas M. Cover": {
-   "count": 1,
+   "count": 2,
    "minyear": 1965,
-   "maxyear": 1965,
+   "maxyear": 2006,
    "keys": [
-    "cover1965"
+    "cover1965",
+    "cover2006elements"
    ]
   },
   "William B. Johnson": {
@@ -32222,7 +32426,7 @@
    ]
   },
   "Yann LeCun": {
-   "count": 9,
+   "count": 10,
    "minyear": 1989,
    "maxyear": 2023,
    "keys": [
@@ -32232,6 +32436,7 @@
     "lecun2006",
     "lecun1989backpropagation",
     "lecun1998gradientbased",
+    "wan2013dropconnect",
     "choromanska2015loss",
     "chaudhari2016entropysgd",
     "lecun2022path"
@@ -32311,7 +32516,7 @@
    ]
   },
   "Geoffrey E. Hinton": {
-   "count": 13,
+   "count": 14,
    "minyear": 1985,
    "maxyear": 2017,
    "keys": [
@@ -32320,6 +32525,7 @@
     "jacobs1991moe",
     "relupaper",
     "hinton2006",
+    "hinton2012dropout",
     "hinton2007baby",
     "rumelhart1986",
     "rumelhart1986pdp",
@@ -35065,11 +35271,13 @@
    ]
   },
   "OpenAI": {
-   "count": 7,
-   "minyear": 2022,
+   "count": 9,
+   "minyear": 2019,
    "maxyear": 2026,
    "keys": [
     "openai2023functioncalling",
+    "openai2019betterlms",
+    "openai2019gpt2release",
     "openai2024o1",
     "openai2023apipricing",
     "navier_stokes_openai",
@@ -42414,13 +42622,14 @@
    ]
   },
   "Ilya Sutskever": {
-   "count": 15,
+   "count": 16,
    "minyear": 2011,
    "maxyear": 2022,
    "keys": [
     "gpt2",
     "firstgpt",
     "srivastava2014dropout",
+    "hinton2012dropout",
     "sutskever2011generating",
     "krizhevsky2012imagenet",
     "sutskever2014seq2seq",
@@ -42433,6 +42642,22 @@
     "radford2022whisper",
     "sutskever2013thesis",
     "mikolov2013negativesampling"
+   ]
+  },
+  "Vladan Joler": {
+   "count": 1,
+   "minyear": 2020,
+   "maxyear": 2020,
+   "keys": [
+    "joler2020nooscope"
+   ]
+  },
+  "Matteo Pasquinelli": {
+   "count": 1,
+   "minyear": 2020,
+   "maxyear": 2020,
+   "keys": [
+    "joler2020nooscope"
    ]
   },
   "Alexander Rush": {
@@ -45306,11 +45531,12 @@
    ]
   },
   "Nitish Srivastava": {
-   "count": 1,
-   "minyear": 2014,
+   "count": 2,
+   "minyear": 2012,
    "maxyear": 2014,
    "keys": [
-    "srivastava2014dropout"
+    "srivastava2014dropout",
+    "hinton2012dropout"
    ]
   },
   "Geoffrey Everest Hinton": {
@@ -45326,22 +45552,87 @@
    ]
   },
   "Alex Krizhevsky": {
-   "count": 4,
+   "count": 5,
    "minyear": 2009,
    "maxyear": 2014,
    "keys": [
     "srivastava2014dropout",
+    "hinton2012dropout",
     "krizhevsky2012imagenet",
     "hinton2011capsules",
     "krizhevsky2009cifar"
    ]
   },
-  "Robert Tibshirani": {
+  "Ruslan R. Salakhutdinov": {
    "count": 1,
-   "minyear": 1996,
-   "maxyear": 1996,
+   "minyear": 2012,
+   "maxyear": 2012,
    "keys": [
-    "tibshirani1996lasso"
+    "hinton2012dropout"
+   ]
+  },
+  "Li Wan": {
+   "count": 1,
+   "minyear": 2013,
+   "maxyear": 2013,
+   "keys": [
+    "wan2013dropconnect"
+   ]
+  },
+  "Matthew Zeiler": {
+   "count": 1,
+   "minyear": 2013,
+   "maxyear": 2013,
+   "keys": [
+    "wan2013dropconnect"
+   ]
+  },
+  "Sixin Zhang": {
+   "count": 1,
+   "minyear": 2013,
+   "maxyear": 2013,
+   "keys": [
+    "wan2013dropconnect"
+   ]
+  },
+  "Rob Fergus": {
+   "count": 2,
+   "minyear": 2013,
+   "maxyear": 2015,
+   "keys": [
+    "wan2013dropconnect",
+    "sukhbaatar2015memnn"
+   ]
+  },
+  "Yarin Gal": {
+   "count": 5,
+   "minyear": 2016,
+   "maxyear": 2024,
+   "keys": [
+    "gal2016variationaldropout",
+    "gal2016dropoutbayesian",
+    "shumailov2023modelcollapse",
+    "kendall2017uncertainties",
+    "farquhar2024semantic"
+   ]
+  },
+  "Zoubin Ghahramani": {
+   "count": 3,
+   "minyear": 1999,
+   "maxyear": 2016,
+   "keys": [
+    "gal2016variationaldropout",
+    "gal2016dropoutbayesian",
+    "jordan1999vi"
+   ]
+  },
+  "Robert Tibshirani": {
+   "count": 2,
+   "minyear": 1996,
+   "maxyear": 2009,
+   "keys": [
+    "tibshirani1996lasso",
+    "hastie2009elements"
    ]
   },
   "Arthur E. Hoerl": {
@@ -45565,16 +45856,6 @@
     "shumailov2023modelcollapse",
     "wong2025sinks",
     "shumailov2024collapse"
-   ]
-  },
-  "Yarin Gal": {
-   "count": 3,
-   "minyear": 2017,
-   "maxyear": 2024,
-   "keys": [
-    "shumailov2023modelcollapse",
-    "kendall2017uncertainties",
-    "farquhar2024semantic"
    ]
   },
   "Nicolas Papernot": {
@@ -53410,13 +53691,14 @@
    ]
   },
   "Hugo Larochelle": {
-   "count": 3,
+   "count": 4,
    "minyear": 2008,
-   "maxyear": 2012,
+   "maxyear": 2021,
    "keys": [
     "vincent2008dae",
     "snoek2012spearmint",
-    "snoek2012practical"
+    "snoek2012practical",
+    "pineau2021reproducibility"
    ]
   },
   "Pierre-Antoine Manzagol": {
@@ -54447,14 +54729,6 @@
     "salvatier2016pymc"
    ]
   },
-  "Zoubin Ghahramani": {
-   "count": 1,
-   "minyear": 1999,
-   "maxyear": 1999,
-   "keys": [
-    "jordan1999vi"
-   ]
-  },
   "Tommi S. Jaakkola": {
    "count": 1,
    "minyear": 1999,
@@ -54570,11 +54844,12 @@
    ]
   },
   "Joaquin Quiñonero-Candela": {
-   "count": 1,
+   "count": 2,
    "minyear": 2005,
-   "maxyear": 2005,
+   "maxyear": 2009,
    "keys": [
-    "quinonero2005unifying"
+    "quinonero2005unifying",
+    "quinonero2009datasetshift"
    ]
   },
   "James Hensman": {
@@ -54594,12 +54869,13 @@
    ]
   },
   "Neil D. Lawrence": {
-   "count": 2,
-   "minyear": 2013,
+   "count": 3,
+   "minyear": 2009,
    "maxyear": 2013,
    "keys": [
     "hensman2013svgp",
-    "damianou2013deepgp"
+    "damianou2013deepgp",
+    "quinonero2009datasetshift"
    ]
   },
   "Marta Garnelo": {
@@ -63836,11 +64112,12 @@
    ]
   },
   "Alan D. Baddeley": {
-   "count": 1,
-   "minyear": 1986,
+   "count": 2,
+   "minyear": 1974,
    "maxyear": 1986,
    "keys": [
-    "baddeley1986workingmemory"
+    "baddeley1986workingmemory",
+    "baddeley1974workingmemory"
    ]
   },
   "Nelson Cowan": {
@@ -67018,11 +67295,12 @@
    ]
   },
   "Claude E. Shannon": {
-   "count": 1,
+   "count": 2,
    "minyear": 1955,
-   "maxyear": 1955,
+   "maxyear": 1959,
    "keys": [
-    "mccarthy1955dartmouth"
+    "mccarthy1955dartmouth",
+    "shannon1959rate"
    ]
   },
   "Greg S. Corrado": {
@@ -69600,14 +69878,6 @@
     "sukhbaatar2015memnn"
    ]
   },
-  "Rob Fergus": {
-   "count": 1,
-   "minyear": 2015,
-   "maxyear": 2015,
-   "keys": [
-    "sukhbaatar2015memnn"
-   ]
-  },
   "Aäron van den Oord": {
    "count": 1,
    "minyear": 2016,
@@ -70865,6 +71135,230 @@
    "maxyear": 1982,
    "keys": [
     "rfc821"
+   ]
+  },
+  "Jorma Rissanen": {
+   "count": 1,
+   "minyear": 1978,
+   "maxyear": 1978,
+   "keys": [
+    "rissanen1978mdl"
+   ]
+  },
+  "Peter D. Grünwald": {
+   "count": 1,
+   "minyear": 2007,
+   "maxyear": 2007,
+   "keys": [
+    "grunwald2007mdl"
+   ]
+  },
+  "Joy A. Thomas": {
+   "count": 1,
+   "minyear": 2006,
+   "maxyear": 2006,
+   "keys": [
+    "cover2006elements"
+   ]
+  },
+  "David C. Knill": {
+   "count": 1,
+   "minyear": 2004,
+   "maxyear": 2004,
+   "keys": [
+    "knill2004bayesian"
+   ]
+  },
+  "Alexandre Pouget": {
+   "count": 1,
+   "minyear": 2004,
+   "maxyear": 2004,
+   "keys": [
+    "knill2004bayesian"
+   ]
+  },
+  "Gregory Hickok": {
+   "count": 1,
+   "minyear": 2007,
+   "maxyear": 2007,
+   "keys": [
+    "hickok2007cortical"
+   ]
+  },
+  "David Poeppel": {
+   "count": 1,
+   "minyear": 2007,
+   "maxyear": 2007,
+   "keys": [
+    "hickok2007cortical"
+   ]
+  },
+  "Graham Hitch": {
+   "count": 1,
+   "minyear": 1974,
+   "maxyear": 1974,
+   "keys": [
+    "baddeley1974workingmemory"
+   ]
+  },
+  "Larry R. Squire": {
+   "count": 1,
+   "minyear": 2004,
+   "maxyear": 2004,
+   "keys": [
+    "squire2004memorysystems"
+   ]
+  },
+  "Trevor Hastie": {
+   "count": 1,
+   "minyear": 2009,
+   "maxyear": 2009,
+   "keys": [
+    "hastie2009elements"
+   ]
+  },
+  "Jerome Friedman": {
+   "count": 1,
+   "minyear": 2009,
+   "maxyear": 2009,
+   "keys": [
+    "hastie2009elements"
+   ]
+  },
+  "Masashi Sugiyama": {
+   "count": 1,
+   "minyear": 2009,
+   "maxyear": 2009,
+   "keys": [
+    "quinonero2009datasetshift"
+   ]
+  },
+  "Anton Schwaighofer": {
+   "count": 1,
+   "minyear": 2009,
+   "maxyear": 2009,
+   "keys": [
+    "quinonero2009datasetshift"
+   ]
+  },
+  "Sayash Kapoor": {
+   "count": 1,
+   "minyear": 2023,
+   "maxyear": 2023,
+   "keys": [
+    "kapoor2023leakage"
+   ]
+  },
+  "Arvind Narayanan": {
+   "count": 1,
+   "minyear": 2023,
+   "maxyear": 2023,
+   "keys": [
+    "kapoor2023leakage"
+   ]
+  },
+  "Richard Meyes": {
+   "count": 1,
+   "minyear": 2019,
+   "maxyear": 2019,
+   "keys": [
+    "meyes2019ablation"
+   ]
+  },
+  "Melanie Lu": {
+   "count": 1,
+   "minyear": 2019,
+   "maxyear": 2019,
+   "keys": [
+    "meyes2019ablation"
+   ]
+  },
+  "Constantin Waubert de Puiseau": {
+   "count": 1,
+   "minyear": 2019,
+   "maxyear": 2019,
+   "keys": [
+    "meyes2019ablation"
+   ]
+  },
+  "Tobias Meisen": {
+   "count": 1,
+   "minyear": 2019,
+   "maxyear": 2019,
+   "keys": [
+    "meyes2019ablation"
+   ]
+  },
+  "Joelle Pineau": {
+   "count": 1,
+   "minyear": 2021,
+   "maxyear": 2021,
+   "keys": [
+    "pineau2021reproducibility"
+   ]
+  },
+  "Philippe Vincent-Lamarre": {
+   "count": 1,
+   "minyear": 2021,
+   "maxyear": 2021,
+   "keys": [
+    "pineau2021reproducibility"
+   ]
+  },
+  "Koustuv Sinha": {
+   "count": 1,
+   "minyear": 2021,
+   "maxyear": 2021,
+   "keys": [
+    "pineau2021reproducibility"
+   ]
+  },
+  "Vincent Larivière": {
+   "count": 1,
+   "minyear": 2021,
+   "maxyear": 2021,
+   "keys": [
+    "pineau2021reproducibility"
+   ]
+  },
+  "Alina Beygelzimer": {
+   "count": 1,
+   "minyear": 2021,
+   "maxyear": 2021,
+   "keys": [
+    "pineau2021reproducibility"
+   ]
+  },
+  "Florence d'Alché-Buc": {
+   "count": 1,
+   "minyear": 2021,
+   "maxyear": 2021,
+   "keys": [
+    "pineau2021reproducibility"
+   ]
+  },
+  "Emily Fox": {
+   "count": 1,
+   "minyear": 2021,
+   "maxyear": 2021,
+   "keys": [
+    "pineau2021reproducibility"
+   ]
+  },
+  "Miguel A. Hernán": {
+   "count": 1,
+   "minyear": 2020,
+   "maxyear": 2020,
+   "keys": [
+    "hernan2020causal"
+   ]
+  },
+  "James M. Robins": {
+   "count": 1,
+   "minyear": 2020,
+   "maxyear": 2020,
+   "keys": [
+    "hernan2020causal"
    ]
   }
  }

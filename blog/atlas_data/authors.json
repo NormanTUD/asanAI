@@ -1199,6 +1199,7 @@
    "math_iv",
    "music_video_generation",
    "origami",
+   "overandunderfittinglab",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -1786,6 +1787,7 @@
    "ai_economics",
    "beyond_llms",
    "computer_vision",
+   "finetuninglab",
    "history",
    "hyperparameters",
    "mechanistic_interpretability",
@@ -1796,8 +1798,10 @@
    "positionalembeddingslab",
    "recurrent_networks",
    "tokenizerlab",
+   "training_data",
    "trainingdynamics",
    "transformer",
+   "unexpected_capabilities",
    "untold_history_iii"
   ]
  },
@@ -2052,9 +2056,10 @@
   "city": "Toronto, Canada",
   "year": 2012.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "srivastava2014dropout",
+   "hinton2012dropout",
    "krizhevsky2012imagenet",
    "hinton2011capsules",
    "krizhevsky2009cifar"
@@ -2933,6 +2938,7 @@
   "cited_in": [
    "agents",
    "history",
+   "human_mind",
    "people_of_ai",
    "symbolic_ai"
   ]
@@ -4400,6 +4406,7 @@
   ],
   "cited_in": [
    "hallucinations",
+   "human_mind",
    "mirror_in_machine",
    "myths"
   ]
@@ -6141,6 +6148,7 @@
    "math_iv",
    "music_video_generation",
    "origami",
+   "overandunderfittinglab",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -12758,11 +12766,13 @@
   "city": "London, England",
   "year": 1974.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "baddeley1986workingmemory"
+   "baddeley1986workingmemory",
+   "baddeley1974workingmemory"
   ],
   "cited_in": [
+   "human_mind",
    "mirror_in_machine"
   ]
  },
@@ -18190,7 +18200,8 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "transformer"
   ]
  },
  {
@@ -18208,7 +18219,8 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "transformer"
   ]
  },
  {
@@ -18226,7 +18238,8 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "transformer"
   ]
  },
  {
@@ -18244,7 +18257,8 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "transformer"
   ]
  },
  {
@@ -18262,7 +18276,8 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "transformer"
   ]
  },
  {
@@ -18280,7 +18295,8 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "transformer"
   ]
  },
  {
@@ -22955,12 +22971,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "mccarthy1955dartmouth"
+   "mccarthy1955dartmouth",
+   "shannon1959rate"
   ],
   "cited_in": [
    "people_of_ai",
+   "statistics_ii",
    "symbolic_ai"
   ]
  },
@@ -29287,6 +29305,7 @@
    "promptengineering",
    "reliability",
    "tokenizerlab",
+   "training_data",
    "trainingdynamics",
    "transformer",
    "unexpected_capabilities",
@@ -29783,6 +29802,7 @@
    "backproplab",
    "differentiation",
    "history",
+   "human_mind",
    "loss_landscape",
    "minimalneuron",
    "optimizerlab",
@@ -30242,6 +30262,7 @@
    "philosophy",
    "positionalembeddingslab",
    "tokenizerlab",
+   "training_data",
    "transformer",
    "unexpected_capabilities",
    "untold_history_iii"
@@ -36040,13 +36061,14 @@
   "city": "Toronto, Canada",
   "year": 2007.0,
   "conf": 1,
-  "works": 13,
+  "works": 14,
   "keys": [
    "ackley1985boltzmann",
    "boltzmannlearning",
    "jacobs1991moe",
    "relupaper",
    "hinton2006",
+   "hinton2012dropout",
    "hinton2007baby",
    "rumelhart1986",
    "rumelhart1986pdp",
@@ -36065,11 +36087,13 @@
    "differentiation",
    "geometry_i",
    "history",
+   "human_mind",
    "loss_landscape",
    "mechanistic_interpretability",
    "minimalneuron",
    "mixture_of_experts",
    "optimizerlab",
+   "overandunderfittinglab",
    "people_of_ai",
    "samplinglab",
    "transformer"
@@ -40093,14 +40117,16 @@
   "city": "Montreal, Canada",
   "year": 2012.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "vincent2008dae",
    "snoek2012spearmint",
-   "snoek2012practical"
+   "snoek2012practical",
+   "pineau2021reproducibility"
   ],
   "cited_in": [
    "beyond_llms",
+   "evaluation",
    "hyperparameters"
   ]
  },
@@ -40752,6 +40778,7 @@
    "math_iv",
    "music_video_generation",
    "origami",
+   "overandunderfittinglab",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -40785,11 +40812,12 @@
   "city": "San Francisco, United States",
   "year": 2014.0,
   "conf": 1,
-  "works": 15,
+  "works": 16,
   "keys": [
    "gpt2",
    "firstgpt",
    "srivastava2014dropout",
+   "hinton2012dropout",
    "sutskever2011generating",
    "krizhevsky2012imagenet",
    "sutskever2014seq2seq",
@@ -40811,6 +40839,7 @@
    "beyond_llms",
    "computer_vision",
    "embeddinglab",
+   "finetuninglab",
    "history",
    "overandunderfittinglab",
    "people_of_ai",
@@ -40819,7 +40848,9 @@
    "recurrent_networks",
    "samplinglab",
    "tokenizerlab",
+   "training_data",
    "transformer",
+   "unexpected_capabilities",
    "untold_history_iii"
   ]
  },
@@ -42406,6 +42437,7 @@
    "math_iv",
    "music_video_generation",
    "origami",
+   "overandunderfittinglab",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -42734,6 +42766,7 @@
   ],
   "cited_in": [
    "history",
+   "human_mind",
    "loss_landscape",
    "minimalneuron",
    "people_of_ai"
@@ -44014,8 +44047,10 @@
    "philosophy",
    "positionalembeddingslab",
    "tokenizerlab",
+   "training_data",
    "trainingdynamics",
    "transformer",
+   "unexpected_capabilities",
    "untold_history_iii"
   ]
  },
@@ -44830,12 +44865,14 @@
   "city": "Oxford, UK",
   "year": 2005.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "quinonero2005unifying"
+   "quinonero2005unifying",
+   "quinonero2009datasetshift"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "evaluation"
   ]
  },
  {
@@ -48291,11 +48328,13 @@
   ],
   "cited_in": [
    "agents",
+   "finetuninglab",
    "history",
    "positionalembeddingslab",
    "promptengineering",
    "reasoning",
    "symbolic_ai",
+   "tokenizerlab",
    "unexpected_capabilities",
    "websearch"
   ]
@@ -48449,7 +48488,8 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "reinforcement_learning"
+   "reinforcement_learning",
+   "statistics_i"
   ]
  },
  {
@@ -50775,6 +50815,7 @@
    "math_iv",
    "music_video_generation",
    "origami",
+   "overandunderfittinglab",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -56811,13 +56852,15 @@
   "city": "Cambridge, UK",
   "year": 2013.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "hensman2013svgp",
-   "damianou2013deepgp"
+   "damianou2013deepgp",
+   "quinonero2009datasetshift"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "evaluation"
   ]
  },
  {
@@ -57571,6 +57614,7 @@
    "math_iv",
    "music_video_generation",
    "origami",
+   "overandunderfittinglab",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -57835,9 +57879,10 @@
   "city": "Toronto, Canada",
   "year": 2014.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "srivastava2014dropout"
+   "srivastava2014dropout",
+   "hinton2012dropout"
   ],
   "cited_in": [
    "overandunderfittinglab"
@@ -58048,6 +58093,7 @@
    "music_video_generation",
    "optimizerlab",
    "origami",
+   "overandunderfittinglab",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -58217,7 +58263,8 @@
   ],
   "cited_in": [
    "fact_lookup",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "transformer"
   ]
  },
  {
@@ -58520,9 +58567,11 @@
   "city": "San Francisco, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 7,
+  "works": 9,
   "keys": [
    "openai2023functioncalling",
+   "openai2019betterlms",
+   "openai2019gpt2release",
    "openai2024o1",
    "openai2023apipricing",
    "navier_stokes_openai",
@@ -58534,6 +58583,7 @@
    "ai_for_science",
    "frontier",
    "global_ai_ecosystem",
+   "history",
    "websearch"
   ]
  },
@@ -62257,8 +62307,10 @@
    "philosophy",
    "positionalembeddingslab",
    "tokenizerlab",
+   "training_data",
    "trainingdynamics",
    "transformer",
+   "unexpected_capabilities",
    "untold_history_iii"
   ]
  },
@@ -63291,11 +63343,13 @@
   "city": "Palo Alto, USA",
   "year": 1996.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "tibshirani1996lasso"
+   "tibshirani1996lasso",
+   "hastie2009elements"
   ],
   "cited_in": [
+   "evaluation",
    "overandunderfittinglab"
   ]
  },
@@ -68328,6 +68382,7 @@
    "global_ai_ecosystem",
    "mechanistic_interpretability",
    "training_data",
+   "transformer",
    "untold_history_iii"
   ]
  },
@@ -70776,9 +70831,11 @@
   "cited_in": [
    "beyond_llms",
    "diffusion",
+   "finetuninglab",
    "history",
    "music_video_generation",
-   "positionalembeddingslab"
+   "positionalembeddingslab",
+   "tokenizerlab"
   ]
  },
  {
@@ -75970,7 +76027,7 @@
   "city": "New York, USA",
   "year": 1998.0,
   "conf": 1,
-  "works": 9,
+  "works": 10,
   "keys": [
    "lecun2007ebm",
    "lecun2022autonomous",
@@ -75978,6 +76035,7 @@
    "lecun2006",
    "lecun1989backpropagation",
    "lecun1998gradientbased",
+   "wan2013dropconnect",
    "choromanska2015loss",
    "chaudhari2016entropysgd",
    "lecun2022path"
@@ -75990,6 +76048,7 @@
    "history",
    "loss_landscape",
    "mirror_in_machine",
+   "overandunderfittinglab",
    "people_of_ai",
    "websearch"
   ]
@@ -76112,13 +76171,16 @@
   "city": "Oxford, UK",
   "year": 2023.0,
   "conf": 1,
-  "works": 3,
+  "works": 5,
   "keys": [
+   "gal2016variationaldropout",
+   "gal2016dropoutbayesian",
    "shumailov2023modelcollapse",
    "kendall2017uncertainties",
    "farquhar2024semantic"
   ],
   "cited_in": [
+   "overandunderfittinglab",
    "philosophy",
    "reliability",
    "training_data"
@@ -78897,12 +78959,15 @@
   "city": "Cambridge, UK",
   "year": 1999.0,
   "conf": 1,
-  "works": 1,
+  "works": 3,
   "keys": [
+   "gal2016variationaldropout",
+   "gal2016dropoutbayesian",
    "jordan1999vi"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "overandunderfittinglab"
   ]
  },
  {
@@ -79000,6 +79065,7 @@
    "math_iv",
    "music_video_generation",
    "origami",
+   "overandunderfittinglab",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -79802,12 +79868,14 @@
   "city": "Berkeley, USA",
   "year": 1965.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "cover1965"
+   "cover1965",
+   "cover2006elements"
   ],
   "cited_in": [
-   "origami"
+   "origami",
+   "statistics_ii"
   ]
  },
  {
@@ -81125,6 +81193,46 @@
   ]
  },
  {
+  "name": "Vladan Joler",
+  "canon": "Vladan Joler",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "joler2020nooscope"
+  ],
+  "cited_in": [
+   "history",
+   "metaphysics_of_ai",
+   "training_data",
+   "unexpected_capabilities"
+  ]
+ },
+ {
+  "name": "Matteo Pasquinelli",
+  "canon": "Matteo Pasquinelli",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "joler2020nooscope"
+  ],
+  "cited_in": [
+   "history",
+   "metaphysics_of_ai",
+   "training_data",
+   "unexpected_capabilities"
+  ]
+ },
+ {
   "name": "Tom Standage",
   "canon": "Tom Standage",
   "alias": null,
@@ -81311,6 +81419,93 @@
    "atlas",
    "history",
    "intro"
+  ]
+ },
+ {
+  "name": "Ruslan R. Salakhutdinov",
+  "canon": "Ruslan R. Salakhutdinov",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hinton2012dropout"
+  ],
+  "cited_in": [
+   "overandunderfittinglab"
+  ]
+ },
+ {
+  "name": "Li Wan",
+  "canon": "Li Wan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2013,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wan2013dropconnect"
+  ],
+  "cited_in": [
+   "overandunderfittinglab"
+  ]
+ },
+ {
+  "name": "Matthew Zeiler",
+  "canon": "Matthew Zeiler",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2013,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wan2013dropconnect"
+  ],
+  "cited_in": [
+   "overandunderfittinglab"
+  ]
+ },
+ {
+  "name": "Sixin Zhang",
+  "canon": "Sixin Zhang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2013,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wan2013dropconnect"
+  ],
+  "cited_in": [
+   "overandunderfittinglab"
+  ]
+ },
+ {
+  "name": "Rob Fergus",
+  "canon": "Rob Fergus",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2013,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "wan2013dropconnect",
+   "sukhbaatar2015memnn"
+  ],
+  "cited_in": [
+   "overandunderfittinglab",
+   "transformer"
   ]
  },
  {
@@ -83497,23 +83692,6 @@
  {
   "name": "Arthur Szlam",
   "canon": "Arthur Szlam",
-  "alias": null,
-  "lat": null,
-  "lng": null,
-  "city": "",
-  "year": 2015,
-  "conf": 0,
-  "works": 1,
-  "keys": [
-   "sukhbaatar2015memnn"
-  ],
-  "cited_in": [
-   "transformer"
-  ]
- },
- {
-  "name": "Rob Fergus",
-  "canon": "Rob Fergus",
   "alias": null,
   "lat": null,
   "lng": null,
@@ -86158,6 +86336,482 @@
   ],
   "cited_in": [
    "untold_history_iii"
+  ]
+ },
+ {
+  "name": "Jorma Rissanen",
+  "canon": "Jorma Rissanen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1978,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rissanen1978mdl"
+  ],
+  "cited_in": [
+   "statistics_ii"
+  ]
+ },
+ {
+  "name": "Peter D. Grünwald",
+  "canon": "Peter D. Grünwald",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2007,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "grunwald2007mdl"
+  ],
+  "cited_in": [
+   "statistics_ii"
+  ]
+ },
+ {
+  "name": "Joy A. Thomas",
+  "canon": "Joy A. Thomas",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2006,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cover2006elements"
+  ],
+  "cited_in": [
+   "statistics_ii"
+  ]
+ },
+ {
+  "name": "David C. Knill",
+  "canon": "David C. Knill",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "knill2004bayesian"
+  ],
+  "cited_in": [
+   "human_mind"
+  ]
+ },
+ {
+  "name": "Alexandre Pouget",
+  "canon": "Alexandre Pouget",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "knill2004bayesian"
+  ],
+  "cited_in": [
+   "human_mind"
+  ]
+ },
+ {
+  "name": "Gregory Hickok",
+  "canon": "Gregory Hickok",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2007,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hickok2007cortical"
+  ],
+  "cited_in": [
+   "human_mind"
+  ]
+ },
+ {
+  "name": "David Poeppel",
+  "canon": "David Poeppel",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2007,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hickok2007cortical"
+  ],
+  "cited_in": [
+   "human_mind"
+  ]
+ },
+ {
+  "name": "Graham Hitch",
+  "canon": "Graham Hitch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1974,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "baddeley1974workingmemory"
+  ],
+  "cited_in": [
+   "human_mind"
+  ]
+ },
+ {
+  "name": "Larry R. Squire",
+  "canon": "Larry R. Squire",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "squire2004memorysystems"
+  ],
+  "cited_in": [
+   "human_mind"
+  ]
+ },
+ {
+  "name": "Trevor Hastie",
+  "canon": "Trevor Hastie",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2009,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hastie2009elements"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Jerome Friedman",
+  "canon": "Jerome Friedman",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2009,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hastie2009elements"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Masashi Sugiyama",
+  "canon": "Masashi Sugiyama",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2009,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "quinonero2009datasetshift"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Anton Schwaighofer",
+  "canon": "Anton Schwaighofer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2009,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "quinonero2009datasetshift"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Sayash Kapoor",
+  "canon": "Sayash Kapoor",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kapoor2023leakage"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Arvind Narayanan",
+  "canon": "Arvind Narayanan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kapoor2023leakage"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Richard Meyes",
+  "canon": "Richard Meyes",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "meyes2019ablation"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Melanie Lu",
+  "canon": "Melanie Lu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "meyes2019ablation"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Constantin Waubert de Puiseau",
+  "canon": "Constantin Waubert de Puiseau",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "meyes2019ablation"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Tobias Meisen",
+  "canon": "Tobias Meisen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "meyes2019ablation"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Joelle Pineau",
+  "canon": "Joelle Pineau",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pineau2021reproducibility"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Philippe Vincent-Lamarre",
+  "canon": "Philippe Vincent-Lamarre",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pineau2021reproducibility"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Koustuv Sinha",
+  "canon": "Koustuv Sinha",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pineau2021reproducibility"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Vincent Larivière",
+  "canon": "Vincent Larivière",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pineau2021reproducibility"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Alina Beygelzimer",
+  "canon": "Alina Beygelzimer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pineau2021reproducibility"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Florence d'Alché-Buc",
+  "canon": "Florence d'Alché-Buc",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pineau2021reproducibility"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Emily Fox",
+  "canon": "Emily Fox",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pineau2021reproducibility"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "Miguel A. Hernán",
+  "canon": "Miguel A. Hernán",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hernan2020causal"
+  ],
+  "cited_in": [
+   "evaluation"
+  ]
+ },
+ {
+  "name": "James M. Robins",
+  "canon": "James M. Robins",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hernan2020causal"
+  ],
+  "cited_in": [
+   "evaluation"
   ]
  }
 ]

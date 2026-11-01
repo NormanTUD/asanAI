@@ -16977,12 +16977,12 @@
     },
     {
       "id": "history-firstgpt-2018",
-      "subject": "gpt",
+      "subject": "gpt-1",
       "predicate": "year",
       "value": 2018,
       "unit": "year",
       "qualifiers": {},
-      "quote": "OpenAI pursued the *decoder-only* path: \\citealternativetitle{firstgpt} showed that autoregressive next-token prediction over a large Transformer could learn powerful representations.",
+      "quote": "The 2018 model was a 12-layer decoder",
       "citation_keys": [
         "firstgpt"
       ],
@@ -16992,10 +16992,10 @@
       "id": "history-gpt2-zero-shot",
       "subject": "gpt-2",
       "predicate": "capability",
-      "value": "emergent zero-shot abilities",
+      "value": "unsupervised multitask learning",
       "unit": "name",
       "qualifiers": {},
-      "quote": "\\citealternativetitle{gpt2} demonstrated emergent zero-shot abilities",
+      "quote": "The paper called this **unsupervised multitask learning**",
       "citation_keys": [
         "gpt2"
       ],
@@ -17018,10 +17018,10 @@
       "id": "history-gpt3-few-shot",
       "subject": "gpt-3",
       "predicate": "capability",
-      "value": "remarkably flexible few-shot learners",
+      "value": "few-shot in-context learning",
       "unit": "name",
       "qualifiers": {},
-      "quote": "proved that sheer scale could produce remarkably flexible few-shot learners.",
+      "quote": "few-shot in-context learning improves smoothly with scale",
       "citation_keys": [
         "brown2020gpt3"
       ],
@@ -18402,6 +18402,137 @@
       },
       "quote": "Predates Modern NLP by 40 Years",
       "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "hist-gpt1-parameters",
+      "subject": "gpt-1",
+      "predicate": "parameters",
+      "value": 117,
+      "unit": "M",
+      "qualifiers": {},
+      "quote": "roughly 117 million parameters",
+      "citation_keys": [
+        "firstgpt"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "hist-gpt1-layers",
+      "subject": "gpt-1",
+      "predicate": "layers",
+      "value": 12,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "a 12-layer decoder",
+      "citation_keys": [
+        "firstgpt"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "hist-gpt1-benchmark-wins",
+      "subject": "gpt-1",
+      "predicate": "benchmark_wins",
+      "value": 9,
+      "unit": "count",
+      "qualifiers": {
+        "scope": "12 benchmarks"
+      },
+      "quote": "9 of the 12 benchmarks",
+      "citation_keys": [
+        "firstgpt"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "hist-books-corpus-documents",
+      "subject": "books-corpus",
+      "predicate": "documents",
+      "value": 7000,
+      "unit": "count",
+      "qualifiers": {
+        "approx": true,
+        "definition": "unique unpublished books"
+      },
+      "quote": "more than 7,000 unpublished books",
+      "citation_keys": [
+        "firstgpt"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "hist-gpt2-parameters",
+      "subject": "gpt-2",
+      "predicate": "parameters",
+      "value": 1.5,
+      "unit": "B",
+      "qualifiers": {},
+      "quote": "to 1.5 billion parameters",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "hist-gpt2-announcement",
+      "subject": "gpt-2",
+      "predicate": "announcement_date",
+      "value": "2019-02",
+      "unit": "date",
+      "qualifiers": {},
+      "quote": "announced it in February 2019",
+      "citation_keys": [
+        "openai2019betterlms"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "hist-gpt2-release",
+      "subject": "gpt-2",
+      "predicate": "release_date",
+      "value": "2019-11",
+      "unit": "date",
+      "qualifiers": {},
+      "quote": "released the full 1.5B weights only in November 2019",
+      "citation_keys": [
+        "openai2019gpt2release"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "hist-webtext-karma",
+      "subject": "webtext",
+      "predicate": "karma_threshold",
+      "value": 3,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "earned at least three karma",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "hist-webtext-size",
+      "subject": "webtext",
+      "predicate": "size",
+      "value": 40,
+      "unit": "GB",
+      "qualifiers": {},
+      "quote": "about 40 GB of text",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "source_url": "",
       "confidence": "stated"
     }
   ],
@@ -27357,6 +27488,91 @@
       "qualifiers": {},
       "quote": "part: 1",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "rel-history-gpt1-gpt2",
+      "to": "gpt-2",
+      "kind": "influenced",
+      "qualifiers": {},
+      "quote": "then scaled the recipe roughly tenfold",
+      "citation_keys": [
+        "firstgpt",
+        "gpt2"
+      ],
+      "confidence": "inferred",
+      "from": "gpt-1"
+    },
+    {
+      "id": "rel-history-webtext-gpt2",
+      "to": "gpt-2",
+      "kind": "used_by",
+      "qualifiers": {},
+      "quote": "trained it on **WebText**",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "confidence": "inferred",
+      "from": "webtext"
+    },
+    {
+      "id": "rel-history-bookscorpus-gpt1",
+      "to": "gpt-1",
+      "kind": "used_by",
+      "qualifiers": {},
+      "quote": "pretrained on BooksCorpus",
+      "citation_keys": [
+        "firstgpt"
+      ],
+      "confidence": "inferred",
+      "from": "books-corpus"
+    },
+    {
+      "id": "rel-history-gpt2-gpt3",
+      "to": "gpt-3",
+      "kind": "influenced",
+      "qualifiers": {},
+      "quote": "turned the observation into a programme",
+      "citation_keys": [
+        "brown2020gpt3"
+      ],
+      "confidence": "inferred",
+      "from": "gpt-2"
+    },
+    {
+      "id": "prov-history-gpt-1",
+      "from": "gpt-1",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "roughly 117 million parameters",
+      "citation_keys": [
+        "firstgpt"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-books-corpus",
+      "from": "books-corpus",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "more than 7,000 unpublished books",
+      "citation_keys": [
+        "firstgpt"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-webtext",
+      "from": "webtext",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "earned at least three karma",
+      "citation_keys": [
+        "gpt2"
+      ],
       "confidence": "provenance"
     },
     {
@@ -40070,6 +40286,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-history-block-464-related_to-history-block-454",
+      "from": "history-block-464",
+      "to": "history-block-454",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-history-block-465-part_of-history",
       "from": "history-block-465",
       "to": "history",
@@ -40084,16 +40310,6 @@
       "from": "history-block-464",
       "to": "history-block-465",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-block-465-related_to-history-block-464",
-      "from": "history-block-465",
-      "to": "history-block-464",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -40120,9 +40336,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-466-related_to-history-block-464",
+      "id": "struct-history-block-466-related_to-history-block-465",
       "from": "history-block-466",
-      "to": "history-block-464",
+      "to": "history-block-465",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40150,9 +40366,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-467-related_to-history-block-464",
+      "id": "struct-history-block-467-related_to-history-block-465",
       "from": "history-block-467",
-      "to": "history-block-464",
+      "to": "history-block-465",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40180,6 +40396,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-history-block-468-related_to-history-block-465",
+      "from": "history-block-468",
+      "to": "history-block-465",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-history-block-469-part_of-history",
       "from": "history-block-469",
       "to": "history",
@@ -40194,16 +40420,6 @@
       "from": "history-block-468",
       "to": "history-block-469",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-block-469-related_to-history-block-468",
-      "from": "history-block-469",
-      "to": "history-block-468",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -40230,6 +40446,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-history-block-470-related_to-history-block-469",
+      "from": "history-block-470",
+      "to": "history-block-469",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-history-block-471-part_of-history",
       "from": "history-block-471",
       "to": "history",
@@ -40244,16 +40470,6 @@
       "from": "history-block-470",
       "to": "history-block-471",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-block-471-related_to-history-block-470",
-      "from": "history-block-471",
-      "to": "history-block-470",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -40280,9 +40496,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-472-related_to-history-block-470",
+      "id": "struct-history-block-472-related_to-history-block-471",
       "from": "history-block-472",
-      "to": "history-block-470",
+      "to": "history-block-471",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40310,6 +40526,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-history-block-473-related_to-history-block-471",
+      "from": "history-block-473",
+      "to": "history-block-471",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-history-block-474-part_of-history",
       "from": "history-block-474",
       "to": "history",
@@ -40324,16 +40550,6 @@
       "from": "history-block-473",
       "to": "history-block-474",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-block-474-related_to-history-block-473",
-      "from": "history-block-474",
-      "to": "history-block-473",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -40360,9 +40576,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-475-related_to-history-block-473",
+      "id": "struct-history-block-475-related_to-history-block-474",
       "from": "history-block-475",
-      "to": "history-block-473",
+      "to": "history-block-474",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40390,6 +40606,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-history-block-476-related_to-history-block-474",
+      "from": "history-block-476",
+      "to": "history-block-474",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-history-block-477-part_of-history",
       "from": "history-block-477",
       "to": "history",
@@ -40404,16 +40630,6 @@
       "from": "history-block-476",
       "to": "history-block-477",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-block-477-related_to-history-block-476",
-      "from": "history-block-477",
-      "to": "history-block-476",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -40440,9 +40656,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-478-related_to-history-block-476",
+      "id": "struct-history-block-478-related_to-history-block-477",
       "from": "history-block-478",
-      "to": "history-block-476",
+      "to": "history-block-477",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40470,9 +40686,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-479-related_to-history-block-476",
+      "id": "struct-history-block-479-related_to-history-block-477",
       "from": "history-block-479",
-      "to": "history-block-476",
+      "to": "history-block-477",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40500,6 +40716,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-history-block-480-related_to-history-block-477",
+      "from": "history-block-480",
+      "to": "history-block-477",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-history-block-481-part_of-history",
       "from": "history-block-481",
       "to": "history",
@@ -40514,16 +40740,6 @@
       "from": "history-block-480",
       "to": "history-block-481",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-block-481-related_to-history-block-480",
-      "from": "history-block-481",
-      "to": "history-block-480",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -40550,9 +40766,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-482-related_to-history-block-480",
+      "id": "struct-history-block-482-related_to-history-block-481",
       "from": "history-block-482",
-      "to": "history-block-480",
+      "to": "history-block-481",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40580,9 +40796,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-483-related_to-history-block-480",
+      "id": "struct-history-block-483-related_to-history-block-481",
       "from": "history-block-483",
-      "to": "history-block-480",
+      "to": "history-block-481",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40610,9 +40826,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-484-related_to-history-block-480",
+      "id": "struct-history-block-484-related_to-history-block-481",
       "from": "history-block-484",
-      "to": "history-block-480",
+      "to": "history-block-481",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40640,9 +40856,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-485-related_to-history-block-480",
+      "id": "struct-history-block-485-related_to-history-block-481",
       "from": "history-block-485",
-      "to": "history-block-480",
+      "to": "history-block-481",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40670,9 +40886,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-486-related_to-history-block-480",
+      "id": "struct-history-block-486-related_to-history-block-481",
       "from": "history-block-486",
-      "to": "history-block-480",
+      "to": "history-block-481",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40700,9 +40916,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-487-related_to-history-block-480",
+      "id": "struct-history-block-487-related_to-history-block-481",
       "from": "history-block-487",
-      "to": "history-block-480",
+      "to": "history-block-481",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40730,9 +40946,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-488-related_to-history-block-480",
+      "id": "struct-history-block-488-related_to-history-block-481",
       "from": "history-block-488",
-      "to": "history-block-480",
+      "to": "history-block-481",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40760,9 +40976,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-489-related_to-history-block-480",
+      "id": "struct-history-block-489-related_to-history-block-481",
       "from": "history-block-489",
-      "to": "history-block-480",
+      "to": "history-block-481",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40790,9 +41006,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-490-related_to-history-block-480",
+      "id": "struct-history-block-490-related_to-history-block-481",
       "from": "history-block-490",
-      "to": "history-block-480",
+      "to": "history-block-481",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40820,9 +41036,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-491-related_to-history-block-480",
+      "id": "struct-history-block-491-related_to-history-block-481",
       "from": "history-block-491",
-      "to": "history-block-480",
+      "to": "history-block-481",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40850,9 +41066,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-492-related_to-history-block-480",
+      "id": "struct-history-block-492-related_to-history-block-481",
       "from": "history-block-492",
-      "to": "history-block-480",
+      "to": "history-block-481",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -40880,9 +41096,39 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-block-493-related_to-history-block-480",
+      "id": "struct-history-block-493-related_to-history-block-481",
       "from": "history-block-493",
-      "to": "history-block-480",
+      "to": "history-block-481",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-block-494-part_of-history",
+      "from": "history-block-494",
+      "to": "history",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-block-493-before-history-block-494",
+      "from": "history-block-493",
+      "to": "history-block-494",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-block-494-related_to-history-block-481",
+      "from": "history-block-494",
+      "to": "history-block-481",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -51510,9 +51756,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1063-part_of-history-block-460",
+      "id": "struct-history-stmt-1063-part_of-history-block-459",
       "from": "history-stmt-1063",
-      "to": "history-block-460",
+      "to": "history-block-459",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51520,9 +51766,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1064-part_of-history-block-460",
+      "id": "struct-history-stmt-1064-part_of-history-block-459",
       "from": "history-stmt-1064",
-      "to": "history-block-460",
+      "to": "history-block-459",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51530,9 +51776,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1065-part_of-history-block-460",
+      "id": "struct-history-stmt-1065-part_of-history-block-459",
       "from": "history-stmt-1065",
-      "to": "history-block-460",
+      "to": "history-block-459",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51540,9 +51786,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1066-part_of-history-block-460",
+      "id": "struct-history-stmt-1066-part_of-history-block-459",
       "from": "history-stmt-1066",
-      "to": "history-block-460",
+      "to": "history-block-459",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51570,9 +51816,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1069-part_of-history-block-461",
+      "id": "struct-history-stmt-1069-part_of-history-block-460",
       "from": "history-stmt-1069",
-      "to": "history-block-461",
+      "to": "history-block-460",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51580,9 +51826,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1070-part_of-history-block-461",
+      "id": "struct-history-stmt-1070-part_of-history-block-460",
       "from": "history-stmt-1070",
-      "to": "history-block-461",
+      "to": "history-block-460",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51590,8 +51836,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1071-part_of-history-block-461",
+      "id": "struct-history-stmt-1071-part_of-history-block-460",
       "from": "history-stmt-1071",
+      "to": "history-block-460",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1072-part_of-history-block-461",
+      "from": "history-stmt-1072",
       "to": "history-block-461",
       "kind": "part_of",
       "qualifiers": {},
@@ -51600,8 +51856,58 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1072-part_of-history-block-462",
-      "from": "history-stmt-1072",
+      "id": "struct-history-stmt-1073-part_of-history-block-461",
+      "from": "history-stmt-1073",
+      "to": "history-block-461",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1074-part_of-history-block-461",
+      "from": "history-stmt-1074",
+      "to": "history-block-461",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1075-part_of-history-block-461",
+      "from": "history-stmt-1075",
+      "to": "history-block-461",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1076-part_of-history-block-461",
+      "from": "history-stmt-1076",
+      "to": "history-block-461",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1077-part_of-history-block-461",
+      "from": "history-stmt-1077",
+      "to": "history-block-461",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1078-part_of-history-block-462",
+      "from": "history-stmt-1078",
       "to": "history-block-462",
       "kind": "part_of",
       "qualifiers": {},
@@ -51610,8 +51916,28 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1073-part_of-history-block-463",
-      "from": "history-stmt-1073",
+      "id": "struct-history-stmt-1079-part_of-history-block-462",
+      "from": "history-stmt-1079",
+      "to": "history-block-462",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1080-part_of-history-block-462",
+      "from": "history-stmt-1080",
+      "to": "history-block-462",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1081-part_of-history-block-463",
+      "from": "history-stmt-1081",
       "to": "history-block-463",
       "kind": "part_of",
       "qualifiers": {},
@@ -51620,89 +51946,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1074-part_of-history-block-465",
-      "from": "history-stmt-1074",
-      "to": "history-block-465",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1075-part_of-history-block-465",
-      "from": "history-stmt-1075",
-      "to": "history-block-465",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1076-part_of-history-block-465",
-      "from": "history-stmt-1076",
-      "to": "history-block-465",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1077-part_of-history-block-466",
-      "from": "history-stmt-1077",
-      "to": "history-block-466",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1078-part_of-history-block-466",
-      "from": "history-stmt-1078",
-      "to": "history-block-466",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1079-part_of-history-block-467",
-      "from": "history-stmt-1079",
-      "to": "history-block-467",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1080-part_of-history-block-467",
-      "from": "history-stmt-1080",
-      "to": "history-block-467",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1081-part_of-history-block-467",
-      "from": "history-stmt-1081",
-      "to": "history-block-467",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1082-part_of-history-block-469",
+      "id": "struct-history-stmt-1082-part_of-history-block-464",
       "from": "history-stmt-1082",
-      "to": "history-block-469",
+      "to": "history-block-464",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51710,9 +51956,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1083-part_of-history-block-469",
+      "id": "struct-history-stmt-1083-part_of-history-block-466",
       "from": "history-stmt-1083",
-      "to": "history-block-469",
+      "to": "history-block-466",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51720,9 +51966,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1084-part_of-history-block-469",
+      "id": "struct-history-stmt-1084-part_of-history-block-466",
       "from": "history-stmt-1084",
-      "to": "history-block-469",
+      "to": "history-block-466",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51730,9 +51976,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1085-part_of-history-block-469",
+      "id": "struct-history-stmt-1085-part_of-history-block-466",
       "from": "history-stmt-1085",
-      "to": "history-block-469",
+      "to": "history-block-466",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51740,9 +51986,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1086-part_of-history-block-471",
+      "id": "struct-history-stmt-1086-part_of-history-block-467",
       "from": "history-stmt-1086",
-      "to": "history-block-471",
+      "to": "history-block-467",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51750,9 +51996,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1087-part_of-history-block-471",
+      "id": "struct-history-stmt-1087-part_of-history-block-467",
       "from": "history-stmt-1087",
-      "to": "history-block-471",
+      "to": "history-block-467",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51760,9 +52006,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1088-part_of-history-block-471",
+      "id": "struct-history-stmt-1088-part_of-history-block-468",
       "from": "history-stmt-1088",
-      "to": "history-block-471",
+      "to": "history-block-468",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51770,9 +52016,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1089-part_of-history-block-471",
+      "id": "struct-history-stmt-1089-part_of-history-block-468",
       "from": "history-stmt-1089",
-      "to": "history-block-471",
+      "to": "history-block-468",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51780,9 +52026,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1090-part_of-history-block-471",
+      "id": "struct-history-stmt-1090-part_of-history-block-468",
       "from": "history-stmt-1090",
-      "to": "history-block-471",
+      "to": "history-block-468",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51790,9 +52036,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1091-part_of-history-block-472",
+      "id": "struct-history-stmt-1091-part_of-history-block-470",
       "from": "history-stmt-1091",
-      "to": "history-block-472",
+      "to": "history-block-470",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51800,9 +52046,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1092-part_of-history-block-472",
+      "id": "struct-history-stmt-1092-part_of-history-block-470",
       "from": "history-stmt-1092",
-      "to": "history-block-472",
+      "to": "history-block-470",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51810,9 +52056,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1093-part_of-history-block-472",
+      "id": "struct-history-stmt-1093-part_of-history-block-470",
       "from": "history-stmt-1093",
-      "to": "history-block-472",
+      "to": "history-block-470",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51820,9 +52066,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1094-part_of-history-block-472",
+      "id": "struct-history-stmt-1094-part_of-history-block-470",
       "from": "history-stmt-1094",
-      "to": "history-block-472",
+      "to": "history-block-470",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51880,9 +52126,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1100-part_of-history-block-474",
+      "id": "struct-history-stmt-1100-part_of-history-block-473",
       "from": "history-stmt-1100",
-      "to": "history-block-474",
+      "to": "history-block-473",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51890,9 +52136,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1101-part_of-history-block-474",
+      "id": "struct-history-stmt-1101-part_of-history-block-473",
       "from": "history-stmt-1101",
-      "to": "history-block-474",
+      "to": "history-block-473",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51900,9 +52146,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1102-part_of-history-block-474",
+      "id": "struct-history-stmt-1102-part_of-history-block-473",
       "from": "history-stmt-1102",
-      "to": "history-block-474",
+      "to": "history-block-473",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51910,8 +52156,68 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1103-part_of-history-block-475",
+      "id": "struct-history-stmt-1103-part_of-history-block-473",
       "from": "history-stmt-1103",
+      "to": "history-block-473",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1104-part_of-history-block-473",
+      "from": "history-stmt-1104",
+      "to": "history-block-473",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1105-part_of-history-block-473",
+      "from": "history-stmt-1105",
+      "to": "history-block-473",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1106-part_of-history-block-473",
+      "from": "history-stmt-1106",
+      "to": "history-block-473",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1107-part_of-history-block-473",
+      "from": "history-stmt-1107",
+      "to": "history-block-473",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1108-part_of-history-block-473",
+      "from": "history-stmt-1108",
+      "to": "history-block-473",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1109-part_of-history-block-475",
+      "from": "history-stmt-1109",
       "to": "history-block-475",
       "kind": "part_of",
       "qualifiers": {},
@@ -51920,69 +52226,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1104-part_of-history-block-477",
-      "from": "history-stmt-1104",
-      "to": "history-block-477",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1105-part_of-history-block-477",
-      "from": "history-stmt-1105",
-      "to": "history-block-477",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1106-part_of-history-block-477",
-      "from": "history-stmt-1106",
-      "to": "history-block-477",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1107-part_of-history-block-478",
-      "from": "history-stmt-1107",
-      "to": "history-block-478",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1108-part_of-history-block-478",
-      "from": "history-stmt-1108",
-      "to": "history-block-478",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1109-part_of-history-block-478",
-      "from": "history-stmt-1109",
-      "to": "history-block-478",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1110-part_of-history-block-479",
+      "id": "struct-history-stmt-1110-part_of-history-block-475",
       "from": "history-stmt-1110",
-      "to": "history-block-479",
+      "to": "history-block-475",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -51990,8 +52236,58 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1111-part_of-history-block-479",
+      "id": "struct-history-stmt-1111-part_of-history-block-475",
       "from": "history-stmt-1111",
+      "to": "history-block-475",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1112-part_of-history-block-476",
+      "from": "history-stmt-1112",
+      "to": "history-block-476",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1113-part_of-history-block-478",
+      "from": "history-stmt-1113",
+      "to": "history-block-478",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1114-part_of-history-block-478",
+      "from": "history-stmt-1114",
+      "to": "history-block-478",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1115-part_of-history-block-478",
+      "from": "history-stmt-1115",
+      "to": "history-block-478",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1116-part_of-history-block-479",
+      "from": "history-stmt-1116",
       "to": "history-block-479",
       "kind": "part_of",
       "qualifiers": {},
@@ -52000,59 +52296,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1112-part_of-history-block-481",
-      "from": "history-stmt-1112",
-      "to": "history-block-481",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1113-part_of-history-block-481",
-      "from": "history-stmt-1113",
-      "to": "history-block-481",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1114-part_of-history-block-481",
-      "from": "history-stmt-1114",
-      "to": "history-block-481",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1115-part_of-history-block-482",
-      "from": "history-stmt-1115",
-      "to": "history-block-482",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1116-part_of-history-block-482",
-      "from": "history-stmt-1116",
-      "to": "history-block-482",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1117-part_of-history-block-482",
+      "id": "struct-history-stmt-1117-part_of-history-block-479",
       "from": "history-stmt-1117",
-      "to": "history-block-482",
+      "to": "history-block-479",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -52060,9 +52306,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1118-part_of-history-block-482",
+      "id": "struct-history-stmt-1118-part_of-history-block-479",
       "from": "history-stmt-1118",
-      "to": "history-block-482",
+      "to": "history-block-479",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -52070,9 +52316,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1119-part_of-history-block-482",
+      "id": "struct-history-stmt-1119-part_of-history-block-480",
       "from": "history-stmt-1119",
-      "to": "history-block-482",
+      "to": "history-block-480",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -52080,9 +52326,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1120-part_of-history-block-482",
+      "id": "struct-history-stmt-1120-part_of-history-block-480",
       "from": "history-stmt-1120",
-      "to": "history-block-482",
+      "to": "history-block-480",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -52120,9 +52366,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1124-part_of-history-block-482",
+      "id": "struct-history-stmt-1124-part_of-history-block-483",
       "from": "history-stmt-1124",
-      "to": "history-block-482",
+      "to": "history-block-483",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -52160,9 +52406,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1128-part_of-history-block-484",
+      "id": "struct-history-stmt-1128-part_of-history-block-483",
       "from": "history-stmt-1128",
-      "to": "history-block-484",
+      "to": "history-block-483",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -52170,9 +52416,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1129-part_of-history-block-484",
+      "id": "struct-history-stmt-1129-part_of-history-block-483",
       "from": "history-stmt-1129",
-      "to": "history-block-484",
+      "to": "history-block-483",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -52180,9 +52426,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1130-part_of-history-block-484",
+      "id": "struct-history-stmt-1130-part_of-history-block-483",
       "from": "history-stmt-1130",
-      "to": "history-block-484",
+      "to": "history-block-483",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -52190,9 +52436,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1131-part_of-history-block-484",
+      "id": "struct-history-stmt-1131-part_of-history-block-483",
       "from": "history-stmt-1131",
-      "to": "history-block-484",
+      "to": "history-block-483",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -52200,9 +52446,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1132-part_of-history-block-484",
+      "id": "struct-history-stmt-1132-part_of-history-block-483",
       "from": "history-stmt-1132",
-      "to": "history-block-484",
+      "to": "history-block-483",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -52210,8 +52456,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1133-part_of-history-block-484",
+      "id": "struct-history-stmt-1133-part_of-history-block-483",
       "from": "history-stmt-1133",
+      "to": "history-block-483",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1134-part_of-history-block-484",
+      "from": "history-stmt-1134",
       "to": "history-block-484",
       "kind": "part_of",
       "qualifiers": {},
@@ -52220,18 +52476,28 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1134-part_of-history-block-485",
-      "from": "history-stmt-1134",
-      "to": "history-block-485",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-history-stmt-1135-part_of-history-block-485",
+      "id": "struct-history-stmt-1135-part_of-history-block-484",
       "from": "history-stmt-1135",
+      "to": "history-block-484",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1136-part_of-history-block-484",
+      "from": "history-stmt-1136",
+      "to": "history-block-484",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1137-part_of-history-block-485",
+      "from": "history-stmt-1137",
       "to": "history-block-485",
       "kind": "part_of",
       "qualifiers": {},
@@ -52240,8 +52506,58 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1136-part_of-history-block-486",
-      "from": "history-stmt-1136",
+      "id": "struct-history-stmt-1138-part_of-history-block-485",
+      "from": "history-stmt-1138",
+      "to": "history-block-485",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1139-part_of-history-block-485",
+      "from": "history-stmt-1139",
+      "to": "history-block-485",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1140-part_of-history-block-485",
+      "from": "history-stmt-1140",
+      "to": "history-block-485",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1141-part_of-history-block-485",
+      "from": "history-stmt-1141",
+      "to": "history-block-485",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1142-part_of-history-block-485",
+      "from": "history-stmt-1142",
+      "to": "history-block-485",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1143-part_of-history-block-486",
+      "from": "history-stmt-1143",
       "to": "history-block-486",
       "kind": "part_of",
       "qualifiers": {},
@@ -52250,8 +52566,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1137-part_of-history-block-487",
-      "from": "history-stmt-1137",
+      "id": "struct-history-stmt-1144-part_of-history-block-486",
+      "from": "history-stmt-1144",
+      "to": "history-block-486",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1145-part_of-history-block-487",
+      "from": "history-stmt-1145",
       "to": "history-block-487",
       "kind": "part_of",
       "qualifiers": {},
@@ -52260,8 +52586,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1138-part_of-history-block-488",
-      "from": "history-stmt-1138",
+      "id": "struct-history-stmt-1146-part_of-history-block-488",
+      "from": "history-stmt-1146",
       "to": "history-block-488",
       "kind": "part_of",
       "qualifiers": {},
@@ -52270,8 +52596,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1139-part_of-history-block-489",
-      "from": "history-stmt-1139",
+      "id": "struct-history-stmt-1147-part_of-history-block-489",
+      "from": "history-stmt-1147",
       "to": "history-block-489",
       "kind": "part_of",
       "qualifiers": {},
@@ -52280,8 +52606,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1140-part_of-history-block-490",
-      "from": "history-stmt-1140",
+      "id": "struct-history-stmt-1148-part_of-history-block-490",
+      "from": "history-stmt-1148",
       "to": "history-block-490",
       "kind": "part_of",
       "qualifiers": {},
@@ -52290,8 +52616,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1141-part_of-history-block-491",
-      "from": "history-stmt-1141",
+      "id": "struct-history-stmt-1149-part_of-history-block-491",
+      "from": "history-stmt-1149",
       "to": "history-block-491",
       "kind": "part_of",
       "qualifiers": {},
@@ -52300,8 +52626,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1142-part_of-history-block-492",
-      "from": "history-stmt-1142",
+      "id": "struct-history-stmt-1150-part_of-history-block-492",
+      "from": "history-stmt-1150",
       "to": "history-block-492",
       "kind": "part_of",
       "qualifiers": {},
@@ -52310,8 +52636,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1143-part_of-history-block-493",
-      "from": "history-stmt-1143",
+      "id": "struct-history-stmt-1151-part_of-history-block-493",
+      "from": "history-stmt-1151",
       "to": "history-block-493",
       "kind": "part_of",
       "qualifiers": {},
@@ -52320,9 +52646,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1144-part_of-history-block-493",
-      "from": "history-stmt-1144",
-      "to": "history-block-493",
+      "id": "struct-history-stmt-1152-part_of-history-block-494",
+      "from": "history-stmt-1152",
+      "to": "history-block-494",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -52330,9 +52656,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1145-part_of-history-block-493",
-      "from": "history-stmt-1145",
-      "to": "history-block-493",
+      "id": "struct-history-stmt-1153-part_of-history-block-494",
+      "from": "history-stmt-1153",
+      "to": "history-block-494",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -52340,9 +52666,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-history-stmt-1146-part_of-history-block-493",
-      "from": "history-stmt-1146",
-      "to": "history-block-493",
+      "id": "struct-history-stmt-1154-part_of-history-block-494",
+      "from": "history-stmt-1154",
+      "to": "history-block-494",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-history-stmt-1155-part_of-history-block-494",
+      "from": "history-stmt-1155",
+      "to": "history-block-494",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -59774,603 +60110,666 @@
     },
     {
       "id": "history-stmt-1061",
-      "quote": "In parallel, OpenAI pursued the *decoder-only* path: \\citealternativetitle{firstgpt} showed that autoregressive next-token prediction over a large Transformer could learn powerful representations.",
+      "quote": "In parallel, OpenAI pursued the *decoder-only* path: \\citealternativetitle{firstgpt} showed that autoregressive next-token prediction over a large Transformer could learn powerful representations, and that fine-tuning those representations on each target task — with the task's inputs rewritten as one token sequence — beat task-specific architectures.",
       "block_id": "history-block-459",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1062",
-      "quote": "\\citealternativetitle{gpt2} demonstrated emergent zero-shot abilities, and \\citealternativetitle{brown2020gpt3}, with 175 billion parameters, proved that sheer scale could produce remarkably flexible few-shot learners.",
+      "quote": "The 2018 model was a 12-layer decoder with roughly 117 million parameters, pretrained on BooksCorpus, a collection of more than 7,000 unpublished books; with only a small linear output layer and delimiter embeddings added, it set the state of the art on 9 of the 12 benchmarks it was tested on.",
       "block_id": "history-block-459",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1063",
-      "quote": "The recipe was assembled in stages.",
-      "block_id": "history-block-460",
+      "quote": "\\citealternativetitle{gpt2} then scaled the recipe roughly tenfold, to 1.5 billion parameters, and trained it on **WebText**, a corpus assembled from outbound Reddit links that had earned at least three karma and filtered down to about 40 GB of text.",
+      "block_id": "history-block-459",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1064",
-      "quote": "**ULMFiT** (\\cite[Howard & Ruder, 2018]{howard2018ulmfit}) supplied the three-step template that every later system follows: pretrain a language model on general text, fine-tune it on the target domain, then fine-tune it on the task — with *discriminative* learning rates and *gradual unfreezing* so that the pretrained knowledge survives.",
-      "block_id": "history-block-460",
+      "quote": "The striking result was not a better benchmark score but a change in method: without any fine-tuning, the model could answer reading-comprehension questions, translate, summarize, and perform other tasks when the task was demonstrated or named in its prompt.",
+      "block_id": "history-block-459",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1065",
-      "quote": "**RoBERTa** (\\cite[Liu et al., 2019]{liu2019roberta}) was a replication study that found BERT significantly undertrained: removing the next-sentence-prediction task, resampling masks dynamically, and training longer on more data set new records with the same architecture.",
-      "block_id": "history-block-460",
+      "quote": "The paper called this **unsupervised multitask learning**; the field soon called it prompting.",
+      "block_id": "history-block-459",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1066",
-      "quote": "**ELECTRA** (\\cite[Clark et al., 2020]{clark2020electra}) changed the objective from filling in blanks to *detecting* replaced tokens, reaching BERT-class quality at a fraction of the compute because every position, not just the masked ones, supplies a training signal.",
-      "block_id": "history-block-460",
+      "quote": "\\citealternativetitle{brown2020gpt3}, with 175 billion parameters, turned the observation into a programme by showing that few-shot in-context learning improves smoothly with scale.",
+      "block_id": "history-block-459",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1067",
-      "quote": "And **T5** (\\cite[Raffel et al., 2020]{raffel2020t5}) unified everything into one text-to-text format: translation, summarization, classification, and question answering all became “given this string, generate that string,” with span corruption as the pretraining objective.",
+      "quote": "GPT-2 was also the first model whose *release* became part of the story.",
       "block_id": "history-block-460",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1068",
-      "quote": "The modern pretrain-then-post-train pipeline is the consolidation of these four ideas.",
+      "quote": "OpenAI announced it in February 2019 but withheld the largest version, citing concerns about synthetic text; it published the smaller models in stages and released the full 1.5B weights only in November 2019, alongside a report on misuse monitoring (\\cite[OpenAI, 2019]{openai2019betterlms}; \\cite[OpenAI, 2019]{openai2019gpt2release}).",
       "block_id": "history-block-460",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1069",
-      "quote": "A crucial refinement came with the **Chinchilla scaling laws** (\\citeauthor{hoffmann2022chinchilla}, \\citeyear{hoffmann2022chinchilla}), which showed that most large models were undertrained: for a given compute budget, the optimal strategy is to train a smaller model on far more data.",
-      "block_id": "history-block-461",
+      "quote": "Critics saw publicity-driven security theatre that broke open-publication norms; defenders saw the first serious experiment in staged release for a capable model.",
+      "block_id": "history-block-460",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1070",
-      "quote": "This insight directly influenced the design of models like LLaMA (\\citeauthor{touvron2023llama}, \\citeyear{touvron2023llama}), which deliberately used more tokens (1.0–1.4 trillion) with a moderately sized 7B–65B parameter architecture, instead of pushing raw parameter counts higher.",
-      "block_id": "history-block-461",
+      "quote": "The argument rehearsed nearly every later open-weights debate, from Llama licensing to the GPT-OSS release.",
+      "block_id": "history-block-460",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1071",
-      "quote": "LLaMA's release was a pivotal moment for the democratization of AI: by showing that smaller, efficiently trained models could compete with GPT-3, it made advanced language modeling accessible to the broader research community, enabling fine-tuning on consumer hardware and sparking the open-source LLM movement.",
-      "block_id": "history-block-461",
+      "quote": "Underneath the release question sits a larger one that the \\cite[Nooscope]{joler2020nooscope} names *knowledge extractivism*: the model is a compressed map of text that millions of people wrote, and the debate over weights is also a debate over who owns and can inspect that map.",
+      "block_id": "history-block-460",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1072",
-      "quote": "Combined with \\citetitle[Deep-Reinforcement-Learning]{christiano2017rlhf}, as described in the \\citealternativetitle{ouyang2022instructgpt} paper, this lineage culminated in **ChatGPT** in November 2022, the moment large language models crossed from research artifact into mainstream cultural phenomenon \\cite{hnfchatgpt2023}.",
-      "block_id": "history-block-462",
+      "quote": "The recipe was assembled in stages.",
+      "block_id": "history-block-461",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1073",
-      "quote": "The trajectory from Shannon's n-grams to ChatGPT vindicates a consistent theme: each generation traded hand-crafted linguistic knowledge for greater scale and more general learning, raw computation and data, given the right architecture, eventually surpassing human-designed heuristics, again proving the \\citealternativetitle{sutton2019bitter}.",
-      "block_id": "history-block-463",
+      "quote": "**ULMFiT** (\\cite[Howard & Ruder, 2018]{howard2018ulmfit}) supplied the three-step template that every later system follows: pretrain a language model on general text, fine-tune it on the target domain, then fine-tune it on the task — with *discriminative* learning rates and *gradual unfreezing* so that the pretrained knowledge survives.",
+      "block_id": "history-block-461",
       "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1074",
-      "quote": "There is a step in the previous story that is easy to miss, because it happens before any model is trained — yet without it, *none* of the \"next-word prediction\" above would even be defined: an LLM does not read words, and it does not read letters.",
-      "block_id": "history-block-465",
-      "section": "The Machine's Alphabet: Tokens",
+      "quote": "**RoBERTa** (\\cite[Liu et al., 2019]{liu2019roberta}) was a replication study that found BERT significantly undertrained: removing the next-sentence-prediction task, resampling masks dynamically, and training longer on more data set new records with the same architecture.",
+      "block_id": "history-block-461",
+      "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1075",
-      "quote": "It reads **tokens**, small fragments of text chosen in advance, and every one of its trillion predictions is a probability over that fixed token table.",
-      "block_id": "history-block-465",
-      "section": "The Machine's Alphabet: Tokens",
+      "quote": "**ELECTRA** (\\cite[Clark et al., 2020]{clark2020electra}) changed the objective from filling in blanks to *detecting* replaced tokens, reaching BERT-class quality at a fraction of the compute because every position, not just the masked ones, supplies a training signal.",
+      "block_id": "history-block-461",
+      "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1076",
-      "quote": "Tokenization is the invisible alphabet of the age \\cite{sennrich2016subword}.",
-      "block_id": "history-block-465",
-      "section": "The Machine's Alphabet: Tokens",
+      "quote": "And **T5** (\\cite[Raffel et al., 2020]{raffel2020t5}) unified everything into one text-to-text format: translation, summarization, classification, and question answering all became “given this string, generate that string,” with span corruption as the pretraining objective.",
+      "block_id": "history-block-461",
+      "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1077",
-      "quote": "How did the alphabet form?",
-      "block_id": "history-block-466",
-      "section": "The Machine's Alphabet: Tokens",
+      "quote": "The modern pretrain-then-post-train pipeline is the consolidation of these four ideas.",
+      "block_id": "history-block-461",
+      "section": "From Language Models to LLMs",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1078",
-      "quote": "Each of the three candidate granularities fails alone:",
+      "quote": "A crucial refinement came with the **Chinchilla scaling laws** (\\citeauthor{hoffmann2022chinchilla}, \\citeyear{hoffmann2022chinchilla}), which showed that most large models were undertrained: for a given compute budget, the optimal strategy is to train a smaller model on far more data.",
+      "block_id": "history-block-462",
+      "section": "From Language Models to LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1079",
+      "quote": "This insight directly influenced the design of models like LLaMA (\\citeauthor{touvron2023llama}, \\citeyear{touvron2023llama}), which deliberately used more tokens (1.0–1.4 trillion) with a moderately sized 7B–65B parameter architecture, instead of pushing raw parameter counts higher.",
+      "block_id": "history-block-462",
+      "section": "From Language Models to LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1080",
+      "quote": "LLaMA's release was a pivotal moment for the democratization of AI: by showing that smaller, efficiently trained models could compete with GPT-3, it made advanced language modeling accessible to the broader research community, enabling fine-tuning on consumer hardware and sparking the open-source LLM movement.",
+      "block_id": "history-block-462",
+      "section": "From Language Models to LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1081",
+      "quote": "Combined with \\citetitle[Deep-Reinforcement-Learning]{christiano2017rlhf}, as described in the \\citealternativetitle{ouyang2022instructgpt} paper, this lineage culminated in **ChatGPT** in November 2022, the moment large language models crossed from research artifact into mainstream cultural phenomenon \\cite{hnfchatgpt2023}.",
+      "block_id": "history-block-463",
+      "section": "From Language Models to LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1082",
+      "quote": "The trajectory from Shannon's n-grams to ChatGPT vindicates a consistent theme: each generation traded hand-crafted linguistic knowledge for greater scale and more general learning, raw computation and data, given the right architecture, eventually surpassing human-designed heuristics, again proving the \\citealternativetitle{sutton2019bitter}.",
+      "block_id": "history-block-464",
+      "section": "From Language Models to LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1083",
+      "quote": "There is a step in the previous story that is easy to miss, because it happens before any model is trained — yet without it, *none* of the \"next-word prediction\" above would even be defined: an LLM does not read words, and it does not read letters.",
       "block_id": "history-block-466",
       "section": "The Machine's Alphabet: Tokens",
       "kind": "statement"
     },
     {
-      "id": "history-stmt-1079",
-      "quote": "In the modern decoding path, \"predicting the next word\" is literally \"predicting the next *token ID*\" — a number in a fixed table, looked up through the embedding matrix described in the [Embeddings](embeddinglab) chapter.",
-      "block_id": "history-block-467",
-      "section": "The Machine's Alphabet: Tokens",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1080",
-      "quote": "You can watch a byte-pair vocabulary grow in the [Tokenizer Lab](tokenizerlab).",
-      "block_id": "history-block-467",
-      "section": "The Machine's Alphabet: Tokens",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1081",
-      "quote": "And the historical irony is worth stating plainly: the machine that \"thinks\" is doing it over an alphabet that a 1994 file-compressor forged out of byte counts — the same statistical instinct that made al-Kindi's ninth-century frequency analysis work, now baked into the very units of thought.",
-      "block_id": "history-block-467",
-      "section": "The Machine's Alphabet: Tokens",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1082",
-      "quote": "The breakthrough of modern AI was predicated on a shift in data philosophy: moving from “quality” (hand-curated expert knowledge) to “quantity” (the total sum of digital footprints).",
-      "block_id": "history-block-469",
-      "section": "Scaling Laws: From Encyclopedias to the Digital Ocean",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1083",
-      "quote": "Early AI failed because the world was not yet sufficiently digitized.",
-      "block_id": "history-block-469",
-      "section": "Scaling Laws: From Encyclopedias to the Digital Ocean",
-      "kind": "statement"
-    },
-    {
       "id": "history-stmt-1084",
-      "quote": "The current era of 2020s AI only became possible once the internet provided a large enough corpus, petabytes of text, code, and images, to allow models to internalize the latent structures of human logic.",
-      "block_id": "history-block-469",
-      "section": "Scaling Laws: From Encyclopedias to the Digital Ocean",
+      "quote": "It reads **tokens**, small fragments of text chosen in advance, and every one of its trillion predictions is a probability over that fixed token table.",
+      "block_id": "history-block-466",
+      "section": "The Machine's Alphabet: Tokens",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1085",
-      "quote": "In this context, data is the “terrain” that the machine's “wheels” must traverse; without a world-scale digital ocean, the abstraction of thought would have had nothing to grip.",
-      "block_id": "history-block-469",
-      "section": "Scaling Laws: From Encyclopedias to the Digital Ocean",
+      "quote": "Tokenization is the invisible alphabet of the age \\cite{sennrich2016subword}.",
+      "block_id": "history-block-466",
+      "section": "The Machine's Alphabet: Tokens",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1086",
-      "quote": "The final layer of abstraction in the history of LLMs is not mathematical, but teleological.",
-      "block_id": "history-block-471",
-      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "quote": "How did the alphabet form?",
+      "block_id": "history-block-467",
+      "section": "The Machine's Alphabet: Tokens",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1087",
-      "quote": "As explored in \\citetitle{ouyang2022instructgpt}, the raw statistical power of a base model often results in “hallucinations” or unhelpful outputs because the machine is merely predicting the next likely word, not the user's intent.",
-      "block_id": "history-block-471",
-      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "quote": "Each of the three candidate granularities fails alone:",
+      "block_id": "history-block-467",
+      "section": "The Machine's Alphabet: Tokens",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1088",
-      "quote": "By introducing **Reinforcement Learning from Human Feedback (RLHF)**, researchers moved beyond the “Black Box” of raw data ingestion into the realm of social alignment.",
-      "block_id": "history-block-471",
-      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "quote": "In the modern decoding path, \"predicting the next word\" is literally \"predicting the next *token ID*\" — a number in a fixed table, looked up through the embedding matrix described in the [Embeddings](embeddinglab) chapter.",
+      "block_id": "history-block-468",
+      "section": "The Machine's Alphabet: Tokens",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1089",
-      "quote": "This process essentially acts as a cultural filter, rewarding the model for being helpful, honest, and harmless.",
-      "block_id": "history-block-471",
-      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "quote": "You can watch a byte-pair vocabulary grow in the [Tokenizer Lab](tokenizerlab).",
+      "block_id": "history-block-468",
+      "section": "The Machine's Alphabet: Tokens",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1090",
-      "quote": "This represents the moment where the machine ceased to be a mere calculator of probabilities and began to function as a conversational agent, transitioning from a mirror of the internet's chaos to a tool that respects the subjective constraints of human interaction.",
-      "block_id": "history-block-471",
-      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "quote": "And the historical irony is worth stating plainly: the machine that \"thinks\" is doing it over an alphabet that a 1994 file-compressor forged out of byte counts — the same statistical instinct that made al-Kindi's ninth-century frequency analysis work, now baked into the very units of thought.",
+      "block_id": "history-block-468",
+      "section": "The Machine's Alphabet: Tokens",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1091",
-      "quote": "The “stochastic parrot” framing reopens the oldest wound in the philosophy of AI.",
-      "block_id": "history-block-472",
-      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "quote": "The breakthrough of modern AI was predicated on a shift in data philosophy: moving from “quality” (hand-curated expert knowledge) to “quantity” (the total sum of digital footprints).",
+      "block_id": "history-block-470",
+      "section": "Scaling Laws: From Encyclopedias to the Digital Ocean",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1092",
-      "quote": "In 1980, \\citeauthor{searle1980minds} had proposed the **Chinese Room** thought experiment: imagine a person locked in a room who follows an English rule-book to shuffle incoming Chinese characters into outgoing Chinese characters.",
-      "block_id": "history-block-472",
-      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "quote": "Early AI failed because the world was not yet sufficiently digitized.",
+      "block_id": "history-block-470",
+      "section": "Scaling Laws: From Encyclopedias to the Digital Ocean",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1093",
-      "quote": "From outside, the room behaves indistinguishably from a fluent Chinese speaker.",
-      "block_id": "history-block-472",
-      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "quote": "The current era of 2020s AI only became possible once the internet provided a large enough corpus, petabytes of text, code, and images, to allow models to internalize the latent structures of human logic.",
+      "block_id": "history-block-470",
+      "section": "Scaling Laws: From Encyclopedias to the Digital Ocean",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1094",
-      "quote": "Yet the person inside understands nothing.",
-      "block_id": "history-block-472",
-      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "quote": "In this context, data is the “terrain” that the machine's “wheels” must traverse; without a world-scale digital ocean, the abstraction of thought would have had nothing to grip.",
+      "block_id": "history-block-470",
+      "section": "Scaling Laws: From Encyclopedias to the Digital Ocean",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1095",
-      "quote": "By Searle's argument, no amount of clever symbol-shuffling is sufficient for *understanding*; minds require specific biological machinery, what he calls *biological naturalism*.",
+      "quote": "The final layer of abstraction in the history of LLMs is not mathematical, but teleological.",
       "block_id": "history-block-472",
       "section": "Taming the Stochastic Parrot: The Alignment Era",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1096",
-      "quote": "The standard rebuttals in the AI literature (the *systems reply*: the room-plus-rules understands; the *robot reply*: grounding in a body fixes the problem; the *connectionist reply*: a neural net would not have the problem) all attempt to push the “understanding” somewhere outside the formal manipulation.",
+      "quote": "As explored in \\citetitle{ouyang2022instructgpt}, the raw statistical power of a base model often results in “hallucinations” or unhelpful outputs because the machine is merely predicting the next likely word, not the user's intent.",
       "block_id": "history-block-472",
       "section": "Taming the Stochastic Parrot: The Alignment Era",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1097",
-      "quote": "\\citeauthor{russell2021aima} point out that Searle's argument is *not* an argument against AI as a field: even if no digital computer literally understands Chinese, AI systems can still be made to behave as if they do, and that behaviour is what the field optimises for.",
+      "quote": "By introducing **Reinforcement Learning from Human Feedback (RLHF)**, researchers moved beyond the “Black Box” of raw data ingestion into the realm of social alignment.",
       "block_id": "history-block-472",
       "section": "Taming the Stochastic Parrot: The Alignment Era",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1098",
-      "quote": "The question the Chinese Room leaves unresolved is whether there is a meaningful difference between these two outcomes, and whether the distinction, if it exists, can be settled empirically at all.",
+      "quote": "This process essentially acts as a cultural filter, rewarding the model for being helpful, honest, and harmless.",
       "block_id": "history-block-472",
       "section": "Taming the Stochastic Parrot: The Alignment Era",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1099",
-      "quote": "LLMs in 2026 have not answered it; they have only made the question louder.",
+      "quote": "This represents the moment where the machine ceased to be a mere calculator of probabilities and began to function as a conversational agent, transitioning from a mirror of the internet's chaos to a tool that respects the subjective constraints of human interaction.",
       "block_id": "history-block-472",
       "section": "Taming the Stochastic Parrot: The Alignment Era",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1100",
-      "quote": "Today, the focus has shifted to **Large Language Models (LLMs)** like GPT (first introduced by the paper \\citetitle{firstgpt} in \\citeyear{firstgpt}).",
-      "block_id": "history-block-474",
-      "section": "The Rise of Generative AI",
+      "quote": "The “stochastic parrot” framing reopens the oldest wound in the philosophy of AI.",
+      "block_id": "history-block-473",
+      "section": "Taming the Stochastic Parrot: The Alignment Era",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1101",
-      "quote": "These models are “pre-trained” on nearly the entire internet to predict the next token in a sequence.",
-      "block_id": "history-block-474",
-      "section": "The Rise of Generative AI",
+      "quote": "In 1980, \\citeauthor{searle1980minds} had proposed the **Chinese Room** thought experiment: imagine a person locked in a room who follows an English rule-book to shuffle incoming Chinese characters into outgoing Chinese characters.",
+      "block_id": "history-block-473",
+      "section": "Taming the Stochastic Parrot: The Alignment Era",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1102",
-      "quote": "By scaling these architectures to billions of parameters, AI has moved from simple classification to generating human-like text, code, and reasoning and even video and music.",
-      "block_id": "history-block-474",
-      "section": "The Rise of Generative AI",
+      "quote": "From outside, the room behaves indistinguishably from a fluent Chinese speaker.",
+      "block_id": "history-block-473",
+      "section": "Taming the Stochastic Parrot: The Alignment Era",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1103",
-      "quote": "What changed since the early days was not the basic ideas, but the availability of data, computing power, and practical training techniques.",
+      "quote": "Yet the person inside understands nothing.",
+      "block_id": "history-block-473",
+      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1104",
+      "quote": "By Searle's argument, no amount of clever symbol-shuffling is sufficient for *understanding*; minds require specific biological machinery, what he calls *biological naturalism*.",
+      "block_id": "history-block-473",
+      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1105",
+      "quote": "The standard rebuttals in the AI literature (the *systems reply*: the room-plus-rules understands; the *robot reply*: grounding in a body fixes the problem; the *connectionist reply*: a neural net would not have the problem) all attempt to push the “understanding” somewhere outside the formal manipulation.",
+      "block_id": "history-block-473",
+      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1106",
+      "quote": "\\citeauthor{russell2021aima} point out that Searle's argument is *not* an argument against AI as a field: even if no digital computer literally understands Chinese, AI systems can still be made to behave as if they do, and that behaviour is what the field optimises for.",
+      "block_id": "history-block-473",
+      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1107",
+      "quote": "The question the Chinese Room leaves unresolved is whether there is a meaningful difference between these two outcomes, and whether the distinction, if it exists, can be settled empirically at all.",
+      "block_id": "history-block-473",
+      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1108",
+      "quote": "LLMs in 2026 have not answered it; they have only made the question louder.",
+      "block_id": "history-block-473",
+      "section": "Taming the Stochastic Parrot: The Alignment Era",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1109",
+      "quote": "Today, the focus has shifted to **Large Language Models (LLMs)** like GPT (first introduced by the paper \\citetitle{firstgpt} in \\citeyear{firstgpt}).",
       "block_id": "history-block-475",
       "section": "The Rise of Generative AI",
       "kind": "statement"
     },
     {
-      "id": "history-stmt-1104",
-      "quote": "The emergence of ChatGPT represents the “Great Convergence” of a multi-millennial effort to decouple human thought from biology and translate it into formal abstraction.",
-      "block_id": "history-block-477",
-      "section": "The Great Convergence: From Syllogisms to Silicon",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1105",
-      "quote": "This journey began with **Aristotle's** syllogisms and was radicalized by **Llull's** mechanical knowledge wheels and **Leibniz's** binary alphabet, the idea that all reasoning could be reduced to a series of calculations.",
-      "block_id": "history-block-477",
-      "section": "The Great Convergence: From Syllogisms to Silicon",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1106",
-      "quote": "From **Babbage and Lovelace's** “algebraic patterns” to **McCulloch and Pitts'** mathematical neurons, the lineage of AI has always sought to treat thought as a formal calculus.",
-      "block_id": "history-block-477",
-      "section": "The Great Convergence: From Syllogisms to Silicon",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1107",
-      "quote": "However, the final transition required more than logic; it required a physical substrate of sufficient scale.",
-      "block_id": "history-block-478",
-      "section": "The Great Convergence: From Syllogisms to Silicon",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1108",
-      "quote": "As noted in \\citetitle{sutton2019bitter}, the “Bitter Lesson” of AI history is that raw computation eventually outpaces human intuition.",
-      "block_id": "history-block-478",
-      "section": "The Great Convergence: From Syllogisms to Silicon",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1109",
-      "quote": "This was made possible by Moore's Law \\cite[Moore's Law]{mooreslaw} and the revolutionary discovery that the massive-parallel SIMD architecture of GPUs, originally forged for the sensory demands of video games, provided the perfect engine for neural matrix operations, as demonstrated by \\cite[Oh et al.]{oh2004gpu} and \\cite[Raina et al.]{raina2009large}.",
-      "block_id": "history-block-478",
-      "section": "The Great Convergence: From Syllogisms to Silicon",
-      "kind": "statement"
-    },
-    {
       "id": "history-stmt-1110",
-      "quote": "Today's models are the ultimate synthesis: the combinatorial logic of the ancients finally meeting the brute-force scaling of the modern era.",
-      "block_id": "history-block-479",
-      "section": "The Great Convergence: From Syllogisms to Silicon",
+      "quote": "These models are “pre-trained” on nearly the entire internet to predict the next token in a sequence.",
+      "block_id": "history-block-475",
+      "section": "The Rise of Generative AI",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1111",
-      "quote": "We have reached a point where the machine “weaves” language by calculating billions of vectors across silicon clusters, proving that when enough compute meets enough abstraction, the machine does not just mimic thought, it executes it.",
+      "quote": "By scaling these architectures to billions of parameters, AI has moved from simple classification to generating human-like text, code, and reasoning and even video and music.",
+      "block_id": "history-block-475",
+      "section": "The Rise of Generative AI",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1112",
+      "quote": "What changed since the early days was not the basic ideas, but the availability of data, computing power, and practical training techniques.",
+      "block_id": "history-block-476",
+      "section": "The Rise of Generative AI",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1113",
+      "quote": "The emergence of ChatGPT represents the “Great Convergence” of a multi-millennial effort to decouple human thought from biology and translate it into formal abstraction.",
+      "block_id": "history-block-478",
+      "section": "The Great Convergence: From Syllogisms to Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1114",
+      "quote": "This journey began with **Aristotle's** syllogisms and was radicalized by **Llull's** mechanical knowledge wheels and **Leibniz's** binary alphabet, the idea that all reasoning could be reduced to a series of calculations.",
+      "block_id": "history-block-478",
+      "section": "The Great Convergence: From Syllogisms to Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1115",
+      "quote": "From **Babbage and Lovelace's** “algebraic patterns” to **McCulloch and Pitts'** mathematical neurons, the lineage of AI has always sought to treat thought as a formal calculus.",
+      "block_id": "history-block-478",
+      "section": "The Great Convergence: From Syllogisms to Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1116",
+      "quote": "However, the final transition required more than logic; it required a physical substrate of sufficient scale.",
       "block_id": "history-block-479",
       "section": "The Great Convergence: From Syllogisms to Silicon",
       "kind": "statement"
     },
     {
-      "id": "history-stmt-1112",
-      "quote": "The history of AI, viewed through a wider lens, reveals a pattern of repeated boom-and-bust cycles \\cite{toosi2021history}.",
-      "block_id": "history-block-481",
-      "section": "The Cycles of AI: Learning from the Winters",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1113",
-      "quote": "The first summer (1956–1969) was fueled by the Dartmouth workshop and Rosenblatt's Perceptron, producing early milestones: **Arthur Samuel's** checker player (1959), the first reinforcement-learning-based AI program; **Newell and Simon's Logic Theorist** (1956), which proved theorems from *Principia Mathematica*; McCarthy's **LISP** language (1958); the **Unimate** industrial robot (1961); the **ELIZA** chatbot (1966); and the **Shakey** mobile robot (1966), the first omni-purpose platform with environment reasoning.",
-      "block_id": "history-block-481",
-      "section": "The Cycles of AI: Learning from the Winters",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1114",
-      "quote": "The HNF blog's 70-year retrospective places the Dartmouth workshop in a much longer lineage running back to Kempelen's chess Turk, Torres Quevedo's endgame machine and Shannon's chess program \\cite{hnfki70jahre2026}; its essay on Shakey reconstructs the SRI robot's television camera, planner and computer link \\cite{hnfshakey2019}.",
-      "block_id": "history-block-481",
-      "section": "The Cycles of AI: Learning from the Winters",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1115",
-      "quote": "The first winter had several independent causes that compounded, and putting them in chronological order helps to see which were technical, which were bureaucratic, and which were legislative \\cite{toosi2021history}.",
-      "block_id": "history-block-482",
-      "section": "The Cycles of AI: Learning from the Winters",
-      "kind": "statement"
-    },
-    {
-      "id": "history-stmt-1116",
-      "quote": "The **ALPAC report** (1966) had already documented machine translation's failure to deliver useful military output and triggered the first wave of DARPA defunding.",
-      "block_id": "history-block-482",
-      "section": "The Cycles of AI: Learning from the Winters",
-      "kind": "statement"
-    },
-    {
       "id": "history-stmt-1117",
-      "quote": "The **Mansfield Amendment** of November 1969 then required the Defense Department to restrict basic research to projects \"with a direct and apparent relationship to a specific military function or operation\", explicitly cutting the long-horizon funding that had supported symbolic AI and the perceptron program (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
-      "block_id": "history-block-482",
-      "section": "The Cycles of AI: Learning from the Winters",
+      "quote": "As noted in \\citetitle{sutton2019bitter}, the “Bitter Lesson” of AI history is that raw computation eventually outpaces human intuition.",
+      "block_id": "history-block-479",
+      "section": "The Great Convergence: From Syllogisms to Silicon",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1118",
-      "quote": "The mathematical **Minsky–Papert critique** of the single-layer Perceptron (1969) was a contributing factor in the academic credibility of connectionism, not a funding cause in itself — the funding had already started moving, and the field had been retreating from perceptrons since the mid-1960s.",
-      "block_id": "history-block-482",
-      "section": "The Cycles of AI: Learning from the Winters",
+      "quote": "This was made possible by Moore's Law \\cite[Moore's Law]{mooreslaw} and the revolutionary discovery that the massive-parallel SIMD architecture of GPUs, originally forged for the sensory demands of video games, provided the perfect engine for neural matrix operations, as demonstrated by \\cite[Oh et al.]{oh2004gpu} and \\cite[Raina et al.]{raina2009large}.",
+      "block_id": "history-block-479",
+      "section": "The Great Convergence: From Syllogisms to Silicon",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1119",
-      "quote": "The UK **Lighthill report** (1973), a written document, convinced the British Science Research Council to cut AI funding in most UK universities within a year; the BBC broadcast a debate about it on 9 May 1973, not the report itself (\\cite{lighthillreport}).",
-      "block_id": "history-block-482",
-      "section": "The Cycles of AI: Learning from the Winters",
+      "quote": "Today's models are the ultimate synthesis: the combinatorial logic of the ancients finally meeting the brute-force scaling of the modern era.",
+      "block_id": "history-block-480",
+      "section": "The Great Convergence: From Syllogisms to Silicon",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1120",
-      "quote": "The American legislative lever (Mansfield, ALPAC) and the British scientific-audit lever (Lighthill) thus hit roughly simultaneously; the technical critique rode alongside them but did not, on its own, redirect money.",
-      "block_id": "history-block-482",
-      "section": "The Cycles of AI: Learning from the Winters",
+      "quote": "We have reached a point where the machine “weaves” language by calculating billions of vectors across silicon clusters, proving that when enough compute meets enough abstraction, the machine does not just mimic thought, it executes it.",
+      "block_id": "history-block-480",
+      "section": "The Great Convergence: From Syllogisms to Silicon",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1121",
-      "quote": "The lesson Toosi et al. draw is that exaggerated claims and failure to appreciate computational complexity have repeatedly triggered downturns — a warning relevant to today's AI boom \\cite{toosi2021history}.",
+      "quote": "The history of AI, viewed through a wider lens, reveals a pattern of repeated boom-and-bust cycles \\cite{toosi2021history}.",
       "block_id": "history-block-482",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1122",
-      "quote": "The revived expert systems era (1980s) created a second summer, but unfulfilled promises led to a second winter by the early 1990s.",
+      "quote": "The first summer (1956–1969) was fueled by the Dartmouth workshop and Rosenblatt's Perceptron, producing early milestones: **Arthur Samuel's** checker player (1959), the first reinforcement-learning-based AI program; **Newell and Simon's Logic Theorist** (1956), which proved theorems from *Principia Mathematica*; McCarthy's **LISP** language (1958); the **Unimate** industrial robot (1961); the **ELIZA** chatbot (1966); and the **Shakey** mobile robot (1966), the first omni-purpose platform with environment reasoning.",
       "block_id": "history-block-482",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1123",
-      "quote": "The Japanese Fifth Generation project (1982–1994) is the canonical case: a state-funded bet on parallel AI hardware that ended without the promised breakthrough \\cite{hnffifthgen2023}.",
+      "quote": "The HNF blog's 70-year retrospective places the Dartmouth workshop in a much longer lineage running back to Kempelen's chess Turk, Torres Quevedo's endgame machine and Shannon's chess program \\cite{hnfki70jahre2026}; its essay on Shakey reconstructs the SRI robot's television camera, planner and computer link \\cite{hnfshakey2019}.",
       "block_id": "history-block-482",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1124",
-      "quote": "The emerging **neuro-symbolic AI** paradigm \\cite{toosi2021history} aims to bridge the historic divide between connectionist and symbolic approaches, combining the trainability of neural networks with the explainability of symbolic systems.",
-      "block_id": "history-block-482",
+      "quote": "The first winter had several independent causes that compounded, and putting them in chronological order helps to see which were technical, which were bureaucratic, and which were legislative \\cite{toosi2021history}.",
+      "block_id": "history-block-483",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1125",
-      "quote": "Toosi et al. frame the whole arc as a recipe for the next crash, because the same over-promise that built each summer is what the subsequent funding freeze punished \\cite{toosi2021history}.",
+      "quote": "The **ALPAC report** (1966) had already documented machine translation's failure to deliver useful military output and triggered the first wave of DARPA defunding.",
       "block_id": "history-block-483",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1126",
-      "quote": "Their review of where the field stands now shows how high the third summer has climbed, which is precisely what makes a fourth winter expensive: global venture investment in AI startups grew from roughly $1.3 billion in 2010 to more than $40 billion in 2020, while corporate investment in AI alone reached nearly $70 billion that year, the number of peer-reviewed AI articles per year multiplied roughly twelve-fold between 2000 and 2020, and NeurIPS attendance grew tenfold since 2012 \\cite{toosi2021history}.",
+      "quote": "The **Mansfield Amendment** of November 1969 then required the Defense Department to restrict basic research to projects \"with a direct and apparent relationship to a specific military function or operation\", explicitly cutting the long-horizon funding that had supported symbolic AI and the perceptron program (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
       "block_id": "history-block-483",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1127",
-      "quote": "When the stakes are that large, the difference between a field that matures and one that crashes is how well it disciplines its own hype.",
+      "quote": "The mathematical **Minsky–Papert critique** of the single-layer Perceptron (1969) was a contributing factor in the academic credibility of connectionism, not a funding cause in itself — the funding had already started moving, and the field had been retreating from perceptrons since the mid-1960s.",
       "block_id": "history-block-483",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1128",
-      "quote": "Their proposed guardrails therefore read like a checklist for the present moment.",
-      "block_id": "history-block-484",
+      "quote": "The UK **Lighthill report** (1973), a written document, convinced the British Science Research Council to cut AI funding in most UK universities within a year; the BBC broadcast a debate about it on 9 May 1973, not the report itself (\\cite{lighthillreport}).",
+      "block_id": "history-block-483",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1129",
-      "quote": "Be sober about what counts as intelligence and avoid claims that machines have “become” human; resist extrapolating from toy problems to the general case on the assumption that faster hardware will absorb the difference; define the terms “AI”, “machine learning” and “deep learning” precisely, since their ambiguity has already become a cover for marketing; and treat the field's methodological lapses — confusing explanation with speculation, misattributing where performance gains come from, and misleading use of mathematics — as systemic risks rather than isolated slips \\cite{toosi2021history}.",
-      "block_id": "history-block-484",
+      "quote": "The American legislative lever (Mansfield, ALPAC) and the British scientific-audit lever (Lighthill) thus hit roughly simultaneously; the technical critique rode alongside them but did not, on its own, redirect money.",
+      "block_id": "history-block-483",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1130",
-      "quote": "Two of these deserve to outlive the rest.",
-      "block_id": "history-block-484",
+      "quote": "The lesson Toosi et al. draw is that exaggerated claims and failure to appreciate computational complexity have repeatedly triggered downturns — a warning relevant to today's AI boom \\cite{toosi2021history}.",
+      "block_id": "history-block-483",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1131",
-      "quote": "The **AI effect** is the field's moving target: a technique is only called “AI” while it is still unsolved, and the moment it is cracked it graduates into an ordinary engineering discipline, and the excitement moves to the next frontier \\cite{toosi2021history}.",
-      "block_id": "history-block-484",
+      "quote": "The revived expert systems era (1980s) created a second summer, but unfulfilled promises led to a second winter by the early 1990s.",
+      "block_id": "history-block-483",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1132",
-      "quote": "And the **black box** is the standing objection to deep learning: the model often cannot say how it reached a decision, which is tolerable for a game but not for medicine, transport, or finance, where a wrong judgment has a human cost and regulation increasingly demands that it be retraced \\cite{toosi2021history}.",
-      "block_id": "history-block-484",
+      "quote": "The Japanese Fifth Generation project (1982–1994) is the canonical case: a state-funded bet on parallel AI hardware that ended without the promised breakthrough \\cite{hnffifthgen2023}.",
+      "block_id": "history-block-483",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1133",
-      "quote": "The interpretability chapters of this course are the direct answer to that demand.",
-      "block_id": "history-block-484",
+      "quote": "The emerging **neuro-symbolic AI** paradigm \\cite{toosi2021history} aims to bridge the historic divide between connectionist and symbolic approaches, combining the trainability of neural networks with the explainability of symbolic systems.",
+      "block_id": "history-block-483",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1134",
-      "quote": "The HNF blog is especially good on the German strand of this story.",
-      "block_id": "history-block-485",
+      "quote": "Toosi et al. frame the whole arc as a recipe for the next crash, because the same over-promise that built each summer is what the subsequent funding freeze punished \\cite{toosi2021history}.",
+      "block_id": "history-block-484",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1135",
-      "quote": "Its portrait of \\cite[Karl Steinbuch]{hnfsteinbuch2017} follows him from the Lernmatrix and the first German transistor computer to his later right-wing politics; its account of the \\cite[1975 Bonn meeting]{hnfbonn2020} marks the organisational birth of West German AI research; and its \\cite[survey of women in AI]{hnfki_frauen2023} recovers researchers the standard narrative tends to leave out.",
-      "block_id": "history-block-485",
+      "quote": "Their review of where the field stands now shows how high the third summer has climbed, which is precisely what makes a fourth winter expensive: global venture investment in AI startups grew from roughly $1.3 billion in 2010 to more than $40 billion in 2020, while corporate investment in AI alone reached nearly $70 billion that year, the number of peer-reviewed AI articles per year multiplied roughly twelve-fold between 2000 and 2020, and NeurIPS attendance grew tenfold since 2012 \\cite{toosi2021history}.",
+      "block_id": "history-block-484",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1136",
-      "quote": "As hardware matured from relays to vacuum tubes and finally to silicon, the bottleneck shifted from physical construction to the management of “Software.” To handle the growing complexity of these systems, computer science adopted a strategy of increasing abstraction.",
-      "block_id": "history-block-486",
+      "quote": "When the stakes are that large, the difference between a field that matures and one that crashes is how well it disciplines its own hype.",
+      "block_id": "history-block-484",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1137",
-      "quote": "This evolution moved from:",
-      "block_id": "history-block-487",
+      "quote": "Their proposed guardrails therefore read like a checklist for the present moment.",
+      "block_id": "history-block-485",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1138",
-      "quote": "**Machine Logic:** Managing individual bits and relays (Zuse).",
-      "block_id": "history-block-488",
+      "quote": "Be sober about what counts as intelligence and avoid claims that machines have “become” human; resist extrapolating from toy problems to the general case on the assumption that faster hardware will absorb the difference; define the terms “AI”, “machine learning” and “deep learning” precisely, since their ambiguity has already become a cover for marketing; and treat the field's methodological lapses — confusing explanation with speculation, misattributing where performance gains come from, and misleading use of mathematics — as systemic risks rather than isolated slips \\cite{toosi2021history}.",
+      "block_id": "history-block-485",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1139",
-      "quote": "**Operating Systems:** Managing hardware resources so the human doesn't have to.",
-      "block_id": "history-block-489",
+      "quote": "Two of these deserve to outlive the rest.",
+      "block_id": "history-block-485",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1140",
-      "quote": "**High-Level Frameworks:** Tools like **TensorFlow** or **Keras** that allow researchers to treat complex neural operations as “simple boxes.”",
-      "block_id": "history-block-490",
+      "quote": "The **AI effect** is the field's moving target: a technique is only called “AI” while it is still unsolved, and the moment it is cracked it graduates into an ordinary engineering discipline, and the excitement moves to the next frontier \\cite{toosi2021history}.",
+      "block_id": "history-block-485",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1141",
-      "quote": "**Graphical User Interfaces:** They move the abstraction even further away from what the hardware is doing when the user can, for example, just speak to control the computer.",
-      "block_id": "history-block-491",
+      "quote": "And the **black box** is the standing objection to deep learning: the model often cannot say how it reached a decision, which is tolerable for a game but not for medicine, transport, or finance, where a wrong judgment has a human cost and regulation increasingly demands that it be retraced \\cite{toosi2021history}.",
+      "block_id": "history-block-485",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1142",
-      "quote": "**AI**: Abstracting away the non-human interaction part of using computers by simulating *meaning* (as in transformers do, for example).",
-      "block_id": "history-block-492",
+      "quote": "The interpretability chapters of this course are the direct answer to that demand.",
+      "block_id": "history-block-485",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1143",
-      "quote": "Today, a developer can invoke a convolutional layer with a single command, such as `model.conv2d`.",
-      "block_id": "history-block-493",
+      "quote": "The HNF blog is especially good on the German strand of this story.",
+      "block_id": "history-block-486",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1144",
-      "quote": "Under the hood, the system manages millions of matrix multiplications, a level of complexity that would have been impossible for a human to track manually, but which fulfills the trajectory started by Lovelace: reducing the mechanics of thought to a manageable, symbolic architecture.",
-      "block_id": "history-block-493",
+      "quote": "Its portrait of \\cite[Karl Steinbuch]{hnfsteinbuch2017} follows him from the Lernmatrix and the first German transistor computer to his later right-wing politics; its account of the \\cite[1975 Bonn meeting]{hnfbonn2020} marks the organisational birth of West German AI research; and its \\cite[survey of women in AI]{hnfki_frauen2023} recovers researchers the standard narrative tends to leave out.",
+      "block_id": "history-block-486",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1145",
-      "quote": "Operating Systems, later frameworks, growing complexity on the system side to reduce complexity on the human side, until progress could be made by just moving simple boxes like in asanAI or TensorFlow like model.Dense or model.conv2d.",
-      "block_id": "history-block-493",
+      "quote": "As hardware matured from relays to vacuum tubes and finally to silicon, the bottleneck shifted from physical construction to the management of “Software.” To handle the growing complexity of these systems, computer science adopted a strategy of increasing abstraction.",
+      "block_id": "history-block-487",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     },
     {
       "id": "history-stmt-1146",
-      "quote": "Very important to think that level of abstraction",
+      "quote": "This evolution moved from:",
+      "block_id": "history-block-488",
+      "section": "The Cycles of AI: Learning from the Winters",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1147",
+      "quote": "**Machine Logic:** Managing individual bits and relays (Zuse).",
+      "block_id": "history-block-489",
+      "section": "The Cycles of AI: Learning from the Winters",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1148",
+      "quote": "**Operating Systems:** Managing hardware resources so the human doesn't have to.",
+      "block_id": "history-block-490",
+      "section": "The Cycles of AI: Learning from the Winters",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1149",
+      "quote": "**High-Level Frameworks:** Tools like **TensorFlow** or **Keras** that allow researchers to treat complex neural operations as “simple boxes.”",
+      "block_id": "history-block-491",
+      "section": "The Cycles of AI: Learning from the Winters",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1150",
+      "quote": "**Graphical User Interfaces:** They move the abstraction even further away from what the hardware is doing when the user can, for example, just speak to control the computer.",
+      "block_id": "history-block-492",
+      "section": "The Cycles of AI: Learning from the Winters",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1151",
+      "quote": "**AI**: Abstracting away the non-human interaction part of using computers by simulating *meaning* (as in transformers do, for example).",
       "block_id": "history-block-493",
+      "section": "The Cycles of AI: Learning from the Winters",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1152",
+      "quote": "Today, a developer can invoke a convolutional layer with a single command, such as `model.conv2d`.",
+      "block_id": "history-block-494",
+      "section": "The Cycles of AI: Learning from the Winters",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1153",
+      "quote": "Under the hood, the system manages millions of matrix multiplications, a level of complexity that would have been impossible for a human to track manually, but which fulfills the trajectory started by Lovelace: reducing the mechanics of thought to a manageable, symbolic architecture.",
+      "block_id": "history-block-494",
+      "section": "The Cycles of AI: Learning from the Winters",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1154",
+      "quote": "Operating Systems, later frameworks, growing complexity on the system side to reduce complexity on the human side, until progress could be made by just moving simple boxes like in asanAI or TensorFlow like model.Dense or model.conv2d.",
+      "block_id": "history-block-494",
+      "section": "The Cycles of AI: Learning from the Winters",
+      "kind": "statement"
+    },
+    {
+      "id": "history-stmt-1155",
+      "quote": "Very important to think that level of abstraction",
+      "block_id": "history-block-494",
       "section": "The Cycles of AI: Learning from the Winters",
       "kind": "statement"
     }
@@ -63126,210 +63525,216 @@
     },
     {
       "id": "history-block-459",
-      "quote": "The real inflection point came with the \\citealternativetitle{vaswani2017attention}, which replaced sequential processing with parallelizable **self-attention**. Two competing branches emerged almost simultaneously. \\citealternativetitle{bert} used the Transformer's *encoder* with **Masked Language Modeling**, hiding random words and predicting them from both directions, to produce deeply bidirectional representations. A single pre-trained BERT model, fine-tuned with minimal data, shattered nearly every NLP benchmark overnight and popularized the **pre-train then fine-tune** paradigm. In parallel, OpenAI pursued the *decoder-only* path: \\citealternativetitle{firstgpt} showed that autoregressive next-token prediction over a large Transformer could learn powerful representations. \\citealternativetitle{gpt2} demonstrated emergent zero-shot abilities, and \\citealternativetitle{brown2020gpt3}, with 175 billion parameters, proved that sheer scale could produce remarkably flexible few-shot learners.",
+      "quote": "The real inflection point came with the \\citealternativetitle{vaswani2017attention}, which replaced sequential processing with parallelizable **self-attention**. Two competing branches emerged almost simultaneously. \\citealternativetitle{bert} used the Transformer's *encoder* with **Masked Language Modeling**, hiding random words and predicting them from both directions, to produce deeply bidirectional representations. A single pre-trained BERT model, fine-tuned with minimal data, shattered nearly every NLP benchmark overnight and popularized the **pre-train then fine-tune** paradigm. In parallel, OpenAI pursued the *decoder-only* path: \\citealternativetitle{firstgpt} showed that autoregressive next-token prediction over a large Transformer could learn powerful representations, and that fine-tuning those representations on each target task — with the task's inputs rewritten as one token sequence — beat task-specific architectures. The 2018 model was a 12-layer decoder with roughly 117 million parameters, pretrained on BooksCorpus, a collection of more than 7,000 unpublished books; with only a small linear output layer and delimiter embeddings added, it set the state of the art on 9 of the 12 benchmarks it was tested on. \\citealternativetitle{gpt2} then scaled the recipe roughly tenfold, to 1.5 billion parameters, and trained it on **WebText**, a corpus assembled from outbound Reddit links that had earned at least three karma and filtered down to about 40 GB of text. The striking result was not a better benchmark score but a change in method: without any fine-tuning, the model could answer reading-comprehension questions, translate, summarize, and perform other tasks when the task was demonstrated or named in its prompt. The paper called this **unsupervised multitask learning**; the field soon called it prompting. \\citealternativetitle{brown2020gpt3}, with 175 billion parameters, turned the observation into a programme by showing that few-shot in-context learning improves smoothly with scale.",
       "kind": "paragraph",
       "section": "From Language Models to LLMs"
     },
     {
       "id": "history-block-460",
-      "quote": "The recipe was assembled in stages. **ULMFiT** (\\cite[Howard & Ruder, 2018]{howard2018ulmfit}) supplied the three-step template that every later system follows: pretrain a language model on general text, fine-tune it on the target domain, then fine-tune it on the task — with *discriminative* learning rates and *gradual unfreezing* so that the pretrained knowledge survives. **RoBERTa** (\\cite[Liu et al., 2019]{liu2019roberta}) was a replication study that found BERT significantly undertrained: removing the next-sentence-prediction task, resampling masks dynamically, and training longer on more data set new records with the same architecture. **ELECTRA** (\\cite[Clark et al., 2020]{clark2020electra}) changed the objective from filling in blanks to *detecting* replaced tokens, reaching BERT-class quality at a fraction of the compute because every position, not just the masked ones, supplies a training signal. And **T5** (\\cite[Raffel et al., 2020]{raffel2020t5}) unified everything into one text-to-text format: translation, summarization, classification, and question answering all became “given this string, generate that string,” with span corruption as the pretraining objective. The modern pretrain-then-post-train pipeline is the consolidation of these four ideas.",
+      "quote": "GPT-2 was also the first model whose *release* became part of the story. OpenAI announced it in February 2019 but withheld the largest version, citing concerns about synthetic text; it published the smaller models in stages and released the full 1.5B weights only in November 2019, alongside a report on misuse monitoring (\\cite[OpenAI, 2019]{openai2019betterlms}; \\cite[OpenAI, 2019]{openai2019gpt2release}). Critics saw publicity-driven security theatre that broke open-publication norms; defenders saw the first serious experiment in staged release for a capable model. The argument rehearsed nearly every later open-weights debate, from Llama licensing to the GPT-OSS release. Underneath the release question sits a larger one that the \\cite[Nooscope]{joler2020nooscope} names *knowledge extractivism*: the model is a compressed map of text that millions of people wrote, and the debate over weights is also a debate over who owns and can inspect that map.",
       "kind": "paragraph",
       "section": "From Language Models to LLMs"
     },
     {
       "id": "history-block-461",
-      "quote": "A crucial refinement came with the **Chinchilla scaling laws** (\\citeauthor{hoffmann2022chinchilla}, \\citeyear{hoffmann2022chinchilla}), which showed that most large models were undertrained: for a given compute budget, the optimal strategy is to train a smaller model on far more data. This insight directly influenced the design of models like LLaMA (\\citeauthor{touvron2023llama}, \\citeyear{touvron2023llama}), which deliberately used more tokens (1.0–1.4 trillion) with a moderately sized 7B–65B parameter architecture, instead of pushing raw parameter counts higher. LLaMA's release was a pivotal moment for the democratization of AI: by showing that smaller, efficiently trained models could compete with GPT-3, it made advanced language modeling accessible to the broader research community, enabling fine-tuning on consumer hardware and sparking the open-source LLM movement.",
+      "quote": "The recipe was assembled in stages. **ULMFiT** (\\cite[Howard & Ruder, 2018]{howard2018ulmfit}) supplied the three-step template that every later system follows: pretrain a language model on general text, fine-tune it on the target domain, then fine-tune it on the task — with *discriminative* learning rates and *gradual unfreezing* so that the pretrained knowledge survives. **RoBERTa** (\\cite[Liu et al., 2019]{liu2019roberta}) was a replication study that found BERT significantly undertrained: removing the next-sentence-prediction task, resampling masks dynamically, and training longer on more data set new records with the same architecture. **ELECTRA** (\\cite[Clark et al., 2020]{clark2020electra}) changed the objective from filling in blanks to *detecting* replaced tokens, reaching BERT-class quality at a fraction of the compute because every position, not just the masked ones, supplies a training signal. And **T5** (\\cite[Raffel et al., 2020]{raffel2020t5}) unified everything into one text-to-text format: translation, summarization, classification, and question answering all became “given this string, generate that string,” with span corruption as the pretraining objective. The modern pretrain-then-post-train pipeline is the consolidation of these four ideas.",
       "kind": "paragraph",
       "section": "From Language Models to LLMs"
     },
     {
       "id": "history-block-462",
-      "quote": "Combined with \\citetitle[Deep-Reinforcement-Learning]{christiano2017rlhf}, as described in the \\citealternativetitle{ouyang2022instructgpt} paper, this lineage culminated in **ChatGPT** in November 2022, the moment large language models crossed from research artifact into mainstream cultural phenomenon \\cite{hnfchatgpt2023}.",
+      "quote": "A crucial refinement came with the **Chinchilla scaling laws** (\\citeauthor{hoffmann2022chinchilla}, \\citeyear{hoffmann2022chinchilla}), which showed that most large models were undertrained: for a given compute budget, the optimal strategy is to train a smaller model on far more data. This insight directly influenced the design of models like LLaMA (\\citeauthor{touvron2023llama}, \\citeyear{touvron2023llama}), which deliberately used more tokens (1.0–1.4 trillion) with a moderately sized 7B–65B parameter architecture, instead of pushing raw parameter counts higher. LLaMA's release was a pivotal moment for the democratization of AI: by showing that smaller, efficiently trained models could compete with GPT-3, it made advanced language modeling accessible to the broader research community, enabling fine-tuning on consumer hardware and sparking the open-source LLM movement.",
       "kind": "paragraph",
       "section": "From Language Models to LLMs"
     },
     {
       "id": "history-block-463",
-      "quote": "The trajectory from Shannon's n-grams to ChatGPT vindicates a consistent theme: each generation traded hand-crafted linguistic knowledge for greater scale and more general learning, raw computation and data, given the right architecture, eventually surpassing human-designed heuristics, again proving the \\citealternativetitle{sutton2019bitter}.",
+      "quote": "Combined with \\citetitle[Deep-Reinforcement-Learning]{christiano2017rlhf}, as described in the \\citealternativetitle{ouyang2022instructgpt} paper, this lineage culminated in **ChatGPT** in November 2022, the moment large language models crossed from research artifact into mainstream cultural phenomenon \\cite{hnfchatgpt2023}.",
       "kind": "paragraph",
       "section": "From Language Models to LLMs"
     },
     {
       "id": "history-block-464",
+      "quote": "The trajectory from Shannon's n-grams to ChatGPT vindicates a consistent theme: each generation traded hand-crafted linguistic knowledge for greater scale and more general learning, raw computation and data, given the right architecture, eventually surpassing human-designed heuristics, again proving the \\citealternativetitle{sutton2019bitter}.",
+      "kind": "paragraph",
+      "section": "From Language Models to LLMs"
+    },
+    {
+      "id": "history-block-465",
       "quote": "The Machine's Alphabet: Tokens",
       "kind": "heading",
       "section": "The Machine's Alphabet: Tokens"
     },
     {
-      "id": "history-block-465",
+      "id": "history-block-466",
       "quote": "There is a step in the previous story that is easy to miss, because it happens before any model is trained — yet without it, *none* of the \"next-word prediction\" above would even be defined: an LLM does not read words, and it does not read letters. It reads **tokens**, small fragments of text chosen in advance, and every one of its trillion predictions is a probability over that fixed token table. Tokenization is the invisible alphabet of the age \\cite{sennrich2016subword}.",
       "kind": "paragraph",
       "section": "The Machine's Alphabet: Tokens"
     },
     {
-      "id": "history-block-466",
+      "id": "history-block-467",
       "quote": "How did the alphabet form? Each of the three candidate granularities fails alone:",
       "kind": "paragraph",
       "section": "The Machine's Alphabet: Tokens"
     },
     {
-      "id": "history-block-467",
+      "id": "history-block-468",
       "quote": "In the modern decoding path, \"predicting the next word\" is literally \"predicting the next *token ID*\" — a number in a fixed table, looked up through the embedding matrix described in the [Embeddings](embeddinglab) chapter. You can watch a byte-pair vocabulary grow in the [Tokenizer Lab](tokenizerlab). And the historical irony is worth stating plainly: the machine that \"thinks\" is doing it over an alphabet that a 1994 file-compressor forged out of byte counts — the same statistical instinct that made al-Kindi's ninth-century frequency analysis work, now baked into the very units of thought.",
       "kind": "paragraph",
       "section": "The Machine's Alphabet: Tokens"
     },
     {
-      "id": "history-block-468",
+      "id": "history-block-469",
       "quote": "Scaling Laws: From Encyclopedias to the Digital Ocean",
       "kind": "heading",
       "section": "Scaling Laws: From Encyclopedias to the Digital Ocean"
     },
     {
-      "id": "history-block-469",
+      "id": "history-block-470",
       "quote": "The breakthrough of modern AI was predicated on a shift in data philosophy: moving from “quality” (hand-curated expert knowledge) to “quantity” (the total sum of digital footprints). Early AI failed because the world was not yet sufficiently digitized. The current era of 2020s AI only became possible once the internet provided a large enough corpus, petabytes of text, code, and images, to allow models to internalize the latent structures of human logic. In this context, data is the “terrain” that the machine's “wheels” must traverse; without a world-scale digital ocean, the abstraction of thought would have had nothing to grip.",
       "kind": "paragraph",
       "section": "Scaling Laws: From Encyclopedias to the Digital Ocean"
     },
     {
-      "id": "history-block-470",
+      "id": "history-block-471",
       "quote": "Taming the Stochastic Parrot: The Alignment Era",
       "kind": "heading",
       "section": "Taming the Stochastic Parrot: The Alignment Era"
     },
     {
-      "id": "history-block-471",
+      "id": "history-block-472",
       "quote": "The final layer of abstraction in the history of LLMs is not mathematical, but teleological. As explored in \\citetitle{ouyang2022instructgpt}, the raw statistical power of a base model often results in “hallucinations” or unhelpful outputs because the machine is merely predicting the next likely word, not the user's intent. By introducing **Reinforcement Learning from Human Feedback (RLHF)**, researchers moved beyond the “Black Box” of raw data ingestion into the realm of social alignment. This process essentially acts as a cultural filter, rewarding the model for being helpful, honest, and harmless. This represents the moment where the machine ceased to be a mere calculator of probabilities and began to function as a conversational agent, transitioning from a mirror of the internet's chaos to a tool that respects the subjective constraints of human interaction.",
       "kind": "paragraph",
       "section": "Taming the Stochastic Parrot: The Alignment Era"
     },
     {
-      "id": "history-block-472",
+      "id": "history-block-473",
       "quote": "The “stochastic parrot” framing reopens the oldest wound in the philosophy of AI. In 1980, \\citeauthor{searle1980minds} had proposed the **Chinese Room** thought experiment: imagine a person locked in a room who follows an English rule-book to shuffle incoming Chinese characters into outgoing Chinese characters. From outside, the room behaves indistinguishably from a fluent Chinese speaker. Yet the person inside understands nothing. By Searle's argument, no amount of clever symbol-shuffling is sufficient for *understanding*; minds require specific biological machinery, what he calls *biological naturalism*. The standard rebuttals in the AI literature (the *systems reply*: the room-plus-rules understands; the *robot reply*: grounding in a body fixes the problem; the *connectionist reply*: a neural net would not have the problem) all attempt to push the “understanding” somewhere outside the formal manipulation. \\citeauthor{russell2021aima} point out that Searle's argument is *not* an argument against AI as a field: even if no digital computer literally understands Chinese, AI systems can still be made to behave as if they do, and that behaviour is what the field optimises for. The question the Chinese Room leaves unresolved is whether there is a meaningful difference between these two outcomes, and whether the distinction, if it exists, can be settled empirically at all. LLMs in 2026 have not answered it; they have only made the question louder.",
       "kind": "paragraph",
       "section": "Taming the Stochastic Parrot: The Alignment Era"
     },
     {
-      "id": "history-block-473",
+      "id": "history-block-474",
       "quote": "The Rise of Generative AI",
       "kind": "heading",
       "section": "The Rise of Generative AI"
     },
     {
-      "id": "history-block-474",
+      "id": "history-block-475",
       "quote": "Today, the focus has shifted to **Large Language Models (LLMs)** like GPT (first introduced by the paper \\citetitle{firstgpt} in \\citeyear{firstgpt}). These models are “pre-trained” on nearly the entire internet to predict the next token in a sequence. By scaling these architectures to billions of parameters, AI has moved from simple classification to generating human-like text, code, and reasoning and even video and music.",
       "kind": "paragraph",
       "section": "The Rise of Generative AI"
     },
     {
-      "id": "history-block-475",
+      "id": "history-block-476",
       "quote": "What changed since the early days was not the basic ideas, but the availability of data, computing power, and practical training techniques.",
       "kind": "paragraph",
       "section": "The Rise of Generative AI"
     },
     {
-      "id": "history-block-476",
+      "id": "history-block-477",
       "quote": "The Great Convergence: From Syllogisms to Silicon",
       "kind": "heading",
       "section": "The Great Convergence: From Syllogisms to Silicon"
     },
     {
-      "id": "history-block-477",
+      "id": "history-block-478",
       "quote": "The emergence of ChatGPT represents the “Great Convergence” of a multi-millennial effort to decouple human thought from biology and translate it into formal abstraction. This journey began with **Aristotle's** syllogisms and was radicalized by **Llull's** mechanical knowledge wheels and **Leibniz's** binary alphabet, the idea that all reasoning could be reduced to a series of calculations. From **Babbage and Lovelace's** “algebraic patterns” to **McCulloch and Pitts'** mathematical neurons, the lineage of AI has always sought to treat thought as a formal calculus.",
       "kind": "paragraph",
       "section": "The Great Convergence: From Syllogisms to Silicon"
     },
     {
-      "id": "history-block-478",
+      "id": "history-block-479",
       "quote": "However, the final transition required more than logic; it required a physical substrate of sufficient scale. As noted in \\citetitle{sutton2019bitter}, the “Bitter Lesson” of AI history is that raw computation eventually outpaces human intuition. This was made possible by Moore's Law \\cite[Moore's Law]{mooreslaw} and the revolutionary discovery that the massive-parallel SIMD architecture of GPUs, originally forged for the sensory demands of video games, provided the perfect engine for neural matrix operations, as demonstrated by \\cite[Oh et al.]{oh2004gpu} and \\cite[Raina et al.]{raina2009large}.",
       "kind": "paragraph",
       "section": "The Great Convergence: From Syllogisms to Silicon"
     },
     {
-      "id": "history-block-479",
+      "id": "history-block-480",
       "quote": "Today's models are the ultimate synthesis: the combinatorial logic of the ancients finally meeting the brute-force scaling of the modern era. We have reached a point where the machine “weaves” language by calculating billions of vectors across silicon clusters, proving that when enough compute meets enough abstraction, the machine does not just mimic thought, it executes it.",
       "kind": "paragraph",
       "section": "The Great Convergence: From Syllogisms to Silicon"
     },
     {
-      "id": "history-block-480",
+      "id": "history-block-481",
       "quote": "The Cycles of AI: Learning from the Winters",
       "kind": "heading",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-481",
+      "id": "history-block-482",
       "quote": "The history of AI, viewed through a wider lens, reveals a pattern of repeated boom-and-bust cycles \\cite{toosi2021history}. The first summer (1956–1969) was fueled by the Dartmouth workshop and Rosenblatt's Perceptron, producing early milestones: **Arthur Samuel's** checker player (1959), the first reinforcement-learning-based AI program; **Newell and Simon's Logic Theorist** (1956), which proved theorems from *Principia Mathematica*; McCarthy's **LISP** language (1958); the **Unimate** industrial robot (1961); the **ELIZA** chatbot (1966); and the **Shakey** mobile robot (1966), the first omni-purpose platform with environment reasoning. The HNF blog's 70-year retrospective places the Dartmouth workshop in a much longer lineage running back to Kempelen's chess Turk, Torres Quevedo's endgame machine and Shannon's chess program \\cite{hnfki70jahre2026}; its essay on Shakey reconstructs the SRI robot's television camera, planner and computer link \\cite{hnfshakey2019}.",
       "kind": "paragraph",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-482",
+      "id": "history-block-483",
       "quote": "The first winter had several independent causes that compounded, and putting them in chronological order helps to see which were technical, which were bureaucratic, and which were legislative \\cite{toosi2021history}. The **ALPAC report** (1966) had already documented machine translation's failure to deliver useful military output and triggered the first wave of DARPA defunding. The **Mansfield Amendment** of November 1969 then required the Defense Department to restrict basic research to projects \"with a direct and apparent relationship to a specific military function or operation\", explicitly cutting the long-horizon funding that had supported symbolic AI and the perceptron program (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}). The mathematical **Minsky–Papert critique** of the single-layer Perceptron (1969) was a contributing factor in the academic credibility of connectionism, not a funding cause in itself — the funding had already started moving, and the field had been retreating from perceptrons since the mid-1960s. The UK **Lighthill report** (1973), a written document, convinced the British Science Research Council to cut AI funding in most UK universities within a year; the BBC broadcast a debate about it on 9 May 1973, not the report itself (\\cite{lighthillreport}). The American legislative lever (Mansfield, ALPAC) and the British scientific-audit lever (Lighthill) thus hit roughly simultaneously; the technical critique rode alongside them but did not, on its own, redirect money. The lesson Toosi et al. draw is that exaggerated claims and failure to appreciate computational complexity have repeatedly triggered downturns — a warning relevant to today's AI boom \\cite{toosi2021history}. The revived expert systems era (1980s) created a second summer, but unfulfilled promises led to a second winter by the early 1990s. The Japanese Fifth Generation project (1982–1994) is the canonical case: a state-funded bet on parallel AI hardware that ended without the promised breakthrough \\cite{hnffifthgen2023}. The emerging **neuro-symbolic AI** paradigm \\cite{toosi2021history} aims to bridge the historic divide between connectionist and symbolic approaches, combining the trainability of neural networks with the explainability of symbolic systems.",
       "kind": "paragraph",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-483",
+      "id": "history-block-484",
       "quote": "Toosi et al. frame the whole arc as a recipe for the next crash, because the same over-promise that built each summer is what the subsequent funding freeze punished \\cite{toosi2021history}. Their review of where the field stands now shows how high the third summer has climbed, which is precisely what makes a fourth winter expensive: global venture investment in AI startups grew from roughly $1.3 billion in 2010 to more than $40 billion in 2020, while corporate investment in AI alone reached nearly $70 billion that year, the number of peer-reviewed AI articles per year multiplied roughly twelve-fold between 2000 and 2020, and NeurIPS attendance grew tenfold since 2012 \\cite{toosi2021history}. When the stakes are that large, the difference between a field that matures and one that crashes is how well it disciplines its own hype.",
       "kind": "paragraph",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-484",
+      "id": "history-block-485",
       "quote": "Their proposed guardrails therefore read like a checklist for the present moment. Be sober about what counts as intelligence and avoid claims that machines have “become” human; resist extrapolating from toy problems to the general case on the assumption that faster hardware will absorb the difference; define the terms “AI”, “machine learning” and “deep learning” precisely, since their ambiguity has already become a cover for marketing; and treat the field's methodological lapses — confusing explanation with speculation, misattributing where performance gains come from, and misleading use of mathematics — as systemic risks rather than isolated slips \\cite{toosi2021history}. Two of these deserve to outlive the rest. The **AI effect** is the field's moving target: a technique is only called “AI” while it is still unsolved, and the moment it is cracked it graduates into an ordinary engineering discipline, and the excitement moves to the next frontier \\cite{toosi2021history}. And the **black box** is the standing objection to deep learning: the model often cannot say how it reached a decision, which is tolerable for a game but not for medicine, transport, or finance, where a wrong judgment has a human cost and regulation increasingly demands that it be retraced \\cite{toosi2021history}. The interpretability chapters of this course are the direct answer to that demand.",
       "kind": "paragraph",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-485",
+      "id": "history-block-486",
       "quote": "The HNF blog is especially good on the German strand of this story. Its portrait of \\cite[Karl Steinbuch]{hnfsteinbuch2017} follows him from the Lernmatrix and the first German transistor computer to his later right-wing politics; its account of the \\cite[1975 Bonn meeting]{hnfbonn2020} marks the organisational birth of West German AI research; and its \\cite[survey of women in AI]{hnfki_frauen2023} recovers researchers the standard narrative tends to leave out.",
       "kind": "paragraph",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-486",
+      "id": "history-block-487",
       "quote": "As hardware matured from relays to vacuum tubes and finally to silicon, the bottleneck shifted from physical construction to the management of “Software.” To handle the growing complexity of these systems, computer science adopted a strategy of increasing abstraction.",
       "kind": "paragraph",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-487",
+      "id": "history-block-488",
       "quote": "This evolution moved from:",
       "kind": "paragraph",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-488",
+      "id": "history-block-489",
       "quote": "1. **Machine Logic:** Managing individual bits and relays (Zuse).",
       "kind": "list-item",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-489",
+      "id": "history-block-490",
       "quote": "2. **Operating Systems:** Managing hardware resources so the human doesn't have to.",
       "kind": "list-item",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-490",
+      "id": "history-block-491",
       "quote": "3. **High-Level Frameworks:** Tools like **TensorFlow** or **Keras** that allow researchers to treat complex neural operations as “simple boxes.”",
       "kind": "list-item",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-491",
+      "id": "history-block-492",
       "quote": "4. **Graphical User Interfaces:** They move the abstraction even further away from what the hardware is doing when the user can, for example, just speak to control the computer.",
       "kind": "list-item",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-492",
+      "id": "history-block-493",
       "quote": "5. **AI**: Abstracting away the non-human interaction part of using computers by simulating *meaning* (as in transformers do, for example).",
       "kind": "list-item",
       "section": "The Cycles of AI: Learning from the Winters"
     },
     {
-      "id": "history-block-493",
+      "id": "history-block-494",
       "quote": "Today, a developer can invoke a convolutional layer with a single command, such as `model.conv2d`. Under the hood, the system manages millions of matrix multiplications, a level of complexity that would have been impossible for a human to track manually, but which fulfills the trajectory started by Lovelace: reducing the mechanics of thought to a manageable, symbolic architecture. Operating Systems, later frameworks, growing complexity on the system side to reduce complexity on the human side, until progress could be made by just moving simple boxes like in asanAI or TensorFlow like model.Dense or model.conv2d. Very important to think that level of abstraction",
       "kind": "paragraph",
       "section": "The Cycles of AI: Learning from the Winters"

@@ -444,6 +444,20 @@
         "kimi2025k2"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "optimizerlab-adam-alpha",
+      "subject": "adam",
+      "predicate": "learning_rate",
+      "value": 0.001,
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "The paper's recommended learning rate is $\\alpha = 0.001$",
+      "citation_keys": [
+        "adam"
+      ],
+      "source_url": "",
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -2206,6 +2220,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-53-related_to-optimizerlab-block-36",
+      "from": "optimizerlab-block-53",
+      "to": "optimizerlab-block-36",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-54-part_of-optimizerlab",
       "from": "optimizerlab-block-54",
       "to": "optimizerlab",
@@ -2220,16 +2244,6 @@
       "from": "optimizerlab-block-53",
       "to": "optimizerlab-block-54",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-54-related_to-optimizerlab-block-53",
-      "from": "optimizerlab-block-54",
-      "to": "optimizerlab-block-53",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2256,9 +2270,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-55-related_to-optimizerlab-block-53",
+      "id": "struct-optimizerlab-block-55-related_to-optimizerlab-block-54",
       "from": "optimizerlab-block-55",
-      "to": "optimizerlab-block-53",
+      "to": "optimizerlab-block-54",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2286,9 +2300,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-56-related_to-optimizerlab-block-53",
+      "id": "struct-optimizerlab-block-56-related_to-optimizerlab-block-54",
       "from": "optimizerlab-block-56",
-      "to": "optimizerlab-block-53",
+      "to": "optimizerlab-block-54",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2316,9 +2330,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-57-related_to-optimizerlab-block-53",
+      "id": "struct-optimizerlab-block-57-related_to-optimizerlab-block-54",
       "from": "optimizerlab-block-57",
-      "to": "optimizerlab-block-53",
+      "to": "optimizerlab-block-54",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2346,9 +2360,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-58-related_to-optimizerlab-block-53",
+      "id": "struct-optimizerlab-block-58-related_to-optimizerlab-block-54",
       "from": "optimizerlab-block-58",
-      "to": "optimizerlab-block-53",
+      "to": "optimizerlab-block-54",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2376,9 +2390,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-59-related_to-optimizerlab-block-53",
+      "id": "struct-optimizerlab-block-59-related_to-optimizerlab-block-54",
       "from": "optimizerlab-block-59",
-      "to": "optimizerlab-block-53",
+      "to": "optimizerlab-block-54",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2406,9 +2420,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-60-related_to-optimizerlab-block-53",
+      "id": "struct-optimizerlab-block-60-related_to-optimizerlab-block-54",
       "from": "optimizerlab-block-60",
-      "to": "optimizerlab-block-53",
+      "to": "optimizerlab-block-54",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2436,9 +2450,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-61-related_to-optimizerlab-block-53",
+      "id": "struct-optimizerlab-block-61-related_to-optimizerlab-block-54",
       "from": "optimizerlab-block-61",
-      "to": "optimizerlab-block-53",
+      "to": "optimizerlab-block-54",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2466,9 +2480,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-62-related_to-optimizerlab-block-53",
+      "id": "struct-optimizerlab-block-62-related_to-optimizerlab-block-54",
       "from": "optimizerlab-block-62",
-      "to": "optimizerlab-block-53",
+      "to": "optimizerlab-block-54",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2496,9 +2510,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-63-related_to-optimizerlab-block-53",
+      "id": "struct-optimizerlab-block-63-related_to-optimizerlab-block-54",
       "from": "optimizerlab-block-63",
-      "to": "optimizerlab-block-53",
+      "to": "optimizerlab-block-54",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2526,6 +2540,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-64-related_to-optimizerlab-block-54",
+      "from": "optimizerlab-block-64",
+      "to": "optimizerlab-block-54",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-65-part_of-optimizerlab",
       "from": "optimizerlab-block-65",
       "to": "optimizerlab",
@@ -2540,16 +2564,6 @@
       "from": "optimizerlab-block-64",
       "to": "optimizerlab-block-65",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-65-related_to-optimizerlab-block-64",
-      "from": "optimizerlab-block-65",
-      "to": "optimizerlab-block-64",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2576,6 +2590,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-66-related_to-optimizerlab-block-65",
+      "from": "optimizerlab-block-66",
+      "to": "optimizerlab-block-65",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-67-part_of-optimizerlab",
       "from": "optimizerlab-block-67",
       "to": "optimizerlab",
@@ -2590,16 +2614,6 @@
       "from": "optimizerlab-block-66",
       "to": "optimizerlab-block-67",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-67-related_to-optimizerlab-block-66",
-      "from": "optimizerlab-block-67",
-      "to": "optimizerlab-block-66",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2626,9 +2640,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-68-related_to-optimizerlab-block-66",
+      "id": "struct-optimizerlab-block-68-related_to-optimizerlab-block-67",
       "from": "optimizerlab-block-68",
-      "to": "optimizerlab-block-66",
+      "to": "optimizerlab-block-67",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2656,9 +2670,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-69-related_to-optimizerlab-block-66",
+      "id": "struct-optimizerlab-block-69-related_to-optimizerlab-block-67",
       "from": "optimizerlab-block-69",
-      "to": "optimizerlab-block-66",
+      "to": "optimizerlab-block-67",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2686,6 +2700,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-70-related_to-optimizerlab-block-67",
+      "from": "optimizerlab-block-70",
+      "to": "optimizerlab-block-67",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-71-part_of-optimizerlab",
       "from": "optimizerlab-block-71",
       "to": "optimizerlab",
@@ -2700,16 +2724,6 @@
       "from": "optimizerlab-block-70",
       "to": "optimizerlab-block-71",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-71-related_to-optimizerlab-block-70",
-      "from": "optimizerlab-block-71",
-      "to": "optimizerlab-block-70",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2736,9 +2750,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-72-related_to-optimizerlab-block-70",
+      "id": "struct-optimizerlab-block-72-related_to-optimizerlab-block-71",
       "from": "optimizerlab-block-72",
-      "to": "optimizerlab-block-70",
+      "to": "optimizerlab-block-71",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2766,6 +2780,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-73-related_to-optimizerlab-block-71",
+      "from": "optimizerlab-block-73",
+      "to": "optimizerlab-block-71",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-74-part_of-optimizerlab",
       "from": "optimizerlab-block-74",
       "to": "optimizerlab",
@@ -2786,16 +2810,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-74-related_to-optimizerlab-block-73",
-      "from": "optimizerlab-block-74",
-      "to": "optimizerlab-block-73",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-optimizerlab-block-75-part_of-optimizerlab",
       "from": "optimizerlab-block-75",
       "to": "optimizerlab",
@@ -2810,6 +2824,16 @@
       "from": "optimizerlab-block-74",
       "to": "optimizerlab-block-75",
       "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-optimizerlab-block-75-related_to-optimizerlab-block-74",
+      "from": "optimizerlab-block-75",
+      "to": "optimizerlab-block-74",
+      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2856,16 +2880,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-77-related_to-optimizerlab-block-76",
-      "from": "optimizerlab-block-77",
-      "to": "optimizerlab-block-76",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-optimizerlab-block-78-part_of-optimizerlab",
       "from": "optimizerlab-block-78",
       "to": "optimizerlab",
@@ -2886,9 +2900,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-78-related_to-optimizerlab-block-76",
+      "id": "struct-optimizerlab-block-78-related_to-optimizerlab-block-77",
       "from": "optimizerlab-block-78",
-      "to": "optimizerlab-block-76",
+      "to": "optimizerlab-block-77",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2916,6 +2930,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-79-related_to-optimizerlab-block-77",
+      "from": "optimizerlab-block-79",
+      "to": "optimizerlab-block-77",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-80-part_of-optimizerlab",
       "from": "optimizerlab-block-80",
       "to": "optimizerlab",
@@ -2930,16 +2954,6 @@
       "from": "optimizerlab-block-79",
       "to": "optimizerlab-block-80",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-80-related_to-optimizerlab-block-79",
-      "from": "optimizerlab-block-80",
-      "to": "optimizerlab-block-79",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2966,9 +2980,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-81-related_to-optimizerlab-block-79",
+      "id": "struct-optimizerlab-block-81-related_to-optimizerlab-block-80",
       "from": "optimizerlab-block-81",
-      "to": "optimizerlab-block-79",
+      "to": "optimizerlab-block-80",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -2996,6 +3010,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-82-related_to-optimizerlab-block-80",
+      "from": "optimizerlab-block-82",
+      "to": "optimizerlab-block-80",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-83-part_of-optimizerlab",
       "from": "optimizerlab-block-83",
       "to": "optimizerlab",
@@ -3010,16 +3034,6 @@
       "from": "optimizerlab-block-82",
       "to": "optimizerlab-block-83",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-83-related_to-optimizerlab-block-82",
-      "from": "optimizerlab-block-83",
-      "to": "optimizerlab-block-82",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3046,9 +3060,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-84-related_to-optimizerlab-block-82",
+      "id": "struct-optimizerlab-block-84-related_to-optimizerlab-block-83",
       "from": "optimizerlab-block-84",
-      "to": "optimizerlab-block-82",
+      "to": "optimizerlab-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3076,9 +3090,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-85-related_to-optimizerlab-block-82",
+      "id": "struct-optimizerlab-block-85-related_to-optimizerlab-block-83",
       "from": "optimizerlab-block-85",
-      "to": "optimizerlab-block-82",
+      "to": "optimizerlab-block-83",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3106,6 +3120,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-86-related_to-optimizerlab-block-83",
+      "from": "optimizerlab-block-86",
+      "to": "optimizerlab-block-83",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-87-part_of-optimizerlab",
       "from": "optimizerlab-block-87",
       "to": "optimizerlab",
@@ -3120,16 +3144,6 @@
       "from": "optimizerlab-block-86",
       "to": "optimizerlab-block-87",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-87-related_to-optimizerlab-block-86",
-      "from": "optimizerlab-block-87",
-      "to": "optimizerlab-block-86",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3156,9 +3170,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-88-related_to-optimizerlab-block-86",
+      "id": "struct-optimizerlab-block-88-related_to-optimizerlab-block-87",
       "from": "optimizerlab-block-88",
-      "to": "optimizerlab-block-86",
+      "to": "optimizerlab-block-87",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3186,6 +3200,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-89-related_to-optimizerlab-block-87",
+      "from": "optimizerlab-block-89",
+      "to": "optimizerlab-block-87",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-90-part_of-optimizerlab",
       "from": "optimizerlab-block-90",
       "to": "optimizerlab",
@@ -3200,16 +3224,6 @@
       "from": "optimizerlab-block-89",
       "to": "optimizerlab-block-90",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-90-related_to-optimizerlab-block-89",
-      "from": "optimizerlab-block-90",
-      "to": "optimizerlab-block-89",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3236,6 +3250,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-91-related_to-optimizerlab-block-90",
+      "from": "optimizerlab-block-91",
+      "to": "optimizerlab-block-90",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-92-part_of-optimizerlab",
       "from": "optimizerlab-block-92",
       "to": "optimizerlab",
@@ -3250,16 +3274,6 @@
       "from": "optimizerlab-block-91",
       "to": "optimizerlab-block-92",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-92-related_to-optimizerlab-block-91",
-      "from": "optimizerlab-block-92",
-      "to": "optimizerlab-block-91",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3286,9 +3300,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-93-related_to-optimizerlab-block-91",
+      "id": "struct-optimizerlab-block-93-related_to-optimizerlab-block-92",
       "from": "optimizerlab-block-93",
-      "to": "optimizerlab-block-91",
+      "to": "optimizerlab-block-92",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3316,6 +3330,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-94-related_to-optimizerlab-block-92",
+      "from": "optimizerlab-block-94",
+      "to": "optimizerlab-block-92",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-95-part_of-optimizerlab",
       "from": "optimizerlab-block-95",
       "to": "optimizerlab",
@@ -3330,16 +3354,6 @@
       "from": "optimizerlab-block-94",
       "to": "optimizerlab-block-95",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-95-related_to-optimizerlab-block-94",
-      "from": "optimizerlab-block-95",
-      "to": "optimizerlab-block-94",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3366,9 +3380,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-96-related_to-optimizerlab-block-94",
+      "id": "struct-optimizerlab-block-96-related_to-optimizerlab-block-95",
       "from": "optimizerlab-block-96",
-      "to": "optimizerlab-block-94",
+      "to": "optimizerlab-block-95",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3396,9 +3410,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-97-related_to-optimizerlab-block-94",
+      "id": "struct-optimizerlab-block-97-related_to-optimizerlab-block-95",
       "from": "optimizerlab-block-97",
-      "to": "optimizerlab-block-94",
+      "to": "optimizerlab-block-95",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3426,9 +3440,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-98-related_to-optimizerlab-block-94",
+      "id": "struct-optimizerlab-block-98-related_to-optimizerlab-block-95",
       "from": "optimizerlab-block-98",
-      "to": "optimizerlab-block-94",
+      "to": "optimizerlab-block-95",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3456,6 +3470,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-99-related_to-optimizerlab-block-95",
+      "from": "optimizerlab-block-99",
+      "to": "optimizerlab-block-95",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-100-part_of-optimizerlab",
       "from": "optimizerlab-block-100",
       "to": "optimizerlab",
@@ -3470,16 +3494,6 @@
       "from": "optimizerlab-block-99",
       "to": "optimizerlab-block-100",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-100-related_to-optimizerlab-block-99",
-      "from": "optimizerlab-block-100",
-      "to": "optimizerlab-block-99",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3506,6 +3520,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-101-related_to-optimizerlab-block-100",
+      "from": "optimizerlab-block-101",
+      "to": "optimizerlab-block-100",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-102-part_of-optimizerlab",
       "from": "optimizerlab-block-102",
       "to": "optimizerlab",
@@ -3520,16 +3544,6 @@
       "from": "optimizerlab-block-101",
       "to": "optimizerlab-block-102",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-102-related_to-optimizerlab-block-101",
-      "from": "optimizerlab-block-102",
-      "to": "optimizerlab-block-101",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3556,9 +3570,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-103-related_to-optimizerlab-block-101",
+      "id": "struct-optimizerlab-block-103-related_to-optimizerlab-block-102",
       "from": "optimizerlab-block-103",
-      "to": "optimizerlab-block-101",
+      "to": "optimizerlab-block-102",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3586,9 +3600,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-104-related_to-optimizerlab-block-101",
+      "id": "struct-optimizerlab-block-104-related_to-optimizerlab-block-102",
       "from": "optimizerlab-block-104",
-      "to": "optimizerlab-block-101",
+      "to": "optimizerlab-block-102",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3616,9 +3630,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-105-related_to-optimizerlab-block-101",
+      "id": "struct-optimizerlab-block-105-related_to-optimizerlab-block-102",
       "from": "optimizerlab-block-105",
-      "to": "optimizerlab-block-101",
+      "to": "optimizerlab-block-102",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3646,6 +3660,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-106-related_to-optimizerlab-block-102",
+      "from": "optimizerlab-block-106",
+      "to": "optimizerlab-block-102",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-107-part_of-optimizerlab",
       "from": "optimizerlab-block-107",
       "to": "optimizerlab",
@@ -3660,16 +3684,6 @@
       "from": "optimizerlab-block-106",
       "to": "optimizerlab-block-107",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-107-related_to-optimizerlab-block-106",
-      "from": "optimizerlab-block-107",
-      "to": "optimizerlab-block-106",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3696,9 +3710,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-108-related_to-optimizerlab-block-106",
+      "id": "struct-optimizerlab-block-108-related_to-optimizerlab-block-107",
       "from": "optimizerlab-block-108",
-      "to": "optimizerlab-block-106",
+      "to": "optimizerlab-block-107",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3726,9 +3740,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-109-related_to-optimizerlab-block-106",
+      "id": "struct-optimizerlab-block-109-related_to-optimizerlab-block-107",
       "from": "optimizerlab-block-109",
-      "to": "optimizerlab-block-106",
+      "to": "optimizerlab-block-107",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3756,9 +3770,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-110-related_to-optimizerlab-block-106",
+      "id": "struct-optimizerlab-block-110-related_to-optimizerlab-block-107",
       "from": "optimizerlab-block-110",
-      "to": "optimizerlab-block-106",
+      "to": "optimizerlab-block-107",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3786,9 +3800,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-111-related_to-optimizerlab-block-106",
+      "id": "struct-optimizerlab-block-111-related_to-optimizerlab-block-107",
       "from": "optimizerlab-block-111",
-      "to": "optimizerlab-block-106",
+      "to": "optimizerlab-block-107",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3816,6 +3830,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-optimizerlab-block-112-related_to-optimizerlab-block-107",
+      "from": "optimizerlab-block-112",
+      "to": "optimizerlab-block-107",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-optimizerlab-block-113-part_of-optimizerlab",
       "from": "optimizerlab-block-113",
       "to": "optimizerlab",
@@ -3830,16 +3854,6 @@
       "from": "optimizerlab-block-112",
       "to": "optimizerlab-block-113",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-optimizerlab-block-113-related_to-optimizerlab-block-112",
-      "from": "optimizerlab-block-113",
-      "to": "optimizerlab-block-112",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3866,9 +3880,39 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-block-114-related_to-optimizerlab-block-112",
+      "id": "struct-optimizerlab-block-114-related_to-optimizerlab-block-113",
       "from": "optimizerlab-block-114",
-      "to": "optimizerlab-block-112",
+      "to": "optimizerlab-block-113",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-optimizerlab-block-115-part_of-optimizerlab",
+      "from": "optimizerlab-block-115",
+      "to": "optimizerlab",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-optimizerlab-block-114-before-optimizerlab-block-115",
+      "from": "optimizerlab-block-114",
+      "to": "optimizerlab-block-115",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-optimizerlab-block-115-related_to-optimizerlab-block-113",
+      "from": "optimizerlab-block-115",
+      "to": "optimizerlab-block-113",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -4206,9 +4250,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-34-part_of-optimizerlab-block-39",
+      "id": "struct-optimizerlab-stmt-34-part_of-optimizerlab-block-40",
       "from": "optimizerlab-stmt-34",
-      "to": "optimizerlab-block-39",
+      "to": "optimizerlab-block-40",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4236,9 +4280,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-37-part_of-optimizerlab-block-41",
+      "id": "struct-optimizerlab-stmt-37-part_of-optimizerlab-block-42",
       "from": "optimizerlab-stmt-37",
-      "to": "optimizerlab-block-41",
+      "to": "optimizerlab-block-42",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4256,9 +4300,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-39-part_of-optimizerlab-block-42",
+      "id": "struct-optimizerlab-stmt-39-part_of-optimizerlab-block-43",
       "from": "optimizerlab-stmt-39",
-      "to": "optimizerlab-block-42",
+      "to": "optimizerlab-block-43",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4276,9 +4320,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-41-part_of-optimizerlab-block-43",
+      "id": "struct-optimizerlab-stmt-41-part_of-optimizerlab-block-44",
       "from": "optimizerlab-stmt-41",
-      "to": "optimizerlab-block-43",
+      "to": "optimizerlab-block-44",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4286,9 +4330,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-42-part_of-optimizerlab-block-48",
+      "id": "struct-optimizerlab-stmt-42-part_of-optimizerlab-block-44",
       "from": "optimizerlab-stmt-42",
-      "to": "optimizerlab-block-48",
+      "to": "optimizerlab-block-44",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4316,9 +4360,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-45-part_of-optimizerlab-block-54",
+      "id": "struct-optimizerlab-stmt-45-part_of-optimizerlab-block-51",
       "from": "optimizerlab-stmt-45",
-      "to": "optimizerlab-block-54",
+      "to": "optimizerlab-block-51",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4326,9 +4370,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-46-part_of-optimizerlab-block-54",
+      "id": "struct-optimizerlab-stmt-46-part_of-optimizerlab-block-55",
       "from": "optimizerlab-stmt-46",
-      "to": "optimizerlab-block-54",
+      "to": "optimizerlab-block-55",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4336,9 +4380,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-47-part_of-optimizerlab-block-54",
+      "id": "struct-optimizerlab-stmt-47-part_of-optimizerlab-block-55",
       "from": "optimizerlab-stmt-47",
-      "to": "optimizerlab-block-54",
+      "to": "optimizerlab-block-55",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4346,9 +4390,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-48-part_of-optimizerlab-block-54",
+      "id": "struct-optimizerlab-stmt-48-part_of-optimizerlab-block-55",
       "from": "optimizerlab-stmt-48",
-      "to": "optimizerlab-block-54",
+      "to": "optimizerlab-block-55",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4366,9 +4410,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-50-part_of-optimizerlab-block-55",
+      "id": "struct-optimizerlab-stmt-50-part_of-optimizerlab-block-56",
       "from": "optimizerlab-stmt-50",
-      "to": "optimizerlab-block-55",
+      "to": "optimizerlab-block-56",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4406,9 +4450,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-54-part_of-optimizerlab-block-60",
+      "id": "struct-optimizerlab-stmt-54-part_of-optimizerlab-block-59",
       "from": "optimizerlab-stmt-54",
-      "to": "optimizerlab-block-60",
+      "to": "optimizerlab-block-59",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4416,9 +4460,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-55-part_of-optimizerlab-block-63",
+      "id": "struct-optimizerlab-stmt-55-part_of-optimizerlab-block-61",
       "from": "optimizerlab-stmt-55",
-      "to": "optimizerlab-block-63",
+      "to": "optimizerlab-block-61",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4426,9 +4470,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-56-part_of-optimizerlab-block-65",
+      "id": "struct-optimizerlab-stmt-56-part_of-optimizerlab-block-64",
       "from": "optimizerlab-stmt-56",
-      "to": "optimizerlab-block-65",
+      "to": "optimizerlab-block-64",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4436,9 +4480,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-57-part_of-optimizerlab-block-65",
+      "id": "struct-optimizerlab-stmt-57-part_of-optimizerlab-block-66",
       "from": "optimizerlab-stmt-57",
-      "to": "optimizerlab-block-65",
+      "to": "optimizerlab-block-66",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4446,9 +4490,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-58-part_of-optimizerlab-block-65",
+      "id": "struct-optimizerlab-stmt-58-part_of-optimizerlab-block-66",
       "from": "optimizerlab-stmt-58",
-      "to": "optimizerlab-block-65",
+      "to": "optimizerlab-block-66",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4456,9 +4500,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-59-part_of-optimizerlab-block-67",
+      "id": "struct-optimizerlab-stmt-59-part_of-optimizerlab-block-66",
       "from": "optimizerlab-stmt-59",
-      "to": "optimizerlab-block-67",
+      "to": "optimizerlab-block-66",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4466,9 +4510,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-60-part_of-optimizerlab-block-67",
+      "id": "struct-optimizerlab-stmt-60-part_of-optimizerlab-block-68",
       "from": "optimizerlab-stmt-60",
-      "to": "optimizerlab-block-67",
+      "to": "optimizerlab-block-68",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4486,9 +4530,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-62-part_of-optimizerlab-block-68",
+      "id": "struct-optimizerlab-stmt-62-part_of-optimizerlab-block-69",
       "from": "optimizerlab-stmt-62",
-      "to": "optimizerlab-block-68",
+      "to": "optimizerlab-block-69",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4506,9 +4550,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-64-part_of-optimizerlab-block-69",
+      "id": "struct-optimizerlab-stmt-64-part_of-optimizerlab-block-70",
       "from": "optimizerlab-stmt-64",
-      "to": "optimizerlab-block-69",
+      "to": "optimizerlab-block-70",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4516,9 +4560,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-65-part_of-optimizerlab-block-69",
+      "id": "struct-optimizerlab-stmt-65-part_of-optimizerlab-block-70",
       "from": "optimizerlab-stmt-65",
-      "to": "optimizerlab-block-69",
+      "to": "optimizerlab-block-70",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4526,9 +4570,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-66-part_of-optimizerlab-block-69",
+      "id": "struct-optimizerlab-stmt-66-part_of-optimizerlab-block-70",
       "from": "optimizerlab-stmt-66",
-      "to": "optimizerlab-block-69",
+      "to": "optimizerlab-block-70",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4536,9 +4580,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-67-part_of-optimizerlab-block-71",
+      "id": "struct-optimizerlab-stmt-67-part_of-optimizerlab-block-70",
       "from": "optimizerlab-stmt-67",
-      "to": "optimizerlab-block-71",
+      "to": "optimizerlab-block-70",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4546,9 +4590,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-68-part_of-optimizerlab-block-71",
+      "id": "struct-optimizerlab-stmt-68-part_of-optimizerlab-block-72",
       "from": "optimizerlab-stmt-68",
-      "to": "optimizerlab-block-71",
+      "to": "optimizerlab-block-72",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4556,9 +4600,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-69-part_of-optimizerlab-block-71",
+      "id": "struct-optimizerlab-stmt-69-part_of-optimizerlab-block-72",
       "from": "optimizerlab-stmt-69",
-      "to": "optimizerlab-block-71",
+      "to": "optimizerlab-block-72",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4566,9 +4610,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-70-part_of-optimizerlab-block-71",
+      "id": "struct-optimizerlab-stmt-70-part_of-optimizerlab-block-72",
       "from": "optimizerlab-stmt-70",
-      "to": "optimizerlab-block-71",
+      "to": "optimizerlab-block-72",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4586,9 +4630,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-72-part_of-optimizerlab-block-72",
+      "id": "struct-optimizerlab-stmt-72-part_of-optimizerlab-block-73",
       "from": "optimizerlab-stmt-72",
-      "to": "optimizerlab-block-72",
+      "to": "optimizerlab-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4596,9 +4640,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-73-part_of-optimizerlab-block-72",
+      "id": "struct-optimizerlab-stmt-73-part_of-optimizerlab-block-73",
       "from": "optimizerlab-stmt-73",
-      "to": "optimizerlab-block-72",
+      "to": "optimizerlab-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4606,9 +4650,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-74-part_of-optimizerlab-block-72",
+      "id": "struct-optimizerlab-stmt-74-part_of-optimizerlab-block-73",
       "from": "optimizerlab-stmt-74",
-      "to": "optimizerlab-block-72",
+      "to": "optimizerlab-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4616,9 +4660,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-75-part_of-optimizerlab-block-74",
+      "id": "struct-optimizerlab-stmt-75-part_of-optimizerlab-block-73",
       "from": "optimizerlab-stmt-75",
-      "to": "optimizerlab-block-74",
+      "to": "optimizerlab-block-73",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4626,9 +4670,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-76-part_of-optimizerlab-block-74",
+      "id": "struct-optimizerlab-stmt-76-part_of-optimizerlab-block-75",
       "from": "optimizerlab-stmt-76",
-      "to": "optimizerlab-block-74",
+      "to": "optimizerlab-block-75",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4636,9 +4680,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-77-part_of-optimizerlab-block-74",
+      "id": "struct-optimizerlab-stmt-77-part_of-optimizerlab-block-75",
       "from": "optimizerlab-stmt-77",
-      "to": "optimizerlab-block-74",
+      "to": "optimizerlab-block-75",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4646,9 +4690,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-78-part_of-optimizerlab-block-77",
+      "id": "struct-optimizerlab-stmt-78-part_of-optimizerlab-block-75",
       "from": "optimizerlab-stmt-78",
-      "to": "optimizerlab-block-77",
+      "to": "optimizerlab-block-75",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4656,9 +4700,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-79-part_of-optimizerlab-block-77",
+      "id": "struct-optimizerlab-stmt-79-part_of-optimizerlab-block-78",
       "from": "optimizerlab-stmt-79",
-      "to": "optimizerlab-block-77",
+      "to": "optimizerlab-block-78",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4676,9 +4720,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-81-part_of-optimizerlab-block-80",
+      "id": "struct-optimizerlab-stmt-81-part_of-optimizerlab-block-79",
       "from": "optimizerlab-stmt-81",
-      "to": "optimizerlab-block-80",
+      "to": "optimizerlab-block-79",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4686,9 +4730,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-82-part_of-optimizerlab-block-80",
+      "id": "struct-optimizerlab-stmt-82-part_of-optimizerlab-block-81",
       "from": "optimizerlab-stmt-82",
-      "to": "optimizerlab-block-80",
+      "to": "optimizerlab-block-81",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4696,9 +4740,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-83-part_of-optimizerlab-block-80",
+      "id": "struct-optimizerlab-stmt-83-part_of-optimizerlab-block-81",
       "from": "optimizerlab-stmt-83",
-      "to": "optimizerlab-block-80",
+      "to": "optimizerlab-block-81",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4716,9 +4760,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-85-part_of-optimizerlab-block-81",
+      "id": "struct-optimizerlab-stmt-85-part_of-optimizerlab-block-82",
       "from": "optimizerlab-stmt-85",
-      "to": "optimizerlab-block-81",
+      "to": "optimizerlab-block-82",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4726,9 +4770,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-86-part_of-optimizerlab-block-83",
+      "id": "struct-optimizerlab-stmt-86-part_of-optimizerlab-block-82",
       "from": "optimizerlab-stmt-86",
-      "to": "optimizerlab-block-83",
+      "to": "optimizerlab-block-82",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4736,9 +4780,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-87-part_of-optimizerlab-block-83",
+      "id": "struct-optimizerlab-stmt-87-part_of-optimizerlab-block-84",
       "from": "optimizerlab-stmt-87",
-      "to": "optimizerlab-block-83",
+      "to": "optimizerlab-block-84",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4756,9 +4800,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-89-part_of-optimizerlab-block-84",
+      "id": "struct-optimizerlab-stmt-89-part_of-optimizerlab-block-85",
       "from": "optimizerlab-stmt-89",
-      "to": "optimizerlab-block-84",
+      "to": "optimizerlab-block-85",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4776,9 +4820,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-91-part_of-optimizerlab-block-85",
+      "id": "struct-optimizerlab-stmt-91-part_of-optimizerlab-block-86",
       "from": "optimizerlab-stmt-91",
-      "to": "optimizerlab-block-85",
+      "to": "optimizerlab-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4786,9 +4830,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-92-part_of-optimizerlab-block-85",
+      "id": "struct-optimizerlab-stmt-92-part_of-optimizerlab-block-86",
       "from": "optimizerlab-stmt-92",
-      "to": "optimizerlab-block-85",
+      "to": "optimizerlab-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4796,9 +4840,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-93-part_of-optimizerlab-block-87",
+      "id": "struct-optimizerlab-stmt-93-part_of-optimizerlab-block-86",
       "from": "optimizerlab-stmt-93",
-      "to": "optimizerlab-block-87",
+      "to": "optimizerlab-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4806,9 +4850,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-94-part_of-optimizerlab-block-87",
+      "id": "struct-optimizerlab-stmt-94-part_of-optimizerlab-block-88",
       "from": "optimizerlab-stmt-94",
-      "to": "optimizerlab-block-87",
+      "to": "optimizerlab-block-88",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4816,9 +4860,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-95-part_of-optimizerlab-block-87",
+      "id": "struct-optimizerlab-stmt-95-part_of-optimizerlab-block-88",
       "from": "optimizerlab-stmt-95",
-      "to": "optimizerlab-block-87",
+      "to": "optimizerlab-block-88",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4836,9 +4880,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-97-part_of-optimizerlab-block-88",
+      "id": "struct-optimizerlab-stmt-97-part_of-optimizerlab-block-89",
       "from": "optimizerlab-stmt-97",
-      "to": "optimizerlab-block-88",
+      "to": "optimizerlab-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4846,9 +4890,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-98-part_of-optimizerlab-block-88",
+      "id": "struct-optimizerlab-stmt-98-part_of-optimizerlab-block-89",
       "from": "optimizerlab-stmt-98",
-      "to": "optimizerlab-block-88",
+      "to": "optimizerlab-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4856,9 +4900,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-99-part_of-optimizerlab-block-88",
+      "id": "struct-optimizerlab-stmt-99-part_of-optimizerlab-block-89",
       "from": "optimizerlab-stmt-99",
-      "to": "optimizerlab-block-88",
+      "to": "optimizerlab-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4866,9 +4910,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-100-part_of-optimizerlab-block-90",
+      "id": "struct-optimizerlab-stmt-100-part_of-optimizerlab-block-89",
       "from": "optimizerlab-stmt-100",
-      "to": "optimizerlab-block-90",
+      "to": "optimizerlab-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4876,9 +4920,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-101-part_of-optimizerlab-block-90",
+      "id": "struct-optimizerlab-stmt-101-part_of-optimizerlab-block-91",
       "from": "optimizerlab-stmt-101",
-      "to": "optimizerlab-block-90",
+      "to": "optimizerlab-block-91",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4886,9 +4930,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-102-part_of-optimizerlab-block-90",
+      "id": "struct-optimizerlab-stmt-102-part_of-optimizerlab-block-91",
       "from": "optimizerlab-stmt-102",
-      "to": "optimizerlab-block-90",
+      "to": "optimizerlab-block-91",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4896,9 +4940,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-103-part_of-optimizerlab-block-92",
+      "id": "struct-optimizerlab-stmt-103-part_of-optimizerlab-block-91",
       "from": "optimizerlab-stmt-103",
-      "to": "optimizerlab-block-92",
+      "to": "optimizerlab-block-91",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4906,9 +4950,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-104-part_of-optimizerlab-block-92",
+      "id": "struct-optimizerlab-stmt-104-part_of-optimizerlab-block-93",
       "from": "optimizerlab-stmt-104",
-      "to": "optimizerlab-block-92",
+      "to": "optimizerlab-block-93",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4926,9 +4970,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-106-part_of-optimizerlab-block-93",
+      "id": "struct-optimizerlab-stmt-106-part_of-optimizerlab-block-94",
       "from": "optimizerlab-stmt-106",
-      "to": "optimizerlab-block-93",
+      "to": "optimizerlab-block-94",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4936,9 +4980,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-107-part_of-optimizerlab-block-93",
+      "id": "struct-optimizerlab-stmt-107-part_of-optimizerlab-block-94",
       "from": "optimizerlab-stmt-107",
-      "to": "optimizerlab-block-93",
+      "to": "optimizerlab-block-94",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4946,9 +4990,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-108-part_of-optimizerlab-block-95",
+      "id": "struct-optimizerlab-stmt-108-part_of-optimizerlab-block-94",
       "from": "optimizerlab-stmt-108",
-      "to": "optimizerlab-block-95",
+      "to": "optimizerlab-block-94",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4956,9 +5000,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-109-part_of-optimizerlab-block-95",
+      "id": "struct-optimizerlab-stmt-109-part_of-optimizerlab-block-96",
       "from": "optimizerlab-stmt-109",
-      "to": "optimizerlab-block-95",
+      "to": "optimizerlab-block-96",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4976,9 +5020,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-111-part_of-optimizerlab-block-96",
+      "id": "struct-optimizerlab-stmt-111-part_of-optimizerlab-block-97",
       "from": "optimizerlab-stmt-111",
-      "to": "optimizerlab-block-96",
+      "to": "optimizerlab-block-97",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -4986,9 +5030,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-112-part_of-optimizerlab-block-96",
+      "id": "struct-optimizerlab-stmt-112-part_of-optimizerlab-block-97",
       "from": "optimizerlab-stmt-112",
-      "to": "optimizerlab-block-96",
+      "to": "optimizerlab-block-97",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5006,9 +5050,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-114-part_of-optimizerlab-block-97",
+      "id": "struct-optimizerlab-stmt-114-part_of-optimizerlab-block-98",
       "from": "optimizerlab-stmt-114",
-      "to": "optimizerlab-block-97",
+      "to": "optimizerlab-block-98",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5026,9 +5070,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-116-part_of-optimizerlab-block-98",
+      "id": "struct-optimizerlab-stmt-116-part_of-optimizerlab-block-99",
       "from": "optimizerlab-stmt-116",
-      "to": "optimizerlab-block-98",
+      "to": "optimizerlab-block-99",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5036,9 +5080,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-117-part_of-optimizerlab-block-98",
+      "id": "struct-optimizerlab-stmt-117-part_of-optimizerlab-block-99",
       "from": "optimizerlab-stmt-117",
-      "to": "optimizerlab-block-98",
+      "to": "optimizerlab-block-99",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5046,9 +5090,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-118-part_of-optimizerlab-block-100",
+      "id": "struct-optimizerlab-stmt-118-part_of-optimizerlab-block-99",
       "from": "optimizerlab-stmt-118",
-      "to": "optimizerlab-block-100",
+      "to": "optimizerlab-block-99",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5056,9 +5100,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-119-part_of-optimizerlab-block-100",
+      "id": "struct-optimizerlab-stmt-119-part_of-optimizerlab-block-101",
       "from": "optimizerlab-stmt-119",
-      "to": "optimizerlab-block-100",
+      "to": "optimizerlab-block-101",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5066,9 +5110,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-120-part_of-optimizerlab-block-102",
+      "id": "struct-optimizerlab-stmt-120-part_of-optimizerlab-block-101",
       "from": "optimizerlab-stmt-120",
-      "to": "optimizerlab-block-102",
+      "to": "optimizerlab-block-101",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5076,9 +5120,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-121-part_of-optimizerlab-block-102",
+      "id": "struct-optimizerlab-stmt-121-part_of-optimizerlab-block-103",
       "from": "optimizerlab-stmt-121",
-      "to": "optimizerlab-block-102",
+      "to": "optimizerlab-block-103",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5086,9 +5130,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-122-part_of-optimizerlab-block-102",
+      "id": "struct-optimizerlab-stmt-122-part_of-optimizerlab-block-103",
       "from": "optimizerlab-stmt-122",
-      "to": "optimizerlab-block-102",
+      "to": "optimizerlab-block-103",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5106,9 +5150,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-124-part_of-optimizerlab-block-103",
+      "id": "struct-optimizerlab-stmt-124-part_of-optimizerlab-block-104",
       "from": "optimizerlab-stmt-124",
-      "to": "optimizerlab-block-103",
+      "to": "optimizerlab-block-104",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5116,9 +5160,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-125-part_of-optimizerlab-block-103",
+      "id": "struct-optimizerlab-stmt-125-part_of-optimizerlab-block-104",
       "from": "optimizerlab-stmt-125",
-      "to": "optimizerlab-block-103",
+      "to": "optimizerlab-block-104",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5136,9 +5180,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-127-part_of-optimizerlab-block-104",
+      "id": "struct-optimizerlab-stmt-127-part_of-optimizerlab-block-105",
       "from": "optimizerlab-stmt-127",
-      "to": "optimizerlab-block-104",
+      "to": "optimizerlab-block-105",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5146,9 +5190,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-128-part_of-optimizerlab-block-104",
+      "id": "struct-optimizerlab-stmt-128-part_of-optimizerlab-block-105",
       "from": "optimizerlab-stmt-128",
-      "to": "optimizerlab-block-104",
+      "to": "optimizerlab-block-105",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5166,9 +5210,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-130-part_of-optimizerlab-block-105",
+      "id": "struct-optimizerlab-stmt-130-part_of-optimizerlab-block-106",
       "from": "optimizerlab-stmt-130",
-      "to": "optimizerlab-block-105",
+      "to": "optimizerlab-block-106",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5176,9 +5220,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-131-part_of-optimizerlab-block-105",
+      "id": "struct-optimizerlab-stmt-131-part_of-optimizerlab-block-106",
       "from": "optimizerlab-stmt-131",
-      "to": "optimizerlab-block-105",
+      "to": "optimizerlab-block-106",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5186,9 +5230,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-132-part_of-optimizerlab-block-107",
+      "id": "struct-optimizerlab-stmt-132-part_of-optimizerlab-block-106",
       "from": "optimizerlab-stmt-132",
-      "to": "optimizerlab-block-107",
+      "to": "optimizerlab-block-106",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5236,9 +5280,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-137-part_of-optimizerlab-block-113",
+      "id": "struct-optimizerlab-stmt-137-part_of-optimizerlab-block-112",
       "from": "optimizerlab-stmt-137",
-      "to": "optimizerlab-block-113",
+      "to": "optimizerlab-block-112",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5246,9 +5290,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-138-part_of-optimizerlab-block-113",
+      "id": "struct-optimizerlab-stmt-138-part_of-optimizerlab-block-114",
       "from": "optimizerlab-stmt-138",
-      "to": "optimizerlab-block-113",
+      "to": "optimizerlab-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5256,9 +5300,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-139-part_of-optimizerlab-block-113",
+      "id": "struct-optimizerlab-stmt-139-part_of-optimizerlab-block-114",
       "from": "optimizerlab-stmt-139",
-      "to": "optimizerlab-block-113",
+      "to": "optimizerlab-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5266,9 +5310,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-140-part_of-optimizerlab-block-113",
+      "id": "struct-optimizerlab-stmt-140-part_of-optimizerlab-block-114",
       "from": "optimizerlab-stmt-140",
-      "to": "optimizerlab-block-113",
+      "to": "optimizerlab-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5276,9 +5320,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-141-part_of-optimizerlab-block-113",
+      "id": "struct-optimizerlab-stmt-141-part_of-optimizerlab-block-114",
       "from": "optimizerlab-stmt-141",
-      "to": "optimizerlab-block-113",
+      "to": "optimizerlab-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5296,9 +5340,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-143-part_of-optimizerlab-block-114",
+      "id": "struct-optimizerlab-stmt-143-part_of-optimizerlab-block-115",
       "from": "optimizerlab-stmt-143",
-      "to": "optimizerlab-block-114",
+      "to": "optimizerlab-block-115",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5306,9 +5350,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-optimizerlab-stmt-144-part_of-optimizerlab-block-114",
+      "id": "struct-optimizerlab-stmt-144-part_of-optimizerlab-block-115",
       "from": "optimizerlab-stmt-144",
-      "to": "optimizerlab-block-114",
+      "to": "optimizerlab-block-115",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-optimizerlab-stmt-145-part_of-optimizerlab-block-115",
+      "from": "optimizerlab-stmt-145",
+      "to": "optimizerlab-block-115",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5543,785 +5597,792 @@
     },
     {
       "id": "optimizerlab-stmt-33",
-      "quote": "This division is the key insight: parameters with large, consistent gradients get *smaller* effective steps (because $\\sqrt{\\hat{v}_t}$ is large), while parameters with small or rare gradients get *larger* effective steps.",
+      "quote": "The paper's recommended learning rate is $\\alpha = 0.001$; the interactive example below uses a larger $\\eta = 0.1$ only so the steps are easy to see.",
       "block_id": "optimizerlab-block-39",
       "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-34",
-      "quote": "The optimizer automatically adapts.",
-      "block_id": "optimizerlab-block-39",
+      "quote": "This division is the key insight: parameters with large, consistent gradients get *smaller* effective steps (because $\\sqrt{\\hat{v}_t}$ is large), while parameters with small or rare gradients get *larger* effective steps.",
+      "block_id": "optimizerlab-block-40",
       "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-35",
-      "quote": "Two consequences of these equations are worth seeing directly.",
+      "quote": "The optimizer automatically adapts.",
       "block_id": "optimizerlab-block-40",
       "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-36",
-      "quote": "The ratio $\\hat{m}_t / \\sqrt{\\hat{v}_t}$ also has a clean reading: it is a **signal-to-noise statistic**, near $\\pm1$ when a coordinate's gradient has kept its sign and near $0$ when it is mostly noise.",
+      "quote": "Two consequences of these equations are worth seeing directly.",
       "block_id": "optimizerlab-block-41",
       "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-37",
-      "quote": "Adam's step therefore measures how *trustworthy* a gradient has been, not how large it happens to be.",
-      "block_id": "optimizerlab-block-41",
+      "quote": "The ratio $\\hat{m}_t / \\sqrt{\\hat{v}_t}$ also has a clean reading: it is a **signal-to-noise statistic**, near $\\pm1$ when a coordinate's gradient has kept its sign and near $0$ when it is mostly noise.",
+      "block_id": "optimizerlab-block-42",
       "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-38",
-      "quote": "The worked example below uses the paper's defaults ($\\beta_1 = 0.9$, $\\beta_2 = 0.999$, $\\epsilon = 10^{-8}$) and $\\eta = 0.1$.",
+      "quote": "Adam's step therefore measures how *trustworthy* a gradient has been, not how large it happens to be.",
       "block_id": "optimizerlab-block-42",
       "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-39",
-      "quote": "Drag the three gradients and step through; every number in the cards comes straight from the four equations above.",
-      "block_id": "optimizerlab-block-42",
+      "quote": "The worked example below uses the paper's defaults ($\\beta_1 = 0.9$, $\\beta_2 = 0.999$, $\\epsilon = 10^{-8}$) and $\\eta = 0.1$.",
+      "block_id": "optimizerlab-block-43",
       "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-40",
-      "quote": "Interactive lab Adam by hand: three steps One parameter, three gradients.",
+      "quote": "Drag the three gradients and step through; every number in the cards comes straight from the four equations above.",
       "block_id": "optimizerlab-block-43",
       "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-41",
-      "quote": "Watch the two moments, their bias corrections, and the step they produce.",
-      "block_id": "optimizerlab-block-43",
+      "quote": "Interactive lab Adam by hand: three steps One parameter, three gradients.",
+      "block_id": "optimizerlab-block-44",
       "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-42",
-      "quote": "Step 1 m₁ — v₁ — m̂₁ — v̂₁ — η·m̂/√v̂ — θ₁ —",
-      "block_id": "optimizerlab-block-48",
+      "quote": "Watch the two moments, their bias corrections, and the step they produce.",
+      "block_id": "optimizerlab-block-44",
       "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-43",
-      "quote": "Step 2 m₂ — v₂ — m̂₂ — v̂₂ — η·m̂/√v̂ — θ₂ —",
+      "quote": "Step 1 m₁ — v₁ — m̂₁ — v̂₁ — η·m̂/√v̂ — θ₁ —",
       "block_id": "optimizerlab-block-49",
       "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-44",
-      "quote": "Step 3 m₃ — v₃ — m̂₃ — v̂₃ — η·m̂/√v̂ — θ₃ —",
+      "quote": "Step 2 m₂ — v₂ — m̂₂ — v̂₂ — η·m̂/√v̂ — θ₂ —",
       "block_id": "optimizerlab-block-50",
       "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-45",
-      "quote": "The one-dimensional valley above is friendly to every optimizer.",
-      "block_id": "optimizerlab-block-54",
-      "section": "Race them: SGD vs. momentum vs. Adam",
+      "quote": "Step 3 m₃ — v₃ — m̂₃ — v̂₃ — η·m̂/√v̂ — θ₃ —",
+      "block_id": "optimizerlab-block-51",
+      "section": "Adam (Adaptive Moment Estimation)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-46",
-      "quote": "Real loss surfaces are not: they have narrow ravines, curved valleys, saddle points and small pits.",
-      "block_id": "optimizerlab-block-54",
+      "quote": "The one-dimensional valley above is friendly to every optimizer.",
+      "block_id": "optimizerlab-block-55",
       "section": "Race them: SGD vs. momentum vs. Adam",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-47",
-      "quote": "Below, all three optimizers start from the same point on a two-dimensional surface and use exact gradients.",
-      "block_id": "optimizerlab-block-54",
+      "quote": "Real loss surfaces are not: they have narrow ravines, curved valleys, saddle points and small pits.",
+      "block_id": "optimizerlab-block-55",
       "section": "Race them: SGD vs. momentum vs. Adam",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-48",
-      "quote": "Watch how differently they move — and try to make the slowest one win.",
-      "block_id": "optimizerlab-block-54",
+      "quote": "Below, all three optimizers start from the same point on a two-dimensional surface and use exact gradients.",
+      "block_id": "optimizerlab-block-55",
       "section": "Race them: SGD vs. momentum vs. Adam",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-49",
-      "quote": "Interactive lab Optimizer Race Three optimizers, one start line, exact gradients.",
+      "quote": "Watch how differently they move — and try to make the slowest one win.",
       "block_id": "optimizerlab-block-55",
       "section": "Race them: SGD vs. momentum vs. Adam",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-50",
-      "quote": "Click anywhere on the map to move the start.",
-      "block_id": "optimizerlab-block-55",
+      "quote": "Interactive lab Optimizer Race Three optimizers, one start line, exact gradients.",
+      "block_id": "optimizerlab-block-56",
       "section": "Race them: SGD vs. momentum vs. Adam",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-51",
-      "quote": "Ravine Banana Saddle Bumpy",
+      "quote": "Click anywhere on the map to move the start.",
       "block_id": "optimizerlab-block-56",
       "section": "Race them: SGD vs. momentum vs. Adam",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-52",
-      "quote": "<canvas data-or=\"canvas\" aria-label=\"Loss surface with optimizer paths\"></canvas> step 0",
+      "quote": "Ravine Banana Saddle Bumpy",
       "block_id": "optimizerlab-block-57",
       "section": "Race them: SGD vs. momentum vs. Adam",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-53",
-      "quote": "loss above the minimum (log scale) <canvas data-or=\"curve\"></canvas>",
+      "quote": "<canvas data-or=\"canvas\" aria-label=\"Loss surface with optimizer paths\"></canvas> step 0",
       "block_id": "optimizerlab-block-58",
       "section": "Race them: SGD vs. momentum vs. Adam",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-54",
-      "quote": "each optimizer starts from a sensible rate for this surface; this scales all three",
-      "block_id": "optimizerlab-block-60",
+      "quote": "loss above the minimum (log scale) <canvas data-or=\"curve\"></canvas>",
+      "block_id": "optimizerlab-block-59",
       "section": "Race them: SGD vs. momentum vs. Adam",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-55",
-      "quote": "SGD: x ← x − η g Momentum: v ← 0.9v + g, x ← x − η v Adam: β₁ = 0.9, β₂ = 0.999 ⭐ minimum",
-      "block_id": "optimizerlab-block-63",
+      "quote": "each optimizer starts from a sensible rate for this surface; this scales all three",
+      "block_id": "optimizerlab-block-61",
       "section": "Race them: SGD vs. momentum vs. Adam",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-56",
-      "quote": "SGD, Momentum, and Adam are the headliners, but the zoo is bigger.",
-      "block_id": "optimizerlab-block-65",
-      "section": "The Rest of the Optimizer Family",
+      "quote": "SGD: x ← x − η g Momentum: v ← 0.9v + g, x ← x − η v Adam: β₁ = 0.9, β₂ = 0.999 ⭐ minimum",
+      "block_id": "optimizerlab-block-64",
+      "section": "Race them: SGD vs. momentum vs. Adam",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-57",
-      "quote": "Each of the optimizers below was invented to fix a specific failure of the previous one.",
-      "block_id": "optimizerlab-block-65",
+      "quote": "SGD, Momentum, and Adam are the headliners, but the zoo is bigger.",
+      "block_id": "optimizerlab-block-66",
       "section": "The Rest of the Optimizer Family",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-58",
-      "quote": "Reading them in order is reading the most productive argument in modern optimization.",
-      "block_id": "optimizerlab-block-65",
+      "quote": "Each of the optimizers below was invented to fix a specific failure of the previous one.",
+      "block_id": "optimizerlab-block-66",
       "section": "The Rest of the Optimizer Family",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-59",
-      "quote": "Plain momentum is a heavy ball rolling downhill: it builds up speed from past gradients, which is great, until it overshoots a valley.",
-      "block_id": "optimizerlab-block-67",
-      "section": "Nesterov Accelerated Gradient (NAG)",
+      "quote": "Reading them in order is reading the most productive argument in modern optimization.",
+      "block_id": "optimizerlab-block-66",
+      "section": "The Rest of the Optimizer Family",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-60",
-      "quote": "The ball doesn't know to slow down before the slope reverses.",
-      "block_id": "optimizerlab-block-67",
+      "quote": "Plain momentum is a heavy ball rolling downhill: it builds up speed from past gradients, which is great, until it overshoots a valley.",
+      "block_id": "optimizerlab-block-68",
       "section": "Nesterov Accelerated Gradient (NAG)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-61",
-      "quote": "Nesterov's fix is small but clever: instead of measuring the slope *where you are*, measure it *where you're about to be*.",
+      "quote": "The ball doesn't know to slow down before the slope reverses.",
       "block_id": "optimizerlab-block-68",
       "section": "Nesterov Accelerated Gradient (NAG)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-62",
-      "quote": "You take the momentum step first (a guess about your future position), then correct based on the gradient there:",
-      "block_id": "optimizerlab-block-68",
+      "quote": "Nesterov's fix is small but clever: instead of measuring the slope *where you are*, measure it *where you're about to be*.",
+      "block_id": "optimizerlab-block-69",
       "section": "Nesterov Accelerated Gradient (NAG)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-63",
-      "quote": "Compare this with plain momentum — the only difference is that the gradient is now evaluated at $\\theta - \\beta v_{t-1}$ instead of at $\\theta$.",
+      "quote": "You take the momentum step first (a guess about your future position), then correct based on the gradient there:",
       "block_id": "optimizerlab-block-69",
       "section": "Nesterov Accelerated Gradient (NAG)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-64",
-      "quote": "It's a one-line change, but the ball is now noticeably more responsive: it slows down when it sees the slope curving up ahead, instead of running off the cliff and catching itself on the rebound.",
-      "block_id": "optimizerlab-block-69",
+      "quote": "Compare this with plain momentum — the only difference is that the gradient is now evaluated at $\\theta - \\beta v_{t-1}$ instead of at $\\theta$.",
+      "block_id": "optimizerlab-block-70",
       "section": "Nesterov Accelerated Gradient (NAG)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-65",
-      "quote": "\\cite[Nesterov (1983)]{nesterov1983method} introduced the accelerated method; his 2004 book is the standard exposition (\\cite[Nesterov, 2004]{nesterov2004introductory}).",
-      "block_id": "optimizerlab-block-69",
+      "quote": "It's a one-line change, but the ball is now noticeably more responsive: it slows down when it sees the slope curving up ahead, instead of running off the cliff and catching itself on the rebound.",
+      "block_id": "optimizerlab-block-70",
       "section": "Nesterov Accelerated Gradient (NAG)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-66",
-      "quote": "In practice NAG typically shaves a few percent off training time on RNNs and other models with strong gradient curvature (\\cite[Ruder, 2016]{ruder2016overview}).",
-      "block_id": "optimizerlab-block-69",
+      "quote": "\\cite[Nesterov (1983)]{nesterov1983method} introduced the accelerated method; his 2004 book is the standard exposition (\\cite[Nesterov, 2004]{nesterov2004introductory}).",
+      "block_id": "optimizerlab-block-70",
       "section": "Nesterov Accelerated Gradient (NAG)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-67",
-      "quote": "SGD uses one global learning rate for every parameter.",
-      "block_id": "optimizerlab-block-71",
-      "section": "Adagrad — The Per-Parameter GPS",
+      "quote": "In practice NAG typically shaves a few percent off training time on RNNs and other models with strong gradient curvature (\\cite[Ruder, 2016]{ruder2016overview}).",
+      "block_id": "optimizerlab-block-70",
+      "section": "Nesterov Accelerated Gradient (NAG)",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-68",
-      "quote": "But the world isn't uniform.",
-      "block_id": "optimizerlab-block-71",
+      "quote": "SGD uses one global learning rate for every parameter.",
+      "block_id": "optimizerlab-block-72",
       "section": "Adagrad — The Per-Parameter GPS",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-69",
-      "quote": "In a language model, the embedding for \"the\" gets a gradient signal on almost every batch; the embedding for \"quokka\" gets one gradient per million tokens.",
-      "block_id": "optimizerlab-block-71",
+      "quote": "But the world isn't uniform.",
+      "block_id": "optimizerlab-block-72",
       "section": "Adagrad — The Per-Parameter GPS",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-70",
-      "quote": "Treating them the same is wasteful: \"the\" gets over-updated and \"quokka\" gets starved.",
-      "block_id": "optimizerlab-block-71",
+      "quote": "In a language model, the embedding for \"the\" gets a gradient signal on almost every batch; the embedding for \"quokka\" gets one gradient per million tokens.",
+      "block_id": "optimizerlab-block-72",
       "section": "Adagrad — The Per-Parameter GPS",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-71",
-      "quote": "Parameters that have received large or frequent gradients get *smaller* effective steps (the denominator is large); parameters that have received small or rare gradients get *larger* effective steps.",
+      "quote": "Treating them the same is wasteful: \"the\" gets over-updated and \"quokka\" gets starved.",
       "block_id": "optimizerlab-block-72",
       "section": "Adagrad — The Per-Parameter GPS",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-72",
-      "quote": "The $\\epsilon$ (usually $10^{-8}$) is just a guard against dividing by zero on the very first step.",
-      "block_id": "optimizerlab-block-72",
+      "quote": "Parameters that have received large or frequent gradients get *smaller* effective steps (the denominator is large); parameters that have received small or rare gradients get *larger* effective steps.",
+      "block_id": "optimizerlab-block-73",
       "section": "Adagrad — The Per-Parameter GPS",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-73",
-      "quote": "Think of it as a per-parameter GPS that slows down for crowded streets and speeds up on empty roads.",
-      "block_id": "optimizerlab-block-72",
+      "quote": "The $\\epsilon$ (usually $10^{-8}$) is just a guard against dividing by zero on the very first step.",
+      "block_id": "optimizerlab-block-73",
       "section": "Adagrad — The Per-Parameter GPS",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-74",
-      "quote": "Adagrad's own motivating setting was large-scale learning with sparse features, where rare but predictive coordinates — the paper's “needles in haystacks” — need larger steps \\cite{duchi2011adagrad}.",
-      "block_id": "optimizerlab-block-72",
+      "quote": "Think of it as a per-parameter GPS that slows down for crowded streets and speeds up on empty roads.",
+      "block_id": "optimizerlab-block-73",
       "section": "Adagrad — The Per-Parameter GPS",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-75",
-      "quote": "RMSprop and Adadelta were developed independently around the same time and share the same core idea — a decaying average of squared gradients instead of Adagrad's ever-growing sum.",
-      "block_id": "optimizerlab-block-74",
-      "section": "Adadelta and RMSprop — Stop the Shrink",
+      "quote": "Adagrad's own motivating setting was large-scale learning with sparse features, where rare but predictive coordinates — the paper's “needles in haystacks” — need larger steps \\cite{duchi2011adagrad}.",
+      "block_id": "optimizerlab-block-73",
+      "section": "Adagrad — The Per-Parameter GPS",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-76",
-      "quote": "RMSprop is Adadelta's first ingredient with a fixed global learning rate ($\\gamma = 0.9$, $\\eta = 0.001$ in Hinton's slides); Adadelta adds the second ingredient, the RMS of past updates, and so needs no learning rate at all.",
-      "block_id": "optimizerlab-block-74",
+      "quote": "RMSprop and Adadelta were developed independently around the same time and share the same core idea — a decaying average of squared gradients instead of Adagrad's ever-growing sum.",
+      "block_id": "optimizerlab-block-75",
       "section": "Adadelta and RMSprop — Stop the Shrink",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-77",
-      "quote": "Zeiler's motivation was that the *units* of the RMSprop update don't match the units of $\\theta$; replacing $\\eta$ with the RMS of past parameter updates, $\\mathrm{RMS}[\\Delta\\theta]_{t-1}$, fixes the dimensional mismatch.",
-      "block_id": "optimizerlab-block-74",
+      "quote": "RMSprop is Adadelta's first ingredient with a fixed global learning rate ($\\gamma = 0.9$, $\\eta = 0.001$ in Hinton's slides); Adadelta adds the second ingredient, the RMS of past updates, and so needs no learning rate at all.",
+      "block_id": "optimizerlab-block-75",
       "section": "Adadelta and RMSprop — Stop the Shrink",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-78",
-      "quote": "Nadam is what you get when you apply the Nesterov trick to Adam.",
-      "block_id": "optimizerlab-block-77",
-      "section": "Nadam — Adam, but Look Ahead",
+      "quote": "Zeiler's motivation was that the *units* of the RMSprop update don't match the units of $\\theta$; replacing $\\eta$ with the RMS of past parameter updates, $\\mathrm{RMS}[\\Delta\\theta]_{t-1}$, fixes the dimensional mismatch.",
+      "block_id": "optimizerlab-block-75",
+      "section": "Adadelta and RMSprop — Stop the Shrink",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-79",
-      "quote": "The fix from \\citeauthor{dozat2016nadam} (\\citeyear{dozat2016nadam}) is one line: replace the previous momentum vector $\\hat{m}_{t-1}$ in the Adam update with the *current* one $\\hat{m}_t$:",
-      "block_id": "optimizerlab-block-77",
+      "quote": "Nadam is what you get when you apply the Nesterov trick to Adam.",
+      "block_id": "optimizerlab-block-78",
       "section": "Nadam — Adam, but Look Ahead",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-80",
-      "quote": "It's a one-line modification, but it makes Adam's momentum term \"look ahead\" the same way Nesterov does, which tends to give modestly faster convergence on tasks with strong gradient curvature.",
+      "quote": "The fix from \\citeauthor{dozat2016nadam} (\\citeyear{dozat2016nadam}) is one line: replace the previous momentum vector $\\hat{m}_{t-1}$ in the Adam update with the *current* one $\\hat{m}_t$:",
       "block_id": "optimizerlab-block-78",
       "section": "Nadam — Adam, but Look Ahead",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-81",
-      "quote": "Adam isn't always the best.",
-      "block_id": "optimizerlab-block-80",
-      "section": "AMSGrad — Fixing a Convergence Flaw",
+      "quote": "It's a one-line modification, but it makes Adam's momentum term \"look ahead\" the same way Nesterov does, which tends to give modestly faster convergence on tasks with strong gradient curvature.",
+      "block_id": "optimizerlab-block-79",
+      "section": "Nadam — Adam, but Look Ahead",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-82",
-      "quote": "Practitioners noticed that Adam can fail to converge on some problems, and \\citeauthor{reddi2018amsgrad} (\\citeyear{reddi2018amsgrad}) pinned down a cause: the EMA of squared gradients can *forget* large but rare gradients, so the effective step can grow again.",
-      "block_id": "optimizerlab-block-80",
+      "quote": "Adam isn't always the best.",
+      "block_id": "optimizerlab-block-81",
       "section": "AMSGrad — Fixing a Convergence Flaw",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-83",
-      "quote": "Their counterexample is a simple convex online problem, not a full network.",
-      "block_id": "optimizerlab-block-80",
+      "quote": "Practitioners noticed that Adam can fail to converge on some problems, and \\citeauthor{reddi2018amsgrad} (\\citeyear{reddi2018amsgrad}) pinned down a cause: the EMA of squared gradients can *forget* large but rare gradients, so the effective step can grow again.",
+      "block_id": "optimizerlab-block-81",
       "section": "AMSGrad — Fixing a Convergence Flaw",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-84",
-      "quote": "This guarantees a non-increasing effective step size, which restores the convergence guarantees that Adam lacks.",
+      "quote": "Their counterexample is a simple convex online problem, not a full network.",
       "block_id": "optimizerlab-block-81",
       "section": "AMSGrad — Fixing a Convergence Flaw",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-85",
-      "quote": "In practice AMSGrad sometimes matches Adam, sometimes loses to it; the empirical comparison was messier than the theory suggested, and most practitioners stuck with Adam.",
-      "block_id": "optimizerlab-block-81",
+      "quote": "This guarantees a non-increasing effective step size, which restores the convergence guarantees that Adam lacks.",
+      "block_id": "optimizerlab-block-82",
       "section": "AMSGrad — Fixing a Convergence Flaw",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-86",
-      "quote": "\\citetitle{loshchilov2019adamw} (\\citealternativetitle{loshchilov2019adamw}) decouples them.",
-      "block_id": "optimizerlab-block-83",
-      "section": "AdamW — Fixing the Weight Decay Bug",
+      "quote": "In practice AMSGrad sometimes matches Adam, sometimes loses to it; the empirical comparison was messier than the theory suggested, and most practitioners stuck with Adam.",
+      "block_id": "optimizerlab-block-82",
+      "section": "AMSGrad — Fixing a Convergence Flaw",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-87",
-      "quote": "Weight decay is applied *directly* to the weights, not through the gradient:",
-      "block_id": "optimizerlab-block-83",
+      "quote": "\\citetitle{loshchilov2019adamw} (\\citealternativetitle{loshchilov2019adamw}) decouples them.",
+      "block_id": "optimizerlab-block-84",
       "section": "AdamW — Fixing the Weight Decay Bug",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-88",
-      "quote": "It's a one-line change, but it makes weight decay behave the way every other optimizer's weight decay does, and it decouples weight decay from the adaptive gradient update.",
+      "quote": "Weight decay is applied *directly* to the weights, not through the gradient:",
       "block_id": "optimizerlab-block-84",
       "section": "AdamW — Fixing the Weight Decay Bug",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-89",
-      "quote": "**AdamW is now the default optimizer for training transformers** in practice — Llama and Stable Diffusion use it, while the original BERT and GPT-3 recipes still used Adam; BERT's recipe applied weight decay through the loss.",
-      "block_id": "optimizerlab-block-84",
+      "quote": "It's a one-line change, but it makes weight decay behave the way every other optimizer's weight decay does, and it decouples weight decay from the adaptive gradient update.",
+      "block_id": "optimizerlab-block-85",
       "section": "AdamW — Fixing the Weight Decay Bug",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-90",
-      "quote": "Adam was posted in December 2014 and published at ICLR 2015 \\cite{adam}; AdamW followed as a 2017 preprint and an ICLR 2019 paper \\cite{loshchilov2019adamw}.",
+      "quote": "**AdamW is now the default optimizer for training transformers** in practice — Llama and Stable Diffusion use it, while the original BERT and GPT-3 recipes still used Adam; BERT's recipe applied weight decay through the loss.",
       "block_id": "optimizerlab-block-85",
       "section": "AdamW — Fixing the Weight Decay Bug",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-91",
-      "quote": "The gap matters: for three years the default recipe was “Adam with L2”, and the decoupled version spread as transformers made weight decay a first-class knob.",
-      "block_id": "optimizerlab-block-85",
+      "quote": "Adam was posted in December 2014 and published at ICLR 2015 \\cite{adam}; AdamW followed as a 2017 preprint and an ICLR 2019 paper \\cite{loshchilov2019adamw}.",
+      "block_id": "optimizerlab-block-86",
       "section": "AdamW — Fixing the Weight Decay Bug",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-92",
-      "quote": "The pair is a good example of how optimizer history actually runs — a fix can be mathematically small, sit in public for two years, and still change practice only when the surrounding models make its advantage visible.",
-      "block_id": "optimizerlab-block-85",
+      "quote": "The gap matters: for three years the default recipe was “Adam with L2”, and the decoupled version spread as transformers made weight decay a first-class knob.",
+      "block_id": "optimizerlab-block-86",
       "section": "AdamW — Fixing the Weight Decay Bug",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-93",
-      "quote": "The cleanest family tree above doesn't mean Adam (or AdamW) is always the right choice.",
-      "block_id": "optimizerlab-block-87",
-      "section": "When Adam Doesn't Win",
+      "quote": "The pair is a good example of how optimizer history actually runs — a fix can be mathematically small, sit in public for two years, and still change practice only when the surrounding models make its advantage visible.",
+      "block_id": "optimizerlab-block-86",
+      "section": "AdamW — Fixing the Weight Decay Bug",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-94",
-      "quote": "\\citeauthor{ruder2016overview}'s survey (\\citeyear{ruder2016overview}) already noted the wrinkle: for convolutional networks on ImageNet, SGD with momentum and a careful learning-rate schedule often matches or beats Adam.",
-      "block_id": "optimizerlab-block-87",
+      "quote": "The cleanest family tree above doesn't mean Adam (or AdamW) is always the right choice.",
+      "block_id": "optimizerlab-block-88",
       "section": "When Adam Doesn't Win",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-95",
-      "quote": "The intuition is sharp — SGD's noisier updates act as an implicit regularizer (they keep the ball bouncing, which helps it escape sharp minima), and a cosine or step-decay schedule gives the optimizer more chances to settle into a flat basin over time.",
-      "block_id": "optimizerlab-block-87",
+      "quote": "\\citeauthor{ruder2016overview}'s survey (\\citeyear{ruder2016overview}) already noted the wrinkle: for convolutional networks on ImageNet, SGD with momentum and a careful learning-rate schedule often matches or beats Adam.",
+      "block_id": "optimizerlab-block-88",
       "section": "When Adam Doesn't Win",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-96",
-      "quote": "The pragmatic rule of thumb: **start with AdamW**.",
+      "quote": "The intuition is sharp — SGD's noisier updates act as an implicit regularizer (they keep the ball bouncing, which helps it escape sharp minima), and a cosine or step-decay schedule gives the optimizer more chances to settle into a flat basin over time.",
       "block_id": "optimizerlab-block-88",
       "section": "When Adam Doesn't Win",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-97",
-      "quote": "If you have the compute for a careful learning-rate sweep and you need every last fraction of a percent of accuracy, try SGD-with-momentum with a cosine schedule.",
-      "block_id": "optimizerlab-block-88",
+      "quote": "The pragmatic rule of thumb: **start with AdamW**.",
+      "block_id": "optimizerlab-block-89",
       "section": "When Adam Doesn't Win",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-98",
-      "quote": "For transformers and large language models specifically, AdamW dominates, because the per-parameter adaptivity genuinely matters when individual weights (especially in token embeddings) see wildly different gradient magnitudes.",
-      "block_id": "optimizerlab-block-88",
+      "quote": "If you have the compute for a careful learning-rate sweep and you need every last fraction of a percent of accuracy, try SGD-with-momentum with a cosine schedule.",
+      "block_id": "optimizerlab-block-89",
       "section": "When Adam Doesn't Win",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-99",
-      "quote": "Don't reach for anything else unless you have a specific reason to.",
-      "block_id": "optimizerlab-block-88",
+      "quote": "For transformers and large language models specifically, AdamW dominates, because the per-parameter adaptivity genuinely matters when individual weights (especially in token embeddings) see wildly different gradient magnitudes.",
+      "block_id": "optimizerlab-block-89",
       "section": "When Adam Doesn't Win",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-100",
-      "quote": "The learning rate is rarely held constant in practice.",
-      "block_id": "optimizerlab-block-90",
-      "section": "Learning-Rate Schedules",
+      "quote": "Don't reach for anything else unless you have a specific reason to.",
+      "block_id": "optimizerlab-block-89",
+      "section": "When Adam Doesn't Win",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-101",
-      "quote": "Step decay lowered it at fixed epochs in early image models \\cite{ruder2016overview}; \\cite[Goyal et al. (2017)]{goyal2017largebatch} coupled a linear warm-up to the linear scaling rule for large batches; \\cite[Loshchilov & Hutter (2016)]{loshchilov2016sgdr} replaced the step with a cosine that anneals to zero and restarts.",
-      "block_id": "optimizerlab-block-90",
+      "quote": "The learning rate is rarely held constant in practice.",
+      "block_id": "optimizerlab-block-91",
       "section": "Learning-Rate Schedules",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-102",
-      "quote": "The schedule is itself a hyperparameter: its shape interacts with batch size and optimizer, which is why a search that tunes only the initial rate can miss most of the gain.",
-      "block_id": "optimizerlab-block-90",
+      "quote": "Step decay lowered it at fixed epochs in early image models \\cite{ruder2016overview}; \\cite[Goyal et al. (2017)]{goyal2017largebatch} coupled a linear warm-up to the linear scaling rule for large batches; \\cite[Loshchilov & Hutter (2016)]{loshchilov2016sgdr} replaced the step with a cosine that anneals to zero and restarts.",
+      "block_id": "optimizerlab-block-91",
       "section": "Learning-Rate Schedules",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-103",
-      "quote": "The effect is that every update direction is scaled to comparable size, so no single singular direction dominates a step.",
-      "block_id": "optimizerlab-block-92",
-      "section": "Muon — orthogonalize the update",
+      "quote": "The schedule is itself a hyperparameter: its shape interacts with batch size and optimizer, which is why a search that tunes only the initial rate can miss most of the gain.",
+      "block_id": "optimizerlab-block-91",
+      "section": "Learning-Rate Schedules",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-104",
-      "quote": "In practice Muon is used only for the hidden 2-D weight matrices inside the network; embeddings, the output head, and 1-D parameters such as norms and biases stay on AdamW, because orthogonalization is not meaningful there (\\cite[Jordan, 2024]{jordan2024muon}).",
-      "block_id": "optimizerlab-block-92",
+      "quote": "The effect is that every update direction is scaled to comparable size, so no single singular direction dominates a step.",
+      "block_id": "optimizerlab-block-93",
       "section": "Muon — orthogonalize the update",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-105",
-      "quote": "At trillion-parameter scale the attention logits can explode when the query and key weights grow together.",
+      "quote": "In practice Muon is used only for the hidden 2-D weight matrices inside the network; embeddings, the output head, and 1-D parameters such as norms and biases stay on AdamW, because orthogonalization is not meaningful there (\\cite[Jordan, 2024]{jordan2024muon}).",
       "block_id": "optimizerlab-block-93",
       "section": "Muon — orthogonalize the update",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-106",
-      "quote": "**MuonClip**, used to train Kimi K2, adds a QK-clip that rescales those weights when their logits exceed a threshold, making the optimizer stable enough for a 1T-parameter mixture-of-experts run (\\cite[Kimi Team, 2025]{kimi2025k2}).",
-      "block_id": "optimizerlab-block-93",
+      "quote": "At trillion-parameter scale the attention logits can explode when the query and key weights grow together.",
+      "block_id": "optimizerlab-block-94",
       "section": "Muon — orthogonalize the update",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-107",
-      "quote": "Muon is still young, but it is the first concrete evidence that the AdamW monoculture may not be permanent.",
-      "block_id": "optimizerlab-block-93",
+      "quote": "**MuonClip**, used to train Kimi K2, adds a QK-clip that rescales those weights when their logits exceed a threshold, making the optimizer stable enough for a 1T-parameter mixture-of-experts run (\\cite[Kimi Team, 2025]{kimi2025k2}).",
+      "block_id": "optimizerlab-block-94",
       "section": "Muon — orthogonalize the update",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-108",
-      "quote": "In \\citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published their paper “\\citetitle{sgd}”, introducing the **Robbins-Monro Process**.",
-      "block_id": "optimizerlab-block-95",
-      "section": "History of Optimizers",
+      "quote": "Muon is still young, but it is the first concrete evidence that the AdamW monoculture may not be permanent.",
+      "block_id": "optimizerlab-block-94",
+      "section": "Muon — orthogonalize the update",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-109",
-      "quote": "This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.",
-      "block_id": "optimizerlab-block-95",
+      "quote": "In \\citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published their paper “\\citetitle{sgd}”, introducing the **Robbins-Monro Process**.",
+      "block_id": "optimizerlab-block-96",
       "section": "History of Optimizers",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-110",
-      "quote": "Robbins and Monro found a root of a noisy function.",
+      "quote": "This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.",
       "block_id": "optimizerlab-block-96",
       "section": "History of Optimizers",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-111",
-      "quote": "A year later, \\cite[Kiefer & Wolfowitz (1952)]{kiefer1952stochastic} turned the idea into a search for a maximum: observe the regression function at two nearby points, form a finite-difference estimate of the slope, and step along it with a shrinking step size.",
-      "block_id": "optimizerlab-block-96",
+      "quote": "Robbins and Monro found a root of a noisy function.",
+      "block_id": "optimizerlab-block-97",
       "section": "History of Optimizers",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-112",
-      "quote": "This is stochastic gradient ascent in all but name, and it made the noisy-optimization framework usable when the gradient itself cannot be observed, the situation that motivates derivative-free optimization.",
-      "block_id": "optimizerlab-block-96",
+      "quote": "A year later, \\cite[Kiefer & Wolfowitz (1952)]{kiefer1952stochastic} turned the idea into a search for a maximum: observe the regression function at two nearby points, form a finite-difference estimate of the slope, and step along it with a shrinking step size.",
+      "block_id": "optimizerlab-block-97",
       "section": "History of Optimizers",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-113",
-      "quote": "Stochastic approximation is the ancestor of SGD: the same root-finding recursion becomes the SGD update when the function is the loss gradient and the root is its zero.",
+      "quote": "This is stochastic gradient ascent in all but name, and it made the noisy-optimization framework usable when the gradient itself cannot be observed, the situation that motivates derivative-free optimization.",
       "block_id": "optimizerlab-block-97",
       "section": "History of Optimizers",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-114",
-      "quote": "Their iterative formula reads",
-      "block_id": "optimizerlab-block-97",
+      "quote": "Stochastic approximation is the ancestor of SGD: the same root-finding recursion becomes the SGD update when the function is the loss gradient and the root is its zero.",
+      "block_id": "optimizerlab-block-98",
       "section": "History of Optimizers",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-115",
-      "quote": "Cauchy's method was not yet our gradient descent: he minimized a sum of squared residuals to solve equations, not a training loss.",
+      "quote": "Their iterative formula reads",
       "block_id": "optimizerlab-block-98",
       "section": "History of Optimizers",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-116",
-      "quote": "The idea surfaced again independently in 1907–1908, when \\cite[Hadamard (1908)]{hadamard1908} used steepest descent in a memoir on clamped elastic plates.",
-      "block_id": "optimizerlab-block-98",
+      "quote": "Cauchy's method was not yet our gradient descent: he minimized a sum of squared residuals to solve equations, not a training loss.",
+      "block_id": "optimizerlab-block-99",
       "section": "History of Optimizers",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-117",
-      "quote": "Only with the rise of numerical optimization in the mid-twentieth century did the same step rule become a general-purpose minimizer, and only with backpropagation did it become the engine of a neural network.",
-      "block_id": "optimizerlab-block-98",
+      "quote": "The idea surfaced again independently in 1907–1908, when \\cite[Hadamard (1908)]{hadamard1908} used steepest descent in a memoir on clamped elastic plates.",
+      "block_id": "optimizerlab-block-99",
       "section": "History of Optimizers",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-118",
-      "quote": "While Cauchy provided the “map” for downhill movement, the challenge for AI was applying this to complex, multi-layered networks.",
-      "block_id": "optimizerlab-block-100",
-      "section": "The Bridge to Modern AI: Backpropagation",
+      "quote": "Only with the rise of numerical optimization in the mid-twentieth century did the same step rule become a general-purpose minimizer, and only with backpropagation did it become the engine of a neural network.",
+      "block_id": "optimizerlab-block-99",
+      "section": "History of Optimizers",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-119",
-      "quote": "This required a way to distribute the blame for an error across millions of internal “neurons.”",
-      "block_id": "optimizerlab-block-100",
+      "quote": "While Cauchy provided the “map” for downhill movement, the challenge for AI was applying this to complex, multi-layered networks.",
+      "block_id": "optimizerlab-block-101",
       "section": "The Bridge to Modern AI: Backpropagation",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-120",
-      "quote": "To understand *why* Adam has become the industry standard, consider its key difference from SGD.",
-      "block_id": "optimizerlab-block-102",
-      "section": "Why Adam Dominates",
+      "quote": "This required a way to distribute the blame for an error across millions of internal “neurons.”",
+      "block_id": "optimizerlab-block-101",
+      "section": "The Bridge to Modern AI: Backpropagation",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-121",
-      "quote": "SGD applies a single, global learning rate to every parameter in the model, whether that parameter is updated thousands of times per batch or only once in a blue moon.",
-      "block_id": "optimizerlab-block-102",
+      "quote": "To understand *why* Adam has become the industry standard, consider its key difference from SGD.",
+      "block_id": "optimizerlab-block-103",
       "section": "Why Adam Dominates",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-122",
-      "quote": "Adam, short for **Adaptive Moment Estimation**, maintains a *per-parameter* running estimate of both the **first moment** (the mean of gradients) and the **second moment** (the mean of squared gradients).",
-      "block_id": "optimizerlab-block-102",
+      "quote": "SGD applies a single, global learning rate to every parameter in the model, whether that parameter is updated thousands of times per batch or only once in a blue moon.",
+      "block_id": "optimizerlab-block-103",
       "section": "Why Adam Dominates",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-123",
-      "quote": "This means parameters that receive sparse, infrequent gradient signals, like the embeddings for rare words, automatically get larger effective learning rates, because their second moment estimate stays small.",
+      "quote": "Adam, short for **Adaptive Moment Estimation**, maintains a *per-parameter* running estimate of both the **first moment** (the mean of gradients) and the **second moment** (the mean of squared gradients).",
       "block_id": "optimizerlab-block-103",
       "section": "Why Adam Dominates",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-124",
-      "quote": "Conversely, parameters that are updated densely and frequently get smaller effective steps, preventing them from overshooting.",
-      "block_id": "optimizerlab-block-103",
+      "quote": "This means parameters that receive sparse, infrequent gradient signals, like the embeddings for rare words, automatically get larger effective learning rates, because their second moment estimate stays small.",
+      "block_id": "optimizerlab-block-104",
       "section": "Why Adam Dominates",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-125",
-      "quote": "In essence, Adam doesn't just navigate the loss landscape, it *reshapes* the landscape to appear more uniform for each parameter independently.",
-      "block_id": "optimizerlab-block-103",
+      "quote": "Conversely, parameters that are updated densely and frequently get smaller effective steps, preventing them from overshooting.",
+      "block_id": "optimizerlab-block-104",
       "section": "Why Adam Dominates",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-126",
-      "quote": "This is especially critical in NLP, where token frequencies follow a **\\cite[Zipf distribution]{zipf1949human}**: a few words like “the” appear constantly, while most words are rare.",
+      "quote": "In essence, Adam doesn't just navigate the loss landscape, it *reshapes* the landscape to appear more uniform for each parameter independently.",
       "block_id": "optimizerlab-block-104",
       "section": "Why Adam Dominates",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-127",
-      "quote": "Without Adam, rare tokens would be starved of meaningful updates, and common tokens would dominate the optimization.",
-      "block_id": "optimizerlab-block-104",
+      "quote": "This is especially critical in NLP, where token frequencies follow a **\\cite[Zipf distribution]{zipf1949human}**: a few words like “the” appear constantly, while most words are rare.",
+      "block_id": "optimizerlab-block-105",
       "section": "Why Adam Dominates",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-128",
-      "quote": "Adam's per-parameter adaptivity elegantly solves this imbalance, which is a major reason it is the default optimizer for training modern large language models.",
-      "block_id": "optimizerlab-block-104",
+      "quote": "Without Adam, rare tokens would be starved of meaningful updates, and common tokens would dominate the optimization.",
+      "block_id": "optimizerlab-block-105",
       "section": "Why Adam Dominates",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-129",
-      "quote": "The lineage that leads here is the cleanest story in the optimizer zoo.",
+      "quote": "Adam's per-parameter adaptivity elegantly solves this imbalance, which is a major reason it is the default optimizer for training modern large language models.",
       "block_id": "optimizerlab-block-105",
       "section": "Why Adam Dominates",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-130",
-      "quote": "Adagrad introduced per-parameter learning rates; Adadelta and RMSprop fixed Adagrad's flaw that the accumulated denominator shrank the effective step toward zero; Adam added a bias-corrected first moment (essentially momentum with a different normalization) on top.",
-      "block_id": "optimizerlab-block-105",
+      "quote": "The lineage that leads here is the cleanest story in the optimizer zoo.",
+      "block_id": "optimizerlab-block-106",
       "section": "Why Adam Dominates",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-131",
-      "quote": "\\citeauthor{ruder2016overview} (\\citeyear{ruder2016overview}) walks through each derivation, and that genealogy is the one this lesson has been climbing toward.",
-      "block_id": "optimizerlab-block-105",
+      "quote": "Adagrad introduced per-parameter learning rates; Adadelta and RMSprop fixed Adagrad's flaw that the accumulated denominator shrank the effective step toward zero; Adam added a bias-corrected first moment (essentially momentum with a different normalization) on top.",
+      "block_id": "optimizerlab-block-106",
       "section": "Why Adam Dominates",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-132",
-      "quote": "| Problem | Symptom | Solution |",
-      "block_id": "optimizerlab-block-107",
-      "section": "Common Pitfalls & Practical Tips",
+      "quote": "\\citeauthor{ruder2016overview} (\\citeyear{ruder2016overview}) walks through each derivation, and that genealogy is the one this lesson has been climbing toward.",
+      "block_id": "optimizerlab-block-106",
+      "section": "Why Adam Dominates",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-133",
-      "quote": "| **Learning rate too high** | Loss oscillates wildly or explodes to infinity | Reduce LR by a factor of 10; use a learning rate scheduler |",
+      "quote": "| Problem | Symptom | Solution |",
       "block_id": "optimizerlab-block-108",
       "section": "Common Pitfalls & Practical Tips",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-134",
-      "quote": "| **Learning rate too low** | Loss decreases painfully slowly; training takes forever | Increase LR; consider warmup schedules |",
+      "quote": "| **Learning rate too high** | Loss oscillates wildly or explodes to infinity | Reduce LR by a factor of 10; use a learning rate scheduler |",
       "block_id": "optimizerlab-block-109",
       "section": "Common Pitfalls & Practical Tips",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-135",
-      "quote": "| **Stuck in local minimum** | Loss plateaus at a suboptimal value | Try Momentum or Adam; increase LR temporarily; restart from a different position |",
+      "quote": "| **Learning rate too low** | Loss decreases painfully slowly; training takes forever | Increase LR; consider warmup schedules |",
       "block_id": "optimizerlab-block-110",
       "section": "Common Pitfalls & Practical Tips",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-136",
-      "quote": "| **Overfitting** | Training loss is low but validation loss rises | Add regularization (dropout, weight decay); reduce model size; get more data |",
+      "quote": "| **Stuck in local minimum** | Loss plateaus at a suboptimal value | Try Momentum or Adam; increase LR temporarily; restart from a different position |",
       "block_id": "optimizerlab-block-111",
       "section": "Common Pitfalls & Practical Tips",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-137",
-      "quote": "You may have seen the advice that the *best* learning rate is the largest one that \"just barely\" doesn't diverge.",
-      "block_id": "optimizerlab-block-113",
-      "section": "The Edge of Stability: why the best learning rate sits on a knife-edge",
+      "quote": "| **Overfitting** | Training loss is low but validation loss rises | Add regularization (dropout, weight decay); reduce model size; get more data |",
+      "block_id": "optimizerlab-block-112",
+      "section": "Common Pitfalls & Practical Tips",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-138",
-      "quote": "That is not folklore; it names a sharp, studied regime called the **edge of stability**.",
-      "block_id": "optimizerlab-block-113",
+      "quote": "You may have seen the advice that the *best* learning rate is the largest one that \"just barely\" doesn't diverge.",
+      "block_id": "optimizerlab-block-114",
       "section": "The Edge of Stability: why the best learning rate sits on a knife-edge",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-139",
-      "quote": "When the learning rate $\\eta$ is large enough that a single step would overshoot a sharp region, gradient descent does **not** blow up.",
-      "block_id": "optimizerlab-block-113",
+      "quote": "That is not folklore; it names a sharp, studied regime called the **edge of stability**.",
+      "block_id": "optimizerlab-block-114",
       "section": "The Edge of Stability: why the best learning rate sits on a knife-edge",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-140",
-      "quote": "Instead it **locks** onto that sharp region and *oscillates* at its rim, with the largest curvature (the sharpness, the top Hessian eigenvalue) settling right around $\\lambda_{\\max} \\approx 2/\\eta$ while the loss still drifts downward (\\cite[Cohen et al., 2021]{cohen2021edgeofstability}; \\cite[Arora et al., 2022]{arora2022edgeofstability}).",
-      "block_id": "optimizerlab-block-113",
+      "quote": "When the learning rate $\\eta$ is large enough that a single step would overshoot a sharp region, gradient descent does **not** blow up.",
+      "block_id": "optimizerlab-block-114",
       "section": "The Edge of Stability: why the best learning rate sits on a knife-edge",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-141",
-      "quote": "The optimizer is balancing on the knife-edge of a sharp minimum, and — surprisingly — it *prefers* those edges over the flat bottoms it would otherwise settle into.",
-      "block_id": "optimizerlab-block-113",
+      "quote": "Instead it **locks** onto that sharp region and *oscillates* at its rim, with the largest curvature (the sharpness, the top Hessian eigenvalue) settling right around $\\lambda_{\\max} \\approx 2/\\eta$ while the loss still drifts downward (\\cite[Cohen et al., 2021]{cohen2021edgeofstability}; \\cite[Arora et al., 2022]{arora2022edgeofstability}).",
+      "block_id": "optimizerlab-block-114",
       "section": "The Edge of Stability: why the best learning rate sits on a knife-edge",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-142",
-      "quote": "This reframes the \"learning rate too high\" row in the table above.",
+      "quote": "The optimizer is balancing on the knife-edge of a sharp minimum, and — surprisingly — it *prefers* those edges over the flat bottoms it would otherwise settle into.",
       "block_id": "optimizerlab-block-114",
       "section": "The Edge of Stability: why the best learning rate sits on a knife-edge",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-143",
-      "quote": "A high $\\eta$ that makes the loss *oscillate but keep falling* is not a bug to fix — it is the network running at the edge of stability, a regime many modern training curves actually live in.",
-      "block_id": "optimizerlab-block-114",
+      "quote": "This reframes the \"learning rate too high\" row in the table above.",
+      "block_id": "optimizerlab-block-115",
       "section": "The Edge of Stability: why the best learning rate sits on a knife-edge",
       "kind": "statement"
     },
     {
       "id": "optimizerlab-stmt-144",
+      "quote": "A high $\\eta$ that makes the loss *oscillate but keep falling* is not a bug to fix — it is the network running at the edge of stability, a regime many modern training curves actually live in.",
+      "block_id": "optimizerlab-block-115",
+      "section": "The Edge of Stability: why the best learning rate sits on a knife-edge",
+      "kind": "statement"
+    },
+    {
+      "id": "optimizerlab-stmt-145",
       "quote": "The practical read: if your loss oscillates but trends steadily down, you are on the edge, and you can often stay there or push a little further rather than immediately dialing the learning rate back.",
-      "block_id": "optimizerlab-block-114",
+      "block_id": "optimizerlab-block-115",
       "section": "The Edge of Stability: why the best learning rate sits on a knife-edge",
       "kind": "statement"
     }
@@ -6557,456 +6618,462 @@
     },
     {
       "id": "optimizerlab-block-39",
-      "quote": "This division is the key insight: parameters with large, consistent gradients get *smaller* effective steps (because $\\sqrt{\\hat{v}_t}$ is large), while parameters with small or rare gradients get *larger* effective steps. The optimizer automatically adapts.",
+      "quote": "The paper's recommended learning rate is $\\alpha = 0.001$; the interactive example below uses a larger $\\eta = 0.1$ only so the steps are easy to see.",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-40",
-      "quote": "Two consequences of these equations are worth seeing directly.",
+      "quote": "This division is the key insight: parameters with large, consistent gradients get *smaller* effective steps (because $\\sqrt{\\hat{v}_t}$ is large), while parameters with small or rare gradients get *larger* effective steps. The optimizer automatically adapts.",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-41",
-      "quote": "The ratio $\\hat{m}_t / \\sqrt{\\hat{v}_t}$ also has a clean reading: it is a **signal-to-noise statistic**, near $\\pm1$ when a coordinate's gradient has kept its sign and near $0$ when it is mostly noise. Adam's step therefore measures how *trustworthy* a gradient has been, not how large it happens to be.",
+      "quote": "Two consequences of these equations are worth seeing directly.",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-42",
-      "quote": "The worked example below uses the paper's defaults ($\\beta_1 = 0.9$, $\\beta_2 = 0.999$, $\\epsilon = 10^{-8}$) and $\\eta = 0.1$. Drag the three gradients and step through; every number in the cards comes straight from the four equations above.",
+      "quote": "The ratio $\\hat{m}_t / \\sqrt{\\hat{v}_t}$ also has a clean reading: it is a **signal-to-noise statistic**, near $\\pm1$ when a coordinate's gradient has kept its sign and near $0$ when it is mostly noise. Adam's step therefore measures how *trustworthy* a gradient has been, not how large it happens to be.",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-43",
-      "quote": "Interactive lab Adam by hand: three steps One parameter, three gradients. Watch the two moments, their bias corrections, and the step they produce.",
+      "quote": "The worked example below uses the paper's defaults ($\\beta_1 = 0.9$, $\\beta_2 = 0.999$, $\\epsilon = 10^{-8}$) and $\\eta = 0.1$. Drag the three gradients and step through; every number in the cards comes straight from the four equations above.",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-44",
-      "quote": "g₁ 1.0",
+      "quote": "Interactive lab Adam by hand: three steps One parameter, three gradients. Watch the two moments, their bias corrections, and the step they produce.",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-45",
-      "quote": "g₂ 0.5",
+      "quote": "g₁ 1.0",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-46",
-      "quote": "g₃ 1.5",
+      "quote": "g₂ 0.5",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-47",
-      "quote": "learning rate η 0.10",
+      "quote": "g₃ 1.5",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-48",
-      "quote": "Step 1 m₁ — v₁ — m̂₁ — v̂₁ — η·m̂/√v̂ — θ₁ —",
+      "quote": "learning rate η 0.10",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-49",
-      "quote": "Step 2 m₂ — v₂ — m̂₂ — v̂₂ — η·m̂/√v̂ — θ₂ —",
+      "quote": "Step 1 m₁ — v₁ — m̂₁ — v̂₁ — η·m̂/√v̂ — θ₁ —",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-50",
-      "quote": "Step 3 m₃ — v₃ — m̂₃ — v̂₃ — η·m̂/√v̂ — θ₃ —",
+      "quote": "Step 2 m₂ — v₂ — m̂₂ — v̂₂ — η·m̂/√v̂ — θ₂ —",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-51",
-      "quote": "+1 step ↺ Reset",
+      "quote": "Step 3 m₃ — v₃ — m̂₃ — v̂₃ — η·m̂/√v̂ — θ₃ —",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-52",
-      "quote": "Configured for θ₀ = 0. Press +1 step .",
+      "quote": "+1 step ↺ Reset",
       "kind": "paragraph",
       "section": "Adam (Adaptive Moment Estimation)"
     },
     {
       "id": "optimizerlab-block-53",
+      "quote": "Configured for θ₀ = 0. Press +1 step .",
+      "kind": "paragraph",
+      "section": "Adam (Adaptive Moment Estimation)"
+    },
+    {
+      "id": "optimizerlab-block-54",
       "quote": "Race them: SGD vs. momentum vs. Adam",
       "kind": "heading",
       "section": "Race them: SGD vs. momentum vs. Adam"
     },
     {
-      "id": "optimizerlab-block-54",
+      "id": "optimizerlab-block-55",
       "quote": "The one-dimensional valley above is friendly to every optimizer. Real loss surfaces are not: they have narrow ravines, curved valleys, saddle points and small pits. Below, all three optimizers start from the same point on a two-dimensional surface and use exact gradients. Watch how differently they move — and try to make the slowest one win.",
       "kind": "paragraph",
       "section": "Race them: SGD vs. momentum vs. Adam"
     },
     {
-      "id": "optimizerlab-block-55",
+      "id": "optimizerlab-block-56",
       "quote": "Interactive lab Optimizer Race Three optimizers, one start line, exact gradients. Click anywhere on the map to move the start.",
       "kind": "paragraph",
       "section": "Race them: SGD vs. momentum vs. Adam"
     },
     {
-      "id": "optimizerlab-block-56",
+      "id": "optimizerlab-block-57",
       "quote": "Ravine Banana Saddle Bumpy",
       "kind": "paragraph",
       "section": "Race them: SGD vs. momentum vs. Adam"
     },
     {
-      "id": "optimizerlab-block-57",
+      "id": "optimizerlab-block-58",
       "quote": "<canvas data-or=\"canvas\" aria-label=\"Loss surface with optimizer paths\"></canvas> step 0",
       "kind": "paragraph",
       "section": "Race them: SGD vs. momentum vs. Adam"
     },
     {
-      "id": "optimizerlab-block-58",
+      "id": "optimizerlab-block-59",
       "quote": "loss above the minimum (log scale) <canvas data-or=\"curve\"></canvas>",
       "kind": "paragraph",
       "section": "Race them: SGD vs. momentum vs. Adam"
     },
     {
-      "id": "optimizerlab-block-59",
+      "id": "optimizerlab-block-60",
       "quote": "Learning rates × 1",
       "kind": "paragraph",
       "section": "Race them: SGD vs. momentum vs. Adam"
     },
     {
-      "id": "optimizerlab-block-60",
+      "id": "optimizerlab-block-61",
       "quote": "each optimizer starts from a sensible rate for this surface; this scales all three",
       "kind": "paragraph",
       "section": "Race them: SGD vs. momentum vs. Adam"
     },
     {
-      "id": "optimizerlab-block-61",
+      "id": "optimizerlab-block-62",
       "quote": "Speed 1",
       "kind": "paragraph",
       "section": "Race them: SGD vs. momentum vs. Adam"
     },
     {
-      "id": "optimizerlab-block-62",
+      "id": "optimizerlab-block-63",
       "quote": "▶ Race +1 step ↺ Reset",
       "kind": "paragraph",
       "section": "Race them: SGD vs. momentum vs. Adam"
     },
     {
-      "id": "optimizerlab-block-63",
+      "id": "optimizerlab-block-64",
       "quote": "SGD: x ← x − η g Momentum: v ← 0.9v + g, x ← x − η v Adam: β₁ = 0.9, β₂ = 0.999 ⭐ minimum",
       "kind": "paragraph",
       "section": "Race them: SGD vs. momentum vs. Adam"
     },
     {
-      "id": "optimizerlab-block-64",
+      "id": "optimizerlab-block-65",
       "quote": "The Rest of the Optimizer Family",
       "kind": "heading",
       "section": "The Rest of the Optimizer Family"
     },
     {
-      "id": "optimizerlab-block-65",
+      "id": "optimizerlab-block-66",
       "quote": "SGD, Momentum, and Adam are the headliners, but the zoo is bigger. Each of the optimizers below was invented to fix a specific failure of the previous one. Reading them in order is reading the most productive argument in modern optimization.",
       "kind": "paragraph",
       "section": "The Rest of the Optimizer Family"
     },
     {
-      "id": "optimizerlab-block-66",
+      "id": "optimizerlab-block-67",
       "quote": "Nesterov Accelerated Gradient (NAG)",
       "kind": "heading",
       "section": "Nesterov Accelerated Gradient (NAG)"
     },
     {
-      "id": "optimizerlab-block-67",
+      "id": "optimizerlab-block-68",
       "quote": "Plain momentum is a heavy ball rolling downhill: it builds up speed from past gradients, which is great, until it overshoots a valley. The ball doesn't know to slow down before the slope reverses.",
       "kind": "paragraph",
       "section": "Nesterov Accelerated Gradient (NAG)"
     },
     {
-      "id": "optimizerlab-block-68",
+      "id": "optimizerlab-block-69",
       "quote": "Nesterov's fix is small but clever: instead of measuring the slope *where you are*, measure it *where you're about to be*. You take the momentum step first (a guess about your future position), then correct based on the gradient there:",
       "kind": "paragraph",
       "section": "Nesterov Accelerated Gradient (NAG)"
     },
     {
-      "id": "optimizerlab-block-69",
+      "id": "optimizerlab-block-70",
       "quote": "Compare this with plain momentum — the only difference is that the gradient is now evaluated at $\\theta - \\beta v_{t-1}$ instead of at $\\theta$. It's a one-line change, but the ball is now noticeably more responsive: it slows down when it sees the slope curving up ahead, instead of running off the cliff and catching itself on the rebound. \\cite[Nesterov (1983)]{nesterov1983method} introduced the accelerated method; his 2004 book is the standard exposition (\\cite[Nesterov, 2004]{nesterov2004introductory}). In practice NAG typically shaves a few percent off training time on RNNs and other models with strong gradient curvature (\\cite[Ruder, 2016]{ruder2016overview}).",
       "kind": "paragraph",
       "section": "Nesterov Accelerated Gradient (NAG)"
     },
     {
-      "id": "optimizerlab-block-70",
+      "id": "optimizerlab-block-71",
       "quote": "Adagrad — The Per-Parameter GPS",
       "kind": "heading",
       "section": "Adagrad — The Per-Parameter GPS"
     },
     {
-      "id": "optimizerlab-block-71",
+      "id": "optimizerlab-block-72",
       "quote": "SGD uses one global learning rate for every parameter. But the world isn't uniform. In a language model, the embedding for \"the\" gets a gradient signal on almost every batch; the embedding for \"quokka\" gets one gradient per million tokens. Treating them the same is wasteful: \"the\" gets over-updated and \"quokka\" gets starved.",
       "kind": "paragraph",
       "section": "Adagrad — The Per-Parameter GPS"
     },
     {
-      "id": "optimizerlab-block-72",
+      "id": "optimizerlab-block-73",
       "quote": "Parameters that have received large or frequent gradients get *smaller* effective steps (the denominator is large); parameters that have received small or rare gradients get *larger* effective steps. The $\\epsilon$ (usually $10^{-8}$) is just a guard against dividing by zero on the very first step. Think of it as a per-parameter GPS that slows down for crowded streets and speeds up on empty roads. Adagrad's own motivating setting was large-scale learning with sparse features, where rare but predictive coordinates — the paper's “needles in haystacks” — need larger steps \\cite{duchi2011adagrad}.",
       "kind": "paragraph",
       "section": "Adagrad — The Per-Parameter GPS"
     },
     {
-      "id": "optimizerlab-block-73",
+      "id": "optimizerlab-block-74",
       "quote": "Adadelta and RMSprop — Stop the Shrink",
       "kind": "heading",
       "section": "Adadelta and RMSprop — Stop the Shrink"
     },
     {
-      "id": "optimizerlab-block-74",
+      "id": "optimizerlab-block-75",
       "quote": "RMSprop and Adadelta were developed independently around the same time and share the same core idea — a decaying average of squared gradients instead of Adagrad's ever-growing sum. RMSprop is Adadelta's first ingredient with a fixed global learning rate ($\\gamma = 0.9$, $\\eta = 0.001$ in Hinton's slides); Adadelta adds the second ingredient, the RMS of past updates, and so needs no learning rate at all. Zeiler's motivation was that the *units* of the RMSprop update don't match the units of $\\theta$; replacing $\\eta$ with the RMS of past parameter updates, $\\mathrm{RMS}[\\Delta\\theta]_{t-1}$, fixes the dimensional mismatch.",
       "kind": "paragraph",
       "section": "Adadelta and RMSprop — Stop the Shrink"
     },
     {
-      "id": "optimizerlab-block-75",
+      "id": "optimizerlab-block-76",
       "quote": "AdaMax — A More Stable Denominator",
       "kind": "heading",
       "section": "AdaMax — A More Stable Denominator"
     },
     {
-      "id": "optimizerlab-block-76",
+      "id": "optimizerlab-block-77",
       "quote": "Nadam — Adam, but Look Ahead",
       "kind": "heading",
       "section": "Nadam — Adam, but Look Ahead"
     },
     {
-      "id": "optimizerlab-block-77",
+      "id": "optimizerlab-block-78",
       "quote": "Nadam is what you get when you apply the Nesterov trick to Adam. The fix from \\citeauthor{dozat2016nadam} (\\citeyear{dozat2016nadam}) is one line: replace the previous momentum vector $\\hat{m}_{t-1}$ in the Adam update with the *current* one $\\hat{m}_t$:",
       "kind": "paragraph",
       "section": "Nadam — Adam, but Look Ahead"
     },
     {
-      "id": "optimizerlab-block-78",
+      "id": "optimizerlab-block-79",
       "quote": "It's a one-line modification, but it makes Adam's momentum term \"look ahead\" the same way Nesterov does, which tends to give modestly faster convergence on tasks with strong gradient curvature.",
       "kind": "paragraph",
       "section": "Nadam — Adam, but Look Ahead"
     },
     {
-      "id": "optimizerlab-block-79",
+      "id": "optimizerlab-block-80",
       "quote": "AMSGrad — Fixing a Convergence Flaw",
       "kind": "heading",
       "section": "AMSGrad — Fixing a Convergence Flaw"
     },
     {
-      "id": "optimizerlab-block-80",
+      "id": "optimizerlab-block-81",
       "quote": "Adam isn't always the best. Practitioners noticed that Adam can fail to converge on some problems, and \\citeauthor{reddi2018amsgrad} (\\citeyear{reddi2018amsgrad}) pinned down a cause: the EMA of squared gradients can *forget* large but rare gradients, so the effective step can grow again. Their counterexample is a simple convex online problem, not a full network.",
       "kind": "paragraph",
       "section": "AMSGrad — Fixing a Convergence Flaw"
     },
     {
-      "id": "optimizerlab-block-81",
+      "id": "optimizerlab-block-82",
       "quote": "This guarantees a non-increasing effective step size, which restores the convergence guarantees that Adam lacks. In practice AMSGrad sometimes matches Adam, sometimes loses to it; the empirical comparison was messier than the theory suggested, and most practitioners stuck with Adam.",
       "kind": "paragraph",
       "section": "AMSGrad — Fixing a Convergence Flaw"
     },
     {
-      "id": "optimizerlab-block-82",
+      "id": "optimizerlab-block-83",
       "quote": "AdamW — Fixing the Weight Decay Bug",
       "kind": "heading",
       "section": "AdamW — Fixing the Weight Decay Bug"
     },
     {
-      "id": "optimizerlab-block-83",
+      "id": "optimizerlab-block-84",
       "quote": "\\citetitle{loshchilov2019adamw} (\\citealternativetitle{loshchilov2019adamw}) decouples them. Weight decay is applied *directly* to the weights, not through the gradient:",
       "kind": "paragraph",
       "section": "AdamW — Fixing the Weight Decay Bug"
     },
     {
-      "id": "optimizerlab-block-84",
+      "id": "optimizerlab-block-85",
       "quote": "It's a one-line change, but it makes weight decay behave the way every other optimizer's weight decay does, and it decouples weight decay from the adaptive gradient update. **AdamW is now the default optimizer for training transformers** in practice — Llama and Stable Diffusion use it, while the original BERT and GPT-3 recipes still used Adam; BERT's recipe applied weight decay through the loss.",
       "kind": "paragraph",
       "section": "AdamW — Fixing the Weight Decay Bug"
     },
     {
-      "id": "optimizerlab-block-85",
+      "id": "optimizerlab-block-86",
       "quote": "Adam was posted in December 2014 and published at ICLR 2015 \\cite{adam}; AdamW followed as a 2017 preprint and an ICLR 2019 paper \\cite{loshchilov2019adamw}. The gap matters: for three years the default recipe was “Adam with L2”, and the decoupled version spread as transformers made weight decay a first-class knob. The pair is a good example of how optimizer history actually runs — a fix can be mathematically small, sit in public for two years, and still change practice only when the surrounding models make its advantage visible.",
       "kind": "paragraph",
       "section": "AdamW — Fixing the Weight Decay Bug"
     },
     {
-      "id": "optimizerlab-block-86",
+      "id": "optimizerlab-block-87",
       "quote": "When Adam Doesn't Win",
       "kind": "heading",
       "section": "When Adam Doesn't Win"
     },
     {
-      "id": "optimizerlab-block-87",
+      "id": "optimizerlab-block-88",
       "quote": "The cleanest family tree above doesn't mean Adam (or AdamW) is always the right choice. \\citeauthor{ruder2016overview}'s survey (\\citeyear{ruder2016overview}) already noted the wrinkle: for convolutional networks on ImageNet, SGD with momentum and a careful learning-rate schedule often matches or beats Adam. The intuition is sharp — SGD's noisier updates act as an implicit regularizer (they keep the ball bouncing, which helps it escape sharp minima), and a cosine or step-decay schedule gives the optimizer more chances to settle into a flat basin over time.",
       "kind": "paragraph",
       "section": "When Adam Doesn't Win"
     },
     {
-      "id": "optimizerlab-block-88",
+      "id": "optimizerlab-block-89",
       "quote": "The pragmatic rule of thumb: **start with AdamW**. If you have the compute for a careful learning-rate sweep and you need every last fraction of a percent of accuracy, try SGD-with-momentum with a cosine schedule. For transformers and large language models specifically, AdamW dominates, because the per-parameter adaptivity genuinely matters when individual weights (especially in token embeddings) see wildly different gradient magnitudes. Don't reach for anything else unless you have a specific reason to.",
       "kind": "paragraph",
       "section": "When Adam Doesn't Win"
     },
     {
-      "id": "optimizerlab-block-89",
+      "id": "optimizerlab-block-90",
       "quote": "Learning-Rate Schedules",
       "kind": "heading",
       "section": "Learning-Rate Schedules"
     },
     {
-      "id": "optimizerlab-block-90",
+      "id": "optimizerlab-block-91",
       "quote": "The learning rate is rarely held constant in practice. Step decay lowered it at fixed epochs in early image models \\cite{ruder2016overview}; \\cite[Goyal et al. (2017)]{goyal2017largebatch} coupled a linear warm-up to the linear scaling rule for large batches; \\cite[Loshchilov & Hutter (2016)]{loshchilov2016sgdr} replaced the step with a cosine that anneals to zero and restarts. The schedule is itself a hyperparameter: its shape interacts with batch size and optimizer, which is why a search that tunes only the initial rate can miss most of the gain.",
       "kind": "paragraph",
       "section": "Learning-Rate Schedules"
     },
     {
-      "id": "optimizerlab-block-91",
+      "id": "optimizerlab-block-92",
       "quote": "Muon — orthogonalize the update",
       "kind": "heading",
       "section": "Muon — orthogonalize the update"
     },
     {
-      "id": "optimizerlab-block-92",
+      "id": "optimizerlab-block-93",
       "quote": "The effect is that every update direction is scaled to comparable size, so no single singular direction dominates a step. In practice Muon is used only for the hidden 2-D weight matrices inside the network; embeddings, the output head, and 1-D parameters such as norms and biases stay on AdamW, because orthogonalization is not meaningful there (\\cite[Jordan, 2024]{jordan2024muon}).",
       "kind": "paragraph",
       "section": "Muon — orthogonalize the update"
     },
     {
-      "id": "optimizerlab-block-93",
+      "id": "optimizerlab-block-94",
       "quote": "At trillion-parameter scale the attention logits can explode when the query and key weights grow together. **MuonClip**, used to train Kimi K2, adds a QK-clip that rescales those weights when their logits exceed a threshold, making the optimizer stable enough for a 1T-parameter mixture-of-experts run (\\cite[Kimi Team, 2025]{kimi2025k2}). Muon is still young, but it is the first concrete evidence that the AdamW monoculture may not be permanent.",
       "kind": "paragraph",
       "section": "Muon — orthogonalize the update"
     },
     {
-      "id": "optimizerlab-block-94",
+      "id": "optimizerlab-block-95",
       "quote": "History of Optimizers",
       "kind": "heading",
       "section": "History of Optimizers"
     },
     {
-      "id": "optimizerlab-block-95",
+      "id": "optimizerlab-block-96",
       "quote": "In \\citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published their paper “\\citetitle{sgd}”, introducing the **Robbins-Monro Process**. This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.",
       "kind": "paragraph",
       "section": "History of Optimizers"
     },
     {
-      "id": "optimizerlab-block-96",
+      "id": "optimizerlab-block-97",
       "quote": "Robbins and Monro found a root of a noisy function. A year later, \\cite[Kiefer & Wolfowitz (1952)]{kiefer1952stochastic} turned the idea into a search for a maximum: observe the regression function at two nearby points, form a finite-difference estimate of the slope, and step along it with a shrinking step size. This is stochastic gradient ascent in all but name, and it made the noisy-optimization framework usable when the gradient itself cannot be observed, the situation that motivates derivative-free optimization.",
       "kind": "paragraph",
       "section": "History of Optimizers"
     },
     {
-      "id": "optimizerlab-block-97",
+      "id": "optimizerlab-block-98",
       "quote": "Stochastic approximation is the ancestor of SGD: the same root-finding recursion becomes the SGD update when the function is the loss gradient and the root is its zero. Their iterative formula reads",
       "kind": "paragraph",
       "section": "History of Optimizers"
     },
     {
-      "id": "optimizerlab-block-98",
+      "id": "optimizerlab-block-99",
       "quote": "Cauchy's method was not yet our gradient descent: he minimized a sum of squared residuals to solve equations, not a training loss. The idea surfaced again independently in 1907–1908, when \\cite[Hadamard (1908)]{hadamard1908} used steepest descent in a memoir on clamped elastic plates. Only with the rise of numerical optimization in the mid-twentieth century did the same step rule become a general-purpose minimizer, and only with backpropagation did it become the engine of a neural network.",
       "kind": "paragraph",
       "section": "History of Optimizers"
     },
     {
-      "id": "optimizerlab-block-99",
+      "id": "optimizerlab-block-100",
       "quote": "The Bridge to Modern AI: Backpropagation",
       "kind": "heading",
       "section": "The Bridge to Modern AI: Backpropagation"
     },
     {
-      "id": "optimizerlab-block-100",
+      "id": "optimizerlab-block-101",
       "quote": "While Cauchy provided the “map” for downhill movement, the challenge for AI was applying this to complex, multi-layered networks. This required a way to distribute the blame for an error across millions of internal “neurons.”",
       "kind": "paragraph",
       "section": "The Bridge to Modern AI: Backpropagation"
     },
     {
-      "id": "optimizerlab-block-101",
+      "id": "optimizerlab-block-102",
       "quote": "Why Adam Dominates",
       "kind": "heading",
       "section": "Why Adam Dominates"
     },
     {
-      "id": "optimizerlab-block-102",
+      "id": "optimizerlab-block-103",
       "quote": "To understand *why* Adam has become the industry standard, consider its key difference from SGD. SGD applies a single, global learning rate to every parameter in the model, whether that parameter is updated thousands of times per batch or only once in a blue moon. Adam, short for **Adaptive Moment Estimation**, maintains a *per-parameter* running estimate of both the **first moment** (the mean of gradients) and the **second moment** (the mean of squared gradients).",
       "kind": "paragraph",
       "section": "Why Adam Dominates"
     },
     {
-      "id": "optimizerlab-block-103",
+      "id": "optimizerlab-block-104",
       "quote": "This means parameters that receive sparse, infrequent gradient signals, like the embeddings for rare words, automatically get larger effective learning rates, because their second moment estimate stays small. Conversely, parameters that are updated densely and frequently get smaller effective steps, preventing them from overshooting. In essence, Adam doesn't just navigate the loss landscape, it *reshapes* the landscape to appear more uniform for each parameter independently.",
       "kind": "paragraph",
       "section": "Why Adam Dominates"
     },
     {
-      "id": "optimizerlab-block-104",
+      "id": "optimizerlab-block-105",
       "quote": "This is especially critical in NLP, where token frequencies follow a **\\cite[Zipf distribution]{zipf1949human}**: a few words like “the” appear constantly, while most words are rare. Without Adam, rare tokens would be starved of meaningful updates, and common tokens would dominate the optimization. Adam's per-parameter adaptivity elegantly solves this imbalance, which is a major reason it is the default optimizer for training modern large language models.",
       "kind": "paragraph",
       "section": "Why Adam Dominates"
     },
     {
-      "id": "optimizerlab-block-105",
+      "id": "optimizerlab-block-106",
       "quote": "The lineage that leads here is the cleanest story in the optimizer zoo. Adagrad introduced per-parameter learning rates; Adadelta and RMSprop fixed Adagrad's flaw that the accumulated denominator shrank the effective step toward zero; Adam added a bias-corrected first moment (essentially momentum with a different normalization) on top. \\citeauthor{ruder2016overview} (\\citeyear{ruder2016overview}) walks through each derivation, and that genealogy is the one this lesson has been climbing toward.",
       "kind": "paragraph",
       "section": "Why Adam Dominates"
     },
     {
-      "id": "optimizerlab-block-106",
+      "id": "optimizerlab-block-107",
       "quote": "Common Pitfalls & Practical Tips",
       "kind": "heading",
       "section": "Common Pitfalls & Practical Tips"
     },
     {
-      "id": "optimizerlab-block-107",
+      "id": "optimizerlab-block-108",
       "quote": "| Problem | Symptom | Solution |",
       "kind": "table-row",
       "section": "Common Pitfalls & Practical Tips"
     },
     {
-      "id": "optimizerlab-block-108",
+      "id": "optimizerlab-block-109",
       "quote": "| **Learning rate too high** | Loss oscillates wildly or explodes to infinity | Reduce LR by a factor of 10; use a learning rate scheduler |",
       "kind": "table-row",
       "section": "Common Pitfalls & Practical Tips"
     },
     {
-      "id": "optimizerlab-block-109",
+      "id": "optimizerlab-block-110",
       "quote": "| **Learning rate too low** | Loss decreases painfully slowly; training takes forever | Increase LR; consider warmup schedules |",
       "kind": "table-row",
       "section": "Common Pitfalls & Practical Tips"
     },
     {
-      "id": "optimizerlab-block-110",
+      "id": "optimizerlab-block-111",
       "quote": "| **Stuck in local minimum** | Loss plateaus at a suboptimal value | Try Momentum or Adam; increase LR temporarily; restart from a different position |",
       "kind": "table-row",
       "section": "Common Pitfalls & Practical Tips"
     },
     {
-      "id": "optimizerlab-block-111",
+      "id": "optimizerlab-block-112",
       "quote": "| **Overfitting** | Training loss is low but validation loss rises | Add regularization (dropout, weight decay); reduce model size; get more data |",
       "kind": "table-row",
       "section": "Common Pitfalls & Practical Tips"
     },
     {
-      "id": "optimizerlab-block-112",
+      "id": "optimizerlab-block-113",
       "quote": "The Edge of Stability: why the best learning rate sits on a knife-edge",
       "kind": "heading",
       "section": "The Edge of Stability: why the best learning rate sits on a knife-edge"
     },
     {
-      "id": "optimizerlab-block-113",
+      "id": "optimizerlab-block-114",
       "quote": "You may have seen the advice that the *best* learning rate is the largest one that \"just barely\" doesn't diverge. That is not folklore; it names a sharp, studied regime called the **edge of stability**. When the learning rate $\\eta$ is large enough that a single step would overshoot a sharp region, gradient descent does **not** blow up. Instead it **locks** onto that sharp region and *oscillates* at its rim, with the largest curvature (the sharpness, the top Hessian eigenvalue) settling right around $\\lambda_{\\max} \\approx 2/\\eta$ while the loss still drifts downward (\\cite[Cohen et al., 2021]{cohen2021edgeofstability}; \\cite[Arora et al., 2022]{arora2022edgeofstability}). The optimizer is balancing on the knife-edge of a sharp minimum, and — surprisingly — it *prefers* those edges over the flat bottoms it would otherwise settle into.",
       "kind": "paragraph",
       "section": "The Edge of Stability: why the best learning rate sits on a knife-edge"
     },
     {
-      "id": "optimizerlab-block-114",
+      "id": "optimizerlab-block-115",
       "quote": "This reframes the \"learning rate too high\" row in the table above. A high $\\eta$ that makes the loss *oscillate but keep falling* is not a bug to fix — it is the network running at the edge of stability, a regime many modern training curves actually live in. The practical read: if your loss oscillates but trends steadily down, you are on the edge, and you can often stay there or push a little further rather than immediately dialing the learning rate back.",
       "kind": "paragraph",
       "section": "The Edge of Stability: why the best learning rate sits on a knife-edge"

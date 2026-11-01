@@ -271,6 +271,50 @@
       ],
       "qualifiers": {},
       "confidence": "stated"
+    },
+    {
+      "id": "tok-gpt1-vocab",
+      "subject": "gpt-1",
+      "predicate": "vocabulary_size",
+      "value": 40000,
+      "unit": "token",
+      "qualifiers": {
+        "definition": "BPE merges"
+      },
+      "quote": "**40,000 merges**",
+      "citation_keys": [
+        "firstgpt"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "tok-gpt1-context",
+      "subject": "gpt-1",
+      "predicate": "context_window",
+      "value": 512,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "512-token context",
+      "citation_keys": [
+        "firstgpt"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "tok-gpt2-vocab",
+      "subject": "gpt-2",
+      "predicate": "vocabulary_size",
+      "value": 50257,
+      "unit": "token",
+      "qualifiers": {},
+      "quote": "**50,257** tokens",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "source_url": "",
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -4274,6 +4318,18 @@
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-tokenizerlab-gpt-1",
+      "from": "gpt-1",
+      "to": "tokenizerlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**40,000 merges**",
+      "citation_keys": [
+        "firstgpt"
+      ],
       "confidence": "provenance"
     }
   ],

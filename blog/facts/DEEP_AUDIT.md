@@ -1,11 +1,11 @@
 # Deep fact audit
 
 - lessons: 99
-- claims: 7198
-- statements: 20660
-- relations: 5383
-- uncovered years: 40
-- uncovered quantities: 4
+- claims: 7247
+- statements: 16855
+- relations: 51171
+- uncovered years: 41
+- uncovered quantities: 5
 - uncited specific claims: 306
 - citation keys not found in lesson: 0
 - relation grounding issues: 70
@@ -16,105 +16,105 @@
 
 | lesson | claims | statements | relations | missing years | missing quantities |
 |---|---:|---:|---:|---:|---:|
-| activationlab | 22 | 124 | 16 | 0 | 0 |
-| agents | 24 | 149 | 21 | 0 | 0 |
-| ai_and_society | 63 | 449 | 46 | 0 | 0 |
-| ai_economics | 14 | 29 | 9 | 0 | 0 |
-| ai_existential_risk | 31 | 100 | 28 | 0 | 0 |
-| ai_for_science | 31 | 36 | 20 | 0 | 0 |
-| algorithms | 42 | 314 | 36 | 0 | 0 |
-| alignment | 30 | 58 | 23 | 0 | 0 |
-| alternative_architectures | 28 | 96 | 21 | 0 | 1 |
-| atlas | 17 | 18 | 13 | 0 | 0 |
-| attentionlab | 31 | 315 | 25 | 0 | 0 |
-| autodiff | 9 | 150 | 6 | 0 | 0 |
-| backproplab | 10 | 26 | 7 | 0 | 0 |
-| beyond_llms | 67 | 668 | 59 | 0 | 0 |
-| coherent_difference | 24 | 690 | 18 | 0 | 0 |
-| coherent_world_models | 58 | 906 | 52 | 0 | 0 |
-| computer_vision | 31 | 108 | 19 | 0 | 0 |
-| contextwindows | 54 | 162 | 35 | 0 | 0 |
-| december | 19 | 22 | 15 | 0 | 0 |
-| deconvolution | 16 | 33 | 11 | 0 | 0 |
-| deeplearninglab | 23 | 109 | 15 | 0 | 1 |
-| derivativelab | 22 | 96 | 16 | 0 | 0 |
-| differentiation | 21 | 98 | 18 | 0 | 0 |
-| diffusion | 28 | 166 | 21 | 0 | 0 |
-| embeddinglab | 25 | 531 | 20 | 0 | 0 |
-| evaluation | 36 | 198 | 24 | 2 | 0 |
-| fact_lookup | 37 | 297 | 27 | 0 | 0 |
-| finetuninglab | 36 | 138 | 27 | 0 | 0 |
-| foam_of_meaning | 16 | 711 | 12 | 0 | 0 |
-| frontier | 31 | 134 | 23 | 0 | 0 |
-| geometry_i | 120 | 448 | 100 | 0 | 0 |
-| geometry_ii | 44 | 207 | 39 | 0 | 0 |
-| geometry_iii | 51 | 240 | 38 | 0 | 0 |
-| global_ai_ecosystem | 30 | 149 | 25 | 0 | 0 |
-| hallucinations | 25 | 60 | 17 | 0 | 0 |
-| history | 1391 | 622 | 814 | 0 | 0 |
-| human_mind | 45 | 302 | 37 | 5 | 0 |
-| hyperparameters | 25 | 82 | 22 | 0 | 0 |
-| inceptionism | 14 | 35 | 10 | 0 | 0 |
-| inference_optimization | 41 | 147 | 24 | 0 | 0 |
-| inference_vs_training | 19 | 48 | 11 | 0 | 0 |
-| information_market | 27 | 67 | 17 | 0 | 0 |
-| intro | 17 | 68 | 8 | 0 | 0 |
-| intuition | 28 | 143 | 25 | 0 | 0 |
+| activationlab | 22 | 68 | 227 | 0 | 0 |
+| agents | 24 | 141 | 469 | 0 | 0 |
+| ai_and_society | 63 | 339 | 925 | 0 | 0 |
+| ai_economics | 14 | 30 | 91 | 0 | 0 |
+| ai_existential_risk | 31 | 61 | 200 | 0 | 0 |
+| ai_for_science | 31 | 22 | 83 | 0 | 0 |
+| algorithms | 42 | 244 | 718 | 0 | 0 |
+| alignment | 30 | 26 | 97 | 0 | 0 |
+| alternative_architectures | 28 | 35 | 151 | 0 | 1 |
+| atlas | 17 | 6 | 44 | 0 | 0 |
+| attentionlab | 31 | 247 | 672 | 0 | 0 |
+| autodiff | 9 | 104 | 372 | 0 | 0 |
+| backproplab | 10 | 24 | 99 | 0 | 0 |
+| beyond_llms | 67 | 419 | 1213 | 0 | 0 |
+| coherent_difference | 24 | 480 | 1221 | 0 | 0 |
+| coherent_world_models | 58 | 437 | 1291 | 0 | 0 |
+| computer_vision | 31 | 76 | 273 | 0 | 0 |
+| contextwindows | 54 | 141 | 605 | 0 | 0 |
+| december | 19 | 17 | 90 | 0 | 0 |
+| deconvolution | 16 | 31 | 94 | 0 | 0 |
+| deeplearninglab | 23 | 100 | 337 | 0 | 1 |
+| derivativelab | 22 | 58 | 214 | 0 | 0 |
+| differentiation | 21 | 82 | 300 | 0 | 0 |
+| diffusion | 28 | 143 | 361 | 0 | 0 |
+| embeddinglab | 25 | 539 | 1398 | 0 | 0 |
+| evaluation | 36 | 132 | 435 | 2 | 0 |
+| fact_lookup | 37 | 213 | 560 | 0 | 0 |
+| finetuninglab | 50 | 102 | 360 | 0 | 0 |
+| foam_of_meaning | 16 | 426 | 1163 | 0 | 0 |
+| frontier | 31 | 67 | 246 | 0 | 0 |
+| geometry_i | 120 | 329 | 916 | 0 | 0 |
+| geometry_ii | 44 | 102 | 327 | 0 | 0 |
+| geometry_iii | 51 | 129 | 345 | 0 | 0 |
+| global_ai_ecosystem | 30 | 41 | 184 | 0 | 0 |
+| hallucinations | 25 | 143 | 453 | 0 | 0 |
+| history | 1400 | 1155 | 3332 | 0 | 0 |
+| human_mind | 45 | 498 | 1085 | 5 | 0 |
+| hyperparameters | 25 | 55 | 175 | 0 | 0 |
+| inceptionism | 14 | 44 | 137 | 0 | 0 |
+| inference_optimization | 41 | 81 | 365 | 0 | 0 |
+| inference_vs_training | 19 | 14 | 47 | 0 | 0 |
+| information_market | 27 | 63 | 159 | 0 | 0 |
+| intro | 17 | 40 | 121 | 0 | 0 |
+| intuition | 28 | 233 | 687 | 0 | 0 |
 | knowledge_map | 15 | 0 | 14 | 0 | 0 |
-| language | 76 | 177 | 72 | 0 | 0 |
-| law_regulation | 28 | 141 | 24 | 0 | 0 |
-| loss_landscape | 25 | 155 | 19 | 0 | 0 |
-| losslab | 23 | 84 | 19 | 0 | 0 |
-| math_i | 43 | 222 | 37 | 0 | 0 |
-| math_ii | 41 | 163 | 34 | 0 | 0 |
-| math_iii | 53 | 364 | 41 | 0 | 0 |
-| math_iv | 34 | 165 | 28 | 0 | 0 |
-| mechanistic_interpretability | 32 | 628 | 26 | 0 | 0 |
-| metaphysics_of_ai | 18 | 72 | 13 | 0 | 0 |
-| minimalneuron | 25 | 135 | 22 | 0 | 0 |
-| mirror_in_machine | 27 | 86 | 24 | 0 | 0 |
-| mixture_of_experts | 18 | 66 | 9 | 0 | 0 |
-| multimodal | 14 | 82 | 7 | 0 | 0 |
-| music_video_generation | 51 | 174 | 44 | 0 | 0 |
-| myths | 26 | 91 | 22 | 0 | 0 |
-| normalizationlab | 23 | 63 | 12 | 0 | 0 |
-| optimizerlab | 32 | 204 | 22 | 0 | 0 |
-| origami | 47 | 433 | 39 | 0 | 0 |
-| overandunderfittinglab | 21 | 121 | 17 | 0 | 0 |
-| people_of_ai | 70 | 292 | 61 | 0 | 0 |
-| philosophy | 85 | 1175 | 78 | 0 | 0 |
-| positionalembeddingslab | 30 | 122 | 20 | 0 | 0 |
-| production_serving | 36 | 213 | 27 | 0 | 0 |
-| promptengineering | 18 | 325 | 16 | 0 | 0 |
-| rag | 26 | 146 | 20 | 0 | 0 |
-| reasoning | 21 | 98 | 14 | 0 | 0 |
-| recurrent_networks | 23 | 74 | 17 | 0 | 0 |
-| reinforcement_learning | 25 | 99 | 16 | 1 | 0 |
-| reliability | 21 | 42 | 17 | 4 | 0 |
-| resnetlab | 19 | 38 | 11 | 0 | 0 |
-| running_locally | 37 | 119 | 29 | 0 | 1 |
-| samplinglab | 30 | 139 | 16 | 0 | 0 |
+| language | 76 | 327 | 795 | 0 | 0 |
+| law_regulation | 28 | 61 | 236 | 0 | 0 |
+| loss_landscape | 25 | 98 | 262 | 0 | 0 |
+| losslab | 23 | 66 | 210 | 0 | 0 |
+| math_i | 43 | 134 | 389 | 0 | 0 |
+| math_ii | 41 | 138 | 514 | 0 | 0 |
+| math_iii | 53 | 242 | 799 | 0 | 0 |
+| math_iv | 34 | 113 | 426 | 0 | 0 |
+| mechanistic_interpretability | 32 | 457 | 1263 | 0 | 0 |
+| metaphysics_of_ai | 18 | 65 | 143 | 0 | 0 |
+| minimalneuron | 25 | 82 | 245 | 0 | 0 |
+| mirror_in_machine | 27 | 54 | 183 | 0 | 0 |
+| mixture_of_experts | 18 | 29 | 79 | 0 | 0 |
+| multimodal | 14 | 59 | 202 | 0 | 0 |
+| music_video_generation | 51 | 241 | 682 | 0 | 0 |
+| myths | 26 | 91 | 258 | 0 | 0 |
+| normalizationlab | 23 | 26 | 99 | 0 | 0 |
+| optimizerlab | 33 | 145 | 487 | 0 | 0 |
+| origami | 47 | 172 | 476 | 0 | 0 |
+| overandunderfittinglab | 25 | 86 | 293 | 1 | 0 |
+| people_of_ai | 70 | 367 | 1016 | 0 | 0 |
+| philosophy | 85 | 1048 | 2591 | 0 | 0 |
+| positionalembeddingslab | 30 | 45 | 183 | 0 | 0 |
+| production_serving | 36 | 122 | 399 | 0 | 0 |
+| promptengineering | 18 | 225 | 711 | 0 | 0 |
+| rag | 26 | 136 | 437 | 0 | 0 |
+| reasoning | 21 | 63 | 244 | 0 | 0 |
+| recurrent_networks | 23 | 70 | 186 | 0 | 0 |
+| reinforcement_learning | 25 | 46 | 219 | 1 | 0 |
+| reliability | 21 | 26 | 81 | 4 | 0 |
+| resnetlab | 19 | 18 | 85 | 0 | 0 |
+| running_locally | 37 | 69 | 292 | 0 | 1 |
+| samplinglab | 30 | 61 | 256 | 0 | 0 |
 | search_lib | 21 | 0 | 12 | 0 | 0 |
-| security_inference | 10 | 30 | 10 | 0 | 0 |
-| software | 64 | 476 | 57 | 0 | 0 |
-| speech_audio | 23 | 63 | 17 | 1 | 0 |
-| statistics_i | 51 | 346 | 27 | 1 | 0 |
-| statistics_ii | 27 | 117 | 19 | 11 | 0 |
-| symbolic_ai | 39 | 142 | 37 | 0 | 0 |
-| tokenizerlab | 20 | 175 | 18 | 4 | 0 |
-| topology | 25 | 208 | 23 | 0 | 1 |
-| training_data | 37 | 134 | 31 | 0 | 0 |
-| training_infrastructure | 32 | 107 | 15 | 0 | 0 |
-| trainingdynamics | 23 | 59 | 17 | 0 | 0 |
-| traininglab | 15 | 10 | 11 | 0 | 0 |
-| transformer | 25 | 519 | 18 | 0 | 0 |
-| unexpected_capabilities | 23 | 248 | 16 | 6 | 0 |
-| untold_history_i | 501 | 263 | 505 | 0 | 0 |
-| untold_history_ii | 648 | 439 | 607 | 0 | 0 |
-| untold_history_iii | 1639 | 778 | 1132 | 1 | 0 |
-| vectorsearch | 31 | 178 | 22 | 0 | 0 |
-| vibe_coding | 35 | 178 | 14 | 0 | 0 |
-| websearch | 23 | 133 | 18 | 4 | 0 |
+| security_inference | 10 | 37 | 123 | 0 | 0 |
+| software | 64 | 358 | 785 | 0 | 0 |
+| speech_audio | 23 | 33 | 137 | 1 | 0 |
+| statistics_i | 51 | 207 | 701 | 1 | 0 |
+| statistics_ii | 27 | 109 | 432 | 11 | 0 |
+| symbolic_ai | 39 | 116 | 386 | 0 | 0 |
+| tokenizerlab | 23 | 146 | 399 | 4 | 0 |
+| topology | 25 | 89 | 254 | 0 | 1 |
+| training_data | 45 | 98 | 357 | 1 | 0 |
+| training_infrastructure | 32 | 55 | 239 | 0 | 0 |
+| trainingdynamics | 23 | 29 | 140 | 0 | 0 |
+| traininglab | 15 | 7 | 67 | 0 | 0 |
+| transformer | 29 | 260 | 831 | 0 | 0 |
+| unexpected_capabilities | 29 | 251 | 528 | 5 | 1 |
+| untold_history_i | 501 | 393 | 1357 | 0 | 0 |
+| untold_history_ii | 648 | 562 | 1853 | 0 | 0 |
+| untold_history_iii | 1639 | 922 | 3559 | 1 | 0 |
+| vectorsearch | 31 | 149 | 588 | 0 | 0 |
+| vibe_coding | 35 | 176 | 453 | 0 | 0 |
+| websearch | 23 | 139 | 573 | 4 | 0 |
 
 ## Uncovered years
 
@@ -125,6 +125,7 @@
 - human_mind.php: 1986
 - human_mind.php: 2007
 - human_mind.php: 2013
+- overandunderfittinglab.php: 2017
 - reinforcement_learning.php: 2025
 - reliability.php: 2021
 - reliability.php: 2022
@@ -147,13 +148,12 @@
 - tokenizerlab.php: 1235
 - tokenizerlab.php: 2024
 - tokenizerlab.php: 2025
+- training_data.php: 2019
 - unexpected_capabilities.php: 1988
 - unexpected_capabilities.php: 2013
 - unexpected_capabilities.php: 2018
-- unexpected_capabilities.php: 2019
 - unexpected_capabilities.php: 2021
-- unexpected_capabilities.php: 2026
-- … and 5 more
+- … and 6 more
 
 ## Uncovered quantities
 
@@ -161,6 +161,7 @@
 - deeplearninglab.php: 0 parameters
 - running_locally.php: 0.7 PARAMETER
 - topology.php: 2 layer
+- unexpected_capabilities.php: 1.5B
 
 ## Uncited specific claims
 
