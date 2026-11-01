@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2608;
+var DEFAULT_EXPECTED_TEST_COUNT = 2612;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -3893,6 +3893,39 @@ async function test_training_live_metrics_panel () {
 	$("#training_live_metrics").hide();
 
 	return epoch_ok && loss_ok && val_ok && time_ok && best_ok && labels_ok && metric_ok && chart_ok;
+}
+
+async function test_add_layers_defers_on_empty_input_shape () {
+	var old_value = $("#inputShape").val();
+	var errors_before = num_errs;
+
+	$("#inputShape").val("");
+	var result = null;
+
+	try {
+		result = await _add_layers_to_model([], undefined, "empty-input-shape-test");
+	} finally {
+		$("#inputShape").val(old_value);
+	}
+
+	test_equal("layer build defers on an empty input shape", result, null);
+	test_equal("deferring an empty input shape does not log an error", num_errs, errors_before);
+
+	return result === null && num_errs === errors_before;
+}
+
+function test_input_shape_guard () {
+	var old_value = $("#inputShape").val();
+
+	$("#inputShape").val("");
+	test_equal("empty input shape is not usable", has_usable_input_shape(), false);
+
+	$("#inputShape").val("[2]");
+	test_equal("valid input shape is usable", has_usable_input_shape(), true);
+
+	$("#inputShape").val(old_value);
+
+	return has_usable_input_shape() || old_value === "";
 }
 
 function test_training_tab_content_order () {
@@ -13390,6 +13423,8 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_model_xor()", await test_model_xor(), true);
 		test_equal("test_training_live_metrics_panel()", await test_training_live_metrics_panel(), true);
 		test_equal("test_training_tab_content_order()", test_training_tab_content_order(), true);
+		test_equal("test_input_shape_guard()", test_input_shape_guard(), true);
+		test_equal("test_add_layers_defers_on_empty_input_shape()", await test_add_layers_defers_on_empty_input_shape(), true);
 		test_equal("test_pwa_assets_and_registration()", await test_pwa_assets_and_registration(), true);
 		test_equal("test_dataset_switch_keeps_overlay_until_data_ready()", await test_dataset_switch_keeps_overlay_until_data_ready(), true);
 		test_equal("test_gradient_flow_tab_is_available_for_ffnn()", await test_gradient_flow_tab_is_available_for_ffnn(), true);

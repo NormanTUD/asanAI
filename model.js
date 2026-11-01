@@ -270,6 +270,11 @@ function find_tensors_with_is_disposed_internal(obj, tensorList = []) {
 
 async function create_model_or_throw () {
 	try {
+		if (!has_usable_input_shape()) {
+			dbg("[create_model_or_throw] Deferred because the input shape is still empty");
+			return;
+		}
+
 		model = await create_model(model, await get_model_structure());
 	} catch (e) {
 		throw new Error(e);
@@ -279,6 +284,11 @@ async function create_model_or_throw () {
 async function recreate_model_if_needed (new_model_config_hash) {
 	// Don't recreate model if training is in progress or about to start
 	if (started_training) {
+		return;
+	}
+
+	if (!has_usable_input_shape()) {
+		dbg("[recreate_model_if_needed] Deferred because the input shape is still empty");
 		return;
 	}
 
@@ -1153,6 +1163,12 @@ function add_kernel_and_bias_to_custom_tensors(added_layer, model_uuid) {
 
 async function _add_layers_to_model(model_structure, fake_model_structure, model_uuid) {
 	var inputShape = get_input_shape();
+
+	if (!Array.isArray(inputShape) || inputShape.length === 0) {
+		dbg("[_add_layers_to_model] Deferred because the input shape is empty");
+		return null;
+	}
+
 	var inputLayer = tf.input({shape: inputShape});
 
 	if (!fake_model_structure) {
@@ -1444,6 +1460,20 @@ function remove_layer_warning(layer_idx, msg) {
 	}
 }
 
+function has_usable_input_shape () {
+	try {
+		var shape = get_input_shape();
+
+		if (!Array.isArray(shape) || shape.length === 0) return false;
+
+		return shape.every(function (value) {
+			return typeof value === "number" && isFinite(value) && value > 0;
+		});
+	} catch (e) {
+		return false;
+	}
+}
+
 async function create_model (old_model = model, fake_model_structure = undefined, force = 0) {
 	if(has_missing_values) {
 		l(`${language[lang]["not_creating_model_because_some_values_are_missing"]} (create model)`);
@@ -1454,6 +1484,11 @@ async function create_model (old_model = model, fake_model_structure = undefined
 		err(language[lang]["no_model_found_but_has_missing_values"]);
 
 		return [old_model, null];
+	}
+
+	if(!has_usable_input_shape()) {
+		dbg("[create_model] Deferred because the input shape is still empty");
+		return old_model;
 	}
 
 	var new_layers_container_md5 = await get_layers_container_md5();
@@ -2382,6 +2417,11 @@ function layer_has_multiple_nodes () {
 
 async function compile_model_if_not_defined () {
 	if(!model) {
+		if (!has_usable_input_shape()) {
+			dbg("[compile_model_if_not_defined] Deferred because the input shape is still empty");
+			return;
+		}
+
 		model = await create_model();
 		await compile_model();
 	}

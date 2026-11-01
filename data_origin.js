@@ -163,6 +163,20 @@ async function repair_output_shape_or_show_error () {
 
 async function create_and_compile_model_or_show_error () {
 	try {
+		// The input shape is set by the config / data loader. On slow engines
+		// the two can briefly be out of order; building a model with an empty
+		// shape produces a dense layer with ndim=1 and fills the error log.
+		var wait_started = Date.now();
+
+		while (!has_usable_input_shape() && Date.now() - wait_started < 5000) {
+			await delay(100);
+		}
+
+		if (!has_usable_input_shape()) {
+			dbg("[change_data_origin] Deferred model creation because the input shape is empty");
+			return;
+		}
+
 		// Unconditional rebuild + compile (5010 behavior): the fast-path
 		// optimization that delegated this to compile_model() removed the
 		// self-healing that keeps model + tensors on the current backend,
