@@ -489,11 +489,12 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
 
     function init() {
         const allSlides = Array.from(document.querySelectorAll('.slide'));
+        const visibleSlides = allSlides.filter(s => !s.hasAttribute('data-disabled'));
         const selection = parseSlideSelection(allSlides.length);
-        slides = selection ? allSlides.filter((_, i) => selection.has(i)) : allSlides;
+        slides = selection ? allSlides.filter((_, i) => selection.has(i)) : visibleSlides;
         if (slides.length === 0) {
             console.warn('slides= hat keine Folie ausgewaehlt – zeige alle Folien.');
-            slides = allSlides;
+            slides = visibleSlides;
         }
 
         // ?short=1 + ?fast=1: Abschluss-Folie "Und wieder von vorn" direkt
