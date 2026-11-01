@@ -1461,19 +1461,16 @@ if (typeof window !== "undefined") {
 // tab on boot, so a gradient_flow tab that's active on load gets the flag
 // set automatically.
 window.__gradient_flow_visible = false;
-// Set when the reader has opened the tab at least once. From then on we keep
-// recording one gradient sample per epoch even while the tab is hidden, so the
-// time axis grows during short trainings too.
-window.__gradient_flow_enabled = false;
 
 function gradientFlowToSummary() {
 	if (!window.__gradient_flow_visible) {
-		if (window.__gradient_flow_enabled && typeof gradientFlow.record === "function") {
+		// Record one sample per epoch even while the tab is hidden, so the time
+		// axis is complete when the reader opens it after a short training run.
+		if (typeof gradientFlow.record === "function") {
 			gradientFlow.record();
 		}
 		return;
 	}
 
-	window.__gradient_flow_enabled = true;
 	gradientFlow("gradient_flow");
 }

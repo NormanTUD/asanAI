@@ -1,5 +1,11 @@
 "use strict";
 
+function reset_gradient_flow_history() {
+	if (typeof gradientFlow !== "undefined" && typeof gradientFlow.reset === "function") {
+		gradientFlow.reset();
+	}
+}
+
 async function change_data_origin() {
 	var __cdo_t0 = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
 	function __cdo_log(label) {
@@ -86,6 +92,10 @@ async function change_data_origin() {
 
 	$("#canvas_grid_visualization").html("");
 	_last_grid_canvas_data_url = null;
+
+	// The model/input shape changed; old gradient-flow columns belong to the
+	// previous architecture.
+	reset_gradient_flow_history();
 }
 
 async function new_origin_is_default(show_images_per_category) {
@@ -376,6 +386,8 @@ async function chose_dataset(no_set_config) {
 	l(language[lang]["ok_chosen_dataset"]);
 
 	create_weight_surfaces(1);
+
+	reset_gradient_flow_history();
 }
 
 var handle_x_file = async function (evt) {
