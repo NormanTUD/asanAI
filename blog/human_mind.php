@@ -216,6 +216,18 @@ From there the path to AI was short. \citeauthorlastnameand{newellsimon1972probl
 </div>
 
 <div class="md">
+### Symbols, vectors, and the Bayesian brain
+
+The cognitive revolution gave AI its first working ontology: **symbols**. Newell and Simon's *Physical Symbol System Hypothesis* made the claim explicit -- a physical symbol system has the necessary and sufficient means for general intelligent action (\cite[Newell and Simon, 1976]{newell1976empirical}). Symbols are discrete, compositional and manipulable; a program that searches a symbol tree is, on this view, a model of thought.
+
+Connectionism offered the other ontology: **distributed vectors**. In *Parallel Distributed Processing*, Rumelhart, McClelland and the PDP group argued that knowledge is stored in the weights of a network, that representations are patterns of activation rather than discrete tokens, and that learning is a gradual adjustment of those weights (\cite[Rumelhart et al., 1986]{rumelhart1986pdp}). The two programs disagreed about almost everything -- the unit of representation, the role of rules, the plausibility of learning from experience -- and the disagreement is still live. Modern LLMs are connectionist machines that can nevertheless implement symbol-like algorithms: they learn to copy, sort, bind and compose, but they do it with vectors and attention rather than with an explicit symbol table. The lesson is not that one side won; it is that the mind supports both descriptions at different levels, and AI inherited the tension.
+
+The **Bayesian brain** is the third strand. Perception is underdetermined by the senses, so the brain must combine noisy evidence with prior expectations. Knill and Pouget describe the brain as performing probabilistic inference, with neural populations representing probability distributions and combining them according to Bayes' rule (\cite[Knill and Pouget, 2004]{knill2004bayesian}). Predictive processing extends this to action and learning: the brain minimizes prediction error, and the model is updated when the error is large (\cite[Clark, 2013]{clark2013whatevernext}). This is the cognitive-science ancestor of the loss function: a mind that minimizes surprise is doing something formally similar to a model that minimizes cross-entropy.
+
+Memory is not one store. Baddeley and Hitch's multicomponent model split working memory into a central executive, a phonological loop and a visuospatial sketchpad, replacing the single short-term box (\cite[Baddeley and Hitch, 1974]{baddeley1974workingmemory}). Long-term memory is likewise plural: declarative memory (facts and events) is distinguished from nondeclarative memory (skills, habits, priming), and within declarative memory, episodic memory (what happened to me) is distinguished from semantic memory (what I know) (\cite[Squire, 2004]{squire2004memorysystems}). Language, too, is not a single module: the dual-stream model describes a ventral stream that maps sound to meaning and a dorsal stream that maps sound to articulation (\cite[Hickok and Poeppel, 2007]{hickok2007cortical}). These distinctions matter for AI because they mark the different jobs a model must do: hold a context, retrieve a fact, learn a skill, and turn a string into a meaning and an action.
+</div>
+
+<div class="md">
 ## V. The Social and Cultural Ratchet: A Mind Bigger Than One Skull
 
 ### Cumulative Cultural Evolution and the Ratchet
