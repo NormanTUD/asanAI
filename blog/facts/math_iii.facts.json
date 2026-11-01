@@ -515,5 +515,2191 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "math_iii-stmt-1",
+      "quote": "This third math chapter steps back from mechanics and addresses two conceptual questions that recur throughout the rest of the textbook:",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-2",
+      "quote": "**Why is “good enough” the goal of AI?** Most AI is approximation; what does that mean precisely?",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-3",
+      "quote": "**Why do neural networks work so well in high dimensions?** Classical statistics calls high dimensions a “curse”, but neural networks thrive.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-4",
+      "quote": "Both questions turn on the geometry of the spaces in which models learn.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-5",
+      "quote": "In traditional programming, we aim for **exactness**.",
+      "section": "What are approximations?",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-6",
+      "quote": "If you write a function to calculate a tax rate, you want the result to be 100% correct every single time.",
+      "section": "What are approximations?",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-7",
+      "quote": "However, the real world is messy and doesn't always follow simple, rigid rules.",
+      "section": "What are approximations?",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-8",
+      "quote": "An **approximation** (from latin *approximātus*, “to come near, approach”, see \\citetitle{kleinetymology}, p.",
+      "section": "What are approximations?",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-9",
+      "quote": "45) is a result that is “close enough” to the truth to be useful, even if it isn't perfect.",
+      "section": "What are approximations?",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-10",
+      "quote": "Most tasks we want AI to solve, like recognizing a face, translating a language, or driving a car, are too complex for “if-then” logic.",
+      "section": "Most Artificial Intelligence is approximations",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-11",
+      "quote": "* **Complexity:** There is no single mathematical formula for a “cat.” A cat can be any color, in any pose, and in any lighting.",
+      "section": "Most Artificial Intelligence is approximations",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-12",
+      "quote": "* **The Goal:** Instead of looking for a perfect rule, AI looks for a **statistical likelihood**.",
+      "section": "Most Artificial Intelligence is approximations",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-13",
+      "quote": "It approximates the pattern of a cat based on the thousands of examples it has seen.",
+      "section": "Most Artificial Intelligence is approximations",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-14",
+      "quote": "When we talk about models being “good enough,” we are looking at the balance of error.",
+      "section": "Accuracy vs. Precision",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-15",
+      "quote": "The words are often used interchangeably, but metrology separates them.",
+      "section": "Accuracy vs. Precision",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-16",
+      "quote": "**Accuracy** is closeness to the true value; **precision** is closeness of repeated readings to one another.",
+      "section": "Accuracy vs. Precision",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-17",
+      "quote": "A thermometer can be precise and biased (all readings agree, all wrong), or accurate on average but noisy.",
+      "section": "Accuracy vs. Precision",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-18",
+      "quote": "In statistical language, mean squared error separates the two:",
+      "section": "Accuracy vs. Precision",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-19",
+      "quote": "408–355 BCE) turned Antiphon's polygon approximation into a proof technique: inscribe and circumscribe polygons until the gap is smaller than any assigned magnitude (\\cite[Eudoxus, MacTutor]{eudoxus_mactutor}).",
+      "section": "Accuracy vs. Precision",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-20",
+      "quote": "Archimedes used the same exhaustion engine to prove that a circle's area equals that of a right triangle whose legs are the radius and the circumference, and his 96-gons gave $3\\tfrac{10}{71}\\lt\\pi\\lt3\\tfrac{1}{7}$ (\\cite[Archimedes, Measurement of a Circle]{archimedes_works_heath}).",
+      "section": "Accuracy vs. Precision",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-21",
+      "quote": "In China, Liu Hui's 263 CE commentary used inscribed polygons to squeeze $\\pi$, recording $157/50$ and, with a 3072-gon, $3.14159$; Zu Chongzhi sharpened the bound to $3.1415926\\lt\\pi\\lt3.1415927$ with $355/113$ (\\cite[Liu Hui]{liuhui_pi_wiki}; \\cite[Zu Chongzhi, MacTutor]{zuchongzhi_mactutor}).",
+      "section": "Accuracy vs. Precision",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-22",
+      "quote": "The bound is the oldest form of \"good enough\".",
+      "section": "Accuracy vs. Precision",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-23",
+      "quote": "> **Approximation is not a modern compromise.** Eudoxus and Archimedes squeezed unknown areas between polygons; Liu Hui and Zu Chongzhi squeezed π; Newton and Euler turned the squeeze into an algorithm; Riemann and Lebesgue turned the algorithm into a definition.",
+      "section": "Accuracy vs. Precision",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-24",
+      "quote": "AI inherits all three moves: the bound, the iteration, and the measure.",
+      "section": "Accuracy vs. Precision",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-25",
+      "quote": "AI leans on three families of approximation:",
+      "section": "The Mathematical Toolkit of Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-26",
+      "quote": "Approximation became an algorithm in the seventeenth and eighteenth centuries.",
+      "section": "The Mathematical Toolkit of Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-27",
+      "quote": "Newton's method, in its modern form, replaces $f(x)=0$ by the tangent at $x_n$ and iterates $x_{n+1}=x_n-f(x_n)/f'(x_n)$; Newton used the idea in *De analysi* (1669) and *Method of Fluxions* (written 1671, published 1736) (\\cite[Newton, Method of Fluxions]{newton1736fluxions}).",
+      "section": "The Mathematical Toolkit of Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-28",
+      "quote": "Euler's method for $y'=f(t,y)$ is the same bargain in time, $y_{n+1}=y_n+h f(t_n,y_n)$ (\\cite[Euler, Institutiones calculi integralis]{euler1768integralis}).",
+      "section": "The Mathematical Toolkit of Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-29",
+      "quote": "Each step is wrong by a controlled amount; the new question is how those errors accumulate.",
+      "section": "The Mathematical Toolkit of Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-30",
+      "quote": "Floating-point arithmetic cannot represent most real numbers exactly (0.1 in binary is an infinite repeating fraction).",
+      "section": "1. Numerical Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-31",
+      "quote": "The IEEE 754 standard bounds the rounding error so that the accumulation of error stays within predictable limits.",
+      "section": "1. Numerical Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-32",
+      "quote": "For a sequence of operations $f_1, f_2, \\dots, f_n$, the **forward error** grows at worst as:",
+      "section": "1. Numerical Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-33",
+      "quote": "where $\\epsilon_{\\text{machine}}$ is machine precision ($\\approx 10^{-7}$ for fp32) and $C$ is a problem-dependent constant.",
+      "section": "1. Numerical Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-34",
+      "quote": "So even if individual steps are approximate, the result is bounded.",
+      "section": "1. Numerical Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-35",
+      "quote": "When we say a model “predicts the next token”, we mean: of all the tokens that *could* plausibly follow, the model assigns probabilities.",
+      "section": "2. Statistical Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-36",
+      "quote": "The **expectation** of the probability distribution is a “best guess”, but a single sample is approximate.",
+      "section": "2. Statistical Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-37",
+      "quote": "Maximum Likelihood Estimation (MLE), Bayesian inference, and Monte Carlo methods are all formal ways of reasoning about the uncertainty inherent in statistical approximation.",
+      "section": "2. Statistical Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-38",
+      "quote": "A neural network is, mathematically, a **function approximator**.",
+      "section": "3. Function Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-39",
+      "quote": "Given a function $f^*: X \\to Y$, the network learns parameters $\\theta$ such that $f_\\theta(x) \\approx f^*(x)$ for the inputs in the training distribution.",
+      "section": "3. Function Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-40",
+      "quote": "The **Universal Approximation Theorem** (\\cite[Cybenko, 1989]{cybenko1989}; \\cite[Hornik et al., 1989]{hornik1989}) states that a feed-forward network with a single hidden layer of sufficient width can approximate **any continuous function** on a compact domain to arbitrary precision.",
+      "section": "3. Function Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-41",
+      "quote": "The theorem says nothing about *how to find* such a network, only that one exists.",
+      "section": "3. Function Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-42",
+      "quote": "The modern self-contained treatment — including the proof strategy (reduction to the univariate case via the Stone–Weierstrass theorem) — is in \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), Ch.\\ 3.",
+      "section": "3. Function Approximation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-43",
+      "quote": "Two more signs show up throughout this book, so it is worth learning them once.",
+      "section": "The integral and the closed integral",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-44",
+      "quote": "Both come from the **calculus**, which **Newton** and **Leibniz** invented independently in the 1660s to 1680s to turn \"what is changing\" into \"what has accumulated.\"",
+      "section": "The integral and the closed integral",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-45",
+      "quote": "The integral $\\int_a^b f(x)\\,\\mathrm{d}x$ **adds a quantity up continuously** over an interval.",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-46",
+      "quote": "The picture: split the interval $[a,b]$ into $n$ equal slices, each of width $\\Delta x = \\frac{b-a}{n}$, and take one sample point $x_i$ in the $i$-th slice (say at its right edge, $x_i = a + i\\,\\Delta x$).",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-47",
+      "quote": "In each slice, replace $f$ by the single height $f(x_i)$, so that slice contributes a rectangle of area $f(x_i)\\,\\Delta x$; adding the $n$ rectangles gives the **Riemann sum** $\\sum_{i=1}^{n} f(x_i)\\,\\Delta x$.",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-48",
+      "quote": "As the slices get thinner and thinner ($n \\to \\infty$, so $\\Delta x \\to 0$), this Riemann sum settles down to the exact area under the curve,",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-49",
+      "quote": "The sign $\\int$ is a stretched Latin *s*, short for *summa* (sum); **Leibniz** introduced it in 1675 \\cite{historyofmathematicalnotation}.",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-50",
+      "quote": "The idea of finding areas by summing infinitely thin pieces is much older: **Archimedes** did it by the method of exhaustion, and **Cavalieri** by \"indivisibles\"; Newton and Leibniz turned it into a general calculation.",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-51",
+      "quote": "The result that makes the integral *useful* is the **Fundamental Theorem of Calculus (FTC)**: if $F'(x) = f(x)$ (so $F$ is an antiderivative of $f$), then the whole limit collapses to a subtraction of two endpoint values.",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-52",
+      "quote": "So you rarely take the limit by hand: find *any* antiderivative $F$ of $f$, then subtract its value at the lower limit from its value at the upper limit.",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-53",
+      "quote": "The definition behind that shortcut took two more centuries.",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-54",
+      "quote": "Cavalieri's *Geometria indivisibilibus continuorum* (1635) treated an area as a sum of parallel line segments and a volume as a sum of parallel sections, so that equal sections imply equal content (\\cite[Cavalieri, Geometria]{cavalieri1635geometria}).",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-55",
+      "quote": "Riemann's 1854 habilitation lecture replaced indivisibles by a finite partition and a mesh: the integral exists when every tagged Riemann sum whose mesh tends to zero approaches the same number (\\cite[Riemann, 1854]{riemann1854trig}).",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-56",
+      "quote": "Lebesgue's 1902 thesis then changed the unit of summation from the domain to the measure of the values, partitioning the codomain into level sets and integrating simple functions (\\cite[Lebesgue, 1902]{lebesgue1902integrale}).",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-57",
+      "quote": "The limit became a measure.",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-58",
+      "quote": "**Worked example.** Let $f(x) = 2x$ on $[0,3]$.",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-59",
+      "quote": "An antiderivative is $F(x) = x^2$, since $(x^2)' = 2x$.",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-60",
+      "quote": "Applying the general formula at the two endpoints,",
+      "section": "The integral $\\int$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-61",
+      "quote": "The ordinary integral $\\int_a^b$ adds a quantity up along a line that has a start, $a$, and an end, $b$.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-62",
+      "quote": "The **closed integral** $\\oint$ adds up the same kind of thing, but along a line that has **no start and no end** — a loop that comes all the way back to where it began.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-63",
+      "quote": "The dot in the middle is only a reminder that the line is closed.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-64",
+      "quote": "The loop integral has its own history.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-65",
+      "quote": "Cauchy's 1825 memoir on definite integrals \"between imaginary limits\" made integration along a complex contour a subject in its own right: for a function holomorphic inside a simple closed curve $C$, $\\oint_C f(z)\\,\\mathrm{d}z=0$ (\\cite[Cauchy, 1825]{cauchy1825memoire}).",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-66",
+      "quote": "The little circle in $\\oint$ is not decoration: it records that the path is closed and that the value may depend on what the loop encloses, which is exactly what the residue calculus would later exploit.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-67",
+      "quote": "Here is what that actually looks like.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-68",
+      "quote": "Walk around the boundary of a shape, one full lap.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-69",
+      "quote": "Let $s$ be the distance you have walked along the boundary, so one tiny step is $ds$ — a small piece of the path.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-70",
+      "quote": "As you walk, add up all those little pieces $ds$.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-71",
+      "quote": "When you get back to where you started, the total is just the **perimeter** of the shape,",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-72",
+      "quote": "First, why there is **no upper limit**: the curve $C$ under the sign *is* the \"from … to …\" — $\\oint_C$ means \"add up all the way around $C$.\" Because the loop is closed you finish where you began, so there is no separate start- and end-number to write down.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-73",
+      "quote": "Second, $ds$ is not a mystery variable: it is one tiny piece of length along the curve, playing exactly the role that $\\Delta x$ played in the Riemann sum above.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-74",
+      "quote": "The only difference is that the thing you would normally write between the sign and the $ds$ (the \"height\") is just the number $1$, and a lone $1$ is left out by convention — exactly as $\\int_a^b dx$ really means $\\int_a^b 1\\,dx$.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-75",
+      "quote": "So here you are adding up pure length.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-76",
+      "quote": "Now do the same idea with *turning* instead of distance.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-77",
+      "quote": "As you walk all the way around a closed loop, keep a running total of how much you have turned.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-78",
+      "quote": "When you reach the start again you are facing the way you began, so the total turning is exactly one full turn, $2\\pi$ (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-79",
+      "quote": "250]{lang2005basicmath}, that is $360^\\circ$), no matter what shape the loop is.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-80",
+      "quote": "More precisely, for a **simple** closed curve the **signed** total turning is $+2\\pi$ or $-2\\pi$ (Hopf's *Umlaufsatz*); a self-intersecting loop can have turning number $k\\in\\mathbb{Z}$ (\\cite[Winding number]{turning_number_wiki}).",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-81",
+      "quote": "You will meet the same idea again in physics and in [Geometry III](geometry_iii): add up a quantity all the way round a closed loop — or across a closed surface, like the total amount that flows out of a box — and the single number you get at the end describes the whole closed shape, not just one point on it.",
+      "section": "The closed integral $\\oint$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-82",
+      "quote": "| Task | Better with exact | Better with approximation |",
+      "section": "Approximation vs. Exact Computation: When Each Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-83",
+      "quote": "| **Arithmetic** | Deterministic arithmetic | Floating-point ≈ correct |",
+      "section": "Approximation vs. Exact Computation: When Each Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-84",
+      "quote": "| **Logic** | SAT solvers, theorem provers | LLMs are approximate |",
+      "section": "Approximation vs. Exact Computation: When Each Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-85",
+      "quote": "| **Search** | A* with admissible heuristic | Monte Carlo Tree Search |",
+      "section": "Approximation vs. Exact Computation: When Each Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-86",
+      "quote": "| **Pattern recognition** | — | Neural networks |",
+      "section": "Approximation vs. Exact Computation: When Each Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-87",
+      "quote": "| **Natural language** | — | Neural networks |",
+      "section": "Approximation vs. Exact Computation: When Each Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-88",
+      "quote": "| **Verification** | Symbolic execution, Lean | — |",
+      "section": "Approximation vs. Exact Computation: When Each Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-89",
+      "quote": "A good engineer uses exact tools where they suffice, and approximate tools where they are the only option.",
+      "section": "Approximation vs. Exact Computation: When Each Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-90",
+      "quote": "Recall from Math II, the central idea: a vector lives in a space, and operations on vectors (addition, scaling, dot product) correspond to geometric operations on the space.",
+      "section": "Vector Spaces: A Brief Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-91",
+      "quote": "Modern AI happens in vector spaces of dimension 768 to 16,000.",
+      "section": "Vector Spaces: A Brief Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-92",
+      "quote": "For the rest of this chapter, the only fact about vector spaces we need is the following: **most vector-space intuition from 2D and 3D fails catastrophically in high dimensions**.",
+      "section": "Vector Spaces: A Brief Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-93",
+      "quote": "Understanding the difference is essential to understanding modern AI.",
+      "section": "Vector Spaces: A Brief Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-94",
+      "quote": "Classical statistics warns: **as dimensionality grows, geometry breaks down**.",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-95",
+      "quote": "* **Distance concentration**: in $d$ dimensions, the ratio between the nearest and farthest distance from a point to its $k$ nearest neighbors approaches 1 as $d \\to \\infty$.",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-96",
+      "quote": "All points become roughly equidistant.",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-97",
+      "quote": "* **Volume explosion**: the unit cube in $d$ dimensions has volume 1, but almost all of that volume lies in a thin shell near its surface, not in its interior.",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-98",
+      "quote": "A uniform sample from the cube is therefore almost surely close to the boundary.",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-99",
+      "quote": "* **Sample complexity**: to densely cover a $d$-dimensional unit cube with samples, you need exponentially many samples as $d$ grows.",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-100",
+      "quote": "With $d = 100$ and 10 samples per axis, you need $10^{100}$ samples, more than atoms in the universe.",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-101",
+      "quote": "These are real problems for classical statistical methods.",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-102",
+      "quote": "Naïve nearest-neighbor classifiers, density estimators, and clustering algorithms all degrade as $d$ grows.",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-103",
+      "quote": "The phrase \"curse of dimensionality\" comes from dynamic programming, not from a theorem about all high-dimensional data.",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-104",
+      "quote": "Bellman used it for the explosion of state spaces: a grid with ten points per axis needs $10^d$ points in $d$ dimensions (\\cite[Bellman, 1957]{bellman1957book}; \\cite[Bellman, 1961]{bellman1961adaptive}).",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-105",
+      "quote": "The geometric symptoms are real but distribution-dependent: for i.i.d.",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-106",
+      "quote": "samples from a broad class of distributions, nearest and farthest distances concentrate, but correlated or clustered data can retain contrast (\\cite[Beyer et al., 1999]{beyer1999nearest}).",
+      "section": "The Curse of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-107",
+      "quote": "You may have heard of the “curse of dimensionality”: in high dimensions, distance metrics break down, and all points become roughly equidistant.",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-108",
+      "quote": "But there is a corresponding **blessing of dimensionality** that makes neural networks possible.",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-109",
+      "quote": "In high-dimensional spaces, random vectors are almost always **nearly orthogonal**.",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-110",
+      "quote": "In 768 dimensions (a typical embedding size), two random vectors have an expected cosine similarity near 0 with small variance, the probability that a cosine has magnitude above $0.1$ is only about $0.6\\%$:",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-111",
+      "quote": "This means the model can store thousands of **nearly-independent features** because high-dimensional space provides exponentially many “almost-orthogonal” directions for free.",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-112",
+      "quote": "This is what makes **superposition** (the ability to represent more features than dimensions) geometrically possible.",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-113",
+      "quote": "The key idea: the same property that makes high dimensions difficult for classical statistics, the concentration of measure, is what makes neural networks powerful.",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-114",
+      "quote": "In low dimensions, features compete for the same axes.",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-115",
+      "quote": "In high dimensions, every feature can have its own private direction with minimal interference.",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-116",
+      "quote": "The curse and the blessing are two sides of the same coin.",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-117",
+      "quote": "The \"blessing\" is the same concentration read in the other direction.",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-118",
+      "quote": "For random unit vectors in $\\mathbb{R}^d$, $\\mathbb{E}[\\cos]=0$ and $\\operatorname{Var}(\\cos)\\approx1/d$, so $P(|\\cos|>0.1)$ is about $0.6\\%$ at $d=768$ and negligible at $d=10^4$ (\\cite[Gorban \\& Tyukin, 2018]{gorban2018blessing}).",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-119",
+      "quote": "The term was introduced in the late 1990s; the mathematics is concentration of measure.",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-120",
+      "quote": "High dimension is not uniformly hostile: it destroys some kinds of contrast and creates others.",
+      "section": "The Blessing of Dimensionality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-121",
+      "quote": "Mechanistic interpretability research (Anthropic, 2024) has shown that LLMs represent **more features than they have dimensions**.",
+      "section": "Superposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-122",
+      "quote": "A 768-dimensional model might encode tens of thousands of interpretable features by letting each feature occupy a *combination* of dimensions.",
+      "section": "Superposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-123",
+      "quote": "Superposition is the name for a model's habit of encoding more features than it has dimensions.",
+      "section": "Superposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-124",
+      "quote": "The toy-model paper showed that a network with $d$ hidden units can represent $n>d$ sparse features by assigning them overlapping, nearly orthogonal directions, paying for the crowding with interference (\\cite[Elhage et al., 2022]{elhage2022superposition}).",
+      "section": "Superposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-125",
+      "quote": "The 2024 Claude 3 Sonnet study then extracted millions of interpretable features from a model whose residual stream is far smaller than that count (\\cite[Templeton et al., 2024]{templeton2024scaling}).",
+      "section": "Superposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-126",
+      "quote": "\"768 dimensions, tens of thousands of features\" is a toy-model scale, not a measured law.",
+      "section": "Superposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-127",
+      "quote": "This is possible precisely because high-dimensional space has exponentially many “almost-orthogonal” directions.",
+      "section": "Superposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-128",
+      "quote": "The cost: features interfere slightly, leading to hallucinations and brittle reasoning when the model is pushed out of distribution.",
+      "section": "Superposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-129",
+      "quote": "A foundational result in high-dimensional probability.",
+      "section": "Concentration of Measure",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-130",
+      "quote": "For any function $f$ that is Lipschitz with constant $L$, the values of $f$ on random points in a high-dimensional ball are tightly concentrated around their mean:",
+      "section": "Concentration of Measure",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-131",
+      "quote": "In words: as dimension $d$ grows, the probability of deviating from the mean shrinks **exponentially**.",
+      "section": "Concentration of Measure",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-132",
+      "quote": "Random high-dimensional vectors are almost deterministic in their statistical properties.",
+      "section": "Concentration of Measure",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-133",
+      "quote": "This concentration is one reason a 70B-parameter LLM can behave reliably on novel inputs: in high dimensions, random directions interfere far less than low-dimensional intuition suggests, and the model's representations remain comparatively stable under small perturbations.",
+      "section": "Concentration of Measure",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-134",
+      "quote": "It does not by itself guarantee that a new input resembles the training data.",
+      "section": "Concentration of Measure",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-135",
+      "quote": "Concentration of measure is older than its name.",
+      "section": "Concentration of Measure",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-136",
+      "quote": "Lévy observed that a Lipschitz function on a high-dimensional sphere is almost constant; Gromov and Milman turned the spherical isoperimetric inequality into a general concentration argument and used it to reprove Dvoretzky's theorem (\\cite[Gromov \\& Milman, 1983]{gromov1983isoperimetric}; \\cite[Concentration of measure]{concentration_of_measure_wiki}).",
+      "section": "Concentration of Measure",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-137",
+      "quote": "Talagrand extended the phenomenon to product spaces, where it becomes a toolbox of exponential inequalities (\\cite[Talagrand, 1995]{talagrand1995concentration}).",
+      "section": "Concentration of Measure",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-138",
+      "quote": "The schematic form is always the same: $P(|f-\\mathbb{E}f|>t)\\le 2e^{-c d t^2/L^2}$.",
+      "section": "Concentration of Measure",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-139",
+      "quote": "A corollary of the blessing: real-world data does not actually fill high-dimensional space.",
+      "section": "The Manifold Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-140",
+      "quote": "A photo of a face lives on a low-dimensional **manifold**, the space of all possible faces, embedded in a much higher-dimensional pixel space.",
+      "section": "The Manifold Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-141",
+      "quote": "The intrinsic dimensionality of “face-ness” might be ~100, even though a $1024 \\times 1024$ image has over a million dimensions.",
+      "section": "The Manifold Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-142",
+      "quote": "Neural networks work because they learn to **parameterize these manifolds**.",
+      "section": "The Manifold Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-143",
+      "quote": "Each layer progressively deforms the high-dimensional space so that the manifold becomes linearly separable at the output.",
+      "section": "The Manifold Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-144",
+      "quote": "The “universal approximation” theorem applies to functions on compact subsets of $\\mathbb{R}^d$, and a compact manifold is exactly such a subset.",
+      "section": "The Manifold Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-145",
+      "quote": "This is why deep learning is so effective on images, audio, and text: each of these modalities has low intrinsic dimensionality, and neural networks are essentially manifold learners.",
+      "section": "The Manifold Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-146",
+      "quote": "The manifold hypothesis is a hypothesis, not a theorem.",
+      "section": "The Manifold Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-147",
+      "quote": "It says that natural data concentrate near a low-dimensional manifold $\\mathcal{M}^m\\subset\\mathbb{R}^d$ with $m\\ll d$; learning then becomes recovery of coordinates on $\\mathcal{M}$ rather than filling $\\mathbb{R}^d$ (\\cite[Cayton, 2005]{cayton2005manifold}).",
+      "section": "The Manifold Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-148",
+      "quote": "Olah's visual essay made the picture concrete for neural networks (\\cite[Olah, 2014]{olah2014manifolds}), and later work treats the hypothesis as a testable modelling assumption rather than a fact (\\cite[Loaiza-Ganem et al., 2024]{loaizaganem2024manifoldsurvey}).",
+      "section": "The Manifold Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-149",
+      "quote": "The intrinsic dimension is estimated, not observed; \"~100\" for faces is a guess, not a measurement.",
+      "section": "The Manifold Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-150",
+      "quote": "Strictly, the universal approximation theorem applies after choosing a chart or an embedding: a compact $m$-manifold embeds in some $\\mathbb{R}^N$ (Whitney), and on each chart the network approximates the coordinate functions (\\cite[Whitney, 1936]{whitney1936manifolds}).",
+      "section": "The Manifold Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-151",
+      "quote": "A surprising property of well-behaved approximations: errors don't necessarily compound.",
+      "section": "Why Approximations Compound and Bound",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-152",
+      "quote": "* **Forward stability** (numerical analysis): small perturbations in input cause bounded perturbations in output.",
+      "section": "Why Approximations Compound and Bound",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-153",
+      "quote": "* **Generalization bounds** (statistical learning theory): with $n$ samples and a network of $V$ parameters, the gap between training and test loss scales as $O\\!\\left(\\sqrt{V / n}\\right)$.",
+      "section": "Why Approximations Compound and Bound",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-154",
+      "quote": "More data reduces the bound; more parameters increases it.",
+      "section": "Why Approximations Compound and Bound",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-155",
+      "quote": "The derivation proceeds via **covering numbers**: one bounds how many $\\varepsilon$-balls are needed to cover the set of all functions a $V$-parameter network can compute, then applies a uniform-concentration inequality.",
+      "section": "Why Approximations Compound and Bound",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-156",
+      "quote": "The full derivation is in \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), Ch.\\ 14.",
+      "section": "Why Approximations Compound and Bound",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-157",
+      "quote": "* **Smoothness priors**: most natural signals are smooth, adjacent pixels in an image, adjacent tokens in text, are correlated.",
+      "section": "Why Approximations Compound and Bound",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-158",
+      "quote": "Neural networks encode this prior through their architecture.",
+      "section": "Why Approximations Compound and Bound",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-159",
+      "quote": "This is a uniform worst-case bound, and $V$ is a capacity measure, not literally the parameter count; it does not predict the test error of an overparameterized network (\\cite[Zhang et al., 2017]{zhang2017rethinking}).",
+      "section": "Why Approximations Compound and Bound",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-160",
+      "quote": "These guarantees are why training a 70B model on 15T tokens can produce a model that generalizes to novel inputs, even though the model has never seen them before.",
+      "section": "Why Approximations Compound and Bound",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-161",
+      "quote": "In 2025, the frontier is the **hybrid** system: LLM for intuition, exact tools for verification.",
+      "section": "Beyond Approximation: Exact Computation with LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-162",
+      "quote": "* **Mathematics**: LLM proposes a proof, Lean verifies it.",
+      "section": "Beyond Approximation: Exact Computation with LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-163",
+      "quote": "* **Code**: LLM writes code, tests execute it.",
+      "section": "Beyond Approximation: Exact Computation with LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-164",
+      "quote": "* **Search**: LLM frames the question, vector DB retrieves the answer.",
+      "section": "Beyond Approximation: Exact Computation with LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-165",
+      "quote": "* **Reasoning**: LLM suggests a path, formal verifier checks it.",
+      "section": "Beyond Approximation: Exact Computation with LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-166",
+      "quote": "The most reliable AI systems in 2025 are not pure LLMs, they are LLMs orchestrating exact symbolic systems.",
+      "section": "Beyond Approximation: Exact Computation with LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-167",
+      "quote": "The approximation engine handles ambiguity; the exact system handles precision.",
+      "section": "Beyond Approximation: Exact Computation with LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-168",
+      "quote": "The student who masters both, and knows when to use which, will be far more capable than one trained in either alone.",
+      "section": "Beyond Approximation: Exact Computation with LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-169",
+      "quote": "This is the synthesis the field is moving toward.",
+      "section": "Beyond Approximation: Exact Computation with LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-170",
+      "quote": "Every loss function, every embedding, every layer of every network is a function between *types*.",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-171",
+      "quote": "A loss is a map $\\mathcal{L} : \\Theta \\to \\mathbb{R}_+$ from the space of parameters to the positive reals.",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-172",
+      "quote": "An embedding is a map $E : V \\to \\mathbb{R}^d$ from a vocabulary to a vector space.",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-173",
+      "quote": "A transformer block is a map $T : \\mathbb{R}^{L \\times d} \\to \\mathbb{R}^{L \\times d}$ from token sequences to token sequences.",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-174",
+      "quote": "Once you see this, every chapter in this book is secretly a chapter about *typed functions*.",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-175",
+      "quote": "In most of this textbook we write types informally (“$x$ is a vector, $w$ is a matrix”).",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-176",
+      "quote": "For most purposes that's enough.",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-177",
+      "quote": "But sometimes a sharper language helps, and the sharpest language for “spaces + functions between them” turns out to be **type theory**.",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-178",
+      "quote": "**Type theory** is a foundation for mathematics where the basic objects are *types* (think: sets with structure) and the basic maps are *functions* between them.",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-179",
+      "quote": "Most modern proof assistants (Lean, Coq, Agda) are built on type theory for the same reason Tensor notation is built on tensors: once you commit, the compiler / kernel checks every step.",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-180",
+      "quote": "Type theory begins as a response to a paradox in Frege's logic.",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-181",
+      "quote": "Frege's *Begriffsschrift* (1879) had given logic quantifiers and a formal notation; his *Grundgesetze* then added Basic Law V, which admits $R=\\{w\\mid w\\notin w\\}$, so $R\\in R$ iff $R\\notin R$ (\\cite[Frege, 1879]{frege1879}; \\cite[Russell's paradox]{russell_paradox_sep}).",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-182",
+      "quote": "Russell's *Principles of Mathematics* (1903) and *Principia Mathematica* (1910–13) answered with a ramified hierarchy of types (\\cite[Russell, 1903]{russell1903principles}; \\cite[Whitehead \\& Russell, 1910]{russell1910principia}), and Church's 1940 simple theory of types replaced the hierarchy with a typed $\\lambda$-calculus (\\cite[Church, 1940]{churchsimplytyped}).",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-183",
+      "quote": "Martin-Löf's 1972 system made types depend on terms; identity types followed in the 1973/75 version, and the 1984 Bibliopolis lectures became the standard exposition (\\cite[Martin-Löf, 1984]{martinlof1984intuitionistic}; \\cite[SEP, Intuitionistic Type Theory]{intuitionistic_type_theory_sep}).",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-184",
+      "quote": "Voevodsky's 2006 note called his homotopy $\\lambda$-calculus \"a hypothetical (at the moment) type system\"; by 2009 he had the univalence axiom, and the 2012–13 IAS special year produced the HoTT Book (\\cite[Voevodsky, 2006]{voevodsky2006hlambda}; \\cite[Voevodsky, 2010]{voevodsky2010equivalence}; \\cite[HoTT Book, 2013]{hottbook}).",
+      "section": "The Other Side of the Bridge: Types, Spaces, and Equality",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-185",
+      "quote": "A **type** is, at minimum, *a collection of things*, often just a set.",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-186",
+      "quote": "Sometimes there is an additional *rule for how to construct its inhabitants* (and how to tell them apart), but that rule is optional: `bool` is perfectly fine as the bare set $\\{\\texttt{True}, \\texttt{False}\\}$, while $\\mathbb{R}^d$ additionally comes with the linear-algebraic operations of addition and scaling.",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-187",
+      "quote": "The simplest types are familiar from every programming language:",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-188",
+      "quote": "* $\\texttt{int}$, the whole numbers: $\\{\\dots, -2, -1, 0, 1, 2, \\dots\\}$",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-189",
+      "quote": "* $\\texttt{bool}$, exactly two values: $\\{\\texttt{True}, \\texttt{False}\\}$",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-190",
+      "quote": "* $\\texttt{string}$, finite sequences of characters",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-191",
+      "quote": "* $\\texttt{float}$, the IEEE-754 reals (not the real $\\mathbb{R}$ of pure maths; this distinction matters)",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-192",
+      "quote": "* $\\mathbb{R}^d$, the $d$-dimensional vectors, i.e. functions $\\{1,\\dots,d\\} \\to \\mathbb{R}$",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-193",
+      "quote": "But types need not be “primitive”, they can be *anything* with a rule for membership.",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-194",
+      "quote": "Trees, graphs, proofs, game states, regular expressions, probability distributions, even *other types*.",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-195",
+      "quote": "Types can also be *built* from other types (the type constructors below).",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-196",
+      "quote": "This is the same freedom you have in any typed programming language, just made explicit.",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-197",
+      "quote": "A **term** is something that *has* a type.",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-198",
+      "quote": "We write $x : A$ for “$x$ is a term of type $A$”.",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-199",
+      "quote": "So $42 : \\texttt{int}$, $\\texttt{True} : \\texttt{bool}$, and a token embedding $\\vec{e}_{4181} : \\mathbb{R}^{768}$.",
+      "section": "What a type actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-200",
+      "quote": "The key idea: **functions are also typed**.",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-201",
+      "quote": "If $A$ and $B$ are types, the type $A \\to B$ (“$A$ arrow $B$”) is *the type of functions from $A$ to $B$*.",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-202",
+      "quote": "A term $f : A \\to B$ is a rule that turns any $a : A$ into an $f(a) : B$ — precisely the classical definition of a **mapping** from a set into a set (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-203",
+      "quote": "345]{lang2005basicmath}).",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-204",
+      "quote": "The canonical example, and the simplest piece of every neural network, is the **is-even** test:",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-205",
+      "quote": "with the rule $\\texttt{isEven}(n) = \\texttt{True}$ iff $n \\equiv 0 \\pmod{2}$.",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-206",
+      "quote": "The type signature `int → bool` is doing real work: it is a *promise to the compiler* that no matter what `int` you pass in, you get back a `bool` and nothing else.",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-207",
+      "quote": "The compiler can now refuse to let you write `is_even(\"hello\")`, `\"hello\"` is not an `int`, so the function is simply not applicable.",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-208",
+      "quote": "Now translate this to the textbook:",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-209",
+      "quote": "* The **ReLU** activation: $\\text{ReLU} : \\mathbb{R} \\to \\mathbb{R}_{\\geq 0}$",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-210",
+      "quote": "* The **sigmoid** activation: $\\sigma : \\mathbb{R} \\to (0,1)$",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-211",
+      "quote": "* The **softmax** (see `math_ii.php`): $\\text{softmax} : \\mathbb{R}^K \\to \\Delta^{K-1}$, where $\\Delta^{K-1}$ is the probability simplex, *the type of probability distributions over $K$ outcomes*",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-212",
+      "quote": "* A **linear layer** with weight $W$ and bias $b$: $L_{W,b} : \\mathbb{R}^{d_\\text{in}} \\to \\mathbb{R}^{d_\\text{out}}$",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-213",
+      "quote": "* The **loss function** in this very chapter: $\\mathcal{L} : \\Theta \\to \\mathbb{R}_+$ (parameters to non-negative reals)",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-214",
+      "quote": "* A **token embedding lookup**: $E : \\texttt{int} \\to \\mathbb{R}^d$, exactly the same shape as `isEven`, just a different codomain",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-215",
+      "quote": "Once you see every function in ML as “$A \\to B$”, a lot of design choices stop looking arbitrary.",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-216",
+      "quote": "A *classifier head* is the composition of a feature extractor $\\mathbb{R}^{d_\\text{in}} \\to \\mathbb{R}^{d_\\text{hidden}}$ with a final layer $\\mathbb{R}^{d_\\text{hidden}} \\to \\Delta^{K-1}$.",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-217",
+      "quote": "A *diffusion model* (see the Diffusion chapter) is a function from $(\\text{image}, \\text{noise-level})$ to the denoised image, type $\\mathbb{R}^{H \\times W \\times 3} \\times [0,1] \\to \\mathbb{R}^{H \\times W \\times 3}$.",
+      "section": "Functions as types",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-218",
+      "quote": "You can build new types from old with **type constructors**:",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-219",
+      "quote": "* **Product** $A \\times B$: pairs $(a, b)$ with $a : A$ and $b : B$.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-220",
+      "quote": "An RGB image is $\\mathbb{R}^{H \\times W} \\times \\mathbb{R}^{H \\times W} \\times \\mathbb{R}^{H \\times W}$.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-221",
+      "quote": "The name *product* is literal: the type $A \\times B$ has exactly $|A| \\cdot |B|$ inhabitants, one pair for every combination of an $A$-thing and a $B$-thing.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-222",
+      "quote": "If $A = \\{\\texttt{A}, \\texttt{B}, \\texttt{C}\\}$ and $B = \\texttt{bool} = \\{\\texttt{true}, \\texttt{false}\\}$, then $A \\times B$ is the table",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-223",
+      "quote": "| | $\\texttt{true}$ | $\\texttt{false}$ |",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-224",
+      "quote": "| $\\texttt{A}$ | $(\\texttt{A}, \\texttt{true})$ | $(\\texttt{A}, \\texttt{false})$ |",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-225",
+      "quote": "| $\\texttt{B}$ | $(\\texttt{B}, \\texttt{true})$ | $(\\texttt{B}, \\texttt{false})$ |",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-226",
+      "quote": "| $\\texttt{C}$ | $(\\texttt{C}, \\texttt{true})$ | $(\\texttt{C}, \\texttt{false})$ |",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-227",
+      "quote": ", six inhabitants, which is $|A| \\cdot |B| = 3 \\cdot 2$.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-228",
+      "quote": "The same rule extends to three or more factors: an RGB image $\\mathbb{R}^{H \\times W} \\times \\mathbb{R}^{H \\times W} \\times \\mathbb{R}^{H \\times W}$ has $|\\mathbb{R}|^{H \\cdot W \\cdot 3}$ inhabitants.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-229",
+      "quote": "The two **projection maps** go the other way:",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-230",
+      "quote": "So $\\pi_1(\\texttt{A}, \\texttt{true}) = \\texttt{A}$ and $\\pi_2(\\texttt{B}, \\texttt{false}) = \\texttt{false}$.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-231",
+      "quote": "Picking a column of the table is applying $\\pi_2$; picking a row is applying $\\pi_1$.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-232",
+      "quote": "Together they let you recover each factor from the pair, and the universal property of the product says this is the *only* way to do it cleanly.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-233",
+      "quote": "* **Sum** $A + B$: tagged unions, *either* an $A$ *or* a $B$, with a tag telling you which.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-234",
+      "quote": "The result of a parser is a Sum: `ParseSuccess(string) + ParseFailure(error)`.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-235",
+      "quote": "Cardinality: $|A| + |B|$.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-236",
+      "quote": "* **Function space** $A \\to B$: already covered.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-237",
+      "quote": "Cardinality: $|B|^{|A|}$, for every one of the $|A|$ inputs you pick one of the $|B|$ outputs, and there are $|B|^{|A|}$ such functions.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-238",
+      "quote": "A function `int → bool` has $2^{|\\mathbb{Z}|}$ inhabitants (one for each subset of the integers), which is a *lot*.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-239",
+      "quote": "* **List** $\\texttt{List}(A)$: finite sequences of $A$'s.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-240",
+      "quote": "A batch of token sequences is $\\texttt{List}(\\mathbb{R}^{L \\times d})$.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-241",
+      "quote": "* **Dependent types** $x : A \\vdash B(x)$: the type $B$ *depends on the value* $x$.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-242",
+      "quote": "“A vector of length $n$” is a dependent type, the length is part of the type, so you cannot pass a length-3 vector to a function expecting length-4.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-243",
+      "quote": "This is the level at which proof assistants really earn their keep.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-244",
+      "quote": "These four constructors are essentially all you need.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-245",
+      "quote": "Most type theories add a few more (e.g. $\\Sigma$-types for dependent pairs, identity types for equality, see below) but they are all variants on the same four ideas.",
+      "section": "Type constructors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-246",
+      "quote": "Every multi-argument function can be rewritten as a chain of one-argument functions.",
+      "section": "Currying: one-argument at a time",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-247",
+      "quote": "This trick is named after Haskell Curry and is the default in most typed languages:",
+      "section": "Currying: one-argument at a time",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-248",
+      "quote": "with the convention that $\\to$ **associates to the right**, so $A \\to B \\to C$ means $A \\to (B \\to C)$.",
+      "section": "Currying: one-argument at a time",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-249",
+      "quote": "Concretely, a function $f : \\texttt{int} \\to \\texttt{bool} \\to \\texttt{string}$ is “give me an `int`, and I'll hand you back a function from `bool` to `string`.“ You call it as `f(42)`, get back a function, and call *that* with `true` or `false`.",
+      "section": "Currying: one-argument at a time",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-250",
+      "quote": "This is not just a notational trick.",
+      "section": "Currying: one-argument at a time",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-251",
+      "quote": "It is what makes **partial application** and **point-free style** possible, and it is why every ML function with several hyperparameters can be written as a pipeline of small composable pieces.",
+      "section": "Currying: one-argument at a time",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-252",
+      "quote": "A transformer block $T$ is $T : \\mathbb{R}^{L \\times d} \\to \\mathbb{R}^{L \\times d}$; multi-layer perceptrons are just nested $\\to$'s of vector spaces.",
+      "section": "Currying: one-argument at a time",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-253",
+      "quote": "**Homotopy Type Theory (HoTT)**, as set out in the \\citetitle{hottbook} (\\citeyear{hottbook}), pushes this further.",
+      "section": "Currying: one-argument at a time",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-254",
+      "quote": "The big idea: *types are spaces, terms are points, and proofs of equality are paths in the space between them*.",
+      "section": "Currying: one-argument at a time",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-255",
+      "quote": "Two things are equal not just when a binary “=” returns true, but when there exists a *continuous deformation* (a homotopy) from one to the other.",
+      "section": "Currying: one-argument at a time",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-256",
+      "quote": "This matters because the **univalence axiom** says: $(A \\simeq B) \\simeq (A = B)$, “equality of types *is* equivalence of types.” Two mathematical structures are identical precisely when you can translate between them without losing **structural** information.",
+      "section": "Currying: one-argument at a time",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-257",
+      "quote": "This is much richer than the binary `==` in a programming language: it accommodates symmetries, isomorphisms, and equivalences as first-class objects.",
+      "section": "Currying: one-argument at a time",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-258",
+      "quote": "Once equality is a *path* rather than a boolean, a new question opens up: **when are two paths the same?** The answer is: another path, a *homotopy* between the two paths, i.e. a continuous deformation of one path into the other.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-259",
+      "quote": "This is a *2-path*, a path between paths.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-260",
+      "quote": "And then: **when are two 2-paths the same?** Answer: a *3-path*.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-261",
+      "quote": "At every level there are paths-between-paths, and the question of whether *those* are equal pushes you up one more level.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-262",
+      "quote": "HoTT takes the full infinite tower seriously: an equality is not a single bit, it is an entire **∞-groupoid**.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-263",
+      "quote": "A **groupoid** is the same thing as a **group**, except that a group is the special case with a single object, while a groupoid can have many objects.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-264",
+      "quote": "Concretely: a groupoid is a collection of objects together with *invertible* maps between them (called **morphisms**), where the morphisms compose and every morphism has an inverse.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-265",
+      "quote": "The “group” part means morphisms are reversible symmetries; the “-oid” part (“resembling”) means there can be more than one object, it is a *group-like* structure, not a single group.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-266",
+      "quote": "A permutation group is a groupoid with one object.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-267",
+      "quote": "A category of *isomorphisms* is a groupoid.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-268",
+      "quote": "The set of symmetries of any mathematical object forms a groupoid.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-269",
+      "quote": "An **∞-groupoid** is a groupoid where, in addition to objects and invertible morphisms between them, you have:",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-270",
+      "quote": "* invertible 2-morphisms between parallel 1-morphisms (“two symmetries are homotopic”),",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-271",
+      "quote": "* invertible 3-morphisms between parallel 2-morphisms,",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-272",
+      "quote": "* at every finite level, and the tower never stops.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-273",
+      "quote": "This is exactly what a *space* is, in the sense topologists mean: points, paths between points, homotopies between paths, homotopies-between-homotopies, all the way up.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-274",
+      "quote": "The slogan of HoTT is therefore:",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-275",
+      "quote": "The payoff for AI: when a Transformer learns “cat = small dog” and someone asks whether *that* equality is the same as the equality “feline = canine”, the question is no longer a yes/no, it is a path between paths, which itself has structure.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-276",
+      "quote": "Two learned representations are “equal” only up to some continuous deformation, and HoTT gives you the language to *talk about* that deformation as a first-class object, not as an afterthought.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-277",
+      "quote": "**A free bridge to the rest of this book.** Once you read types as spaces and proofs as paths, a surprising amount of this textbook *clicks*:",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-278",
+      "quote": "- An **embedding space** is a type $\\mathbb{R}^d$ whose points are vectors.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-279",
+      "quote": "Cosine similarity becomes a path-flavored statement about angle.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-280",
+      "quote": "- An **isomorphism between neural-network layers** (same function, different parameterization) is exactly the kind of “$A = B$” HoTT treats as “$A \\simeq B$”.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-281",
+      "quote": "- A **theorem prover checking an LLM's proof** (see the Symbolic AI chapter and the Reasoning chapter ) is a function between two types, and HoTT makes the *equality* of the prover's output with the formal statement into something you can *transport structure along*, not just check with a boolean.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-282",
+      "quote": "- **Constitutional AI** and reward modeling become functions whose codomain is *preferences*, a type with structure (transitivity, asymmetry) that HoTT handles cleanly.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-283",
+      "quote": "You do not need HoTT to read this book.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-284",
+      "quote": "But once you have the picture in your head, *types are spaces, proofs are paths, equality is equivalence*, you will start spotting it everywhere in deep learning.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-285",
+      "quote": "And you will have a name for the structure the field is moving toward: **a sheaf of types, glued by proofs, where equality is a path you can walk**.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-286",
+      "quote": "**Hands-on, right below this box:** an interactive lab lets you deform paths into one another, watch equality become a path, and try out each of the AI applications \\citeauthor{youvan2024} proposes — sliders instead of formulas.",
+      "section": "Equality all the way up: paths, homotopies, ∞-groupoids",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-287",
+      "quote": "The math in the box above is precisely the machinery \\citeauthor{youvan2024} (\\citeyear{youvan2024}) argues for as a *foundation for how AI systems are built*.",
+      "section": "An interactive tour: HoTT as a foundation for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-288",
+      "quote": "This is not a benchmark or a new network; it is a position paper.",
+      "section": "An interactive tour: HoTT as a foundation for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-289",
+      "quote": "Its claim: if a model is written in a language that already understands **types**, **paths**, and **higher equality**, then reliability, verifiability, and explainability stop being bolted on afterwards and become built-in properties of the design.",
+      "section": "An interactive tour: HoTT as a foundation for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-290",
+      "quote": "The tour below follows the paper's own arc — two prerequisites, the core idea, then the application areas it targets.",
+      "section": "An interactive tour: HoTT as a foundation for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-291",
+      "quote": "Everything is interactive; drag the sliders and click around.",
+      "section": "An interactive tour: HoTT as a foundation for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-292",
+      "quote": "Modern AI is startlingly capable — and at the same time **opaque**, **brittle**, and **hard to guarantee**.",
+      "section": "Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-293",
+      "quote": "Nobody can say why the model called the picture a cat, an imperceptible pixel-noise flips a panda into a gibbon, and \"passed ten thousand tests\" says nothing about the infinite inputs it has not seen.",
+      "section": "Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-294",
+      "quote": "Click through the three problems to see how each one feels:",
+      "section": "Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-295",
+      "quote": "A **type** is a set with discipline: every object has exactly one type, and the language checks — *for you, before anything runs* — that you never feed a function the wrong kind of input.",
+      "section": "Prerequisite: what a type is, and programs-as-proofs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-296",
+      "quote": "The left-hand widget lets you pick a value and a function and watch that check pass or fail.",
+      "section": "Prerequisite: what a type is, and programs-as-proofs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-297",
+      "quote": "The right-hand one is the deeper trick (the **Curry–Howard correspondence**): in type theory a logical *statement* is itself a type, and a *proof* of it is a *program* of that type.",
+      "section": "Prerequisite: what a type is, and programs-as-proofs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-298",
+      "quote": "That is why type theory is the natural home for verifying AI at all.",
+      "section": "Prerequisite: what a type is, and programs-as-proofs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-299",
+      "quote": "The slogan is easiest to believe once it is on screen.",
+      "section": "A type is a space",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-300",
+      "quote": "Pick a type below — a single point, the interval, a two-element type, the circle $S^1$, the sphere $S^2$, or the torus $T^2$.",
+      "section": "A type is a space",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-301",
+      "quote": "The drawing is not decoration: the **shape** of the type decides which equalities it can have.",
+      "section": "A type is a space",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-302",
+      "quote": "A point and an interval can be contracted to nothing; two separate points have no path between them at all; the circle has a loop that no continuous deformation can remove.",
+      "section": "A type is a space",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-303",
+      "quote": "This is the geometric reading of type theory developed in the \\citetitle{hottbook} (\\citeyear{hottbook}).",
+      "section": "A type is a space",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-304",
+      "quote": "Recall the core slogan: **types are spaces, terms are points, equalities are paths.** But *what* is a path, really?",
+      "section": "Prerequisite: homotopy — when are two paths \"the same\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-305",
+      "quote": "Two routes from $a$ to $b$ count as \"the same\" when you can **continuously deform** one into the other without lifting the endpoints.",
+      "section": "Prerequisite: homotopy — when are two paths \"the same\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-306",
+      "quote": "The slider below deforms a blue start-path into a purple target-path; the white curve in between is the homotopy at that instant.",
+      "section": "Prerequisite: homotopy — when are two paths \"the same\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-307",
+      "quote": "And here is the twist that makes the subject deep: in a space with a **hole**, some paths simply cannot be deformed into each other — the hole is an obstacle the deformation would have to pass through.",
+      "section": "Prerequisite: homotopy — when are two paths \"the same\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-308",
+      "quote": "Now the marriage of the two prerequisites.",
+      "section": "Core idea: equality is a path",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-309",
+      "quote": "Instead of treating $a = b$ as a bare true/false, HoTT says: **\"$a = b$\" is itself a type** — the type of all the paths connecting $a$ to $b$.",
+      "section": "Core idea: equality is a path",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-310",
+      "quote": "Two objects can be equal in *several different ways*, one for each path.",
+      "section": "Core idea: equality is a path",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-311",
+      "quote": "That is the whole point, and it is what the box above only hinted at: equality is not a bit, it is a structure you can manipulate.",
+      "section": "Core idea: equality is a path",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-312",
+      "quote": "If a proof of $a = b$ is a path, then two different proofs are two different paths with the same endpoints.",
+      "section": "One equality, many proofs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-313",
+      "quote": "Drag $a$ or $b$, bend the path, run it backwards, or show $\\mathrm{refl}$.",
+      "section": "One equality, many proofs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-314",
+      "quote": "The endpoints stay fixed while the path changes continuously — that deformation is itself a homotopy.",
+      "section": "One equality, many proofs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-315",
+      "quote": "The point of the readout is the point of the whole subject: the *object* $p : a \\equiv b$ carries structure that a boolean could never carry.",
+      "section": "One equality, many proofs",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-316",
+      "quote": "If paths are objects, can two paths be *equal*?",
+      "section": "Core idea: paths between paths, all the way up",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-317",
+      "quote": "Yes — by a **path between the two paths** (a 2-path, or homotopy).",
+      "section": "Core idea: paths between paths, all the way up",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-318",
+      "quote": "And two 2-paths can be equal by a 3-path, and so on, without end.",
+      "section": "Core idea: paths between paths, all the way up",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-319",
+      "quote": "The result is an **∞-groupoid**: points, paths, paths-between-paths, … at every level.",
+      "section": "Core idea: paths between paths, all the way up",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-320",
+      "quote": "Rotate the scene below and strip the tower down dimension by dimension — a single type can carry an entire landscape of such relationships.",
+      "section": "Core idea: paths between paths, all the way up",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-321",
+      "quote": "Two paths $p$ and $q$ between the same endpoints can themselves be equal.",
+      "section": "Equality has levels",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-322",
+      "quote": "A **2-path** $\\alpha : p \\equiv q$ is a surface between them: every horizontal slice of that surface is an intermediate path, and the surface is the proof that the proofs agree.",
+      "section": "Equality has levels",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-323",
+      "quote": "This is the first step of the infinite tower — and it is where equality stops looking like a bit and starts looking like geometry.",
+      "section": "Equality has levels",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-324",
+      "quote": "Fix the base point of $S^1$.",
+      "section": "The circle counts its loops",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-325",
+      "quote": "A loop that winds around $n$ times cannot be deformed into one that winds around $m \\neq n$ times.",
+      "section": "The circle counts its loops",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-326",
+      "quote": "The **winding number** is an integer, loops compose by addition, and running a loop backwards negates it.",
+      "section": "The circle counts its loops",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-327",
+      "quote": "That is the fundamental group: $\\pi_1(S^1) \\cong \\mathbb{Z}$ (\\cite[HoTT Book, Ch.",
+      "section": "The circle counts its loops",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-328",
+      "quote": "Choose two winding numbers, compose them, and watch the lift to the number line count the total.",
+      "section": "The circle counts its loops",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-329",
+      "quote": "A higher inductive type is allowed to declare **paths** as constructors, not only points.",
+      "section": "Types built from paths",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-330",
+      "quote": "The circle is the smallest example: one point, and one loop from that point to itself.",
+      "section": "Types built from paths",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-331",
+      "quote": "Equivalently, take the interval and declare its two endpoints equal.",
+      "section": "Types built from paths",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-332",
+      "quote": "The slider performs that quotient in front of you: at the end, $0$ and $1$ are the same point and the interval has become a loop (\\cite[HoTT Book, Ch.",
+      "section": "Types built from paths",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-333",
+      "quote": "Two worlds can have exactly the same structure and still be written down differently: a switch with states off/on, and a parity type with states even/odd.",
+      "section": "What is isomorphic is identical",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-334",
+      "quote": "They are plainly equivalent.",
+      "section": "What is isomorphic is identical",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-335",
+      "quote": "**Univalence** upgrades that equivalence to an identity — a path between the types — and then any structure proved on one side transports to the other.",
+      "section": "What is isomorphic is identical",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-336",
+      "quote": "What univalence does *not* do is identify types that are not equivalent: it is a sharp criterion, not a blender.",
+      "section": "What is isomorphic is identical",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-337",
+      "quote": "A type can depend on a point: over every point of a base space sits a fibre, and **transport** carries an element along a path in the base.",
+      "section": "A loop can change what you carry",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-338",
+      "quote": "If the fibres are little arrows glued with a half twist, the total space is a **Möbius strip**.",
+      "section": "A loop can change what you carry",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-339",
+      "quote": "Go once around the base circle and the fibre returns *reflected*.",
+      "section": "A loop can change what you carry",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-340",
+      "quote": "This is monodromy: the path itself matters, not only its endpoints.",
+      "section": "A loop can change what you carry",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-341",
+      "quote": "It is the reason dependent types are more expressive than a bare family of sets.",
+      "section": "A loop can change what you carry",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-342",
+      "quote": "Instead of testing a model on ten thousand cases and hoping, **prove** it behaves correctly under *all* conditions.",
+      "section": "Application: formal verification of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-343",
+      "quote": "This is the dream of formal verification, and HoTT's precise notion of \"equal\" (equal up to a small perturbation, equal regardless of gender, …) is what makes a mechanically checkable proof possible.",
+      "section": "Application: formal verification of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-344",
+      "quote": "Pick a scenario from the paper:",
+      "section": "Application: formal verification of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-345",
+      "quote": "In the real world a model is never *certain*.",
+      "section": "Application: typing uncertainty",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-346",
+      "quote": "HoTT offers a clean way to **type uncertainty itself** — even uncertainty *about* uncertainty, the second-order quantity that Bayesian networks struggle to express naturally.",
+      "section": "Application: typing uncertainty",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-347",
+      "quote": "The first widget combines a symptom and a test into a distribution over diagnoses; the second shows that \"how sure am I about my own certainty\" is a 2-path between distributions.",
+      "section": "Application: typing uncertainty",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-348",
+      "quote": "The web is full of the same thing described in different ways.",
+      "section": "Application: knowledge representation & the Semantic Web",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-349",
+      "quote": "HoTT's answer: *different descriptions, but there exists an **identity path** between them.* Raise \"data sources\" in the graph below to make duplicates appear under different names, then switch on the HoTT equivalences to watch identity paths link them together without destroying the structure.",
+      "section": "Application: knowledge representation & the Semantic Web",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-350",
+      "quote": "A deep model makes a decision — but why?",
+      "section": "Application: explainable AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-351",
+      "quote": "HoTT offers a structure for making the **path of the decision** trackable: click an input on the left and trace the path it takes through the network.",
+      "section": "Application: explainable AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-352",
+      "quote": "Inputs that land in the same class share similar paths, and HoTT makes that path-equivalence a first-class, checkable fact.",
+      "section": "Application: explainable AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-353",
+      "quote": "**Yes — HoTT is not a trick, it is a foundation.** When AI systems are built from the ground up in a language that knows types, paths, and higher equality, then **verification, explainability, and expressiveness** become *built-in properties*, not after-the-fact repairs.",
+      "section": "Youvan's answer to his own question",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-354",
+      "quote": "Concretely, \\citeauthor{youvan2024} proposes:",
+      "section": "Youvan's answer to his own question",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-355",
+      "quote": "* AI **programming languages** with a HoTT type system",
+      "section": "Youvan's answer to his own question",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-356",
+      "quote": "* **formal proofs** of fairness, privacy, and robustness",
+      "section": "Youvan's answer to his own question",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-357",
+      "quote": "* types for **higher-order uncertainty**",
+      "section": "Youvan's answer to his own question",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-358",
+      "quote": "* **Semantic-Web** integration via identity paths",
+      "section": "Youvan's answer to his own question",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-359",
+      "quote": "* HoTT as a **bridging language** toward quantum AI",
+      "section": "Youvan's answer to his own question",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-360",
+      "quote": "* **explainability** through structured decision paths",
+      "section": "Youvan's answer to his own question",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-361",
+      "quote": "Be clear, though, about what the paper is and is not.",
+      "section": "Youvan's answer to his own question",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-362",
+      "quote": "It is a **position paper / vision**: it names the direction and the tools, but it ships **no experiments, no benchmark numbers, no code, and no worked proof constructions**.",
+      "section": "Youvan's answer to his own question",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-363",
+      "quote": "The hard work — the languages, libraries, and compilers — is exactly what it is *asking the community* to build, and it is honest about the cost: HoTT is mathematically demanding, existing ML frameworks do not fit it out of the box, and the extra structure carries real computational overhead.",
+      "section": "Youvan's answer to his own question",
+      "kind": "statement"
+    },
+    {
+      "id": "math_iii-stmt-364",
+      "quote": "The payoff, if the interdisciplinary effort (mathematics + computer science + AI) pays off, is a generation of AI that is robust, verifiable, and genuinely understandable.",
+      "section": "Youvan's answer to his own question",
+      "kind": "statement"
+    }
   ]
 }

@@ -490,5 +490,985 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "math_ii-stmt-1",
+      "quote": "Modern AI is, at its core, applied linear algebra.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-2",
+      "quote": "Every image, every word, every token lives in a high-dimensional **vector space**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-3",
+      "quote": "This chapter introduces the mathematical objects that make neural networks possible: vectors, matrices, tensors, and the operations that combine them.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-4",
+      "quote": "If you complete this chapter, the rest of the textbook, embeddings, attention, gradients, activations, will read as natural applications of these primitives.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-5",
+      "quote": "In 1D, you only have one “degree of freedom.” You can go forward or backward.",
+      "section": "1D: The Line",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-6",
+      "quote": "* **Concept:** A single number describes your entire universe.",
+      "section": "1D: The Line",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-7",
+      "quote": "By adding a second number, we unlock an infinite flat surface.",
+      "section": "2D: The Plane",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-8",
+      "quote": "\\citealternativetitle{rgb_color_cube}: every color in this RGB color cube is a single point inside it, located by its Red, Green, and Blue coordinates.",
+      "section": "3D: The Color Cube",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-9",
+      "quote": "We cannot “see” 4D, but we can **describe** it.",
+      "section": "4D and Beyond: The “Feature” Space",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-10",
+      "quote": "In AI, dimensions are just “features.” Imagine we are describing a “Fruit.” We can use a 4D vector to describe:",
+      "section": "4D and Beyond: The “Feature” Space",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-11",
+      "quote": "Every fruit is now a point in a 4D “Fruit Space.”",
+      "section": "4D and Beyond: The “Feature” Space",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-12",
+      "quote": "The geometric picture above is intuitive, but it hides a question: when we add a vector to a vector, or stretch a vector by a number, *what rules must those operations obey?* A **vector space** is the precise answer.",
+      "section": "The formal definition (the important one)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-13",
+      "quote": "Mathematicians formalize this as follows.",
+      "section": "The formal definition (the important one)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-14",
+      "quote": "Pick a *base field* $k$ — a number system where addition, subtraction, multiplication, and division all behave as you would expect.",
+      "section": "The formal definition (the important one)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-15",
+      "quote": "In this course, $k$ will almost always be the **real numbers** $\\mathbb{R}$; in cryptography or some physics contexts it might be a finite field or the complex numbers.",
+      "section": "The formal definition (the important one)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-16",
+      "quote": "A *vector space over $k$* is a set $V$ together with two operations — vector addition $V \\times V \\to V$ and scalar multiplication $k \\times V \\to V$ — that satisfy eight axioms (closure, associativity, identity, inverses, distributivity, compatibility of scalar multiplication), as \\cite[Axler lists them in Linear Algebra Done Right (Ch.",
+      "section": "The formal definition (the important one)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-17",
+      "quote": "12)]{axler2024linearalgebra}.",
+      "section": "The formal definition (the important one)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-18",
+      "quote": "The elements of $V$ are called **vectors**; the elements of $k$ are called **scalars**.",
+      "section": "The formal definition (the important one)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-19",
+      "quote": "A **scalar** is a single number from the base field — in this course, almost always a real number.",
+      "section": "Scalars",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-20",
+      "quote": "You use scalars every time you stretch a vector or measure a single quantity.",
+      "section": "Scalars",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-21",
+      "quote": "A note on terminology: in machine learning, you will often see \"scalar\" used more loosely to mean \"a single number of any kind\" — for example a pixel brightness in $\\{0, 1, \\ldots, 255\\}$.",
+      "section": "Scalars",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-22",
+      "quote": "That is fine as a casual usage, but strictly speaking that *set* is not a field (no negatives, no quotients), so it cannot be the base field $k$ of a vector space.",
+      "section": "Scalars",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-23",
+      "quote": "The values are *discrete integers* (a subset of $\\mathbb{Z}$), not real numbers in the strict mathematical sense; storing them as floats or treating them as elements of $\\mathbb{R}$ is a computational convention that lets you run arithmetic on them, not a statement about what kind of object they are.",
+      "section": "Scalars",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-24",
+      "quote": "The two meanings rarely cause problems in practice; just be aware they exist.",
+      "section": "Scalars",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-25",
+      "quote": "A **vector** is an element of a vector space.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-26",
+      "quote": "The geometric picture is an *arrow* with a direction and a length: \"three steps to the right, four steps up.\" The algebraic picture is a single thing you can add to other vectors and stretch with scalars.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-27",
+      "quote": "If you pick a basis, you can write a vector as a list of coordinates.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-28",
+      "quote": "In $\\mathbb{R}^3$ with the standard basis (\\cite[Axler, Linear Algebra Done Right, §2B, p.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-29",
+      "quote": "39]{axler2024linearalgebra}), the arrow \"3 right, 4 up, 2 forward\" becomes the column",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-30",
+      "quote": "Two important properties:",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-31",
+      "quote": "* A vector is *not glued to one spot*.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-32",
+      "quote": "The arrow \"3 right, 4 up\" is the same arrow whether you draw it starting at the origin or at $(1, 1)$.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-33",
+      "quote": "This is what it means for vectors to be *free* (not anchored to a point).",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-34",
+      "quote": "* You can stretch a vector by a scalar: $2 \\cdot (3, 4, 2) = (6, 8, 4)$.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-35",
+      "quote": "You can add vectors component-wise: $(1, 2) + (3, 4) = (4, 6)$.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-36",
+      "quote": "To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, one for Blue.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-37",
+      "quote": "This 3-tuple is a vector in $\\mathbb{R}^3$:",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-38",
+      "quote": "Two independent births stand behind that picture.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-39",
+      "quote": "In 1843 William Rowan Hamilton found the rule $i^2=j^2=k^2=ijk=-1$ and reported it to the Royal Irish Academy that November; the four-part objects he called *quaternions* multiplied non-commutatively, so $ab \\neq ba$ (\\cite[Hamilton, 1844]{hamilton1844quaternions}).",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-40",
+      "quote": "A year later Hermann Grassmann's *Ausdehnungslehre* built a coordinate-free algebra of $n$-dimensional extensions, complete with subspaces, bases and exterior products (\\cite[Grassmann, 1844]{grassmann1844ausdehnungslehre}).",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-41",
+      "quote": "Hamilton's vectors lived inside a 4-D algebra; Grassmann's lived in a space of any dimension.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-42",
+      "quote": "Modern linear algebra inherits from both.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-43",
+      "quote": "A vector is *not glued to one spot*.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-44",
+      "quote": "The arrow \"3 right, 4 up\" is the same arrow whether you draw it starting at the origin or somewhere else.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-45",
+      "quote": "Vectors can have any number of dimensions.",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-46",
+      "quote": "Two essential operations on vectors:",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-47",
+      "quote": "**Scalar multiplication** multiplies each coordinate:",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-48",
+      "quote": "Vectors can also be added:",
+      "section": "Vectors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-49",
+      "quote": "A **Matrix** is a grid of numbers (like a spreadsheet).",
+      "section": "The Matrix (rank 2)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-50",
+      "quote": "A **Black & White photo** is just a Matrix.",
+      "section": "The Matrix (rank 2)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-51",
+      "quote": "Each spot in the grid tells the computer how bright that specific pixel is, when we say $0$ means “black”, $255$ means white and everything inbetween are different shades of gray.",
+      "section": "The Matrix (rank 2)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-52",
+      "quote": "Historically, a matrix began as a *bookkeeping device*: Sylvester's oblong array existed so that one could pick square sub-arrays and form determinants from them (\\cite[Sylvester, 1850]{sylvester1850matrix}).",
+      "section": "The Matrix (rank 2)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-53",
+      "quote": "Cayley's 1858 memoir changed its status.",
+      "section": "The Matrix (rank 2)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-54",
+      "quote": "He defined addition, multiplication and inversion of matrices, checked that a $2\\times2$ matrix satisfies its own characteristic equation, and introduced the \"transposed matrix\" (\\cite[Cayley, 1858]{cayleymemoirmatrices}).",
+      "section": "The Matrix (rank 2)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-55",
+      "quote": "A grid of numbers became an object with an algebra — the step that lets a neural network's weight matrix be multiplied, inverted and differentiated.",
+      "section": "The Matrix (rank 2)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-56",
+      "quote": "You have seen scalars, vectors, and matrices.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-57",
+      "quote": "You can stack them in a grid of grids to get more structure.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-58",
+      "quote": "Python and PyTorch call these multidimensional arrays *tensors* — that is the meaning of the word in this course:",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-59",
+      "quote": "A *tensor* is a rectangular array of numbers with a fixed number of axes (also called *dimensions* or *modes*).",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-60",
+      "quote": "A scalar is a 0-axis tensor, a vector is a 1-axis tensor, a matrix is a 2-axis tensor, and so on.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-61",
+      "quote": "Throughout this course, \"tensor\" means \"multidimensional array\" (the ML sense).",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-62",
+      "quote": "The form a tensor has is called a *shape*.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-63",
+      "quote": "The shape defines how many rows and columns a tensor has, and how many nested tensors it has.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-64",
+      "quote": "For example, an image with $ 32 \\cdot 32 $ pixels and 3 channels (one for red, green and blue each) has a shape of $ \\left[ 32, 32, 3 \\right] $.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-65",
+      "quote": "* **The Grid:** The large outer brackets $\\begin{pmatrix} \\dots \\end{pmatrix}$ represent the **Shape** (Rows and Columns).",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-66",
+      "quote": "* **The Depth:** Each small inner bracket $\\begin{pmatrix} r \\\\ g \\\\ b \\end{pmatrix}$ is the **Feature Vector** for a single pixel.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-67",
+      "quote": "* **The Coordinates:** The numbers like $_{1,2}$ mean: “Row 1, Column 2”.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-68",
+      "quote": "To make colors, we use **three numbers** for every single pixel: one for **Red**, one for **Green**, and one for **Blue**.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-69",
+      "quote": "We can think of a pixel $P$ as a stack of three values:",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-70",
+      "quote": "By mixing these three primary lights at different brightness levels (0 to 255), you can create a vast range of colors — over 16 million of them!",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-71",
+      "quote": "You can then use full images as tensors, ie you can write an image into a variable, and pass it to functions, and get a vector out of it again:",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-72",
+      "quote": "When we cannot write the function by hand, we learn it instead and call the result a **Model**.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-73",
+      "quote": "A model approximates the true function and stands in for it.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-74",
+      "quote": "With other methods of making numbers from data (like Embeddings to create numbers from texts, as ChatGPT does, which we will discuss later), we can create models that do many things.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-75",
+      "quote": "For example, we could create a function that maps $\\text{Text} \\rightarrow \\text{Music}$ or $\\text{Image} \\rightarrow \\text{Text}$.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-76",
+      "quote": "All models are wrong, but some are useful.",
+      "section": "Arrays, vectors, matrices, and the word \"tensor\"",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-77",
+      "quote": "So far a tensor was just *data* — numbers arranged in a shape.",
+      "section": "Doing arithmetic with tensors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-78",
+      "quote": "But you can also *compute* with it, and two operations power almost everything that follows.",
+      "section": "Doing arithmetic with tensors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-79",
+      "quote": "**Element-wise.** Combine the matching entries of two tensors, one by one.",
+      "section": "Doing arithmetic with tensors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-80",
+      "quote": "The tensors do not even need the same shape: shapes are lined up from the right, an axis of length $1$ stretches to match, and a missing leading axis counts as $1$.",
+      "section": "Doing arithmetic with tensors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-81",
+      "quote": "This rule is called **broadcasting** \\cite[Broadcasting, NumPy]{numpy_broadcasting} — and it quietly explains the $\\mathbf{x}+b$ of every affine layer.",
+      "section": "Doing arithmetic with tensors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-82",
+      "quote": "**Contraction.** Multiply entries along a shared axis and add them up.",
+      "section": "Doing arithmetic with tensors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-83",
+      "quote": "The matrix product is exactly one contraction, $M_{ik}=\\sum_{j} \\underbrace{C_{ij}}_{\\text{row of C}}\\,\\underbrace{D_{jk}}_{\\text{column of D}}$, where the index $j$ that appears twice is summed over and then hidden — the *summation convention* Einstein introduced in 1916 (\\cite[Einstein, 1916]{einstein1916annalen}).",
+      "section": "Doing arithmetic with tensors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-84",
+      "quote": "Contraction is the single most important operation in both linear algebra and deep learning.",
+      "section": "Doing arithmetic with tensors",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-85",
+      "quote": "Each word is old, and each was coined to solve a concrete problem.",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-86",
+      "quote": "- **Matrix** — from Latin *mātrix*, \"womb or mold,\" ultimately *māter*, \"mother\" \\cite[matrix, Etymonline]{etymonline_matrix}.",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-87",
+      "quote": "Sylvester's problem was bookkeeping: building the invariant theory of eliminants, he needed a way to line up a determinant's terms so he could juggle them, and in 1850 he called the result a *matrix* — \"a Matrix out of which we may form various systems of determinants\" (\\cite[Sylvester, 1850]{sylvester1850matrix}).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-88",
+      "quote": "Cayley's problem was different: he wanted linear transformations to behave like numbers you can multiply and compose, and his 1858 \"arithmetic of matrices\" gave them exactly that (\\cite[Cayley, 1858]{cayleymemoirmatrices}).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-89",
+      "quote": "- **Determinant** — the object the matrix was invented to organise is older than the matrix itself.",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-90",
+      "quote": "Seki Takakazu computed determinants in Japan by 1683, and Leibniz sent determinant-like \"resultants\" to l'Hôpital in a letter of 1693 (\\cite[MacTutor: Matrices and determinants]{mactutor_matrices_determinants}).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-91",
+      "quote": "Gabriel Cramer stated the general rule for solving $n$ linear equations with determinants in 1750, without proof (\\cite[Cramer, 1750]{cramer1750introduction}); Cauchy gave the word its modern sense only in 1812.",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-92",
+      "quote": "- **Vector** — from Latin *vĕctōr*, \"a carrier,\" from *vĕhĕre*, \"to carry\" \\cite[vector, Etymonline]{etymonline_vector}.",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-93",
+      "quote": "Hamilton wanted to do 3-D geometry the way complex numbers do 2-D: a \"calculus of direction\" that adds and rotates directed line segments in space without writing out every component (\\cite[Hamilton, 1854]{hamiltonextensionsquaternions}).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-94",
+      "quote": "- **Scalar** — from Latin *scalaris*, \"of a ladder\" (*scala*, a single step) \\cite[scalar, Etymonline]{etymonline_scalar}.",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-95",
+      "quote": "It is Hamilton's word for the direction-free *amount* of a quantity — the part you can add and multiply like an ordinary number, split off from the direction a *vector* carries (\\cite[Hamilton, 1854]{hamiltonextensionsquaternions}).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-96",
+      "quote": "- **A note on the dates** — Hamilton pairs *scalar* and *vector* explicitly in his 1846 *Philosophical Magazine* paper: \"the algebraically real part ...",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-97",
+      "quote": "the scalar\" and the imaginary part \"may be called the vector part\" (\\cite[Hamilton, 1846]{hamilton1846quaternions}).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-98",
+      "quote": "The word *vector* itself is older — astronomers spoke of a *radius vector* — but Hamilton gave it the algebraic sense used here (\\cite[Miller: vector]{miller_vector}).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-99",
+      "quote": "- **Tensor** — the English word dates to 1704, a Modern Latin agent noun from *tendere*, \"to stretch\" \\cite[tensor, Etymonline]{etymonline_tensor}.",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-100",
+      "quote": "Hamilton gave it a mathematical life, using it for the length of a quaternion.",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-101",
+      "quote": "The modern object had to solve Voigt's problem: a crystal's properties depend on the direction you probe them (stiffness, light, heat flow), and he needed one object to hold all those directional couplings — his \"Tensoren,\" 1898 (\\cite[Voigt, 1898]{voigt1898krystalle}).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-102",
+      "quote": "Ricci-Curbastro and Levi-Civita then built the calculus that makes tensors work, 1900, so that the laws of geometry could be written with no privileged coordinate system — the language Einstein inherited for relativity (\\cite[Ricci-Curbastro & Levi-Civita, 1900]{riccilevicivita1900}; \\cite[Einstein, 1916]{einstein1916annalen}).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-103",
+      "quote": "- **Summation convention** — Einstein's 1916 answer to the tedium of long sums in his new tensor equations: an index that appears twice is summed over and then vanishes from the page (\\cite[Einstein, 1916]{einstein1916annalen}).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-104",
+      "quote": "Two details sharpen that story.",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-105",
+      "quote": "Voigt's word is not a definition of the modern tensor: he writes that he will call \"die für sie charakteristischen physikalischen Grössen aber Tensoren\" — the physical quantities characteristic of anisotropic crystals, \"tensors\" (\\cite[Voigt, 1898]{voigt1898krystalle}).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-106",
+      "quote": "And Ricci-Curbastro and Levi-Civita's 1900 memoir does not use the noun at all; it speaks of *systèmes* with covariant and contravariant components (\\cite[Ricci-Curbastro & Levi-Civita, 1900]{riccilevicivita1900}; \\cite[Miller: tensor]{miller_tensor}).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-107",
+      "quote": "The noun travelled from Voigt's crystallography into Einstein's relativity; the calculus came from the Italians.",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-108",
+      "quote": "> **One idea, many names.** Determinants came first (Seki 1683, Leibniz 1693), matrices were named for bookkeeping (Sylvester 1850), matrix algebra arrived in 1858 (Cayley), and tensors travelled from quaternions (Hamilton 1846) through crystallography (Voigt 1898) into relativity (Einstein 1916).",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-109",
+      "quote": "The array is the modern container; the history is the set of problems it was built to hold.",
+      "section": "Where the words come from",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-110",
+      "quote": "In programming and math, we often want to take the result of one function and plug it directly into another.",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-111",
+      "quote": "This is called **composition**.",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-112",
+      "quote": "If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \\circ f)(x)$, which is just a shorthand for $g(f(x))$.",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-113",
+      "quote": "A deep network is built exactly this way: each layer is a function acting on the previous layer's output, so the whole network is a **chain of composed functions**, and — in Olah's framing — the role that *types* play in programming is played by *representations*: two layers can be composed only when the output representation of one matches the input the next expects (\\cite[Olah, 2015]{colah2015types}).",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-114",
+      "quote": "The word *function* is older than the notation.",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-115",
+      "quote": "Leibniz used it in a 1673 manuscript for a line that \"performs some function\" in a figure; Johann Bernoulli described it in 1694 as \"a quantity somehow formed from indeterminate and constant quantities\" (\\cite[MacTutor: The Function Concept]{macTutorFunctions}).",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-116",
+      "quote": "Euler introduced the symbol $f(x)$ in 1734 and made the function the central object of analysis in his 1748 *Introductio* (\\cite[Miller: Function Symbols]{miller_functionsymbols}).",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-117",
+      "quote": "Once a function has a name, composition is just substitution: write $g(\\;)$ and put $f(x)$ inside.",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-118",
+      "quote": "You can experiment with how two linear functions combine.",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-119",
+      "quote": "Adjust the sliders to see how the “inner” function $f$ and the “outer” function $g$ create a new, composed result.",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-120",
+      "quote": "We can visualize these relationships using a triangle diagram.",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-121",
+      "quote": "It shows that there are two ways to reach the same result: either you transform your data first and then apply a function, or you apply a modified version of that function to your raw data.",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-122",
+      "quote": "In Category Theory, $A, B, C$ are *objects* (which can be any mathematical objects, like sets) and $f$ and $g$ (the arrows) are so-called *morphisms* (which can be anything that connects mathematical objects to each other, like functions).",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-123",
+      "quote": "When both paths lead to the same result, we say the diagram **commutes**.",
+      "section": "Chaining Functions (Composition)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-124",
+      "quote": "The **Hadamard Product** ($\\odot$) was introduced by \\citeauthor{hadamardproduct} to study **singularities** in complex power series: the term-by-term product and the related **Hadamard multiplication theorem** belong to his 1899 *Acta Mathematica* paper \\citetitle{hadamard1899series}.",
+      "section": "The Hadamard Product ($\\odot$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-125",
+      "quote": "It is defined for vectors as $\\vec{a} \\odot \\vec{b} = (a_1 b_1, \\dots, a_n b_n)^T$ — the coefficients are multiplied term by term — which is exactly what lets one predict the analytic continuation and boundaries of functions derived from known ones.",
+      "section": "The Hadamard Product ($\\odot$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-126",
+      "quote": "The history is a little more tangled than the name suggests.",
+      "section": "The Hadamard Product ($\\odot$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-127",
+      "quote": "Hadamard's 1892 thesis was about Taylor series and analytic continuation; the term-by-term product and its multiplication theorem belong to his 1899 *Acta Mathematica* paper (\\cite[Hadamard, 1899]{hadamard1899series}).",
+      "section": "The Hadamard Product ($\\odot$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-128",
+      "quote": "For matrices the key result is Schur's: the Hadamard product of two positive-semidefinite matrices is positive-semidefinite, proved as Theorem VII of his 1911 paper (\\cite[Schur, 1911]{schur1911bilinear}).",
+      "section": "The Hadamard Product ($\\odot$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-129",
+      "quote": "The name \"Hadamard product\" for the matrix operation was popularised by Paul Halmos, who recalled that John von Neumann suggested it (\\cite[Hadamard product, Wikipedia]{hadamard_product_wiki}).",
+      "section": "The Hadamard Product ($\\odot$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-130",
+      "quote": "While standard matrix multiplication follows the “row-by-column” rule, the **Hadamard Product** (also known as the *element-wise product*) is much more straightforward.",
+      "section": "The Hadamard Product ($\\odot$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-131",
+      "quote": "It takes two matrices or vectors of the **same dimensions** and multiplies the elements that occupy the same position.",
+      "section": "The Hadamard Product ($\\odot$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-132",
+      "quote": "In the context of Deep Learning, the $\\odot$ symbol is ubiquitous.",
+      "section": "The Hadamard Product ($\\odot$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-133",
+      "quote": "It is used in **Layer Normalization** to scale normalized values by a learnable parameter $\\gamma$, and in **Gating Mechanisms** (like LSTMs or GRUs) to decide which information should pass through a “gate.”",
+      "section": "The Hadamard Product ($\\odot$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-134",
+      "quote": "For two vectors $\\vec{a}$ and $\\vec{b}$ of length $n$, the product is defined as:",
+      "section": "Mathematical Definition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-135",
+      "quote": "Adjust the values in vectors $\\vec{a}$ and $\\vec{b}$ to see how the resulting vector is calculated element-by-element.",
+      "section": "Mathematical Definition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-136",
+      "quote": "Transposing a matrix means flipping it over its main diagonal, turning rows into columns and columns into rows.",
+      "section": "Matrix Transposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-137",
+      "quote": "If $A$ is an $m \\times n$ matrix with elements $a_{ij}$, then the transpose $A^T$ is an $n \\times m$ matrix where $(A^T)_{ij} = A_{ji}$ (\\cite[Boyd & Vandenberghe, Applied Linear Algebra, §6.3.1, p.",
+      "section": "Matrix Transposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-138",
+      "quote": "115]{boyd2018appliedlinearalgebra}).",
+      "section": "Matrix Transposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-139",
+      "quote": "The idea of matrix transposition was introduced in 1858 by the British mathematician \\citeauthor{cayleymemoirmatrices} in his paper \\citetitle{cayleymemoirmatrices}.",
+      "section": "Matrix Transposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-140",
+      "quote": "It arose from the study of bilinear and quadratic forms, where swapping rows and columns was needed to express symmetry properties.",
+      "section": "Matrix Transposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-141",
+      "quote": "Cayley's own wording is precise: \"A matrix compounded with the transposed matrix gives rise to a symmetrical matrix\" (\\cite[Cayley, 1858]{cayleymemoirmatrices}).",
+      "section": "Matrix Transposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-142",
+      "quote": "The operation was thus born with matrix algebra, not added later: $A^T A$ and $AA^T$ are the symmetric Gram matrices of the rows and columns of $A$.",
+      "section": "Matrix Transposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-143",
+      "quote": "Cayley wrote the operation out in words; the modern superscript notation is later.",
+      "section": "Matrix Transposition",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-144",
+      "quote": "Two vector operations appear so often in AI that they deserve explicit definitions here, even though they are first motivated in the Statistics and Loss chapters.",
+      "section": "Softmax and Cross-Entropy",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-145",
+      "quote": "Given a vector of real-valued scores $\\vec{z} \\in \\mathbb{R}^{K}$ (called **logits**), the **softmax** turns it into a vector of probabilities that sum to $1$:",
+      "section": "Softmax: vector → probability distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-146",
+      "quote": "The exponential emphasises differences: a logit gap of $1$ becomes a ratio of $e \\approx 2.7$, a gap of $2$ becomes $e^2 \\approx 7.4$.",
+      "section": "Softmax: vector → probability distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-147",
+      "quote": "This is the operation behind the output layer of a classification network and behind every next-token probability in an LLM (see the Attention chapter).",
+      "section": "Softmax: vector → probability distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-148",
+      "quote": "The formula is older than machine learning.",
+      "section": "Softmax: vector → probability distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-149",
+      "quote": "It is the **Boltzmann distribution** of statistical mechanics — Boltzmann's 1868 paper, Gibbs's textbook of 1902 — with the logits playing the role of negative energies (\\cite[Boltzmann distribution]{boltzmann_distribution_wiki}).",
+      "section": "Softmax: vector → probability distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-150",
+      "quote": "Duncan Luce derived it from his choice axiom in 1959 (\\cite[Luce, 1959]{luce1959individualchoice}).",
+      "section": "Softmax: vector → probability distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-151",
+      "quote": "The name \"softmax\" is John Bridle's; he used it for a normalised exponential in a 1989 conference paper published in 1990 (\\cite[Bridle, 1990]{bridle1990softmax}).",
+      "section": "Softmax: vector → probability distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-152",
+      "quote": "Given a true probability distribution $\\vec{y}$ (one-hot for a single correct class) and a predicted distribution $\\hat{\\vec{y}}$ (the model's softmax output), the **cross-entropy** is",
+      "section": "Cross-entropy: measuring the gap between two distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-153",
+      "quote": "Shannon's 1948 paper defined the entropy $H(p)=-\\sum_i p_i\\log p_i$ as the cost of coding data from $p$ (\\cite[Shannon, 1948]{shannon1948communication}).",
+      "section": "Cross-entropy: measuring the gap between two distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-154",
+      "quote": "Kullback and Leibler's 1951 \"mean information for discrimination\" is the extra cost of coding with the wrong distribution $q$: $D_{\\mathrm{KL}}(p\\Vert q)=\\sum_i p_i\\log(p_i/q_i)$ (\\cite[Kullback & Leibler, 1951]{kullback1951information}).",
+      "section": "Cross-entropy: measuring the gap between two distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-155",
+      "quote": "Adding the two gives the cross-entropy, $H(p,q)=H(p)+D_{\\mathrm{KL}}(p\\Vert q)=-\\sum_i p_i\\log q_i$.",
+      "section": "Cross-entropy: measuring the gap between two distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-156",
+      "quote": "Good's 1952 \"Rational Decisions\" connected probability, rational behaviour and information, and generalised Wald's decision theory (\\cite[Good, 1952]{good1952rational}).",
+      "section": "Cross-entropy: measuring the gap between two distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-157",
+      "quote": "For a one-hot true label where $y_c = 1$ for the correct class $c$, this collapses to",
+      "section": "Cross-entropy: measuring the gap between two distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-158",
+      "quote": "That is: cross-entropy loss for a single example is just the **negative log-probability the model assigned to the correct class**.",
+      "section": "Cross-entropy: measuring the gap between two distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-159",
+      "quote": "This is the standard classification loss (see the Loss chapter) and, paired with softmax, has the elegant property",
+      "section": "Cross-entropy: measuring the gap between two distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-160",
+      "quote": "where $z_i$ are the **pre-softmax logits** and $\\hat{y}_i = \\text{softmax}(\\vec{z})_i$.",
+      "section": "Cross-entropy: measuring the gap between two distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-161",
+      "quote": "This is the derivative of the **composed** softmax-then-cross-entropy pipeline with respect to the logits — *not* the derivative of cross-entropy by itself.",
+      "section": "Cross-entropy: measuring the gap between two distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-162",
+      "quote": "The softmax Jacobian is $\\partial \\hat{y}_i / \\partial z_j = \\hat{y}_i(\\delta_{ij} - \\hat{y}_j)$ and cross-entropy alone gives $\\partial L / \\partial \\hat{y}_i = -y_i / \\hat{y}_i$; applying the chain rule,",
+      "section": "Cross-entropy: measuring the gap between two distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "math_ii-stmt-163",
+      "quote": "The $\\hat{y}_i$ factors from the softmax Jacobian cancel the $1/\\hat{y}_i$ factors from the cross-entropy gradient, leaving the remarkably simple \"predicted minus actual\" — which is precisely why softmax + cross-entropy is the canonical pairing.",
+      "section": "Cross-entropy: measuring the gap between two distributions",
+      "kind": "statement"
+    }
   ]
 }

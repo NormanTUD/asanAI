@@ -472,5 +472,811 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "frontier-stmt-1",
+      "quote": "This chapter surveys the research frontier of 2025, the techniques and ideas that are emerging from labs but not yet standardized.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-2",
+      "quote": "Some will become textbook material in two years; others will fade.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-3",
+      "quote": "Knowing the landscape keeps you ahead of the curve.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-4",
+      "quote": "The topics are grouped into six themes, then closed with the open questions that define the field.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-5",
+      "quote": "Bai et al. (Anthropic, 2022) replaced most of the human labelling used by \\citeauthor{ouyang2022instructgpt} (\\citeyear{ouyang2022instructgpt}) with **AI self-critique against a written constitution**:",
+      "section": "Constitutional AI (CAI)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-6",
+      "quote": "The model generates a response.",
+      "section": "Constitutional AI (CAI)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-7",
+      "quote": "The model critiques it against a constitutional principle (“be helpful, harmless, honest”).",
+      "section": "Constitutional AI (CAI)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-8",
+      "quote": "The model revises the response.",
+      "section": "Constitutional AI (CAI)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-9",
+      "quote": "Train the final outputs with RL (RLAIF: RL from AI Feedback).",
+      "section": "Constitutional AI (CAI)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-10",
+      "quote": "A typical constitution entry: *“Which response is more honest?",
+      "section": "Constitutional AI (CAI)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-11",
+      "quote": "Response A states the limits of its knowledge; Response B makes up plausible-sounding facts.",
+      "section": "Constitutional AI (CAI)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-12",
+      "quote": "Choose the more honest response.”*",
+      "section": "Constitutional AI (CAI)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-13",
+      "quote": "CAI reduces human labelling substantially; the paper compares it with an RLHF baseline rather than with InstructGPT (\\cite[Ouyang et al., 2022]{ouyang2022instructgpt}).",
+      "section": "Constitutional AI (CAI)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-14",
+      "quote": "Anthropic uses CAI for Claude 2/3/4.",
+      "section": "Constitutional AI (CAI)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-15",
+      "quote": "The same approach underlies **self-critique** in many production systems.",
+      "section": "Constitutional AI (CAI)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-16",
+      "quote": "The interpretability chapter covered **circuits**.",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-17",
+      "quote": "A complementary approach: **decompose activations into sparse, interpretable features**.",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-18",
+      "quote": "An SAE has an encoder $E: \\mathbb{R}^d \\to \\mathbb{R}^{d'}$ with $d' \\gg d$ (e.g., $d' = 100{,}000$ features), applies a sparsity penalty, and reconstructs via a decoder $D: \\mathbb{R}^{d'} \\to \\mathbb{R}^d$:",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-19",
+      "quote": "The L1 penalty forces only a few features to be active for any input.",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-20",
+      "quote": "Anthropic's work on Claude 3 Sonnet (2024) found:",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-21",
+      "quote": "* A single SAE feature activated on **Golden Gate Bridge** references, across languages, image descriptions, and even ASCII art (\\cite[Templeton et al., 2024]{anthropic2024goldengate}).",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-22",
+      "quote": "* Features for **code bugs**, **refusal**, **deception** could be identified.",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-23",
+      "quote": "* Anthropic reported these features in Claude 3 Sonnet; whether they are **universal** across model families is still an open question.",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-24",
+      "quote": "The “**Golden Gate Claude**” demonstration (\\cite[Templeton et al., 2024]{anthropic2024goldengate}) amplified a single feature to make the model obsessed with the Golden Gate Bridge.",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-25",
+      "quote": "This is direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.",
+      "section": "Sparse Autoencoders (SAEs) for Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-26",
+      "quote": "From the Mechanistic Interpretability chapter's foundation, frontier work in 2024–2025:",
+      "section": "Mechanistic Interpretability Frontier",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-27",
+      "quote": "* **Sparse autoencoders** (see above), millions of features per model.",
+      "section": "Mechanistic Interpretability Frontier",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-28",
+      "quote": "* **Causal scrubbing** (\\cite[Chan et al., 2022]{redman2024causalscrubbing}): formally verify which circuits implement a behavior.",
+      "section": "Mechanistic Interpretability Frontier",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-29",
+      "quote": "* **Cross-model universality**: do circuits transfer across models?",
+      "section": "Mechanistic Interpretability Frontier",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-30",
+      "quote": "Yes, partially, “induction heads” appear in every Transformer.",
+      "section": "Mechanistic Interpretability Frontier",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-31",
+      "quote": "* **Alignment-via-interpretability**: identify features for “deception”, “harm”, “sycophancy” and steer the model away from them.",
+      "section": "Mechanistic Interpretability Frontier",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-32",
+      "quote": "**Representation engineering** (\\cite[Zou et al., 2023]{zou2023repeng}) is the umbrella term.",
+      "section": "Mechanistic Interpretability Frontier",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-33",
+      "quote": "The dream: an **“MRI for AI”**, read the activations, identify misbehavior, fix it surgically.",
+      "section": "Mechanistic Interpretability Frontier",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-34",
+      "quote": "Not realized, but progressing.",
+      "section": "Mechanistic Interpretability Frontier",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-35",
+      "quote": "Recall from the Reasoning chapter: a **Process Reward Model** scores every step of a CoT, not just the final answer.",
+      "section": "Process Reward Models in Production",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-36",
+      "quote": "* **\\citealternativetitle{zhang2024mathshepherd}**: auto-labels step correctness by checking if subsequent steps can reach the answer.",
+      "section": "Process Reward Models in Production",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-37",
+      "quote": "* **Critic models** (Qwen, DeepSeek): separate models trained to score the quality of intermediate steps.",
+      "section": "Process Reward Models in Production",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-38",
+      "quote": "* **Tree search**: best-of-N with PRM-guided search gives dramatic improvements on hard math .",
+      "section": "Process Reward Models in Production",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-39",
+      "quote": "The trade-off: PRMs add 2–5× inference cost.",
+      "section": "Process Reward Models in Production",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-40",
+      "quote": "Used selectively on the hardest 10–20% of queries.",
+      "section": "Process Reward Models in Production",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-41",
+      "quote": "A 2024 idea: **train at inference time on the test input itself**.",
+      "section": "Test-Time Training",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-42",
+      "quote": "\\cite[Sun et al. (2024)]{sun2024ttt} showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.",
+      "section": "Test-Time Training",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-43",
+      "quote": "For a hard reasoning problem: take the prompt, generate some self-supervised variants, train a tiny LoRA on them, then answer.",
+      "section": "Test-Time Training",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-44",
+      "quote": "Especially powerful when the test domain differs from pretraining.",
+      "section": "Test-Time Training",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-45",
+      "quote": "(\\cite[Sun et al., 2024]{sun2024ttt}) adds seconds-to-minutes per query.",
+      "section": "Test-Time Training",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-46",
+      "quote": "Useful for offline batch processing, not real-time chat.",
+      "section": "Test-Time Training",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-47",
+      "quote": "The 2024–2025 long-context arms race:",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-48",
+      "quote": "* Gemini 1.5 Pro: 1M tokens (commercial); 10M in research.",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-49",
+      "quote": "* Claude 3.5 Sonnet: 200K tokens.",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-50",
+      "quote": "* Yi-Lightning, Qwen 2.5: 200K–1M.",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-51",
+      "quote": "Techniques enabling this:",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-52",
+      "quote": "* **RoPE scaling** (\\cite[Su et al., 2021]{su2021rope}): interpolate or extrapolate rotary position embeddings.",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-53",
+      "quote": "**YaRN** (\\cite[Peng et al., 2023]{peng2023yarn}) extends this with frequency-aware scaling.",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-54",
+      "quote": "* **ALiBi** (\\cite[Press et al., 2022]{press2022alibi}): linear bias to attention scores; doesn't require position embedding changes.",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-55",
+      "quote": "* **Ring Attention** (\\cite[Li et al., 2023]{li2023seqparallel}): sequence parallelism with overlap of compute and communication.",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-56",
+      "quote": "* **InfLLM**: training-free long-context via KV compression (\\cite[Xiao et al., 2024]{infllm2024}).",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-57",
+      "quote": "* **Landmark Attention** (\\cite[Mohtashami & Jaggi, 2023]{mohtashami2023landmark}): append “landmark” tokens summarizing past context.",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-58",
+      "quote": "The **lost-in-the-middle** problem remains: models perform best on information at the start or end of the context window, worse in the middle.",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-59",
+      "quote": "The reason is poorly understood but reproducible across architectures.",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-60",
+      "quote": "For evaluation, **needle-in-a-haystack** tests are now standard: insert a specific fact at a random position; ask the model to retrieve it.",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-61",
+      "quote": "Performance degrades as context length grows.",
+      "section": "Long Context Beyond a Million Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-62",
+      "quote": "Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers** (\\cite[Raposo et al., 2024]{raposo2024mod}).",
+      "section": "Mixture of Depths (MoD)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-63",
+      "quote": "Easy tokens skip; hard tokens use full depth.",
+      "section": "Mixture of Depths (MoD)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-64",
+      "quote": "Result: ~50% compute reduction at equal quality.",
+      "section": "Mixture of Depths (MoD)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-65",
+      "quote": "The capacity is preserved; the routing learns to allocate it.",
+      "section": "Mixture of Depths (MoD)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-66",
+      "quote": "Related: **early exit** (\\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\\cite[Fedus et al., 2022]{fedus2022switch}).",
+      "section": "Mixture of Depths (MoD)",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-67",
+      "quote": "See the AI Agents chapter for the basics.",
+      "section": "Agentic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-68",
+      "quote": "* **\\cite[Multi-Agent]{du2023multiagent}** (\\cite[Du et al., 2023]{du2023multiagent}): multiple LLMs argue; a judge picks the best.",
+      "section": "Agentic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-69",
+      "quote": "Improves reasoning accuracy 5–15%.",
+      "section": "Agentic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-70",
+      "quote": "* **Toolformer-style self-taught tool use** (\\cite[Schick et al., 2023]{schick2023toolformer}; Gorilla, \\cite[Patil et al., 2023]{patil2023gorilla}): models learn to call thousands of APIs.",
+      "section": "Agentic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-71",
+      "quote": "* **Computer use agents**: Anthropic's Claude can interact with a real desktop.",
+      "section": "Agentic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-72",
+      "quote": "All powered by screenshot→action Transformers.",
+      "section": "Agentic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-73",
+      "quote": "* **Code agents**: SWE-Agent, AutoCodeRover, Devin, autonomous software engineering.",
+      "section": "Agentic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-74",
+      "quote": "Still unreliable but improving.",
+      "section": "Agentic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-75",
+      "quote": "* **Hierarchical agents**: a planner agent delegates to specialist sub-agents.",
+      "section": "Agentic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-76",
+      "quote": "Used in many production systems.",
+      "section": "Agentic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-77",
+      "quote": "GAIA (Mialon et al., 2023, Meta) tests realistic agent tasks: “find the CEO of the company that acquired Twitter's recommendation team and their phone number on the website”.",
+      "section": "Agentic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-78",
+      "quote": "Frontier agents solve ~50% of these; humans solve 92%.",
+      "section": "Agentic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-79",
+      "quote": "LLMs reason in language; **world models** reason in simulation.",
+      "section": "World Models and Embodied AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-80",
+      "quote": "Yann LeCun has argued for years that LLMs lack the grounding necessary for true intelligence, and **Joint Embedding Predictive Architectures** (JEPA) are his proposed alternative.",
+      "section": "World Models and Embodied AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-81",
+      "quote": "* **Genie 2** (DeepMind, 2024): generates playable 3D environments from a single image.",
+      "section": "World Models and Embodied AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-82",
+      "quote": "* **V-JEPA 2** (Meta, 2025): self-supervised video prediction at scale.",
+      "section": "World Models and Embodied AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-83",
+      "quote": "* **Dreamer V3** (\\cite[Hafner et al., 2023]{hafner2023dreamer}): world model enables Minecraft diamond collection from scratch.",
+      "section": "World Models and Embodied AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-84",
+      "quote": "* **Sora** (OpenAI, 2024): world-model-like video generation, though OpenAI doesn't explicitly call it one.",
+      "section": "World Models and Embodied AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-85",
+      "quote": "* **RT-2 / PaLM-E / OpenVLA**: vision-language-action models for robot control.",
+      "section": "World Models and Embodied AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-86",
+      "quote": "The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack.",
+      "section": "World Models and Embodied AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-87",
+      "quote": "Whether this is correct is an open question; LeCun's position paper argues that prediction in representation space, not token prediction, is the missing ingredient (\\cite[LeCun, 2022]{lecun2022path}).",
+      "section": "World Models and Embodied AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-88",
+      "quote": "LLMs are still **predominantly English-centric** in training:",
+      "section": "Multilingual and Low-Resource AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-89",
+      "quote": "* Llama 3.1: ~90% English tokens (the Llama 3 report publishes this figure).",
+      "section": "Multilingual and Low-Resource AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-90",
+      "quote": "* GPT-4o and DeepSeek-V3: their training mixes are not public, so exact percentages should not be treated as established.",
+      "section": "Multilingual and Low-Resource AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-91",
+      "quote": "This biases models toward English cultural norms, knowledge, and reasoning patterns.",
+      "section": "Multilingual and Low-Resource AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-92",
+      "quote": "Frontier efforts in 2025:",
+      "section": "Multilingual and Low-Resource AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-93",
+      "quote": "* **African languages** (Yoruba, Amharic, Swahili): covered by **Aya** (Cohere), **Lesan AI** (Tigrinya, Amharic).",
+      "section": "Multilingual and Low-Resource AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-94",
+      "quote": "* **Indic languages**: **AI4Bharat** (Tamil, Bengali, Hindi, etc.), **Navarasa-2.0** (15 Indic languages).",
+      "section": "Multilingual and Low-Resource AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-95",
+      "quote": "* **Chinese**: Qwen, DeepSeek, GLM, InternLM.",
+      "section": "Multilingual and Low-Resource AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-96",
+      "quote": "* **Arabic**: Jais, Falcon, Allam.",
+      "section": "Multilingual and Low-Resource AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-97",
+      "quote": "Low-resource languages are evaluated with benchmarks like **XTREME-S**, **AfroBench**, **INCLUDE**.",
+      "section": "Multilingual and Low-Resource AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-98",
+      "quote": "The challenge: high-quality training data in these languages is scarce.",
+      "section": "Multilingual and Low-Resource AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-99",
+      "quote": "Solutions: **machine-translated** data (with quality filters), **synthetic data** generation, **cross-lingual transfer** from high-resource languages.",
+      "section": "Multilingual and Low-Resource AI",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-100",
+      "quote": "LLMs are **stateless**: they don't learn from interactions.",
+      "section": "Memory and Continual Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-101",
+      "quote": "Every conversation starts fresh.",
+      "section": "Memory and Continual Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-102",
+      "quote": "The 2024–2025 frontier in long-term memory:",
+      "section": "Memory and Continual Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-103",
+      "quote": "* **External memory stores**: vector databases, structured stores (Letta, MemGPT), fact databases.",
+      "section": "Memory and Continual Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-104",
+      "quote": "* **Memory-augmented Transformers**: kNN-LM, RAG with learnable retrieval.",
+      "section": "Memory and Continual Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-105",
+      "quote": "* **Tool-based memory**: the model calls a memory API to save/retrieve facts.",
+      "section": "Memory and Continual Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-106",
+      "quote": "* **Titans** (Google, 2024): a Transformer with a learned long-term memory module.",
+      "section": "Memory and Continual Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-107",
+      "quote": "Surpasses Transformers on million-token tasks.",
+      "section": "Memory and Continual Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-108",
+      "quote": "* **Test-time training**: see above.",
+      "section": "Memory and Continual Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-109",
+      "quote": "* **Continual learning**: training on a stream of new data without forgetting old.",
+      "section": "Memory and Continual Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-110",
+      "quote": "Still unsolved at frontier scale.",
+      "section": "Memory and Continual Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-111",
+      "quote": "For practical deployments: a good **memory + retrieval layer** is more useful than a longer context window.",
+      "section": "Memory and Continual Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-112",
+      "quote": "A model zoo is not a curriculum, but the releases of 2023–2026 are a useful audit of which research ideas survived contact with scale.",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-113",
+      "quote": "Five patterns recur across otherwise unrelated labs.",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-114",
+      "quote": "Sparse mixture-of-experts became the default at the frontier.** DeepSeek-V3 (671B total, 37B active) reported frontier quality from a disclosed final training run of roughly \\$5.6M (\\cite[DeepSeek-AI, 2024]{deepseek2024v3}); Kimi K2 pushed open weights to a trillion parameters with the MuonClip optimizer (\\cite[Kimi Team, 2025]{kimi2025k2}); LongCat-Flash reached 560B with about 27B active and was reported as trained on Chinese accelerators (\\cite[LongCat Team, 2025]{longcat2025}).",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-115",
+      "quote": "The economic logic is the one from the [Mixture of Experts](mixture_of_experts.php) chapter: capacity scales with total parameters, cost with active ones.",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-116",
+      "quote": "Hybrid attention layouts replaced pure dense attention.** gpt-oss alternates dense and sliding-window attention layers and gives every head a learned sink logit (\\cite[OpenAI, 2025]{gptoss2025}); MiniMax built its line on lightning attention, a linear-attention variant interleaved with softmax attention (\\cite[MiniMax, 2025]{minimax2025lightning}); DeepSeek-V2 introduced multi-head latent attention to shrink the KV cache (\\cite[DeepSeek-AI, 2024]{deepseek2024v2}).",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-117",
+      "quote": "The goal in every case is the same: keep exact attention where it matters, and stop paying quadratic cost everywhere.",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-118",
+      "quote": "Reasoning became a training target, not a prompt trick.** RLVR — reinforcement learning against programmatic verifiers — turned chain-of-thought from something users coaxed out of a model into something models are trained to produce.",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-119",
+      "quote": "DeepSeek-R1 published the recipe and open weights (\\cite[Guo et al., 2025]{guo2025deepseekr1}), and the o-series, Claude's extended thinking, and Gemini's thinking modes made the inference-compute dial a product feature.",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-120",
+      "quote": "Hybrid thinking modes arrived.** Qwen3 trained dense and mixture-of-experts models with both a fast, non-thinking mode and a slower reasoning mode, selectable per request (\\cite[Qwen Team, 2025]{qwen2025qwen3}) — an acknowledgment that most queries do not need a thousand tokens of deliberation.",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-121",
+      "quote": "Open weights moved from “small models” to frontier-adjacent scale.** Llama 3 405B was **one of the first** open-weight models widely described as competitive with closed frontier systems (\\cite[Grattafiori et al., 2024]{llama3herd2024}); Llama 4 added native multimodality and MoE (\\cite[Meta AI, 2025]{meta2025llama4}); Gemma 3 brought multimodality and long context to the small-model tier (\\cite[Gemma Team, 2025]{gemma2025v3}); Qwen3 and Kimi K2 became standard bases for fine-tuning.",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-122",
+      "quote": "The open ecosystem no longer trails by a full generation on architecture — mainly on data and compute.",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-123",
+      "quote": "Interpretability moved into the system card.** Frontier safety reports now routinely include sparse-autoencoder features, attribution graphs, activation steering, and activation verbalizers — the techniques of the [Mechanistic Interpretability](mechanistic_interpretability.php) chapter — as evidence about internal states rather than as research curiosities (\\cite[Lindsey et al., 2025]{anthropic2025biology}; \\cite[Pan et al., 2024]{pan2024latentqa}).",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-124",
+      "quote": "Diffusion language models became a real alternative.** LLaDA showed that masked diffusion could train an 8B instruction-following model from scratch, and Mercury and Gemini Diffusion brought parallel decoding to products (\\cite[Nie et al., 2025]{nie2025llada}).",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-125",
+      "quote": "Whether dLLMs close the quality gap at the frontier is still open, but “autoregressive or bust” is no longer the default assumption.",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-126",
+      "quote": "The through-line: the Transformer did not get replaced.",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-127",
+      "quote": "It got **specialized** — sparse experts, hybrid attention, learned sinks, compressed caches, and a second axis of compute at inference time.",
+      "section": "The 2026 Snapshot: Which Ideas Stuck",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-128",
+      "quote": "* Will the next paradigm shift come from **architectures** (post-Transformer), **scaling** (more data/compute), or **inference** (test-time compute, agents)?",
+      "section": "Open Questions",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-129",
+      "quote": "* Can interpretability mature into a **safety discipline**, predicting and preventing failures before deployment?",
+      "section": "Open Questions",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-130",
+      "quote": "* Will **multimodal** models converge to a single architecture (one Transformer for everything) or remain specialists (one for vision, one for speech)?",
+      "section": "Open Questions",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-131",
+      "quote": "* Will **open models** close the gap to frontier, or will the frontier pull away indefinitely?",
+      "section": "Open Questions",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-132",
+      "quote": "* Will **economic value** concentrate among the few companies with frontier-scale compute, or diffuse widely?",
+      "section": "Open Questions",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-133",
+      "quote": "The answers will reshape technology, economics, and society in ways that are not yet visible.",
+      "section": "Open Questions",
+      "kind": "statement"
+    },
+    {
+      "id": "frontier-stmt-134",
+      "quote": "What is certain: this is a remarkable time to be studying the field.",
+      "section": "Open Questions",
+      "kind": "statement"
+    }
   ]
 }

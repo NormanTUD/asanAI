@@ -469,5 +469,595 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "differentiation-stmt-1",
+      "quote": "The concept of a **derivative** is one of the most important ideas in all of mathematics.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-2",
+      "quote": "It answers a deceptively simple question: *How fast is something changing at this exact moment?*",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-3",
+      "quote": "If you drive a car and your speedometer reads 60 km/h, that number is a derivative, it tells you the instantaneous rate of change of your position with respect to time.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-4",
+      "quote": "But how do we define “instantaneous” mathematically, when an instant has zero duration?",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-5",
+      "quote": "This question puzzled mathematicians for centuries, and its resolution gave birth to an entire branch of mathematics: **Calculus**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-6",
+      "quote": "The development of calculus is one of the most famous (and contentious) stories in the history of science.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-7",
+      "quote": "Two towering figures independently developed the core ideas in the late 17th century.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-8",
+      "quote": "\\citealternativetitle{newton_portrait}.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-9",
+      "quote": "Newton developed his “method of fluxions” around 1665–1666, motivated by problems in physics: he needed a way to describe the motion of planets and falling objects.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-10",
+      "quote": "He thought of quantities as “flowing” and their rates of change as “fluxions.” Newton's approach was deeply rooted in the physical world: velocity is the fluxion of position, and acceleration is the fluxion of velocity.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-11",
+      "quote": "However, Newton was notoriously secretive and did not publish his methods until decades later.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-12",
+      "quote": "\\citealternativetitle{leibniz_portrait}.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-13",
+      "quote": "Leibniz, working independently in the 1670s and 1680s, developed his own version of calculus with a focus on notation and formal manipulation.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-14",
+      "quote": "His notation, the $\\frac{dy}{dx}$ that we still use today, was published in \\citeyear{leibniz1684nova} in his paper \\citetitle{leibniz1684nova}.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-15",
+      "quote": "Leibniz's genius lay in creating a symbolic language so powerful and intuitive that it made calculus accessible and practical.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-16",
+      "quote": "The derivative is built on the concept of a **limit**, which we introduced earlier.",
+      "section": "The Limit Definition of the Derivative",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-17",
+      "quote": "The key idea is to start with something we *can* compute, the average rate of change over an interval, and then shrink that interval to zero.",
+      "section": "The Limit Definition of the Derivative",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-18",
+      "quote": "Given a function $f(x)$, the **average rate of change** between two points $x$ and $x + h$ is:",
+      "section": "The Average Rate of Change (The Secant Line)",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-19",
+      "quote": "Geometrically, this is the slope of the **secant line** connecting the two points $(x, f(x))$ and $(x+h, f(x+h))$ on the graph of $f$.",
+      "section": "The Average Rate of Change (The Secant Line)",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-20",
+      "quote": "The **derivative** is what happens when we let $h$ approach zero.",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-21",
+      "quote": "The secant line becomes a **tangent line**, touching the curve at that point:",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-22",
+      "quote": "**In plain words:** the derivative is the rate of change at *one exact point* — like a speedometer reading at a single instant, not the average over a whole trip.",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-23",
+      "quote": "The formula just says: measure the average change over a tiny stretch, then shrink that stretch all the way down to zero.",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-24",
+      "quote": "This is the **limit definition of the derivative**, sometimes called the definition “from first principles.” The notation $f'(x)$ (read “f prime of x”) was introduced by \\citeauthor{lagrange1797theorie} in \\citetitle{lagrange1797theorie} (\\citeyear{lagrange1797theorie}).",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-25",
+      "quote": "Leibniz wrote the same concept as $\\frac{df}{dx}$.",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-26",
+      "quote": "\\citealternativetitle{lagrange_portrait}, who introduced the now-universal prime notation $f'(x)$ for derivatives.",
+      "section": "The Instantaneous Rate of Change (The Tangent Line)",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-27",
+      "quote": "Let's apply the limit definition to $f(x) = x^2$ step by step:",
+      "section": "A Concrete Example: Deriving $f(x) = x^2$ from First Principles",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-28",
+      "quote": "Expand $(x+h)^2 = x^2 + 2xh + h^2$:",
+      "section": "A Concrete Example: Deriving $f(x) = x^2$ from First Principles",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-29",
+      "quote": "So the derivative of $x^2$ is $2x$.",
+      "section": "A Concrete Example: Deriving $f(x) = x^2$ from First Principles",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-30",
+      "quote": "At $x = 3$, the slope of the tangent line is $2 \\cdot 3 = 6$.",
+      "section": "A Concrete Example: Deriving $f(x) = x^2$ from First Principles",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-31",
+      "quote": "This means that at $x = 3$, the function is increasing at a rate of 6 units of $y$ per unit of $x$.",
+      "section": "A Concrete Example: Deriving $f(x) = x^2$ from First Principles",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-32",
+      "quote": "Computing derivatives from the limit definition every time would be tedious.",
+      "section": "Derivative Rules",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-33",
+      "quote": "Fortunately, mathematicians have derived a set of **rules** that let us differentiate most functions quickly.",
+      "section": "Derivative Rules",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-34",
+      "quote": "These rules were developed by Newton, Leibniz, and their successors (notably \\citeauthor{euler1755} in \\citetitle{euler1755}, \\citeyear{euler1755}, who systematized much of the notation and theory).",
+      "section": "Derivative Rules",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-35",
+      "quote": "The derivative of a constant is zero.",
+      "section": "The Constant Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-36",
+      "quote": "A constant doesn't change, so its rate of change is zero:",
+      "section": "The Constant Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-37",
+      "quote": "This is the workhorse of differentiation.",
+      "section": "The Power Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-38",
+      "quote": "- $\\frac{d}{dx}[x^3] = 3x^2$",
+      "section": "The Power Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-39",
+      "quote": "- $\\frac{d}{dx}[x^{-1}] = -x^{-2} = -\\frac{1}{x^2}$",
+      "section": "The Power Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-40",
+      "quote": "- $\\frac{d}{dx}[\\sqrt{x}] = \\frac{d}{dx}[x^{1/2}] = \\frac{1}{2}x^{-1/2} = \\frac{1}{2\\sqrt{x}}$",
+      "section": "The Power Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-41",
+      "quote": "You can “pull out” constants.",
+      "section": "The Constant Multiple Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-42",
+      "quote": "For example: $\\frac{d}{dx}[5x^3] = 5 \\cdot 3x^2 = 15x^2$.",
+      "section": "The Constant Multiple Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-43",
+      "quote": "The derivative of a sum is the sum of the derivatives.",
+      "section": "The Sum Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-44",
+      "quote": "When two functions are multiplied, the derivative is not simply the product of the derivatives.",
+      "section": "The Product Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-45",
+      "quote": "The **Chain Rule** is arguably the most important rule for AI and deep learning.",
+      "section": "The Chain Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-46",
+      "quote": "It tells us how to differentiate **composed functions**, functions inside functions:",
+      "section": "The Chain Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-47",
+      "quote": "Or in Leibniz notation, if $y = f(u)$ and $u = g(x)$:",
+      "section": "The Chain Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-48",
+      "quote": "This is the mathematical foundation of **backpropagation** in neural networks.",
+      "section": "The Chain Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-49",
+      "quote": "When a neural network chains together many layers of functions, the chain rule lets us compute how the final error depends on each individual weight, no matter how deep the network is.",
+      "section": "The Chain Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-50",
+      "quote": "You can explore the derivative rules interactively below.",
+      "section": "The Chain Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-51",
+      "quote": "Choose a function and see its derivative computed and plotted in real time:",
+      "section": "The Chain Rule",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-52",
+      "quote": "Some derivatives appear so frequently in AI and science that they are worth memorizing:",
+      "section": "Special Derivatives Worth Knowing",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-53",
+      "quote": "| Function $f(x)$ | Derivative $f'(x)$ | Notes |",
+      "section": "Special Derivatives Worth Knowing",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-54",
+      "quote": "| $x^n$ | $nx^{n-1}$ | Power Rule |",
+      "section": "Special Derivatives Worth Knowing",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-55",
+      "quote": "| $e^x$ | $e^x$ | The only function equal to its own derivative, up to a constant multiple!",
+      "section": "Special Derivatives Worth Knowing",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-56",
+      "quote": "| $\\ln(x)$ | $\\frac{1}{x}$ | Natural logarithm |",
+      "section": "Special Derivatives Worth Knowing",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-57",
+      "quote": "| $\\sin(x)$ | $\\cos(x)$ | |",
+      "section": "Special Derivatives Worth Knowing",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-58",
+      "quote": "| $\\cos(x)$ | $-\\sin(x)$ | |",
+      "section": "Special Derivatives Worth Knowing",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-59",
+      "quote": "| $\\sigma(x) = \\frac{1}{1+e^{-x}}$ | $\\sigma(x)(1-\\sigma(x))$ | The sigmoid, crucial activation function for neural networks |",
+      "section": "Special Derivatives Worth Knowing",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-60",
+      "quote": "The fact that $e^x$ is its own derivative is not a coincidence, but it is essentially the *definition* of $e$: the number $e$ is the unique base for which the exponential function has this self-replicating property.",
+      "section": "Special Derivatives Worth Knowing",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-61",
+      "quote": "The derivative $f'(a)$ gives the **slope of the tangent line** to the graph of $f$ at the point $x = a$.",
+      "section": "The Geometric Meaning: Tangent Lines",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-62",
+      "quote": "The equation of this tangent line is:",
+      "section": "The Geometric Meaning: Tangent Lines",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-63",
+      "quote": "This is the best **linear approximation** of $f$ near $x = a$.",
+      "section": "The Geometric Meaning: Tangent Lines",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-64",
+      "quote": "In fact, this idea generalizes: the Taylor series is built by adding higher-order derivatives to get better and better polynomial approximations.",
+      "section": "The Geometric Meaning: Tangent Lines",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-65",
+      "quote": "You can explore the tangent line interactively below.",
+      "section": "The Geometric Meaning: Tangent Lines",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-66",
+      "quote": "Move the point along the curve and see how the tangent line changes:",
+      "section": "The Geometric Meaning: Tangent Lines",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-67",
+      "quote": "The chain rule is so important for AI that it deserves its own interactive demonstration.",
+      "section": "The Chain Rule Visualized",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-68",
+      "quote": "When we compose two functions $f(g(x))$, the chain rule tells us:",
+      "section": "The Chain Rule Visualized",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-69",
+      "quote": "Think of it as peeling an onion: differentiate the outer layer, leaving the inner part untouched, then multiply by the derivative of the inner part.",
+      "section": "The Chain Rule Visualized",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-70",
+      "quote": "In a neural network with layers $L_1, L_2, \\dots, L_n$, the chain rule extends naturally:",
+      "section": "The Chain Rule Visualized",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-71",
+      "quote": "This is exactly what **backpropagation** computes, the chain rule applied layer by layer from the output back to the input.",
+      "section": "The Chain Rule Visualized",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-72",
+      "quote": "Derivatives are not just an abstract mathematical concept, they are the **engine** that drives all of modern machine learning.",
+      "section": "Why Derivatives Matter for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-73",
+      "quote": "**Gradient Descent**: To train a neural network, we need to minimize a **loss function** that measures how wrong the model's predictions are.",
+      "section": "Why Derivatives Matter for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-74",
+      "quote": "The derivative (or **gradient**, in multiple dimensions) tells us which direction to adjust the weights to reduce the loss.",
+      "section": "Why Derivatives Matter for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-75",
+      "quote": "This is the algorithm called **Gradient Descent**, first described for least-squares problems by \\citeauthor{cauchy1847} in \\citeyear{cauchy1847} (his note solves simultaneous equations by minimising a sum of squares; general nonlinear descent came later).",
+      "section": "Why Derivatives Matter for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-76",
+      "quote": "**Backpropagation**: As we saw, the **chain rule** allows us to compute the gradient of the loss with respect to every single weight in a deep network, no matter how many layers it has.",
+      "section": "Why Derivatives Matter for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-77",
+      "quote": "This algorithm, popularized by \\citeauthor{rumelhart1986} in \\citeyear{rumelhart1986}, is what makes deep learning possible.",
+      "section": "Why Derivatives Matter for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-78",
+      "quote": "**Optimization Landscape**: The derivative tells us about the “shape” of the loss function, where it slopes up, where it slopes down, and where it is flat (critical points).",
+      "section": "Why Derivatives Matter for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-79",
+      "quote": "Understanding this landscape is key to training models effectively.",
+      "section": "Why Derivatives Matter for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-80",
+      "quote": "**The Sigmoid Derivative**: As the table above shows, the sigmoid function $\\sigma(z) = \\frac{1}{1+e^{-z}}$ has the elegant derivative $\\sigma'(z) = \\sigma(z)(1-\\sigma(z))$.",
+      "section": "Why Derivatives Matter for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-81",
+      "quote": "This means once you compute the forward pass, the backward pass is nearly free, you already have all the values you need.",
+      "section": "Why Derivatives Matter for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-82",
+      "quote": "In summary, without derivatives, there would be no way to train neural networks, and modern AI as we know it would not exist.",
+      "section": "Why Derivatives Matter for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-83",
+      "quote": "In AI, we almost never deal with functions of a single variable.",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-84",
+      "quote": "A neural network's loss depends on millions of weights simultaneously.",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-85",
+      "quote": "A **partial derivative** measures how the function changes when we vary *one* variable while holding all others constant.",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-86",
+      "quote": "For a function $f(x, y)$, the partial derivatives are:",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-87",
+      "quote": "The collection of all partial derivatives forms the **gradient vector**:",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-88",
+      "quote": "The gradient points in the direction of **steepest ascent**.",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-89",
+      "quote": "To minimize a function (like a loss function), we move in the *opposite* direction of the gradient, this is **gradient descent**.",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-90",
+      "quote": "The symbol $\\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \\citeyear{condorcet1770}; the modern $\\partial/\\mathrm{d}x$ notation was created by \\citeauthor{legendre1786} in \\citetitle{legendre1786} (\\citeyear{legendre1786}) — a suggestion he later abandoned — and was only popularized after Jacobi reintroduced it in 1841 (according to \\citeauthor{historyofmathematicalnotation}, Vol.",
+      "section": "Partial Derivatives: Functions of Multiple Variables",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-91",
+      "quote": "| Concept | Notation | Meaning |",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-92",
+      "quote": "| Derivative | $f'(x)$ or $\\frac{df}{dx}$ | Instantaneous rate of change |",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-93",
+      "quote": "| Limit definition | $\\lim_{h \\to 0} \\frac{f(x+h)-f(x)}{h}$ | Formal definition |",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-94",
+      "quote": "| Chain rule | $\\frac{dy}{dx} = \\frac{dy}{du} \\cdot \\frac{du}{dx}$ | Derivatives of composed functions |",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-95",
+      "quote": "| Partial derivative | $\\frac{\\partial f}{\\partial x}$ | Rate of change in one variable |",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-96",
+      "quote": "| Gradient | $\\nabla f$ | Vector of all partial derivatives |",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-97",
+      "quote": "The derivative is the bridge between static mathematics and dynamic change.",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "differentiation-stmt-98",
+      "quote": "It is the tool that lets us ask “what happens next?” and, in the context of AI, “how should we adjust?” Without it, machines could not learn.",
+      "section": "Summary",
+      "kind": "statement"
+    }
   ]
 }

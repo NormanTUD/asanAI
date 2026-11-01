@@ -490,5 +490,751 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "activationlab-stmt-1",
+      "quote": "Activation functions serve as the mathematical **“gates”** of a neural network.",
+      "section": "The Necessity of Activation Functions",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-2",
+      "quote": "Without them, a network would be nothing more than a series of linear transformations, essentially collapsing into one giant linear equation.",
+      "section": "The Necessity of Activation Functions",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-3",
+      "quote": "By introducing **non-linearity**, these functions allow the model to learn complex patterns, from the specific curve of a cat's ear to the subtle nuances of human speech.",
+      "section": "The Necessity of Activation Functions",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-4",
+      "quote": "In neural networks, one of the most basic building blocks is the **Dense layer** (referred to as **Linear** in PyTorch).",
+      "section": "The Linear Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-5",
+      "quote": "It performs a simple linear transformation of its input:",
+      "section": "The Linear Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-6",
+      "quote": "* $W$ is the **weight matrix**.",
+      "section": "The Linear Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-7",
+      "quote": "* $b$ is the **bias vector**.",
+      "section": "The Linear Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-8",
+      "quote": "If we stack two Dense layers without an activation function, the operations combine mathematically:",
+      "section": "The Problem: Mathematical Collapse",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-9",
+      "quote": "Substituting the linear equation:",
+      "section": "The Problem: Mathematical Collapse",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-10",
+      "quote": "We end up with another linear transformation like $Wx + b$, where $ W = W_2W_1 $ and $b = (W_2b_1 + b_2)$.",
+      "section": "The Problem: Mathematical Collapse",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-11",
+      "quote": "This way, adding more layers, doesn't add more functionality to the neural network.",
+      "section": "The Problem: Mathematical Collapse",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-12",
+      "quote": "This is where activation functions come into play.",
+      "section": "The Problem: Mathematical Collapse",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-13",
+      "quote": "Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the remaining term is just a new bias vector, the multi-layer network behaves exactly like a **single-layer** model.",
+      "section": "The Problem: Mathematical Collapse",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-14",
+      "quote": "Without non-linear activation functions — the non-differentiable Heaviside threshold $H(x)=\\mathbf{1}_{x>0}$ of the early Perceptron, which \\citeauthor{rosenblatt1958perceptron} trained with a discrete error-correction rule rather than gradient descent; the rectifier $\\max(0,x)$ used by \\citeauthor{relufirst} in \\citeyear{relufirst} and popularised by \\citeauthorlastnameand{relupaper} in \\citeyear{relupaper}; the logistic sigmoid; or tanh — stacking layers adds no extra “intelligence” or power to the model.",
+      "section": "The Problem: Mathematical Collapse",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-15",
+      "quote": "With enough width, ReLU networks can represent every continuous piecewise-linear function on a compact domain, and every function such a network computes is itself continuous and piecewise-linear.",
+      "section": "The Problem: Mathematical Collapse",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-16",
+      "quote": "The exact version is proved in \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), Ch.\\ 5.",
+      "section": "The Problem: Mathematical Collapse",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-17",
+      "quote": "While ReLU and Sigmoid deal with individual neurons, **SoftMax** is a team player.",
+      "section": "SoftMax: The “Multi-Class” Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-18",
+      "quote": "The formula is older than machine learning: it is the **Boltzmann distribution** of statistical mechanics, with the logits playing the role of negative energies \\cite{boltzmann_distribution_wiki}, and \\citeauthor{luce1959individualchoice} derived it from his choice axiom in \\citeyear{luce1959individualchoice}.",
+      "section": "SoftMax: The “Multi-Class” Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-19",
+      "quote": "The name \"softmax\" comes from \\citeauthor{bridle1990softmax}, who used it for a normalised exponential in a 1989 conference paper published in \\citeyear{bridle1990softmax}.",
+      "section": "SoftMax: The “Multi-Class” Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-20",
+      "quote": "It is used when you want to have percentages instead of absolute numbers, especially in the **output layer** of a neural network designed for multi-class classification (e.g., identifying if an image is a cat, dog, or bird, or at the end of a Transformer module, which returns a list of words with a given probability).",
+      "section": "SoftMax: The “Multi-Class” Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-21",
+      "quote": "* **Hard Max:** A standard “Maximum” function (like `argmax`) is “hard.” It returns 1 for the largest value and 0 for everything else.",
+      "section": "Why the name “Soft” Max?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-22",
+      "quote": "It is not differentiable, which means we can't train a network with it with Backpropagation.",
+      "section": "Why the name “Soft” Max?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-23",
+      "quote": "* **Soft Max:** This is a “softened” version.",
+      "section": "Why the name “Soft” Max?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-24",
+      "quote": "It turns the largest value into the highest probability, but it still assigns smaller probabilities to the “losers.” This allows the network to express **uncertainty**.",
+      "section": "Why the name “Soft” Max?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-25",
+      "quote": "For an input vector $z$ (called **logits**), the SoftMax value for the $i$-th element is:",
+      "section": "The Math",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-26",
+      "quote": "**Exponentials ($e^z$):** We raise $e$ to the power of each input.",
+      "section": "The Math",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-27",
+      "quote": "This ensures every output is positive.",
+      "section": "The Math",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-28",
+      "quote": "**Normalization:** We divide each result by the sum of all results.",
+      "section": "The Math",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-29",
+      "quote": "This ensures the final values **always sum to 1.0 (100%)**.",
+      "section": "The Math",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-30",
+      "quote": "If you input 0.1 and 0.9, you might expect 10% and 90%.",
+      "section": "Why it's not a simple percentage (The “Non-Linear” Secret)",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-31",
+      "quote": "Instead, you get roughly 31% and 69%.",
+      "section": "Why it's not a simple percentage (The “Non-Linear” Secret)",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-32",
+      "quote": "This is because SoftMax is **not a linear scaling**; it is an **exponential normalization**.",
+      "section": "Why it's not a simple percentage (The “Non-Linear” Secret)",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-33",
+      "quote": "SoftMax uses the function $e^x$ to transform inputs.",
+      "section": "The Exponential “Contrast”",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-34",
+      "quote": "* **Linear thinking:** 0.9 is 9x larger than 0.1.",
+      "section": "The Exponential “Contrast”",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-35",
+      "quote": "* **SoftMax thinking:** $e^{0.9}$ (2.46) is only ~2.2x larger than $e^{0.1}$ (1.11).",
+      "section": "The Exponential “Contrast”",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-36",
+      "quote": "The exponential does not simply widen every gap: it converts an additive difference between logits into a multiplicative ratio of probabilities.",
+      "section": "The Exponential “Contrast”",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-37",
+      "quote": "A logit gap of $1$ becomes a ratio of $e \\approx 2.7$, a gap of $2$ becomes $e^2 \\approx 7.4$.",
+      "section": "The Exponential “Contrast”",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-38",
+      "quote": "That is why the sharpness depends on the scale of the logits, not on their raw ratio: for $0.1$ and $0.9$ the ratio falls from $9:1$ to about $2.2:1$, while for $2$ and $4$ it rises from $2:1$ to about $7.4:1$.",
+      "section": "The Exponential “Contrast”",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-39",
+      "quote": "SoftMax is shift-invariant, and a temperature parameter can soften or sharpen the distribution.",
+      "section": "The Exponential “Contrast”",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-40",
+      "quote": "The formula above is the $\\tau=1$ case of a one-parameter family, $\\sigma_\\tau(z)_i = e^{z_i/\\tau}/\\sum_j e^{z_j/\\tau}$.",
+      "section": "Temperature: sharpening and flattening",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-41",
+      "quote": "A small $\\tau$ divides the logits by a small number, magnifying their differences and sharpening the distribution; a large $\\tau$ flattens it toward uniform.",
+      "section": "Temperature: sharpening and flattening",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-42",
+      "quote": "Temperature appears in two different places in a Transformer.",
+      "section": "Temperature: sharpening and flattening",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-43",
+      "quote": "**Attention** uses a fixed temperature $\\tau=\\sqrt{d_k}$ inside every attention head at every layer: it controls how sharply a query spreads its weight over the keys.",
+      "section": "Temperature: sharpening and flattening",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-44",
+      "quote": "The **sampling temperature** you set in a chat API (0.7, 1.2, …) is a second, separate knob applied once to the final vocabulary logits, just before the next token is sampled.",
+      "section": "Temperature: sharpening and flattening",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-45",
+      "quote": "Same mathematics, different point in the network.",
+      "section": "Temperature: sharpening and flattening",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-46",
+      "quote": "A simple percentage calculation fails if you have negative scores (e.g., -2.0 and 1.0).",
+      "section": "Handling Negative Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-47",
+      "quote": "You cannot have a negative probability.",
+      "section": "Handling Negative Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-48",
+      "quote": "SoftMax solves this because $e^x$ is **always positive**.",
+      "section": "Handling Negative Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-49",
+      "quote": "Even $e^{-5.0}$ results in a tiny, positive number (0.0067).",
+      "section": "Handling Negative Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-50",
+      "quote": "Because $e$ represents the “most natural” way to describe growth, the function $e^x$ is uniquely simple to work with in calculus.",
+      "section": "Why is this the standard for AI?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-51",
+      "quote": "In SoftMax, we are essentially saying: *“Let's treat the scores (logits) as continuous growth rates.”* By using $e$, the math of learning (calculus) becomes as smooth and efficient as possible, because the derivative of $e^x$ is just $e^x$.",
+      "section": "Why is this the standard for AI?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-52",
+      "quote": "This “cleanliness” is what allows us to train massive AI models without the math becoming a tangled mess.",
+      "section": "Why is this the standard for AI?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-53",
+      "quote": "Neural networks don't use $e$ just because it's famous; they use it because of **Calculus**.",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-54",
+      "quote": "* **The Derivative Property:** $e^x$ is the only function (up to a constant multiple) whose derivative is itself: $\\frac{d}{dx}e^x = e^x$.",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-55",
+      "quote": "* *Why this matters:* In backpropagation, we calculate “gradients” (slopes).",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-56",
+      "quote": "When we combine the SoftMax function with Cross-Entropy Loss, the complex calculus simplifies into a incredibly elegant term: $(y_{pred} - y_{true})$.",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-57",
+      "quote": "This efficiency makes training deep networks computationally feasible.",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-58",
+      "quote": "* **The Positivity Constraint:** Probabilities cannot be negative.",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-59",
+      "quote": "However, raw neural network outputs (logits) can be any real number from $-\\infty$ to $+\\infty$.",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-60",
+      "quote": "Since $e^x$ is strictly positive for all real $x$, it maps negative numbers into the positive space required for probability.",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-61",
+      "quote": "* **Non-Linear Contrast (The “Amplifier”):**",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-62",
+      "quote": "If we have Logits $x_1=2$ and $x_2=4$, the difference is only 2 units (linear).",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-63",
+      "quote": "But $e^4 \\approx 54.6$ and $e^2 \\approx 7.4$.",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-64",
+      "quote": "The exponential transformation increases the ratio from $2:1$ to roughly $7:1$.",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-65",
+      "quote": "This forces the network to pick a “winner,” making the classification decision much more distinct.",
+      "section": "Why is $e$ the perfect choice for SoftMax?",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-66",
+      "quote": "The SoftMax formula $\\sigma(z)_i = \\frac{e^{z_i}}{\\sum e^{z_j}}$ is essentially a **normalization of growth**.",
+      "section": "The Motivation in SoftMax",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-67",
+      "quote": "By exponentiating the logits, we are measuring the “total growth energy” of all classes combined and then asking: *“What percentage of the total energy belongs to Class A?”* This ensures that even if a score is negative, it still represents a physical “share” of the total probability, and that the sum of all shares always equals exactly 1.0 (100%).",
+      "section": "The Motivation in SoftMax",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-68",
+      "quote": "The realization that activation functions needed to be differentiable was born from the necessity of **gradient-based optimization**.",
+      "section": "The Evolution of Differentiability: From Step Functions to Sigmoids",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-69",
+      "quote": "In early models like the Perceptron (by \\citeauthor{rosenblatt1958perceptron}), the **Heaviside step function** was used.",
+      "section": "The Evolution of Differentiability: From Step Functions to Sigmoids",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-70",
+      "quote": "Because its derivative is zero almost everywhere, it was impossible to use calculus to “nudge” weights in the right direction.",
+      "section": "The Evolution of Differentiability: From Step Functions to Sigmoids",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-71",
+      "quote": "To solve this, researchers turned to smooth, continuous functions that allowed for the application of the chain rule, the mathematical backbone of **backpropagation**.",
+      "section": "The Evolution of Differentiability: From Step Functions to Sigmoids",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-72",
+      "quote": "Before it was an activation, the sigmoid was a **population law**.",
+      "section": "The Evolution of Differentiability: From Step Functions to Sigmoids",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-73",
+      "quote": "In \\citeyear{verhulst1838logistic}, \\citeauthor{verhulst1838logistic} proposed $dP/dt = rP(1-P/K)$: a population $P$ grows at rate $r$ when small, but the term $(1-P/K)$ slows it as it approaches the carrying capacity $K$.",
+      "section": "The Evolution of Differentiability: From Step Functions to Sigmoids",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-74",
+      "quote": "The solution is the logistic curve, an S-shape that starts exponentially and then flattens.",
+      "section": "The Evolution of Differentiability: From Step Functions to Sigmoids",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-75",
+      "quote": "The same curve later became the workhorse of bio-assay and logistic regression (\\cite{berkson1944logistic}; \\cite{cox1958logistic}), and only then was it borrowed as a differentiable \"firing probability\" for neural units.",
+      "section": "The Evolution of Differentiability: From Step Functions to Sigmoids",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-76",
+      "quote": "During the 1980s and 90s, the **Sigmoid** and **Hyperbolic Tangent (Tanh)** functions became the standard “decision makers” for neural networks.",
+      "section": "The Reign of Sigmoid and Tanh",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-77",
+      "quote": "* **Sigmoid**: This function squashes input values into a range of $(0, 1)$, which made it natural to read an output as the probability of a neuron “firing” — though the curve itself was not invented for that purpose.",
+      "section": "The Reign of Sigmoid and Tanh",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-78",
+      "quote": "The early backpropagation experiments on handwritten zip codes actually used a scaled hyperbolic tangent in the hidden layers, not the logistic sigmoid \\cite{lecun1989backpropagation}.",
+      "section": "The Reign of Sigmoid and Tanh",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-79",
+      "quote": "* **Tanh**: As researchers like \\citeauthor{lecun1998gradientbased} (in '\\citetitle{lecun1998gradientbased}', published in \\citeyear{lecun1998gradientbased}) pushed for better performance, **Tanh** became preferred over Sigmoid because it is zero-centered, mapping inputs to a range of $(-1, 1)$.",
+      "section": "The Reign of Sigmoid and Tanh",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-80",
+      "quote": "This helped keep the updates to the network's weights more balanced during training, a technique notably applied to document recognition systems.",
+      "section": "The Reign of Sigmoid and Tanh",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-81",
+      "quote": "Tanh is a rescaled logistic curve: $\\tanh(x) = 2\\sigma(2x)-1$.",
+      "section": "The Reign of Sigmoid and Tanh",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-82",
+      "quote": "The rescaling makes it zero-centred, so a unit's gradient is not biased in one direction simply because its output is always positive — the reason \\cite[LeCun et al. (1989)]{lecun1989backpropagation} used a scaled hyperbolic tangent in every node of their zip-code network.",
+      "section": "The Reign of Sigmoid and Tanh",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-83",
+      "quote": "The price is the same saturation at both ends: for large $|x|$ the derivative tends to zero, and stacking many such units multiplies those small numbers together.",
+      "section": "The Reign of Sigmoid and Tanh",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-84",
+      "quote": "That is the vanishing-gradient problem in its simplest form.",
+      "section": "The Reign of Sigmoid and Tanh",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-85",
+      "quote": "The era of S-shaped curves eventually reached a limit.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-86",
+      "quote": "Because both **Sigmoid** and **Tanh** “flatten out” (saturate) at high and low input values, their derivatives become nearly zero.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-87",
+      "quote": "In deep networks, multiplying these tiny numbers together during backpropagation caused the signal to disappear before it reached the earliest layers, a phenomenon known as the **vanishing gradient problem**.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-88",
+      "quote": "The problem was diagnosed precisely in the early 1990s.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-89",
+      "quote": "\\citeauthor{hochreiter1991vanishing}'s \\citeyear{hochreiter1991vanishing} diploma thesis analysed the repeated multiplication of Jacobians in backpropagation and showed that the error signal can shrink exponentially with depth; \\cite[Bengio et al. (1994)]{bengio1994learning} made the result general and connected it to the difficulty of learning long-range dependencies.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-90",
+      "quote": "The fix is not a single trick: ReLU keeps the derivative from vanishing on the active side, residual connections give the gradient a short path around a block, and gated recurrent architectures such as the LSTM and GRU learn to hold information across time.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-91",
+      "quote": "This bottleneck was finally bypassed when the community embraced the **Rectified Linear Unit (ReLU)**, the piecewise-linear function $\\max(0,x)$.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-92",
+      "quote": "\\citeauthor{relufirst} had used a rectifier-like response as an activation in a multilayered network as early as \\citeyear{relufirst}, but the unit entered mainstream deep learning in 2010, when \\citeauthorlastnameand{relupaper} showed that rectified units could train better than sigmoid units in restricted Boltzmann machines.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-93",
+      "quote": "By keeping a constant gradient of 1 for all positive inputs ($x > 0$), ReLU let gradients flow through dozens of layers without fading; \\cite[Glorot et al. (2011)]{glorot2011deep} then demonstrated why this made deep supervised networks trainable.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-94",
+      "quote": "The 2012 ImageNet result \\cite{krizhevsky2012imagenet} made rectifier networks the default, and the modern deep-learning era followed.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-95",
+      "quote": "The name \"rectifier\" comes from electronics: a half-wave rectifier passes the positive half of a signal and blocks the negative half, and $\\max(0,x)$ is exactly that operation.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-96",
+      "quote": "In the 2010 RBM experiments that brought it back, the rectified unit was not just a cheaper sigmoid; it changed the sparsity of the learned representations, with many units sitting exactly at zero \\cite{relupaper}.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-97",
+      "quote": "That sparsity is the subject of the next section.",
+      "section": "The Breaking Point: Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-98",
+      "quote": "The most common explanation for ReLU's success is that its derivative is 1 for positive inputs and 0 for negative ones, which prevents the vanishing gradient problem.",
+      "section": "Why ReLU Works: Sparse Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-99",
+      "quote": "But there is a deeper insight: ReLU creates **sparsity**.",
+      "section": "Why ReLU Works: Sparse Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-100",
+      "quote": "For any given input, roughly half of ReLU's neurons output exactly zero.",
+      "section": "Why ReLU Works: Sparse Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-101",
+      "quote": "This means the network is effectively using a **different sparse subnetwork** for each input.",
+      "section": "Why ReLU Works: Sparse Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-102",
+      "quote": "A neuron that activates for “dog” may be silent for “cat,” and vice versa.",
+      "section": "Why ReLU Works: Sparse Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-103",
+      "quote": "Over the entire dataset, each neuron specializes in a subset of patterns, and every input activates only a fraction of the available neurons.",
+      "section": "Why ReLU Works: Sparse Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-104",
+      "quote": "This connects directly to the \\cite[Lottery Ticket Hypothesis]{frankle2019lottery}: within a large, randomly initialized network, there exist smaller subnetworks (“winning tickets”) that, when trained in isolation, can match the performance of the full network.",
+      "section": "Why ReLU Works: Sparse Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-105",
+      "quote": "ReLU makes these subnetworks easier to find because its sparsity naturally partitions the network into overlapping but distinct computational pathways.",
+      "section": "Why ReLU Works: Sparse Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-106",
+      "quote": "The “aha-moment”: ReLU doesn't just prevent vanishing gradients, it forces the network to use a different “team” of neurons for every input, creating **implicit specialization**.",
+      "section": "Why ReLU Works: Sparse Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-107",
+      "quote": "No neuron needs to be a generalist; each can become an expert on a narrow pattern because it only fires when that pattern appears.",
+      "section": "Why ReLU Works: Sparse Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-108",
+      "quote": "While ReLU became the workhorse of CNNs, the **Gaussian Error Linear Unit (GELU)**, introduced by \\citeauthorlastnameand{hendrycks2016gelu} in \\citeyear{hendrycks2016gelu}, became the standard activation in many **Transformer** feed-forward networks — GPT-1, BERT and their descendants — although the original Transformer used ReLU \\cite{vaswani2017attention}.",
+      "section": "GELU: The Smooth Transformer Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-109",
+      "quote": "This is the activation used in the FFN of the nanoGPT model we train in this course:",
+      "section": "GELU: The Smooth Transformer Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-110",
+      "quote": "Where $\\Phi(x)$ is the standard normal cumulative distribution function and $\\text{erf}$ is the error function.",
+      "section": "GELU: The Smooth Transformer Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-111",
+      "quote": "In \\citeyear{hendrycks2016gelu}, \\citeauthorlastnameand{hendrycks2016gelu} did not simply fit a curve: they derived GELU as the expectation of a stochastic regulariser.",
+      "section": "GELU: The Smooth Transformer Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-112",
+      "quote": "Multiply the input $x$ by a Bernoulli mask that keeps it with probability $\\Phi(x)$ and drops it otherwise; the expected value of that random gate is $x\\Phi(x)$, the GELU.",
+      "section": "GELU: The Smooth Transformer Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-113",
+      "quote": "The Gaussian CDF enters for a reason — it is the probability that a standard-normal noise variable stays below $x$ — and the function inherits a smooth, slightly non-monotonic dip near $x\\approx-0.75$ instead of ReLU's hard corner.",
+      "section": "GELU: The Smooth Transformer Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-114",
+      "quote": "GELU is often described as a “smooth ReLU”: it behaves approximately like $\\max(0, x)$ but is **everywhere differentiable** and keeps a small non-zero gradient for negative inputs.",
+      "section": "GELU: The Smooth Transformer Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-115",
+      "quote": "This means the gradient is rarely exactly zero for negative inputs, so a detector can keep contributing a small signal during backpropagation.",
+      "section": "GELU: The Smooth Transformer Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-116",
+      "quote": "It is this smoothness, combined with its superior performance on language modeling, that made GELU the natural choice for the Transformer's FFN.",
+      "section": "GELU: The Smooth Transformer Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-117",
+      "quote": "The **Sigmoid Linear Unit (SiLU)** — introduced by \\cite[Elfwing et al. (2017)]{elfwing2017silu} and independently found as **Swish** by \\cite[Ramachandran et al. (2017)]{ramachandran2017swish} — is the activation inside the **U-Net denoiser of Stable Diffusion** \\cite{rombach2022ldm} and in many modern vision models:",
+      "section": "SiLU: The Diffusion Smooth Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-118",
+      "quote": "Both names describe the same self-gating trick: the input multiplies a gate that is a function of itself, so the unit can pass a signal, suppress it, or output a small negative value.",
+      "section": "SiLU: The Diffusion Smooth Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-119",
+      "quote": "\\cite[Elfwing et al. (2017)]{elfwing2017silu} approached it from reinforcement-learning value functions, while \\cite[Ramachandran et al. (2017)]{ramachandran2017swish} found it by architecture search; the two papers arrived at the same curve from different directions.",
+      "section": "SiLU: The Diffusion Smooth Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-120",
+      "quote": "That is a different mechanism from GELU's probabilistic gate, even though the two curves are nearly indistinguishable.",
+      "section": "SiLU: The Diffusion Smooth Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-121",
+      "quote": "A *self-gated* function: each input is multiplied by its own sigmoid.",
+      "section": "SiLU: The Diffusion Smooth Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-122",
+      "quote": "Looks like a smoothed ReLU, strongly positive for large $x$, weakly negative for large negative $x$ (minimum $\\approx -0.28$), zero at $x = 0$.",
+      "section": "SiLU: The Diffusion Smooth Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-123",
+      "quote": "Like GELU it is everywhere differentiable and retains a small gradient for moderately negative inputs; unlike GELU it needs only one sigmoid (no error function), so deep vision stacks prefer it.",
+      "section": "SiLU: The Diffusion Smooth Gate",
+      "kind": "statement"
+    },
+    {
+      "id": "activationlab-stmt-124",
+      "quote": "Inside Stable Diffusion, each ResBlock applies `GroupNorm → SiLU → Conv` twice, with a residual connection around the pair \\cite{rombach2022ldm}.",
+      "section": "SiLU: The Diffusion Smooth Gate",
+      "kind": "statement"
+    }
   ]
 }

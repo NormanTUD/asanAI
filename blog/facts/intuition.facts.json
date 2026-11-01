@@ -478,5 +478,865 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "intuition-stmt-1",
+      "quote": "We can think of LLMs as machines that predict the next most likely word, given a context — only one word at a time.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-2",
+      "quote": "That word is appended to the input and fed back in, and the loop repeats until a special `|endoftext|` token signals the end.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-3",
+      "quote": "In the example below, the user enters the text “Once upon a” and lets the LLM continue.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-4",
+      "quote": "**Step 1.** The text is put into the LLM:",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-5",
+      "quote": "**Step 2.** The predicted word is attached, and the whole new text is fed back in:",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-6",
+      "quote": "**Step 3.** It repeats — each answer becomes part of the next question — until the model emits the stop signal:",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-7",
+      "quote": "**Final output: “Once upon a time there was a dragon.”**",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-8",
+      "quote": "The LLM learned to predict the next word by reading **massive** amounts of text — books, websites, articles — noticing the patterns in how language works, and picking up facts along the way.",
+      "section": "How does the computer find the next word?",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-9",
+      "quote": "But how does it get from a string of words to a single prediction?",
+      "section": "How does the computer find the next word?",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-10",
+      "quote": "It happens in five steps.",
+      "section": "How does the computer find the next word?",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-11",
+      "quote": "We will follow one word through all of them.",
+      "section": "How does the computer find the next word?",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-12",
+      "quote": "Computers don't understand words.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-13",
+      "quote": "So the very first thing an LLM does is **chop the input into small pieces called tokens**.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-14",
+      "quote": "We can first think of these tokens as words, but they don't have to be.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-15",
+      "quote": "They can be sub-words, numbers, or any part of a text.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-16",
+      "quote": "While we humans think in words, the LLM “thinks” in tokens.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-17",
+      "quote": "Most tokens are common words or word fragments.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-18",
+      "quote": "`\"understanding\"` might split into `\"under\"` + `\"standing\"` — two tokens.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-19",
+      "quote": "That is the quiet genius of it: a word the model has never seen can still be assembled from pieces it knows by heart.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-20",
+      "quote": "Where a word splits depends on the data the model was trained on.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-21",
+      "quote": "It chooses that automatically, and once chosen, the vocabulary stays fixed for the life of the model — a fixedness with strange consequences for the rare tokens almost nobody ever trained on (\\cite[Li et al., 2024]{glitchtokens}).",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-22",
+      "quote": "Some tokens are almost never seen in training, so their embeddings stay nearly arbitrary.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-23",
+      "quote": "Feed one to a model and it can spill nonsense or start reciting its training data — the “understanding” only reaches as far as the text it happened to read.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-24",
+      "quote": "Researchers call them glitch tokens (\\cite[Land & Bartolo, 2024]{land2024fishing}; \\cite[Li et al., 2024]{glitchtokens}).",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-25",
+      "quote": "The most famous example is .",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-26",
+      "quote": "It is not a word and not a random string: it is the Reddit handle of a user who posted repeatedly in r/counting , a subreddit where people count upward, one number per comment.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-27",
+      "quote": "Such names appeared so often in that corner of the web that the tokenizer gave some of them their own tokens.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-28",
+      "quote": "But the vocabulary was built from a broader scrape of the web than the curated text used to train the model, so the model barely ever met them.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-29",
+      "quote": "Ask it to repeat and it may answer “distribute”, refuse, or insult you.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-30",
+      "quote": "Other counter names such as can make a model start reciting numbers (\\cite[Rumbelow & Watkins, 2023]{rumbelow2023solidgold}).",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-31",
+      "quote": "That is the lesson in miniature.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-32",
+      "quote": "A token is not a concept the model knows; it is a slot the model had to fill from data.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-33",
+      "quote": "If the slot was filled with almost nothing, there is almost nothing behind it — and what comes out is whatever the surrounding statistics happen to drag along.",
+      "section": "Step 1: Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-34",
+      "quote": "A raw token tells the model nothing about what a word *means*.",
+      "section": "Step 2: Embedding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-35",
+      "quote": "So the model replaces each token with a **long list of numbers** — a vector — that stands for its meaning.",
+      "section": "Step 2: Embedding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-36",
+      "quote": "These vectors live in a high-dimensional space where **words with similar meanings end up close together**.",
+      "section": "Step 2: Embedding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-37",
+      "quote": "To make this tangible, the demo below plots a tiny slice of that space — just two semantic axes the model might discover: **Power** and **Gender**.",
+      "section": "Step 2: Embedding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-38",
+      "quote": "“Man” and “Prince” sit close on the Power axis; “Man” and “Woman” sit close on the Gender axis.",
+      "section": "Step 2: Embedding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-39",
+      "quote": "Nobody hand-designs these positions.",
+      "section": "Step 2: Embedding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-40",
+      "quote": "The model learns them automatically during training, purely from seeing which words turn up in similar company across billions of sentences.",
+      "section": "Step 2: Embedding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-41",
+      "quote": "And the space doesn't just capture similarity — it captures **relationships**.",
+      "section": "Step 2: Embedding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-42",
+      "quote": "The direction from “Man” to “Woman” stands for the concept of gender.",
+      "section": "Step 2: Embedding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-43",
+      "quote": "Carry that same direction from “King” and you land right next to “Queen.” Nobody typed that rule in — it fell out of the statistics of the text (\\cite[Word2Vec]{mikolov2013word2vec}).",
+      "section": "Step 2: Embedding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-44",
+      "quote": "Real networks don't use two dimensions but **thousands** — far too many to picture.",
+      "section": "Step 2: Embedding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-45",
+      "quote": "The principle stays the same: position encodes meaning, direction encodes relationship.",
+      "section": "Step 2: Embedding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-46",
+      "quote": "“The dog bites man” means something very different from “The man bites dog.” Same words, different order.",
+      "section": "Step 3: Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-47",
+      "quote": "So a **positional encoding** is added to each token's embedding — a unique signal that says “I'm the 1st word,” “I'm the 2nd word,” and so on.",
+      "section": "Step 3: Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-48",
+      "quote": "Now each token carries two pieces of information: **what it is** and **where it is**.",
+      "section": "Step 3: Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-49",
+      "quote": "This is not a nicety — the embedding and attention operations have no built-in notion of sequence order, so without it, the two sentences above would be indistinguishable to the model.",
+      "section": "Step 3: Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-50",
+      "quote": "This is the heart of the model — the **Transformer architecture** (\\cite[Vaswani et al., 2017]{vaswani2017attention}).",
+      "section": "Step 4: The Transformer Layers",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-51",
+      "quote": "The token vectors flow through **many layers** stacked on top of each other (modern LLMs can have 80+ layers), each one refining the model's understanding a little more.",
+      "section": "Step 4: The Transformer Layers",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-52",
+      "quote": "Call the vector a token starts with $\\mathbf{x}_{0}$.",
+      "section": "Step 4: The Transformer Layers",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-53",
+      "quote": "Every layer *adds* its output to what is already there instead of overwriting it, so that nothing learned earlier is ever thrown away.",
+      "section": "Step 4: The Transformer Layers",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-54",
+      "quote": "If layer $l$ reads $\\mathbf{h}_{l}$ and writes back its own contribution, the rule is:",
+      "section": "Step 4: The Transformer Layers",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-55",
+      "quote": "In general $\\mathbf{h}_{l+1} = \\mathbf{h}_{l} + \\text{Layer}(\\mathbf{h}_{l})$, starting from $\\mathbf{h}_{0} = \\mathbf{x}_{0}$.",
+      "section": "Step 4: The Transformer Layers",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-56",
+      "quote": "This running vector is called the **residual stream**.",
+      "section": "Step 4: The Transformer Layers",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-57",
+      "quote": "It was originally invented to prevent the **vanishing gradient problem**, but it also acts as a **shared notebook**: each layer reads from the notebook, does some thinking, and **writes its findings back** to it.",
+      "section": "Step 4: The Transformer Layers",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-58",
+      "quote": "Attention lets the model **look at other tokens** to understand context.",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-59",
+      "quote": "In *“The cat sat on the mat because **it** was tired”*, what does “it” refer to?",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-60",
+      "quote": "An **attention head** figures this out by comparing “it” to every other word and deciding that “it” is most related to “cat”.",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-61",
+      "quote": "Attention Heads solve what linguists call **Long Distance Dependencies**: a word at the beginning of a long text may influence the meaning of a word at the very end.",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-62",
+      "quote": "Attention allows to find out which word attends to which other word over short or even very long texts, and it can do so over the whole **context length** of the LLM model.",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-63",
+      "quote": "It does so by moving the Embedding of a word in dependence of the context it's used in to a place called **contextualized Embedding** that looks not only at the word, but at the context the word is used in.",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-64",
+      "quote": "This is best exemplified when using words that have multiple meanings, like “bank”, which could be a **river bank**, or a **bank** where you put your **money**.",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-65",
+      "quote": "Cycle through the examples below.",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-66",
+      "quote": "Notice how the diamond — the contextualized “Bank” — leaps toward the neighbor that defines it.",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-67",
+      "quote": "This is what **Attention** does: it looks at the context a word is used in, and moves the **Embedding** of a word in the **Embedding Space** to a point closer to its meaning in the context it's used in.",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-68",
+      "quote": "LLM models have **many attention heads** running in parallel, each a tiny specialist.",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-69",
+      "quote": "One might track which noun a pronoun refers to, another might connect verbs to their objects, another might notice adjectives describing nearby nouns.",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-70",
+      "quote": "It matters, though, that not every head does something a human can read off.",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-71",
+      "quote": "A head may look like it reacts to nouns or verbs while in reality it is just a pattern learned from statistics — not programmed to react to those words, and not \"knowing\" what they are (\\cite[Elhage et al., 2021]{elhage2021mathematical}).",
+      "section": "4a: Attention - “Which other words matter for *this* word?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-72",
+      "quote": "After attention has gathered context, a small **neural network** processes each token on its own.",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-73",
+      "quote": "Unlike attention, it does not look at other tokens — it looks at one token's vector and transforms it.",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-74",
+      "quote": "In a modern LLM this block holds about **two-thirds of all the parameters**, which is why most of the model's stored knowledge lives here (\\cite[Geva et al., 2021]{geva2021kv}).",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-75",
+      "quote": "The usual cartoon says three things happen: pattern detectors fire, a filter zeroes the weak ones, and knowledge is added back.",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-76",
+      "quote": "That is a useful first picture — but the modern version is sharper and a little stranger:",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-77",
+      "quote": "- **It is a key → value memory.** The first matrix holds thousands of *keys*: patterns in the token's vector.",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-78",
+      "quote": "When a key matches, the second matrix writes a *value* — not a stored sentence, but a **distribution over the next tokens** that this kind of pattern tends to be followed by.",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-79",
+      "quote": "Lower layers key on shallow patterns (word forms, syntax); upper layers key on meaning.",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-80",
+      "quote": "- **It is where facts are recalled.** In the middle layers the FFN behaves like an associative memory for subject → attribute facts.",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-81",
+      "quote": "Researchers can locate a single fact there and edit the weights to change it: the ROME method can make a model “believe” a different capital of France without retraining it (\\cite[Meng et al., 2022]{meng2022locating}).",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-82",
+      "quote": "- **The clean little cards are a convenient lie.** Real neurons are mostly *polysemantic* — one neuron responds to several unrelated things — because the model packs far more features than it has neurons, a phenomenon called superposition (\\cite[Elhage et al., 2022]{elhage2022superposition}).",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-83",
+      "quote": "Sparse autoencoders can untangle those activations into features a human can actually read (\\cite[Bricken et al., 2023]{bricken2023monosemanticity}; \\cite[Cunningham et al., 2023]{cunningham2023sparse}).",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-84",
+      "quote": "- **Modern FFNs are often gated, and sometimes replaced.** Many current models swap the hard ReLU for a gated activation such as SwiGLU, where one branch controls how much of another passes through (\\cite[Shazeer, 2020]{shazeer2020glu}).",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-85",
+      "quote": "And because this block is so large, some models replace it with a **mixture of experts** — many FFNs, with each token routed to only a few of them (\\cite[Fedus et al., 2022]{fedus2022switch}).",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-86",
+      "quote": "Let us follow the word **“Apple”**.",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-87",
+      "quote": "Thanks to attention, its vector already carries clues about its context.",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-88",
+      "quote": "Depending on whether those clues say *eating* or *buying*, a different set of keys matches — and a different value distribution is written into the stream.",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-89",
+      "quote": "Technically, this is expressed with the formula:",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-90",
+      "quote": "Here $W_1$ holds the keys, the $\\max(0, \\ldots)$ keeps only the strong matches (many modern models replace it with a gated activation), and $W_2$ writes the values — the shift in the next-token distribution.",
+      "section": "4b: Feed-Forward Network - “What do I conclude?”",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-91",
+      "quote": "The outputs of the attention heads, and then of the feed-forward network, are added straight back to the **residual stream** — nothing is overwritten, every layer only adds.",
+      "section": "4c: All together",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-92",
+      "quote": "And crucially, neither the attention heads nor the feed-forward network are configured by hand.",
+      "section": "4c: All together",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-93",
+      "quote": "They learn what to look for by looking at massive amounts of data.",
+      "section": "4c: All together",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-94",
+      "quote": "The residual stream shows *what* a layer writes.",
+      "section": "4d: A layer is a bend in space",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-95",
+      "quote": "It leaves open *where* it writes it.",
+      "section": "4d: A layer is a bend in space",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-96",
+      "quote": "Read the layer's output as a new coordinate system and the operation looks like a bend of the whole space: a smooth, reversible map that lifts the inside of a ring and lowers its outside, opening a gap for a flat classifier.",
+      "section": "4d: A layer is a bend in space",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-97",
+      "quote": "This is the geometric picture behind the \"origami\" view of feed-forward layers \\cite{keup2022origami} — except that here the bend is smooth, so no point is torn or glued.",
+      "section": "4d: A layer is a bend in space",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-98",
+      "quote": "The hard ReLU crease is the subject of [Origami in N dimensions](origami.php).",
+      "section": "4d: A layer is a bend in space",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-99",
+      "quote": "The demo starts with a red core inside a blue ring, a configuration no straight line can separate.",
+      "section": "4d: A layer is a bend in space",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-100",
+      "quote": "Step through it: add a dimension, bend the plane into a bowl, slide a flat plane into the gap, then squash the whole picture onto a one-dimensional score.",
+      "section": "4d: A layer is a bend in space",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-101",
+      "quote": "The important shift is not that the layer moves points.",
+      "section": "4d: A layer is a bend in space",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-102",
+      "quote": "It changes the coordinate system the next layer reads.",
+      "section": "4d: A layer is a bend in space",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-103",
+      "quote": "Stack many such bends and the representation can be arranged so that a final linear readout — one flat cut — is enough.",
+      "section": "4d: A layer is a bend in space",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-104",
+      "quote": "That is the trick behind deep networks: depth buys a sequence of space bends, and the last layer gets to stay simple.",
+      "section": "4d: A layer is a bend in space",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-105",
+      "quote": "After all the layers, the model takes the **last token's vector** and produces a **score for every word in its vocabulary** (often 50,000+ words).",
+      "section": "Step 5: The Final Prediction",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-106",
+      "quote": "Those scores are turned into probabilities:",
+      "section": "Step 5: The Final Prediction",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-107",
+      "quote": "Then it **picks a word** — usually one of the top candidates, but with a little randomness, so it doesn't say the exact same thing every time.",
+      "section": "Step 5: The Final Prediction",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-108",
+      "quote": "And then, as in the very first example, that word is appended to the input and the whole process begins again, one word at a time, until the model decides it is done.",
+      "section": "Step 5: The Final Prediction",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-109",
+      "quote": "A single prediction is one slice through a tube of plausible continuations.",
+      "section": "The truth tunnel",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-110",
+      "quote": "Step through the sentence and watch the tube narrow as the context closes the options — then turn up the temperature and watch it inflate again.",
+      "section": "The truth tunnel",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-111",
+      "quote": "There is no “understanding” module, no grammar checker, no knowledge database.",
+      "section": "The key insight",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-112",
+      "quote": "It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison.",
+      "section": "The key insight",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-113",
+      "quote": "But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.",
+      "section": "The key insight",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-114",
+      "quote": "The goal of minimizing cross-entropy loss is not a shallow objective.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-115",
+      "quote": "There is a deep connection between **prediction** and **compression**.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-116",
+      "quote": "The Kolmogorov complexity $K(x)$ of a string $x$ is the length of the shortest program that produces it.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-117",
+      "quote": "Solomonoff's theory of inductive inference proves that the optimal predictor for any sequence is the one that finds the shortest description (maximum compression) of the data seen so far.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-118",
+      "quote": "Cross-entropy loss, which LLMs minimize, is an upper bound on the compressibility of the text.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-119",
+      "quote": "A model that achieves low cross-entropy has found a short description of the statistical structure of language.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-120",
+      "quote": "The hypothesis that drives much of modern scaling research goes further: to compress natural language well, you must model the **causal structure of the world** that generates language.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-121",
+      "quote": "When the training text says “I dropped the glass and it ___,” predicting “shattered” requires an implicit model of gravity, material properties, and causation.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-122",
+      "quote": "The model does not need to be explicitly taught physics; the compression objective pushes it to discover physical regularities because they reduce prediction error.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-123",
+      "quote": "This is the dominant interpretation of why scaling works: more parameters allow more compression, which requires more accurate world models, which produces more “intelligent” behavior.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-124",
+      "quote": "**From this perspective, intelligence and optimal compression go hand in hand** — intelligence is not a separate objective that has to be optimized directly.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-125",
+      "quote": "This framing is best read as a productive working hypothesis, not a proved identity.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-126",
+      "quote": "Solomonoff's theorem is a result about *prediction*, not about *understanding*: an optimal predictor must be a compressor, but it does not settle whether a *particular* predictor, including a modern LLM, has anything resembling genuine world knowledge — or whether fluent prediction can arise from large-scale surface pattern-matching alone, the position associated with \\citeauthor{bender2021stochasticparrots}'s stochastic-parrots critique.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-127",
+      "quote": "The empirical evidence does not yet fully adjudicate the question; the practical success of scaling makes the compression-as-intelligence view hard to dismiss, but it remains a contested and deeply philosophical claim rather than a settled fact.",
+      "section": "Why next-token prediction is so powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-128",
+      "quote": "A model thinks in a continuous space, yet it must speak in a **finite** vocabulary.",
+      "section": "The Meadow of Words",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-129",
+      "quote": "This meadow shows how a thought becomes a word: every word is a pin in the field, every point of the field is a possible next-thought, and the thought simply falls into the cell of the **nearest** word.",
+      "section": "The Meadow of Words",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-130",
+      "quote": "The seams between cells are exactly the places where two words are equally near — where language runs out.",
+      "section": "The Meadow of Words",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-131",
+      "quote": "> **In one line:** a language model is a finite vocabulary laid over an infinite space of meaning — and a loop that keeps falling from one point in that space to the next word.",
+      "section": "The Meadow of Words",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-132",
+      "quote": "The meadow is a **Voronoi partition** of thought space.",
+      "section": "The same construction in any dimension",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-133",
+      "quote": "With word pins $a_1, \\dots, a_n$, the cell of word $w$ is the set of thoughts for which $a_w$ is the nearest pin:",
+      "section": "The same construction in any dimension",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-134",
+      "quote": "A language model is a loop that turns geometry into words, and words back into geometry.",
+      "section": "The loop, all the way down",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-135",
+      "quote": "Text arrives as **tokens** and becomes **vectors**.",
+      "section": "The loop, all the way down",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-136",
+      "quote": "Layer after layer, **attention** lets every vector look at its neighbours while the **residual stream** carries all earlier findings forward untouched.",
+      "section": "The loop, all the way down",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-137",
+      "quote": "The last vector is then scored against the entire **vocabulary** and turned into a probability distribution — and one word is drawn.",
+      "section": "The loop, all the way down",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-138",
+      "quote": "That word is appended to the input, and the loop starts again.",
+      "section": "The loop, all the way down",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-139",
+      "quote": "Nowhere in that loop is a shelf of stored facts, and nowhere is a little module labelled \"understanding\".",
+      "section": "The loop, all the way down",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-140",
+      "quote": "Meaning lives in the **geometry** — in directions, distances, and regions — and the model's only task at each step is to place the next thought somewhere in that space.",
+      "section": "The loop, all the way down",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-141",
+      "quote": "The meadow is that last step seen up close: a finite vocabulary cutting an infinite space of possible thoughts into cells, with a seam wherever two words are equally near.",
+      "section": "The loop, all the way down",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-142",
+      "quote": "Prediction is the walk; language is the trail it leaves.",
+      "section": "The loop, all the way down",
+      "kind": "statement"
+    },
+    {
+      "id": "intuition-stmt-143",
+      "quote": "> **In one line:** a large language model is a next-word predictor trained on a vast slice of human text — and at scale, that simple loop starts to behave like a model of language, of reasoning, and of the world behind them.",
+      "section": "The loop, all the way down",
+      "kind": "statement"
+    }
   ]
 }

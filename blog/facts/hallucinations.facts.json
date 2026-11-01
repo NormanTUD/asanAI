@@ -448,5 +448,367 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "hallucinations-stmt-1",
+      "quote": "One of the biggest dangers of modern AI (Large Language Models) is that they can sound incredibly confident while saying something completely untrue.",
+      "section": "The Problem: Why AI Lies to You",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-2",
+      "quote": "We call this a **Hallucination**.",
+      "section": "The Problem: Why AI Lies to You",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-3",
+      "quote": "To understand why this happens, we have to stop thinking of AI as a “Database of Knowledge” and start thinking of it as a **Pattern Completion Engine**.",
+      "section": "The Problem: Why AI Lies to You",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-4",
+      "quote": "Deliberately over-driving that engine — tuning the input instead of the weights — is what the [Inceptionism](inceptionism.php) dreams do: the network projects its learned templates onto noise until it sees towers in rocks and birds in clouds, engineered pareidolia.",
+      "section": "The Problem: Why AI Lies to You",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-5",
+      "quote": "The AI does not “know” that the capital of France is Paris.",
+      "section": "The Problem: Why AI Lies to You",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-6",
+      "quote": "It simply knows that in the millions of books it read, the word “Paris” appears extremely often after the phrase “The capital of France is”.",
+      "section": "The Problem: Why AI Lies to You",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-7",
+      "quote": "\\marginfig{pareidolia_jupiter_face.jpg}{Humans are pattern completion engines too.",
+      "section": "The Problem: Why AI Lies to You",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-8",
+      "quote": "This photo from NASA's Juno probe shows ordinary cloud turbulence on Jupiter, but the eye insists on seeing a *face* — pareidolia, the same conflating of noise and pattern that makes an LLM “see” a fact that isn't there.",
+      "section": "The Problem: Why AI Lies to You",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-9",
+      "quote": "Image: [NASA/JPL-Caltech/SwRI/MSSS](https://commons.wikimedia.org/wiki/File:Just_in_Time_for_Halloween,_NASA%27s_Juno_Mission_Spots_Eerie_%22Face%22_on_Jupiter_(PIA25727).jpg) (public domain; color processing Vladimir Tarasov).}",
+      "section": "The Problem: Why AI Lies to You",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-10",
+      "quote": "At its core, an LLM is a giant mathematical function that calculates probabilities.",
+      "section": "The Mechanism: Next-Token Prediction",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-11",
+      "quote": "It looks at the text you have written so far (the Context) and calculates a probability score for every single word in its vocabulary to see which one should come next.",
+      "section": "The Mechanism: Next-Token Prediction",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-12",
+      "quote": "Imagine the AI is trying to finish the sentence: *“The sky is...”*",
+      "section": "The Mechanism: Next-Token Prediction",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-13",
+      "quote": "Here is what the internal probabilities might look like:",
+      "section": "The Mechanism: Next-Token Prediction",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-14",
+      "quote": "In this case, the AI will likely pick “Blue”.",
+      "section": "The Mechanism: Next-Token Prediction",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-15",
+      "quote": "But notice that “Green” and “Cheese” are not zero.",
+      "section": "The Mechanism: Next-Token Prediction",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-16",
+      "quote": "If the AI is forced to be “creative,” it might pick them.",
+      "section": "The Mechanism: Next-Token Prediction",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-17",
+      "quote": "We use a parameter called **Temperature ($T$)**.",
+      "section": "The Role of Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-18",
+      "quote": "Mathematically, the AI produces a “Raw Score” (called a Logit, $z$) for every word.",
+      "section": "The Role of Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-19",
+      "quote": "To turn these scores into percentages (probabilities), we use the **Softmax Function** with Temperature:",
+      "section": "The Role of Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-20",
+      "quote": "* **Low Temperature ($T \\to 0$):** The most likely word gets nearly 100% probability.",
+      "section": "The Role of Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-21",
+      "quote": "The AI becomes robotic, factual, and repetitive.",
+      "section": "The Role of Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-22",
+      "quote": "* **High Temperature ($T \\to \\infty$):** The probabilities flatten out.",
+      "section": "The Role of Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-23",
+      "quote": "“Paris” and “Frog” become almost equally likely.",
+      "section": "The Role of Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-24",
+      "quote": "The AI becomes “creative,” but also starts **Hallucinating**.",
+      "section": "The Role of Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-25",
+      "quote": "The context is: *“The capital of France is...”*",
+      "section": "The Role of Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-26",
+      "quote": "Watch how increasing the Temperature makes the AI more likely to say something wrong (“Frog”).",
+      "section": "The Role of Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-27",
+      "quote": "Because the AI is just predicting the next word based on style and syntax, it can generate **Plausible-Sounding Nonsense**.",
+      "section": "The Dangers of Blind Trust",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-28",
+      "quote": "**Fake Citations:** If you ask for a medical study, the AI knows what a study title *looks* like.",
+      "section": "The Dangers of Blind Trust",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-29",
+      "quote": "It will invent a title, invent author names that sound real, and give you a link that doesn't exist.",
+      "section": "The Dangers of Blind Trust",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-30",
+      "quote": "It isn't lying on purpose; it's just completing the pattern of “What a bibliography looks like.”",
+      "section": "The Dangers of Blind Trust",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-31",
+      "quote": "**Code Vulnerabilities:** AI can write code, but it often guesses libraries or functions that don't exist (hallucination) or uses outdated, insecure patterns because they were common in the training data.",
+      "section": "The Dangers of Blind Trust",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-32",
+      "quote": "**Confidence:** The most dangerous part is the tone.",
+      "section": "The Dangers of Blind Trust",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-33",
+      "quote": "The AI does not hesitate.",
+      "section": "The Dangers of Blind Trust",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-34",
+      "quote": "It does not say “I think...”.",
+      "section": "The Dangers of Blind Trust",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-35",
+      "quote": "It says “The answer is X,” even when X is wrong.",
+      "section": "The Dangers of Blind Trust",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-36",
+      "quote": "You should treat an LLM like a **very eager, very well-read, but occasionally drunk intern.**",
+      "section": "How to use AI Safely",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-37",
+      "quote": "* **Human in the Loop:** Never automate a system where the AI takes critical action (like sending money or medical advice) without a human checking it first.",
+      "section": "How to use AI Safely",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-38",
+      "quote": "* **Verify Facts:** Use AI for summarization, drafting, and brainstorming.",
+      "section": "How to use AI Safely",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-39",
+      "quote": "Do **not** use it as a search engine for facts without verifying the output via Google or a trusted source.",
+      "section": "How to use AI Safely",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-40",
+      "quote": "* **RAG (Retrieval Augmented Generation):** An automated retriever searches a knowledge base (e.g., a manual, documents, or a database) and injects the most relevant passages into the prompt, the AI then answers using only those passages.",
+      "section": "How to use AI Safely",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-41",
+      "quote": "This reduces hallucinations significantly because the AI doesn't have to rely on its “fuzzy memory.”",
+      "section": "How to use AI Safely",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-42",
+      "quote": "The Rule of Thumb is: even if the output looks right, be suspicious.",
+      "section": "How to use AI Safely",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-43",
+      "quote": "Always check the math, run the code, and check the links.",
+      "section": "How to use AI Safely",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-44",
+      "quote": "A primary driver of hallucinations is the static nature of an AI's knowledge.",
+      "section": "The Training Data Cutoff and Zeitgeist Bias",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-45",
+      "quote": "Because models are trained up to a specific point in time, they often “invent” information about events occurring after that date, attempting to force new facts into existing, outdated patterns.",
+      "section": "The Training Data Cutoff and Zeitgeist Bias",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-46",
+      "quote": "This is compounded by popularity bias: the AI tends to provide the statistically most likely answer even if it is incorrect.",
+      "section": "The Training Data Cutoff and Zeitgeist Bias",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-47",
+      "quote": "If training data contains a myth more frequently than the historical truth, the AI will reproduce it as fact because the linguistic pattern is simply stronger.",
+      "section": "The Training Data Cutoff and Zeitgeist Bias",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-48",
+      "quote": "AI models often exhibit **sycophancy** \\citeauthor{sharma2023sycophancy} (\\citeyear{sharma2023sycophancy}), a tendency to agree with the user even when the user makes a false claim.",
+      "section": "Sycophancy and Confirmation Bias",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-49",
+      "quote": "If a user asks, “Why is 2+2=5?”, a model, especially at a high temperature, might attempt to hallucinate a mathematical justification to satisfy the user's implicit expectation.",
+      "section": "Sycophancy and Confirmation Bias",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-50",
+      "quote": "This happens because models are reinforced to be “helpful” and follow the user's conversational lead rather than providing confrontational corrections.",
+      "section": "Sycophancy and Confirmation Bias",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-51",
+      "quote": "There is a fundamental difference between retrieving facts and genuine logical reasoning.",
+      "section": "Logic Gaps vs. Statistical Patterns",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-52",
+      "quote": "A well-known phenomenon in this area is the **Reversal Curse** \\cite{berglund2023reversal}.",
+      "section": "Logic Gaps vs. Statistical Patterns",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-53",
+      "quote": "Researchers have observed that while an AI might know that “Person A is the mother of Person B,” it cannot automatically infer that “Person B is the child of Person A” if that specific directional relationship was missing from the training data.",
+      "section": "Logic Gaps vs. Statistical Patterns",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-54",
+      "quote": "In these instances, the AI often hallucinates names that fit the statistical context of the sentence but fail the test of logical consistency.",
+      "section": "Logic Gaps vs. Statistical Patterns",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-55",
+      "quote": "A deep-seated challenge remains the lack of transparency in neural networks.",
+      "section": "The Black Box of Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-56",
+      "quote": "Even at a low Temperature, it is often impossible to pinpoint exactly why a specific neuron “fired” to trigger a hallucination.",
+      "section": "The Black Box of Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-57",
+      "quote": "The field of **Mechanistic Interpretability** is currently working to decode these internal decision paths.",
+      "section": "The Black Box of Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-58",
+      "quote": "The goal is to prevent hallucinations at the source, within the model's weights, rather than simply filtering the output after the fact.",
+      "section": "The Black Box of Interpretability",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-59",
+      "quote": "The essence of bullshit is not that it is false but that it is phony...",
+      "section": "“Bullshit” vs. Lying (Harry G. Frankfurt)",
+      "kind": "statement"
+    },
+    {
+      "id": "hallucinations-stmt-60",
+      "quote": "[The bullshitter] does not care whether the things he says describe reality correctly.",
+      "section": "“Bullshit” vs. Lying (Harry G. Frankfurt)",
+      "kind": "statement"
+    }
   ]
 }

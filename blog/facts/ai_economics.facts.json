@@ -119,5 +119,181 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "ai_economics-stmt-1",
+      "quote": "The course has covered what AI *is* and what it *can do*; this chapter is the part that decides what it *can afford to do* — and it is missing until now.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-2",
+      "quote": "Economics is not a business afterthought bolted onto the technology; it is a **physical layer**, and it explains decisions you have already seen without a word of arithmetic: why the frontier moved to [Mixture of Experts](mixture_of_experts.php) (more knowledge, same active cost), why the field moved from large under-trained models toward smaller models trained on far more data ([Scaling](hyperparameters.php), \\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}), and why \"just run it locally\" is sometimes the cheapest option and sometimes the most expensive.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-3",
+      "quote": "The whole layer reduces to two numbers — *FLOPs for training* and *FLOPs per token for inference* — and everything below is arithmetic on top of those two.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-4",
+      "quote": "Here is the load-bearing estimate.",
+      "section": "The 6ND rule: training cost in one line",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-5",
+      "quote": "Training a transformer on $D$ tokens, with $N$ parameters, costs approximately",
+      "section": "The 6ND rule: training cost in one line",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-6",
+      "quote": "Inference is a **forward pass only** — no backward — so the per-token cost equals one training step's forward pass, about **2 FLOPs per active parameter per token** (one third of the $6N$ used for a full training step):",
+      "section": "Inference cost per token: active parameters, not total",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-7",
+      "quote": "The single most important serving cost-saver is **prompt caching**, and its arithmetic is the [prefill/decode split](inference_vs_training.php) you already met.",
+      "section": "Why caching saves ~10×: the prefill is paid once",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-8",
+      "quote": "The expensive part of a call is often the **prefill** — reading a long, *repeated* system prompt, tool definitions, or few-shot examples into context.",
+      "section": "Why caching saves ~10×: the prefill is paid once",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-9",
+      "quote": "Without caching, you pay the prefill FLOPs *every call*.",
+      "section": "Why caching saves ~10×: the prefill is paid once",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-10",
+      "quote": "With caching, the repeated prefix's keys and values are computed **once** and *reused*, so the second and later calls skip that prefill almost entirely.",
+      "section": "Why caching saves ~10×: the prefill is paid once",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-11",
+      "quote": "That is where the \"~10×\" comes from: when a call is dominated by a long, repeated prefix (say 4,000 tokens of system prompt) plus a short completion (say 400), uncached you pay for all 4,400 tokens' prefill+decode, but cached you pay mostly for the 400-token completion — roughly **one tenth** of the work per call.",
+      "section": "Why caching saves ~10×: the prefill is paid once",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-12",
+      "quote": "\\cite[Anthropic, Prompt caching]{promptcaching} is the production example: cached tokens are billed at a fraction of uncached ones, precisely because the prefill that would have been recomputed is not.",
+      "section": "Why caching saves ~10×: the prefill is paid once",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-13",
+      "quote": "The calculator above models this directly — slide the cached fraction and watch the bill fall by up to ~90% on the cached part.",
+      "section": "Why caching saves ~10×: the prefill is paid once",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-14",
+      "quote": "The deeper point: caching is not a trick, it is a consequence of the two regimes.",
+      "section": "Why caching saves ~10×: the prefill is paid once",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-15",
+      "quote": "**Prefill is compute-bound and pay-once-able; decode is memory-bound and per-step.** Anything you can make *pay-once* (a repeated prefix) you should cache, because you are moving cost out of the per-call path and into a one-time one.",
+      "section": "Why caching saves ~10×: the prefill is paid once",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-16",
+      "quote": "The last comparison is the one people get wrong.",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-17",
+      "quote": "\"Run it locally\" and \"call the API\" are not the same cost shape:",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-18",
+      "quote": "* **The API is *per-token*.** You pay for what you use — zero when idle, high when busy.",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-19",
+      "quote": "The marginal cost of a token is the price; there is no fixed cost.",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-20",
+      "quote": "This is cheap for a **light, spiky** workload and expensive for a heavy, steady one (you keep paying per token forever).",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-21",
+      "quote": "* **Local is *fixed*.** You pay for the hardware (a GPU that holds a 7B model) once, and then tokens cost almost nothing in compute — the marginal cost is just electricity.",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-22",
+      "quote": "This is expensive for a **light** workload (you bought a GPU to use 2% of the time) and cheap for a **heavy, steady** one (the fixed cost amortizes to nothing over millions of tokens).",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-23",
+      "quote": "They cross at a **breakeven**: local is better when your *steady* token volume is high enough that the hardware cost is recovered within your horizon; the API is better when your volume is light, spiky, or private-data-light.",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-24",
+      "quote": "And there is a third axis the arithmetic ignores — **privacy**: local keeps the data on the machine, which is sometimes worth the worse economics.",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-25",
+      "quote": "This is the [Running locally](running_locally.php) and [Inference optimization](inference_optimization.php) decision, made into a number.",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-26",
+      "quote": "> The economic layer is two numbers and one split.",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-27",
+      "quote": "Training costs $6ND$; inference costs 2× active-params per token.",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-28",
+      "quote": "Caching moves the pay-once prefill out of the per-call path; the active-vs-total gap is what sparsity buys; and fixed-versus-per-token is what \"local or API\" really means.",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_economics-stmt-29",
+      "quote": "None of it is about the technology being *worth* it — it is about the technology being *affordable*, which is a different question, and the one that decides what gets built.",
+      "section": "7B on a laptop, or the API: fixed cost vs per-token cost",
+      "kind": "statement"
+    }
   ]
 }

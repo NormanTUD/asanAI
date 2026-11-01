@@ -495,5 +495,937 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "loss_landscape-stmt-1",
+      "quote": "A neural network is a parameterized function $f(x;\\theta)$ with parameters $\\theta \\in \\mathbb{R}^d$ (for a modern LLM, $d$ is in the billions).",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-2",
+      "quote": "Training means finding the $\\theta$ that makes $f$ predict the data.",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-3",
+      "quote": "We measure \"predicts well\" with a scalar **loss**",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-4",
+      "quote": "the average per-example error $\\ell$ over the training set.",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-5",
+      "quote": "Think of $\\theta$ as one point in a $d$-dimensional space.",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-6",
+      "quote": "The value $\\mathcal{L}(\\theta)$ is the *height* of a landscape above that point.",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-7",
+      "quote": "Training is rolling a ball downhill on this landscape until it settles into a low valley.",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-8",
+      "quote": "The whole question of \"why does deep learning work?\" reduces to the geometry of this landscape: how many valleys it has, how steep they are, how they connect, and which ones generalize.",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-9",
+      "quote": "The systematic visualization of loss landscapes was popularised by \\citeauthor{li2018losslandscape} (\\citeyear{li2018losslandscape}).",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-10",
+      "quote": "The underlying mathematics, non-convex optimization in $10^7$ dimensions, goes back further: \\citeauthor{rumelhart1986learning} noted in \\citeyear{rumelhart1986learning} that although the error surface may contain local minima, experience showed the network \"very rarely gets stuck in poor local minima\", and \\citeauthor{hochreiter1991vanishing} (\\citeyear{hochreiter1991vanishing}) had already linked the geometry to trainability.",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-11",
+      "quote": "**ResNet-56, no skip connections.** The loss surface is highly chaotic, with steep cliffs and many competing basins.",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-12",
+      "quote": "Figure from \\citeauthor{li2018losslandscape} (\\citeyear{li2018losslandscape}) (code repo `tomgoldstein/loss-landscape`).",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-13",
+      "quote": "**ResNet-56, with skip connections.** The same architecture, the same training run, but the landscape is now a single smooth basin.",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-14",
+      "quote": "Test error drops to around 6%.",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-15",
+      "quote": "Figure from \\citeauthor{li2018losslandscape} (\\citeyear{li2018losslandscape}).",
+      "section": "The Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-16",
+      "quote": "A modern LLM has roughly $10^{10}$ parameters.",
+      "section": "The landscape is a function on a million-dimensional space",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-17",
+      "quote": "The loss is one scalar value at each point of this space.",
+      "section": "The landscape is a function on a million-dimensional space",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-18",
+      "quote": "The \"landscape\" is the graph $\\{(\\theta, \\mathcal{L}(\\theta))\\}$: a hypersurface with one dimension for the loss value and $d$ more for the parameters, too big to draw.",
+      "section": "The landscape is a function on a million-dimensional space",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-19",
+      "quote": "What we *can* do is take a 2-D slice through it: pick a center $\\theta^\\star$ (a trained minimum) and two directions $d_1, d_2$, then plot",
+      "section": "The landscape is a function on a million-dimensional space",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-20",
+      "quote": "Most of the plots in this chapter are 2-D slices of that kind.",
+      "section": "The landscape is a function on a million-dimensional space",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-21",
+      "quote": "The static figures above are 2-D slices of real (huge) loss landscapes, but you only see the result — the *descent* that produced them is invisible.",
+      "section": "See it: walk a 2-D loss landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-22",
+      "quote": "Here is the smallest landscape you can actually walk on: a single neuron",
+      "section": "See it: walk a 2-D loss landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-23",
+      "quote": "There is one weight $\\mathbf{W} \\in \\mathbb{R}$ and one bias $b \\in \\mathbb{R}$, so $\\mathcal{L}(w, b)$ is a genuine 2-D surface and fits in a 3-D plot.",
+      "section": "See it: walk a 2-D loss landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-24",
+      "quote": "The line drawn on the surface is the optimizer's *trajectory*, batch by batch.",
+      "section": "See it: walk a 2-D loss landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-25",
+      "quote": "Pick a target (try **Parabola**), tick one or two optimizers (SGD and Adam are pre-selected), press **Start**, and watch.",
+      "section": "See it: walk a 2-D loss landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-26",
+      "quote": "The point of the widget is to *feel* each claim above:",
+      "section": "See it: walk a 2-D loss landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-27",
+      "quote": "* **Non-convexity comes from non-linearities.** Switch the activation from `Linear` to `ReLU` and the same $(w, b)$ grid suddenly has flat plateaus, saddles, and sharp ridges.",
+      "section": "See it: walk a 2-D loss landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-28",
+      "quote": "* **Saddles outnumber minima.** With `ReLU` and a low learning rate, the SGD line stalls for many epochs on a flat plateau before a stochastic step kicks it downhill.",
+      "section": "See it: walk a 2-D loss landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-29",
+      "quote": "* **Different basins.** `Adam` and `Momentum` often land in *different* minima of the same surface — the trajectories diverge visibly.",
+      "section": "See it: walk a 2-D loss landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-30",
+      "quote": "* **The noise-smoothed surface.** Crank the epoch count up; the trajectory visits cells the initial surface never sampled, because mini-batch noise is effectively smoothing the loss underneath it.",
+      "section": "See it: walk a 2-D loss landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-31",
+      "quote": "A ReLU network has an embarrassing symmetry.",
+      "section": "Why naive plots of the landscape lie",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-32",
+      "quote": "Multiply the weights of layer $\\ell$ by any positive number $c$ and divide the next layer by $c$:",
+      "section": "Why naive plots of the landscape lie",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-33",
+      "quote": "The function is identical.",
+      "section": "Why naive plots of the landscape lie",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-34",
+      "quote": "The two parameterizations sit at the *same point* on the landscape (same training loss, same outputs), but a plot of $\\mathcal{L}(\\theta + \\alpha\\,d)$ around them looks completely different: one appears \"sharp\", the other \"flat\", at random.",
+      "section": "Why naive plots of the landscape lie",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-35",
+      "quote": "\\citeauthor{dinh2017sharpness} (\\citeyear{dinh2017sharpness}) exploited this to build equivalent networks with arbitrarily large \"sharpness\".",
+      "section": "Why naive plots of the landscape lie",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-36",
+      "quote": "The standard sharpness measure was broken.",
+      "section": "Why naive plots of the landscape lie",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-37",
+      "quote": "BatchNorm \\cite{ioffe2015batchnorm} makes the symmetry even stronger: rescaling any filter by any positive factor leaves the network unchanged.",
+      "section": "Why naive plots of the landscape lie",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-38",
+      "quote": "The fix from \\citeauthor{li2018losslandscape}: instead of a random Gaussian direction $d$, rescale each *filter* of $d$ so it has the same Frobenius norm as the corresponding filter of $\\theta^\\star$.",
+      "section": "Why naive plots of the landscape lie",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-39",
+      "quote": "Only then is a 2-D plot comparable across architectures and across runs.",
+      "section": "Why naive plots of the landscape lie",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-40",
+      "quote": "A purely linear deep network, just stacked matrices with no activation function between them, has a loss surface with no spurious local minima at all.",
+      "section": "Non-convexity comes from the non-linearities, not from depth",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-41",
+      "quote": "Every critical point is either a global minimum or a saddle.",
+      "section": "Non-convexity comes from the non-linearities, not from depth",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-42",
+      "quote": "\\citeauthor{saxe2014deep} (\\citeyear{saxe2014deep}) showed this analytically for deep linear networks; \\citeauthor{kawaguchi2016deep} (\\citeyear{kawaguchi2016deep}) extended the result to deep nonlinear networks.",
+      "section": "Non-convexity comes from the non-linearities, not from depth",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-43",
+      "quote": "So where does the non-convexity of real networks come from?",
+      "section": "Non-convexity comes from the non-linearities, not from depth",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-44",
+      "quote": "From the activation functions.",
+      "section": "Non-convexity comes from the non-linearities, not from depth",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-45",
+      "quote": "ReLU, sigmoid, GELU: every nonlinearity bends the function and creates the possibility of bad local minima.",
+      "section": "Non-convexity comes from the non-linearities, not from depth",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-46",
+      "quote": "This is why residual connections help so much: each residual block is asked to learn only a small adjustment to the running state, so the overall transformation stays close to linear, and the loss surface stays well-behaved.",
+      "section": "Non-convexity comes from the non-linearities, not from depth",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-47",
+      "quote": "\\citeauthor{lu2017expressive} (\\citeyear{lu2017expressive}) reviews the broader picture.",
+      "section": "Non-convexity comes from the non-linearities, not from depth",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-48",
+      "quote": "For a long time, the worry was that local minima would trap gradient descent.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-49",
+      "quote": "\\citeauthor{dauphin2014saddle} (\\citeyear{dauphin2014saddle}) showed this worry is mostly backwards.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-50",
+      "quote": "In a high-dimensional non-convex function:",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-51",
+      "quote": "* the **ratio** of saddle points to local minima grows exponentially with dimension,",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-52",
+      "quote": "* so saddles dominate the landscape more and more as $d$ increases.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-53",
+      "quote": "A \"stuck plateau\" is almost never a valley floor.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-54",
+      "quote": "It is a saddle whose gradient happens to be tiny.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-55",
+      "quote": "Newton-class methods slow down at saddles too, which is why classical second-order optimizers struggle on deep nets.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-56",
+      "quote": "\\citeauthor{dauphin2014saddle}'s **Saddle-Free Newton** escapes them by replacing the Hessian $H$ with $|H|$ — rescaling each eigen-direction by $1/|\\lambda_i|$ while preserving the gradient's sign — so negative-curvature directions repel instead of attract.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-57",
+      "quote": "Plain SGD escapes them for free, because the stochastic noise of mini-batches is exactly the kick needed to dislodge the ball off a saddle along its descending direction.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-58",
+      "quote": "That is the modern view of deep-net optimization.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-59",
+      "quote": "The mini-batch noise does more than kick the ball off saddles.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-60",
+      "quote": "Each mini-batch gives a slightly different gradient, so the surface SGD effectively optimizes is the true loss convolved with the noise distribution.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-61",
+      "quote": "This smoothed surface has fewer saddles, fewer sharp minima, flatter basins.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-62",
+      "quote": "\\citeauthor{smithle2018bayesian} (\\citeyear{smithle2018bayesian}) and \\citeauthor{mandt2017variational} (\\citeyear{mandt2017variational}) made this precise: small-batch SGD is approximately sampling from a Boltzmann-like distribution $p(\\theta) \\propto e^{-\\mathcal{L}(\\theta)/T}$ where the temperature $T$ is set by the learning rate and batch size.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-63",
+      "quote": "Higher temperature (smaller batch, larger learning rate) flattens the effective surface and biases the trajectory toward wide basins.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-64",
+      "quote": "This is the deepest reason mini-batch noise is a feature, not a bug.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-65",
+      "quote": "The hyperbolic paraboloid $z = x^2 - y^2$: a surface that goes up in one direction and down in another, the canonical shape of a high-dimensional saddle point.",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-66",
+      "quote": "\\cite[Hyperbolic paraboloid, Wikimedia Commons, CC0]{hyperbolic_paraboloid_saddle}",
+      "section": "Saddles outnumber minima in high dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-67",
+      "quote": "The intuition is old: a minimum inside a wide, flat basin should generalize, because small perturbations of $\\theta$ keep the loss low.",
+      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-68",
+      "quote": "A narrow, sharp minimum memorizes the training set but blows up on test.",
+      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-69",
+      "quote": "\\citetitle{keskar2016largebatch} (\\citeyear{keskar2016largebatch}) sharpened this empirically: large-batch SGD finds sharper minima than small-batch SGD, and the sharp-minimum runs generalize *worse* on CIFAR-10, CIFAR-100, MNIST, and TIMIT.",
+      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-70",
+      "quote": "The story is not so clean once \\citeauthor{dinh2017sharpness} (\\citeyear{dinh2017sharpness}) is added.",
+      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-71",
+      "quote": "Because of the ReLU and BatchNorm rescaling symmetry above, every sharp minimum can be reparameterized into an equivalent flat one.",
+      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-72",
+      "quote": "\"Sharp\" was not a property of the minimum.",
+      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-73",
+      "quote": "It was an artifact of the parameterization.",
+      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-74",
+      "quote": "\\citeauthor{smithle2018bayesian} (\\citeyear{smithle2018bayesian}) reframed SGD as approximate Bayesian inference: small-batch noise is not a bug but a prior that biases the trajectory toward wide valleys.",
+      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-75",
+      "quote": "The live descendants of this debate are **Sharpness-Aware Minimization** \\cite{foret2021sam}, which explicitly adds a \"be flat\" penalty to the loss.",
+      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-76",
+      "quote": "Too flat, and the gradient signal vanishes; too sharp, and the optimizer oscillates.",
+      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-77",
+      "quote": "SAM works because the loss depends on the data and parameters; a step that is locally flat on the training set may not be flat on the test set, so SAM evaluates the loss at a small perturbation around the current point and descends from there.",
+      "section": "Sharp minima, flat minima, and the oldest debate in deep learning",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-78",
+      "quote": "The two surface plots at the top of this chapter are the same architecture, ResNet-56 on CIFAR-10, trained the same way.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-79",
+      "quote": "The only difference is whether the residual connections are present.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-80",
+      "quote": "With them, the landscape is a single smooth basin.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-81",
+      "quote": "Without them, the landscape is chaotic, full of competing peaks, and the test error roughly *doubles*.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-82",
+      "quote": "The mechanism is concrete.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-83",
+      "quote": "A residual block computes",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-84",
+      "quote": "so the *change* across the block is just $F_\\ell(h_\\ell)$, the small adjustment the layer learned.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-85",
+      "quote": "During backprop, the gradient signal has two paths back to the input: through $F_\\ell$ and through the skip path.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-86",
+      "quote": "As long as the layer's learned adjustment stays bounded, the skip path keeps the gradient flowing even when the other path is near zero.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-87",
+      "quote": "\\citeauthor{he2016identity} (\\citeyear{he2016identity}) showed this empirically with a pre-activation analysis: a 1001-layer ResNet trains without difficulty because the skip path preserves the signal layer to layer.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-88",
+      "quote": "\\citetitle{li2018losslandscape}'s contribution was to see the consequence on the landscape.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-89",
+      "quote": "A 110-layer ResNet and a 20-layer ResNet have nearly the same low-loss contour width when skip connections are present.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-90",
+      "quote": "Without skips, the 110-layer net can still be trained (to ~16% test error on CIFAR-10), but its basin is far sharper and less usable — and a 156-layer net without skips does not train at all.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-91",
+      "quote": "The skip connection does not just help optimization.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-92",
+      "quote": "It changes the geometry of the surface the optimizer walks on.",
+      "section": "Skip connections reshape the landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-93",
+      "quote": "In the same paper, doubling only the number of filters per layer of ResNet-56 ($k=1 \\to 2 \\to 4 \\to 8$, Wide-ResNet) makes the basin flatter and the test error drop monotonically ($5.89\\% \\to 5.07\\% \\to 4.34\\% \\to 3.93\\%$ on CIFAR-10).",
+      "section": "Wide networks have flatter landscapes",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-94",
+      "quote": "\\citeauthor{choromanska2015loss} (\\citeyear{choromanska2015loss}) gave a statistical-physics argument for this: in a deep random network, the loss behaves like a disordered physical system in high dimension, and the number of bad local minima drops exponentially with the size of the network while the number of good ones barely changes.",
+      "section": "Wide networks have flatter landscapes",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-95",
+      "quote": "\\citeauthor{nguyen2017loss} (\\citeyear{nguyen2017loss}) proved a related result: if one hidden layer is wider than the number of training points and the layers above it are pyramidal, then *almost all* local minima are global minima.",
+      "section": "Wide networks have flatter landscapes",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-96",
+      "quote": "Train two ResNets independently on CIFAR-10 from different random initializations.",
+      "section": "Minima are connected by flat paths",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-97",
+      "quote": "They land in *different* minima, with different test errors and different predictions on hard examples.",
+      "section": "Minima are connected by flat paths",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-98",
+      "quote": "Now draw a straight line between them in weight space and plot the loss along the line.",
+      "section": "Minima are connected by flat paths",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-99",
+      "quote": "\\citeauthor{garipov2018mode} (\\citeyear{garipov2018mode}) showed that the loss along this straight line is *high* — the two minima are separated by a barrier — but that with a small bend in the line (a \"polygonal chain\"), every point along the curved path has nearly training-set error.",
+      "section": "Minima are connected by flat paths",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-100",
+      "quote": "The minima are *mode-connected*: not by a straight valley, but by a low-loss curved path.",
+      "section": "Minima are connected by flat paths",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-101",
+      "quote": "The set of well-performing weights is connected.",
+      "section": "Minima are connected by flat paths",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-102",
+      "quote": "The landscape is one big basin, full of curvature ripples and small ridges but without barriers.",
+      "section": "Minima are connected by flat paths",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-103",
+      "quote": "This is also why \"model ensembling\", averaging several independently-trained nets, works so well: every ensemble member is somewhere along this single low-loss manifold, and their disagreements are just different local orientations.",
+      "section": "Minima are connected by flat paths",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-104",
+      "quote": "A small transformer trained on modular arithmetic (like $a \\times b \\bmod p$) does something striking \\cite{grokking}.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-105",
+      "quote": "For the first few hundred steps it memorizes the training examples.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-106",
+      "quote": "Training accuracy reaches 100%, but test accuracy stays near zero.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-107",
+      "quote": "Then, over many thousands of additional steps, the test accuracy suddenly jumps to 100%.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-108",
+      "quote": "The network has swapped a sharp memorizing basin for a flat generalizing one.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-109",
+      "quote": "The architecture did not change.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-110",
+      "quote": "The loss function did not change.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-111",
+      "quote": "The optimizer simply had time to migrate from one basin to another, crossing a barrier that the early-training dynamics could not cross.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-112",
+      "quote": "This shows two things about the landscape.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-113",
+      "quote": "First, the same initialization sits inside the catchment of many basins, some sharp, some flat, with barriers between them.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-114",
+      "quote": "Second, weight decay (the only thing distinguishing the two basins in this experiment) is what biases the long-time trajectory toward the flat basin.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-115",
+      "quote": "The geometry is fixed; the optimizer's path through it is shaped by regularizers.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-116",
+      "quote": "The \"one big valley\" claim needs a caveat.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-117",
+      "quote": "Swap two neurons in any hidden layer and the network computes exactly the same function, but its position in weight space changes by a large distance.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-118",
+      "quote": "This permutation symmetry means every \"true\" minimum corresponds to an astronomical number of equivalent positions in raw weight space.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-119",
+      "quote": "A 50-layer net with 256 neurons per layer has roughly $(256!)^{50}$ equivalent positions for each minimum, more than the number of atoms in the observable universe.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-120",
+      "quote": "The landscape is full of copies of the same minimum, scattered across weight space like reflections in a hall of mirrors.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-121",
+      "quote": "This is why a raw straight-line interpolation between two independently trained networks is high-loss: without accounting for the copies, the line passes through garbage (random mismatches between equivalent copies), not through the low-loss valley.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-122",
+      "quote": "\\citeauthor{garipov2018mode} (\\citeyear{garipov2018mode}) sidestepped this by searching for a low-loss *curved* path between the two minima; aligning permutations is a later technique for testing *linear* mode connectivity.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-123",
+      "quote": "The \"one connected valley\" claim is true in the symmetry-reduced parameter space, where equivalent copies are identified as the same point.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-124",
+      "quote": "In raw parameter space the same statement is false; the same minimum has many disconnected copies.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-125",
+      "quote": "\\citeauthor{amit1989modeling} (\\citeyear{amit1989modeling}) reviews the broader symmetry structure of neural-network landscapes.",
+      "section": "Grokking: the optimizer slowly switches basins",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-126",
+      "quote": "To plot an optimizer's trajectory, you would naturally project it onto a 2-D plane of random directions.",
+      "section": "SGD travels in an almost one-dimensional subspace",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-127",
+      "quote": "\\citeauthor{li2018losslandscape}'s section 7 shows this fails almost completely: the trajectory sits in a subspace that random directions do not span.",
+      "section": "SGD travels in an almost one-dimensional subspace",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-128",
+      "quote": "Two random Gaussian vectors in $d$ dimensions are nearly orthogonal; the expected *magnitude* of their cosine similarity is $\\sqrt{2/(\\pi d)}$, roughly $2.5 \\times 10^{-4}$ for a 10-million-parameter model.",
+      "section": "SGD travels in an almost one-dimensional subspace",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-129",
+      "quote": "Projecting onto them collapses the trajectory to a single dot.",
+      "section": "SGD travels in an almost one-dimensional subspace",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-130",
+      "quote": "PCA on the iterates $\\theta_0, \\theta_1, \\ldots, \\theta_T$ recovers what is actually happening.",
+      "section": "SGD travels in an almost one-dimensional subspace",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-131",
+      "quote": "For both SGD and Adam on VGG-9, the first **two** PCA directions capture between **40% and 90%** of the variation in the descent path; the remaining directions are nearly silent.",
+      "section": "SGD travels in an almost one-dimensional subspace",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-132",
+      "quote": "Gradient descent is effectively low-dimensional.",
+      "section": "SGD travels in an almost one-dimensional subspace",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-133",
+      "quote": "The picture that survives the most careful empirical work \\cite{li2018losslandscape,garipov2018mode,choromanska2015loss} is roughly this:",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-134",
+      "quote": "The landscape is one connected valley.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-135",
+      "quote": "Local minima are exponentially rare.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-136",
+      "quote": "Saddles dominate but are easy to escape with stochastic noise.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-137",
+      "quote": "Independent runs find different points, all connected by low-loss paths (once permutation symmetries are factored out).",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-138",
+      "quote": "Skip connections reshape the topology.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-139",
+      "quote": "They replace chaotic multi-basin terrain with one smooth basin.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-140",
+      "quote": "As a side effect, trainable 100-layer nets exist.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-141",
+      "quote": "Wider networks have wider basins.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-142",
+      "quote": "Sharpness and generalization error track each other when measured with filter normalization.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-143",
+      "quote": "Optimizers are nearly one-dimensional.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-144",
+      "quote": "The trajectory lives in a subspace spanned by a handful of PCA directions; the other $10^{10}$ coordinates are nearly constant.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-145",
+      "quote": "The optimizer sees a noise-smoothed version of the surface, not the raw one, which is why small batches help \\cite{mandt2017variational}.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-146",
+      "quote": "Flat generalizes, sharp memorizes, but only when \"flat/sharp\" is defined by a scale-invariant measure (filter-normalized Hessian, local entropy \\cite{chaudhari2016entropysgd}, or SAM \\cite{foret2021sam}).",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-147",
+      "quote": "The naive measures are broken by ReLU rescaling.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-148",
+      "quote": "Architecture determines what basins exist.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-149",
+      "quote": "A plain feedforward net and a ResNet have different loss surfaces over the same data, because they have different reachable weight configurations.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-150",
+      "quote": "Choosing an architecture is choosing which family of basins the optimizer can land in.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-151",
+      "quote": "The same basin can be reached by very different paths.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-152",
+      "quote": "SGD, Adam, momentum, and SAM all settle into basins of comparable quality on a given architecture; the regularizer (weight decay) and the noise (mini-batch size) decide which basin wins over long training \\cite{grokking}.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-153",
+      "quote": "The energy-landscape concept in physics is much older — suggested by René Marcelin in 1913 and given its first quantitative potential-energy surface for H + H₂ by Eyring and Polanyi in 1931; \\citeauthor{wales2003energy}'s \\citeyear{wales2003energy} book is a modern synthesis.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-154",
+      "quote": "It was first applied to neural networks by \\citeauthor{hopfield1982} (\\citeyear{hopfield1982}), whose associative-memory networks literally used the energy of a physical spin system as the loss function.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "loss_landscape-stmt-155",
+      "quote": "The systematic 2-D visualization that turned the metaphor into a diagnostic tool is \\citeauthor{li2018losslandscape} (\\citeyear{li2018losslandscape}); their `tomgoldstein/loss-landscape` GitHub repo is the de-facto standard for loss-landscape plots today.",
+      "section": "Putting it together",
+      "kind": "statement"
+    }
   ]
 }

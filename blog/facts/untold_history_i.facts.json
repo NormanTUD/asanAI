@@ -12290,5 +12290,1531 @@
       "confidence": "provenance"
     }
   ],
-  "deep_audit": true
+  "deep_audit": true,
+  "statements": [
+    {
+      "id": "untold_history_i-stmt-1",
+      "quote": "The main history of AI follows the ideas: perceptrons, backpropagation, transformers.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-2",
+      "quote": "This history follows the other line — the **displaced prerequisites**, the discoveries made in fields that had no intention of producing a computer, from the chemistry that purified silicon to the looms that taught machines to read punched cards.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-3",
+      "quote": "Finishing this project is impossible.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-4",
+      "quote": "Every discipline we touch opens onto another, and a complete account would be the history of the world.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-5",
+      "quote": "We try anyway, but under a deliberate limit: we follow only the threads that can be shown to end, however indirectly, in a machine that learns.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-6",
+      "quote": "What follows is a selection, not an inventory.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-7",
+      "quote": "Before tracing the Big Bang or the first cell, a deeper question looms: **Why is there something rather than nothing?**",
+      "section": "Why Is There Anything at All?",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-8",
+      "quote": "The question received its most famous formulation from **Gottfried Wilhelm Leibniz**.",
+      "section": "Leibniz: The Principle of Sufficient Reason",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-9",
+      "quote": "Nothing exists without a reason; since the physical world is contingent, its explanation must lie outside itself in a **necessary being** whose non-existence would be logically impossible.",
+      "section": "Leibniz: The Principle of Sufficient Reason",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-10",
+      "quote": "This conviction that all reasoning is ultimately a form of calculation underlay his long-running *Characteristica Universalis* project (1679–1690); the 1686 treatise \\cite[Generales Inquisitiones]{leibniz1686calculus} itself focuses on the logical analysis of notions and truths, not symbolic computation as such.",
+      "section": "Leibniz: The Principle of Sufficient Reason",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-11",
+      "quote": "The idea of reducing thought to calculation is articulated more explicitly in his earlier \\cite[*Dissertio de Arte Combinatoria*]{leibniz1666combinatoria} (1666).",
+      "section": "Leibniz: The Principle of Sufficient Reason",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-12",
+      "quote": "\\citeauthor{heidegger1935metaphysics} radicalized Leibniz's question, calling *“Why are there beings at all, and not rather nothing?”* the fundamental question of philosophy itself.",
+      "section": "Heidegger: The Fundamental Question",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-13",
+      "quote": "But where Leibniz sought an answer, Heidegger insisted the question must be *held open*, our absorption in particular things makes us forget the sheer wonder that anything exists at all.",
+      "section": "Heidegger: The Fundamental Question",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-14",
+      "quote": "A more unconventional argument, associated with the thinker \\citeauthor{jocaxiannothing}, inverts the puzzle:",
+      "section": "Jocaxian: Nothing Has No Rules",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-15",
+      "quote": "Suppose absolutely **nothing** exists, no matter, no laws, no logic.",
+      "section": "Jocaxian: Nothing Has No Rules",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-16",
+      "quote": "Then there are **no rules preventing** something from arising, because rules are themselves *something*.",
+      "section": "Jocaxian: Nothing Has No Rules",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-17",
+      "quote": "A state of absolute nothingness is therefore inherently **unstable**: without any prohibition, something can emerge.",
+      "section": "Jocaxian: Nothing Has No Rules",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-18",
+      "quote": "Instead of asking “Why something?”, the question becomes: **“What could prevent something from existing?”** And the answer is: *nothing*, because nothingness lacks all causal power.",
+      "section": "Jocaxian: Nothing Has No Rules",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-19",
+      "quote": "Sustaining a void would itself require a kind of rule, which would already be *something*.",
+      "section": "Jocaxian: Nothing Has No Rules",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-20",
+      "quote": "These three perspectives share a recognition that existence is not self-evident.",
+      "section": "Jocaxian: Nothing Has No Rules",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-21",
+      "quote": "Leibniz answers with a necessary ground; Heidegger preserves the wonder; Jocaxian argues that the very emptiness of nothing guarantees its own dissolution.",
+      "section": "Jocaxian: Nothing Has No Rules",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-22",
+      "quote": "According to the prevailing cosmological model, the universe began approximately 13.8 billion years ago in an event commonly known as the Big Bang, expanding from an extremely hot, dense state into the vast cosmos we observe today (\\cite[Weinberg, 1977]{weinberg1977first}).",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-23",
+      "quote": "Within the first few minutes, nucleosynthesis produced the lightest elements, primarily hydrogen and helium.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-24",
+      "quote": "Over hundreds of millions of years, gravity drew matter together to form the first stars and galaxies.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-25",
+      "quote": "Successive generations of stars forged heavier elements in their cores and dispersed them through supernova explosions, seeding the interstellar medium with the raw materials for planets and, eventually, life.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-26",
+      "quote": "The discovery of the cosmic microwave background radiation provided strong empirical support for this model (\\cite[Penzias and Wilson, 1965]{penzias1965measurement}).",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-27",
+      "quote": "The \\citealternativetitle{wmap_cmb}: the temperature fluctuations of the cosmic microwave background as measured by NASA's Wilkinson Microwave Anisotropy Probe, the earliest direct image of the infant universe roughly 380,000 years after the Big Bang.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-28",
+      "quote": "The \\citealternativetitle{budassi_universe_image} (CC BY-SA 3.0): the whole observable universe on a logarithmic radial scale — the Solar System at the centre, the planets and the Oort cloud, the nearest stars, the Milky Way, the neighbouring galaxies and the cosmic web, out to the cosmic microwave background and the Big Bang at the very rim.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-29",
+      "quote": "Source: \\citeauthor{budassi_universe_image}, \\citeyear{budassi_universe_image}, \\citealternativetitle{budassi_universe_image}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-30",
+      "quote": "The \\citealternativetitle{img_miller_urey_apparatus} (CC BY-SA 3.0): the Miller–Urey apparatus — a closed loop of methane, ammonia and hydrogen, boiled and struck by an electric arc, whose condensate turned out to contain amino acids.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-31",
+      "quote": "Source: \\citeauthor{img_miller_urey_apparatus}, \\citeyear{img_miller_urey_apparatus}, \\citealternativetitle{img_miller_urey_apparatus}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-32",
+      "quote": "The \\citealternativetitle{img_hammerhead_ribozyme} (CC BY-SA 3.0): the hammerhead ribozyme, one of the small self-cleaving RNA enzymes whose discovery showed that RNA, and not only protein, can be an enzyme.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-33",
+      "quote": "Source: \\citeauthor{img_hammerhead_ribozyme}, \\citeyear{img_hammerhead_ribozyme}, \\citealternativetitle{img_hammerhead_ribozyme}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-34",
+      "quote": "The \\citealternativetitle{img_stromatolite_sharkbay} (CC BY 4.0): living stromatolites in Shark Bay, Western Australia — modern microbial mats in the same form that, in their 3.5-billion-year-old fossil descendants, provide the oldest secure evidence of life on Earth.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-35",
+      "quote": "Source: \\citeauthor{img_stromatolite_sharkbay}, \\citeyear{img_stromatolite_sharkbay}, \\citealternativetitle{img_stromatolite_sharkbay}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-36",
+      "quote": "The \\citealternativetitle{img_charnia_masoni} (CC BY-SA 3.0): Charnia masoni , a frond-like Ediacaran organism from Charnwood Forest, England, one of the icons of the first large soft-bodied life.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-37",
+      "quote": "Source: \\citeauthor{img_charnia_masoni}, \\citeyear{img_charnia_masoni}, \\citealternativetitle{img_charnia_masoni}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-38",
+      "quote": "The \\citealternativetitle{img_kimberella_quadrata} (CC BY-SA 4.0): Kimberella , a quilted Ediacaran animal from the White Sea, Russia, proposed by Fedonkin and Waggoner (\\citeyear{fedonkin1997kimberella}) to be one of the earliest bilaterians.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-39",
+      "quote": "Source: \\citeauthor{img_kimberella_quadrata}, \\citeyear{img_kimberella_quadrata}, \\citealternativetitle{img_kimberella_quadrata}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-40",
+      "quote": "The \\citealternativetitle{img_dickinsonia_costata} (CC BY-SA 3.0): Dickinsonia costata , the flat, ribbed Ediacaran animal whose animal identity was confirmed in \\citeyear{bobrovskiy2018dickinsonia} by the animal-specific sterol cholestanol preserved in its fossils.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-41",
+      "quote": "Source: \\citeauthor{img_dickinsonia_costata}, \\citeyear{img_dickinsonia_costata}, \\citealternativetitle{img_dickinsonia_costata}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-42",
+      "quote": "The \\citealternativetitle{img_anomalocaris_canadensis} (CC BY 4.0): Anomalocaris canadensis , the metre-long Cambrian apex predator with ringed mouthparts and frontal appendages, with no living relatives.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-43",
+      "quote": "Source: \\citeauthor{img_anomalocaris_canadensis}, \\citeyear{img_anomalocaris_canadensis}, \\citealternativetitle{img_anomalocaris_canadensis}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-44",
+      "quote": "The \\citealternativetitle{img_burgess_shale_fossils} (CC BY 2.0): a selection of Middle Cambrian fossils from the Burgess Shale, the type locality for the Cambrian Explosion, where the first appearance of most modern animal body plans is preserved in fine detail (\\cite[Whittington, 1979]{whittington1979burgess}).",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-45",
+      "quote": "Source: \\citeauthor{img_burgess_shale_fossils}, \\citeyear{img_burgess_shale_fossils}, \\citealternativetitle{img_burgess_shale_fossils}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-46",
+      "quote": "The \\citealternativetitle{img_vetulicola_cuneatus} (CC BY-SA 4.0): Vetulicola cuneatus , a primitive deuterostome from the Chengjiang biota, one of the earliest animals on the lineage leading to the chordates (\\cite[Shu et al., 2001]{shu2001chengjiang}).",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-47",
+      "quote": "Source: \\citeauthor{img_vetulicola_cuneatus}, \\citeyear{img_vetulicola_cuneatus}, \\citealternativetitle{img_vetulicola_cuneatus}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-48",
+      "quote": "The \\citealternativetitle{img_hallucigenia_smithsonian} (Public Domain): Hallucigenia sparsa , a lobopodian from the Cambrian whose four rows of spines led Walcott to mount it \"upside down\" before its true orientation was recognized.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-49",
+      "quote": "Source: \\citeauthor{img_hallucigenia_smithsonian}, \\citeyear{img_hallucigenia_smithsonian}, \\citealternativetitle{img_hallucigenia_smithsonian}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-50",
+      "quote": "The \\citealternativetitle{img_fuxianhuia_fossil} (CC0): a fossil of *Fuxianhuia protensa* from the Chengjiang biota.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-51",
+      "quote": "The species is famous for specimens in which the brain and optic lobes are preserved.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-52",
+      "quote": "Source: \\citeauthor{img_fuxianhuia_fossil}, \\citeyear{img_fuxianhuia_fossil}, \\citealternativetitle{img_fuxianhuia_fossil}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-53",
+      "quote": "The \\citealternativetitle{img_fuxianhuiid_cns} (CC BY-SA 4.0): the brain, optic lobes, and ventral nerve cord of a fuxianhuiid, reconstructed mainly from *Fuxianhuia protensa*.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-54",
+      "quote": "Source: \\citeauthor{img_fuxianhuiid_cns}, \\citeyear{img_fuxianhuiid_cns}, \\citealternativetitle{img_fuxianhuiid_cns}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-55",
+      "quote": "The \\citealternativetitle{img_pleurobrachia_bachei} (CC0): *Pleurobrachia bachei*, a ctenophore or comb jelly.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-56",
+      "quote": "Ctenophores have neurons, but many of the genes that build other animals' neurons are absent or not expressed in them.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-57",
+      "quote": "Source: \\citeauthor{img_pleurobrachia_bachei}, \\citeyear{img_pleurobrachia_bachei}, \\citealternativetitle{img_pleurobrachia_bachei}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-58",
+      "quote": "The \\citealternativetitle{img_anomalocaris_eye_fossil} (CC BY 2.0): an *Anomalocaris* eye preserved in pyrite.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-59",
+      "quote": "The compound eye had more than 16,000 lenses in a single eye (\\cite[Paterson et al., 2011]{paterson2011anomalocaris}).",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-60",
+      "quote": "Source: \\citeauthor{img_anomalocaris_eye_fossil}, \\citeyear{img_anomalocaris_eye_fossil}, \\citealternativetitle{img_anomalocaris_eye_fossil}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-61",
+      "quote": "The \\citealternativetitle{img_tyrannosaurus_rex_mount} (CC BY-SA 3.0): a mounted skeleton of Tyrannosaurus rex , the iconic apex predator of the Late Cretaceous, the age the dinosaurs dominated for 165 million years.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-62",
+      "quote": "Source: \\citeauthor{img_tyrannosaurus_rex_mount}, \\citeyear{img_tyrannosaurus_rex_mount}, \\citealternativetitle{img_tyrannosaurus_rex_mount}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-63",
+      "quote": "The \\citealternativetitle{img_archaeopteryx_durbed} (CC BY-SA 3.0): Archaeopteryx lithographica , the feathered, toothed \"first bird\" found in Bavaria in 1861, the living hinge between the reptile world of the dinosaurs and the birds we still see.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-64",
+      "quote": "Source: \\citeauthor{img_archaeopteryx_durbed}, \\citeyear{img_archaeopteryx_durbed}, \\citealternativetitle{img_archaeopteryx_durbed}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-65",
+      "quote": "The \\citealternativetitle{img_pangaea_200ma} (CC BY-SA 4.0): Pangaea, the supercontinent, at about 200 million years ago, just before it began to break apart into the continents that would drift to their present positions.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-66",
+      "quote": "Source: \\citeauthor{img_pangaea_200ma}, \\citeyear{img_pangaea_200ma}, \\citealternativetitle{img_pangaea_200ma}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-67",
+      "quote": "The \\citealternativetitle{img_chicxulub_impact_artist} (Public domain): an artist's impression of the Chicxulub impact — a ten-kilometre asteroid striking the shallow seas of what is now the Yucatán Peninsula 66 million years ago, the event that ended the age of dinosaurs.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-68",
+      "quote": "Source: \\citeauthor{img_chicxulub_impact_artist}, \\citeyear{img_chicxulub_impact_artist}, \\citealternativetitle{img_chicxulub_impact_artist}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-69",
+      "quote": "The \\citealternativetitle{img_kpge_iridium_anomaly} (CC BY-SA 4.0): the iridium anomaly — the spike of the meteoritic element iridium found exactly in the clay layer that marks the Cretaceous–Paleogene boundary, the \"smoking gun\" that pointed to an extraterrestrial impact rather than slow, gradual extinction.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-70",
+      "quote": "Source: \\citeauthor{img_kpge_iridium_anomaly}, \\citeyear{img_kpge_iridium_anomaly}, \\citealternativetitle{img_kpge_iridium_anomaly}, Wikimedia Commons.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-71",
+      "quote": "The controlled use of fire was a major \\cite[turning point]{wonderwerk}",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-72",
+      "quote": "While extensive deposits of ash and charcoal",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-73",
+      "quote": "from sites dating to the past 400,000 years are well documented, the",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-74",
+      "quote": "evidence for fire from earlier contexts has long been subject to",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-75",
+      "quote": "alternative interpretations.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-76",
+      "quote": "At \\cite[Wonderwerk Cave]{wonderwerk}",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-77",
+      "quote": "in South Africa, micromorphological analysis and Fourier",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-78",
+      "quote": "transform infrared microspectroscopy of intact sediments from the",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-79",
+      "quote": "Early Acheulean Stratum 10, dated to approximately one Million Years Ago, provide",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-80",
+      "quote": "the earliest secure evidence for burning in an archaeological context.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-81",
+      "quote": "The angularity of bone fragments and the",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-82",
+      "quote": "exceptional preservation of ashed plant material indicate that these",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-83",
+      "quote": "components were combusted and accumulated locally, approximately 30",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-84",
+      "quote": "meters inside the cave, ruling out transport by wind or water as well",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-85",
+      "quote": "as spontaneous guano combustion.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-86",
+      "quote": "Fire awareness among hominins, however, almost certainly predates such",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-87",
+      "quote": "hearth evidence: as savanna-dwelling primates exposed to frequent",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-88",
+      "quote": "lightning-caused bush fires, early hominins would have engaged with",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-89",
+      "quote": "fire first as foragers, retrieving eggs, small animals, and",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-90",
+      "quote": "invertebrates made visible by burning landscapes, as described by",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-91",
+      "quote": "\\citeauthorlastnameand{controlleduseoffire}.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-92",
+      "quote": "Over time, these simple interactions",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-93",
+      "quote": "were stretched in space and time, pushing toward a division of labor",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-94",
+      "quote": "in which slow-burning materials had to be selected and guarded while",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-95",
+      "quote": "other subsistence activities continued.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-96",
+      "quote": "The simplest ignition technique, rubbing a stick in a groove in a wooden “hearth”, requires no more",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-97",
+      "quote": "conceptual complexity than hafting, since both involve bringing two",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-98",
+      "quote": "components together via a vital intermediary: tinder in the one,",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-99",
+      "quote": "\\cite[fixative in the other]{controlleduseoffire}.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-100",
+      "quote": "\\cite[By 120,000 years ago]{controlleduseoffire}, pierced shell beads indicate knowledge of twine or cord,",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-101",
+      "quote": "which would have been necessary for operating a fire drill.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-102",
+      "quote": "Fire extended the waking day, enabled",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-103",
+      "quote": "cooking, which, according to \\citeauthor{wrangham2009catching}'s cooking hypothesis,",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-104",
+      "quote": "dramatically improved nutrient absorption and supported the increase",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-105",
+      "quote": "in brain size through the Pleistocene, provided protection from predators, and",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-106",
+      "quote": "facilitated social gathering.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-107",
+      "quote": "sense, the controlled use of fire and its associated tools sit at the",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-108",
+      "quote": "very beginning of the history of machines as a history of",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-109",
+      "quote": "**abstraction**, where human effort is progressively “drawn away”",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-110",
+      "quote": "Archaic humans including Neanderthals and Denisovans diverged from the lineage leading to modern humans roughly 500,000–700,000 years ago.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-111",
+      "quote": "Anatomically modern *Homo sapiens* appeared in Africa approximately 300,000 years ago (\\cite[Hublin et al., 2017]{hublin2017jebel}).",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-112",
+      "quote": "The date at which the cognitive prerequisites for full language were in place remains contested: some scholars speculate, on largely indirect grounds, that they were present by about 135,000 years ago (\\cite[Miyagawa et al., 2025]{earlylanguage}), but no direct archaeological evidence for symbolic language of that age survives; the earliest undisputed evidence for fully symbolic behaviour dates to roughly 100,000 years ago.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-113",
+      "quote": "The emergence of modern human behavior (\\cite[Henshilwood et al., 2002]{emergenceofmodernhumanbehaviour}), including symbolic art and complex tool manufacture, is attested from at least 100,000 years ago.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-114",
+      "quote": "The development of agriculture approximately 10,000–12,000 years ago and the subsequent rise of civilizations in Mesopotamia, Egypt, the Indus Valley, and China set the stage for the accumulation of knowledge across generations that would eventually produce philosophy, mathematics, and science, and, ultimately, the intellectual infrastructure for artificial intelligence.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-115",
+      "quote": "**The Earliest Figures: 40,000–35,000 Years Ago.** The oldest undisputed images of a person are small figurines of the Aurignacian: the **Venus of Hohle Fels**, a six-centimetre carving of mammoth ivory from a cave near Schelklingen, is the oldest known depiction of a human being (\\cite[Conard, 2009]{conard2009hohlefels}); the **Venus of Galgenberg** (\"Fanny\"), a serpentine statuette from the Stratzing excavation in Austria, is among the oldest of its kind (\\cite[Neugebauer-Maresch, 1989]{neugebauer1989galgenberg}).",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-116",
+      "quote": "Abstract symbolic expression is older, but these are the earliest clear *figures* of a person.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-117",
+      "quote": "What they already contain is a move that would run for forty thousand more years: an idea in the head, **pulled out and made into a thing in the world**.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-118",
+      "quote": "The figurine is a model of a person held in the hand, external to the brain that made it, exactly as a network's weights are a physical, external model of a concept.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-119",
+      "quote": "And it takes two things to make one, a *creative* act that conjures a representation which did not exist, and the practical act of **working with the world** to pin the idea into matter, the ancestors of generation and of tool-use in machine learning.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-120",
+      "quote": "\\marginfig{venus_hohle_fels.jpg}{The Venus of Hohle Fels, a mammoth-ivory figurine about 6 cm tall, from the Hohle Fels cave near Schelklingen, Germany (40,000 to 35,000 years old).",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-121",
+      "quote": "[Photo: Ramessos, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:VenusHohlefels2.jpg)}",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-122",
+      "quote": "\\marginfig{venus_galgenberg.jpg}{The Venus of Galgenberg, nicknamed \"Fanny\", in green serpentine (7.2 cm), from the Stratzing site in Lower Austria (about 32,000 to 36,000 years old).",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-123",
+      "quote": "[Photo: Aiwok, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Venus_vom_Galgenberg.JPG)}",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-124",
+      "quote": "**From a Body to a Face: 26,000–14,000 Years Ago.** The Venus figurines are schematic; the first *recognisable* faces came later.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-125",
+      "quote": "The carved-ivory **head from Dolní Věstonice** (Czech Republic, about 26,000 years old) is among the earliest realistic human faces, and it appears to model a specific elderly woman whose buried skull shows the same one-sided distortion as the carving \\cite{dolnivestonice}.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-126",
+      "quote": "A little later, the engraved slabs of **La Marche** (France, Magdalenian, about 14,000–15,000 years ago) carry over a hundred human figures, each with a distinct face, robes and even boots \\cite{lamarchecave}, so individualised that they were long disputed.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-127",
+      "quote": "\\marginfig{dolni_vestonice_head.jpg}{The ivory head from Dolní Věstonice, Czech Republic (about 26,000 years old), one of the oldest known realistic human faces; the carving matches the skull of a buried elderly woman found at the site.",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-128",
+      "quote": "[Photo: Zde, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Female_face,_ivory_carving,_Doln%C3%AD_V%C4%9Bstonice,_Gravettian,_28_000_-_22_000_BP.jpg)}",
+      "section": "The Development of the Universe and Earth",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-129",
+      "quote": "The physical prerequisites are the silicon, the cables, the cooling.",
+      "section": "From Mythos to Logos: The Mental Landscape That Made Computation Thinkable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-130",
+      "quote": "Beneath them lies a *mental* layer: the habits of thought that made a reasoning machine conceivable.",
+      "section": "From Mythos to Logos: The Mental Landscape That Made Computation Thinkable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-131",
+      "quote": "They were not invented for computation.",
+      "section": "From Mythos to Logos: The Mental Landscape That Made Computation Thinkable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-132",
+      "quote": "They were invented to explain the sky, to justify the rule of kings, to calculate the tides, and to win at dice.",
+      "section": "From Mythos to Logos: The Mental Landscape That Made Computation Thinkable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-133",
+      "quote": "The same logic that classified Greek gods now classifies the layers of a neural network; the same probability that priced a 17th-century gamble now trains a language model.",
+      "section": "From Mythos to Logos: The Mental Landscape That Made Computation Thinkable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-134",
+      "quote": "Before science, there was story.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-135",
+      "quote": "Every pre-scientific civilisation explained the natural world through **mythos**: narratives in which gods, spirits, and cosmic beings directly caused natural phenomena.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-136",
+      "quote": "The sun was a chariot driven across the sky; the seasons were the result of a god's moods; earthquakes were the anger of a deity beneath the earth.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-137",
+      "quote": "This was not \"wrong\" in the modern sense; it was a *different kind of model*, one in which agency was located in personal beings rather than in impersonal laws.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-138",
+      "quote": "Yet mythos was not merely an obstacle to science.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-139",
+      "quote": "It created specific mental prerequisites without which the scientific revolution would have been unthinkable:",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-140",
+      "quote": "* **The intelligibility of nature.** The Greek mythological tradition, inherited from the Hittites and Mesopotamians, contained a radical idea: the cosmos was not the arbitrary whim of a capricious god but the expression of a rational order, *kosmos* (κόσμος), as opposed to *chaos* (χάος).",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-141",
+      "quote": "The opening of Hesiod's *Theogony* (c.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-142",
+      "quote": "700 BCE) tells of the emergence of order from formless void.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-143",
+      "quote": "This is the mythological seed of the scientific conviction that nature is *legible*, that there are regularities to be discovered.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-144",
+      "quote": "* **The homunculus model and the Great Chain of Being.** The medieval synthesis of Aristotelian biology and Christian theology produced the **Great Chain of Being** (*scala naturae*): a fixed, ranked hierarchy of all creation, from inert minerals at the bottom, through plants, animals, humans, angels, to God at the top.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-145",
+      "quote": "\\citeauthorlastnameand{thomas1274summa} integrated this hierarchy into Christian doctrine in his \\citetitle{thomas1274summa} (c.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-146",
+      "quote": "The chain was *static*: each species held an immutable rank.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-147",
+      "quote": "This model dominated Western thought for over a millennium.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-148",
+      "quote": "Its legacy for computation is paradoxical: the chain's legacy is the idea of **discrete, nested, ranked categories**, the intuition of a *level of abstraction* and a *class*.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-149",
+      "quote": "When \\citeauthorlastnameand{linnaeus1758systema} published the 10th edition of \\citetitle{linnaeus1758systema} in \\citeyear{linnaeus1758systema}, he was still working within the chain's logic: nature as a fixed, ranked taxonomy.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-150",
+      "quote": "It was not until \\citeauthorlastnameand{darwin1859origin}'s \\citetitle{darwin1859origin} (\\citeyear{darwin1859origin}) that the ladder was replaced by a **branching tree**.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-151",
+      "quote": "The tree structure that survives in phylogeny is exactly the shape of hierarchical information organization: file systems, type hierarchies, ontologies.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-152",
+      "quote": "The \\citealternativetitle{img_great_chain_of_being_1579} (Public Domain): the hierarchy of creation as \\citeauthor{img_great_chain_of_being_1579} drew it in Rhetorica Christiana — from inert matter at the base, through plants, animals, and humans, up through the angels to God at the apex.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-153",
+      "quote": "The fixed, ranked ladder that dominated Western thought for a millennium, the last great echo of which is Linnaeus's Systema Naturae .",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-154",
+      "quote": "Source: \\citeauthor{img_great_chain_of_being_1579}, \\citeyear{img_great_chain_of_being_1579}, \\citealternativetitle{img_great_chain_of_being_1579}, Wikimedia Commons.",
+      "section": "The Mythos: How Story Shaped the Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-155",
+      "quote": "The Scientific Revolution was not a single event but a cascade of mutually reinforcing breakthroughs, each one displacing the last:",
+      "section": "The Scientific Revolution: 1543–1687",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-156",
+      "quote": "**Copernicus: The First Displacement.** \\citeauthorlastnameand{copernicus1543revolutionibus}'s \\citetitle{copernicus1543revolutionibus}, published in Nuremberg by Johannes Petreius in \\citeyear{copernicus1543revolutionibus} (the year of his death), moved the Earth from the centre of the cosmos to a planet orbiting the Sun.",
+      "section": "The Scientific Revolution: 1543–1687",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-157",
+      "quote": "The intellectual shock was not primarily astronomical but *metaphysical*: if the Earth is not the centre, then the human being is not the centre, and the Great Chain of Being, which had placed humanity at the navel of creation, is broken.",
+      "section": "The Scientific Revolution: 1543–1687",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-158",
+      "quote": "The book was placed on the Index of Prohibited Books in 1616 and remained there until 1758.",
+      "section": "The Scientific Revolution: 1543–1687",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-159",
+      "quote": "But the idea, once released, could not be contained.",
+      "section": "The Scientific Revolution: 1543–1687",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-160",
+      "quote": "The \\citealternativetitle{img_copernicus_portrait} (CC BY 4.0): Nicolaus Copernicus (1473–1543), whose De revolutionibus orbium coelestium (\\citeyear{copernicus1543revolutionibus}) displaced the Earth from the centre of the cosmos — the first and most consequential displacement in the Scientific Revolution.",
+      "section": "The Scientific Revolution: 1543–1687",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-161",
+      "quote": "Source: \\citeauthor{img_copernicus_portrait}, \\citeyear{img_copernicus_portrait}, \\citealternativetitle{img_copernicus_portrait}, Wikimedia Commons.",
+      "section": "The Scientific Revolution: 1543–1687",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-162",
+      "quote": "The Scientific Revolution provided the *physical* model of the world.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-163",
+      "quote": "The *mathematical* infrastructure for modern computation was built in parallel, by people working on problems that had nothing to do with machines:",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-164",
+      "quote": "**Probability: The Calculus of Uncertainty.** In 1654, the Chevalier de Méré, a professional gambler, posed a question to \\citeauthorlastnameand{pascalfirmat1654}: how should the stakes in an interrupted game of dice be fairly divided?",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-165",
+      "quote": "The correspondence that followed, between Pascal and Fermat, is the founding document of **probability theory**.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-166",
+      "quote": "\\citeauthorlastnameand{huygens1657ratiociniis}'s \\citetitle{huygens1657ratiociniis} (\\citeyear{huygens1657ratiociniis}), the first book on probability, introduced **expected value** as the central concept.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-167",
+      "quote": "\\citeauthorlastnameand{bayes1763essay} died in 1761, leaving behind a manuscript, \"An Essay towards Solving a Problem in the Doctrine of Chances,\" which his friend Richard Price discovered and published in the *Philosophical Transactions of the Royal Society* in \\citeyear{bayes1763essay}.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-168",
+      "quote": "The essay solves a problem of **inverse probability**: given the data, what is the probability of the hypothesis that generated it?",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-169",
+      "quote": "This is **Bayesian inference**, and it is the mathematical engine of every probabilistic machine learning model, from the Perceptron's update rule to the variational autoencoder.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-170",
+      "quote": "\\citeauthorlastnameand{laplace1812analytic}'s \\citetitle{laplace1812analytic} (\\citeyear{laplace1812analytic}) independently derived and generalized Bayes's result, unified probability with the theory of errors, and applied it to astronomical prediction.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-171",
+      "quote": "His \\citetitle{laplace1814essai} (\\citeyear{laplace1814essai}) added the **Laplace demon** and the **central limit theorem**, the result that the sum of a large number of independent random variables tends toward a Gaussian distribution.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-172",
+      "quote": "The central limit theorem is the reason that **backpropagation** works: the gradient of a loss function over millions of parameters is a sum of many small, roughly independent contributions, and its distribution is approximately Gaussian, which is why the stochastic gradient estimator is so effective.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-173",
+      "quote": "**Logic as Algebra: The Bridge to Circuits.** In 1847, \\citeauthorlastnameand{boole1847analysis} published \\citetitle{boole1847analysis}, the first attempt to reduce logic to algebra.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-174",
+      "quote": "In \\citetitle{boole1854laws} (\\citeyear{boole1854laws}), he gave the definitive statement: logic *is* an algebra of 0/1 quantities, in which the operations of AND, OR, and NOT correspond to multiplication, addition, and complementation.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-175",
+      "quote": "This is **Boolean algebra**, and it is the algebra of the logic gate.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-176",
+      "quote": "The bridge from Boolean algebra to physical circuits was built by \\citeauthorlastnameand{shannon1938relay} in his MIT master's thesis, \"A Symbolic Analysis of Relay and Switching Circuits,\" published in the *Transactions of the AIEE* in \\citeyear{shannon1938relay}.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-177",
+      "quote": "Shannon showed that Boole's algebra is **isomorphic** to the algebra of two-state electrical circuits: AND is switches in series; OR is switches in parallel; NOT is an inverter.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-178",
+      "quote": "A logical formula can be *wired into a physical circuit*, and the circuit can *compute* the truth value of the formula.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-179",
+      "quote": "This is the moment at which logic became hardware.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-180",
+      "quote": "Without Shannon's 1938 thesis, the digital computer is a philosophical curiosity; with it, it is an engineering discipline.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-181",
+      "quote": "**Information: The Quantification of Signal.** In \\citeyear{shannon1948communication}, \\citeauthorlastnameand{shannon1948communication} published \"A Mathematical Theory of Communication\" in the *Bell System Technical Journal*, formalizing everything the telegraph and cryptography had intuited but never measured.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-182",
+      "quote": "**Information** is a quantifiable, measurable, transmissible quantity.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-183",
+      "quote": "**Entropy** measures the average information in a message.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-184",
+      "quote": "**Channel capacity** is the maximum rate at which information can be transmitted reliably over a noisy channel.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-185",
+      "quote": "The **channel coding theorem** guarantees that reliable communication is possible up to a fundamental limit.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-186",
+      "quote": "Shannon's 1948 paper is the theoretical foundation of every error-correcting code, every compression algorithm, and every communication protocol that carries the weights of a language model across the internet.",
+      "section": "The Mathematical Infrastructure of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-187",
+      "quote": "The transition from mythos to computation is not one invention but the **convergence of five independent intellectual revolutions**:",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-188",
+      "quote": "| Revolution | Key Figures | Concept Contributed | Where It Lives in an LLM |",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-189",
+      "quote": "| **Classification** (Aristotle → Linnaeus → Darwin) | Aristotle, Linnaeus, Darwin | Discrete, nested, ranked categories; then the **tree** | Type systems; hierarchical organization of information |",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-190",
+      "quote": "| **Mechanism** (Descartes → Newton → Laplace) | Descartes, Newton, Laplace | The world (incl.",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-191",
+      "quote": "the brain) as a **deterministic, rule-governed mechanism** | The computer as a mechanism; the \"brain as computer\" idea |",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-192",
+      "quote": "| **Probability** (Pascal/Fermat → Bayes → Laplace) | Pascal, Fermat, Bayes, Laplace | A calculus of **uncertainty** | Statistical learning; inference under noise; all of probabilistic ML |",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-193",
+      "quote": "| **Logic as Algebra** (Boole → Shannon) | Boole, De Morgan, Peirce, Shannon | Logic as **symbolic algebra** → realizable in **switches** | The logic gate; the digital circuit; computation as wired logic |",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-194",
+      "quote": "| **Information** (Telegraph → Shannon 1948) | Morse, Shannon | **Information** as a quantifiable, transmissible quantity | The bit; coding; error correction; the \"content\" of data |",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-195",
+      "quote": "Each of these revolutions was driven by problems that had nothing to do with computation: how to classify the animals of the known world, how to justify the divine order, how to divide the stakes in an interrupted game, how to wire a telegraph switch, how to measure the capacity of a communication channel.",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-196",
+      "quote": "Yet together, they produced the *mental landscape* in which the idea of a machine that reasons became not only possible but inevitable.",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-197",
+      "quote": "The LLM is the endpoint of a convergence that began when a Greek philosopher in Miletus looked at the sea and decided that it did not need a god to explain it.",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-198",
+      "quote": "Ideas alone do not compute.",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-199",
+      "quote": "Every inference rests on a scaffold of discoveries made by people who never imagined a machine writing poetry — the displaced prerequisites that fill the rest of this history.",
+      "section": "The Convergence",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-200",
+      "quote": "The **Neolithic Revolution**, the wide-scale shift from nomadic foraging to settled agriculture beginning around 11,700 years ago, is the largest single change in the human niche since the spread of *Homo erectus*.",
+      "section": "From Foragers to Civilisations: The Sedentarisation That Made Computation Thinkable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-201",
+      "quote": "The very idea that such a prehistoric shift could be called a *revolution* comes from **V.",
+      "section": "From Foragers to Civilisations: The Sedentarisation That Made Computation Thinkable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-202",
+      "quote": "Gordon Childe** (\\citeauthor{childe1936man}), who argued in his 1936 *Man Makes Himself* that the British population curve between 1750 and 1800 turns \"through an angle of about 30°,\" and that comparable kinks far enough back in prehistory deserve the same name (\\cite[Childe 1936, ch.",
+      "section": "From Foragers to Civilisations: The Sedentarisation That Made Computation Thinkable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-203",
+      "quote": "He later labelled two of those kinks the **Neolithic Revolution** and the **Urban Revolution** (\\cite[Childe 1950]{childe1950urban}).",
+      "section": "From Foragers to Civilisations: The Sedentarisation That Made Computation Thinkable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-204",
+      "quote": "Without **sedentarisation** (*Sesshaftwerdung*), none of the intellectual and material prerequisites of modern computation could have emerged.",
+      "section": "From Foragers to Civilisations: The Sedentarisation That Made Computation Thinkable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-205",
+      "quote": "For the vast majority of their existence, humans were foragers: small, mobile bands that owned few possessions and consumed food within days of gathering it.",
+      "section": "From foraging to farming",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-206",
+      "quote": "Australian Aboriginal foragers of the Western Desert, ethnographically studied in the twentieth century, sustained extraordinarily detailed oral traditions for at least 65,000 years — but the lifestyle imposed a hard ceiling on every other dimension of accumulation.",
+      "section": "From foraging to farming",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-207",
+      "quote": "Without stored food, there could be no fixed residence, no pottery, no granaries, no dense craft specialisation, no civic buildings, no writing, no standing armies, no taxation — and no libraries, no schools, and no project that outlasted the working life of a single forager.",
+      "section": "From foraging to farming",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-208",
+      "quote": "The change began with the climate.",
+      "section": "From foraging to farming",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-209",
+      "quote": "As the Pleistocene ice sheets melted, the climate wobbled through a final cold snap (the **Younger Dryas**, ~10,900–9,700 BCE) and then settled into the long, warm, stable interval we still inhabit, the **Holocene**.",
+      "section": "From foraging to farming",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-210",
+      "quote": "What made the **Fertile Crescent** special was not a single miracle crop but a *package* of eight wild species — the **Neolithic founder crops** identified by **Daniel Zohary** with Maria Hopf and later Ehud Weiss (\\cite[Zohary, Hopf & Weiss 2012]{zoharyhopf2000domestication}): the cereals emmer, einkorn, and barley; the pulses lentil, pea, chickpea, and bitter vetch; and the fibre plant flax.",
+      "section": "From foraging to farming",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-211",
+      "quote": "The earliest secure evidence for cultivated, morphologically domesticated emmer and einkorn comes from sites in the Fertile Crescent at roughly 9500 BCE, before pottery, before towns, and before writing.",
+      "section": "From foraging to farming",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-212",
+      "quote": "Sheep, goats, cattle, and pigs followed; stored grain and managed herds made a year-round sedentary diet possible for the first time.",
+      "section": "From foraging to farming",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-213",
+      "quote": "Sedentarisation preceded agriculture, not the other way around.",
+      "section": "The first towns",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-214",
+      "quote": "The site of **Jericho** (\\cite[Kenyon 1957]{kenyon1957digging}), in the West Bank near a perennial spring, has stone-walled occupation layers beginning in the **Pre-Pottery Neolithic A** around 9500 BCE — earlier than full cereal domestication.",
+      "section": "The first towns",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-215",
+      "quote": "8000 BCE, ~8.5 m tall) is one of the oldest stone monuments on Earth, and its surrounding wall and ditch are the earliest known example of **fortification**, a built structure whose purpose is to defend a *fixed place*.",
+      "section": "The first towns",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-216",
+      "quote": "A few hundred kilometres north, in the Konya plain, **Çatalhöyük** (\\cite[Mellaart 1967]{mellaart1967catal}) was occupied from roughly 7500 to 5600 BCE and at its peak housed somewhere between 600 and 8,000 people, the largest known Neolithic proto-city.",
+      "section": "The first towns",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-217",
+      "quote": "The second, much longer campaign under **Ian Hodder** (1993–2018) overturned Mellaart's \"Mother Goddess\" reading: only one of ~2,000 figurines matched the Mother Goddess style, fewer than five percent depicted women, and the houses were remarkably uniform in size with no clear hierarchical elite (\\cite[Hodder 2006]{hodder2006leopard}).",
+      "section": "The first towns",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-218",
+      "quote": "Childe's second coinage, the **Urban Revolution** (\\cite[Childe 1950]{childe1950urban}), names what happened around 4000 BCE in southern Mesopotamia: the small farming villages of the Uruk period coalesced into cities.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-219",
+      "quote": "**Uruk** itself grew to perhaps 50,000 inhabitants by 3100 BCE; comparable trajectories played out in Egypt, the Indus valley, the Yellow River basin, and later Mesoamerica.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-220",
+      "quote": "In a 1950 *Town Planning Review* paper, Childe listed ten diagnostic features of the first cities — large population, full-time specialists, concentration of surplus, monumental architecture, a ruling class freed from manual labour, systems of recording and writing, exact and predictive sciences, representational art, long-distance trade, and a state organisation based on residence rather than kinship (\\cite[Childe 1950]{childe1950urban}) — almost every one of which is a step in the chain that ends at a printed circuit.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-221",
+      "quote": "The **Bronze Age** — Near East c.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-222",
+      "quote": "3300–1200 BCE — ran on long-distance trade in tin and copper; Childe, in *Man Makes Himself*, makes the deeper argument about why: \"The bronze axe which replaces it is not only a superior implement, it also presupposes a more complex economic and social structure.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-223",
+      "quote": "The casting of bronze is too difficult a process to be carried out by anyone in the intervals of growing or catching his food or minding her babies.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-224",
+      "quote": "It is a specialist's job, and these specialists must rely for such primary necessities as food upon a surplus produced by other specialists.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-225",
+      "quote": "Again, the copper and tin of which the bronze axe is composed are comparatively rare, and very seldom occur together.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-226",
+      "quote": "One or both of the constituents will almost certainly have to be imported.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-227",
+      "quote": "Such importation is possible only if some sort of communications and trade have been established and if there is a surplus of some local product to barter for the metals\" (\\cite[Childe 1936, ch.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-228",
+      "quote": "**Iron**, which began to displace bronze around 1200 BCE, was for a long time the *inferior* metal: more abundant, but harder to smelt and cast.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-229",
+      "quote": "Its decisive advantage was *availability*, and the **Iron Age** accordingly democratised the tools bronze had reserved for elites.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-230",
+      "quote": "Childe's principle: each of these shifts is, in his precise sense, a \"revolution\" — a measurable upward kink in the population curve.",
+      "section": "The Urban Revolution and the metals",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-231",
+      "quote": "The single most consequential innovation of the Urban Revolution for this lesson is **writing**.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-232",
+      "quote": "It emerged not from literary ambition but from bookkeeping.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-233",
+      "quote": "In **Denise Schmandt-Besserat**'s reconstruction, the first system was a set of small shaped clay **tokens** — cones, spheres, disks, cylinders — in use across the Near East from the eighth millennium BCE.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-234",
+      "quote": "Her original 1978 paper in *Scientific American* put the thesis crisply: \"Long before the Sumerians invented writing, accounts in western Asia were kept with clay tokens of various distinctive shapes.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-235",
+      "quote": "It appears that the tokens gave rise to the Sumerian ideographs\" (\\cite[Schmandt-Besserat 1978]{schmandtbesserat1978}; \\cite[Schmandt-Besserat 1992]{schmandtbesserat1992}; \\cite[Schmandt-Besserat 1996]{schmandtbesserat1996}).",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-236",
+      "quote": "Tokens sealed inside clay *bullae* were marked on the outside with their own shapes — the first case of a physical record carrying its own verification.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-237",
+      "quote": "Around 3300 BCE, in Uruk IV, the envelope was dropped for a flat tablet on which the token shapes were impressed directly; by 2600 BCE the picture-shapes had been replaced by the wedge-shaped marks we call **cuneiform**, from the Latin *cuneus*.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-238",
+      "quote": "Cuneiform was the first of five independent inventions of writing: Egyptian **hieroglyphs** (c.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-239",
+      "quote": "3200 BCE), undeciphered Indus script (c.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-240",
+      "quote": "2600 BCE), Shang Chinese oracle-bone characters (c.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-241",
+      "quote": "1250 BCE), and Mesoamerican **Maya** (c.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-242",
+      "quote": "The next question after cities was how to make a king's word outlast the king.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-243",
+      "quote": "The **Code of Hammurabi** (\\cite[Roth 1997]{roth1997lawcollections}; \\cite[Scheil 1902]{scheil1902code}) is the earliest preserved answer: a basalt stele ~2.25 m tall, inscribed in Old Babylonian Akkadian around 1753 BCE, rediscovered at Susa in 1901, edited by the Dominican priest **Jean-Vincent Scheil** in 1902, and now in the Louvre.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-244",
+      "quote": "Its 282 case-form laws cover everything from a surgeon's fee to *lex talionis* — \"an eye for an eye.\" The principle most modern readers remember is the second; the more durable contribution is structural: a body of law, made public on a monument in every major city of the empire, that could be cited after the king's death.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-245",
+      "quote": "**Writing** and **coinage**, the two abstractions that let information and value outlive their physical carriers, are the ancestors of every spreadsheet, database, and general ledger an LLM is ever trained on.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-246",
+      "quote": "Where both coexisted, libraries appeared: the **Library of Alexandria** (\\cite[El-Abbadi 1990]{elabbadi1990life}; \\cite[Canfora 1990]{canfora1990vanished}), founded under the Ptolemies, held between 400,000 and 700,000 papyrus scrolls by the second century BCE — every Greek book that could be found, copied on demand, and held under one roof for cross-reference by Zenodotus, Eratosthenes, Aristarchus, and Hypatia.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-247",
+      "quote": "Its destruction, gradual across several centuries, is one of the great unrecoverable losses of human knowledge.",
+      "section": "Writing, law, libraries",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-248",
+      "quote": "Strip any one element out of this chain and the rest cannot stand.",
+      "section": "Why sedentarisation is a prerequisite of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-249",
+      "quote": "No agriculture, no fixed residence; no fixed residence, no pottery, no granary, no city; no city, no specialised scribal class; no scribal class, no writing; no writing, no codified law, no coinage, no algebra, no astronomy accurate enough to predict eclipses, no geometry accurate enough to survey after a Nile flood, no library, no encyclopedia, no standard mathematical notation, no \"algorithm\" in the modern sense.",
+      "section": "Why sedentarisation is a prerequisite of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-250",
+      "quote": "Each step was made for reasons that had nothing to do with computation.",
+      "section": "Why sedentarisation is a prerequisite of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-251",
+      "quote": "Yet the chain they collectively built is the chain on which every calculator, database, operating system, and large language model rests.",
+      "section": "Why sedentarisation is a prerequisite of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-252",
+      "quote": "A language model is a model of human *language*, and human language was *first made durable* by the scribes of Sumer.",
+      "section": "Why sedentarisation is a prerequisite of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-253",
+      "quote": "The grammatical categories of Akkadian and Sumerian, the case system of Latin, the inflectional morphology of ancient Greek, the tonal layers of Middle Chinese, the analytic structure of Old English — all of these are inside the corpus on which an LLM is trained, because they were inside the libraries that writing built, that agriculture made possible, that the cities of the first urban revolution sustained.",
+      "section": "Why sedentarisation is a prerequisite of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_i-stmt-254",
+      "quote": "Take the chain away and the corpus thins to oral memory; take the oral memory away and the model has nothing to model.",
+      "section": "Why sedentarisation is a prerequisite of AI",
+      "kind": "statement"
+    }
+  ]
 }

@@ -503,5 +503,811 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "training_data-stmt-1",
+      "quote": "A frontier LLM is roughly **half algorithm, half data**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-2",
+      "quote": "The same architecture trained on 1 trillion curated tokens outperforms one trained on 10 trillion unfiltered tokens.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-3",
+      "quote": "This chapter covers what data is used, how it is filtered, deduplicated, and decontaminated, and why every frontier lab guards its data recipes as their most valuable trade secret.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-4",
+      "quote": "Frontier LLMs are trained on **10–15 trillion tokens**.",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-5",
+      "quote": "The composition is roughly:",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-6",
+      "quote": "| Source | Approx % | Tokens | Notes |",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-7",
+      "quote": "| Web (Common Crawl, etc.) | 50–70% | 5–10T | Raw HTML, requires heavy filtering |",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-8",
+      "quote": "| Code (GitHub, etc.) | 10–15% | 1–2T | Critical for code generation |",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-9",
+      "quote": "| Books | 5–10% | 0.5–1T | Long-form, high quality |",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-10",
+      "quote": "| Scientific papers | 3–5% | 200–500B | arXiv, PubMed, etc.",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-11",
+      "quote": "| Wikipedia | 1–2% | 100–200B | High-quality reference text |",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-12",
+      "quote": "| Math (synthetic) | 2–5% | 200–500B | Web pages, Math StackExchange |",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-13",
+      "quote": "| Conversational / instruction | 2–5% | 200–500B | Curated human dialogues |",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-14",
+      "quote": "| Multimodal captions | 5–10% | 500B–1T | Alt-text, image captions |",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-15",
+      "quote": "The **Chinchilla scaling law** (\\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}) suggests that for a given compute budget, models are best trained when tokens $\\approx 20 \\times$ parameters.",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-16",
+      "quote": "So a 70B model needs ~1.4T tokens to be “Chinchilla-optimal”; frontier models now train on $10 \\times$ that, trading sample efficiency for capability.",
+      "section": "The Scale of Modern Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-17",
+      "quote": "**Common Crawl** (commoncrawl.org) is a non-profit that has been archiving web pages since 2008.",
+      "section": "Common Crawl: The Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-18",
+      "quote": "Each month, it crawls ~3 billion URLs, producing ~300 TB of raw HTML.",
+      "section": "Common Crawl: The Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-19",
+      "quote": "After deduplication and WARC-packaging, this yields ~30 TB of useful text per month.",
+      "section": "Common Crawl: The Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-20",
+      "quote": "Over its lifetime Common Crawl has crawled hundreds of billions of URLs and accumulated multiple petabytes of raw data.",
+      "section": "Common Crawl: The Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-21",
+      "quote": "LLMs use a small, heavily-filtered subset.",
+      "section": "Common Crawl: The Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-22",
+      "quote": "**Crawl**: WARC files of HTML pages.",
+      "section": "Common Crawl: The Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-23",
+      "quote": "**Extract text**: tools like **trafilatura**, **jusText**, or Resiliparse strip HTML, scripts, ads.",
+      "section": "Common Crawl: The Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-24",
+      "quote": "**Language identification**: fastText-based model (`lid.176.bin`) classifies each document; non-target languages are dropped.",
+      "section": "Common Crawl: The Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-25",
+      "quote": "**Quality filtering**: see below.",
+      "section": "Common Crawl: The Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-26",
+      "quote": "**Deduplication**: see below.",
+      "section": "Common Crawl: The Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-27",
+      "quote": "**Decontamination**: see below.",
+      "section": "Common Crawl: The Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-28",
+      "quote": "Web text is mostly junk: SEO spam, machine-translated articles, product listings with 50 keyword variations, “Lorem ipsum”, repetitive template content.",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-29",
+      "quote": "A model trained on this learns to mimic junk.",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-30",
+      "quote": "* **Length filter**: drop documents < 100 or > 100,000 characters.",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-31",
+      "quote": "* **Mean word length**: drop documents with abnormally long “words” (often base64 or random tokens).",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-32",
+      "quote": "* **Symbol-to-word ratio**: drop if > 0.1 (mostly punctuation / numbers).",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-33",
+      "quote": "* **Bullet-point ratio**: drop if > 90% lines are bullets (often lists).",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-34",
+      "quote": "* **Stop-word fraction**: English text has 20–30% stop-words.",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-35",
+      "quote": "Lower indicates non-natural text.",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-36",
+      "quote": "* **Perplexity filter**: compute perplexity under a small reference LM (KenLM).",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-37",
+      "quote": "High perplexity → outlier text.",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-38",
+      "quote": "Drop top/bottom percentiles.",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-39",
+      "quote": "* **Classifier filter**: train a binary classifier on (Good = Wikipedia/Wikipedia-like, Bad = random web pages).",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-40",
+      "quote": "**Gopher** rules (\\cite[Rae et al., 2021]{rae2021gopher}) and **C4** rules (\\cite[Raffel et al., 2020]{raffel2020t5}) are the most cited.",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-41",
+      "quote": "FineWeb (\\cite[Penedo et al., 2024]{penedo2024fineweb}) pushed this further: 1.3T tokens of *English-only* web data filtered with **FastText** (high-quality vs. low-quality classifier) and aggressive deduplication.",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-42",
+      "quote": "FineWeb-Edu adds an educational-quality classifier.",
+      "section": "Quality Filtering",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-43",
+      "quote": "Duplicate or near-duplicate documents **inflate training cost and can cause memorization**.",
+      "section": "Deduplication",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-44",
+      "quote": "Hash each document (SHA-256 over normalized text); keep only one copy of each hash.",
+      "section": "Exact Deduplication",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-45",
+      "quote": "Catches verbatim copies but not near-duplicates.",
+      "section": "Exact Deduplication",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-46",
+      "quote": "Compute $k$ hash functions over $n$-grams of each document; the **MinHash signature** approximates the Jaccard similarity between document pairs in $O(k)$ space.",
+      "section": "Fuzzy Deduplication (MinHash)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-47",
+      "quote": "Documents with identical MinHash signatures have high Jaccard similarity.",
+      "section": "Fuzzy Deduplication (MinHash)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-48",
+      "quote": "Threshold of $0.8$ Jaccard catches near-duplicates.",
+      "section": "Fuzzy Deduplication (MinHash)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-49",
+      "quote": "For very large corpora, build a **suffix array** across the entire corpus and identify repeated substrings of length $\\geq k$ (typically $k = 100$ characters).",
+      "section": "Substring Deduplication (Suffix Array)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-50",
+      "quote": "Drop all but one occurrence.",
+      "section": "Substring Deduplication (Suffix Array)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-51",
+      "quote": "**PaCoRA** (MosaicML) and **SemDeDup** (\\cite[Abbas et al., 2023]{abbas2023semdedup}) extend this to semantic duplicates via embedding-based clustering.",
+      "section": "Substring Deduplication (Suffix Array)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-52",
+      "quote": "A document in the training set may **contain benchmark items verbatim**.",
+      "section": "Decontamination",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-53",
+      "quote": "Models that have seen the test set are not being honestly evaluated.",
+      "section": "Decontamination",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-54",
+      "quote": "Build a list of benchmark items (questions, options, answers, code stubs).",
+      "section": "Standard Decontamination Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-55",
+      "quote": "**n-gram overlap**: for each training document, compute the longest common n-gram with any benchmark item.",
+      "section": "Standard Decontamination Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-56",
+      "quote": "If $> k$ (typically $k = 8$ for words, $k = 50$ for characters), drop or rewrite the document.",
+      "section": "Standard Decontamination Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-57",
+      "quote": "**Suffix array approach**: index all benchmark items as substrings; find all training documents containing them.",
+      "section": "Standard Decontamination Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-58",
+      "quote": "* **Paraphrase contamination**: rewriting a benchmark question in different words is hard to detect.",
+      "section": "Limitations",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-59",
+      "quote": "* **Translation contamination**: a French-language model could be tested on French versions of English benchmarks; cross-lingual contamination is harder.",
+      "section": "Limitations",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-60",
+      "quote": "* **Adversarial contamination**: bad actors can post benchmark items publicly to poison future training sets.",
+      "section": "Limitations",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-61",
+      "quote": "Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perplexity filtering**: documents that the model finds “surprisingly low-perplexity” are flagged for review.",
+      "section": "Limitations",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-62",
+      "quote": "FrontierMath and ARC-AGI (\\cite[Chollet, 2024]{chollet2024arcagi}) use private, novel questions precisely to avoid this issue.",
+      "section": "Limitations",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-63",
+      "quote": "Beyond raw web text, frontier models train on carefully curated datasets:",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-64",
+      "quote": "* **The Pile** (\\cite[Gao et al., 2020]{gao2020pile}): ~825 GB of diverse text from 22 sources (PubMed, ArXiv, GitHub, Wikipedia, StackExchange, etc.).",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-65",
+      "quote": "Open dataset, but reported to contain some benchmark contamination.",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-66",
+      "quote": "The Pile also became a cautionary tale for licensing: its **Books3** component was withdrawn in 2023 amid copyright litigation, and the dataset's status is no longer as clean as its “open” label suggested.",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-67",
+      "quote": "* **Common Pile v0.1** (EleutherAI and collaborators, 2025): 8 TB of public-domain and openly licensed text from 30 sources, built explicitly as a legally cleaner successor to the Pile.",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-68",
+      "quote": "The **Comma** models were trained solely on it, demonstrating that a competitive 7B-class model does not require scraped copyrighted books (\\cite[Selvam et al., 2025]{commonpile2025}).",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-69",
+      "quote": "* **RedPajama** (\\cite[Together, 2023]{together2024redpajama}): open replication of LLaMA's training mix.",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-70",
+      "quote": "1.2T tokens, all sources documented.",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-71",
+      "quote": "* **SlimPajama** (Cerebras, 2023): cleaned, deduplicated version of RedPajama.",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-72",
+      "quote": "* **FineWeb** (HuggingFace, 2024): 1.3T high-quality English tokens.",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-73",
+      "quote": "* **FineWeb-Edu** (HuggingFace, 2024): 1.3T tokens scored for educational quality.",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-74",
+      "quote": "* **Cosmopedia** (HuggingFace, 2024): 25B tokens of synthetic textbooks generated by Mixtral.",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-75",
+      "quote": "* **The Stack** (BigCode, 2022): 3.1 TB of source code in 30 programming languages (the much larger v2 followed in 2024).",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-76",
+      "quote": "* **OBELICS** (Laurençon et al., 2023): multimodal web-text dataset.",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-77",
+      "quote": "Open recipes (RedPajama, FineWeb) have been critical for the open-source LLM movement: anyone can reproduce a near-frontier training mix.",
+      "section": "Specialized Datasets",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-78",
+      "quote": "How much web vs. code vs. math?",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-79",
+      "quote": "This is largely **undocumented and proprietary**.",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-80",
+      "quote": "Chinchilla's scaling laws \\cite{hoffmann2022chinchilla} fix the total token-to-parameter ratio, but they say little about the *domain mix*, which is tuned empirically per model.",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-81",
+      "quote": "Technical reports and ablations show:",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-82",
+      "quote": "* **Code data** disproportionately helps reasoning (LLaMA, Mistral, Qwen all emphasize code).",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-83",
+      "quote": "* **Math data** is critical for arithmetic; even small amounts help.",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-84",
+      "quote": "* **Multilingual data** is under-studied, most frontier models are still 70–90% English.",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-85",
+      "quote": "* **Instruction data** is best added *after* pretraining, not mixed in.",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-86",
+      "quote": "* **DPO/preference data** should be 100K–1M examples, not millions.",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-87",
+      "quote": "**Dolma** (AI2, 2024), **RedPajama-V2** (Together, 2024), and **DataComp-LM** (DCLM, 2024) are open efforts to systematically study data mixes.",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-88",
+      "quote": "DataComp-LM showed that a 7B model trained on a carefully-filtered 2.6T tokens (DCLM-Baseline) can outperform models trained with far more compute — 6.6× less compute than Llama 3 8B.",
+      "section": "Data Mixing: The Frontier Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-89",
+      "quote": "Code is only 10–15% of a frontier training mix, yet it is the single most effective ingredient for reasoning ability.",
+      "section": "Why Code Is Disproportionately Powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-90",
+      "quote": "Three data-level properties explain most of it.",
+      "section": "Why Code Is Disproportionately Powerful",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-91",
+      "quote": "Prose makes claims; code makes predictions.",
+      "section": "Verifiable ground truth at web scale",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-92",
+      "quote": "Docstrings specify contracts, tests can be *run* — execution is a free, automatic truth oracle.",
+      "section": "Verifiable ground truth at web scale",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-93",
+      "quote": "GitHub is the largest collection of (specification, correct solution) pairs in existence, and **HumanEval** (\\cite[Chen et al., 2021]{chen2021codex}) is literally the training pattern itself: docstring → program.",
+      "section": "Verifiable ground truth at web scale",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-94",
+      "quote": "Verifiability compounds: (\\cite[Li et al., 2022]{li2022alphacode}) reached competitive-programming rank by sampling up to ~100,000 candidates per problem and keeping only those whose *execution* matched the expected test outputs.",
+      "section": "Verifiable ground truth at web scale",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-95",
+      "quote": "Code is telegraphic: little stylistic redundancy, high signal per byte.",
+      "section": "Dense, and up-weighted by tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-96",
+      "quote": "BPE splits code's dense symbols into more tokens per byte than prose (often 1.5–2×), so the per-token loss effectively up-weights code relative to its byte share.",
+      "section": "Dense, and up-weighted by tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-97",
+      "quote": "And valid programs live on a sharply constrained manifold — syntax narrows the legal continuations at every step — so the model learns code's structural constraints cheaply, the way it learns grammar.",
+      "section": "Dense, and up-weighted by tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-98",
+      "quote": "A program is reasoning with the working memory made visible: variables as state, loops as iteration, branches as case analysis.",
+      "section": "Explicit step-by-step reasoning in the raw",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-99",
+      "quote": "Code is the densest source of (problem → algorithm → implementation) triples on the web.",
+      "section": "Explicit step-by-step reasoning in the raw",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-100",
+      "quote": "Pretraining on a code+text mixture improves *general* reasoning almost without negative transfer, and code data at instruction-tuning time adds task-specific reasoning (\\cite[Ma et al., 2023]{ma2023codereasoning}).",
+      "section": "Explicit step-by-step reasoning in the raw",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-101",
+      "quote": "What transfers is structure, not vocabulary: across 3,331 controlled fine-tuning runs in 10 languages, breaking code's *structure* hurt far more than breaking its *meaning*; pseudocode was often as effective as code, and corrupted code stayed competitive as long as surface regularities survived (\\cite[Waheed et al., 2025]{waheed2025codeinduced}).",
+      "section": "Explicit step-by-step reasoning in the raw",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-102",
+      "quote": "Because code is executable, it is the bridge to the symbolic: PAL had the LLM decompose a word problem into a short program and offloaded the computation to an interpreter — a 12B model plus an interpreter beat PaLM-540B's chain-of-thought on GSM8K (\\cite[Gao et al., 2022]{gao2022pal}).",
+      "section": "Why this becomes everything else",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-103",
+      "quote": "Executable code is also a universal action space for agents (up to 20% higher success rates than pre-defined JSON actions \\cite[Wang et al., 2024]{wang2024codeact}) and the reason RL with verifiable rewards (see the Reasoning chapter ) works best on code and math: the test suite *is* the reward model.",
+      "section": "Why this becomes everything else",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-104",
+      "quote": "The lineage: Codex fine-tuned GPT on GitHub code — 28.8% on HumanEval where GPT-3 got 0% (\\cite[Chen et al., 2021]{chen2021codex}); Code Llama's 7B Python model, trained on ~500B extra code tokens, beat Llama 2 **70B** on code benchmarks (\\cite[Rozière et al., 2023]{roziere2023codellama}); DeepSeek-Coder trained 2T project-level tokens from scratch (\\cite[Guo et al., 2024]{guo2024deepseekcoder}).",
+      "section": "Why this becomes everything else",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-105",
+      "quote": "The other side of the same data: models are strongest where the corpus is thickest — popular languages, mainstream frameworks, English identifiers — and next-token prediction learns surface regularities first, so syntax comes easily while deep semantics (debugging, refactoring) remains the hard part.",
+      "section": "Why this becomes everything else",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-106",
+      "quote": "The sharpest illustration is **SWE-bench** (\\cite[Jimenez et al., 2024]{jimenez2024swebench}), 2,294 real GitHub issues: the best model of 2023 resolved 1.96%.",
+      "section": "Why this becomes everything else",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-107",
+      "quote": "Reasoning models have since climbed far, but the gap between “passes the unit tests” and “does software engineering” is where the data's limits show.",
+      "section": "Why this becomes everything else",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-108",
+      "quote": "With natural data exhaust, frontier labs increasingly generate **synthetic training data**:",
+      "section": "Synthetic Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-109",
+      "quote": "* **Self-instruct**: prompt the model to generate variations of seed instructions.",
+      "section": "Synthetic Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-110",
+      "quote": "* **Constitutional AI** (\\cite[Bai et al., 2022]{bai2022constitutional}): model generates responses, critiques them against rules, revises.",
+      "section": "Synthetic Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-111",
+      "quote": "* **Distillation**: a stronger model generates high-quality responses that a smaller model is then trained on.",
+      "section": "Synthetic Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-112",
+      "quote": "* **Problem synthesis**: generate problems with verifiable solutions (\\cite[Hendrycks et al., 2021]{hendrycks2021math}).",
+      "section": "Synthetic Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-113",
+      "quote": "* **Model collapse** (\\cite[Shumailov et al., 2023]{shumailov2023modelcollapse}): training on a model's own outputs causes drift away from the true data distribution over generations.",
+      "section": "Synthetic Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-114",
+      "quote": "* **Loss of diversity**: synthetic data tends to converge to common modes.",
+      "section": "Synthetic Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-115",
+      "quote": "* **Reward hacking**: synthetic data optimized for a verifier is gamed.",
+      "section": "Synthetic Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-116",
+      "quote": "OpenAI's **WebGPT** and DeepMind's **Sparrow** demonstrated that synthetic preference data can substitute for expensive human labelling, at the cost of ceiling effects (you can't exceed your teacher's quality).",
+      "section": "Synthetic Data",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-117",
+      "quote": "For those training their own models, the rough sequence is:",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-118",
+      "quote": "**Source raw data**: Common Crawl dumps, GitHub, ArXiv, StackExchange, books from public sources.",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-119",
+      "quote": "**Extract text**: HTML → plain text with WARC extraction.",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-120",
+      "quote": "**Language ID**: fastText, keep target languages.",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-121",
+      "quote": "**Quality filter**: heuristic rules + classifier (e.g., FineWeb's quality classifier).",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-122",
+      "quote": "**Deduplicate**: exact hash + MinHash + suffix-array.",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-123",
+      "quote": "**Decontaminate**: against benchmarks you care about.",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-124",
+      "quote": "**Mix and balance**: per-source sampling weights, target ratio (e.g., 50% web, 15% code, 10% books, 5% math).",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-125",
+      "quote": "**Tokenize**: BPE/SentencePiece over a representative sample.",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-126",
+      "quote": "(BPE is a **compression** algorithm from \\citeyear{gage1994bpe} \\cite{gage1994bpe} repurposed for tokenization: it fuses frequent adjacent pairs into single short-ID tokens, so the token stream is a shorter, lossless form of the raw text.)",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-127",
+      "quote": "**Pack**: concatenate and chunk into fixed-length training sequences.",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-128",
+      "quote": "This pipeline takes weeks of engineering and significant compute.",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-129",
+      "quote": "The result is what you train on.",
+      "section": "Practical Recipe (Llama 3-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-130",
+      "quote": "A famous result from the **DataComp-LM** benchmark: at fixed compute, model quality improves strongly with the **quality-adjusted token count**.",
+      "section": "Why Data Is Half the Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-131",
+      "quote": "The paper reports large gains from better filtering; the slogan that doubling data quality is equivalent to doubling model size is a rough summary, not an exact law.",
+      "section": "Why Data Is Half the Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-132",
+      "quote": "The implication: data work has higher ROI than architecture work for most practitioners.",
+      "section": "Why Data Is Half the Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-133",
+      "quote": "A 1B model on FineWeb-Edu often beats a 3B model on Common Crawl.",
+      "section": "Why Data Is Half the Secret",
+      "kind": "statement"
+    },
+    {
+      "id": "training_data-stmt-134",
+      "quote": "Frontier labs spend **half their training-team headcount on data**, not on algorithms.",
+      "section": "Why Data Is Half the Secret",
+      "kind": "statement"
+    }
   ]
 }

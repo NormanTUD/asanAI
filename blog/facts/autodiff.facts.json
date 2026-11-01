@@ -81,5 +81,907 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "autodiff-stmt-1",
+      "quote": "At the heart of every modern neural network lies a deceptively simple question: *“How much did each weight contribute to the error?”* The answer is computed by a technique called **Automatic Differentiation (AD)**, specifically its *reverse mode*, which underpins the backpropagation algorithm used to train virtually every deep learning model today.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-2",
+      "quote": "Automatic differentiation is neither symbolic differentiation (manipulating algebraic expressions like a CAS) nor numerical differentiation (using finite differences like $\\frac{f(x+h) - f(x)}{h}$).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-3",
+      "quote": "Instead, it is an *exact* method that computes derivatives by systematically applying the **chain rule** to elementary operations recorded on a computational graph, often called a **tape**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-4",
+      "quote": "A widely-read visual walkthrough of exactly this reading — backpropagation as reverse-mode differentiation on a computational graph — is \\citetitle{colah2015backprop} \\cite{colah2015backprop}.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-5",
+      "quote": "Long before any machine, the chain rule was a notational achievement.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-6",
+      "quote": "Leibniz's *Nova Methodus* of 1684 introduced the differentials $dx$ and $dy$; his calculus treated $dy/dx$ as a quotient of infinitesimals and supplied the operational rules—including the chain rule—that AD still uses \\cite{leibniz1684nova}.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-7",
+      "quote": "AD inherits that formalism almost unchanged: each elementary operation contributes a local derivative, and the derivative of the whole is their product.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-8",
+      "quote": "The first published algorithm for what we now call automatic differentiation is usually credited to \\citeauthor{wengert1964} in \\citeyear{wengert1964}.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-9",
+      "quote": "In his paper \\citetitle{wengert1964}, Wengert described a procedure for the automatic evaluation of total and partial derivatives of arbitrary algebraic functions by decomposing them into sequences of elementary expressions, without ever developing symbolic derivative formulas.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-10",
+      "quote": "This forward-mode technique laid the conceptual groundwork for all later AD systems.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-11",
+      "quote": "The critical extension to **reverse mode** was made by \\citeauthor{linnainmaa1970} in his \\citeyear{linnainmaa1970} \\cite[master's thesis]{linnainmaa1970}; the English version appeared in 1976 \\cite{linnainmaa1976}.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-12",
+      "quote": "Linnainmaa's original motivation was not neural networks at all, he sought an efficient way to track how rounding errors accumulate through long chains of floating-point computations.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-13",
+      "quote": "His key insight was that by recording each elementary operation and then traversing that record in reverse, one could compute the partial derivatives of the final result with respect to *every* intermediate variable in a single backward pass.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-14",
+      "quote": "Where Wengert's forward mode required one pass per input variable, Linnainmaa's reverse mode required only one pass per *output*, an asymmetry that would prove decisive for training neural networks with millions of parameters and a single scalar loss.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-15",
+      "quote": "This technique was later independently rediscovered and applied to neural network training by \\citeauthor{werbos1974} in his \\citeyear{werbos1974} \\cite[doctoral thesis]{werbos1974}, where he proposed using reverse-mode AD to compute gradients for multi-layer networks.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-16",
+      "quote": "However, it was the landmark \\citeyear{rumelhart1986} paper by \\cite[Rumelhart et al.]{rumelhart1986}, that popularized the method under the name **backpropagation** and demonstrated its practical effectiveness, reigniting interest in connectionist models after the first AI winter.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-17",
+      "quote": "The line did not end with Rumelhart et al. Linnainmaa's Finnish thesis reached a wider audience only in 1976 \\cite{linnainmaa1976}, and in 1980 \\citeauthor{speelpenning1980} turned reverse mode into a compiler technique for functions of many variables \\cite{speelpenning1980}.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-18",
+      "quote": "Speelpenning's reverse sweep over a recorded computation is one of the direct ancestors of modern AD compilers; the same idea later reappears as the gradient tape.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-19",
+      "quote": "Before understanding *how* AD works, it helps to understand *why* the alternatives fail at scale:",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-20",
+      "quote": "**Symbolic Differentiation** (like what Mathematica or Wolfram Alpha does) manipulates algebraic expressions directly.",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-21",
+      "quote": "For a simple function like $f(x) = x^2 \\sin(x)$, it produces an exact symbolic derivative.",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-22",
+      "quote": "However, for a neural network with millions of parameters and deeply nested compositions, the resulting symbolic expressions grow exponentially, a phenomenon called **expression swell**.",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-23",
+      "quote": "The derivative of a 100-layer network would be an algebraic expression larger than any computer could store.",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-24",
+      "quote": "**Numerical Differentiation** approximates derivatives using finite differences:",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-25",
+      "quote": "This requires **one forward pass per parameter** to compute each partial derivative.",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-26",
+      "quote": "For a model with $n$ parameters, that means $n + 1$ forward passes.",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-27",
+      "quote": "GPT-3 has 175 billion parameters, numerical differentiation would require 175 billion forward passes per training step.",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-28",
+      "quote": "It is also numerically unstable: too large an $h$ introduces truncation error, too small an $h$ introduces floating-point cancellation error.",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-29",
+      "quote": "**Automatic Differentiation** computes exact derivatives (up to floating-point precision) in at most a constant factor more work than the original function evaluation.",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-30",
+      "quote": "Reverse-mode AD, specifically, computes the gradient of a scalar output with respect to *all* inputs in a single backward pass, regardless of how many parameters there are.",
+      "section": "Why Not Symbolic or Numerical Differentiation?",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-31",
+      "quote": "The entire machinery of AD rests on the **chain rule** of calculus.",
+      "section": "The Chain Rule: The Mathematical Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-32",
+      "quote": "If a function $y$ is computed through a chain of intermediate steps:",
+      "section": "The Chain Rule: The Mathematical Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-33",
+      "quote": "Then the derivative of $y$ with respect to $x$ is:",
+      "section": "The Chain Rule: The Mathematical Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-34",
+      "quote": "For a longer chain $x \\to v_1 \\to v_2 \\to \\cdots \\to v_k \\to y$:",
+      "section": "The Chain Rule: The Mathematical Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-35",
+      "quote": "AD automates this process by recording each elementary operation and its local derivative, then chaining them together.",
+      "section": "The Chain Rule: The Mathematical Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-36",
+      "quote": "There are two “directions” in which the chain rule can be evaluated:",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-37",
+      "quote": "**Forward Mode** propagates derivatives *alongside* the computation, from inputs to outputs.",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-38",
+      "quote": "It computes $\\frac{\\partial v_i}{\\partial x}$ for a chosen input $x$ at each step.",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-39",
+      "quote": "This is efficient when there are **few inputs and many outputs** (e.g., computing the Jacobian column by column).",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-40",
+      "quote": "**Reverse Mode** first completes the entire forward computation, then propagates derivatives *backward* from the output to all inputs.",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-41",
+      "quote": "It computes $\\frac{\\partial y}{\\partial v_i}$ for all intermediate variables $v_i$ in one pass.",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-42",
+      "quote": "This is efficient when there are **many inputs and few outputs**, exactly the situation in neural network training, where we have millions of weights (inputs) and a single scalar loss (output).",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-43",
+      "quote": "Since training always reduces to minimizing a single scalar loss $L$, reverse mode requires only **one** backward pass to get $\\frac{\\partial L}{\\partial w_i}$ for every weight $w_i$.",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-44",
+      "quote": "This is why reverse-mode AD (backpropagation) is the universal choice for deep learning.",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-45",
+      "quote": "Reverse mode's bargain has a price: it must retain intermediate values from the forward pass, so memory grows with the length of the tape.",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-46",
+      "quote": "\\citeauthor{griewank1989} clarified the arithmetic cost of the reverse sweep, and the book that grew out of that work, *Evaluating Derivatives* (2000; 2nd ed.",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-47",
+      "quote": "2008), developed the memory-versus-recomputation trade-off—including checkpointing—that modern frameworks use \\cite{griewank1989,griewank2008}.",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-48",
+      "quote": "Checkpointing stores a few states and recomputes the rest, which is what lets a deep network's gradient fit in memory.",
+      "section": "Forward Mode vs. Reverse Mode",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-49",
+      "quote": "The idea of carrying local derivative information along with a computation is older than the name.",
+      "section": "Before the name existed: a machine that differentiated",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-50",
+      "quote": "In the 1820s **Charles Babbage** designed the **Difference Engine**, a steam-era machine that tabulated polynomial functions by the **method of finite differences** \\cite[Babbage's Difference Engine]{differenceengine}.",
+      "section": "Before the name existed: a machine that differentiated",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-51",
+      "quote": "You loaded it with a function's value and its successive differences at one starting point, and then cranked it forward: each turn produced the next value purely by *adding* the stored differences, with no multiplication and no formula at all.",
+      "section": "Before the name existed: a machine that differentiated",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-52",
+      "quote": "The engine was **not** an automatic-differentiation machine: it evaluated a polynomial from stored finite differences, not the derivatives of an arbitrary program.",
+      "section": "Before the name existed: a machine that differentiated",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-53",
+      "quote": "But the underlying move — carry a local state forward and read the next value from it — is a cousin of forward-mode AD, which records exact local derivatives instead of finite differences and applies the chain rule to them.",
+      "section": "Before the name existed: a machine that differentiated",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-54",
+      "quote": "The central data structure in reverse-mode AD is the **computational graph**, colloquially called the **tape** (by analogy with a magnetic tape that records operations sequentially).",
+      "section": "The Tape: Recording the Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-55",
+      "quote": "During the forward pass, every elementary operation, addition, multiplication, exponentiation, activation functions, is recorded on this tape along with its inputs and the local partial derivatives.",
+      "section": "The Tape: Recording the Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-56",
+      "quote": "Evaluated at $x = \\frac{\\pi}{2}, \\; y = 1$:",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-57",
+      "quote": "**Step 1 (Forward Pass):** Break the computation into elementary operations and record each one.",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-58",
+      "quote": "| Step | Operation | Result | Local Derivatives |",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-59",
+      "quote": "| $v_0$ | input $x$ | $\\frac{\\pi}{2} \\approx 1.5708$ | 1 (constant) |",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-60",
+      "quote": "| $v_1$ | input $y$ | $1$ | 1 (constant) |",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-61",
+      "quote": "| $v_2 = v_0 + v_1$ | add | $2.5708$ | $\\frac{\\partial v_2}{\\partial v_0} = 1, \\quad \\frac{\\partial v_2}{\\partial v_1} = 1$ |",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-62",
+      "quote": "| $v_3 = \\sin(v_0)$ | sin | $1.0$ | $\\frac{\\partial v_3}{\\partial v_0} = \\cos(v_0) = 0$ |",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-63",
+      "quote": "| $v_4 = v_2 \\cdot v_3$ | multiply | $2.5708$ | $\\frac{\\partial v_4}{\\partial v_2} = v_3 = 1, \\quad \\frac{\\partial v_4}{\\partial v_3} = v_2 = 2.5708$ |",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-64",
+      "quote": "**Step 2 (Backward Pass):** Starting from the output $v_4$, propagate the gradient $\\bar{v}_i = \\frac{\\partial f}{\\partial v_i}$ backward through the tape.",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-65",
+      "quote": "We use the notation $\\bar{v}_i$ (called the **adjoint**) to denote $\\frac{\\partial f}{\\partial v_i}$.",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-66",
+      "quote": "| Step | Adjoint Computation | Value |",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-67",
+      "quote": "| $\\bar{v}_4$ | $\\frac{\\partial f}{\\partial v_4} = 1$ (seed) | $1$ |",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-68",
+      "quote": "| $\\bar{v}_2$ | $\\bar{v}_4 \\cdot \\frac{\\partial v_4}{\\partial v_2} = 1 \\cdot v_3 = 1 \\cdot 1$ | $1$ |",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-69",
+      "quote": "| $\\bar{v}_3$ | $\\bar{v}_4 \\cdot \\frac{\\partial v_4}{\\partial v_3} = 1 \\cdot v_2 = 1 \\cdot 2.5708$ | $2.5708$ |",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-70",
+      "quote": "| $\\bar{v}_0$ | $\\bar{v}_2 \\cdot \\frac{\\partial v_2}{\\partial v_0} + \\bar{v}_3 \\cdot \\frac{\\partial v_3}{\\partial v_0} = 1 \\cdot 1 + 2.5708 \\cdot 0$ | $1$ |",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-71",
+      "quote": "| $\\bar{v}_1$ | $\\bar{v}_2 \\cdot \\frac{\\partial v_2}{\\partial v_1} = 1 \\cdot 1$ | $1$ |",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-72",
+      "quote": "We can verify: $f(x,y) = (x+y)\\sin(x)$, so $\\frac{\\partial f}{\\partial x} = \\sin(x) + (x+y)\\cos(x) = 1 + 2.5708 \\cdot 0 = 1$ and $\\frac{\\partial f}{\\partial y} = \\sin(x) = 1$.",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-73",
+      "quote": "You can explore this process interactively below.",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-74",
+      "quote": "Adjust $x$ and $y$ and watch the tape being built and then unwound.",
+      "section": "A Concrete Example",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-75",
+      "quote": "The tape can also be visualized as a **directed acyclic graph (DAG)**, where each node is an operation and each edge carries a value and a local derivative.",
+      "section": "The Computational Graph: Visualizing the Tape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-76",
+      "quote": "The forward pass flows left-to-right, and the backward pass flows right-to-left, accumulating gradients via the chain rule at each node.",
+      "section": "The Computational Graph: Visualizing the Tape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-77",
+      "quote": "Below is an interactive visualization of the computational graph for $f(x, y) = (x + y) \\cdot \\sin(x)$.",
+      "section": "The Computational Graph: Visualizing the Tape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-78",
+      "quote": "Hover over any node to see its forward value and backward adjoint.",
+      "section": "The Computational Graph: Visualizing the Tape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-79",
+      "quote": "In practice, automatic differentiation is used to compute the gradient $\\nabla L(\\mathbf{w})$ of a loss function $L$ with respect to all model weights $\\mathbf{w}$.",
+      "section": "Gradient Descent on a Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-80",
+      "quote": "The optimizer then updates the weights in the direction that reduces the loss:",
+      "section": "Gradient Descent on a Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-81",
+      "quote": "where $\\eta$ is the learning rate.",
+      "section": "Gradient Descent on a Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-82",
+      "quote": "This is **gradient descent**, first described for least-squares problems by \\citeauthor{cauchy1847} in \\citeyear{cauchy1847} in \\citetitle{cauchy1847} (general nonlinear descent came later).",
+      "section": "Gradient Descent on a Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-83",
+      "quote": "The interactive demo below shows gradient descent on a simple 2D loss landscape $L(w_1, w_2) = w_1^2 + w_2^2$ (a paraboloid).",
+      "section": "Gradient Descent on a Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-84",
+      "quote": "The gradient at any point $(w_1, w_2)$ is $\\nabla L = (2w_1, 2w_2)$, which always points directly away from the minimum at the origin, in the direction of steepest ascent.",
+      "section": "Gradient Descent on a Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-85",
+      "quote": "Gradient descent moves against it, along $-\\nabla L$, which is what carries the weights back toward the origin.",
+      "section": "Gradient Descent on a Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-86",
+      "quote": "You can adjust the learning rate and starting position to see how the optimizer converges.",
+      "section": "Gradient Descent on a Loss Landscape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-87",
+      "quote": "Modern deep learning frameworks implement reverse-mode AD as a core feature.",
+      "section": "Tape-Based AD in Practice: TensorFlow and PyTorch",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-88",
+      "quote": "The two dominant frameworks, \\citealternativetitle{tensorflow2016} and \\citealternativetitle{pytorch}, take slightly different approaches to building the computational graph, but both ultimately implement the same mathematical principle.",
+      "section": "Tape-Based AD in Practice: TensorFlow and PyTorch",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-89",
+      "quote": "\\citealternativetitle{tensorflow2016} uses an **explicit tape** via the `tf.GradientTape()` context manager.",
+      "section": "TensorFlow: Explicit Tape with `GradientTape`",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-90",
+      "quote": "You must explicitly tell TensorFlow to start recording operations.",
+      "section": "TensorFlow: Explicit Tape with `GradientTape`",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-91",
+      "quote": "This gives you fine-grained control over what gets differentiated.",
+      "section": "TensorFlow: Explicit Tape with `GradientTape`",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-92",
+      "quote": "\\citealternativetitle{pytorch} uses an **implicit tape**, any tensor created with `requires_grad=True` automatically records operations performed on it.",
+      "section": "PyTorch: Implicit Tape with `autograd`",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-93",
+      "quote": "The tape is built dynamically during the forward pass (this is called **define-by-run** or **eager mode**), which makes debugging more intuitive.",
+      "section": "PyTorch: Implicit Tape with `autograd`",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-94",
+      "quote": "Both approaches produce identical mathematical results.",
+      "section": "PyTorch: Implicit Tape with `autograd`",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-95",
+      "quote": "The choice between them is largely a matter of API preference and ecosystem.",
+      "section": "PyTorch: Implicit Tape with `autograd`",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-96",
+      "quote": "| Feature | PyTorch | TensorFlow |",
+      "section": "Key Differences at a Glance",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-97",
+      "quote": "| **Tape creation** | Implicit (automatic for `requires_grad=True` tensors) | Explicit (`with tf.GradientTape()`) |",
+      "section": "Key Differences at a Glance",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-98",
+      "quote": "| **Graph mode** | Define-by-run (dynamic) | Eager by default; `@tf.function` for static graphs |",
+      "section": "Key Differences at a Glance",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-99",
+      "quote": "| **Trigger backward** | `loss.backward()` | `tape.gradient(loss, variables)` |",
+      "section": "Key Differences at a Glance",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-100",
+      "quote": "| **Access gradients** | `tensor.grad` attribute | Returned by `tape.gradient()` |",
+      "section": "Key Differences at a Glance",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-101",
+      "quote": "| **Tape persistence** | Consumed after `.backward()` (use `retain_graph=True` to keep) | Consumed after `.gradient()` (use `persistent=True` to keep) |",
+      "section": "Key Differences at a Glance",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-102",
+      "quote": "| **Higher-order derivatives** | Nest `.backward()` calls or use `torch.autograd.grad` | Nest `GradientTape` contexts |",
+      "section": "Key Differences at a Glance",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-103",
+      "quote": "Both frameworks produce mathematically identical gradients.",
+      "section": "Key Differences at a Glance",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-104",
+      "quote": "The choice is primarily about API ergonomics and ecosystem preferences.",
+      "section": "Key Differences at a Glance",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-105",
+      "quote": "\\citeauthor{jax2018}'s JAX takes a third route: rather than recording a mutable tape, it composes function transformations.",
+      "section": "JAX: Transformations Instead of a Tape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-106",
+      "quote": "`grad` turns a scalar-valued function into its gradient, `jacfwd` and `jacrev` build Jacobians in forward or reverse mode, and `vmap` and `jit` compile the result for accelerators \\cite{jax2018}.",
+      "section": "JAX: Transformations Instead of a Tape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-107",
+      "quote": "The same reverse-mode chain rule is underneath, but the API exposes *which* mode is used—a useful reminder that forward and reverse are two schedules for the same derivative, not two different calculi.",
+      "section": "JAX: Transformations Instead of a Tape",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-108",
+      "quote": "To truly understand tape-based Automatic Differentiation, it helps to build one from scratch.",
+      "section": "Building a Minimal Autograd Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-109",
+      "quote": "The following is a minimal but complete implementation of a reverse-mode autograd engine in pure Python.",
+      "section": "Building a Minimal Autograd Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-110",
+      "quote": "It supports addition, multiplication, and the sine function, enough to differentiate our example $f(x, y) = (x + y) \\cdot \\sin(x)$.",
+      "section": "Building a Minimal Autograd Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-111",
+      "quote": "This minimal engine implements the exact same algorithm that PyTorch and TensorFlow use internally, just without the GPU acceleration, operator overloading for hundreds of operations, and memory optimizations.",
+      "section": "Building a Minimal Autograd Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-112",
+      "quote": "One critical consequence of tape-based Automatic Differentiation in deep networks is the **vanishing gradient problem**, systematically analyzed by \\citeauthor{hochreiter1991vanishing} in \\citeyear{hochreiter1991vanishing} and formalized for recurrent networks by \\citeauthor{bengio1994learning} in \\citeyear{bengio1994learning}.",
+      "section": "The Vanishing and Exploding Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-113",
+      "quote": "When the chain rule is applied through many layers, the gradient is a product of many local derivatives:",
+      "section": "The Vanishing and Exploding Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-114",
+      "quote": "This is a product of $n$ local derivatives.",
+      "section": "The Vanishing and Exploding Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-115",
+      "quote": "If each factor is small (say, less than 1), the product shrinks **exponentially** toward zero as $n$ grows, the gradient **vanishes**.",
+      "section": "The Vanishing and Exploding Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-116",
+      "quote": "Conversely, if each factor is greater than 1, the product **explodes** toward infinity.",
+      "section": "The Vanishing and Exploding Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-117",
+      "quote": "Consider a network using the sigmoid activation $\\sigma(z) = \\frac{1}{1+e^{-z}}$.",
+      "section": "Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-118",
+      "quote": "The maximum value of $\\sigma'(z)$ is $0.25$, occurring at $z = 0$.",
+      "section": "Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-119",
+      "quote": "This means that at **every layer**, the gradient is multiplied by a factor of at most $0.25$.",
+      "section": "Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-120",
+      "quote": "The gradient reaching the first layer is less than one millionth of the gradient at the output.",
+      "section": "Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-121",
+      "quote": "The early layers effectively stop learning, they receive no useful signal about how to update their weights.",
+      "section": "Vanishing Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-122",
+      "quote": "The opposite problem occurs when the local derivatives are consistently greater than 1.",
+      "section": "Exploding Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-123",
+      "quote": "In recurrent neural networks processing long sequences, the gradient can grow exponentially, causing weight updates so large that the model diverges to $\\text{NaN}$.",
+      "section": "Exploding Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-124",
+      "quote": "Several architectural innovations have been developed to combat these problems:",
+      "section": "Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-125",
+      "quote": "**ReLU Activation** (\\citeauthor{relupaper}, \\citeyear{relupaper}): The Rectified Linear Unit $\\text{ReLU}(z) = \\max(0, z)$ has a derivative of exactly $1$ for positive inputs, preventing the multiplicative shrinkage that plagues sigmoid networks.",
+      "section": "Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-126",
+      "quote": "**Residual Connections** (\\citeauthor{he2015resnet}, \\citeyear{he2015resnet}): Skip connections add the input of a block directly to its output: $\\mathbf{y} = F(\\mathbf{x}) + \\mathbf{x}$.",
+      "section": "Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-127",
+      "quote": "This creates a “gradient highway” that allows gradients to bypass problematic layers entirely.",
+      "section": "Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-128",
+      "quote": "**Layer Normalization** (\\citeauthor{ba2016layernorm}, \\citeyear{ba2016layernorm}): Normalizing activations at each layer keeps their scale stable and makes optimization less sensitive to initialization; it helps with vanishing gradients but is not a guarantee against either failure mode.",
+      "section": "Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-129",
+      "quote": "**Gradient Clipping**: A simple but effective technique that caps the gradient norm at a maximum value, preventing explosions while preserving direction.",
+      "section": "Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-130",
+      "quote": "You can explore the vanishing gradient problem interactively below.",
+      "section": "Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-131",
+      "quote": "Adjust the number of layers and the activation function to see how the gradient magnitude decays (or explodes) as it propagates backward.",
+      "section": "Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-132",
+      "quote": "An important distinction in modern AD frameworks is whether the computational graph is built **statically** (before execution) or **dynamically** (during execution).",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-133",
+      "quote": "**Static Graphs** (TensorFlow 1.x, early Theano): The entire computation is defined symbolically before any data flows through it.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-134",
+      "quote": "This allows aggressive compiler-level optimizations but makes debugging difficult, you cannot simply insert a `print()` statement to inspect intermediate values.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-135",
+      "quote": "**Dynamic Graphs** (PyTorch, TensorFlow 2.x eager mode): The graph is built on-the-fly as operations execute.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-136",
+      "quote": "Each forward pass constructs a fresh tape, which is then consumed during the backward pass.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-137",
+      "quote": "This “define-by-run” approach is more intuitive and Pythonic, allowing standard control flow (`if`, `for`, `while`) to be used naturally within the model.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-138",
+      "quote": "The Transformer architecture, released in \\citeyear{vaswani2017attention}, made variable-length sequences and masked attention central to language modeling.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-139",
+      "quote": "Its operations do not *require* a dynamic graph—padded or bucketed batches can be compiled statically—but define-by-run frameworks made such models easier to prototype and debug, which helped PyTorch become the dominant framework in research.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-140",
+      "quote": "Backpropagation through a deep network is really just multiplying a chain of Jacobian matrices .",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-141",
+      "quote": "Each layer's local derivative is a Jacobian matrix $J^{(\\ell)}$ containing the partial derivatives of every output of layer $\\ell$ with respect to every input.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-142",
+      "quote": "The chain rule for a network with $L$ layers is simply matrix multiplication:",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-143",
+      "quote": "The vanishing gradient problem becomes immediately obvious from this perspective: if every Jacobian has singular values less than 1 (i.e., it is a contraction mapping), the product of $L$ such matrices shrinks exponentially with depth.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-144",
+      "quote": "ResNets ease this because their Jacobian is $I + J_F$: the product of $L$ such factors contains the identity term $I$, which provides a direct path for the gradient and keeps it from being multiplied by a small factor at every layer.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-145",
+      "quote": "That mitigates vanishing, though it does not by itself guarantee that the full gradient stays large.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-146",
+      "quote": "This matrix-chain perspective also reveals why the choice of activation function matters so much for trainability.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-147",
+      "quote": "Sigmoid and tanh activations squash their inputs into a small range, producing Jacobians with singular values well below 1.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-148",
+      "quote": "ReLU, by contrast, has a Jacobian that is either 1 (for positive inputs) or 0 (for negative inputs).",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-149",
+      "quote": "While ReLU avoids vanishing gradients for active neurons, it introduces the “dying ReLU” problem where neurons can get permanently stuck in the zero regime.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "autodiff-stmt-150",
+      "quote": "Modern architectures like GPT use smooth activation variants such as GELU, or gated units such as SwiGLU built on the smooth Swish function: their gradients taper off gradually for large negative inputs instead of snapping abruptly to zero the way ReLU's do.",
+      "section": "Dynamic vs. Static Computational Graphs",
+      "kind": "statement"
+    }
   ]
 }

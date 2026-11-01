@@ -103,5 +103,499 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "multimodal-stmt-1",
+      "quote": "A pure text model is blind.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-2",
+      "quote": "It has never seen a colour, a face, or a curve.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-3",
+      "quote": "**Multimodal** models remove this handicap: a single network that ingests **images, text, audio, video**, and reasons across them.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-4",
+      "quote": "The 2024–2025 generation (GPT-4o, Claude 3.5 Sonnet, Gemini 1.5, InternVL-2, LLaVA-OneVision) is multimodal by default; text-only models are increasingly a special case.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-5",
+      "quote": "This chapter traces the technical lineage from pixels-as-tensors (see the Computer Vision chapter ) to **pixels-as-tokens** that an LLM can read.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-6",
+      "quote": "A trained text model lives in a **language embedding space** $\\mathbb{R}^d$ where “king” and “queen” sit close together.",
+      "section": "The Two Towers: Why Aligning Spaces Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-7",
+      "quote": "An image encoder (a CNN or Vision Transformer) lives in a **visual embedding space** $\\mathbb{R}^{d'}$ where two photographs of the same cat also sit close together.",
+      "section": "The Two Towers: Why Aligning Spaces Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-8",
+      "quote": "The problem: these two spaces are not the same.",
+      "section": "The Two Towers: Why Aligning Spaces Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-9",
+      "quote": "You cannot, in general, do $\\vec{v}_\\text{cat\\,image} - \\vec{v}_\\text{dog\\,image} \\approx \\vec{v}_\\text{“cat”} - \\vec{v}_\\text{“dog”}$ until they have been aligned.",
+      "section": "The Two Towers: Why Aligning Spaces Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-10",
+      "quote": "The simplest alignment is **contrastive learning**: pull matched (image, caption) pairs together, push mismatched pairs apart.",
+      "section": "The Two Towers: Why Aligning Spaces Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-11",
+      "quote": "This is exactly what **CLIP** does.",
+      "section": "The Two Towers: Why Aligning Spaces Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-12",
+      "quote": "Published by \\cite[Radford et al. (OpenAI), 2021]{radford2021clip}, CLIP trains two encoders simultaneously on ~400 million (image, text) pairs scraped from the public web:",
+      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-13",
+      "quote": "* An **image encoder** $f_\\theta : \\text{Image} \\to \\mathbb{R}^d$ (originally a ResNet-50, later a ViT-L/14).",
+      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-14",
+      "quote": "* A **text encoder** $g_\\phi : \\text{Text} \\to \\mathbb{R}^d$ (a Transformer).",
+      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-15",
+      "quote": "Both are L2-normalized to live on the unit sphere, so cosine similarity equals dot product.",
+      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-16",
+      "quote": "For a batch of $N$ matched pairs, CLIP computes an $N \\times N$ similarity matrix and trains both encoders to maximize the diagonal (matched pairs) and minimize the off-diagonal (mismatched pairs) via a **symmetric cross-entropy loss**:",
+      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-17",
+      "quote": "where $\\mathbf{I}_i = f_\\theta(\\text{image}_i)$, $\\mathbf{T}_i = g_\\phi(\\text{text}_i)$, and $\\tau$ is a learnable temperature.",
+      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-18",
+      "quote": "After training, CLIP exhibits **zero-shot image classification**: write a prompt like *“a photo of a {label}”* for every candidate class, encode all prompts, encode the image, pick the prompt with highest cosine similarity.",
+      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-19",
+      "quote": "No fine-tuning, no classifier head.",
+      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-20",
+      "quote": "CLIP matched the accuracy of fully-supervised ResNet-50 on ImageNet without ever seeing an ImageNet label.",
+      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-21",
+      "quote": "This is the foundation of every modern vision-language model.",
+      "section": "CLIP: Contrastive Language-Image Pre-training",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-22",
+      "quote": "A Vision Transformer (ViT, \\cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit}) treats an image as a **sequence of patches**.",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-23",
+      "quote": "For an image of $H \\times W \\times 3$ pixels with patch size $P \\times P$:",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-24",
+      "quote": "Each patch is linearly projected to a $d$-dimensional vector (the patch embedding), a learnable `[CLS]` token is prepended, and 1-D positional embeddings are added.",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-25",
+      "quote": "The resulting sequence of $n+1$ vectors is fed to a standard Transformer encoder.",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-26",
+      "quote": "The `[CLS]` token's final hidden state is the image representation.",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-27",
+      "quote": "For a $224 \\times 224$ image with $P=16$: $n = 196$ patches.",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-28",
+      "quote": "ViT-L/14 processes this with 24 layers, 16 heads, $d=1024$, yielding ~304M parameters.",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-29",
+      "quote": "Modern ViTs (EVA-02, SigLIP) push to $P=14$ patches on $448 \\times 448$ inputs, yielding $>1000$ tokens per image.",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-30",
+      "quote": "This is the deep conceptual shift: **an image is no longer “a grid to be convolved”; it is a sequence to be attended to**.",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-31",
+      "quote": "The same Transformer block that processes word tokens now processes visual tokens.",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-32",
+      "quote": "The architecture becomes modality-agnostic.",
+      "section": "Vision Transformers: Turning Pixels into Tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-33",
+      "quote": "The challenge: a pretrained text-only LLM has never seen a pixel.",
+      "section": "Multimodal LLMs: How a Text Model Learns to See",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-34",
+      "quote": "Three architectural patterns have emerged (often combined):",
+      "section": "Multimodal LLMs: How a Text Model Learns to See",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-35",
+      "quote": "A pretrained vision encoder (e.g., CLIP-ViT) produces a sequence of visual tokens.",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-36",
+      "quote": "A small **projection MLP** maps each visual token from the vision space into the LLM's text-token embedding space:",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-37",
+      "quote": "The projected visual tokens are concatenated with the text-token sequence and fed to the LLM as if they were ordinary words.",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-38",
+      "quote": "**Only the projection layer is trained initially**; the LLM is frozen.",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-39",
+      "quote": "The visual tokens literally become “foreign-language words” the LLM learns to read.",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-40",
+      "quote": "LLaVA-1.5 (\\cite[Liu et al., 2023]{liu2023llava}) used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector.",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-41",
+      "quote": "With ~600k image-instruction pairs, it reached 78.5% on VQAv2, competitive with GPT-4 on several multimodal benchmarks.",
+      "section": "Pattern 1: Projection Layer (LLaVA-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-42",
+      "quote": "The vision tokens are not concatenated into the text sequence; instead, the LLM's self-attention layers are augmented with **cross-attention blocks** that read from the visual sequence at every layer.",
+      "section": "Pattern 2: Cross-Attention (Flamingo-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-43",
+      "quote": "Flamingo (\\cite[Alayrac et al., 2022]{alayrac2022flamingo}) interleaved gated cross-attention layers between frozen Transformer blocks, training only the cross-attention and a Perceiver Resampler that compressed variable-length image features into a fixed 64-token representation.",
+      "section": "Pattern 2: Cross-Attention (Flamingo-style)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-44",
+      "quote": "The Transformer is trained from scratch on interleaved image, audio, text, and video tokens.",
+      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-45",
+      "quote": "There is no projection layer; the model has always seen pixels as first-class tokens.",
+      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-46",
+      "quote": "Tokens representing 1/24-second audio frames, $16 \\times 16$ image patches, and BPE text tokens all flow through the same residual stream.",
+      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-47",
+      "quote": "(The text side is BPE, a **compression** algorithm repurposed as a tokenizer: it fuses frequent patterns into short-ID tokens, so the text enters already in a shorter, lossless form.) This requires vast multimodal training data (trillions of tokens), but produces the most coherent cross-modal reasoning.",
+      "section": "Pattern 3: Native Multimodality (GPT-4o, Gemini)",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-48",
+      "quote": "Take the prompt *“What is unusual about this image?”* with an attached photo.",
+      "section": "How a Multimodal LLM Answers a Question",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-49",
+      "quote": "**Encode** the image with the vision tower → sequence of $n$ visual tokens.",
+      "section": "How a Multimodal LLM Answers a Question",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-50",
+      "quote": "**Project** them into the LLM's token space (or feed via cross-attention).",
+      "section": "How a Multimodal LLM Answers a Question",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-51",
+      "quote": "**Tokenize** the text prompt as usual.",
+      "section": "How a Multimodal LLM Answers a Question",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-52",
+      "quote": "**Concatenate**: $\\text{[visual tokens] [text tokens]}$.",
+      "section": "How a Multimodal LLM Answers a Question",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-53",
+      "quote": "**Autoregressive generation** as in any LLM: predict the next text token conditioned on the joint sequence.",
+      "section": "How a Multimodal LLM Answers a Question",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-54",
+      "quote": "The LLM treats the visual tokens as if they were a foreign language it has been taught to read.",
+      "section": "How a Multimodal LLM Answers a Question",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-55",
+      "quote": "No new attention mechanism is required, the same Q/K/V machinery already described in the Attention chapter handles the cross-modal mixing, because visual and text tokens occupy the same vector space.",
+      "section": "How a Multimodal LLM Answers a Question",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-56",
+      "quote": "| Benchmark | What it tests | Why it matters |",
+      "section": "Visual Question Answering Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-57",
+      "quote": "| **VQA v2** | Simple visual question answering | The original VQA benchmark; saturated |",
+      "section": "Visual Question Answering Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-58",
+      "quote": "| **MMMU** | Multi-discipline college-level multimodal reasoning | Requires expert knowledge + image understanding |",
+      "section": "Visual Question Answering Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-59",
+      "quote": "| **MMVet** | Integrated multimodal capabilities | Tests composition of recognition + reasoning + OCR |",
+      "section": "Visual Question Answering Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-60",
+      "quote": "| **MathVista** | Mathematical reasoning in visual contexts | Diagrams, plots, geometric figures |",
+      "section": "Visual Question Answering Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-61",
+      "quote": "| **DocVQA** | Reading text inside images | Critical for invoices, receipts, forms |",
+      "section": "Visual Question Answering Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-62",
+      "quote": "| **MM-Bench** | Broad multimodal evaluation | Now multilingual |",
+      "section": "Visual Question Answering Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-63",
+      "quote": "| **RealWorldQA** | Real-world spatial reasoning | Self-driving, robotics |",
+      "section": "Visual Question Answering Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-64",
+      "quote": "The leaderboard has shifted dramatically: when MMMU appeared in 2023, text-only models sat near the random baseline.",
+      "section": "Visual Question Answering Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-65",
+      "quote": "By 2025, top models (GPT-4o, Claude 3.5, Gemini 1.5 Pro) exceed 70%, and on VQA v2 they exceed 85%.",
+      "section": "Visual Question Answering Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-66",
+      "quote": "Multimodal does **not** mean omnipotent:",
+      "section": "The Limits of Multimodal LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-67",
+      "quote": "* **Spatial reasoning**: counting objects (“how many apples?”), understanding left/right relationships, depth ordering, all surprisingly weak.",
+      "section": "The Limits of Multimodal LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-68",
+      "quote": "* **Hallucination amplifies**: an LLM that hallucinates text can hallucinate “the dog is brown” when no dog is present.",
+      "section": "The Limits of Multimodal LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-69",
+      "quote": "* **OCR is brittle**: handwritten text, unusual fonts, or cluttered scenes cause systematic failures.",
+      "section": "The Limits of Multimodal LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-70",
+      "quote": "* **Adversarial fragility**: imperceptible pixel perturbations (see the Security chapter) can flip a model's answer.",
+      "section": "The Limits of Multimodal LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-71",
+      "quote": "* **Resolution wall**: a 1024-token visual sequence compresses 1024×1024 pixels into 1024 vectors.",
+      "section": "The Limits of Multimodal LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-72",
+      "quote": "Mitigations: any-resolution ViTs, “image cropping” at inference, native higher resolutions.",
+      "section": "The Limits of Multimodal LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-73",
+      "quote": "* **Any-to-any models**: GPT-4o, Gemini 2, and others can take image, audio, video *and* produce any of them, generating speech, singing, or video from a text prompt.",
+      "section": "What's Next",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-74",
+      "quote": "* **Video as a long sequence of patches**: video tokens are simply more frames stacked in time.",
+      "section": "What's Next",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-75",
+      "quote": "Gemini 1.5 Pro accepts up to 1 hour of video at native resolution.",
+      "section": "What's Next",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-76",
+      "quote": "* **Embodied multimodal**: robots that fuse camera, lidar, proprioception, and language in one model (RT-2, PaLM-E, OpenVLA).",
+      "section": "What's Next",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-77",
+      "quote": "Multimodal LLMs are conceptually simple:",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-78",
+      "quote": "**Encode** each modality into a sequence of vectors.",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-79",
+      "quote": "**Project** all modalities into a shared token space (or use cross-attention).",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-80",
+      "quote": "**Train** the model as a normal next-token predictor on the joint sequence.",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-81",
+      "quote": "The hard parts are data (curating billions of matched image-text-audio samples, see the Training Data chapter), compute (vision towers + LLMs + alignment data = massive training runs), and evaluation (the benchmarks above are still being developed).",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "multimodal-stmt-82",
+      "quote": "But the architectural recipe is now standard and reproducible, which is why every frontier lab ships multimodal-by-default in 2025.",
+      "section": "Summary",
+      "kind": "statement"
+    }
   ]
 }

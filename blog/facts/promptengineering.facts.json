@@ -420,5 +420,1957 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "promptengineering-stmt-1",
+      "quote": "Prompt engineering is the practical craft of communicating with Large Language Models, not by hacking their weights, but by hacking their **input**.",
+      "section": "The Art of Talking to a Stochastic Parrot",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-2",
+      "quote": "Since an LLM is fundamentally a next-token predictor wrapped in a chatbot interface, the way you phrase, structure, and constrain your input is the single most powerful lever you have.",
+      "section": "The Art of Talking to a Stochastic Parrot",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-3",
+      "quote": "Think of it like this: you are not programming the model.",
+      "section": "The Art of Talking to a Stochastic Parrot",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-4",
+      "quote": "You are **creating a linguistic environment** that statistically steers it toward your desired outcome.",
+      "section": "The Art of Talking to a Stochastic Parrot",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-5",
+      "quote": "Every word you choose reduces the entropy of what comes next.",
+      "section": "The Art of Talking to a Stochastic Parrot",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-6",
+      "quote": "There is an explicit cousin of this approach: instead of nudging the model through tokens, you can **move the activation vector consciously to a chosen point in the embedding space**, then let generation proceed from that point.",
+      "section": "The Art of Talking to a Stochastic Parrot",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-7",
+      "quote": "This is *latent space steering*: identify a direction $\\Delta$ (typically the mean difference between activations of contrastive prompt pairs at a chosen layer), then add $h' = h + \\alpha \\Delta$ to the hidden state at inference time (\\cite[§1–2, Definition of latent steering]{emergentmind_latent_space_steering}).",
+      "section": "The Art of Talking to a Stochastic Parrot",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-8",
+      "quote": "Where prompting operates on the *input* surface, latent steering operates on the *internal* representation \\cite[contrastive CAA, mean-difference extraction]{emergentmind_steering_vectors}, and where prompting is a linguistic lever, latent steering is a geometric one \\cite[representation as direction in activation manifold]{emergentmind_representation_steering}.",
+      "section": "The Art of Talking to a Stochastic Parrot",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-9",
+      "quote": "A concrete tour of what you can steer this way — refusal, honesty, sentiment, even where-and-when — is in [Mechanistic Interpretability](mechanistic_interpretability.php), where each direction is not merely found but *causally verified*: add it and the behavior appears, remove it and it disappears.",
+      "section": "The Art of Talking to a Stochastic Parrot",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-10",
+      "quote": "This chart shows the output entropy (a measure of randomness) for different prompt styles.",
+      "section": "The Art of Talking to a Stochastic Parrot",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-11",
+      "quote": "Vague prompts leave the model with maximum uncertainty, forcing it to guess what you want.",
+      "section": "The Art of Talking to a Stochastic Parrot",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-12",
+      "quote": "Each dimension you specify -- length, tone, format, audience, examples -- cuts the entropy further, until only a narrow band of valid outputs remains.",
+      "section": "The Art of Talking to a Stochastic Parrot",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-13",
+      "quote": "These techniques set the operating environment for the model, like setting registers before a computation.",
+      "section": "The Foundations",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-14",
+      "quote": "Assigning a persona acts as a **semantic filter** that primes the model to activate specific regions of its training distribution.",
+      "section": "Define the Role",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-15",
+      "quote": "A “senior Rust engineer” persona pulls different weights than a “Shakespearean poet,” even on the exact same question.",
+      "section": "Define the Role",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-16",
+      "quote": "* **Prompt:** “Act as a senior Rust engineer reviewing this code for safety.”",
+      "section": "Define the Role",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-17",
+      "quote": "* **Why it works:** The role constrains vocabulary, reasoning style, and output distribution into a tight cluster.",
+      "section": "Define the Role",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-18",
+      "quote": "Every dimension you specify removes one degree of freedom from the model's output space.",
+      "section": "Be Specific: Crush the Entropy",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-19",
+      "quote": "* **Bad:** “Write about AI.”",
+      "section": "Be Specific: Crush the Entropy",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-20",
+      "quote": "* **Good:** “Write a 150-word summary of transformer attention for a high school student.",
+      "section": "Be Specific: Crush the Entropy",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-21",
+      "quote": "LLMs rely on distributional semantics where “not” is a minor statistical nudge, not a logical inverter.",
+      "section": "Avoid Negations (Don't Think of a White Bear)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-22",
+      "quote": "The vector for “not happy” in embedding space stays close to “happy” because they co-occur constantly in training data.",
+      "section": "Avoid Negations (Don't Think of a White Bear)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-23",
+      "quote": "However, the negation token *does* appear in the residual stream (the J-space, or logit-accumulation space) -- the model literally sees the token “not” and processes it through its layers.",
+      "section": "Avoid Negations (Don't Think of a White Bear)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-24",
+      "quote": "The problem is that the attention mechanism spreads the negation's influence across the whole phrase rather than cleanly inverting the modified concept.",
+      "section": "Avoid Negations (Don't Think of a White Bear)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-25",
+      "quote": "The “not” vector gets diluted by the strong semantic signal of the word it modifies.",
+      "section": "Avoid Negations (Don't Think of a White Bear)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-26",
+      "quote": "* **Bad:** “Don't be informal.”",
+      "section": "Avoid Negations (Don't Think of a White Bear)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-27",
+      "quote": "* **Good:** “Maintain a formal, academic tone, using no contractions and no slang.”",
+      "section": "Avoid Negations (Don't Think of a White Bear)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-28",
+      "quote": "Triple quotes, XML tags, and dashed lines create **hard boundaries** between instructions and data.",
+      "section": "Use Delimiters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-29",
+      "quote": "This reduces prompt leakage where the model confuses your system prompt with the user content.",
+      "section": "Use Delimiters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-30",
+      "quote": "Ask the model to normalize messy input *before* processing it.",
+      "section": "Input Canonicalization",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-31",
+      "quote": "This turns unstructured chaos into predictable data.",
+      "section": "Input Canonicalization",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-32",
+      "quote": "* **Prompt:** “Before analyzing, convert all dates to ISO 8601, strip HTML tags, and remove duplicate whitespace.”",
+      "section": "Input Canonicalization",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-33",
+      "quote": "LLMs are not human, they process tokens.",
+      "section": "Keep It Lean: No Fluff",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-34",
+      "quote": "“Please,” “thank you,” and polite framing add **semantic noise** without value.",
+      "section": "Keep It Lean: No Fluff",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-35",
+      "quote": "Every token you waste is a token the model could have used for reasoning.",
+      "section": "Keep It Lean: No Fluff",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-36",
+      "quote": "* **Bad:** “Could you please, if it's not too much trouble, maybe help me with...”",
+      "section": "Keep It Lean: No Fluff",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-37",
+      "quote": "* **Good:** “Define entropy.",
+      "section": "Keep It Lean: No Fluff",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-38",
+      "quote": "Control tone, style, and structure when generating text.",
+      "section": "Creative & Generation",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-39",
+      "quote": "Specifying the reader tells the model which details to omit and which to explain.",
+      "section": "Target Audience = Abstraction Level",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-40",
+      "quote": "This is the single highest-leverage stylistic control.",
+      "section": "Target Audience = Abstraction Level",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-41",
+      "quote": "* “Explain neural networks to a 10-year-old” uses analogies, no math.",
+      "section": "Target Audience = Abstraction Level",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-42",
+      "quote": "* “Explain neural networks to a ML PhD” uses equations, loss surfaces, backprop.",
+      "section": "Target Audience = Abstraction Level",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-43",
+      "quote": "Tell the model what *to* do, not what *not* to do.",
+      "section": "Positive Constraints",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-44",
+      "quote": "Affirmative instructions are statistically easier for the model to follow.",
+      "section": "Positive Constraints",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-45",
+      "quote": "* “Use simple, everyday language at a 5th-grade reading level” works.",
+      "section": "Positive Constraints",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-46",
+      "quote": "* “Don't use complex words” fails because the model heard “complex words” and may generate them.",
+      "section": "Positive Constraints",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-47",
+      "quote": "You can mimic temperature and top-p controls through linguistic instruction:",
+      "section": "Parameter Awareness in Language",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-48",
+      "quote": "| Desired Effect | Prompt Language |",
+      "section": "Parameter Awareness in Language",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-49",
+      "quote": "| Factual, safe | “Be factual, deterministic, cite sources for every claim” |",
+      "section": "Parameter Awareness in Language",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-50",
+      "quote": "| Creative | “Be imaginative, surreal, use metaphor and unexpected associations” |",
+      "section": "Parameter Awareness in Language",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-51",
+      "quote": "| Balanced | “Be informative but engaging, include one creative example” |",
+      "section": "Parameter Awareness in Language",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-52",
+      "quote": "Ask the model to generate the *criteria for a perfect answer* before generating the answer.",
+      "section": "Inverse Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-53",
+      "quote": "This primes it with high-quality structure.",
+      "section": "Inverse Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-54",
+      "quote": "* **Prompt:** “First, list 5 criteria that would make a great answer to this question.",
+      "section": "Inverse Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-55",
+      "quote": "Then answer it, meeting each criterion.”",
+      "section": "Inverse Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-56",
+      "quote": "Require a dense outline first, then expand each point.",
+      "section": "Compression-Then-Expansion",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-57",
+      "quote": "This prevents rambling and ensures the final output has a backbone.",
+      "section": "Compression-Then-Expansion",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-58",
+      "quote": "* **Step 1:** “Summarize this topic in 3 bullet points.”",
+      "section": "Compression-Then-Expansion",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-59",
+      "quote": "* **Step 2:** “Now expand each bullet into a full paragraph.”",
+      "section": "Compression-Then-Expansion",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-60",
+      "quote": "For math, logic, and complex problem-solving, the domain where prompt engineering matters most.",
+      "section": "Reasoning & Analysis",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-61",
+      "quote": "The single most important reasoning technique (\\cite[Wei et al., 2022]{wei2022cot}).",
+      "section": "Chain-of-Thought (CoT)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-62",
+      "quote": "By forcing the model to write out intermediate steps, you populate its context window with logical scaffolding that guides it to the right answer.",
+      "section": "Chain-of-Thought (CoT)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-63",
+      "quote": "* **Prompt:** “A farmer has 17 sheep.",
+      "section": "Chain-of-Thought (CoT)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-64",
+      "quote": "* **Why it works:** Direct answers let the model guess.",
+      "section": "Chain-of-Thought (CoT)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-65",
+      "quote": "Step-by-step reasoning forces it to *simulate* logic, building on each previous token as a foundation.",
+      "section": "Chain-of-Thought (CoT)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-66",
+      "quote": "An extension of CoT (\\cite[Yao et al., 2023]{yao2023tot}) where the model explores multiple reasoning branches simultaneously, then evaluates which path is most promising.",
+      "section": "Tree-of-Thought (ToT)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-67",
+      "quote": "* **Prompt:** “Consider 3 different approaches to solve this problem.",
+      "section": "Tree-of-Thought (ToT)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-68",
+      "quote": "Evaluate each for correctness.",
+      "section": "Tree-of-Thought (ToT)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-69",
+      "quote": "Then pick the best one and solve it.”",
+      "section": "Tree-of-Thought (ToT)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-70",
+      "quote": "Force the model to surface its hidden assumptions before answering.",
+      "section": "Assumption Enumeration",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-71",
+      "quote": "This prevents it from relying on unstated (and possibly wrong) premises.",
+      "section": "Assumption Enumeration",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-72",
+      "quote": "* **Prompt:** “Before answering, list all assumptions you're making about the context, data, and constraints.”",
+      "section": "Assumption Enumeration",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-73",
+      "quote": "Instruct the model to label confidence levels or say “I don't know.” This fights the model's default mode of confident hallucination.",
+      "section": "Explicit Uncertainty Handling",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-74",
+      "quote": "* **Prompt:** “For each claim, label your confidence: high / medium / low.",
+      "section": "Explicit Uncertainty Handling",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-75",
+      "quote": "If unsure, state 'I do not have sufficient information.'”",
+      "section": "Explicit Uncertainty Handling",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-76",
+      "quote": "The model alternates between reasoning traces and tool calls (search, calculator, code execution) (\\cite[Yao et al., 2023]{yao2023react}).",
+      "section": "ReAct (Reasoning + Acting)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-77",
+      "quote": "Each observation from the tool feeds back into the reasoning loop.",
+      "section": "ReAct (Reasoning + Acting)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-78",
+      "quote": "* **Pattern:** `Thought` then `Action` then `Observation` then `Thought` then `Action` ...",
+      "section": "ReAct (Reasoning + Acting)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-79",
+      "quote": "Building reliable systems with and about LLMs.",
+      "section": "Code, Security & Robustness",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-80",
+      "quote": "Define a strict schema (JSON, CSV, YAML) that constrains the model's generation pathway.",
+      "section": "Specify Output Format",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-81",
+      "quote": "This reduces hallucination because every token must be syntactically valid within the structure.",
+      "section": "Specify Output Format",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-82",
+      "quote": "Separate architectural logic from code generation.",
+      "section": "Plan-and-Execute",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-83",
+      "quote": "First produce a plan, then execute it (\\cite[Wang et al., 2023]{wang2023planandexecute}).",
+      "section": "Plan-and-Execute",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-84",
+      "quote": "* **Step 1:** “Design the architecture for a rate-limited API proxy.”",
+      "section": "Plan-and-Execute",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-85",
+      "quote": "* **Step 2:** “Now implement it in Python using FastAPI.”",
+      "section": "Plan-and-Execute",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-86",
+      "quote": "Ask for tests before implementation.",
+      "section": "Test-First (TDD for AI)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-87",
+      "quote": "This forces the model to define success criteria first, leading to more robust code.",
+      "section": "Test-First (TDD for AI)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-88",
+      "quote": "* **Prompt:** “First, write 3 unit tests for a function that validates email addresses.",
+      "section": "Test-First (TDD for AI)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-89",
+      "quote": "Then implement the function.”",
+      "section": "Test-First (TDD for AI)",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-90",
+      "quote": "Ask the model to attack its own solution.",
+      "section": "Adversarial Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-91",
+      "quote": "This is the closest thing to debug mode for prompts.",
+      "section": "Adversarial Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-92",
+      "quote": "* **Prompt:** “Now pretend you are a malicious hacker.",
+      "section": "Adversarial Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-93",
+      "quote": "How would you break this system?",
+      "section": "Adversarial Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-94",
+      "quote": "The output format constraint doubles as a security measure: structured outputs are harder to inject because the model must maintain syntactic validity.",
+      "section": "Prompt Injection Defense",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-95",
+      "quote": "**Prompt injection** is when a malicious user embeds instructions inside data the model processes (e.g., “Ignore all previous instructions and...”).",
+      "section": "Prompt Injection Defense",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-96",
+      "quote": "The model cannot fundamentally distinguish between instructions and data, making this a first-order security concern.",
+      "section": "Prompt Injection Defense",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-97",
+      "quote": "**Mitigation layers (in order of effectiveness):**",
+      "section": "Prompt Injection Defense",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-98",
+      "quote": "**Strong delimiters** -- separate instructions from data visually",
+      "section": "Prompt Injection Defense",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-99",
+      "quote": "**Input sanitization** -- strip known injection patterns",
+      "section": "Prompt Injection Defense",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-100",
+      "quote": "**Layered defense** -- secondary model scans for injections",
+      "section": "Prompt Injection Defense",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-101",
+      "quote": "**Least privilege** -- never give the model write access without human confirmation",
+      "section": "Prompt Injection Defense",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-102",
+      "quote": "**Red-team regularly** -- use adversarial prompting against your own system",
+      "section": "Prompt Injection Defense",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-103",
+      "quote": "There is a deep architectural reason that prompt structure matters: the **causal mask** in autoregressive Transformers.",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-104",
+      "quote": "During training, each token can only attend to tokens before it, never after.",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-105",
+      "quote": "This creates a fundamental information asymmetry:",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-106",
+      "quote": "Token 5 knows about tokens 1 through 4.",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-107",
+      "quote": "But token 2 has no idea what token 5 will say.",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-108",
+      "quote": "Information flows forward only.",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-109",
+      "quote": "**Concrete example:** If the training data contains “Valentina Tereshkova was the first woman in space,” the model learns to predict “first woman in space” from “Valentina Tereshkova was the.” But it never learns the reverse: it never sees “first woman in space was” followed by “Valentina Tereshkova” during training, because the causal mask means “Valentina Tereshkova” never had to predict anything that came before it.",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-110",
+      "quote": "The model learns the conditional distribution $P(\\text{attribute} \\mid \\text{name})$ but not $P(\\text{name} \\mid \\text{attribute})$.",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-111",
+      "quote": "**How this affects your prompts:**",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-112",
+      "quote": "* **Order is causal.** Instructions placed later in the prompt have the full context of everything before them.",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-113",
+      "quote": "Later instructions override earlier ones because they see more.",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-114",
+      "quote": "* **Chain-of-Thought works because of the causal mask.** Each reasoning step becomes “former context” for the next step, building a chain of conditional probabilities.",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-115",
+      "quote": "* **Context window position matters.** Important instructions should go at the beginning (they influence everything after) or at the very end (they see everything before).",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-116",
+      "quote": "The middle is where the model pays least attention.",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-117",
+      "quote": "* **The Reversal Curse is a robust failure mode of autoregressive training.** The causal mask is part of the explanation, but not the whole story; if your prompt expects the model to infer reverse relationships, provide both directions explicitly.",
+      "section": "The Causal Mask: Why Order Matters",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-118",
+      "quote": "Polish outputs and catch errors without starting from scratch.",
+      "section": "Refinement & Quality Control",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-119",
+      "quote": "Provide 3-5 examples of (input, desired output) pairs.",
+      "section": "Few-Shot Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-120",
+      "quote": "The model learns the pattern without fine-tuning.",
+      "section": "Few-Shot Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-121",
+      "quote": "This is **in-context learning**.",
+      "section": "Few-Shot Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-122",
+      "quote": "* Show examples of the tone, format, and logic you want.",
+      "section": "Few-Shot Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-123",
+      "quote": "The model will mimic the *pattern*, not just the content.",
+      "section": "Few-Shot Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-124",
+      "quote": "After generating, tell the model to switch into critic mode and evaluate its own output for flaws (\\cite[Madaan et al., 2023]{madaan2023selfrefine} \\cite[Shinn et al. (2023)]{shinn2023reflexion}).",
+      "section": "Self-Critique / Reflection",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-125",
+      "quote": "* **Prompt:** “Review your answer for factual errors, logical gaps, and unsupported claims.",
+      "section": "Self-Critique / Reflection",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-126",
+      "quote": "Then rewrite it with corrections.”",
+      "section": "Self-Critique / Reflection",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-127",
+      "quote": "Do not start over, refine.",
+      "section": "Iterative Refinement",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-128",
+      "quote": "Each follow-up adds contextual weight that steers the model.",
+      "section": "Iterative Refinement",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-129",
+      "quote": "* **Prompt 1:** “Write a product description.”",
+      "section": "Iterative Refinement",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-130",
+      "quote": "* **Prompt 2:** “Make it more urgent, add scarcity language.”",
+      "section": "Iterative Refinement",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-131",
+      "quote": "* **Prompt 3:** “Now shorten to 50 words for an ad.”",
+      "section": "Iterative Refinement",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-132",
+      "quote": "Show the model what *bad* looks like.",
+      "section": "Negative Example Injection",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-133",
+      "quote": "This defines the boundary of success more sharply than rules alone.",
+      "section": "Negative Example Injection",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-134",
+      "quote": "* **Prompt:** “Here are 3 examples of bad customer service responses.",
+      "section": "Negative Example Injection",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-135",
+      "quote": "Now write one that avoids all these mistakes.”",
+      "section": "Negative Example Injection",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-136",
+      "quote": "Solve the same problem from multiple viewpoints.",
+      "section": "Perspective Switching",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-137",
+      "quote": "This produces a holistic analysis and surfaces blind spots.",
+      "section": "Perspective Switching",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-138",
+      "quote": "* **Prompt:** “Analyze this UI from: (a) a senior engineer, (b) a first-time user, (c) a malicious attacker.”",
+      "section": "Perspective Switching",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-139",
+      "quote": "Everything in the chapter so far works on the **surface**: tokens in, tokens out.",
+      "section": "Semantic Vector Steering: Targeting a Region, Not a Point",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-140",
+      "quote": "You describe what you want in words, the model interprets those words through its embedding space, and you get back a token sequence.",
+      "section": "Semantic Vector Steering: Targeting a Region, Not a Point",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-141",
+      "quote": "You never see the space directly; you only see what comes out the other end.",
+      "section": "Semantic Vector Steering: Targeting a Region, Not a Point",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-142",
+      "quote": "Instead of telling the model *what to generate*, you specify *where to land in the embedding space*.",
+      "section": "Semantic Vector Steering: Targeting a Region, Not a Point",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-143",
+      "quote": "You give it **semantic coordinates** -- abstract properties that, taken together, define a small region of the latent manifold.",
+      "section": "Semantic Vector Steering: Targeting a Region, Not a Point",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-144",
+      "quote": "The model then has to find a concrete realization inside that region on its own.",
+      "section": "Semantic Vector Steering: Targeting a Region, Not a Point",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-145",
+      "quote": "This is what has variously been called *semantic vector steering*, *latent-space targeting*, or *semantic latent-space navigation* \\cite[steering as moving the activation vector toward a chosen point in embedding space]{emergentmind_latent_space_steering}.",
+      "section": "Semantic Vector Steering: Targeting a Region, Not a Point",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-146",
+      "quote": "The prompting version does the same thing the activation-addition version does, except that the arithmetic is done in words: each adjective is a vector direction, each \"but\" is an intersection constraint, and the contradictions are how you get the precision that a single direction alone cannot deliver \\cite[contrastive steering vectors, mean-difference direction extraction]{emergentmind_steering_vectors}.",
+      "section": "Semantic Vector Steering: Targeting a Region, Not a Point",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-147",
+      "quote": "Compare two ways of asking for the same thing.",
+      "section": "From Concrete to Regional",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-148",
+      "quote": "* **Concrete instruction:** “Write a poem about autumn.",
+      "section": "From Concrete to Regional",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-149",
+      "quote": "Three stanzas, rhyme scheme ABAB, melancholic tone, mention falling leaves.”",
+      "section": "From Concrete to Regional",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-150",
+      "quote": "* **Regional targeting:** “Move toward *simple-but-interesting*, *familiar-but-strange*, *nostalgic-but-not-sad*, *calm-but-alive*, *repeating-but-developing*, *minimal-but-characterful*.",
+      "section": "From Concrete to Regional",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-151",
+      "quote": "Then land wherever you find a coherent point inside that region.”",
+      "section": "From Concrete to Regional",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-152",
+      "quote": "The first locks down everything: topic, structure, rhyme, tone, content.",
+      "section": "From Concrete to Regional",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-153",
+      "quote": "The second leaves the form free but defines a tight band of properties the model has to satisfy.",
+      "section": "From Concrete to Regional",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-154",
+      "quote": "Each phrase is not an instruction -- it is a **coordinate direction** in semantic space \\cite[representation as direction in activation manifold, $h' = h + \\alpha\\Delta$]{emergentmind_representation_steering}.",
+      "section": "From Concrete to Regional",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-155",
+      "quote": "The model has to interpret them, find the intersection region, and produce something concrete that lives there.",
+      "section": "From Concrete to Regional",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-156",
+      "quote": "You are not telling the model *which point* to land on.",
+      "section": "From Concrete to Regional",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-157",
+      "quote": "You are carving out a *small region* of the embedding space and letting the model find the best concrete point inside it.",
+      "section": "From Concrete to Regional",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-158",
+      "quote": "A single abstract property -- \"interesting\" -- covers almost everything.",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-159",
+      "quote": "are already much smaller regions.",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-160",
+      "quote": "But the real narrowing happens when you require **both sides of a seeming contradiction simultaneously**:",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-161",
+      "quote": "* **simple but interesting** -- exclude triviality *and* exclude complexity",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-162",
+      "quote": "* **familiar but strange** -- exclude the unknown *and* exclude the cliché",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-163",
+      "quote": "* **nostalgic but not sad** -- exclude present pain, keep longing",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-164",
+      "quote": "* **calm but alive** -- exclude deadness, exclude turbulence",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-165",
+      "quote": "* **repeating but developing** -- exclude stasis, exclude chaos",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-166",
+      "quote": "* **minimal but characterful** -- exclude emptiness, exclude ornament",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-167",
+      "quote": "Each contradiction is the **intersection of two thin regions** that meet in a narrow band.",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-168",
+      "quote": "Stack them and the intersection shrinks geometrically.",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-169",
+      "quote": "The model has no choice but to land in a small, well-defined neighborhood -- but it still has to find the actual point inside it.",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-170",
+      "quote": "The mechanism is the same one *latent steering* exploits: identify directions, then push toward (or away from) them at inference time (\\cite[§1, definition of latent steering; §2, amortization of direction injection]{emergentmind_latent_steering}).",
+      "section": "Why Contradictions Work",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-171",
+      "quote": "One speculative way to frame this is with sheaf theory, the mathematics of gluing local data into global objects.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-172",
+      "quote": "**On this view, meaning behaves like a sheaf over context** \\cite[sheaf theory applied to embedding spaces, local-to-global gluing]{coherent_difference_chapter}: each context (an \"open set\" in the topology of usage) carries its own local data (the tokens that co-occur there), and the embedding space is the *global section* that would fall out if all the local patches agreed on their overlaps.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-173",
+      "quote": "This is an analogy, not a proven mechanism.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-174",
+      "quote": "In this picture, when you specify a property like \"nostalgic but not sad\", you are doing four moves at once:",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-175",
+      "quote": "**Distinction** \\cite[Draw a distinction -- the first axiom of \\citetitle{spencerbrown1969form}]{spencerbrown1969form}.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-176",
+      "quote": "You mark out one direction in the embedding space from another.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-177",
+      "quote": "\"Nostalgic\" and \"sad\" are *not* the same vector, even though they live in the same neighborhood.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-178",
+      "quote": "Calling them apart is the act that makes the rest of the prompt possible.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-179",
+      "quote": "**Locality** \\cite[Open sets, neighborhoods: “near” without a metric]{topology_wiki}.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-180",
+      "quote": "Each adjective occupies a region of embedding space, and \"but\" requires that the regions *overlap* -- the target point has to live inside both.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-181",
+      "quote": "Two properties whose regions do not overlap define an empty intersection, and the prompt fails.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-182",
+      "quote": "Coherent prompting is coherent because the chosen properties can be satisfied by some point.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-183",
+      "quote": "**Compatibility on overlaps** \\cite[Sheaf condition: sections agree on pairwise intersections]{sheaf_mathematics}.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-184",
+      "quote": "\"Nostalgic but not sad\" is exactly the requirement that the local section labeled *nostalgic* and the local section labeled *not-sad* agree on the overlap -- i.e. there exists a point that satisfies both.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-185",
+      "quote": "The contradictions tighten compatibility: they require the intersection of multiple sections to be non-empty on a much smaller overlap.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-186",
+      "quote": "**Gluing into a global section** \\cite[Local data + compatibility on overlaps $\\Rightarrow$ unique global section]{sheaf_mathematics}.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-187",
+      "quote": "When all your local constraints are mutually compatible, the sheaf condition would license gluing them into a global point.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-188",
+      "quote": "In the analogy, that point is the model's output.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-189",
+      "quote": "If your constraints are coherent, the model finds one.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-190",
+      "quote": "If they are not, the model either drifts to the nearest coherent point or produces nonsense.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-191",
+      "quote": "The slogan is the same sentence that organizes sheaf theory, topology, and much of category theory \\cite[local-to-global gluing, the structural backbone of modern structural mathematics]{coherent_difference_chapter}:",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-192",
+      "quote": "The chain from distinction to gluing -- distinction, relation, transformation, locality, compatibility, coherence, gluing, globality \\cite[the nine-step chain, from Spencer-Brown's first cut to invariance under change of cover]{coherent_difference_chapter} -- is the chain the chapter uses as an analogy for what happens inside an LLM when it parses a prompt and produces an answer.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-193",
+      "quote": "Prompting via semantic coordinates makes that chain visible: you are choosing which *local sections* to specify and trusting the model to glue them into a global one.",
+      "section": "The Spatial Picture: Distinction, Locality, Coherence, Gluing",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-194",
+      "quote": "If you want to use this technique deliberately:",
+      "section": "The Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-195",
+      "quote": "**Define the target feeling.** Not the target content.",
+      "section": "The Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-196",
+      "quote": "*How should the output feel?*",
+      "section": "The Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-197",
+      "quote": "**Extract abstract properties.** List 4–8 adjectives that, taken together, describe that feeling.",
+      "section": "The Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-198",
+      "quote": "**Identify axes.** Each adjective is a direction in semantic space.",
+      "section": "The Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-199",
+      "quote": "Decide for each: positive (move toward) or negative (move away from).",
+      "section": "The Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-200",
+      "quote": "**Add contradictions.** Pair properties that *seem* opposed but whose joint satisfaction is the very thing you want.",
+      "section": "The Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-201",
+      "quote": "\"Calm but alive\" is more useful than \"calm\" alone \\cite[combinatorial control of attributes via stacked vectors]{emergentmind_steering_vectors}.",
+      "section": "The Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-202",
+      "quote": "**Release concrete form.** Do not specify length, structure, format, or specific content.",
+      "section": "The Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-203",
+      "quote": "**Iterate by sharpening.** If the output misses, sharpen one or two coordinates.",
+      "section": "The Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-204",
+      "quote": "Do not add new content instructions -- that re-introduces the surface-level mode you are trying to escape.",
+      "section": "The Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-205",
+      "quote": "| Situation | Use Semantic Vector Steering?",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-206",
+      "quote": "| Creative work (poetry, fiction, image prompts) | **Yes** -- this is where it shines |",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-207",
+      "quote": "| Open-ended ideation (\"give me 5 product names\") | **Yes** -- gives diversity with coherence |",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-208",
+      "quote": "| Style transfer (rewrite this in the style of X) | **Yes** -- rich stylistic coordinates |",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-209",
+      "quote": "| Factual Q&A | No -- use CoT + specificity instead |",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-210",
+      "quote": "| Code generation | No -- use structured output + TDD instead |",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-211",
+      "quote": "| Safety-critical instructions | No -- use explicit, unambiguous language |",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-212",
+      "quote": "| Long structured documents | Partial -- combine with delimiters and outline |",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-213",
+      "quote": "The technique is a **lens**.",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-214",
+      "quote": "It lets you see (and shape) the region of latent space the model is sampling from, rather than the specific token sequence it produces.",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-215",
+      "quote": "For tasks where the goal is *a particular kind of thing* rather than *a particular thing*, it often beats conventional prompting by a wide margin -- because it leaves the model's full expressive range available, while still defining the band that range must stay inside.",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-216",
+      "quote": "In the sheaf metaphor, the deepest version of the insight is: **local difference plus coherent transitions glues into global unity** \\cite[the one-sentence summary of the whole coherent-difference picture]{coherent_difference_chapter}.",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-217",
+      "quote": "In that metaphor, a prompt is a sheaf specification and the output is the global section.",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-218",
+      "quote": "Your job is to choose the local sections; the model's job is to glue them.",
+      "section": "When It Shines, When It Doesn't",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-219",
+      "quote": "The previous section described the technique.",
+      "section": "The Inner Map: Steering by Feel",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-220",
+      "quote": "This one describes the *skill that makes the technique work*.",
+      "section": "The Inner Map: Steering by Feel",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-221",
+      "quote": "After enough hours working with an LLM, something curious happens: you stop thinking in tokens.",
+      "section": "The Inner Map: Steering by Feel",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-222",
+      "quote": "You start thinking in **regions**.",
+      "section": "The Inner Map: Steering by Feel",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-223",
+      "quote": "You know, without calculating, that *quasar* sits in a distant corner of the embedding space from *cat*, and that both sit far from *homeomorphism* or *eigenvalue* \\cite[clusters of meaning in embedding space, topic neighborhoods]{coherent_difference_chapter}.",
+      "section": "The Inner Map: Steering by Feel",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-224",
+      "quote": "You know that *wabi-sabi* lives in a neighborhood near *imperfect*, *transient*, *asymmetric* -- not because you looked it up, but because you have *seen* the model navigate there dozens of times.",
+      "section": "The Inner Map: Steering by Feel",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-225",
+      "quote": "You know that *verbose but precise* is a tight intersection, while *concise and poetic* sits in a different band of the same general direction.",
+      "section": "The Inner Map: Steering by Feel",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-226",
+      "quote": "The clusters, the nearness, the difference from many aspects at once -- you carry them as a **map**.",
+      "section": "The Inner Map: Steering by Feel",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-227",
+      "quote": "It is the same thing that happens to a chess player who can glance at a board and \"see\" the position without enumerating moves \\cite[chess expertise as pattern recognition, the master’s “thousand-board vocabulary”]{feigenbaum1984expert}, or to a radiologist who can flag a subtle lesion before consciously naming what they see.",
+      "section": "The Inner Map: Steering by Feel",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-228",
+      "quote": "The skill is the same: **pattern recognition, internalized to the point of intuition**.",
+      "section": "The Inner Map: Steering by Feel",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-229",
+      "quote": "The prompt engineer is doing the same thing, but their boards are configurations of the latent manifold rather than configurations of wooden pieces.",
+      "section": "The Inner Map: Steering by Feel",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-230",
+      "quote": "What you are carrying in your head is an approximate **map of the model's latent space**.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-231",
+      "quote": "It has five kinds of structure:",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-232",
+      "quote": "* **Clusters.** Topics, domains, genres, registers, modalities -- each forms a roughly recognizable region.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-233",
+      "quote": "*Quasar*, *black hole*, *supernova* cluster together; *cat*, *dog*, *rabbit* form another cluster; *eigenvalue*, *manifold*, *homeomorphism* form a third \\cite[clusters in embedding space, the geometry of meaning]{coherent_difference_chapter}.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-234",
+      "quote": "You can locate, roughly, where most ordinary words live.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-235",
+      "quote": "* **Distances.** The distance from *quasar* to *cat* is large in many aspects (subject matter, register, modality) but small in others (both are concrete nouns).",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-236",
+      "quote": "The distance from *quasar* to *active galactic nucleus* is small in most aspects.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-237",
+      "quote": "**Distance is multi-dimensional, not scalar** \\cite[aspects of meaning, near in one axis, far in another]{coherent_difference_chapter}.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-238",
+      "quote": "You have learned which axis matters for which kind of comparison.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-239",
+      "quote": "* **Directions.** Each property -- *simple*, *interesting*, *formal*, *familiar* -- is a direction you have learned to recognize.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-240",
+      "quote": "You know roughly which way each one points in the regions you frequent.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-241",
+      "quote": "Some of these directions are remarkably **linear**: sentiment, truthfulness, language identity, register, formality, even abstract concepts like *honesty* or *humor* show up as near-straight lines in activation space \\cite[The Linear Representation Hypothesis, features as linear directions]{park2024linear}.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-242",
+      "quote": "The directions you can name are the ones the model has learned to factor out as a single axis.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-243",
+      "quote": "* **Intersections.** You have an intuitive sense of which combinations are coherent (large non-empty intersection) and which are contradictory (empty intersection).",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-244",
+      "quote": "*Calm but alive* works; *dead but loud* does not, and you know this before asking.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-245",
+      "quote": "The sheaf picture offers a precise metaphor for this: **compatibility on overlaps is exactly the requirement that the intersection of local regions be non-empty** \\cite[sheaf condition, sections agree on pairwise intersections]{sheaf_mathematics}.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-246",
+      "quote": "You feel the sheaf condition without doing the math.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-247",
+      "quote": "* **Boundaries.** You know where the model's coverage is **dense** (well-trodden regions like Python code, English prose, common sense reasoning) and where it **thins** (obscure technical jargon, recent events past the cutoff, niche cultural references, low-resource languages).",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-248",
+      "quote": "You can tell when a prompt is asking the model to sample from a sparse region, and you adjust accordingly \\cite[coverage of the embedding manifold, sparse regions, reliability varies]{emergentmind_latent_space_steering}.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-249",
+      "quote": "The \"feeling\" of moving the vector consciously to a point or area in embedding space is the operation of this map in real time.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-250",
+      "quote": "You do not literally see the 4096-dimensional vector; you have learned, through repeated interaction, which **directions** and **regions** the model tends to inhabit for which inputs.",
+      "section": "What the Map Actually Contains",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-251",
+      "quote": "Four mechanisms do the work:",
+      "section": "How the Map Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-252",
+      "quote": "**Repeated exposure.** Every prompt-and-response pair is a sample from the model's joint distribution.",
+      "section": "How the Map Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-253",
+      "quote": "After enough samples, the distribution's structure becomes familiar -- the way a city becomes familiar after you have walked it enough times.",
+      "section": "How the Map Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-254",
+      "quote": "You stop being surprised by *what the model knows where*, and start predicting it.",
+      "section": "How the Map Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-255",
+      "quote": "**Failure-driven refinement.** When a prompt goes wrong, you are usually wrong about *which region* you were aiming for.",
+      "section": "How the Map Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-256",
+      "quote": "The error localizes: \"I thought I was in the *concise-technical* region, but I was actually in *verbose-marketing*.\" Each failure sharpens the map's boundaries \\cite[steering vectors have in-distribution variability, “anti-steer” examples up to 50%]{emergentmind_steering_vectors}.",
+      "section": "How the Map Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-257",
+      "quote": "The map you trust is the one that has been wrong often enough for you to have noticed *how* it was wrong.",
+      "section": "How the Map Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-258",
+      "quote": "**Cross-domain transfer.** Once the map works for one domain, it transfers surprisingly well to others.",
+      "section": "How the Map Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-259",
+      "quote": "The structure of *abstract-but-grounded* or *familiar-but-novel* is similar across writing styles, code, image prompts, and music descriptions, because the model's embedding space is **shared across modalities** \\cite[cross-domain transfer of steering vectors, shared representations]{emergentmind_latent_space_steering}.",
+      "section": "How the Map Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-260",
+      "quote": "A skill built in English prose applies to Python, to diffusion prompts, to Japanese haiku, with adjustment.",
+      "section": "How the Map Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-261",
+      "quote": "**Active attention.** Prompt engineers who **deliberately look** for clusters (\"where do these words live?\"), **measure** distances (\"how similar are these two concepts by the model's behavior?\"), and **name** directions (\"this is the *formal* axis\") develop the map faster than those who only consume outputs.",
+      "section": "How the Map Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-262",
+      "quote": "The act of attention is itself a kind of distinction \\cite[Draw a distinction -- the first axiom]{spencerbrown1969form}; what you can mark off from what, you can begin to navigate.",
+      "section": "How the Map Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-263",
+      "quote": "The map is functional because the embedding space is not arbitrary.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-264",
+      "quote": "It is a high-dimensional manifold with real structure; the sheaf picture is one way to describe that structure, not a proof that it is literally a sheaf.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-265",
+      "quote": "\\cite[embedding spaces as global objects assembled from local context data]{coherent_difference_chapter}:",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-266",
+      "quote": "* **Linear features.** Many semantic properties are encoded as **linear directions** in activation space \\cite[Linear Representation Hypothesis, geometry of features in LLMs]{park2024linear}.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-267",
+      "quote": "The contrastive steering vectors we discussed earlier are exactly these directions, computed as the mean difference of activations on positive vs. negative examples \\cite[contrastive CAA, mean-difference extraction]{emergentmind_steering_vectors}.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-268",
+      "quote": "When you name a property (\"formal\", \"concise\", \"playful\"), you are pointing at one of these directions.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-269",
+      "quote": "* **Cluster geometry.** Concepts cluster by domain and aspect, and the clusters have substructure \\cite[marks2023 geometry of concepts, cluster structure in LLM representations]{marks2023geometry}.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-270",
+      "quote": "This is the geometry of meaning that makes *quasar* and *cat* far apart while *quasar* and *active galactic nucleus* are close.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-271",
+      "quote": "* **Polysemanticity, partially disentangled.** A single direction in raw activation space may carry multiple meanings, but sparse autoencoders (SAEs) can decompose the space into more nearly monosemantic features \\cite[monosemantic features via sparse autoencoders, the “towards monosemanticity” line of work]{bricken2023monosemanticity}.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-272",
+      "quote": "Your map is a *low-resolution SAE* of the model's geometry: coarser than what an SAE can extract, but pointing at the same structure.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-273",
+      "quote": "The directions you can name are the directions that survive sparse decomposition \\cite[SAE-based steering, sparse representation spaces]{emergentmind_latent_space_steering}.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-274",
+      "quote": "The map you carry is an approximation of this geometry.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-275",
+      "quote": "It is coarse -- you cannot plot a 4096-dimensional vector in your head -- but the **topology** of the manifold (which regions are connected, which directions lead where, which intersections are non-empty) is learnable, and once learned, it functions as a working navigation tool.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-276",
+      "quote": "Topology, recall, is the discipline that studies \"near\" without committing to a metric \\cite[open sets, neighborhoods: locality without distance]{topology_wiki}.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-277",
+      "quote": "Your mental map is topological rather than metric: it gets the *shape* right more reliably than the *distances*.",
+      "section": "Why the Map Works Mechanically",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-278",
+      "quote": "The map is what lets you do the move that started this section: move the vector consciously.",
+      "section": "Three Practical Uses of the Map",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-279",
+      "quote": "**Pre-check before prompting.** Before writing a prompt, you can roughly visualize the region the model will sample from.",
+      "section": "Three Practical Uses of the Map",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-280",
+      "quote": "If that region does not contain what you want, you adjust the prompt before sending it -- not after.",
+      "section": "Three Practical Uses of the Map",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-281",
+      "quote": "This compresses the feedback loop from *prompt–observe–correct* to *predict–prompt–confirm*.",
+      "section": "Three Practical Uses of the Map",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-282",
+      "quote": "**Calibrated iteration.** When you say \"make it more like X\", you have a feel for how far *more X* will push the output.",
+      "section": "Three Practical Uses of the Map",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-283",
+      "quote": "The feedback loop is faster because you are predicting the model's response, not just reacting to it.",
+      "section": "Three Practical Uses of the Map",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-284",
+      "quote": "You avoid the failure mode where the user keeps adding adjectives (\"more X, more Y, more Z\") until the prompt is a soup.",
+      "section": "Three Practical Uses of the Map",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-285",
+      "quote": "**Targeted exploration.** When you want the model to do something unusual, the map tells you which directions to combine.",
+      "section": "Three Practical Uses of the Map",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-286",
+      "quote": "*Calm but alive* works because you know those two directions have a non-empty intersection.",
+      "section": "Three Practical Uses of the Map",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-287",
+      "quote": "*Loud but silent* does not work, and you do not waste a prompt finding out.",
+      "section": "Three Practical Uses of the Map",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-288",
+      "quote": "You explore the sheaf of admissible intersections, not the empty product space.",
+      "section": "Three Practical Uses of the Map",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-289",
+      "quote": "The embedding space is not visible.",
+      "section": "The Coda",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-290",
+      "quote": "You cannot draw it on paper.",
+      "section": "The Coda",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-291",
+      "quote": "But its structure is **real** in the sense that it is stable and learnable; the sheaf picture is a metaphor for how local context might assemble into a global object \\cite[global object as glue of compatible locals]{coherent_difference_chapter}.",
+      "section": "The Coda",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-292",
+      "quote": "The map in your head is your internal model of that global object.",
+      "section": "The Coda",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-293",
+      "quote": "The better your map, the more precisely you can steer.",
+      "section": "The Coda",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-294",
+      "quote": "The deepest version of the insight, then, is not really about prompts at all.",
+      "section": "The Coda",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-295",
+      "quote": "It is about the practitioner:",
+      "section": "The Coda",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-296",
+      "quote": "> A good prompt engineer is not someone who has memorized templates.",
+      "section": "The Coda",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-297",
+      "quote": "They are someone who has internalized a map of the space their model lives in, and learned to navigate it consciously.",
+      "section": "The Coda",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-298",
+      "quote": "The map is built from samples, sharpened by failure, transferred across domains, and refined by active attention.",
+      "section": "The Coda",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-299",
+      "quote": "The technique is downstream of the skill; the skill is upstream of the technique.",
+      "section": "The Coda",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-300",
+      "quote": "Master the map, and the technique follows.",
+      "section": "The Coda",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-301",
+      "quote": "Different problems need different tools.",
+      "section": "Technique Selection Guide",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-302",
+      "quote": "Here is how the major techniques compare:",
+      "section": "Technique Selection Guide",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-303",
+      "quote": "| Goal | Best Technique |",
+      "section": "Decision Quick-Reference",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-304",
+      "quote": "| Solve a math/logic problem | Chain-of-Thought |",
+      "section": "Decision Quick-Reference",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-305",
+      "quote": "| Generate creative fiction | Role Prompting + High Temp Language |",
+      "section": "Decision Quick-Reference",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-306",
+      "quote": "| Extract structured data | Structured Output (JSON schema) |",
+      "section": "Decision Quick-Reference",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-307",
+      "quote": "| Write production code | Plan-and-Execute + Test-First |",
+      "section": "Decision Quick-Reference",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-308",
+      "quote": "| Analyze a controversial topic | Perspective Switching + Uncertainty Labeling |",
+      "section": "Decision Quick-Reference",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-309",
+      "quote": "| Debug a bad output | Self-Critique + Negative Examples |",
+      "section": "Decision Quick-Reference",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-310",
+      "quote": "| Build a secure system | Adversarial Prompting + Delimiters |",
+      "section": "Decision Quick-Reference",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-311",
+      "quote": "| Handle long documents | Compression-Then-Expansion + Delimiters |",
+      "section": "Decision Quick-Reference",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-312",
+      "quote": "Ask the model to *generate a prompt* for the task you want done.",
+      "section": "Advanced: Meta-Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-313",
+      "quote": "* **Prompt:** “Generate a system prompt that would make an AI assistant an expert code reviewer focused on security vulnerabilities.",
+      "section": "Advanced: Meta-Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-314",
+      "quote": "The prompt should include role definition, output format, and specific areas to check.”",
+      "section": "Advanced: Meta-Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-315",
+      "quote": "This is prompt engineering at one level of indirection, and it often produces better results than hand-crafting the prompt yourself.",
+      "section": "Advanced: Meta-Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-316",
+      "quote": "All prompt engineering techniques reduce to one idea: **control the probability distribution.** Every technique -- roles, delimiters, CoT, few-shot, structured output -- is a tool for collapsing the model's output space from “anything” to “exactly what I need.”",
+      "section": "The Master Principle",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-317",
+      "quote": "| Technique | What It Constrains |",
+      "section": "The Master Principle",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-318",
+      "quote": "| Role Prompting | Vocabulary, tone, reasoning style |",
+      "section": "The Master Principle",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-319",
+      "quote": "| Specificity | Content, length, format |",
+      "section": "The Master Principle",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-320",
+      "quote": "| Delimiters | Boundary between instruction and data |",
+      "section": "The Master Principle",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-321",
+      "quote": "| Chain-of-Thought | Logical path to answer |",
+      "section": "The Master Principle",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-322",
+      "quote": "| Structured Output | Token-by-token syntactic validity |",
+      "section": "The Master Principle",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-323",
+      "quote": "| Few-Shot | Pattern of input-output mapping |",
+      "section": "The Master Principle",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-324",
+      "quote": "| Self-Critique | Self-consistency across passes |",
+      "section": "The Master Principle",
+      "kind": "statement"
+    },
+    {
+      "id": "promptengineering-stmt-325",
+      "quote": "The best prompt engineers do not memorize techniques, they understand which **degrees of freedom** the model has, and systematically lock them down until only the correct output path remains.",
+      "section": "The Master Principle",
+      "kind": "statement"
+    }
   ]
 }

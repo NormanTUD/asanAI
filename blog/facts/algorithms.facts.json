@@ -553,5 +553,1891 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "algorithms-stmt-1",
+      "quote": "This chapter has two halves.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-2",
+      "quote": "The first asks a question that took two thousand years to be *asked*: **what makes a procedure an *algorithm*?** — and follows the answer through Euclid's gcd, the Sieve of Eratosthenes, and the 1928 decision problem that forced the entire theory of computation to be invented.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-3",
+      "quote": "The second shows a modern transformer *executing* algorithms on its own: grokking the Discrete Fourier Transform without being told it, and running code that exists only in the prompt.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-4",
+      "quote": "Read the first half to understand the object being executed; the second is the machine that runs it.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-5",
+      "quote": "You have used the word *algorithm* so many times it has lost all meaning.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-6",
+      "quote": "A sorting step is an algorithm.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-7",
+      "quote": "A search is an algorithm.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-8",
+      "quote": "The way your coffee machine cycles through its modes is, in the strict sense, an algorithm.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-9",
+      "quote": "But there is a question almost nobody asks, and it is the one this whole field was eventually built around: **what makes a procedure an *algorithm* — as opposed to just a set of steps you happen to run?**",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-10",
+      "quote": "Two properties, and they are the entire game.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-11",
+      "quote": "* **It must terminate.** An algorithm is not an infinite loop.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-12",
+      "quote": "It must *finish*, in a finite number of steps, for every input it promises to handle.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-13",
+      "quote": "* **It must be correct — by construction.** Not \"it usually works,\" not \"we tested a few cases,\" but *guaranteed* right, by an argument that holds for *every* input.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-14",
+      "quote": "A procedure that has both is an algorithm.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-15",
+      "quote": "The rest of this half is the story of those two properties — and of how, in a single decade, they went from being quietly *practiced* for two thousand years to being rigorously *studied*.",
+      "section": "Two Lessons in One",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-16",
+      "quote": "One of the oldest algorithms still in use every day sits in Euclid's *Elements*, Book VII (\\cite[Euclidean algorithm]{euclideanalgorithm}; \\cite[The Elements]{euclidelements}); Babylonian scribes were already writing step-by-step procedures a millennium and a half earlier (\\cite[Knuth, 1972]{knuth1972babylonian}).",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-17",
+      "quote": "Given two whole numbers, find their **greatest common divisor** — the largest number that divides both.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-18",
+      "quote": "> Divide the larger by the smaller.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-19",
+      "quote": "Replace the pair by *(the smaller, the remainder)*.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-20",
+      "quote": "Repeat until the remainder is zero.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-21",
+      "quote": "The last non-zero remainder is the answer.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-22",
+      "quote": "It is an algorithm in the full, strong sense — and the *why* is the point, because it is the earliest example we have of someone *checking the two properties*.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-23",
+      "quote": "* **Termination.** Each remainder is smaller than the divisor it came from, and a remainder is always smaller than the divisor.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-24",
+      "quote": "So the second number of the pair, the divisor, strictly shrinks at every step.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-25",
+      "quote": "A list of positive integers that keeps shrinking cannot go on forever — it *must* reach zero.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-26",
+      "quote": "That is not a hope that it will stop; it is a proof that it will.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-27",
+      "quote": "* **Correctness.** The load-bearing fact is $gcd(a, b) = gcd(b, a - qb)$: taking away a multiple of one number from the other never changes the two numbers' common divisor.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-28",
+      "quote": "Every single step preserves the answer; and when the process ends, the answer is sitting in the last non-zero remainder.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-29",
+      "quote": "For the next two thousand years, this was just *the way you found a common divisor*.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-30",
+      "quote": "Nobody wrote \"this procedure provably terminates and is provably correct,\" because the idea of checking those two things **in general** had not yet occurred to anyone.",
+      "section": "Euclid's algorithm (c. 300 BC): the first with a surviving proof",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-31",
+      "quote": "A few decades later, in Alexandria, the same two millennia-old craft produced a different *shape* of procedure: the \\cite[Sieve of Eratosthenes]{sieveoferatosthenes}.",
+      "section": "Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-32",
+      "quote": "Given a limit $n$, list every number from 2 to $n$, then cross off every multiple of 2, then every multiple of 3, then 5, and so on.",
+      "section": "Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-33",
+      "quote": "What is left standing is exactly the set of primes.",
+      "section": "Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-34",
+      "quote": "Where Euclid's algorithm *reduces* a problem step by step, the sieve **filters** a finite set.",
+      "section": "Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-35",
+      "quote": "It is still an algorithm, for the same two reasons: it *terminates* (once the smallest number you have not crossed off, $p$, satisfies $p^2 > n$, nothing below $n$ can still be composite, so you are done), and it is *correct by construction* (a number survives the sieve only if none of the primes below it divide it, which is precisely what being prime means).",
+      "section": "Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-36",
+      "quote": "Two algorithms, separated by a few decades and a city, both defined long before the word *computer* existed, both pinned down by the identical pair: **it stops, and it is right.**",
+      "section": "Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-37",
+      "quote": "\\marginfig{eratosthenes.jpg}{Eratosthenes of Cyrene (c.",
+      "section": "Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-38",
+      "quote": "276–194 BC), from a later engraving.",
+      "section": "Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-39",
+      "quote": "Here is the gap the rest of the course has been circling.",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-40",
+      "quote": "For all that, the algorithm was never a **thing**.",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-41",
+      "quote": "People *did* algorithms; no one *studied* them as objects with properties you could check.",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-42",
+      "quote": "The name is itself a fossil of that gap.",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-43",
+      "quote": "*Algorithm* is the Latinized form of the name of the Persian mathematician al-Khwarizmi, whose ninth-century arithmetic gave us the word \\cite[the etymology of \"algorithm\" (Wikipedia)]{historyofmath_wikipedia} — the course traces al-Khwarizmi himself in [The Brief History of AI](history.php).",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-44",
+      "quote": "But al-Khwarizmi *named and catalogued* procedures — he did not ask the question that actually matters, and that nobody had asked before:",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-45",
+      "quote": "> Is there a **general, universal** procedure?",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-46",
+      "quote": "Can one machine, running one rule, decide the answer to *any* problem in a class — not just *this* gcd, or *this* sieve, but *any* instance, for all time?",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-47",
+      "quote": "Naming a class of things is not the same as asking whether the class has a single procedure that handles all of it.",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-48",
+      "quote": "That question — and it is *the* question — sat unasked until the twentieth century.",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-49",
+      "quote": "Al-Khwarizmi's *al-Kitab al-jabr* (c.",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-50",
+      "quote": "820) is the bridge between the Babylonian recipe and the modern algorithm: it states a general procedure for solving quadratics and then demonstrates it on every case, with a geometric proof for each.",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-51",
+      "quote": "The Latin translation of his name became *algorismus*, the medieval name for the Hindu-Arabic calculation method, and eventually \"algorithm\" (\\cite[al-Khwarizmi, c.",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-52",
+      "quote": "820]{alkhwarizmi820algebra}; \\cite[history of mathematics]{historyofmath_wikipedia}).",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-53",
+      "quote": "What he still lacked was the question of whether one procedure could decide an entire class of problems -- the question Hilbert would pose in 1928.",
+      "section": "The gap: two thousand years of *doing*, none of *studying*",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-54",
+      "quote": "Two very different algorithms mark the long middle.",
+      "section": "The long middle: from method to program",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-55",
+      "quote": "Newton's method, circulated in the 1670s and published in his *Method of Fluxions*, finds a root by repeatedly replacing a guess $x$ with $x - f(x)/f'(x)$; its convergence can be proved, and its descendants still solve equations inside every numerical library (\\cite[Newton, 1736]{newton1736fluxions}).",
+      "section": "The long middle: from method to program",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-56",
+      "quote": "In 1843 Ada Lovelace published a step-by-step program for Babbage's Analytical Engine to compute Bernoulli numbers -- the first published program for a general-purpose machine -- and argued that such a machine could manipulate symbols, not only numbers (\\cite[Menabrea & Lovelace, 1843]{menabrea_lovelace1843}; \\cite[Ada Lovelace]{ada_lovelace_wiki}).",
+      "section": "The long middle: from method to program",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-57",
+      "quote": "In 1928 the mathematician David Hilbert (\\cite[Hilbert & Ackermann, 1928]{hilbert1928entscheidung}) posed a question that had been waiting, unasked, for two thousand years.",
+      "section": "The question that built everything: the Entscheidungsproblem (1928)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-58",
+      "quote": "In German it is the **Entscheidungsproblem**, the decision problem:",
+      "section": "The question that built everything: the Entscheidungsproblem (1928)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-59",
+      "quote": "> Given any statement of arithmetic — or, more generally, any formula of logic — does there exist a **general, mechanical procedure** that decides, in a finite number of steps, whether the statement is provable?",
+      "section": "The question that built everything: the Entscheidungsproblem (1928)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-60",
+      "quote": "This is exactly the question Euclid's two properties had been pointing at all along.",
+      "section": "The question that built everything: the Entscheidungsproblem (1928)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-61",
+      "quote": "An *algorithm* was, quietly, a candidate *answer*: a mechanical procedure that terminates and is correct.",
+      "section": "The question that built everything: the Entscheidungsproblem (1928)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-62",
+      "quote": "The Entscheidungsproblem asks whether such a procedure exists **in general** — not for this problem, but for the whole class.",
+      "section": "The question that built everything: the Entscheidungsproblem (1928)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-63",
+      "quote": "Hilbert was confident the answer was **yes**; he was actively looking for the procedure.",
+      "section": "The question that built everything: the Entscheidungsproblem (1928)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-64",
+      "quote": "The answer, delivered eight years later by two independent mathematicians wielding two tools that looked nothing alike, was **no**.",
+      "section": "The question that built everything: the Entscheidungsproblem (1928)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-65",
+      "quote": "\\marginfig{hilbert_1907.jpg}{David Hilbert (1862–1943), 1907.",
+      "section": "The question that built everything: the Entscheidungsproblem (1928)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-66",
+      "quote": "Kurt Gödel had already delivered the first blow in 1931 with his incompleteness theorems \\cite[Gödel's incompleteness theorems (1931)]{godel1931incompleteness}: no consistent, effectively axiomatized system that can express basic arithmetic can prove every true statement in it.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-67",
+      "quote": "But incompleteness left a door open — it says some truths escape *proof*, not that no *procedure* could still decide which statements are decidable.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-68",
+      "quote": "The decision problem was still, as far as anyone could tell, on the table.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-69",
+      "quote": "In 1936, working independently, **Alonzo Church** and **Alan Turing** each wrote down a rigorous formalism for \"mechanical procedure,\" and each used it to answer the 1928 question with a proof that the answer is **no** \\cite[The Church–Turing Thesis (SEP)]{churchturing1936}.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-70",
+      "quote": "Turing learned of Church's result while his own paper was in press, and added an appendix proving the two formalisms equivalent.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-71",
+      "quote": "* **Church** worked with the λ-calculus: pure rewriting of symbols, a formalism that reads like algebra.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-72",
+      "quote": "* **Turing** built a *machine* — a finite controller that reads one symbol at a time from, and writes symbols to, an infinite strip of tape, moving left or right according to its current state \\cite[Turing, On Computable Numbers (1936)]{turing1937}.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-73",
+      "quote": "The two formalisms look nothing alike.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-74",
+      "quote": "One is a calculus; the other is a physical picture of a head on a tape.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-75",
+      "quote": "And yet they compute *exactly* the same set of functions — every problem one can solve, the other can solve too.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-76",
+      "quote": "That coincidence is so load-bearing that it has its own name: the \\cite[Church–Turing thesis (SEP)]{churchturing1936}.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-77",
+      "quote": "And the upshot for the 1928 question: within this shared class of \"what a machine can do,\" the validity of a first-order formula is not decidable in general.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-78",
+      "quote": "The Entscheidungsproblem has *no solution* — not because no one was clever enough to find the procedure, but because the procedure is provably *not there*.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-79",
+      "quote": "The question itself has no \"yes.\"",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-80",
+      "quote": "A Turing machine: a finite set of states reading and writing symbols on an infinite tape, moving left or right.",
+      "section": "1936: two machines, one answer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-81",
+      "quote": "Step back, and the whole chapter is one turning point.",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-82",
+      "quote": "* For two millennia, people **ran** procedures — Euclid's gcd, the sieve — and never asked *what made them work*.",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-83",
+      "quote": "* One question — *is there a general method?* (the Entscheidungsproblem, 1928) — forced the procedure itself to become a **mathematical object** with checkable properties: *does it terminate?",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-84",
+      "quote": "what is it even able to reach?*",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-85",
+      "quote": "* Answering that question (Church, Turing, 1936) did not merely settle a logic puzzle.",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-86",
+      "quote": "It **invented the theory of computation** — the study of *computation as a thing you can reason about*, not just a thing you do.",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-87",
+      "quote": "That is the \"displaced prerequisite\" this first half is filling.",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-88",
+      "quote": "Everything in the second half of this chapter, and in [Software](software.php) — the idea that a computation has a *cost*, a *guarantee*, and a *limit* — rests on the fact that, in 1936, the algorithm stopped being a verb and became a noun.",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-89",
+      "quote": "You can now hold one in your hand and take it apart: ask whether it stops, prove whether it is right, and measure how much work it does.",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-90",
+      "quote": "Euclid had the algorithm.",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-91",
+      "quote": "Hilbert asked the question.",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-92",
+      "quote": "Church and Turing built the machine that *is* the answer.",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-93",
+      "quote": "> A procedure becomes an **algorithm** when two things hold: it **terminates** for every input it promises to handle, and it is **correct by construction**.",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-94",
+      "quote": "The question \"is there a *general* procedure?\" — the Entscheidungsproblem, 1928 — is what turned that property from a verb into an object, and forced the entire theory of computation to be built.",
+      "section": "The payoff: the algorithm becomes an object",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-95",
+      "quote": "The mid-twentieth century made algorithms into engineering objects.",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-96",
+      "quote": "Binary search -- repeatedly halving a sorted interval -- was described by John Mauchly in 1946 and analyzed in the early 1960s; Knuth's *Sorting and Searching* gave its exact comparison count and a canonical correct formulation (\\cite[Binary search]{binarysearch_wiki}; \\cite[Knuth]{taocp3}).",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-97",
+      "quote": "Dijkstra's 1968 letter against the `goto` statement argued that programs should be built from structured control flow so their progress can be reasoned about, and Hoare's 1969 axioms gave a formal logic for assignments and while-loops -- the beginning of program verification (\\cite[Dijkstra, 1968]{dijkstra1968goto}; \\cite[Hoare, 1969]{hoare1969axiomatic}).",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-98",
+      "quote": "Two questions turned algorithms into a mathematical theory.",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-99",
+      "quote": "Cook (1971) and Levin (1973) showed that a single problem -- Boolean satisfiability -- is complete for the class NP: if it had a polynomial-time algorithm, so would every problem whose solution can be checked in polynomial time (\\cite[Cook, 1971]{cook1971complexity}; \\cite[Cook-Levin theorem]{cooklevin_wiki}).",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-100",
+      "quote": "Bellman's *Dynamic Programming* (1957) gave the complementary positive technique: break a problem into overlapping subproblems, store each answer once, and build the optimum from optimal subproblems (\\cite[Bellman, 1957]{bellman1957book}).",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-101",
+      "quote": "Together they defined the modern question -- not just can it be computed, but at what cost.",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-102",
+      "quote": "Two algorithms from the same decades made whole industries computable.",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-103",
+      "quote": "Dantzig's simplex method (1947; book 1963) solved linear programs by walking along the vertices of a polyhedron, turning logistics, scheduling, and resource allocation into routine calculation (\\cite[Dantzig, 1963]{dantzig1963linear}).",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-104",
+      "quote": "The fast Fourier transform, rediscovered by Cooley and Tukey in 1965, reduced the cost of a discrete Fourier transform from $O(n^2)$ to $O(n\\log n)$; Gauss had used the same idea in 1805, but the 1965 paper made it a standard tool (\\cite[Cooley & Tukey, 1965]{cooley1965fft}; \\cite[FFT history]{fft_history_wiki}).",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-105",
+      "quote": "Modern algorithms increasingly search rather than calculate.",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-106",
+      "quote": "PageRank (1998) treated the web as a Markov chain and ranked pages by the stationary distribution of a random surfer, turning a graph into a single global importance score (\\cite[Brin & Page, 1998]{brin1998pagerank}).",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-107",
+      "quote": "AlphaGo (2016) combined a policy network, a value network, and Monte Carlo tree search to beat Lee Sedol at Go -- a game whose branching factor had defeated pure search (\\cite[Silver et al., 2016]{silver2016go}).",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-108",
+      "quote": "Both are algorithms in the old sense -- they terminate and are correct relative to a model -- but their guarantee is statistical or empirical, not a proof of optimality.",
+      "section": "What an algorithm costs",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-109",
+      "quote": "The concept is settled: an algorithm is a procedure that terminates and is correct, and since 1936 we can *reason* about algorithms — their cost, their guarantees, their limits.",
+      "section": "How a Transformer Executes Algorithms",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-110",
+      "quote": "The second half of this chapter asks a concrete question: can a *neural network* actually *run* one?",
+      "section": "How a Transformer Executes Algorithms",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-111",
+      "quote": "A transformer trained on a toy arithmetic task does two things that look almost impossible.",
+      "section": "How a Transformer Executes Algorithms",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-112",
+      "quote": "It **groks** an algorithm it was never explicitly taught — it rediscovers the Discrete Fourier Transform on its own.",
+      "section": "How a Transformer Executes Algorithms",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-113",
+      "quote": "And it **executes code that only exists in the prompt** — an algorithm it has never seen before, following it step by step with no interpreter and no CPU.",
+      "section": "How a Transformer Executes Algorithms",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-114",
+      "quote": "Both are real, measured, and explained below, starting with how a tiny network computes modular addition by rotating points on a circle.",
+      "section": "How a Transformer Executes Algorithms",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-115",
+      "quote": "When we train a neural network on a simple task like modular addition, something remarkable happens.",
+      "section": "How a Transformer Executes Algorithms",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-116",
+      "quote": "The network doesn't just memorize the answers, it *discovers* an algorithm.",
+      "section": "How a Transformer Executes Algorithms",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-117",
+      "quote": "Specifically, it learns to use the **Discrete Fourier Transform** to convert addition into wave interference, as described by (\\cite[Nanda et al., 2023]{nanda2023grokking}).",
+      "section": "How a Transformer Executes Algorithms",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-118",
+      "quote": "This section walks through, step by step, exactly *how* a tiny one-layer Transformer computes:",
+      "section": "How a Transformer Executes Algorithms",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-119",
+      "quote": "where $P = 113$ is a prime number.",
+      "section": "How a Transformer Executes Algorithms",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-120",
+      "quote": "The network's vocabulary is just the numbers $\\{0, 1, 2, \\ldots, 112\\}$, and it must output the correct sum modulo 113.",
+      "section": "How a Transformer Executes Algorithms",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-121",
+      "quote": "The network learns that **modular arithmetic is circular**.",
+      "section": "The Core Insight",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-122",
+      "quote": "After $P$, you wrap around to 0, just like an angle wrapping around a circle.",
+      "section": "The Core Insight",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-123",
+      "quote": "So the network represents each number as a **point on a circle**, and performs addition by **rotating angles**.",
+      "section": "The Core Insight",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-124",
+      "quote": "But a single circle (a single frequency) has too many ambiguities.",
+      "section": "The Core Insight",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-125",
+      "quote": "So the network uses **5 different frequencies** simultaneously, and combines them via **constructive interference**, the same principle that makes noise-cancelling headphones work, but in reverse.",
+      "section": "The Core Insight",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-126",
+      "quote": "The trained network implements the following algorithm (\\cite[Nanda et al., 2023, Section 4]{nanda2023grokking}):",
+      "section": "The Algorithm in Five Steps",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-127",
+      "quote": "**Embedding:** Map each input number to points on 5 different circles (5 Fourier components)",
+      "section": "The Algorithm in Five Steps",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-128",
+      "quote": "**Attention:** Bring the representations of $a$ and $b$ together",
+      "section": "The Algorithm in Five Steps",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-129",
+      "quote": "**MLP:** Apply trigonometric addition theorems to compute $\\cos(\\omega_k(a+b))$ and $\\sin(\\omega_k(a+b))$",
+      "section": "The Algorithm in Five Steps",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-130",
+      "quote": "**Unembedding:** Compare the result against all 113 possible output tokens using cosine similarity",
+      "section": "The Algorithm in Five Steps",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-131",
+      "quote": "**Interference:** The 5 frequencies constructively interfere *only* at the correct answer",
+      "section": "The Algorithm in Five Steps",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-132",
+      "quote": "The key formula that the MLP neurons compute is the **addition theorem**:",
+      "section": "The Algorithm in Five Steps",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-133",
+      "quote": "And the final logit for each candidate answer $c$ is:",
+      "section": "The Algorithm in Five Steps",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-134",
+      "quote": "This is maximal when $c = (a+b) \\bmod P$, because then *all five* cosine terms equal 1 simultaneously.",
+      "section": "The Algorithm in Five Steps",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-135",
+      "quote": "This algorithm is not present at the start of training.",
+      "section": "Connection to Grokking",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-136",
+      "quote": "The phenomenon is called **grokking**: a model suddenly transitions from **memorization** to **generalization** long after it seems to have plateaued.",
+      "section": "Connection to Grokking",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-137",
+      "quote": "Originally identified by \\cite[Power et al. (2022)]{power2022grokking}, this “aha moment” occurs when a model achieves 100% training accuracy but 0% validation accuracy for an extended period, only to have validation accuracy jump to 100% within a few epochs.",
+      "section": "Connection to Grokking",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-138",
+      "quote": "This indicates a shift from high-frequency noise-fitting to the discovery of an underlying algorithmic pattern, and structurally it is often marked by a transition in **attention matrices** from messy, uniform distributions to clean, highly structured representations.",
+      "section": "Connection to Grokking",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-139",
+      "quote": "Here the network first **memorizes** the training data (achieving 100% train accuracy but ca.",
+      "section": "Connection to Grokking",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-140",
+      "quote": "Then, after many more epochs, it suddenly “groks” the addition pattern, test accuracy jumping from 0% to 100% in a few hundred steps.",
+      "section": "Connection to Grokking",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-141",
+      "quote": "Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.",
+      "section": "Connection to Grokking",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-142",
+      "quote": "Below you can explore each step of the algorithm interactively.",
+      "section": "Interactive Exploration",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-143",
+      "quote": "Change the input numbers, toggle frequencies on and off, and watch how the interference pattern changes.",
+      "section": "Interactive Exploration",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-144",
+      "quote": "The matrix $W_L = W_U W_{\\text{out}}$ maps MLP activations directly to logits.",
+      "section": "The Neuron-Logit Map $W_L$",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-145",
+      "quote": "It is approximately **rank 10**, with each direction corresponding to the cosine or sine of one of the 5 key frequencies (\\cite[Nanda et al., 2023, Section 4.2, Equation 2]{nanda2023grokking}):",
+      "section": "The Neuron-Logit Map $W_L$",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-146",
+      "quote": "The residual after this approximation has Frobenius norm under **0.55%** of the norm of $W_L$.",
+      "section": "The Neuron-Logit Map $W_L$",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-147",
+      "quote": "The embedding matrix $W_E$ is a $P \\times d_{\\text{model}} = 113 \\times 128$ matrix.",
+      "section": "The Embedding Space: Fourier Sparsity",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-148",
+      "quote": "When we take a Discrete Fourier Transform along the token dimension and compute the $\\ell_2$-norm along the model dimension, we find that $W_E$ is **sparse in the Fourier basis** (\\cite[Nanda et al., 2023, Section 4.1, Figure 3]{nanda2023grokking}).",
+      "section": "The Embedding Space: Fourier Sparsity",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-149",
+      "quote": "Only 5-6 frequencies have significant norm.",
+      "section": "The Embedding Space: Fourier Sparsity",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-150",
+      "quote": "These are the **key frequencies** that the network uses for its computation.",
+      "section": "The Embedding Space: Fourier Sparsity",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-151",
+      "quote": "This is the first line of evidence that the network operates in a Fourier basis: the embedding itself is already organized as sine/cosine waves at specific frequencies.",
+      "section": "The Embedding Space: Fourier Sparsity",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-152",
+      "quote": "Everything above describes an algorithm **baked into the weights** during training.",
+      "section": "In-Context Algorithm Execution: How LLMs Run Code That Only Exists in the Prompt",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-153",
+      "quote": "But something far stranger happens every day: you paste pseudocode into a prompt, say “now execute `add(128, 367)`“, and the model produces the correct answer, despite never having been trained on *your* algorithm.",
+      "section": "In-Context Algorithm Execution: How LLMs Run Code That Only Exists in the Prompt",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-154",
+      "quote": "This is **in-context algorithm execution**.",
+      "section": "In-Context Algorithm Execution: How LLMs Run Code That Only Exists in the Prompt",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-155",
+      "quote": "The algorithm is not in the weights.",
+      "section": "In-Context Algorithm Execution: How LLMs Run Code That Only Exists in the Prompt",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-156",
+      "quote": "It exists only as tokens in the context window.",
+      "section": "In-Context Algorithm Execution: How LLMs Run Code That Only Exists in the Prompt",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-157",
+      "quote": "Yet the model follows it step by step.",
+      "section": "In-Context Algorithm Execution: How LLMs Run Code That Only Exists in the Prompt",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-158",
+      "quote": "The model has no Python interpreter.",
+      "section": "The Puzzle",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-159",
+      "quote": "It has no variable registers.",
+      "section": "The Puzzle",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-160",
+      "quote": "Yet it produces “495”, and if you ask it to show its work, it traces through the loop iterations correctly.",
+      "section": "The Puzzle",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-161",
+      "quote": "The key insight from \\cite[Garg et al. (2022)]{garg2022incontext} is that Transformers trained on diverse data don't memorize specific algorithms, they learn a **meta-algorithm**: a general-purpose procedure for extracting and executing patterns from context.",
+      "section": "What the Weights Actually Encode: A Meta-Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-162",
+      "quote": "Formally, given a prompt structured as:",
+      "section": "What the Weights Actually Encode: A Meta-Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-163",
+      "quote": "a trained Transformer can predict $f(x_{\\text{query}})$ for functions $f$ it has **never seen during training**, with performance matching the optimal estimator for that function class.",
+      "section": "What the Weights Actually Encode: A Meta-Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-164",
+      "quote": "This is not memorization: with $2d$ in-context examples, the model achieves error < 0.001, while the best memorized weight vector from 32M training vectors would yield error ca.",
+      "section": "What the Weights Actually Encode: A Meta-Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-165",
+      "quote": "0.216 \\cite[Appendix B.7]{garg2022incontext}.",
+      "section": "What the Weights Actually Encode: A Meta-Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-166",
+      "quote": "But your algorithm prompt isn't input-output pairs, it's *code*.",
+      "section": "What the Weights Actually Encode: A Meta-Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-167",
+      "quote": "The weights don't contain your algorithm.",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-168",
+      "quote": "They contain three capabilities that *together* allow execution:",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-169",
+      "quote": "Pattern Recognition (Attention Layers)**",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-170",
+      "quote": "The attention mechanism identifies structural patterns in the prompt: loop constructs, variable assignments, conditional branches, function signatures.",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-171",
+      "quote": "Induction heads (\\cite[Olsson et al., 2022]{olsson2022induction}), the same circuits that do pattern completion like “[A][B]...[A] → predict [B]”, generalize to matching algorithmic patterns: “when I see `carry = s // 10` followed by a state where s=15, the next value of carry is 1.“",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-172",
+      "quote": "State Simulation (Residual Stream)**",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-173",
+      "quote": "The residual stream maintains an implicit “execution state.” As the model generates each token of output, the residual stream encodes something analogous to:",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-174",
+      "quote": "- Current values of variables (carry, digit_a, digit_b, etc.)",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-175",
+      "quote": "- Current position in the loop",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-176",
+      "quote": "- Accumulated partial results",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-177",
+      "quote": "This is not a literal register file, it's a distributed representation across hundreds of dimensions.",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-178",
+      "quote": "Step-by-Step Generation (Autoregressive Decoding)**",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-179",
+      "quote": "Each generated token advances the computation by one micro-step.",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-180",
+      "quote": "The model doesn't execute the entire algorithm in a single forward pass, it executes one step per generated token, using its own output as “scratch space” for the next step.",
+      "section": "The Three Things the Weights Encode",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-181",
+      "quote": "\\cite[Zhou et al. (2022)]{zhou2022algorithmic} showed something crucial: **how you describe the algorithm determines whether the model can execute it.**",
+      "section": "Why Ambiguity Kills: The Algorithmic Prompting Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-182",
+      "quote": "Consider teaching addition.",
+      "section": "Why Ambiguity Kills: The Algorithmic Prompting Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-183",
+      "quote": "A scratchpad-style prompt shows:",
+      "section": "Why Ambiguity Kills: The Algorithmic Prompting Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-184",
+      "quote": "The model sees that 8+7 generates carry 1 and 2+6 generates carry 0.",
+      "section": "Why Ambiguity Kills: The Algorithmic Prompting Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-185",
+      "quote": "But it could conclude: “carry is 1 when both digits are even” or “first pair always has carry 1.” The rules are **ambiguous** from examples alone (\\cite[Section 2]{zhou2022algorithmic}).",
+      "section": "Why Ambiguity Kills: The Algorithmic Prompting Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-186",
+      "quote": "An algorithmic prompt removes this ambiguity by making every computational step explicit:",
+      "section": "Why Ambiguity Kills: The Algorithmic Prompting Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-187",
+      "quote": "The result: **90.5% accuracy on 19-digit addition** vs. 9.5% for few-shot baselines, a 9× error reduction \\cite[Table 2]{zhou2022algorithmic}.",
+      "section": "Why Ambiguity Kills: The Algorithmic Prompting Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-188",
+      "quote": "Is the model truly executing the algorithm from context, or just pattern-matching the output format?",
+      "section": "Proof That the Model Actually Follows the In-Context Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-189",
+      "quote": "\\cite[Zhou et al. (2022)]{zhou2022algorithmic} prove it's genuine execution through three tests:",
+      "section": "Proof That the Model Actually Follows the In-Context Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-190",
+      "quote": "**Test 1: Intermediate step correctness.** For every addition question where the final answer was correct, ALL intermediate steps were also correct.",
+      "section": "Proof That the Model Actually Follows the In-Context Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-191",
+      "quote": "The model doesn't skip steps, it traces through the algorithm as written (\\cite[Section 3.1]{zhou2022algorithmic}).",
+      "section": "Proof That the Model Actually Follows the In-Context Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-192",
+      "quote": "**Test 2: Systematic errors destroy performance.** When ALL carry calculations in the prompt examples are wrong (e.g., always using the wrong digit), accuracy drops to ca.",
+      "section": "Proof That the Model Actually Follows the In-Context Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-193",
+      "quote": "If the model were relying on its pretrained knowledge of addition, wrong examples wouldn't matter.",
+      "section": "Proof That the Model Actually Follows the In-Context Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-194",
+      "quote": "But it's actually learning the rule from context \\cite[Figure 3b]{zhou2022algorithmic}.",
+      "section": "Proof That the Model Actually Follows the In-Context Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-195",
+      "quote": "**Test 3: Irregular errors cause only minor degradation.** When only SOME steps have errors, the model can still extrapolate the correct rule from the unchanged steps.",
+      "section": "Proof That the Model Actually Follows the In-Context Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-196",
+      "quote": "This shows it's generalizing from the pattern, not memorizing specific examples.",
+      "section": "Proof That the Model Actually Follows the In-Context Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-197",
+      "quote": "This is in stark contrast to chain-of-thought prompting, where providing wrong reasoning patterns barely affects performance, suggesting those models rely on pretraining knowledge, not in-context learning (\\cite[Madaan and Yazdanbakhsh, 2022]{madaan2022textpatterns}).",
+      "section": "Proof That the Model Actually Follows the In-Context Algorithm",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-198",
+      "quote": "Combining insights from both papers, here is a schematic of what happens during a single forward pass when the model encounters “Execute: add(128, 367)” after seeing the algorithm; the layer ranges below are illustrative, not measured:",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-199",
+      "quote": "**Layers 1–4 (Algorithm Parsing):**",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-200",
+      "quote": "Attention heads identify the structure of the algorithm in the prompt.",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-201",
+      "quote": "- Loop structure (`while` → iteration pattern)",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-202",
+      "quote": "- Variable bindings (`carry = ...` → state tracking)",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-203",
+      "quote": "- Arithmetic operations (`s = digit_a + digit_b + carry`→ computation rule)",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-204",
+      "quote": "The QK circuits of these heads have learned to match structural tokens (`while`, `if`, `=`) regardless of the specific variable names or values.",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-205",
+      "quote": "**Layers 5–8 (State Binding):**",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-206",
+      "quote": "The model binds the query inputs (128, 367) to the algorithm's parameters (a, b).",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-207",
+      "quote": "This is analogous to what \\cite[Garg et al. (2022)]{garg2022incontext} call “computing sufficient statistics”, the attention layers aggregate information from the in-context algorithm description and the specific inputs into a unified representation.",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-208",
+      "quote": "**Layers 9–12 (Step Execution):**",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-209",
+      "quote": "MLP layers transform the bound state into the next output token.",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-210",
+      "quote": "For each generated token, the model:",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-211",
+      "quote": "Reads the current “state” from the residual stream",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-212",
+      "quote": "Applies the transformation rule extracted from the algorithm description",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-213",
+      "quote": "Writes the updated state back",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-214",
+      "quote": "This is why **autoregressive generation is essential**: the model can only execute one step per forward pass.",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-215",
+      "quote": "Complex algorithms require many generated tokens (the “scratchpad”), with each token advancing the state by one micro-step.",
+      "section": "The Mechanism: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-216",
+      "quote": "The model cannot execute a 19-digit addition in a single forward pass, that would require maintaining ca.",
+      "section": "The Critical Role of the Scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-217",
+      "quote": "19 loop iterations worth of state simultaneously.",
+      "section": "The Critical Role of the Scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-218",
+      "quote": "Instead, it generates intermediate tokens that serve as **external memory**:",
+      "section": "The Critical Role of the Scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-219",
+      "quote": "Each forward pass reads the previously generated tokens (which encode the current state) and produces the next step.",
+      "section": "The Critical Role of the Scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-220",
+      "quote": "The context window acts as a tape, exactly like a Turing machine's tape, but with the constraint that it can only be written left-to-right.",
+      "section": "The Critical Role of the Scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-221",
+      "quote": "This is why \\cite[Zhou et al. (2022)]{zhou2022algorithmic} find that **context length is the primary bottleneck**: the model can only execute as many steps as fit in its context window.",
+      "section": "The Critical Role of the Scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-222",
+      "quote": "\\cite[Zhou et al. (2022)]{zhou2022algorithmic} identify a hierarchy of capabilities:",
+      "section": "The Four Stages of Teaching Algorithms In-Context",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-223",
+      "quote": "**Teaching an Algorithm as a Skill:** Provide a detailed, non-ambiguous description of the algorithm execution on running examples.",
+      "section": "The Four Stages of Teaching Algorithms In-Context",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-224",
+      "quote": "Result: 90.5% on 19-digit addition (\\cite[Section 3]{zhou2022algorithmic}).",
+      "section": "The Four Stages of Teaching Algorithms In-Context",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-225",
+      "quote": "**Skill Accumulation:** Teaching multiple algorithms simultaneously (e.g., addition AND subtraction in one prompt).",
+      "section": "The Four Stages of Teaching Algorithms In-Context",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-226",
+      "quote": "The model learns to select the correct algorithm based on the input (\\cite[Section 4]{zhou2022algorithmic}).",
+      "section": "The Four Stages of Teaching Algorithms In-Context",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-227",
+      "quote": "**Skill Composition:** Teaching how to combine skills (e.g., multiplication as repeated addition).",
+      "section": "The Four Stages of Teaching Algorithms In-Context",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-228",
+      "quote": "Previously learned algorithms become subroutines (\\cite[Section 5]{zhou2022algorithmic}).",
+      "section": "The Four Stages of Teaching Algorithms In-Context",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-229",
+      "quote": "**Skills as Tools:** Using learned algorithms as subroutines within broader reasoning (e.g., using the addition algorithm inside a word problem).",
+      "section": "The Four Stages of Teaching Algorithms In-Context",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-230",
+      "quote": "This reveals an **interference phenomenon**: mixing formal algorithm execution with informal reasoning in the same context degrades both (\\cite[Section 6]{zhou2022algorithmic}).",
+      "section": "The Four Stages of Teaching Algorithms In-Context",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-231",
+      "quote": "Despite these capabilities, there are hard limits:",
+      "section": "What the Model Cannot Do",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-232",
+      "quote": "- **Context length bounds computation:** The model can only execute as many steps as fit in its context window.",
+      "section": "What the Model Cannot Do",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-233",
+      "quote": "- **Ambiguity kills performance:** If the algorithm description allows multiple interpretations, the model may follow the wrong one.",
+      "section": "What the Model Cannot Do",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-234",
+      "quote": "Uncommon operations (like indexing a variable position) are harder than common ones (like always taking the last element) (\\cite[Zhou et al., 2022, Section 3.1]{zhou2022algorithmic}).",
+      "section": "What the Model Cannot Do",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-235",
+      "quote": "- **Interference between skills:** Mixing very different types of reasoning (e.g., informal math reasoning + formal algorithm execution) in one prompt causes performance degradation (\\cite[Zhou et al., 2022, Section 6]{zhou2022algorithmic}).",
+      "section": "What the Model Cannot Do",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-236",
+      "quote": "- **No true compilation:** The model doesn't “compile” your code into an internal representation.",
+      "section": "What the Model Cannot Do",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-237",
+      "quote": "It simulates execution token by token.",
+      "section": "What the Model Cannot Do",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-238",
+      "quote": "This means execution speed is O(output_tokens), not O(algorithm_complexity).",
+      "section": "What the Model Cannot Do",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-239",
+      "quote": "Below you can explore how an LLM executes an addition algorithm step by step.",
+      "section": "Interactive Exploration",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-240",
+      "quote": "Provide two numbers, and watch the model trace through the algorithm, showing how each generated token advances the computational state.",
+      "section": "Interactive Exploration",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-241",
+      "quote": "The discovery by \\cite[Zhou et al. (2022)]{zhou2022algorithmic} that changed how we think about in-context algorithm execution is deceptively simple: **the more precisely you describe each step, the better the model executes it.** But the mechanism behind this is subtle and reveals something deep about how Transformers process instructions.",
+      "section": "Algorithmic Prompting: Why Specificity Unlocks Execution",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-242",
+      "quote": "Consider teaching a model to add two numbers.",
+      "section": "The Specificity Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-243",
+      "quote": "There's a spectrum of how explicitly you can describe the algorithm:",
+      "section": "The Specificity Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-244",
+      "quote": "| Level | Prompt Style | Accuracy (19-digit) |",
+      "section": "The Specificity Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-245",
+      "quote": "| **Zero-shot** | “What is 1234567890123456789 + 9876543210987654321?” | ca.",
+      "section": "The Specificity Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-246",
+      "quote": "| **Few-shot** | Show 3 examples of addition with answers | 9.5% |",
+      "section": "The Specificity Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-247",
+      "quote": "| **Chain-of-thought** | Show examples with informal reasoning (“carry the 1...”) | ca.",
+      "section": "The Specificity Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-248",
+      "quote": "| **Algorithmic prompting** | Show the *exact* algorithm with every micro-step explicit | **90.5%** |",
+      "section": "The Specificity Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-249",
+      "quote": "The 9× improvement from few-shot to algorithmic prompting isn't just “more detail helps.” It reveals that the model's attention heads can only reliably extract rules when those rules are **unambiguous from the context** (\\cite[Section 2]{zhou2022algorithmic}).",
+      "section": "The Specificity Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-250",
+      "quote": "When you show the model `8 + 7 = 15, write 5, carry 1` followed by `2 + 6 = 8, write 8, carry 0`, the model must infer the carry rule.",
+      "section": "The Ambiguity Problem (Visualized)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-251",
+      "quote": "But from just these two examples, multiple rules are consistent:",
+      "section": "The Ambiguity Problem (Visualized)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-252",
+      "quote": "- ✅ “Carry = 1 when sum ≥ 10” (correct)",
+      "section": "The Ambiguity Problem (Visualized)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-253",
+      "quote": "- ❌ “Carry = 1 when both digits are ≥ 7” (consistent with examples!)",
+      "section": "The Ambiguity Problem (Visualized)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-254",
+      "quote": "- ❌ “Carry = 1 on the first iteration only” (also consistent!)",
+      "section": "The Ambiguity Problem (Visualized)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-255",
+      "quote": "Algorithmic prompting eliminates this by making the rule explicit: `Since 8+7+0=15 and 15≥10, carry = (15-5)/10 = 1`.",
+      "section": "The Ambiguity Problem (Visualized)",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-256",
+      "quote": "Zhou et al. discovered that algorithmic reasoning can be taught progressively through four stages, each building on the last:",
+      "section": "The Four Stages of Algorithmic Teaching",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-257",
+      "quote": "**Single Skill:** Teach one algorithm with full step-by-step specificity",
+      "section": "The Four Stages of Algorithmic Teaching",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-258",
+      "quote": "**Skill Accumulation:** Teach multiple algorithms in one prompt (the model learns to select the right one)",
+      "section": "The Four Stages of Algorithmic Teaching",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-259",
+      "quote": "**Skill Composition:** Teach how to chain algorithms (multiplication = repeated addition)",
+      "section": "The Four Stages of Algorithmic Teaching",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-260",
+      "quote": "**Skills as Tools:** Use algorithms as subroutines within broader reasoning tasks",
+      "section": "The Four Stages of Algorithmic Teaching",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-261",
+      "quote": "Each stage introduces new challenges.",
+      "section": "The Four Stages of Algorithmic Teaching",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-262",
+      "quote": "Stage 3 (composition) is particularly interesting: the model must recognize when to “call” a sub-algorithm and correctly pass state between them.",
+      "section": "The Four Stages of Algorithmic Teaching",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-263",
+      "quote": "The circular representations above solve a very specific problem: **modular** addition, where the answer wraps around a fixed modulus ($\\bmod N$).",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-264",
+      "quote": "That is a *bounded, cyclic* task — there is no \"carry out to infinity,\" and no question of how *big* a number is.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-265",
+      "quote": "Once you leave that world, the model hits two different walls, and understanding them clarifies what a \"number\" actually is inside the network.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-266",
+      "quote": "**Magnitude, not value.** The natural question is how the model represents *size* — how does it \"know\" that $7 > 3$ so it can compare two numbers?",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-267",
+      "quote": "(\\cite[Levy & Geva, 2024]{levy2024numbers}) probed and intervened on Llama-3-8B and Mistral-7B and found that they do **not** store a single ordered \"number line.\" Instead **each digit is stored as its own circular (angular) code in base 10**: the value of a digit $d$ sits at the angle $\\theta = 2\\pi d / 10$ around a small circle, held in a *pair* of dimensions as $(\\cos\\theta,\\; \\sin\\theta)$.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-268",
+      "quote": "So a digit is a 2-D rotary code — the same kind of Fourier feature the modular-addition section used, just applied one digit at a time.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-269",
+      "quote": "Crucially, each *digit position* (units, tens, hundreds, …) gets its **own separate** circle in its own (roughly orthogonal) 2-D subspace, so the digits do not bleed into each other.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-270",
+      "quote": "\"13\" is therefore not a point between 12 and 14 — it is a \"1\" on the *tens* circle plus a \"3\" on the *units* circle.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-271",
+      "quote": "In the **hidden states (the residual stream) of the later layers**, not in the input embedding.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-272",
+      "quote": "The circular probes decode the digits reliably from about the **third layer onward** (the first couple of layers are still busy \"contextualizing\" a multi-digit number, whose several tokens have to be combined first), and a causal intervention that rotates one digit's angle by $+5 \\bmod 10$ modifies that digit in the model's answer — the exact intended result appears in only about 10–15% of cases (roughly half are \"close\"), so the code is genuinely *used*, not merely readable.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-273",
+      "quote": "(The paper's honest caveat: this is one strong, causally-active representation; it may be one of several redundant ones packed in superposition, not the only numeracy signal.) The tell-tale signature is the *error pattern*: arithmetic mistakes cluster on a **single digit** of the answer (the model emits \"633\" or \"823\" instead of \"833\"), exactly what a digit-wise code predicts — not the value-adjacent slips (\"831\", \"834\") a real number-line representation would produce.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-274",
+      "quote": "There is no clean, monotonic magnitude to \"read off\" and compare, which is why comparing small numbers is so error-prone: the model holds a digit-by-digit code, not a quantity.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-275",
+      "quote": "\\cite[Cacioli (2026)]{cacioli2026weber} brought the formal tools of psychophysics to the question.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-276",
+      "quote": "First, **Weber's law** — a 19th-century finding about human perception: the smallest difference you can notice between two stimuli is a constant *fraction* of their size, not a constant *amount*.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-277",
+      "quote": "You tell 10 from 11 instantly, but not 1000 from 1001, because the gap (1) shrinks relative to the magnitude.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-278",
+      "quote": "The consequence is that magnitudes are spaced **logarithmically** in perception: a fixed *ratio* (×1.1) is a fixed *distance*, whether you are near 10 or near 1000.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-279",
+      "quote": "(\\cite[Cacioli, 2026]{cacioli2026weber}) found the transformer's magnitude geometry has exactly this **log-compressive, Weber-law** structure (a 10% step is a constant distance), which also resolves a live disagreement in the literature (linear spacing?",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-280",
+      "quote": "But the decisive finding is a **dissociation**: a model can *have* this logarithmic magnitude geometry and *still* perform at chance on discrimination tasks.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-281",
+      "quote": "Representing magnitude and being *able to use it to compare* are not the same thing — the geometry is necessary but not sufficient.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-282",
+      "quote": "**Counting: recognizing is not counting.** \"How many r's are in strawberry?\" is the canonical failing.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-283",
+      "quote": "(\\cite[Fu et al., 2024]{fu2024count}) showed that models **recognize the letters but do not count them**: errors track the number of letters/tokens in the word, and the dominant failure is that *most models break once a symbol repeats more than twice*.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-284",
+      "quote": "Word frequency in the training data barely matters — this is a computation they are performing on the fly, not a lookup they failed to memorize.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-285",
+      "quote": "(\\cite[Conde et al., 2025]{conde2025count}) confirmed exact counting is not intrinsic; it only becomes reliable when the model is given a scratchpad (a chain-of-thought it can increment).",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-286",
+      "quote": "**Why it is hard, in principle.** The difference from modular addition is not training data — it is the *shape of the state required*.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-287",
+      "quote": "Mod-$N$ addition lives on a finite circle, so it needs only a bounded, cyclic representation (exactly the Fourier features above \\cite[Ding et al., 2024]{ding2024fittest} \\cite[Engels et al., 2025]{engels2024multidim}).",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-288",
+      "quote": "Exact counting, by contrast, needs an **unbounded integer** that increments and is read out at the end — a state that grows with the input.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-289",
+      "quote": "\\cite[Hahn (2020)]{hahn2020limitations} proved the matching impossibility: a fixed-size transformer's self-attention **cannot model periodic finite-state languages** (counting to $n$, parity, \"how many times does $x$ appear\") **unless the number of layers or heads grows with the sequence length.** In other words, a fixed network has no reliable exact-integer counter, and the depth that would supply one is exactly what is fixed.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-290",
+      "quote": "Modular arithmetic is easy because it is bounded and circular; comparison needs an ordered code the model does not cleanly have, and counting needs unbounded state it cannot hold.",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-291",
+      "quote": "Different failures, and neither is \"just train it more.\"",
+      "section": "Beyond Modular Arithmetic: Magnitude, Comparison, and Counting",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-292",
+      "quote": "Here is a tension worth sitting with.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-293",
+      "quote": "An RNN keeps its state in a single hidden vector that it updates one token at a time, carrying everything forward.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-294",
+      "quote": "A transformer has **no such carried-over hidden vector**: within a single forward pass it is a *parallel* function applied to the whole context at once, with no step-by-step evolution.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-295",
+      "quote": "You are right that \"time\" barely exists for the network inside one forward pass — the only real notion of order is the **sequence position** of the tokens (and, during generation, the autoregressive step-by-step decoding).",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-296",
+      "quote": "So \"state across time\" below means **state across the token positions / decode steps**, not an internal clock.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-297",
+      "quote": "Given that, the puzzle is sharper, not softer: how can a network with no carried-over memory do anything *sequential* or *stateful* — parse a sentence, follow a procedure, track a running count — when it has nowhere to keep the running total?",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-298",
+      "quote": "The reframe is that the state is **not absent, it is distributed**.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-299",
+      "quote": "The \"state\" is the **residual stream plus the Key/Value vectors of every past token**.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-300",
+      "quote": "Each past token's hidden state is a register that the current token can read from through attention, and each new token writes a fresh entry.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-301",
+      "quote": "The whole sequence is, in effect, a **work tape / register file** that the model re-reads every step.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-302",
+      "quote": "(\\cite[Katharopoulos et al., 2020]{katharopoulos2020linear}) made the relationship to recurrence literal: a *linear*-attention transformer has an exact **iterative (RNN-like) implementation**, where a single accumulated matrix plays the role of the hidden state.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-303",
+      "quote": "\"Stateless\" is therefore a misnomer; the state is just stored *in the context* rather than in a vector.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-304",
+      "quote": "Formally, this is enough to run a state machine.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-305",
+      "quote": "A single attention layer can implement the transitions of a **finite-state automaton** — softly, through the softmax, or exactly under a hardmax.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-306",
+      "quote": "(\\cite[Adriaensen & Maene, 2024]{adriaensen2024moore}) took this concretely: they trained transformers on regular languages and then **extracted the finite-state (Moore) machine the network had implicitly built**, using queries and counterexamples rather than reading the states out of the weights.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-307",
+      "quote": "You can pull the state machine *out* of the transformer.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-308",
+      "quote": "But the power is bounded, and (\\cite[Hahn, 2020]{hahn2020limitations}) pins down where.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-309",
+      "quote": "Because the context length is fixed, the number of distinct \"states\" a single forward pass can hold is finite — a fixed-size, fixed-context transformer is a **finite-state machine**, and it cannot model periodic or truly hierarchical languages unless its depth or head-count scales with the input.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-310",
+      "quote": "The mechanistic engine behind the sequential behavior is the **induction head** (\\cite[Olsson et al., 2022]{olsson2022induction}) — find $[A][B]\\ldots[A]$, copy the successor $[B]$ — which is a primitive form of **recurrence** (copy what followed a repeated pattern).",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-311",
+      "quote": "And (\\cite[von Oswald et al., 2022]{vonoswald2022indc}) read the whole forward pass as **in-context gradient descent**, with the residual stream holding an *evolving in-context model*.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-312",
+      "quote": "So \"recurrence\" in a transformer is not a stored hidden vector being updated; it is attention **re-reading an ever-growing store of past states** and refining them layer by layer, a hand-off between specialized heads in successive layers that is carried by thin low-rank \"channels\" in the residual stream (\\cite[Merullo et al., 2024]{merullo2024talkingheads}).",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-313",
+      "quote": "The honest summary: a transformer performs sequential, stateful computation by treating the context itself as state — a soft state machine whose state space is bounded by its (fixed) depth and context window.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    },
+    {
+      "id": "algorithms-stmt-314",
+      "quote": "That bound is precisely what limits the arithmetic and counting of the previous section, and the binding limits you meet in the fact-retrieval chapter.",
+      "section": "A Transformer as a State Machine: How a Stateless Network Keeps State",
+      "kind": "statement"
+    }
   ]
 }

@@ -541,5 +541,2863 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "software-stmt-1",
+      "quote": "Every large language model runs on a stack of software that is, strictly speaking, older than the idea of an LLM by several decades.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-2",
+      "quote": "The GPU does the matrix math; but *something* has to decide which GPU runs which layer, when to move data between memory and disk, how a process that has run for a week keeps from corrupting its neighbor, and how a line of Python becomes a billion instructions on a specific chip.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-3",
+      "quote": "That something is not a single invention.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-4",
+      "quote": "It is a **ladder of abstractions** — an operating system, a compiler, a library, a runtime, a framework — each rung hiding the messy reality of the rung below and exposing a small, clean interface to the rung above.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-5",
+      "quote": "This is the same idea that runs through the whole of this course, the “extra level of indirection” that David Wheeler named and that the wheel itself prefigured.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-6",
+      "quote": "Hardware gives you *transistors*.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-7",
+      "quote": "The **operating system** gives you *files, processes and memory*.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-8",
+      "quote": "A **programming language** and its **compiler** give you *expressions and functions*.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-9",
+      "quote": "A **library** gives you *data structures*.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-10",
+      "quote": "A **framework** gives you *neural layers*.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-11",
+      "quote": "And a **model** gives you *text*.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-12",
+      "quote": "Remove any single rung and the ones above it fall; add a rung and the ones above it become possible.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-13",
+      "quote": "This page is a deep dive into that ladder.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-14",
+      "quote": "It is deliberately broader than a “history of Unix” or a “top ten programming languages.” It covers the operating systems you will rarely hear named (GM-NAA I/O, Multics, VMS, Plan 9, the Hurd, BeOS), the languages that shaped how we *think* about computation (Lisp, ALGOL, Smalltalk, Prolog, APL), the tools that made it possible to *maintain* software complex enough to be useful (compilers, `make`, version control), and the people and ideas — their rivalries, their ideologies, their stubbornness — that decided which abstractions survived.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-15",
+      "quote": "Because the single most important fact about software is not technical: it is that software was built by **rival minds competing over the shape of thought itself**, and without that competition there is no stack, and no AI on top of it.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-16",
+      "quote": "The framing borrowed from the [Untold History](untold_history_i) chapter applies directly here: the operating system, the compiler and the version-control system are all **displaced prerequisites**.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-17",
+      "quote": "They were invented to solve problems that had nothing to do with intelligence — scheduling batch jobs at a car factory, translating one notation into another, keeping a team's code from colliding — and yet every one of them is a load-bearing fact of modern machine learning.",
+      "section": "Software: The Layer That Made Everything Else Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-18",
+      "quote": "To keep the thread visible while we climb, here is the whole stack, from the first mechanical gears to the final sentence, with the historical moment each rung was nailed down:",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-19",
+      "quote": "* **The automatic machine** (Hero of Alexandria, 1st c.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-20",
+      "quote": "CE) — the first *self-acting* machines; the ancestors of the automaton.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-21",
+      "quote": "* **The mechanical computer** (Leibniz’s Stepped Reckoner, 1673–1694) — the first machine that could *multiply and divide*, and Leibniz’s parallel development of the **binary** system.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-22",
+      "quote": "* **The programmable engine** (Babbage’s Analytical Engine, 1837) — the first machine *designed to be reprogrammed* by punched cards.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-23",
+      "quote": "* **The working computer** (Zuse Z3, 1941) — the first *automatic, fully programmable* computer actually built and running.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-24",
+      "quote": "* **Silicon / the transistor** (1947) — the physical switch.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-25",
+      "quote": "* **The stored program** (1948) — the idea that the *instructions* live in the same memory as the *data* (\\citeauthor{vonneumann}'s \\citeyear{vonneumann} report is the canonical statement of this).",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-26",
+      "quote": "* **The assembler** (1952) — the first *translator* that maps a human-readable mnemonic to machine code.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-27",
+      "quote": "* **The compiler** (1952; see Grace Hopper below) — the first *translator* from a whole language.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-28",
+      "quote": "* **The operating system** (1956) — the first program that *manages the machine for you*.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-29",
+      "quote": "* **The high-level language** (FORTRAN 1957, Lisp 1958) — the first languages that let you speak about *mathematics* and *symbols*, not about *wires*.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-30",
+      "quote": "* **The portable systems language** (C, 1972) — the first language an operating system could be *written in* and then *moved* to a new machine.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-31",
+      "quote": "* **The toolchain** (`make` 1976, version control 1972–2005) — the first tools that let a *team* build and keep software.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-32",
+      "quote": "* **The GUI / the personal computer** (Smalltalk 1972, Alto 1973) — the first software that treated the *person* as the user, not the operator.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-33",
+      "quote": "* **The library & framework** (1980s–now) — the first software that packaged *algorithms* for reuse.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-34",
+      "quote": "* **The model** (2012–now) — the trained weights, the thing that predicts the next token.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-35",
+      "quote": "We will climb this ladder from the bottom up, because that is the order the rungs were actually built, and because it is the only order in which the ideas make sense.",
+      "section": "The Abstraction Ladder, Stacked",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-36",
+      "quote": "The ladder looks, from the transistor up, like a story that begins in 1947.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-37",
+      "quote": "But the *question* the whole ladder answers — how do you separate a *machine* from the *task* it is doing today?",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-38",
+      "quote": "— is far older, and it was first posed in brass, not silicon.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-39",
+      "quote": "The rungs below the transistor are mechanical, and they belong on this page for one reason above all: **software does not exist until a machine can be *programmed***.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-40",
+      "quote": "Until a machine can be told, in a general and changeable way, what to do, there is no boundary between machine and task, and therefore no place for “software” to live.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-41",
+      "quote": "The idea that a machine can act *on its own* is ancient.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-42",
+      "quote": "In first-century Alexandria, **Hero of Alexandria** built water- and steam-driven automata that opened temple doors, dispensed a measured draught of wine, and, in the famous **aeolipile**, spun from the mere force of steam.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-43",
+      "quote": "They did not compute, and they were not computers; but they established the deep instinct the whole field inherits — that a machine can be made to run through a *sequence of actions* without being driven step by step.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-44",
+      "quote": "An **automaton** is, literally, a *self-acting* machine (Greek *automatos*), and it is from that instinct, not from electronics, that the idea of the machine-as-agent descends.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-45",
+      "quote": "The first machine to *compute* — to carry out an entire calculation by itself — was **Gottfried Wilhelm Leibniz**’s **Stepped Reckoner**, begun in 1673 and completed in 1694 \\cite{leibnizrechenmaschine}.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-46",
+      "quote": "It was the first calculator able to **multiply and divide** mechanically, not merely add and subtract; the machine itself worked in decimal, but Leibniz separately developed the **binary** arithmetic a transistor would one day make literal.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-47",
+      "quote": "But the calculator was not his real ambition.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-48",
+      "quote": "In his \\citeyear{leibniz1686calculus} sketch of a *calculus ratiocinator*, Leibniz proposed that reasoning itself could be reduced to calculation, that disputes could be settled not by argument but by arithmetic — “let us calculate!” \\cite{leibniz1686calculus}.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-49",
+      "quote": "That is the seed of the entire field, stated three centuries before the silicon.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-50",
+      "quote": "\\citealternativetitle{leibnizcc} — the first calculator able to perform all four arithmetic operations.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-51",
+      "quote": "\\citealternativetitle{babbage} — the first general-purpose, programmable engine: a store, a mill, and a way to reprogram it.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-52",
+      "quote": "\\citealternativetitle{zusez1} — Zuse’s Z1 (1938); the working Z3 followed in 1941.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-53",
+      "quote": "The ENIAC, first general-purpose electronic digital computer (1945).",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-54",
+      "quote": "It had no stored program: a “program” was a physical rewiring of the machine, thousands of patch cables set by hand \\cite{chm}.",
+      "section": "Before the Transistor: The Machine Learns to Be Programmed",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-55",
+      "quote": "The word *software* barely existed in 1945.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-56",
+      "quote": "A “program” for the ENIAC was not a file.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-57",
+      "quote": "It was a **patch panel**: thousands of cables plugged into specific sockets, plus a bank of switches set by hand, that told the machine what circuit to compute.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-58",
+      "quote": "To run a *different* calculation you had to physically re-patch the machine, a process that could take days and was full of silent errors, because there was no place to *store* the instructions separately from the hardware.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-59",
+      "quote": "There was no such thing as an operating system, a compiler, or a “language,” because there was no boundary between the machine and its task.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-60",
+      "quote": "This is the fundamental problem that the entire rest of this page is about solving: **how do you separate the *machine* from the *task* it is doing today?** Every subsequent invention — the stored program, the compiler, the operating system, the language — is a different answer to that same question.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-61",
+      "quote": "The first step was the **stored program**.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-62",
+      "quote": "The idea — that the instructions could be *stored in the machine's memory* just like the numbers, and changed by loading new data — was set out in \\citeauthor{vonneumann}'s \\citeyear{vonneumann} *First Draft of a Report on the EDVAC* \\cite{vonneumann}, which proposed a single memory holding both program and data, the **von Neumann architecture** that still describes most computers today.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-63",
+      "quote": "It was first *demonstrated* on the **Manchester “Baby”** (SSEM) at the University of Manchester, which on 21 June 1948 ran the first stored program, a small routine that found the largest factor of a 20-bit number \\cite{chm}.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-64",
+      "quote": "A year later, **EDSAC** at Cambridge, built by **Maurice Wilkes** and his team, became the first *practical* stored-program machine \\cite{chm} — and with it came the first two software concepts, both from Wilkes's team.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-65",
+      "quote": "* **The initial orders:** a tiny fixed block of instructions that ran first and loaded the real program.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-66",
+      "quote": "This is, in embryo, the **operating system** — the machine bootstrapping itself before it can do anything a user asked for.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-67",
+      "quote": "* **The subroutine:** the idea of a block of code you can *call* from many places and *return* from.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-68",
+      "quote": "Wilkes is said to have regarded the subroutine as the best idea he never got full credit for; it is the single most important abstraction in all of programming, the ancestor of the *function*.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-69",
+      "quote": "The human story here is easy to miss.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-70",
+      "quote": "The ENIAC was programmed, for its first years, by a team of **six women** — Kay McNulty, Betty Jean Jennings, Betty Holberton, Marlyn Meltzer, Ruth Lichterman and Frances Bilas — who worked out, by hand, the timing and the patching of thousands of circuits.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-71",
+      "quote": "They were hired as “computers” (the word then meant a *person*), and for decades their names were left out of the record \\cite{chm}.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-72",
+      "quote": "The first “software engineers” were women doing, with cables and switches, exactly the work the word *software* was later coined to describe.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-73",
+      "quote": "The most famous “bug” in computing history is a literal one.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-74",
+      "quote": "On **9 September 1947**, the team operating the **Harvard Mark II** relay computer found a moth caught in a relay, and taped it into the logbook with the annotation **“First actual case of bug being found.”** (The logbook page is in the Computer History Museum.) \\citeauthor{chm} The word *bug* for a defect is older — engineers like **Thomas Edison** used it for mechanical faults decades earlier — but the moth is the image that stuck, and it is a perfect metaphor for the era: a physical, findable, removable fault, in a machine you could open up and look at.",
+      "section": "Programming by Hand (1943–1950): Before There Was “Software”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-75",
+      "quote": "A stored-program machine is a *better* calculator, but it is still a single-user, single-task device.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-76",
+      "quote": "If you feed it a job and the job spends forty minutes reading data from a slow tape, the fast CPU just **sits idle**, waiting.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-77",
+      "quote": "The obvious waste — and the obvious opportunity — was to let the machine **look after itself**: while one job's tape was churning, run another job's calculation.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-78",
+      "quote": "That “look after itself” program is the **operating system**.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-79",
+      "quote": "Its job is not to *do* the user's calculation; it is to *manage the machine* — load the next job, move data between the fast memory and the slow tape, keep track of who owns what, and make the whole thing look like one continuous service.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-80",
+      "quote": "This is the purest form of the “extra level of indirection”: the user stops talking to the hardware and starts talking to an *agent* that talks to the hardware.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-81",
+      "quote": "The first real operating system, by most accounts, was **GM-NAA I/O** (1956), built by **General Motors** together with **North American Aviation** (\"NAA\") to run a queue of jobs on an IBM 704 \\cite{chm}.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-82",
+      "quote": "It was not a grand theoretical design; it was a *system program* that General Motors needed so that a stack of punched-card jobs could be loaded and run one after another with the tape handled automatically.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-83",
+      "quote": "Its historical importance is not its sophistication but its **existence**: it is the first documented case of a program whose sole purpose was to *manage the machine on behalf of other programs*.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-84",
+      "quote": "The “GM” in the name is the “GM/OS” that most histories skip straight past to Unix.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-85",
+      "quote": "IBM followed with its own batch systems.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-86",
+      "quote": "The **IBM 701** (1952) shipped with one of the first **assemblers** (a program that translates short mnemonics like `ADD` into machine code), and the **IBM 7090** (1959) ran **IBSYS**, IBM's first true operating system, which added a file system and batch job control \\cite{chm}.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-87",
+      "quote": "Batch was the model: you handed a box of cards to the operator, came back the next day, and collected a box of printout.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-88",
+      "quote": "There was no interactivity, no “terminal.” You did not *use* the computer; you *submitted* to it.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-89",
+      "quote": "(The EDVAC, the machine \\citeauthor{vonneumann}'s report had described, got its own dedicated first operating system, whose design IBM's **Charles H.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-90",
+      "quote": "Reitwiesner** documented in detail for the history of computing \\cite{edvac_os}.)",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-91",
+      "quote": "The first break from batch was **timesharing**, and the machine that proved it was the **CTSS** (Compatible Time-Sharing System) at MIT, 1959–1961, led by **Fernando Corbató** \\cite{ctss_annals}.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-92",
+      "quote": "CTSS let many people sit at *terminals* and use the *same* computer at once, each getting the illusion of a private machine.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-93",
+      "quote": "In doing so it invented a stack of ideas we now take for granted: a **file system with access control** (you could *own* a file and stop others from reading it), **swapping** (move a whole user's workspace out to disk and back), **electronic mail**, **shared libraries**, and the concept of a **login** \\cite{ctss_annals}.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-94",
+      "quote": "CTSS was built under the “Man–Computer Symbiosis” research program at MIT's Project MAC, funded by **J.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-95",
+      "quote": "Licklider**'s vision at ARPA — a vision we return to below, because it is one of the clearest early statements of what a computer is *for*: to extend the human mind, not to replace it \\cite{licklider}.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-96",
+      "quote": "What is striking about GM-NAA I/O is how *unheroic* the first operating system was.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-97",
+      "quote": "There was no manifesto, no philosophy, no “do one thing well.” There was a car company in Detroit that had a pile of payroll and parts calculations and a machine that sat idle half the time, and a system program written to keep it busy \\cite{chm}.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-98",
+      "quote": "The operating system was not conceived as an idea; it was conceived as a *scheduling problem*.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-99",
+      "quote": "That matters: the OS was born as **economics** (do not waste the expensive CPU), not as **aesthetics**.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-100",
+      "quote": "The beautiful, philosophical operating systems — Unix, Plan 9 — came later, and they could be beautiful precisely because someone had first solved the boring economic problem.",
+      "section": "The First Operating Systems (1950s): The Machine That Manages Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-101",
+      "quote": "If CTSS was the proof of concept, **Multics** was the ambition.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-102",
+      "quote": "Starting in **1964**, a three-way collaboration between **Bell Labs**, **General Electric (GE)** and **MIT's Project MAC** set out to build the definitive timesharing operating system \\cite{multics_plan9}.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-103",
+      "quote": "The goal was *everything at once*: true multi-user timesharing, hardware **memory segmentation**, a **hierarchical file system** with a directory structure, **security** and **access control** on every file, and **reliability** through redundant components.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-104",
+      "quote": "It was, in the words of its later critics, the first operating system that treated the computer as a *public utility* to be shared by thousands of people, safely.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-105",
+      "quote": "Multics was, by every modern measure, *ahead of its time*.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-106",
+      "quote": "It had the features — the file tree, the permissions, the protection domains — that every serious operating system still has.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-107",
+      "quote": "And it was a **commercial failure**.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-108",
+      "quote": "It was enormously complex, expensive, and slow to deliver; it never really worked well on the GE hardware it was built for, and by the time the system was stable, the market had moved on to smaller, cheaper machines.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-109",
+      "quote": "When it finally shipped in 1969, it had perhaps a couple of dozen installations.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-110",
+      "quote": "The commercial verdict was in: Multics was *too much* \\cite{multics_plan9}.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-111",
+      "quote": "But this is the crux, and the most instructive failure in the history of computing.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-112",
+      "quote": "It was *early and too large*.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-113",
+      "quote": "Almost everything good about it — the concept of a shared, protected, multi-user file system; the idea of *timesharing* as a service; the discipline of *security* as a first-class concern — did not die.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-114",
+      "quote": "The engineers who found Multics overwhelming, and who wanted to build *smaller* things on the side, carried its ideas away in their heads and rebuilt them, stripped down, on a much cheaper machine.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-115",
+      "quote": "That “on the side” project was called **Unix**.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-116",
+      "quote": "The psychology of Multics is worth pausing on, because it set up the central argument of Unix and of most software since.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-117",
+      "quote": "Multics was a **top-down** design: a committee of the world's best engineers, a comprehensive specification, an attempt to get *everything* right the first time, in a single monolithic system.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-118",
+      "quote": "It was the engineering ideal of the age — *comprehensiveness, correctness, a single perfect whole*.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-119",
+      "quote": "It was also, to the people on the team, a kind of art project, and the team culture (the “games” they built to test the graphics, the long dinners, the sense of building a cathedral) was real \\cite{multics_plan9}.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-120",
+      "quote": "When it failed, it did not fail for lack of brilliance; it failed for the sin of **scale**.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-121",
+      "quote": "The lesson — *that a small, composable, imperfect system can beat a large, perfect, monolithic one* — became the founding creed of the Unix camp, and the argument has not been settled since.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-122",
+      "quote": "The Multics team did not just build a file system; they built a *culture*.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-123",
+      "quote": "To test the (then cutting-edge) display and input capabilities of their terminals, they wrote games.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-124",
+      "quote": "One of them, **Space Travel**, was a simple space-shooter, and it is the direct ancestor of the first “video game” to run on a time-sharing system.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-125",
+      "quote": "The crucial detail for our story: **Space Travel** was written by **Ken Thompson** and a colleague *as a game*, but when the Multics graphics were too slow and the hardware too costly to keep iterating on, Thompson took the game home and rewrote it on a cheap, discarded **PDP-7** that was sitting in a corner \\cite{multics_plan9}.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-126",
+      "quote": "The operating system he wrote *around that game* to make it run — with its file system, its shell, its little kernel — is what became Unix.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-127",
+      "quote": "The most influential operating system in history was, in a very real sense, **a side project born from a game that the “serious” operating system was too slow to run**.",
+      "section": "Multics (1964–1969): The “Too Much” System",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-128",
+      "quote": "**Unix** was written at **Bell Labs** starting in **1969**, by **Ken Thompson** and (from about 1971) **Dennis Ritchie**, on that spare PDP-7 \\cite{unix_ts}.",
+      "section": "Unix and the Hacker Ethos (1969–1973)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-129",
+      "quote": "Its name was a playful jab at Multics — a seven-letter pun, and a statement of intent: *the opposite of that over-engineered thing*.",
+      "section": "Unix and the Hacker Ethos (1969–1973)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-130",
+      "quote": "Its first kernel fit on a single page of documentation.",
+      "section": "Unix and the Hacker Ethos (1969–1973)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-131",
+      "quote": "It had a file system, a shell (a command interpreter, the first “sh,” written by Thompson himself), a few utilities, and — crucially — an attitude.",
+      "section": "Unix and the Hacker Ethos (1969–1973)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-132",
+      "quote": "The attitude was later codified as the **Unix philosophy**, and it is an *ideology* as much as a technical style:",
+      "section": "Unix and the Hacker Ethos (1969–1973)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-133",
+      "quote": "* **Do one thing, and do it well.** A program should be a small, sharp tool.",
+      "section": "Unix and the Hacker Ethos (1969–1973)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-134",
+      "quote": "* **Build tools that work together.** Write programs that can be *combined*, piping the output of one into the input of another.",
+      "section": "Unix and the Hacker Ethos (1969–1973)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-135",
+      "quote": "* **Text is universal.** Represent everything as plain text, so any tool can read any other tool's output.",
+      "section": "Unix and the Hacker Ethos (1969–1973)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-136",
+      "quote": "The **pipe** — the `|` operator that connects the output of one program to the input of another — was added in **1973** by **Doug McIlroy**, and it is arguably the single most important idea in the design: it is the “level of indirection” made concrete.",
+      "section": "Unix and the Hacker Ethos (1969–1973)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-137",
+      "quote": "You do not need to know what the two programs do to each other; you only need to know they share a *vocabulary* (text) and a *contract* (one reads stdin, the other writes stdout).",
+      "section": "Unix and the Hacker Ethos (1969–1973)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-138",
+      "quote": "This is composition, and composition is the entire game \\cite{unix_ts}.",
+      "section": "Unix and the Hacker Ethos (1969–1973)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-139",
+      "quote": "Unix began in a language called **B** (1969, Thompson's own invention, a tiny precursor).",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-140",
+      "quote": "In **1972**, **Dennis Ritchie** extended B into **C**, and in **1973** he and Thompson did something that had never been done: they **rewrote the operating system in the very language the operating system was compiling** \\cite{unix_ts}.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-141",
+      "quote": "Before C, an operating system was written in the machine's own assembly language, which meant it was *locked to one machine*; to run it on a different computer you had to rewrite it from scratch.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-142",
+      "quote": "After C, the Unix kernel was **portable**: compile the same C source on a different machine and you get a working Unix for that machine.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-143",
+      "quote": "This is a quiet, enormous deal, and it is worth stating plainly, because it is the *direct* ancestor of everything about modern software, including AI.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-144",
+      "quote": "**C made software relocatable.** It is the reason a “library” can be built once and used on a thousand machines.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-145",
+      "quote": "It is the reason the next 50 years of software — the compilers, the databases, the browsers, the GPUs' drivers, the frameworks, and the machine-learning libraries (NumPy, cuDNN, PyTorch's kernels) — could be *shared* rather than *rewritten*.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-146",
+      "quote": "The entire modern software economy rests on the assumption that a piece of code, written once, will run on many machines.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-147",
+      "quote": "That assumption is a 1973 Bell Labs decision \\cite{unix_ts}.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-148",
+      "quote": "The psychology of C is the psychology of the Unix group in a nutshell: **pragmatism over elegance, and smallness over power.** C is famously *bare*: it has almost no error checking, no object system, no “safety” — it gives you exactly the machine and nothing more.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-149",
+      "quote": "Purists of other languages have long mocked it (“C is not a high-level language; it is *portable assembly*”), and the mocking is half right.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-150",
+      "quote": "But that bareness is the *feature*.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-151",
+      "quote": "C is “assembly that you can take with you,” and it is the reason the *same* low-level performance you get from writing to the metal is also the language you use to build the *infrastructure* on top of which everything else runs.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-152",
+      "quote": "When a machine-learning framework needs to squeeze the last flop out of a GPU, it descends to C and CUDA; the high-level Python on top is the *interface*, and C (and the assembly it lowers to) is the *work*.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-153",
+      "quote": "When asked, years later, to describe the feeling of writing Unix, the members of the Bell Labs group gave a one-word answer that has become a kind of password for the hacker identity: **“Glory.”** The joke was that the motivation for the work was not the paycheck (Bell Labs was a research lab, not a product company) and not the users (there were barely any), but the *satisfaction of the thing working*.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-154",
+      "quote": "Unix was built because building a clean, small, composable system was *fun*, and the fun was the point \\cite{bell_labs}.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-155",
+      "quote": "This is the seed of the **hacker ethic** — the belief that the intrinsic pleasure of making a clever, working thing is a legitimate, even primary, motivation — and it is a motivation that has powered most of the “open” side of software ever since.",
+      "section": "C: The Operating System, Rewritten to Be Portable (1972)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-156",
+      "quote": "A portable, powerful, well-liked operating system was, commercially, a *dangerous* thing for AT&T, because Bell Labs (part of AT&T) was not allowed to *sell* Unix.",
+      "section": "The Unix Wars, and the Idea of a Standard (1979–1990)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-157",
+      "quote": "Universities and vendors began shipping their own versions, and within a decade there were two incompatible families: the **Berkeley Software Distribution (BSD)**, out of the University of California, Berkeley (which added the socket interface for networking and the famous `csh` and `tcpdump`), and **System V**, AT&T's commercial line \\cite{unix_ts}.",
+      "section": "The Unix Wars, and the Idea of a Standard (1979–1990)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-158",
+      "quote": "They were *Unixes* in the cultural sense but *incompatible* in the technical one — a program written for one often would not run on the other.",
+      "section": "The Unix Wars, and the Idea of a Standard (1979–1990)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-159",
+      "quote": "The response was **POSIX** (Portable Operating System Interface), a set of standards published in the 1980s that defined a *common* Unix: the same system calls, the same command-line tools, the same shell semantics, on every machine \\cite{unix_ts}.",
+      "section": "The Unix Wars, and the Idea of a Standard (1979–1990)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-160",
+      "quote": "POSIX is one of the first big acts of *standardization* in software, and it is a small miracle that it worked at all, because standardization is the natural enemy of the Unix hacker ethos (which prefers to *invent* the next tool rather than agree on one).",
+      "section": "The Unix Wars, and the Idea of a Standard (1979–1990)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-161",
+      "quote": "The tension — **open invention versus agreed standard** — is the tension that runs through all of software, and it is a tension we will see again, and again, in the languages and in the open-source movement.",
+      "section": "The Unix Wars, and the Idea of a Standard (1979–1990)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-162",
+      "quote": "The “wars” were also, and this is the part that belongs in the psychology, a **war of identities**.",
+      "section": "The Unix Wars, and the Idea of a Standard (1979–1990)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-163",
+      "quote": "The BSD camp was *academic and free* (they gave the code away); the System V camp was *commercial and closed* (you bought a license).",
+      "section": "The Unix Wars, and the Idea of a Standard (1979–1990)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-164",
+      "quote": "The same two poles — *open and academic* versus *closed and commercial* — that produced the Unix wars went on to produce the entire modern map of the software industry, from the free-software movement to the proprietary empires, from open-source Linux to the walled gardens.",
+      "section": "The Unix Wars, and the Idea of a Standard (1979–1990)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-165",
+      "quote": "The operating system was the first battleground, and the battle never really ended; it just changed fronts.",
+      "section": "The Unix Wars, and the Idea of a Standard (1979–1990)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-166",
+      "quote": "In the early 1990s, some of the original Unix people at Bell Labs — Thompson, **Rob Pike**, and a few others — did what purists do when the original idea has, in their view, been corrupted by decades of add-ons: they **started over from scratch** \\cite{multics_plan9}.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-167",
+      "quote": "The result was **Plan 9 from Bell Labs** (often just “Plan 9,” a reference to Ed Wood's 1957 cult science-fiction film *Plan 9 from Outer Space*).",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-168",
+      "quote": "Plan 9 took the Unix idea — *“everything is a file”* — and pushed it to its logical extreme.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-169",
+      "quote": "In Unix, files, devices, and (later, via sockets) network connections were given a *file-like* interface.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-170",
+      "quote": "In Plan 9, *everything* was a file: a window on your screen, a device, a process, a connection to a machine across the network — all addressed the same way, through the same small set of operations, over a single, simple protocol called **9P** \\cite{plan9_9front}.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-171",
+      "quote": "The idea was radical **simplicity**: one idea, applied uniformly, instead of a dozen special cases.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-172",
+      "quote": "A program on one machine could open a file on another machine with exactly the same call it used to open a local file.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-173",
+      "quote": "Plan 9 was, like Multics before it, *ahead of its time* and never commercially successful \\cite{multics_plan9}.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-174",
+      "quote": "But it is beloved by exactly the kind of people who love it, and its descendants are alive today.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-175",
+      "quote": "The community that keeps it going (and a cleaner reimplementation called **9front**) maintains it as a working system and as a *philosophical statement* \\cite{plan9_9front}.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-176",
+      "quote": "And in **1995**, the same group began **Inferno**, a system with its own **virtual machine** and its own high-level language, **Limbo** (a safe, garbage-collected successor to C), aimed at *embedded* and *media* applications \\cite{plan9_9front}.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-177",
+      "quote": "Inferno's most visible (and, to its fans, most delightful) feature was its color: the whole user interface, the windows, the text, everything, was rendered in **blue** — a deliberate, almost aesthetic choice that made an Inferno machine unmistakable at a glance \\cite{plan9_9front}.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-178",
+      "quote": "The story of Plan 9/Inferno is a caution and a compliment at once.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-179",
+      "quote": "It is a **compliment** to the Unix people: they could, and did, take their own idea to its purest form and make it *work*, and in doing so they produced one of the most elegant operating-system designs ever conceived.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-180",
+      "quote": "It is a **caution** because it shows the cost of that purity: a system so clean and so “correct” that the rest of the world, busy building incompatible things, simply drove past it.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-181",
+      "quote": "The “one true operating system” is a beautiful idea and a doomed product, and the people who built it knew it; they built it anyway, because building it *was* the point.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-182",
+      "quote": "The “9” in Plan 9 is a Bell Labs in-joke, but not the one often told.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-183",
+      "quote": "The name is a reference to **Ed Wood's 1957 cult science-fiction film *Plan 9 from Outer Space*** — widely called one of the worst films ever made, which is exactly the self-deprecating register the Bell Labs group enjoyed \\cite{plan9_9front}.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-184",
+      "quote": "(It is *not* named for a hypothetical “ninth edition” of Unix: Research Unix had already reached an actual **9th edition** in 1986.) The number nine then recurs through the project as a running motif — the protocol is **9P**, the implementation **9front**, the tape format **9tape** — part humor, part a quiet cult around a single, lucky, arbitrary number.",
+      "section": "Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-185",
+      "quote": "By the mid-1970s, the microprocessor made a *whole computer* cheap enough to fit on a desk, and with the personal computer came the first *consumer* operating-system war.",
+      "section": "The Personal Computer and the Operating-System War (1974–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-186",
+      "quote": "The first popular microcomputer operating system was **CP/M** (Control Program/Monitor), written in 1974 by **Gary Kildall** at **Digital Research** for the 8-bit Intel 8080.",
+      "section": "CP/M: The First Microcomputer OS (1974)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-187",
+      "quote": "It was the dominant OS on many 8080/Z80 machines (on the Apple II it required a Z-80 card), and it defined, in miniature, the model that followed: a tiny kernel, a disk file system (the `.COM`, `.EXE`, `.SYS` file types still echo it), and a command line \\cite{chm}.",
+      "section": "CP/M: The First Microcomputer OS (1974)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-188",
+      "quote": "The story of CP/M meeting IBM is one of the great “what-ifs” of the industry.",
+      "section": "CP/M: The First Microcomputer OS (1974)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-189",
+      "quote": "In 1980, IBM was designing its first personal computer and needed an operating system.",
+      "section": "CP/M: The First Microcomputer OS (1974)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-190",
+      "quote": "It approached Digital Research about **CP/M-86**, a 16-bit version.",
+      "section": "CP/M: The First Microcomputer OS (1974)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-191",
+      "quote": "The famous (and fiercely disputed) anecdote has Kildall unavailable for the key meeting because he was water-skiing, and an IBM engineer walking away and instead talking to **Microsoft** \\cite{chm}.",
+      "section": "CP/M: The First Microcomputer OS (1974)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-192",
+      "quote": "Whether or not the water-skiing is literally true, the *consequence* is not in dispute: IBM licensed its PC's operating system from Microsoft, not from CP/M's author.",
+      "section": "CP/M: The First Microcomputer OS (1974)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-193",
+      "quote": "The result made Microsoft, and it made the next twenty years of computing.",
+      "section": "CP/M: The First Microcomputer OS (1974)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-194",
+      "quote": "What Microsoft sold to IBM was not, at first, even a serious operating system.",
+      "section": "MS-DOS and the IBM PC (1981)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-195",
+      "quote": "In 1980, **Tim Paterson** at the tiny firm **Seattle Computer Products** had written **86-DOS** — internally nicknamed **QDOS**, *Quick and Dirty Operating System* — a quick clone of CP/M ported to the new 16-bit Intel 8086, built in about six weeks and left thin and unfinished \\cite{chm}.",
+      "section": "MS-DOS and the IBM PC (1981)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-196",
+      "quote": "When the IBM deal came together in 1981, Microsoft **hired Paterson** and **bought 86-DOS** (version 1.10) for a reported **twenty-five thousand dollars**, reworked it, renamed it **MS-DOS**, and licensed it to IBM, which shipped it as **PC DOS** \\cite{chm}.",
+      "section": "MS-DOS and the IBM PC (1981)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-197",
+      "quote": "The **IBM PC**, released in August 1981, used it.",
+      "section": "MS-DOS and the IBM PC (1981)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-198",
+      "quote": "Two decisions in that contract shaped the industry.",
+      "section": "MS-DOS and the IBM PC (1981)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-199",
+      "quote": "First, Microsoft kept the *rights* to the OS and licensed it to *other* manufacturers as well, not just IBM — a small clause that turned MS-DOS into the OS of the *entire* PC market, not just IBM's.",
+      "section": "MS-DOS and the IBM PC (1981)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-200",
+      "quote": "Second, IBM did **not** patent its **BIOS** (the basic firmware that boots the machine), so others could *clean-room* reverse-engineer it and build “PC-compatible” clones, from Compaq up \\cite{chm}.",
+      "section": "MS-DOS and the IBM PC (1981)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-201",
+      "quote": "The result was the **Wintel** standard: Intel's CPU plus Microsoft's OS, cloned by everyone, the dominant platform of the personal-computer era, and the platform on which the first wave of consumer software — and, later, the first wave of desktop AI tools — was built \\cite{windows_ms}.",
+      "section": "MS-DOS and the IBM PC (1981)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-202",
+      "quote": "It is a detail that is easy to miss and worth stating, because it is the difference between a product and a *bet*: at the time Microsoft licensed DOS to IBM, **DOS was not the company's main product**.",
+      "section": "MS-DOS and the IBM PC (1981)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-203",
+      "quote": "Microsoft's first product was **Altair BASIC** (1975, written by Bill Gates and Paul Allen for the first personal computer kit), and the company's center of gravity was on software for the emerging PC as a *market*, not on the operating system.",
+      "section": "MS-DOS and the IBM PC (1981)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-204",
+      "quote": "DOS was a quick, cheap acquisition to *have* an OS to hand to IBM; it was meant to be the *hook*, not the *prize* \\cite{chm}.",
+      "section": "MS-DOS and the IBM PC (1981)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-205",
+      "quote": "The fact that the hook became the most profitable piece of software in the history of the world is one of the great ironies, and it is a pure function of *timing and positioning* rather than of technical superiority — MS-DOS was, by any engineering measure, a *worse* operating system than the alternatives on the market.",
+      "section": "MS-DOS and the IBM PC (1981)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-206",
+      "quote": "The most instructive operating-system failure of the PC era was not a failure of technology but a **failure of trust**.",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-207",
+      "quote": "In the mid-1980s, **IBM and Microsoft** decided to build a *real* 32-bit operating system *together*, a successor to DOS that could do preemptive multitasking, protected memory, and a proper graphical interface.",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-208",
+      "quote": "The result was **OS/2**, released in 1987 \\cite{windows_ms}.",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-209",
+      "quote": "For a time it looked like the future.",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-210",
+      "quote": "OS/2 was, technically, a *better* operating system than the DOS that was about to dominate: it was 32-bit, it had true preemptive multitasking, it had a real memory model, and its **Presentation Manager** GUI was ahead of its time \\cite{windows_ms}.",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-211",
+      "quote": "And then the two partners pulled in opposite directions.",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-212",
+      "quote": "**IBM** decided OS/2 was *the* future and went all-in on it, building the powerful **OS/2 Warp** (1994).",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-213",
+      "quote": "**Microsoft**, meanwhile, did something far simpler and far more effective: it bolted a graphical shell, **Windows 3.0** (1990), *on top of the existing DOS*, and let it run on the *huge* installed base of cheap PCs that OS/2 did not.",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-214",
+      "quote": "Windows was, engineering-wise, a patch on a 16-bit machine; but it was *cheap, familiar, and already installed*, and it won \\cite{windows_ms}.",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-215",
+      "quote": "The fallout was a long, bitter legal and commercial dispute that ran through the 1990s, and it is a case study in how a *technically superior* system loses to a *strategically positioned* one.",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-216",
+      "quote": "OS/2 Warp was a good, fast, solid operating system that sold to almost no one, and it is remembered mainly as the *near-miss* — the OS that, had its two creators pulled in the same direction, might have been the Windows we all use.",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-217",
+      "quote": "The lesson belongs in the psychology: the operating-system business was never decided by the *best* kernel.",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-218",
+      "quote": "It was decided by **distribution, backward compatibility, and the willingness of one partner to do something the other had not authorized**.",
+      "section": "OS/2: The Collaboration That Ate Itself (1987)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-219",
+      "quote": "**Windows 1.0** (1985) was a graphical shell over DOS; it was useful but fragile.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-220",
+      "quote": "**Windows 3.0** (1990) and **3.1** (1992) made it *good* — a real graphical environment, VGA color, the file manager and the programs people actually wanted — and they made the PC a mass-market machine \\cite{windows_ms}.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-221",
+      "quote": "But under the hood it was still DOS, 16-bit, and the engineers at Microsoft knew it was a *temporary* structure.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-222",
+      "quote": "So, in parallel, Microsoft built a *real* operating system from the ground up: **Windows NT** (1993), the “New Technology” kernel.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-223",
+      "quote": "The decisive move was hiring **Dave Cutler**, the architect of VMS at **Digital Equipment Corporation (DEC)**, and a small team of some of the best systems engineers in the industry, to write it \\cite{windows_ms}.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-224",
+      "quote": "NT was 32-bit, preemptive, portable across several CPUs, and *secure* in a way DOS and its Windows shell never were.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-225",
+      "quote": "It was the “serious” Microsoft operating system, and it is the direct ancestor of every modern Windows (and of the security model of much of the server world).",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-226",
+      "quote": "The strange, telling fact is that for a *decade* Microsoft ran **two** operating systems in parallel: the *popular* one (Windows 95, 98, ME — still DOS at its core) and the *serious* one (NT, 2000, XP — the real kernel).",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-227",
+      "quote": "**Windows 95** (1995) was the cultural event: the Start button, the graphical shell, plug-and-play, and a launch that was a genuine moment in consumer technology \\cite{windows_ms}.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-228",
+      "quote": "It was, technically, the *lesser* of the two; it won on *familiarity and price*.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-229",
+      "quote": "The two lines finally merged in **Windows XP** (2001), which put the *popular* Windows shell on the *serious* NT kernel.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-230",
+      "quote": "The modern Windows — and, through it, the platform that a huge share of the world's AI software was first written and tested on — is the *descendant of that 1993 bet by a small team* \\cite{windows_ms}.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-231",
+      "quote": "The operating-system war of the 1980s did not end with the Wintel standard; it simply moved *up* a layer, into the **browser**.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-232",
+      "quote": "In the mid-1990s, **Netscape** (Netscape Navigator) and **Microsoft** (Internet Explorer) fought a ferocious, industry-defining fight for the default browser, a fight that was really a fight for *the new front door to the computer* \\cite{windows_ms}.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-233",
+      "quote": "Microsoft's move — bundling the browser *with* the operating system — was so decisive, and so legally controversial, that it became the core of the first great antitrust case against a software company.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-234",
+      "quote": "The pattern is identical to the OS/2 story: the *better* product did not win; the product that was *already there*, that *cost nothing*, that the user did not have to think about, did.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-235",
+      "quote": "And the *idea* that was born in that war — that the *browser* is the new universal application platform, the new “operating system” of the internet — is the idea that made the *web* a place where software (including, eventually, web-based AI tools) could run *anywhere*, without installation.",
+      "section": "Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-236",
+      "quote": "Unix, Windows, and their war are the famous thread.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-237",
+      "quote": "But the space was crowded, and several *other* operating systems made contributions that are easy to skip and hard to replace.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-238",
+      "quote": "* **VAX/VMS (1977, DEC).** Digital Equipment Corporation's VMS was the “Swiss Army knife” of the 1980s: a powerful, preemptive, multi-user operating system with *excellent* security, virtual memory, and fault tolerance, running on the VAX minicomputer \\cite{chm}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-239",
+      "quote": "It was the default on a huge number of scientific and commercial sites, and its *security model* (mandatory access control, the idea that the *system* — not the user — enforces who can read what) influenced the security design of systems that followed.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-240",
+      "quote": "The psychology of VMS is the psychology of DEC: a company that built *machines* for the people who actually *used* computers, in a culture that prized *reliability* over *elegance* \\cite{chm}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-241",
+      "quote": "* **Mach (1985, CMU) and the microkernel.** At Carnegie Mellon, **Avie Tevanian** (and a team) built **Mach**, a **microkernel** — an operating system in which the *kernel* is deliberately *tiny* (only the absolute minimum: scheduling, basic memory, basic I/O), and everything else (file systems, device drivers, the network) runs *outside* it, in user space \\cite{mach}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-242",
+      "quote": "The argument was that a small, simple, *verifiable* core is easier to get *right* than a large, monolithic kernel, and that everything else can be *replaced* without touching the core.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-243",
+      "quote": "This set off a famous, decades-long debate — the **microkernel versus the monolithic kernel** argument — between the purists (who wanted the clean microkernel) and the pragmatists (who said the monolith is *faster* and the “clean” version is a *theoretical* nicety).",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-244",
+      "quote": "The debate was played out publicly, in print, in the mid-1980s, and it has never been fully settled \\cite{chm}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-245",
+      "quote": "Mach matters because it did not die in a journal.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-246",
+      "quote": "It became the *kernel* of **NeXTSTEP** (1989), the operating system of **Steve Jobs's** NeXT computer, which combined the Mach microkernel with a **BSD** user space and an **object-oriented** system built around **Objective-C** \\cite{chm}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-247",
+      "quote": "NeXTSTEP had a beautiful, consistent graphical interface (later **Aqua**) and a *modern* object model, and when Apple bought NeXT in 1997, NeXTSTEP became the foundation of **macOS** (and, with it, of **iOS**).",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-248",
+      "quote": "So the microkernel that a CMU team built as a *research* kernel is, today, the *basis of the operating system on a billion phones* \\cite{chm}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-249",
+      "quote": "The “pure” research idea won — not by being *chosen*, but by being *bought*.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-250",
+      "quote": "The **Tanenbaum–Torvalds debate** — **Andrew Tanenbaum** defending the **microkernel** (his teaching OS, MINIX) against **Linus Torvalds**, who chose a **monolithic** kernel for **Linux** — is one of the great public arguments in operating-systems history, and it is worth reading for what it reveals about how engineers *disagree*: after years of arguing that a small, clean core was the road to a *reliable* OS, Tanenbaum publicly dismissed Torvalds’s monolithic Linux as a *dead end* “not suitable for teaching,” while Torvalds and his camp retorted that a monolith is *simpler, faster, and actually buildable* \\cite{chm}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-251",
+      "quote": "Both sides were *brilliant* and *right*, about different things.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-252",
+      "quote": "The microkernel people were right that a small core is *easier to verify and harder to crash*; the monolith people were right that the *extra context switches* in a microkernel make it *slower* for the common case.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-253",
+      "quote": "The resolution that history arrived at is a *hybrid*: a *small* core, with the *most performance-critical* pieces (the file system, the network) *pulled back inside* it.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-254",
+      "quote": "Modern kernels — including the Linux kernel and the kernel of the Mac — are, in practice, *monoliths that learned a little from the microkernel*, and the argument is a perfect example of a *technical* debate that is really an *aesthetic* one: do you value *clean correctness* or *measured speed*?",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-255",
+      "quote": "* **GNU Hurd (1991, the free operating system).** **Richard Stallman**'s **GNU** project set out to build a *complete, free* operating system — one whose every part could be studied, copied, and modified.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-256",
+      "quote": "The kernel of that system, the **Hurd** (HURD, a name that is its own backronym), was built on top of Mach \\cite{gnu_hurd}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-257",
+      "quote": "The Hurd is famous for one thing above all: it has been *“almost done”* for decades.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-258",
+      "quote": "The phrase “the GNU Hurd will be done, and then it will be free” became a running, affectionate joke in the free-software world — *done* in the sense of “functioning,” but never in the sense of “the default thing people actually run” \\cite{gnu_hurd}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-259",
+      "quote": "The Hurd is a monument to an *idea* (a completely free, user-controlled system) that outran its *execution*, and it is the flag of the **free-software** movement, for which the *freedom* of the software is the point, not the *convenience* \\cite{gnu_hurd}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-260",
+      "quote": "* **Amiga OS (1985, Commodore).** The Amiga was the machine that *should have* eaten the world.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-261",
+      "quote": "Running on a Motorola 68000, its operating system offered, in **1985**, **preemptive multitasking**, a true **graphical user interface** (Intuition), and a multi-channel audio system, on a *consumer* machine that cost less than the business computers of the day \\cite{chm}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-262",
+      "quote": "It was the platform of a generation of computer musicians and demoscene artists, and its OS was, for its price class, *years* ahead.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-263",
+      "quote": "It failed for *business* reasons (Commodore's management, not the technology), and it is remembered as the great *what-if* of the home computer: a *real* multitasking graphical OS, in a living room, before the IBM PC had one \\cite{chm}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-264",
+      "quote": "founded 1990, and the media-oriented computer).** **Be Inc.** (founded in 1990 by **Jean-Louis Gassée**, who had been a senior executive at Apple) built an operating system explicitly aimed at *multimedia*: a fast, preemptive, threaded design that treated *media* — video, audio, the user interface — as first-class citizens, and that could run a 3-D “Media Transport” in real time \\cite{chm}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-265",
+      "quote": "Be never became a mass-market OS, and the company's assets were eventually acquired by **Palm, Inc.** (2001) primarily for its *people* and its *code*.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-266",
+      "quote": "BeOS is a reminder that the operating-system space was never a two-horse race; it was a *bazaar* of visions, each one a different answer to “what is a computer *for*?” — for Be, the answer was *media*, and for a moment it looked like the right answer for the coming web \\cite{chm}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-267",
+      "quote": "* **MINIX (1987, the teaching operating system).** **Andrew Tanenbaum** wrote **MINIX** with a deliberately different goal: not to be the *best* operating system, but to be the *smallest one you can actually teach* \\cite{minix3}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-268",
+      "quote": "It was small enough that a student could *read the entire kernel* in a semester, and he used it to argue his side of the microkernel debate (MINIX 3 became a true microkernel) \\cite{minix3}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-269",
+      "quote": "Its importance is *educational*: for a generation, MINIX was the *textbook* operating system, the one students actually *read* and *modified*, and the people who learned to think about kernels by reading MINIX went on to build the real ones \\cite{minix3}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-270",
+      "quote": "The most dramatic proof that an operating-system bug can *ground a spacecraft* is the **Mars Pathfinder** (1997).",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-271",
+      "quote": "The lander ran on **VxWorks**, a real-time operating system, and a few minutes after touchdown it *lost contact* — a failure that was traced, in a now-classic post-mortem, to a **priority-inversion** bug, a flaw in how the OS *ordered* the tasks it was running.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-272",
+      "quote": "A *low*-priority task held a lock that a *high*-priority task needed, and a *medium*-priority task jumped in line, so the high-priority task (which had to watch the lander's systems) was *starved* — a textbook real-time failure, caused by an *off-the-shelf* OS feature that had not been configured for the worst case \\cite{mars_pathfinder}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-273",
+      "quote": "The fix — a **priority-inheritance** mutex, a well-known, cheap, *textbook* correction — would have prevented it.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-274",
+      "quote": "The story is told in every real-time operating-system course as the ultimate argument for *boring, correct, conservative* operating-system design: the most sophisticated software on Mars was defeated not by the physics of Mars, but by a *scheduling bug in the software that managed the software*.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-275",
+      "quote": "And the rest, briefly, so the map is complete: **RISC OS** (Acorn, the clean, elegant OS of the ARM microcomputer); **QNX** (the *embedded* operating system that, quietly, runs in a large share of the cars, medical devices, and industrial controllers around the world — the OS you *never* see because it is *inside* things); **pSOS** (a real-time operating system for embedded systems, created around 1982 by Alfred Chao); **Xenix** (Microsoft's Unix, before the company found its destiny in Windows); and **SCO UNIX** (one of the many “Unixes” of the wars).",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-276",
+      "quote": "Each was a different answer to the same question, and each left a scar on the design of the systems that survived \\cite{chm}.",
+      "section": "The Other Operating Systems (the “and so on and so forth”)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-277",
+      "quote": "If the operating system is the *machine that manages itself*, the programming language is the *way a human talks to it*.",
+      "section": "Programming Languages: The Development of a Way of Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-278",
+      "quote": "And the history of programming languages is, more than any other part of software, a history of *ideas about thinking*: what is a *computation*?",
+      "section": "Programming Languages: The Development of a Way of Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-279",
+      "quote": "which abstractions are *honest* and which are *lies*?",
+      "section": "Programming Languages: The Development of a Way of Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-280",
+      "quote": "Each major language is a *thesis*, and the “winning” language of an era is the thesis that most people found *bearable*.",
+      "section": "Programming Languages: The Development of a Way of Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-281",
+      "quote": "The languages were not invented in the order we use them.",
+      "section": "Programming Languages: The Development of a Way of Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-282",
+      "quote": "They were invented in the order of *ambition*: first to *save the labor of coding* (FORTRAN), then to *express mathematics* (Lisp, ALGOL), then to *build systems* (C), then to *build objects* (Simula, Smalltalk, C++), then to *build anything* (the modern polyglot era).",
+      "section": "Programming Languages: The Development of a Way of Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-283",
+      "quote": "The first high-level language was not *elegant*; it was *economic*.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-284",
+      "quote": "In 1957, a team at IBM led by **John Backus** built **FORTRAN** (FORmula TRANslation), the first language that let a *scientist* write a calculation in a form close to the *mathematics* (a sum, a loop, a formula) instead of in machine code \\cite{fortran2}.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-285",
+      "quote": "The claim that sold it — that a FORTRAN program ran as fast as, or faster than, hand-tuned assembly, while taking a fraction of the time to *write* — was, for the first time, *credible* \\cite{fortran2}.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-286",
+      "quote": "FORTRAN is *still* the language of a huge amount of scientific and numerical computing; the *computational kernel* of much of modern numerical software is, literally, FORTRAN, wrapped in newer languages.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-287",
+      "quote": "In the same era, **Grace Hopper**'s group at the Navy was doing the other half of the revolution: *compilation* itself.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-288",
+      "quote": "Hopper's **A-0** system (1952) was the **first compiler** — a program that *translated* a high-level language into machine code automatically, instead of the programmer writing the machine code by hand \\cite{chm}.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-289",
+      "quote": "Hopper *coined the word “compiler”* and, more importantly, she *preached the idea* that programming should be *independent of the machine*: that a person should write for *the problem*, not for *this particular computer*.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-290",
+      "quote": "That is the entire philosophy of high-level programming in one sentence, and it is the reason we can write Python on a machine that did not exist when we learned it \\cite{chm}.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-291",
+      "quote": "Hopper's **FLOW-MATIC** (1959), a business language with an *English-like* syntax, became the basis of **COBOL** (1959), the language of *bookkeeping*, which — and this is a fact that surprises people — is *still* running a large share of the world's banking and insurance systems, half a century on \\cite{chm}.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-292",
+      "quote": "Grace Hopper is one of the great *translators* in the history of the field, in both senses.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-293",
+      "quote": "She built the *first compiler*, but she also *translated the idea of the computer* from “a machine for people who can read its guts” into “a tool for people who can state a problem” \\cite{chm}.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-294",
+      "quote": "Her insistence that the language should be *close to English* (“why should the computer speak a language only its builder understands?”) was a *sociological* insight as much as a technical one: the *limiting* resource was not the machine, it was the *number of people who could program it*, and the only way to get more programmers was to make the language *bearable to non-specialists* \\cite{chm}.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-295",
+      "quote": "That insight — *that the value of a language is the size of the set of people who can use it* — is the insight behind BASIC, Python, and, in a different way, behind the *natural-language* interface of modern AI.",
+      "section": "The First Languages (1950s): Saving the Labor of Coding",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-296",
+      "quote": "In **1958**, **John McCarthy** at MIT invented **Lisp** (LISt Processing), and it was a *different kind of thing* from FORTRAN.",
+      "section": "Lisp (1958): The Language That Treated Computation as Mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-297",
+      "quote": "Where FORTRAN was a language for *numbers*, Lisp was a language for *symbols* and *functions*, built directly on the **lambda calculus** of **Alonzo Church** (1930s) — the mathematical theory of *functions as first-class objects*.",
+      "section": "Lisp (1958): The Language That Treated Computation as Mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-298",
+      "quote": "In Lisp, a *function* is a *value*: you can pass it around, return it, build new functions out of old ones.",
+      "section": "Lisp (1958): The Language That Treated Computation as Mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-299",
+      "quote": "The whole language is, essentially, a small *calculus*, and it was the first language that treated *computation itself* as a *mathematical object* to be manipulated \\cite{lispworks}.",
+      "section": "Lisp (1958): The Language That Treated Computation as Mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-300",
+      "quote": "Lisp invented or popularized a stack of ideas that are now *everywhere* but whose origins are in 1958: the **automatic garbage collector** (1959, the memory that cleans itself up, so the programmer never has to free it), the *first-class function*, the *recursive* definition, and the *dynamic* type \\cite{lispworks}.",
+      "section": "Lisp (1958): The Language That Treated Computation as Mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-301",
+      "quote": "And it created a *culture*: the MIT **Lisp machine** (a computer designed from the ground up to run Lisp) and the **hacker** subculture that grew up around it, for whom the *pleasure* of the language — its *elegance*, its *power*, its “way of thinking” — was the point, not the *application*.",
+      "section": "Lisp (1958): The Language That Treated Computation as Mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-302",
+      "quote": "The psychology of Lisp is the psychology of **McCarthy**, who was, by all accounts, *magnificent and difficult*.",
+      "section": "Lisp (1958): The Language That Treated Computation as Mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-303",
+      "quote": "In 1959, in an essay, he predicted that *within a decade* computers would be as intelligent as human beings — a prediction that was *spectacularly* wrong about the *date* and has, in a sense, been *spectacularly* right about the *event*, some six decades later \\cite{lispworks}.",
+      "section": "Lisp (1958): The Language That Treated Computation as Mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-304",
+      "quote": "The *idea* that a machine could *think*, stated by a *logician* in 1959 as a *matter of course* (“of course we will, it is just engineering”), is one of the founding intuitions of artificial intelligence, and Lisp is the language in which that intuition was first *programmed*.",
+      "section": "Lisp (1958): The Language That Treated Computation as Mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-305",
+      "quote": "If Lisp was the *mathematical* language, **ALGOL** (ALGOrithmic Language: ALGOL 58, the **ALGOL 60** report of 1960, and its revised report of 1963) was the *structured* one \\cite{algol60}.",
+      "section": "ALGOL (1958/1960): The Language That Taught Us *Structure*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-306",
+      "quote": "ALGOL was designed by a committee with a *deliberate* goal: to make programming *readable* and *correct*, by giving the language a real *structure*.",
+      "section": "ALGOL (1958/1960): The Language That Taught Us *Structure*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-307",
+      "quote": "It introduced, or consolidated, the ideas that every “structured” language since has inherited: **block structure** (a program is a tree of *blocks*, each with its own *scope*), **lexical scoping** (a variable is visible in exactly the block where it is defined and the blocks nested inside it), and **structured control** (`if`, `for`, `while`) \\cite{algol60}.",
+      "section": "ALGOL (1958/1960): The Language That Taught Us *Structure*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-308",
+      "quote": "ALGOL's deepest contribution was a *theorem*, proved in 1966 by **Böhm and Jacopini**: that *any* computable program can be written using just *three* control structures — *sequence*, *if*, and *while* — with no `goto` at all \\cite{goto_harmful}.",
+      "section": "ALGOL (1958/1960): The Language That Taught Us *Structure*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-309",
+      "quote": "That result turned the *style* of programming into a *mathematical* question, and it set the stage for the most famous essay in the history of software.",
+      "section": "ALGOL (1958/1960): The Language That Taught Us *Structure*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-310",
+      "quote": "In **1968**, **Edsger Dijkstra** wrote, to a friend, the letter that became **“Go to Statement Considered Harmful”** \\cite{goto_harmful}.",
+      "section": "ALGOL (1958/1960): The Language That Taught Us *Structure*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-311",
+      "quote": "The argument was *small* and *enormous* at once: the `goto` (the unconditional jump, the “go to line 47”) was not merely *ugly*; it was *dangerous*, because it let a program's *control flow* become a *spaghetti* that no human could *follow*, and a program no human can follow is a program no human can *prove correct*.",
+      "section": "ALGOL (1958/1960): The Language That Taught Us *Structure*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-312",
+      "quote": "The essay is a *rhetorical* masterpiece as much as a technical one, and it did what very few pieces of writing in computing have done: it *changed the way a whole profession thought about itself*, by turning *style* into *professionalism* \\cite{goto_harmful}.",
+      "section": "ALGOL (1958/1960): The Language That Taught Us *Structure*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-313",
+      "quote": "“Structured programming” — the idea that a program should have a *clean, provable* structure — is a direct child of that letter, and the *idea* that *the readability and correctness of the code is a first-class engineering concern* (not a cosmetic one) is one of the lasting contributions of the 1960s to the discipline.",
+      "section": "ALGOL (1958/1960): The Language That Taught Us *Structure*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-314",
+      "quote": "It is also, quietly, an *AI* contribution: the insistence that a system be *understandable by a human* is the same insistence that, decades later, would drive the demand for *interpretable* and *explainable* models.",
+      "section": "ALGOL (1958/1960): The Language That Taught Us *Structure*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-315",
+      "quote": "We met **C** (1972, Ritchie) in the Unix story; it is the *systems* language, the “portable assembly,” the language in which the operating systems, the compilers, the databases, and the *low-level* half of everything is built.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-316",
+      "quote": "Its standards (C89 in 1989, then C99, C11, C17, and C23) froze and extended the language that a *whole industry* had been building on \\cite{unix_ts}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-317",
+      "quote": "**C++** is the *argument* about what C should have been.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-318",
+      "quote": "**Bjarne Stroustrup** at Bell Labs began in 1979 with “C with Classes” — the idea of taking the *bare* C and adding an *object model* on top of it — and it grew, over the 1980s and 1990s, into a *large* language that tries to be *everything at once*: low-level *and* object-oriented *and* generic, systems *and* application \\cite{isocpp}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-319",
+      "quote": "C++ is *contested* in a way that few languages are — its *power* is its *complexity*, and its *complexity* is its *bug* — but it is also *indispensable*: it is the language of the *game engines*, the *browsers*, the *databases*, and a *very large* share of the *high-performance* half of machine learning (the C++ and CUDA kernels under the Python frameworks) \\cite{isocpp}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-320",
+      "quote": "The psychology of C++ is the psychology of *refusal to choose*: it is the language for people who are not willing to give up *either* the *control* of C *or* the *convenience* of the high-level, and who are willing to pay, in *complexity*, for having both.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-321",
+      "quote": "* **Pascal (1970, Niklaus Wirth).** Wirth designed **Pascal** as a *teaching* language, and he *succeeded* so well that it became *the* language of the first generation of students for a decade \\cite{pascal}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-322",
+      "quote": "Pascal took ALGOL's *structure* and made it *pedagogical*: a small, clean, *honest* language in which a student could see *exactly* what the program does.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-323",
+      "quote": "Wirth went on to **Modula** and **Oberon**, languages that pushed the *modular*, *small* design further, and his influence is the influence of the *idea* that a language should be *small enough to be understood* \\cite{pascal}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-324",
+      "quote": "* **Simula (1967, Norway): the first object-oriented language.** In Norway, **Ole-Johan Dahl** and **Kristen Nygaard** built **Simula** (first Simula 67) to *simulate* real-world systems, and to do so they invented the *object*: a *thing* that bundles its *data* and its *behavior* together, and the *class* (a *template* for making many such things), and *inheritance* (one class *extends* another) \\cite{chm}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-325",
+      "quote": "**Simula is the first object-oriented language**, and the *object* — the idea that the basic unit of a program is a *self-contained thing* that *hides* its innards and *shows* an interface — is the single most *diffused* idea in the history of programming languages.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-326",
+      "quote": "Every `class` in every language since, and the whole *object-oriented* paradigm (Java, C++, Python, Swift), is a *descendant* of Simula 67.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-327",
+      "quote": "That a *simulation* language, built to model *queues and factories*, gave the world the *object* is one of the great examples of an *idea escaping its intended use*.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-328",
+      "quote": "* **Smalltalk (1972, Alan Kay) and the Dynabook: the Operating System for the *Person*.** This is the single most important *side* story in the history of software for our purposes, because it is where the *computer stopped being a machine for operators and became a machine for people*.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-329",
+      "quote": "At **Xerox PARC**, **Alan Kay** and his team built **Smalltalk** (1972), a *pure* object-oriented language (dynamically typed, fully object-based, *no* globals), and — more importantly — they built it *on a machine with a mouse and a screen*.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-330",
+      "quote": "The **Xerox Alto** (1973), the *first* computer with a *graphical user interface* and a *mouse*, ran Smalltalk, and it is the *direct ancestor* of the Apple Lisa (1983) and the **Macintosh** (1984) \\cite{smalltalk}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-331",
+      "quote": "Kay's *vision* for why he was doing all this was not “faster calculations”; it was the **Dynabook** — a concept he articulated in the late 1960s and refined for decades: a *personal* computer, *light* enough to carry, *powerful* enough to *teach a child*, with a *graphical* interface, that could be a *tool for thinking*, for *writing*, for *learning* \\cite{smalltalk}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-332",
+      "quote": "The Dynabook is, in effect, a *1968 sketch of the tablet and the laptop and the “personal computer” and the “AI tutor” all at once*.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-333",
+      "quote": "It is a sketch of *exactly the kind of machine* that a modern AI assistant is trying to be: a *personal*, *graphical*, *learning* tool, *for a person*, *at the desktop*.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-334",
+      "quote": "The fact that the *idea* of the personal, graphical, learning computer was *stated, clearly, in 1968* — and that the *technology* (the Alto, Smalltalk) to build it *existed* in 1973 — and that it *took twenty more years* to become a product (the Mac, in 1984) is one of the great *gap* stories in the history of the field: the *idea* was there, the *prototype* was there, and the *market* was not \\cite{smalltalk}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-335",
+      "quote": "Xerox PARC is the *Rosetta Stone* of the “ahead of its time” story.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-336",
+      "quote": "In the 1970s it produced, in *working form*, the *mouse*, the *graphical user interface*, *Ethernet* (the network), *laser printing*, and *object-oriented programming* (Smalltalk) — and Xerox, the company that owned it, *never shipped most of them as products* \\cite{chm}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-337",
+      "quote": "The *ideas* escaped, and they were *adopted* by Apple (the GUI, via the Alto, via Jobs's visit in 1979) and by the *networking* world (Ethernet) and by *every* object-oriented language since (Smalltalk).",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-338",
+      "quote": "PARC is the purest example of a *research* institution producing *product-defining* ideas that its *owner* could not *monetize*, and of *ideas* being worth more than the *products* that fail to carry them.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-339",
+      "quote": "It is also, quietly, an *AI* story: the *personal computer* that PARC imagined — a *learning*, *graphical*, *personal* tool — is the *form factor* in which modern AI *lives*.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-340",
+      "quote": "* **ML, Haskell, and the pure-functional camp (1973–1990).** **ML** (1973, from the Lisp world, but *typed*) and its descendants (**Standard ML**, **OCaml**, **F#**) were built around a single, *powerful* idea: **type inference**.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-341",
+      "quote": "In 1978, **Robin Milner** (with **Hindley**) showed that a program's *types* could be *figured out automatically* by the compiler, so the programmer *did not have to write them* — a *proof* about the program, done *for you*, at *compile time* \\cite{haskell}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-342",
+      "quote": "**Haskell** (1990) pushed the *functional* idea to its *pure* limit: a *lazy* (compute only what you need, when you need it), *pure* (no side effects, the same input always gives the same output) language, in which a *function* is the *only* thing and a *program* is a *mathematical expression* \\cite{haskell}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-343",
+      "quote": "Haskell is named for **Haskell Curry**, the logician whose work on *combinators* (and the **Curry–Howard correspondence**, the deep link between *programs* and *proofs*) is the *mathematical* foundation of the whole *typed-functional* tradition \\cite{haskell}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-344",
+      "quote": "The *psychology* of this camp is the *psychology of the mathematician*: the *purity* is the *point*; a *side effect* is a *sin*; a *proof* is a *program*; and the *beauty* of the *type system* is a *moral* good.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-345",
+      "quote": "It is the *idealist* pole of the language world, in permanent, productive *tension* with the *pragmatist* pole of C and C++.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-346",
+      "quote": "* **Prolog (1972, Marseille): the language of *logic*.** In France, **Alain Colmerauer** (with Philippe Roussel) invented **Prolog** (PROgramming in LOGic), a language in which you do not *tell* the computer *how* to do something; you *tell* it *what is true* (a set of *facts* and *rules*), and you *ask* it a *question*, and it *works backward* (by *logic*, by *unification* and *backtracking*) to *find* an answer \\cite{prolog}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-347",
+      "quote": "Prolog was the *flagship* language of the *symbolic AI* and the *expert systems* of the 1980s, and it is the language that *most directly* embodies the *old* idea — the *Leibniz*, the *Llull*, the *Boole* idea, the idea that *reasoning* is *symbol manipulation* — that this whole course has been tracing.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-348",
+      "quote": "It *lost* the argument to *statistical* methods (to the neural networks, to the “bitter lesson”), but it did not *die*; it lives on in *database* query languages, in *logic* programming, and in the *neuro-symbolic* attempt to bring *structure* back into *learning* systems \\cite{prolog}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-349",
+      "quote": "* **APL (1958, Kenneth Iverson): the language of a *single notation*.** **APL** (A Programming Language) was built, by **Kenneth Iverson**, around a *single, dense, symbolic notation* — a *keyboard* of special *symbols* (the “APL keyboard”) in which an *entire* calculation could be written on *one line* \\cite{apl_j}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-350",
+      "quote": "APL is *unbearable* to most people (the notation is a *barrier*) and *extraordinary* to its fans (the *conciseness* is a *superpower*), and it is the *purest* example of a language as a *notational system*: the *whole* of the language is a *notation*, and the *value* of the language *is* the *value* of the notation.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-351",
+      "quote": "Its descendants (**J**, and the *vector* operations that became *NumPy*) carried the *idea* — *compute on whole arrays at once, not element by element* — into the *center* of modern numerical computing \\cite{apl_j}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-352",
+      "quote": "* **BASIC (1964, Dartmouth): the language *for everyone*.** **John Kemeny** and **Thomas Kurtz** at **Dartmouth College** invented **BASIC** (Beginner's All-purpose Symbolic Instruction Code) with an *explicit, almost *moral* goal: to *democratize* programming, to make it *available to people who were not specialists*, to put a *computer* in the hands of the *general student* \\cite{dartmouth}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-353",
+      "quote": "BASIC is *small*, *simple*, and *forgiving*, and it was the *first* language of a *huge* number of people, from the *Altair* (where **Altair BASIC**, written by Gates and Allen, became Microsoft's *first* product) to the *home computers* of the 1980s \\cite{dartmouth}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-354",
+      "quote": "The *psychology* of BASIC is the *psychology of the teacher*: the *goal* is not *power*, it is *access*; the *measure* of the language is not *what it can do*, it is *how many people can use it*.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-355",
+      "quote": "That *access* philosophy — *that the *value* of a tool is the *number of people* who can use it* — is the *same* philosophy that, decades later, made *Python* the *language* of *machine learning*, and it is a philosophy that *runs directly* into the *natural-language* interface of *modern AI*: the *end goal* of the *access* project is a *computer* that *anyone* can *talk* to.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-356",
+      "quote": "* **SQL (1974) and the relational model (1970): the language of *data*.** In 1970, **Edgar Codd** at IBM published **“A Relational Model of Data for Large Shared Data Banks”** \\cite{codd1970}, which proposed that *all* your data should be stored in *tables* (*relations*), and that you should *query* it with a *logical* language, not with a *program* that *navigates* the *storage*.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-357",
+      "quote": "The language that came out of that idea, **SQL** (Structured Query Language, from IBM's SEQUEL, 1974), is the *language* of *databases*, and the *relational model* is the *model* on which *almost all* modern *data storage* is built \\cite{codd1970}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-358",
+      "quote": "Codd won the **Turing Award** in 1981 for the *model*.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-359",
+      "quote": "The *psychology* of the relational revolution is the *psychology of the *separation* of *what you want* (the *query*) from *how it is stored* (the *implementation*) — the *same* “level of indirection” that runs through the *whole* of software, applied to *data*.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-360",
+      "quote": "And it is *directly* *AI*-relevant: the *relational* idea — *a clean, logical view of the data, independent of the messy storage* — is the *ancestor* of the *vector database* and the *semantic* *index* that a modern retrieval system builds.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-361",
+      "quote": "* **Ada (1980): the language with a *mandate*.** The United States Department of Defense, needing a *single*, *reliable*, *maintainable* language for *safety-critical* systems (the sort of software that flies a plane or aims a missile), commissioned a *language*, and it was named — in a *deliberate* act of *recognition* — after **Ada Lovelace** \\cite{chm}.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-362",
+      "quote": "Ada is *boring* in the *best* sense: *explicit*, *checked*, *maintainable*, *safe*.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-363",
+      "quote": "It is the *language* of the *argument* that *software* can be an *engineering* *discipline* (with *standards*, *certification*, *liability*), not just a *craft*, and it is the *flag* of the *software-engineering* *side* of the *field*.",
+      "section": "C, C++, and the Systems Languages (1970s)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-364",
+      "quote": "From the 1990s on, the *number* of *languages* *exploded*, and the *question* changed from “*which* language is *right*?” to “*which* language is *right for this job*?” — the *polyglot* era, in which a single *system* is built from *several* languages, each doing *what it is best at*.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-365",
+      "quote": "* **Java (1995, Sun).** **James Gosling**'s **Java** was born from the **“Green Project”** (a *home-appliance* computer, code-named **“Oak”**) and re-tooled for the *web* as **“Write Once, Run Anywhere”** \\cite{java_oracle}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-366",
+      "quote": "Its *key* idea is the **JVM** (Java Virtual Machine): a *portable* *machine* that *runs* the *compiled* *Java* *bytecode*, so the *same* *program* runs on *any* *platform* that has the *JVM* \\cite{java_oracle}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-367",
+      "quote": "Java *defined* the *enterprise* *web* of the 2000s, and its *idea* — *a portable runtime, a managed memory, a language that is *safe* by *default* — is the *idea* behind a *whole* family of *managed* languages.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-368",
+      "quote": "* **Python (1991, Guido van Rossum): the language that *won* machine learning.** **Python** was designed, by **Guido van Rossum**, for *readability* and *pleasure*: “*Readability counts*,” “*Beautiful is better than ugly*” — the language is *explicit* in its *aesthetics*, and its *brevity* means a *program* is *shorter* and *clearer* than the *same* program in *Java* or *C++* \\cite{python}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-369",
+      "quote": "Two facts made Python the *language* of *modern AI*.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-370",
+      "quote": "First, its *readability* and its *batteries-included* culture made it the *first* language a *researcher* (a *scientist*, not a *systems* *programmer*) could *use* to *prototype* an *idea* in an *afternoon* \\cite{python}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-371",
+      "quote": "Second, the *entire* *ecosystem* of *machine-learning* tools — **NumPy**, **SciPy**, **scikit-learn**, **TensorFlow**, **PyTorch** — was *built in Python*, *on top of* C/C++/CUDA *kernels*, so that the *researcher* writes *Python* and the *machine* runs *C* \\cite{python}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-372",
+      "quote": "The *Zen of Python* (**PEP 20**, 2004) is a *poem* of *principles* that *summarizes* the *philosophy* of the language, and the *most* *quoted* *line* — “*There should be one— and preferably only one —obvious way to do it*” — is the *Unix* *philosophy* (*do* one thing, *do* it well, *do* it *one* *way*) *reapplied* to a *language* \\cite{python_zen}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-373",
+      "quote": "Python has a *rich* *culture* of *public* *discussion* (the *mailing* *lists*, the *PEPs*, the *benevolent* *dictator*), and from that culture came a *word* that is now *used* in *every* *engineering* *shop* in the *world*: **“bikeshedding”** \\cite{python}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-374",
+      "quote": "The *joke* is that a *committee* will *spend* *hours* *debating* the *color* of the *bicycle* *shed* (the *trivial*, *visible*, *low-stakes* *decision*) while *ignoring* the *elephant* in the *room* (the *important*, *invisible*, *high-stakes* *one*).",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-375",
+      "quote": "The *word* captures a *real* *failure* *mode* of *software* *teams* — that *effort* *flows* to the *easy*, *concrete*, *arguable* *decision*, not to the *hard*, *abstract*, *important* *one* — and it is a *perfect* *metaphor* for the *history* of *software* itself: the *industry* *spends* *enormous* *effort* on the *surface* (the *GUI*, the *syntax*, the *brand*) and *relatively* *little* on the *deep* *structure* (the *kernel*, the *model*, the *proof*).",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-376",
+      "quote": "* **JavaScript (1995, Brendan Eich): the language written in *ten days*.** **Brendan Eich** was asked, at **Netscape**, to put a *scripting* language *inside* the *browser*, and he *built* the *first* version of **JavaScript** (originally **“LiveScript”**) in *ten days* in *May 1995* \\cite{javascript_mdn}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-377",
+      "quote": "It was, by *deliberate* *choice*, *loose* (dynamically *typed*, *forgiving*, *quick* to *write*), and it was *rebranded* **“JavaScript”** (the *Java* *name*, for *marketing*, though the *languages* are *unrelated*) \\cite{javascript_mdn}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-378",
+      "quote": "The *irony* is *total*: a *ten-day*, *compromise*, *stopgap* language, built to *ship* a *feature*, became the *most* *deployed* programming language in the *history* of the *world*, the *language* of the *entire* *client* *side* of the *web*, and, through the **Node.js** runtime (2009), the *language* of a *huge* share of the *server* *side* as *well* \\cite{javascript_mdn}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-379",
+      "quote": "JavaScript is the *purest* *example* of a *language* *winning* by *distribution* rather than by *design*: it is not the *best* language, by *most* *measures*, but it is the *language that is *everywhere*, and *everywhere* is a *feature*.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-380",
+      "quote": "* **C# (2000, Microsoft).** **Anders Hejlsberg** (the creator of *Turbo Pascal* and *Delphi*) built **C#** for Microsoft's **.NET** platform as a *synthesis*: the *syntax* and *feel* of *C++*, the *managed* *memory* and *type safety* of *Java*, the *object model* of *both* \\cite{csharp_ms}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-381",
+      "quote": "It is the *language* of the *enterprise* and of the **.NET** ecosystem, and its *design* is a *case study* in *synthesis*: it is a language that *chose* the *best* *idea* from *each* of its *rivals* and *combined* them, and it is a *reminder* that the *history* of *languages* is a *history* of *synthesis* as *much* as of *invention*.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-382",
+      "quote": "* **Go (2009, Google): the *boring* language that *won*.** In 2009, **Robert Griesemer**, **Rob Pike**, and **Ken Thompson** (yes, *Ken Thompson*, the *co-creator* of *Unix* and *Plan 9*) designed **Go** at Google \\cite{go_lang}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-383",
+      "quote": "Its *goals* were *deliberately* *anti-clever*: *fast* to *compile*, *simple* to *read*, *built-in* *concurrency* (the *goroutine*, a *lightweight* *thread*), and *no* *hidden* *complexity* \\cite{go_lang}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-384",
+      "quote": "Go is *famous* for being *boring*, and it is *famous* for being *enormously* *successful*: it is the *language* of much of the *infrastructure* of the *cloud*, of *Docker*, of *Kubernetes*, and of a *huge* share of the *systems* that *run* the *data centers* in which *large* *models* are *trained* \\cite{go_lang}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-385",
+      "quote": "The *psychology* of Go is the *psychology* of the *senior* *engineer* who has *seen* *enough* *clever* *languages* to *prefer* the *boring* one: *the* *best* *language* is the *one* *the whole team can read*, and *the* *best* *tool* is the *one* *that gets out of the way*.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-386",
+      "quote": "* **Rust (2010–2015, Graydon Hoare, Mozilla): the language that *solves* the *crash*.** **Rust** was born from a *specific* *obsession*: **memory safety**.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-387",
+      "quote": "A *very large* share of the *world's* *critical* *security* *vulnerabilities* come from *memory* *errors* (the *buffer* *overflow*, the *use-after-free*, the *dangling* *pointer*), and those errors live in the *low-level* languages (C, C++) that *build* the *infrastructure* \\cite{rust_lang}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-388",
+      "quote": "Rust's answer is the **borrow checker**: a *compile-time* *proof* that *no* memory is *used* after it is *freed* and that *no* two things *write* to the *same* memory at the *same* time, *without* a *garbage* *collector* and *without* giving up *speed* \\cite{rust_lang}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-389",
+      "quote": "Rust *refuses to compile* a program that might *crash* or *leak*, which is a *radical* *idea* (a *language* that *says no* to *your* *code*) and a *revolutionary* one (a *systems* language that is *memory-safe* by *construction*).",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-390",
+      "quote": "It reached **1.0** in 2015, and it is now the *language* that *governments* and *operating-system* *projects* (including a *large* part of the *modernization* of *Windows* and *Linux* *drivers*) are *choosing* for *new* *safety-critical* *systems* \\cite{rust_lang}.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-391",
+      "quote": "The *psychology* of Rust is the *psychology* of the *safety* *engineer*: the *goal* is not *expressiveness*, it is *the absence of a whole class of catastrophic failures*, and the *price* (a *steep* *learning* *curve*, a *compiler* that *argues* with you) is *worth it*.",
+      "section": "The Modern Languages (1990s–now): The Polyglot Era",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-392",
+      "quote": "A language and an operating system are not *enough* to build a *large* *system*.",
+      "section": "The Toolchain: The Software That Builds the Software",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-393",
+      "quote": "You also need the *tools* that let a *team* *write*, *build*, *test*, and *maintain* *software* that is *complex* *enough* to be *useful*.",
+      "section": "The Toolchain: The Software That Builds the Software",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-394",
+      "quote": "These tools are the *most* *underrated* *part* of the *stack*, and they are the *part* that is *most* *directly* *responsible* for making *large* *software* (and therefore *AI*) *possible* at *all*.",
+      "section": "The Toolchain: The Software That Builds the Software",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-395",
+      "quote": "We met the *compiler* with *Hopper* (1952).",
+      "section": "The Compiler, the Assembler, and the “Translator”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-396",
+      "quote": "The *assembler* (the *IBM 701* *assembler*, 1952) came *around* the *same* *time*, and it is the *first* *translator*: it *maps* *short* *mnemonics* (`ADD`, `MOV`) to *machine* *code*, so the *programmer* does not have to *write* *binary* \\cite{chm}.",
+      "section": "The Compiler, the Assembler, and the “Translator”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-397",
+      "quote": "The *compiler* *generalized* the *idea*: *translate* a *whole* *language*, not just a *shorthand*.",
+      "section": "The Compiler, the Assembler, and the “Translator”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-398",
+      "quote": "And the *optimizing* *compiler* (the *FORTRAN* *optimizer*, the *register* *allocator*, the *peephole* *optimizer*) *added* the *third* *idea*: that the *translator* can *make* the *program* *faster* than the *human* could *have* *written* it *by hand*, by *rearranging* and *simplifying* the *code* \\cite{fortran2}.",
+      "section": "The Compiler, the Assembler, and the “Translator”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-399",
+      "quote": "The *compiler* is, in *effect*, the *first* *AI* *in* the *stack*: a *program* that *reads* a *human's* *intent* (the *source*) and *produces* a *different*, *better*, *machine* *form* of it, *automatically*.",
+      "section": "The Compiler, the Assembler, and the “Translator”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-400",
+      "quote": "The *entire* *idea* of a *model* that *transforms* an *input* into a *better* *output* is *prefigured* in the *compiler*.",
+      "section": "The Compiler, the Assembler, and the “Translator”",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-401",
+      "quote": "In **1976**, **Stuart Feldman** at Bell Labs wrote **`make`**, a *tool* that *answers* the *question* “*what* *needs* to be *rebuilt*?” \\cite{gnu_make}.",
+      "section": "`make`: The “Build” That Runs Itself (1976)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-402",
+      "quote": "A *large* program is a *graph* of *dependencies*: file *C* depends on file *B*, which depends on file *A*.",
+      "section": "`make`: The “Build” That Runs Itself (1976)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-403",
+      "quote": "When you *change* *A*, you must *rebuild* *B* and *C* (but *not* the *fifty* other files that *do not* depend on *A*).",
+      "section": "`make`: The “Build” That Runs Itself (1976)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-404",
+      "quote": "`make` reads a *description* of that *graph* (a *Makefile*) and *works out*, *automatically*, the *minimal* set of *things* to *rebuild*, and *builds* them *in* the *right* *order* \\cite{gnu_make}.",
+      "section": "`make`: The “Build” That Runs Itself (1976)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-405",
+      "quote": "It is a *small* *program*, and it is *one* of the *most* *important* *tools* in the *history* of *software*, because it is the *first* *tool* that *treated* the *build* *process* as a *computable* *problem* (a *graph* *traversal*) rather than a *manual* *chore*.",
+      "section": "`make`: The “Build” That Runs Itself (1976)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-406",
+      "quote": "Every *build* *system* since (**CMake**, **Bazel**, the *build* systems of *TensorFlow* and *PyTorch*) is a *descendant* of `make`, and the *idea* — *the* *build* is a *graph*, and the *graph* can be *solved* — is the *idea* that makes *building* a *large* *software* *system* (a *model*, a *framework*, a *compiler* *itself*) *tractable* \\cite{gnu_make}.",
+      "section": "`make`: The “Build” That Runs Itself (1976)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-407",
+      "quote": "The *single* *greatest* *barrier* to *large* *software* is not the *machine*; it is the *team*.",
+      "section": "Version Control: The “Team” That Never Collides (1972–2005)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-408",
+      "quote": "If *ten* *people* edit the *same* *code*, they *collide*: they *overwrite* each other, they *lose* each other's *changes*, they *cannot* say *what* *changed* *and* *when* and *why*.",
+      "section": "Version Control: The “Team” That Never Collides (1972–2005)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-409",
+      "quote": "The *answer* is **version control**: a *system* that *keeps* *every* *version* of *every* *file*, *records* *who* *changed* *what* and *when*, and lets *people* *work* on the *same* *code* *at the same time* without *destroying* each other \\cite{git}.",
+      "section": "Version Control: The “Team” That Never Collides (1972–2005)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-410",
+      "quote": "The *lineage* is a *beautiful* *one*: **SCCS** (1972, **Marc Rochkind**, Bell Labs) was the *first* *serious* *system*; **RCS** (1982, **Walter F.",
+      "section": "Version Control: The “Team” That Never Collides (1972–2005)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-411",
+      "quote": "Tichy**) *refined* it; **CVS** (1986, **Dick Grune**) made it *networked* (so a *team* across the *world* could *share* a *repository*); **Subversion** (2000, **CollabNet**) *simplified* it; and **Git** (2005, **Linus Torvalds**) *revolutionized* it \\cite{git}.",
+      "section": "Version Control: The “Team” That Never Collides (1972–2005)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-412",
+      "quote": "Git was *born* of a *specific* *fight*: the *Linux* *kernel* *team* had been *using* a *proprietary* *tool* (**BitKeeper**), and when the *license* was *withdrawn*, Torvalds *built* a *replacement* in a *matter of weeks*, *designed* around *one* *radical* *idea*: that *every* *developer* has a *complete, local* *copy* of the *entire* *history*, and that *commits* are *local* and *fast*, and *sharing* is an *explicit* act \\cite{git}.",
+      "section": "Version Control: The “Team” That Never Collides (1972–2005)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-413",
+      "quote": "Git is now the *universal* *version* control *system*, and it is *directly* *responsible* for the *way* *modern* *software* — and *modern* *AI* — is *developed*: the *open*, *distributed*, *collaborative* *development* of a *large* *system* by *hundreds* of *people* *at once* is *only* *possible* because of *Git*.",
+      "section": "Version Control: The “Team” That Never Collides (1972–2005)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-414",
+      "quote": "The name **Git** is, by the *creator's* *own* *admission*, a *self-deprecating* *joke*: in *British* *slang*, “git” is a *word* for a *fool*, and **Linus Torvalds** — who is *not* *shy* about his *opinions* — *chose* it *deliberately*, in the *spirit* of the *project* (a *tool* built by the *people* who *use* it, *for* the *people* who *use* it, *without* *permission* or *patronage*) \\cite{git}.",
+      "section": "Version Control: The “Team” That Never Collides (1972–2005)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-415",
+      "quote": "The *joke* is *typical* of the *open-source* *ethos*: the *tool* is *named* after the *user's* *imperfection* (the *bug*, the *mistake*, the *foolish* *commit*), because the *whole* *point* of the *system* is that *everyone* *makes* *mistakes*, and the *system* *exists* to make the *mistakes* *reversible* and *visible*.",
+      "section": "Version Control: The “Team” That Never Collides (1972–2005)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-416",
+      "quote": "A *version* *control* *system* is, in *effect*, a *machine* for *forgiving* *human* *error*, and that is *exactly* the *role* that *software* — the *whole* *stack* of it — has *always* *played* in *relation* to the *human* *who uses it*: it *absorbs* the *error*, it *keeps* the *record*, it *lets* the *human* *try again*.",
+      "section": "Version Control: The “Team” That Never Collides (1972–2005)",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-417",
+      "quote": "Pull the *threads* together, and a *clear* *answer* emerges to the *question* the [Intro](intro) *posed*: *what* had to be *true* about the *world*, and about *human* *society*, before a *machine* could *learn* to *write*?",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-418",
+      "quote": "First, the *machine* had to be *cheap* *enough* to be *shared* and *many* (the *transistor*, the *microprocessor*), and *fast* *enough* to be *useful* (Moore's Law, the *GPU*).",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-419",
+      "quote": "Second, the *machine* had to *manage itself* (the *operating system*), so that a *human* did not have to *babysit* it.",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-420",
+      "quote": "Third, the *human* had to be able to *talk* to it in a *language* that was *close to the problem*, not close to the *wires* (the *high-level* language), and to *share* and *reuse* the *answers* (the *library*, the *framework*).",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-421",
+      "quote": "Fourth, a *team* had to be able to *build* and *keep* a *system* *large* *enough* to be *smart* (the *compiler*, `make`, *version* control).",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-422",
+      "quote": "And *fifth* — and this is the *one* that is *easiest* to *forget* — the *idea* had to exist, *before* the *technology* caught up, that the *computer* is a *tool for extending the human mind*, not a *calculator*: the *idea* that was *stated* by **Licklider** in **“Man–Computer Symbiosis”** (1960) \\cite{licklider}, by **McCarthy** in *1959*, by **Kay** in the *Dynabook* in *1968*, and by *a* *hundred* *other* *minds* in the *intervening* years.",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-423",
+      "quote": "The *operating system*, the *language*, the *toolchain*: these are the *displaced* *prerequisites* of *AI*, in exactly the *sense* of the [Untold History](untold_history_i) chapter.",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-424",
+      "quote": "They were *built* to *solve* *problems* that had *nothing* to do with *intelligence* (scheduling a *factory*, translating a *notation*, keeping a *team* from *colliding*), and *yet* every *one* of them is a *load-bearing* *fact* of *modern* *machine* *learning*.",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-425",
+      "quote": "Remove the *operating system* and there is no *way* to *run* a *model* on a *many-core* *machine*.",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-426",
+      "quote": "Remove the *compiler* and there is no *way* to *turn* a *researcher's* *Python* into *GPU* *kernels*.",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-427",
+      "quote": "Remove *version* control and there is no *way* for the *hundreds* of *people* who *build* a *frontier* *model* to *work* *together*.",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-428",
+      "quote": "Remove the *language* and there is no *way* for a *scientist* to *prototype* an *idea*.",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-429",
+      "quote": "The *stack* is *not* a *coincidence*; it is the *necessary* *scaffolding* on which the *model* *stands*.",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-430",
+      "quote": "Margaret Hamilton, whose work on the Apollo flight software is one of the founding acts of *software engineering* as a discipline.",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-431",
+      "quote": "Apollo AGC software modules.",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-432",
+      "quote": "The flight software had to *detect and recover* from *errors* in *real time*, on a machine with *less memory than a modern calculator*.",
+      "section": "What Was Required, in the End, for a Human to Build Something Like Today's AI",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-433",
+      "quote": "The word **“software engineering”** was *coined* at the **1968** **Garmisch** conference (the *First International Conference on Software Engineering*), where the *participants* — many of them *watching* the *Apollo* program — agreed that *software* had grown *too* *large* and *too* *important* to be a *craft*, and that it needed to be an *engineering* *discipline*, with *methods*, *standards*, and *measures* \\cite{garmisch1968}.",
+      "section": "“Software Engineering”: The Moment Software Became a *Discipline*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-434",
+      "quote": "The *person* most *associated* with *making* that *idea* *real* is **Margaret Hamilton**, whose team wrote the **Apollo** *Guidance* *Computer*'s *flight* *software* — a *system* that had to *detect* its *own* *errors* and *recover*, *in flight*, on a machine with *less* memory than a *pocket* *calculator* \\cite{chm}.",
+      "section": "“Software Engineering”: The Moment Software Became a *Discipline*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-435",
+      "quote": "The *famous* *photograph* of *Hamilton* *standing* beside a *pyramid* of *punch* *cards* (the *entire* *Apollo* *AGC* *software*, *stacked*) is *one* of the *icons* of the *field*, and the *idea* it *embodies* — that *software* is a *serious*, *measurable*, *engineerable* *thing*, with *failure* *modes* that must be *designed* *against* — is the *idea* that *underlies* the *entire* *modern* *practice* of *building* *reliable* *large* *systems*, *including* the *training* and *deployment* of *large* *models*.",
+      "section": "“Software Engineering”: The Moment Software Became a *Discipline*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-436",
+      "quote": "The *pyramid* *photo* is *often* *described* as showing “*72,000 lines of code in 72 kilobytes*,” and the *numbers* are *broadly* *right* in *spirit* if not in *detail*: the *Apollo* *AGC* *software* was *enormous* *for* its *hardware*, and *Hamilton's* *team* had to *invent* *most* of the *techniques* of *real-time*, *fault-tolerant*, *resource-constrained* *software* *from scratch*, because there *was no* *prior* *art* \\cite{chm}.",
+      "section": "“Software Engineering”: The Moment Software Became a *Discipline*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-437",
+      "quote": "The *deeper* *point* is *not* the *lines of code*; it is that *Hamilton* *treated* the *software* as a *first-class* *engineering* *artifact*, with a *name* (“*software* *engineering*”), a *method*, and a *standard of proof* (the *system* must *be* *able* to *prove* that it *will not* *fail* *in* a *way* that *kills* the *astronauts*).",
+      "section": "“Software Engineering”: The Moment Software Became a *Discipline*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-438",
+      "quote": "That *attitude* — *that* the *code* is a *load-bearing* *structure*, and that *its* *correctness* is a *matter of* *life and death* — is the *attitude* that *modern* *AI* *safety* is *only now* *beginning* to *adopt*.",
+      "section": "“Software Engineering”: The Moment Software Became a *Discipline*",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-439",
+      "quote": "The *technical* history — the *OSes*, the *languages*, the *tools* — is the *skeleton*.",
+      "section": "The Ideas and the Minds: The Geist of the Software",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-440",
+      "quote": "The *flesh* is the *history of the ideas* and the *psychology of the people* who *fought* over them, and it is the *part* that *explains* *why* the *stack* has the *shape* it *does*.",
+      "section": "The Ideas and the Minds: The Geist of the Software",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-441",
+      "quote": "Software is *defined* by its *arguments*.",
+      "section": "The Great Arguments",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-442",
+      "quote": "There is no *area* of it in which the *right* *answer* was *obvious*, and the *shape* of the *modern* *stack* is the *shape of the* *arguments* that were *won* (or *left* *unresolved*).",
+      "section": "The Great Arguments",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-443",
+      "quote": "* **Monolithic versus microkernel.** *Should* the *kernel* be a *big* *monolith* (fast, but *hard* to *verify*) or a *small* *microkernel* (clean, but *slower*)?",
+      "section": "The Great Arguments",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-444",
+      "quote": "Fought by **Tanenbaum** and **Torvalds** (MINIX’s microkernel versus Linux’s monolith), *resolved* (in *practice*) by the *hybrid* \\cite{chm}.",
+      "section": "The Great Arguments",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-445",
+      "quote": "* **Top-down versus bottom-up.** *Should* you *design* the *whole* *system* *first* (the *Multics* *way*, the *comprehensive* *specification*) or *build* it *in* *small*, *composable* *pieces* (the *Unix* *way*, the *“do one thing well”*)?",
+      "section": "The Great Arguments",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-446",
+      "quote": "The *Unix* *way* *won* the *operating system* *war*, and it is the *way* that *most* *modern* *software* is *built* \\cite{unix_ts}.",
+      "section": "The Great Arguments",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-447",
+      "quote": "* **Open versus closed.** *Should* the *code* be *free* to *read* and *modify* (the *Unix* *BSD* *camp*, the *free-software* *movement*, *open* *source*), or *proprietary* (the *System V* *camp*, the *commercial* *empire*)?",
+      "section": "The Great Arguments",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-448",
+      "quote": "The *answer* is *both*, in a *tension* that *has never* been *resolved* and that *defines* the *industry* \\cite{chm}.",
+      "section": "The Great Arguments",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-449",
+      "quote": "* **Purity versus pragmatism.** *Should* the *language* be *pure* and *provable* (the *functional* *camp*, *Haskell*) or *pragmatic* and *powerful* (the *systems* *camp*, *C* and *C++)*?",
+      "section": "The Great Arguments",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-450",
+      "quote": "The *answer* is *a* *spectrum*, and the *spectrum* is the *whole* *space* of *languages* \\cite{haskell}.",
+      "section": "The Great Arguments",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-451",
+      "quote": "The *people* matter as *much* as the *ideas*, because the *ideas* were *carried* by *specific* *minds* with *specific* *temperaments*:",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-452",
+      "quote": "* **Dennis Ritchie** was the *quiet* *perfectionist*.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-453",
+      "quote": "He *built* *C* and *Unix* with a *minimalism* that was *almost* *aesthetic*: the *fewest* *keywords*, the *smallest* *kernel*, the *cleanest* *interface*.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-454",
+      "quote": "His *style* is the *style* of the *Unix* *philosophy* made *flesh* \\cite{unix_ts}.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-455",
+      "quote": "* **Ken Thompson** was the *hacker* *for* *whom* the *work* was the *pleasure*.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-456",
+      "quote": "*“If it is not fun, it is not worth doing”* is *his* *creed*, and *Unix*, *Plan 9*, *Go* — all of it — is the *work* of a *man* who *built* *systems* because *building* *systems* was *fun* \\cite{bell_labs}.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-457",
+      "quote": "* **Grace Hopper** was the *saleswoman* for the *idea* that the *machine* should *speak* *English*.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-458",
+      "quote": "She *built* the *first* *compiler*, but she *sold* the *idea* of *machine-independent* *programming* to a *world* that *did not* *believe* it *yet* \\cite{chm}.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-459",
+      "quote": "* **John McCarthy** was the *logician* who *predicted* *machine* *intelligence* as a *matter of course*, in *1959*, and *built* the *language* (*Lisp*) in which that *prediction* was *first* *programmed* \\cite{lispworks}.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-460",
+      "quote": "* **Alan Kay** was the *visionary* who *sketched* the *personal*, *graphical*, *learning* *computer* in *1968* and *built* a *prototype* of it in *1973*, *twenty* *years* before the *market* *was ready* \\cite{smalltalk}.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-461",
+      "quote": "* **Bjarne Stroustrup** was the *pragmatist* who *refused* to *choose* between *power* and *convenience*, and *paid* for it in *complexity* \\cite{isocpp}.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-462",
+      "quote": "* **Niklaus Wirth** was the *pedagogue* who *believed* that a *language* should be *small enough to be understood*, and who *built* *Pascal* to *prove* it \\cite{pascal}.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-463",
+      "quote": "* **Richard Stallman** was the *ideologist* for whom the *freedom* of the *software* was the *point*, and who *built* the *GNU* *Hurd* as a *monument* to that *idea*, *whether* or not it *ever* *became* the *default* \\cite{gnu_hurd}.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-464",
+      "quote": "* **Linus Torvalds** was the *pragmatist* *organizer* who *proved* that a *large* *system* (the *Linux* *kernel*, *Git*, and, through them, much of the *infrastructure* of *modern* *AI*) could be *built* by a *distributed*, *open*, *ruthlessly* *meritocratic* *team*, and who *named* his *tool* after the *user's* *foolishness* \\cite{git}.",
+      "section": "The Psychology of the Builders",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-465",
+      "quote": "Running through all of this is a *distinctive* *psychology*, the **hacker ethic**: the *belief* that *information* should be *free*, that *software* should be *shared* and *improved* by *everyone*, that the *measure* of a *programmer* is the *quality* of the *work* (not the *title* or the *institution*), and that the *intrinsic* *pleasure* of *making a clever, working thing* is a *legitimate*, even *primary*, motivation \\cite{bell_labs}.",
+      "section": "The Hacker Ethic and the Gift Economy",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-466",
+      "quote": "This *ethic* is the *engine* of the *open* *side* of *software*: of *Unix* (*given away* by *Bell Labs*), of *open source* (*Linux*, *Git*, *the* *web* *browser*), of *free* *software* (*GNU*, *the* *Hurd*), and — *directly* — of the *open* *model* *movement* in *AI* (*the* *open-weights* *models*, *the* *open* *frameworks*, *the* *public* *datasets*).",
+      "section": "The Hacker Ethic and the Gift Economy",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-467",
+      "quote": "The *hacker ethic* is the *cultural* *prerequisite* of *open* *AI*, in exactly the *way* that the *operating system* is the *technical* *prerequisite*: without the *belief* that *sharing* the *work* *makes* it *better*, there is no *open* *ecosystem*, and without the *open* *ecosystem*, the *pace* of *progress* in *AI* would have been *slower* by an *order* of *magnitude*.",
+      "section": "The Hacker Ethic and the Gift Economy",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-468",
+      "quote": "Look at the *whole* *ladder* again, from the *bottom* up, and the *shape* of it is *not* *accidental*.",
+      "section": "The Thread That Runs All the Way Down",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-469",
+      "quote": "It is the *shape* of the *idea* that **computation is the manipulation of symbols**, *stated* by **Leibniz**, *proved* by **Turing**, *built* by **Ritchie** and *the* *Unix* *group*, *expressed* in *a* *hundred* *languages*, *managed* by *a* *hundred* *operating* *systems*, and *finally* — *in* the *model* — *turned back on itself*: a *system* of *symbol* *manipulation* that *learns* *the* *rules* of *symbol* *manipulation* from *the* *data*, instead of *having them written down*.",
+      "section": "The Thread That Runs All the Way Down",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-470",
+      "quote": "The *operating system* *abstracts* the *machine*.",
+      "section": "The Thread That Runs All the Way Down",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-471",
+      "quote": "The *language* *abstracts* the *operating system*.",
+      "section": "The Thread That Runs All the Way Down",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-472",
+      "quote": "The *framework* *abstracts* the *language*.",
+      "section": "The Thread That Runs All the Way Down",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-473",
+      "quote": "The *model* *abstracts* the *data*.",
+      "section": "The Thread That Runs All the Way Down",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-474",
+      "quote": "And the *user* — the *human* who *types* a *sentence* into a *chat* *box* — is *abstracted* from *all* of it, *standing* at the *top* of the *ladder*, *speaking* to a *machine* in *the* *only* *language* that *has never* *needed* a *compiler*: *the* *human* *one*.",
+      "section": "The Thread That Runs All the Way Down",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-475",
+      "quote": "Every *rung* of the *ladder* was *built* by a *rival* *mind* who *believed* that *their* *abstraction* was the *right* *one*, and *the* *stack* is the *record* of *which* *abstractions* *survived* the *competition*.",
+      "section": "The Thread That Runs All the Way Down",
+      "kind": "statement"
+    },
+    {
+      "id": "software-stmt-476",
+      "quote": "That is the *deep* *lesson* of the *whole* *page*, and it is the *lesson* that *belongs* in the *mind* *chapter* alongside it: **without the competition, there is no ladder, and without the ladder, there is no AI.**",
+      "section": "The Thread That Runs All the Way Down",
+      "kind": "statement"
+    }
   ]
 }

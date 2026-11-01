@@ -476,5 +476,583 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "alternative_architectures-stmt-1",
+      "quote": "The Transformer is not the end of the road.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-2",
+      "quote": "Its $O(n^2)$ attention cost creates a quadratic wall: doubling the context length quadruples compute and memory.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-3",
+      "quote": "For long-context applications (genomes, codebases, hour-long video), this is prohibitive.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-4",
+      "quote": "Since 2020, a small but rapidly growing field has produced **sub-quadratic alternatives** that match Transformers on language modelling while scaling to million-token contexts.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-5",
+      "quote": "This chapter surveys the main candidates, with the mathematical core of each.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-6",
+      "quote": "The reason the field keeps circling back to a small palette of building blocks — recurrence, convolution, attention — is that each one is, in functional-programming terms, a **higher-order function** (a fold, a windowed map, and so on) that a network can reuse, so that a model is \"a very rough functional program, with these flexible, learnable pieces\" (\\cite[Olah, 2015]{colah2015types}).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-7",
+      "quote": "**KV-cache mitigation:** Even standard Transformers handle long contexts via **KV-caching** (see the Production Serving chapter), which stores past K/V matrices so per-token compute stays linear in sequence length during autoregressive generation.",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-8",
+      "quote": "The O(n²) cost appears in **training** and in **prefill** of long prompts; generation with a KV cache is O(n) per token.",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-9",
+      "quote": "The practical gap between Transformers and sub-quadratic alternatives is therefore smaller than the asymptotic notation suggests.",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-10",
+      "quote": "Standard self-attention (see the Attention chapter ) computes:",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-11",
+      "quote": "where $d_k$ is the dimension of the keys (the head dimension).",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-12",
+      "quote": "The $QK^\\top$ matrix has shape $n \\times n$, where $n$ is the sequence length.",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-13",
+      "quote": "Both compute and memory scale as $O(n^2)$.",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-14",
+      "quote": "For $n = 128{,}000$, that matrix alone is $128{,}000^2 \\times 2$ bytes $\\approx 33$ GB in fp16.",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-15",
+      "quote": "The architectural alternatives attack this in three different ways:",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-16",
+      "quote": "| Approach | Idea | Memory |",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-17",
+      "quote": "| **Sparse / Sliding-window attention** | Attend only to a local window (Mistral, Longformer) | $O(n \\cdot w)$ |",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-18",
+      "quote": "| **Linear attention** | Replace softmax with a kernel $\\phi(Q)\\phi(K)^\\top$ | $O(n \\cdot d)$ |",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-19",
+      "quote": "| **State-space models** | Maintain a fixed-size recurrent state | $O(d^2)$ |",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-20",
+      "quote": "| **Recurrence + windowed attention hybrids** | Jamba, Zamba, etc.",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-21",
+      "quote": "| $O(n \\cdot w)$ with SSM long range |",
+      "section": "The Quadratic Wall",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-22",
+      "quote": "A **state-space model** (SSM) describes a continuous linear dynamical system:",
+      "section": "State-Space Models: S4 and Mamba",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-23",
+      "quote": "where $x(t)$ is the input signal, $h(t) \\in \\mathbb{R}^{N}$ is the latent state, and $y(t)$ is the output.",
+      "section": "State-Space Models: S4 and Mamba",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-24",
+      "quote": "Discretized with step $\\Delta$:",
+      "section": "State-Space Models: S4 and Mamba",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-25",
+      "quote": "where $\\bar A = \\exp(\\Delta A)$, $\\bar B = (\\Delta A)^{-1}(\\exp(\\Delta A) - \\mathbf{I}) \\Delta B$.",
+      "section": "State-Space Models: S4 and Mamba",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-26",
+      "quote": "This is a **linear recurrent network** with a fixed-size state $h_t \\in \\mathbb{R}^{N}$.",
+      "section": "State-Space Models: S4 and Mamba",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-27",
+      "quote": "Compute is $O(N)$ per step, memory is $O(N)$ regardless of sequence length.",
+      "section": "State-Space Models: S4 and Mamba",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-28",
+      "quote": "The lineage runs back through the [Networks with Memory](recurrent_networks.php) chapter: an LSTM is exactly this state update with a learned, gated nonlinearity bolted on — the gates decide *what to keep*, and the fixed-size state is why these models dominated before attention scaled up \\cite{colah2015lstm,lstm}.",
+      "section": "State-Space Models: S4 and Mamba",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-29",
+      "quote": "\\cite[Gu et al. (2021)]{gu2021s4} made training stable by parameterizing $A$ in a **HiPPO structure** (high-order polynomial projection operator), which captures long-range dependencies efficiently.",
+      "section": "S4",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-30",
+      "quote": "S4 set state-of-the-art on the Long Range Arena benchmark, beating Transformers by a large margin on sequences of length $16{,}000$.",
+      "section": "S4",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-31",
+      "quote": "Mamba's key contribution (\\cite[Gu & Dao, 2023]{gu2023mamba}) is making the SSM **input-dependent**:",
+      "section": "Mamba",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-32",
+      "quote": "i.e. the state-transition matrices depend on the current input.",
+      "section": "Mamba",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-33",
+      "quote": "This breaks time-invariance, so the efficient global-convolution mode is no longer available and the recurrence must be run step by step; in exchange the model can selectively remember or forget based on context.",
+      "section": "Mamba",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-34",
+      "quote": "Mamba matches Transformer quality at language modelling, scales linearly in $n$, and at inference avoids the growing KV-cache (see Production Serving chapter).",
+      "section": "Mamba",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-35",
+      "quote": "Mamba-2 (\\cite[Dao & Gu, 2024]{dao2024mamba2}) reveals that selective SSMs and attention are **algebraically dual** through a tensor contraction framework called **Structured State-Space Duality (SSD)**.",
+      "section": "Mamba-2 and SSD",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-36",
+      "quote": "In practice this lets Mamba-2 use an efficient attention-like kernel for compute, retaining the linear-time recurrence for inference.",
+      "section": "Mamba-2 and SSD",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-37",
+      "quote": "Jamba interleaves Mamba and Transformer blocks in a 1:7 ratio:",
+      "section": "Jamba (AI21, 2024): Hybrid SSM + Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-38",
+      "quote": "This hybrid scales to 256K context (Jamba-1.5-Large), uses ~25% of the memory of an equivalent Transformer, and matches its quality.",
+      "section": "Jamba (AI21, 2024): Hybrid SSM + Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-39",
+      "quote": "Other hybrids: Zamba (Zyphra), RecurrentGemma (Google), Striped Hyena (Together AI).",
+      "section": "Jamba (AI21, 2024): Hybrid SSM + Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-40",
+      "quote": "The softmax in attention is what makes the operation non-associative, forcing the $O(n^2)$ cost.",
+      "section": "Linear Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-41",
+      "quote": "Replace softmax with a feature map $\\phi$:",
+      "section": "Linear Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-42",
+      "quote": "By computing $\\sum_j \\phi(K_j) V_j^\\top$ once as an $d \\times d$ outer product (the “state”), compute drops to $O(n \\cdot d^2)$ and memory is $O(d^2)$, independent of $n$.",
+      "section": "Linear Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-43",
+      "quote": "$\\phi(x) = \\exp(-\\|x\\|^2/2) \\cdot (\\exp(\\omega_1 \\cdot x), \\ldots, \\exp(\\omega_m \\cdot x))$ for random $\\omega_i \\sim \\mathcal{N}(0, I)$ (positive random features).",
+      "section": "Performer",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-44",
+      "quote": "Provably unbiased kernel approximation (\\cite[Choromanski et al., 2021]{choromanski2021performer}).",
+      "section": "Performer",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-45",
+      "quote": "RetNet uses a **decayed retention** mechanism (a decay matrix $D_{nm} = \\gamma^{n-m}$) and supports three computation modes:",
+      "section": "RetNet (Sun et al., Microsoft, 2023)",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-46",
+      "quote": "* **Parallel**: same $O(n^2 \\cdot d)$ as Transformer during training.",
+      "section": "RetNet (Sun et al., Microsoft, 2023)",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-47",
+      "quote": "* **Recurrent**: $O(d^2)$ state, like an SSM at inference.",
+      "section": "RetNet (Sun et al., Microsoft, 2023)",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-48",
+      "quote": "* **Chunkwise**: hybrid, sliding window.",
+      "section": "RetNet (Sun et al., Microsoft, 2023)",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-49",
+      "quote": "RetNet reports 8.4× faster decoding and about 70% less memory than a vanilla Transformer at inference (roughly 3.3× smaller).",
+      "section": "RetNet (Sun et al., Microsoft, 2023)",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-50",
+      "quote": "\\cite[Peng et al. (2023)]{peng2023rwkv} introduced a linear-attention-with-decay RNN.",
+      "section": "RWKV",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-51",
+      "quote": "RWKV-7 (2025) matches 7B Transformers on language tasks.",
+      "section": "RWKV",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-52",
+      "quote": "Every architecture above still generates left to right.",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-53",
+      "quote": "A **diffusion language model** (dLLM) attacks the serialism itself: instead of predicting one token per forward pass, it starts from a fully corrupted sequence and refines **all positions in parallel** over a handful of denoising steps, in the same spirit as image diffusion (\\cite[Austin et al., 2021]{austin2021d3pm}).",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-54",
+      "quote": "The dominant formulation for text is an **absorbing-state** process.",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-55",
+      "quote": "Each token is independently replaced by a special mask symbol $m$ with probability $\\beta_t$ per step, and once masked it stays masked:",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-56",
+      "quote": "At the final step the sequence is almost entirely masks.",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-57",
+      "quote": "Training reverses the process with a weighted masked-token cross-entropy over randomly sampled masking rates:",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-58",
+      "quote": "That objective is BERT's fill-in-the-blank loss, rearranged so that it defines a principled generative process.",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-59",
+      "quote": "Sampling starts from a fully masked sequence, asks the bidirectional Transformer for a distribution at every masked position, and commits the predictions whose confidence clears a threshold.",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-60",
+      "quote": "Easy, constrained tokens (punctuation, function words) lock in first; hard content words last.",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-61",
+      "quote": "Because the model attends in both directions, it can also revise earlier tokens in light of later ones and fill in the middle of a document natively.",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-62",
+      "quote": "The appeal is throughput: one forward pass can commit many tokens, and the number of denoising steps is an explicit quality-versus-speed dial.",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-63",
+      "quote": "**LLaDA** (2025), an 8-billion-parameter masked diffusion model trained from scratch, reported in-context learning and instruction following competitive with Llama 3 8B — the first evidence that the recipe holds at mainstream open-model scale (\\cite[Nie et al., 2025]{nie2025llada}).",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-64",
+      "quote": "Inception Labs' Mercury and Google DeepMind's experimental Gemini Diffusion followed in 2025, reporting sampling speeds in the thousands of tokens per second on H100-class hardware.",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-65",
+      "quote": "Bidirectional attention is incompatible with the standard KV cache, so every denoising step recomputes attention over the whole sequence; the speedup depends on keeping the step count well below the sequence length.",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-66",
+      "quote": "Tokens committed in the same step are also treated as conditionally independent, so jointly dependent words can clash, which is why practical systems use confidence schedules and semi-autoregressive block decoding.",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-67",
+      "quote": "Whether dLLMs reach full quality parity with autoregressive models at frontier scale remains open as of 2026.",
+      "section": "Diffusion Language Models: Denoising Instead of Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-68",
+      "quote": "* **Hyena** (\\cite[Poli et al., 2023]{poli2023hyena}): replaces attention with **implicit long convolutions** parameterised by an MLP, with element-wise gating.",
+      "section": "Other Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-69",
+      "quote": "Achieves Transformer-quality language modelling at sub-quadratic cost.",
+      "section": "Other Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-70",
+      "quote": "* **Mega** (\\cite[Ma et al., 2022]{ma2022mega}): combines moving-average gated linear units with attention.",
+      "section": "Other Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-71",
+      "quote": "* **Striped Hyena-7B** (Together, 2024): Hyena + attention hybrid, 128K context.",
+      "section": "Other Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-72",
+      "quote": "* **Mixture-of-Depths** (\\cite[Raposo et al., 2024]{raposo2024mod}): routes tokens through different numbers of layers, averaging $0.5\\times$ the compute of a standard Transformer.",
+      "section": "Other Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-73",
+      "quote": "* **Universal Transformers**: recurrent application of the same Transformer block with a halting mechanism.",
+      "section": "Other Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-74",
+      "quote": "The field is in active flux; no single “Transformer replacement” has emerged, but hybrids are clearly the immediate future.",
+      "section": "Other Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-75",
+      "quote": "For sequence length $n$, model dim $d$, batch size $b$:",
+      "section": "Compute / Memory Comparison",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-76",
+      "quote": "| Architecture | Training FLOPs | Inference memory | Long-context scaling |",
+      "section": "Compute / Memory Comparison",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-77",
+      "quote": "| **Transformer** | $O(bnd^2 + bn^2d)$ | $O(bnd)$ per generated token (KV-cache) | Quadratic prefill, linear decode |",
+      "section": "Compute / Memory Comparison",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-78",
+      "quote": "| **Sliding-window attention** | $O(bnd^2 + bnwd)$ | $O(bnd)$ | Linear in $n$ (fixed window) |",
+      "section": "Compute / Memory Comparison",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-79",
+      "quote": "| **Linear attention** | $O(bnd^2)$ | $O(bd^2)$ | Linear in $n$ |",
+      "section": "Compute / Memory Comparison",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-80",
+      "quote": "| **State-space model (S4/Mamba)** | $O(bnd^2)$ | $O(bd^2)$ | Linear in $n$ |",
+      "section": "Compute / Memory Comparison",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-81",
+      "quote": "| **RetNet recurrent mode** | $O(bnd^2)$ | $O(bd^2)$ | Linear in $n$ |",
+      "section": "Compute / Memory Comparison",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-82",
+      "quote": "| **RWKV** | $O(bnd^2)$ | $O(bd^2)$ | Linear in $n$ (with decay) |",
+      "section": "Compute / Memory Comparison",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-83",
+      "quote": "The constant factors matter: an SSM with state $N = 16$ is roughly comparable in cost to an attention head with head-dim 16, but its long-context behaviour is qualitatively different.",
+      "section": "Compute / Memory Comparison",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-84",
+      "quote": "Despite the architectural menu, vanilla Transformers remain dominant in 2025 because:",
+      "section": "Where Transformers Still Win",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-85",
+      "quote": "* **Hardware maturity**: GPUs have highly optimized kernels for dense matmul + softmax.",
+      "section": "Where Transformers Still Win",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-86",
+      "quote": "SSM and linear-attention kernels are catching up (Mamba-2, FlashAttention-3) but still trail.",
+      "section": "Where Transformers Still Win",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-87",
+      "quote": "* **In-context learning**: Transformers' ability to learn from a few in-context examples seems related to their attention pattern.",
+      "section": "Where Transformers Still Win",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-88",
+      "quote": "Some SSMs are weaker here.",
+      "section": "Where Transformers Still Win",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-89",
+      "quote": "* **Ecosystem**: every training framework (PyTorch, JAX, Megatron) is tuned for Transformers.",
+      "section": "Where Transformers Still Win",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-90",
+      "quote": "The picture is changing fast: in 2025, Jamba, RecurrentGemma, RWKV-7, Striped Hyena, and several Mamba variants are deployed in production.",
+      "section": "Where Transformers Still Win",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-91",
+      "quote": "* Can pure-SSM models match Transformers at long-horizon reasoning, or are hybrids strictly necessary?",
+      "section": "Open Questions",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-92",
+      "quote": "* Will the in-context-learning gap close?",
+      "section": "Open Questions",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-93",
+      "quote": "* How do these architectures behave on **multimodal** data (images, audio)?",
+      "section": "Open Questions",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-94",
+      "quote": "* What new inductive biases emerge at the million-token scale?",
+      "section": "Open Questions",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-95",
+      "quote": "The next decade of architecture research is open.",
+      "section": "Open Questions",
+      "kind": "statement"
+    },
+    {
+      "id": "alternative_architectures-stmt-96",
+      "quote": "For a working practitioner today, **hybrid models (Jamba, Mamba-2-Transformer hybrids) are the safest choice** for long-context production deployments.",
+      "section": "Open Questions",
+      "kind": "statement"
+    }
   ]
 }

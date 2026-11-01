@@ -83,5 +83,1285 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "production_serving-stmt-1",
+      "quote": "Training is once; inference is forever.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-2",
+      "quote": "A frontier LLM might be trained for $100M and then **served billions of times** at a per-call cost that determines profitability.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-3",
+      "quote": "This chapter covers the systems stack that makes LLM inference fast, cheap, and reliable.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-4",
+      "quote": "The frontier in 2025: serving **hundreds of thousands of tokens per second per cluster** (a 100-node cluster of 70B-class models serving ~10,000 concurrent users at ~30 tokens/sec each) with sub-100 ms TPOT for chat workloads.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-5",
+      "quote": "For a 70B model in bf16, each generated token requires reading the full model weights from HBM.",
+      "section": "The Inference Challenge",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-6",
+      "quote": "The weights are 140 GB, which does not fit on one 80 GB H100; on two H100s (70 GB per GPU) at ~3 TB/s per GPU, the memory traffic gives **~23 ms per token** as a *pure memory-bandwidth lower bound* (about 40 tokens/s).",
+      "section": "The Inference Challenge",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-7",
+      "quote": "Production chat targets are tighter: **TTFT** (time to first token) of < 500 ms and **TPOT** (time per output token) of < 50 ms.",
+      "section": "The Inference Challenge",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-8",
+      "quote": "To beat that floor, systems use FP8 quantization, speculative decoding (multiple tokens per memory pass), and/or multi-GPU sharding that reduces per-GPU memory traffic, the techniques discussed in this chapter.",
+      "section": "The Inference Challenge",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-9",
+      "quote": "**Memory bandwidth (the hard floor)**: see above, sets the minimum per-token latency for a given precision.",
+      "section": "The Inference Challenge",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-10",
+      "quote": "**Compute throughput**: matmuls saturate FLOPs only at large batch sizes.",
+      "section": "The Inference Challenge",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-11",
+      "quote": "**Latency**: chat workloads are bursty; prefill and decode have different characteristics.",
+      "section": "The Inference Challenge",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-12",
+      "quote": "Solutions attack each in turn.",
+      "section": "The Inference Challenge",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-13",
+      "quote": "Recall from the Attention chapter: during autoregressive generation, each new token must attend to all previous tokens.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-14",
+      "quote": "Without caching, every step recomputes the K and V matrices for the full history, $O(n^2)$ work per token.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-15",
+      "quote": "The **KV-cache** stores the K and V projections of past tokens in GPU memory.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-16",
+      "quote": "For a 70B model ($L = 80$ layers, $h = 64$ heads, $d_h = 128$) with fp16 KV (2 bytes): $2 \\cdot 80 \\cdot 64 \\cdot 128 \\cdot 2 = 2.6$ MB per token.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-17",
+      "quote": "For 4K context: 10.5 GB; for 128K context: **335 GB**, **exceeding the model weights themselves**.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-18",
+      "quote": "This is the dominant memory cost in inference.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-19",
+      "quote": "Several techniques address it:",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-20",
+      "quote": "* **Multi-Query Attention (MQA) / Grouped-Query Attention (GQA)** (\\cite[Ainslie et al., 2023]{ainslie2023gqa}): share K/V across multiple query heads.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-21",
+      "quote": "Llama 2 70B uses GQA with 8 KV heads for 64 query heads → 8× less KV memory.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-22",
+      "quote": "* **Paged Attention** (\\cite[Kwon et al., 2023]{kwon2023vllm}) (vLLM): allocate KV cache in non-contiguous pages, like OS virtual memory.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-23",
+      "quote": "Eliminates fragmentation, enables sharing across requests.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-24",
+      "quote": "* **KV-cache compression**: quantize KV to int4 or int8 (≈4× memory reduction, minor quality loss).",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-25",
+      "quote": "* **Sliding-window attention**: only cache the last $w$ tokens' KV.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-26",
+      "quote": "Used in Mistral and Gemma 2.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-27",
+      "quote": "* **Prefix caching**: reuse KV across requests with the same prompt prefix.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-28",
+      "quote": "Standard for system prompts.",
+      "section": "KV-Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-29",
+      "quote": "A single forward pass for one user underutilizes the GPU.",
+      "section": "Batching: The Key to GPU Efficiency",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-30",
+      "quote": "**Batching** amortizes memory reads across many requests:",
+      "section": "Batching: The Key to GPU Efficiency",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-31",
+      "quote": "Generate one token for $B$ requests at the same time.",
+      "section": "Static Batching",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-32",
+      "quote": "All requests run synchronously; some finish early but wait for others.",
+      "section": "Static Batching",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-33",
+      "quote": "**Straggler problem**: one long request blocks the rest.",
+      "section": "Static Batching",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-34",
+      "quote": "Continuously add new requests to the batch as they arrive.",
+      "section": "Dynamic Batching",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-35",
+      "quote": "Better throughput, but still has stragglers.",
+      "section": "Dynamic Batching",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-36",
+      "quote": "**vLLM** (\\cite[Kwon et al., 2023]{kwon2023vllm}) and **TGI** (HuggingFace) introduced this: after each token is generated, immediately swap finished sequences out of the batch and swap new ones in.",
+      "section": "Continuous Batching (Iteration-level Scheduling)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-37",
+      "quote": "GPU stays at peak utilization; no waiting.",
+      "section": "Continuous Batching (Iteration-level Scheduling)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-38",
+      "quote": "Continuous batching alone can give 10–20× throughput improvement over static batching for chat workloads.",
+      "section": "Continuous Batching (Iteration-level Scheduling)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-39",
+      "quote": "Naïve KV-cache allocation reserves a contiguous block per request: if a request needs 4K tokens but only 2K are used, the rest is wasted.",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-40",
+      "quote": "With many requests, fragmentation can waste **30–60%** of KV memory.",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-41",
+      "quote": "**Paged Attention** (vLLM) treats the KV cache like OS virtual memory (\\cite[Kwon et al., 2023]{kwon2023vllm}):",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-42",
+      "quote": "* Allocate fixed-size **physical blocks** (typically 16 tokens each).",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-43",
+      "quote": "* Each request has a **block table** mapping logical → physical blocks.",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-44",
+      "quote": "* Blocks can be **shared** across requests with the same prefix (e.g., the system prompt).",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-45",
+      "quote": "* No fragmentation; near-100% memory utilization.",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-46",
+      "quote": "Paged Attention (\\cite[Kwon et al., 2023]{kwon2023vllm}) is now the standard in vLLM, TGI, TensorRT-LLM, and most production systems.",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-47",
+      "quote": "LLM decoding is **memory-bound**, not compute-bound.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-48",
+      "quote": "Each token requires reading all model weights once.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-49",
+      "quote": "A 70B model in bf16 cannot fit on a single 80 GB H100 at all; split across two H100s it tops out near ~40 tokens/s, and in FP8 on one H100 near the same order, regardless of FLOPs.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-50",
+      "quote": "**Speculative decoding** (\\cite[Leviathan et al., 2023]{leviathan2023speculative}) breaks this:",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-51",
+      "quote": "A small, fast **draft model** (e.g., 1B) generates $k$ candidate tokens autoregressively (fast, ~10× the throughput).",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-52",
+      "quote": "The large **target model** verifies all $k$ tokens in a **single forward pass** (parallel).",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-53",
+      "quote": "Accept the longest prefix the target model agrees with; resample from the corrected distribution on rejection.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-54",
+      "quote": "If the draft and target agree on $k$ tokens, you get $k$ tokens for the cost of 1 forward pass.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-55",
+      "quote": "Typical speedup: **2–3×** with high acceptance rate (90%+ for chat).",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-56",
+      "quote": "**Self-speculative decoding**: use early-exit or layer-skipping to draft with a partial version of the same model.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-57",
+      "quote": "No separate draft model needed.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-58",
+      "quote": "Reduce precision of weights and/or activations:",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-59",
+      "quote": "| Format | Bits | 70B size | Quality loss |",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-60",
+      "quote": "| fp32 | 32 | 280 GB | Baseline |",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-61",
+      "quote": "| fp16 / bf16 | 16 | 140 GB | Negligible |",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-62",
+      "quote": "| int8 (weights only) | 8 | 70 GB | ~0.5% on benchmarks |",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-63",
+      "quote": "| int4 (GPTQ, AWQ) | 4 | 35 GB | 1–3% |",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-64",
+      "quote": "| int3 / int2 (QuIP, QuIP#) | 2–3 | ~17–26 GB | 3–10% |",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-65",
+      "quote": "| 1-bit (BitNet \\cite[Ma et al., 2024]{ma2024bitnet}) | 1.58 | 13 GB | Comparable to fp16 at scale |",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-66",
+      "quote": "Modern quantization is **nearly free** at int8 and acceptable at int4 for most workloads.",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-67",
+      "quote": "AWQ (Activation-aware Weight Quantization \\cite[Lin et al., 2023]{lin2023awq}) and GPTQ (\\cite[Frantar et al., 2023]{frantar2022gptq}) are the standard tools.",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-68",
+      "quote": "The trade-off is non-uniform: outliers in some channels cause big errors; per-channel scaling mitigates.",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-69",
+      "quote": "For activations, **fp8** (H100 native) gives 2× throughput with minimal quality loss.",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-70",
+      "quote": "**INT4 KV-cache** is a separate axis, giving up to 4× KV memory reduction.",
+      "section": "Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-71",
+      "quote": "A small student model trained to mimic a large teacher:",
+      "section": "Distillation Revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-72",
+      "quote": "* **Logit distillation** (\\cite[Hinton et al., 2015]{hinton2015distilling}): match the teacher's full output distribution: $\\mathcal{L} = \\text{KL}\\!\\big(p_T \\,\\|\\, p_S\\big)$.",
+      "section": "Distillation Revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-73",
+      "quote": "* **Hidden-state distillation**: match intermediate activations layer-by-layer.",
+      "section": "Distillation Revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-74",
+      "quote": "* **Attention distillation**: match attention matrices.",
+      "section": "Distillation Revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-75",
+      "quote": "* **Generative distillation**: train on the teacher's text outputs (supervised fine-tuning).",
+      "section": "Distillation Revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-76",
+      "quote": "Modern distilled families:",
+      "section": "Distillation Revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-77",
+      "quote": "* **DeepSeek-V3 → DeepSeek-R1-Distill** (2025): 1.5B–70B student models trained on R1 outputs.",
+      "section": "Distillation Revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-78",
+      "quote": "* **Llama 3.1-Instruct (2024)**: the smaller instruct models use SFT data that is partly synthesized by the Llama 3.1-405B.",
+      "section": "Distillation Revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-79",
+      "quote": "* **Phi-3-mini** (3.8B) → trained on about 3.3T tokens; the larger Phi-3 models were then trained with additional data and alignment.",
+      "section": "Distillation Revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-80",
+      "quote": "Distilled models can match the teacher on specific benchmarks within 5–10% of its quality, at $10\\times$ lower inference cost.",
+      "section": "Distillation Revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-81",
+      "quote": "The most widely used open-source serving system.",
+      "section": "vLLM (UC Berkeley)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-82",
+      "quote": "Paged Attention (\\cite[Kwon et al., 2023]{kwon2023vllm}), continuous batching, tensor parallelism, speculative decoding, prefix caching.",
+      "section": "vLLM (UC Berkeley)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-83",
+      "quote": "Powers ChatGPT-style deployments at major labs.",
+      "section": "vLLM (UC Berkeley)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-84",
+      "quote": "Rust-based serving stack.",
+      "section": "TGI (HuggingFace Text Generation Inference)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-85",
+      "quote": "Optimized for transformer inference with built-in quantization, batching, and streaming.",
+      "section": "TGI (HuggingFace Text Generation Inference)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-86",
+      "quote": "Production-grade at HuggingFace, AWS, and many enterprises.",
+      "section": "TGI (HuggingFace Text Generation Inference)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-87",
+      "quote": "NVIDIA's optimized inference engine.",
+      "section": "TensorRT-LLM (NVIDIA)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-88",
+      "quote": "Tightly integrated with TensorRT for kernel fusion, in-flight batching, and fp8/int4 quantization.",
+      "section": "TensorRT-LLM (NVIDIA)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-89",
+      "quote": "Highest raw throughput on NVIDIA hardware.",
+      "section": "TensorRT-LLM (NVIDIA)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-90",
+      "quote": "Optimized for **structured generation**, JSON output, grammar-constrained decoding, multi-turn tool use.",
+      "section": "SGLang (Stanford LMSYS)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-91",
+      "quote": "Powers Vicuna and many agent systems.",
+      "section": "SGLang (Stanford LMSYS)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-92",
+      "quote": "The reference CPU and consumer-GPU inference engine.",
+      "section": "llama.cpp (Georgi Gerganov)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-93",
+      "quote": "**GGUF** format, dozens of quantization levels, runs Llama 70B on a MacBook.",
+      "section": "llama.cpp (Georgi Gerganov)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-94",
+      "quote": "The cornerstone of local LLM inference.",
+      "section": "llama.cpp (Georgi Gerganov)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-95",
+      "quote": "* **OpenAI API**: GPT-4o, o1, o3.",
+      "section": "Inference Endpoints (Cloud)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-96",
+      "quote": "Managed, OpenAI's own stack.",
+      "section": "Inference Endpoints (Cloud)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-97",
+      "quote": "* **Anthropic API**: Claude 3.5/3.7/4.",
+      "section": "Inference Endpoints (Cloud)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-98",
+      "quote": "* **Google Vertex AI**: Gemini models.",
+      "section": "Inference Endpoints (Cloud)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-99",
+      "quote": "* **Together.ai, Fireworks, Groq, Anyscale**: third-party inference providers running open-source models on optimized hardware.",
+      "section": "Inference Endpoints (Cloud)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-100",
+      "quote": "* **AWS Bedrock**, **Azure AI Foundry**: enterprise multi-model.",
+      "section": "Inference Endpoints (Cloud)",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-101",
+      "quote": "| Workload | Hardware | Why |",
+      "section": "Hardware: What to Use When",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-102",
+      "quote": "| Frontier (GPT-4-class, 1T+ params) | H100 / B200 clusters | Memory bandwidth + interconnect |",
+      "section": "Hardware: What to Use When",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-103",
+      "quote": "| Open-source (Llama 70B) | A100 / H100 | Standard tooling |",
+      "section": "Hardware: What to Use When",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-104",
+      "quote": "| Edge (Llama 8B) | RTX 4090, L40S, Apple Silicon | Quantization-friendly |",
+      "section": "Hardware: What to Use When",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-105",
+      "quote": "| Mobile (sub-3B) | Snapdragon, Apple Neural Engine | Low power |",
+      "section": "Hardware: What to Use When",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-106",
+      "quote": "| Latency-critical | Groq LPU, Cerebras | Custom silicon; sub-second TTFT |",
+      "section": "Hardware: What to Use When",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-107",
+      "quote": "| Cost-optimized | AMD MI300X | 192 GB HBM3 per card |",
+      "section": "Hardware: What to Use When",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-108",
+      "quote": "The custom-silicon competition (Groq's LPU, Cerebras WSE, SambaNova, AWS Trainium, Google TPU) is making inference **dramatically cheaper** in 2024–2025.",
+      "section": "Hardware: What to Use When",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-109",
+      "quote": "Everything up to this point has been about *serving* the model — the stack, the batching, the memory, the hardware.",
+      "section": "From Model to Product: the pipeline around the model",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-110",
+      "quote": "A deployed LLM **product** is a different animal, and the difference is structural, not incidental.",
+      "section": "From Model to Product: the pipeline around the model",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-111",
+      "quote": "**The model is a component, not the system.** It is a *stochastic* component — it can produce a different answer to the same prompt twice, it can be slow, it can exceed its budget, and it can, occasionally, fail outright — wrapped in a *deterministic* system that decides which model to call, what it is allowed to say, what it is allowed to do, what to do when it fails, and what it all cost.",
+      "section": "From Model to Product: the pipeline around the model",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-112",
+      "quote": "[Agents](agents.php) showed one piece of this; the sections below are the whole shape, because a \"model\" and a \"product made with a model\" are two different architectures, and most LLM engineering is the second one.",
+      "section": "From Model to Product: the pipeline around the model",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-113",
+      "quote": "Start from the property that drives everything: the model is **non-deterministic** (temperature > 0) and **reliably wrong sometimes**.",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-114",
+      "quote": "A traditional service is deterministic and either works or returns an error; you design for the error.",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-115",
+      "quote": "An LLM service is *probabilistic*: it returns *an* answer, most of the time *a good one*, occasionally *a bad one you cannot distinguish from a good one by its shape*.",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-116",
+      "quote": "So the system around it is not a wrapper that calls it; it is a set of **services that manage a stochastic component's failures** — the same way a system around a flaky network manages packet loss, except here the \"loss\" is a confident, plausible, wrong answer.",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-117",
+      "quote": "The product, then, is a pipeline, and each stage is a service with its own job:",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-118",
+      "quote": "<defs><marker id=\"pparrow\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\"> </marker></defs>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-119",
+      "quote": "<rect x=\"8\" y=\"44\" width=\"66\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-120",
+      "quote": "<text x=\"41\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">query</text>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-121",
+      "quote": "<rect x=\"90\" y=\"44\" width=\"70\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-122",
+      "quote": "<text x=\"125\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">router</text>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-123",
+      "quote": "<rect x=\"176\" y=\"44\" width=\"70\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-124",
+      "quote": "<text x=\"211\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">guard-rails</text>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-125",
+      "quote": "<rect x=\"262\" y=\"44\" width=\"60\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-126",
+      "quote": "<text x=\"292\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">model</text>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-127",
+      "quote": "<rect x=\"338\" y=\"44\" width=\"70\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-128",
+      "quote": "<text x=\"373\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">validate</text>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-129",
+      "quote": "<rect x=\"424\" y=\"44\" width=\"70\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-130",
+      "quote": "<text x=\"459\" y=\"60\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text)\">retry /</text>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-131",
+      "quote": "<text x=\"459\" y=\"72\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text)\">fallback</text>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-132",
+      "quote": "<rect x=\"508\" y=\"44\" width=\"46\" height=\"32\" rx=\"7\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-border)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-133",
+      "quote": "<text x=\"531\" y=\"64\" text-anchor=\"middle\" font-size=\"10\" fill=\"var(--mn-text)\">cost</text>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-134",
+      "quote": "<line x1=\"74\" y1=\"60\" x2=\"88\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-135",
+      "quote": "<line x1=\"160\" y1=\"60\" x2=\"174\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-136",
+      "quote": "<line x1=\"246\" y1=\"60\" x2=\"260\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-137",
+      "quote": "<line x1=\"322\" y1=\"60\" x2=\"336\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-138",
+      "quote": "<line x1=\"408\" y1=\"60\" x2=\"422\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-139",
+      "quote": "<line x1=\"494\" y1=\"60\" x2=\"506\" y2=\"60\" stroke=\"var(--mn-text-secondary)\" stroke-width=\"1.5\" marker-end=\"url(#pparrow)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-140",
+      "quote": "<line x1=\"459\" y1=\"76\" x2=\"292\" y2=\"76\" stroke=\"var(--mn-border)\" stroke-width=\"1\" stroke-dasharray=\"3 3\" marker-end=\"url(#pparrow)\"/>",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-141",
+      "quote": "A query is routed to the right model, filtered in, answered, filtered out, and checked; if it fails, the retry/fallback loop re-enters the model (dashed) with a different choice; every call is metered.",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-142",
+      "quote": "Each box is a service with its own failure mode.",
+      "section": "The reframe: services around a thing that sometimes fails",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-143",
+      "quote": "The cheapest and highest-leverage service is the **router**.",
+      "section": "The router: pick the model per query",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-144",
+      "quote": "Not every query needs the biggest, most expensive model.",
+      "section": "The router: pick the model per query",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-145",
+      "quote": "A simple \"what's the weather?\" needs a small, fast model; a multi-step reasoning task needs a large one; a domain question needs a specialized or fine-tuned one.",
+      "section": "The router: pick the model per query",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-146",
+      "quote": "A router inspects the query and dispatches it — for **cost, quality, and latency** at once — and the common pattern is **cheap-then-escalate**: answer with a small model, and only if it signals low confidence (or the query classifies as hard) do you *escalate* to the big one.",
+      "section": "The router: pick the model per query",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-147",
+      "quote": "\\cite[Ong et al., RouteLLM (2024)]{routellm2024} make this concrete: a lightweight learner, trained on preference data, predicts which model a query needs, and routes the easy ones to the small model — saving the large model's cost on the queries it was never going to beat anyway.",
+      "section": "The router: pick the model per query",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-148",
+      "quote": "Routing is the first place the \"the model is a component\" reframe pays off: you are not *using* a model, you are *scheduling work across models*, exactly as a system schedules work across machines.",
+      "section": "The router: pick the model per query",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-149",
+      "quote": "A guardrail is a check that runs **outside** the model, on its input or its output, that the model itself does not enforce.",
+      "section": "Guardrails: enforced layers, not prompts",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-150",
+      "quote": "Input guardrails screen the query (is it in scope?",
+      "section": "Guardrails: enforced layers, not prompts",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-151",
+      "quote": "does it contain PII you are not allowed to process?",
+      "section": "Guardrails: enforced layers, not prompts",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-152",
+      "quote": "is it a prompt-injection attempt?).",
+      "section": "Guardrails: enforced layers, not prompts",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-153",
+      "quote": "Output guardrails screen the answer (does it actually answer the question?",
+      "section": "Guardrails: enforced layers, not prompts",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-154",
+      "quote": "does it contain a prohibited claim or a leaked secret?",
+      "section": "Guardrails: enforced layers, not prompts",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-155",
+      "quote": "does it match the required format?).",
+      "section": "Guardrails: enforced layers, not prompts",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-156",
+      "quote": "The key word is **enforced**: a guardrail is a *layer* the answer must pass, not a line in the system prompt asking the model to \"please be careful.\" A prompt is a *request* to a stochastic component; a guardrail is a *gate* in the deterministic system.",
+      "section": "Guardrails: enforced layers, not prompts",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-157",
+      "quote": "\\cite[Rebedea et al., NeMo Guardrails (2023)]{nemocguardrails} is the canonical framing of guardrails as programmable, checkable \"rails\" the model's output must follow — safety, factuality, format, and scope as *checks*, not *advice*.",
+      "section": "Guardrails: enforced layers, not prompts",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-158",
+      "quote": "This is the same move as the entire course: you do not *trust* the stochastic part to do the thing you need; you *check* it.",
+      "section": "Guardrails: enforced layers, not prompts",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-159",
+      "quote": "Guardrails are the deterministic system's way of holding the model to a contract the model alone would not keep.",
+      "section": "Guardrails: enforced layers, not prompts",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-160",
+      "quote": "When the model can act — read a file, call an API, run a function — the interface is a **schema**: a JSON description of the available tools, their arguments, and their types.",
+      "section": "The tool-calling schema: a specification the model fills",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-161",
+      "quote": "The model does not \"use the tool\"; it *fills in the schema* — it emits a structured call (function name + arguments) that the *system* validates and executes.",
+      "section": "The tool-calling schema: a specification the model fills",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-162",
+      "quote": "This is the [tool use](agents.php) half, but the architectural point is that the schema is a **specification**: a typed contract between a stochastic emitter (the model) and a deterministic executor (your code).",
+      "section": "The tool-calling schema: a specification the model fills",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-163",
+      "quote": "The executor does not trust the emitted arguments; it *validates* them against the schema, and if the arguments are malformed or out of range, it rejects them and re-prompts.",
+      "section": "The tool-calling schema: a specification the model fills",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-164",
+      "quote": "The model proposes; the schema disposes.",
+      "section": "The tool-calling schema: a specification the model fills",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-165",
+      "quote": "The [ReAct](react2022) pattern (\\cite[Yao et al., 2022]{react2022}) — reason, act, observe, repeat — is the loop this runs in, but the *contract* is the schema, and a schema is exactly the kind of written, checkable standard the [evaluation](evaluation.php) chapter keeps coming back to.",
+      "section": "The tool-calling schema: a specification the model fills",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-166",
+      "quote": "Because the component is non-deterministic, the system must handle its failures *explicitly*, the way a distributed system handles a flaky dependency:",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-167",
+      "quote": "* **Retry with backoff.** A malformed call, a truncated output, a rate-limit error — retry, with a backoff, before giving up.",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-168",
+      "quote": "Some failures are transient (a hiccup in the API); some are structural (the model keeps producing an out-of-schema answer), and those are not fixed by retrying — they are the guardrail's job to catch.",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-169",
+      "quote": "* **Fallback.** If the primary model fails or is too slow, fall back to a secondary model (a different provider, or a smaller/cheaper model of the same capability class).",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-170",
+      "quote": "The product defines what \"fallback\" *means* — a degraded answer is acceptable, a wrong answer is not — and that definition is a product decision, not a model property.",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-171",
+      "quote": "* **Degradation and the all-down case.** What does the product do when *every* model is unavailable?",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-172",
+      "quote": "A cached answer, a canned response, an honest \"I can't do that right now\" — one of these, *decided in advance*.",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-173",
+      "quote": "A system with no defined behavior for total failure is not a system; it is a model with a network cable.",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-174",
+      "quote": "The through-line: **determinism is a property you build, not one the model has.** The model gives you a distribution; the pipeline collapses it to a single, checkable, recoverable outcome.",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-175",
+      "quote": "The reliability the user experiences is engineered around the model, not supplied by it.",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-176",
+      "quote": "> A model is a component.",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-177",
+      "quote": "A product is a deterministic system that *schedules* a stochastic component (routing), *checks* it (guardrails), *contracts* with it (schemas), *recovers* from its failures (retry, fallback, degradation), and *sees* and *prices* everything it does (observability, cost).",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-178",
+      "quote": "The model is the only box in the diagram you did not design; every other box you did.",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-179",
+      "quote": "That is the whole discipline, and it is why \"it works in the notebook\" and \"it works in production\" are two different sentences.",
+      "section": "Retry, fallback, and degradation: determinism is built, not had",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-180",
+      "quote": "A production LLM system needs:",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-181",
+      "quote": "* **Latency monitoring**: TTFT, TPOT, end-to-end, p50/p95/p99.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-182",
+      "quote": "* **Throughput**: tokens/sec/GPU, requests/sec/GPU.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-183",
+      "quote": "* **Quality**: periodic sampling + LLM-as-judge on real traffic.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-184",
+      "quote": "* **Safety**: jailbreak detection, PII redaction, hallucination flags.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-185",
+      "quote": "* **Cost tracking**: per-request token cost, dollar-cost-per-conversation.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-186",
+      "quote": "* **A/B testing**: shadow traffic to new models, statistical comparison.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-187",
+      "quote": "The reason the first two alone are not enough is the shape of the failures: an LLM product fails **one in two hundred** requests, not one in a thousand.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-188",
+      "quote": "You cannot debug a failure you cannot *reproduce by name* — the only way to find the 1-in-200 is to have logged the exact prompt that produced the bad answer.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-189",
+      "quote": "**Observability** is the record of *every call*: the prompt, the completion, tokens in and out, latency, which model it was routed to, which guardrail fired, whether it retried.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-190",
+      "quote": "\\cite[OpenTelemetry GenAI (CNCF)]{otelgenai} standardizes exactly this — the GenAI semantic conventions for tracing LLM calls — so an LLM product has logs, metrics, and *traces* the way any other service does.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-191",
+      "quote": "It is what makes a probabilistic system *debuggable* at all.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-192",
+      "quote": "**Cost tracking** is the per-request and per-user accounting of tokens — a first-class feature, not an afterthought, because the pipeline *creates* the cost: routing decides which model's price applies, retries multiply it, and fallbacks change the profile.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-193",
+      "quote": "Without per-user accounting you cannot answer the only question a business asks — *\"what did this customer's usage actually cost us?\"* (see [The economic layer](ai_economics)).",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-194",
+      "quote": "Tools: Langfuse, Helicone, LangSmith, Arize Phoenix, Honeycomb.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-195",
+      "quote": "A common production mistake: shipping an LLM endpoint without **cost attribution**.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-196",
+      "quote": "At scale, a single user can rack up thousands of dollars per session if the system prompt is bloated or the conversation loops.",
+      "section": "Observability: The Hidden Half",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-197",
+      "quote": "A good production engineer knows when to skip the LLM entirely:",
+      "section": "When NOT to Use an LLM",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-198",
+      "quote": "* **Deterministic logic** (date parsing, math, lookups): use code, regex, traditional ML.",
+      "section": "When NOT to Use an LLM",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-199",
+      "quote": "* **Sub-millisecond latency**: precompute, cache, use heuristics.",
+      "section": "When NOT to Use an LLM",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-200",
+      "quote": "* **Strict reproducibility**: LLMs are stochastic; can't guarantee byte-identical output.",
+      "section": "When NOT to Use an LLM",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-201",
+      "quote": "* **Auditability**: every LLM call needs human review for high-stakes decisions (medical, legal).",
+      "section": "When NOT to Use an LLM",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-202",
+      "quote": "* **Cost ceiling**: a chat that costs $0.50 is fine; one that costs $5 is not.",
+      "section": "When NOT to Use an LLM",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-203",
+      "quote": "Rule of thumb: prototype with the best model; measure cost; downgrade if necessary; cache aggressively; consider a hybrid pipeline (cheap heuristic + occasional LLM fallback).",
+      "section": "When NOT to Use an LLM",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-204",
+      "quote": "Serving is only the start.",
+      "section": "MLOps / LLM-Ops: life after deployment",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-205",
+      "quote": "In production a model is a **system** that drifts, regresses, and costs money:",
+      "section": "MLOps / LLM-Ops: life after deployment",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-206",
+      "quote": "* **Monitoring & drift.** Inputs and quality shift over time (new slang, new user populations, data leaks).",
+      "section": "MLOps / LLM-Ops: life after deployment",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-207",
+      "quote": "Track latency and error rate *and* the statistical shape of what is coming in.",
+      "section": "MLOps / LLM-Ops: life after deployment",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-208",
+      "quote": "* **Evals in CI.** Run a regression suite of prompts + automatic metrics on every change, like unit tests for code; A/B new weights against old on live traffic.",
+      "section": "MLOps / LLM-Ops: life after deployment",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-209",
+      "quote": "* **Versioning & rollback.** Treat weights, prompts, and retrieval indexes as versioned artifacts you can roll back in minutes.",
+      "section": "MLOps / LLM-Ops: life after deployment",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-210",
+      "quote": "* **Feedback loops.** Capture corrections and rejections, label a slice, and fold it back into fine-tuning — a data flywheel.",
+      "section": "MLOps / LLM-Ops: life after deployment",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-211",
+      "quote": "* **Cost governance.** Token cost, batch size, and model routing (cheap model first, expensive on escalation) are first-class constraints, not afterthoughts.",
+      "section": "MLOps / LLM-Ops: life after deployment",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-212",
+      "quote": "The discipline borrows its bones from software **continuous delivery** \\cite[Wikipedia]{continuous_delivery_wiki} — build, test, ship, observe, repeat — now applied to a model whose \"code\" is a billion floating-point weights.",
+      "section": "MLOps / LLM-Ops: life after deployment",
+      "kind": "statement"
+    },
+    {
+      "id": "production_serving-stmt-213",
+      "quote": "The goal is the same as in the Evaluation chapter : a measurement loop tight enough that you learn, before a user does, when the model has started to fail.",
+      "section": "MLOps / LLM-Ops: life after deployment",
+      "kind": "statement"
+    }
   ]
 }

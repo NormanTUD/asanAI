@@ -180,5 +180,163 @@
       "confidence": "provenance"
     }
   ],
-  "deep_audit": true
+  "deep_audit": true,
+  "statements": [
+    {
+      "id": "backproplab-stmt-1",
+      "quote": "Backpropagation, introduced to the field of AI in \\citeyear{rumelhart1986}, is how a neural network **learns from its own mistakes**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-2",
+      "quote": "**Forward Pass** — inputs flow *left → right* through the layers, producing a prediction.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-3",
+      "quote": "**Backward Pass** — the error flows *right → left*, telling each weight exactly how much to change.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-4",
+      "quote": "In the demo further down you can *watch* both flows as glowing pulses along the wires — each neuron's numbers update the instant a pulse lands on it.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-5",
+      "quote": "Click any neuron or weight to unfold its equations; every quantity wears an **underbrace** naming what it is in plain words, and a **show definition** toggle unfolds a symbol into its own formula.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-6",
+      "quote": "Instead of a toy 2‑2‑2 net, the demo below runs a **4-layer network** with shape **3 → 4 → 4 → 2**.",
+      "section": "The Network You'll Play With",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-7",
+      "quote": "That's small enough to hand‑trace, deep enough to show how error signals *cascade* backward layer by layer — the exact behaviour that makes \"deep\" learning deep.",
+      "section": "The Network You'll Play With",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-8",
+      "quote": "Every arrow between layers is a **weight** $w$; every neuron also owns a **bias** $b$.",
+      "section": "The Network You'll Play With",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-9",
+      "quote": "Each neuron does two things:",
+      "section": "One Neuron, In Slow Motion",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-10",
+      "quote": "The **sigmoid** squashes any real number into $(0, 1)$.",
+      "section": "One Neuron, In Slow Motion",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-11",
+      "quote": "Its derivative — which we'll need for backprop — is delightfully cheap once you already know $\\sigma(z)$:",
+      "section": "One Neuron, In Slow Motion",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-12",
+      "quote": "Hover the plot below to see the tangent slope at any point:",
+      "section": "One Neuron, In Slow Motion",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-13",
+      "quote": "To learn, we need $\\partial E / \\partial w$ for every weight $w$ in the network.",
+      "section": "The Chain Rule Is All You Need",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-14",
+      "quote": "Instead of computing each one from scratch, backprop reuses work by pushing an **error signal** $\\delta$ backward, layer by layer.",
+      "section": "The Chain Rule Is All You Need",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-15",
+      "quote": "**At the output layer** (sigmoid + half-SSE):",
+      "section": "The Chain Rule Is All You Need",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-16",
+      "quote": "**At any hidden layer** (chain rule):",
+      "section": "The Chain Rule Is All You Need",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-17",
+      "quote": "Once you have $\\delta$ at a neuron, the gradient for any weight *feeding into* it is trivial:",
+      "section": "The Chain Rule Is All You Need",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-18",
+      "quote": "And the update is a small step downhill:",
+      "section": "The Chain Rule Is All You Need",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-19",
+      "quote": "where $\\eta$ is the **learning rate**.",
+      "section": "The Chain Rule Is All You Need",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-20",
+      "quote": "**Press ▶ Forward** — watch cyan pulses travel left→right; each neuron's activation *updates the moment a pulse lands on it*.",
+      "section": "Now Watch It Happen",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-21",
+      "quote": "**Press ◀ Backward** — watch red pulses travel right→left; each neuron's error signal $\\delta$ updates on arrival.",
+      "section": "Now Watch It Happen",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-22",
+      "quote": "**Hover any neuron** — a *cone of influence* lights up every weight it touches, colored by that weight's contribution.",
+      "section": "Now Watch It Happen",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-23",
+      "quote": "**Click any neuron or weight** — the panel below expands its full equations.",
+      "section": "Now Watch It Happen",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-24",
+      "quote": "Every quantity wears an **underbrace** naming what it is, with a wider underbrace grouping related terms.",
+      "section": "Now Watch It Happen",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-25",
+      "quote": "**Hit \"show definition\"** on a line — it unfolds that symbol into its own formula (e.g. the activation into the raw sigmoid).",
+      "section": "Now Watch It Happen",
+      "kind": "statement"
+    },
+    {
+      "id": "backproplab-stmt-26",
+      "quote": "**Press ✓ Full step**, then **↻ Train 100** — watch the values change on arrival and the loss bar shrink as the network adapts.",
+      "section": "Now Watch It Happen",
+      "kind": "statement"
+    }
+  ]
 }

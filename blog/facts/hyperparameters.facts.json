@@ -546,5 +546,499 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "hyperparameters-stmt-1",
+      "quote": "Every model in this course contains two kinds of numbers: **parameters**, which *learning* changes, and **hyperparameters**, which *you choose* before learning starts.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-2",
+      "quote": "This chapter is about the second kind: what it is, why it cannot be solved for, and how practitioners actually find good values.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-3",
+      "quote": "A **parameter** is a quantity the training algorithm updates.",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-4",
+      "quote": "The weights $W$ of a transformer are parameters: they start at random values and are moved by gradient descent until the [loss](losslab.php) stops decreasing.",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-5",
+      "quote": "A model may have billions of them, and you never pick one by hand.",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-6",
+      "quote": "A **hyperparameter** is a quantity that stays *fixed* during training and is *chosen* by the practitioner before it starts.",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-7",
+      "quote": "It sits outside the learned weights and determines what the model is and how it is trained:",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-8",
+      "quote": "| Category | Hyperparameter | Chosen as |",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-9",
+      "quote": "| Architecture | $d_{\\text{model}}$, $N$ layers, $h$ heads, FFN width, context size, vocabulary size | integers, often constrained ($d_{\\text{model}}$ a multiple of $h$) |",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-10",
+      "quote": "| Optimization | learning rate, optimizer (SGD / Adam / …), batch size, number of epochs, weight decay | continuous (learning rate usually on a log scale) or categorical |",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-11",
+      "quote": "| Data | context length, tokenization scheme, data mixing | integers / categorical |",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-12",
+      "quote": "| Inference | temperature, top-$p$ | continuous (see the [Temperature & Sampling](samplinglab.php) chapter) |",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-13",
+      "quote": "You have already set several of these: the learning rate and optimizer in the [Optimizer chapter](optimizerlab.php), $d_{\\text{model}}$, $h$, $N$ and context size in the [Transformer chapter](transformer.php).",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-14",
+      "quote": "The boundary is not perfectly clean.",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-15",
+      "quote": "A learning-rate *schedule* is a function you choose whose value changes over time, and every optimizer carries its own hyperparameters (Adam's $\\beta_1$, $\\beta_2$, $\\epsilon$), so choices nest inside other choices.",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-16",
+      "quote": "The `optimizer` slot itself hides a sub-family of choices.",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-17",
+      "quote": "The names you have seen in the [Optimizer chapter](optimizerlab.php) — SGD and Adam — are just two of about a dozen in active use: SGD with Momentum, Nesterov accelerated gradient, Adagrad, Adadelta, RMSprop, AdaMax, Nadam, AMSGrad, and AdamW each address a limitation of earlier methods.",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-18",
+      "quote": "\\citeauthor{ruder2016overview}'s 2016 overview article (\\citeyear{ruder2016overview}) is the canonical practitioner survey of the family, with derivations of each rule and a discussion of which to reach for when.",
+      "section": "Two Kinds of Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-19",
+      "quote": "A constant that cancels out (say, an additive constant in the loss) changes neither the gradients nor the model.",
+      "section": "Why a Hyperparameter Is Not a Constant",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-20",
+      "quote": "A hyperparameter does both:",
+      "section": "Why a Hyperparameter Is Not a Constant",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-21",
+      "quote": "* **Architecture hyperparameters change the model itself.** $d_{\\text{model}} = 768$ and $d_{\\text{model}} = 128$ are not two settings of the same model; they are two different function classes with different weight-matrix shapes.",
+      "section": "Why a Hyperparameter Is Not a Constant",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-22",
+      "quote": "Choosing $d_{\\text{model}}$ is the choice of *which* set of functions the optimizer may search over.",
+      "section": "Why a Hyperparameter Is Not a Constant",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-23",
+      "quote": "* **Optimization hyperparameters change the process, not just its speed.** The learning rate does not merely pace the descent: gradient descent with a different step size follows a different trajectory and can settle in a different minimum.",
+      "section": "Why a Hyperparameter Is Not a Constant",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-24",
+      "quote": "Two runs that differ only in learning rate are different experiments, not one experiment at two speeds.",
+      "section": "Why a Hyperparameter Is Not a Constant",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-25",
+      "quote": "* **Data hyperparameters change the objective.** A different context length or a different tokenizer changes the loss the model is actually minimizing.",
+      "section": "Why a Hyperparameter Is Not a Constant",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-26",
+      "quote": "Consequence: there is no closed-form equation of the form $\\text{hyperparameter} = f(\\text{task})$ that you can solve.",
+      "section": "Why a Hyperparameter Is Not a Constant",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-27",
+      "quote": "The only way to know what a choice is worth is to run trainings and measure the result — or to fit a statistical model to the results of earlier runs.",
+      "section": "Why a Hyperparameter Is Not a Constant",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-28",
+      "quote": "**Evaluation is expensive.** One point in the search space costs one full training run.",
+      "section": "Why the Search Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-29",
+      "quote": "At real scale that means days on thousands of GPUs; even a small model on one GPU costs minutes per point.",
+      "section": "Why the Search Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-30",
+      "quote": "**The objective is noisy.** Two runs with the same hyperparameters but different random seeds land at slightly different losses.",
+      "section": "Why the Search Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-31",
+      "quote": "A search must average over noise or it optimizes luck.",
+      "section": "Why the Search Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-32",
+      "quote": "**The space is mixed and constrained.** Discrete values ($N$, $h$), continuous values (learning rate, best explored on a log scale), categorical choices (optimizer), plus constraints such as $d_{\\text{model}} \\bmod h = 0$.",
+      "section": "Why the Search Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-33",
+      "quote": "A method that only handles one of these cannot handle the whole space.",
+      "section": "Why the Search Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-34",
+      "quote": "**Hyperparameters interact.** Learning rate and batch size must be chosen together: doubling the batch size usually requires rescaling the learning rate — the linear scaling rule doubles it, up to a limit \\cite{goyal2017largebatch}.",
+      "section": "Why the Search Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-35",
+      "quote": "The search space is not a grid of independent dials.",
+      "section": "Why the Search Is Hard",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-36",
+      "quote": "Most published models ship with a hyperparameter table whose values were inherited from the previous model with a few adjustments.",
+      "section": "Expert knowledge and transfer",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-37",
+      "quote": "Transfer works because architectures and objectives change slowly between papers — and it fails silently when the task or scale changes, because nothing tells you the inherited value is no longer good.",
+      "section": "Expert knowledge and transfer",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-38",
+      "quote": "Before search became automatic, tuning was a craft with a short list of rules.",
+      "section": "Expert knowledge and transfer",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-39",
+      "quote": "\\cite[Bengio (2012)]{bengio2012practical} codified them for deep networks: the initial learning rate is “often the single most important hyperparameter” and should be tuned on a log scale; the batch size is mostly a computational choice; and random search is preferable to grid search when only a few axes matter.",
+      "section": "Expert knowledge and transfer",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-40",
+      "quote": "The advice sounds modest, but it encodes the empirical fact that one hyperparameter dominates the others, which is why even a large Bayesian search usually starts by mapping that axis.",
+      "section": "Expert knowledge and transfer",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-41",
+      "quote": "At the frontier, search is partly replaced by *fitted laws*.",
+      "section": "Scaling laws",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-42",
+      "quote": "(\\cite[Kaplan et al., 2020]{kaplan2020scaling}) showed that the loss of a language model depends on the number of parameters $N$, the number of training tokens $D$ and the compute $C$ as smooth power laws.",
+      "section": "Scaling laws",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-43",
+      "quote": "Fit the laws on cheap small models and you can extrapolate the target size for a fixed budget.",
+      "section": "Scaling laws",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-44",
+      "quote": "(\\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}) redid the analysis on a larger scale and found that for a fixed compute budget, models should be trained on roughly 20 times as many tokens as they have parameters — far more than the then-standard practice, which had been copied between papers for years.",
+      "section": "Scaling laws",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-45",
+      "quote": "A fitted law can thus overturn a prior belief that no single experiment would have questioned.",
+      "section": "Scaling laws",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-46",
+      "quote": "Scaling laws changed what search is for.",
+      "section": "Scaling laws",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-47",
+      "quote": "If the loss follows a power law in parameters and tokens, a handful of small runs can predict the compute-optimal frontier, and some hyperparameters can be transferred rather than re-searched at every scale.",
+      "section": "Scaling laws",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-48",
+      "quote": "\\cite[Yang et al. (2022)]{yang2022mup} made this concrete with maximal-update parametrization (muP): many optimal hyperparameters — including the learning rate — stay stable as the model grows, so tuning a small model can be reused zero-shot on a large one.",
+      "section": "Scaling laws",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-49",
+      "quote": "The practical consequence is a shift from per-model search to a few scaled reference runs.",
+      "section": "Scaling laws",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-50",
+      "quote": "The simplest systematic method: choose a grid of candidate values per hyperparameter and train on every combination.",
+      "section": "Grid search",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-51",
+      "quote": "With $n$ points on each of $d$ axes this costs $n^d$ trainings, which grows so fast that grid search is only affordable for $d \\approx 2$–3 — and it wastes budget on combinations where the unimportant axes are varied pointlessly.",
+      "section": "Grid search",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-52",
+      "quote": "Draw configurations at random (uniformly for discrete values, log-uniformly for positive continuous ones like the learning rate) and train on them.",
+      "section": "Random search",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-53",
+      "quote": "(\\cite[Bergstra & Bengio, 2012]{bergstra2010random}) showed that for a fixed evaluation budget, random search matches or beats grid search in most realistic settings: when only a few hyperparameters matter much, a grid spreads its points across the values of the ones that do not, while random search keeps covering the full range of every axis.",
+      "section": "Random search",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-54",
+      "quote": "Build a probabilistic *surrogate model* of $\\text{config} \\mapsto \\text{loss}$ from the evaluations already performed, and choose the next configuration by balancing **exploitation** (where the surrogate predicts a good loss) against **exploration** (where it is still uncertain).",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-55",
+      "quote": "Two standard instantiations:",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-56",
+      "quote": "* **Gaussian-process surrogates** — the classical form, introduced by \\cite[Močkus (1975)]{mockus1978bo} and made practical for ML by \\cite[Snoek et al. (2012)]{snoek2012practical}: a Gaussian process is placed over the loss function; an acquisition function (e.g. expected improvement) picks the next point from the balance of predicted quality and uncertainty.",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-57",
+      "quote": "* **TPE (Tree-structured Parzen Estimators)** — introduced by \\cite[Bergstra et al. (2011)]{bergstra2011algorithms} and applied at scale by \\cite[Bergstra et al. (2013)]{bergstra2013science}: instead of a full process, the observed configurations are split into those that gave a *good* loss and those that gave a *bad* one; each group is modeled by its own density, and the next configuration is sampled where the good density is high relative to the bad one.",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-58",
+      "quote": "Bayesian optimization treats the search as a sequential decision problem: maintain a belief about the objective, choose the point that maximizes expected improvement, observe, update.",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-59",
+      "quote": "\\cite[Močkus (1975)]{mockus1978bo} gave the Bayesian formulation; \\cite[Jones et al. (1998)]{jones1998ego} made Gaussian-process surrogates and expected improvement practical under the name “efficient global optimization”; \\cite[Snoek et al. (2012)]{snoek2012practical} then adapted the machinery to ML models — a CIFAR-10 convolutional network, online LDA, and a structured SVM — and to the cost of each run.",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-60",
+      "quote": "The modern tooling descends from that line.",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-61",
+      "quote": "\\cite[Hyperopt]{hyperopt} is the open-source implementation that popularised TPE; \\cite[Optuna]{akiba2019optuna} and \\cite[Ax]{olson2025ax} are the modern alternatives.",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-62",
+      "quote": "The defining property of the whole approach: *every evaluation makes the next one smarter*, so the search is sequential and budget-aware rather than exhaustive.",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-63",
+      "quote": "\\cite[Li et al. (2016)]{li2016hyperband} turned this observation into an algorithm.",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-64",
+      "quote": "Hyperband runs successive-halving brackets: start many configurations with a tiny budget, keep the best fraction, and multiply the survivors' budget; a bracket repeats this until one configuration remains.",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-65",
+      "quote": "Running several brackets at different aggressiveness levels makes the method robust to the unknown cost of a full training run, and the whole procedure is a bandit-style allocation of trials rather than a surrogate model.",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-66",
+      "quote": "It remains the reference point for modern multi-fidelity schedulers.",
+      "section": "Bayesian optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-67",
+      "quote": "\\cite[Jaderberg et al. (2017)]{jaderberg2017pbt} pushed the idea further with population-based training.",
+      "section": "Population-based training",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-68",
+      "quote": "A population of workers trains in parallel; at intervals, poorly performing workers copy the weights and hyperparameters of better ones and then perturb them, so the hyperparameters are *evolved* during training rather than fixed beforehand.",
+      "section": "Population-based training",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-69",
+      "quote": "The method was demonstrated on deep reinforcement learning, machine translation and GANs — settings where schedules and exploration constants matter and runs are long — but it applies whenever a training run can be paused and forked.",
+      "section": "Population-based training",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-70",
+      "quote": "It is search and training in one loop.",
+      "section": "Population-based training",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-71",
+      "quote": "A bad configuration usually announces itself early: the loss curves of doomed runs separate from the survivors within the first few epochs.",
+      "section": "Multi-fidelity search",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-72",
+      "quote": "Multi-fidelity methods therefore run many trials briefly and extend only the ones that are winning, so a fixed budget buys far more distinct configurations than running each trial to completion.",
+      "section": "Multi-fidelity search",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-73",
+      "quote": "If you have a model whose training can be run as a program, the search does not have to be done by hand.",
+      "section": "A Tool for the Search: OmniOpt",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-74",
+      "quote": "\\cite[ScaDS.AI Dresden/Leipzig]{omniopt} has developed exactly such an instrument: **OmniOpt**, a hyperparameter optimization tool that wraps an optimizer around your own program.",
+      "section": "A Tool for the Search: OmniOpt",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-75",
+      "quote": "Its current version, OmniOpt2, no longer ties the search to a single algorithm: it is built on the \\cite[Ax]{olson2025ax} adaptive-experimentation platform, whose default surrogate is a Gaussian process fitted by \\cite[BoTorch]{balandat2020botorch}, and it can additionally run TPE, Sobol quasi-random sequences, factorial designs, and the full range of \\cite[Optuna]{akiba2019optuna} samplers.",
+      "section": "A Tool for the Search: OmniOpt",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-76",
+      "quote": "Which algorithm fits the problem is up to the search space: Gaussian processes shine in low-to-medium-dimensional continuous spaces, TPE in high-dimensional or heavily categorical ones, and quasi-random sequences when the evaluations are cheap enough that adaptivity pays no dividend.",
+      "section": "A Tool for the Search: OmniOpt",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-77",
+      "quote": "* Your program is a **black box** in any programming language on Linux: it reads the hyperparameters as command-line arguments, trains, and prints the objective value to standard output.",
+      "section": "A Tool for the Search: OmniOpt",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-78",
+      "quote": "* OmniOpt proposes the next configurations, balancing exploration and exploitation, and checks and installs all dependencies automatically.",
+      "section": "A Tool for the Search: OmniOpt",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-79",
+      "quote": "* The evaluations are distributed automatically over the HPC system at TU Dresden, given you have access to the system — more than 40,000 CPUs and several hundred GPUs.",
+      "section": "A Tool for the Search: OmniOpt",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-80",
+      "quote": "If you don't have access to the TU Dresden HPC systems, you can run it on any Linux, or any system that has Slurm as a scheduler.",
+      "section": "A Tool for the Search: OmniOpt",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-81",
+      "quote": "* The results come back as the full table of evaluated configurations plus 2D slices of the search space as color maps and parallel-coordinate plots.",
+      "section": "A Tool for the Search: OmniOpt",
+      "kind": "statement"
+    },
+    {
+      "id": "hyperparameters-stmt-82",
+      "quote": "See the [project page](https://scads.ai/transfer-and-service/software/omniopt/).",
+      "section": "A Tool for the Search: OmniOpt",
+      "kind": "statement"
+    }
   ]
 }

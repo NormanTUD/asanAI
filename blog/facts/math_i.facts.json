@@ -553,5 +553,1339 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "math_i-stmt-1",
+      "quote": "Before we can understand a Neural Network, we have to understand the language it speaks: **mathematics**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-2",
+      "quote": "This first of three math chapters covers the numerical foundations, the symbols and operations that appear constantly in AI code.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-3",
+      "quote": "By the end, you will be comfortable with the sum symbol $\\sum$, Euler's number $e$, logarithms, and the way a computer represents “infinity” without crashing.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-4",
+      "quote": "Long before anyone wrote a numeral, people counted by making marks.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-5",
+      "quote": "The **Lebombo bone**, a baboon fibula from Border Cave, carries a row of incised notches and is dated to roughly 42,000–43,000 years ago by 24 radiocarbon measurements; it is plausibly a tally stick, though that reading is not certain (\\cite[Bruderer, 2024]{lebombobone}).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-6",
+      "quote": "The **Ishango bone** from the Congo, about 20,000 years old, has 168 marks arranged in three columns; proposed readings range from a base-12 counting aid to a lunar calendar (\\cite[de Heinzelin, 1957]{ishangobone}; \\cite[Pletser, 2012]{ishango12}).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-7",
+      "quote": "Neither bone proves arithmetic, but both externalise number as a spatial pattern — the move every array, tensor and embedding still makes.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-8",
+      "quote": "The first **place-value** systems grew out of accounting, not pure mathematics.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-9",
+      "quote": "Sumerian scribes were counting in base 60 before 3500 BCE, and the Old Babylonians turned that inheritance into a positional sexagesimal system around 2000 BCE, using just two wedge symbols for the digits 1–59 (\\cite[MacTutor: Babylonian Mathematics]{macTutorBabylonianMathematics}; \\cite[MacTutor: Babylonian Numerals]{macTutorBabylonianNumerals}).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-10",
+      "quote": "Egypt went the other way: its hieroglyphs were decimal but **not** positional, with separate signs for 1, 10, 100 and so on, and the Rhind Papyrus (c.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-11",
+      "quote": "1650 BCE) works in unit fractions (\\cite[MacTutor: Egyptian Numerals]{macTutorEgyptianNumerals}; \\cite[Ahmes, c.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-12",
+      "quote": "1650 BCE]{rhindpapyrus}).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-13",
+      "quote": "In classical programming, you need to write every single step that has to be done with data.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-14",
+      "quote": "This initializes a *variable* called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-15",
+      "quote": "*Variables* can be thought of as containers for values which you can use instead of concrete values.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-16",
+      "quote": "According to \\citeauthor{historyofmathematicalnotation} (Vol.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-17",
+      "quote": "381), the naming of the variable $x$ for the unknown was started by \\citeauthor{lageometrie} in \\citeyear{lageometrie}, where he used $a, b, c$ for *known* quantities, and $x, y, z$ for *unknown* ones.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-18",
+      "quote": "We will not follow this strictly, though.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-19",
+      "quote": "The line with <tt>print</tt> then prints out this value to the command line.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-20",
+      "quote": "You can also use more variables, like the next example uses $ y $, which, in turn, uses the value of $ x $ to print $ 3 $ after calculating its values.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-21",
+      "quote": "Let's now introduce **functions**.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-22",
+      "quote": "A function is something that accepts inputs and calculates an output, where the rules are specified from how to get from the inputs to the outputs.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-23",
+      "quote": "Functions are useful, as they model reality.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-24",
+      "quote": "The word \"function\" enters mathematics through Leibniz, who used it in 1673 for a line \"performing some function\" in a figure, but the modern concept is Euler's.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-25",
+      "quote": "In the *Introductio* (1748) Euler defines a function as an analytic expression; in the *Institutiones* (1755) he widens this to \"quantities which depend on\" others (\\cite[MacTutor: The Function Concept]{macTutorFunctions}; \\cite[Euler, 1748]{euler1748introductio}; \\cite[Euler, 1755]{euler1755}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-26",
+      "quote": "Euler also gave the symbol $f(x)$ its modern life in 1734 (\\cite[Miller: Function Symbols]{miller_functionsymbols}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-27",
+      "quote": "Dirichlet's 1837 definition drops the formula requirement altogether: a function is any rule assigning one value to each input (\\cite[MacTutor: The Function Concept]{macTutorFunctions}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-28",
+      "quote": "That is the sense in which a neural network *is* a function: a rule, not a formula.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-29",
+      "quote": "When we have such a function, we can go through a list of values, like $1$, $2$, $\\dots$, and plug them into the function, and use the resulting number as a position indicator, and create a so-called “plot” from it.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-30",
+      "quote": "That is, we show it in a diagram where $x$ is left-to-right and $y$, the result, is the vertical direction.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-31",
+      "quote": "The identity function looks like this:",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-32",
+      "quote": "We can now also introduce parameters, $a$ and $b$ (which will later be the so-called **weights**): $ f(x) = ax + b $.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-33",
+      "quote": "$a$ changes the slope of the line, while $b$ moves it up or down.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-34",
+      "quote": "You can see how the parameters affect the plot by changing them with the sliders:",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-35",
+      "quote": "For example, the $ \\text{add} $-function takes 2 inputs, and adds them to each other with the rule $ \\text{Output} = \\text{First input} + \\text{second input} $.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-36",
+      "quote": "We may use shorter names like $x$ and $y$ instead of $\\text{First input}$.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-37",
+      "quote": "In python, it looks like this:",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-38",
+      "quote": "We can use this $\\text{add}$ function in the code, similar to what we had before.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-39",
+      "quote": "Of course, we can also parameterize this function: $f(x, y) = ax + by$.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-40",
+      "quote": "You can also play around with how this changes the results of this function in the next plot:",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-41",
+      "quote": "We can also use other functions, like $\\sin$ (the sine) in our functions, and we can also parameterize them to get more complex patterns:",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-42",
+      "quote": "For a mathematical understanding of functions, you need sets first, which are quite simple.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-43",
+      "quote": "A set is a collection of things (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-44",
+      "quote": "99]{lang2005basicmath}), like the collection of positive natural numbers smaller than 4: $\\left\\{1, 2, 3\\right\\}$.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-45",
+      "quote": "A function now, mathematically speaking, is a rule to transform each input of one set into exactly one element of another set (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-46",
+      "quote": "345]{lang2005basicmath}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-47",
+      "quote": "Like, for example, the function $y = f(x) = x \\cdot 2$, transforms the input $x$ to $y$ with the rule $x\\cdot 2$.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-48",
+      "quote": "Sets do not need to contain only numbers, though.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-49",
+      "quote": "Sets can contain sets, or sets can contain images, or people, or whatever else that can be listed.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-50",
+      "quote": "The *set* of jobs could be something like this: $\\left\\{\\text{programmer}, \\text{janitor}, \\text{cashier}, \\dots\\right\\}$.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-51",
+      "quote": "Sets can have a limited number of elements (and even be empty), or have an unlimited amount of elements, like the set of all numbers.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-52",
+      "quote": "Since, for each number, there's always a larger number, the set never ends.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-53",
+      "quote": "There are certain sets that are useful to know, like $\\mathbb{N}$, which is the set of all natural numbers, or $\\mathbb{R}$, which is the set of all real numbers (i.e. all numbers we use in every day life when not simply counting, e.g. $1.8$ or $3.14$, but also every number from $\\mathbb{N}$, or the set of so-called **boolean values** $\\mathbb{B} = \\left\\{\\text{True}, \\text{False}\\right\\}$, but a set does not need to be any of them.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-54",
+      "quote": "A function defines a rule such that, for each element of a set, applying that rule yields an element of another (or the same) set.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-55",
+      "quote": "Another example for a function could be something like the function $\\text{is\\_even}(x)$, which takes any nonnegative integer $x \\in \\{0, 1, 2, 3, \\ldots\\}$ and returns $\\text{True}$ if $x$ is even and $\\text{False}$ otherwise.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-56",
+      "quote": "Here the input set is $\\mathbb{N}$ (the natural numbers, including 0), and the output set is $\\mathbb{B} = \\{\\text{True}, \\text{False}\\}$.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-57",
+      "quote": "Notice that $0$ is even, so $\\text{is\\_even}(0) = \\text{True}$ — which is exactly what the definition gives us.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-58",
+      "quote": "Some books define the natural numbers as $\\{1, 2, 3, \\ldots\\}$ (excluding $0$).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-59",
+      "quote": "Both conventions are common.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-60",
+      "quote": "Throughout this course we use the inclusive convention $\\mathbb{N} = \\{0, 1, 2, \\ldots\\}$, matching the convention most programming languages (and most AI libraries) use.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-61",
+      "quote": "Zero entered mathematics twice, and the two entries are easy to confuse.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-62",
+      "quote": "Babylonian scribes used a pair of wedges as an **empty-place marker** from about 400 BCE, but they did not treat it as a number, and they did not use it at the right-hand end of a numeral (\\cite[MacTutor: A History of Zero]{macTutorZero}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-63",
+      "quote": "The decisive step is Brahmagupta's *Brāhmasphuṭasiddhānta* (628 CE), which gives rules for calculating with zero and negatives; his rule for a finite number divided by zero survives in Colebrooke's translation as \"A definite quantity divided by cipher, is the submultiple of nought\" (\\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-64",
+      "quote": "Negative numbers appear first as **bookkeeping**, not as abstract objects.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-65",
+      "quote": "The Chinese *Nine Chapters on the Mathematical Art*, compiled in the Han dynasty, uses positive and negative quantities in systems of linear equations, and Liu Hui (3rd century CE) states rules for adding and subtracting them (\\cite[Han-dynasty compilers, 1st c.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-66",
+      "quote": "Brahmagupta then gives the rule in words that still sound modern: \"the difference of an affirmative and a negative quantity is their addition\" (\\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-67",
+      "quote": "The discovery that a square's diagonal is **incommensurable** with its side broke the Pythagorean programme that \"all is number\".",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-68",
+      "quote": "The proof is traditionally attributed to Hippasus (5th century BCE); Theodorus of Cyrene extended it to surds up to √17, and Eudoxus of Cnidus (c.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-69",
+      "quote": "408–355 BCE) rebuilt proportion so that incommensurable magnitudes could be handled without pretending they were ratios of integers (\\cite[MacTutor: Real Numbers]{macTutorRealNumbers}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-70",
+      "quote": "Euclid's *Elements* Book X organises the result (\\cite{euclidelements}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-71",
+      "quote": "Only in 1872 did Dedekind give the modern definition: an irrational is a **cut** in the rationals (\\cite[Dedekind, 1872]{dedekind1872}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-72",
+      "quote": "Cantor's 1895 definition is the source of the modern notation: \"Unter einer 'Menge' verstehen wir jede Zusammenfassung M von bestimmten wohlunterschiedenen Objecten m unsrer Anschauung oder unseres Denkens ...",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-73",
+      "quote": "zu einem Ganzen\" — a set is any collection of definite, distinct objects of our intuition or thought into a whole (\\cite[Cantor, 1895]{cantor1895}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-74",
+      "quote": "The symbol $\\in$ is younger: Peano introduced it in 1889, taking the first letter of the Greek *esti* (\"is\") (\\cite[MacTutor: Set Theory]{macTutorSetTheory}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-75",
+      "quote": "Cantor's unrestricted \"any collection\" later forced axiomatisation after Russell's paradox (discovered around 1901–02) (\\cite[MacTutor: Set Theory]{macTutorSetTheory}).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-76",
+      "quote": "> **The number line was not given; it was built.** Tally marks (c.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-77",
+      "quote": "42,000 BP) externalised counting; Babylon added place-value (c.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-78",
+      "quote": "2000 BCE); Brahmagupta made zero a number (628 CE); Dedekind made the irrationals rigorous (1872).",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-79",
+      "quote": "Each step turned a practical trick into an object mathematics could calculate with.",
+      "section": "Programming",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-80",
+      "quote": "In classical programming, you would specify each step by hand to define a function, but for some functions, this is barely possible since the problem is ill-defined or way too complex.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-81",
+      "quote": "For example, imagine you need a program to tell images of cats and dogs apart.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-82",
+      "quote": "You cannot simply write a function that checks for every single pixel value, because then you'd need to know every single possible image of a cat or a dog, which is an infinite amount.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-83",
+      "quote": "This is where AI comes in.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-84",
+      "quote": "AI replaces the idea of a hand-written *function* with a *model* that does what you want, and doesn't do it by a list of handwritten rules, but learns how to do it by example.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-85",
+      "quote": "For example, you may have a large set of images of cats and dogs, and the information for each image, if it shows a cat or a dog.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-86",
+      "quote": "Then, you'd have 2 sets, one, the set of all images, and the set of results like $\\left\\{\\text{cat}, \\text{dog}\\right\\}$, where each Image is mapped to one of those results, ie.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-87",
+      "quote": "you know that you want $\\text{function}\\left(\\text{Image of a cat}\\right) \\rightarrow \\text{cat}$ and $\\text{function}\\left(\\text{Image of a dog}\\right) \\rightarrow \\text{dog}$.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-88",
+      "quote": "AI then learns how to get from that input to that output.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-89",
+      "quote": "You only provide basic building blocks it should use, which depend on the type of task you want it to solve.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-90",
+      "quote": "This model will (most probably) not be perfect.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-91",
+      "quote": "But it can be **good enough** to be useful.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-92",
+      "quote": "Throughout this course, we will look into these building blocks and how the computer then creates this model, and how these building blocks work.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-93",
+      "quote": "We'll start with very simple building blocks for simple numbers, and then go to building blocks to classify images, and end up with Transformers, which are the basic structure for chatGPT, which all take ideas from each other.",
+      "section": "Classical programming vs. AI",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-94",
+      "quote": "In AI, we often deal with thousands or even millions of numbers at once.",
+      "section": "The Sum Symbol $ \\sum $",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-95",
+      "quote": "If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \\dots$ would take up too much space.",
+      "section": "The Sum Symbol $ \\sum $",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-96",
+      "quote": "To solve this, mathematicians use the Greek letter **Sigma** ($\\sum$) as a shorthand for “summation” (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "The Sum Symbol $ \\sum $",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-97",
+      "quote": "384]{lang2005basicmath}).",
+      "section": "The Sum Symbol $ \\sum $",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-98",
+      "quote": "This symbol for summation was introduced by \\citeauthor{euler1755} in \\citeyear{euler1755} (see p.",
+      "section": "The Sum Symbol $ \\sum $",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-99",
+      "quote": "61, § 438, \\citetitle{historyofmathematicalnotation}, Volume 2).",
+      "section": "The Sum Symbol $ \\sum $",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-100",
+      "quote": "Euler introduced $\\Sigma$ in the *Institutiones calculi differentialis* (1755) with a sentence that names the analogy: \"Quemadmodum ad differentiam denotandam vsi sumus signo Δ, ita summam indicabimus signo Σ\" — just as we use Δ for the difference, we shall denote the sum by Σ (\\cite[Euler, 1755]{euler1755}; \\cite[Miller: Symbols of Operation]{millerOperation}).",
+      "section": "The Sum Symbol $ \\sum $",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-101",
+      "quote": "His $\\Sigma$ was an indefinite-sum sign; the definite form with lower and upper limits is a 19th-century development, documented in Fourier's 1820 paper (\\cite[Cajori, 1928]{historyofmathematicalnotation}).",
+      "section": "The Sum Symbol $ \\sum $",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-102",
+      "quote": "The product sign $\\prod$ is credited by Cajori to Gauss in 1812, and the factorial sign $n!$ to Kramp in 1808 (\\cite[Miller: Symbols of Operation]{millerOperation}; \\cite[Kramp, 1808]{kramp1808}).",
+      "section": "The Sum Symbol $ \\sum $",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-103",
+      "quote": "> Euler's Σ (1755) was an indefinite sum; the definite Σ with limits is 19th-century (Fourier, 1820).",
+      "section": "The Sum Symbol $ \\sum $",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-104",
+      "quote": "Cajori credits Gauss with ∏ (1812), Kramp with n!",
+      "section": "The Sum Symbol $ \\sum $",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-105",
+      "quote": "The Greek **capital Pi** ($\\prod$) is the mathematical shorthand for repeated multiplication.",
+      "section": "The Product Symbol $\\prod$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-106",
+      "quote": "It works similarly to the $\\sum$:",
+      "section": "The Product Symbol $\\prod$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-107",
+      "quote": "A special type of function often encountered in combinatorics and calculus is the **factorial**.",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-108",
+      "quote": "It represents the product of all positive integers less than or equal to a non-negative integer $n$.",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-109",
+      "quote": "Factorials ($n!$) are the product of all positive integers up to $n$ (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-110",
+      "quote": "71, § 448), the familiar exclamation point notation $n!$ was introduced by \\citeauthor{kramp1808} in his work \\citetitle{kramp1808} (\\citeyear{kramp1808}).",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-111",
+      "quote": "Before this, mathematicians often used a L-shaped symbol to denote the same operation.",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-112",
+      "quote": "More precisely, the half-box notation became popular *later*, chiefly in Britain and America, and fell out of favour because it was hard to typeset (\\cite[Cajori, 1928]{historyofmathematicalnotation}).",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-113",
+      "quote": "In programming, we can define this function using **recursion**, where a function calls itself to solve smaller versions of the same problem:",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-114",
+      "quote": "The factorial grows extremely quickly, much faster than exponential functions.",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-115",
+      "quote": "This growth is essential when calculating the number of possible permutations (orderings) of a set of objects (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-116",
+      "quote": "359]{lang2005basicmath}).",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-117",
+      "quote": "**Combinatorics:** $n!$ represents the number of ways to arrange $n$ objects.",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-118",
+      "quote": "There is exactly $1$ way to arrange zero items (the empty set).",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-119",
+      "quote": "**Consistency:** To maintain the recursive property $(n-1)!",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-120",
+      "quote": "= \\frac{n!}{n}$, setting $n=1$ yields $0!",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-121",
+      "quote": "The notation $n!$ was introduced by \\citeauthor{kramp1808} in \\citeyear{kramp1808} (p.",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-122",
+      "quote": "He sought a notation to simplify the large products found in **combinatorics** and **power series**.",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-123",
+      "quote": "= 1$ is a “combinatorial convention”.",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-124",
+      "quote": "It ensures that fundamental formulas, such as the **Binomial Coefficient** $\\binom{n}{k} = \\frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$ (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-125",
+      "quote": "Without this definition, $\\binom{n}{0}$ and $\\binom{n}{n}$ would be undefined (since $0!$ would have no value at all), forcing awkward special cases.",
+      "section": "The Factorial",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-126",
+      "quote": "In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-127",
+      "quote": "* **Absorbing Addition/Subtraction:**",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-128",
+      "quote": "Adding or subtracting any finite number $n$ to infinity changes nothing.",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-129",
+      "quote": "This is used in AI so that once a value passes a “certainty” threshold, small finite additions leave it unchanged.",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-130",
+      "quote": "* **The Vanishing Fraction:**",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-131",
+      "quote": "Any finite number divided by infinity approaches zero.",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-132",
+      "quote": "This is crucial for normalization, helping the model turn massive raw scores into manageable probabilities.",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-133",
+      "quote": "* **The Exponential Decay:**",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-134",
+      "quote": "The exponential of negative infinity is exactly zero.",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-135",
+      "quote": "This is useful in machine learning: it lets us “mask” certain pieces of data by assigning them a value of $-\\infty$, which makes them effectively ignored.",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-136",
+      "quote": "This becomes important later in the chapter on Transformers.",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-137",
+      "quote": "* $\\infty$ is not a normal *number*, though (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-138",
+      "quote": "397]{lang2005basicmath}).",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-139",
+      "quote": "$\\infty - \\infty$ is $\\text{NaN}$: *Not a Number*.",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-140",
+      "quote": "* Similarly, $\\frac{\\infty}{\\infty}$ is $\\text{NaN}$.",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-141",
+      "quote": "* More precisely, `NaN` is an IEEE 754 floating-point value, not a mathematical number.",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-142",
+      "quote": "Mathematically, $\\infty-\\infty$ and $\\infty/\\infty$ are **indeterminate forms**; the hardware turns them into NaN so that a computation can continue without a crash.",
+      "section": "Arithmetic with $\\infty$ in Computing",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-143",
+      "quote": "In computing, we treat $\\infty$ as a value, but in mathematics, we use limits to describe behavior.",
+      "section": "The Concept of Limits ($\\lim$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-144",
+      "quote": "* **The Vanishing Fraction:** As the denominator $x$ becomes infinitely large, the ratio $\\frac{n}{x}$ shrinks to zero.",
+      "section": "The Concept of Limits ($\\lim$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-145",
+      "quote": "* **Exponential Decay (Masking):** In Softmax layers, we use $e^{-\\infty}$.",
+      "section": "The Concept of Limits ($\\lim$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-146",
+      "quote": "Mathematically, this is the limit of the natural exponential function as it moves toward negative infinity (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "The Concept of Limits ($\\lim$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-147",
+      "quote": "335]{lang2005basicmath}).",
+      "section": "The Concept of Limits ($\\lim$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-148",
+      "quote": "* **Indeterminate Forms:** Limits explain why $\\frac{\\infty}{\\infty}$ is $\\text{NaN}$.",
+      "section": "The Concept of Limits ($\\lim$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-149",
+      "quote": "Different functions reach infinity at different speeds, so the result isn't a single number.",
+      "section": "The Concept of Limits ($\\lim$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-150",
+      "quote": "\\citealternativetitle{euler_portrait}, the Swiss mathematician after whom $e$ is named.",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-151",
+      "quote": "Euler's number has a history separate from logarithms.",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-152",
+      "quote": "Jacob Bernoulli met it in 1683 while studying continuous compound interest: he showed that $(1+1/n)^n$ is trapped between 2 and 3 as $n$ grows, the first number defined by a limiting process (\\cite[MacTutor: The Number e]{macTutorE}).",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-153",
+      "quote": "Euler first wrote the letter $e$ in a letter to Goldbach in 1731, then gave the full treatment in the *Introductio* (1748), including $e=\\sum_{k=0}^{\\infty}1/k!$ and a value to 18 decimals (\\cite[Euler, 1748]{euler1748introductio}).",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-154",
+      "quote": "Hermite proved in 1873 that $e$ is **transcendental**, not merely irrational (\\cite[MacTutor: The Number e]{macTutorE}).",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-155",
+      "quote": "More precisely, $e$ is the limit of the sequence, approached from below; it is not a largest member, and the claim applies to the 100%-continuous-compounding model.",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-156",
+      "quote": "The idea of summing infinite series to achieve finite results dates back to antiquity, notably Zeno's paradox, later addressed through Archimedes's method of exhaustion.",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-157",
+      "quote": "In the 14th century, the Indian mathematician Madhava of Sangamagrama gave the earliest known examples of specific Taylor series, for sine, cosine, and arctangent, though not the general method.",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-158",
+      "quote": "His followers in the Kerala school, recorded in works such as the \\citetitle{madhava}, developed further expansions over the following two centuries.",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-159",
+      "quote": "In early 1671, James Gregory independently discovered something like the general Maclaurin series (see \\citetitle{gregoryachievements}), but never published his method, believing he had merely rediscovered work by Isaac Newton.",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-160",
+      "quote": "In 1691–1692, Newton wrote down an explicit general formulation in an unpublished draft of \\citetitle{newtonquadratura}, but the relevant sections were omitted from the 1704 publication.",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-161",
+      "quote": "It was not until 1715 that \\citeauthor{taylor1715} published the first general method for constructing these series (pp.",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-162",
+      "quote": "21–23), after whom they are now named.",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-163",
+      "quote": "The special case centered at zero was later named after \\citeauthor{maclaurin}, who published the relevant work in 1742.",
+      "section": "Euler's Number ($e$)",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-164",
+      "quote": "In its simplest form, exponentiation is repeated multiplication (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-165",
+      "quote": "If we ask, “What is 2 to the power of 3?” ($2^3$), we mean:",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-166",
+      "quote": "In the expression $b^y = x$:",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-167",
+      "quote": "* **$b$** is the **base**.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-168",
+      "quote": "* **$y$** is the **exponent**.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-169",
+      "quote": "* **$x$** is the **result**.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-170",
+      "quote": "While we often start with whole numbers, the exponent $y$ can also be a **floating-point number** (a decimal).",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-171",
+      "quote": "For example, $2^{0.5}$ is the same as the square root of 2 ($\\approx 1.414$) (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-172",
+      "quote": "When the exponent is a fraction, we are no longer just “counting” multiplications; we are looking at continuous growth.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-173",
+      "quote": "This transition from discrete steps to a continuous curve is what makes exponentiation so powerful in modeling natural processes.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-174",
+      "quote": "The reason $2^{0.5}$ (or $2^{1/2}$) equals $\\sqrt{2}$ comes from the fundamental rule of exponents: when you multiply two powers with the same base, you add the exponents (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-175",
+      "quote": "If we multiply $2^{0.5}$ by itself, the rule says:",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-176",
+      "quote": "Since $2^{0.5}$ is a number that, when multiplied by itself, results in $2$, it fits the literal definition of a square root.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-177",
+      "quote": "This logic extends to any floating-point number; for instance, $2^{0.333}$ is approximately the cube root ($\\sqrt[3]{2}$) because adding $0.333 + 0.333 + 0.333$ brings us back to roughly $2^1$.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-178",
+      "quote": "Negative exponents do not mean the result becomes negative; instead, they represent the **reciprocal** (division) (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-179",
+      "quote": "A negative exponent tells you to “divide” instead of “multiply.”",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-180",
+      "quote": "In the context of the continuous curve, as the exponent moves into negative territory, the result simply gets closer and closer to zero, but never quite touches it.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-181",
+      "quote": "This is why logarithms (the inverse) are so useful, they allow us to work with these tiny, microscopic fractions by looking at the exponent instead of the decimal.",
+      "section": "Exponentiation",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-182",
+      "quote": "A logarithm is the inverse operation of exponentiation (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-183",
+      "quote": "338]{lang2005basicmath}).",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-184",
+      "quote": "It asks the opposite question.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-185",
+      "quote": "Instead of asking for the result of a growth process, it asks: **“To what power must we raise the base to get this specific result?”** ($b^?",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-186",
+      "quote": "For example, if we ask “To what power must we raise 2 to get 8?” ($\\log_2(8) = ?$), the answer is 3.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-187",
+      "quote": "Abstractly, a logarithm transforms a scale of growth (multiplicative) into a scale of steps (additive) (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-188",
+      "quote": "339]{lang2005basicmath}).",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-189",
+      "quote": "It tells you the “size” or “order of magnitude” of a number rather than just its value.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-190",
+      "quote": "For the logarithm to be well-defined, the base must satisfy **$b > 0$ and $b \\neq 1$**.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-191",
+      "quote": "The case $b = 1$ is degenerate: $1^y = 1$ for every exponent $y$, so the equation $1^?",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-192",
+      "quote": "= x$ only has a solution when $x = 1$ — and even then, *any* exponent \"works\".",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-193",
+      "quote": "Bases $b \\leq 0$ are excluded because the real exponential $b^y$ is not a well-defined continuous function there.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-194",
+      "quote": "Bases $b \\in (0, 1)$ are perfectly valid (e.g., $\\log_{0.5}(4) = -2$, because $0.5^{-2} = 4$), but the slider below is restricted to $b \\in (1, 10]$ to keep the picture readable.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-195",
+      "quote": "Logarithms were introduced in \\citeyear{napier1614} by the Scottish mathematician John Napier in his landmark work \\citealternativetitle{napier1614}.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-196",
+      "quote": "\\citealternativetitle{napier_portrait}.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-197",
+      "quote": "Historically, one of the most fundamental tools is the **Mercator series** \\citealternativetitle{mercator1668} (p.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-198",
+      "quote": "32f) for the natural logarithm ($\\ln$):",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-199",
+      "quote": "This is the series that taught mathematicians to think of $\\ln$ as a limit of polynomials.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-200",
+      "quote": "Modern floating-point units, however, do not evaluate it term-by-term in the hot path — the alternating series converges slowly and accumulates rounding error badly.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-201",
+      "quote": "Instead, math libraries reduce the problem to a small interval (e.g., $\\ln(x) = \\ln(x/2^k) + k\\ln 2$), then approximate on that interval with a **rational function** (a Padé / Remez minimax polynomial), a **CORDIC** iteration in hardware, or a short **table lookup with interpolation**.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-202",
+      "quote": "The Mercator series is the historical and didactic root; the polynomial a CPU actually evaluates on a single call is much shorter, of higher degree, and tuned for the working interval.",
+      "section": "Logarithms: Reversing the Process",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-203",
+      "quote": "In practice, most mathematical libraries only “know” how to calculate the natural logarithm (base $e \\approx 2.718$).",
+      "section": "The Change of Base",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-204",
+      "quote": "To find the logarithm for any other base $a$, we use the **Change of Base Formula** (\\cite[Lang, Basic Mathematics, Ch.",
+      "section": "The Change of Base",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-205",
+      "quote": "341]{lang2005basicmath}):",
+      "section": "The Change of Base",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-206",
+      "quote": "This works because changing the base only rescales the logarithm.",
+      "section": "The Change of Base",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-207",
+      "quote": "If you know the natural logarithm, you can find the logarithm to any other base $a$ by dividing by the natural logarithm of $a$.",
+      "section": "The Change of Base",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-208",
+      "quote": "This allows a computer to solve any logarithmic problem using just one optimized core function.",
+      "section": "The Change of Base",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-209",
+      "quote": "While logarithms were born from the needs of 17th-century astronomers, they are essential for Artificial Intelligence today.",
+      "section": "The Change of Base",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-210",
+      "quote": "In neural networks, we use them to prevent numerical errors when dealing with tiny probabilities and to calculate how “wrong” a model is during training.",
+      "section": "The Change of Base",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-211",
+      "quote": "We will dive deeper into “Log Loss” and “Softmax” in the upcoming sections.",
+      "section": "The Change of Base",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-212",
+      "quote": "While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool.",
+      "section": "The Mathematical Concept: The Role of $\\infty$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-213",
+      "quote": "It allows systems to handle “impossible” states or “hidden” information without crashing the underlying logic.",
+      "section": "The Mathematical Concept: The Role of $\\infty$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-214",
+      "quote": "The use of the symbol $\\infty$ for the concept of infinity dates back to \\citeyear{wallis1655}, according to \\citeauthor{historyofmathematicalnotation} (Vol.",
+      "section": "The Mathematical Concept: The Role of $\\infty$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-215",
+      "quote": "Wallis introduced the **symbol**, not the concept.",
+      "section": "The Mathematical Concept: The Role of $\\infty$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-216",
+      "quote": "Aristotle denied the **actual infinite** and allowed only the **potential infinite**: the natural numbers can always be extended, but never completed (*Physics* III.4–8) (\\cite[MacTutor: Infinity]{macTutorInfinity}; \\cite[Physics]{aristotlephysics}).",
+      "section": "The Mathematical Concept: The Role of $\\infty$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-217",
+      "quote": "Grosseteste's *De luce* (c.",
+      "section": "The Mathematical Concept: The Role of $\\infty$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-218",
+      "quote": "1225) takes the opposite risk: light \"multiplied itself by its very nature an infinite number of times on all sides\", and \"the multiplication of a simple being an infinite number of times must produce a finite quantity\" (\\cite[Grosseteste, trans.",
+      "section": "The Mathematical Concept: The Role of $\\infty$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-219",
+      "quote": "1942]{grosseteste_on_light}).",
+      "section": "The Mathematical Concept: The Role of $\\infty$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-220",
+      "quote": "Wallis gave the concept its symbol: he introduced $\\infty$ in 1655 and used it again in the *Arithmetica infinitorum* (1656) (\\cite[Wallis, 1655]{wallis1655}; \\cite[MacTutor: Infinity]{macTutorInfinity}).",
+      "section": "The Mathematical Concept: The Role of $\\infty$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-221",
+      "quote": "> **Potential, actual, symbolic.** Aristotle allowed only a potential infinite; Grosseteste argued that infinite multiplication produces a finite magnitude; Wallis gave the result its symbol, ∞ (1655).",
+      "section": "The Mathematical Concept: The Role of $\\infty$",
+      "kind": "statement"
+    },
+    {
+      "id": "math_i-stmt-222",
+      "quote": "Mathematics kept all three ideas and learned to distinguish them.",
+      "section": "The Mathematical Concept: The Role of $\\infty$",
+      "kind": "statement"
+    }
   ]
 }

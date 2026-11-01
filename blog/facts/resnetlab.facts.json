@@ -366,5 +366,235 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "resnetlab-stmt-1",
+      "quote": "To train a neural network, we use **Backpropagation**.",
+      "section": "The Vanishing Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-2",
+      "quote": "This algorithm calculates how much each weight contributed to the final error (loss) so we can adjust the weights to reduce that error.",
+      "section": "The Vanishing Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-3",
+      "quote": "Mathematically, we use the **Chain Rule** of calculus.",
+      "section": "The Vanishing Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-4",
+      "quote": "In a standard “Plain” network (like VGG or AlexNet), the input $x$ passes through a series of layers to produce output $y$.",
+      "section": "The Vanishing Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-5",
+      "quote": "During backpropagation, to find the gradient of the loss $\\mathcal{L}$ with respect to the first layer's weights, we must multiply the derivatives of *every* layer in the network:",
+      "section": "The Vanishing Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-6",
+      "quote": "**Why “Vanishing”?** If the derivatives (gradients) in this chain are small (e.g., $< 1$), multiplying many of them together causes the result to shrink exponentially.",
+      "section": "The Vanishing Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-7",
+      "quote": "* **Plain Network:** $0.9 \\times 0.9 \\times 0.9 \\dots \\approx 0$",
+      "section": "The Vanishing Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-8",
+      "quote": "* **Result:** The early layers stop learning because their gradient update is effectively zero.",
+      "section": "The Vanishing Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-9",
+      "quote": "Deep networks become impossible to train.",
+      "section": "The Vanishing Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-10",
+      "quote": "This was first mathematically accurately described by \\citeauthor{hochreiter1991vanishing} in his \\cite[Diplomarbeit]{hochreiter1991vanishing}, while the term 'Vanishing Gradient' was first coined by Yoshua Bengio et al. in their \\citeyear{bengio1994learning} paper '\\citetitle{bengio1994learning}'.",
+      "section": "The Vanishing Gradient Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-11",
+      "quote": "ResNet (short for *Residual Network*) was introduced by Kaiming He et al. in \\citeyear{he2015resnet} in their paper '\\citetitle{he2015resnet}', and won the ImageNet competition in December 2015.",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-12",
+      "quote": "The skip-connection idea itself, however, did not originate there: \\citeauthor{highway2015}'s **Highway Networks** \\citeyear{highway2015} (May 2015, seven months earlier) introduced learnable gating on top of skip connections and demonstrated training of truly deep feedforward networks with hundreds of layers.",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-13",
+      "quote": "Hochreiter's \\citeyear{hochreiter1991vanishing} thesis is a different ancestor: it analysed the vanishing-gradient problem and proposed a *constant error flow* — the idea that became the LSTM's constant error carousel — but it did not propose ResNet-style identity shortcuts.",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-14",
+      "quote": "ResNet is closely related to a Highway Network whose gates are always open — a useful analogy rather than an exact algebraic special case (see the History chapter).",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-15",
+      "quote": "ResNet changes the fundamental building block of the convolution.",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-16",
+      "quote": "Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the *difference*) $F(x) := H(x) - x$.",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-17",
+      "quote": "The original mapping is reconstructed as:",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-18",
+      "quote": "* $x$ is the input to the block (the “Identity Connection”).",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-19",
+      "quote": "* $F(x)$ is the learned transformation (usually 2 or 3 convolution layers).",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-20",
+      "quote": "**The Gradient “Superhighway”:** Let's look at the gradient of this new block during backpropagation:",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-21",
+      "quote": "The **$+\\mathbf{I}$** term is the magic.",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-22",
+      "quote": "It ensures that the gradient can flow *directly* from the later layers to the earlier layers without being multiplied by the weights of the intermediate layers.",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-23",
+      "quote": "Even if the weights in $F(x)$ are very small (causing $\\frac{\\partial F}{\\partial x} \\approx 0$), the gradient signal is preserved by the identity term.",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-24",
+      "quote": "Formally, the backpropagation recursion through a residual block involves the factor $\\mathbf{I} + J_F$ (where $J_F$ is the Jacobian of the residual function) rather than $J_F$ alone — so the gradient is never *multiplied by* a potentially tiny matrix, only *shifted* by one.",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-25",
+      "quote": "The full analysis is in \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), Ch.\\ 17.1.",
+      "section": "The Residual Solution",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-26",
+      "quote": "The equation $y = F(x) + x$ requires that the dimensions of $x$ and $F(x)$ be identical so they can be added element-wise.",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-27",
+      "quote": "However, Convolutional Neural Networks (CNNs) often change dimensions to process features at different scales:",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-28",
+      "quote": "**Downsampling:** Reducing Height/Width (Stride > 1).",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-29",
+      "quote": "**Channel Expansion:** Increasing the number of filters (Depth).",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-30",
+      "quote": "When the dimensions don't match, we cannot simply add $x$.",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-31",
+      "quote": "We must transform $x$ using a **projection shortcut** ($W_s$):",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-32",
+      "quote": "**The $1 \\times 1$ Convolution:** The most common way to implement $W_s$ is a **$1 \\times 1$ Convolution**.",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-33",
+      "quote": "* **Spatial:** A $1 \\times 1$ kernel does not look at neighboring pixels; with stride 1 it preserves the spatial height and width ($H \\times W$).",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-34",
+      "quote": "When the main path downsamples, the projection shortcut uses the same stride and downsamples with it.",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-35",
+      "quote": "* **Depth:** It acts as a linear projection across the channels.",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-36",
+      "quote": "If input $x$ has $C_\\text{in}$ channels and we need $C_\\text{out}$ channels, the $1 \\times 1$ layer performs a weighted sum of the input channels to produce the desired output depth.",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-37",
+      "quote": "**Mathematical Operation at a single pixel $(i, j)$:** If input $x \\in \\mathbb{R}^{H \\times W \\times C_\\text{in}}$ and we want output $y \\in \\mathbb{R}^{H \\times W \\times C_\\text{out}}$:",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    },
+    {
+      "id": "resnetlab-stmt-38",
+      "quote": "This allows the network to match the “shape” of the main path $F(x)$ so the residual connection can still function, keeping the flow of gradients intact.",
+      "section": "Handling Dimension Mismatches ($1 \\times 1$ Convs)",
+      "kind": "statement"
+    }
   ]
 }

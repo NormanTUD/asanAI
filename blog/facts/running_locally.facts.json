@@ -476,5 +476,721 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "running_locally-stmt-1",
+      "quote": "You don't need a GPU cluster to run a powerful LLM.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-2",
+      "quote": "A quantized 70B model runs on a MacBook.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-3",
+      "quote": "A 7B model in int4 fits on a phone.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-4",
+      "quote": "The local-LLM ecosystem in 2025 is mature enough for serious work: privacy-preserving inference, offline use, fine-tuning on consumer hardware, and even agents that never touch the cloud.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-5",
+      "quote": "This chapter covers the practical stack: from the hardware and file formats, through the engines and tools, to fine-tuning, and closes with the case for running locally.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-6",
+      "quote": "| GPU | VRAM | What it can run |",
+      "section": "The Hardware Reality",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-7",
+      "quote": "| RTX 3060 | 12 GB | 7B in int4, 13B in int3 |",
+      "section": "The Hardware Reality",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-8",
+      "quote": "| RTX 4070 Ti | 12 GB | Same |",
+      "section": "The Hardware Reality",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-9",
+      "quote": "| RTX 4090 | 24 GB | 13B int4, 30B int4 |",
+      "section": "The Hardware Reality",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-10",
+      "quote": "| RTX 5090 | 32 GB | 30B int4, 70B Q2_K |",
+      "section": "The Hardware Reality",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-11",
+      "quote": "| Apple M3 Max | 64–128 GB unified | 70B int4, 70B Q5_K_M |",
+      "section": "The Hardware Reality",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-12",
+      "quote": "| Apple M4 Max | 64–128 GB unified | Same |",
+      "section": "The Hardware Reality",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-13",
+      "quote": "The **unified memory** on Apple Silicon is the killer feature: you can use 64–128 GB for both model weights and OS, making local 70B inference practical on a laptop.",
+      "section": "The Hardware Reality",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-14",
+      "quote": "A Mac Studio M3 Ultra with 192 GB runs a 405B model in Q2_K at usable speeds.",
+      "section": "The Hardware Reality",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-15",
+      "quote": "**GGUF** (GPT-Generated Unified Format) is the de facto standard for local LLMs, designed by Georgi Gerganov for **llama.cpp**.",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-16",
+      "quote": "Every popular open model is published in GGUF.",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-17",
+      "quote": "GGUF supports many quantization schemes in a single file:",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-18",
+      "quote": "| Type | Bits/weight | Quality | Size (70B) |",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-19",
+      "quote": "| F32 | 32 | Lossless | 280 GB |",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-20",
+      "quote": "| F16 / BF16 | 16 | Negligible loss | 140 GB |",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-21",
+      "quote": "| Q8_0 | 8 | ~0.5% loss | 70 GB |",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-22",
+      "quote": "| Q6_K | 6.5 | ~1% | 60 GB |",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-23",
+      "quote": "| Q5_K_M | 5.5 | ~1.5% | 48 GB |",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-24",
+      "quote": "| Q4_K_M | 4.5 | ~2–3% | 40 GB |",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-25",
+      "quote": "| Q3_K_M | 3.5 | ~5% | 32 GB |",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-26",
+      "quote": "| Q2_K | 2.5 | ~10% | 25 GB |",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-27",
+      "quote": "| IQ1_S | 1.5 | Major loss | 18 GB |",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-28",
+      "quote": "The K-quant schemes (Q2_K through Q5_K_M) use **k-quantization** with importance-aware mixed precision: most weights are quantized to the target bits, but sensitive layers get extra bits.",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-29",
+      "quote": "**IQ-quants** (Importance-aware Quantization) push to 1–2 bits with surprisingly good quality.",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-30",
+      "quote": "A rule of thumb: **Q4_K_M is the sweet spot** for most local use.",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-31",
+      "quote": "Q5_K_M for quality-sensitive work.",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-32",
+      "quote": "Q8_0 if you have memory to spare.",
+      "section": "GGUF: The Universal Format",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-33",
+      "quote": "**llama.cpp** ([github.com/ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp)) (\\cite[Gerganov, 2023]{gerganov2023llamacpp}) is a C++ inference engine, originally designed to run Llama 7B on a MacBook.",
+      "section": "llama.cpp: The Reference Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-34",
+      "quote": "* All major open models (Llama, Mistral, Qwen, DeepSeek, Phi, Gemma, etc.)",
+      "section": "llama.cpp: The Reference Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-35",
+      "quote": "* CPU, CUDA, Metal (Apple GPU), ROCm (AMD), Vulkan, SYCL (Intel), OpenCL",
+      "section": "llama.cpp: The Reference Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-36",
+      "quote": "* Speculative decoding, prefix caching, multi-GPU",
+      "section": "llama.cpp: The Reference Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-37",
+      "quote": "* LoRA adapter loading at runtime",
+      "section": "llama.cpp: The Reference Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-38",
+      "quote": "* Batched inference (server mode)",
+      "section": "llama.cpp: The Reference Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-39",
+      "quote": "Server mode (OpenAI-compatible API):",
+      "section": "llama.cpp: The Reference Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-40",
+      "quote": "Then point any OpenAI client at `http://localhost:8080/v1`.",
+      "section": "llama.cpp: The Reference Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-41",
+      "quote": "**Drop-in local replacement for OpenAI's API**.",
+      "section": "llama.cpp: The Reference Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-42",
+      "quote": "Performance: a 70B Q4_K_M on M3 Max generates ~10–15 tokens/second.",
+      "section": "llama.cpp: The Reference Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-43",
+      "quote": "A 7B Q4_K_M on RTX 4090: ~80–120 tokens/second.",
+      "section": "llama.cpp: The Reference Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-44",
+      "quote": "A 405B Q4 on M3 Ultra: ~5 tokens/second.",
+      "section": "llama.cpp: The Reference Engine",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-45",
+      "quote": "**Ollama** ([ollama.com](https://ollama.com)) (\\cite[Ollama, 2024]{ollama2024}) wraps llama.cpp in a clean interface:",
+      "section": "Ollama: One-Line Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-46",
+      "quote": "Ollama handles model downloads (from its registry), quantization (you can specify the quant level), and exposes an OpenAI-compatible API at `localhost:11434`.",
+      "section": "Ollama: One-Line Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-47",
+      "quote": "It also ships a Modelfile system for custom system prompts and parameters.",
+      "section": "Ollama: One-Line Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-48",
+      "quote": "The [Ollama model library](https://ollama.com/library) has thousands of community-contributed models, including fine-tunes for specific tasks (code, math, roleplay, embeddings).",
+      "section": "Ollama: One-Line Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-49",
+      "quote": "**LM Studio** ([lmstudio.ai](https://lmstudio.ai)) (\\cite[LM Studio, 2024]{lmstudio2024}) is the desktop app version: search, download, chat, and run a local API.",
+      "section": "LM Studio: GUI for Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-50",
+      "quote": "Built on llama.cpp but with a polished UI.",
+      "section": "LM Studio: GUI for Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-51",
+      "quote": "Targets non-technical users.",
+      "section": "LM Studio: GUI for Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-52",
+      "quote": "* Built-in model browser (HuggingFace integration).",
+      "section": "LM Studio: GUI for Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-53",
+      "quote": "* Chat UI with conversation history.",
+      "section": "LM Studio: GUI for Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-54",
+      "quote": "* OpenAI-compatible local server.",
+      "section": "LM Studio: GUI for Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-55",
+      "quote": "* GPU/CPU control, KV-cache size, context length.",
+      "section": "LM Studio: GUI for Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-56",
+      "quote": "* Available on macOS, Windows, Linux.",
+      "section": "LM Studio: GUI for Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-57",
+      "quote": "For most people, LM Studio is the easiest entry point.",
+      "section": "LM Studio: GUI for Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-58",
+      "quote": "For developers, Ollama or llama.cpp directly.",
+      "section": "LM Studio: GUI for Local LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-59",
+      "quote": "* **Jan** (https://jan.ai): open-source desktop client, similar to LM Studio.",
+      "section": "Other Local Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-60",
+      "quote": "* **GPT4All** (Nomic): local model runner with retrieval built in.",
+      "section": "Other Local Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-61",
+      "quote": "* **PrivateGPT / LocalAI**: OpenAI drop-in replacements with local model backends.",
+      "section": "Other Local Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-62",
+      "quote": "* **mlx** (Apple): Apple's ML framework, optimized for Apple Silicon.",
+      "section": "Other Local Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-63",
+      "quote": "* **exllamav2** (turboderp): high-throughput inference for NVIDIA GPUs.",
+      "section": "Other Local Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-64",
+      "quote": "* **koboldcpp**: llama.cpp with a KoboldAI-style UI for creative writing.",
+      "section": "Other Local Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-65",
+      "quote": "* **text-generation-webui** (oobabooga): the original local LLM web UI.",
+      "section": "Other Local Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-66",
+      "quote": "* **vLLM**: primarily a server, but can run locally on multi-GPU machines.",
+      "section": "Other Local Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-67",
+      "quote": "* **SGLang**: production-grade local server with structured generation.",
+      "section": "Other Local Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-68",
+      "quote": "For Python notebooks: **transformers + accelerate + bitsandbytes** loads any HuggingFace model in 4–8 bits with two lines of code.",
+      "section": "Other Local Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-69",
+      "quote": "The 2024–2025 democratization of fine-tuning is real:",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-70",
+      "quote": "* **QLoRA** (\\cite[Dettmers et al., 2023]{dettmers2023qlora}): 4-bit base model + LoRA adapters trainable in fp16.",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-71",
+      "quote": "The paper demonstrates a 65B fine-tune on a single 48 GB GPU; 70B is an extrapolation.",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-72",
+      "quote": "* **Unsloth**: 2× faster QLoRA, kernels optimized for consumer GPUs.",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-73",
+      "quote": "* **Axolotl**: popular framework for instruction fine-tuning.",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-74",
+      "quote": "* **LoRA** (\\cite[Hu et al., 2021]{hu2021lora}) **/ QLoRA / DoRA** (\\cite[Liu et al., 2024]{liu2024dora}): rank-$r$ adapters that train a tiny fraction of parameters.",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-75",
+      "quote": "* **torchtune** (PyTorch native): clean library for fine-tuning recipes.",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-76",
+      "quote": "A typical local fine-tune:",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-77",
+      "quote": "Pick a base model (Llama 3.1 8B, Mistral 7B, Qwen 2.5 7B).",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-78",
+      "quote": "Format your data as instruction-response pairs (JSONL, Alpaca format).",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-79",
+      "quote": "Train a LoRA adapter with QLoRA on your consumer GPU (hours, not days).",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-80",
+      "quote": "Merge the adapter into the base model.",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-81",
+      "quote": "Quantize to GGUF and serve with Ollama.",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-82",
+      "quote": "Total time: an afternoon for a small fine-tune.",
+      "section": "Fine-Tuning Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-83",
+      "quote": "A 7B model on a modern laptop:",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-84",
+      "quote": "* Chat, summarization, basic reasoning",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-85",
+      "quote": "* Code completion and review (with quantization-aware models like DeepSeek-Coder)",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-86",
+      "quote": "* Lightweight RAG over personal documents",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-87",
+      "quote": "* Local agent loops with tool use",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-88",
+      "quote": "* Privacy-preserving inference for sensitive data",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-89",
+      "quote": "A 70B model on a beefy Mac Studio:",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-90",
+      "quote": "* Near-frontier quality on most tasks",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-91",
+      "quote": "* Longer contexts (32K+) at usable speeds",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-92",
+      "quote": "* Strong coding and reasoning",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-93",
+      "quote": "* Acceptable throughput for a single user",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-94",
+      "quote": "What local cannot do (yet):",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-95",
+      "quote": "* Match frontier model quality on hard reasoning (MATH, GPQA)",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-96",
+      "quote": "* Real-time voice (latency too high)",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-97",
+      "quote": "* Run on phones for serious workloads (3B max)",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-98",
+      "quote": "* Multi-user serving at scale",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-99",
+      "quote": "The gap is closing: by 2026, expect frontier-quality 70B models running comfortably on laptops.",
+      "section": "What You Can Realistically Do Locally",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-100",
+      "quote": "For many organizations, **local inference is mandatory**:",
+      "section": "The Privacy Argument",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-101",
+      "quote": "* **Healthcare**: HIPAA-compliant inference on patient data without cloud transmission.",
+      "section": "The Privacy Argument",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-102",
+      "quote": "* **Legal**: attorney-client privilege requires no third-party data sharing.",
+      "section": "The Privacy Argument",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-103",
+      "quote": "* **Finance**: proprietary trading strategies never leave the firewall.",
+      "section": "The Privacy Argument",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-104",
+      "quote": "* **Defense / government**: air-gapped deployments.",
+      "section": "The Privacy Argument",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-105",
+      "quote": "* **Personal use**: conversation logs never uploaded.",
+      "section": "The Privacy Argument",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-106",
+      "quote": "The local-LLM ecosystem in 2025 makes this practical.",
+      "section": "The Privacy Argument",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-107",
+      "quote": "A small fine-tune on internal data + a quantized local model = a private AI assistant that never phones home.",
+      "section": "The Privacy Argument",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-108",
+      "quote": "| Consideration | Local | Cloud |",
+      "section": "Local vs Cloud: The Decision Matrix",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-109",
+      "quote": "| **Setup cost** | Hardware ($2–10K) | $0 |",
+      "section": "Local vs Cloud: The Decision Matrix",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-110",
+      "quote": "| **Per-query cost** | Electricity | Token-based pricing |",
+      "section": "Local vs Cloud: The Decision Matrix",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-111",
+      "quote": "| **Latency** | 10–50 ms + compute | 100–1000 ms network + compute |",
+      "section": "Local vs Cloud: The Decision Matrix",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-112",
+      "quote": "| **Privacy** | Total | Limited by provider |",
+      "section": "Local vs Cloud: The Decision Matrix",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-113",
+      "quote": "| **Model quality** | Open-source only | Frontier (GPT-4o, Claude 4, Gemini 2) |",
+      "section": "Local vs Cloud: The Decision Matrix",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-114",
+      "quote": "| **Customization** | Full fine-tune access | Limited to API |",
+      "section": "Local vs Cloud: The Decision Matrix",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-115",
+      "quote": "| **Scalability** | Single-machine | Elastic |",
+      "section": "Local vs Cloud: The Decision Matrix",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-116",
+      "quote": "| **Maintenance** | You | Provider |",
+      "section": "Local vs Cloud: The Decision Matrix",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-117",
+      "quote": "For most individuals and small businesses: **hybrid**.",
+      "section": "Local vs Cloud: The Decision Matrix",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-118",
+      "quote": "Use local for privacy-sensitive workloads and high-volume routine tasks.",
+      "section": "Local vs Cloud: The Decision Matrix",
+      "kind": "statement"
+    },
+    {
+      "id": "running_locally-stmt-119",
+      "quote": "Use cloud for hard reasoning and frontier capabilities.",
+      "section": "Local vs Cloud: The Decision Matrix",
+      "kind": "statement"
+    }
   ]
 }

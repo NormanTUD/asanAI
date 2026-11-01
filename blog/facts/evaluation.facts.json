@@ -470,5 +470,1063 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "evaluation-stmt-1",
+      "quote": "You cannot improve what you cannot measure.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-2",
+      "quote": "The evaluation problem is one of the hardest open issues in modern AI: benchmarks shape what models optimize for, and poorly designed benchmarks produce models that are great at benchmarks but useless in practice.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-3",
+      "quote": "This chapter covers the major benchmarks, their mathematical formulation, and the crisis of **benchmark contamination**, the central concern that LLMs have already seen every test set during pretraining.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-4",
+      "quote": "\\citetitle{goodhartslaw} is usually compressed into the aphorism *when a measure becomes a target, it ceases to be a good measure* — Marilyn Strathern's 1997 phrasing of Goodhart's original 1975 observation.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-5",
+      "quote": "The benchmarks below, MMLU, HumanEval, GSM8K, are exactly such measures.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-6",
+      "quote": "Once a model is trained to maximize them, the benchmark stops measuring what it was supposed to measure.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-7",
+      "quote": "See the Loss chapter § Beware of Goodhart's Law for the training-side version of this disease.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-8",
+      "quote": "LLM evaluations fall into four families:",
+      "section": "The Taxonomy of Evaluations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-9",
+      "quote": "| Family | What it measures | Example |",
+      "section": "The Taxonomy of Evaluations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-10",
+      "quote": "| **Multiple-choice** | Knowledge / recognition | (\\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}), HellaSwag, ARC |",
+      "section": "The Taxonomy of Evaluations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-11",
+      "quote": "| **Generative, exact-match** | Verifiable outputs | (\\cite[Chen et al., 2021]{chen2021humaneval}), GSM8K, MATH |",
+      "section": "The Taxonomy of Evaluations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-12",
+      "quote": "| **Generative, judged** | Open-ended quality | MT-Bench, AlpacaEval, (\\cite[Zheng et al., 2023]{zheng2023lmsys}) |",
+      "section": "The Taxonomy of Evaluations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-13",
+      "quote": "| **Human preference** | Real-world quality | LMSYS (\\cite[Zheng et al., 2023]{zheng2023lmsys}), Anthropic HH |",
+      "section": "The Taxonomy of Evaluations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-14",
+      "quote": "* Multiple-choice can be hacked by always answering “C” (random baseline ~25% on 4-choice, calibration tests measure this).",
+      "section": "The Taxonomy of Evaluations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-15",
+      "quote": "* Exact-match fails on tasks with multiple valid answers (any equivalent SQL query, any correct translation).",
+      "section": "The Taxonomy of Evaluations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-16",
+      "quote": "* LLM-as-judge inherits the judge's biases.",
+      "section": "The Taxonomy of Evaluations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-17",
+      "quote": "* Human preference is gold-standard but slow and expensive.",
+      "section": "The Taxonomy of Evaluations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-18",
+      "quote": "MMLU (\\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) comprises 14,042 multiple-choice questions across 57 subjects.",
+      "section": "MMLU: Massive Multitask Language Understanding",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-19",
+      "quote": "Covers STEM, humanities, social sciences, professional law, medicine.",
+      "section": "MMLU: Massive Multitask Language Understanding",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-20",
+      "quote": "The model sees the question and four options (A/B/C/D); we measure:",
+      "section": "MMLU: Massive Multitask Language Understanding",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-21",
+      "quote": "By 2025, frontier models exceed 88% on (\\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}); the benchmark is **saturated**.",
+      "section": "MMLU: Massive Multitask Language Understanding",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-22",
+      "quote": "The community has moved to **MMLU-Pro** (\\cite[Wang et al., 2024]{wang2024mmlupro}) (more options, harder questions, no shortcut hacks) and **GPQA** (Rein et al., NYU/Cohere/Anthropic; graduate-level questions in biology, chemistry, physics).",
+      "section": "MMLU: Massive Multitask Language Understanding",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-23",
+      "quote": "HellaSwag (\\cite[Zellers et al., 2019]{zellers2019hellaswag}) tests commonsense completion: given a context, choose the most plausible continuation from four adversarial distractors.",
+      "section": "HellaSwag",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-24",
+      "quote": "ARC (\\cite[Clark et al., 2018]{clark2018arc}) is the AI2 Reasoning Challenge: grade-school science questions.",
+      "section": "ARC",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-25",
+      "quote": "GSM8K (\\cite[Cobbe et al., 2021]{cobbe2021gsm8k}) provides grade-school math problems:",
+      "section": "GSM8K",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-26",
+      "quote": "The model must produce a numerical answer after reasoning.",
+      "section": "GSM8K",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-27",
+      "quote": "**Exact-match accuracy** requires the final integer (here, $\\$18$) to be correct, with tolerance for units, commas, etc.",
+      "section": "GSM8K",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-28",
+      "quote": "(\\cite[Cobbe et al., 2021]{cobbe2021gsm8k}).",
+      "section": "GSM8K",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-29",
+      "quote": "MATH (\\cite[Hendrycks et al., 2021]{hendrycks2021math}) comprises 12,500 competition math problems from AMC, AIME, etc.",
+      "section": "MATH",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-30",
+      "quote": "Each has a step-by-step LaTeX solution.",
+      "section": "MATH",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-31",
+      "quote": "Models must produce the final answer; correctness is checked symbolically.",
+      "section": "MATH",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-32",
+      "quote": "HumanEval (\\cite[Chen et al., 2021]{chen2021humaneval}) consists of 164 hand-written Python programming problems with unit tests.",
+      "section": "HumanEval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-33",
+      "quote": "The model's code is executed; **pass@k** measures whether at least one of $k$ samples passes all tests:",
+      "section": "HumanEval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-34",
+      "quote": "where $n$ is the number of samples and $c$ is the number that pass.",
+      "section": "HumanEval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-35",
+      "quote": "This unbiased estimator handles low $k$ correctly.",
+      "section": "HumanEval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-36",
+      "quote": "For $k=1$ it reduces to $c/n$, the fraction of samples that pass.",
+      "section": "HumanEval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-37",
+      "quote": "MBPP (\\cite[Austin et al., 2021]{austin2021mbpp}) comprises 974 Python problems, slightly easier than (\\cite[Chen et al., 2021]{chen2021humaneval}).",
+      "section": "MBPP",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-38",
+      "quote": "BIG-Bench (\\cite[Srivastava et al., 2022]{srivastava2022bigbench}) comprises 204 tasks ranging from linguistics to physics, designed to be **beyond current capabilities**.",
+      "section": "BIG-Bench",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-39",
+      "quote": "Mostly saturated by 2025 but historically important.",
+      "section": "BIG-Bench",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-40",
+      "quote": "For open-ended tasks (summarization, dialogue, instruction-following), there's no single correct answer.",
+      "section": "Generative, LLM-as-Judge",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-41",
+      "quote": "The standard approach is **LLM-as-judge** (Zheng et al., LMSYS, 2023):",
+      "section": "Generative, LLM-as-Judge",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-42",
+      "quote": "* Present two model outputs (A and B) to a strong judge model (typically GPT-4 or Claude).",
+      "section": "Generative, LLM-as-Judge",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-43",
+      "quote": "* Ask: *“Which response is better, A or B?”*",
+      "section": "Generative, LLM-as-Judge",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-44",
+      "quote": "* Score: win-rate of model X vs. baseline.",
+      "section": "Generative, LLM-as-Judge",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-45",
+      "quote": "The mathematical formulation assumes the judge's preference is a noisy signal of true quality:",
+      "section": "Generative, LLM-as-Judge",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-46",
+      "quote": "where $Q$ is true quality and $T$ is “judge noise”.",
+      "section": "Generative, LLM-as-Judge",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-47",
+      "quote": "Empirical agreement with humans is ~70-80% on chat data.",
+      "section": "Generative, LLM-as-Judge",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-48",
+      "quote": "MT-Bench (\\cite[Zheng et al., 2023]{zheng2023lmsys}) and AlpacaEval (\\cite[Dubois et al., 2024]{dubois2024alpacaeval}) — **MT-Bench**: 80 high-quality multi-turn questions across 8 categories, judged by GPT-4.",
+      "section": "MT-Bench / AlpacaEval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-49",
+      "quote": "Reported as a 1-10 score.",
+      "section": "MT-Bench / AlpacaEval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-50",
+      "quote": "AlpacaEval: 805 questions, judged by GPT-4 Turbo, reports win-rate against GPT-4 baseline.",
+      "section": "MT-Bench / AlpacaEval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-51",
+      "quote": "LMSYS (\\cite[Zheng et al., 2023]{zheng2023lmsys}) is the gold standard for human preference.",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-52",
+      "quote": "Real users chat with two anonymous models side-by-side, then vote which they prefer.",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-53",
+      "quote": "The original Elo ranking:",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-54",
+      "quote": "with $K=32$, $S_{AB} = 1$ if A wins.",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-55",
+      "quote": "The original leaderboard updated this online; the current Arena fits a Bradley–Terry model to the same pairwise votes, which has the same logistic form but supports confidence intervals (\\cite[Chiang et al., 2024]{chiang2024arena}).",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-56",
+      "quote": "Arena preference and static benchmarks answer different questions, so their rankings can diverge: a model that leads on MMLU need not lead on chat quality, and the Arena's confidence intervals are wide enough that small rank gaps are not meaningful (\\cite[Chiang et al., 2024]{chiang2024arena}).",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-57",
+      "quote": "GLUE packaged nine language-understanding tasks into one score; within a year, models had passed the estimated non-expert human baseline, so the benchmark lost its headroom (\\cite[Wang et al., 2018]{wang2018glue}).",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-58",
+      "quote": "SuperGLUE raised the difficulty with harder tasks and a stricter format, and it too was largely solved within a few years (\\cite[Wang et al., 2019]{wang2019superglue}).",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-59",
+      "quote": "MMLU repeated the pattern at larger scale: broad knowledge, 57 subjects, then saturation and a harder successor in MMLU-Pro (\\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}; \\cite[Wang et al., 2024]{wang2024mmlupro}).",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-60",
+      "quote": "Saturation is success and failure at once.",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-61",
+      "quote": "BIG-bench was built to resist that fate: 204 tasks from 450 authors, deliberately selected to be beyond then-current models (\\cite[Srivastava et al., 2022]{srivastava2022bigbench}).",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-62",
+      "quote": "Its aggregate score is hard to interpret because the tasks use different metrics, and the suite already contains many items that later models can solve.",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-63",
+      "quote": "GPQA then took the opposite route: 448 expert-written, Google-proof science questions on which PhD-level experts score about 65% and skilled non-experts about 34% (\\cite[Rein et al., 2024]{rein2024gpqa}).",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-64",
+      "quote": "ARC-AGI adds a private evaluation set and a format that resists memorisation (\\cite[Chollet et al., 2024]{chollet2024arcagi}).",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-65",
+      "quote": "Hardness alone is not enough; the items must also be unseen.",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-66",
+      "quote": "Contamination is a spectrum, not a binary.",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-67",
+      "quote": "At one end is verbatim leakage, which extraction attacks can demonstrate directly (\\cite[Carlini et al., 2021]{carlini2021extracting}).",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-68",
+      "quote": "In the middle is statistical evidence: Min-K% Prob flags a passage when even its least likely tokens are unusually likely under the model, a signal that needs no access to the training corpus (\\cite[Shi et al., 2024]{shi2024mink}).",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-69",
+      "quote": "At the other end is the slow decay of a fixed test set.",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-70",
+      "quote": "LiveBench responds by refreshing questions from recent competitions, papers and news, and scoring them automatically against ground truth rather than by an LLM judge (\\cite[White et al., 2024]{white2024livebench}).",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-71",
+      "quote": "No single check proves cleanliness; the design has to assume leakage and make it expensive.",
+      "section": "LMSYS",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-72",
+      "quote": "The dirty secret of LLM evaluation: **most public benchmarks have been seen during pretraining**.",
+      "section": "Benchmark Contamination: The Crisis",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-73",
+      "quote": "GPT-4's pretraining data cuts off in September 2021; many benchmarks were uploaded to GitHub, posted on Stack Overflow, or discussed on Reddit before then.",
+      "section": "Benchmark Contamination: The Crisis",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-74",
+      "quote": "\\marginfig{canary_coal_mine.jpg}{A foreman holding a canary in a cage — the miners' carbon-monoxide detector (U.S.",
+      "section": "Benchmark Contamination: The Crisis",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-75",
+      "quote": "The bird dies well before a human does, turning an invisible poison into an early alarm.",
+      "section": "Benchmark Contamination: The Crisis",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-76",
+      "quote": "**Canary strings** do the same job for benchmarks: you plant a unique token that a model could never emit naturally, and if it ever reappears in output, the test set has leaked into the training data.",
+      "section": "Benchmark Contamination: The Crisis",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-77",
+      "quote": "[Photo: public domain](https://commons.wikimedia.org/wiki/File:Canary_coal_mine.jpg)}",
+      "section": "Benchmark Contamination: The Crisis",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-78",
+      "quote": "Evidence of contamination:",
+      "section": "Benchmark Contamination: The Crisis",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-79",
+      "quote": "* **Exact-match memorization**: models regurgitate benchmark items verbatim.",
+      "section": "Benchmark Contamination: The Crisis",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-80",
+      "quote": "* **Ordering effects**: models perform anomalously well on benchmark-internal “Question 17” but badly on a shuffled version.",
+      "section": "Benchmark Contamination: The Crisis",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-81",
+      "quote": "* **Min-K% Prob** (\\cite[Shi et al., 2024]{shi2024mink}): a passage is likelier to be memorized when even its least likely tokens have comparatively high probability under the model.",
+      "section": "Benchmark Contamination: The Crisis",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-82",
+      "quote": "The older extraction attacks showed the complementary failure directly: verbatim regurgitation (\\cite[Carlini et al., 2021]{carlini2021extracting}).",
+      "section": "Benchmark Contamination: The Crisis",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-83",
+      "quote": "* **Test-set perplexity**: a model that has seen the test set has lower perplexity than a fresh one.",
+      "section": "Benchmark Contamination: The Crisis",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-84",
+      "quote": "* **Dynamic benchmarks**: questions are refreshed on a schedule from recent sources, as in LiveBench (\\cite[White et al., 2024]{white2024livebench}).",
+      "section": "Mitigations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-85",
+      "quote": "MMLU-Pro is harder but still static (\\cite[Wang et al., 2024]{wang2024mmlupro}).",
+      "section": "Mitigations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-86",
+      "quote": "* **Held-out or private evaluation sets**: the private ARC-AGI eval set (\\cite[Chollet et al., 2024]{chollet2024arcagi}), FrontierMath (Epoch AI), and SEAL (Scale AI).",
+      "section": "Mitigations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-87",
+      "quote": "The questions are withheld rather than merely copyrighted, which makes contamination much harder, at the price of limited public scrutiny.",
+      "section": "Mitigations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-88",
+      "quote": "* **Time-shifted benchmarks**: questions created after the model's training cutoff, then benchmarked in real-time.",
+      "section": "Mitigations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-89",
+      "quote": "* **Adversarial filtering**: maintain a “contaminated” list of items that appear in pretraining corpora (ProxiMix, D-Clean).",
+      "section": "Mitigations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-90",
+      "quote": "* **Canary strings**: a unique token injected into benchmark items; if it appears in model output, the model has been trained on the benchmark.",
+      "section": "Mitigations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-91",
+      "quote": "**FrontierMATH** problems (\\cite[Glazer et al., 2024]{glazer2024frontiermath}) are novel, require expert construction, and are not available online.",
+      "section": "Mitigations",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-92",
+      "quote": "* **Position bias**: prefers the response shown first.",
+      "section": "LLM-as-Judge Failure Modes",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-93",
+      "quote": "* **Length bias**: prefers longer responses.",
+      "section": "LLM-as-Judge Failure Modes",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-94",
+      "quote": "* **Self-preference**: prefers outputs similar to its own style.",
+      "section": "LLM-as-Judge Failure Modes",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-95",
+      "quote": "* **Sycophancy**: agrees with the user's stated preference regardless of quality.",
+      "section": "LLM-as-Judge Failure Modes",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-96",
+      "quote": "* **Verbosity bias**: prefers detailed, formatted answers even when conciseness is correct.",
+      "section": "LLM-as-Judge Failure Modes",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-97",
+      "quote": "Mitigations: swap A/B positions, average over multiple judges, use pairwise tournament design rather than direct scoring, use specialized fine-tuned judges.",
+      "section": "LLM-as-Judge Failure Modes",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-98",
+      "quote": "The community is moving towards:",
+      "section": "Beyond Static Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-99",
+      "quote": "* **Live evaluations**: continuous, time-stamped, on novel data.",
+      "section": "Beyond Static Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-100",
+      "quote": "* **Capability-specific benchmarks**: LiveCodeBench (contests from the past month), MathArena (rolling math contests).",
+      "section": "Beyond Static Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-101",
+      "quote": "* **Process-based evaluation**: scoring not just final answers but the **reasoning steps** (PRM, see the Reasoning chapter ).",
+      "section": "Beyond Static Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-102",
+      "quote": "* **Behavioral red-teaming**: probing for specific failure modes (jailbreaks, hallucinations, bias).",
+      "section": "Beyond Static Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-103",
+      "quote": "* **Task-specific evaluation**: medical QA with clinician review, legal tasks with lawyer review, code with actual execution and CI.",
+      "section": "Beyond Static Benchmarks",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-104",
+      "quote": "The Holistic Evaluation of Language Models benchmark suite (\\cite[Liang et al., 2022]{liang2023helm}) scores **16 core scenarios on 7 metrics** (accuracy, calibration, robustness, fairness, bias, toxicity, efficiency), plus 26 targeted scenarios for a total of 42.",
+      "section": "HELM: Holistic Evaluation of Language Models",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-105",
+      "quote": "It pioneered the multi-axis, transparent reporting standard.",
+      "section": "HELM: Holistic Evaluation of Language Models",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-106",
+      "quote": "The most reliable current evaluations are:",
+      "section": "The State of Evaluation in 2025",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-107",
+      "quote": "**LMSYS (\\cite[Zheng et al., 2023]{zheng2023lmsys}) Elo**, for general chat quality.",
+      "section": "The State of Evaluation in 2025",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-108",
+      "quote": "**GPQA / FrontierMath / ARC-AGI**, for hard reasoning, contamination-resistant.",
+      "section": "The State of Evaluation in 2025",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-109",
+      "quote": "**HumanEval** (\\cite[Chen et al., 2021]{chen2021humaneval}) / LiveCodeBench / SWE-Bench, for code.",
+      "section": "The State of Evaluation in 2025",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-110",
+      "quote": "**Human preference studies**, the gold standard, when affordable.",
+      "section": "The State of Evaluation in 2025",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-111",
+      "quote": "Static benchmarks like (\\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) are **informative but no longer load-bearing** for frontier-model comparison.",
+      "section": "The State of Evaluation in 2025",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-112",
+      "quote": "When evaluating an LLM for your application:",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-113",
+      "quote": "**Build your own evaluation set** with 100–500 examples from your real workload.",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-114",
+      "quote": "Static benchmarks won't reflect your distribution.",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-115",
+      "quote": "**Use LLM-as-judge carefully**, verify agreement with human raters on a held-out subset.",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-116",
+      "quote": "**Track variance**: run with temperature > 0 and report mean ± std.",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-117",
+      "quote": "**Test for regressions**: regression suite on every model update.",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-118",
+      "quote": "**Watch for contamination**: time-shift your evaluation set creation.",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-119",
+      "quote": "**Include adversarial examples**: prompts designed to break the system.",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-120",
+      "quote": "The goal is **not** to maximize a leaderboard score.",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-121",
+      "quote": "It is to **measure real-world utility**, and that requires effort that no static benchmark can replace.",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-122",
+      "quote": "The first part of this chapter covered *public* benchmarks — MMLU, HumanEval, the leaderboards — the shared rulers by which models are compared to one another.",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-123",
+      "quote": "This second part is the other half, and the one that is actually used at work: **how do you build an evaluation for *your* problem?** \"Report the MMLU score\" and \"measure whether *my* feature works for *my* users\" are different skills, and the second is where most ML time is actually spent.",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-124",
+      "quote": "The gap between them is small in principle and large in practice — and it is closed by a handful of concrete techniques, not by a feel for the answer.",
+      "section": "Practical Guidance",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-125",
+      "quote": "A public benchmark answers a *fixed* question (\"can the model do general knowledge?\").",
+      "section": "From benchmark to your-own eval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-126",
+      "quote": "Your product has its own question — \"does it extract the invoice fields correctly?\", \"does it refuse the out-of-scope request?\", \"does it sound like our voice?\" — and no leaderboard answers it for you.",
+      "section": "From benchmark to your-own eval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-127",
+      "quote": "Building your own eval is the move from the fixed question to the specific one, and it has three parts: a **set of inputs** that represent the real cases you care about, a **way to score** each answer, and a **number** that lets you compare two versions.",
+      "section": "From benchmark to your-own eval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-128",
+      "quote": "The trap is that the scoring part is where it goes wrong.",
+      "section": "From benchmark to your-own eval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-129",
+      "quote": "A score is only as good as the *standard* behind it, and a standard that lives only in your head (\"this looks right\") is not a standard — it is a mood, and it will drift between you, your teammate, and your judge.",
+      "section": "From benchmark to your-own eval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-130",
+      "quote": "So the first real task is to write the standard down.",
+      "section": "From benchmark to your-own eval",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-131",
+      "quote": "A **rubric** turns \"good answer\" into a scored, written standard: a small set of **criteria** (what matters), a **scale** (what a 1, 3, 5 each means), and **anchors** (a concrete example of what each score looks like).",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-132",
+      "quote": "The anchors are the load-bearing part — they are the difference between a rubric that two people can apply identically and one they cannot.",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-133",
+      "quote": "A useful pattern is *dimensional* scoring rather than a single holistic score, because a single score hides *what* went wrong.",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-134",
+      "quote": "For a \"write a support reply\" task, you might score separately:",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-135",
+      "quote": "| Dimension | What a 1 looks like | What a 3 looks like | What a 5 looks like |",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-136",
+      "quote": "| **Correctness** | States a wrong fact or misses the point | Correct but incomplete | Correct and complete |",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-137",
+      "quote": "| **Grounding** | Invents details not in the ticket | Uses the ticket, small gaps | Every claim traceable to the ticket |",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-138",
+      "quote": "| **Tone** | Robotic or off-voice | Polite, generic | Matches the product's voice |",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-139",
+      "quote": "| **Safety** | Leaks PII / over-promises | Safe | Safe, and declines what it should |",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-140",
+      "quote": "Each dimension gets its own anchor examples.",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-141",
+      "quote": "The point of writing the \"what a 3 looks like\" column is that *most* real outputs land in the middle, and the middle is where two scorers diverge — so the middle is where the anchors must be most precise.",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-142",
+      "quote": "A rubric without sharp middle anchors will not give you reproducible scores, no matter how careful the scorers are.",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-143",
+      "quote": "> A rubric is a *specification*.",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-144",
+      "quote": "If two trained annotators do not agree, the rubric — not the annotators — is wrong.",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-145",
+      "quote": "You fix the rubric, you do not blame the score.",
+      "section": "Rubric design: a specification, not a vibe",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-146",
+      "quote": "Before you trust any score, you must trust the *standard*.",
+      "section": "Inter-annotator agreement: is the rubric sound?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-147",
+      "quote": "The test is **inter-annotator agreement (IAA)**: have two (or more) people score the *same* answers independently, and measure how often they agree — but not naively.",
+      "section": "Inter-annotator agreement: is the rubric sound?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-148",
+      "quote": "Two people both scoring \"3\" most of the time could just be lazy; the right statistic adjusts for the agreement you would expect **by chance**.",
+      "section": "Inter-annotator agreement: is the rubric sound?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-149",
+      "quote": "The standard is **Cohen's κ** (kappa) \\cite[Wikipedia, Cohen's kappa]{cohenkappa}:",
+      "section": "Inter-annotator agreement: is the rubric sound?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-150",
+      "quote": "You will want to scale this past two humans — human scoring is slow and costs money.",
+      "section": "Calibrating an LLM judge: trust it only where it agrees",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-151",
+      "quote": "The obvious move is to use a strong LLM as the judge, and the first part of this chapter introduced it.",
+      "section": "Calibrating an LLM judge: trust it only where it agrees",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-152",
+      "quote": "The failure is that a judge *inherits its own biases* (it prefers its own style, longer answers, a particular phrasing), so an uncalibrated LLM judge can systematically prefer the wrong thing.",
+      "section": "Calibrating an LLM judge: trust it only where it agrees",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-153",
+      "quote": "**Calibration** is the fix, and it is the same IAA idea applied to the machine:",
+      "section": "Calibrating an LLM judge: trust it only where it agrees",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-154",
+      "quote": "**Hold out a subset** (say 50–200 answers) and score it *by hand*, with your κ-verified rubric.",
+      "section": "Calibrating an LLM judge: trust it only where it agrees",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-155",
+      "quote": "This is the ground truth.",
+      "section": "Calibrating an LLM judge: trust it only where it agrees",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-156",
+      "quote": "**Have the LLM judge score the same subset.**",
+      "section": "Calibrating an LLM judge: trust it only where it agrees",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-157",
+      "quote": "**Measure the judge's agreement with the humans** — a κ, or a correlation, or an agreement rate.",
+      "section": "Calibrating an LLM judge: trust it only where it agrees",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-158",
+      "quote": "**Trust the judge only where it agrees.** If the judge matches human scoring at κ ≥ 0.7 on your held-out set, you can let it scale the rest.",
+      "section": "Calibrating an LLM judge: trust it only where it agrees",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-159",
+      "quote": "Where it disagrees systematically (a particular dimension, a particular answer style), either fix the prompt/rubric or score that part by hand.",
+      "section": "Calibrating an LLM judge: trust it only where it agrees",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-160",
+      "quote": "This is the LLM-as-judge method of \\cite[Zheng et al. (2023)]{llmjudge2023} in its practical form: an LLM judge is not a substitute for a standard, it is a *cheap instrument that you must calibrate against the standard first*.",
+      "section": "Calibrating an LLM judge: trust it only where it agrees",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-161",
+      "quote": "The held-out human subset is the calibration set; without it, the judge is a black box with a plausible face on it.",
+      "section": "Calibrating an LLM judge: trust it only where it agrees",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-162",
+      "quote": "The last trap is the smallest and the most damaging: **reading too much into a small number.** You ship a prompt change and the eval goes from 82% to 87% — \"up 5 points, shipped.\" But with $n = 100$ examples, 82% is 82 correct and 87% is 87 correct, and a difference of five correct answers out of one hundred is exactly the kind of thing that happens by chance.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-163",
+      "quote": "The question is never \"did it go up?\" but \"**could it go up by this much if nothing changed?**\"",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-164",
+      "quote": "The answer is a **confidence interval** on the difference.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-165",
+      "quote": "The cheap, assumption-light way is the **bootstrap**: draw *with replacement* samples of size $n$ from your scored data, recompute the accuracy on each, and repeat thousands of times.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-166",
+      "quote": "The spread of those recomputed accuracies is your uncertainty.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-167",
+      "quote": "Do it for both versions and for the *difference*, and you get a bootstrap distribution of \"how much could this gap be explained by sampling noise.\" If the bootstrap distribution of the difference overlaps zero a lot — if the 5% lift's error bar straddles 0 — the lift is not real, and you should not ship on it.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-168",
+      "quote": "Two corollaries that bite in practice:",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-169",
+      "quote": "* **Small $n$ needs big effects.** At $n = 100$, you need a change of roughly *ten* points or more to be confident; a three-point change is inside the noise.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-170",
+      "quote": "Either the effect is large, or you need more examples.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-171",
+      "quote": "* **The multiple-comparisons trap.** If you try twenty prompt variants and report the best one, you have *selected on the noise* — the best of twenty random draws will look like a winner by construction.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-172",
+      "quote": "The fix is to hold out a *final* test set you look at only once, or to pre-register which metric you will optimize.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-173",
+      "quote": "[HELM](helm2022) exists, in part, to make these measurement practices consistent across benchmarks \\cite[Liang et al., HELM (2022)]{helm2022}.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-174",
+      "quote": "> An eval is a measurement instrument, and like any instrument it has a resolution.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-175",
+      "quote": "Below the resolution, the number is not a result — it is a rounding error with a label on it.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    },
+    {
+      "id": "evaluation-stmt-176",
+      "quote": "The whole discipline of building an eval is: write the standard down, verify two people can read it the same way, calibrate the cheap judge against the careful one, and refuse to act on a number smaller than the noise.",
+      "section": "Variance and significance: is the difference real?",
+      "kind": "statement"
+    }
   ]
 }

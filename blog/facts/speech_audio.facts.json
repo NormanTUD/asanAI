@@ -453,5 +453,385 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "speech_audio-stmt-1",
+      "quote": "Sound is the **last major modality** that LLMs learned to read and write.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-2",
+      "quote": "As of 2025, frontier models (GPT-4o, Gemini, Voxtral, Qwen2-Audio) handle audio natively, taking voice input, generating speech, transcribing languages, recognizing emotion, even singing.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-3",
+      "quote": "This chapter covers how audio is represented, how it is encoded and decoded, and how Transformer-based models learn to listen and speak.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-4",
+      "quote": "A raw audio waveform is a 1-D signal sampled at 16 kHz or 44.1 kHz, a sequence of 16,000 to 44,100 floats **per second**.",
+      "section": "From Waveform to Tokens: Three Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-5",
+      "quote": "That is too dense for any model to ingest directly.",
+      "section": "From Waveform to Tokens: Three Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-6",
+      "quote": "Modern systems compress audio through one of three representations:",
+      "section": "From Waveform to Tokens: Three Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-7",
+      "quote": "A spectrogram is a 2-D representation: **time on the x-axis, frequency on the y-axis, intensity as colour**.",
+      "section": "1. Spectrograms (and Mel-spectrograms)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-8",
+      "quote": "It is computed by Short-Time Fourier Transform (STFT): split the waveform into 20–40 ms windows, compute the magnitude of the FFT, stack them.",
+      "section": "1. Spectrograms (and Mel-spectrograms)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-9",
+      "quote": "where $w$ is a window function (Hann, Hamming) and $H$ is the hop size.",
+      "section": "1. Spectrograms (and Mel-spectrograms)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-10",
+      "quote": "\\marginfig{spectrogram_speech_open.png}{A real spectrogram of the spoken word “open”, plotted with a *reassigned* STFT so the harmonic stripes stand out clearly: time runs left to right, frequency bottom to top, intensity as brightness.",
+      "section": "1. Spectrograms (and Mel-spectrograms)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-11",
+      "quote": "Image: [Kelly Fitz, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Long-window_reassigned_spectrogram_of_speech.png).}",
+      "section": "1. Spectrograms (and Mel-spectrograms)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-12",
+      "quote": "**Mel-spectrograms** warp the frequency axis to the **mel scale**, which approximates human pitch perception (logarithmic in frequency).",
+      "section": "1. Spectrograms (and Mel-spectrograms)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-13",
+      "quote": "A 10-second clip at 16 kHz becomes a mel-spectrogram of shape $(\\text{mel bins}, \\text{time frames}) \\approx (80, 500)$.",
+      "section": "1. Spectrograms (and Mel-spectrograms)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-14",
+      "quote": "For an LLM to “read” audio as discrete tokens (like text tokens), a **neural codec** compresses audio into a stream of integers.",
+      "section": "2. Neural Audio Codecs (the modern approach)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-15",
+      "quote": "* **SoundStream** (Google, 2021): 24 kHz mono audio → discrete codes at 3–18 kbps.",
+      "section": "2. Neural Audio Codecs (the modern approach)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-16",
+      "quote": "* **EnCodec** (Meta, 2022): 24 kHz stereo → discrete codes; uses a residual vector quantizer.",
+      "section": "2. Neural Audio Codecs (the modern approach)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-17",
+      "quote": "* **DAC** (Descript, 2023): improved quality at low bitrates.",
+      "section": "2. Neural Audio Codecs (the modern approach)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-18",
+      "quote": "* **Whisper's log-mel**: not discrete, but the de facto input for ASR models.",
+      "section": "2. Neural Audio Codecs (the modern approach)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-19",
+      "quote": "The codec has an **encoder** $E: \\text{waveform} \\to \\mathbb{Z}^{T \\times n_q}$ (frames × codebook entries) and a **decoder** $D: \\mathbb{Z}^{T \\times n_q} \\to \\text{waveform}$.",
+      "section": "2. Neural Audio Codecs (the modern approach)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-20",
+      "quote": "With $n_q = 8$ codebooks and 75 frames per second, audio becomes 600 tokens per second, comparable in density to text.",
+      "section": "2. Neural Audio Codecs (the modern approach)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-21",
+      "quote": "Models like **wav2vec 2.0**, **HuBERT**, and **WavLM** learn speech representations by masking spans of audio and predicting the discrete latent units of a teacher model.",
+      "section": "3. Self-Supervised Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-22",
+      "quote": "The output is a sequence of 50 Hz contextualized vectors, perfect input for downstream ASR, speaker ID, or emotion recognition.",
+      "section": "3. Self-Supervised Representations",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-23",
+      "quote": "**Whisper** (Radford et al., OpenAI, 2022) is the dominant open ASR model.",
+      "section": "Speech Recognition: Whisper and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-24",
+      "quote": "* **Input**: 30-second audio chunks, converted to 80-channel log-mel spectrograms (100 Hz frames; 50 Hz after the conv stem).",
+      "section": "Speech Recognition: Whisper and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-25",
+      "quote": "* **Encoder**: standard Transformer (ViT-style for the convolutional stem), processes the spectrogram into hidden states.",
+      "section": "Speech Recognition: Whisper and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-26",
+      "quote": "* **Decoder**: autoregressive Transformer that produces text tokens.",
+      "section": "Speech Recognition: Whisper and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-27",
+      "quote": "* **Training**: 680,000 hours of weakly-supervised multilingual audio with transcribed captions.",
+      "section": "Speech Recognition: Whisper and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-28",
+      "quote": "The model is trained with a multi-task objective: transcribe, translate to English, detect language, timestamp.",
+      "section": "Speech Recognition: Whisper and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-29",
+      "quote": "Whisper-large-v3 (2023) achieves under 3% word error rate on clean English and ~10% on noisy multilingual.",
+      "section": "Speech Recognition: Whisper and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-30",
+      "quote": "**Conformer** (Gulati et al., Google, 2020) is the dominant architecture for streaming ASR.",
+      "section": "Speech Recognition: Whisper and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-31",
+      "quote": "It combines convolutions (for local patterns) with self-attention (for global context) in each block.",
+      "section": "Speech Recognition: Whisper and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-32",
+      "quote": "USM (Google, 2023) and SeamlessM4T (Meta, 2023) extend this to 100+ languages.",
+      "section": "Speech Recognition: Whisper and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-33",
+      "quote": "Note that Whisper is one of the few remaining widely-used **encoder-decoder** Transformers, most modern speech and language systems are decoder-only (see the Transformer chapter ); the unified models below (GPT-4o, Gemini, Voxtral, Qwen2-Audio) follow the decoder-only / native-Transformer pattern.",
+      "section": "Speech Recognition: Whisper and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-34",
+      "quote": "TTS has three historical generations:",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-35",
+      "quote": "**Concatenative TTS** (pre-2016): stitch pre-recorded phoneme fragments.",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-36",
+      "quote": "**Neural spectrogram models** (Tacotron 2, 2017): encoder–decoder produces a mel-spectrogram, a separate **vocoder** (WaveNet, WaveGlow) converts it to waveform.",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-37",
+      "quote": "**Codec-based models** (VALL-E, Bark, SoundStorm, 2023+): treat speech as discrete codec tokens; a Transformer LLM predicts them; the codec decoder converts to waveform.",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-38",
+      "quote": "Voice cloning from a 3-second reference sample becomes trivial.",
+      "section": "Text-to-Speech: From Tacotron to Neural Codec Models",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-39",
+      "quote": "* **Jukebox** (OpenAI, 2020): VQ-VAE on raw audio + autoregressive Transformer.",
+      "section": "Music Generation",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-40",
+      "quote": "Slow, and limited to a few minutes of music per sample.",
+      "section": "Music Generation",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-41",
+      "quote": "* **MusicGen** (Meta, 2023): single-pass Transformer over EnCodec tokens, conditioned on text and (optionally) melody.",
+      "section": "Music Generation",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-42",
+      "quote": "* **Suno / Udio** (2024): closed-source, end-to-end text → song with vocals and instruments.",
+      "section": "Music Generation",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-43",
+      "quote": "Industry-leading quality.",
+      "section": "Music Generation",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-44",
+      "quote": "* **Stable Audio** (Stability AI, 2024): latent diffusion over audio spectrograms.",
+      "section": "Music Generation",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-45",
+      "quote": "All rely on the same principle: **audio as a sequence of discrete tokens** + autoregressive or diffusion generation.",
+      "section": "Music Generation",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-46",
+      "quote": "The frontier is a single Transformer that handles text, audio, and image tokens interchangeably:",
+      "section": "Unified Speech–Text Models (2024+)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-47",
+      "quote": "* **GPT-4o** (OpenAI, 2024): real-time voice conversation with emotional nuance.",
+      "section": "Unified Speech–Text Models (2024+)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-48",
+      "quote": "Audio tokens are interleaved with text tokens in one residual stream.",
+      "section": "Unified Speech–Text Models (2024+)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-49",
+      "quote": "* **Gemini 1.5/2** (Google): native audio understanding (transcription, translation, classification) and generation.",
+      "section": "Unified Speech–Text Models (2024+)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-50",
+      "quote": "* **Voxtral** (Mistral, 2025): open-weight 24B audio model.",
+      "section": "Unified Speech–Text Models (2024+)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-51",
+      "quote": "* **Qwen2-Audio** (Alibaba, 2024): open-weights audio chat model.",
+      "section": "Unified Speech–Text Models (2024+)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-52",
+      "quote": "The training data for these is massive: trillions of audio tokens, interleaved with text.",
+      "section": "Unified Speech–Text Models (2024+)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-53",
+      "quote": "Internally, audio is encoded into the LLM's vocabulary; the model is trained as a normal next-token predictor.",
+      "section": "Unified Speech–Text Models (2024+)",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-54",
+      "quote": "| Concept | Reference | Key formula/idea |",
+      "section": "Key Concepts Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-55",
+      "quote": "| Spectrogram | Time × Frequency | STFT magnitude |",
+      "section": "Key Concepts Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-56",
+      "quote": "| Mel-spectrogram | Perceptually warped frequency | $\\text{mel}(f) = 2595 \\log_{10}(1 + f/700)$ |",
+      "section": "Key Concepts Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-57",
+      "quote": "| Neural codec | Discrete audio tokens | $D(E(x)) \\approx x$ |",
+      "section": "Key Concepts Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-58",
+      "quote": "| Whisper | Encoder–decoder Transformer | 80-mel input → text tokens |",
+      "section": "Key Concepts Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-59",
+      "quote": "| VALL-E | Codec-LM TTS | $P(\\text{tokens} \\mid \\text{text}, \\text{reference})$ |",
+      "section": "Key Concepts Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-60",
+      "quote": "| Conformer | Conv + Attention | Local + global context per layer |",
+      "section": "Key Concepts Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-61",
+      "quote": "| Unified multimodal | Text + audio tokens | One Transformer for both |",
+      "section": "Key Concepts Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-62",
+      "quote": "The shift from “speech recognition” (separate ASR model) and “speech synthesis” (separate TTS model) to **one model that speaks and listens** is now complete in 2025.",
+      "section": "Key Concepts Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "speech_audio-stmt-63",
+      "quote": "The remaining frontier is **real-time, low-latency, expressive speech**, natural conversation rather than turn-taking.",
+      "section": "Key Concepts Recap",
+      "kind": "statement"
+    }
   ]
 }

@@ -505,5 +505,451 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "recurrent_networks-stmt-1",
+      "quote": "A feedforward network answers one question and forgets it.",
+      "section": "The Loop",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-2",
+      "quote": "The token that left the model's mind is gone — the next token is produced without the first one having made a mark.",
+      "section": "The Loop",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-3",
+      "quote": "But language is *sequential*: the meaning of “was” arrives only with what came before.",
+      "section": "The Loop",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-4",
+      "quote": "\\citeauthor{colah2015lstm}'s classic walkthrough (\\citeyear{colah2015lstm}) puts it simply:",
+      "section": "The Loop",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-5",
+      "quote": "> Humans don't start their thinking from scratch every second.",
+      "section": "The Loop",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-6",
+      "quote": "… You don't throw everything away and start thinking from scratch again.",
+      "section": "The Loop",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-7",
+      "quote": "Your thoughts have persistence.",
+      "section": "The Loop",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-8",
+      "quote": "A **recurrent neural network (RNN)** gives a network the same trick: a loop that feeds its own hidden state back in.",
+      "section": "The Loop",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-9",
+      "quote": "Instead of a stack of layers, it is a chain of copies of one network, each passing a **hidden state** $\\mathbf{h}_{t-1}$ to the next — the machine keeps reading its own writing.",
+      "section": "The Loop",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-10",
+      "quote": "The loop is older than the language model.",
+      "section": "The Loop",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-11",
+      "quote": "\\citeauthor{hopfield1982} showed that a network of symmetrically connected threshold units could store patterns as stable states of an energy landscape, with the dynamics settling into one of them \\cite{hopfield1982}.",
+      "section": "The Loop",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-12",
+      "quote": "Hopfield's networks were not trained by backpropagation and did not process sequences token by token, but they established the idea the RNN inherits: a network's computation can be a trajectory through state space rather than a single feedforward pass.",
+      "section": "The Loop",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-13",
+      "quote": "The recurrence is easiest to read when it is **unrolled** across time — drawn as a sequence of identical networks, one per step, each handing its state forward:",
+      "section": "Unrolling: One Network, Many Copies",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-14",
+      "quote": "The recurrent loop unfolded as a chain — $\\mathbf{a}$ is the input, $\\mathbf{h}$ the state the copies hand to each other, $\\mathbf{y}$ the output.",
+      "section": "Unrolling: One Network, Many Copies",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-15",
+      "quote": "[Diagram: fdeloche, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Recurrent_neural_network_unfold.svg)",
+      "section": "Unrolling: One Network, Many Copies",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-16",
+      "quote": "Because the state must be *propagated* — multiplied through the chain, step by step — far-apart context is fragile.",
+      "section": "The Long-Distance Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-17",
+      "quote": "Predicting the next word in *“the clouds are in the sky”* needs only recent words.",
+      "section": "The Long-Distance Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-18",
+      "quote": "But finish *“I grew up in France … I speak fluent __”*, and the answer depends on something from sentences ago.",
+      "section": "The Long-Distance Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-19",
+      "quote": "In the long gap, an RNN must remember the word “France” while doing all the intervening work.",
+      "section": "The Long-Distance Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-20",
+      "quote": "\\citeauthor{colah2015lstm} captures the state of things precisely:",
+      "section": "The Long-Distance Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-21",
+      "quote": "> In theory, RNNs are absolutely capable of handling such “long-term dependencies.” … In practice, RNNs don't seem to be able to learn them.",
+      "section": "The Long-Distance Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-22",
+      "quote": "The failure mode is the [vanishing gradient](backproplab.php).",
+      "section": "The Long-Distance Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-23",
+      "quote": "Unrolling an RNN computes gradients through many multiplications of the same matrix; if the Jacobian's spectral radius stays below 1, the signal *shrinks* toward zero — mathematically, a long step sequence compounds the decay into the exponential $\\rho^{k}$ that [attention later sidesteps entirely](attentionlab.php) \\cite{colah2015backprop,hochreiter1991vanishing}.",
+      "section": "The Long-Distance Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-24",
+      "quote": "The problem was diagnosed early by \\citeauthor{hochreiter1991vanishing} (\\citeyear{hochreiter1991vanishing}) and formalized for recurrent networks by \\citeauthor{bengio1994learning} (\\citeyear{bengio1994learning}) — but the fix arrived as an explicit memory.",
+      "section": "The Long-Distance Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-25",
+      "quote": "Training a recurrent net means differentiating through the unrolled graph, a procedure known as **backpropagation through time**.",
+      "section": "The Long-Distance Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-26",
+      "quote": "\\citeauthor{werbos1990bptt} gave the method its canonical exposition, showing how the adjoint recurrence runs backward along the same chain that generated the states \\cite{werbos1990bptt}.",
+      "section": "The Long-Distance Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-27",
+      "quote": "In the language of the [autodiff chapter](autodiff.php), BPTT is simply reverse-mode AD applied to a graph whose depth is the sequence length—which is exactly why the same vanishing-gradient arithmetic returns.",
+      "section": "The Long-Distance Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-28",
+      "quote": "The **Long Short-Term Memory** network, introduced by \\citeauthorlastnameand{lstm} in \\citeyear{lstm}, changes what flows down the chain \\cite{lstm}.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-29",
+      "quote": "Alongside the ordinary hidden state $\\mathbf{h}_t$ runs a **cell state** $\\mathbf{c}_t$ — a lane that is *not* transformed by every gate.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-30",
+      "quote": "\\citeauthor{colah2015lstm} calls it the conveyor belt: information rides on it straight through the network, altered only by the gentle, learned interactions that **gates** apply.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-31",
+      "quote": "Each gate is a sigmoid layer whose output lies in $[0,1]$ — it reads “how much to let through,” from closed ($0$) to wide open ($1$) \\cite{colah2015lstm}.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-32",
+      "quote": "The original LSTM had an input gate and an output gate; the forget gate was added by \\citeauthor{lstm_vanilla} (\\citeyear{lstm_vanilla}).",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-33",
+      "quote": "The modern cell has three:",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-34",
+      "quote": "* **The forget gate** decides what to drop from the previous state: $\\mathbf{f}_t = \\sigma\\!\\big(\\mathbf{W}_f [\\mathbf{h}_{t-1}, \\mathbf{x}_t] + \\mathbf{b}_f\\big)$.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-35",
+      "quote": "* **The input gate** writes new memory from a candidate $\\tilde{\\mathbf{c}}_t = \\tanh\\big(\\mathbf{W}_c [\\mathbf{h}_{t-1}, \\mathbf{x}_t] + \\mathbf{b}_c\\big)$, scaled by $\\mathbf{i}_t = \\sigma\\!\\big(\\mathbf{W}_i [\\mathbf{h}_{t-1}, \\mathbf{x}_t] + \\mathbf{b}_i\\big)$.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-36",
+      "quote": "* The **output gate** decides what the updated state reveals as $\\mathbf{h}_t = \\mathbf{o}_t \\odot \\tanh(\\mathbf{c}_t)$.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-37",
+      "quote": "The cell update is then a soft overwrite, not a full rewrite:",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-38",
+      "quote": "In a language model that has learned grammar, \\citeauthor{colah2015lstm} notes the gates learn an interpretable job:",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-39",
+      "quote": "> …it might output whether the subject is singular or plural, so that we know what form a verb should be conjugated into if that's what follows next.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-40",
+      "quote": "Forget the gate, keep the memory: that is the whole trick — an *elementwise* multiplication by a gate near 1 instead of a full matrix product, so the gradients survive the journey across a long sentence \\cite{colah2015lstm}.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-41",
+      "quote": "The LSTM was not invented in a vacuum.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-42",
+      "quote": "In his 1991 diploma thesis, \\citeauthor{hochreiter1991vanishing} analyzed why recurrent gradients decay; the solution he and Schmidhuber developed, the *constant error carousel*, appeared in the 1997 LSTM paper \\cite{hochreiter1991vanishing,lstm}.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-43",
+      "quote": "The carousel is a self-connected unit whose error signal can flow backward without being multiplied by a weight matrix—the cell state made trainable.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-44",
+      "quote": "Learned input and output gates let the network decide when to write to it and when to read from it.",
+      "section": "The LSTM's Conveyor Belt",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-45",
+      "quote": "What follows is a pruning of the idea, not a new invention.",
+      "section": "The Family Tree",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-46",
+      "quote": "The **gated recurrent unit (GRU)** of \\citeauthor{cho2014gru} (\\citeyear{cho2014gru}) merges the forget and input gates into one **update gate**, and weds the memory to the output via a **reset gate** — two gates instead of three, fewer parameters, similar performance \\cite{cho2014gru}.",
+      "section": "The Family Tree",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-47",
+      "quote": "And when \\citeauthor{greff2015lstm} and colleagues *searched* the space of LSTM variants systematically, they reached a deflating but reassuring conclusion: the best variants are only marginally better than the plain, standard LSTM \\cite{greff2015lstm}.",
+      "section": "The Family Tree",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-48",
+      "quote": "The message of that search echoes [the universality discussion in the toolkit](https://asanai.scads.ai): architecture cleverness buys freedom from *unavoidable* failure, but the winning configurations cluster together — “all about the same” \\cite{colah2015lstm}.",
+      "section": "The Family Tree",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-49",
+      "quote": "What actually scaled, as [the next chapter](attentionlab.php) shows, was not a better gate but *removing the chain entirely* — \\citeauthor{colah2015lstm} ends his walkthrough with an honest roadmap:",
+      "section": "The Family Tree",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-50",
+      "quote": "> A common opinion among researchers is: \"Yes!",
+      "section": "The Family Tree",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-51",
+      "quote": "There is a next step and it's attention!\" The idea is to let every step of an RNN pick information to look at from some larger collection of information.",
+      "section": "The Family Tree",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-52",
+      "quote": "The next step was not another gate but the removal of the recurrence itself.",
+      "section": "The Family Tree",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-53",
+      "quote": "\\citeauthor{vaswani2017attention}'s Transformer kept the encoder–decoder shape and replaced the recurrent chain with **self-attention**, letting every position attend to every other position in parallel \\cite{vaswani2017attention}.",
+      "section": "The Family Tree",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-54",
+      "quote": "That change shortened the path between distant tokens from a chain of length $n$ to a single attention step, and it made training parallel across the sequence.",
+      "section": "The Family Tree",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-55",
+      "quote": "The price was quadratic cost in sequence length—and the beginning of the architecture that powers modern LLMs.",
+      "section": "The Family Tree",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-56",
+      "quote": "The recurrent loop becomes much more useful when you give it a job with two different sequences.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-57",
+      "quote": "**Sequence-to-sequence** learning (seq2seq), introduced in 2014 by Sutskever, Vinyals, and Le and independently by Cho et al., pairs two recurrent networks (\\cite[Sutskever et al., 2014]{sutskever2014seq2seq}; \\cite[Cho et al., 2014]{cho2014gru}):",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-58",
+      "quote": "* an **encoder** reads the source sentence one token at a time and compresses it into a single **context vector** — the final hidden state;",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-59",
+      "quote": "* a **decoder** is initialized with that vector and generates the target sentence token by token, feeding its own previous output back in.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-60",
+      "quote": "For a source $x_1,\\dots,x_T$ and target $y_1,\\dots,y_{T'}$:",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-61",
+      "quote": "The context vector is the paradigm's central wager: that the meaning of a sentence of any length can be stored as a point in a fixed-dimensional space, and unfolded back into another language.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-62",
+      "quote": "It is also its central weakness.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-63",
+      "quote": "Everything the decoder knows about the source must pass through those few numbers, so quality falls as sentences get longer.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-64",
+      "quote": "Sutskever et al. found a cheap partial fix: **reverse the source sentence**, which puts the first source words — the ones that predict the first target words — close to the context vector.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-65",
+      "quote": "**Attention** removed the bottleneck.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-66",
+      "quote": "\\citeauthor{bahdanau2014} let the decoder compute, at every output step, a weighted sum over *all* encoder states:",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-67",
+      "quote": "That per-step alignment is the direct ancestor of the self-attention inside every Transformer: instead of one compressed summary, the decoder learns *where to look* (\\cite[Bahdanau et al., 2014]{bahdanau2014}).",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-68",
+      "quote": "Training introduced a protocol that every modern language model still uses.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-69",
+      "quote": "**Teacher forcing** feeds the decoder the *true* previous token at every step, not its own prediction, so all positions can be scored in one parallel pass; the technique goes back to \\citeauthor{williams1989} (\\citeyear{williams1989}).",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-70",
+      "quote": "At inference the gold prefix is gone and the model consumes its own outputs; the mismatch between the two conditions is called **exposure bias**.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-71",
+      "quote": "Scheduled sampling, which gradually replaces gold tokens with model predictions during training, was the recurrent era's remedy \\cite{bengio2015scheduled}.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-72",
+      "quote": "At Transformer scale the problem largely receded in practice, but the protocol did not: next-token training *is* teacher forcing with a causal mask.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-73",
+      "quote": "The seq2seq form outlived the recurrence.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    },
+    {
+      "id": "recurrent_networks-stmt-74",
+      "quote": "Google's production GNMT system stacked eight LSTM layers per side \\cite{wu2016gnmt}, the Transformer kept the encoder–decoder skeleton and replaced the recurrent core with attention \\cite{vaswani2017attention}, T5 recast every task as text-to-text \\cite{raffel2020t5}, and Whisper carried the same shape into speech recognition \\cite{radford2022whisper}.",
+      "section": "From sequences to translations: seq2seq",
+      "kind": "statement"
+    }
   ]
 }

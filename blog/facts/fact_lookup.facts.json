@@ -489,5 +489,1789 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "fact_lookup-stmt-1",
+      "quote": "Type the words **\"The capital of France is \"** into a chat model.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-2",
+      "quote": "The next token comes back: **\"Paris\"**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-3",
+      "quote": "Most users treat this as ordinary.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-4",
+      "quote": "It is, arguably, the deepest open question in modern AI, dressed up as a trivia question.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-5",
+      "quote": "The picture we sketch in this chapter is the best current answer that the mechanistic interpretability community has been able to put together.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-6",
+      "quote": "Each piece is backed by experiments on real models.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-7",
+      "quote": "Each piece is also incomplete.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-8",
+      "quote": "We will be honest about both.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-9",
+      "quote": "*Nobody* knows the full story, not the model authors, not the interpretability researchers, not the theorists.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-10",
+      "quote": "What we have is a stack of partial theories, each with published evidence, that together form a coherent working picture.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-11",
+      "quote": "The picture is, by the consensus of the field, *almost certainly not the whole picture*.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-12",
+      "quote": "It is doing a lot of work in the question \"how does it know to reply Paris?\", and most of that work is misleading.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-13",
+      "quote": "- declarative memory in the human sense,",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-14",
+      "quote": "- a symbolic reasoning step,",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-15",
+      "quote": "- the model \"understanding\" geography.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-16",
+      "quote": "We mean something much more specific and much more boring.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-17",
+      "quote": "The trained model is a function",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-18",
+      "quote": "Here $\\mathcal{X}$ is the set of all finite token sequences, $V$ is the vocabulary of size $|V|$, and $\\Delta^{|V|-1}$ is the probability simplex (the set of all probability distributions over $|V|$ outcomes).",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-19",
+      "quote": "The question becomes: *why does $f_\\theta$, applied to the prompt \"The capital of France is\", assign high probability to the token \"Paris\"?* That is a well-posed mathematical question.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-20",
+      "quote": "The answer will not tell us what Paris *is*.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-21",
+      "quote": "It will tell us what shape of computation inside the network produces that token.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-22",
+      "quote": "The whole rest of this chapter is an answer to that question, in eleven pieces, with the bits we don't know labelled honestly as we go.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-23",
+      "quote": "A language model is trained to do one thing: predict the next token in a sequence.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-24",
+      "quote": "It is *not* trained on a curriculum of trivia questions, and it is *not* given a goal of being factually accurate.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-25",
+      "quote": "It is trained on a slice of human text, with the loss $-\\log P(t_{i+1} \\mid t_1, \\ldots, t_i)$.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-26",
+      "quote": "The fact \"the capital of France is Paris\" is only useful to the model insofar as it lowers that loss on internet text.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-27",
+      "quote": "If, in some hypothetical corpus, every sentence that started \"the capital of France is\" were followed by the word \"Lyon\", the model would learn \"Lyon\" with equal enthusiasm, and with the same kind of internal mechanism.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-28",
+      "quote": "This is what people mean when they say language models have no \"ground truth\" — they are not in the business of truth, they are in the business of likelihood.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-29",
+      "quote": "That a likelihood-maximizer ends up saying anything we would call a fact at all is itself one of the surprises of the last decade, and it is what makes the question worth asking.",
+      "section": "The question, re-framed",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-30",
+      "quote": "The forward pass that turns \"The capital of France is \" into a distribution over next tokens is short.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-31",
+      "quote": "In a modern decoder-only Transformer like those behind GPT, Claude, and LLaMA, it looks like this:",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-32",
+      "quote": "Five stages, each a deterministic matrix operation plus an elementwise nonlinearity.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-33",
+      "quote": "**Tokenization.** The string is split into tokens from a fixed vocabulary $V$ (size $|V| \\approx 32\\text{k} - 200\\text{k}$ depending on the tokenizer).",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-34",
+      "quote": "Each token is an integer $t_i$.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-35",
+      "quote": "**Embedding.** Each integer $t_i$ is looked up in an embedding matrix $W_E \\in \\mathbb{R}^{|V| \\times d}$, giving a vector $x_i^{(0)} \\in \\mathbb{R}^d$.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-36",
+      "quote": "A positional embedding is added to encode the position.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-37",
+      "quote": "**$L$ Transformer blocks.** Each block computes, at every position $i$, an attention output and an MLP output, and *adds* both to the residual stream.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-38",
+      "quote": "We will spend most of this chapter inside this step.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-39",
+      "quote": "**Unembedding.** The last residual stream at the *final position* (the position where we want to predict the next token) is multiplied by the unembedding matrix $W_U \\in \\mathbb{R}^{d \\times |V|}$ to produce a logit vector $\\ell$.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-40",
+      "quote": "**Softmax.** The logits are exponentiated and normalized to produce a probability distribution $p$ over the vocabulary.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-41",
+      "quote": "That is the entire computation.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-42",
+      "quote": "There is no lookup table, no symbolic database, no hidden \"memory module\" the model secretly consults.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-43",
+      "quote": "There is just $W_E$, $L$ stacked blocks, $W_U$, and a softmax.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-44",
+      "quote": "All the \"knowledge\" of Paris is in the weights $\\theta$.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-45",
+      "quote": "This sounds too austere to be true.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-46",
+      "quote": "The next sections will fill in how it can nevertheless produce Paris.",
+      "section": "What the model actually computes, top to bottom",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-47",
+      "quote": "The single most important structural fact about a Transformer is the **residual stream**: a single vector $x_i^{(\\ell)} \\in \\mathbb{R}^d$ at every layer $\\ell$ and every position $i$, to which every component *adds* its output (\\cite[Elhage et al., 2021]{elhage2021mathematical}).",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-48",
+      "quote": "The residual stream is a *public* scratchpad: every attention head and every MLP layer reads from it and writes to it.",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-49",
+      "quote": "The crucial word is *additive*: nothing in the architecture forces components to overwrite each other, they just add their contributions.",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-50",
+      "quote": "This means a circuit for any specific behavior can be isolated as a sum of contributions from specific components at specific layers (\\cite[Elhage et al., 2021]{elhage2021mathematical}).",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-51",
+      "quote": "A subtler fact about the residual stream, documented empirically by (\\cite[Elhage et al., 2023]{elhage2023privileged}), is that the *coordinate axes* of the residual stream — that is, the individual entries of the vector $x^{(\\ell)}_i$ — end up carrying more meaning than the mathematics of the architecture suggests they should.",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-52",
+      "quote": "In a \"pure\" linear-algebra view, the basis of $\\mathbb{R}^d$ is arbitrary, and only directions should matter; in practice, the per-dimension normalizers in the Adam optimizer nudge the model into using specific coordinates for specific kinds of information.",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-53",
+      "quote": "We will not need this fact for the rest of the chapter, but it is the reason that single coordinates sometimes look interpretable even when they should not.",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-54",
+      "quote": "For our prompt, the residual stream at the final position starts as the embedding of \" \", plus a positional encoding for position 5.",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-55",
+      "quote": "After $L$ iterations of \"attention read this, MLP write something\", it ends up as a vector that, when multiplied by $W_U$, gives a logit on \"Paris\" that is much larger than the logit on \"Lyon\" or \"Berlin\".",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-56",
+      "quote": "If you have ever tried to debug a neural network where one component *overwrites* another's output, you know the pain: the intermediate state is non-recoverable, and you cannot reason about what each component contributed.",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-57",
+      "quote": "The residual connection $x \\mapsto x + f(x)$ is the architectural choice that turns a Transformer from a black box into a *decomposable* black box.",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-58",
+      "quote": "Every component's contribution is literally a vector that can be read off the residual stream and inspected.",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-59",
+      "quote": "Almost every interpretability trick we will use in this chapter rests on this additivity.",
+      "section": "The residual stream as a public scratchpad",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-60",
+      "quote": "For the prompt \"The capital of France is \", the first thing the model has to do is *figure out which tokens matter*.",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-61",
+      "quote": "The word \"is\" is a verb that wants an object.",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-62",
+      "quote": "The country is \"France\", which appeared three tokens earlier.",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-63",
+      "quote": "The mechanism for this routing is **self-attention** (\\cite[Vaswani et al., 2017]{vaswani2017attention}).",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-64",
+      "quote": "Each attention head computes three projections of the residual stream at every position:",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-65",
+      "quote": "The attention pattern is the softmax of query-key dot products:",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-66",
+      "quote": "and the head's output at position $i$ is",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-67",
+      "quote": "For our prompt, in the early layers, attention is mostly doing *local* work — each token looks at its neighbours.",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-68",
+      "quote": "By the middle layers, particular attention heads have learned to route specific pieces of information.",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-69",
+      "quote": "One head, in some layer, becomes a \"previous-token head\" that attends to whatever came immediately before each token.",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-70",
+      "quote": "Another head, in a later layer, learns to attend *from the final position back to the position where \"France\" sits* (\\cite[Olsson et al., 2022]{olsson2022induction}).",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-71",
+      "quote": "The result is that the residual stream at the final position ends up containing information about \"France\" that the embedding alone did not put there.",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-72",
+      "quote": "A useful decomposition, due to (\\cite[Elhage et al., 2021]{elhage2021mathematical}), is to split each head into its **QK circuit** ($W_Q^\\top W_K$, the matrix that decides *where to look*) and its **OV circuit** ($W_O W_V$, the matrix that decides *what to write when looking*).",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-73",
+      "quote": "For an \"I want to read 'France'\" head, the QK matrix makes the final position attend strongly to the \"France\" position, and the OV matrix is approximately the identity in the relevant subspace — it copies what it reads.",
+      "section": "Attention: routing \"France\" to the end",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-74",
+      "quote": "If attention is the routing layer — the part that figures out *which* information matters — then the **MLP layers** are where the *content* of the model's knowledge actually lives.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-75",
+      "quote": "This is the most important conceptual claim in this chapter, and it has substantial experimental support.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-76",
+      "quote": "A Transformer block's MLP is a two-layer feed-forward network applied independently at every position:",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-77",
+      "quote": "with $\\sigma$ typically being GeLU.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-78",
+      "quote": "(\\cite[Geva et al., 2020]{keyvalmem}) made the observation that turned this into a research program: the columns of $W_1$ can be read as **keys** (input patterns the neuron \"looks for\"), and the corresponding rows of $W_2$ as **values** (vectors to write into the residual stream when that key matches).",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-79",
+      "quote": "The activation $\\sigma(x W_1)$ is the *soft* match score against every key.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-80",
+      "quote": "The analogy to a hash table is exact.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-81",
+      "quote": "A literal hash table would, given $x$, find the one key $k^*$ that exactly matches and return its value $v^*$.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-82",
+      "quote": "The MLP does the same thing *approximately*: multiple keys can match with different scores, and the output is a weighted average of their values, weighted by match strength.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-83",
+      "quote": "This is a **soft associative memory**:",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-84",
+      "quote": "For GPT-2 small ($d = 768$, $d_{\\text{ff}} = 4d = 3072$), each MLP layer has 3072 keys and 3072 values.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-85",
+      "quote": "Twelve layers gives roughly $12 \\times 3072 \\approx 37{,}000$ key-value pairs.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-86",
+      "quote": "At 70B the FFN alone holds roughly 56 billion parameters (Llama-2 70B has $80$ layers with $d_{\\text{ff}} = 28{,}672$); at 400B it reaches a few hundred billion, distributed across 80+ layers, each with $d_{\\text{ff}} \\approx 4d$ to $8d$ keys.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-87",
+      "quote": "The numbers get large enough that, even after correcting for the fact that many \"keys\" are not interpretable as anything human-friendly, there is enough capacity to store a remarkable amount of associative knowledge.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-88",
+      "quote": "A hard hash table stores a fact or it doesn't.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-89",
+      "quote": "A soft key-value memory does something more interesting: it stores *fuzzy* facts.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-90",
+      "quote": "The key \"the capital of France is\" and the key \"France's capital is\" can both partially activate the same value vector — that's why the model answers Paris whether you phrase the question as \"the capital of France is\", \"what is the capital of France\", or \"Paris is the capital of\".",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-91",
+      "quote": "In a hard lookup world, only one of those phrasings would hit.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-92",
+      "quote": "The fuzziness is what makes the model robust to paraphrase.",
+      "section": "The MLP as a soft key-value memory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-93",
+      "quote": "So there is a cloud of soft key-value pairs in the model's weights.",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-94",
+      "quote": "The question is: is \"Paris is the capital of France\" stored *somewhere specific*, or is it smeared across millions of pairs in some inseparable way?",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-95",
+      "quote": "The experimental evidence from the last few years is, surprisingly clearly: *somewhere specific*.",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-96",
+      "quote": "\\cite[Dai et al. (2022)]{dai2022knowledgeneurons} introduced the **knowledge neuron** framework.",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-97",
+      "quote": "For a relational fact like \"the Space Needle is in Seattle\", they:",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-98",
+      "quote": "Run the cloze query \"The Space Needle is located in the city of \\_\\_\\_\" through the model and identify the layer where the answer first becomes confidently \"Seattle\".",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-99",
+      "quote": "Use integrated-gradients attribution to find which neurons in that layer's MLP, and which intermediate dimensions in the residual stream, are most responsible for the prediction.",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-100",
+      "quote": "**Suppress** those neurons (set their activations to zero) and watch the prediction collapse to \"Seattle\" → other plausible city, or \"Seattle\" → something unrelated.",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-101",
+      "quote": "**Amplify** those neurons and watch the prediction become over-confidently \"Seattle\" even in contexts where it shouldn't.",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-102",
+      "quote": "For BERT-style models, they find a small number of mid-layer MLP neurons whose activation is robustly correlated with the expression of specific facts.",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-103",
+      "quote": "The correlations are not perfectly monosemantic (more on this in §9), but they are strong enough to suggest that the model *is* doing something like \"for this subject–relation pair, write the corresponding object into the residual stream\" at identifiable locations.",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-104",
+      "quote": "This is the closest thing we have to a smoking gun: there exist *local, causally important* sites in the network for specific factual associations.",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-105",
+      "quote": "Not a single \"grandmother cell\" — a small cluster of mid-layer MLP neurons acting as a soft key-value pair.",
+      "section": "Where \"Paris\" specifically lives",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-106",
+      "quote": "The most dramatic experimental evidence that facts live in identifiable, narrow regions of the weights comes from (\\cite[Meng et al., 2022]{meng2022locating}) and their method **ROME** — *Rank-One Model Editing*.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-107",
+      "quote": "Identify, for a specific factual prompt like \"The Eiffel Tower is in\", *which* mid-layer MLP block in the model (they studied GPT-J) is most responsible for the prediction \"Paris\".",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-108",
+      "quote": "They do this with causal tracing: they run the model, then re-run it with one component at a time replaced by a corrupted version, and measure how much the prediction degrades.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-109",
+      "quote": "Confirm that the responsible block is small in scope: most other facts are unaffected by perturbations to that block.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-110",
+      "quote": "**Edit** the fact by applying a rank-one update to the block's $W_2$ matrix, chosen so that the block now reads \"The Eiffel Tower is in → Rome\" instead.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-111",
+      "quote": "The result: after the edit, the model says Rome when asked about the Eiffel Tower, says Rome when asked \"Where is the Eiffel Tower?\", says Rome when given \"Eiffel Tower: ___\" — and, crucially, *still says Paris when asked about the capital of France*.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-112",
+      "quote": "The new fact is added without disrupting nearby facts.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-113",
+      "quote": "This is more than an editing trick.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-114",
+      "quote": "It is direct experimental evidence that **factual associations are stored as low-rank, locally-modifiable structures in the weights**.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-115",
+      "quote": "If facts were smeared diffusely across the network, no rank-one update could change one without ruining others.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-116",
+      "quote": "The fact that this works — and works robustly across many subjects and relations (\\cite[Meng et al., 2022]{meng2022memit}) — is the strongest evidence we have that the soft-key-value-memory picture in §4 is more than just an analogy.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-117",
+      "quote": "The same low-rank, locally-editable structure shows up on the attention side: a head's influence on a head several layers later is carried by the dominant singular direction of its value–output matrix, and zeroing that one singular value measurably changes what the model does (\\cite[Merullo et al., 2024]{merullo2024talkingheads}) (see [Mechanistic Interpretability](mechanistic_interpretability)).",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-118",
+      "quote": "ROME is not a complete theory of fact storage.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-119",
+      "quote": "It is one experimental tool that shows *some* facts can be edited locally; it does not show that *all* facts are stored this way.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-120",
+      "quote": "Multi-hop facts, rare facts, and facts that contradict earlier-trained facts are harder to edit cleanly.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-121",
+      "quote": "And the edits sometimes do ripple, in ways that are not yet fully understood.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-122",
+      "quote": "The picture in §4 is therefore a *best current model* of fact storage, with explicit annotations about where it is shaky.",
+      "section": "Opening up one fact: ROME",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-123",
+      "quote": "The third piece of the picture is the most surprising, and the most contested.",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-124",
+      "quote": "A long line of work, going back to the famous \"king − man + woman ≈ queen\" result on word embeddings, has found that *semantic relations are linear operations in the model's representation space*.",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-125",
+      "quote": "(\\cite[Park et al., 2024]{park2024linear}) made this rigorous with the **linear representation hypothesis**: a concept like \"country → capital\" is a *direction* in the residual stream, and the model's internal representations of words are arranged so that moving along that direction in the embedding of \"France\" lands you near the embedding of \"Paris\".",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-126",
+      "quote": "Concretely, if $\\gamma(w) \\in \\mathbb{R}^{d}$ denotes the unembedding-column vector for word $w$ (so that the logit for $w$ is $\\gamma(w) \\cdot x$), the hypothesis predicts",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-127",
+      "quote": "That is: the *vector* from \"France\" to \"Paris\" is approximately the same vector as the one from \"Germany\" to \"Berlin\".",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-128",
+      "quote": "The relation \"is the capital of\" is being represented as a single direction $\\bar{r}$ in the unembedding space, such that for any country $c$,",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-129",
+      "quote": "A related and equally striking line of evidence is the **function vector** finding of (\\cite[Todd et al., 2024]{todd2024functionvectors}).",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-130",
+      "quote": "They give the model an in-context task — a few examples of \"French: chien → dog; Spanish: gato → cat; English: ___ → ?\" — and show that a small number of attention heads in the middle layers carry a *single vector* that encodes \"the task is translate from {French, Spanish, English} to English\".",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-131",
+      "quote": "They then extract that vector from one prompt, *inject* it into the residual stream of an entirely different prompt (\"the cheese is ___\"), and the model performs the translation task on the new prompt, even though the new prompt has no in-context examples.",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-132",
+      "quote": "Putting §4 and §6 together: **a fact is not stored as a key-value pair in one location, but as a *direction* in the residual stream that the key-value lookup is responsible for writing**.",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-133",
+      "quote": "The MLP at layer $\\ell$ contains the key \"if input looks like a country with a capital-relation context, write the vector $\\bar{r}$ into the residual stream\".",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-134",
+      "quote": "The unembedding $W_U$ then converts $\\bar{r}$ into the logit pattern that puts mass on the correct answer.",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-135",
+      "quote": "This is the linear-representation + soft-key-value-memory picture in one breath.",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-136",
+      "quote": "It is the picture that *most* current interpretability researchers are betting on, and it has the strongest convergence between theory (Park et al.'s causal inner product) and experiment (ROME, function vectors, knowledge neurons).",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-137",
+      "quote": "The strongest evidence that this picture holds in *frontier-scale* production models — not just in the 100M–7B toys where most of the original experiments were done — comes from (\\cite[Templeton et al., 2024]{templeton2024scaling}).",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-138",
+      "quote": "They trained sparse autoencoders on the residual stream of Claude 3 Sonnet and recovered up to 34 million interpretable features.",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-139",
+      "quote": "Among them: features for individual famous people, features for specific cities, features for specific code constructs, features for abstract concepts like \"errors in code\" and \"sarcasm\".",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-140",
+      "quote": "The fact that a feature for \"the Eiffel Tower\" exists as a *direction* in the residual stream of a production frontier model is direct confirmation that the linear-representation picture scales.",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-141",
+      "quote": "And the now-famous \"Golden Gate Bridge\" feature — a single direction whose activation makes the model insist on mentioning the bridge regardless of what you ask about — is a textbook example of a fact-as-direction.",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-142",
+      "quote": "This same \"direction with a fixed meaning\" scales from *facts* to whole *behaviors*.",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-143",
+      "quote": "The country→capital relation above is one kind of axis; the [Mechanistic Interpretability](mechanistic_interpretability.php) lesson catalogs others — the truth, refusal, and honesty directions, sentiment and tone axes, and even where-and-when (spatial and temporal) directions — each found and verified the same way.",
+      "section": "Facts as directions: the linear representation hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-144",
+      "quote": "All of the above is the result of careful *post-hoc* analysis: you run the model, find what mattered, edit it, see what changes.",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-145",
+      "quote": "There is also a much simpler trick that lets you *watch the answer form in real time* as the forward pass progresses: the **logit lens**.",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-146",
+      "quote": "The idea, introduced by (\\cite[nostalgebraist, 2020]{nostalgebraist2020logitlens}) and refined into the **tuned lens** by (\\cite[Belrose et al., 2023]{belrose2023tunedlens}), is to apply the unembedding matrix $W_U$ to the residual stream at *every* layer, not just the final one:",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-147",
+      "quote": "In a well-trained Transformer, the intermediate residual streams are already *approximately* in the unembedding basis (this is a consequence of the residual structure, weight decay, and the fact that the model is being trained end-to-end to produce a useful final residual stream).",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-148",
+      "quote": "So the logits you get from intermediate layers are a meaningful, if imperfect, readout of \"what would the model predict if it had to stop here?\".",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-149",
+      "quote": "Empirically, for a prompt like \"The capital of France is\", the logit-lens readout across layers looks something like:",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-150",
+      "quote": "| Layer | Top decoded token | Interpretation |",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-151",
+      "quote": "| 1–4 | \"France\", \"Paris\", \"the\" | shallow pattern matching; nothing confident yet |",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-152",
+      "quote": "| 5–10 | \"Paris\", \"Lyon\", \"Versailles\" | the right semantic neighbourhood |",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-153",
+      "quote": "| 15–25 | \"Paris\" with growing margin | the model has decided |",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-154",
+      "quote": "| 30–40 | \"Paris\" with high margin | refinement, hedging, suppression of alternatives |",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-155",
+      "quote": "The midpoint is where the *decision* happens, in the sense that \"Paris\" enters the top-1 and stays there.",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-156",
+      "quote": "The last 20 or so layers are mostly refinement: nudging the probability mass around, suppressing alternative candidates (\"Lyon\", \"Versailles\"), making sure the next-character predictions (\"P\", \"Pa\", \"Par\", \"Pari\", \"Paris\") stay consistent.",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-157",
+      "quote": "This is also why **early-exit** methods — predicting from layer $L/2$ instead of layer $L$ — sometimes work surprisingly well (\\cite[Elhage et al., 2021]{elhage2021mathematical}): by the middle, the model has often already committed to the answer.",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-158",
+      "quote": "The logit lens is a *diagnostic*, not a measurement of what the model is \"thinking\".",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-159",
+      "quote": "When you apply $W_U$ at layer 15, you are asking: *if I had to output a token right now, which one would I pick?* The model does not actually output a token at layer 15.",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-160",
+      "quote": "The lens tells you what the residual stream at layer 15 has come to represent in unembedding space — which is informative, because the unembedding is what determines the final output.",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-161",
+      "quote": "The **tuned lens** (\\cite[Belrose et al., 2023]{belrose2023tunedlens}) improves on this by learning a small per-layer affine correction, which fixes the bias that earlier layers use slightly different bases than the unembedding expects.",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-162",
+      "quote": "Use the logit lens for intuition, the tuned lens when you want to be rigorous.",
+      "section": "Watching the answer form: the logit lens",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-163",
+      "quote": "There is a tempting picture that goes like this.",
+      "section": "The attractor analogy, honestly",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-164",
+      "quote": "The residual stream starts somewhere — a vector near the embedding of \" \", perturbed by attention that has read \"France\" from earlier.",
+      "section": "The attractor analogy, honestly",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-165",
+      "quote": "As it passes through layer after layer, it gets *pulled* toward a region of $\\mathbb{R}^d$ that decodes to \"Paris\".",
+      "section": "The attractor analogy, honestly",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-166",
+      "quote": "Other prompts — \"The capital of Germany is\", \"2 + 2 =\", \"Once upon a\" — get pulled toward different regions.",
+      "section": "The attractor analogy, honestly",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-167",
+      "quote": "The picture is of basins of attraction, like a Hopfield network or a dynamical system with fixed points.",
+      "section": "The attractor analogy, honestly",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-168",
+      "quote": "This picture is *suggestive* and *partially grounded*, but it is not, as of this writing, a theorem.",
+      "section": "The attractor analogy, honestly",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-169",
+      "quote": "Let us say what is and isn't known.",
+      "section": "The attractor analogy, honestly",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-170",
+      "quote": "The connection between Transformer attention and modern Hopfield networks is mathematically precise.",
+      "section": "What is grounded",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-171",
+      "quote": "(\\cite[Ramsauer et al., 2020]{ramsauer2020hopfield}) showed that the attention update rule",
+      "section": "What is grounded",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-172",
+      "quote": "with $\\beta \\propto 1/\\sqrt{d_k}$, is *exactly* the update rule of a continuous-state Hopfield network with energy function",
+      "section": "What is grounded",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-173",
+      "quote": "where $\\mathrm{lse}$ is the log-sum-exp.",
+      "section": "What is grounded",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-174",
+      "quote": "The classical Hopfield network of (\\cite[Hopfield, 1982]{hopfield1982}) was the original \"associative memory with basins of attraction\" architecture.",
+      "section": "What is grounded",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-175",
+      "quote": "So the *attention mechanism* in a Transformer is, formally, an iterative retrieval rule from a generalized Hopfield model.",
+      "section": "What is grounded",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-176",
+      "quote": "That is a real mathematical fact.",
+      "section": "What is grounded",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-177",
+      "quote": "From this, it is *tempting* to conclude that the whole residual stream is being \"attracted\" toward stored memory states across layers.",
+      "section": "What is suggested but not proven",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-178",
+      "quote": "The logit-lens evidence (§7) is consistent with this picture — predictions become more confident as layers progress, as if the residual stream is converging toward an attractor.",
+      "section": "What is suggested but not proven",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-179",
+      "quote": "The function-vector evidence (§6) is consistent — small vectors steer predictions, as if the residual stream were being gently pushed toward a different basin.",
+      "section": "What is suggested but not proven",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-180",
+      "quote": "Three honest problems with calling this \"attractor dynamics\" in the strict sense:",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-181",
+      "quote": "**No iteration to convergence.** A Transformer runs for a *fixed* $L$ layers and then stops.",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-182",
+      "quote": "There is no convergence criterion, no \"until the residual stream stops changing\" loop.",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-183",
+      "quote": "The forward pass is a finite-length trajectory, not a flow.",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-184",
+      "quote": "Calling the endpoint an \"attractor\" is loose.",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-185",
+      "quote": "**No energy function for the *whole* model.** Ramsauer et al.'s result gives an energy function for the *attention* operation alone.",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-186",
+      "quote": "The MLP layers, the residual connections, and the layer-normalization steps between blocks do not obviously combine into a single energy function.",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-187",
+      "quote": "Whether the full Transformer is a gradient-flow on some learned energy is an open conjecture, not a theorem.",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-188",
+      "quote": "**Linear-ish, not nonlinear.** Real Hopfield dynamics are nonlinear, and \"basin of attraction\" is a nonlinear concept.",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-189",
+      "quote": "The Transformer dynamics are mostly linear-ish (residual connections, layer norm) with isolated nonlinearities (softmax, GeLU).",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-190",
+      "quote": "It is not clear that the language of basins carries over.",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-191",
+      "quote": "So: the *attention* part of the Transformer is mathematically a Hopfield-style associative memory.",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-192",
+      "quote": "The *whole* Transformer is, *maybe*, doing something attractor-like, but the evidence is empirical (logit lens, function vectors) and the formal justification is incomplete.",
+      "section": "What is wrong with the picture",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-193",
+      "quote": "You may have heard LLMs described as \"high-dimensional dynamical systems\", and dynamical systems make people think of chaos.",
+      "section": "On chaos theory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-194",
+      "quote": "Let us be careful here, because the word *chaos* has a technical meaning (sensitivity to initial conditions, topological mixing, dense periodic orbits) that does not strictly apply.",
+      "section": "On chaos theory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-195",
+      "quote": "The forward pass of an LLM is *deterministic*.",
+      "section": "On chaos theory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-196",
+      "quote": "Given the same prompt and the same weights, you get the same logits.",
+      "section": "On chaos theory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-197",
+      "quote": "So it is not literally chaotic in the sense of \"small changes blow up exponentially over time\".",
+      "section": "On chaos theory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-198",
+      "quote": "What *is* true is that the learned function is **sensitive to its inputs in semantically meaningful ways**: a one-token change in the prompt (\"The capital of France is\" → \"The capital of Germany is\") produces a large, semantically coherent change in the output.",
+      "section": "On chaos theory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-199",
+      "quote": "This is sensitivity *of the function*, not sensitivity *of a dynamical system*.",
+      "section": "On chaos theory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-200",
+      "quote": "The word \"chaos\" is evocative but technically wrong here.",
+      "section": "On chaos theory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-201",
+      "quote": "The forward pass is also, empirically, mostly **contractive**: semantically similar prompts land nearby in the residual stream.",
+      "section": "On chaos theory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-202",
+      "quote": "That is the opposite of chaos.",
+      "section": "On chaos theory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-203",
+      "quote": "So when this chapter says \"the residual stream is being attracted toward a region that decodes to Paris\", the right word is *attraction*, in the colloquial sense, not *chaos* in the dynamical-systems sense.",
+      "section": "On chaos theory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-204",
+      "quote": "Take the analogy as a useful lens, not a literal claim about the math.",
+      "section": "On chaos theory",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-205",
+      "quote": "There is an obvious question lurking behind §4 and §5.",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-206",
+      "quote": "If facts live in MLP neurons, why is it that you cannot just open up a 7-billion-parameter model, look at the neurons one by one, and find the neuron that fires for \"Paris\"?",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-207",
+      "quote": "The answer is **superposition** (\\cite[Elhage et al., 2022]{elhage2022superposition}): the model represents more features than it has dimensions, by encoding features as nearly-orthogonal directions in activation space.",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-208",
+      "quote": "In high dimensions, you can pack exponentially many nearly-orthogonal vectors.",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-209",
+      "quote": "If $d = 4096$, the number of unit vectors that are pairwise at angle at least $90° - \\epsilon$ is exponential in $d$.",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-210",
+      "quote": "The model exploits this: it stores thousands or millions of interpretable features (\"this is a French word\", \"this is the subject of a sentence\", \"this token activates the 'capital of X' key\") as directions in the residual stream, *not* as individual neurons.",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-211",
+      "quote": "A single neuron ends up participating in many features; a single feature ends up spread across many neurons.",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-212",
+      "quote": "This is why the knowledge-neuron finding of (\\cite[Dai et al., 2022]{dai2022knowledgeneurons}) is *remarkable*: it works *despite* superposition.",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-213",
+      "quote": "Some neurons end up monosemantic for specific facts because, during training, the optimization finds it cheaper to dedicate a few neurons to frequently-retrieved facts than to spread those facts across the superposition soup.",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-214",
+      "quote": "The systematic way to *recover* monosemantic features from a superposed residual stream is the **sparse autoencoder** (\\cite[Cunningham et al., 2023]{cunningham2023sparse}; \\cite[Bricken et al., 2023]{bricken2023monosemanticity}).",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-215",
+      "quote": "A sparse autoencoder is a small network trained to decompose the residual stream into a much larger dictionary of sparse features, such that each feature fires for a single human-interpretable concept.",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-216",
+      "quote": "The original SAE work \\cite[Bricken et al. (2023)]{bricken2023monosemanticity} trained SAEs on the MLP of a one-layer transformer with 512 neurons, over 8 billion data points — not on GPT-2 small; \\cite[Templeton et al. (2024)]{templeton2024scaling} then scaled the same idea to Claude 3 Sonnet and recovered up to 34 million features.",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-217",
+      "quote": "A parallel line of work \\cite[Elhage et al. (2022)]{elhage2022solu} showed that an architectural change — replacing the GeLU activation in MLP neurons with a custom \"SoLU\" activation — makes individual neurons substantially *more* monosemantic even without SAEs, by reducing the incentive to use superposition in the first place.",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-218",
+      "quote": "This is an active research area; the current best SAEs recover tens of millions of interpretable features from a frontier model, and they have been used to find features that correlate with specific factual associations, specific syntactic structures, specific sentiment, and specific safety-relevant concepts.",
+      "section": "Superposition: why there is no \"grandmother cell\"",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-219",
+      "quote": "The picture in §3–§9 is the best current account, and it is the one most mechanistic interpretability researchers would defend at a conference.",
+      "section": "Three honest limits",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-220",
+      "quote": "It is also incomplete in ways that matter.",
+      "section": "Three honest limits",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-221",
+      "quote": "Almost all the experiments cited in this chapter — ROME, knowledge neurons, induction heads, logit lens — were done on models in the 100M–7B parameter range: BERT-base, GPT-2 small, GPT-J.",
+      "section": "Scale gap",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-222",
+      "quote": "Frontier models in 2025–2026 are 100× to 1000× larger.",
+      "section": "Scale gap",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-223",
+      "quote": "The honest version of this concern is that the picture in §3–§9 is well-supported for \"small\" production models (≤ 7B) and is rapidly being extended to frontier-scale production models.",
+      "section": "Scale gap",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-224",
+      "quote": "(\\cite[Templeton et al., 2024]{templeton2024scaling}) have trained sparse autoencoders on Claude 3 Sonnet and recovered millions of interpretable features.",
+      "section": "Scale gap",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-225",
+      "quote": "(\\cite[Lindsey et al., 2025]{lindsey2025biology}) and (\\cite[Ameisen et al., 2025]{ameisen2025circuit}) have applied \"circuit tracing\" — replacing MLP layers with cross-layer transcoders and then following the computation feature-by-feature — to Claude 3.5 Haiku, producing the first end-to-end mechanistic accounts of multi-step behaviors in a production model.",
+      "section": "Scale gap",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-226",
+      "quote": "The picture is converging: the same general mechanisms (residual stream as scratchpad, attention as routing, MLPs as soft key-value stores, facts as directions) appear to hold, with new layers of structure visible only at the frontier scale.",
+      "section": "Scale gap",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-227",
+      "quote": "The picture works well for single-hop retrieval: \"the capital of X is Y\" → look up X, return Y.",
+      "section": "Multi-hop and composition",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-228",
+      "quote": "It is much less clear for multi-hop: \"the wife of the actor who played Batman in 1989 is\".",
+      "section": "Multi-hop and composition",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-229",
+      "quote": "This requires the model to *compose* several retrieved facts: identify Batman-1989 → Michael Keaton, identify Keaton's wife → Caroline McWilliams (or whoever the model thinks).",
+      "section": "Multi-hop and composition",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-230",
+      "quote": "We do not have a clean mechanistic story for this.",
+      "section": "Multi-hop and composition",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-231",
+      "quote": "There is some evidence that multi-hop reasoning uses chains of attention heads acting as a kind of scratchpad in the residual stream (\\cite[Olsson et al., 2022]{olsson2022induction}), but it is not as crisp as the single-fact picture.",
+      "section": "Multi-hop and composition",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-232",
+      "quote": "This is one of the most active areas of current research.",
+      "section": "Multi-hop and composition",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-233",
+      "quote": "When the model says \"Paris\", is it because it has an internal *model* of the world in which France has a capital called Paris?",
+      "section": "Facts vs. world models",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-234",
+      "quote": "Or is it because it has memorized a soft key-value pair that happens to fire on this context?",
+      "section": "Facts vs. world models",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-235",
+      "quote": "The most striking evidence that LLMs *can* build internal models — not just lookups — comes from (\\cite[Li et al., 2023]{li2022othello_iclr}).",
+      "section": "Facts vs. world models",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-236",
+      "quote": "They trained a GPT-style model on legal Othello moves *with no information about the board*.",
+      "section": "Facts vs. world models",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-237",
+      "quote": "Probing experiments revealed that the model had spontaneously built an internal representation of the board state, accurate enough that interventions on the representation produced the predicted changes in next-move predictions.",
+      "section": "Facts vs. world models",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-238",
+      "quote": "This is a *world model*, in a meaningful sense, learned purely from next-token prediction.",
+      "section": "Facts vs. world models",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-239",
+      "quote": "For factual knowledge about the real world, the situation is murkier.",
+      "section": "Facts vs. world models",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-240",
+      "quote": "Frontier models behave as if they have a *partial* world model: they can answer questions they were never directly trained on, by combining retrieved facts.",
+      "section": "Facts vs. world models",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-241",
+      "quote": "But it is unclear whether that world model is a coherent geometric structure in the residual stream (something like a map of Europe with Paris marked on it) or a vast, mostly-flat lookup table with cross-references.",
+      "section": "Facts vs. world models",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-242",
+      "quote": "Probably both, in unknown proportions.",
+      "section": "Facts vs. world models",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-243",
+      "quote": "The honest summary is that the *mechanism* of fact retrieval is reasonably well-understood at small scale and for single-hop facts, and that the *structure* of what is being retrieved — flat lookup vs. hierarchical world model — is one of the deepest open questions in interpretability.",
+      "section": "Facts vs. world models",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-244",
+      "quote": "A large part of what the model does is **binding**: tying a \"filler\" to a \"gap\" across distance — the subject to its verb, the object to the verb that governs it, a pronoun to its antecedent.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-245",
+      "quote": "The cleanest reverse-engineered case is the **indirect-object-identification circuit** (\\cite[Wang et al., 2022]{wang2022interpretability}): a small set of heads whose job is to *copy* the right noun across the intervening verb to the position where it is needed.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-246",
+      "quote": "Understanding *why* this works sometimes and fails other times comes down to a single resource: **depth, as a budget of hops.**",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-247",
+      "quote": "**One head does one hop.** A single attention step moves information one *hop*: it reads one value from one source position and writes it to one target.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-248",
+      "quote": "A dependency that requires $N$ sequential hops therefore needs about $N$ layers to perform it.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-249",
+      "quote": "Depth is not just \"more capacity\" — it is the **composition budget**.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-250",
+      "quote": "(\\cite[Kohli et al., 2026]{kohli2026loop}) made this sharp: a vanilla transformer trained to compose up to, say, **5 hops fails to extrapolate to 10**, while a *recurrent-depth* transformer (one that loops its layers) can — confirming that a fixed-depth model is capped at its trained number of hops.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-251",
+      "quote": "**Binding breaks in exactly three predictable ways:**",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-252",
+      "quote": "- **Nesting.** (\\cite[Lakretz et al., 2021]{lakretz2020nested}) showed that long-distance agreement drops **below chance** on *nested* or embedded dependencies.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-253",
+      "quote": "When a second clause is wedged inside the first, the copy chain outgrows the effective depth and the errors compound — the model does not just get worse, it gets *systematically wrong*.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-254",
+      "quote": "- **Attractors.** (\\cite[Lasri et al., 2022]{lasri2022agree}) showed that a **single** intervening \"distractor\" noun (an attractor with a mismatched number) is enough to hijack the copy and collapse subject-verb agreement.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-255",
+      "quote": "The binding is a contest, and one rival token in the gap is often enough to win it.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-256",
+      "quote": "- **The theoretical root.** All of this is the empirical face of (\\cite[Hahn, 2020]{hahn2020limitations}): fixed-size self-attention **cannot model hierarchical structure at all** unless the depth scales with the input.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-257",
+      "quote": "A dependency tree of depth $d$ needs $d$ hops; a network with a fixed number of layers has a fixed reach.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-258",
+      "quote": "The takeaway is a clean one: **binding works for short, unambiguous chains, and it fails exactly when the chain is long, nested, or interfered with** — because every hop costs a layer, and the model is handed only a fixed number.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-259",
+      "quote": "This is the same depth-as-budget idea that caps the arithmetic of the algorithms chapter, and it is why \"the model lost track of the subject\" is not a quirk but a structural limit.",
+      "section": "Binding Across Distance — and Why It Breaks",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-260",
+      "quote": "Here is the picture in one breath, with citations:",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-261",
+      "quote": "At each of the $L$ iterations:",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-262",
+      "quote": "- **Attention** (\\cite[Vaswani et al., 2017]{vaswani2017attention}; \\cite[Elhage et al., 2021]{elhage2021mathematical}) routes information between positions: in our prompt, the critical job is making the final position attend back to the position holding \"France\".",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-263",
+      "quote": "- **MLP** (\\cite[Geva et al., 2020]{keyvalmem}) performs a soft key-value lookup: somewhere in the weight matrices $W_1, W_2$ is a key that activates on \"country with capital-relation context\" and a value that writes the \"capital-of-X\" direction (\\cite[Park et al., 2024]{park2024linear}) into the residual stream.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-264",
+      "quote": "- **Residual addition** (\\cite[Elhage et al., 2021]{elhage2021mathematical}) accumulates these contributions into a single public vector.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-265",
+      "quote": "- After the final layer, **$W_U$ unembeds** the residual stream into vocabulary logits.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-266",
+      "quote": "The logit for \"Paris\" is large because the residual stream has been pulled close to the unembedding direction of \"Paris\".",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-267",
+      "quote": "- **Softmax** turns the logits into a probability distribution over the next token.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-268",
+      "quote": "This picture has not come from any single experiment; it has been confirmed in pieces, each line of work tying a different mechanism to a specific, testable claim.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-269",
+      "quote": "ROME (\\cite[Meng et al., 2022]{meng2022locating}) showed that a single rank-one edit to one mid-layer MLP block can rewrite one fact — the Eiffel Tower's city, say — while leaving its neighbours intact, and the successor method MEMIT (\\cite[Meng et al., 2022]{meng2022memit}) scaled the same locality result to thousands of simultaneous edits.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-270",
+      "quote": "Knowledge-neuron attribution (\\cite[Dai et al., 2022]{dai2022knowledgeneurons}) found that suppressing or amplifying a small cluster of MLP neurons flips a specific prediction on and off.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-271",
+      "quote": "Function-vector steering (\\cite[Todd et al., 2024]{todd2024functionvectors}) extracted the single residual-stream direction that encodes an in-context task and transplanted it into unrelated prompts.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-272",
+      "quote": "Induction-head analysis (\\cite[Olsson et al., 2022]{olsson2022induction}) identified the attention pattern that lets later tokens read earlier ones, which is what powers in-context learning.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-273",
+      "quote": "The logit lens (\\cite[nostalgebraist, 2020]{nostalgebraist2020logitlens}) and its refinement, the tuned lens (\\cite[Belrose et al., 2023]{belrose2023tunedlens}), let you decode the residual stream at every layer and watch the answer form.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-274",
+      "quote": "Superposition theory (\\cite[Elhage et al., 2022]{elhage2022superposition}) explains why none of these features lives in a single neuron — the model packs far more features than it has dimensions — and sparse autoencoders (\\cite[Cunningham et al., 2023]{cunningham2023sparse}; \\cite[Bricken et al., 2023]{bricken2023monosemanticity}) recover them as interpretable directions, scaled to a frontier production model by (\\cite[Templeton et al., 2024]{templeton2024scaling}); the SoLU activation (\\cite[Elhage et al., 2022]{elhage2022solu}) attacks the same problem from the training side by reducing the incentive to superpose.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-275",
+      "quote": "Anthropic's report \"Mapping the mind of a large language model\" (\\cite[Anthropic, 2024]{anthropic2023mapping}) was the early accessible summary; the full machinery grew out of the Transformer Circuits Thread series, from the residual-stream framework (\\cite[Elhage et al., 2021]{elhage2021mathematical}) and induction heads (\\cite[Olsson et al., 2022]{olsson2022induction}) to superposition (\\cite[Elhage et al., 2022]{elhage2022superposition}), dictionary learning (\\cite[Bricken et al., 2023]{bricken2023monosemanticity}), scaling monosemanticity (\\cite[Templeton et al., 2024]{templeton2024scaling}), and circuit tracing in a production model (\\cite[Ameisen et al., 2025]{ameisen2025circuit}; \\cite[Lindsey et al., 2025]{lindsey2025biology}) — a series that has driven most of this story since 2021.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-276",
+      "quote": "The picture is also consistent with the Hopfield-network interpretation of attention (\\cite[Ramsauer et al., 2020]{ramsauer2020hopfield}), building on the classical associative-memory networks of \\cite[Hopfield (1982)]{hopfield1982}.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-277",
+      "quote": "It is not yet, however, the whole picture for frontier-scale models or multi-hop reasoning.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-278",
+      "quote": "That is the state of the art in mid-2026.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-279",
+      "quote": "The next token \"Paris\" is not retrieved from a database.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-280",
+      "quote": "It is *computed*, by a function $f_\\theta$ that maps an input vector to a residual stream that has been nudged, layer by layer, into a region of $\\mathbb{R}^d$ where the unembedding matrix gives high logit to the right answer.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-281",
+      "quote": "We know roughly *which* layers do the nudging, *which* matrices hold the knowledge, *which* directions encode which relations.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-282",
+      "quote": "We do not yet know *why* this is the optimal way to store the information, *whether* the same mechanism works at frontier scale, or *whether* the model has anything like an internal world map of Europe with Paris marked on it.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-283",
+      "quote": "Those are open questions.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-284",
+      "quote": "They are the questions the next decade of interpretability research will be asking.",
+      "section": "Putting it together",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-285",
+      "quote": "Five things, restated as a checklist.",
+      "section": "What to carry away",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-286",
+      "quote": "**\"Knows\" means: the function $f_\\theta$ assigns high probability to the right token.** Nothing more.",
+      "section": "What to carry away",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-287",
+      "quote": "This is a precise mathematical claim and a useful starting point.",
+      "section": "What to carry away",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-288",
+      "quote": "**Knowledge lives in the MLP layers as soft key-value pairs.** Attention is the routing layer; MLPs are the storage.",
+      "section": "What to carry away",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-289",
+      "quote": "This is supported by ROME, knowledge neurons, and function vectors.",
+      "section": "What to carry away",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-290",
+      "quote": "**Facts are directions in the residual stream.** \"Capital of X\" is a direction; adding it to the embedding of \"France\" gives you the embedding of \"Paris\".",
+      "section": "What to carry away",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-291",
+      "quote": "This is the linear representation hypothesis, and it is the picture most consistent with all the experimental evidence.",
+      "section": "What to carry away",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-292",
+      "quote": "**The decision happens in the middle layers, not the end.** By roughly layer $L/2$, the model has usually committed to \"Paris\" and the rest is refinement.",
+      "section": "What to carry away",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-293",
+      "quote": "This is the logit-lens finding.",
+      "section": "What to carry away",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-294",
+      "quote": "**The picture is incomplete.** Scale gap, multi-hop composition, and the lookup-vs-world-model distinction are all open.",
+      "section": "What to carry away",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-295",
+      "quote": "Anyone who tells you they have the full story is selling something.",
+      "section": "What to carry away",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-296",
+      "quote": "If those five points are in your head, you understand roughly as much about fact retrieval in LLMs as any working researcher in 2026.",
+      "section": "What to carry away",
+      "kind": "statement"
+    },
+    {
+      "id": "fact_lookup-stmt-297",
+      "quote": "The remaining open questions are deep, but the parts we *do* know are now formally grounded, experimentally tested, and converging on a coherent picture.",
+      "section": "What to carry away",
+      "kind": "statement"
+    }
   ]
 }

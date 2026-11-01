@@ -409,6 +409,32 @@ uv run blog/tools/factcheck/check_facts.py blog/ \
 1986, H100 80 GB / 989 TFLOPS, AlexNet 2012, Transformer 2017, Chinchilla
 20 Tokens/Parameter), Tiefe der Geschichtskapitel und Quote/Einheit-Pflicht.
 
+## Statement-Ledger — jeder Satz
+
+Zusätzlich zu den strukturierten `claims` enthält jede Fact-Datei ein
+`statements`-Array. Es protokolliert **jeden Prosa-Satz** aus den
+`.md`-/`figcaption`-Blöcken:
+
+```json
+{
+  "id": "tokenizerlab-stmt-12",
+  "quote": "Before an AI can “calculate” a word, it must chop the text into pieces.",
+  "section": "Tokenization",
+  "kind": "statement"
+}
+```
+
+Erzeugen und prüfen:
+
+```bash
+uv run blog/tools/factcheck/extract_statements.py blog/
+uv run blog/tools/factcheck/extract_statements.py blog/ --check
+```
+
+`--check` schlägt fehl, wenn eine Lektion geändert wurde und ihre
+Statement-Liste veraltet ist. Statements sind die Vollständigkeits- und
+Provenienzschicht; numerische Konflikte werden über `claims` geprüft.
+
 ### CI-Fehler sind kopierbar
 
 Zwei nicht verklebbare Claims erzeugen einen Block mit `FACT CONFLICT`,

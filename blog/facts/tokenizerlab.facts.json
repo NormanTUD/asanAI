@@ -476,5 +476,1057 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "tokenizerlab-stmt-1",
+      "quote": "Before an AI can “calculate” a word, it must chop the text into pieces.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-2",
+      "quote": "This process is called **Tokenization**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-3",
+      "quote": "Depending on how you chop, the AI “sees” the world differently.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-4",
+      "quote": "A tokenizer's output is a list of **integers**, token IDs in $\\{0, 1, \\dots, |V|-1\\}$.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-5",
+      "quote": "The very next step in every Transformer is to look each ID up in a trainable matrix $E \\in \\mathbb{R}^{|V| \\times d}$ to get a vector.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-6",
+      "quote": "That lookup is what brings you into the Embeddings chapter .",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-7",
+      "quote": "Everything below this chapter is “before the lookup”; everything in Embeddings is “after”.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-8",
+      "quote": "The most intuitive way: Every time there is a space, comma, dot etc., we create a new token.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-9",
+      "quote": "Before modern subword methods, word-level splitting was the default for systems like the original **IBM Alignment Models** in the early 1990s.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-10",
+      "quote": "While \\citeauthor{zipf1949human} (\\citeyear{zipf1949human}) formalized the distribution problem, it was these early translation models that hit the “Out-of-Vocabulary” (OOV) wall, leading researchers to realize that treating “brave” and “bravely” as two completely unrelated IDs was inefficient.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-11",
+      "quote": "**Problem:** If the AI sees a new word like “bravely”, it has no idea what it means.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-12",
+      "quote": "Here, we don't care about words.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-13",
+      "quote": "We just take every X characters (e.g., Trigrams).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-14",
+      "quote": "This approach of using chains of dependencies was first pioneered by \\citeauthor{markov1913ngram} in \\citeyear{markov1913ngram} to describe the statistical structure of language.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-15",
+      "quote": "Later, *Claude Shannon* expanded the idea of word-level Analysis and $n$-gram-Models with his works \\cite[Mathematical Theory of Communication]{shannon1948communication} (released in \\citeyear{shannon1948communication}) and \\citetitle{shannon1951communication} (released in \\citeyear{shannon1951communication}), in which he quantified the information content and entropy of the English language.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-16",
+      "quote": "**Problem:** It's consistent, but it often destroys the meaning of words.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-17",
+      "quote": "This treats every single letter and space as its own token.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-18",
+      "quote": "This is the most granular way to see text.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-19",
+      "quote": "The concept of viewing text as a sequence of raw characters dates back to \\citeauthor{markov1913ngram} (\\citeyear{markov1913ngram}), who used it to analyze the statistical structure of Russian literature.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-20",
+      "quote": "In the era of Deep Learning, the “raw view” was revitalized by \\citeauthor{sutskever2011generating} in their paper \\citetitle{sutskever2011generating}, which proved that Recurrent Neural Networks could learn to predict the next character with enough precision to form coherent words and sentences from scratch.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-21",
+      "quote": "WordPiece is a subword method closely related to BPE, but instead of merging the most *frequent* pair, it greedily merges the pair whose combination most improves the **likelihood of the training data**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-22",
+      "quote": "The original formulation (Schuster & Nakajima 2012), introduced to handle the massive character sets of Japanese and Korean, optimizes that likelihood directly through an iterative procedure, it has no closed-form per-pair score.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-23",
+      "quote": "The ratio shown below is a separate, simpler *approximation* used by BERT-style implementations, not the original objective.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-24",
+      "quote": "WordPiece later became famous as the tokenizer behind Google's **BERT**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-25",
+      "quote": "Continuation fragments are marked with `##` (e.g., “tokenization” → `token`, `##iza`, `##tion`).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-26",
+      "quote": "GPT-style models use BPE instead because byte-level BPE is simpler to train at scale and guarantees coverage of any input without needing an unknown-token fallback.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-27",
+      "quote": "Initialize the vocabulary with every character present in the training data.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-28",
+      "quote": "Score every candidate pair , but instead of raw frequency, WordPiece is *defined* as merging the pair that most increases the likelihood of the training data (the original formulation of Schuster & Nakajima 2012).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-29",
+      "quote": "That likelihood-based objective is not equivalent to a closed-form pair score, so implementations use an approximation: BERT-style tokenizers score each candidate pair with a likelihood-ratio measure:",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-30",
+      "quote": "This closed-form ratio is a *simplification*, not the original formulation, it favors merging pairs whose co-occurrence is high relative to how often each piece appears independently, which is why the formula is a *ratio* rather than a raw frequency: BPE uses raw frequency, BERT-style WordPiece uses the ratio.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-31",
+      "quote": "Merge the highest-scoring pair and add the new symbol to the vocabulary.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-32",
+      "quote": "Repeat until the desired vocabulary size is reached.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-33",
+      "quote": "Tokenize new text using a greedy longest-match-first approach: scan from the beginning of each word, find the longest substring that exists in the vocabulary, emit it, then continue with the remainder.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-34",
+      "quote": "Continuation fragments are prefixed with (e.g., → , , ).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-35",
+      "quote": "Modern AIs use **BPE (Byte-Pair Encoding)**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-36",
+      "quote": "It keeps common words whole but splits rare words into known building blocks like `ing` or `ly`.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-37",
+      "quote": "The history of BPE is a classic case of an algorithm being repurposed for a new era.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-38",
+      "quote": "Originally, \\citeauthor{gage1994bpe} (\\citeyear{gage1994bpe}) developed the technique strictly for data compression, using iterative byte-pair replacement to shrink files.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-39",
+      "quote": "It remained a niche compression tool until \\citeauthor{sennrich2016subword} (\\citeyear{sennrich2016subword}) adapted the logic into a subword tokenization strategy.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-40",
+      "quote": "This shift allowed modern models to handle rare words by breaking them into frequent fragments, effectively solving the “Out-of-Vocabulary” problem that had previously limited word-level neural networks.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-41",
+      "quote": "**Why BPE works: Zipf's Law.** The reason BPE's merge strategy is so effective is that it mirrors the statistical structure of language itself.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-42",
+      "quote": "\\citeauthor{zipf1949human} observed that in any natural language corpus, a few words (like “the,” “of,” “and”) appear with very high frequency, while most words are rare.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-43",
+      "quote": "BPE's iterative merging naturally produces a token vocabulary that follows this same distribution: common words stay intact as single tokens, while rare words are broken into fragments that reuse frequent subword units.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-44",
+      "quote": "This aligns the tokenizer's granularity with the data's statistical structure, frequent patterns get short codes, rare ones get longer compositions.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-45",
+      "quote": "In effect, BPE is a lossless compression scheme that happens to produce excellent tokenizations for language models.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-46",
+      "quote": "**Reading it as compression.** Every merge fuses a frequent pair into a single new symbol, so each new symbol is a **short ID that replaces a longer string**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-47",
+      "quote": "The more often a pattern appears, the more often it gets promoted to one small ID; the rarer a pattern, the more symbols (a longer code) it needs.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-48",
+      "quote": "Point the same machinery at a file instead of a corpus and it *is* a compressor: store the small merge table once, then store the shorter sequence of IDs, and you have a smaller file that decodes back to the identical original text.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-49",
+      "quote": "That is exactly how \\citeauthor{gage1994bpe} used it in \\citeyear{gage1994bpe}, before \\citeauthor{sennrich2016subword} turned the codebook into a vocabulary.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-50",
+      "quote": "Initialize the vocabulary with every individual character (or byte) that appears in the training corpus.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-51",
+      "quote": "Count all adjacent symbol pairs across the corpus.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-52",
+      "quote": "For example, in a corpus containing “car” (5×) and “cable” (3×), the pair c a appears 8 times total.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-53",
+      "quote": "Merge the most frequent pair into a single new symbol and add it to the vocabulary.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-54",
+      "quote": "This is the core step: BPE always picks the pair with the highest frequency .",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-55",
+      "quote": "Repeat steps 2–3 for a fixed number of merge operations (a hyperparameter).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-56",
+      "quote": "Each round creates a slightly larger subword unit.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-57",
+      "quote": "Tokenize new text by applying the learned merge rules in order.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-58",
+      "quote": "Common words end up as single tokens; rare words get split into known subword fragments (e.g., → + ), effectively solving the Out-of-Vocabulary problem.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-59",
+      "quote": "Type a word like **“strawberry”** below and watch how BPE splits it.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-60",
+      "quote": "The model never sees individual letters, it sees whatever fragments the tokenizer produced during training.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-61",
+      "quote": "The first part of this chapter showed you the *mechanism*: how a stream of characters is chopped into a fixed vocabulary of subwords so a discrete, finite model can process open-ended text.",
+      "section": "The Consequence: Tokenization as a Bias",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-62",
+      "quote": "This second part is the *consequence* of that mechanism — the part that is easy to miss because it is invisible in a single-language demo.",
+      "section": "The Consequence: Tokenization as a Bias",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-63",
+      "quote": "A tokenizer is not a neutral preprocessing step.",
+      "section": "The Consequence: Tokenization as a Bias",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-64",
+      "quote": "It is a **bias**, baked into the model before a single weight is trained, and it prices every language differently.",
+      "section": "The Consequence: Tokenization as a Bias",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-65",
+      "quote": "Two of the most consequential, least-discussed properties of a modern LLM — why it costs more to speak in one language than another, and why it sometimes fails in exactly the ways the Strawberry demo above hinted at — live here.",
+      "section": "The Consequence: Tokenization as a Bias",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-66",
+      "quote": "Building a vocabulary is a decision, not a default.",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-67",
+      "quote": "The options form a spectrum, and each one optimizes a different trade-off:",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-68",
+      "quote": "<line x1=\"20\" y1=\"45\" x2=\"540\" y2=\"45\" stroke=\"var(--mn-border)\" stroke-width=\"2\"/>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-69",
+      "quote": "<circle cx=\"40\" cy=\"45\" r=\"7\" fill=\"var(--mn-accent)\"/>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-70",
+      "quote": "<text x=\"40\" y=\"75\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">word-level</text>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-71",
+      "quote": "<text x=\"40\" y=\"24\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text-secondary)\">small vocab, many unknowns</text>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-72",
+      "quote": "<circle cx=\"190\" cy=\"45\" r=\"7\" fill=\"var(--mn-accent)\"/>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-73",
+      "quote": "<text x=\"190\" y=\"75\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">BPE</text>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-74",
+      "quote": "<text x=\"190\" y=\"24\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text-secondary)\">merge frequent pairs</text>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-75",
+      "quote": "<circle cx=\"340\" cy=\"45\" r=\"7\" fill=\"var(--mn-accent)\"/>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-76",
+      "quote": "<text x=\"340\" y=\"75\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">unigram</text>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-77",
+      "quote": "<text x=\"340\" y=\"24\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text-secondary)\">LM-pruned, stochastic</text>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-78",
+      "quote": "<circle cx=\"490\" cy=\"45\" r=\"7\" fill=\"var(--mn-accent)\"/>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-79",
+      "quote": "<text x=\"490\" y=\"75\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">byte-level</text>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-80",
+      "quote": "<text x=\"490\" y=\"24\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text-secondary)\">never an unknown</text>",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-81",
+      "quote": "Moving from word-level to byte-level trades vocabulary size for robustness: the finer the unit, the smaller the vocabulary and the fewer the \"cannot be represented\" cases.",
+      "section": "The choices that were never obvious",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-82",
+      "quote": "Here is the property that matters.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-83",
+      "quote": "A tokenizer trained mostly on one language builds a vocabulary that is *efficient* for that language and *inefficient* for others.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-84",
+      "quote": "A subword is a token; the model charges you one token of compute, one slot of context window, and one unit of API cost for each one.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-85",
+      "quote": "And the *same meaning* does not cost the same number of tokens in every language.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-86",
+      "quote": "A word that is a single high-frequency subword in the dominant language may need several tokens in another — because its characters, syllables, or words were never frequent enough in the training corpus to be merged into a single subword.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-87",
+      "quote": "For many lower-resource and non-Latin scripts (Thai, Devanagari, Cyrillic, and a long tail of others) the result is routinely **several times more tokens per word** than English, a disparity now measured and analyzed as a form of infrastructure bias in its own right (\\cite[Teklehaymanot & Nejdl, 2025]{tokenbias2025}).",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-88",
+      "quote": "The same sentence, translated faithfully, is *longer* in the low-resource language at the token layer — even though it says the same thing.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-89",
+      "quote": "This is not a bug in the model; it is a property of the *tokenizer*, fixed before training.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-90",
+      "quote": "And it compounds in three places at once:",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-91",
+      "quote": "**Cost.** Tokens are billed per token.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-92",
+      "quote": "A conversation that runs 3–5× longer in tokens costs 3–5× more API money, for an equal amount of meaning.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-93",
+      "quote": "**Context.** The context window is measured in tokens.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-94",
+      "quote": "A longer tokenization means the same document *fills the window sooner*, so the model sees less of it — a silent, per-language reduction in effective context.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-95",
+      "quote": "**Capacity.** The model's attention has a fixed token budget per sequence.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-96",
+      "quote": "A language that spends more tokens per word gets *fewer words of attention* for the same budget.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-97",
+      "quote": "> Language is priced by the tokenizer.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-98",
+      "quote": "The model's competence in a given language is, partly, a function of how *cheap* that language is in tokens — a quantity decided by a vocabulary trained on a corpus that was, in practice, not that language.",
+      "section": "The pathology: token inflation",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-99",
+      "quote": "Token inflation is a *quantitative* failure: the pieces are real, there are simply too many of them.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-100",
+      "quote": "There is also a stranger, *qualitative* failure.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-101",
+      "quote": "Sometimes a string becomes a single token during tokenizer training, but the model itself almost never sees that token during pretraining.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-102",
+      "quote": "The token exists in the vocabulary, it has an ID, an embedding row, and a place in every weight matrix, but its parameters are barely trained.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-103",
+      "quote": "The result is a **glitch token**: an input the tokenizer handles perfectly and the model has no learned meaning for.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-104",
+      "quote": "The canonical examples come from the GPT-2/GPT-3 tokenizer (the `·` below marks a leading space).",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-105",
+      "quote": "In 2023, \\citeauthor{rumbelow2023solidgold} collected strings such as `·SolidGoldMagikarp`, `·petertodd`, and `·externalToEVA` that produced bizarre, evasive, or repetitive behavior when used as prompts, including failures to repeat or spell the string back (\\cite[Rumbelow & Watkins, 2023]{rumbelow2023solidgold}).",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-106",
+      "quote": "The likely cause is a mismatch between the corpus used to *train the tokenizer* and the corpus used to *train the model*: a token can be frequent in the tokenizer's corpus (usernames, code handles, scraped strings) and absent from the model's training data, leaving its embedding close to its random initialization.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-107",
+      "quote": "Glitch tokens are the extreme end of a continuum, not a handful of curiosities.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-108",
+      "quote": "\\cite[Land & Bartolo (2024)]{land2024fishing} showed that undertrained tokens are widespread and can be found automatically by comparing a token's frequency in the tokenizer corpus with its exposure in the model.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-109",
+      "quote": "\\cite[Li et al. (2024)]{glitchtokens} built a taxonomy and detection pipeline for them, and \\cite[Zhang et al. (2024)]{glitchprober2024} extended detection and mitigation.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-110",
+      "quote": "The practical lesson is not “avoid one weird string”; it is that **a vocabulary entry is not a learned concept**.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-111",
+      "quote": "The documented examples are mostly ordinary-looking strings.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-112",
+      "quote": "That is the point: nothing in the surface form tells you whether the token was trained.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-113",
+      "quote": "| Token (the `·` marks a leading space) | What was reported | What it reveals |",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-114",
+      "quote": "| `·SolidGoldMagikarp` | Refusals, repetitions, and confusion when asked to repeat or spell it | A token can exist without a usable embedding |",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-115",
+      "quote": "| `·petertodd` | Bizarre associations and unstable completions | The model may pattern-match the *string's* scraped context, not its meaning |",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-116",
+      "quote": "| `·externalToEVA` | Evasive or malformed answers | Code identifiers can become tokens the language model never learned |",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-117",
+      "quote": "| `·davidjl` | Unstable, sometimes evasive behavior | A username can be a single token and a blind spot |",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-118",
+      "quote": "| `·RandomRedditor` | Unstable completions | A scraped username can occupy a whole vocabulary slot |",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-119",
+      "quote": "| `·repmovsb` | Unstable or evasive behavior | An assembly mnemonic can be a token with no learned semantics |",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-120",
+      "quote": "| `·TheNitromeFan` | Repeated or confused output | A fandom handle can be a token the model never learned |",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-121",
+      "quote": "The families are recognizable in hindsight: Reddit usernames, UI identifiers such as `·guiActive`, code mnemonics such as `·repmovsb`, and ordinary-looking words such as `·Scaled`.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-122",
+      "quote": "The pattern is general: **the tokenizer's training corpus and the model's training corpus are not the same corpus.** A tokenizer can create a token for a string that is frequent in its own data and then hand the model an embedding row that almost never receives a gradient.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-123",
+      "quote": "The model cannot tell you what the token means, because it was never taught.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-124",
+      "quote": "This is also a security property.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-125",
+      "quote": "A token the model handles unpredictably is a potential bypass: adversarial tokenization can change a model's behavior or slip text past a classifier that segments it differently (\\cite[Geh et al., 2025]{geh2025adversarialtokenization}; \\cite[Schulz et al., 2025]{tokenbreak2025}).",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-126",
+      "quote": "The lesson for anyone deploying a model is dull but important: **test the tokenizer, not just the model**, and treat “this string is one token” as a claim to verify rather than a guarantee.",
+      "section": "When the vocabulary is a graveyard: glitch tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-127",
+      "quote": "Byte-level BPE \\cite[Radford et al., GPT-2 (2019)]{gpt2} solved the *worst* failure — a token the model cannot even *represent*.",
+      "section": "Byte-level: the floor, not the fix",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-128",
+      "quote": "Because the alphabet is all 256 bytes, every possible input has a tokenization; there is no unknown token, no \"cannot read this script.\" That is a genuine, large win: a byte-level model can, in principle, read *any* language, including ones it was barely trained on.",
+      "section": "Byte-level: the floor, not the fix",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-129",
+      "quote": "But byte-level does **not** remove the inflation — it only removes the *failure to represent it*.",
+      "section": "Byte-level: the floor, not the fix",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-130",
+      "quote": "A Thai sentence is still more bytes (hence more tokens) than the same sentence in English, because the information is denser per character in a script with a large alphabet.",
+      "section": "Byte-level: the floor, not the fix",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-131",
+      "quote": "Byte-level is the **floor**: it guarantees you can tokenize anything.",
+      "section": "Byte-level: the floor, not the fix",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-132",
+      "quote": "The *relative* cost between languages remains, because it is a property of the languages themselves (how much information per byte), not of the tokenizer's vocabulary.",
+      "section": "Byte-level: the floor, not the fix",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-133",
+      "quote": "The current research direction is to shrink, or remove, the discrete-token bottleneck altogether.",
+      "section": "The frontier: removing the discrete bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-134",
+      "quote": "The clearest first step is **byte-to-byte** pretraining: model over raw bytes rather than over a hand-built subword vocabulary, so there is no per-language vocabulary to be biased by \\cite[Xue et al., ByT5 (2022)]{byt52022}.",
+      "section": "The frontier: removing the discrete bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-135",
+      "quote": "Beyond that, the 2025–26 frontier explores **byte-latent / continuous** representations — learning a continuous \"pre-token\" space the model predicts over, sidestepping the fixed 256-byte (or fixed-vocabulary) discretization.",
+      "section": "The frontier: removing the discrete bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-136",
+      "quote": "Whether that actually closes the per-language gap, or merely moves the bias into the continuous representation, is an open question; the honest statement is that the *idea* — stop making a fixed vocabulary the unit of thought — is live and consequential, even where the named systems are not yet settled into stable references you can cite.",
+      "section": "The frontier: removing the discrete bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-137",
+      "quote": "The practical takeaway does not depend on the frontier.",
+      "section": "The frontier: removing the discrete bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-138",
+      "quote": "A tokenizer is a **decision with economic and fairness consequences**, not a detail.",
+      "section": "The frontier: removing the discrete bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-139",
+      "quote": "If you deploy a model multilingually, the question \"how many tokens does a sentence in language *L* cost, relative to the dominant language?\" is a real number, it is not one, and it should be measured — because the model's *effective* context window, and its *price*, are different for every language it serves.",
+      "section": "The frontier: removing the discrete bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-140",
+      "quote": "Glitch tokens are one member of a family.",
+      "section": "The rest of the bestiary",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-141",
+      "quote": "Once you look at text as *tokens* rather than characters, several other failure modes become visible.",
+      "section": "The rest of the bestiary",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-142",
+      "quote": "None of them is exotic; all of them are consequences of the same decision to cut text at statistically convenient boundaries.",
+      "section": "The rest of the bestiary",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-143",
+      "quote": "A number is a sequence of digits; a tokenizer sees a string and may group it in ways that depend on frequency rather than place value.",
+      "section": "Numbers do not survive the trip",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-144",
+      "quote": "`1234` may be one token while `1235` becomes `123` + `5`; a decimal point, a leading zero, or a thousands separator can change the segmentation again.",
+      "section": "Numbers do not survive the trip",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-145",
+      "quote": "The model then has to do arithmetic across pieces that do not line up with the digits, which is one reason arithmetic accuracy depends on *how the number was written* (\\cite[Singh & Strouse, 2024]{singh2024tokenizationcounts}).",
+      "section": "Numbers do not survive the trip",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-146",
+      "quote": "The fix is not “train harder”; it is to choose a representation that preserves the structure, for example digit-wise tokenization or an external calculator.",
+      "section": "Numbers do not survive the trip",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-147",
+      "quote": "Leading and trailing spaces belong to tokens.",
+      "section": "A space is not nothing",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-148",
+      "quote": "A prompt ending in `The answer is` and one ending in `The answer is ` can have different next-token distributions, because the final token is different.",
+      "section": "A space is not nothing",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-149",
+      "quote": "This matters most at the boundary between a prompt and a generated continuation, where a partial token can force the model into an awkward segmentation.",
+      "section": "A space is not nothing",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-150",
+      "quote": "Recent work shows that models can often recover from *non-canonical* tokenizations, but the distribution shift is real and measurable (\\cite[Zheng et al., 2025]{zheng2025brokentokens}).",
+      "section": "A space is not nothing",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-151",
+      "quote": "Boundary-aware prompting and token healing exist precisely to avoid handing the model a split it did not expect.",
+      "section": "A space is not nothing",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-152",
+      "quote": "Unicode is not a one-to-one mapping from what you see to what the tokenizer receives.",
+      "section": "One visible character, many tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-153",
+      "quote": "The same visible `é` can be one code point or `e` plus a combining acute accent; an emoji can be a single code point or a zero-width-joiner sequence of several; flags, family emoji, and right-to-left text add more cases.",
+      "section": "One visible character, many tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-154",
+      "quote": "Normalization forms (NFC, NFD) can therefore change the token sequence without changing the rendered text (\\cite[Unicode Consortium, UAX #15]{unicodeuax15}).",
+      "section": "One visible character, many tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-155",
+      "quote": "Normalize before comparing, classifying, or hashing text — and remember that normalization is itself a lossy decision when the exact byte sequence matters.",
+      "section": "One visible character, many tokens",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-156",
+      "quote": "Token IDs are not portable.",
+      "section": "The same string, a different tokenizer",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-157",
+      "quote": "Each model family has its own vocabulary and merge rules, so the same sentence can be longer, shorter, or split at completely different places under a different tokenizer.",
+      "section": "The same string, a different tokenizer",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-158",
+      "quote": "That is why swapping a tokenizer invalidates the embedding matrix, why token counts from one model are not a budget for another, and why “the context window is 128k tokens” is a statement about a *particular* tokenizer.",
+      "section": "The same string, a different tokenizer",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-159",
+      "quote": "The tokenizer is part of the model contract, not a preprocessing detail you can change later.",
+      "section": "The same string, a different tokenizer",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-160",
+      "quote": "If a safety filter and a generator tokenize the same text differently, an attacker can exploit the gap: invisible characters, Cyrillic letters that look Latin, leetspeak, or deliberate segmentation can change one side's view while leaving the other's meaning intact.",
+      "section": "Spelling, homoglyphs, and filter evasion",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-161",
+      "quote": "This is the practical face of adversarial tokenization (\\cite[Geh et al., 2025]{geh2025adversarialtokenization}; \\cite[Schulz et al., 2025]{tokenbreak2025}).",
+      "section": "Spelling, homoglyphs, and filter evasion",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-162",
+      "quote": "Defenses have to normalize and tokenize consistently across every component in the pipeline; a filter that reads characters while the model reads tokens is not protecting the same input.",
+      "section": "Spelling, homoglyphs, and filter evasion",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-163",
+      "quote": "The pathologies above point to a short engineering checklist:",
+      "section": "What to do about it",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-164",
+      "quote": "* **Measure, don't assume.** Count tokens per word for every language you serve, and track how those counts change across model families.",
+      "section": "What to do about it",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-165",
+      "quote": "A per-language token budget is a real product decision.",
+      "section": "What to do about it",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-166",
+      "quote": "* **Audit the vocabulary against the model's data.** Tokens that are frequent in the tokenizer corpus but rare in pretraining are candidates for pruning, retraining, or better initialization; detection is now automatic.",
+      "section": "What to do about it",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-167",
+      "quote": "* **Test the ugly cases.** Spelling, copying, numbers, whitespace, emoji, combining marks, rare names, and mixed scripts belong in the evaluation set, not in the “we'll see” bucket.",
+      "section": "What to do about it",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-168",
+      "quote": "* **Choose the right floor.** Byte-level BPE guarantees coverage; tokenizer-free and byte-latent approaches remove the discrete vocabulary entirely.",
+      "section": "What to do about it",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-169",
+      "quote": "Neither automatically removes the *statistical* bias, but they change which failures are possible.",
+      "section": "What to do about it",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-170",
+      "quote": "* **Give numbers a tool.** Digit-wise tokenization, a calculator, or a code interpreter is usually more reliable than asking the model to do arithmetic on arbitrary chunks.",
+      "section": "What to do about it",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-171",
+      "quote": "* **Treat the tokenizer as a versioned contract.** Document it, test it, and re-run the tests whenever the vocabulary or the model changes.",
+      "section": "What to do about it",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-172",
+      "quote": "> A tokenizer is a lossy interface between text and thought.",
+      "section": "What to do about it",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-173",
+      "quote": "The loss is not random: it is a set of decisions about which distinctions matter, made before the model sees a single example.",
+      "section": "What to do about it",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-174",
+      "quote": "The next time a model “can't count,” “can't spell,” or “goes weird” on an ordinary-looking string, ask the tokenizer first.",
+      "section": "What to do about it",
+      "kind": "statement"
+    },
+    {
+      "id": "tokenizerlab-stmt-175",
+      "quote": "It is often the part of the system that made the decision, and the part nobody debugged.",
+      "section": "What to do about it",
+      "kind": "statement"
+    }
   ]
 }

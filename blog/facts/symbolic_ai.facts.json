@@ -553,5 +553,859 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "symbolic_ai-stmt-1",
+      "quote": "For most of its history, AI was **symbolic**: explicit rules, logical inference, hand-curated knowledge.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-2",
+      "quote": "The neural revolution displaced it, but did not destroy it.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-3",
+      "quote": "The 2020s have seen a renaissance: knowledge graphs, formal verification, neuro-symbolic hybrids, and LLM agents that use tools and APIs as symbolic primitives.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-4",
+      "quote": "This chapter traces the other branch of AI and shows how it complements neural networks.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-5",
+      "quote": "Symbolic AI begins with the logicist dream that all of mathematics could be derived from logic.",
+      "section": "Before the program: logic and its limits",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-6",
+      "quote": "Frege's *Begriffsschrift* (1879) invented modern quantifier notation and tried to reduce arithmetic to logical laws; Russell and Whitehead's *Principia Mathematica* (1910-13) carried the project through, after Russell's paradox exposed its foundations (\\cite[Frege, 1879]{frege1879}; \\cite[Russell & Whitehead, 1910]{russell1910pm}; \\cite[Russell's paradox]{russell_paradox_sep}).",
+      "section": "Before the program: logic and its limits",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-7",
+      "quote": "Hilbert's programme then asked for a finitary consistency proof and a decision procedure for first-order logic (\\cite[Hilbert & Ackermann, 1928]{hilbert1928entscheidung}).",
+      "section": "Before the program: logic and its limits",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-8",
+      "quote": "Gödel's 1931 theorems ended the dream in its strong form: any consistent, effectively axiomatized system strong enough for arithmetic is incomplete and cannot prove its own consistency (\\cite[Gödel, 1931]{godel1931incompleteness}; \\cite[SEP]{sep_godel_incompleteness}).",
+      "section": "Before the program: logic and its limits",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-9",
+      "quote": "Turing's 1936 paper supplied the missing negative answer: no mechanical procedure can decide, for every first-order formula, whether it is provable (\\cite[Turing, 1936]{turing1936}).",
+      "section": "Foundations",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-10",
+      "quote": "In 1950 he replaced the question of mechanism with an operational test -- can a machine's text replies be distinguished from a person's?",
+      "section": "Foundations",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-11",
+      "quote": "-- and made \"Can machines think?\" an empirical question (\\cite[Turing, 1950]{turing1950computing}).",
+      "section": "Foundations",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-12",
+      "quote": "Six years later, the 1956 Dartmouth Summer Research Project named the field and set its agenda: language, neural nets, abstraction, creativity, and the conjecture that every feature of intelligence can be described precisely enough for a machine to simulate it (\\cite[McCarthy et al., 1955]{mccarthy1955dartmouth}).",
+      "section": "Foundations",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-13",
+      "quote": "Before the technical material, it is worth pausing on the philosophical manifesto that grounded the entire symbolic-AI tradition in a defence of itself as a *science*.",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-14",
+      "quote": "\\citeauthor{newell1976empirical} (\\citeyear{newell1976empirical}) — Allen Newell and Herbert A.",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-15",
+      "quote": "Simon, in the ACM Turing Award lecture \"Computer Science as Empirical Inquiry\" (the 1975 award was given to Newell and Simon jointly, and the published paper is the joint form) — make a sustained case that computer science is not *applied mathematics* and not *engineering*, but an *empirical* science on a par with physics or biology, whose natural objects are **symbol systems** and whose characteristic method is the construction of *symbols and search*.",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-16",
+      "quote": "Computer science is an empirical discipline.",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-17",
+      "quote": "[...] We build computers and programs for two reasons: (a) to provide a human service (the computer as servant), and (b) to experiment with symbolic processes (the computer as simulation chamber).",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-18",
+      "quote": "[...] The urge to make computers more and more intelligent is, therefore, an urge to provide a tool for the empirical study of intelligence.",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-19",
+      "quote": "The synthesis below happens naturally once you read three other chapters: Reasoning (CoT is *implicit* logic the network learned), Mechanistic Interpretability (the circuits you find inside a Transformer often look like AND/OR/NOT gates), and AI Agents (ReAct-style tool use is symbolic reasoning wrapped around a neural policy).",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-20",
+      "quote": "The “neuro-symbolic” framing just makes the marriage explicit.",
+      "section": "Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-21",
+      "quote": "| | Symbolic (GOFAI) | Neural (Connectionist) |",
+      "section": "The Two Branches",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-22",
+      "quote": "| **Representation** | Symbols, rules, logic | Vectors, weights |",
+      "section": "The Two Branches",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-23",
+      "quote": "| **Reasoning** | Formal inference | Pattern recognition |",
+      "section": "The Two Branches",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-24",
+      "quote": "| **Knowledge** | Hand-curated | Learned from data |",
+      "section": "The Two Branches",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-25",
+      "quote": "| **Transparency** | Traceable proof | Black box |",
+      "section": "The Two Branches",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-26",
+      "quote": "| **Robustness** | Strong (provable) | Brittle (adversarial) |",
+      "section": "The Two Branches",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-27",
+      "quote": "| **Sample efficiency** | High | High data needs |",
+      "section": "The Two Branches",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-28",
+      "quote": "| **Scaling** | Knowledge engineering bottleneck | Compute + data |",
+      "section": "The Two Branches",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-29",
+      "quote": "Both have strengths the other lacks.",
+      "section": "The Two Branches",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-30",
+      "quote": "**Neuro-symbolic AI** is the synthesis.",
+      "section": "The Two Branches",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-31",
+      "quote": "The classical symbolic AI stack rests on **first-order logic** and its extensions.",
+      "section": "Knowledge Representation: From Logic to RDF",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-32",
+      "quote": "Variables are boolean; connectives $\\land, \\lor, \\neg, \\implies$ combine them.",
+      "section": "Propositional Logic",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-33",
+      "quote": "Decidable; SAT solvers are highly optimized.",
+      "section": "Propositional Logic",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-34",
+      "quote": "Adds $\\forall$ (forall), $\\exists$ (exists), predicates $P(x)$, and functions $f(x)$.",
+      "section": "First-Order Logic (FOL)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-35",
+      "quote": "More expressive; semi-decidable.",
+      "section": "First-Order Logic (FOL)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-36",
+      "quote": "A simple FOL knowledge base:",
+      "section": "First-Order Logic (FOL)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-37",
+      "quote": "A fragment of FOL designed to be **decidable** while still expressive.",
+      "section": "Description Logics (DLs)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-38",
+      "quote": "Foundation of the **Semantic Web**:",
+      "section": "Description Logics (DLs)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-39",
+      "quote": "* **Concepts** (classes): Human, Mammal, Vehicle",
+      "section": "Description Logics (DLs)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-40",
+      "quote": "* **Roles** (properties): hasParent, drives, owns",
+      "section": "Description Logics (DLs)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-41",
+      "quote": "* **Individuals**: Socrates, Plato",
+      "section": "Description Logics (DLs)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-42",
+      "quote": "* **Constructors**: $\\sqcap$ (intersection), $\\sqcup$ (union), $\\neg$ (negation), $\\exists R.C$ (exists role filler)",
+      "section": "Description Logics (DLs)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-43",
+      "quote": "The standard **SROIQ** description logic underlies **OWL 2 DL** (the description-logic profile of the Web Ontology Language).",
+      "section": "Description Logics (DLs)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-44",
+      "quote": "The Semantic Web stack (W3C standards):",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-45",
+      "quote": "* **RDF** (Resource Description Framework): triple representation $\\langle \\text{subject}, \\text{predicate}, \\text{object} \\rangle$.",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-46",
+      "quote": "* **RDFS** (RDF Schema): class hierarchies, property hierarchies.",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-47",
+      "quote": "* **OWL** (Web Ontology Language): full description logic, cardinality constraints, equivalence, disjointness.",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-48",
+      "quote": "* **SPARQL**: SQL-like query language for RDF.",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-49",
+      "quote": "Major public knowledge graphs:",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-50",
+      "quote": "* **Wikidata**: 100M+ items, the open community-edited KG.",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-51",
+      "quote": "* **DBpedia**: extracted from Wikipedia infoboxes.",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-52",
+      "quote": "* **Google Knowledge Graph**: powers search infoboxes.",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-53",
+      "quote": "* **ConceptNet**: 34M commonsense assertions.",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-54",
+      "quote": "* **WordNet**: lexical KG (synonymy, hypernymy).",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-55",
+      "quote": "* **UMLS**: medical KG (3M+ concepts).",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-56",
+      "quote": "* **Amazon Product Graph, Facebook Entity Graph**: industrial-scale closed KGs.",
+      "section": "RDF, RDFS, OWL, SPARQL",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-57",
+      "quote": "A KG query is **graph pattern matching**:",
+      "section": "Reasoning Over Knowledge Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-58",
+      "quote": "Reasoners (Pellet, HermiT, FaCT++) implement **tableau-based** algorithms that check consistency and infer new triples.",
+      "section": "Reasoning Over Knowledge Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-59",
+      "quote": "* **Subsumption**: is $A$ a subclass of $B$?",
+      "section": "Reasoning Over Knowledge Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-60",
+      "quote": "* **Instance checking**: is $a$ an instance of $C$?",
+      "section": "Reasoning Over Knowledge Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-61",
+      "quote": "* **Consistency**: does the KG have a model?",
+      "section": "Reasoning Over Knowledge Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-62",
+      "quote": "* **Realization**: find the most specific class for an individual.",
+      "section": "Reasoning Over Knowledge Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-63",
+      "quote": "For **rule-based reasoning** beyond OWL, **Datalog** and **Prolog** are used.",
+      "section": "Reasoning Over Knowledge Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-64",
+      "quote": "Modern graph databases (Neo4j, Amazon Neptune, Stardog, TigerGraph) add **property graphs**: nodes and edges with arbitrary attributes.",
+      "section": "Reasoning Over Knowledge Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-65",
+      "quote": "Resolution gave symbolic reasoning its industrial engine.",
+      "section": "Reasoning Over Knowledge Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-66",
+      "quote": "Robinson's 1965 rule -- resolve two clauses on a complementary literal, with unification handling variables -- made first-order theorem proving a single uniform inference step (\\cite[Robinson, 1965]{robinson1965resolution}).",
+      "section": "Reasoning Over Knowledge Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-67",
+      "quote": "Kowalski's 1974 \"Predicate Logic as a Programming Language\" turned resolution into computation: a logic program is a set of Horn clauses, and answering a query is proof search (\\cite[Kowalski, 1974]{kowalski1974prolog}).",
+      "section": "Reasoning Over Knowledge Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-68",
+      "quote": "Colmerauer and Roussel's Prolog (1972-73) implemented that idea and became the language of expert systems, natural-language parsers, and later Datalog engines (\\cite[Colmerauer & Roussel, 1973]{colmerauer1973prolog}).",
+      "section": "Reasoning Over Knowledge Graphs",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-69",
+      "quote": "To bridge symbolic KGs with neural methods, several **KG embedding** methods learn vector representations of entities and relations:",
+      "section": "Embedding-Based KG Reasoning",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-70",
+      "quote": "* **TransE** \\cite{bordes2013transe}: $\\mathbf{h} + \\mathbf{r} \\approx \\mathbf{t}$ (translation in embedding space).",
+      "section": "Embedding-Based KG Reasoning",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-71",
+      "quote": "* **DistMult** \\cite{yang2015distmult}: bilinear $\\langle \\mathbf{h}, \\mathbf{r}, \\mathbf{t} \\rangle$ score.",
+      "section": "Embedding-Based KG Reasoning",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-72",
+      "quote": "* **ComplEx**: extends to complex-valued embeddings for asymmetric relations.",
+      "section": "Embedding-Based KG Reasoning",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-73",
+      "quote": "* **RotatE** \\cite{sun2019rotate}: rotation in complex space, captures composition.",
+      "section": "Embedding-Based KG Reasoning",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-74",
+      "quote": "* **GraphSAGE** \\cite{hamilton2017graphsage} / **R-GCN** \\cite{schlichtkrull2018rgcn}: graph neural networks over the KG structure.",
+      "section": "Embedding-Based KG Reasoning",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-75",
+      "quote": "These enable **link prediction**: given $(h, r, ?)$, predict $t$, completing missing triples.",
+      "section": "Embedding-Based KG Reasoning",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-76",
+      "quote": "Used in recommendation, drug repurposing, fraud detection.",
+      "section": "Embedding-Based KG Reasoning",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-77",
+      "quote": "Symbolic AI's first commercial wave was knowledge engineering.",
+      "section": "The knowledge-engineering cycle",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-78",
+      "quote": "DENDRAL inferred molecular structures from mass spectra, MYCIN recommended antibiotics from hundreds of if-then rules, and both showed that hand-coded expertise could beat general search in a narrow domain (\\cite[Feigenbaum et al., 1969]{feigenbaum1965dendral}; \\cite[Shortliffe & Buchanan, 1976]{shortliffe1976mycin}).",
+      "section": "The knowledge-engineering cycle",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-79",
+      "quote": "The details explain why the recipe spread.",
+      "section": "The knowledge-engineering cycle",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-80",
+      "quote": "DENDRAL pruned the search for one compound from more than eleven million candidate structures to about twenty-two thousand, which could then be tested individually; MYCIN separated its rules from its inference engine, so the engine could be reused as the first expert-system shell (EMYCIN), and in a blind clinical test it prescribed antibiotics as well as, or better than, nine human clinicians \\cite{crevier1993ai}.",
+      "section": "The knowledge-engineering cycle",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-81",
+      "quote": "The commercial breakthrough was XCON (originally R1), John McDermott's VAX configurer for the Digital Equipment Corporation: about three hundred rules in 1979 grew to more than three thousand by 1984, and the system configured ten machine models \\cite{crevier1993ai}.",
+      "section": "The knowledge-engineering cycle",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-82",
+      "quote": "Winograd's SHRDLU (1972) embedded language in a tiny blocks world, so every word had a referent (\\cite[Winograd, 1972]{winograd1972understanding}).",
+      "section": "The knowledge-engineering cycle",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-83",
+      "quote": "McCarthy and Hayes had already named the obstacle: the frame problem, deciding what stays unchanged when an action occurs (\\cite[McCarthy & Hayes, 1969]{mccarthy1969some}).",
+      "section": "The knowledge-engineering cycle",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-84",
+      "quote": "Cyc, begun in 1984, was the maximalist response -- a hand-built common-sense ontology and inference engine -- but knowledge acquisition did not scale (\\cite[Cyc]{cyc_wiki}).",
+      "section": "The knowledge-engineering cycle",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-85",
+      "quote": "The semantic web was the attempt to make that knowledge public and composable: RDF triples, OWL ontologies, and SPARQL queries, standardized by the W3C and promoted in Berners-Lee, Hendler, and Lassila's 2001 *Scientific American* article (\\cite[Berners-Lee et al., 2001]{berners2001sw}).",
+      "section": "The knowledge-engineering cycle",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-86",
+      "quote": "Google's 2012 Knowledge Graph showed the industrial version -- a proprietary graph of entities and relations behind search answers (\\cite[Singhal, 2012]{singhal2012knowledge}).",
+      "section": "The knowledge-engineering cycle",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-87",
+      "quote": "The current revival is neuro-symbolic: neural networks handle perception and ambiguity, while symbolic engines supply exact inference and verification, as in DeepProbLog and AlphaGeometry (\\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}; \\cite[Trinh et al., 2024]{trinh2024alphageometry}; \\cite[Garcez & Lamb, 2020]{garcez2020neurosymbolic}).",
+      "section": "The knowledge-engineering cycle",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-88",
+      "quote": "Modern LLMs use **tools** as symbolic primitives:",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-89",
+      "quote": "* **Web search**: query → fetch results → summarize.",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-90",
+      "quote": "* **Code execution**: generate Python → run in sandbox → use output.",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-91",
+      "quote": "* **Calculator**: “what is 17 × 23?” → call a calculator → return 391.",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-92",
+      "quote": "* **Database query**: “users in Berlin” → generate SQL → execute → return rows.",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-93",
+      "quote": "* **API calls**: “book a flight” → call Skyscanner API.",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-94",
+      "quote": "Frameworks: LangChain, LlamaIndex, AutoGen, CrewAI, LangGraph, OpenAI's function-calling, Anthropic's tool use.",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-95",
+      "quote": "The LLM acts as a **planner and natural-language interface**; the symbolic system provides **grounded computation**.",
+      "section": "Symbolic Reasoning in 2025: LLMs + Tools",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-96",
+      "quote": "Symbolic AI is critical for **provable correctness**:",
+      "section": "Formal Verification and Theorem Proving",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-97",
+      "quote": "* **Lean, Coq, Isabelle, Agda**: interactive theorem provers.",
+      "section": "Formal Verification and Theorem Proving",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-98",
+      "quote": "Used in mathematics (Liquid Tensor Experiment), cryptography (zk-SNARKs), and verified software (CompCert, seL4).",
+      "section": "Formal Verification and Theorem Proving",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-99",
+      "quote": "* **SAT solvers** (CaDiCaL, Kissat, CryptoMiniSat): scale to millions of variables.",
+      "section": "Formal Verification and Theorem Proving",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-100",
+      "quote": "Industry-standard for hardware verification, planning, scheduling.",
+      "section": "Formal Verification and Theorem Proving",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-101",
+      "quote": "* **SMT solvers** (Z3, CVC5): extend SAT with theories (arithmetic, arrays, bit-vectors).",
+      "section": "Formal Verification and Theorem Proving",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-102",
+      "quote": "* **Model checkers** (SPIN, TLC for TLA+): verify state machines, distributed systems, protocols.",
+      "section": "Formal Verification and Theorem Proving",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-103",
+      "quote": "The Lean-based **“AI for math”** initiative (DeepMind, 2024; OpenAI, 2024) has produced LLMs that:",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-104",
+      "quote": "Generate a candidate proof in natural language + Lean code.",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-105",
+      "quote": "Submit to Lean's kernel for verification.",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-106",
+      "quote": "If verification fails, refine using the error message.",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-107",
+      "quote": "The combined AlphaProof and AlphaGeometry system (\\cite[DeepMind, 2024]{deepmind2024alphaproof}) reached silver-medal level at IMO 2024, solving four of the six problems.",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-108",
+      "quote": "Subsequent work has solved IMO 2025 problems.",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-109",
+      "quote": "The combination of **neural intuition** + **symbolic verification** is the most promising path to provably correct mathematical reasoning.",
+      "section": "LLM + Theorem Proving (the 2024 frontier)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-110",
+      "quote": "The synthesis takes several forms:",
+      "section": "Neuro-Symbolic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-111",
+      "quote": "| Approach | Description | Example |",
+      "section": "Neuro-Symbolic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-112",
+      "quote": "| **Neural + symbolic modules** | NN does perception, symbolic does reasoning | AlphaGeometry (\\cite[Trinh et al., 2024]{trinh2024alphageometry}), AlphaProof |",
+      "section": "Neuro-Symbolic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-113",
+      "quote": "| **Neural representations, symbolic inference** | Embeddings + logical rules | Logic Tensor Networks, NLProlog |",
+      "section": "Neuro-Symbolic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-114",
+      "quote": "| **Symbolic priors on neural nets** | Constraints in loss function | Physics-informed NNs, constraint satisfaction |",
+      "section": "Neuro-Symbolic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-115",
+      "quote": "| **NN as heuristic for symbolic search** | Learned policy for tree search | AlphaGo, theorem provers |",
+      "section": "Neuro-Symbolic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-116",
+      "quote": "| **Differentiable logic** | Soft logic, gradient through rules | DeepProbLog, NARS |",
+      "section": "Neuro-Symbolic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-117",
+      "quote": "| **LLM + tool use** | Neural planner, symbolic tools | ReAct \\cite{yao2023react}, Toolformer, agents |",
+      "section": "Neuro-Symbolic Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-118",
+      "quote": "Solves IMO (\\cite[Trinh et al., 2024]{trinh2024alphageometry}) problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies.",
+      "section": "AlphaGeometry (DeepMind, 2024)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-119",
+      "quote": "Solved 25 of the 30 IMO geometry problems from 2000–2022, close to the average human gold medallist.",
+      "section": "AlphaGeometry (DeepMind, 2024)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-120",
+      "quote": "A Transformer that learns to **call APIs** (calculator, search, translation) by self-supervised training on examples where API calls improve perplexity (\\cite[Schick et al., 2023]{schick2023toolformer}).",
+      "section": "Toolformer",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-121",
+      "quote": "Pure neural, but uses symbolic tools.",
+      "section": "Toolformer",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-122",
+      "quote": "Embed logical rules as soft constraints on neural network outputs.",
+      "section": "Logic Tensor Networks (Serafini & Garcez, 2016)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-123",
+      "quote": "Combines first-order logic with deep learning in a single end-to-end trainable system.",
+      "section": "Logic Tensor Networks (Serafini & Garcez, 2016)",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-124",
+      "quote": "Extends ProbLog (probabilistic logic programming) with neural predicates (\\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}).",
+      "section": "DeepProbLog",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-125",
+      "quote": "A neural net outputs probabilities; the probabilistic logic engine reasons over them.",
+      "section": "DeepProbLog",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-126",
+      "quote": "* **Exact computation** (arithmetic, code execution)",
+      "section": "When Symbolic Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-127",
+      "quote": "* **Formal verification** (proofs, model checking)",
+      "section": "When Symbolic Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-128",
+      "quote": "* **Structured prediction with hard constraints** (valid JSON, valid SQL, valid chemical structures)",
+      "section": "When Symbolic Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-129",
+      "quote": "* **Deterministic reproducibility** (same input → same output)",
+      "section": "When Symbolic Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-130",
+      "quote": "* **Long-tail factual queries** (a KG knows every entity; an LLM hallucinates)",
+      "section": "When Symbolic Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-131",
+      "quote": "When you need provable, deterministic, exact results: use a symbolic system, possibly wrapped by an LLM as the interface.",
+      "section": "When Symbolic Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-132",
+      "quote": "* Open-ended generation (text, images, audio, video).",
+      "section": "When Neural Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-133",
+      "quote": "* Pattern recognition (vision, speech, anomalies).",
+      "section": "When Neural Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-134",
+      "quote": "* Tasks where rules are unknown or hard to specify.",
+      "section": "When Neural Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-135",
+      "quote": "* Handling natural-language inputs robustly.",
+      "section": "When Neural Wins",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-136",
+      "quote": "By 2030, the standard production AI system will be:",
+      "section": "The Future: Hybrid by Default",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-137",
+      "quote": "* An LLM at the top, doing natural-language understanding and planning.",
+      "section": "The Future: Hybrid by Default",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-138",
+      "quote": "* Calling symbolic tools (calculators, code interpreters, databases, KGs, APIs).",
+      "section": "The Future: Hybrid by Default",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-139",
+      "quote": "* With formal verification of critical outputs.",
+      "section": "The Future: Hybrid by Default",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-140",
+      "quote": "* Trained jointly on text, code, and structured data (SQL, JSON, RDF).",
+      "section": "The Future: Hybrid by Default",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-141",
+      "quote": "The dichotomy is dissolving.",
+      "section": "The Future: Hybrid by Default",
+      "kind": "statement"
+    },
+    {
+      "id": "symbolic_ai-stmt-142",
+      "quote": "The student who masters **both** branches will be far more capable than one trained in either alone.",
+      "section": "The Future: Hybrid by Default",
+      "kind": "statement"
+    }
   ]
 }

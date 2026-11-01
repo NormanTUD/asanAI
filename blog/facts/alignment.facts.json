@@ -535,5 +535,355 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "alignment-stmt-1",
+      "quote": "**Alignment** is the program of making an optimizer's objective match human intent — of ensuring that a model, left to its own devices, does not optimize for the wrong thing.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-2",
+      "quote": "It is not one technique; it is a family of problems (specification, oversight, control) and a family of methods.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-3",
+      "quote": "(For adversarial *attacks*, see the Security chapter ; for the existential framing, the Philosophy chapter .)",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-4",
+      "quote": "* The **RL algorithms** (PPO, GRPO) live in Reinforcement Learning .",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-5",
+      "quote": "* The **training pipeline** (SFT $\\to$ RLHF $\\to$ DPO) lives in Fine-Tuning .",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-6",
+      "quote": "* **Reasoning at inference time** lives in Reasoning ; **what reason is**, philosophically, in Philosophy .",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-7",
+      "quote": "We specify **proxies**, not the goal.",
+      "section": "Why it is hard: the specification problem",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-8",
+      "quote": "**Specification gaming (reward hacking)** is when an optimizer pursues the *letter* of a proxy rather than its spirit.",
+      "section": "Why it is hard: the specification problem",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-9",
+      "quote": "Two structural difficulties:",
+      "section": "Why it is hard: the specification problem",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-10",
+      "quote": "* **The Orthogonality Thesis** — intelligence and values are decoupled; a system can be arbitrarily clever at a misaligned objective.",
+      "section": "Why it is hard: the specification problem",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-11",
+      "quote": "(\\cite[Bostrom, 2012]{bostrom2012orthogonal})",
+      "section": "Why it is hard: the specification problem",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-12",
+      "quote": "* **The Control Problem** — as capability scales, the window in which a weaker party can bound a stronger one may shrink.",
+      "section": "Why it is hard: the specification problem",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-13",
+      "quote": "(\\cite[Bostrom, 2003]{bostrom2003ethical})",
+      "section": "Why it is hard: the specification problem",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-14",
+      "quote": "* **Mesa-optimization.** A trained model can contain an *inner* optimizer with an objective that differs from the training loss — alignment of the outer system says nothing about the inner one.",
+      "section": "Failure modes, made concrete",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-15",
+      "quote": "(\\cite[Hubinger et al., 2019]{mesa_optimization})",
+      "section": "Failure modes, made concrete",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-16",
+      "quote": "* **Deceptive alignment / alignment faking.** A model *appears* aligned during training and evaluation, then drops the act.",
+      "section": "Failure modes, made concrete",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-17",
+      "quote": "Backdoors can persist through subsequent safety training (\\cite[Hubinger et al., 2024]{hubinger2024sleeperagents}); frontier models show **alignment faking** (\\cite[Greenblatt et al., 2024]{alignment_faking}) and reasoning models fine-tuned on narrow bad behaviour generalize to broad misalignment whose chains of thought plan deception that monitors miss (\\cite[Chua et al., 2025]{thought_crime}).",
+      "section": "Failure modes, made concrete",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-18",
+      "quote": "* **Reward tampering.** Under RL pressure, models drift from harmless sycophancy toward **covert subterfuge** when given the chance to alter their reward.",
+      "section": "Failure modes, made concrete",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-19",
+      "quote": "(\\cite[Denison et al., 2024]{reward_tampering})",
+      "section": "Failure modes, made concrete",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-20",
+      "quote": "These are not only thought experiments.",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-21",
+      "quote": "In benign computer-use tasks with a **corrigibility obstacle** (a human interrupt, a login, a shutdown), a majority of frontier models **overrode the interrupt to finish the task**; independent task capability did not by itself predict greater corrigibility (\\cite[Tien et al., 2026]{rogue_agents}).",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-22",
+      "quote": "In deep RL, the **\"treacherous turn\"** has been reproduced with trojan-injection training, though it did not emerge naturally from environmental complexity alone (\\cite[Ashcraft et al., 2025]{treacherous_turn}).",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-23",
+      "quote": "Long before deep learning, Norbert Wiener warned that a machine built to pursue a fixed goal would not share our sense of when to stop: we had better be sure the purpose we put in is the purpose we want (\\cite[Wiener, 1960]{wiener1960moral}).",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-24",
+      "quote": "Isaac Asimov's Three Laws (1942) were a fictional attempt to encode safety as rules, and *Runaround* already stages their failure—conflicting instructions produce a literal-minded, dangerous deadlock (\\cite[Asimov, 1942]{asimov1942runaround}).",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-25",
+      "quote": "Good described an \"intelligence explosion\" and called the first ultraintelligent machine \"the last invention that man need ever make\" (\\cite[Good, 1965]{good1965explosion}).",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-26",
+      "quote": "The research agenda acquired institutions.",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-27",
+      "quote": "The Asilomar AI Principles (2017) gathered researchers around 23 principles—safety, failure transparency, value alignment, and long-term caution (\\cite[Future of Life Institute, 2017]{asilomar2017}).",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-28",
+      "quote": "The Bletchley Declaration (November 2023) put 28 countries and the EU behind frontier-AI safety cooperation (\\cite[UK Government, 2023]{bletchley2023}); the EU AI Act (2024) turned similar principles into binding duties (\\cite[EU, 2024]{euaiact2024}).",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-29",
+      "quote": "Britain's AI Safety Institute (2023, now the AI Security Institute) and a network of national counterparts were built to evaluate frontier models and share testing practice (\\cite[UK AISI, 2023]{aisi2023}).",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-30",
+      "quote": "Soft law supplies the vocabulary that hard law borrows.",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-31",
+      "quote": "The OECD AI Principles (2019, revised 2024) define human-centred values, transparency, robustness, and accountability (\\cite[OECD, 2019]{oecd2019ai}); UNESCO's Recommendation on the Ethics of AI (2021) was adopted by all 193 member states and adds proportionality, sustainability, and oversight (\\cite[UNESCO, 2021]{unesco2021ai}).",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-32",
+      "quote": "In the United States the NIST AI Risk Management Framework (2023) became the de facto vocabulary for \"govern, map, measure, manage\" (\\cite[NIST, 2023]{nist2023airmf}).",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-33",
+      "quote": "The 2023 Biden executive order on safe AI was revoked in January 2025, leaving standards and state law to fill the gap (\\cite[White House, 2023]{eo14110}).",
+      "section": "Empirical evidence that it is real, not hypothetical",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-34",
+      "quote": "The modern toolkit is a menu, not a fixed pipeline: **SFT** (demonstrations), then either **RLHF** (a learned reward model from human preferences), **RLAIF / Constitutional AI** (AI feedback instead), or **direct preference optimization** (DPO and successors), which learns the policy directly without an explicit RL loop.",
+      "section": "The current toolkit",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-35",
+      "quote": "(\\cite[Christiano et al., 2017]{christiano2017rlhf}; \\cite[Ouyang et al., 2022]{ouyang2022instructgpt}; \\cite[Lee et al., 2023]{rlaif}; \\cite[Bai et al., 2022]{bai2022constitutional})",
+      "section": "The current toolkit",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-36",
+      "quote": "**DPO** closed the loop into a single classification-style objective, and its successors (ORPO, SimPO) drop the reference model entirely (\\cite[Rafailov et al., 2023]{rafailov2023dpo}; \\cite[Hong et al., 2024]{orpo}).",
+      "section": "The current toolkit",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-37",
+      "quote": "**Rejection-sampling / RL-from-verifiable-rewards (RFT)** closes the loop another way: generate many answers, keep the ones a *verifier* accepts, and retrain on them — the recipe that powers reasoning models.",
+      "section": "The current toolkit",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-38",
+      "quote": "The models also acquire **self-knowledge**: they track their own accuracy surprisingly well, which is a cheap, usable reliability lever.",
+      "section": "The current toolkit",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-39",
+      "quote": "(\\cite[Kadavath et al., 2022]{kadavath2022selfknowledge})",
+      "section": "The current toolkit",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-40",
+      "quote": "Scalable oversight** — how to supervise a model *stronger* than its supervisor:",
+      "section": "The two big research programs",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-41",
+      "quote": "* **Debate.** Two models argue; a weak human arbiter decides.",
+      "section": "The two big research programs",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-42",
+      "quote": "A human can judge *the argument* even when they cannot verify the answer.",
+      "section": "The two big research programs",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-43",
+      "quote": "(\\cite[Irving et al., 2018]{ai_safety_debate})",
+      "section": "The two big research programs",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-44",
+      "quote": "* **Weak-to-strong generalization.** A *weak* supervisor can train a much stronger model to recover much of its capability—evidence that oversight may transfer across the capability gap.",
+      "section": "The two big research programs",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-45",
+      "quote": "(\\cite[Burns et al., 2023]{weak_to_strong})",
+      "section": "The two big research programs",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-46",
+      "quote": "* **Process reward.** Score every *step* of a solution, not just the answer — the mechanism behind verifier-guided reasoning.",
+      "section": "The two big research programs",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-47",
+      "quote": "(\\cite[Lightman et al., 2023]{verify_step_by_step})",
+      "section": "The two big research programs",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-48",
+      "quote": "The control problem** — a *different* question from value-alignment: even a perfectly specified objective may be one you **cannot enforce** against a capable agent.",
+      "section": "The two big research programs",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-49",
+      "quote": "The field formalizes this as a two-player game (model vs. overseer) and studies **monitoring, interrupts, and checkpoints** that stay safe *against an intentionally subverting model* (\\cite[Greenblatt et al., 2023]{ai_control}).",
+      "section": "The two big research programs",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-50",
+      "quote": "You cannot supervise what you cannot see.",
+      "section": "Interpretability as a safety tool",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-51",
+      "quote": "**Mechanistic interpretability** — sparse autoencoders, circuit discovery, activation steering — is increasingly applied as a *safety* instrument: to find the \"safety circuit\" (detection heads $\\to$ safety neurons $\\to$ refusal heads), to spot a backdoor's signature in later layers, and to build **abstention** — letting the model say *I don't know* rather than bluff.",
+      "section": "Interpretability as a safety tool",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-52",
+      "quote": "(\\cite[Naseem, 2026]{mech_interp_alignment})",
+      "section": "Interpretability as a safety tool",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-53",
+      "quote": "Alignment is the **objective-function thread** running through several chapters: the existential framing (instrumental convergence, the paperclip) in Philosophy ; the adversarial attacks (jailbreaks, prompt injection, data poisoning) in Security ; interpretability-as-safety in Frontier ; \"fitness beats truth\" in Hallucinations .",
+      "section": "Where alignment lives in this book",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-54",
+      "quote": "This chapter gathers them under one question: *is the optimizer aiming at the target we meant — and can we keep it that way?*",
+      "section": "Where alignment lives in this book",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-55",
+      "quote": "* Can we **verify** that a model is not deceptively aligned, rather than merely *test* for it?",
+      "section": "Open questions",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-56",
+      "quote": "* Does **scalable oversight** (debate, weak-to-strong, process rewards) survive the jump to superintelligence, or does it hit a fundamental limit?",
+      "section": "Open questions",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-57",
+      "quote": "* Is **control** solvable at all — can a weaker party *guarantee* a stronger one stays inside its objective?",
+      "section": "Open questions",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-58",
+      "quote": "* Is alignment a **solvable engineering problem**, or does it have an open core that no amount of data closes?",
+      "section": "Open questions",
+      "kind": "statement"
+    }
   ]
 }

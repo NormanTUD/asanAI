@@ -289,5 +289,217 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "inceptionism-stmt-1",
+      "quote": "Everything so far trained a network by adjusting **weights** so that an input maps to a correct output.",
+      "section": "The Network Turned Upside Down",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-2",
+      "quote": "The original Inceptionism essay by \\citeauthor{mordvintsev2015inceptionism} (\\citeyear{mordvintsev2015inceptionism}) asks what happens if you **freeze the weights and adjust the input instead**: run gradient *ascent* on one class score, and the pixel values themselves start to echo whatever the network has stored about that class \\cite{mordvintsev2015inceptionism}.",
+      "section": "The Network Turned Upside Down",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-3",
+      "quote": "Start from pure noise, maximize the “banana” output, and the noise organizes into a banana — first a blurry, surreal one, then, zoomed in with feedback, an endless cascade of banana-things.",
+      "section": "The Network Turned Upside Down",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-4",
+      "quote": "The authors describe the mechanism in plainly human terms \\cite{mordvintsev2015inceptionism}:",
+      "section": "The Network Turned Upside Down",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-5",
+      "quote": "> This creates a feedback loop: if a cloud looks a little bit like a bird, the network will make it look more like a bird.",
+      "section": "The Network Turned Upside Down",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-6",
+      "quote": "This in turn will make the network recognize the bird even more strongly on the next pass and so forth, until a highly detailed bird appears, seemingly out of nowhere.",
+      "section": "The Network Turned Upside Down",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-7",
+      "quote": "A classifier trained on ImageNet computes a score for each of 1,000 classes (the Places205 network used for some of the essay's images has 205).",
+      "section": "Gradient Ascent on a Class",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-8",
+      "quote": "In forward mode the image is fixed and the network reads it; in dream mode the roles flip — a single random seed gradient-ascented on the “banana” channel.",
+      "section": "Gradient Ascent on a Class",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-9",
+      "quote": "The same image can be optimized for *any* class or any region of it, and the network's layer depth decides the visual style: low layers produce edges, curves and simple strokes; high layers assemble **whole objects** from what they represent \\cite{mordvintsev2015inceptionism}.",
+      "section": "Gradient Ascent on a Class",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-10",
+      "quote": "Instead of prescribing a class, feed the network a photo and ask it to *enhance whatever it detected* — “whatever you see there, I want more of it”.",
+      "section": "Let the Network Choose: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-11",
+      "quote": "The chosen layer then sets the whole visual vocabulary: \\citeauthor{mordvintsev2015inceptionism} note that the first layers are sensitive to basic features, edges and their orientations, so they over-interpret the input as strokes and simple ornament-like patterns, while high layers assemble these into complete objects \\cite{mordvintsev2015inceptionism}.",
+      "section": "Let the Network Choose: Layer by Layer",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-12",
+      "quote": "The funniest artifact of the process is that the dreams obey the network's *natural environment*.",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-13",
+      "quote": "Asked to dream a dumbbell, the network repeatedly produced pictures of a **weightlifter holding one up** — not because the weights encode a dumbbell standing alone, but because, in the training world, dumbbells practically never appear without a person \\cite{mordvintsev2015inceptionism}.",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-14",
+      "quote": "The dream exposes the training distribution's hidden scenery.",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-15",
+      "quote": "\\marginfig{inceptionism_dumbbells.png}{The network's dumbbell dream: a dumbbell *and* a weightlifter holding it — \"Maybe it's never been shown a dumbbell without an arm holding it.\" \\cite{mordvintsev2015inceptionism}.",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-16",
+      "quote": "(\\cite[Figure: original Inceptionism essay, CC BY 4.0]{mordvintsev2015inceptionism})}",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-17",
+      "quote": "The same effect recurs everywhere: clouds swirled into **birds**, rocks and trees rebuilt as **towers and pagodas** or buildings, and birds and insects appearing in images of leaves.",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-18",
+      "quote": "Each is a feedback loop — *recognize, amplify, repeat* — until the network's own expectation takes over.",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-19",
+      "quote": "This is **engineered pareidolia**, the machine counterpart of the face in the [Jupiter photograph](hallucinations.php) or in everyday household objects: our visual system and a convolutional net both **project trained patterns onto ambiguous input**.",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-20",
+      "quote": "The over-interpretation is deliberate and childlike — the essay's own words \\cite{mordvintsev2015inceptionism}:",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-21",
+      "quote": "> …even a relatively simple neural network can be used to over-interpret an image, just like as children we enjoyed watching clouds and interpreting the random shapes.",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-22",
+      "quote": "But because the data is stored at such a high abstraction, the results are an interesting remix of these learned features — neither faithful reproductions nor noise, but the network's own hybrids.",
+      "section": "Dream Logic: The Weightlifter's Dumbbells",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-23",
+      "quote": "An especially revealing variant: instead of starting from noise, start from a real photo.",
+      "section": "The Dream Map",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-24",
+      "quote": "Editing it by gradient ascent shows *where* the network already had opinions.",
+      "section": "The Dream Map",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-25",
+      "quote": "The essay's accompanying image — the one whose file is named `image-dream-map` — is captioned simply: \"The original image influences what kind of objects form in the processed image.\"",
+      "section": "The Dream Map",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-26",
+      "quote": "Zoom the dream into a pattern and run the loop again — the process never settles.",
+      "section": "Fractal Dreams",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-27",
+      "quote": "Each new pattern is parsed by the network and amplified into new objects, which themselves re-enter the loop: towers sprout from rocks, birds spiral from clouds, and every iteration of the zoom yields *more intricate* structure.",
+      "section": "Fractal Dreams",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-28",
+      "quote": "In the post's own, now-famous formulation \\cite{mordvintsev2015inceptionism}:",
+      "section": "Fractal Dreams",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-29",
+      "quote": "> If we apply the algorithm iteratively on its own outputs and apply some zooming after each iteration, we get an endless stream of new impressions, exploring the set of things the network knows about.",
+      "section": "Fractal Dreams",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-30",
+      "quote": "The essay ends on a refreshing note.",
+      "section": "A Tool, Not a Mirror",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-31",
+      "quote": "The authors are careful not to present these images as a faithful picture of what the network “knows”: visualization can reveal that a network has learned the wrong thing, and can help correct those training mishaps.",
+      "section": "A Tool, Not a Mirror",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-32",
+      "quote": "The weightlifter is exactly the kind of leakage of training-distribution priors they have in mind.",
+      "section": "A Tool, Not a Mirror",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-33",
+      "quote": "And they unashamedly welcome the artistic use: neural networks as an instrument, alongside the [perceptual style transfer](computer_vision.php) toolchain, for painters and photographers \\cite{mordvintsev2015inceptionism}.",
+      "section": "A Tool, Not a Mirror",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-34",
+      "quote": "> It also makes us wonder whether neural networks could become a tool for artists—a new way to remix visual concepts—or perhaps even shed a little light on the roots of the creative process in general.",
+      "section": "A Tool, Not a Mirror",
+      "kind": "statement"
+    },
+    {
+      "id": "inceptionism-stmt-35",
+      "quote": "*All images on this page come from the original blog post and are licensed by **Google Inc.** under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/), except for the MIT Places-database images, which are not used here.*",
+      "section": "A Tool, Not a Mirror",
+      "kind": "statement"
+    }
   ]
 }

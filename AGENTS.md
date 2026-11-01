@@ -1040,10 +1040,27 @@ The four history chapters (`history`, `untold_history_i/ii/iii`) are the
 reference for a deep ledger: hundreds of claims each, every claim anchored by
 `quote`, every subject connected by a relation.
 
+**Statement ledger — every prose sentence.** Structured claims cover the
+checkable facts; the `statements` array in each fact file covers the **full
+prose**: every sentence from the lesson's `.md`/`figcaption` blocks is stored
+verbatim (normalised whitespace) with a stable id, its heading and
+`kind: "statement"`. This is the deterministic answer to “every claim must be
+protocolled”: no prose sentence can silently disappear. Generate/refresh with
+
+```bash
+uv run blog/tools/factcheck/extract_statements.py blog/
+uv run blog/tools/factcheck/extract_statements.py blog/ --check
+```
+
+`--check` is a CI gate: a changed lesson whose statement list is stale fails
+immediately. Statements are not used for numeric conflicts (they are
+multi-valued); they are the coverage/provenance layer.
+
 **How the content claims are tested.** Two independent gates run in CI:
 
 ```bash
 uv run blog/tests/content_claims_test.py
+uv run blog/tools/factcheck/extract_statements.py blog/ --check
 uv run blog/tools/factcheck/check_facts.py blog/ \
   --strict-relations --strict-quotes --require-claims
 ```
@@ -1125,7 +1142,8 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tests/link_checker.py blog/` | every `url:` in `literature.js` returns 2xx; PDFs must start `%PDF`; TLS/bot-block soft-passes never fail | real failures | `blog/**` + weekly cron |
 | `uv run blog/tests/literature_dup_keys.py blog/` | every top-level key in `literature.js` appears exactly once (JS object last-wins would silently hide a duplicate) | **any duplicate** | `blog/**` |
 | `uv run blog/tools/factcheck/check_facts.py blog/ --strict-relations --strict-quotes --require-claims` | one fact file per lesson; content claim per lesson; schema; cross-lesson numeric/date/unit/model-spec conflicts; relation endpoints/cycles/temporal; every subject connected; quotes still present | missing/orphan file, metadata-only lesson, malformed claim, conflict, isolated subject, stale quote | `blog/**` (php-validation job) |
-| `uv run blog/tests/content_claims_test.py` | every lesson has content claims; history depth thresholds; core facts; no line fields; quote/unit presence | any missing content claim or core fact | `blog/**` (php-validation job) |
+| `uv run blog/tests/content_claims_test.py` | every lesson has content claims and statements; history depth thresholds; core facts; no line fields; quote/unit presence | any missing content claim, statement or core fact | `blog/**` (php-validation job) |
+| `uv run blog/tools/factcheck/extract_statements.py blog/ --check` | every prose sentence is protocolled in the lesson's fact file (`statements` array) | stale statement ledger | `blog/**` (php-validation job) |
 | `uv run blog/tests/fact_ledger_test.py` | unit tests for aliases, unit normalisation, conflict detection, coverage | any failed test | `blog/**` (php-validation job) |
 | `node blog/tests/{topics,math_alt,keypoint,search_js,semantic_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search, semantic ranking | any failed check | `blog/**` |
 | `node blog/tests/rag_chat_test.js` | RAG chat status text, citation links, HTML escaping | any failed check | `blog/**` |

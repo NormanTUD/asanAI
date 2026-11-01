@@ -577,5 +577,1759 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "people_of_ai-stmt-1",
+      "quote": "Artificial intelligence has a surprisingly small cast of recurring characters.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-2",
+      "quote": "The same names appear in the history chapters, the mathematics lessons, the interpretability labs, and the frontier surveys — sometimes as the person who proved the key theorem, sometimes as the person whose failed attempt defined the next decade's problem.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-3",
+      "quote": "This chapter is a **who's who**: what each person contributed, why it still matters, and one or two primary sources you can read for yourself.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-4",
+      "quote": "Every entry answers the same question in miniature — *what did this person do to AI research?* — and then points to the work where the answer is worked out.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-5",
+      "quote": "It is deliberately not a ranking.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-6",
+      "quote": "Credit in AI is contested, collaborative, and often late.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-7",
+      "quote": "The person whose name is on the paper is not always the person who had the idea first, and the person who had the idea first is not always the person who made it work.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-8",
+      "quote": "Where the record is disputed, the lesson says so.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-9",
+      "quote": "The intellectual scaffolding predates electronic computers by a century.",
+      "section": "Before the Machine",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-10",
+      "quote": "These are the people who made “a machine that learns” thinkable before it was buildable.",
+      "section": "Before the Machine",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-11",
+      "quote": "\\marginfig{ada_lovelace_portrait.jpg}{Ada Lovelace, painted by Alfred Edward Chalon.",
+      "section": "Ada Lovelace and Charles Babbage",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-12",
+      "quote": "Babbage was a mathematician and inventor who hated the errors in printed mathematical tables; that frustration drove his Difference Engine and then the Analytical Engine, a programmable machine with a store, a mill, and punched-card input.",
+      "section": "Ada Lovelace and Charles Babbage",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-13",
+      "quote": "He never saw it completed, and spent much of his fortune and the government's patience on the design.",
+      "section": "Ada Lovelace and Charles Babbage",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-14",
+      "quote": "\\marginfig{charles_babbage_portrait.jpg}{Charles Babbage, 1860.",
+      "section": "Ada Lovelace and Charles Babbage",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-15",
+      "quote": "\\cite{img_charles_babbage}.",
+      "section": "Ada Lovelace and Charles Babbage",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-16",
+      "quote": "Public domain.} Lovelace, the daughter of Lord Byron, was taught mathematics by Augustus De Morgan and translated Menabrea's account of the engine; her notes are longer than the original.",
+      "section": "Ada Lovelace and Charles Babbage",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-17",
+      "quote": "Note G is a step-by-step algorithm for Bernoulli numbers, traditionally described as the first published computer program.",
+      "section": "Ada Lovelace and Charles Babbage",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-18",
+      "quote": "She called her approach “poetical science” and insisted that the machine could manipulate symbols — even compose music — not merely crunch numbers.",
+      "section": "Ada Lovelace and Charles Babbage",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-19",
+      "quote": "She died at 36, and the Analytical Engine was never built (\\cite[Menabrea & Lovelace, 1843]{menabrea_lovelace1843}; \\cite[McCorduck, 1979]{mccorduck1979machines}).",
+      "section": "Ada Lovelace and Charles Babbage",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-20",
+      "quote": "\\marginfig{alan_turing_1951.jpg}{Alan Turing, 1951.",
+      "section": "Alan Turing",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-21",
+      "quote": "Turing was a Cambridge mathematician who, at 24, imagined a machine with an infinite tape and a finite table of states, and used it to prove that some well-defined problems have no mechanical solution.",
+      "section": "Alan Turing",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-22",
+      "quote": "During the Second World War he worked at Bletchley Park on breaking the Enigma cipher, an episode that stayed secret for decades.",
+      "section": "Alan Turing",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-23",
+      "quote": "In 1950 he replaced “Can machines think?” with an operational question: can a machine's text responses be distinguished from a human's?",
+      "section": "Alan Turing",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-24",
+      "quote": "The imitation game did not settle the philosophy, but it turned a metaphysical dispute into an experiment.",
+      "section": "Alan Turing",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-25",
+      "quote": "He was prosecuted in 1952 for homosexuality, then a crime in Britain, and died in 1954 at 41.",
+      "section": "Alan Turing",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-26",
+      "quote": "His question — whether thought can be mechanized — is still the field's north star (\\cite[Turing, 1936]{turing1936}; \\cite[Turing, 1950]{turing1950computing}; \\cite[Hodges, 1983]{hodges1983enigma}).",
+      "section": "Alan Turing",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-27",
+      "quote": "\\marginfig{claude_shannon_portrait.jpg}{Claude Shannon.",
+      "section": "Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-28",
+      "quote": "\\cite{img_claude_shannon}.",
+      "section": "Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-29",
+      "quote": "[CC BY 2.0](https://creativecommons.org/licenses/by/2.0/).}",
+      "section": "Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-30",
+      "quote": "Shannon was a Michigan-born mathematician and engineer whose master's thesis applied Boolean algebra to electrical relays — the idea that made digital circuit design a branch of logic.",
+      "section": "Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-31",
+      "quote": "At Bell Labs he asked what the fundamental limits of communication are, and answered with entropy and channel capacity.",
+      "section": "Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-32",
+      "quote": "He was also a playful inventor: his maze-solving mouse Theseus, his juggling, and his unicycle rides through the Bell Labs corridors were famous.",
+      "section": "Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-33",
+      "quote": "His 1951 paper framed language as a prediction problem — guess the next character, and the difficulty of the guess measures the redundancy of the text.",
+      "section": "Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-34",
+      "quote": "Every language model's training loss is a version of that measurement (\\cite[Shannon, 1948]{shannon1948communication}; \\cite[Shannon, 1951]{shannon1951communication}; \\cite[McCorduck, 1979]{mccorduck1979machines}).",
+      "section": "Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-35",
+      "quote": "\\marginfig{john_von_neumann_portrait.jpg}{John von Neumann.",
+      "section": "John von Neumann and Norbert Wiener",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-36",
+      "quote": "\\cite{img_john_von_neumann}.",
+      "section": "John von Neumann and Norbert Wiener",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-37",
+      "quote": "[CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).}",
+      "section": "John von Neumann and Norbert Wiener",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-38",
+      "quote": "Von Neumann was a Hungarian-born prodigy who worked on game theory, quantum mechanics, and the Manhattan Project before turning to computers.",
+      "section": "John von Neumann and Norbert Wiener",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-39",
+      "quote": "His EDVAC report described the stored-program computer, in which instructions and data share the same memory — the architecture every digital computer still uses — and it cited McCulloch and Pitts' threshold neuron, making the paper a bridge between neural modelling and computer design.",
+      "section": "John von Neumann and Norbert Wiener",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-40",
+      "quote": "Wiener, a child prodigy taught intensively by his father, founded cybernetics: the science of feedback and control.",
+      "section": "John von Neumann and Norbert Wiener",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-41",
+      "quote": "His insistence that organisms and machines could be analysed in the same loop shaped the vocabulary of adaptation that Rosenblatt, Ashby, and the early connectionists inherited (\\cite[von Neumann, 1945]{vonneumann}; \\cite[Wiener, 1948]{wiener1948cybernetics}; \\cite[McCorduck, 1979]{mccorduck1979machines}).",
+      "section": "John von Neumann and Norbert Wiener",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-42",
+      "quote": "\\marginfig{walter_pitts_1954.jpg}{Walter Pitts in 1954.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-43",
+      "quote": "In 1943 McCulloch, a neurophysiologist, and Pitts, a self-taught logician, published **“A Logical Calculus of the Ideas Immanent in Nervous Activity.”** They modelled the neuron as an all-or-none threshold unit and showed that networks of such units can express any function of propositional logic; with recurrent loops, the model anticipated the computational generality later formalized in automata theory.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-44",
+      "quote": "The paper is the founding document of neural-network theory.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-45",
+      "quote": "It gave Rosenblatt the unit he would teach, gave Hopfield the binary element his energy model would settle, and gave the field the step nonlinearity that later became the obstacle backpropagation had to overcome (\\cite[McCulloch & Pitts, 1943]{mccullochpitts1943}).",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-46",
+      "quote": "Their 1947 follow-up, **“How We Know Universals,”** extended the model to the perception of auditory and visual form and anticipated the idea that nervous systems compute invariant representations (\\cite[Pitts & McCulloch, 1947]{pitts1947universals}).",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-47",
+      "quote": "McCulloch collected the programme in \\citetitle{mcculloch1965embodiments} (\\citeyear{mcculloch1965embodiments}).",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-48",
+      "quote": "McCulloch was the group's impresario as much as its theorist.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-49",
+      "quote": "He came to the work from philosophy, medicine and neurophysiology, moved through a series of disciplinary identities — student, poet, experimental neurologist, psychiatry resident, neurophysiologist, neuropsychiatrist, administrator, cybernetician, engineer, mentor — and treated the mind–body problem as a physiological question he called “experimental epistemology”.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-50",
+      "quote": "His homes in Hinsdale, Old Lyme and Cambridge ran an open-door policy; students and collaborators lived there, and his mentoring was deliberately egalitarian rather than authoritarian.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-51",
+      "quote": "The roster that passed through his circle reads like a roll-call of postwar brain science: Lettvin, Maturana, Pitts, Manuel Blum, Jack Cowan, Leo Verbeek, Bill Kilmer and Roberto Moreno-Diaz (\\cite[Abraham, 2016, pp.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-52",
+      "quote": "75–100, 153–157, 186]{abraham2016rebelgenius}).",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-53",
+      "quote": "He also wrote poetry — sonnets, mostly — and published a collection, *The Natural Fit*, in 1959; poetry was one of the identities through which he presented himself, not a hobby kept apart from the science.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-54",
+      "quote": "At the end of his life he left an epitaph warning biographers not to sum him up, because he had always been “on an unknown way / To mine own ends”.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-55",
+      "quote": "He died on 24 September 1969, at 70, and donated his body to Yale; Ralph Gerard's obituary called him a “rebel genius”, the phrase that became the title of Abraham's biography (\\cite[Abraham, 2016, pp.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-56",
+      "quote": "156, 186–189]{abraham2016rebelgenius}).",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-57",
+      "quote": "A McCulloch–Pitts cell: inputs are summed, compared with a threshold, and passed through an all-or-none step.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-58",
+      "quote": "\\cite{img_mcculloch_pitts_neuron}.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-59",
+      "quote": "[CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-60",
+      "quote": "McCulloch's career reads as a sequence of identities rather than a single profession:",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-61",
+      "quote": "- **Student** — Haverford, Yale and Columbia; mathematics, philosophy, psychology and medicine.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-62",
+      "quote": "- **Poet** — sonnets collected in *The Natural Fit* (1959).",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-63",
+      "quote": "- **Experimental neurologist** — cats, absinthe, convulsions, head injuries and cortical localisation.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-64",
+      "quote": "- **Psychiatry assistant** — Rockland State Hospital, 1932–34, where he met Eilhard von Domarus.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-65",
+      "quote": "- **Neurophysiologist** — Dusser de Barenne's strychnine laboratory at Yale, more than twenty papers.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-66",
+      "quote": "- **Experimental epistemologist** — Clark Hull's seminars and a physiological theory of knowledge.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-67",
+      "quote": "- **Theorist** — with Walter Pitts, from their meeting in 1941.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-68",
+      "quote": "- **Mentor** — more than 120 younger collaborators and an open door.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-69",
+      "quote": "- **Neuropsychiatrist** — the reticular formation, the chemistry of psychoses, electroconvulsive therapy.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-70",
+      "quote": "- **Cybernetician** — chair of the Macy conferences.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-71",
+      "quote": "- **Experimentalist** — strychnine on cortex, absinthe in cats, patients' blood in rabbits.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-72",
+      "quote": "- **Farmer** — Old Lyme: dams, barns and a dairy herd.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-73",
+      "quote": "- **Provocateur** — an intellectual showman who treated disciplinary boundaries as arbitrary fences.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-74",
+      "quote": "Abraham's argument is not that these were masks over a hidden “real” McCulloch, but that the transdisciplinary life was itself the achievement (\\cite[Abraham, 2016]{abraham2016rebelgenius}).",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-75",
+      "quote": "The open-door policy was literal.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-76",
+      "quote": "In Hinsdale, Old Lyme and Cambridge, students and collaborators lived in the house; Robert Morison observed in 1947 that the household also contained the children of Stanley Gerr and Norbert Wiener's thirteen-year-old daughter, and concluded that McCulloch chose collaborators largely by how much help they needed.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-77",
+      "quote": "His own children called their parents “Warren” and “Rook”; Jerome Lettvin remembered being listened to “as attentively as a colleague”.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-78",
+      "quote": "Manuel Blum, who would win the Turing Award in 1995, said that McCulloch treated him as an equal when he was not one — “He really listened to what I had to say.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-79",
+      "quote": "And I could actually read his stuff” — and that McCulloch “lifted up quite ordinary people (like me) and made them feel special.” The roster that passed through his orbit includes Lettvin, Pitts, Minsky, Papert, Maturana, Varela, Arbib, Cowan, Blum, Kauffman, Selfridge, MacKay, Kilmer, Wall, Moreno-Díaz and Verbeek.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-80",
+      "quote": "It is the clearest evidence for McCulloch's own claim that his best work was the people he trained (\\cite[Abraham, 2016]{abraham2016rebelgenius}).",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-81",
+      "quote": "Old Lyme was not a retreat from science but another site of it.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-82",
+      "quote": "The farm McCulloch and Rook bought in 1928 became **Camp Aladdin**, a summer camp for children from Brooklyn where the children made the rules; after the Crash it became a working farm.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-83",
+      "quote": "McCulloch calculated the hydraulics of the dam spillways himself, built a large barn in 1938 and a stone mill building in 1940, and kept a dairy herd during the Second World War.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-84",
+      "quote": "His son David remembered that he knew which wood had which properties for which job, and that the architectural drawings always returned to symmetry — the same interest in proportion that had produced the Columbia thesis on dynamic symmetry (\\cite[Abraham, 2016]{abraham2016rebelgenius}).",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-85",
+      "quote": "McCulloch's laboratory life and domestic life were equally unorthodox.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-86",
+      "quote": "He reportedly lived on whisky and ice cream, went to bed around four in the morning, travelled in hobnailed boots, and wore a brown leather jacket under his suit jacket.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-87",
+      "quote": "In early experiments with Elsberg and Pike he injected cats with increasing concentrations of absinthe over two hours and watched the pupils dilate, the muscles twitch, and the eyes dance with nystagmus.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-88",
+      "quote": "With Ladislas Meduna he injected blood from schizophrenic patients into rabbits; in about 60 percent of cases the blood acted as an insulin antagonist, a result that led to the diagnosis of “oneirophrenia” (from Greek *oneiros*, dream).",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-89",
+      "quote": "None of this was mere eccentricity: the same willingness to move from poetry to hydraulics to neurochemistry is what made the transdisciplinary programme possible (\\cite[Abraham, 2016]{abraham2016rebelgenius}).",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-90",
+      "quote": "Several uploads preserve the same 1969 Channel 6 Toronto interview with McCulloch; the full programme is embedded first, followed by the long excerpt and the shorter clips.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-91",
+      "quote": "The last video is a short documentary on Walter Pitts.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-92",
+      "quote": "[youtube]8Wdz1Tj5084[/youtube]",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-93",
+      "quote": "[youtube]ZGxfQN_3BT0[/youtube]",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-94",
+      "quote": "The sad story of the father of AI — Walter Pitts:",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-95",
+      "quote": "[youtube]sCjU0ZoLoGM[/youtube]",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-96",
+      "quote": "Two online sources pair well with the primary literature above: the 1948 *Brooklyn Daily Eagle* clipping is reproduced with a link to the original page image \\cite{afflictor2014mcculloch}, and Amanda Gefter's *Nautilus* portrait of McCulloch and Pitts is excerpted here \\cite{afflictor2015mechanistic, gefter2015pitts}.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-97",
+      "quote": "Afflictor's McCulloch tag archive collects both pieces in one place \\cite{afflictor_mcculloch_tag}.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-98",
+      "quote": "An IBM 704 at NASA Langley, 1957 — the machine on which Samuel's later checkers program ran.",
+      "section": "Warren McCulloch and Walter Pitts",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-99",
+      "quote": "The connectionist line was not the only one to leave the laboratory.",
+      "section": "The Knowledge Engineers",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-100",
+      "quote": "In the 1970s a second group decided that the bottleneck was not the learning rule but **knowledge** itself, and built systems that encoded a specialist's rules explicitly.",
+      "section": "The Knowledge Engineers",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-101",
+      "quote": "**Edward Feigenbaum** and **Bruce Buchanan** at Stanford turned that conviction into DENDRAL, which inferred molecular structures from mass spectra, and then MYCIN, which diagnosed blood infections from a few hundred IF–THEN rules.",
+      "section": "The Knowledge Engineers",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-102",
+      "quote": "MYCIN separated its rule base from its inference engine, so the engine could be reused as the first expert-system shell, EMYCIN, and in a blind clinical test it prescribed antibiotics as well as, or better than, nine human clinicians \\cite{crevier1993ai}.",
+      "section": "The Knowledge Engineers",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-103",
+      "quote": "Feigenbaum called the activity **knowledge engineering**, and it became the commercial face of AI in the 1980s (\\cite[Feigenbaum, 1984]{feigenbaum1984expert}; \\cite[Shortliffe & Buchanan, 1976]{shortliffe1976mycin}).",
+      "section": "The Knowledge Engineers",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-104",
+      "quote": "**John McDermott**'s XCON (originally R1) took the recipe to the Digital Equipment Corporation, where it configured VAX machines and grew from about three hundred rules in 1979 to more than three thousand by 1984 \\cite{crevier1993ai}.",
+      "section": "The Knowledge Engineers",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-105",
+      "quote": "**Douglas Lenat** pushed the same bet further: his AM and Eurisko programs tried to discover mathematical concepts and new heuristics, and when that programme stalled he began **Cyc**, a hand-built common-sense ontology measured in person-centuries of knowledge engineering (\\cite[Cyc]{cyc_wiki}; \\cite{crevier1993ai}).",
+      "section": "The Knowledge Engineers",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-106",
+      "quote": "The lesson of this generation is the one the neural revival would later overturn: intelligence was supposed to live in the rules, and the rules had to be written by hand.",
+      "section": "The Knowledge Engineers",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-107",
+      "quote": "\\marginfig{john_hopfield_portrait.jpg}{John Hopfield.",
+      "section": "John Hopfield",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-108",
+      "quote": "\\cite{img_john_hopfield}.",
+      "section": "John Hopfield",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-109",
+      "quote": "[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).}",
+      "section": "John Hopfield",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-110",
+      "quote": "Hopfield trained as a physicist, worked at Bell Labs and Princeton, and came to neural networks from the physics of collective behaviour.",
+      "section": "John Hopfield",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-111",
+      "quote": "His 1982 paper treated the network as an energy landscape: stored patterns are minima, and recall is relaxation downhill.",
+      "section": "John Hopfield",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-112",
+      "quote": "The model made associative memory rigorous, connected neural networks to statistical physics, and helped restart a field that had been in retreat since the perceptron critique.",
+      "section": "John Hopfield",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-113",
+      "quote": "He shared the 2024 Nobel Prize in Physics with Geoffrey Hinton for these foundations (\\cite[Hopfield, 1982]{hopfield1982}; \\cite[Nobel Prize, 2024]{nobel2024physics}).",
+      "section": "John Hopfield",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-114",
+      "quote": "\\marginfig{david_rumelhart_portrait.jpg}{David Rumelhart at IJCNN Seattle, 1991.",
+      "section": "David Rumelhart, Geoffrey Hinton, and Ronald Williams",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-115",
+      "quote": "\\cite{img_david_rumelhart}.",
+      "section": "David Rumelhart, Geoffrey Hinton, and Ronald Williams",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-116",
+      "quote": "[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).}",
+      "section": "David Rumelhart, Geoffrey Hinton, and Ronald Williams",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-117",
+      "quote": "Rumelhart was a psychologist who led the PDP group at UC San Diego; Hinton was a British-Canadian psychologist who had been arguing for connectionism since the 1970s; Williams was the mathematician who helped make the gradient computation precise.",
+      "section": "David Rumelhart, Geoffrey Hinton, and Ronald Williams",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-118",
+      "quote": "Their 1986 Nature paper showed that the chain rule could be applied backward through a multi-layer network to compute every parameter's gradient in one pass, and demonstrated the idea on tasks that had defeated earlier single-layer systems.",
+      "section": "David Rumelhart, Geoffrey Hinton, and Ronald Williams",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-119",
+      "quote": "The algorithm had been derived earlier — by Werbos in 1974, and independently by others — but the 1986 paper gave it a clean statement, a public demonstration, and a generation of readers.",
+      "section": "David Rumelhart, Geoffrey Hinton, and Ronald Williams",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-120",
+      "quote": "The same PDP volumes collected the wider programme, including Rumelhart and McClelland's past-tense model, which became the standard test case in the rules-versus-associations debate (\\cite[Rumelhart & McClelland, 1986]{rumelhart1986pasttense}).",
+      "section": "David Rumelhart, Geoffrey Hinton, and Ronald Williams",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-121",
+      "quote": "Hinton later co-invented the Boltzmann machine, led the deep-belief-network revival, coauthored AlexNet, left Google in 2023 to warn about risk, and shared the 2024 Nobel Prize in Physics (\\cite[Rumelhart et al., 1986]{rumelhart1986}; \\cite[Ackley et al., 1985]{ackley1985boltzmann}; \\cite[Hinton et al., 2006]{hinton2006}; \\cite[Nobel Prize, 2024]{nobel2024physics}).",
+      "section": "David Rumelhart, Geoffrey Hinton, and Ronald Williams",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-122",
+      "quote": "\\marginfig{geoffrey_hinton_portrait.jpg}{Geoffrey Hinton.",
+      "section": "David Rumelhart, Geoffrey Hinton, and Ronald Williams",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-123",
+      "quote": "\\cite{img_geoffrey_hinton}.",
+      "section": "David Rumelhart, Geoffrey Hinton, and Ronald Williams",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-124",
+      "quote": "[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).} Hinton went on to co-invent the Boltzmann machine, lead the deep-belief-network revival of 2006, and coauthor AlexNet in 2012.",
+      "section": "David Rumelhart, Geoffrey Hinton, and Ronald Williams",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-125",
+      "quote": "He shared the 2024 Nobel Prize in Physics with Hopfield, and later became one of the most prominent voices warning about the risks of the technology he helped create (\\cite[Hinton et al., 2006]{hinton2006}; \\cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet}; \\cite[Nobel Prize, 2024]{nobel2024physics}).",
+      "section": "David Rumelhart, Geoffrey Hinton, and Ronald Williams",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-126",
+      "quote": "\\marginfig{paul_werbos_portrait.jpg}{Paul Werbos at IJCNN Seattle, 1991.",
+      "section": "Paul Werbos",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-127",
+      "quote": "Werbos published the first derivation of backpropagation for neural networks in his 1974 Harvard dissertation, **Beyond Regression**, more than a decade before the 1986 paper made it famous.",
+      "section": "Paul Werbos",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-128",
+      "quote": "He also developed **backpropagation through time** for recurrent networks and the **adaptive critic** family of designs — a learned value model guiding a learned policy — which he later called approximate dynamic programming.",
+      "section": "Paul Werbos",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-129",
+      "quote": "His experience is the field's standard cautionary tale about how long a good idea can sit unread (\\cite[Werbos, 1974]{werbos1974}; \\cite[Werbos, 1990]{werbos1990bptt}).",
+      "section": "Paul Werbos",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-130",
+      "quote": "\\marginfig{yann_lecun_portrait.jpg}{Yann LeCun.",
+      "section": "Yann LeCun",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-131",
+      "quote": "[CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).}",
+      "section": "Yann LeCun",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-132",
+      "quote": "LeCun grew up in France, studied in Paris, and joined Bell Labs, where he combined convolutional weight-sharing with backpropagation to recognize handwritten ZIP codes for the U.S.",
+      "section": "Yann LeCun",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-133",
+      "quote": "Postal Service in 1989; the later LeNet-5 was deployed in bank check-reading systems.",
+      "section": "Yann LeCun",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-134",
+      "quote": "He later founded NYU's CILVR lab and Meta's FAIR, and has spent the last decade arguing that self-supervised world models, not next-token prediction alone, are the path to general intelligence.",
+      "section": "Yann LeCun",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-135",
+      "quote": "He shared the 2018 Turing Award with Hinton and Bengio (\\cite[LeCun et al., 1989]{lecun1989backpropagation}; \\cite[LeCun, 2022]{lecun2022path}).",
+      "section": "Yann LeCun",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-136",
+      "quote": "\\marginfig{yoshua_bengio_portrait.jpg}{Yoshua Bengio.",
+      "section": "Yoshua Bengio",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-137",
+      "quote": "\\cite{img_yoshua_bengio}.",
+      "section": "Yoshua Bengio",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-138",
+      "quote": "[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).}",
+      "section": "Yoshua Bengio",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-139",
+      "quote": "Bengio grew up in France and Canada, trained as a computer scientist, and built Mila in Montreal into one of the world's leading academic deep-learning labs.",
+      "section": "Yoshua Bengio",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-140",
+      "quote": "His 2003 neural probabilistic language model replaced sparse n-gram tables with dense, learned word embeddings — the direct ancestor of the input layer of every modern language model.",
+      "section": "Yoshua Bengio",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-141",
+      "quote": "He shared the 2018 Turing Award with Hinton and LeCun, and has become one of the most prominent scientific voices on AI safety, arguing that the field needs international coordination and a precautionary approach (\\cite[Bengio et al., 2003]{neuralprobabilistic}; \\cite[Bengio et al., 2023]{bengio2023managing}).",
+      "section": "Yoshua Bengio",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-142",
+      "quote": "\\marginfig{sepp_hochreiter_portrait.jpg}{Sepp Hochreiter at his institute, 2015.",
+      "section": "Sepp Hochreiter and Jürgen Schmidhuber",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-143",
+      "quote": "\\cite{img_sepp_hochreiter}.",
+      "section": "Sepp Hochreiter and Jürgen Schmidhuber",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-144",
+      "quote": "Their 1997 **Long Short-Term Memory** introduced the cell state and the gating mechanism that let recurrent networks carry information across many steps without the vanishing gradient destroying it.",
+      "section": "Sepp Hochreiter and Jürgen Schmidhuber",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-145",
+      "quote": "LSTM dominated sequence modelling for two decades — speech, translation, handwriting, time series — and its gated-residual idea is still visible in modern architectures.",
+      "section": "Sepp Hochreiter and Jürgen Schmidhuber",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-146",
+      "quote": "\\marginfig{juergen_schmidhuber_portrait.jpg}{Jürgen Schmidhuber at the AI for Good summit, 2017.",
+      "section": "Sepp Hochreiter and Jürgen Schmidhuber",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-147",
+      "quote": "\\cite{img_juergen_schmidhuber}.",
+      "section": "Sepp Hochreiter and Jürgen Schmidhuber",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-148",
+      "quote": "[CC BY 2.0](https://creativecommons.org/licenses/by/2.0/).} The Transformer replaced the recurrence, not the lesson: a network needs a protected path for information to survive depth and time (\\cite[Hochreiter & Schmidhuber, 1997]{lstm}).",
+      "section": "Sepp Hochreiter and Jürgen Schmidhuber",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-149",
+      "quote": "AlexNet, split across two GPUs: five convolutional layers, three fully connected layers, and a 1000-way softmax.",
+      "section": "Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-150",
+      "quote": "\\cite{img_alexnet_architecture}.",
+      "section": "Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-151",
+      "quote": "[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).",
+      "section": "Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-152",
+      "quote": "\\marginfig{david_silver_portrait.jpg}{David Silver.",
+      "section": "David Silver and Demis Hassabis",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-153",
+      "quote": "Silver studied at Cambridge and UCL, joined DeepMind in 2010, and led the AlphaGo team that combined deep policy and value networks with Monte Carlo tree search to beat Lee Sedol in 2016.",
+      "section": "David Silver and Demis Hassabis",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-154",
+      "quote": "He then led AlphaZero, which learned chess, shogi, and Go from the rules alone by self-play (\\cite[Silver et al., 2016]{silver2016alphago}; \\cite[Silver et al., 2018]{silver2018zero}).",
+      "section": "David Silver and Demis Hassabis",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-155",
+      "quote": "MuZero carried the idea further, learning a model of the environment's dynamics and planning inside it without being given the rules (\\cite[Schrittwieser et al., 2020]{schrittwieser2020muzero}).",
+      "section": "David Silver and Demis Hassabis",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-156",
+      "quote": "\\marginfig{demis_hassabis_portrait.jpg}{Demis Hassabis.",
+      "section": "David Silver and Demis Hassabis",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-157",
+      "quote": "\\cite{img_demis_hassabis}.",
+      "section": "David Silver and Demis Hassabis",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-158",
+      "quote": "[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).} Hassabis co-founded DeepMind after a career that included neuroscience research at UCL — including work on how patients with hippocampal amnesia imagine new experiences (\\cite[Hassabis et al., 2007]{hassabis2007patients}) — and built the organization that made both projects possible; he shared one half of the 2024 Nobel Prize in Chemistry with John Jumper for AlphaFold, while David Baker received the other half for computational protein design (\\cite[Jumper et al., 2021]{jumper2021alphafold}; \\cite[Nobel Prize, 2024]{nobel2024chemistry}; \\cite[DeepMind, 2024]{deepmind_about}).",
+      "section": "David Silver and Demis Hassabis",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-159",
+      "quote": "Silver and Sutton's later essay argues that reward maximization is sufficient for intelligence in general, not just for games (\\cite[Silver et al., 2021]{silver2021reward}).",
+      "section": "David Silver and Demis Hassabis",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-160",
+      "quote": "\\marginfig{john_jumper_portrait.jpg}{John Jumper.",
+      "section": "John Jumper",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-161",
+      "quote": "Jumper is a computational chemist who joined DeepMind in 2017 and led the AlphaFold team.",
+      "section": "John Jumper",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-162",
+      "quote": "He had worked on protein folding as a student and knew the problem's reputation: a protein's function is determined by its three-dimensional shape, but the space of possible folds is astronomical.",
+      "section": "John Jumper",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-163",
+      "quote": "AlphaFold 2's accuracy at CASP14 in 2020 turned a decades-old grand challenge into a practical tool, and AlphaFold 3 extended the approach to biomolecular complexes (\\cite[Jumper et al., 2021]{jumper2021alphafold}; \\cite[Abramson et al., 2024]{alphafold3}).",
+      "section": "John Jumper",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-164",
+      "quote": "He shared one half of the 2024 Nobel Prize in Chemistry with Hassabis; David Baker received the other half (\\cite[Nobel Prize, 2024]{nobel2024chemistry}; \\cite[DeepMind, 2024]{deepmind_about}).",
+      "section": "John Jumper",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-165",
+      "quote": "\\marginfig{richard_sutton_portrait.jpg}{Richard Sutton.",
+      "section": "Richard Sutton and Andrew Barto",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-166",
+      "quote": "\\cite{img_richard_sutton}.",
+      "section": "Richard Sutton and Andrew Barto",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-167",
+      "quote": "Sutton grew up in Canada, did a PhD at UMass Amherst, and worked at AT&T Bell Labs before returning to Alberta; Barto was his UMass colleague and coauthor.",
+      "section": "Richard Sutton and Andrew Barto",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-168",
+      "quote": "Together they built temporal-difference learning, the value-function view, and the textbook that trained the field.",
+      "section": "Richard Sutton and Andrew Barto",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-169",
+      "quote": "Sutton's “The Bitter Lesson” is the clearest statement of the scaling worldview — general methods that exploit computation beat methods with built-in human knowledge — and it remains the most cited argument for the approach that produced modern LLMs.",
+      "section": "Richard Sutton and Andrew Barto",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-170",
+      "quote": "In 2024 they shared the ACM Turing Award (\\cite[Sutton, 1988]{sutton1988td}; \\citetitle{sutton2018rlbook}; \\cite[Sutton, 2019]{sutton2019bitter}; \\cite[ACM, 2024]{acm2024turing}).",
+      "section": "Richard Sutton and Andrew Barto",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-171",
+      "quote": "Two attention heads from layer 5 of 6 in the original Transformer, tracking how the word “its” resolves to different antecedents in different contexts.",
+      "section": "Ashish Vaswani and Noam Shazeer",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-172",
+      "quote": "\\cite{img_transformer_attention_heads}.",
+      "section": "Ashish Vaswani and Noam Shazeer",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-173",
+      "quote": "[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).",
+      "section": "Ashish Vaswani and Noam Shazeer",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-174",
+      "quote": "The people below built the formal and institutional foundations on which everything else rests.",
+      "section": "The Mathematicians and Computer Pioneers",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-175",
+      "quote": "Their work is older than the label “AI,” but the field's central questions — what can be computed, what can be represented, and what can be learned — are theirs.",
+      "section": "The Mathematicians and Computer Pioneers",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-176",
+      "quote": "\\marginfig{george_boole_portrait.jpg}{George Boole.",
+      "section": "George Boole and Gottlob Frege",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-177",
+      "quote": "\\marginfig{gottlob_frege_portrait.jpg}{Gottlob Frege.",
+      "section": "George Boole and Gottlob Frege",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-178",
+      "quote": "\\cite{img_gottlob_frege}.",
+      "section": "George Boole and Gottlob Frege",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-179",
+      "quote": "Boole's **Laws of Thought** (1854) turned Aristotle's syllogisms into algebra: propositions become variables, “and” and “or” become operations, and logical inference becomes calculation.",
+      "section": "George Boole and Gottlob Frege",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-180",
+      "quote": "Every digital circuit and every symbolic AI system is downstream of that move (\\citetitle{boole1854}).",
+      "section": "George Boole and Gottlob Frege",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-181",
+      "quote": "Frege's **Begriffsschrift** (1879) went further, inventing predicate logic and the quantifier notation that made it possible to express statements about *all* or *some* objects — the logical grammar that Russell and Whitehead later built into *Principia Mathematica* (\\citetitle{frege1879}).",
+      "section": "George Boole and Gottlob Frege",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-182",
+      "quote": "Church's lambda calculus gave computation a second formal language, and his 1936 proof that the Entscheidungsproblem is unsolvable established that not every well-defined mathematical question has a mechanical answer (\\cite[Church, 1936]{church1936}).",
+      "section": "Alonzo Church and Alan Turing",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-183",
+      "quote": "Turing's contemporaneous paper on computable numbers introduced the abstract machine that now bears his name, proved the same negative result by a different route, and gave the field its standard model of what a computer *is* (\\citetitle{turing1936}).",
+      "section": "Alonzo Church and Alan Turing",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-184",
+      "quote": "The Church–Turing thesis — that every effectively calculable function is computable by a Turing machine — is the unspoken premise of every neural network.",
+      "section": "Alonzo Church and Alan Turing",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-185",
+      "quote": "\\marginfig{john_mccarthy_portrait.jpg}{John McCarthy.",
+      "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-186",
+      "quote": "\\cite{img_john_mccarthy}.",
+      "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-187",
+      "quote": "The 1955 **Dartmouth proposal** named the field and set its first research agenda: language, neurons, abstraction, and creativity, all to be studied by building machines that could exhibit them (\\cite[McCarthy et al., 1955]{mccarthy1955dartmouth}).",
+      "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-188",
+      "quote": "McCarthy went on to invent LISP and to argue that common-sense knowledge could be represented as explicit logical statements — the symbolic programme that dominated AI's first decades.",
+      "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-189",
+      "quote": "Minsky co-founded MIT's AI laboratory and later wrote *The Society of Mind*, a book-length argument that intelligence is a society of simpler agents rather than a single monolithic algorithm.",
+      "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-190",
+      "quote": "\\marginfig{simon_newell.jpg}{Herbert A.",
+      "section": "Herbert Simon and Allen Newell",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-191",
+      "quote": "\\cite{simonnewell_image}.",
+      "section": "Herbert Simon and Allen Newell",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-192",
+      "quote": "Simon and Newell built the **Logic Theory Machine**, one of the first programs to prove theorems, and used it to argue that human problem solving is symbol manipulation.",
+      "section": "Herbert Simon and Allen Newell",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-193",
+      "quote": "The program proved 38 of the first 52 theorems in *Principia Mathematica* and found a shorter proof of theorem 2.85 than Russell and Whitehead's; when the authors submitted that proof to the *Journal of Symbolic Logic* with the program listed as a co-author, the editor rejected it because proving a theorem in the outmoded system of *Principia* was no accomplishment \\cite{crevier1993ai}.",
+      "section": "Herbert Simon and Allen Newell",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-194",
+      "quote": "Their **physical symbol system hypothesis** — that a physical symbol system has the necessary and sufficient means for general intelligent action — became the philosophical core of classical AI.",
+      "section": "Herbert Simon and Allen Newell",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-195",
+      "quote": "Simon also won the Nobel Prize in Economics for his work on bounded rationality, a reminder that the study of intelligence has always crossed disciplinary lines (\\cite[Newell & Simon, 1956]{newell1956logic}).",
+      "section": "Herbert Simon and Allen Newell",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-196",
+      "quote": "Ashby's **Design for a Brain** defined adaptation as the maintenance of essential variables within viable limits and built the **Homeostat**, a machine that reorganized its own connections until it recovered stability.",
+      "section": "W. Ross Ashby and Donald Hebb",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-197",
+      "quote": "His “law of requisite variety” — only variety can absorb variety — is still the best one-line statement of why control requires internal complexity (\\citetitle{ashbydesigndbrain1952}).",
+      "section": "W. Ross Ashby and Donald Hebb",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-198",
+      "quote": "Hebb's **The Organization of Behavior** proposed that repeated co-activation strengthens synapses, the rule that Rosenblatt turned into the perceptron's error-correction mechanism (\\citetitle{hebb1949organizationofbehaviour}).",
+      "section": "W. Ross Ashby and Donald Hebb",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-199",
+      "quote": "He's **ResNet** introduced the residual connection — learn a *delta* rather than a full transformation — and made networks with hundreds of layers trainable.",
+      "section": "Kaiming He and Alexey Dosovitskiy",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-200",
+      "quote": "The idea is so basic that it now appears in almost every deep architecture, including the Transformer's own residual stream (\\cite[He et al., 2016]{he2016resnet}).",
+      "section": "Kaiming He and Alexey Dosovitskiy",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-201",
+      "quote": "Dosovitskiy's **Vision Transformer** treated an image as a sequence of patches and showed that a plain Transformer, with enough data, could match or beat convolutional networks.",
+      "section": "Kaiming He and Alexey Dosovitskiy",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-202",
+      "quote": "That result opened the path to the unified multimodal models of the 2020s (\\cite[Dosovitskiy et al., 2020]{dosovitskiy2020vit}).",
+      "section": "Kaiming He and Alexey Dosovitskiy",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-203",
+      "quote": "The **U-Net** paired a contracting encoder with an expanding decoder and skip connections, giving image generation and segmentation a precise spatial backbone; it is still the default architecture inside diffusion models (\\cite[Ronneberger et al., 2015]{ronneberger2015unet}).",
+      "section": "Olaf Ronneberger and Phillip Isola",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-204",
+      "quote": "**pix2pix** showed that a conditional GAN could learn image-to-image translation from paired examples — edges to photographs, maps to aerial views, day to night — and made “image translation” a standard task (\\cite[Isola et al., 2017]{isola2017pix2pix}).",
+      "section": "Olaf Ronneberger and Phillip Isola",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-205",
+      "quote": "Ho's **DDPM** made diffusion models practical by learning to reverse a fixed noising process one small step at a time (\\cite[Ho et al., 2020]{ho2020ddpm}).",
+      "section": "Jonathan Ho, Yang Song, and Robin Rombach",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-206",
+      "quote": "Song's score-based formulation provided the continuous-time view — learn the gradient of the log density, then follow it back to data — that unified diffusion with earlier energy-based methods (\\cite[Song & Ermon, 2019]{song2019score}).",
+      "section": "Jonathan Ho, Yang Song, and Robin Rombach",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-207",
+      "quote": "Rombach's **latent diffusion** moved the whole process into a compressed image space, cutting the compute enough to put Stable Diffusion on a consumer GPU (\\cite[Rombach et al., 2022]{rombach2022ldm}).",
+      "section": "Jonathan Ho, Yang Song, and Robin Rombach",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-208",
+      "quote": "Ramesh's **DALL·E** was an autoregressive Transformer over discrete image tokens — a direct application of the language-model recipe to pixels (\\cite[Ramesh et al., 2021]{ramesh2021dalle}).",
+      "section": "Aditya Ramesh, Alec Radford, and William Peebles",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-209",
+      "quote": "Radford's **CLIP** learned a shared image-text space from hundreds of millions of pairs by contrastive training, giving text-to-image systems a semantic steering wheel (\\cite[Radford et al., 2021]{radford2021clip}); his GPT-2 and Whisper work did the same for open-ended text and speech (\\cite[Radford et al., 2019]{radford2019language}; \\cite[Radford et al., 2022]{radford2022whisper}).",
+      "section": "Aditya Ramesh, Alec Radford, and William Peebles",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-210",
+      "quote": "Peebles' **Diffusion Transformer** replaced the U-Net with a plain Transformer over latent patches and became the backbone of Sora, FLUX, and Stable Diffusion 3 (\\cite[Peebles & Xie, 2023]{peebles2023dit}).",
+      "section": "Aditya Ramesh, Alec Radford, and William Peebles",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-211",
+      "quote": "The language-model stack was assembled from many small inventions.",
+      "section": "The NLP Lineage",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-212",
+      "quote": "These are the people whose papers supply the pieces.",
+      "section": "The NLP Lineage",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-213",
+      "quote": "\\marginfig{tomas_mikolov_portrait.jpg}{Tomáš Mikolov.",
+      "section": "Tomas Mikolov and Jeffrey Pennington",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-214",
+      "quote": "\\cite{img_tomas_mikolov}.",
+      "section": "Tomas Mikolov and Jeffrey Pennington",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-215",
+      "quote": "Mikolov's **word2vec** trained dense word vectors on local context windows and showed that their differences encode analogies — “king − man + woman ≈ queen” (\\cite[Mikolov et al., 2013]{mikolov2013word2vec}).",
+      "section": "Tomas Mikolov and Jeffrey Pennington",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-216",
+      "quote": "Pennington's **GloVe** reached the same geometry from the opposite direction, factorizing the global co-occurrence matrix so that dot products approximate log counts (\\cite[Pennington et al., 2014]{pennington2014glove}).",
+      "section": "Tomas Mikolov and Jeffrey Pennington",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-217",
+      "quote": "Together they made the embedding layer a standard component of neural language models.",
+      "section": "Tomas Mikolov and Jeffrey Pennington",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-218",
+      "quote": "Sennrich's **subword BPE** solved the out-of-vocabulary problem by learning a vocabulary of frequent character fragments, so any word can be reconstructed from pieces (\\cite[Sennrich et al., 2016]{sennrich2016subword}).",
+      "section": "Rico Sennrich and Taku Kudo",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-219",
+      "quote": "Kudo's **SentencePiece** made the same idea language-independent by treating whitespace as a normal symbol, which is why multilingual models can tokenize Chinese, English, and code with one vocabulary (\\cite[Kudo & Richardson, 2018]{kudo2018sentencepiece}).",
+      "section": "Rico Sennrich and Taku Kudo",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-220",
+      "quote": "Devlin's **BERT** trained a bidirectional encoder with masked language modelling and established the pretrain-then-fine-tune paradigm for understanding tasks (\\cite[Devlin et al., 2019]{devlin2019bert}).",
+      "section": "Jacob Devlin, Yinhan Liu, and Colin Raffel",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-221",
+      "quote": "Liu's **RoBERTa** showed that BERT was undertrained: remove next-sentence prediction, resample masks dynamically, train longer on more data, and the same architecture sets new records (\\cite[Liu et al., 2019]{liu2019roberta}).",
+      "section": "Jacob Devlin, Yinhan Liu, and Colin Raffel",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-222",
+      "quote": "Raffel's **T5** unified translation, summarization, classification, and question answering into one text-to-text format with span-corruption pretraining (\\cite[Raffel et al., 2020]{raffel2020t5}).",
+      "section": "Jacob Devlin, Yinhan Liu, and Colin Raffel",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-223",
+      "quote": "A frontier model is not just an algorithm; it is a distributed system.",
+      "section": "Systems and Efficiency",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-224",
+      "quote": "These people made the difference between a paper and a training run.",
+      "section": "Systems and Efficiency",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-225",
+      "quote": "\\marginfig{jeff_dean_portrait.jpg}{Jeff Dean.",
+      "section": "Jeff Dean, Samyam Rajbhandari, and Dmitry Lepikhin",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-226",
+      "quote": "Dean's **DistBelief** showed that neural networks could be trained across thousands of machines, and his later work on TensorFlow and TPUs made that infrastructure usable (\\cite[Dean et al., 2012]{dean2012large}).",
+      "section": "Jeff Dean, Samyam Rajbhandari, and Dmitry Lepikhin",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-227",
+      "quote": "Rajbhandari's **ZeRO** partitioned optimizer states, gradients, and parameters across data-parallel workers, removing the memory duplication that had blocked trillion-parameter training (\\cite[Rajbhandari et al., 2020]{rajbhandari2020zero}).",
+      "section": "Jeff Dean, Samyam Rajbhandari, and Dmitry Lepikhin",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-228",
+      "quote": "Lepikhin's **GShard** combined mixture-of-experts routing with automatic sharding, making sparse models practical at scale (\\cite[Lepikhin et al., 2021]{lepikhin2021gshard}).",
+      "section": "Jeff Dean, Samyam Rajbhandari, and Dmitry Lepikhin",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-229",
+      "quote": "Fedus's **Switch Transformer** simplified MoE routing to one expert per token and scaled it to trillion-parameter models (\\cite[Fedus et al., 2022]{fedus2022switch}).",
+      "section": "William Fedus, Tri Dao, and Woosuk Kwon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-230",
+      "quote": "Dao's **FlashAttention** made exact attention IO-aware: it tiles the computation to fit in GPU on-chip memory instead of materializing the full attention matrix (\\cite[Dao et al., 2022]{dao2022flashattention}).",
+      "section": "William Fedus, Tri Dao, and Woosuk Kwon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-231",
+      "quote": "Kwon's **vLLM** introduced PagedAttention, managing the KV cache in fixed-size blocks like an operating system's virtual memory; it turned serving from a memory-fragmentation problem into a throughput problem (\\cite[Kwon et al., 2023]{kwon2023vllm}).",
+      "section": "William Fedus, Tri Dao, and Woosuk Kwon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-232",
+      "quote": "Olah's **circuits thread** reframed neural networks as objects to be reverse-engineered: features are directions, circuits are subgraphs, and the goal is a mechanistic explanation of behavior (\\cite[Olah et al., 2020]{olaha2020zoomin}).",
+      "section": "Chris Olah, Nelson Elhage, and Trenton Bricken",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-233",
+      "quote": "Elhage's **Mathematical Framework for Transformer Circuits** formalized the residual stream and the QK/OV circuits, and his **Toy Models of Superposition** explained why neurons are polysemantic: networks pack more features than dimensions by using nearly orthogonal directions (\\cite[Elhage et al., 2021]{elhage2021mathematical}; \\cite[Elhage et al., 2022]{elhage2022superposition}).",
+      "section": "Chris Olah, Nelson Elhage, and Trenton Bricken",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-234",
+      "quote": "Bricken's **Towards Monosemanticity** showed that sparse autoencoders could recover interpretable features from superposition, the technique later scaled to production models (\\cite[Bricken et al., 2023]{bricken2023monosemanticity}).",
+      "section": "Chris Olah, Nelson Elhage, and Trenton Bricken",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-235",
+      "quote": "Zou's **representation engineering** turned interpretability into a top-down toolkit for reading and controlling high-level properties such as honesty and power-seeking (\\cite[Zou et al., 2023]{zou2023repeng}).",
+      "section": "Andy Zou and Alexander Matt Turner",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-236",
+      "quote": "Turner's **activation addition** showed that a single contrastive direction — “Love” minus “Hate” — could steer a model's sentiment at inference time without any training (\\cite[Turner et al., 2023]{turner2023actadd}).",
+      "section": "Andy Zou and Alexander Matt Turner",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-237",
+      "quote": "\\marginfig{dario_amodei_portrait.jpg}{Dario Amodei.",
+      "section": "Collin Burns, Dario Amodei, and Geoffrey Irving",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-238",
+      "quote": "Burns' **weak-to-strong generalization** fine-tuned strong models on labels from weak supervisors to measure how much latent capability could be elicited — a present-day proxy for the alignment problem (\\cite[Burns et al., 2023]{burns2023weakstrong}).",
+      "section": "Collin Burns, Dario Amodei, and Geoffrey Irving",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-239",
+      "quote": "Amodei's **Concrete Problems in AI Safety** named the failure modes that the field still uses as its taxonomy: reward hacking, side effects, scalable oversight, safe exploration, and distributional shift (\\cite[Amodei et al., 2016]{amodei2016concrete}).",
+      "section": "Collin Burns, Dario Amodei, and Geoffrey Irving",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-240",
+      "quote": "Irving's **AI safety via debate** proposed training two models to argue opposite sides of a question in front of a human judge, so that the judge can supervise answers too complex to verify directly (\\cite[Irving et al., 2018]{irving2018debate}).",
+      "section": "Collin Burns, Dario Amodei, and Geoffrey Irving",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-241",
+      "quote": "\\marginfig{stuart_russell_portrait.jpg}{Stuart Russell.",
+      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-242",
+      "quote": "\\cite{img_stuart_russell}.",
+      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-243",
+      "quote": "\\marginfig{nick_bostrom_portrait.jpg}{Nick Bostrom.",
+      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-244",
+      "quote": "\\marginfig{eliezer_yudkowsky_portrait.jpg}{Eliezer Yudkowsky.",
+      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-245",
+      "quote": "\\cite{img_eliezer_yudkowsky}.",
+      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-246",
+      "quote": "\\marginfig{toby_ord_portrait.jpg}{Toby Ord.",
+      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-247",
+      "quote": "Russell's **Human Compatible** argues that the standard objective-based model of AI is the problem: a machine optimizing a fixed objective will resist correction, so the design goal should be uncertainty about human preferences and a willingness to be switched off (\\citetitle{russell2019human}).",
+      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-248",
+      "quote": "Bostrom's **Superintelligence** framed the control problem and the orthogonality thesis — intelligence and final goals are independent — for a broad audience (\\citetitle{bostrom2014superintelligence}).",
+      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-249",
+      "quote": "Yudkowsky's earlier essay on AI as a global risk factor made the case that a sufficiently capable optimizer need not be malevolent to be dangerous (\\cite[Yudkowsky, 2008]{yudkowsky2008ai}).",
+      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-250",
+      "quote": "Ord's **The Precipice** places AI risk alongside pandemics and nuclear war in a broader ethics of existential risk (\\citetitle{ord2020precipice}).",
+      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-251",
+      "quote": "Tesauro's **TD-Gammon** combined self-play with temporal-difference learning and a neural network, reaching master-level backgammon and demonstrating that value learning from self-generated experience could work at scale (\\cite[Tesauro, 1995]{tesauro1995tdgammon}).",
+      "section": "Gerald Tesauro, Volodymyr Mnih, and John Schulman",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-252",
+      "quote": "Mnih's **DQN** learned Atari games directly from pixels with a convolutional network and experience replay, the result that launched deep reinforcement learning (\\cite[Mnih et al., 2015]{mnih2015dqn}).",
+      "section": "Gerald Tesauro, Volodymyr Mnih, and John Schulman",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-253",
+      "quote": "Schulman's **PPO** made policy-gradient training stable enough to become the default algorithm for RLHF and for many game-playing systems (\\cite[Schulman et al., 2017]{schulman2017ppo}).",
+      "section": "Gerald Tesauro, Volodymyr Mnih, and John Schulman",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-254",
+      "quote": "Shao's **DeepSeekMath** introduced **GRPO**, the group-relative policy optimization that removes the critic by normalizing rewards across sampled answers to the same prompt.",
+      "section": "Zhihong Shao",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-255",
+      "quote": "GRPO made verifiable-reward RL cheap enough to run at scale and became the optimization engine behind DeepSeek-R1 and many open reasoning models (\\cite[Shao et al., 2024]{shao2024grpo}).",
+      "section": "Zhihong Shao",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-256",
+      "quote": "These are the names that appear most often across the course, counted approximately by citation keys plus full-name mentions in the top-level lesson files.",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-257",
+      "quote": "The right-hand column points to the lessons where their work does the most work.",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-258",
+      "quote": "| Person | Recurring in |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-259",
+      "quote": "| **Geoffrey Hinton** | [History](history.php), [Backpropagation](backproplab.php), [Optimizers](optimizerlab.php), [Deep Learning](deeplearninglab.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-260",
+      "quote": "| **Alan Turing** | [History](history.php), [Algorithms](algorithms.php), [Philosophy](philosophy.php), [Myths](myths.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-261",
+      "quote": "| **Norbert Wiener** | [History](history.php), [Untold History](untold_history_iii.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-262",
+      "quote": "| **John von Neumann** | [History](history.php), [Software](software.php), [Untold History](untold_history_iii.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-263",
+      "quote": "| **Ada Lovelace** | [History](history.php), [Software](software.php), [Untold History](untold_history_iii.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-264",
+      "quote": "| **Charles Babbage** | [History](history.php), [Software](software.php), [Untold History](untold_history_iii.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-265",
+      "quote": "| **Marvin Minsky** | [History](history.php), [AI and Society](ai_and_society.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-266",
+      "quote": "| **Seymour Papert** | [History](history.php), [Philosophy](philosophy.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-267",
+      "quote": "| **John Hopfield** | [History](history.php), [The Mirror in the Machine](mirror_in_machine.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-268",
+      "quote": "| **Paul Werbos** | [History](history.php), [Backpropagation](backproplab.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-269",
+      "quote": "| **Demis Hassabis** | [AI and Society](ai_and_society.php), [AI for Science](ai_for_science.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-270",
+      "quote": "| **David Silver** | [Reinforcement Learning](reinforcement_learning.php), [AI for Science](ai_for_science.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-271",
+      "quote": "| **John Jumper** | [AI for Science](ai_for_science.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-272",
+      "quote": "| **Andrew Ng** | [History](history.php), [Software](software.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-273",
+      "quote": "| **Yann LeCun** | [Computer Vision](computer_vision.php), [History](history.php), [AI Existential Risk](ai_existential_risk.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-274",
+      "quote": "| **Yoshua Bengio** | [Language](language.php), [History](history.php), [AI Existential Risk](ai_existential_risk.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-275",
+      "quote": "| **Frank Rosenblatt** | [History](history.php), [Smallest Neural Network](minimalneuron.php), [Activation Functions](activationlab.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-276",
+      "quote": "| **Warren McCulloch & Walter Pitts** | [History](history.php), [The Mirror in the Machine](mirror_in_machine.php), [Philosophy](philosophy.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-277",
+      "quote": "| **Claude Shannon** | [History](history.php), [Language](language.php), [Statistics I](statistics_i.php), [Tokenization](tokenizerlab.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-278",
+      "quote": "| **Ashish Vaswani** | [Transformer](transformer.php), [Attention](attentionlab.php), [Context Windows](contextwindows.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-279",
+      "quote": "| **Richard Sutton** | [Reinforcement Learning](reinforcement_learning.php), [AI Existential Risk](ai_existential_risk.php), [Myths](myths.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-280",
+      "quote": "| **Sepp Hochreiter** | [Recurrent Networks](recurrent_networks.php), [Attention](attentionlab.php), [Automatic Differentiation](autodiff.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-281",
+      "quote": "| **Fei-Fei Li** | [Computer Vision](computer_vision.php), [Multimodal](multimodal.php), [Evaluation](evaluation.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-282",
+      "quote": "| **David Rumelhart** | [Backpropagation](backproplab.php), [Automatic Differentiation](autodiff.php), [Loss Landscape](loss_landscape.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-283",
+      "quote": "| **Noam Shazeer** | [Transformer](transformer.php), [Mixture of Experts](mixture_of_experts.php), [Inference Optimization](inference_optimization.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-284",
+      "quote": "| **Catherine Olsson** | [In-Context Learning](unexpected_capabilities.php), [Mechanistic Interpretability](mechanistic_interpretability.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-285",
+      "quote": "| **François Chollet** | [Unexpected Capabilities](unexpected_capabilities.php), [Global AI Ecosystem](global_ai_ecosystem.php) |",
+      "section": "The Recurring Cast",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-286",
+      "quote": "The history of AI is not a list of lone geniuses.",
+      "section": "A Note on Credit",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-287",
+      "quote": "Ideas arrive in clusters, are independently discovered, and are often named after the person who made them famous rather than the person who had them first.",
+      "section": "A Note on Credit",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-288",
+      "quote": "Backpropagation is the canonical example: Werbos derived it in 1974, Rumelhart, Hinton, and Williams made it famous in 1986, and Linnainmaa had described the reverse-mode chain rule earlier still.",
+      "section": "A Note on Credit",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-289",
+      "quote": "The perceptron has its own priority dispute: Farley and Clark built a perceptron-like device before Rosenblatt, but did not build the theory around it.",
+      "section": "A Note on Credit",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-290",
+      "quote": "The Transformer had eight authors, and its key ideas drew on attention mechanisms developed for translation.",
+      "section": "A Note on Credit",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-291",
+      "quote": "This chapter names people because names are how the course's citations, biographies, and Atlas entries are organized — not because the field's progress can be reduced to a list of individuals.",
+      "section": "A Note on Credit",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-292",
+      "quote": "The primary sources are the point.",
+      "section": "A Note on Credit",
+      "kind": "statement"
+    }
   ]
 }

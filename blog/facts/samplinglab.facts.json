@@ -446,5 +446,841 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "samplinglab-stmt-1",
+      "quote": "Given a probability distribution over the next token, which one do you pick?",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-2",
+      "quote": "This is the **decoding strategy**, and it controls the model's “personality”, focused and deterministic, or wild and creative.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-3",
+      "quote": "The frontier in 2025: many subtle techniques beyond temperature and top-$k$.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-4",
+      "quote": "This chapter covers every common decoding method with its mathematical formulation and recommended use, grouped from the baseline distribution, through the candidate-set filters, to the diversity and search tricks and the practical settings that tie them together.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-5",
+      "quote": "Three of the four quantities in this chapter, **Boltzmann distributions**, **entropy**, and **KL-divergence**, were born long before language models.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-6",
+      "quote": "They appear in the Statistics II chapter § Boltzmann Distributions, § Entropy, § KL Divergence.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-7",
+      "quote": "If softmax + temperature looks familiar from physics, that is because it *is* physics.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-8",
+      "quote": "The softmax with temperature $T$ is exactly the **Boltzmann distribution** (\\cite[Boltzmann, 1877]{boltzmann}) over the token \"energy levels\" $E_i = -z_i$ (the logit, negated), written in dimensionless form by absorbing the Boltzmann constant into $T$: $\\;P_i = e^{z_i/T} / \\sum_j e^{z_j/T}$.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-9",
+      "quote": "So $T$ is not a knob we invented — it is a **temperature** in the thermodynamic sense.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-10",
+      "quote": "$T \\to 0$ is the **ground state**: the system collapses onto the single lowest-energy, highest-probability token (greedy).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-11",
+      "quote": "$T \\to \\infty$ is the **infinite-temperature** limit, where every state is equally populated (uniform).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-12",
+      "quote": "Raising $T$ does not make the model \"creative\" in any vague sense; it lets higher-energy, rarer tokens be occupied at all, the way a hotter gas puts its particles into excited states.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-13",
+      "quote": "Sampling is thermodynamics in disguise.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-14",
+      "quote": "Boltzmann's 1877 memoir gave the combinatorial derivation behind the distribution $p_i\\propto e^{-E_i/kT}$ for a gas in thermal equilibrium (\\cite{boltzmann}).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-15",
+      "quote": "Gibbs gave the ensemble formulation in his 1902 treatise (\\cite{gibbs1902}), and the same exponential family reappears as the Gibbs distribution in statistics and image processing (\\cite{geman1984gibbs}).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-16",
+      "quote": "Ackley, Hinton, and Sejnowski imported the idea into neural networks as the Boltzmann machine, where temperature controls the sharpness of the stochastic units (\\cite{ackley1985boltzmann}).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-17",
+      "quote": "Softmax temperature is exactly this formula with the negative logit playing the role of energy, so the analogy is structural, not decorative.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-18",
+      "quote": "After the LLM produces logits $\\mathbf{z} \\in \\mathbb{R}^{|V|}$ for the next token, softmax gives a probability distribution:",
+      "section": "The Probability Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-19",
+      "quote": "where $T$ is **temperature**:",
+      "section": "The Probability Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-20",
+      "quote": "* $T \\to 0$: argmax (greedy).",
+      "section": "The Probability Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-21",
+      "quote": "Always picks the most likely token.",
+      "section": "The Probability Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-22",
+      "quote": "* $T = 1$: native distribution.",
+      "section": "The Probability Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-23",
+      "quote": "* $T \\to \\infty$: uniform distribution (random).",
+      "section": "The Probability Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-24",
+      "quote": "* $T > 1$: flatter distribution (more diverse, more random).",
+      "section": "The Probability Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-25",
+      "quote": "* $T < 1$: sharper distribution (more focused).",
+      "section": "The Probability Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-26",
+      "quote": "But that's only the beginning.",
+      "section": "The Probability Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-27",
+      "quote": "Most modern systems use **additional filters** on top of temperature.",
+      "section": "The Probability Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-28",
+      "quote": "Always pick $\\arg\\max_i P(i)$.",
+      "section": "Greedy Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-29",
+      "quote": "Used in production for fact-retrieval tasks where creativity is unwanted.",
+      "section": "Greedy Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-30",
+      "quote": "Drawback: **repetition loops** and **mode collapse** (“the the the the...”).",
+      "section": "Greedy Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-31",
+      "quote": "Restrict to the $k$ tokens with highest probability, then renormalize (\\cite[Fan et al., 2018]{fan2018topk}):",
+      "section": "Top-$k$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-32",
+      "quote": "where $Z = \\sum_{j \\in \\mathcal{V}_k} P(j)$.",
+      "section": "Top-$k$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-33",
+      "quote": "* $k = 50$: typical for chat.",
+      "section": "Top-$k$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-34",
+      "quote": "* $k = 1000+$ for creative writing.",
+      "section": "Top-$k$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-35",
+      "quote": "Drawback: $k$ is a fixed number, but the appropriate $k$ varies per context.",
+      "section": "Top-$k$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-36",
+      "quote": "Sometimes only 3 tokens have meaningful probability; sometimes 100.",
+      "section": "Top-$k$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-37",
+      "quote": "Fan, Lewis, and Dauphin introduced top-$k$ sampling for open-ended story generation, where pure ancestral sampling drifted into incoherence and beam search produced bland text (\\cite{fan2018topk}).",
+      "section": "Top-$k$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-38",
+      "quote": "Their model used $k=10$ together with a temperature, and the combination was enough to keep generations on topic without collapsing to the mode.",
+      "section": "Top-$k$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-39",
+      "quote": "The method's weakness was visible from the start: a fixed $k$ cannot know whether the next distribution is sharp or flat, which is exactly the problem nucleus sampling later addressed.",
+      "section": "Top-$k$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-40",
+      "quote": "Sample from the smallest set of tokens whose cumulative probability exceeds $p$ (\\cite[Holtzman et al., 2020]{holtzman2020nucleus}):",
+      "section": "Top-$p$ (Nucleus) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-41",
+      "quote": "* $p = 0.9$: typical for chat (sample from top 90% of mass).",
+      "section": "Top-$p$ (Nucleus) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-42",
+      "quote": "* $p = 0.95$: more diverse.",
+      "section": "Top-$p$ (Nucleus) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-43",
+      "quote": "* $p = 0.5$: very focused.",
+      "section": "Top-$p$ (Nucleus) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-44",
+      "quote": "This adapts the effective vocabulary size to the distribution.",
+      "section": "Top-$p$ (Nucleus) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-45",
+      "quote": "When the distribution is sharp (one token dominates), $\\mathcal{V}_p$ is small; when flat, $\\mathcal{V}_p$ is large.",
+      "section": "Top-$p$ (Nucleus) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-46",
+      "quote": "Most production APIs default to **top-$p$ = 0.9 or 0.95**.",
+      "section": "Top-$p$ (Nucleus) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-47",
+      "quote": "Holtzman et al. diagnosed the failure of maximization-based decoding as a mismatch between machine and human text: greedy and beam search produce high-probability, low-surprisal strings that loop, while pure sampling occasionally goes off the rails (\\cite{holtzman2020nucleus}).",
+      "section": "Top-$p$ (Nucleus) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-48",
+      "quote": "Nucleus sampling keeps the smallest set of tokens whose mass reaches $p$, so the candidate pool expands when the model is uncertain and contracts when it is confident.",
+      "section": "Top-$p$ (Nucleus) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-49",
+      "quote": "Human evaluation showed it matching or beating top-$k$ on coherence and diversity; the cost is that $p$ still has to be tuned per model.",
+      "section": "Top-$p$ (Nucleus) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-50",
+      "quote": "A newer dynamic-truncation method (\\cite[Nguyen et al., 2025]{nguyen2025minp}), available in Hugging Face Transformers, vLLM, and llama.cpp:",
+      "section": "Min-$p$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-51",
+      "quote": "* Choose $m = \\max_i P(i)$ (the highest probability).",
+      "section": "Min-$p$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-52",
+      "quote": "* Include all tokens with $P(i) \\geq s \\cdot m$ where $s \\in [0, 1]$ is the min-$p$ parameter.",
+      "section": "Min-$p$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-53",
+      "quote": "* $s = 0.1$: include any token within 10× of the max.",
+      "section": "Min-$p$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-54",
+      "quote": "* $s = 0.05$: more inclusive.",
+      "section": "Min-$p$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-55",
+      "quote": "* $s = 1.0$: greedy (only the top token qualifies).",
+      "section": "Min-$p$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-56",
+      "quote": "$s = 0.0$ switches the filter off (keeps every token).",
+      "section": "Min-$p$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-57",
+      "quote": "Min-$p$ **scales with confidence**: when the model is sharp, few tokens qualify; when uncertain, more.",
+      "section": "Min-$p$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-58",
+      "quote": "The authors report better quality and diversity than top-$p$, especially at higher temperatures; the evidence is strongest in that high-temperature regime.",
+      "section": "Min-$p$ Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-59",
+      "quote": "Top-$n$ is just another name for top-$k$: keep exactly the $n$ highest-probability tokens, then renormalize.",
+      "section": "Top-$n$ (Top-$N$) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-60",
+      "quote": "The two names appear in different codebases, which can make them look like separate algorithms.",
+      "section": "Top-$n$ (Top-$N$) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-61",
+      "quote": "They are the same filter, and the same drawback applies: $n$ does not adapt to how sharp or flat the distribution is.",
+      "section": "Top-$n$ (Top-$N$) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-62",
+      "quote": "Discards tokens in the “tail” of the distribution where the second derivative of probability is small.",
+      "section": "Tail-Free Sampling (TFS)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-63",
+      "quote": "Rarely used in production.",
+      "section": "Tail-Free Sampling (TFS)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-64",
+      "quote": "Similar to min-$p$ but with a different criterion: cut off tokens with probability below an $\\eta$-dependent threshold based on entropy.",
+      "section": "Eta ($\\eta$) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-65",
+      "quote": "Generally less popular than min-$p$.",
+      "section": "Eta ($\\eta$) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-66",
+      "quote": "Locally typical sampling starts from an information-theoretic observation: human text keeps each word's surprisal close to the conditional entropy of its context, while high-probability machine text is too predictable and pure sampling is too noisy (\\cite{meister2022typical}).",
+      "section": "Eta ($\\eta$) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-67",
+      "quote": "The method keeps tokens whose information content $-\\log p_i$ is closest to the entropy $H$, rather than the tokens with the largest probability.",
+      "section": "Eta ($\\eta$) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-68",
+      "quote": "On summarization and story generation it reduced repetition and scored competitively with nucleus sampling.",
+      "section": "Eta ($\\eta$) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-69",
+      "quote": "Its parameter is the mass $\\tau$ of the typical set, so like top-$p$ it controls how much of the distribution survives.",
+      "section": "Eta ($\\eta$) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-70",
+      "quote": "Every method above is a different way of answering the same question: *which candidates are still allowed?* Below, a model has produced logits for the next word.",
+      "section": "Try it: the Decoding Studio",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-71",
+      "quote": "Turn the temperature, switch the filters on and off, and sample.",
+      "section": "Try it: the Decoding Studio",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-72",
+      "quote": "The faint bar behind each token is its probability after temperature; the bright bar is what is left after the filters cut the tail and the survivors are renormalized.",
+      "section": "Try it: the Decoding Studio",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-73",
+      "quote": "Then switch to the factual prompt and notice how top-$k$ keeps nonsense while top-$p$ and min-$p$ shrink to a single word on their own.",
+      "section": "Try it: the Decoding Studio",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-74",
+      "quote": "Penalize tokens that have already appeared in the context (\\cite[Keskar et al., 2019]{keskar2019ctrl}).",
+      "section": "Repetition Penalty",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-75",
+      "quote": "CTRL divides their logits by $\\theta$ inside the softmax; most implementations use the sign-aware form, which divides positive logits and multiplies negative ones so that every repeated token really becomes less likely:",
+      "section": "Repetition Penalty",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-76",
+      "quote": "* $\\theta = 1.0$: no penalty.",
+      "section": "Repetition Penalty",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-77",
+      "quote": "* $\\theta = 1.1$: mild penalty.",
+      "section": "Repetition Penalty",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-78",
+      "quote": "* $\\theta = 1.3$: strong penalty.",
+      "section": "Repetition Penalty",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-79",
+      "quote": "Useful for chat where the model might otherwise loop.",
+      "section": "Repetition Penalty",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-80",
+      "quote": "OpenAI-style **frequency** and **presence** penalties are additive variants: subtract $\\alpha\\cdot\\text{count}(i)$ or $\\beta\\cdot\\mathbf{1}[i\\in\\text{context}]$ from the logit.",
+      "section": "Repetition Penalty",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-81",
+      "quote": "A smarter repetition penalty (Cohere, 2023) that detects repeated n-grams and penalizes them only when they would create a degenerate loop:",
+      "section": "DRY (Don't Repeat Yourself) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-82",
+      "quote": "* Match n-grams of length $n \\geq n_{\\text{min}}$ (e.g., 8).",
+      "section": "DRY (Don't Repeat Yourself) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-83",
+      "quote": "* If the most recent n-gram matches an earlier one and would continue the repetition, apply penalty.",
+      "section": "DRY (Don't Repeat Yourself) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-84",
+      "quote": "More nuanced than the basic repetition penalty.",
+      "section": "DRY (Don't Repeat Yourself) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-85",
+      "quote": "Used in Cohere's Command-R and recommended for long-context generation.",
+      "section": "DRY (Don't Repeat Yourself) Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-86",
+      "quote": "A 2024 technique: randomly exclude the top token from sampling with some probability.",
+      "section": "XTC (Exclude Top Choices)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-87",
+      "quote": "Forces the model to use less-likely words.",
+      "section": "XTC (Exclude Top Choices)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-88",
+      "quote": "Useful for breaking out of repetitive patterns in creative writing.",
+      "section": "XTC (Exclude Top Choices)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-89",
+      "quote": "* $p_{\\text{exclude}} = 0.1$: 10% of the time, the top token is excluded.",
+      "section": "XTC (Exclude Top Choices)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-90",
+      "quote": "Contrastive search (\\cite[Su et al., 2022]{su2022contrastive}) is a **deterministic** decoding strategy that picks the token maximizing:",
+      "section": "Contrastive Search",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-91",
+      "quote": "where $\\mathbf{h}_i$ is the token's hidden state and $\\alpha$ controls the degeneration penalty.",
+      "section": "Contrastive Search",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-92",
+      "quote": "The original objective uses the model probability $P(i)$, not its logarithm; replacing $P$ with $\\log P$ changes the balance between confidence and the degeneration penalty.",
+      "section": "Contrastive Search",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-93",
+      "quote": "Produces high-quality, **non-repetitive** output without randomness.",
+      "section": "Contrastive Search",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-94",
+      "quote": "A sampling scheme (\\cite[Basu et al., 2020]{basu2020mirostat}) that **targets a fixed perplexity** during generation.",
+      "section": "mirostat",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-95",
+      "quote": "The model adjusts its sampling to maintain target surprise:",
+      "section": "mirostat",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-96",
+      "quote": "* Target perplexity $\\tau$ (e.g., $\\tau = 5$).",
+      "section": "mirostat",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-97",
+      "quote": "* After each generated token, compute current perplexity.",
+      "section": "mirostat",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-98",
+      "quote": "* Adjust $k$ (top-$k$) to drive perplexity toward $\\tau$.",
+      "section": "mirostat",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-99",
+      "quote": "Produces output with consistent information density.",
+      "section": "mirostat",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-100",
+      "quote": "Used by some LLM writers for creative prose.",
+      "section": "mirostat",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-101",
+      "quote": "Maintain the top $B$ partial sequences at each step; expand all of them; keep the top $B$.",
+      "section": "Beam Search",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-102",
+      "quote": "Used in machine translation; rarely in modern LLM chat.",
+      "section": "Beam Search",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-103",
+      "quote": "Drawbacks: tends to produce generic, “averaged” outputs in open-ended generation.",
+      "section": "Beam Search",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-104",
+      "quote": "Beam search predates neural language models: speech recognizers such as Harpy pruned a tree of acoustic hypotheses with it in the 1970s (\\cite{lowerre1976harpy}).",
+      "section": "Beam Search",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-105",
+      "quote": "Sutskever et al. brought it into sequence-to-sequence translation, where it became the default because it searches sequence likelihood more thoroughly than greedy decoding (\\cite{sutskever2014seq2seq}).",
+      "section": "Beam Search",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-106",
+      "quote": "The catch is length: raw log-probabilities favor short outputs, so implementations divide by a length penalty.",
+      "section": "Beam Search",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-107",
+      "quote": "In open-ended generation, that same likelihood objective rewards generic continuations, which is why chat models moved away from beam search.",
+      "section": "Beam Search",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-108",
+      "quote": "The sampling rule at the heart of speculative decoding (\\cite[Leviathan et al., 2023]{leviathan2023speculative}): the draft model proposes tokens probabilistically, the target model verifies them, and rejected proposals are corrected by sampling from the target's adjusted distribution:",
+      "section": "Speculative Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-109",
+      "quote": "This guarantees the output distribution exactly matches the target model's distribution, while achieving speedup.",
+      "section": "Speculative Sampling",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-110",
+      "quote": "| Use case | Temperature | Top-$p$ | Min-$p$ | Repetition penalty |",
+      "section": "Recommended Settings (2025)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-111",
+      "quote": "| **Chat (factual)** | 0.7 | 0.9 | 0.0 | 1.1 |",
+      "section": "Recommended Settings (2025)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-112",
+      "quote": "| **Chat (creative)** | 1.0 | 0.95 | 0.05 | 1.1 |",
+      "section": "Recommended Settings (2025)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-113",
+      "quote": "| **Code generation** | 0.2 | 0.95 | 0.0 | 1.0 |",
+      "section": "Recommended Settings (2025)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-114",
+      "quote": "| **Math/reasoning** | 0.0 | 1.0 | 0.0 | 1.0 |",
+      "section": "Recommended Settings (2025)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-115",
+      "quote": "| **Translation** | 0.3 | 0.9 | 0.0 | 1.0 |",
+      "section": "Recommended Settings (2025)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-116",
+      "quote": "| **Creative writing** | 1.2 | 0.95 | 0.1 | 1.2 + DRY |",
+      "section": "Recommended Settings (2025)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-117",
+      "quote": "| **Summarization** | 0.5 | 0.9 | 0.0 | 1.1 |",
+      "section": "Recommended Settings (2025)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-118",
+      "quote": "**Model-card defaults vary**: Qwen3 recommends temperature 0.6–0.7 with top-$p$ 0.8–0.95 and min-$p$ 0; DeepSeek-R1 recommends 0.6 with top-$p$ 0.95; Mistral cards do not set min-$p$ either.",
+      "section": "Recommended Settings (2025)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-119",
+      "quote": "The OpenAI API defaults to temperature 1.0 and top-$p$ 1.0; Anthropic likewise applies no nucleus truncation by default.",
+      "section": "Recommended Settings (2025)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-120",
+      "quote": "Product UIs may layer their own presets.",
+      "section": "Recommended Settings (2025)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-121",
+      "quote": "Min-$p$ is a common optional filter, not a universal default.",
+      "section": "Recommended Settings (2025)",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-122",
+      "quote": "A 2024 idea: adjust temperature based on the entropy of the predicted distribution.",
+      "section": "Dynamic Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-123",
+      "quote": "When the model is confident (low entropy), lower temperature; when uncertain (high entropy), raise it.",
+      "section": "Dynamic Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-124",
+      "quote": "The intuition: respect the model's confidence rather than always applying the same temperature.",
+      "section": "Dynamic Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-125",
+      "quote": "Implementations: **entropy-aware sampling** (\\cite[Wang et al., 2024]{wang2024entropy}), **DynTemp**, and proprietary variants in vLLM and llama.cpp.",
+      "section": "Dynamic Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-126",
+      "quote": "Not yet standardized but promising.",
+      "section": "Dynamic Temperature",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-127",
+      "quote": "* **Reproducibility**: set temperature = 0 (or very low) for reproducible outputs.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-128",
+      "quote": "* **For evals**: temperature = 0 + greedy.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-129",
+      "quote": "Otherwise the eval is noisy.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-130",
+      "quote": "* **For chat**: temperature 0.7–1.0, top-$p$ 0.9.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-131",
+      "quote": "* **For code**: low temperature, no top-$p$, possibly beam search.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-132",
+      "quote": "* **For batch inference**: deterministic, greedy.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-133",
+      "quote": "A common mistake: using temperature 1.0 with top-$p$ 0.9 AND min-$p$ 0.05.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-134",
+      "quote": "These compound; the effective sampling becomes very restricted.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-135",
+      "quote": "**Pick one filter method** unless you know what you're doing.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-136",
+      "quote": "The choice between greedy and stochastic decoding is not a binary of correct versus creative (\\cite{fan2018topk, holtzman2020nucleus}); temperature 0 removes sampling noise but not every source of variation.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-137",
+      "quote": "Floating-point reductions, GPU kernel scheduling, batching, and tensor-parallel order can change the last bits of a logit, and a near-tie can then flip the argmax.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-138",
+      "quote": "Providers that offer a seed make a best effort, not a guarantee.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    },
+    {
+      "id": "samplinglab-stmt-139",
+      "quote": "The practical rule is to fix sampler, seed, model version, and batch shape together; if an evaluation must be exactly repeatable, cache the generated outputs rather than regenerate them.",
+      "section": "Practical Tips",
+      "kind": "statement"
+    }
   ]
 }

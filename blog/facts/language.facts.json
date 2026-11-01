@@ -563,5 +563,1069 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "language-stmt-1",
+      "quote": "The intelligence of a modern Large Language Model (LLM) is the digital climax of a multi-million-year trajectory.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-2",
+      "quote": "To understand how a machine “speaks,” we must trace the path from the biological re-engineering of the primate throat and the ear that decodes it to the ancient mathematical formalization of grammar.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-3",
+      "quote": "Before language could be abstracted into data, it required a radical “hardware” upgrade.",
+      "section": "The Biological Engine: The Human Pipe",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-4",
+      "quote": "Humans possess a vocal tract configuration that is unique among primates.",
+      "section": "The Biological Engine: The Human Pipe",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-5",
+      "quote": "* **Earliest Signs:** Genomic evidence suggests that the unique human capacity for language was present at least **\\cite[135,000 years ago]{earlylanguage}**, and the same authors propose that language may have triggered the widespread appearance of modern human behavior around **100,000 years ago** (\\cite[Miyagawa et al., 2025]{earlylanguage}).",
+      "section": "The Biological Engine: The Human Pipe",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-6",
+      "quote": "This “Cognitive Ignition” precedes the archaeological appearance of symbolic art like the \\citetitle{blombosochre}.",
+      "section": "The Biological Engine: The Human Pipe",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-7",
+      "quote": "* **The Descended Larynx:** In most mammals, the larynx (voice box) sits high in the throat, allowing for simultaneous breathing and swallowing.",
+      "section": "The Biological Engine: The Human Pipe",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-8",
+      "quote": "In humans, the larynx descended during evolution, creating a large pharyngeal cavity, an acoustic chamber that allows the tongue to move both vertically and horizontally to produce a vast range of resonant frequencies.",
+      "section": "The Biological Engine: The Human Pipe",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-9",
+      "quote": "* **The First Anatomists:** While ancient Indian texts like the **\\cite[Sushruta Samhita]{sushruta}** (c.",
+      "section": "The Biological Engine: The Human Pipe",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-10",
+      "quote": "300 BCE) mentioned the throat as the source of voice, **\\cite[Alcmaeon of Croton]{alcmaeon}** (c.",
+      "section": "The Biological Engine: The Human Pipe",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-11",
+      "quote": "500 BCE) dissected animals and identified “channels” (*poroi*) that connected the senses to the brain — though whether his dissections were systematic is contested.",
+      "section": "The Biological Engine: The Human Pipe",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-12",
+      "quote": "* **The Renaissance Map:** The most precise early mapping of this “vocal machine” came from **\\cite[Leonardo da Vinci]{davinci_anatomical}** (c.",
+      "section": "The Biological Engine: The Human Pipe",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-13",
+      "quote": "He treated the larynx as an acoustic instrument, sketching the tongue's muscles and performing experiments, such as squeezing the lungs of a dead goose, to show how the larynx produced tone.",
+      "section": "The Biological Engine: The Human Pipe",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-14",
+      "quote": "A language needs a sender and a receiver.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-15",
+      "quote": "The previous section followed the sender -- the larynx, the tongue, the acoustic chamber of the throat.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-16",
+      "quote": "This section follows the receiver, and the receiver is far older.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-17",
+      "quote": "The sensory cell at the bottom of the ear is the **hair cell**, a mechanotransducer that turns a displacement smaller than the width of an atom into an electrical signal (\\cite[Hudspeth, 1989]{hudspeth1989earworks}).",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-18",
+      "quote": "The same kind of cell, with the same bundle of stereocilia and the same tip-link machinery, serves hearing and balance in the inner ear and the lateral line of fishes (\\cite[Schlosser, 2018]{schlosser2018senses}).",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-19",
+      "quote": "The hair cell is ancient; the cochlea is a late invention built around it.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-20",
+      "quote": "Fish have no cochlea, no eardrum, and no middle ear.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-21",
+      "quote": "They detect the motion of water with the lateral line and low-frequency vibration with the otolith organs of the inner ear.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-22",
+      "quote": "The bone that will become the stapes, the **hyomandibula**, still holds the jaw to the skull; the spiracle, a gill slit behind the jaw, will become the middle ear and the Eustachian tube.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-23",
+      "quote": "The ear, in other words, is a recycled gill arch.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-24",
+      "quote": "The first tetrapods inherited this equipment and used it without a tympanic membrane: they probably heard ground-borne vibration through the skull and the limbs, not airborne sound through an eardrum (\\cite[Clack, 1997]{clack1997tetrapod}).",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-25",
+      "quote": "The tympanic ear is not one invention but many.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-26",
+      "quote": "A true eardrum, a freely vibrating stapes, and a pressure-relief window appear separately in amphibians, reptiles, birds, and mammals; in amniotes the first fossil evidence is Triassic, and it roughly coincides with the evolution of insect sound production (\\cite[Clack, 1997]{clack1997tetrapod}).",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-27",
+      "quote": "Hearing, in the form we know it, is a convergence -- the same problem solved again and again by different bones.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-28",
+      "quote": "The mammalian solution is the strangest and the best documented.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-29",
+      "quote": "In a reptile the jaw joint is formed by the **articular** bone of the lower jaw and the **quadrate** bone of the upper jaw, and the single middle-ear bone is the **columella**, the stapes.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-30",
+      "quote": "In mammals the dentary expands until it meets the squamosal and forms a new jaw joint; the old joint loses its load-bearing role; and its bones migrate into the ear.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-31",
+      "quote": "The articular becomes the **malleus**, the quadrate becomes the **incus**, and the columella becomes the **stapes**.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-32",
+      "quote": "The homology was first established from embryology by Karl Bogislaus Reichert in 1837 and synthesized by Ernst Gaupp in 1913; it is still called the **Reichert--Gaupp theory** (\\cite[Maier and Ruf, 2016]{maier2016middleear}).",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-33",
+      "quote": "The fossil record did not bridge the gap until the 1950s, when \\cite[Kühne (1958)]{kuhne1958morganucodon} described *Morganucodon* from Rhaetic fissure fillings in Wales.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-34",
+      "quote": "The animal had both a reptilian jaw joint and a mammalian ear, the two systems working side by side (\\cite[Allin, 1975]{allin1975middleear}).",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-35",
+      "quote": "Later finds filled in the sequence, and in 2024 two Jurassic mammaliaforms -- *Dianoconodon* and a shuotheriid -- showed the articular-quadrate joint losing its load-bearing function while the post-dentary bones were still attached to the jaw: the migration caught in the act (\\cite[Mao et al., 2024]{mao2024jawear}).",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-36",
+      "quote": "The first mammals were small, nocturnal insectivores.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-37",
+      "quote": "A three-bone ear that responds to high frequencies is a device for finding insects in the dark and for localizing their rustle; the coiled cochlea and the high-frequency range came later.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-38",
+      "quote": "The earliest mammalian cochleae were only about two millimetres long; even Late Jurassic mammals had a coil of only about 270 degrees, and the fully coiled therian cochlea appeared later.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-39",
+      "quote": "Hearing above 20 kHz did not arrive until the early Cretaceous, around 125 million years ago (\\cite[Manley, 2012]{manley2012cochleae}).",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-40",
+      "quote": "The middle ear is also an impedance transformer.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-41",
+      "quote": "Air and the fluid of the inner ear have very different acoustic impedances; without a matching device, most of the sound would reflect away at the oval window.",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-42",
+      "quote": "The eardrum collects force over a large area, the ossicles concentrate it on the small footplate of the stapes, and the lever arm adds a little more (\\cite[Hemilä et al., 1995]{hemila1995middleear}).",
+      "section": "The Other Half of the Channel: The Evolution of Hearing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-43",
+      "quote": "A human fetus begins to hear long before it is born.",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-44",
+      "quote": "In a systematic study of 19 to 35 weeks of gestation, the first response to a pure tone appeared at 19 weeks, and it was a response to 500 Hz; by 27 weeks almost all fetuses responded to 250 and 500 Hz, but none to 1000 or 3000 Hz; by 33 and 35 weeks all responded to the higher tones, and the intensity needed to elicit a response had fallen by 20 to 30 dB (\\cite[Hepper and Shahidullah, 1994]{hepper1994fetalhearing}).",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-45",
+      "quote": "The womb is a low-pass filter: low frequencies travel through the mother's tissues, high frequencies are attenuated.",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-46",
+      "quote": "The fetus therefore hears the melody of speech before it hears the consonants.",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-47",
+      "quote": "This is not passive exposure.",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-48",
+      "quote": "Fetuses recognize their mother's voice and respond differently to a familiar and a strange voice (\\cite[Kisilevsky et al., 2003]{kisilevsky2003fetalvoice}); newborns prefer their mother's voice to another woman's (\\cite[DeCasper and Fifer, 1980]{decasper1980mothervoice}); and newborns prefer a story that was read aloud to them in the womb (\\cite[DeCasper and Spence, 1986]{decasper1986prenatal}).",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-49",
+      "quote": "The learning leaves a neural trace: Finnish fetuses exposed to variants of a speech-like word showed enhanced mismatch responses to those variants after birth, and the strength of the response tracked the amount of prenatal exposure (\\cite[Partanen et al., 2013]{partanen2013prenatal}).",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-50",
+      "quote": "At birth the infant is a citizen of the world of phonemes.",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-51",
+      "quote": "It can discriminate contrasts that its native language does not use; within the first year it loses that ability and becomes a specialist in the contrasts that matter (\\cite[Werker and Tees, 1984]{werker1984crosslanguage}).",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-52",
+      "quote": "It also prefers the rhythm of its native language: French newborns discriminate French from Russian, and two-day-olds prefer their native language over a foreign one (\\cite[Mehler et al., 1988]{mehler1988precursor}; \\cite[Moon et al., 1993]{moon1993native}).",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-53",
+      "quote": "The sequence is prosody, then phonemes, then words -- the opposite of the order in which a written corpus presents language to a model.",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-54",
+      "quote": "For a language model, the input is already discrete: tokens.",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-55",
+      "quote": "For a human infant, the input is a continuous, noisy, low-pass-filtered pressure wave, and the first task is to find the units.",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-56",
+      "quote": "Hearing is the channel through which the statistical structure of a language enters the brain, and it begins to do so before birth.",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-57",
+      "quote": "That is why the ear is not a peripheral detail in the history of language; it is the first teacher.",
+      "section": "The First Language Lesson: Hearing Before Birth",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-58",
+      "quote": "Once humans could decouple a “number” from a physical pile of stones, they could perform operations on the concept of quantity itself.",
+      "section": "The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-59",
+      "quote": "This is the cognitive leap that separates human language from all animal communication systems.",
+      "section": "The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-60",
+      "quote": "It enabled mathematics, religion, law, and eventually, the encoding of language into machines.",
+      "section": "The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-61",
+      "quote": "No grammar, no matter how elaborate, divides the legal sentences from the illegal ones cleanly.",
+      "section": "The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-62",
+      "quote": "The linguist and anthropologist **Edward Sapir** wrote in 1921 that \"no language is tyrannically consistent.",
+      "section": "The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-63",
+      "quote": "All grammars leak.\" The classic case is Groucho Marx: \"One morning I shot an elephant in my pajamas.",
+      "section": "The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-64",
+      "quote": "How he got into my pajamas I don't know.\" Two parse trees, two meanings, and only common sense picks the right one.",
+      "section": "The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-65",
+      "quote": "The fix, developed through the 1970s and 80s, was to stop asking *is this sentence legal?* and start asking *how probable is this parse?*: attach probabilities to grammar rules (the **probabilistic context-free grammars** of Taylor Booth, 1969, refined by Eugene Charniak), learn those probabilities from large annotated corpora such as the **Penn Treebank**, and let the most probable parse win (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
+      "section": "The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-66",
+      "quote": "That move, from hand-written rules to learned probabilities, is the same move that took the whole field from symbolic AI to the statistical geometry of the next section, and, finally, to the language models that predict the next token instead of parsing the sentence at all.",
+      "section": "The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-67",
+      "quote": "The community organized in the same period: the Association for Machine Translation and Computational Linguistics (AMTCL) held its first meeting in 1962, and in 1968 it became the **Association for Computational Linguistics (ACL)**, which still publishes *Computational Linguistics* and sponsors the field's main conferences (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
+      "section": "The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-68",
+      "quote": "This works because the model has learned, from billions of co-occurrence patterns, that the *direction* from “Woman” to “Queen” encodes the concept of “royalty”, and that same direction, applied to “Man,” lands near “King.” Meaning has become mathematics.",
+      "section": "The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-69",
+      "quote": "This is the ultimate evolution: we have moved from the biological vibrations of the **larynx**, through the deterministic **logic of Pāṇini**, and finally into a **statistical geometry** where the machine “understands” the world by measuring the distance between human ideas.",
+      "section": "The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-70",
+      "quote": "The evolution of writing is a multi-millennial journey of externalizing human thought, moving from biological speech to physical data storage.",
+      "section": "The History of Writing",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-71",
+      "quote": "The earliest forms of “proto-writing” began with symbolic art.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-72",
+      "quote": "These were the first instances of **exogrammatic storage**, information kept outside the human brain.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-73",
+      "quote": "* **Symbolic Engravings:** Some of the oldest known symbolic artifacts are ochre engravings from the Blombos Cave in South Africa, dating back to the Middle Stone Age.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-74",
+      "quote": "* **Tallies:** Objects like the Lebombo bone (ca.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-75",
+      "quote": "41,000 BCE) represent even more specific data storage, likely used as mathematical tally sticks for tracking lunar cycles or inventories.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-76",
+      "quote": "Hand stencils at \\cite[Cueva de las Manos]{cuevadelasmanos}, Argentina (c.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-77",
+      "quote": "Paint was sprayed through bone pipes onto hands pressed against the rock wall.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-78",
+      "quote": "\\marginfig{cuneiform.jpg}{Early Cuneiform Writing \\cite[Early Cuneiform Writing]{cuneiform}.}",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-79",
+      "quote": "By 3200 BCE in Mesopotamia, pictograms evolved into **Cuneiform**, characterized by wedge-shaped marks made with a reed stylus in soft clay.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-80",
+      "quote": "* **Standardization:** Writing shifted from accounting lists to complex legal codes, literature, and religious texts.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-81",
+      "quote": "* **Mathematical Formalization:** Later, scholars like Pāṇini (ca.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-82",
+      "quote": "4th Century BCE) developed the अष्टाध्यायी (*Ashtadhyayi*), a set of formal rules for Sanskrit that functioned like a generative logic for language, mirroring the structured way we treat language in modern computing.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-83",
+      "quote": "This trajectory from biological vibrations to physical tokens, and finally to abstract geometry, forms the foundation for how modern systems now process meaning.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-84",
+      "quote": "First described by \\citeauthor{acrophonic} in \\citeyear{acrophonic}, this is how the alphabet was actually derived.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-85",
+      "quote": "The Phoenician letter *aleph* (𐤀) originally depicted an *ox* head (the word for *ox* was *ʾalp*).",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-86",
+      "quote": "Over time, the picture was stripped of its meaning and retained only the first phoneme, /ʔ/ (a glottal stop).",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-87",
+      "quote": "Similarly, bet (𐤁) was a *house* (*bayt*), reduced to /b/.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-88",
+      "quote": "The Greek adaptation turned *aleph* into *alpha* (Α) and bet into beta (Β), giving us the word “alphabet” itself.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-89",
+      "quote": "Where the Rebus Principle says “use the whole sound of a word,” the Acrophonic Principle says “use only the first sound.” It's a further compression, and it's the specific mechanism by which the Phoenician abjad was created from earlier pictographic systems.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-90",
+      "quote": "First introduced by \\citeauthor{dualitypattern} in 1949 and elaborated in his \\citeyear{dualitypattern} *Éléments de linguistique générale*, human language operates on two levels:",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-91",
+      "quote": "- First articulation: Meaningful units (morphemes/words) combine into sentences.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-92",
+      "quote": "(“un” + “believe” + “able”)",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-93",
+      "quote": "- Second articulation: Meaningless units (phonemes/letters) combine into meaningful units.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-94",
+      "quote": "(b + e + l + i + e + f → “belief”)",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-95",
+      "quote": "No animal communication system has this.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-96",
+      "quote": "A vervet monkey's eagle alarm call is a single, indivisible unit, you can't rearrange its “phonemes” to make a new call.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-97",
+      "quote": "But in human language, the same ~40 phonemes can generate an infinite vocabulary.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-98",
+      "quote": "Although first described by Friedrich Nietzsche in his essay \\citetitle{ueberwahrheitundluege} in an informal way, the **Principle of Arbitrariness** was first formalized by \\citeauthor{saussure1916} in \\citeyear{saussure1916}, and it states that there is no natural, intrinsic connection between a word and its meaning.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-99",
+      "quote": "The word “dog” does not look, sound, or feel like a dog, the link between the *signifier* (the sound-image “dog”) and the *signified* (the concept of a dog) is a pure social convention.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-100",
+      "quote": "Saussure called this the “arbitrariness of the sign,” and it applies at every level: the phonemes that make up a word, the morphemes that compose it, and the syntactic rules that govern its use are all products of historical accident and communal agreement, not physical necessity.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-101",
+      "quote": "This principle is the theoretical reason that embeddings work at all.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-102",
+      "quote": "If words had fixed, intrinsic meanings anchored to their sounds or shapes, we could deduce semantics from phonetics alone.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-103",
+      "quote": "But precisely *because* the relationship between form and meaning is arbitrary, meaning can only be recovered from *patterns of use*, which is exactly what Firth's distributional hypothesis proposes and what a Transformer's attention mechanism computes.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-104",
+      "quote": "Arbitrariness is the problem; statistical learning over context is the solution.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-105",
+      "quote": "Popularised by \\citeauthor{zipf1949human} in \\citeyear{zipf1949human} (though the regularity had been noticed earlier, by Auerbach in 1913), the Principle of Economy observes that in any natural language corpus, the frequency of a word is inversely proportional to its rank.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-106",
+      "quote": "The most common word (“the”) appears roughly twice as often as the second most common (“of”), three times as often as the third (“and”), and so on.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-107",
+      "quote": "This is not a coincidence, it reflects a deep optimization pressure: speakers minimize articulatory effort by assigning the shortest, most accessible forms to the most frequent meanings, while rare concepts are expressed with longer, more complex words.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-108",
+      "quote": "This principle operates at every scale of the history of writing.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-109",
+      "quote": "Cuneiform signs for common words were simplified more aggressively than rare ones.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-110",
+      "quote": "The Phoenician alphabet itself is an act of economy, 22 signs instead of hundreds.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-111",
+      "quote": "And modern Byte-Pair Encoding tokenization is Zipf's Law made algorithmic: frequent subwords like “the” or “ing” earn their own token IDs, while rare strings are decomposed into smaller pieces.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-112",
+      "quote": "When we say that a tokenizer balances “vocabulary size against expressiveness,” we are describing Zipf's tradeoff between effort and precision, a tradeoff that human languages have been optimizing for millennia.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-113",
+      "quote": "While Saussure emphasized arbitrariness, writing systems almost always begin at the opposite pole: **iconicity**, the principle that a symbol's form *resembles* its referent.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-114",
+      "quote": "The earliest Sumerian sign for “ox” was a recognizable sketch of an ox head; the sign for “water” depicted wavy lines.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-115",
+      "quote": "Even the Phoenician alphabet, as the Acrophonic Principle describes, began with iconic pictograms, *aleph* looked like an ox, *bet* looked like a house, before those pictures were stripped down to abstract letterforms.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-116",
+      "quote": "This trajectory from iconic to arbitrary is not a single historical event but a recurring, universal pattern.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-117",
+      "quote": "Chinese characters began as oracle bone pictographs and gradually became the abstract strokes of modern *hanzi*.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-118",
+      "quote": "Egyptian hieroglyphs started as vivid animal and object drawings and ended as the cursive shorthand of Demotic script.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-119",
+      "quote": "In every case, the driving force is the same: as a writing system is used more frequently and by more people, speed and economy overwhelm fidelity to appearance.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-120",
+      "quote": "Iconicity is the *starting condition* of every writing system; arbitrariness is the *attractor state* it evolves toward.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-121",
+      "quote": "Understanding this arc, from picture to abstraction, from resemblance to convention, is essential for understanding why modern embeddings, which encode meaning as directions in a featureless vector space, represent the logical endpoint of a process that began with a Sumerian farmer scratching an ox into wet clay.",
+      "section": "Cave Paintings and Symbolic Art",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-122",
+      "quote": "The sixteen letters of inscription no.",
+      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-123",
+      "quote": "I, drawn on a block of limestone at the Wadi el-Hol \\cite[Wadi el-Hol inscription no.",
+      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-124",
+      "quote": "I, drawing]{wadielholinscription_i}.",
+      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-125",
+      "quote": "The Rosetta Stone (196 BCE) is the first multi-lingual “parallel corpus”, a single decree inscribed in Egyptian hieroglyphics,",
+      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-126",
+      "quote": "Demotic script, and Greek, proving that distinct symbolic systems can map to the same underlying meaning.",
+      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-127",
+      "quote": "When \\citeauthor{hieroglyphsdeciphered} deciphered Egyptian hieroglyphics in 1822, he did so by *aligning* the Greek text (which he could read) with the hieroglyphic text (which he could not),",
+      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-128",
+      "quote": "exploiting the assumption that both encoded the same content.",
+      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-129",
+      "quote": "This is precisely the method that powered IBM's statistical machine translation models in the 1990s and that still underpins the training of modern multilingual LLMs: given two texts known to express the same meaning in different languages,",
+      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-130",
+      "quote": "the system learns a mapping between their symbolic systems.",
+      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-131",
+      "quote": "The Rosetta Stone thus embodies a principle that connects directly to \\citeauthor{firth_context}'s distributional hypothesis and to the embedding spaces of modern Transformers:",
+      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-132",
+      "quote": "meaning is not locked inside any single symbol system but can be recovered from the *structural relationships* between symbols, whether those symbols are hieroglyphs, Greek letters, or high-dimensional vectors.",
+      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-133",
+      "quote": "It is the ancient proof of concept for the idea that translation, and, by extension, understanding, is fundamentally an alignment problem.",
+      "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-134",
+      "quote": "The story of language is a single, unbroken thread:",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-135",
+      "quote": "**Biology** gave us the descended larynx and the cochlea -- an instrument and a listener.",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-136",
+      "quote": "**Symbolic displacement** freed thought from the present moment, enabling abstraction.",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-137",
+      "quote": "**Writing** externalized memory, from tally bones to clay tokens to cuneiform.",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-138",
+      "quote": "**Formalization** (Pāṇini, Aristotle, Wilkins) revealed that language obeys rules, and rules can be encoded.",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-139",
+      "quote": "**Mechanization** (Kempelen) proved that speech could be reproduced by machines.",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-140",
+      "quote": "**Statistical geometry** (Firth → Transformers) showed that meaning itself can be computed.",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-141",
+      "quote": "Each step was a further **abstraction**: from vibrations in air, to marks on clay, to rules on paper, to vectors in silicon.",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-142",
+      "quote": "The LLM is not a break from this history, it is its latest chapter.",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-143",
+      "quote": "If Pāṇini formalized grammar and Firth formalized context, what will the next formalization look like?",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-144",
+      "quote": "Perhaps it will be the formalization of *reasoning itself*, closing the loop between the symbolic displacement that made us human and the artificial intelligence that now mirrors us.",
+      "section": "Conclusion: 135,000 Years in a Single Thread",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-145",
+      "quote": "The title of Gleick's history carries an ambiguity that matters for LLMs.",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-146",
+      "quote": "“The Information” names both the mathematical quantity Shannon isolated and the deluge of data, text, images, and messages in which modern life is immersed (\\cite[Gleick, 2011]{gleick2011information}).",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-147",
+      "quote": "Gleick's closing chapters are about the second: an abundance of information does not automatically produce an abundance of understanding, and attention becomes the scarce resource.",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-148",
+      "quote": "His epilogue is called “The Return of Meaning” for a reason.",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-149",
+      "quote": "After a century of measuring messages without interpreting them, the question of what they mean comes back.",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-150",
+      "quote": "That distinction is the cleanest way to state what a language model does and does not do.",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-151",
+      "quote": "An LLM is a machine for estimating the probability of the next token from a vast corpus; it is exquisitely sensitive to the *statistical* structure of the flood, and it has no independent, non-statistical purchase on whether a sentence is true, important, or worth saying.",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-152",
+      "quote": "Shannon deliberately excluded meaning from his theory, and the exclusion is still built into the objective: cross-entropy rewards a good guess about what comes next, not a good answer about what is the case.",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-153",
+      "quote": "The history in this chapter therefore ends with a question rather than a triumph.",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-154",
+      "quote": "Writing externalized memory; printing and the telegraph externalized and accelerated its transmission; Shannon made its quantity measurable; the computer made it machine-processable; and the LLM has now made a statistical model of the whole archive.",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-155",
+      "quote": "What remains outside the model is the part the archive was always *for*: the act of a mind that means something by it.",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-156",
+      "quote": "Whether that act can itself be captured by information, or whether it is the one thing the flood cannot carry, is the question the rest of this course takes up.",
+      "section": "After the Flood: Information Is Not Meaning",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-157",
+      "quote": "But the linguistic thread is only one of several.",
+      "section": "The Threads Are Many, Not One",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-158",
+      "quote": "It converges with a parallel history of **numeracy**, from tally marks to clay tokens to place-value arithmetic, that grounded equally abstract rules for quantity.",
+      "section": "The Threads Are Many, Not One",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-159",
+      "quote": "It converges with **logic**, from Aristotle's syllogisms to Boole's algebra to Shannon's switching circuits, that reduced reasoning itself to a physical process.",
+      "section": "The Threads Are Many, Not One",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-160",
+      "quote": "It converges with **mechanization**, from Jacquard's loom to Babbage's engine to the modern microprocessor, that gave these rules a substrate faster than any human mind.",
+      "section": "The Threads Are Many, Not One",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-161",
+      "quote": "The LLM is not the *only* possible outcome of this convergence.",
+      "section": "The Threads Are Many, Not One",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-162",
+      "quote": "The digital computer, the scientific method, and the modern university are equally its products.",
+      "section": "The Threads Are Many, Not One",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-163",
+      "quote": "But the LLM is the point where all the threads happen to meet: language, numeracy, logic, and mechanism woven into a single substrate.",
+      "section": "The Threads Are Many, Not One",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-164",
+      "quote": "The next formalization may not be about language at all.",
+      "section": "The Threads Are Many, Not One",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-165",
+      "quote": "The threads diverge again as soon as they converge.",
+      "section": "The Threads Are Many, Not One",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-166",
+      "quote": "What matters is the pattern: abstraction upon abstraction, each layer enabling the next, with no final destination in sight.",
+      "section": "The Threads Are Many, Not One",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-167",
+      "quote": "For decades, natural-language processing was a **zoo**: one hand-built system per task, each with its own features, dataset, and state of the art.",
+      "section": "The NLP Task Landscape, Unified",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-168",
+      "quote": "| Task | Question it answered | Classic tool |",
+      "section": "The NLP Task Landscape, Unified",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-169",
+      "quote": "| Machine translation | Translate between languages | statistical, phrase-based MT |",
+      "section": "The NLP Task Landscape, Unified",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-170",
+      "quote": "| Part-of-speech / parsing | Label words / build the tree | HMMs, CFGs, CRFs |",
+      "section": "The NLP Task Landscape, Unified",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-171",
+      "quote": "| Named-entity recognition | Find people, places, dates | CRFs, sequence models |",
+      "section": "The NLP Task Landscape, Unified",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-172",
+      "quote": "| Sentiment analysis | Classify polarity | SVMs on bag-of-words |",
+      "section": "The NLP Task Landscape, Unified",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-173",
+      "quote": "| Question answering | Extract / generate an answer | retrieval + extraction |",
+      "section": "The NLP Task Landscape, Unified",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-174",
+      "quote": "The Transformer **collapsed the zoo**.",
+      "section": "The NLP Task Landscape, Unified",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-175",
+      "quote": "One pre-trained model, fine-tuned, now performs *most* of these as a single next-token task (\\cite[Zhao et al., 2023]{zhao2023survey}).",
+      "section": "The NLP Task Landscape, Unified",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-176",
+      "quote": "The tasks did not vanish — they were **absorbed** into a general sequence model.",
+      "section": "The NLP Task Landscape, Unified",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-177",
+      "quote": "That absorption is the same gesture as every thread in this chapter: a specific, hand-built mechanism giving way to a general one that subsumes it.",
+      "section": "The NLP Task Landscape, Unified",
+      "kind": "statement"
+    }
   ]
 }

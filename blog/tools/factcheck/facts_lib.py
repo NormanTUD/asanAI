@@ -542,3 +542,28 @@ KNOWN_RELATION_KINDS = {
     "founded", "mentioned_in",
 }
 
+def normalize_source(text: str) -> str:
+    """Plain prose view used for quote/statement matching."""
+    import html as _html
+    text = re.sub(r"<\?php.*?\?>", " ", text, flags=re.S)
+    text = re.sub(r"<!--.*?-->", " ", text, flags=re.S)
+    text = re.sub(r"<script.*?</script>|<style.*?</style>|<pre.*?</pre>|<code.*?</code>", " ", text, flags=re.S | re.I)
+    text = re.sub(r"\$\$.*?\$\$", " ", text, flags=re.S)
+    text = _html.unescape(text)
+    text = strip_html_tags(text)
+    return re.sub(r"\s+", " ", text).strip()
+
+_HTML_TAG_RE = re.compile(
+    r"</?(?:a|abbr|article|aside|audio|b|blockquote|br|button|caption|code|col|colgroup|"
+    r"dd|del|details|div|dl|dt|em|figcaption|figure|font|footer|form|h[1-6]|header|hr|i|"
+    r"iframe|img|input|ins|kbd|label|li|main|mark|nav|ol|option|p|path|pre|q|s|samp|"
+    r"section|select|small|source|span|strong|sub|summary|sup|svg|table|tbody|td|tfoot|"
+    r"th|thead|time|tr|u|ul|var|video)\b[^>]*>",
+    re.I,
+)
+
+
+def strip_html_tags(text: str) -> str:
+    """Strip real HTML tags only; leave LaTeX like ``< \varepsilon`` alone."""
+    return _HTML_TAG_RE.sub(" ", text)
+

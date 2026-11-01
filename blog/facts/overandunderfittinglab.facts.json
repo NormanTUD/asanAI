@@ -423,5 +423,733 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "overandunderfittinglab-stmt-1",
+      "quote": "We give an artificial intelligence, specifically, a single-layer neural network, one deceptively simple task: **“Learn the pattern of a sine wave.”**",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-2",
+      "quote": "By adjusting the controls below you will witness, in real time, why AI models sometimes *hallucinate* or collapse when they encounter something new.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-3",
+      "quote": "We construct a function $f(x)$ of the form",
+      "section": "The Maths: How the Model “Thinks”",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-4",
+      "quote": "This is **Polynomial Regression**.",
+      "section": "The Maths: How the Model “Thinks”",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-5",
+      "quote": "Rather than “knowing” the answer is a sine wave, the model assembles an equation by combining different powers of $x$.",
+      "section": "The Maths: How the Model “Thinks”",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-6",
+      "quote": "| $n$, **Polynomial Degree** | Controlled by the *Complexity* slider.",
+      "section": "The Maths: How the Model “Thinks”",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-7",
+      "quote": "Degree 1 → straight line ($w_1 x + b$).",
+      "section": "The Maths: How the Model “Thinks”",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-8",
+      "quote": "Degree 10 → a curve that can bend up to 9 times.",
+      "section": "The Maths: How the Model “Thinks”",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-9",
+      "quote": "| $w_i$, **Weights** | Coefficients the AI adjusts during training to reshape the curve.",
+      "section": "The Maths: How the Model “Thinks”",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-10",
+      "quote": "| $b$, **Bias term** | A constant that shifts the entire curve up or down.",
+      "section": "The Maths: How the Model “Thinks”",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-11",
+      "quote": "Not to be confused with “high bias” (underfitting).",
+      "section": "The Maths: How the Model “Thinks”",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-12",
+      "quote": "The **MSE** (Mean Squared Error) is the AI's measure of “how wrong am I?”:",
+      "section": "The Loss Function",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-13",
+      "quote": "* **Low loss** → the model's curve hugs the training dots closely.",
+      "section": "The Loss Function",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-14",
+      "quote": "* **High loss** → the model hasn't yet found a curve that fits the data.",
+      "section": "The Loss Function",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-15",
+      "quote": "Knowing “how wrong am I?” is not enough, the model also needs a strategy for getting *less wrong*.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-16",
+      "quote": "This is the job of **gradient descent**.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-17",
+      "quote": "At each training step the model:",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-18",
+      "quote": "Computes the loss (MSE) on the current batch of data.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-19",
+      "quote": "Calculates the **gradient**, the direction in which each weight $w_i$ would *increase* the loss the fastest — so to shrink the loss, the model nudges each weight the opposite way.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-20",
+      "quote": "Updates every weight by a small step in that direction:",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-21",
+      "quote": "The scalar $\\eta$ is the **learning rate**, it controls how large each step is.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-22",
+      "quote": "Too large and the model overshoots; too small and training takes forever.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-23",
+      "quote": "We use the **Adam** optimizer (a popular variant of gradient descent that adapts the learning rate automatically) with $\\eta = 0.01$.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-24",
+      "quote": "One complete pass through the entire training dataset is called an **epoch**.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-25",
+      "quote": "The epoch counter in the control panel shows how many full passes the model has completed.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-26",
+      "quote": "Plain (vanilla) gradient descent uses the same learning rate $\\eta$ for every weight.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-27",
+      "quote": "**Adam** (\\citeauthor{adam}, \\citeyear{adam}) maintains a per-weight running average of both the gradient and its squared magnitude, effectively giving each weight its own adaptive step size.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-28",
+      "quote": "This makes training faster and more stable, especially for loss landscapes with many flat regions or sharp valleys, which is exactly what polynomial regression with high degrees produces.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-29",
+      "quote": "Adam is the end of a longer story, not the beginning.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-30",
+      "quote": "The chain runs: Adagrad → Adadelta and RMSprop → Adam, each step fixing a concrete failure of the previous one (vanishing step sizes, then the missing momentum term).",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-31",
+      "quote": "\\citeauthor{ruder2016overview} (\\citeyear{ruder2016overview}) walks the whole lineage with derivations; the [Optimizer lesson](optimizerlab.php) is the interactive version.",
+      "section": "How the Model Learns: Gradient Descent",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-32",
+      "quote": "Every predictive model faces a fundamental tension between two sources of error:",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-33",
+      "quote": "* **Bias**, error from overly simplistic assumptions.",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-34",
+      "quote": "A straight line ($n = 1$) *cannot* represent a sine wave no matter how much data it sees.",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-35",
+      "quote": "High bias → **underfitting**.",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-36",
+      "quote": "* **Variance**, error from excessive sensitivity to the training data.",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-37",
+      "quote": "A degree-10 polynomial has so much freedom that it contorts itself to pass through every noisy dot, and a different random sample would produce a wildly different curve.",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-38",
+      "quote": "High variance → **overfitting**.",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-39",
+      "quote": "The **total error** on unseen data is approximately:",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-40",
+      "quote": "As model complexity increases, bias falls but variance rises.",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-41",
+      "quote": "The sweet spot, the lowest total error, lies somewhere in between.",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-42",
+      "quote": "The idea here is to let you *see* that tradeoff in action.",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-43",
+      "quote": "In practice, we never know the true function (here we do, it's $\\sin(x)$).",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-44",
+      "quote": "Instead, practitioners split their data into a **training set** (used to fit the model) and a **test set** (held back, never seen during training).",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-45",
+      "quote": "The test-set error is an unbiased estimate of how the model will perform on new data.",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-46",
+      "quote": "More sophisticated approaches like **$k$-fold cross-validation** repeat this split $k$ times and average the results.",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-47",
+      "quote": "We skip the train/test split to keep things visual, but every real-world ML pipeline relies on it.",
+      "section": "The Bias–Variance Tradeoff",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-48",
+      "quote": "**Underfitting (High Bias):** Set the **Degree** to **1** or **2** and train.",
+      "section": "Try It Yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-49",
+      "quote": "The red line is too rigid to follow the wave, even inside the training window.",
+      "section": "Try It Yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-50",
+      "quote": "**Overfitting (High Variance):** Set the **Degree** to **10**, crank the **Noise** up, and train.",
+      "section": "Try It Yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-51",
+      "quote": "Watch the red line contort itself to touch every noisy dot.",
+      "section": "Try It Yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-52",
+      "quote": "**The Extrapolation Trap:** No matter how good the fit looks *inside* the blue box, observe what happens *outside* it.",
+      "section": "Try It Yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-53",
+      "quote": "The red line almost always rockets toward $\\pm\\infty$.",
+      "section": "Try It Yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-54",
+      "quote": "**Regularization:** Toggle **L2 Regularization** on and repeat experiment 2.",
+      "section": "Try It Yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-55",
+      "quote": "Notice how the curve becomes smoother and the weights stay smaller, even at high degree.",
+      "section": "Try It Yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-56",
+      "quote": "| **Dotted grey line**, *Universal Truth* | A perfect sine wave, $y = \\sin(x)$.",
+      "section": "What You're Seeing",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-57",
+      "quote": "This is the true underlying pattern we want the AI to learn.",
+      "section": "What You're Seeing",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-58",
+      "quote": "| **Blue-shaded region**, *Training Window* | The slice of reality the model is allowed to observe.",
+      "section": "What You're Seeing",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-59",
+      "quote": "In practice we never have *all* the data, only a small, noisy sample.",
+      "section": "What You're Seeing",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-60",
+      "quote": "| **Black dots**, *Noisy Observations* | The specific data points the AI can “see.” Notice they scatter around the true curve; real-world measurements are never perfect.",
+      "section": "What You're Seeing",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-61",
+      "quote": "| **Red line**, *AI's Hypothesis* | The model's current best guess.",
+      "section": "What You're Seeing",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-62",
+      "quote": "It tries to draw a curve that passes as close to the black dots as possible.",
+      "section": "What You're Seeing",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-63",
+      "quote": "| **Green dots**, *Test Data* | Data points the model has **never** seen during training.",
+      "section": "What You're Seeing",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-64",
+      "quote": "The test MSE measures how well the model generalises.",
+      "section": "What You're Seeing",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-65",
+      "quote": "Look at how the **Red Line** behaves *outside* the **Blue Training Zone**:",
+      "section": "The Extrapolation Failure",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-66",
+      "quote": "* **The AI's logic:** *“I found a polynomial that perfectly matches the dots I was given.”*",
+      "section": "The Extrapolation Failure",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-67",
+      "quote": "* **The reality:** The AI has no concept of *periodicity*, it doesn't know the wave repeats.",
+      "section": "The Extrapolation Failure",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-68",
+      "quote": "It assumes the local polynomial trend continues, which inevitably sends $f(x) \\to \\pm\\infty$.",
+      "section": "The Extrapolation Failure",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-69",
+      "quote": "* **Lesson:** Machine-learning models are typically strong **interpolators** (they guess well *between* known points) but poor **extrapolators** (they guess badly *outside* the range of training data).",
+      "section": "The Extrapolation Failure",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-70",
+      "quote": "| Regime | Degree | Training MSE | Test MSE | Behaviour |",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-71",
+      "quote": "| **Underfitting** (High Bias) | 1 – 3 | High | High | The curve is too stiff to follow the sine wave.",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-72",
+      "quote": "Both training and test error are large.",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-73",
+      "quote": "| **Reasonable fit** | 4 – 6 | Low | Low | Acceptable inside the training window.",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-74",
+      "quote": "Test MSE is close to training MSE.",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-75",
+      "quote": "| **Overfitting** (High Variance) | 7 – 10 | Very low | High | The curve contorts wildly to pass through every noisy dot.",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-76",
+      "quote": "Training MSE drops but test MSE climbs, the classic signature of overfitting.",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-77",
+      "quote": "**Key insight:** Watch the **two MSE numbers** as you increase the degree.",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-78",
+      "quote": "When training MSE keeps falling but test MSE starts rising, the model has crossed from learning the signal to memorizing the noise.",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-79",
+      "quote": "This gap between training and test performance is the most reliable diagnostic for overfitting in practice.",
+      "section": "Underfitting vs. Overfitting",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-80",
+      "quote": "We use polynomial regression, but the lessons apply directly to neural networks.",
+      "section": "From Polynomial Regression to Neural Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-81",
+      "quote": "A single-layer neural network with $n$ neurons computes a weighted sum of *learned features*, conceptually identical to our weighted sum of polynomial terms.",
+      "section": "From Polynomial Regression to Neural Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-82",
+      "quote": "Adding more neurons (or more layers) is analogous to raising the polynomial degree: it increases the model's **capacity** to represent complex functions.",
+      "section": "From Polynomial Regression to Neural Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-83",
+      "quote": "The \\citetitle{hornik1989universal} (\\citeauthor{hornik1989universal}, \\citeyear{hornik1989universal}; with a related follow-up by \\citeauthor{hornik} in \\citeyear{hornik}) proves that a sufficiently wide neural network can approximate *any* continuous function, just as a sufficiently high-degree polynomial can.",
+      "section": "From Polynomial Regression to Neural Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-84",
+      "quote": "But “can approximate anything” is precisely the problem: with enough capacity, the model will fit the noise, not just the signal.",
+      "section": "From Polynomial Regression to Neural Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-85",
+      "quote": "Large Language Models (LLMs) are neural networks with billions of parameters, polynomial degree cranked to an astronomical level.",
+      "section": "From Polynomial Regression to Neural Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-86",
+      "quote": "They perform brilliantly on tasks similar to their training data (*interpolation*) but can produce plausible-sounding nonsense on topics outside that distribution (*extrapolation*).",
+      "section": "From Polynomial Regression to Neural Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-87",
+      "quote": "The red line rocketing to $\\pm\\infty$ outside the blue box is a visual metaphor for hallucination.",
+      "section": "From Polynomial Regression to Neural Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-88",
+      "quote": "When you use high-degree polynomials to fit data, you often see violent oscillations near the edges of the training interval.",
+      "section": "Runge's Phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-89",
+      "quote": "This is known as \\citealternativetitle{rungesphenomenon} (pp.",
+      "section": "Runge's Phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-90",
+      "quote": "Even when the fit is excellent in the center, the tails of the polynomial whip around unpredictably, rendering the model useless for prediction beyond its training window.",
+      "section": "Runge's Phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-91",
+      "quote": "\\citeauthor{rungesphenomenon} demonstrated the phenomenon using the innocent-looking function",
+      "section": "Runge's Phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-92",
+      "quote": "on the interval $[-1, 1]$ with equidistant interpolation nodes.",
+      "section": "Runge's Phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-93",
+      "quote": "As the number of nodes increases, the interpolating polynomial converges at the center but diverges wildly near $x = \\pm 1$.",
+      "section": "Runge's Phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-94",
+      "quote": "The maximum error actually *grows* without bound.",
+      "section": "Runge's Phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-95",
+      "quote": "To prevent a model from chasing noise or exhibiting \\citealternativetitle{rungesphenomenon}, developers impose mathematical constraints that reward *simplicity* over perfect memorization.",
+      "section": "Taming the “Wiggle”: Regularization & Dropout",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-96",
+      "quote": "Without constraints, the weight vector $\\mathbf{w}$ can explode to enormous values just to force the curve through every noisy dot.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-97",
+      "quote": "Regularization adds a **penalty term** to the loss:",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-98",
+      "quote": "| Method | Penalty | Effect |",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-99",
+      "quote": "| **L1, Lasso** (\\citeauthor{tibshirani1996lasso}, \\citeyear{tibshirani1996lasso}) | $\\lambda \\sum_{j} \\| w_j \\|$ | Drives unimportant weights to **exactly zero** → automatic feature selection.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-100",
+      "quote": "| **L2, Ridge** (first described by \\citeauthor{hoerl1970ridge} in \\citeyear{hoerl1970ridge}) | $\\lambda \\displaystyle\\sum_{j} w_j^{2}$ | Shrinks all weights toward zero → produces a **smoother** curve.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-101",
+      "quote": "The regularized losses therefore become:",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-102",
+      "quote": "**Try it now:** Use the **L2 Regularization (λ)** slider above.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-103",
+      "quote": "Set the degree to 10, add noise, train, then gradually increase $\\lambda$.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-104",
+      "quote": "Watch the red curve smooth out and the test MSE drop, even as training MSE rises slightly.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-105",
+      "quote": "That's the tradeoff: you sacrifice a little training accuracy for much better generalization.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-106",
+      "quote": "The idea of penalizing solution complexity predates machine learning by decades.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-107",
+      "quote": "**\\citeauthor{earlyl2}** (\\citeyear{earlyl2}) independently developed what we now call L2 regularization in the context of solving ill-posed integral equations, problems where small perturbations in the input cause enormous changes in the output.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-108",
+      "quote": "In statistics, \\citeauthor{hoerl1970ridge} and Kennard reintroduced the technique in \\citeyear{hoerl1970ridge} as **Ridge Regression**.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-109",
+      "quote": "\\citeauthor{tibshirani1996lasso}'s **LASSO** (\\citeyear{tibshirani1996lasso}) added the L1 variant, whose key innovation was producing *sparse* solutions, models that automatically ignore irrelevant features by setting their weights to exactly zero.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-110",
+      "quote": "Because the model must learn the pattern with only *partial* information at every step, the resulting approximation is far more robust, and far less likely to “freak out” when it leaves the training window.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-111",
+      "quote": "The trade-off: dropout requires **more training data** and **longer training** to converge.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-112",
+      "quote": "The classical bias–variance tradeoff predicts a clean U-shaped test-error curve: error falls as complexity increases, hits a minimum, then rises as the model overfits.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-113",
+      "quote": "But recent research has revealed a surprising twist called **double descent**.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-114",
+      "quote": "When models become *extremely* overparameterized, far past the point where they can perfectly interpolate the training data, test error can start *decreasing again*.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-115",
+      "quote": "This has been observed in deep neural networks, random forests, and even simple linear models.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-116",
+      "quote": "The intuition: once a model has vastly more parameters than data points, there are many possible perfect-fit solutions, and gradient descent tends to find the “simplest” one (in a minimum-norm sense), which generalises well.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-117",
+      "quote": "This challenges the simple “more parameters = more overfitting” narrative.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-118",
+      "quote": "A rigorous explanation now exists: if the network's weights remain small — as standard initialization and weight decay ensure — then the network is automatically Lipschitz-continuous with a constant **independent of its parameter count**, and the generalization bound depends on that Lipschitz constant, not on the number of weights \\cite{petersen2024mathdl}.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-119",
+      "quote": "Adding parameters in the overparameterized regime therefore no longer increases the generalization error.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-120",
+      "quote": "Here, double descent is not visible because our polynomial degrees stay low.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    },
+    {
+      "id": "overandunderfittinglab-stmt-121",
+      "quote": "But it explains why modern LLMs with billions of parameters can generalise well despite being massively overparameterized, provided they are trained with enough data and appropriate regularization.",
+      "section": "L1 & L2 Regularization (Weight Penalties)",
+      "kind": "statement"
+    }
   ]
 }

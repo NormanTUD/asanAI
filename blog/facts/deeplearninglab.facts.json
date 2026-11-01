@@ -427,5 +427,661 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "deeplearninglab-stmt-1",
+      "quote": "In the **Minimal Neuron** section, we saw that one neuron does something very simple: it multiplies its input by a weight, adds a bias, and then bends the result with an activation function.",
+      "section": "From a Single Neuron to a Deep Network",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-2",
+      "quote": "A single neuron can draw *one* straight line through data, and nothing more.",
+      "section": "From a Single Neuron to a Deep Network",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-3",
+      "quote": "**Deep Learning** — a term first used in a different context by \\citeauthor{deeplearningfirstuse} (\\citeyear{deeplearningfirstuse}), reintroduced for neural networks by \\citeauthor{aizenberg2000}, and popularized after \\citeauthor{hinton2006} — is what happens when we stop using one neuron and start **stacking many of them in layers**, feeding the output of one layer as the input to the next.",
+      "section": "From a Single Neuron to a Deep Network",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-4",
+      "quote": "A single layer takes a vector of inputs $\\mathbf{x}$ and produces a vector of outputs $\\mathbf{h}$ (called a *hidden state*, because it sits between the input and the final answer):",
+      "section": "One Layer at a Time",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-5",
+      "quote": "Reading this from the inside out:",
+      "section": "One Layer at a Time",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-6",
+      "quote": "- $W$ is a **matrix of weights**.",
+      "section": "One Layer at a Time",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-7",
+      "quote": "Each row is like one neuron's weights, and stacking many neurons side by side gives us a matrix instead of a single number.",
+      "section": "One Layer at a Time",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-8",
+      "quote": "Multiplying by $W$ mixes the inputs together in many different learned combinations at once.",
+      "section": "One Layer at a Time",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-9",
+      "quote": "- $\\mathbf{b}$ is a **bias vector**, one offset per neuron.",
+      "section": "One Layer at a Time",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-10",
+      "quote": "- $\\sigma$ is the **activation function** (the \"bend\"), applied to each entry.",
+      "section": "One Layer at a Time",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-11",
+      "quote": "Nothing exotic — just a matrix multiplication, an addition, and a bend.",
+      "section": "One Layer at a Time",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-12",
+      "quote": "\"Deep\" simply means: the output of one layer becomes the input of the next.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-13",
+      "quote": "In math, this is called **function composition**.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-14",
+      "quote": "Each layer has its own weights $W_n$ and biases $\\mathbf{b}_n$.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-15",
+      "quote": "This stacking is what lets the network build a **ladder of features**: layer 1 might pick up simple things (edges, basic patterns), layer 2 combines those into shapes, and deeper layers combine those into full concepts (a face, a word, a chess position).",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-16",
+      "quote": "There is a beautiful mathematical guarantee behind all of this, called the **Universal Approximation Theorem**.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-17",
+      "quote": "It's actually a *family* of related results — notably \\citeauthor{cybenko1989} (\\citeyear{cybenko1989}) and \\citeauthor{hornik1989universal} (\\citeyear{hornik1989universal}) — and they all say roughly the same thing:",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-18",
+      "quote": "> A network with just **one hidden layer** can approximate **any reasonable continuous function** as closely as you want, as long as it has enough neurons.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-19",
+      "quote": "Formally, such a network computes:",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-20",
+      "quote": "which is just: take $n$ neurons, each one bends the input its own way ($\\psi$ with weights $a_j$ and threshold $\\theta_j$), then add up their outputs weighted by $\\beta_j$.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-21",
+      "quote": "If $n$ is large enough, this sum can match the shape of *any* well-behaved function.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-22",
+      "quote": "**Two important caveats**, because this theorem is often oversold:",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-23",
+      "quote": "It's an **existence** proof, not a **learning** proof.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-24",
+      "quote": "It says the right weights *exist*, not that gradient descent will find them.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-25",
+      "quote": "\"Enough neurons\" can mean *astronomically* many.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-26",
+      "quote": "In practice, a shallow-but-huge network is almost never the right choice — **depth is dramatically more efficient** than width, as we'll see next.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-27",
+      "quote": "And the cleanest modern characterization, \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), gives an exact *if and only if*: the one-hidden-layer network is a universal approximator **if and only if** the activation is not a polynomial.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-28",
+      "quote": "That means sigmoid, ReLU, tanh, SiLU — every standard activation — qualifies, while no amount of width can compensate for a polynomial activation.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-29",
+      "quote": "So the theorem is foundational, but it doesn't explain *why* deep networks work so well.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-30",
+      "quote": "For that, we need to look at what depth actually buys us.",
+      "section": "Stacking Layers = Function Composition",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-31",
+      "quote": "The ideas above become tangible when you watch a network learn.",
+      "section": "Try it: train a network yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-32",
+      "quote": "Below is a real multilayer perceptron, trained with backpropagation and Adam right in your browser.",
+      "section": "Try it: train a network yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-33",
+      "quote": "The small squares in the diagram show what each neuron responds to: the first hidden layer learns simple straight cuts, deeper layers combine them into curves.",
+      "section": "Try it: train a network yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-34",
+      "quote": "Try the circle without hidden layers, then add the feature x₁², x₂².",
+      "section": "Try it: train a network yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-35",
+      "quote": "Here's the honest, mechanical answer to why \"a big pile of matrix multiplications\" ends up being able to translate languages, recognize faces, and play chess better than any human.",
+      "section": "Why Deep Learning Works (And Why It Works *So* Well)",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-36",
+      "quote": "It comes down to four ingredients working together: **depth**, **nonlinearity**, **backpropagation**, and the **optimizer's hidden preferences**.",
+      "section": "Why Deep Learning Works (And Why It Works *So* Well)",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-37",
+      "quote": "A deep network is a **composition of many simple functions**.",
+      "section": "The One-Paragraph Answer",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-38",
+      "quote": "Each function (a \"layer\") is a matrix multiplication followed by a small bend.",
+      "section": "The One-Paragraph Answer",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-39",
+      "quote": "On its own, one layer is powerless — it can only mix, rotate, and scale.",
+      "section": "The One-Paragraph Answer",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-40",
+      "quote": "But **chained together, simple steps stack into arbitrarily complex ones**.",
+      "section": "The One-Paragraph Answer",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-41",
+      "quote": "Then **training** (forward pass → measure error → **backprop** → **optimizer step**) tunes the weights until the whole composition implements the right input-to-output map.",
+      "section": "The One-Paragraph Answer",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-42",
+      "quote": "The \"storage\" of knowledge is nothing more than the final tuned weights.",
+      "section": "The One-Paragraph Answer",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-43",
+      "quote": "Depth gives us **expressivity**, the nonlinearity prevents **collapse**, backprop provides an **efficient learning signal**, and the optimizer has a built-in **bias toward simple, generalizing solutions** rather than memorization.",
+      "section": "The One-Paragraph Answer",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-44",
+      "quote": "A deep network with $L$ layers just feeds each layer's output into the next:",
+      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-45",
+      "quote": "**Here's the crucial part.** If you removed the bend $\\sigma$, the whole stack collapses:",
+      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-46",
+      "quote": "A stack of pure linear layers is **mathematically identical to one linear layer**.",
+      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-47",
+      "quote": "No matter how deep, it can only draw straight lines.",
+      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-48",
+      "quote": "It cannot compute $x^2$, it cannot solve XOR, it cannot tell a cat from a dog.",
+      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-49",
+      "quote": "The nonlinearity **prevents that collapse**.",
+      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-50",
+      "quote": "Each $\\sigma$ re-bends the space, so the next matrix multiplies something that has *already been transformed*.",
+      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-51",
+      "quote": "Depth alone isn't the power — **depth with a bend in between** is.",
+      "section": "Depth = Composition, and Why the \"Bend\" Is Everything",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-52",
+      "quote": "The mechanical reason depth is so effective is **reuse**.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-53",
+      "quote": "A sub-result computed by an early layer is reused by everything downstream.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-54",
+      "quote": "Depth turns \"compute, throw away, recompute\" into \"compute once, reuse everywhere.\"",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-55",
+      "quote": "**A concrete example.** Suppose we want to check \"is a point inside an $n$-dimensional unit box?\" — meaning each coordinate must be in $(0,1)$.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-56",
+      "quote": "- A **shallow** (2-layer) network needs roughly $2^n$ neurons to capture this — **exponential** growth.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-57",
+      "quote": "- A **deep** network with $n$ layers of just a few neurons each does it in $O(n)$ total neurons.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-58",
+      "quote": "Each layer checks one coordinate and multiplies by the running result from the previous layer.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-59",
+      "quote": "This isn't a fluke: \\citeauthor{telgarsky2016wars} proved there exist functions a deep net represents with $O(n)$ neurons that a shallow net needs $2^{\\Omega(n)}$ neurons to match.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-60",
+      "quote": "And \\citeauthor{montufar2014regions} showed that the number of distinct \"linear regions\" a ReLU network can carve out **grows exponentially with depth** — the compositional structure is exactly what buys the exponential expressivity.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-61",
+      "quote": "And the bound is **tight**: a depth-$L$ ReLU network of width 2 produces a \"sawtooth\" with exactly $2^L$ linear regions, so the exponential growth is guaranteed, not merely possible \\cite{petersen2024mathdl}.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-62",
+      "quote": "**What this looks like conceptually:** each layer builds features **on top of** the previous layer's features.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-63",
+      "quote": "- Layer 1: edges, simple patterns.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-64",
+      "quote": "- Layer 2: patterns *made of* layer-1 patterns (corners, textures).",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-65",
+      "quote": "- Layer $k$: patterns made of $(k{-}1)$-level patterns.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-66",
+      "quote": "This matches how **the real world is structured**: pixels → edges → parts → objects; sounds → phonemes → words → meaning.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-67",
+      "quote": "Deep networks are compact for the same reason: the world itself is compositional.",
+      "section": "Why Depth Beats Width: Reuse",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-68",
+      "quote": "Before training, the weights are random and the network's output is garbage.",
+      "section": "How the Knowledge Gets Into the Weights",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-69",
+      "quote": "Forward pass** — run input $x$ through all layers, get prediction $\\hat{y}$.",
+      "section": "How the Knowledge Gets Into the Weights",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-70",
+      "quote": "Loss** — measure how wrong we were in a single number:",
+      "section": "How the Knowledge Gets Into the Weights",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-71",
+      "quote": "Backpropagation** — figure out, for every single weight, \"if I nudge it slightly, does the error go up or down?\" Because the network is a composition, the influence of a weight in layer $\\ell$ flows through *every layer after it*.",
+      "section": "How the Knowledge Gets Into the Weights",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-72",
+      "quote": "The **chain rule** from calculus handles this:",
+      "section": "How the Knowledge Gets Into the Weights",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-73",
+      "quote": "The clever part is that backprop **reuses intermediate results**, walking the error signal *backward* through the network.",
+      "section": "How the Knowledge Gets Into the Weights",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-74",
+      "quote": "What would naively be exponential bookkeeping becomes **linear in the number of layers**.",
+      "section": "How the Knowledge Gets Into the Weights",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-75",
+      "quote": "Optimizer step** — nudge every weight a small amount in the direction that reduces the error:",
+      "section": "How the Knowledge Gets Into the Weights",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-76",
+      "quote": "Repeat millions of times.",
+      "section": "How the Knowledge Gets Into the Weights",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-77",
+      "quote": "The **trajectory of the weights through weight-space** is literally what writes the knowledge into the matrices.",
+      "section": "How the Knowledge Gets Into the Weights",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-78",
+      "quote": "There is no separate memory — the knowledge *is* the final numbers.",
+      "section": "How the Knowledge Gets Into the Weights",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-79",
+      "quote": "There's a practical problem with stacking many layers.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-80",
+      "quote": "When backprop sends the error signal backward through, say, 100 layers, it gets multiplied by many small numbers along the way.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-81",
+      "quote": "The signal often **shrinks to nearly zero** (the \"vanishing gradient\" problem) or occasionally explodes.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-82",
+      "quote": "Early layers stop learning because they receive no meaningful feedback.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-83",
+      "quote": "\\citeauthor{he2015resnet} introduced a stunningly simple fix: the **residual connection** (also called a skip connection).",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-84",
+      "quote": "Instead of each layer computing an entirely new representation, it computes just a **correction** and adds it to the running state:",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-85",
+      "quote": "This one change transforms deep networks in three ways:",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-86",
+      "quote": "Gradients flow freely.** Because of the $+h_{\\ell-1}$ term, the derivative through the skip path is exactly $1$.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-87",
+      "quote": "The error signal has a **highway back to the earliest layers** — it can no longer be strangled by many small multiplications.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-88",
+      "quote": "This is what makes training networks with hundreds or even thousands of layers actually possible.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-89",
+      "quote": "Each layer only has to learn a small refinement.** Instead of every layer needing to reinvent the entire representation, layers are free to add tiny, targeted adjustments.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-90",
+      "quote": "If a layer has nothing useful to add, it can just learn $f_\\ell \\approx 0$ and let the input pass through unchanged.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-91",
+      "quote": "Bad layers become harmless; good layers become powerful.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-92",
+      "quote": "It creates the \"residual stream.\"** In modern transformers, this idea becomes central: the recursively updated state $h_\\ell = h_0 + \\sum_{i=1}^{\\ell} f_i(h_{i-1})$ acts like a **shared communication bus** that every layer can read from and write to.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-93",
+      "quote": "Attention heads and MLPs across the whole network exchange information by adding features into this stream and reading them out later.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-94",
+      "quote": "This is why transformer analyses (see \\citeauthor{elhage2021framework}) treat the residual stream as the central object of the network — it's the substrate on which computation actually happens.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-95",
+      "quote": "Residual connections also **flatten the loss landscape** \\cite[Li et al.]{li2018losslandscape}, making the optimization problem itself easier and pushing training toward solutions that generalize better.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-96",
+      "quote": "It's one of the rare tricks in deep learning that improves trainability, generalization, *and* interpretability all at once.",
+      "section": "Residual Connections: How We Actually Train *Really* Deep Networks",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-97",
+      "quote": "The loss $\\mathcal{L}(W)$ is a surface in a space with **millions or billions of dimensions**.",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-98",
+      "quote": "Gradient descent is a ball rolling downhill on this surface.",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-99",
+      "quote": "Two facts shape what it finds.",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-100",
+      "quote": "**Saddle points, not local minima, are the real obstacle.** In very high dimensions, almost every flat spot is a saddle (curving up in some directions, down in others), not a true trap \\cite[Dauphin et al.]{dauphin2014saddle}.",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-101",
+      "quote": "The **randomness in mini-batch training** acts like little kicks that knock the ball off saddles, which is why training huge networks actually works.",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-102",
+      "quote": "And for a single-hidden-layer network with at least as many neurons as training samples, the loss landscape has **no spurious valleys at all** — every local minimum is a global minimum \\cite{petersen2024mathdl}.",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-103",
+      "quote": "All of these obstacles (saddles, ill-conditioning, ill-chosen learning rates) are exactly what the modern optimizer zoo was built to handle.",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-104",
+      "quote": "\\citeauthor{ruder2016overview}'s 2016 overview article (\\citeyear{ruder2016overview}) is the standard practitioner-facing survey of the family — Momentum, Nesterov, Adagrad, RMSprop, Adam, AMSGrad — with derivations and the intuition behind each fix.",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-105",
+      "quote": "Then, ΛA,σ,S,L, has no spurious valleys.",
+      "section": "The Loss Landscape and the \"Implicit Bias\" That Makes It Work",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-106",
+      "quote": "The activation function $\\sigma$ (like **ReLU** or **Sigmoid**) is the glue that makes stacking work.",
+      "section": "The Role of Non-Linearity",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-107",
+      "quote": "Without it, the whole network — no matter how deep — collapses into a single linear function, because \"a linear function of a linear function is still linear.\"",
+      "section": "The Role of Non-Linearity",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-108",
+      "quote": "By keeping non-linear \"bends\" between the stacks, the network can warp the coordinate space in complex ways, letting it solve problems that no straight line ever could — like the classic **XOR** gate.",
+      "section": "The Role of Non-Linearity",
+      "kind": "statement"
+    },
+    {
+      "id": "deeplearninglab-stmt-109",
+      "quote": "**Tip:** Try changing the activation function of the hidden layer in the playground below and watch what happens.",
+      "section": "The Role of Non-Linearity",
+      "kind": "statement"
+    }
   ]
 }

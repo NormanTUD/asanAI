@@ -15049,5 +15049,2641 @@
       "confidence": "provenance"
     }
   ],
-  "deep_audit": true
+  "deep_audit": true,
+  "statements": [
+    {
+      "id": "untold_history_ii-stmt-1",
+      "quote": "Glass was made in Mesopotamia and Egypt as early as 3500 BCE, but the transparent optical glass needed for precision lenses required centuries of refinement.",
+      "section": "Glass and Lenses: The Instruments That Expanded Perception",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-2",
+      "quote": "The Venetian glassmakers of Murano developed *cristallo*, a clear soda-lime glass, in the 15th century, and it was from this material that the first lenses were ground.",
+      "section": "Glass and Lenses: The Instruments That Expanded Perception",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-3",
+      "quote": "**\\citeauthor{galileosidereus}**'s \\citeyear{galileosidereus} \\citetitle{galileosidereus} turned such a lens skyward, discovering Jupiter's moons and confirming Copernican astronomy.",
+      "section": "Glass and Lenses: The Instruments That Expanded Perception",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-4",
+      "quote": "**\\citeauthor{leeuwenhoekletters}**'s single-lens microscopes, reported in his letters to the Royal Society from the 1670s onward, revealed a microbial world invisible to the naked eye and established the empirical foundation for cell theory that would later inform Cajal's neuron doctrine.",
+      "section": "Glass and Lenses: The Instruments That Expanded Perception",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-5",
+      "quote": "The same lens-grinding tradition produced the camera obscura, Niépce's photographic plate, and Muybridge's motion sequences, the labelled image datasets of the 19th century.",
+      "section": "Glass and Lenses: The Instruments That Expanded Perception",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-6",
+      "quote": "Without optical glass, there are no microscopes (and no neuron doctrine), no telescopes (and no celestial mechanics), and no cameras (and no modern vision datasets).",
+      "section": "Glass and Lenses: The Instruments That Expanded Perception",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-7",
+      "quote": "The \\citealternativetitle{img_huygens_aerial_telescope} (Public Domain): the tubeless aerial telescope of \\citeauthor{img_huygens_aerial_telescope}, drawn in \\citeyear{img_huygens_aerial_telescope} — a lens-based instrument of the same lineage as Galileo's refractor, extending human perception to the heavens.",
+      "section": "Glass and Lenses: The Instruments That Expanded Perception",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-8",
+      "quote": "Source: \\citeauthor{img_huygens_aerial_telescope}, \\citeyear{img_huygens_aerial_telescope}, \\citealternativetitle{img_huygens_aerial_telescope}, Wikimedia Commons.",
+      "section": "Glass and Lenses: The Instruments That Expanded Perception",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-9",
+      "quote": "No instrument in this history displaced its original purpose so completely as the microscope.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-10",
+      "quote": "Built to examine the fine detail of lenses, cloth, and surfaces, it ended up supplying both the *model* and the *method* of artificial intelligence: the model, because it revealed the neuron; the method, because it taught science how to zoom in until a new world of units appeared.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-11",
+      "quote": "**The book that named the cell.** \\citeauthor{micrographia}'s \\citeyear{micrographia} \\citetitle{micrographia} was the first major publication of the Royal Society and its first best-seller; Samuel Pepys called it “the most ingenious book that ever I read in my life”.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-12",
+      "quote": "Hooke used a compound microscope, built for him in London by the optician Christopher Cock, magnifying some fifty times in diameter, to describe a louse, a flea, a gnat, a fly's eye, and the jagged edge of a honed razor — the first book to publish drawings of the world as seen through lenses \\cite{micrographia_wiki}.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-13",
+      "quote": "The most consequential observation in the book was made on its least interesting specimen: a thin slice of cork.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-14",
+      "quote": "Hooke saw that it was “all perforated and porous, much like a Honey-comb”, and that “these pores, or cells, … were indeed the first microscopical pores I ever saw, and perhaps, that were ever seen” (\\cite[Hooke, 1665]{hookecork}).",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-15",
+      "quote": "He named them *cells*, after the small rooms of a monastery, without knowing what they were for: he had seen only the empty walls of dead plant tissue.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-16",
+      "quote": "But the word caught, and within two centuries it came to name the unit of all living things.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-17",
+      "quote": "I could exceedingly plainly perceive it to be all perforated and porous, much like a Honey-comb, but that the pores of it were not regular … these pores, or cells, … were indeed the first microscopical pores I ever saw, and perhaps, that were ever seen, for I had not met with any Writer or Person, that had made any mention of them before this.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-18",
+      "quote": "\\citealternativetitle{img_micrographia_cork} (Public Domain): the honeycombed pores of a thin slice of cork, no thicker than the 400th part of an inch, as drawn for \\citetitle{micrographia}.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-19",
+      "quote": "It was looking at this dead plant tissue that \\citeauthor{micrographia} coined the word “cell”.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-20",
+      "quote": "Source: \\citeauthor{img_micrographia_cork}, \\citeyear{img_micrographia_cork}, \\citealternativetitle{img_micrographia_cork}, Wikimedia Commons.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-21",
+      "quote": "The \\citealternativetitle{img_micrographia_titlepage} (Public Domain): the title page of the 1665 folio, the Royal Society's first major publication and the first scientific best-seller.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-22",
+      "quote": "The \\citealternativetitle{img_hooke_cock_microscope} (Public Domain): the compound microscope manufactured by Christopher Cock of London for \\citeauthor{micrographia}, believed to be the instrument with which he made the observations in \\citetitle{micrographia}.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-23",
+      "quote": "Source: \\citeauthor{img_hooke_cock_microscope}, \\citeyear{img_hooke_cock_microscope}, \\citealternativetitle{img_hooke_cock_microscope}, Wikimedia Commons.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-24",
+      "quote": "The \\citealternativetitle{img_cajal_cerebellum} (Public Domain): the cells of the chick cerebellum as \\citeauthor{cajaltextura} drew them.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-25",
+      "quote": "The reticular theory, a single continuous mesh, had been the consensus of his generation; each black-inked cell in this drawing is a separate individual, the unit of the neuron doctrine and the direct ancestor of the “neuron” in a neural network.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-26",
+      "quote": "Source: \\citeauthor{img_cajal_cerebellum}, \\citeyear{img_cajal_cerebellum}, \\citealternativetitle{img_cajal_cerebellum}, Wikimedia Commons.",
+      "section": "From Cork to Circuits: The Microscope That Gave AI Its Model and Its Method",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-27",
+      "quote": "No electrical computer can exist without electricity, yet the phenomenon was first observed in a context utterly alien to computation.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-28",
+      "quote": "Around 600 BCE, **Thales of Miletus** noticed that rubbing amber (*ἤλεκτρον*, *elektron* in Greek) against fur caused it to attract lightweight objects like feathers, an observation recorded attributed to Thales, later catalogued by \\citeauthor{laertius} in \\citetitle{laertius} (Book I, §15).",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-29",
+      "quote": "For over two millennia, this remained a philosophical curiosity, a parlor trick of nature.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-30",
+      "quote": "\\marginfig{volta_portrait.jpg}{\\citeauthor{volta_portrait}, inventor of the first true electric battery.}",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-31",
+      "quote": "The transformation of this curiosity into a usable force required a cascade of unrelated breakthroughs:",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-32",
+      "quote": "* **Alessandro Volta** (1800) created the first true battery (the *voltaic pile*), proving that electricity could be generated chemically and sustained as a steady current, not just produced as a momentary spark.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-33",
+      "quote": "He announced the device in a letter to Sir Joseph Banks, president of the Royal Society, subsequently published as \\citetitle{volta}.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-34",
+      "quote": "\\marginfig{voltaic_pile.png}{\\citealternativetitle{voltaic_pile} (1800): stacked disks of copper and zinc separated by brine-soaked cloth, the first electric battery.}",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-35",
+      "quote": "* **Michael Faraday** (1831) discovered **electromagnetic induction**, the dynamo principle, demonstrating that moving a magnet through a coil of wire generates electric current.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-36",
+      "quote": "He described the effect in \\citetitle{faraday}.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-37",
+      "quote": "This single insight is the basis of virtually all electrical power generation on Earth, from coal plants to wind turbines.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-38",
+      "quote": "Without it, there is no power grid, no data center, and no GPU cluster.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-39",
+      "quote": "* **Nikola Tesla** and **George Westinghouse** (1880s–1890s) championed **alternating current (AC)**, which allowed electricity to be transmitted over long distances without catastrophic loss.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-40",
+      "quote": "Tesla's foundational polyphase AC patents (U.S.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-41",
+      "quote": "Patents \\cite[381,968]{teslaelectricmotor}–\\cite[382,282]{teslacurrent}, filed 1887, granted 1888) and his landmark lecture “A New System of Alternate Current Motors and Transformers” (delivered before the American Institute of Electrical Engineers, May 1888) laid the technical basis.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-42",
+      "quote": "The ability to centralize power generation and distribute it across cities and continents is a silent prerequisite for every server farm that trains an LLM.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-43",
+      "quote": "\\citealternativetitle{faraday_disk}: Faraday's rotating copper disk between the poles of a horseshoe magnet, the first demonstration that mechanical motion can produce a steady electric current.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-44",
+      "quote": "\\citeauthor{tesla_portrait}, whose polyphase alternating-current patents made long-distance electrical power distribution economically viable.",
+      "section": "From Amber to Amperes: The Discovery and Harnessing of Electricity",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-45",
+      "quote": "Metallurgy is a silent prerequisite whose absence makes every other layer of this history impossible.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-46",
+      "quote": "The trail begins not in a logic textbook but in a smelter's furnace, with the first systematic reflection on what an ore actually is.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-47",
+      "quote": "**\\citeauthor{theophrastusstones}**'s \\citeyear{theophrastusstones} treatise \\citetitle{theophrastusstones} (Περὶ λίθων) is the earliest surviving attempt to classify rocks and minerals by their behavior under heat, including the iron ores that would, within a few centuries, replace bronze as the skeleton of civilisation.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-48",
+      "quote": "A few generations later, **\\citeauthor{plinynaturalhistory}**'s \\citeyear{plinynaturalhistory} \\citetitle{plinynaturalhistory}, in particular books XXXIII and XXXIV, gathered everything the Roman world knew about copper, iron, gold, silver, lead, tin, and mercury, including the mining and smelting processes that turned ore into the material substrate of roads, aqueducts, weapons, coinage, and (by then) the bronze gears of the Antikythera mechanism.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-49",
+      "quote": "The leap from art to science came in \\citeyear{deremetallica}, when **\\citeauthor{deremetallica}** published \\citetitle{deremetallica}, the first comprehensive modern treatise on mining and smelting, with 292 woodcuts that turned German mining practice into a book one could study.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-50",
+      "quote": "Agricola's volumes remained the standard for nearly two centuries, and **\\citeauthor{vonneumann}**'s later EDVAC design borrowed directly from the engineering vocabulary of mines: a \"Store\" (memory) and a \"Mill\" (CPU) are named after the architecture of ore processing.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-51",
+      "quote": "The transformation of iron from a precious craft metal into an industrial commodity was completed in \\citeyear{bessemerpatent}, when **\\citeauthor{bessemerpatent}** patented the \\citealternativetitle{bessemerpatent}, which dropped the price of steel by a factor of ten and made possible every precision instrument, generator, and structural beam that the electric age would demand.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-52",
+      "quote": "Yet the deepest metallurgical miracle predates Bessemer by more than a millennium and stands in Delhi.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-53",
+      "quote": "The \\citealternativetitle{ironpillardelhi}, erected under Chandragupta II (c.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-54",
+      "quote": "375–415 CE), has resisted corrosion for over 1,600 years in a climate that would eat unprotected iron alive.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-55",
+      "quote": "**\\citeauthor{ironpillardelhi}**'s \\citeyear{ironpillardelhi} analysis showed that the resistance comes from a thin, self-forming layer of crystalline iron hydrogen phosphate hydrate that grows only one-twentieth of a millimetre per millennium: a passive film that ancient Indian smiths produced not by understanding quantum electrochemistry, but by smelting with high-phosphorus charcoal in a lime-free furnace.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-56",
+      "quote": "The pillar's survival is, like the Jacquard loom or the Antikythera mechanism, a reminder that someone solved a problem no one had formulated, with no intention of contributing to any future science.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-57",
+      "quote": "The \\citealternativetitle{img_iron_pillar_delhi} (Public Domain): the \\citealternativetitle{ironpillardelhi}, a wrought-iron column that has resisted corrosion for over 1,600 years through a self-forming passive film, a metallurgical result no one set out to engineer.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-58",
+      "quote": "Source: \\citeauthor{img_iron_pillar_delhi}, \\citeyear{img_iron_pillar_delhi}, \\citealternativetitle{img_iron_pillar_delhi}, Wikimedia Commons.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-59",
+      "quote": "The \\citealternativetitle{img_bessemer_converter} (Public Domain): the \\citealternativetitle{bessemerpatent}, the process that turned steel from a precious craft metal into an industrial commodity.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-60",
+      "quote": "Source: \\citeauthor{img_bessemer_converter}, \\citeyear{img_bessemer_converter}, \\citealternativetitle{img_bessemer_converter}, Wikimedia Commons.",
+      "section": "From Bloomery to Boolean: The Metals That Compute",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-61",
+      "quote": "Ultimately, every element used in computing, silicon (Si, 14) for substrates, copper (Cu, 29) for interconnects, gold (Au, 79) for wire bonds, tantalum (Ta, 73) for capacitors, gallium (Ga, 31) and arsenic (As, 33) for III-V semiconductors in networking lasers, erbium (Er, 68) for fiber optic amplifiers, neodymium (Nd, 60) for magnets, was first isolated, characterized, and understood through chemistry.",
+      "section": "The Periodic Table as Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-62",
+      "quote": "Dmitri Mendeleev's 1869 periodic table organized the elements by atomic weight and predicted the existence of undiscovered elements; without this organizational framework, the systematic engineering of materials for computation would have been impossible.",
+      "section": "The Periodic Table as Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-63",
+      "quote": "The \\citealternativetitle{mendeleev_periodic_table}: Mendeleev's original 1869 arrangement of the elements by atomic weight, complete with bold predictions for then-undiscovered elements such as gallium, scandium and germanium.",
+      "section": "The Periodic Table as Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-64",
+      "quote": "Every silicon, copper and neodymium atom in a modern GPU owes its place on this chart.",
+      "section": "The Periodic Table as Foundation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-65",
+      "quote": "External memory did not begin with writing.",
+      "section": "Tally Bones: Counting Before Writing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-66",
+      "quote": "Long before paper or ink, humans outsourced counting to matter: the **Lebombo bone**, a baboon fibula with 29 notches from Border Cave (Eswatini/South Africa, c.",
+      "section": "Tally Bones: Counting Before Writing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-67",
+      "quote": "42,000–43,000 years ago), is the oldest known counting device, probably a lunar or menstrual calendar.",
+      "section": "Tally Bones: Counting Before Writing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-68",
+      "quote": "The **Dolní Věstonice bone** — a wolf radius found by **\\citeauthor{wolfbone}** in 1936 in Moravia, with 55 notches in two groups (30 and 25) on an 18 cm bone, dated to roughly 27,000 years ago — and the **Ishango bone** (c.",
+      "section": "Tally Bones: Counting Before Writing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-69",
+      "quote": "18,000 BCE, with columns of marks read as a base-12 counting aid) show that the same impulse to externalise quantity into physical marks arose independently in Africa and Europe.",
+      "section": "Tally Bones: Counting Before Writing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-70",
+      "quote": "These notches are the first data ever written down: quantities pushed out of memory into the physical world, the direct ancestor of every counter, array, and database.",
+      "section": "Tally Bones: Counting Before Writing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-71",
+      "quote": "Nothing older with a counting function is known; older notched bones (up to ca.",
+      "section": "Tally Bones: Counting Before Writing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-72",
+      "quote": "80,000 years old, e.g., Apollo 11 Rockshelter, Namibia \\cite[Vogelsang et al., 2010]{vogelsang2010apollo11}) exist, but their marks are likely decorative, and the oldest known drawing by our species is a hatched flake from Blombos Cave (ca.",
+      "section": "Tally Bones: Counting Before Writing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-73",
+      "quote": "71,000–73,000 years ago \\cite[Henshilwood et al., 2018]{henshilwood2018blombos}); deliberate geometric incision is far older, as the Trinil shell shows (ca.",
+      "section": "Tally Bones: Counting Before Writing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-74",
+      "quote": "540,000–430,000 years ago \\cite[Joordens et al., 2015]{trinilshell}).",
+      "section": "Tally Bones: Counting Before Writing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-75",
+      "quote": "The first numbers ever written down were not drawn — they were *pressed*.",
+      "section": "The First Written Numbers: Tokens, Tablets, and Base 60",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-76",
+      "quote": "In the farming villages of southern Mesopotamia, granary clerks and shepherds kept small clay **tokens**: cones, spheres, and lens-shaped lumps, each encoding a unit of account (a small jar of oil, a large jar, a measure of grain, an animal).",
+      "section": "The First Written Numbers: Tokens, Tablets, and Base 60",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-77",
+      "quote": "The shapes had been in use, by the dating of the earliest deposits, since at least the **9th millennium BCE** (\\cite[Ifrah, 2000]{ifrah2000}; \\cite[Schmandt-Besserat, 1992]{schmandtbesserat1992}).",
+      "section": "The First Written Numbers: Tokens, Tablets, and Base 60",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-78",
+      "quote": "To make the record tamper-proof, the tokens were sealed inside a hollow clay envelope — a **bulla** — and the shapes were impressed on the outside so the contents could be checked without breaking it: the first external memory of a sealed record, a data structure with a checksum.",
+      "section": "The First Written Numbers: Tokens, Tablets, and Base 60",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-79",
+      "quote": "Around **3300 BCE**, at Uruk, the envelope was dropped and the message was written directly on a flat tablet: the **proto-cuneiform** tablets, the oldest documents in the world, are almost entirely lists of grain, beer, and workers.",
+      "section": "The First Written Numbers: Tokens, Tablets, and Base 60",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-80",
+      "quote": "2000 BCE the system had abstracted into something recognisably numeric: **two** wedge signs only — the vertical wedge 𒁹 (1) and the corner wedge 𒌋 (10) — combined to form the digits 1–59, then stacked in **base 60** with **position**, the first positional numeral system on record (\\cite[Chrisomalis, 2010]{chrisomalis2010}).",
+      "section": "The First Written Numbers: Tokens, Tablets, and Base 60",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-81",
+      "quote": "A gap marked an empty position — a zero *placeholder*, but not a number: it was never written in the final position, and there was no radix point, so where the units place fell had to be inferred from context.",
+      "section": "The First Written Numbers: Tokens, Tablets, and Base 60",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-82",
+      "quote": "The sexagesimal legacy is still running: the 360° of the circle, the 60-minute hour, the 60-second minute.",
+      "section": "The First Written Numbers: Tokens, Tablets, and Base 60",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-83",
+      "quote": "While Mesopotamia and Egypt built positional systems, Europe inherited its numerals from Rome — and Rome's system was an abacus made of letters.",
+      "section": "Roman Numerals: The System That Blocked Arithmetic",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-84",
+      "quote": "The seven glyphs **I, V, X, L, C, D, M** descend from **Etruscan** numerals: I (1), X (10, a cross of the hands) and the C-shaped arc for 100, later identified with the letter *C* of *centum*; the \"half\" values were derived by halving — half of X is V, half of the 50-sign is the inverted-T ⊥ that became L — and 500 and 1000 began as boxed or circled 5 and 10 (⊕, a circle around X) that flattened into **D** and, under the influence of the word *mille*, **M** (\\cite[Chrisomalis, 2010]{chrisomalis2010}; \\cite[Ifrah, 2000]{ifrah2000}).",
+      "section": "Roman Numerals: The System That Blocked Arithmetic",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-85",
+      "quote": "Numbers were written **additively** — the value is the sum of the letters — with the subtractive convention (IV, XL, XC, CD, CM) layered on later; the system has no zero, no place value, and no way to say \"this position is empty\", so 1,009 is simply MIX and a thousand is a single M.",
+      "section": "Roman Numerals: The System That Blocked Arithmetic",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-86",
+      "quote": "Arithmetic in it is not a matter of carrying digits but of *juggling letters*: multiplying MMCDXLVI by anything was a page-long exercise, which is why medieval European calculation was done on the **abacus** and the lined **counting table** (*Rechentisch*) instead of on the page.",
+      "section": "Roman Numerals: The System That Blocked Arithmetic",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-87",
+      "quote": "The same system kept its fractions in base 12: the *as* was divided into twelve *unciae*, written as dots — the source of the English words \"ounce\" and \"inch\".",
+      "section": "Roman Numerals: The System That Blocked Arithmetic",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-88",
+      "quote": "From the 14th century the positional 0–9 system steadily displaced it in accounting and science; the Roman numeral survived exactly where no calculation was needed — clock faces, chapter numbers, and the statue of Liberty.",
+      "section": "Roman Numerals: The System That Blocked Arithmetic",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-89",
+      "quote": "The digits in this very sentence are Indian, carried by Arabs, and fixed in form by European type.",
+      "section": "How 0–9 Got Here",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-90",
+      "quote": "Their ancestors are the **Brahmi** numerals already visible on the edicts of Ashoka (3rd century BCE) — but Brahmi was still *additive*, with separate signs for each magnitude (1, 10, 100, …) and no zero.",
+      "section": "How 0–9 Got Here",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-91",
+      "quote": "Around **600 CE** the writing of numbers in India shifted to *positional* notation: one set of glyphs for 1–9, repeated by position, with a **dot** for the empty place (\\cite[Chrisomalis, 2010]{chrisomalis2010}); the **Bakhshali manuscript**, radiocarbon-dated to the 3rd–4th century CE, already shows that placeholder in use.",
+      "section": "How 0–9 Got Here",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-92",
+      "quote": "Brahmagupta's 628 CE treatise made zero a *number* with rules for arithmetic, and an inscription at **Gwalior** dated **876 CE** is the oldest dated, undisputed zero symbol.",
+      "section": "How 0–9 Got Here",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-93",
+      "quote": "The system crossed into the Islamic world in the 8th–9th centuries, where it was called *al-ḥisāb al-hindī* — \"Indian arithmetic\" — and treated in dedicated monographs by **al-Khwārizmī** (c.",
+      "section": "How 0–9 Got Here",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-94",
+      "quote": "825) and **al-Kindī** (c.",
+      "section": "How 0–9 Got Here",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-95",
+      "quote": "830); the 10th-century **al-Uqlīḍīsī** was the first to extend it to decimal fractions, which is why the system is properly named \"Hindu–**Arabic**\" (\\cite[Smith and Karpinski, 1911]{smithkarpinski1911}).",
+      "section": "How 0–9 Got Here",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-96",
+      "quote": "Christian Europe first met the digits in the Spanish *Codex Vigilanus* of 976; **Fibonacci**'s 1202 *Liber Abaci* made them a tool of commerce; and the familiar shapes of 0–9 as we set them in type are a product of the late 15th and early 16th centuries, when the medieval Indian and Arabic glyph forms (the Ganges numerals and their descendants) settled into their European forms.",
+      "section": "How 0–9 Got Here",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-97",
+      "quote": "\"Arabic numerals\" is thus a misattribution in the name: Indian invention, Arab carrier, Italian populariser.",
+      "section": "How 0–9 Got Here",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-98",
+      "quote": "And zero was not invented only once: the **Maya** independently developed a zero (a shell glyph) for their vigesimal positional system in the Classic period (\\cite[Ifrah, 2000]{ifrah2000}), and China had already been computing positionally in **base 10 on counting rods** for two millennia before the Indian system arrived, writing the empty rod position as 〇 — the oldest surviving use of that character for zero is in **Qin Jiushao**'s 1247 treatise.",
+      "section": "How 0–9 Got Here",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-99",
+      "quote": "Zero as a *placeholder* appears at least three times independently; zero as a *number* appears once.",
+      "section": "How 0–9 Got Here",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-100",
+      "quote": "External memory long predates paper: Sumerian clay tablets (c.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-101",
+      "quote": "3400 BCE), Egyptian papyrus scrolls, Chinese oracle bones and bamboo strips, Greek wax tablets, Roman parchment codices, Indian palm-leaf manuscripts — all of these are older, and many are far older.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-102",
+      "quote": "**\\citeauthor{cai_lun_paper}**'s contribution, recorded in the *Hou Hanshu* (後漢書, the official history of the Later Han dynasty), was a court memorial of 105 CE describing how to refine a sheet from mulberry bark, hemp, rags, and fishnets, hung on a frame and dried in the sun.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-103",
+      "quote": "The breakthrough was not paper itself but the *process*: cheap raw materials, mechanical pulping, and rapid drying at industrial scale, properties that clay, papyrus, and parchment lacked.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-104",
+      "quote": "The technique spread westward after the Battle of Talas (751 CE), where Chinese papermakers were captured, and reached Europe via Moorish Spain by the 11th century; the first European paper mill was established in Fabriano, Italy, around 1276, using water-powered stamping mills.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-105",
+      "quote": "Paper was the substrate for everything that followed: Hollerith's 1890 census used punched card stock, Gutenberg printed on it, scientific journals disseminated discoveries through it, and the text corpora on which modern language models are trained consist almost entirely of it.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-106",
+      "quote": "Without paper, knowledge remains scarce and local; with paper, a civilisation can accumulate, standardise, and distribute what it knows across centuries and continents.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-107",
+      "quote": "The \\citealternativetitle{img_cai_lun} (Public Domain): \\citeauthor{cai_lun_paper}, the Han-dynasty official whose \\citeyear{cai_lun_paper} court memorial described a scalable process for making paper from mulberry bark, hemp, rags and fishnets, the breakthrough that turned a precious writing surface into an industrial substrate.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-108",
+      "quote": "Source: \\citeauthor{img_cai_lun}, \\citeyear{img_cai_lun}, \\citealternativetitle{img_cai_lun}, Wikimedia Commons.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-109",
+      "quote": "The numeral zero, along with the positional decimal system, was \\cite[introduced to Western Europe]{kleinetymology} through the work of **Leonardo of Pisa** (Fibonacci).",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-110",
+      "quote": "In his 1202 work *Liber Abaci*, Fibonacci \\cite[popularized the Indo-Arabic numeral system]{fibonacciliber} in the Western world, using digits $0$ through $9$ with place-value notation.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-111",
+      "quote": "Unlike the cumbersome Roman numerals used in Europe at the time, this system offered revolutionary simplicity and computational power.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-112",
+      "quote": "Fibonacci is \\cite[responsible for popularising the Arabic numerals (0, 1, 2, 3, 4, …) in Europe]{fibonaccimathigon}, which was still using Roman numerals (I, V, X, D, …) in the 12th century CE.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-113",
+      "quote": "Fibonacci \\cite[studied with Arab mathematicians]{fibonaccihistory} in North Africa, where his father held a diplomatic post.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-114",
+      "quote": "The system originated in India, **Brahmagupta** (c.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-115",
+      "quote": "628 CE) formalized arithmetic with zero in his \\cite[*Brāhmasphuṭasiddhānta*]{brahmagupta628}.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-116",
+      "quote": "It reached the Islamic world through \\cite[Al-Khwarizmi]{alkwarizma}, whose 9th-century *al-Kitāb al-mukhtaṣar fī ḥisāb al-jabr wa-l-muqābala* served as the conduit to North Africa and, eventually, to Fibonacci.",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-117",
+      "quote": "*Liber Abaci* also \\cite[introduced Europe to the Fibonacci sequence]{fibonacciseq}:",
+      "section": "Paper: The Substrate That Made Mass Distribution Possible",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-118",
+      "quote": "The Caxton Celebration (1877): William Caxton showing specimens of his printing to King Edward IV and his Queen.",
+      "section": "The Printing Press: Mass-Producing Knowledge",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-119",
+      "quote": "The Gutenberg press, developed around 1440, combined movable metal type, oil-based ink, and a modified wine press.",
+      "section": "The Printing Press: Mass-Producing Knowledge",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-120",
+      "quote": "Source: \\citeauthor{img_caxton_celebration}, \\citeyear{img_caxton_celebration}, \\citealternativetitle{img_caxton_celebration}, Wikimedia Commons.",
+      "section": "The Printing Press: Mass-Producing Knowledge",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-121",
+      "quote": "Portrait of Luca Pacioli (c.",
+      "section": "Double-Entry Bookkeeping: The First Error-Detecting Code",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-122",
+      "quote": "1495), attributed to Jacomo de' Barbari.",
+      "section": "Double-Entry Bookkeeping: The First Error-Detecting Code",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-123",
+      "quote": "Pacioli's Summa de Arithmetica (1494) was the first printed systematic exposition of double-entry bookkeeping — the first widely used error-detecting code.",
+      "section": "Double-Entry Bookkeeping: The First Error-Detecting Code",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-124",
+      "quote": "Source: \\citeauthor{img_pacioli_portrait}, \\citeyear{img_pacioli_portrait}, \\citealternativetitle{img_pacioli_portrait}, Wikimedia Commons.",
+      "section": "Double-Entry Bookkeeping: The First Error-Detecting Code",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-125",
+      "quote": "The database has a paper ancestor.",
+      "section": "The Card Catalog and the Filing Cabinet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-126",
+      "quote": "By the 1880s the card catalog was being described as the greatest library invention because it could be kept up to date: a new card could be inserted anywhere at any time, a single reference replaced a search through pages, and a card could be removed by lifting it out, while guides and locks kept the order stable (\\cite[Library Bureau, 1890]{librarybureau1890catalog}).",
+      "section": "The Card Catalog and the Filing Cabinet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-127",
+      "quote": "The same catalog sold the physical furniture of retrieval, including files, index cabinets, card cases, trays and fittings (\\cite[Library Bureau, 1890]{librarybureau1890catalog}).",
+      "section": "The Card Catalog and the Filing Cabinet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-128",
+      "quote": "Dewey's 1890 card-catalog rules then standardised the card itself: author and classed catalogs, sample cards, and rules for subject cards, coloured cards and filing (\\cite[Dewey, 1890]{cardcatalogrules1890}).",
+      "section": "The Card Catalog and the Filing Cabinet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-129",
+      "quote": "A record that can be inserted, removed, cross-referenced and kept in order is already a database in paper form.",
+      "section": "The Card Catalog and the Filing Cabinet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-130",
+      "quote": "The other half of the paperwork revolution was classification.",
+      "section": "Metadata Before Databases",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-131",
+      "quote": "Dewey's 1876 *A Classification and Subject Index* was devised for cataloguing and indexing, divided the library into nine numbered classes, and was found on trial to be equally useful for numbering and arranging books on shelves; Dewey explicitly lists catalogues, shelf lists, indexes and cross-references as the things the system makes cheaper to produce (\\cite[Dewey, 1876]{dewey1876classification}).",
+      "section": "Metadata Before Databases",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-132",
+      "quote": "Metadata, in other words, is older than the computer: a book's class number is a key, a shelf list is an index, and a cross-reference is a join.",
+      "section": "Metadata Before Databases",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-133",
+      "quote": "The insurance industry was one of the first institutions to turn population records into a calculable risk.",
+      "section": "Insurance and the Actuary: Risk as Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-134",
+      "quote": "Halley's 1693 paper used the bills of mortality from Breslaw to construct a table of ages and deaths, and then used that table to value annuities on lives (\\cite[Halley, 1693]{halley1693mortality}).",
+      "section": "Insurance and the Actuary: Risk as Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-135",
+      "quote": "A life table is a statistical model fitted to administrative data, and its purpose is a price.",
+      "section": "Insurance and the Actuary: Risk as Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-136",
+      "quote": "Actuarial science is therefore an early example of the full pipeline that later becomes machine learning: collect records, estimate a distribution, and use it to make decisions under uncertainty.",
+      "section": "Insurance and the Actuary: Risk as Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-137",
+      "quote": "Gerardus Mercator's 1569 world map: the first cartographic projection that allowed rhumb-line courses to be plotted as straight lines on a flat sheet.",
+      "section": "Navigation and the Longitude Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-138",
+      "quote": "The longitude problem — determining east-west position at sea — drove decades of research in precision engineering and horology.",
+      "section": "Navigation and the Longitude Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-139",
+      "quote": "Source: \\citeauthor{img_mercator_1569}, \\citeyear{img_mercator_1569}, \\citealternativetitle{img_mercator_1569}, Wikimedia Commons.",
+      "section": "Navigation and the Longitude Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-140",
+      "quote": "The Magdeburg hemispheres (Otto von Guericke, 1654): two copper bowls evacuated of air, held together so firmly by atmospheric pressure that teams of horses could not pull them apart.",
+      "section": "Vacuum Technique: Emptying Space to Fill It with Electrons",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-141",
+      "quote": "The vacuum technique pioneered here would, three centuries later, make the vacuum tube possible.",
+      "section": "Vacuum Technique: Emptying Space to Fill It with Electrons",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-142",
+      "quote": "Source: \\citeauthor{img_magdeburg_hemispheres}, \\citeyear{img_magdeburg_hemispheres}, \\citealternativetitle{img_magdeburg_hemispheres}, Wikimedia Commons.",
+      "section": "Vacuum Technique: Emptying Space to Fill It with Electrons",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-143",
+      "quote": "**\\citeauthor{huygenspendulum}**'s \\citeyear{huygenspendulum} \\citetitle{huygenspendulum} built the first pendulum clock in 1656, improving daily accuracy from roughly 15 minutes to about 15 seconds.",
+      "section": "Precision Clocks: The Metronome of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-144",
+      "quote": "The key innovation was the escapement mechanism, a device that converts the continuous swing of a pendulum into discrete, uniform ticks.",
+      "section": "Precision Clocks: The Metronome of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-145",
+      "quote": "This is the mechanical ancestor of every digital clock: the escapement does for mechanical time what the quartz crystal oscillator (first used in a clock by Warren Marrison at Bell Labs in 1927) does for electronic time, and what the clock signal in a CPU does for computation, namely it breaks continuous flow into countable, synchronous steps.",
+      "section": "Precision Clocks: The Metronome of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-146",
+      "quote": "Without precision clocks, there is no synchronous digital logic, no time-division multiplexing in telecommunications, no coordinated distributed systems, and no GPS timestamps.",
+      "section": "Precision Clocks: The Metronome of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-147",
+      "quote": "Every modern computer is, at its core, a clock-driven machine.",
+      "section": "Precision Clocks: The Metronome of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-148",
+      "quote": "The \\citealternativetitle{img_huygens_horologium} (Public Domain): \\citeauthor{huygenspendulum}'s \\citetitle{huygenspendulum} (\\citeyear{img_huygens_horologium}), the treatise that gave the pendulum clock its geometric and mathematical foundations, the instrument whose escapement broke continuous time into countable, synchronous steps.",
+      "section": "Precision Clocks: The Metronome of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-149",
+      "quote": "Source: \\citeauthor{img_huygens_horologium}, \\citeyear{img_huygens_horologium}, \\citealternativetitle{img_huygens_horologium}, Wikimedia Commons.",
+      "section": "Precision Clocks: The Metronome of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-150",
+      "quote": "A network of machines needs a shared clock.",
+      "section": "Standard Time and Time Zones",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-151",
+      "quote": "The 1884 International Meridian Conference proposed a single prime meridian for all nations, adopted the meridian of Greenwich as the initial meridian for longitude, and proposed a universal day counted from zero to twenty-four hours from mean midnight at that meridian (\\cite[International Meridian Conference, 1884]{meridian1884proceedings}).",
+      "section": "Standard Time and Time Zones",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-152",
+      "quote": "The resolutions were not self-executing, but they gave railways, telegraphs and later computer networks a common temporal coordinate.",
+      "section": "Standard Time and Time Zones",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-153",
+      "quote": "The Network Time Protocol then did for computer clocks what the conference did for civil time: RFC 5905 describes a protocol that synchronises computer clocks across the Internet, with accuracy extending to tens of microseconds on modern workstations and fast local networks (\\cite[Mills et al., 2010]{rfc5905}).",
+      "section": "Standard Time and Time Zones",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-154",
+      "quote": "Distributed training, logging and transaction ordering all assume that the clocks agree.",
+      "section": "Standard Time and Time Zones",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-155",
+      "quote": "The barcode gave the physical world a machine-readable identifier.",
+      "section": "The Barcode and the QR Code",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-156",
+      "quote": "Woodland and Silver's 1952 patent, \"Classifying apparatus and method,\" describes identifying patterns that are read by photo-sensitive apparatus, so that things can be classified without relying on their own characteristics, and explicitly proposes the apparatus as a sensory and classifying organ for tabulating, computing and sorting machines (\\cite[Woodland and Silver, 1952]{woodland1952barcode}).",
+      "section": "The Barcode and the QR Code",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-157",
+      "quote": "The QR code extended the idea to two dimensions: DENSO WAVE released it in 1994 with high data capacity, Kanji and Kana support, error correction and 360-degree reading, and it became an AIM standard in 1997, a Japanese industrial standard in 1999 and an ISO standard in 2000 (\\cite[DENSO WAVE, 2026]{denso_qr_history}).",
+      "section": "The Barcode and the QR Code",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-158",
+      "quote": "A barcode is a join key between a physical object and a database row; a QR code is the same idea with more bits.",
+      "section": "The Barcode and the QR Code",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-159",
+      "quote": "**\\citeauthor{newcomenengine}**'s \\citeyear{newcomenengine} atmospheric steam engine was the first practical device for converting thermal energy into mechanical work.",
+      "section": "The Steam Engine: Powering Precision Manufacturing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-160",
+      "quote": "Built to pump water from flooded coal mines, it consumed enormous quantities of coal and did so inefficiently.",
+      "section": "The Steam Engine: Powering Precision Manufacturing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-161",
+      "quote": "**\\citeauthor{wattpatent}**'s \\citeyear{wattpatent} separate-condenser patent improved efficiency roughly fourfold, making steam power economical for factories, mills, and eventually railways and ships.",
+      "section": "The Steam Engine: Powering Precision Manufacturing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-162",
+      "quote": "The steam engine's significance for computation is indirect but essential: it powered the machine tools (lathes, milling machines, grinders) that produced the precision-machined interchangeable parts on which all subsequent engineering, from Babbage's difference engine to the wave-soldered PCBs of modern data centers, would depend.",
+      "section": "The Steam Engine: Powering Precision Manufacturing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-163",
+      "quote": "It also drove the Industrial Revolution's demand for standardised measurement, interchangeable components, and systematic quality control, the same practices, at nanometre scale, that govern semiconductor fabrication today.",
+      "section": "The Steam Engine: Powering Precision Manufacturing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-164",
+      "quote": "The \\citealternativetitle{img_watt_steam_engine} (Public Domain): \\citeauthor{wattpatent} and his separate-condenser engine, the device that made steam power economical enough to drive the machine tools of precision manufacturing.",
+      "section": "The Steam Engine: Powering Precision Manufacturing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-165",
+      "quote": "Source: \\citeauthor{img_watt_steam_engine}, \\citeyear{img_watt_steam_engine}, \\citealternativetitle{img_watt_steam_engine}, Wikimedia Commons.",
+      "section": "The Steam Engine: Powering Precision Manufacturing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-166",
+      "quote": "A modern data center generates enormous quantities of heat.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-167",
+      "quote": "Training a large language model pushes thousands of GPUs to their thermal limits for weeks or months.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-168",
+      "quote": "Without industrial **cooling systems**, the silicon would overheat and fail within minutes.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-169",
+      "quote": "Long before mechanical refrigeration existed, the cold itself had to be **harvested in winter and stored for summer use**.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-170",
+      "quote": "The oldest strategy was the **[Eisweiher](ice pond)**: a small, shallow, wind-sheltered body of water, often an artificial pond or a specially dammed millpond, chosen so that a few days of sustained frost would freeze it solid.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-171",
+      "quote": "The surface was then cut into rectangular blocks with hand saws, pried loose with pike poles, and hauled by sled, cart, or slide into an insulated **ice cellar** (*Eiskeller*) packed with straw, where it could last through the warm months (\\cite[Ice-cutting on Lake Traunsee, 1899]{eisschlagen_traunsee}).",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-172",
+      "quote": "The technique was in continuous use across Central Europe from the Middle Ages well into the twentieth century, and the name *Eisweiher* survives on ponds that today serve very different purposes, as fish ponds, fire-water reservoirs, or simply recreational lakes.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-173",
+      "quote": "Where no suitable pond existed, breweries, hospitals, hotels, and food businesses erected **[Eisgalgen](ice gallows)**: wooden or steel frames fitted with sturdy horizontal crossbeams.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-174",
+      "quote": "At temperatures below about −3 °C, well or spring water was sprayed from nozzles over the rig, freezing into long icicles that could grow several metres down over the course of a cold week.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-175",
+      "quote": "The icicles were then knocked off with mallets, collected, and stored (\\cite[Ice gallows (Eisgalgen) at Mittenwald, 2015]{eisgalgen_mittenwald}).",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-176",
+      "quote": "A single large installation, such as the one still occasionally operated at a brewery in Ulm, can “harvest” up to 100 m³ of ice during a sufficiently cold week.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-177",
+      "quote": "Unlike pond ice, gallows ice gave the operator direct control over water quality, and made ice production independent of any nearby natural waterbody, a complete ice-making installation with no moving parts and no machinery at all.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-178",
+      "quote": "\\citealternativetitle{eisschlagen_traunsee}: ice-cutting (*Eisschlagen*) on an Austrian lake, December 1899.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-179",
+      "quote": "The frozen surface is being sawn into rectangular blocks, pried loose with pike poles, and carted off to a nearby ice cellar for summer use, the basic workflow of every *Eisweiher* from the Middle Ages to the early 20th century.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-180",
+      "quote": "\\citealternativetitle{eisgalgen_mittenwald}: a wooden ice gallows (*Eisgalgen*) at the Dekan-Karl-Platz in Mittenwald, Bavaria, January 2015.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-181",
+      "quote": "Water sprayed over the frame freezes into icicles several metres long, a fully mechanical ice factory that requires nothing but gravity and sub-zero air.",
+      "section": "Refrigeration and Cooling: Keeping the Mind from Melting",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-182",
+      "quote": "In 1804, **Joseph Marie Jacquard** perfected a loom attachment that used **punched cards** to automate the weaving of complex textile patterns.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-183",
+      "quote": "Each card encoded a single row: hole or no hole, thread up or thread down.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-184",
+      "quote": "By chaining cards together, an intricate brocade could be reproduced without a skilled assistant manually selecting each thread, a purely industrial innovation with no computational intent.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-185",
+      "quote": "The \\citealternativetitle{jacquard_loom}: a Jacquard loom with its chain of punched cards visible on the right.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-186",
+      "quote": "Each card encodes a single row of the pattern, the first example of a complex, sequential process stored as discrete binary instructions on a physical medium.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-187",
+      "quote": "While Leibniz's Stepped Reckoner proved that mechanical calculation was possible, it remained a fragile prototype, prone to jamming and never reliable enough for daily use.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-188",
+      "quote": "The gap between theoretical proof-of-concept and practical tool was bridged over a century later by **Charles Xavier Thomas de Colmar**, a French inventor and entrepreneur.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-189",
+      "quote": "In \\citeyear{thomasdcolmar1820}, Thomas de Colmar patented the **Arithmometer**, a calculating machine based on Leibniz's stepped drum mechanism.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-190",
+      "quote": "What distinguished it from all prior devices was not mathematical novelty but *engineering reliability and commercial viability*.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-191",
+      "quote": "After decades of refinement, the Arithmometer entered mass production in the 1850s, becoming the **first commercially successful mechanical calculator** and the first to be produced in industrial quantities.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-192",
+      "quote": "\\citealternativetitle{arithmometer_thomas}: the Arithmometer of Thomas de Colmar, c.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-193",
+      "quote": "1850, at the Musée des Arts et Métiers in Paris.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-194",
+      "quote": "Based on Leibniz's stepped drum, this brass device was the first calculator reliable enough to be mass-produced and sold to banks, insurers and governments.",
+      "section": "The Jacquard Loom: Weaving the Concept of Programmable Input",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-195",
+      "quote": "A modern vision model is, at the level of bytes, a pile of images together with labels.",
+      "section": "From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-196",
+      "quote": "That shape, a labelled image-sequence dataset, has a remarkably concrete origin in 19th-century France and Philadelphia.",
+      "section": "From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-197",
+      "quote": "The very first surviving camera photograph was made by **Joseph Nicéphore Niépce** around 1826–1827 at his estate in Saint-Loup-de-Varennes.",
+      "section": "From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-198",
+      "quote": "His *Point de vue du Gras*, a view from a window onto the courtyard below, was fixed onto a pewter plate coated with bitumen of Judea.",
+      "section": "From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-199",
+      "quote": "Because the light-sensitive asphalt needed roughly **eight hours of exposure**, the sun appears to illuminate the buildings from both sides at once, an artefact no human eye could ever have witnessed.",
+      "section": "From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-200",
+      "quote": "The plate itself survived, and is held today at the \\cite[Harry Ransom Center]{niepce_le_gras} at the University of Texas at Austin.",
+      "section": "From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-201",
+      "quote": "The \\citealternativetitle{niepce_le_gras}: the oldest surviving camera photograph, captured on a bitumen-coated pewter plate over the course of an entire day.",
+      "section": "From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-202",
+      "quote": "The 8-hour exposure causes sunlight to fall on the buildings from both sides simultaneously, a property of no real scene, only of the extremely long time-integral Niépce's chemistry required.",
+      "section": "From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-203",
+      "quote": "Muybridge's 1878 sequence of the horse *Occident* galloping past a battery of tripwire cameras: the founding image of \\citealternativetitle{muybridge1887catalogue}, and arguably the first instance in history of a *labelled image-sequence dataset*: a continuous motion, sampled in equal time-intervals, with the subject, action and breed known in advance.",
+      "section": "From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-204",
+      "quote": "Muybridge's labelled images stayed, for half a century, a pile of glass plates.",
+      "section": "From a Baby's Face to the GPU: Space Image Processing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-205",
+      "quote": "The first photograph a computer ever processed was not a picture of the Moon.",
+      "section": "From a Baby's Face to the GPU: Space Image Processing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-206",
+      "quote": "In 1957, at the National Bureau of Standards, **Russell Kirsch** built a **drum scanner** and scanned a photograph of his three-month-old son, **Walden**, into a 176×176 array of numbers processed on the bureau's SEAC computer (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
+      "section": "From a Baby's Face to the GPU: Space Image Processing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-207",
+      "quote": "The \\citealternativetitle{img_kirsch_baby} (Public Domain, \\citeauthor{img_kirsch_baby}): the first image a computer ever processed — not the Moon, but a baby.",
+      "section": "From a Baby's Face to the GPU: Space Image Processing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-208",
+      "quote": "A 176×176 scan of Kirsch's three-month-old son, 1957.",
+      "section": "From a Baby's Face to the GPU: Space Image Processing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-209",
+      "quote": "The \\citealternativetitle{img_ranger7_moon} (Public Domain): a lunar image from NASA's \\citealternativetitle{img_ranger7_moon} probe, the kind of grainy, unevenly-lit picture that Robert Nathan's JPL team enhanced with the first *space* image-processing pipelines, the quiet ancestor of the modern computer-vision stack (\\cite[Tomayko, 1988]{tomayko1988spaceflight}).",
+      "section": "From a Baby's Face to the GPU: Space Image Processing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-210",
+      "quote": "Source: \\citeauthor{img_ranger7_moon}, \\citeyear{img_ranger7_moon}, \\citealternativetitle{img_ranger7_moon}, Wikimedia Commons.",
+      "section": "From a Baby's Face to the GPU: Space Image Processing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-211",
+      "quote": "The \\citealternativetitle{img_ranger7_guericke} (Public Domain): Ranger 7's B-camera photograph of Guericke crater in Mare Nubium, taken 8.5 minutes before impact — a grainy, unevenly-lit frame exactly like the ones Nathan's new pipelines had to stretch, flatten and de-noise.",
+      "section": "From a Baby's Face to the GPU: Space Image Processing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-212",
+      "quote": "Source: \\citeauthor{img_ranger7_guericke}, \\citeyear{img_ranger7_guericke}, \\citealternativetitle{img_ranger7_guericke}, Wikimedia Commons.",
+      "section": "From a Baby's Face to the GPU: Space Image Processing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-213",
+      "quote": "The \\citealternativetitle{img_ranger7_impact} (Public Domain): Ranger 7's final photograph, the highest-resolution picture of the Moon taken up to that date, moments before the spacecraft struck the surface.",
+      "section": "From a Baby's Face to the GPU: Space Image Processing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-214",
+      "quote": "Source: \\citeauthor{img_ranger7_impact}, \\citeyear{img_ranger7_impact}, \\citealternativetitle{img_ranger7_impact}, Wikimedia Commons.",
+      "section": "From a Baby's Face to the GPU: Space Image Processing",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-215",
+      "quote": "A microphone, a radio antenna and a temperature sensor all produce continuous voltages.",
+      "section": "The ADC: Where the World Becomes Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-216",
+      "quote": "The first step into the digital world is sampling and quantisation.",
+      "section": "The ADC: Where the World Becomes Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-217",
+      "quote": "Shannon proved that a function limited to a band of W cycles per second is completely determined by its ordinates at discrete points spaced 1/(2W) seconds apart (\\cite[Shannon, 1948]{shannon1948communication}).",
+      "section": "The ADC: Where the World Becomes Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-218",
+      "quote": "The analog-to-digital converter is the device that performs this reduction.",
+      "section": "The ADC: Where the World Becomes Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-219",
+      "quote": "Walden's survey calls ADCs ubiquitous, critical components of software radio and other signal-processing systems, and maps the trade-off between resolution and sampling rate: below about two million samples per second resolution is limited by thermal noise, and at higher rates it falls by about one bit for every doubling of the sampling rate because of aperture jitter (\\cite[Walden, 1999]{walden1999adc}).",
+      "section": "The ADC: Where the World Becomes Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-220",
+      "quote": "Every image, every sound recording and every sensor reading in a training set passed through such a device.",
+      "section": "The ADC: Where the World Becomes Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-221",
+      "quote": "The image sensor is a silicon chip that converts photons into charge and then into numbers.",
+      "section": "The Digital Eye: CCD and CMOS",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-222",
+      "quote": "Boyle and Smith's charge-coupled device stores charge in potential wells at the surface of a semiconductor and moves it from one capacitor to the next by manipulating electrode potentials; they explicitly listed imaging as one of its applications (\\cite[Boyle and Smith, 1970]{boyle1970ccd}).",
+      "section": "The Digital Eye: CCD and CMOS",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-223",
+      "quote": "CMOS active-pixel sensors later made the camera small, cheap and low-power enough to sit in every phone: Fossum describes them as competitive with CCD technology while offering on-chip functionality, lower system power, lower cost and miniaturisation, including on-chip analog-to-digital conversion (\\cite[Fossum, 1997]{fossum1997cmos}).",
+      "section": "The Digital Eye: CCD and CMOS",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-224",
+      "quote": "Machine vision is downstream of that device.",
+      "section": "The Digital Eye: CCD and CMOS",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-225",
+      "quote": "The discrete Fourier transform turns a signal into its frequency components, but the naive sum is expensive.",
+      "section": "The FFT: Making Waves Computable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-226",
+      "quote": "The Cooley-Tukey algorithm computes the same transform with a recursive factorisation that made Fourier analysis practical on a machine (\\cite[Cooley and Tukey, 1965]{cooley1965fft}).",
+      "section": "The FFT: Making Waves Computable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-227",
+      "quote": "The consequences are everywhere: spectral analysis, filtering, radar and audio processing, image compression, and the convolution kernels inside neural networks all depend on fast transforms.",
+      "section": "The FFT: Making Waves Computable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-228",
+      "quote": "The algorithm is a pure mathematical displacement: invented for numerical analysis, it became a load-bearing part of the signal-processing stack that feeds AI.",
+      "section": "The FFT: Making Waves Computable",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-229",
+      "quote": "The laser is a device for generating or amplifying coherent light.",
+      "section": "The Laser: Coherent Light as a Tool",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-230",
+      "quote": "Maiman's patent describes a ruby laser system and the principle of pumping a solid medium to produce coherent emission, following the maser idea proposed by Schawlow and Townes (\\cite[Maiman, 1967]{maiman1967laserpatent}).",
+      "section": "The Laser: Coherent Light as a Tool",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-231",
+      "quote": "Coherent light then became a tool: it carries signals through glass fibre, reads barcodes, measures distance in LIDAR and exposes patterns in lithography.",
+      "section": "The Laser: Coherent Light as a Tool",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-232",
+      "quote": "None of these uses was the point of the original device.",
+      "section": "The Laser: Coherent Light as a Tool",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-233",
+      "quote": "The laser is the archetype of a displaced prerequisite: a solution in search of problems, which eventually supplied several of the problems' solutions.",
+      "section": "The Laser: Coherent Light as a Tool",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-234",
+      "quote": "A Morse telegraph key: the first practical interface for digital electronic communication.",
+      "section": "Land Telegraphy: The First Digital Network",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-235",
+      "quote": "Morse code, a variable-length binary encoding using dots and dashes, was the first digital communication protocol.",
+      "section": "Land Telegraphy: The First Digital Network",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-236",
+      "quote": "Source: \\citeauthor{img_morse_telegraph}, \\citeyear{img_morse_telegraph}, \\citealternativetitle{img_morse_telegraph}, Wikimedia Commons.",
+      "section": "Land Telegraphy: The First Digital Network",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-237",
+      "quote": "Early telegraphy ran on single wires with an earth return, and early telephony reused those circuits.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-238",
+      "quote": "That worked until electric trams and power lines began to induce noise into them.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-239",
+      "quote": "The first fix was the **balanced circuit**: two wires carrying equal and opposite currents, so that interference picked up by both wires cancelled at the receiver.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-240",
+      "quote": "In the 1880s telephone engineers added **wire transposition** — swapping the two wires every few poles, the ancestor of twisting — and Alexander Graham Bell patented the **twisted pair** in 1881.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-241",
+      "quote": "Twisting does not block interference; it makes the interference common to both wires, so it cancels when the receiver takes the difference.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-242",
+      "quote": "It is still the basis of every Ethernet cable and telephone line (\\cite{bell1881twistedpair}; \\cite{twistedpairwiki}).",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-243",
+      "quote": "The second fix was **shielding**.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-244",
+      "quote": "Michael Faraday showed in 1836 that a closed conducting shell keeps external electric fields out of its interior; the Faraday cage is the principle behind every shielded cable.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-245",
+      "quote": "At high frequencies the shield can be thin, because the **skin effect** confines the current to its surface, but any hole, braid gap or bad connector leaks.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-246",
+      "quote": "The limiting case is the **coaxial cable**: a single inner conductor surrounded by a concentric outer conductor, with the electromagnetic field confined to the dielectric between them.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-247",
+      "quote": "Oliver Heaviside patented the idea in 1880 and showed that it eliminated interference between parallel cables; Siemens & Halske patented a German version in 1884, and Lloyd Espenschied and Herman Affel of Bell Labs patented the first modern coaxial cable in 1929 (\\cite{espenschied1929coax}; \\cite{coaxwiki}; \\cite{faradaycagewiki}).",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-248",
+      "quote": "Coax then became the high-bandwidth copper pipe of the 20th century.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-249",
+      "quote": "In 1936 it carried the first closed-circuit television pictures from the Berlin Olympics to Leipzig, and an experimental AT&T link between New York and Philadelphia carried 240 telephone calls; the first commercial US system (1941) carried one TV channel or 480 calls.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-250",
+      "quote": "In 1956 the **TAT-1** cable became the first transatlantic telephone coaxial cable, and by the 1960s coax was carrying thousands of calls and television between cities.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-251",
+      "quote": "It later became the physical medium of cable television and of early Ethernet (10BASE5 and 10BASE2), and it still carries broadband internet into many homes (\\cite{coaxwiki}).",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-252",
+      "quote": "For AI, the lesson is the same as for the telegraph: the model is only as global as the cable underneath it.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-253",
+      "quote": "Coax was the copper bridge between the telephone network and the data network — the medium that carried the first transatlantic telephone traffic, the first cable TV, and the first local-area networks.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-254",
+      "quote": "Fiber now carries the long haul, but the shielded pair and the coaxial line are still the last mile.",
+      "section": "Coaxial Cable and the Shielded Pair: Keeping the Signal Inside the Wire",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-255",
+      "quote": "The “digital ocean” of training data does not exist in an abstract cloud; it flows through **physical infrastructure** that has its own displaced history:",
+      "section": "Fiber Optics and Submarine Cables: The Physical Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-256",
+      "quote": "* **Total Internal Reflection** (1842): **Jean-Daniel Colladon** demonstrated that light could be guided along curved paths through a jet of water in \\citetitle{colladon}.",
+      "section": "Fiber Optics and Submarine Cables: The Physical Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-257",
+      "quote": "**John Tyndall** independently popularized the same principle through his Royal Institution lectures in London during the 1850s and 1870s, later described in \\citetitle{notesonlight} (1870).",
+      "section": "Fiber Optics and Submarine Cables: The Physical Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-258",
+      "quote": "At the time, these seemed little more than elegant scientific demonstrations.",
+      "section": "Fiber Optics and Submarine Cables: The Physical Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-259",
+      "quote": "The \\citealternativetitle{colladon_lightpipe}: light entering one end of a curved jet of water re-emerges from the other, trapped by total internal reflection.",
+      "section": "Fiber Optics and Submarine Cables: The Physical Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-260",
+      "quote": "A purely optical phenomenon that, 130 years later, became the physical basis of long-distance data transmission.",
+      "section": "Fiber Optics and Submarine Cables: The Physical Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-261",
+      "quote": "\\citealternativetitle{submarine_cable}: an annotated cross-section of a modern submarine communications cable.",
+      "section": "Fiber Optics and Submarine Cables: The Physical Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-262",
+      "quote": "Hair-thin glass fibers at the center, surrounded by copper, steel and polyethylene, carry intercontinental data traffic at terabits per second.",
+      "section": "Fiber Optics and Submarine Cables: The Physical Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-263",
+      "quote": "For every copper wire that carried the first telegraph signal, some unknown insulator had to wrap around it and refuse to carry it themselves.",
+      "section": "The Silent Other Half: Insulating Electricity from Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-264",
+      "quote": "Without insulation, electricity simply arcs to the nearest ground and dissipates as heat; the entire discipline of electrical engineering exists only because someone, somewhere, found a material whose electrons refused to move.",
+      "section": "The Silent Other Half: Insulating Electricity from Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-265",
+      "quote": "The displaced prerequisite, in other words, is not the conductor but the **resistor of motion around it**.",
+      "section": "The Silent Other Half: Insulating Electricity from Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-266",
+      "quote": "The \\citealternativetitle{guttapercha} tree, a *Palaquium* of the Malay archipelago, was tapped for centuries by local craftsmen before the British surgeon **William Montgomerie** identified in 1843 its unusual dielectric strength and thermoplastic behaviour.",
+      "section": "The Silent Other Half: Insulating Electricity from Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-267",
+      "quote": "**\\citeauthor{faraday}** recognised its insulating value at its introduction, and by 1845 it was being extruded around copper wire to form the first insulated telegraph conductors.",
+      "section": "The Silent Other Half: Insulating Electricity from Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-268",
+      "quote": "**\\citeauthor{atlantictelegraph}**'s \\citeyear{atlantictelegraph} book \\citetitle{atlantictelegraph} documents the central role the material played in the 1857–1858 transatlantic cable attempts: 2,600 nautical miles of copper conductor had to be wrapped in gutta-percha to survive a mile-deep ocean without short-circuiting to seawater.",
+      "section": "The Silent Other Half: Insulating Electricity from Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-269",
+      "quote": "Without gutta-percha, no submarine cable, no global telegraph, no instant transatlantic news, no cable-stitched internet, no undersea fibre backbone.",
+      "section": "The Silent Other Half: Insulating Electricity from Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-270",
+      "quote": "The \\citealternativetitle{img_gutta_percha_cable} (Public Domain): the apparatus for wrapping the copper conductors of the \\citealternativetitle{atlantictelegraph} in \\citealternativetitle{guttapercha}, the silent other half of the telegraph, the insulator whose stubbornness let the signal *stay* a signal across a mile-deep ocean.",
+      "section": "The Silent Other Half: Insulating Electricity from Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-271",
+      "quote": "Source: \\citeauthor{img_gutta_percha_cable}, \\citeyear{img_gutta_percha_cable}, \\citealternativetitle{img_gutta_percha_cable}, Wikimedia Commons.",
+      "section": "The Silent Other Half: Insulating Electricity from Itself",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-272",
+      "quote": "Every prompt typed into an LLM passes through a **keyboard** whose layout was dictated not by computation, but by the jamming tendencies of 19th-century typebar mechanisms.",
+      "section": "From Typewriters to Keyboards: The Mechanical Alphabet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-273",
+      "quote": "In 1868, **Christopher Latham Sholes**, Carlos Glidden, and Samuel W.",
+      "section": "From Typewriters to Keyboards: The Mechanical Alphabet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-274",
+      "quote": "Soule patented an early typewriter (\\cite[U.S.",
+      "section": "From Typewriters to Keyboards: The Mechanical Alphabet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-275",
+      "quote": "Patent 79,265]{typewriterpatent}).",
+      "section": "From Typewriters to Keyboards: The Mechanical Alphabet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-276",
+      "quote": "Remington and Sons** began mass-producing the **Sholes & Glidden Type-Writer**, featuring the **QWERTY** layout, an arrangement designed to separate commonly paired letters and prevent adjacent typebars from colliding.",
+      "section": "From Typewriters to Keyboards: The Mechanical Alphabet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-277",
+      "quote": "This layout, born from a purely mechanical constraint, became the universal standard for text input and has survived virtually unchanged for over 150 years.",
+      "section": "From Typewriters to Keyboards: The Mechanical Alphabet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-278",
+      "quote": "\\citealternativetitle{sholes_typewriter}: the original Sholes, Glidden and Soule prototype typewriter (1868–1873), manufactured by E.",
+      "section": "From Typewriters to Keyboards: The Mechanical Alphabet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-279",
+      "quote": "Remington and Sons as the Sholes & Glidden Type-Writer.",
+      "section": "From Typewriters to Keyboards: The Mechanical Alphabet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-280",
+      "quote": "The QWERTY layout, designed to prevent adjacent typebars from jamming, became the universal input standard that survives into the era of LLM chatbots.",
+      "section": "From Typewriters to Keyboards: The Mechanical Alphabet",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-281",
+      "quote": "A machine that cannot *show* its output is, for all practical purposes, mute.",
+      "section": "Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-282",
+      "quote": "The visual display has its origins not in computing, but in 19th-century experimental physics.",
+      "section": "Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-283",
+      "quote": "The first television proposals were older than the CRT, and they were closer to the fax machine than to the screen.",
+      "section": "Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-284",
+      "quote": "In 1877–1881 the French notary **Constantin Senlecq** proposed a **telectroscope**: a selenium point scanned an image formed on the ground glass of a camera obscura, its light-dependent resistance modulated a telegraph current, and a synchronised receiver drove a pencil across paper.",
+      "section": "Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-285",
+      "quote": "It was a still-image facsimile, not moving television, but it established the two core ideas — turn light into electricity with selenium, and serialise the image by scanning.",
+      "section": "Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-286",
+      "quote": "The word \"telectroscope\" itself was popularised by Moigno and Figuier from a *New York Sun* hoax about an \"electroscope\"; none of the 19th-century telectroscopes was a working television system.",
+      "section": "Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-287",
+      "quote": "Senlecq patented a refined version in 1907, by which time Nipkow's scanning disk had become the standard mechanical route; he died blind in 1934, before television became a public medium (\\cite{senlecqwiki}; \\cite{telectroscopewiki}; \\cite{lange_senlecq}).",
+      "section": "Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-288",
+      "quote": "In 1897, **Karl Ferdinand Braun** invented the **cathode ray tube (CRT)** at the University of Strasbourg, described in \\citetitle{braunannalen}.",
+      "section": "Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-289",
+      "quote": "It was a laboratory instrument for visualizing alternating-current waveforms, a tool for physicists, not communicators.",
+      "section": "Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-290",
+      "quote": "By directing an electron beam onto a phosphorescent surface, Braun rendered invisible electrical phenomena as visible, glowing traces.",
+      "section": "Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-291",
+      "quote": "A \\citealternativetitle{crt}: the phosphor-coated face of a cathode ray tube.",
+      "section": "Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-292",
+      "quote": "Invented in 1897 as a laboratory instrument for visualising oscillating currents, the CRT evolved through television, radar and computer terminals into the display on which the first chatbots were typed.",
+      "section": "Cathode Rays and Glowing Phosphors: The Screen That Gave AI a Face",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-293",
+      "quote": "Radio begins with a laboratory demonstration that electromagnetic action propagates with finite velocity.",
+      "section": "Radio: The Invisible Network",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-294",
+      "quote": "Hertz's *Electric Waves* collects the researches in which he generated rapid electric oscillations with sparks and Leyden jars and detected their propagation through space (\\cite[Hertz, 1893]{hertz1893electricwaves}).",
+      "section": "Radio: The Invisible Network",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-295",
+      "quote": "Marconi's 1897 patent, \"Transmitting electrical signals,\" turned the laboratory effect into a signalling system (\\cite[Marconi, 1897]{marconi1897patent}).",
+      "section": "Radio: The Invisible Network",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-296",
+      "quote": "Radio then became the first network without wires: broadcast, radar, navigation and, eventually, mobile data.",
+      "section": "Radio: The Invisible Network",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-297",
+      "quote": "The air itself became a medium for machine-readable signals.",
+      "section": "Radio: The Invisible Network",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-298",
+      "quote": "A radio network that serves many moving users needs a way to reuse spectrum.",
+      "section": "Cellular and Wi-Fi: The Network Without Wires",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-299",
+      "quote": "The cellular concept does exactly that: MacDonald's 1979 paper shows how a cellular system within a limited block of frequency spectrum can serve large-scale mobile telephony by frequency reuse and cell splitting, with hexagonal geometry and the AMPS system as the practical realisation (\\cite[MacDonald, 1979]{macdonald1979cellular}).",
+      "section": "Cellular and Wi-Fi: The Network Without Wires",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-300",
+      "quote": "Local wireless networks followed a different path: the IEEE 802.11 standard of 1997 specified a wireless LAN medium-access control and physical layer, creating the technical basis for Wi-Fi (\\cite[IEEE, 1997]{ieee80211_1997}).",
+      "section": "Cellular and Wi-Fi: The Network Without Wires",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-301",
+      "quote": "Together, cellular and Wi-Fi made network access ambient rather than a place you went to.",
+      "section": "Cellular and Wi-Fi: The Network Without Wires",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-302",
+      "quote": "The smartphone is the point where radio, low-power computing, a camera and a touchscreen became one device.",
+      "section": "The Smartphone: A Supercomputer in Every Pocket",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-303",
+      "quote": "Apple's 2007 launch described the iPhone as three products in one, a mobile phone, a widescreen iPod and an Internet communications device, with a large multi-touch display, a two-megapixel camera, desktop-class email, web browsing, searching and maps (\\cite[Apple, 2007]{apple2007iphone}).",
+      "section": "The Smartphone: A Supercomputer in Every Pocket",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-304",
+      "quote": "The processor lineage behind such devices descends from the low-power RISC idea: the Acorn RISC Machine was designed as a complete system architecture for optimal implementation on silicon, aimed at the low-cost personal-computer market (\\cite[Furber and Wilson, 1987]{furber1987arm}).",
+      "section": "The Smartphone: A Supercomputer in Every Pocket",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-305",
+      "quote": "The cellular standards that carry the data are specified by 3GPP (\\cite[3GPP, 2026]{threegpp_specs}).",
+      "section": "The Smartphone: A Supercomputer in Every Pocket",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-306",
+      "quote": "The result is a sensor platform in every pocket, generating the images, text, locations and behaviour that later become training data.",
+      "section": "The Smartphone: A Supercomputer in Every Pocket",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-307",
+      "quote": "Each of these discoveries was made for a goal unrelated to artificial intelligence.",
+      "section": "The Smartphone: A Supercomputer in Every Pocket",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-308",
+      "quote": "Remove any one and the edifice collapses; together they are the silent infrastructure on which every inference runs.",
+      "section": "The Smartphone: A Supercomputer in Every Pocket",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-309",
+      "quote": "The entire digital age rests upon the **transistor**, a device whose invention required understanding a branch of physics that did not exist until the 20th century.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-310",
+      "quote": "The story begins, improbably, with sand.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-311",
+      "quote": "Silicon dioxide (common sand) is one of the most abundant compounds on Earth.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-312",
+      "quote": "But transforming it into a substrate for computation required:",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-313",
+      "quote": "**Quantum Mechanics** (1920s–1930s): **Max Planck** introduced the quantum of energy in \\citetitle{planck}.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-314",
+      "quote": "**Niels Bohr** proposed the quantized atom in \\citetitle{bohr}.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-315",
+      "quote": "**Werner Heisenberg** formulated matrix mechanics in \\citetitle{quanten}, and **Erwin Schrödinger** developed wave mechanics in \\citetitle{schroedinger}.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-316",
+      "quote": "Together, they revealed that matter at the atomic scale behaves according to probabilistic wave functions, not classical Newtonian mechanics.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-317",
+      "quote": "This theory explained why certain materials (semiconductors) conduct electricity only under specific conditions, a phenomenon that classical physics could not account for.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-318",
+      "quote": "**Band Theory of Solids** (1929–1931): **Felix Bloch** applied quantum mechanics to electrons in crystal lattices in \\citetitle{bloch}.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-319",
+      "quote": "**Alan Herries Wilson** then used Bloch's framework to explain semiconductors specifically in \\citetitle{wilsonsemiconductors}, describing how energy bands and “gaps” determine whether a material conducts, insulates, or semi-conducts.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-320",
+      "quote": "This theoretical framework made it possible to *predict* and *engineer* the electrical properties of materials like silicon and germanium.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-321",
+      "quote": "**The Transistor** (1947): **John Bardeen** and **Walter Brattain** at Bell Labs built the first point-contact transistor in December 1947, a solid-state device that could amplify and switch electrical signals.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-322",
+      "quote": "They published \\citetitle{semiconductor}.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-323",
+      "quote": "**William Shockley** followed with the superior junction transistor, described in \\citetitle{shockley}.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-324",
+      "quote": "The transistor replaced the vacuum tube, which was bulky, hot, fragile, and power-hungry.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-325",
+      "quote": "Without the transistor, Moore's Law is inconceivable, and without Moore's Law, LLMs are computationally impossible.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-326",
+      "quote": "The \\citealternativetitle{first_transistor}: a plastic wedge pressing two fine gold wires against a slab of germanium.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-327",
+      "quote": "This unassuming device replaced the vacuum tube and inaugurated the age of solid-state electronics.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-328",
+      "quote": "The large language model is, at bottom, applied physics: inference is an electrical signal in doped silicon governed by quantum mechanics, and training consumes energy generated by electromagnetic induction.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-329",
+      "quote": "Physics also supplied the mathematics — the Boltzmann distribution behind Boltzmann machines, the Ising model behind early recurrent architectures, energy minimisation behind energy-based learning, and the free-energy principle as a proposed unifying account of biological and artificial intelligence.",
+      "section": "Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-330",
+      "quote": "If physics provided the theoretical understanding of matter, chemistry provided the practical ability to *transform* it.",
+      "section": "The Chemistry of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-331",
+      "quote": "Every component of an LLM's physical substrate, from the ultra-pure silicon wafers to the rare-earth magnets in hard drives, from the lithium-ion batteries in mobile devices to the specialized cooling fluids in data centers, is a product of chemical engineering.",
+      "section": "The Chemistry of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-332",
+      "quote": "Chemistry gave AI its body.",
+      "section": "The Chemistry of Computation",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-333",
+      "quote": "The \\citealternativetitle{img_merlin_enchanteur} (Public Domain): Merlin the Enchanter dictating his prophecies to his scribe, from a thirteenth-century French miniature of Robert de Boron's *Merlin en prose* — the magician whose art promised to command the world and could not, emblem of the failed magic from which chemistry was born.",
+      "section": "Alchemy: The Displaced Root of Chemistry",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-334",
+      "quote": "Source: \\citeauthor{img_merlin_enchanteur}, \\citeyear{img_merlin_enchanteur}, \\citealternativetitle{img_merlin_enchanteur}, Wikimedia Commons.",
+      "section": "Alchemy: The Displaced Root of Chemistry",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-335",
+      "quote": "The \\citealternativetitle{img_jabir_alembic} (Public Domain): an alembic as \\citeauthor{img_jabir_alembic} drew and described in the eighth century, one of the earliest recorded distillation apparatuses.",
+      "section": "Alchemy: The Displaced Root of Chemistry",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-336",
+      "quote": "Source: \\citeauthor{img_jabir_alembic}, \\citeyear{img_jabir_alembic}, \\citealternativetitle{img_jabir_alembic}, Wikimedia Commons.",
+      "section": "Alchemy: The Displaced Root of Chemistry",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-337",
+      "quote": "The \\citealternativetitle{img_alchemist_studio} (Public Domain): an alchemist in his studio, as \\citeauthor{img_alchemist_studio} painted him, the bench crowded with the furnaces, stills, and vessels that were his true instrument.",
+      "section": "Alchemy: The Displaced Root of Chemistry",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-338",
+      "quote": "Source: \\citeauthor{img_alchemist_studio}, \\citeyear{img_alchemist_studio}, \\citealternativetitle{img_alchemist_studio}, Wikimedia Commons.",
+      "section": "Alchemy: The Displaced Root of Chemistry",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-339",
+      "quote": "The \\citealternativetitle{img_paracelsus_portrait} (Public Domain): \\citeauthor{img_paracelsus_portrait} (Paracelsus, 1493–1541), who turned the alchemists' dream of a universal *elixir* into the systematic preparation of medicines, the founding move of pharmacology.",
+      "section": "Alchemy: The Displaced Root of Chemistry",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-340",
+      "quote": "Source: \\citeauthor{img_paracelsus_portrait}, \\citeyear{img_paracelsus_portrait}, \\citealternativetitle{img_paracelsus_portrait}, Wikimedia Commons.",
+      "section": "Alchemy: The Displaced Root of Chemistry",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-341",
+      "quote": "The \\citealternativetitle{img_flaming_heart} (Public Domain): the \"flaming heart\" from an alchemical and rosicrucian compendium of about \\citeyear{img_flaming_heart}, an emblem of the *Great Work*, the long staged process whose goal was never achieved and whose method was.",
+      "section": "Alchemy: The Displaced Root of Chemistry",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-342",
+      "quote": "Source: \\citeauthor{img_flaming_heart}, \\citeyear{img_flaming_heart}, \\citealternativetitle{img_flaming_heart}, Wikimedia Commons.",
+      "section": "Alchemy: The Displaced Root of Chemistry",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-343",
+      "quote": "Every weight update in a modern neural network is an electrical signal propagating through silicon, coordinated by a clock, stored in volatile memory, and communicated across copper traces on a printed circuit board.",
+      "section": "The Hardware of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-344",
+      "quote": "None of these components was invented for artificial intelligence.",
+      "section": "The Hardware of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-345",
+      "quote": "The CPU descends from wartime code-breaking.",
+      "section": "The Hardware of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-346",
+      "quote": "The GPU was forged by video games.",
+      "section": "The Hardware of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-347",
+      "quote": "Networking grew from military resilience planning.",
+      "section": "The Hardware of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-348",
+      "quote": "Storage was driven by census-taking.",
+      "section": "The Hardware of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-349",
+      "quote": "Yet together, they form the physical body in which neural networks are incarnated.",
+      "section": "The Hardware of AI",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-350",
+      "quote": "Of all the displaced prerequisites, one is not a material or a device but a *demand*: a computer that could not crash, could not be switched off, and could not afford to be wrong.",
+      "section": "The Space Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-351",
+      "quote": "NASA never pushed the state of the art, as \\citeauthor{tomayko1988spaceflight} puts it, but nudged it often enough to matter \\cite{tomayko1988spaceflight}.",
+      "section": "The Space Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-352",
+      "quote": "Real-time scheduling, redundant voting sets, distributed flight computers and software-first design all migrated from orbit into the terrestrial stack; the dedicated section on spaceflight below follows those threads in detail.",
+      "section": "The Space Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-353",
+      "quote": "The poles gave AI three things it could not get anywhere else: the oldest data on Earth, the first reason to aim a giant computer at the whole sky, and a benchmark of cold the next computer had to beat.",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-354",
+      "quote": "**The data is ice.** An ice core is a column of fallen snow compressed to ice, each year's air sealed in its bubbles.",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-355",
+      "quote": "Polar drilling, begun in the 1957–58 International Geophysical Year — the Soviet Vostok core, nearly 3,700 m deep and holding 420,000 years, the EPICA Dome C core with 800,000 years of CO₂ and temperature, and Greenland's GRIP/NEEM — turned the ice sheets into a deep-time archive \\cite[ice cores]{icecorewiki} \\cite[Vostok Station]{vostokstation}.",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-356",
+      "quote": "No ice core, no 800,000-year climate record, and no dataset long enough to anchor a climate model.",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-357",
+      "quote": "\\marginfig{vostok_ice_core.jpg}{Vostok Station, Antarctica, and the caves cut into the ice sheet to store drill cores at −55 °C year-round.",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-358",
+      "quote": "[Photo: Todd Sowers, Lamont–Doherty / NOAA, public domain](https://commons.wikimedia.org/wiki/File:Wostok-Station_core32.jpg)}",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-359",
+      "quote": "**The demand was the atmosphere.** Forecasting the weather was the first problem worth a digital computer.",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-360",
+      "quote": "Jule Charney, at the Institute for Advanced Study with von Neumann, worked out the theory of upper-air \"long waves\" (\\cite[Charney, 1947]{charney1947longwaves}), and in 1950 his team ran the **first numerical weather forecast on the ENIAC** (\\cite[Charney, Fjørtoft & von Neumann, 1950]{charney1950nwp}).",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-361",
+      "quote": "Weather and climate models remain among the largest supercomputing workloads, run at gold-standard centres such as ECMWF \\cite{ecmwf}.",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-362",
+      "quote": "\\marginfig{eniac_1946.jpg}{Two of the ENIAC's programmers, Jean \"Betty\" Jennings and Frances Bilas, setting up the machine in 1946 — the computer that, with Charney's team, produced the first numerical weather forecast.",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-363",
+      "quote": "Army, public domain](https://commons.wikimedia.org/wiki/File:Two_women_operating_ENIAC_%28full_resolution%29.jpg)}",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-364",
+      "quote": "**The cold had to be beaten.** Vostok has recorded −89 °C, the coldest reliably measured on Earth \\cite{vostokstation}.",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-365",
+      "quote": "Beating that cold is the hidden prerequisite of the next compute substrate: Kamerlingh Onnes liquefied helium and found superconductivity (1911; Nobel 1913) \\cite{onnes1913nobel}, the dilution refrigerator (1964) pushed to 2 mK \\cite{dilutionfridge}, and **superconducting qubits now run below 15 mK** in IBM and Google processors \\cite{superconductingqubit}.",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-366",
+      "quote": "\\marginfig{qubit_cryostat.jpg}{The FMN Laboratory team (Bauman University, Moscow) assembling the cryogenic stage of a superconducting quantum computer, cooled to near absolute zero.",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-367",
+      "quote": "[Photo: Sergey Kushlevich, CC BY 4.0](https://commons.wikimedia.org/wiki/File:Measuring_a_qubit_leaves_no_room_for_error.jpg)}",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-368",
+      "quote": "**The full circle.** In 2023 DeepMind's **GraphCast**, a graph network trained on four decades of global reanalysis, forecast ten days of weather in under a minute on one TPU, beating ECMWF's model on over 90% of measured variables (\\cite[Lam et al., 2023]{lam2023graphcast} \\cite[GraphCast, open source]{graphcast_github}).",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-369",
+      "quote": "The ice and the atmosphere that forged the machines are now read by them.",
+      "section": "The Polar Program That Nudged the State of the Art",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-370",
+      "quote": "The CPU's modern history begins with relay-based processors like Zuse's Z3 (1941) and the vacuum-tube ENIAC (1946), which used thousands of tubes to achieve speeds thousands of times faster than relays \\cite[see ENIAC description]{eniac1946}.",
+      "section": "The Central Processing Unit (CPU)",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-371",
+      "quote": "The transistor (1947) made miniaturization possible (\\cite[Bardeen et al., 1948]{semiconductor}), and the **integrated circuit**, independently conceived by **Jack Kilby** (1958) (\\cite[Kilby, 1958]{kilbyic}) and **Robert Noyce** (1959) (\\cite[Noyce, 1959]{noyceic}), placed multiple transistors on a single die.",
+      "section": "The Central Processing Unit (CPU)",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-372",
+      "quote": "\\citealternativetitle{eniac_image}: the U.S.",
+      "section": "The Central Processing Unit (CPU)",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-373",
+      "quote": "Army's 1946 photograph of the ENIAC in operation at the Moore School.",
+      "section": "The Central Processing Unit (CPU)",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-374",
+      "quote": "The machine spans an entire room and fills it wall-to-wall with cables, vacuum tubes and function-table panels.",
+      "section": "The Central Processing Unit (CPU)",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-375",
+      "quote": "The \\citealternativetitle{williams_tube}: a Williams-Kilburn cathode-ray tube with its associated read/write electronics.",
+      "section": "The Central Processing Unit (CPU)",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-376",
+      "quote": "Each bit was stored as a tiny patch of charge on the phosphor screen, the first truly random-access electronic memory.",
+      "section": "The Central Processing Unit (CPU)",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-377",
+      "quote": "The previous sections treated the chip as a component.",
+      "section": "The Fab: How Sand Becomes an Accelerator",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-378",
+      "quote": "This section treats it as a manufactured object, because a modern accelerator is not designed in a vacuum: it is the output of an industrial system that turns purified sand into patterned silicon, and then packages that silicon with memory, power delivery and cooling.",
+      "section": "The Fab: How Sand Becomes an Accelerator",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-379",
+      "quote": "Remove the fab and the design is only a file.",
+      "section": "The Fab: How Sand Becomes an Accelerator",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-380",
+      "quote": "The pure-play foundry is a relatively recent institutional invention.",
+      "section": "The Foundry: Designing Without a Factory",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-381",
+      "quote": "TSMC was founded in 1987 as a joint venture and incorporated as a dedicated foundry: it manufactures semiconductors using its customers' proprietary integrated-circuit designs rather than selling chips under its own brand (\\cite[TSMC, 2026]{tsmc2025annualreport}).",
+      "section": "The Foundry: Designing Without a Factory",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-382",
+      "quote": "That separation let companies design chips without owning a fabrication plant, while the foundry amortized the enormous fixed cost of the plant across many customers.",
+      "section": "The Foundry: Designing Without a Factory",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-383",
+      "quote": "TSMC's own filing describes fabs as \"largely fixed cost assets\" whose economics improve as utilization rises (\\cite[TSMC, 2026]{tsmc2025annualreport}).",
+      "section": "The Foundry: Designing Without a Factory",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-384",
+      "quote": "The fabless model is therefore not a detail of business history: it is why a startup can specify an AI accelerator and have it manufactured at the leading edge.",
+      "section": "The Foundry: Designing Without a Factory",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-385",
+      "quote": "The most difficult step is printing the pattern.",
+      "section": "EUV: Light at 13.5 Nanometres",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-386",
+      "quote": "ASML describes extreme ultraviolet (EUV) lithography as using light with a wavelength of 13.5 nm, the cutting edge of lithography and the highest resolution available, and states that it is currently the world's only manufacturer of EUV systems (\\cite[ASML, 2026]{asml2025annualreport}).",
+      "section": "EUV: Light at 13.5 Nanometres",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-387",
+      "quote": "EUV simplifies manufacturing relative to multiple-patterning with deep-ultraviolet immersion: one exposure per critical layer instead of several, fewer masks and process steps, and better yield and scalability for advanced logic and memory (\\cite[ASML, 2026]{asml2025annualreport}).",
+      "section": "EUV: Light at 13.5 Nanometres",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-388",
+      "quote": "The underlying idea is older.",
+      "section": "EUV: Light at 13.5 Nanometres",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-389",
+      "quote": "Soft X-ray reduction lithography with multilayer mirrors was demonstrated in the late 1980s, with experiments on a synchrotron beamline and demagnified patterns below 0.5 micrometres (\\cite[Kinoshita et al., 1989]{kinoshita1989euv}).",
+      "section": "EUV: Light at 13.5 Nanometres",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-390",
+      "quote": "The industrial machine took another two decades; the physics was already in place.",
+      "section": "EUV: Light at 13.5 Nanometres",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-391",
+      "quote": "A fab is a contamination-control problem before it is a computer.",
+      "section": "The Cleanroom and the Ultrapure Drop",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-392",
+      "quote": "VLSI yields require control of particulate contamination during manufacture, and the ambient air of the production facility is one source; measuring ultrafine particles of 0.1 micrometres or less in real time requires instruments such as the differential mobility analyzer and the diffusion battery (\\cite[Donovan et al., 1985]{donovan1985cleanroom}).",
+      "section": "The Cleanroom and the Ultrapure Drop",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-393",
+      "quote": "Water is the other carrier: ultrafiltration removes particles, colloids and large macromolecules from ultrapure water, and leak detection in membrane modules is a prerequisite for defect-free manufacturing (\\cite[Ruth and Berndt, 2016]{ruth2016ultrapure}).",
+      "section": "The Cleanroom and the Ultrapure Drop",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-394",
+      "quote": "The cleanroom is not a metaphor for precision; it is the physical condition under which a wafer can be patterned at all.",
+      "section": "The Cleanroom and the Ultrapure Drop",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-395",
+      "quote": "A modern accelerator is not one die but a stack.",
+      "section": "Advanced Packaging: Where Memory Meets Logic",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-396",
+      "quote": "High Bandwidth Memory (HBM) stacks DRAM dies on a base logic die using through-silicon vias and die stacking, reaching more than 256 GB/s while reducing power, and its packaging must solve reliability, thermal dissipation, package size and high-throughput stacking (\\cite[Jun et al., 2017]{jun2017hbm}).",
+      "section": "Advanced Packaging: Where Memory Meets Logic",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-397",
+      "quote": "CoWoS-R uses an organic interposer to integrate heterogeneous and chiplet components, with low-RC interconnect, signal isolation and design scalability; integrated decoupling capacitors suppress power-domain noise and improve HBM3 signal integrity at high data rates (\\cite[Jeng and Liu, 2022]{jeng2022cowos}).",
+      "section": "Advanced Packaging: Where Memory Meets Logic",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-398",
+      "quote": "The logic die and the memory are only useful together, and the package is where their electrical and thermal limits meet.",
+      "section": "Advanced Packaging: Where Memory Meets Logic",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-399",
+      "quote": "The grid does not create energy; it converts and moves it.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-400",
+      "quote": "The first stage is mechanical.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-401",
+      "quote": "Faraday's 1831 induction experiment turned motion into current; Siemens's 1867 dynamo paper and Gramme's ring armature made that current steady and cheap; Parsons's 1884 compound steam turbine made it fast and compact.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-402",
+      "quote": "Edison's Pearl Street station (1882) showed that a central plant could light a district, and the Westinghouse–Tesla AC system, with transformers and high-voltage lines, made the grid regional.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-403",
+      "quote": "The generator at the end of the line has not changed in principle since Faraday; only the fuel and the scale have (\\cite{faraday}; \\cite{siemens1867dynamo}; \\cite{parsons1911steamturbine}; \\cite{electricpowerhistorywiki}).",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-404",
+      "quote": "**Coal** was the first fuel of the grid.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-405",
+      "quote": "A coal-fired plant pulverises the coal, burns it to boil water, drives a steam turbine, and turns a generator; the Rankine cycle sets the thermodynamic limit, and the waste heat needs cooling water or towers (\\cite{rankine1859}; \\cite{eia_coal}).",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-406",
+      "quote": "Coal is stored sunlight — the energy of plants that lived hundreds of millions of years ago, compressed and heated into a seam — and for most of the 20th century it was the backbone of industrial electricity.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-407",
+      "quote": "It remains one of the largest sources worldwide, even as gas and renewables displace it in many markets (\\cite{coalpowerwiki}).",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-408",
+      "quote": "**Oil** began as a lighting fuel, not a power fuel.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-409",
+      "quote": "Drake's 1859 well in Pennsylvania turned petroleum into an industry; refining separated kerosene for lamps, then gasoline and diesel for the internal-combustion engine.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-410",
+      "quote": "Oil-fired plants and diesel generators are common where coal or gas is unavailable, and oil is the feedstock of the petrochemical industry that makes plastics, fertilisers and the materials of the computer.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-411",
+      "quote": "Its role in computation is also indirect: seismic exploration for oil was one of the first customers for large-scale numerical computing, long before machine learning (\\cite{drakewellmuseum}; \\cite{eia_oil}; \\cite{claerbout1992earth}).",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-412",
+      "quote": "**Nuclear** power is the other way to boil water.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-413",
+      "quote": "In 1938 Otto Hahn and Fritz Strassmann bombarded uranium with neutrons and found that the radioactive alkaline-earth fraction behaved chemically like barium; their paper concluded that, as chemists, they would have to rename the supposed radium/actinium/thorium series as barium/lanthanum/cerium, but as nuclear chemists they hesitated because the result contradicted nuclear physics (\\cite{hahnstrassmann1939fission}).",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-414",
+      "quote": "Lise Meitner and Otto Frisch read the result as the splitting of the uranium nucleus, called the process **fission**, and explained its energy release (\\cite{meitnerfrisch1939fission}).",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-415",
+      "quote": "Chicago Pile-1 went critical in 1942; Obninsk (1954) was the first grid-connected nuclear plant, and Shippingport (1957) the first in the United States.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-416",
+      "quote": "A reactor is a controlled chain reaction whose heat drives the same steam turbine as a coal plant, but its fuel is uranium, its waste is radioactive, and its accidents are rare and severe.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-417",
+      "quote": "Fusion — the sun's reaction — remains experimental; no fusion plant has ever sold electricity (\\cite{nuclearpowerwiki}; \\cite{obninskwiki}; \\cite{worldnuclear}).",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-418",
+      "quote": "**Fuel** is the variable that ties these together.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-419",
+      "quote": "Coal, oil and gas are fossil fuels: chemical energy stored by ancient photosynthesis.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-420",
+      "quote": "Uranium is a nuclear fuel: energy stored in atomic nuclei.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-421",
+      "quote": "Hydrogen, biofuels and batteries are carriers or processed fuels, not primary sources.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-422",
+      "quote": "Energy density explains the difference: a kilogram of uranium contains millions of times more energy than a kilogram of coal, which is why a small fuel assembly can power a city.",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-423",
+      "quote": "The grid's history is a history of substituting one fuel for another while keeping the same generator at the end (\\cite{fossilfuelwiki}; \\cite{eia_coal}; \\cite{eia_oil}; \\cite{energydensitywiki}).",
+      "section": "The Energy Stack: Coal, Oil and Fission",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-424",
+      "quote": "The electric grid is a machine for moving power, not just generating it.",
+      "section": "The Grid: Electricity as a Utility",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-425",
+      "quote": "Tesla's polyphase AC patents of the 1880s made long-distance distribution practical by supplying alternating current and a method of converting and distributing it (\\cite[Tesla, 1887]{teslaelectricmotor}; \\cite[Tesla, 1888]{teslacurrent}).",
+      "section": "The Grid: Electricity as a Utility",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-426",
+      "quote": "A century later the grid has become a binding constraint on AI.",
+      "section": "The Grid: Electricity as a Utility",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-427",
+      "quote": "The International Energy Agency's central projection has data-centre electricity consumption roughly doubling from 485 TWh in 2025 to 950 TWh in 2030, about 3% of global electricity demand, while consumption from AI-focused data centres grew by 50% in 2025 (\\cite[IEA, 2026]{iea2026energyai}).",
+      "section": "The Grid: Electricity as a Utility",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-428",
+      "quote": "The same report describes grids being stretched by the wave of project applications for data centres (\\cite[IEA, 2026]{iea2026energyai}).",
+      "section": "The Grid: Electricity as a Utility",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-429",
+      "quote": "A training cluster is therefore not only a collection of GPUs; it is a customer with a power contract, a connection queue and a cooling load.",
+      "section": "The Grid: Electricity as a Utility",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-430",
+      "quote": "The cloud turned computing into something that could be rented by the hour.",
+      "section": "The Cloud: Computation as a Utility",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-431",
+      "quote": "Amazon S3, launched on 14 March 2006, offered an application programming interface for highly scalable, reliable, low-latency storage at very low cost (\\cite[Amazon Web Services, 2006]{amazons3_2006}).",
+      "section": "The Cloud: Computation as a Utility",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-432",
+      "quote": "Amazon EC2 entered limited beta on 25 August 2006: a virtual CPU equivalent to a 1.7 GHz Xeon, 1.75 GB of RAM, 160 GB of local disk and 250 Mb/s of network bandwidth, at ten cents per clock hour, built on the Xen virtual machine monitor and booting from Amazon Machine Images stored as S3 objects (\\cite[Barr, 2006]{amazonec2_2006}).",
+      "section": "The Cloud: Computation as a Utility",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-433",
+      "quote": "Kubernetes, open-sourced by Google in 2014, added a portable, extensible, open-source platform for managing containerized workloads, with scaling and failover handled by the platform rather than by hand (\\cite[Kubernetes Authors, 2014]{kubernetes_overview}).",
+      "section": "The Cloud: Computation as a Utility",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-434",
+      "quote": "The result is elastic compute: capacity that can be acquired for a training run and released when the run ends.",
+      "section": "The Cloud: Computation as a Utility",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-435",
+      "quote": "At scale, the unit of design is no longer the server but the building.",
+      "section": "The Warehouse-Scale Computer",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-436",
+      "quote": "Barroso, Clidaras and Hoelzle describe the modern data center as one massive warehouse-scale computer: a warehouse full of machines whose hardware and software resources must work in concert to deliver Internet-service performance, with a design, operation and cost structure of its own (\\cite[Barroso et al., 2013]{barroso2013datacenter}).",
+      "section": "The Warehouse-Scale Computer",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-437",
+      "quote": "The IEA notes that AI is pushing data-center power density to the limits of today's technologies (\\cite[IEA, 2026]{iea2026energyai}).",
+      "section": "The Warehouse-Scale Computer",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-438",
+      "quote": "The cloud is therefore not weightless.",
+      "section": "The Warehouse-Scale Computer",
+      "kind": "statement"
+    },
+    {
+      "id": "untold_history_ii-stmt-439",
+      "quote": "It is a warehouse, a power contract and a thermal engineering problem, and the abstraction of \"renting a GPU\" rests on all three.",
+      "section": "The Warehouse-Scale Computer",
+      "kind": "statement"
+    }
+  ]
 }

@@ -487,5 +487,259 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "reliability-stmt-1",
+      "quote": "A model that is right 95% of the time but **confident when it is wrong** is not a model you can deploy in a hospital, a courtroom, or a cockpit.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-2",
+      "quote": "**Reliability** is the discipline of matching *confidence* to *correctness* — and of knowing when to **decline**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-3",
+      "quote": "It pairs with the Hallucinations chapter: there we ask *why models lie*; here we ask *how to make their confidence mean something*.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-4",
+      "quote": "A **calibrated** model says $P(\\text{cat}) = 0.9$ only when roughly 90% of its 0.9-cat cases are actually cats.",
+      "section": "Calibration",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-5",
+      "quote": "Modern networks are not — they are systematically **over-confident**, especially out of distribution.",
+      "section": "Calibration",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-6",
+      "quote": "The cheap fix is **temperature scaling**: learn a single scalar $T$ and divide the logits by it, stretching the sharp softmax back onto the diagonal.",
+      "section": "Calibration",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-7",
+      "quote": "It costs nothing at inference.",
+      "section": "Calibration",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-8",
+      "quote": "(\\cite[Guo et al., 2017]{guo2017calibration})",
+      "section": "Calibration",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-9",
+      "quote": "LLMs expose a related signal.",
+      "section": "Calibration",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-10",
+      "quote": "Asked for the probability that a proposed answer is true ($P(\\text{True})$), larger models are reasonably calibrated on multiple-choice and true/false items, and the signal improves with scale (\\cite[Kadavath et al., 2022]{kadavath2022selfknowledge}).",
+      "section": "Calibration",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-11",
+      "quote": "Their direct \"do I know this?\" estimate ($P(\\text{IK})$) generalises less reliably to new tasks, so it is a usable but not a free reliability lever.",
+      "section": "Calibration",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-12",
+      "quote": "\\cite[Kendall & Gal (2017)]{kendall2017uncertainties} separate the one uncertainty everyone means into two:",
+      "section": "Two kinds of uncertainty",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-13",
+      "quote": "* **Aleatoric** — irreducible noise *in the data* (a blurry photo).",
+      "section": "Two kinds of uncertainty",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-14",
+      "quote": "* **Epistemic** — the *model's* ignorance (a species it has never seen).",
+      "section": "Two kinds of uncertainty",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-15",
+      "quote": "The distinction drives safe autonomy: a car should brake for epistemic uncertainty (\"I don't know what that is\"), not merely aleatoric (\"the rain makes this noisy\").",
+      "section": "Two kinds of uncertainty",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-16",
+      "quote": "**Deep ensembles** — train several networks, average them — approximate Bayesian uncertainty at the cost of training $M$ models: they agree in-distribution and **disagree on out-of-distribution input**, which is exactly the disagreement you want as an alarm.",
+      "section": "Two kinds of uncertainty",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-17",
+      "quote": "(\\cite[Lakshminarayanan et al., 2017]{lakshminarayanan2017ensembles})",
+      "section": "Two kinds of uncertainty",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-18",
+      "quote": "**Selective prediction** predicts only when confident and **abstains** the rest, trading *coverage* for lower *risk*.",
+      "section": "When to stop: abstention & OOD",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-19",
+      "quote": "**Out-of-distribution (OOD) detection** is its cousin: flag inputs far from anything seen in training (ensemble disagreement, low similarity to the training manifold) and route them to a human or a fallback.",
+      "section": "When to stop: abstention & OOD",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-20",
+      "quote": "The goal is not to be right everywhere; it is to **know the boundary of where you are allowed to answer**.",
+      "section": "When to stop: abstention & OOD",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-21",
+      "quote": "Everything above is empirical.",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-22",
+      "quote": "**Conformal prediction** is different: wrap any black-box model in a calibration procedure that outputs a **set** of answers with a marginal coverage guarantee of at least $1-\\varepsilon$, averaged over exchangeable calibration and test draws.",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-23",
+      "quote": "It is **distribution-free** in the sense that it assumes only exchangeability — not a particular data distribution or model class.",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-24",
+      "quote": "It is the rigorous, assumption-light way to hand a user an honest \"I'm not sure,\" and it applies to LLMs, vision, and structured outputs alike.",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-25",
+      "quote": "(\\cite[Angelopoulos & Bates, 2021]{angelopoulos2021conformal})",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-26",
+      "quote": "Post-hoc calibration is older than deep learning.",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-27",
+      "quote": "Platt introduced a sigmoid fit that maps an SVM's margin to a probability, learned on held-out data (\\cite[Platt, 1999]{platt1999probabilistic}).",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-28",
+      "quote": "Guo et al. later compared this and other post-hoc methods on modern networks and found temperature scaling — a single scalar dividing the logits — the best simple trade-off between calibration and accuracy (\\cite[Guo et al., 2017]{guo2017calibration}).",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-29",
+      "quote": "Neither method changes the ranking of predictions; they only make the scores mean what they say.",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-30",
+      "quote": "Selective classification turns abstention into a measurable contract.",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-31",
+      "quote": "Geifman and El-Yaniv give a procedure that, given a trained network and a target risk, rejects test instances until the remaining predictions meet that risk with high probability (\\cite[Geifman & El-Yaniv, 2017]{geifman2017selective}).",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-32",
+      "quote": "The output is a risk–coverage curve: you choose how much of the input distribution the system is allowed to answer.",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-33",
+      "quote": "Conformal prediction was developed by Vovk and colleagues as a way to put finite-sample guarantees on sequential predictions (\\cite[Vovk et al., 2005]{vovk2005algorithmic}).",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-34",
+      "quote": "Split conformal prediction later made it practical: hold out a calibration set, compute a nonconformity score for each example, and use the empirical quantile of those scores to build the test set (\\cite[Angelopoulos & Bates, 2021]{angelopoulos2021conformal}).",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-35",
+      "quote": "The guarantee is marginal and distribution-free only under exchangeability.",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-36",
+      "quote": "For language generation the score is the hard part; Quach et al. construct conformal sets of sequences and show how the coverage–efficiency trade-off behaves in practice (\\cite[Quach et al., 2023]{quach2023conformal}).",
+      "section": "Conformal prediction: finite-sample guarantees",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-37",
+      "quote": "Red-teaming is evaluation with an adversary.",
+      "section": "Red-teaming and safety evaluation",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-38",
+      "quote": "Perez et al. showed that one language model can generate test cases that make another model produce harmful replies, scaling the search far beyond hand-written probes (\\cite[Perez et al., 2022]{perez2022redteaming}).",
+      "section": "Red-teaming and safety evaluation",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-39",
+      "quote": "Wei et al. taxonomise why safety training fails — competing objectives and mismatched generalisation — and Mazeika et al. standardise the attacks and defences so results are comparable across models (\\cite[Wei et al., 2024]{wei2024jailbroken}; \\cite[Mazeika et al., 2024]{mazeika2024harmbench}).",
+      "section": "Red-teaming and safety evaluation",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-40",
+      "quote": "Safety evaluation is broader than jailbreaks: Weidinger et al. argue for measuring capability, human interaction and systemic risk together, because a model that passes a toxicity filter can still cause harm in deployment (\\cite[Weidinger et al., 2023]{weidinger2023sociotechnical}).",
+      "section": "Red-teaming and safety evaluation",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-41",
+      "quote": "Combine the tools: **calibrated confidence** + an explicit **\"I don't know\"** (abstain or defer) + **retrieval to verify** (see RAG ).",
+      "section": "For LLMs in practice",
+      "kind": "statement"
+    },
+    {
+      "id": "reliability-stmt-42",
+      "quote": "The target is a system whose confidence you can *trust* under stakes — one that is right when confident, and quiet when it is not.",
+      "section": "For LLMs in practice",
+      "kind": "statement"
+    }
   ]
 }

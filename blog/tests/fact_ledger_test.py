@@ -213,10 +213,9 @@ class CheckerTests(unittest.TestCase):
         real = ROOT / "facts"
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            write_lesson(root, "backproplab", part=2, order=5)
-            write_lesson(root, "security_inference", part=5, order=8)
             (root / "facts").mkdir()
             for slug in ("backproplab", "security_inference"):
+                shutil.copy(ROOT / f"{slug}.php", root / f"{slug}.php")
                 shutil.copy(real / f"{slug}.facts.json", root / "facts" / f"{slug}.facts.json")
             self.assertEqual(self.run_check(root), 0)
 

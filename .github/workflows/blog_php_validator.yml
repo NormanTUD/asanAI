@@ -86,6 +86,11 @@ jobs:
         run: |
           uv run blog/tests/content_claims_test.py
 
+      - name: Check Statement Ledger Freshness
+        # Every prose sentence must be protocolled in the lesson's fact file.
+        run: |
+          uv run blog/tools/factcheck/extract_statements.py blog/ --check
+
       - name: Run Literature Link Checker
         run: |
           mkdir -p link-report

@@ -520,5 +520,223 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "ai_for_science-stmt-1",
+      "quote": "This book opened with the universe: stars forging the elements, a handful of laws, and early mathematics learning to count and measure.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-2",
+      "quote": "The models we built to **predict** the world are being turned on the world to **discover** in it.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-3",
+      "quote": "Science is the ultimate test of whether a model has *learned* the world rather than merely memorized it — the test the Why Do Networks Generalize?",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-4",
+      "quote": "chapter says we still cannot fully explain.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-5",
+      "quote": "**Protein folding** — predicting a protein's 3D shape from its amino-acid sequence — was a 50-year grand challenge.",
+      "section": "The flagship: AlphaFold",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-6",
+      "quote": "**AlphaFold** solved it at near-experimental accuracy, winning CASP14 by a wide margin (\\cite[Jumper et al., 2021]{jumper2021alphafold}); its leaders shared the 2024 **Nobel Prize in Chemistry**.",
+      "section": "The flagship: AlphaFold",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-7",
+      "quote": "**AlphaFold 3** extended the model to the joint structure of proteins, nucleic acids, ligands, ions, and modified residues (\\cite[Abramson et al., 2024]{alphafold3}), and **AlphaMissense** scored 71 million single-nucleotide missense variants in canonical transcripts (216 million across isoforms) (\\cite[Abramson et al., 2023]{alphamissense}).",
+      "section": "The flagship: AlphaFold",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-8",
+      "quote": "The AlphaFold Protein Structure Database released ~**200 million** predicted structures, free to use — a new atlas of biology.",
+      "section": "The flagship: AlphaFold",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-9",
+      "quote": "(\\cite[EMBL-EBI, 2023]{alphafold_db})",
+      "section": "The flagship: AlphaFold",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-10",
+      "quote": "One predicted structure from the AlphaFold database, coloured by **pLDDT** — the model's own per-residue confidence.",
+      "section": "The flagship: AlphaFold",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-11",
+      "quote": "Note the reliable coils and the uncertain, disordered tails: the system knows where it is guessing.",
+      "section": "The flagship: AlphaFold",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-12",
+      "quote": "\\cite[Image: AlphaFold predicted structure]{alphafold_protein_img}",
+      "section": "The flagship: AlphaFold",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-13",
+      "quote": "This is where the story becomes startling.",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-14",
+      "quote": "AI has moved from *solving given problems* to *opening new ones*.",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-15",
+      "quote": "**The headline.** In September 2026, an **OpenAI** system of roughly **10,000 coordinating agents** (88 hours, ~130 billion tokens) produced an **analytic proof — with a machine-checked Lean 4 formalization** — that the 3D incompressible **Navier–Stokes** equations can develop a **finite-time singularity** under a smooth external force, resolving statement (C)/(D) of the **Clay Millennium** formulation.",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-16",
+      "quote": "(\\cite[OpenAI, 2026]{navier_stokes_openai}) Two caveats belong in any honest account: it is a *forced* result, and — as of writing — it is **not yet peer-reviewed**, and its priority is **in active dispute** with work by Buckmaster (NYU) and Alpöge (Anthropic).",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-17",
+      "quote": "(\\cite[Wikipedia, 2026]{navier_stokes_priority})",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-18",
+      "quote": "**The pattern behind it.** The proof did not appear from a single forward pass.",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-19",
+      "quote": "It came from an **evolutionary LLM search** — propose code/proof, test it, refine — a method first shown to find *new* mathematical results years earlier:",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-20",
+      "quote": "| System | Year | What it found |",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-21",
+      "quote": "| **AlphaTensor** (\\cite[Fawzi et al., 2022]{alphatensor}) | 2022 | Faster, provably-correct matrix-multiplication algorithms (first improvement over Strassen's 4×4 two-level scheme in ~50 years) |",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-22",
+      "quote": "| **FunSearch** (\\cite[Romera-Paredes et al., 2024]{funsearch}) | 2024 | New cap-set constructions and a better bin-packing lower bound — the *first* LLM discoveries on open problems |",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-23",
+      "quote": "| **Deletion codes** (\\cite[Weindel & Heckel, 2025]{deletion_codes}) | 2025 | A construction proven to hit the **conjectured-optimal** Varshamov–Tenengolts single-deletion code (a 70-year-open problem) |",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-24",
+      "quote": "| **AlphaEvolve** (\\cite[Georgiev, Gómez-Serrano, Tao, Wagner, 2025]{alphaevolve}) | 2025 | On 67 open problems (with Terence Tao a co-author): matched best-known in most, **improved several** |",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-25",
+      "quote": "The competition-math line ran in parallel: **AlphaProof** + **AlphaGeometry 2** reached the **silver-medal** standard at the 2024 IMO (28/42 points), with AG2 alone now **beating an average gold medalist** on 25 years of Olympiad geometry (\\cite[Wikipedia, 2024]{imo_wiki}; \\cite[Chervonyi et al., 2025]{alphageometry2}).",
+      "section": "Mathematics: from competition problems to open problems",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-26",
+      "quote": "* **Materials.** **GNoME**, a graph network over crystal structures, predicted **2.2 million** new stable materials, about 380,000 of them on the updated convex hull (stable candidates), including promising ceramics, superhard substances, and superconductors (\\cite[Merchant et al., 2023]{merchant2023gnome}).",
+      "section": "Materials, weather, molecules",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-27",
+      "quote": "* **Weather.** **FourCastNet** (2022) and **GraphCast** (2023) forecast global weather in seconds to minutes, often matching or beating the physics-based ECMWF model while being orders of magnitude faster (\\cite[Pathak et al., 2022]{pathak2022fourcastnet}; \\cite[Lam et al., 2023]{lam2023graphcast}); **GenCast** (2024) extended this to probabilistic ensemble forecasts, beating ENS on 97.2% of targets (\\cite[Price et al., 2024]{price2024gencast}).",
+      "section": "Materials, weather, molecules",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-28",
+      "quote": "* **Games → search.** **AlphaGo** beat the Go champion (\\cite[Silver et al., 2016]{silver2016go}); **AlphaZero** then taught itself Go, chess and shogi by self-play (\\cite[Silver et al., 2018]{silver2018zero}) — the *learned value + search* engine that powered everything above.",
+      "section": "Materials, weather, molecules",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-29",
+      "quote": "* **World models.** **JEPA**-style models predict the *next state* of a system rather than its raw pixels — the idea behind control and robotics (\\cite[LeCun, 2022]{lecun2022jepa}).",
+      "section": "Materials, weather, molecules",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-30",
+      "quote": "The book's opening claim is that **physics is compression**: find the short law that generates the data.",
+      "section": "Why this closes the loop",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-31",
+      "quote": "A model that *generalizes* is doing precisely that — compressing a dataset into a law you can **extrapolate**.",
+      "section": "Why this closes the loop",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-32",
+      "quote": "When that extrapolation yields a *new* protein, a *new* material, a *new* code, or a *new* proof, **prediction and discovery become a single act**.",
+      "section": "Why this closes the loop",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-33",
+      "quote": "The tally mark, the Pāṇini rule, and the neural net are the same gesture: abstract the pattern into a coherent structure, then trust it to say something about what you have not yet seen (\\cite[Coherent Difference]{coherent_difference}).",
+      "section": "Why this closes the loop",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-34",
+      "quote": "The honest caveat: these systems are **hypothesis generators**.",
+      "section": "Why this closes the loop",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-35",
+      "quote": "The human in the loop still verifies, checks the Lean proof, reproduces the crystal, and decides what matters.",
+      "section": "Why this closes the loop",
+      "kind": "statement"
+    },
+    {
+      "id": "ai_for_science-stmt-36",
+      "quote": "**AI proposes; science disposes.**",
+      "section": "Why this closes the loop",
+      "kind": "statement"
+    }
   ]
 }

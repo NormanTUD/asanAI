@@ -358,5 +358,295 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "inference_vs_training-stmt-1",
+      "quote": "Training and inference are the *same function* — the same weights, the same attention, the same layers — but they are **different forms of computation**, and the difference is the load-bearing fact of the whole serving economy.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-2",
+      "quote": "In [Attention](attentionlab.php) you saw the mechanism; in [Inference optimization](inference_optimization.php) and [Production serving](production_serving.php) you will meet the tricks.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-3",
+      "quote": "This chapter gives them the *reason*: why a model that took minutes to train on a batch takes *seconds per token* to serve, and why \"how many tokens per second?\" and \"how many users at once?\" are two different questions with two different answers.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-4",
+      "quote": "During **training**, the model sees the *whole* sequence at once — a prompt and its target, as a dense block of $T$ tokens processed in parallel.",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-5",
+      "quote": "That parallelism is what makes a GPU fast: a big block of tokens is a dense matrix multiply, and dense matrix multiplies are exactly the work a GPU's arithmetic units are built for.",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-6",
+      "quote": "Training is **compute-bound** — the bottleneck is the sheer number of floating-point operations.",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-7",
+      "quote": "**Inference** is different.",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-8",
+      "quote": "Generation is *autoregressive*: you produce **one token at a time**, and each new token must attend to every token that came before it.",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-9",
+      "quote": "There is no \"batch of $T$ new tokens\" to parallelize — there is exactly one.",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-10",
+      "quote": "So the question at each step is no longer \"how many multiplies?\" (just one token's worth) but \"how much *data* do I have to move to compute this one token?\" And the answer is: *a lot* — the entire model's weights, plus every past token's attention state.",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-11",
+      "quote": "That makes decode **memory-bandwidth-bound**: the arithmetic units sit mostly idle while the memory bus is the thing keeping up.",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-12",
+      "quote": "<text x=\"12\" y=\"20\" font-size=\"12\" fill=\"var(--mn-text-secondary)\">PREFILL (prompt, length T)</text>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-13",
+      "quote": "<rect x=\"12\" y=\"30\" width=\"250\" height=\"34\" rx=\"6\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-14",
+      "quote": "<text x=\"137\" y=\"51\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text)\">T tokens in parallel → dense matmul</text>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-15",
+      "quote": "<text x=\"272\" y=\"51\" font-size=\"12\" fill=\"var(--mn-text-secondary)\">compute-bound</text>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-16",
+      "quote": "<text x=\"12\" y=\"95\" font-size=\"12\" fill=\"var(--mn-text-secondary)\">DECODE (one token at a time)</text>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-17",
+      "quote": "<rect x=\"12\" y=\"104\" width=\"40\" height=\"20\" rx=\"4\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-18",
+      "quote": "<text x=\"32\" y=\"118\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">t</text>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-19",
+      "quote": "<rect x=\"58\" y=\"104\" width=\"40\" height=\"20\" rx=\"4\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-20",
+      "quote": "<text x=\"78\" y=\"118\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">t+1</text>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-21",
+      "quote": "<rect x=\"104\" y=\"104\" width=\"40\" height=\"20\" rx=\"4\" fill=\"var(--mn-bg-subtle)\" stroke=\"var(--mn-accent)\"/>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-22",
+      "quote": "<text x=\"124\" y=\"118\" text-anchor=\"middle\" font-size=\"11\" fill=\"var(--mn-text)\">t+2</text>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-23",
+      "quote": "<text x=\"160\" y=\"118\" font-size=\"13\" fill=\"var(--mn-text-secondary)\">…</text>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-24",
+      "quote": "<rect x=\"180\" y=\"98\" width=\"368\" height=\"34\" rx=\"6\" fill=\"none\" stroke=\"var(--mn-text-secondary)\" stroke-dasharray=\"4 3\"/>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-25",
+      "quote": "<text x=\"364\" y=\"119\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--mn-text-secondary)\">KV-cache — grows by one entry per step</text>",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-26",
+      "quote": "Prefill processes the whole prompt in parallel (a dense, compute-bound block).",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-27",
+      "quote": "Decode then appends one token at a time, and every step must read the entire KV-cache that has grown up to that point (a memory-bound step).",
+      "section": "Training runs over a batch; inference runs over a stream",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-28",
+      "quote": "Attention is $O(T^2)$ in the naive reading: token $i$ attends to all $i$ preceding tokens.",
+      "section": "The KV-cache: stop recomputing the past",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-29",
+      "quote": "If you recomputed that from scratch for every new token, generation would be catastrophically slow — the cost would grow quadratically with length.",
+      "section": "The KV-cache: stop recomputing the past",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-30",
+      "quote": "The **KV-cache** is the fix: the keys and values for each past token are computed *once* and **stored**, so when the next token arrives its attention *reuses* the cached keys and values instead of recomputing them.",
+      "section": "The KV-cache: stop recomputing the past",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-31",
+      "quote": "You trade memory for arithmetic: the cache grows by one key and one value per layer, per head, per new token — **linear** in sequence length — and decode stays $O(T)$ rather than $O(T^2)$ per step.",
+      "section": "The KV-cache: stop recomputing the past",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-32",
+      "quote": "That cache is also, quietly, the most important *physical* object in serving.",
+      "section": "The KV-cache: stop recomputing the past",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-33",
+      "quote": "It is where the memory goes as context length grows, and it is the thing the memory-bound decode step has to move.",
+      "section": "The KV-cache: stop recomputing the past",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-34",
+      "quote": "Everything below — why long contexts are expensive, why people quantize, why they build PagedAttention — is a consequence of that cache.",
+      "section": "The KV-cache: stop recomputing the past",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-35",
+      "quote": "Because decode is memory-bandwidth-bound, its cost is dominated by *how many bytes you read*, not how many flops you do.",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-36",
+      "quote": "And you read two things: the model weights (once per step) and the KV-cache (which grows with context).",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-37",
+      "quote": "Three consequences follow, and they shape the entire serving industry (\\cite[Pope et al., 2022]{pope2022scaling}).",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-38",
+      "quote": "**Long contexts are expensive, per token.** A 32k-token context means every decode step reads a 32k-token cache.",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-39",
+      "quote": "The per-token cost of *decoding* climbs with the length of what is already in the window — which is why \"how long can it read?\" and \"how fast does it answer?\" are coupled, and why the [context window](contextwindows.php) is a cost dial, not just a feature.",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-40",
+      "quote": "**The optimizations are all about moving fewer bytes.** **Quantization** shrinks the bytes of both weights and cache (lower precision, fewer bits to move).",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-41",
+      "quote": "**FlashAttention** (\\cite[Dao et al., 2022]{flashattention2022}) reorders the computation so the attention matrix is never materialized in memory, cutting the memory traffic of the attention itself.",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-42",
+      "quote": "And **PagedAttention** (\\cite[Kwon et al., vLLM (2023)]{vllm2023}) manages the KV-cache like an operating system manages virtual memory — in fixed-size *blocks* — so you do not reserve a worst-case contiguous chunk per sequence and waste half the memory to fragmentation.",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-43",
+      "quote": "**Throughput and concurrency are different numbers.** \"Tokens per second\" is the speed of *one* stream — a property of the memory-bound decode step.",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-44",
+      "quote": "\"How many *users* at once\" is a property of *how many KV-caches fit in memory* — a capacity question.",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-45",
+      "quote": "Continuous batching interleaves many sequences' decode steps so the (memory-bound) hardware is kept busy with more than one stream, trading a little latency-per-stream for a lot more total users.",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-46",
+      "quote": "A serving system is a machine for managing that trade-off, and the KV-cache is the working set it manages.",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-47",
+      "quote": "> The reason the \"optimizations\" in the next chapters work is the reason a single token takes as long as it does: inference is not a smaller version of training.",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_vs_training-stmt-48",
+      "quote": "It is a *different bottleneck* — one where moving bytes, not computing them, is the scarce resource, and where a linearly growing cache is the object of all the attention.",
+      "section": "Why the two regimes set the economics",
+      "kind": "statement"
+    }
   ]
 }

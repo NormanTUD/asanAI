@@ -406,5 +406,901 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "agents-stmt-1",
+      "quote": "**Terminological clarification (important, see also the Philosophy chapter):** In this course, “AI agent” is used as a *technical* term for a software architecture that wraps an LLM in a control loop and grants it access to external interfaces such as the file system, the network, a search engine, or other tools.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-2",
+      "quote": "It is **not** a claim about consciousness, qualia, intentionality, volition, or any form of genuine “agency” in the philosophical sense.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-3",
+      "quote": "When the chapter title or related literature uses the word “autonomous”, it refers to *engineering* autonomy (the loop runs without per-step human approval), not to philosophical agency.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-4",
+      "quote": "The LLM at the heart of an agent is the same reactive, stateless next-token predictor described in the Philosophy chapter; what changes is the *scaffolding around it*, not its inner nature.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-5",
+      "quote": "Concretely, an **AI Agent** is a system where a Large Language Model acts not merely as a text generator, but as a **controller inside an observe→reason→act loop**.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-6",
+      "quote": "It can be given access to its environment (a file system, a browser, an API), reason about which tool to invoke, observe the result, and iterate until a task is complete.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-7",
+      "quote": "The LLM remains the “decision-making component” of a loop rather than a one-shot oracle.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-8",
+      "quote": "**Key insight:** A vanilla LLM generates text in a single forward pass.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-9",
+      "quote": "An **agent** wraps that LLM in a loop that gives it memory, tools, and the ability to act on the world, then feeds observations back in for the next reasoning step.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-10",
+      "quote": "The difference between “using an LLM” and “deploying an agent” is the difference between asking someone a question (in their head) and hiring them to complete a project (with hands on a keyboard, a browser, a terminal).",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-11",
+      "quote": "The hired person's *cognitive architecture* has not changed; what changed is the set of effectors available to them.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-12",
+      "quote": "The same is true of the LLM inside an agent.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-13",
+      "quote": "The “Re” in **ReAct** is the reasoning loop from the Reasoning chapter ; the “Act” is just a tool call appended to each reasoning step.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-14",
+      "quote": "Everything in this chapter assumes familiarity with CoT, self-consistency, and verification-guided search.",
+      "section": "What is an AI Agent?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-15",
+      "quote": "The concept of an autonomous reasoning agent long predates LLMs.",
+      "section": "Historical Roots: Where Did the Idea Come From?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-16",
+      "quote": "Understanding the lineage helps explain why modern agents work the way they do.",
+      "section": "Historical Roots: Where Did the Idea Come From?",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-17",
+      "quote": "The deepest historical root of the modern AI agent is not from AI research at all but from a *psychology*-oriented network engineer asking what computers were actually *for*.",
+      "section": "0. Man-Computer Symbiosis (1960) — the Vision Before the Tech",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-18",
+      "quote": "\\citeauthor{licklider1960symbiosis} (\\citeyear{licklider1960symbiosis}) published \"Man-Computer Symbiosis\" in the IRE Transactions on Human Factors in Electronics while at Bolt, Beranek and Newman, two years before he took charge of ARPA's Information Processing Techniques Office, where he funded the time-sharing and networking research that led to the ARPANET and helped shape what became the internet.",
+      "section": "0. Man-Computer Symbiosis (1960) — the Vision Before the Tech",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-19",
+      "quote": "The paper argues, against the prevailing orthodoxy of the day (which held that computers would automate human decision-making by replacing humans), that the right relation between human and computer is not *replacement* but *symbiosis* — a tight, real-time, two-way coupling in which each partner does what it does best.",
+      "section": "0. Man-Computer Symbiosis (1960) — the Vision Before the Tech",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-20",
+      "quote": "The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.",
+      "section": "0. Man-Computer Symbiosis (1960) — the Vision Before the Tech",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-21",
+      "quote": "\\citealternativetitle{shrdlu_image}.",
+      "section": "0. Man-Computer Symbiosis (1960) — the Vision Before the Tech",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-22",
+      "quote": "Terry Winograd's SHRDLU (1972) let a user type English sentences (“pick up a big red block”) to manipulate a virtual world of colored blocks, the canonical demonstration that natural-language reasoning over a small world was possible.",
+      "section": "0. Man-Computer Symbiosis (1960) — the Vision Before the Tech",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-23",
+      "quote": "The RL paradigm formalized agents mathematically.",
+      "section": "2. Reinforcement Learning Agents (1990s–2010s)",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-24",
+      "quote": "An agent interacts with an environment, receiving observations $o_t$ and rewards $r_t$, selecting actions $a_t$ to maximize cumulative reward:",
+      "section": "2. Reinforcement Learning Agents (1990s–2010s)",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-25",
+      "quote": "This gave us game-playing agents (TD-Gammon, AlphaGo), but they were trained for one game at a time, needed enormous experience, and could not carry their skill into a new task.",
+      "section": "2. Reinforcement Learning Agents (1990s–2010s)",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-26",
+      "quote": "\\citealternativetitle{alphago_leesedol_image}: world champion Lee Sedol (right) studies the board as Aja Huang (left) places stones on behalf of AlphaGo during Game 4, March 2016 in Seoul.",
+      "section": "2. Reinforcement Learning Agents (1990s–2010s)",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-27",
+      "quote": "AlphaGo won the match 4–1 and became the first program to defeat a top human player at Go.",
+      "section": "2. Reinforcement Learning Agents (1990s–2010s)",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-28",
+      "quote": "The breakthrough insight, articulated in (\\cite[Yao et al., 2023]{yao2023react}), was that LLMs already encode vast world knowledge and can perform multi-step reasoning in natural language.",
+      "section": "3. The LLM Agent Revolution (2022–present)",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-29",
+      "quote": "Instead of learning a policy from scratch, you can use the LLM *as* the policy, prompting it to reason, select tools, and iterate.",
+      "section": "3. The LLM Agent Revolution (2022–present)",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-30",
+      "quote": "This collapses the classical agent architecture into a single model that handles perception (reading text), reasoning (chain-of-thought), and action selection (tool calls) simultaneously.",
+      "section": "3. The LLM Agent Revolution (2022–present)",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-31",
+      "quote": "The most influential framework for LLM agents is **ReAct** (\\cite[Yao et al., 2023]{yao2023react}), which interleaves **Re**asoning traces and **Act**ions in a single prompt stream:",
+      "section": "The ReAct Paradigm: Reasoning + Acting",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-32",
+      "quote": "The key innovation is that **Thought** and **Action** alternate in the same token stream.",
+      "section": "The ReAct Paradigm: Reasoning + Acting",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-33",
+      "quote": "The LLM generates both its internal reasoning *and* its tool calls as text.",
+      "section": "The ReAct Paradigm: Reasoning + Acting",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-34",
+      "quote": "The orchestrator parses the actions, executes them, and injects the observations back into the context.",
+      "section": "The ReAct Paradigm: Reasoning + Acting",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-35",
+      "quote": "\\cite[Yao et al. (2023)]{yao2023react} showed that:",
+      "section": "Why interleaving matters",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-36",
+      "quote": "- **Reasoning without acting** (chain-of-thought alone) hallucinates facts it cannot verify.",
+      "section": "Why interleaving matters",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-37",
+      "quote": "- **Acting without reasoning** (tool use without explicit thought) makes incoherent tool choices.",
+      "section": "Why interleaving matters",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-38",
+      "quote": "- **ReAct** (both together) achieves the best of both worlds: grounded, interpretable, multi-step problem solving.",
+      "section": "Why interleaving matters",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-39",
+      "quote": "SHRDLU was a high-water mark of the early symbolic approach.",
+      "section": "SHRDLU and the architecture tradition",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-40",
+      "quote": "Terry Winograd's program parsed English commands, planned in a blocks world, and answered questions about its own actions; it was a genuine natural-language system, but only inside a hand-built microworld whose vocabulary, planner, and objects were all fixed \\cite{winograd1972understanding}.",
+      "section": "SHRDLU and the architecture tradition",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-41",
+      "quote": "A decade later Rodney Brooks drew the opposite lesson: his subsumption architecture built robots from layers of simple reactive behaviours, each suppressing the one below, with no central world model and no planner \\cite{brooks1986layered}.",
+      "section": "SHRDLU and the architecture tradition",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-42",
+      "quote": "“Elephants Don't Play Chess” added the slogan — the world is its own best model \\cite{brooks1990elephants}.",
+      "section": "SHRDLU and the architecture tradition",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-43",
+      "quote": "In parallel with robotics, cognitive science built unified architectures.",
+      "section": "SHRDLU and the architecture tradition",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-44",
+      "quote": "Soar modelled problem solving as search through a problem space, with impasses triggering subgoals and “chunking” compiling the result of a subgoal into a new rule \\cite{laird1987soar}.",
+      "section": "SHRDLU and the architecture tradition",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-45",
+      "quote": "ACT-R partitioned cognition into modules — declarative memory, production rules, buffers — and calibrated their timing against human behaviour \\cite{anderson2004actr}.",
+      "section": "SHRDLU and the architecture tradition",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-46",
+      "quote": "The BDI tradition gave agents an explicit practical-reasoning vocabulary: beliefs model the world, desires are goals, and intentions are the goals the agent has committed to pursue \\cite{rao1995bdi}.",
+      "section": "SHRDLU and the architecture tradition",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-47",
+      "quote": "The modern LLM agent's scratchpad, memory store, and control loop are a loose, learned reimplementation of this functional list.",
+      "section": "SHRDLU and the architecture tradition",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-48",
+      "quote": "ReAct taught a model to call tools in its text; Toolformer asked whether a model could learn when to call them.",
+      "section": "Toolformer: learning when to call",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-49",
+      "quote": "Schick et al. let GPT-J annotate its own corpus by trying API calls — a calculator, a search engine, a translator — and kept only calls whose result lowered the model's perplexity on the following tokens, then fine-tuned on that self-labelled data \\cite{schick2023toolformer}.",
+      "section": "Toolformer: learning when to call",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-50",
+      "quote": "The model learned to insert calls without being told which calls were useful.",
+      "section": "Toolformer: learning when to call",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-51",
+      "quote": "Toolformer is the bridge between prompt-level ReAct and today's function-calling APIs: both make tool use a learned, token-level decision rather than an external orchestration rule.",
+      "section": "Toolformer: learning when to call",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-52",
+      "quote": "Concrete coding agents implement this loop as **multi-step tool usage**.",
+      "section": "Toolformer: learning when to call",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-53",
+      "quote": "A deep dive into the opencode agent (\\cite[Abboud, 2025]{abboud2025opencode}) shows the pattern clearly: the LLM call is a streaming loop in which the model continuously emits text and tool calls, the framework executes each call, and the results are fed back into the context.",
+      "section": "Toolformer: learning when to call",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-54",
+      "quote": "Termination is explicit — a `stopWhen` clause ends the loop after a maximum number of steps, and a rejected permission request aborts it.",
+      "section": "Toolformer: learning when to call",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-55",
+      "quote": "The framework processes the stream event by event (text deltas, tool calls, tool results, tool errors), persisting each artifact to disk as it goes.",
+      "section": "Toolformer: learning when to call",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-56",
+      "quote": "This is precisely the observe→reason→act cycle of the diagram above, made concrete.",
+      "section": "Toolformer: learning when to call",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-57",
+      "quote": "The system prompt is the agent's “DNA.” It defines:",
+      "section": "The System Prompt: Defining the Agent's Identity",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-58",
+      "quote": "**Available tools** (name, description, parameters)",
+      "section": "The System Prompt: Defining the Agent's Identity",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-59",
+      "quote": "**Behavioral constraints** (“never execute destructive actions without confirmation”)",
+      "section": "The System Prompt: Defining the Agent's Identity",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-60",
+      "quote": "**Output format** (how to structure thoughts, actions, and final answers)",
+      "section": "The System Prompt: Defining the Agent's Identity",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-61",
+      "quote": "**Persona** (role, expertise level, communication style)",
+      "section": "The System Prompt: Defining the Agent's Identity",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-62",
+      "quote": "Real agents rarely rely on a single prompt.",
+      "section": "The System Prompt: Defining the Agent's Identity",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-63",
+      "quote": "In opencode, the effective system prompt is assembled at runtime from several sources — a provider-specific base prompt, an optional `AGENTS.md` file from the project, and an agent-specific prompt — and switching between a read-only planning mode and a full build mode is itself injected as a system reminder (\\cite[Abboud, 2025]{abboud2025opencode}).",
+      "section": "The System Prompt: Defining the Agent's Identity",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-64",
+      "quote": "Tool use (also called **function calling**) is the bridge between the LLM's text world and the real world.",
+      "section": "Tool Use: The Mechanism in Detail",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-65",
+      "quote": "The mechanism works identically to what was described in the web search chapter, but generalized to arbitrary tools.",
+      "section": "Tool Use: The Mechanism in Detail",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-66",
+      "quote": "The LLM doesn't execute anything.",
+      "section": "How the LLM “calls” a tool",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-67",
+      "quote": "It generates a **structured text output** that the orchestrator parses and executes:",
+      "section": "How the LLM “calls” a tool",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-68",
+      "quote": "Tools are defined as JSON schemas that the LLM sees in its system prompt:",
+      "section": "The Tool Registry",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-69",
+      "quote": "Real registries look exactly like this.",
+      "section": "The Tool Registry",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-70",
+      "quote": "The opencode agent ships a set of built-in tools — read, write, edit, bash, glob, grep, list, webfetch, todo management, and a task tool for spawning sub-agents — each defined with a description and a parameters schema and registered so the model can invoke it by name (\\cite[Abboud, 2025]{abboud2025opencode}).",
+      "section": "The Tool Registry",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-71",
+      "quote": "The description and schema are what the LLM sees; an `execute` function is what actually runs when the model decides to call the tool.",
+      "section": "The Tool Registry",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-72",
+      "quote": "The same function-calling primitives are used with every major provider (Anthropic, OpenAI, Google, or any OpenAI-compatible endpoint), because a provider-agnostic SDK translates the tool definitions into each vendor's dialect.",
+      "section": "The Tool Registry",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-73",
+      "quote": "A single LLM call is stateless, it only “remembers” what's in its context window.",
+      "section": "Memory: How Agents Remember",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-74",
+      "quote": "Agents need memory to handle multi-step tasks that span many interactions.",
+      "section": "Memory: How Agents Remember",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-75",
+      "quote": "Memory Type Mechanism Analogy",
+      "section": "Types of Agent Memory",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-76",
+      "quote": "Working Memory The current context window contents Your desk right now",
+      "section": "Types of Agent Memory",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-77",
+      "quote": "Short-term Memory Conversation history (recent turns) What was said 5 minutes ago",
+      "section": "Types of Agent Memory",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-78",
+      "quote": "Long-term Memory External vector database (RAG) Your filing cabinet",
+      "section": "Types of Agent Memory",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-79",
+      "quote": "Episodic Memory Logs of past agent runs Your diary",
+      "section": "Types of Agent Memory",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-80",
+      "quote": "Procedural Memory Learned tool-use patterns (fine-tuning) Muscle memory",
+      "section": "Types of Agent Memory",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-81",
+      "quote": "A practical illustration of session-scoped working memory comes from the opencode agent: it exposes todo-list tools (write and read) whose state persists per session and is fed back into the model — an explicit prompt-level scratchpad (\\cite[Abboud, 2025]{abboud2025opencode}).",
+      "section": "Types of Agent Memory",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-82",
+      "quote": "And when the growing conversation history approaches the model's context limit, the agent automatically summarizes the session so far and continues from that summary instead of losing state entirely.",
+      "section": "Types of Agent Memory",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-83",
+      "quote": "Many agent frameworks give the LLM a **scratchpad**, a section of the prompt where it can write intermediate results that persist across iterations:",
+      "section": "The Scratchpad Pattern",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-84",
+      "quote": "A single agent has limits: context window size, expertise breadth, and the tendency to lose focus on long tasks.",
+      "section": "Multi-Agent Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-85",
+      "quote": "**Multi-agent systems** address this by having multiple specialized agents collaborate.",
+      "section": "Multi-Agent Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-86",
+      "quote": "Pattern Description Example",
+      "section": "Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-87",
+      "quote": "Hierarchical A “manager” agent delegates subtasks to “worker” agents CEO agent assigns research to analyst agent, writing to editor agent",
+      "section": "Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-88",
+      "quote": "Debate Multiple agents argue different positions, a judge synthesizes Red team vs. blue team for security analysis",
+      "section": "Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-89",
+      "quote": "Pipeline Agents process sequentially, each refining the previous output Researcher → Writer → Editor → Fact-checker",
+      "section": "Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-90",
+      "quote": "Swarm Agents work in parallel on independent subtasks, results merged Multiple search agents covering different aspects of a question",
+      "section": "Architectures",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-91",
+      "quote": "Agents communicate through the same mechanism as tool use, one agent's output becomes another agent's input, mediated by an orchestrator:",
+      "section": "Communication Between Agents",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-92",
+      "quote": "In practice, sub-agents are often just another tool.",
+      "section": "Communication Between Agents",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-93",
+      "quote": "The opencode agent, for example, exposes a single `task` tool whose description enumerates the available sub-agents; invoking it spins up a brand-new session with its own context window, its own toolset, and possibly a different model, and the sub-agent's final output is returned as the tool result (\\cite[Abboud, 2025]{abboud2025opencode}).",
+      "section": "Communication Between Agents",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-94",
+      "quote": "The orchestrator in the diagram above can therefore be another LLM — a recursive delegation that hints at full autonomy.",
+      "section": "Communication Between Agents",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-95",
+      "quote": "The 2023 autonomous-agent wave turned ReAct into a product.",
+      "section": "AutoGPT, Voyager, MCP, and multi-agent systems",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-96",
+      "quote": "AutoGPT, released in March 2023, gave GPT-4 a goal, a set of tools, and a loop that decomposed the goal into tasks, executed them, and wrote results to memory; it went viral as the first widely seen “fully autonomous” agent, though in practice it often looped, drifted, or burned tokens \\cite{autogpt2023}.",
+      "section": "AutoGPT, Voyager, MCP, and multi-agent systems",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-97",
+      "quote": "Voyager went the other way, embedding an LLM agent in Minecraft with an automatic curriculum and a skill library, so that successful programs could be stored and reused \\cite{wang2023voyager}.",
+      "section": "AutoGPT, Voyager, MCP, and multi-agent systems",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-98",
+      "quote": "For years every agent framework invented its own tool schema.",
+      "section": "AutoGPT, Voyager, MCP, and multi-agent systems",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-99",
+      "quote": "The Model Context Protocol (MCP), announced by Anthropic in November 2024, tried to standardise the interface: an MCP server exposes resources, prompts, and tools over JSON-RPC, and any MCP-capable client can discover and call them \\cite{anthropic2024mcp}.",
+      "section": "AutoGPT, Voyager, MCP, and multi-agent systems",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-100",
+      "quote": "The design separates the tool provider from the agent runtime, so a database, a file system, or a SaaS product can be written once and used by many agents.",
+      "section": "AutoGPT, Voyager, MCP, and multi-agent systems",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-101",
+      "quote": "Multi-agent systems are older than LLMs: blackboard architectures, contract-net protocols, and BDI teams were studied through the 1980s and 1990s.",
+      "section": "AutoGPT, Voyager, MCP, and multi-agent systems",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-102",
+      "quote": "The LLM version keeps the coordination patterns but replaces hand-written protocols with natural-language messages.",
+      "section": "AutoGPT, Voyager, MCP, and multi-agent systems",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-103",
+      "quote": "Du et al. showed that several model instances debating across rounds can improve factuality and reasoning over a single pass \\cite{du2023multiagent}, while AutoGen framed the whole application as a conversation between configurable agents \\cite{wu2023autogen}.",
+      "section": "AutoGPT, Voyager, MCP, and multi-agent systems",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-104",
+      "quote": "The open question is whether the gains come from genuine division of labour or simply from more samples and more test-time compute.",
+      "section": "AutoGPT, Voyager, MCP, and multi-agent systems",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-105",
+      "quote": "\\cite[Reflexion]{shinn2023reflexion} adds a self-evaluation step: after completing a task, the agent reflects on what went wrong and stores that reflection in memory for future attempts.",
+      "section": "Reflexion: Learning from Mistakes",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-106",
+      "quote": "An agent that can act on the world (send emails, execute code, make purchases) must be **grounded**, its actions must correspond to the user's actual intent.",
+      "section": "The Grounding Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-107",
+      "quote": "Misalignment between the user's goal and the agent's interpretation can cause real harm.",
+      "section": "The Grounding Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-108",
+      "quote": "Goal misinterpretation “Clean up my inbox” → agent deletes all emails Confirmation steps for destructive actions",
+      "section": "The Grounding Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-109",
+      "quote": "Reward hacking Agent finds shortcuts that satisfy metrics but not intent Human-in-the-loop checkpoints",
+      "section": "The Grounding Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-110",
+      "quote": "Unbounded iteration Agent enters infinite loop trying to achieve impossible goal Maximum iteration limits",
+      "section": "The Grounding Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-111",
+      "quote": "Tool misuse Agent uses code execution to access unauthorized resources Sandboxing, permission systems",
+      "section": "The Grounding Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-112",
+      "quote": "Prompt injection via tools Malicious content in web search results hijacks agent Input sanitization, instruction hierarchy",
+      "section": "The Grounding Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-113",
+      "quote": "Every safety measure (confirmations, sandboxing, human review) adds latency and reduces autonomy.",
+      "section": "The Autonomy–Safety Trade-off",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-114",
+      "quote": "This creates a fundamental tension:",
+      "section": "The Autonomy–Safety Trade-off",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-115",
+      "quote": "The field is actively researching how to push this frontier, making agents both more capable *and* more aligned simultaneously, rather than trading one for the other.",
+      "section": "The Autonomy–Safety Trade-off",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-116",
+      "quote": "Concrete agents build these mitigations in from the start.",
+      "section": "The Autonomy–Safety Trade-off",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-117",
+      "quote": "In opencode (\\cite[Abboud, 2025]{abboud2025opencode}), a permission system gates sensitive tools like `bash`, so a read-only planning agent must explicitly request approval before executing anything; the read tool refuses binary files, and edits are rejected for paths outside the working directory; oversized tool output is truncated before it re-enters the context; and at each step the agent records a git snapshot of the working tree, letting a failed change be rolled back in full.",
+      "section": "The Autonomy–Safety Trade-off",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-118",
+      "quote": "One grounding mechanism deserves special mention: after the model edits a file, the agent queries a Language Server for static diagnostics and feeds them back into the context, so undefined symbols or type errors become immediately visible — a squiggly-line IDE check injected into the agent's own observations.",
+      "section": "The Autonomy–Safety Trade-off",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-119",
+      "quote": "The agent paradigm has spawned numerous open-source frameworks:",
+      "section": "Frameworks and Implementations",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-120",
+      "quote": "Framework Language Key Feature",
+      "section": "Frameworks and Implementations",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-121",
+      "quote": "LangChain / LangGraph Python Graph-based agent workflows with state machines",
+      "section": "Frameworks and Implementations",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-122",
+      "quote": "AutoGPT Python Fully autonomous goal-pursuing agent (2023 viral demo)",
+      "section": "Frameworks and Implementations",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-123",
+      "quote": "CrewAI Python Multi-agent role-based collaboration",
+      "section": "Frameworks and Implementations",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-124",
+      "quote": "Microsoft AutoGen Python Conversational multi-agent framework",
+      "section": "Frameworks and Implementations",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-125",
+      "quote": "Semantic Kernel C# / Python Microsoft's enterprise agent SDK",
+      "section": "Frameworks and Implementations",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-126",
+      "quote": "OpenAI Assistants API API Managed agent infrastructure with built-in tools",
+      "section": "Frameworks and Implementations",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-127",
+      "quote": "Anthropic Claude Tool Use API Native function calling with safety constraints",
+      "section": "Frameworks and Implementations",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-128",
+      "quote": "opencode TypeScript / Bun Open-source coding agent: client/server architecture (Hono HTTP server + Go terminal UI), provider-agnostic through the AI SDK (\\cite[Abboud, 2025]{abboud2025opencode})",
+      "section": "Frameworks and Implementations",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-129",
+      "quote": "Neuron (PHP) PHP Agent framework for PHP backend engineers",
+      "section": "Frameworks and Implementations",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-130",
+      "quote": "All of these implement the same core loop described above, they differ in how they manage state, compose tools, handle errors, and coordinate multiple agents.",
+      "section": "Frameworks and Implementations",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-131",
+      "quote": "Agents are a natural generalization of Websearch and RAG-Systems:",
+      "section": "Connection to Web Search: Agents as Generalized Search",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-132",
+      "quote": "One tool: Many tools: search, code, email, APIs, ...",
+      "section": "Connection to Web Search: Agents as Generalized Search",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-133",
+      "quote": "One reasoning step: “Should I search?” Many reasoning steps: plan, execute, reflect",
+      "section": "Connection to Web Search: Agents as Generalized Search",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-134",
+      "quote": "One iteration: search → answer Many iterations: search → analyze → search again → synthesize",
+      "section": "Connection to Web Search: Agents as Generalized Search",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-135",
+      "quote": "Fixed pipeline Dynamic, goal-directed behavior",
+      "section": "Connection to Web Search: Agents as Generalized Search",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-136",
+      "quote": "Stateless Stateful (memory across steps)",
+      "section": "Connection to Web Search: Agents as Generalized Search",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-137",
+      "quote": "The web search pipeline is literally a **single-tool, single-iteration agent**.",
+      "section": "Connection to Web Search: Agents as Generalized Search",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-138",
+      "quote": "A full agent generalizes this to arbitrary tools and arbitrary iteration depth.",
+      "section": "Connection to Web Search: Agents as Generalized Search",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-139",
+      "quote": "An LLM wrapped in an observe→reason→act loop with tools and memory",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-140",
+      "quote": "Classical AI (1950s–1990s) established the paradigm; \\cite[Yao et al. (2023)]{yao2023react} made it practical with LLMs",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-141",
+      "quote": "LLM generates structured JSON; orchestrator parses, executes, returns result",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-142",
+      "quote": "Context window (working memory) + external stores (vector DBs, scratchpads)",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-143",
+      "quote": "Interleaving reasoning traces and actions in a single prompt stream",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-144",
+      "quote": "What are multi-agent systems?",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-145",
+      "quote": "Multiple specialized LLM agents collaborating via an orchestrator",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-146",
+      "quote": "Goal misinterpretation, unbounded iteration, prompt injection via tools",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-147",
+      "quote": "How does this relate to web search?",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-148",
+      "quote": "Web search is a single-tool, single-step agent.",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "agents-stmt-149",
+      "quote": "Full agents generalize this",
+      "section": "Summary",
+      "kind": "statement"
+    }
   ]
 }

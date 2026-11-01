@@ -406,5 +406,1075 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "vibe_coding-stmt-1",
+      "quote": "In February 2025, Andrej Karpathy gave a name to a way of building software that sounded like a joke: describe what you want, let the model write the code, accept the result, and stop pretending you understand the diff.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-2",
+      "quote": "He called it **vibe coding**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-3",
+      "quote": "Nine months later, Collins Dictionary made it Word of the Year \\cite{collins2025woty}.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-4",
+      "quote": "The sharpest test case arrived in October 2026.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-5",
+      "quote": "A developer named Brandon Thomas used Claude Opus 5.5 to \"vibe code replacements to 7 of Adobe's apps in Rust\" — a Photoshop-like **PhotoCraft**, a Premiere-like **FilmCraft**, a Lightroom-like **LightCraft**, plus stand-ins for Illustrator, After Effects, InDesign and Acrobat.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-6",
+      "quote": "The project, **ArtCraft**, is free, open source and deliberately familiar: the menus, panels and shortcuts are where a Photoshop user's hands expect them.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-7",
+      "quote": "Within weeks it had grown to thirteen apps, including Figma-, Word-, Excel- and PowerPoint-like tools \\cite{getartcraftapps}.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-8",
+      "quote": "\"Software is over,\" Thomas wrote.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-9",
+      "quote": "He had, in his words, \"one-shotted Photoshop.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-10",
+      "quote": "The whole thing\" \\cite{arstechnica2026softwareover}.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-11",
+      "quote": "This chapter is about what is real in that claim and what is demo.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-12",
+      "quote": "The short answer: the cost of a *credible alternative* has collapsed, but the cost of a *product* has not.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-13",
+      "quote": "That distinction is the whole story.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-14",
+      "quote": "Vibe coding is a **relationship to code**, not a particular tool.",
+      "section": "What vibe coding actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-15",
+      "quote": "Karpathy's original description is precise:",
+      "section": "What vibe coding actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-16",
+      "quote": "There's a new kind of coding I call \"vibe coding\", where you fully give in to the vibes, embrace exponentials, and forget that the code even exists.",
+      "section": "What vibe coding actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-17",
+      "quote": "The earliest documented use of \"vibe coding\" in this sense is Karpathy's post of **2 February 2025, 23:17 UTC**.",
+      "section": "What vibe coding actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-18",
+      "quote": "He named a practice that was already forming around long-context models; he did not invent natural-language programming.",
+      "section": "What vibe coding actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-19",
+      "quote": "Merriam-Webster listed the term as slang on **8 March 2025** \\cite{merriam2025vibe}.",
+      "section": "What vibe coding actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-20",
+      "quote": "In the arXiv record, the first abstract mention is **11 March** (Peng and Wang) \\cite{peng2025codedigitaltwin}, the first title is **26 May** (Sapkota et al.) \\cite{sapkota2025vibeagentic}, and the first dedicated empirical study is **29 June** (Sarkar and Drosos).",
+      "section": "What vibe coding actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-21",
+      "quote": "Collins made it Word of the Year in November.",
+      "section": "What vibe coding actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-22",
+      "quote": "Priority claims are fragile; the sequence matters more than the labels.",
+      "section": "What vibe coding actually is",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-23",
+      "quote": "The honest answer is: it depends on the task, the codebase and the experience of the person.",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-24",
+      "quote": "The original studies are not contradictory; they are measuring different things.",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-25",
+      "quote": "| Question | Original study | Finding |",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-26",
+      "quote": "| A narrow, well-specified task?",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-27",
+      "quote": "| Peng et al. 2023, controlled experiment with GitHub Copilot \\cite{peng2023copilot} | **55.8% faster** on an HTTP-server task |",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-28",
+      "quote": "| Ordinary work in large firms?",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-29",
+      "quote": "| Cui et al. 2026, three field experiments, 4,867 developers \\cite{cui2026field} | **+26.08%** completed tasks; juniors adopt more and gain more |",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-30",
+      "quote": "| Experts on their own mature repositories?",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-31",
+      "quote": "| METR 2025, randomized trial with 16 experienced open-source developers \\cite{becker2025metr} | **19% slower**, while developers believed they were faster |",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-32",
+      "quote": "| Delivery in real organizations?",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-33",
+      "quote": "| DORA 2025, survey of ~5,000 professionals \\cite{dora2025} | Throughput up, stability down; AI amplifies existing practice |",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-34",
+      "quote": "| Building a whole app from scratch?",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-35",
+      "quote": "| Vibe Code Bench 2026, 100 specs, 16 frontier models \\cite{tran2026vibecodebench} | Best model **61.8%** on held-out specs; self-testing predicts success |",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-36",
+      "quote": "The pattern is consistent once you stop asking \"is AI faster?\" and start asking \"faster at what?\" AI wins when the task is **specifiable, verifiable and greenfield**.",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-37",
+      "quote": "It loses when the context is tacit, the code is old, and reviewing a plausible-but-wrong change costs more than writing the change.",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-38",
+      "quote": "That is why a developer can feel 20% faster and measure 19% slower.",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-39",
+      "quote": "Felt productivity is not the same as throughput.",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-40",
+      "quote": "Many of these papers are preprints, and several studies are small; they describe practice better than they prove causation.",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-41",
+      "quote": "And the studies are not directly comparable: an autocomplete assistant in a large firm, an agent in a mature repository and a benchmark of whole apps are different interventions.",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-42",
+      "quote": "The safest conclusion is also the most useful: **measure cycle time and review load in your own team, not somebody else's headline.**",
+      "section": "Does it make us faster?",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-43",
+      "quote": "ArtCraft publishes its own scorecard, which makes the gap unusually visible.",
+      "section": "The last 20% is the product",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-44",
+      "quote": "FilmCraft reported roughly **87% feature-checklist coverage**, but only **50–60% readiness for real projects** \\cite{digitaltrends2026artcraft}.",
+      "section": "The last 20% is the product",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-45",
+      "quote": "The missing part is not more code.",
+      "section": "The last 20% is the product",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-46",
+      "quote": "It is color management that matches, a PSD round-trip that does not corrupt a layer, a brush engine that feels right, an undo stack that survives a crash, a plug-in ABI, support, security response and the thousand small behaviors professionals notice immediately.",
+      "section": "The last 20% is the product",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-47",
+      "quote": "The original security literature is older than the vibe-coding debate and remarkably consistent.",
+      "section": "Security is a default, not an edge case",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-48",
+      "quote": "Pearce et al. found about **40%** of 1,689 Copilot programs vulnerable.",
+      "section": "Security is a default, not an edge case",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-49",
+      "quote": "Perry et al. found that users with an AI assistant wrote **less secure** code and were **more confident** it was secure.",
+      "section": "Security is a default, not an edge case",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-50",
+      "quote": "Tihanyi et al. found at least **62.07%** of 331,000 generated C programs vulnerable.",
+      "section": "Security is a default, not an edge case",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-51",
+      "quote": "The SUSVIBES benchmark found that the best agent was functionally correct 57% of the time but secure only **11.8%** of the time.",
+      "section": "Security is a default, not an edge case",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-52",
+      "quote": "Veracode's industry testing found **45%** of AI-generated samples introduced an OWASP Top 10 flaw \\cite{pearce2022asleep,perry2023insecure,tihanyi2024secure,zhao2025susvibes,veracode2025genai}.",
+      "section": "Security is a default, not an edge case",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-53",
+      "quote": "Three failure modes are now routine:",
+      "section": "Security is a default, not an edge case",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-54",
+      "quote": "* **Package hallucinations.** Models recommend libraries that do not exist; an attacker registers the invented name and waits.",
+      "section": "Security is a default, not an edge case",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-55",
+      "quote": "This is **slopsquatting** \\cite{spracklen2024slopsquatting}.",
+      "section": "Security is a default, not an edge case",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-56",
+      "quote": "* **Exposed data by default.** In May 2025, 170 of 1,645 web apps built with Lovable had a flaw that exposed personal information \\cite{semafor2025lovable}.",
+      "section": "Security is a default, not an edge case",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-57",
+      "quote": "* **The agent with production credentials.** In July 2025, Replit's agent deleted a company's production database during a code freeze, then misrepresented what happened \\cite{register2025replit}.",
+      "section": "Security is a default, not an edge case",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-58",
+      "quote": "GitClear's longitudinal data — 211 million changed lines from 2020–2024 — shows refactoring falling from 25% of changed lines to under 10%, while copy-pasted code rose from 8.3% to 12.3% \\cite{gitclear2025}.",
+      "section": "Maintenance moves to the reviewer",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-59",
+      "quote": "A 2026 study of 22,953 pull requests from 1,719 vibe coders found that lower-experience contributors submitted 2.15 times more commits, received **4.52 times more review comments**, had **31% lower acceptance rates**, and their PRs stayed open **5.16 times longer** \\cite{asdaque2026review}.",
+      "section": "Maintenance moves to the reviewer",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-60",
+      "quote": "The productivity gain did not disappear; it moved to the reviewer.",
+      "section": "Maintenance moves to the reviewer",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-61",
+      "quote": "ArtCraft is worth studying because it is not a generic \"AI writes code\" story.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-62",
+      "quote": "It is a deliberate attack on a mature software category, built with the exact tools this course describes.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-63",
+      "quote": "The technical claims are real and checkable.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-64",
+      "quote": "The apps are pure Rust, native on macOS, Windows and Linux, and compile to WebAssembly.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-65",
+      "quote": "They are dual-licensed MIT/Apache.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-66",
+      "quote": "PhotoCraft's README lists 67 tools, 16 adjustment layers, 27 Photoshop blend modes, real PSD read/write, more than 1,700 tests and 500+ commands exposed through a CLI, a JSON channel and an MCP server.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-67",
+      "quote": "It also says the app is in **early alpha** and \"not yet a Photoshop replacement for daily professional work\" \\cite{github2026photocraft}.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-68",
+      "quote": "What makes the clone credible is not the feature list.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-69",
+      "quote": "It is the **combination**:",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-70",
+      "quote": "* **Interface fidelity.** The menus, shortcuts and panels are copied, so the biggest switching cost — relearning — disappears.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-71",
+      "quote": "* **File-format compatibility.** A clone that reads and writes PSD files is a credible exit from the file lock-in.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-72",
+      "quote": "* **Local, native, no subscription.** For photographers, studios and privacy-sensitive users, that is a feature.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-73",
+      "quote": "* **Agent-readiness.** Every action is a command, so the app can be driven by a script or an agent, not only a human hand — the same shift the [agent](agents.php) chapter describes \\cite{anthropic2024mcp}.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-74",
+      "quote": "* **A business model.** The apps are free; ArtCraft sells access to its paid AI image and video model.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-75",
+      "quote": "The free suite is customer acquisition, not charity.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-76",
+      "quote": "Canva's free Affinity plus paid AI is the same shape \\cite{canva2025affinityfree,canva2025affinityofficial}.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-77",
+      "quote": "The legal question is narrower than the rhetoric.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-78",
+      "quote": "\"Clean room\" traditionally means one team studies the original and another writes the replacement, so no protected expression crosses the wall.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-79",
+      "quote": "ArtCraft says it worked from public specs and observed behavior.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-80",
+      "quote": "A true clean room traditionally requires separate teams, and that separation is hard to verify from the outside.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-81",
+      "quote": "Reverse engineering for interoperability is often fair use, but copying protected expression, violating an enforceable license or copying distinctive trade dress can still be illegal \\cite{eff_reverse_engineering,apple_v_microsoft_wiki}.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-82",
+      "quote": "The model does not launder provenance.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-83",
+      "quote": "There is also a cultural cost.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-84",
+      "quote": "Shin et al. show that web vibe coding tends to reproduce dominant design conventions and narrow diversity; their remedy is **productive friction**, making the model's defaults visible and contestable \\cite{shin2026homogenization}.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-85",
+      "quote": "A clone that copies the dominant interface is the aesthetic version of the same phenomenon: it lowers switching costs by making everything look like the thing it replaces.",
+      "section": "The ArtCraft stress test",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-86",
+      "quote": "Adobe is the ideal stress test because it is both a spectacular business and a spectacular target.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-87",
+      "quote": "In fiscal 2025 it reported **USD 23.77 billion** in revenue, **USD 25.2 billion** in ARR and more than **USD 10 billion** in operating cash flow; AI-influenced ARR was above **USD 5 billion**, AI-first ARR above **USD 250 million** \\cite{adobe2025q4,adobe2025aiarr}.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-88",
+      "quote": "This is not a company that forgot to innovate.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-89",
+      "quote": "Firefly is embedded across its tools and marketed as \"commercially safe,\" though reporting has questioned how complete its training-data provenance is \\cite{firefly_wiki}.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-90",
+      "quote": "So why does a free Photoshop clone matter?",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-91",
+      "quote": "Because Adobe's revenue is not primarily a technology rent.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-92",
+      "quote": "It is a **workflow rent**.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-93",
+      "quote": "Photoshop is valuable because the PSD file is the lingua franca of a studio, the plug-in ecosystem is enormous, the color pipeline is trusted, the fonts are licensed, the collaboration tools sit next to the canvas, the enterprise contract includes support and indemnity, and a generation of professionals has Photoshop in their fingers.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-94",
+      "quote": "The moat is the system around the pixels.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-95",
+      "quote": "That system has soft spots.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-96",
+      "quote": "Creative Cloud moved to subscription-only pricing in 2013; the FTC and DOJ sued Adobe in 2024 over hidden cancellation fees and a difficult cancellation flow, and the case settled in 2026 \\cite{adobe_wiki}.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-97",
+      "quote": "Most users need a small fraction of the suite.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-98",
+      "quote": "A free clone that covers that fraction does not have to be as good as Photoshop; it has to be good enough for *their* work.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-99",
+      "quote": "And AI changes the job: if a model can remove a background or generate a layout, the value of manual editing falls — and a clone can call the same model through an API.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-100",
+      "quote": "| Moat | What it protects | Does a clone attack it?",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-101",
+      "quote": "| Interface and muscle memory | Cost of relearning | **Yes, directly** |",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-102",
+      "quote": "| File formats | Cost of leaving | **Partly** — PSD support helps |",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-103",
+      "quote": "| Plug-ins and assets | Long-tail professional workflows | **Not yet** — the biggest gap |",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-104",
+      "quote": "| Color, fonts, output fidelity | Trust in professional results | **Slowly** |",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-105",
+      "quote": "| Collaboration and cloud | Team workflow | **Not really** — a different product |",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-106",
+      "quote": "| Enterprise trust and indemnity | Procurement, legal, security | **No** — favors the incumbent |",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-107",
+      "quote": "| Price | Willingness to pay | **Yes** — free is a feature |",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-108",
+      "quote": "The likely outcome is not \"Adobe is dead.\" It is **unbundling and price compression**.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-109",
+      "quote": "The low end — students, hobbyists, freelancers, emerging markets, internal tools — moves to free or cheap clones.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-110",
+      "quote": "The high end — enterprises, regulated industries, complex workflows — pays for trust, support, collaboration, indemnity and integration.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-111",
+      "quote": "This is the classic pattern of [disruptive innovation](https://hbr.org/2015/12/what-is-disruptive-innovation): the entrant starts where the incumbent's margin is thin, then improves \\cite{christensen2015disruptive}.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-112",
+      "quote": "It went public in July 2025 at a valuation above **USD 56 billion**, then fell below **USD 20** a share by June 2026 as AI research costs rose and gross margin compressed \\cite{figma_wiki,yahoo2026figma}.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-113",
+      "quote": "The market was not punishing growth; it was repricing the cost of growing in an AI world.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-114",
+      "quote": "Adobe's question is the same one, with a bigger installed base and a stronger trust moat.",
+      "section": "Adobe under the microscope",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-115",
+      "quote": "**Pricing.** SaaS was built on seats: each human who logs in pays.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-116",
+      "quote": "Agents do not log in; they call an API, execute a workflow and disappear.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-117",
+      "quote": "If value is delivered per task, per document or per successful outcome, the seat is a poor proxy.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-118",
+      "quote": "Adobe sells generative credits, Figma sells AI credits, Canva bundles AI into premium tiers.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-119",
+      "quote": "The direction is clear even where the destination is not.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-120",
+      "quote": "**Build versus buy.** Every company can now generate software for itself: a dashboard, a document workflow, an inventory tool.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-121",
+      "quote": "That is a real democratization of capability, and a real governance problem.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-122",
+      "quote": "The bottleneck is no longer \"can we build it?\" but \"should we, who owns it, and how do we know it is safe?\" Verification, permissions and observability become products.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-123",
+      "quote": "**Labor.** The review-overhead study above is the clearest warning: low-experience vibe coders shift verification work to maintainers.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-124",
+      "quote": "The education evidence points the same way.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-125",
+      "quote": "Thorgeirsson et al. found that both writing skill and computer-science achievement predict vibe-coding performance \\cite{thorgeirsson2026skills}; Rinja et al. found that top students used AI for inquiry and exploration, while low performers delegated tasks and asked for ready-made solutions \\cite{rinja2026helpseeking}.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-126",
+      "quote": "The junior pipeline is the hidden risk: if no one learns to read code, no one can review the code that writes the code.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-127",
+      "quote": "**Open source.** Vibe coding raises productivity by lowering the cost of using existing code, but it weakens the user engagement through which maintainers earn returns.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-128",
+      "quote": "Koren et al. model this as a potential decline in the availability and quality of open source despite higher productivity \\cite{koren2026vibeoss}.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-129",
+      "quote": "Gu et al. add a second bias: mainstream languages and frameworks get higher AI success rates than niche ones, a **Matthew effect** that centralizes the ecosystem around what the models already know \\cite{gu2025matthew}.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-130",
+      "quote": "Free code is not free infrastructure.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-131",
+      "quote": "**Incumbents.** The practical response is not to pretend the clone does not exist.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-132",
+      "quote": "It is to make the premium worth paying: clear pricing and easy cancellation; open or well-documented file formats; a strong plug-in and asset ecosystem; enterprise trust, support and indemnity; agent-ready APIs; and a free tier that does not feel like a trap.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-133",
+      "quote": "The lesson of enshittification is that users leave when switching costs fall \\cite{enshittification_wiki}.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-134",
+      "quote": "The lesson of Andreessen's \"software is eating the world\" is that software now eats software: the scarce inputs are distribution, trust, data, workflow and accountability \\cite{andreessen2011software}.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-135",
+      "quote": "**If you are the buyer.** Keep your originals in open or well-documented formats.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-136",
+      "quote": "Pilot the clone on one real deadline, not a demo.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-137",
+      "quote": "Price migration, training and support, not just the license.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-138",
+      "quote": "And keep an exit plan: the point of leaving a lock-in is not to enter a new one.",
+      "section": "What changes for software companies",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-139",
+      "quote": "The best short manual for this is Kim and Yegge's *Vibe Coding* \\cite{kim2025vibecoding}.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-140",
+      "quote": "Their central metaphor is worth keeping: you are the **chef, not the sous-chef**.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-141",
+      "quote": "The model can chop, sear and plate; you own the menu, the taste and every plate that leaves the kitchen.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-142",
+      "quote": "Their operating model is three loops:",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-143",
+      "quote": "| Loop | Time scale | What to do |",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-144",
+      "quote": "| **Inner** | seconds to minutes | Small tasks; spec and tests first; commit every few minutes; verify the output; keep the agent on the path |",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-145",
+      "quote": "| **Middle** | hours to days | Short `AGENTS.md` golden rules; Memento handover; parallel agents in separate workspaces |",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-146",
+      "quote": "| **Outer** | weeks to months | Protect APIs and module boundaries; modularize; audit by risk and familiarity |",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-147",
+      "quote": "Then the rules that matter most in practice:",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-148",
+      "quote": "**You are the chef.** Delegating implementation is not delegating responsibility.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-149",
+      "quote": "\"The AI wrote it\" is not a defense in a post-mortem, a procurement review or a courtroom.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-150",
+      "quote": "**FAAFO, not just speed.** The book optimizes for **F**ast, **A**mbitious, **A**utonomous, **F**un and **O**ptionality.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-151",
+      "quote": "There is no **B** for Better: quality is your job.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-152",
+      "quote": "The book's warning is concrete: set a timer and ask every hour whether you are still on the right path.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-153",
+      "quote": "**Spec before code.** Ask for acceptance criteria, edge cases, a test plan and open questions before the model writes a line.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-154",
+      "quote": "Then make it write the tests.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-155",
+      "quote": "**Keep `AGENTS.md` short, and use the Memento handover.** Around ten golden rules — what must always happen and what must never happen; long lists get ignored.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-156",
+      "quote": "At 20–50% remaining context, stop and write `HANDOVER.md`: what worked, what failed, next steps, temporary branches, pitfalls.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-157",
+      "quote": "**Count the babies and reject cardboard muffins.** Verify every requirement individually and look for deleted lines in the diff.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-158",
+      "quote": "Green tests are not enough: read the implementation and check that the test actually tests something.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-159",
+      "quote": "Models quietly decide what is \"optional,\" and hardcoded values can make a test suite look complete when it is a film set.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-160",
+      "quote": "**Don't break bridges.** Existing module interfaces and APIs are sacrosanct unless you explicitly approve a change.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-161",
+      "quote": "Add, don't delete; ask before changing a contract.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-162",
+      "quote": "**Audit by risk.** Full depth for high-risk or unfamiliar code; lightweight for low-risk internal tools; black-box only for throwaway work.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-163",
+      "quote": "**Threat-model the default.** Auth, authorization, input validation, secrets, rate limits, logging.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-164",
+      "quote": "The model will happily generate a login form that stores passwords in plain text.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-165",
+      "quote": "The research is beginning to formalize these rules.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-166",
+      "quote": "ZORO turns `AGENTS.md` into active controls; VibeContract turns intent into task contracts; Shift-Up embeds executable requirements and architecture records into the loop; and a 737-participant experiment found human-led instructions beat AI-led instructions \\cite{ma2026zoro,wang2026vibecontract,lipsanen2026shiftup,hu2026humanguidance}.",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-167",
+      "quote": "The one-sentence version: **generate at the speed of a demo, verify at the speed of production.**",
+      "section": "The practical playbook",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-168",
+      "quote": "The ArtCraft moment is not the death of Adobe.",
+      "section": "The verdict",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-169",
+      "quote": "Adobe has a record revenue base, a deep ecosystem and a trust moat that an alpha suite does not replace.",
+      "section": "The verdict",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-170",
+      "quote": "But the warning is real: the entry price of a *credible alternative* has collapsed from \"a team, a year, a legal budget\" to \"a small team, a model and a few weeks.\" That is a phase change in the economics of software, and it applies to Figma, Microsoft Office, Autodesk and every SaaS product whose moat is a mature interface plus a file format plus a subscription.",
+      "section": "The verdict",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-171",
+      "quote": "The likely outcome is not universal free software.",
+      "section": "The verdict",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-172",
+      "quote": "It is **unbundling and price compression**: free clones at the low end, paid trust and integration at the high end.",
+      "section": "The verdict",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-173",
+      "quote": "The incumbent's job is to make the high end worth the premium.",
+      "section": "The verdict",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-174",
+      "quote": "The entrant's job is to survive the last 20%.",
+      "section": "The verdict",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-175",
+      "quote": "When code is cheap, the scarce things are taste, verification, distribution, data, trust and accountability.",
+      "section": "The verdict",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-176",
+      "quote": "The old line was that software is eating the world.",
+      "section": "The verdict",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-177",
+      "quote": "The new line is that software is eating software.",
+      "section": "The verdict",
+      "kind": "statement"
+    },
+    {
+      "id": "vibe_coding-stmt-178",
+      "quote": "The meal is not free, and the bill arrives at the part nobody demoed.",
+      "section": "The verdict",
+      "kind": "statement"
+    }
   ]
 }

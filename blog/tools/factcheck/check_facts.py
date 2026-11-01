@@ -31,6 +31,7 @@ from facts_lib import (  # noqa: E402
     ACYCLIC_KINDS,
     KNOWN_RELATION_KINDS,
     canon_subject,
+    normalize_source,
     claim_normalized,
     fact_files,
     is_functional,
@@ -122,11 +123,7 @@ def _has_cycle(edges: list[tuple[str, str]]) -> str | None:
 
 
 def _normalize_source(text: str) -> str:
-    text = re.sub(r"<\?php.*?\?>", " ", text, flags=re.S)
-    text = re.sub(r"<script.*?</script>|<style.*?</style>", " ", text, flags=re.S | re.I)
-    text = re.sub(r"<[^>]+>", " ", text)
-    text = html.unescape(text)
-    return re.sub(r"\s+", " ", text).strip().lower()
+    return normalize_source(text)
 
 
 def _format_conflict(subject: str, predicate: str, scope: str, clusters: list[list[dict]]) -> str:
@@ -220,6 +217,7 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
     all_claims: list[dict] = []
     relations: list[dict] = []
     quote_warnings: list[str] = []
+    statement_count = 0
     documents: dict[str, dict] = {}
     files_without_claims: list[str] = []
     unregistered: list[str] = []
@@ -259,6 +257,22 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
             return quote in raw_source or _normalize_source(quote) in norm_source
 
         documents[slug] = document if isinstance(document, dict) else {}
+        seen_statement_ids: set[str] = set()
+        for statement in document.get("statements", []) if isinstance(document, dict) else []:
+            if not isinstance(statement, dict):
+                errors.append(f"{path}: malformed statement entry")
+                continue
+            sid = statement.get("id", "")
+            quote = statement.get("quote", "")
+            statement_count += 1
+            if not quote:
+                errors.append(f"{path}: statement {sid or '?'} has no quote")
+            elif not quote_ok(quote):
+                errors.append(f"{path}: statement {sid or '?'} quote not found in source")
+            if sid:
+                if sid in seen_statement_ids:
+                    errors.append(f"{path}: duplicate statement id {sid!r}")
+                seen_statement_ids.add(sid)
         for raw_rel in iter_relations(document):
             if "line" in raw_rel:
                 errors.append(f"{path}: relation {raw_rel.get('id', '?')} has a line field; use quote only")
@@ -541,7 +555,8 @@ def check(blog: Path, coverage: bool = True, verbose: bool = False,
 
     print(
         f"[{'FAIL' if (errors or conflicts) else 'PASS'}] "
-        f"{len(facts)} fact files, {len(all_claims)} claims, {len(relations)} relations, "
+        f"{len(facts)} fact files, {len(all_claims)} claims, {statement_count} statements, "
+        f"{len(relations)} relations, "
         f"{len(isolated)} isolated subject(s), {len(files_without_claims)} metadata-only lesson(s), "
         f"{len(unregistered)} unregistered year(s), {len(quote_warnings)} quote warning(s), "
         f"{len(conflicts)} conflict(s), {len(errors)} error(s)"

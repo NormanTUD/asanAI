@@ -539,5 +539,1717 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "human_mind-stmt-1",
+      "quote": "The other chapters of this course trace two of the three legs that hold up a large language model: the **ideas** (the syllogism, the number, the proof, the token) and the **matter** (the sand, the wire, the transistor, the cooling fluid, the grid of power).",
+      "section": "The Displaced Prerequisite of All Displaced Prerequisites",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-2",
+      "quote": "But a model is not a thing that thinks; it is a thing that a mind *built*.",
+      "section": "The Displaced Prerequisite of All Displaced Prerequisites",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-3",
+      "quote": "And the mind that built it is the deepest, least visible, and most \"displaced\" of all the prerequisites on this site.",
+      "section": "The Displaced Prerequisite of All Displaced Prerequisites",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-4",
+      "quote": "Every technique that looks, from the outside, like a modern invention of AI turns out to be an **externalization** or an **emulation** of a capacity that evolved long before the first silicon die, for foraging, for social life, and for staying alive.",
+      "section": "The Displaced Prerequisite of All Displaced Prerequisites",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-5",
+      "quote": "The brain is, in effect, the **first large language model**: a predictive, generative, loss-minimizing, embodied, social, world-modeling engine that runs on a few tens of watts of wet tissue.",
+      "section": "The Displaced Prerequisite of All Displaced Prerequisites",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-6",
+      "quote": "What we have done, in building LLMs, is not to invent a new kind of mind.",
+      "section": "The Displaced Prerequisite of All Displaced Prerequisites",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-7",
+      "quote": "We have taken a few of the oldest tricks in the animal book and re-implemented them in silicon, then scaled them past anything biology could afford.",
+      "section": "The Displaced Prerequisite of All Displaced Prerequisites",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-8",
+      "quote": "This chapter follows that thread as far down as the evidence allows.",
+      "section": "The Displaced Prerequisite of All Displaced Prerequisites",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-9",
+      "quote": "It is, like the material history that precedes it, a history of **exaptation**: the taking-over of a structure for a purpose it was never designed for.",
+      "section": "The Displaced Prerequisite of All Displaced Prerequisites",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-10",
+      "quote": "The jaws that became the ear bones, the social mind-reading that learned to model electrons, the forager's appetite that became the scientist's curiosity.",
+      "section": "The Displaced Prerequisite of All Displaced Prerequisites",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-11",
+      "quote": "Nothing here was selected to make a chatbot.",
+      "section": "The Displaced Prerequisite of All Displaced Prerequisites",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-12",
+      "quote": "Everything was selected to keep a primate alive, and only later did we point the machinery at theorems and text.",
+      "section": "The Displaced Prerequisite of All Displaced Prerequisites",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-13",
+      "quote": "The first obstacle was not intellectual but **metabolic**.",
+      "section": "The Expensive Brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-14",
+      "quote": "A human brain is roughly two per cent of body mass yet consumes close to a quarter of the body's resting energy.",
+      "section": "The Expensive Brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-15",
+      "quote": "For millions of years our ancestors had a brain of roughly ape-size, and the central puzzle of human evolution is how the species could *afford* to triple it.",
+      "section": "The Expensive Brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-16",
+      "quote": "The **expensive-tissue hypothesis** of \\citeauthorlastnameand{aiellowheeler1995expensivetissue} offers the most economical accounting: the brain could only be paid for by *spending less* elsewhere, and the organ that gave up the most was the gut.",
+      "section": "The Expensive Brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-17",
+      "quote": "A larger, more expensive brain and a smaller, cheaper digestive tract are, on this account, two sides of the same metabolic coin, and the shift that made both possible was the move to **cooking**.",
+      "section": "The Expensive Brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-18",
+      "quote": "\\citeauthor{wrangham2009catching} argues in \\citetitle{wrangham2009catching} that the controlled use of fire — a turning point already discussed in the material history — did more than protect and gather.",
+      "section": "The Expensive Brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-19",
+      "quote": "By pre-digesting food, cooking made a far greater share of calories available per mouthful, which let the gut shrink and the brain expand.",
+      "section": "The Expensive Brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-20",
+      "quote": "This is where the history of **energy** and the history of **cognition** quietly meet: the caloric surplus of the hearth is what bought the first cognitive surplus.",
+      "section": "The Expensive Brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-21",
+      "quote": "There is no abstract thought in a body that must spend all its fuel on digesting raw tubers.",
+      "section": "The Expensive Brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-22",
+      "quote": "The \"need\" that made AI possible was, at the deepest level, a **budget line item in an ancient metabolizing animal**.",
+      "section": "The Expensive Brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-23",
+      "quote": "\\citealternativetitle{flames_image} — the caloric surplus of the hearth: fire did the pre-digesting that let the gut shrink and the brain expand.",
+      "section": "The Expensive Brain",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-24",
+      "quote": "The connection is even more literal in the reward system.",
+      "section": "Reward: The Reinforcement Learning That Was Already Running",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-25",
+      "quote": "In a landmark series of experiments, \\citeauthorlastnameand{schultz1997dopamine} showed that the dopamine neurons of the primate midbrain do not fire when a reward *arrives*, but when a reward is **better or worse than predicted** — their activity tracks the **prediction error** of the reward.",
+      "section": "Reward: The Reinforcement Learning That Was Already Running",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-26",
+      "quote": "The signal is, to a striking degree of quantitative agreement, the same temporal-difference error that reinforcement-learning algorithms compute:",
+      "section": "Reward: The Reinforcement Learning That Was Already Running",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-27",
+      "quote": "a spike when reality beats the model's expectation, a dip when it falls short.",
+      "section": "Reward: The Reinforcement Learning That Was Already Running",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-28",
+      "quote": "\\citeauthorlastnameand{schultz1997dopamine} interpreted this as the biological implementation of a reinforcement-learning rule, with the value function $V$ carried by the dopamine system.",
+      "section": "Reward: The Reinforcement Learning That Was Already Running",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-29",
+      "quote": "\"Reinforcement learning\", the most \"AI\" of all the learning paradigms, was not borrowed from the brain; it was **recognized** in the brain.",
+      "section": "Reward: The Reinforcement Learning That Was Already Running",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-30",
+      "quote": "The slot-machine pull of a variable reward, the way a dog leans toward the sound of a can opener, the way a child keeps pressing the button that sometimes lights up — all of it is the same mathematics that now tunes a model's policy.",
+      "section": "Reward: The Reinforcement Learning That Was Already Running",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-31",
+      "quote": "The brain has been running RL since the first animal learned that one patch of ground was worth more than another.",
+      "section": "Reward: The Reinforcement Learning That Was Already Running",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-32",
+      "quote": "There is, however, a cruel constraint on all of this: the mind has almost no **scratch space**.",
+      "section": "The Working-Memory Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-33",
+      "quote": "\\citeauthor{miller1956magicalnumber} famously found that the number of discrete items a person can hold \"in mind\" at once is small and stubborn, around **seven plus or minus two** chunks, and that this limit is remarkably stable across tasks — though later work puts the raw-item limit nearer four (\\cite[Cowan, 2001]{cowan2001magical4}).",
+      "section": "The Working-Memory Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-34",
+      "quote": "This is one of the most load-bearing facts in the whole history of the mind, because a tiny working buffer is precisely the condition that *forces* a mind to **compress**.",
+      "section": "The Working-Memory Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-35",
+      "quote": "You cannot hold everything, so you must group, summarize, and abstract, and the groups you form become the units you think with.",
+      "section": "The Working-Memory Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-36",
+      "quote": "The bottleneck is not a bug of the human mind; it is the very pressure that pushed it to build the \"extra level of indirection\" this whole course is about.",
+      "section": "The Working-Memory Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-37",
+      "quote": "Without the cramped working memory, there would be no need for the chunk, the category, the symbol — and no need, in the end, for the token.",
+      "section": "The Working-Memory Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-38",
+      "quote": "The mechanism by which the mind escapes its working-memory bottleneck is **chunking**.",
+      "section": "Chunking: Compressing the World into Usable Units",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-39",
+      "quote": "\\citeauthorlastnameand{chasesimon1973chess} showed, in a now-classic study of chess perception, that a chess master looks at a board and does not see thirty-two separate pieces but a small number of **familiar configurations**, and that this chunking, not raw visual acuity, is what makes the master \"see\" a position in an instant.",
+      "section": "Chunking: Compressing the World into Usable Units",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-40",
+      "quote": "Experts in any domain are experts because they have **compressed** their field into a library of reusable units.",
+      "section": "Chunking: Compressing the World into Usable Units",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-41",
+      "quote": "This is the cognitive origin of the token.",
+      "section": "Chunking: Compressing the World into Usable Units",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-42",
+      "quote": "A tokenizer does not understand language; it does what a chess master's eye does, it **chunks** a stream of symbols into a manageable number of meaningful pieces, and a pre-trained model does what the master's memory does, it **retrieves** the configurations that matter.",
+      "section": "Chunking: Compressing the World into Usable Units",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-43",
+      "quote": "The \"vocabulary\" of a transformer is a chunking scheme, and the \"context window\" is a working-memory limit.",
+      "section": "Chunking: Compressing the World into Usable Units",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-44",
+      "quote": "The whole architecture is a confession that the mind cannot hold it all, so it must reduce the world to a few hundred reusable symbols and reason over those.",
+      "section": "Chunking: Compressing the World into Usable Units",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-45",
+      "quote": "To chunk, a mind must **categorize**, and human categorization turned out to be far less crisp than logic textbooks assumed.",
+      "section": "Categories, Prototypes, and Fuzzy Boundaries",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-46",
+      "quote": "\\citeauthorlastnameand{rosch1975familyresemblance} showed that the members of a natural category are not separated from non-members by a clean boundary but graded around a **prototype**: some chairs are \"more chair\" than others, some birds are \"more bird\", and a category is a **cloud** in a space of similarity rather than a region fenced off by a definition.",
+      "section": "Categories, Prototypes, and Fuzzy Boundaries",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-47",
+      "quote": "A category is best understood as a region of a **geometry**, with a center, a spread, and fuzzy, gradient edges.",
+      "section": "Categories, Prototypes, and Fuzzy Boundaries",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-48",
+      "quote": "That geometry is not a loose analogy; it is the ancestor of the **embedding space** in which a modern model lives.",
+      "section": "Categories, Prototypes, and Fuzzy Boundaries",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-49",
+      "quote": "When a language model places \"king\" near \"queen\" and \"man\" near \"woman\", it is doing, in a high-dimensional vector space, exactly what a human categorizer does around a prototype: it is learning that the world is organized into **clouds of related things**, and that the distance between two points in the cloud carries meaning.",
+      "section": "Categories, Prototypes, and Fuzzy Boundaries",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-50",
+      "quote": "The \"fuzzy boundary\" that Rosch found in a child's idea of a \"chair\" is the same fuzzy boundary that makes a soft nearest-neighbor in an embedding space more useful than a hard one.",
+      "section": "Categories, Prototypes, and Fuzzy Boundaries",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-51",
+      "quote": "Semantic space is the geometry of human categories, made explicit.",
+      "section": "Categories, Prototypes, and Fuzzy Boundaries",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-52",
+      "quote": "If chunking is compression, then **analogy** is the mind's engine of *invention*.",
+      "section": "Analogy: The Engine of Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-53",
+      "quote": "The philosopher and AI researcher \\citeauthor{gentner1983structuremapping} proposed that we understand a new thing by **mapping the relational structure** of a thing we already know onto it: we do not copy surface features, we copy *relationships*.",
+      "section": "Analogy: The Engine of Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-54",
+      "quote": "A heart is \"like a pump\" not because it is red and wet, but because it takes an input, moves a fluid, and resists back-pressure.",
+      "section": "Analogy: The Engine of Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-55",
+      "quote": "Analogy is structure-mapping, and it is, arguably, the single most important cognitive tool the mind owns.",
+      "section": "Analogy: The Engine of Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-56",
+      "quote": "Every great scientific advance in this course's history is an analogy that someone dared to make explicit: the atom as a tiny solar system, the electric current as a flow of water, the nervous system as a telegraph, the universe as a clockwork, the cell as a factory.",
+      "section": "Analogy: The Engine of Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-57",
+      "quote": "The \"mathematical\" and the \"physical\" parts of AI are both built from analogies: a differential equation that \"behave like\" a physical system, a probability that \"acts like\" a frequency, a gradient that \"rolls downhill\" through a landscape.",
+      "section": "Analogy: The Engine of Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-58",
+      "quote": "To build an LLM is to chain together a few very powerful analogies — that *language is a sequence*, that *a sequence is a probability*, that *a probability can be optimized* — and the human mind's native fluency in analogical structure is what let anyone see that the chain could be closed.",
+      "section": "Analogy: The Engine of Discovery",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-59",
+      "quote": "Even the most abstract of our ideas, it turns out, are **down in the body**.",
+      "section": "Metaphor and the Embodied Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-60",
+      "quote": "\\citeauthor{lakoff1993metaphor} and colleagues argued that we do not think *with* metaphor; we think **in** it.",
+      "section": "Metaphor and the Embodied Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-61",
+      "quote": "Our concepts of time (\"a long, a short\"), of importance (\"important things are heavy, up, central\"), of the number line itself (larger numbers to the **right**, positive **up**, negative **down**) are not logical conventions but sedimented images from walking, lifting, and reaching.",
+      "section": "Metaphor and the Embodied Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-62",
+      "quote": "The reason we find a proof \"elegant\" or a space \"open\" is that we first learned openness by standing in a room.",
+      "section": "Metaphor and the Embodied Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-63",
+      "quote": "This \"embodiment\" of the abstract is a quiet prerequisite of the whole enterprise.",
+      "section": "Metaphor and the Embodied Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-64",
+      "quote": "The **geometry** on which the Transformer relies — vectors, rotations, inner products, the \"manifold\" of a latent space — is a formalization of intuitions the body had before there were axes to draw them on.",
+      "section": "Metaphor and the Embodied Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-65",
+      "quote": "The \"up and down\" of a number line is in the motor and spatial cortex before it is in the algebra.",
+      "section": "Metaphor and the Embodied Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-66",
+      "quote": "The mind built the body's metaphors first and the mathematics second, and the mathematics is, at bottom, the metaphor made rigorous.",
+      "section": "Metaphor and the Embodied Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-67",
+      "quote": "A mind that can only *look at* a representation is limited to the views it has already been given.",
+      "section": "Mental Imagery: Turning Things in the Head",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-68",
+      "quote": "The human mind can **manipulate** a representation — and the cleanest proof came in 1971, when \\citeauthorlastnameand{shepardmetzler1971} showed that people can *rotate* a three-dimensional object in their heads.",
+      "section": "Mental Imagery: Turning Things in the Head",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-69",
+      "quote": "The experiment: subjects were shown two 3-D assemblies of cubes, drawn in different orientations, and asked only \"same or different?\" They answered quickly when the two were identical or obvious mirror-images — but when the two differed by a *rotation*, their response time increased **linearly with the angle** between them \\cite[Shepard & Metzler, mental rotation (1971)]{shepardmetzler1971}.",
+      "section": "Mental Imagery: Turning Things in the Head",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-70",
+      "quote": "You cannot answer that in constant time by \"looking\"; you answer the way a *simulation* does, by turning the object bit by bit until the orientations match.",
+      "section": "Mental Imagery: Turning Things in the Head",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-71",
+      "quote": "The mind was caught running an animation, at a rate — a few dozen degrees a second — that matches, eerily, the rate a person can turn a real object in their hands.",
+      "section": "Mental Imagery: Turning Things in the Head",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-72",
+      "quote": "\\marginfig{mental_rotation.jpg}{The Shepard–Metzler \"mental rotation task\": two cube assemblies, seen from different angles.",
+      "section": "Mental Imagery: Turning Things in the Head",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-73",
+      "quote": "Judging \"same or different\" takes longer the larger the rotation between them — the signature of a simulation, not a lookup.",
+      "section": "Mental Imagery: Turning Things in the Head",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-74",
+      "quote": "Public domain (Wikipedia diagram).}",
+      "section": "Mental Imagery: Turning Things in the Head",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-75",
+      "quote": "This is load-bearing for this course, because it is the first clean demonstration that human cognition is **computation on a model**: the mind does not store a fixed answer for every orientation of every object; it runs a *procedure* over an internal representation, and the procedure's cost is visible in the timing.",
+      "section": "Mental Imagery: Turning Things in the Head",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-76",
+      "quote": "The same shape of move underlies the \"chain of thought\" you will meet in the model chapters: instead of answering directly, the mind (and later the model) *works through the intermediate states*, and the number of intermediate states is what takes the time.",
+      "section": "Mental Imagery: Turning Things in the Head",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-77",
+      "quote": "Mental rotation is the ancestor, in a human subject, of a transformer's intermediate layers: a representation, transformed step by step, until it reaches the answer.",
+      "section": "Mental Imagery: Turning Things in the Head",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-78",
+      "quote": "One step stands above all the others, and it is the step that makes **formal systems** possible at all: the ability to **think about one's own thinking**.",
+      "section": "Metarepresentation: Thinking About Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-79",
+      "quote": "\\citeauthor{flavell1979metacognition} named this capacity **metacognition**, the \"cognitive monitoring\" by which a mind holds a representation of its own representations and can inspect, correct, and report on them.",
+      "section": "Metarepresentation: Thinking About Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-80",
+      "quote": "It is the \"stepping outside\" that the introduction's \"ladder of abstraction\" gestures toward, and it is what separates a reflex from a *deliberation*.",
+      "section": "Metarepresentation: Thinking About Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-81",
+      "quote": "Metarepresentation is the seed of logic, of the written proof, and of the \"chain of thought\".",
+      "section": "Metarepresentation: Thinking About Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-82",
+      "quote": "A syllogism is a metarepresentation: it is a representation *about* the relations between representations.",
+      "section": "Metarepresentation: Thinking About Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-83",
+      "quote": "A proof is a metarepresentation of a metarepresentation.",
+      "section": "Metarepresentation: Thinking About Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-84",
+      "quote": "And when a modern model is prompted to \"think step by step\" and actually *does* produce intermediate reasoning before answering, it is being pushed to externalize a form of metacognition, to show its working, to let the reader monitor the monitor.",
+      "section": "Metarepresentation: Thinking About Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-85",
+      "quote": "The \"reflection\" that a model performs, or pretends to perform, is the same reflex a mathematician uses when she pauses to ask, \"does this step actually follow?\" The mind learned to be its own auditor before anyone built a machine that could be asked to show its reasoning.",
+      "section": "Metarepresentation: Thinking About Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-86",
+      "quote": "Long before anyone counted, the mind could **estimate**.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-87",
+      "quote": "Infants, and many animals, possess an **approximate number sense**, a coarse, ratio-sensitive ability to gauge \"more or less\" of a set of things, present before any language and, as \\citeauthor{dehaene1997numbersense} argues, the substrate on which exact arithmetic was later built.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-88",
+      "quote": "We do not learn number from scratch; we learn to *sharpen* an intuition that is already there, the way we learn to read by sharpening a statistical intuition about the shapes of letters.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-89",
+      "quote": "This matters because it shows that the most \"unphysical\" of all our tools, the abstract integer — and by extension the vector, the tensor, the billion-dimensional point in a latent space — did not descend from the sky.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-90",
+      "quote": "It grew out of a forager's need to know whether there were more or fewer things than last week.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-91",
+      "quote": "The `int` in your code is the descendant of a primate's \"a lot\" and \"a few\", made exact.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-92",
+      "quote": "Every number a machine manipulates is, in its origin, a body's fuzzy sense of quantity, refined across millennia until it could be trusted with a nuclear calculation.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-93",
+      "quote": "The approximate number sense has a sharp **ceiling**, and knowing where it is reveals what counting actually *adds*.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-94",
+      "quote": "For a small set of objects — up to about **four** — you do not count at all; you **subitize**: you *see* the number, instantly, in a single glance, the way you see a single object \\cite[subitizing]{subitizing}.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-95",
+      "quote": "Show a child three dots or five dots and the judgment \"more\" is immediate for three but not for five; three and five straddle a wall.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-96",
+      "quote": "Beyond the subitizing limit, the mind switches to a **serial process** — counting one, two, three, four, five — which is slower and can be interrupted or lost.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-97",
+      "quote": "So \"counting\" is not the same thing as \"knowing how many\"; it is the *procedure* you reach for once the fast, parallel intuition runs out.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-98",
+      "quote": "The boundary is not just a lab curiosity; it is a window into **whether exact number ever needs language at all**.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-99",
+      "quote": "In two of the few studied communities without exact number words — the Pirahã of the Amazon, whose lexicon has no words for specific quantities, and the Mundurucú, who have number words only up to a small value before a word like \"many\" \\cite[Pirahã (Gordon, 2004); Pica et al., Mundurucú (2004)]{piraha2004, picamundurucu2004} — the tests reveal the same architecture: an approximate, ratio-sensitive sense that *works* up to a small magnitude and then **breaks**.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-100",
+      "quote": "The Mundurucú can compare and even add large numbers *approximately* — is this group of 50 bigger than that group of 40?",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-101",
+      "quote": "— but ask them for the *exact* sum once their number words run out, and accuracy collapses.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-102",
+      "quote": "Exact arithmetic, it turns out, is not an innate sense waiting to be switched on; it is a **construction** — the approximate intuition, sharpened by the scaffolding of exact number words and counting.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-103",
+      "quote": "That is the bridge from the forager's \"a lot\" to the `int` in your code: not a jump, but a tool that makes an intuition exact.",
+      "section": "The Number Sense",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-104",
+      "quote": "Among the strangest capacities of a young mind is its insistence on **play** — activity with no immediate payoff, repeated for its own sake.",
+      "section": "Play: Rehearsal for the Novel",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-105",
+      "quote": "Research connecting evolutionary psychology, child development, and creativity has argued that play is not a frivolous by-product but a **practice environment**: a low-stakes arena in which a young animal or child can try combinations, test cause and effect, and role-play situations it will meet only later and more dangerously.",
+      "section": "Play: Rehearsal for the Novel",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-106",
+      "quote": "\\citeauthorlastnameand{mehta2020play} review this \"play deficit\" line of work and its link to creativity, the idea that the ability to *play with ideas* is a core ingredient of the flexible, novel thinking that culture rewards.",
+      "section": "Play: Rehearsal for the Novel",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-107",
+      "quote": "For a history of AI, play is load-bearing in a way that is easy to miss.",
+      "section": "Play: Rehearsal for the Novel",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-108",
+      "quote": "The \"useful\" part of any breakthrough — the theorem, the algorithm, the architecture — is almost always *found* during the \"useless\" part: the idle fiddling, the toy example, the puzzle solved for the sheer pleasure of solving it.",
+      "section": "Play: Rehearsal for the Novel",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-109",
+      "quote": "The reason a culture of \"researchers\" can exist at all is that humans, unlike most animals, will pursue a problem **for the fun of it**, long before its value is clear.",
+      "section": "Play: Rehearsal for the Novel",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-110",
+      "quote": "Basic science, the \"curiosity-driven\" work that produced logic, number theory, and probability, is institutionalized play.",
+      "section": "Play: Rehearsal for the Novel",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-111",
+      "quote": "A society that funds only what is immediately practical does not, by definition, discover the next thing.",
+      "section": "Play: Rehearsal for the Novel",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-112",
+      "quote": "The engine of the \"useless\" mind is one of the great, invisible, cultural prerequisites of AI.",
+      "section": "Play: Rehearsal for the Novel",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-113",
+      "quote": "Play is powered by a specific and well-studied appetite: **curiosity**.",
+      "section": "Curiosity and the Intrinsic Drive",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-114",
+      "quote": "\\citeauthor{loewenstein1994curiosity} reframed curiosity as a drive to close a gap between what one knows and what one *wants* to know, an \"information gap\" that is aversive to leave open and rewarding to close.",
+      "section": "Curiosity and the Intrinsic Drive",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-115",
+      "quote": "Crucially, this drive can run **independently of any external reward**: a mind will chase an answer it has no use for.",
+      "section": "Curiosity and the Intrinsic Drive",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-116",
+      "quote": "This \"intrinsic motivation\" is the fuel of science, and it is a genuinely strange evolutionary product, a mechanism that spends energy on questions whose survival value is not obvious.",
+      "section": "Curiosity and the Intrinsic Drive",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-117",
+      "quote": "An LLM does not get curious.",
+      "section": "Curiosity and the Intrinsic Drive",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-118",
+      "quote": "It is given a task and optimized toward a reward, which is precisely why \"intrinsic motivation\" is one of the most discussed open problems in modern AI, and why the \"self-improving\" agents on the frontier are, in effect, attempts to *build* into a system the one drive the human brain got for free.",
+      "section": "Curiosity and the Intrinsic Drive",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-119",
+      "quote": "The gap between the two — the model that wants to be told what to do, and the scientist who wants to be left alone to wonder — is a gap between a **reinforcement** system and a **curiosity** system, and closing it is a matter of importing, into silicon, the oldest appetite in the social brain.",
+      "section": "Curiosity and the Intrinsic Drive",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-120",
+      "quote": "Some of the most important thinking does not happen when a mind is *focused* on a problem, but when it has set the problem **aside**.",
+      "section": "Incubation, Daydreaming, and the \"Aha\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-121",
+      "quote": "The classic \"stages of creative insight\" — preparation, **incubation**, illumination, and verification — were laid out a century ago and remain the standard description.",
+      "section": "Incubation, Daydreaming, and the \"Aha\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-122",
+      "quote": "The psychologist \\citeauthor{mednick1962creative} modeled the \"aha\" as a process of **associative combination**: the mind, during the unfocused incubation phase, keeps loosely and randomly recombining the pieces of the problem, until a new, useful connection happens to fire.",
+      "section": "Incubation, Daydreaming, and the \"Aha\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-123",
+      "quote": "The insight, when it strikes, is usually a **recombination** the focused mind could never have found, because the focused mind is too locked onto the obvious path.",
+      "section": "Incubation, Daydreaming, and the \"Aha\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-124",
+      "quote": "There is now strong evidence for where this happens in the brain.",
+      "section": "Incubation, Daydreaming, and the \"Aha\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-125",
+      "quote": "The **default-mode network**, identified by \\citeauthorlastnameand{raichle2007defaultmode} as the set of regions that are *active* when the mind is not doing an external task — the \"daydreaming\" circuit — is precisely the circuit that lights up during recall, imagination, and self-referential thought.",
+      "section": "Incubation, Daydreaming, and the \"Aha\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-126",
+      "quote": "The shower-thought, the insight on the walk, the answer that arrives in the night, are the default mode doing its slow, loose, low-cost search over the space of possibilities.",
+      "section": "Incubation, Daydreaming, and the \"Aha\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-127",
+      "quote": "The \"unconscious\" is not a place where thought goes to die; it is a **background process**, and it is, in a sense, the first form of **asynchronous computation**, a computation that runs while the \"foreground\" is doing something else.",
+      "section": "Incubation, Daydreaming, and the \"Aha\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-128",
+      "quote": "The mathematician's famous \"let me sleep on it\" is a scheduling decision.",
+      "section": "Incubation, Daydreaming, and the \"Aha\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-129",
+      "quote": "A mind that can only model the world *as it is* is a mind that cannot plan.",
+      "section": "Imagination, Counterfactuals, and Fiction",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-130",
+      "quote": "The human mind's signature extra is the ability to model the world **as it might be**: to run **counterfactuals**, to simulate \"what if\".",
+      "section": "Imagination, Counterfactuals, and Fiction",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-131",
+      "quote": "This is the same machinery as imagination, and it is the machinery that makes planning, design, and **fiction** possible.",
+      "section": "Imagination, Counterfactuals, and Fiction",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-132",
+      "quote": "\\citeauthorlastnameand{tomasello2014thinking} argues that the distinctive human move is not just to model the world, but to model it **together**, in a shared, \"we\" mode, and that the shared fictional world — the story, the myth, the scenario everyone agrees to treat as \"real for the moment\" — is a technology of coordination as powerful as any tool.",
+      "section": "Imagination, Counterfactuals, and Fiction",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-133",
+      "quote": "Fiction is, in this light, a form of **counterfactual training data**.",
+      "section": "Imagination, Counterfactuals, and Fiction",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-134",
+      "quote": "Before a society could build a ship, it could *imagine* the ship, rehearse its operation in story, and agree on the roles.",
+      "section": "Imagination, Counterfactuals, and Fiction",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-135",
+      "quote": "Before a civilization could run a large-scale project, it had to be able to hold a **shared hypothetical** in common.",
+      "section": "Imagination, Counterfactuals, and Fiction",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-136",
+      "quote": "The \"imagination\" that makes AI possible, the ability to model a state of the world that does not yet exist and to act on that model, is the same imagination that made the first story, the first plan, and the first \"what if we tried it this way?\" possible.",
+      "section": "Imagination, Counterfactuals, and Fiction",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-137",
+      "quote": "A language model is, at bottom, a machine for generating counterfactuals of text, and it inherited the capacity from the mind that first dared to imagine a sentence that had never been said.",
+      "section": "Imagination, Counterfactuals, and Fiction",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-138",
+      "quote": "The archaeological record gives us a rough date for when all of this became visible.",
+      "section": "Art and the Symbolic Revolution",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-139",
+      "quote": "Around the **Upper Paleolithic**, roughly fifty to seventy thousand years ago, the human record changes in kind: pigment, engraved symbols, carved figurines, and the great painted caves appear, in a burst that is often called a **behavioral** or **symbolic** \"revolution\".",
+      "section": "Art and the Symbolic Revolution",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-140",
+      "quote": "The decorated ochre and complex tools documented from sites such as Blombos Cave, and the painted walls of caves in Europe, are the earliest surviving artifacts of a mind that can represent **something that is not present**, a mind that can make a mark *stand for* a thing.",
+      "section": "Art and the Symbolic Revolution",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-141",
+      "quote": "(\\cite[Henshilwood et al., 2002]{emergenceofmodernhumanbehaviour}) This is the first **generative model** we have direct evidence for: a system for producing and sharing representations of a world beyond the immediate.",
+      "section": "Art and the Symbolic Revolution",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-142",
+      "quote": "\\citealternativetitle{cuevadelasmanos_image} — hand stencils at Cueva de las Manos, Argentina: a record of a body that is not there.",
+      "section": "Art and the Symbolic Revolution",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-143",
+      "quote": "The oldest surviving \"document\" is, in this sense, an externalized memory of an absent mind.",
+      "section": "Art and the Symbolic Revolution",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-144",
+      "quote": "The Greeks did not begin their science with a hypothesis; they began with a feeling.",
+      "section": "From Wonder to Philosophy",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-145",
+      "quote": "In the opening of the *Metaphysics*, \\citeauthor{aristotlemetaphysics} writes that the pursuit of understanding begins in **wonder** (Greek: *thaumazein*), the felt strangeness of the fact that things are the way they are.",
+      "section": "From Wonder to Philosophy",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-146",
+      "quote": "\"It is through wonder that men now begin and once began to philosophize,\" he says, and from the wonder at particular things the mind is drawn, step by step, to the question of the whole.",
+      "section": "From Wonder to Philosophy",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-147",
+      "quote": "This single sentence is the oldest statement in the history of science, and it locates the origin of the scientific mind not in a method but in an **emotion**: the discomfort of not-understanding, and the pleasure of resolving it.",
+      "section": "From Wonder to Philosophy",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-148",
+      "quote": "\\citealternativetitle{aristotleandplato} (detail) — Aristotle, at right, in Raphael's *Scuola di Atene*: the philosopher who located the origin of science in the felt discomfort of not-understanding.",
+      "section": "From Wonder to Philosophy",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-149",
+      "quote": "\\citealternativetitle{galilei_image} — Galileo, from Justus Sustermans's 1636 portrait (Uffizi), who bet that the \"book of nature\" was written in the language of mathematics.",
+      "section": "From Wonder to Philosophy",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-150",
+      "quote": "\\citealternativetitle{poincare_image} — Henri Poincaré, who in *Mathematical Creation* described how his breakthroughs arrived by unconscious recombination, not grinding.",
+      "section": "From Wonder to Philosophy",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-151",
+      "quote": "\\citealternativetitle{simonnewell_image} — Herbert A.",
+      "section": "From Wonder to Philosophy",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-152",
+      "quote": "Simon and Allen Newell, co-founders of the \"mind as information processing\", who built the first general problem solvers and, with the rest, satisfied the \"good enough\" that made engineering possible.",
+      "section": "From Wonder to Philosophy",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-153",
+      "quote": "No single human, in a million years, would have invented a transistor.",
+      "section": "Cumulative Cultural Evolution and the Ratchet",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-154",
+      "quote": "The mind that built AI is not one brain; it is a **culture**, and the distinctive human trait is not that our brains are large but that our cultures **accumulate**.",
+      "section": "Cumulative Cultural Evolution and the Ratchet",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-155",
+      "quote": "\\citeauthor{henrich2016secret} argues in \\citetitle{henrich2016secret} that human \"smarts\" are mostly **cultural**, that we are, in his phrase, \"cognitively niche-constructing\" animals who build an external world of tools and ideas, and that the individual human brain has *evolved* in part to make use of that accumulated knowledge.",
+      "section": "Cumulative Cultural Evolution and the Ratchet",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-156",
+      "quote": "The key mechanism is the **ratchet effect**: an innovation, once made, can be kept, copied, improved, and passed on, so that each generation starts from where the last one *ended* rather than from scratch.",
+      "section": "Cumulative Cultural Evolution and the Ratchet",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-157",
+      "quote": "This is the \"iterative innovation\" that makes AI possible, and it is a cultural, not a biological, fact.",
+      "section": "Cumulative Cultural Evolution and the Ratchet",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-158",
+      "quote": "A chimpanzee population does not ratchet: a clever trick dies with the chimp who invented it.",
+      "section": "Cumulative Cultural Evolution and the Ratchet",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-159",
+      "quote": "The \"training data\" of a modern model is, in the deepest sense, the **ratcheted output of hundreds of thousands of generations** of human iteration, all of it compressed into a corpus.",
+      "section": "Cumulative Cultural Evolution and the Ratchet",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-160",
+      "quote": "The model is not learning *from nothing*; it is learning from the accumulated, ratcheted, improved-upon work of the species.",
+      "section": "Cumulative Cultural Evolution and the Ratchet",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-161",
+      "quote": "The \"cultural brain\" is the first and most important \"data set\" in the history of intelligence.",
+      "section": "Cumulative Cultural Evolution and the Ratchet",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-162",
+      "quote": "\\citeauthorlastnameand{tomasello2014thinking} argues that the specifically human kind of thinking is not just *individual* cognition but **shared** intentionality: the ability to engage with others in a common goal, a common attention, a \"we\" project, rather than just a parallel set of \"I\" projects.",
+      "section": "Shared Intentionality and \"We-Mode\" Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-163",
+      "quote": "A human does not just *see* the same thing as a fellow human; she sees it **with** them, and the act of joint attention creates a common ground from which new, collaborative thought can grow.",
+      "section": "Shared Intentionality and \"We-Mode\" Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-164",
+      "quote": "It is this \"we-mode\" that makes **teaching, learning from others, and cumulative culture** possible in the first place.",
+      "section": "Shared Intentionality and \"We-Mode\" Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-165",
+      "quote": "For AI, the relevance is the \"social\" in \"social learning\" and the \"shared\" in \"shared representations\".",
+      "section": "Shared Intentionality and \"We-Mode\" Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-166",
+      "quote": "A model trained on the output of many minds is, in a sense, a **collective mind**: it carries the shared biases, the common ground, the \"we\" assumptions of the culture that produced its training data.",
+      "section": "Shared Intentionality and \"We-Mode\" Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-167",
+      "quote": "The \"alignment\" problem, the problem of making a model *share* a community's values and goals, is a direct descendant of the problem of shared intentionality: how do two minds, or a mind and a machine, get to the same \"we\"?",
+      "section": "Shared Intentionality and \"We-Mode\" Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-168",
+      "quote": "The fact that the human mind was built to *coordinate with other minds* is what makes the \"interface\" between a model and its users even possible, and it is why a model that \"gets\" the user is not just pattern-matching but, in a loose and important sense, **reading a mind**.",
+      "section": "Shared Intentionality and \"We-Mode\" Thinking",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-169",
+      "quote": "The final, and perhaps deepest, move is the **externalization** of the mind.",
+      "section": "Externalized Memory and the Extended Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-170",
+      "quote": "\\citeauthorlastnameand{clarkchalmers1998extended} proposed the \"extended mind\" thesis: that the boundary of a mind does not have to be the skull, that a notebook, a set of notes, a physical artifact that a person *reliably* uses as a part of her thinking, can count as a genuine part of her cognition, on a par with a memory in the head.",
+      "section": "Externalized Memory and the Extended Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-171",
+      "quote": "The **abacus** in [the untold history](untold_history_ii), the **writing system**, the **book**, the **map** and the **ledger** are all, on this account, parts of the mind that have been placed outside the body.",
+      "section": "Externalized Memory and the Extended Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-172",
+      "quote": "This is the direct intellectual ancestor of the **vector database** and the **retrieval** system.",
+      "section": "Externalized Memory and the Extended Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-173",
+      "quote": "A large language model with a memory, an RAG setup, a \"context\" that reaches outside the model into a corpus, is a **Clark-and-Chalmers extended mind** made literal: a mind whose scratch space is not just a few tokens but a searchable archive of the species' accumulated ratcheted work.",
+      "section": "Externalized Memory and the Extended Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-174",
+      "quote": "The trajectory is continuous: from the ochre mark on the cave wall (externalized memory of a single image), to the clay tablet (externalized memory of an account), to the printed book (externalized, distributed, ratcheted memory), to the web (externalized, global, searchable memory), to the model (a *mind* that reads and reasons over that memory).",
+      "section": "Externalized Memory and the Extended Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-175",
+      "quote": "The \"context window\" is the modern form of the \"notebook on the table\"; the only thing that has changed is that the notebook is now a civilization, and the mind reading it is now made of transistors.",
+      "section": "Externalized Memory and the Extended Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-176",
+      "quote": "Before the book, before the punch card, before the vector database, there was a problem: the human brain holds very little at once.",
+      "section": "The Memory Palace: memory as a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-177",
+      "quote": "We covered this bottleneck earlier in this chapter — working memory is a handful of slots, the \\cite[magical number seven, plus or minus two]{miller1956magicalnumber}.",
+      "section": "The Memory Palace: memory as a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-178",
+      "quote": "Yet for a thousand years before writing was cheap, humans had to *hold* enormous amounts of information in their heads: a lawyer's precedents, an orator's speech, a monk's whole scripture, a merchant's prices across a continent.",
+      "section": "The Memory Palace: memory as a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-179",
+      "quote": "They did not solve it with a better brain.",
+      "section": "The Memory Palace: memory as a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-180",
+      "quote": "They solved it with a **technique** — the first time in the story of this book that a human extended the mind *not with a tool that does the work, but with a structure that organizes remembering itself*.",
+      "section": "The Memory Palace: memory as a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-181",
+      "quote": "That technique is the memory palace.",
+      "section": "The Memory Palace: memory as a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-182",
+      "quote": "And its logic, which looks like a parlor trick, turns out to be the exact logic that an [embedding](embeddinglab.php) runs two thousand years later.",
+      "section": "The Memory Palace: memory as a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-183",
+      "quote": "The origin story is a tragedy.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-184",
+      "quote": "After a great feast, the hall at Larissa in Thessaly collapsed on its guests.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-185",
+      "quote": "The only person who escaped unharmed was the poet \\cite[Simonides of Ceos]{simonidesofceos} — because two young men had just stepped out to fetch him, and he had followed them outside.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-186",
+      "quote": "When the hall came down on top of the crowd, the bodies were a heap.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-187",
+      "quote": "But Simonides was able to identify each one, one by one, by the place each had been **seated** \\cite[Method of loci]{methodofloci}.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-188",
+      "quote": "The place did the remembering for him.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-189",
+      "quote": "Content was recoverable because it had a *location*.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-190",
+      "quote": "That single observation is the seed of the entire technique: **attach what you want to remember to a place you already know, and retrieve it by going back to the place.**",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-191",
+      "quote": "The Greeks and Romans had a name for the places, and for the method: the *loci* (the \"places\") of the *method of loci* \\cite[Method of loci]{methodofloci}.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-192",
+      "quote": "A *locus* is any spot in a route you can walk reliably — the front door, the hall, the window, the garden, the roof.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-193",
+      "quote": "You already know them in the order you walk them.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-194",
+      "quote": "That order is free: it costs you nothing to recall \"door, then hall, then window,\" because your body has walked it ten thousand times.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-195",
+      "quote": "The genius is that the technique borrows a structure you *already have* — the spatial map of a building you know — and re-uses it to store *new, unrelated* information.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-196",
+      "quote": "You are not strengthening the memory of the building.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-197",
+      "quote": "You are using the building as a **filing cabinet** for something else entirely.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-198",
+      "quote": "A \"memory wheel\" from \\cite[Giordano Bruno]{giordanobruno}'s mnemonic practice (Paris, 1582): images laid out around a set of fixed *places*, so that walking the wheel in order walks the content.",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-199",
+      "quote": "Public domain, from *Cantus Circæus* (1582).",
+      "section": "The method of loci",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-200",
+      "quote": "Reduce the method to its mechanism and there are exactly **two moves**.",
+      "section": "How it actually works: two moves",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-201",
+      "quote": "**Move one: the spatial index.** Pick a familiar route with distinct landmarks — your home is the classic choice.",
+      "section": "How it actually works: two moves",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-202",
+      "quote": "This is the *scaffold*: a sequence of locations in a fixed, free, easily-traversed order.",
+      "section": "How it actually works: two moves",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-203",
+      "quote": "The landmarks do the work of keeping the content in sequence.",
+      "section": "How it actually works: two moves",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-204",
+      "quote": "**Move two: the encoding.** At each location, place a **vivid, exaggerated, slightly absurd image** of the thing you want to remember.",
+      "section": "How it actually works: two moves",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-205",
+      "quote": "The stranger and more active the image, the more it \"hooks\" onto the place.",
+      "section": "How it actually works: two moves",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-206",
+      "quote": "To recall, you *walk the route* and read off the image at each stop.",
+      "section": "How it actually works: two moves",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-207",
+      "quote": "That second move is not decoration.",
+      "section": "How it actually works: two moves",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-208",
+      "quote": "A bland fact — \"item three is *cinnamon*\" — barely attaches to a location.",
+      "section": "How it actually works: two moves",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-209",
+      "quote": "But an image — \"a giant cinnamon stick the size of a door, someone is rolling it\" — is dramatic, and dramatic things are the things the visual memory grabs and keeps.",
+      "section": "How it actually works: two moves",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-210",
+      "quote": "The method does two jobs at once: it gives each item a **position**, and it re-encodes the item into a form that the brain stores well.",
+      "section": "How it actually works: two moves",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-211",
+      "quote": "So the memory palace is not \"a picture of a house.\" It is a **data structure**: a pre-built, ordered set of slots (the loci), into which you have written transformed copies of your data (the images), to be read back by traversal (the walk).",
+      "section": "How it actually works: two moves",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-212",
+      "quote": "Now the point of this whole chapter.",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-213",
+      "quote": "Read the two structures side by side, and the resemblance stops being a metaphor.",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-214",
+      "quote": "| Memory palace | A vector space / retrieval |",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-215",
+      "quote": "| A *locus* — a spot on a known route | A coordinate — a point in space |",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-216",
+      "quote": "| The item you want to remember | The content you store |",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-217",
+      "quote": "| \"Place item *x* at locus *i*\" | \"Assign content *x* to index *i*\" (the embedding) |",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-218",
+      "quote": "| The vivid, bizarre image | A feature encoding that makes the item *retrievable* |",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-219",
+      "quote": "| Walking the route to recall | Traversing the space — nearest-neighbour search |",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-220",
+      "quote": "| A faded or weak image | A low-confidence retrieval, or a miss |",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-221",
+      "quote": "The memory palace is the oldest instance of a very general idea: **store information by giving it a location in space, and find it by travelling to that location.** An [embedding](embeddinglab.php) is the same idea at industrial scale.",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-222",
+      "quote": "When you embed a sentence, you are producing its *locus* — a point in a high-dimensional space, chosen so that *similar* sentences land *nearby*.",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-223",
+      "quote": "When you retrieve, you are not scanning a list; you are *walking the space toward the neighbourhood* of your query.",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-224",
+      "quote": "That is exactly the \"walk the route and read off the image\" move, except the route is now a geometric distance and the \"image\" is the vector itself.",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-225",
+      "quote": "This is why the analogy is load-bearing, not cute.",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-226",
+      "quote": "The memory palace is a **hand-built vector space**, and the person who built it had no idea they were building one.",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-227",
+      "quote": "They had only noticed, the way Simonides did, that *a thing you can place is a thing you can find again.*",
+      "section": "The payoff: a memory palace is a hand-built vector space",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-228",
+      "quote": "The Romans turned the trick into a professional art — the *ars memoriae*, the \"art of memory.\" Rhetoricians built elaborate palaces on purpose: an auditor with a long list of arguments walked a purpose-designed building, each room a *locus*, each wall a shelf of images.",
+      "section": "A millennium of the *ars memoriae*",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-229",
+      "quote": "The art spread through the middle ages, where it became less a lawyer's tool than a **monastic technology of devotion**: the structure of a church, the order of the liturgy, the arrangement of figures on a painted panel — all were mnemonically loaded, so that walking the church *was* reciting the doctrine.",
+      "section": "A millennium of the *ars memoriae*",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-230",
+      "quote": "The spatial map of a sacred building and the logical map of the faith were deliberately made the same map.",
+      "section": "A millennium of the *ars memoriae*",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-231",
+      "quote": "For most of this time the technique was a craft, not a science — something masters demonstrated to students, not something anyone had analyzed.",
+      "section": "A millennium of the *ars memoriae*",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-232",
+      "quote": "The most radical practitioner was \\cite[Giordano Bruno]{giordanobruno} (1548–1600), who pushed the method past the flat \"walk a room\" into **three-dimensional space**.",
+      "section": "Giordano Bruno: memory made three-dimensional",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-233",
+      "quote": "He described a *spacemem*: a vast space of locations — levels, directions, a whole architecture of positions — in which images were distributed, so that to recall was to *navigate a volume*, not just a hallway.",
+      "section": "Giordano Bruno: memory made three-dimensional",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-234",
+      "quote": "His mnemonic devices, the famous **memory wheels**, were printed diagrams you could literally rotate and consult \\cite[De umbris idearum (1582)]{brunodeumbris1582} \\cite[Giordano Bruno]{giordanobruno}.",
+      "section": "Giordano Bruno: memory made three-dimensional",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-235",
+      "quote": "Bruno used it the way we would use a database: to hold *whole books* in his head, and to generate arguments by recombining what was stored.",
+      "section": "Giordano Bruno: memory made three-dimensional",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-236",
+      "quote": "He claimed the system let him remember \"innumerable\" things, and he performed memory feats before kings that read, to a modern audience, like a live demo of a key-value store \\cite[Giordano Bruno]{giordanobruno}.",
+      "section": "Giordano Bruno: memory made three-dimensional",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-237",
+      "quote": "\\marginfig{giordano_bruno_portrait.jpg}{\\cite[Giordano Bruno (1548–1600)]{giordanobruno}, from an 18th-century engraving (N.",
+      "section": "Giordano Bruno: memory made three-dimensional",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-238",
+      "quote": "Gundling, *Neue Bibliothec*, 1715).",
+      "section": "Giordano Bruno: memory made three-dimensional",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-239",
+      "quote": "The art also travelled as a **teaching technology**.",
+      "section": "Matteo Ricci: the art carried to China",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-240",
+      "quote": "In the late 1500s the Jesuit missionary **Matteo Ricci** wrote a treatise on the memory art — *Xiguo jifa* (《西國記法》, \"The Art of Memory of the Western Country\"), completed in 1595 — partly to give Chinese students a practical method for memorizing the Latin and Italian they were learning.",
+      "section": "Matteo Ricci: the art carried to China",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-241",
+      "quote": "The memory palace, invented in a Greek hall, was now a piece of pedagogy on a mission in China: a spatial index for foreign words.",
+      "section": "Matteo Ricci: the art carried to China",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-242",
+      "quote": "It is a small, concrete example of the general pattern of this course — a technique invented to *extend the mind* crossing every boundary there is.",
+      "section": "Matteo Ricci: the art carried to China",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-243",
+      "quote": "The thread was not seriously studied until 1966, when the historian \\citeauthor{artofmemoryyates} (\\citeyear{artofmemoryyates}) published \\cite[The Art of Memory]{artofmemoryyates}.",
+      "section": "Frances Yates: the scholarly spine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-244",
+      "quote": "Yates traced the art from the classical *loci* of Simonides, through the medieval *ars memoriae*, to the Renaissance — and showed that its flowering in the hands of Bruno and others was bound up with the Hermetic and magical image of the imagination as a *creative, world-generating* power.",
+      "section": "Frances Yates: the scholarly spine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-245",
+      "quote": "The memory palace was not, for the Renaissance mind, a dry mnemonic trick; it was a model of how the mind holds and *produces* the world.",
+      "section": "Frances Yates: the scholarly spine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-246",
+      "quote": "That book is still the place to start, and it is what turned the parlor trick back into a subject of study.",
+      "section": "Frances Yates: the scholarly spine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-247",
+      "quote": "\\marginfig{frances_yates.jpg}{Frances A.",
+      "section": "Frances Yates: the scholarly spine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-248",
+      "quote": "Step back and the memory palace sits exactly where you would expect in this course.",
+      "section": "The bridge forward: from a palace to a corpus",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-249",
+      "quote": "It is the **internal** twin of everything the external-memory sections above have been about.",
+      "section": "The bridge forward: from a palace to a corpus",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-250",
+      "quote": "Earlier in this chapter we met the idea of a *mind plus a library* — the ratchet of cumulative knowledge, where the library is the external palace.",
+      "section": "The bridge forward: from a palace to a corpus",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-251",
+      "quote": "The method of loci is what a *single* mind does when it is its own library: it builds a palace *inside* its head and files the world in it.",
+      "section": "The bridge forward: from a palace to a corpus",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-252",
+      "quote": "And two thousand years later the external version is back, at a scale no palace could hold.",
+      "section": "The bridge forward: from a palace to a corpus",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-253",
+      "quote": "A [vector database](vectorsearch.php) is a memory palace for the entire written world: every document is *placed* (embedded) at a location in a high-dimensional space, and a query *walks the space* to the neighbourhood it wants.",
+      "section": "The bridge forward: from a palace to a corpus",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-254",
+      "quote": "[Retrieval-Augmented Generation](rag.php) is the modern \"walk the route and read off what is there\" — except the route is a metric on vectors, and the library is the whole of the web.",
+      "section": "The bridge forward: from a palace to a corpus",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-255",
+      "quote": "The monk walking his church, the lawyer walking his hall, and the LLM fetching a relevant passage are all doing the same two moves this chapter has been about: **give the thing a place, then go find it.**",
+      "section": "The bridge forward: from a palace to a corpus",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-256",
+      "quote": "> A memory palace is a hand-built vector space.",
+      "section": "The bridge forward: from a palace to a corpus",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-257",
+      "quote": "You store meaning by giving it a *location*, and you retrieve it by *travelling to that location*.",
+      "section": "The bridge forward: from a palace to a corpus",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-258",
+      "quote": "The human who invented it and the machine that scaled it made the same discovery: a thing you can place is a thing you can find again.",
+      "section": "The bridge forward: from a palace to a corpus",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-259",
+      "quote": "A mind that only learns while it is awake would learn very little.",
+      "section": "Sleep as \"Offline Training\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-260",
+      "quote": "The human mind does most of its **consolidation** while it is *asleep*.",
+      "section": "Sleep as \"Offline Training\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-261",
+      "quote": "\\citeauthorlastnameand{diekelmann2010sleep} review the evidence that during sleep the brain **replays** the day's experiences, transferring them from a fast, volatile storage into a slow, stable one, and that this \"replay\" is what makes a memory durable and, importantly, what lets the brain **generalize** from it.",
+      "section": "Sleep as \"Offline Training\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-262",
+      "quote": "The sleep is, in effect, an **offline training phase**: a batch job that runs in the background, on the day's \"data\", while the \"foreground\" process (waking life) is idle.",
+      "section": "Sleep as \"Offline Training\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-263",
+      "quote": "The parallel to machine learning is close, and it is not new: the \"offline\" phase, the \"consolidation\" of a day's updates, the \"replay\" that stabilizes a network, the \"dreaming\" that is the brain's self-generated, low-stakes rehearsal (the \"self-play\" of the earlier section).",
+      "section": "Sleep as \"Offline Training\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-264",
+      "quote": "A forager's brain was, every night, running a training loop on the day's experience, and the \"sleep\" that the model does not have — but that its biological ancestor did — is one of the quiet, taken-for-granted mechanisms on which the whole edifice of \"learning from data\" was built.",
+      "section": "Sleep as \"Offline Training\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-265",
+      "quote": "We built a machine that learns while it is \"on\"; our ancestor's brain learned while it was \"off\".",
+      "section": "Sleep as \"Offline Training\"",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-266",
+      "quote": "The mind's relationship to **uncertain reward** is tuned by the same dynamics that run a casino.",
+      "section": "The Slot Machine in the Skull",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-267",
+      "quote": "The psychologist \\citeauthor{schultz1997dopamine} and the behaviorists before him found that the most \"addictive\" schedule of reinforcement is the **variable-ratio** one, the one in which the reward comes after an unpredictable number of tries, the exact schedule of a slot machine, and the one that produces the most persistent, \"unbreakable\" behavior.",
+      "section": "The Slot Machine in the Skull",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-268",
+      "quote": "The dopamine system is, as we saw, a **reward-prediction** system, and the interplay of *exploration* (try a new thing, maybe it pays) and *exploitation* (keep doing the thing that pays) is the brain's native form of the **bandit problem** that now decides whether an agent should try a new action or repeat a known good one.",
+      "section": "The Slot Machine in the Skull",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-269",
+      "quote": "\\citealternativetitle{slotmachine_image} — the variable-ratio machine the brain's dopamine system runs on: the reward comes after an unpredictable number of tries, which is why the behavior never breaks.",
+      "section": "The Slot Machine in the Skull",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-270",
+      "quote": "\\citealternativetitle{freud_image} — Sigmund Freud, who made the inner, uncommanded life of the mind an object of study at all.",
+      "section": "The Slot Machine in the Skull",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-271",
+      "quote": "\\citealternativetitle{jung_image} — Carl Gustav Jung, who mapped the interior as a landscape with its own inherited structures, the archetypes.",
+      "section": "The Slot Machine in the Skull",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-272",
+      "quote": "\\citealternativetitle{heidegger_image} — Martin Heidegger, for whom the \"interior\" is not a private room but the way existing discloses itself from within (Dasein, being-in-the-world).",
+      "section": "The Slot Machine in the Skull",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-273",
+      "quote": "\\citealternativetitle{schmitz_image} — Hermann Schmitz, whose pathos-phenomenology treats the interior as an intensive, irreducible dimension of reality.",
+      "section": "The Slot Machine in the Skull",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-274",
+      "quote": "\\citealternativetitle{mirrorselfrecognition_image} — an orangutan meeting its own reflection, the classic mirror test: the behavioral signature of a self-model, a representation of the agent that is doing the modeling.",
+      "section": "The Slot Machine in the Skull",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-275",
+      "quote": "\\citealternativetitle{dawkins_image} — Richard Dawkins, who named the \"meme\", the cultural unit that copies and varies the way a gene does.",
+      "section": "The Slot Machine in the Skull",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-276",
+      "quote": "Step back and the four \"legs\" of a large language model line up, and the fourth, the one this chapter has been tracing, is the one that is easiest to forget and the one that is doing the most invisible work.",
+      "section": "VII. Synthesis: The Convergence of Mind and Machine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-277",
+      "quote": "* **Energy**: the caloric surplus of the hearth, ratcheted through the grid, that *paid for* the thinking.",
+      "section": "VII. Synthesis: The Convergence of Mind and Machine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-278",
+      "quote": "* **Matter**: the sand, the wire, the silicon, the substrate on which the thinking was *placed*.",
+      "section": "VII. Synthesis: The Convergence of Mind and Machine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-279",
+      "quote": "* **Information**: the number, the word, the book, the web, the corpus from which the thinking was *fed*.",
+      "section": "VII. Synthesis: The Convergence of Mind and Machine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-280",
+      "quote": "* **Mind**: the forager's, social, playful, wondering, compressing, exapted organ that did all the *thinking*, and that, at the end, built the machine.",
+      "section": "VII. Synthesis: The Convergence of Mind and Machine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-281",
+      "quote": "The brain is the first AI, and the LLM is its **externalization**, its **emulation**, and its **satisficing** (good-enough) **descendant**.",
+      "section": "VII. Synthesis: The Convergence of Mind and Machine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-282",
+      "quote": "The brain is a predictive, generative, loss-minimizing, embodied, social, world-modeling engine that runs on a few tens of watts; the LLM is the same engine, built from the same handful of deep ideas — compress the world into chunks, model it as a probability, minimize the surprise, read the social intent, externalize the memory, and let the *good enough* beat the *optimal* — re-implemented in silicon and scaled, at last, past anything that a gut-shrinking, fire-making, story-telling primate could afford.",
+      "section": "VII. Synthesis: The Convergence of Mind and Machine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-283",
+      "quote": "Nothing in this chain was designed for the machine.",
+      "section": "VII. Synthesis: The Convergence of Mind and Machine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-284",
+      "quote": "Every link is an exaptation: the cooking that paid for the brain, the social brain that was aimed at the stars, the forager's curiosity that became the scientist's drive, the \"good enough\" that became the engineering, the cultural ratchet that became the corpus, the extended mind that became the context window, and the hyperactive mind-reader that now, whenever a machine says something clever, cannot help suspecting — against all the evidence, and against the better part of itself — that *something is there*.",
+      "section": "VII. Synthesis: The Convergence of Mind and Machine",
+      "kind": "statement"
+    },
+    {
+      "id": "human_mind-stmt-285",
+      "quote": "The mind that built the machine is, in the end, the machine's oldest and most invisible author, and the whole of this course, from the first stone tool to the last token, is the story of that mind slowly learning to build itself.",
+      "section": "VII. Synthesis: The Convergence of Mind and Machine",
+      "kind": "statement"
+    }
   ]
 }

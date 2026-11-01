@@ -449,5 +449,1003 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "diffusion-stmt-1",
+      "quote": "A single text prompt, and a diffusion model produced this image in seconds.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-2",
+      "quote": "This one was created with the prompt “Astronaut Riding a Horse” (\\cite[Image: Stable Diffusion 3.5]{diffusion_astronaut_img})",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-3",
+      "quote": "Concretely, the forward process takes a clean image $x_0$ and at each of $T$ small timesteps sprinkles in a little Gaussian noise.",
+      "section": "The forward process: a controlled demolition",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-4",
+      "quote": "After $T = 1000$ steps nothing of the original picture survives.",
+      "section": "The forward process: a controlled demolition",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-5",
+      "quote": "A handy mathematical shortcut is that at any intermediate timestep $t$, you can jump straight from the clean image to $x_t$ in one go, without stepping through all the intermediate $x_1, x_2, \\ldots, x_{t-1}$:",
+      "section": "The forward process: a controlled demolition",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-6",
+      "quote": "In this demo $t$ is the *noise fraction*, not the DDPM timestep: $t = 0$ is the clean image and $t = 1$ is pure Gaussian noise.",
+      "section": "The forward process: a controlled demolition",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-7",
+      "quote": "DDPM's discrete schedule reaches the same endpoint at timestep $T$.",
+      "section": "The forward process: a controlled demolition",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-8",
+      "quote": "Crucially, **every step of the forward process is fixed in advance**, no learning required.",
+      "section": "The forward process: a controlled demolition",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-9",
+      "quote": "The forward chain is just a way to manufacture training data for the model that does the hard work.",
+      "section": "The forward process: a controlled demolition",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-10",
+      "quote": "The slider below shows the forward process happening to a real image.",
+      "section": "The forward process: a controlled demolition",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-11",
+      "quote": "Drag it to watch the picture dissolve into noise.",
+      "section": "The forward process: a controlled demolition",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-12",
+      "quote": "The reverse process starts from pure noise and runs backward.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-13",
+      "quote": "At each step, the network looks at the current noisy image and asks: *what noise should I subtract to make this slightly more recognizable?* A thousand such tiny denoising steps, and out pops a clean image.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-14",
+      "quote": "DDPM's contribution was to make the reverse chain trainable by a simple surrogate.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-15",
+      "quote": "Instead of predicting the full reverse distribution, the network predicts the noise that was added, and training minimizes squared error to it — a reweighted variational bound, and the reweighting is what made sample quality jump (\\cite[Ho et al., 2020]{ho2020ddpm}).",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-16",
+      "quote": "\\cite[Nichol & Dhariwal (2021)]{nichol2021improved} then replaced the linear noise schedule with a cosine one and learned the reverse variances, improving both log-likelihood and sample quality (\\cite[Nichol & Dhariwal, 2021]{nichol2021improved}); \\cite[Dhariwal & Nichol (2021)]{dhariwal2021diffusion} added classifier guidance and showed diffusion could beat GANs on image synthesis (\\cite[Dhariwal & Nichol, 2021]{dhariwal2021diffusion}).",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-17",
+      "quote": "This is the formulation introduced by DDPM.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-18",
+      "quote": "The training objective is almost laughably simple.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-19",
+      "quote": "For a randomly chosen timestep $t$:",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-20",
+      "quote": "Add the corresponding amount of noise, producing a noisy $x_t$.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-21",
+      "quote": "Ask the network to predict *what that noise was*.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-22",
+      "quote": "Train by mean-squared error between the predicted and the true noise.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-23",
+      "quote": "For the vanilla DDPM objective — and for DDIM, which is a *sampler* for a DDPM-trained model rather than a separate training recipe — that is it: no discriminator, no generator, no min-max game (\\cite[Song et al., 2020]{song2020ddim}).",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-24",
+      "quote": "Just MSE between predicted and true noise.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-25",
+      "quote": "This stability is one of the big reasons diffusion displaced GANs so quickly.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-26",
+      "quote": "(One caveat: the 1-step “Turbo” models like SDXL-Turbo were *not* trained with pure MSE, they use **adversarial diffusion distillation**, an explicit GAN-style loss, to compress 50 denoising steps into 1.)",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-27",
+      "quote": "The slider below steps through the **reverse** process on the same image.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-28",
+      "quote": "Drag it from right to left to watch an image emerge from chaos.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-29",
+      "quote": "In a real diffusion model this would take a thousand tiny denoising steps; here we collapse them into a handful of frames.",
+      "section": "The reverse process: the part that learns",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-30",
+      "quote": "You might ask: how can *removing noise* ever create a picture?",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-31",
+      "quote": "The trick is this, **a denoiser that can spot noise must also have learned what “no noise” looks like**.",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-32",
+      "quote": "It has implicitly learned the shape of the data distribution.",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-33",
+      "quote": "So if you start from pure noise and repeatedly denoise, you trace a path through that distribution, and end up with a brand new sample.",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-34",
+      "quote": "That is the deep “why” of diffusion in one sentence.",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-35",
+      "quote": "Two ways to make it more concrete:",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-36",
+      "quote": "* **Coarse-to-fine**: at high noise levels, only the largest-scale structure of the data is recoverable.",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-37",
+      "quote": "The network first sketches rough shapes, then refines detail.",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-38",
+      "quote": "Generation is hierarchical *by construction*.",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-39",
+      "quote": "* **Score matching** (\\cite[Song & Ermon, 2019]{song2019score}): for Gaussian noise at a fixed level, a denoiser that predicts the noise is mathematically equivalent to a model of the score, the gradient of the log data density (Tweedie's formula).",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-40",
+      "quote": "Running Langevin dynamics on that score — following the gradient with a little randomness — samples from the distribution.",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-41",
+      "quote": "Either view explains why “denoising” and “generation” are two sides of the same coin.",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-42",
+      "quote": "The two lineages — denoising diffusion and score matching — were unified in 2021.",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-43",
+      "quote": "\\cite[Song et al. (2021)]{song2021sde} showed that both are discretizations of a stochastic differential equation: a forward SDE adds noise, and a reverse-time SDE, driven by the score, removes it (\\cite[Song et al., 2021]{song2021sde}).",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-44",
+      "quote": "That view made the sampler a design choice rather than a consequence of the training chain.",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-45",
+      "quote": "\\cite[Song et al. (2020)]{song2020ddim} had already shown the point concretely: a non-Markovian, deterministic reverse process can sample a DDPM model in far fewer steps with little loss in quality (\\cite[Song et al., 2020]{song2020ddim}).",
+      "section": "Why does this work?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-46",
+      "quote": "To make a model draw *what you want*, you have to feed it some signal.",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-47",
+      "quote": "For text-to-image, that signal is a text prompt, first encoded into a sequence of token vectors by a separate text encoder (typically CLIP or T5).",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-48",
+      "quote": "Guidance began with a classifier.",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-49",
+      "quote": "\\cite[Dhariwal & Nichol (2021)]{dhariwal2021diffusion} showed that a pretrained image classifier's gradient could steer each denoising step toward a chosen class, a trick called classifier guidance that improved sample quality at the cost of an extra network (\\cite[Dhariwal & Nichol, 2021]{dhariwal2021diffusion}).",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-50",
+      "quote": "\\cite[Ho & Salimans (2022)]{ho2022cfg} removed the classifier: train one denoiser with the condition randomly dropped, then extrapolate away from its unconditional prediction (\\cite[Ho & Salimans, 2022]{ho2022cfg}).",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-51",
+      "quote": "That is the version Stable Diffusion uses, because it needs no classifier and works with free-form text.",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-52",
+      "quote": "The trick that made text-to-image *actually work* is **classifier-free guidance** (\\cite[Ho & Salimans, 2022]{ho2022cfg}).",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-53",
+      "quote": "At training time, the network is shown the text prompt 90% of the time and *nothing* 10% of the time, learning both a conditional and an unconditional denoiser in one model.",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-54",
+      "quote": "At inference, you amplify the gap between them:",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-55",
+      "quote": "The factor $w$ is the **guidance scale**.",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-56",
+      "quote": "The intuition: $\\epsilon_\\theta(x_t, t, \\varnothing)$ is what the model thinks “an image” looks like; $\\epsilon_\\theta(x_t, t, c) - \\epsilon_\\theta(x_t, t, \\varnothing)$ is the *direction* the prompt pushes in; multiplying by $w > 1$ moves the output further along that direction, so the generated image matches the prompt more literally.",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-57",
+      "quote": "Around $w \\approx 7$ is the modern default.",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-58",
+      "quote": "Higher values follow the prompt more literally but produce more generic-looking images; lower values give variety but may drift from the prompt.",
+      "section": "Telling the model what to draw",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-59",
+      "quote": "The CFG trick above answers “how do you amplify the prompt”.",
+      "section": "From text to image: the whole pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-60",
+      "quote": "But three questions remain: **where do the (image, prompt) training pairs come from?**, **how does the text encoder turn words into something the U-Net can read?**, and **how does the U-Net actually use those numbers?** This section walks through the full pipeline end-to-end.",
+      "section": "From text to image: the whole pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-61",
+      "quote": "You do **not** need to sit down and label 100,000 images.",
+      "section": "1. Training data, no manual labels needed",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-62",
+      "quote": "The training set for Stable Diffusion is **LAION-5B**, a publicly released scrape of about 5 billion (image, alt-text) pairs from the web.",
+      "section": "1. Training data, no manual labels needed",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-63",
+      "quote": "The “label” of every image is whatever its surrounding HTML already said, the alt attribute, the caption, the page title.",
+      "section": "1. Training data, no manual labels needed",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-64",
+      "quote": "What the model actually learns from this data is **not a database of specific images**.",
+      "section": "1. Training data, no manual labels needed",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-65",
+      "quote": "It learns an *internal representation of the world*: what astronauts look like, what horses look like, what “riding” looks like, what “in space” looks like, each concept distilled from many thousands of images seen during training.",
+      "section": "1. Training data, no manual labels needed",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-66",
+      "quote": "When you prompt for “an astronaut riding a horse”, there is almost certainly no training image of exactly that scene.",
+      "section": "1. Training data, no manual labels needed",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-67",
+      "quote": "The model composes a new image by combining its learned concepts: astronaut-shape here, horse-shape there, riding-pose between them.",
+      "section": "1. Training data, no manual labels needed",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-68",
+      "quote": "The output is **synthesized**, not retrieved.",
+      "section": "1. Training data, no manual labels needed",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-69",
+      "quote": "This is also why diffusion models sometimes hallucinate or get details wrong: the “labels” are noisy, scraped web text, not clean annotations, and the concepts are statistical, not encyclopedic.",
+      "section": "1. Training data, no manual labels needed",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-70",
+      "quote": "(One consequence worth knowing: as more AI-generated images flood the web, future models trained on the same web will be trained on their own predecessors' outputs.",
+      "section": "1. Training data, no manual labels needed",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-71",
+      "quote": "This recursive phenomenon is called **model collapse**, and it is a real research concern.)",
+      "section": "1. Training data, no manual labels needed",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-72",
+      "quote": "The diffusion U-Net cannot read English.",
+      "section": "2. Text becomes numbers, the text encoder and embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-73",
+      "quote": "Before it ever sees your prompt, a separate **text encoder** turns the prompt into a sequence of vectors.",
+      "section": "2. Text becomes numbers, the text encoder and embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-74",
+      "quote": "For Stable Diffusion 1.5, that encoder is CLIP's text tower; SD 3 combines CLIP-L, CLIP-G and T5-XXL, and FLUX combines CLIP-L with T5-XXL.",
+      "section": "2. Text becomes numbers, the text encoder and embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-75",
+      "quote": "Both are **Transformer encoders**, the same architecture family as the LLMs in the other chapters.",
+      "section": "2. Text becomes numbers, the text encoder and embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-76",
+      "quote": "The text encoder does two things, in order, tokenization and embedding.",
+      "section": "2. Text becomes numbers, the text encoder and embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-77",
+      "quote": "Both are covered in detail elsewhere on this site (see the **Tokenization** and **Embeddings** chapters); the small viz above is just a quick reminder of what comes out of the other end of that pipeline.",
+      "section": "2. Text becomes numbers, the text encoder and embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-78",
+      "quote": "The crucial property for our purposes is that each token ends up as a vector (768 numbers for CLIP, 4096 for T5-XXL), and **similar concepts end up close together** in that vector space: “astronaut” and “space suit” have nearby vectors, “horse” and “pony” have nearby vectors, “astronaut riding a horse” is far from “still life with fruit”.",
+      "section": "2. Text becomes numbers, the text encoder and embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-79",
+      "quote": "Now the diffusion U-Net has two inputs at every denoising step:",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-80",
+      "quote": "* the current noisy latent (as a grid of patches, e.g. $64 \\times 64$ for a $512 \\times 512$ image)",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-81",
+      "quote": "* the text embedding (a sequence of vectors, one per token)",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-82",
+      "quote": "The U-Net applies **cross-attention** at each layer.",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-83",
+      "quote": "The picture to keep in your head: **at every step, the model paints the image by asking each word in your prompt, “which part of the picture is yours?”** The word *“astronaut”* claims the upper-center region.",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-84",
+      "quote": "The word *“horse”* claims the lower region.",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-85",
+      "quote": "The word *“riding”* claims the bit in between.",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-86",
+      "quote": "Function words like *“a”*, *“of”* barely claim anything.",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-87",
+      "quote": "Below: click any *content* word in the prompt and watch a colored region light up over the part of the astronaut image that word would “claim” during generation.",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-88",
+      "quote": "The regions are simplified, a real diffusion model has hundreds of tiny patches, but the principle is the same: each word in your prompt controls its own piece of the picture.",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-89",
+      "quote": "This is the mechanism behind every text-to-image model.",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-90",
+      "quote": "Different words control different regions.",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-91",
+      "quote": "By the end of denoising, each pixel of the image has been “asked” which word it should look like, and the text embedding has answered.",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-92",
+      "quote": "**If you swap one word in the prompt, the embedding moves, the attention shifts, and the generated image changes in just that region.**",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-93",
+      "quote": "The full Stable Diffusion pipeline looks like this end-to-end:",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-94",
+      "quote": "So the answer to “do I need to label 100k images?” is: **no** for pretraining (the labels already exist on the web).",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-95",
+      "quote": "The yes cases are *fine-tuning*, if you want the model to draw a specific style or subject, you can fine-tune with **LoRA** (\\cite[Hu et al., 2021]{hu2021lora}) on as few as a few dozen images, or steer outputs with **ControlNet** (\\cite[Zhang et al., 2023]{zhang2023controlnet}) using edge maps, depth maps, or pose skeletons.",
+      "section": "3. Cross-attention, how the U-Net reads the text",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-96",
+      "quote": "The denoiser's shape is borrowed from medical imaging.",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-97",
+      "quote": "The **U-Net** was introduced by \\cite[Ronneberger et al. (2015)]{ronneberger2015unet} for biomedical segmentation, where a contracting path captures context and a symmetric expanding path restores fine detail, with skip connections passing high-resolution features across (\\cite[Ronneberger et al., 2015]{ronneberger2015unet}).",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-98",
+      "quote": "Diffusion models adopted it because denoising is also a dense, image-to-image prediction: every latent cell needs an output, and coarse structure and fine texture must be combined.",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-99",
+      "quote": "\\cite[Nichol & Dhariwal (2021)]{nichol2021improved} and \\cite[Dhariwal & Nichol (2021)]{dhariwal2021diffusion} then tuned this backbone with residual blocks, attention and time embeddings.",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-100",
+      "quote": "It is **not** a stack of dense layers.",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-101",
+      "quote": "The denoiser is a **U-Net** built from:",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-102",
+      "quote": "* **2D convolutions**, slide filters over the latent to detect local patterns",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-103",
+      "quote": "* **ResBlocks**, `Conv → Norm → SiLU → Conv` plus a skip connection",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-104",
+      "quote": "* **GroupNorm + SiLU**, normalization and the smooth $x \\cdot \\sigma(x)$ activation",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-105",
+      "quote": "* **Self-attention** at the lower resolutions, pixels talk to each other across the whole image",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-106",
+      "quote": "* **Cross-attention** at the lower resolutions, pixels attend to the text tokens (this is the conditioning)",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-107",
+      "quote": "* **Skip connections** from each encoder block to the matching decoder block",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-108",
+      "quote": "* **Sinusoidal time embedding** for the timestep $t$, injected into every block",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-109",
+      "quote": "The only fully-connected layers are tiny MLPs for the time and text embeddings.",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-110",
+      "quote": "Everything else is convolution or attention.",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-111",
+      "quote": "Stable Diffusion 1.5's U-Net has ~860 M parameters (the full pipeline, including text encoder and VAE, is about 1 B).",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-112",
+      "quote": "The forward pass per denoising step: encode $t$, run the noisy latent down through four encoder blocks, apply self- and cross-attention at the bottleneck, run back up through four decoder blocks with skip connections, output the predicted noise.",
+      "section": "What's the network?",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-113",
+      "quote": "Doing all this in raw pixel space at $512 \\times 512$ resolution is brutally expensive.",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-114",
+      "quote": "Each image is roughly 786,000 numbers, and the network must process hundreds of millions of them per step.",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-115",
+      "quote": "Compressing before generating was not new.",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-116",
+      "quote": "Autoencoders had long learned compact codes (\\cite[Kingma & Welling, 2014]{kingma2014vae}), and VQGAN showed that a discrete autoencoder plus a powerful prior could synthesise high-resolution images (\\cite[Esser et al., 2021]{esser2021taming}).",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-117",
+      "quote": "\\cite[Rombach et al. (2022)]{rombach2022ldm} made the decisive move for diffusion: train the autoencoder first, freeze it, and run the diffusion process entirely in its latent space (\\cite[Rombach et al., 2022]{rombach2022ldm}).",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-118",
+      "quote": "The result was not just cheaper — it let the same denoiser scale to larger images by changing the decoder, not the diffusion model.",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-119",
+      "quote": "The breakthrough of **Latent Diffusion Models** (\\cite[Rombach et al., 2022]{rombach2022ldm}), the technology behind Stable Diffusion, was to *first* compress the image into a much smaller latent representation using a pretrained autoencoder, *then* do all the diffusion work in that compressed space, *then* decode the result back to pixels.",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-120",
+      "quote": "The U-Net never sees a pixel; it only sees a $64 \\times 64$ latent map.",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-121",
+      "quote": "This makes training and inference roughly 64× cheaper.",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-122",
+      "quote": "The text prompt goes through CLIP, the latent goes through the U-Net, and at the end a frozen VAE decoder turns the clean latent back into an image.",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-123",
+      "quote": "The VAE is never trained alongside the diffusion model, it was learned earlier as an ordinary autoencoder and frozen in place.",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-124",
+      "quote": "Below, the famous DDIM denoising sequence for a real Stable Diffusion run shows the same idea in action.",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-125",
+      "quote": "Read it from top-left to bottom-right: the network starts from pure noise and gradually reveals a coherent image of a European-style castle in Japan, adding detail with each step.",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-126",
+      "quote": "The same recipe works anywhere you can define a “noising” process and a network that can reverse it:",
+      "section": "Beyond images",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-127",
+      "quote": "* **Video**: Sora, Veo, Stable Video Diffusion, same idea, with an extra time dimension and attention layers that keep frames consistent.",
+      "section": "Beyond images",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-128",
+      "quote": "* **Audio**: AudioLDM, DiffSinger, diffuse a spectrogram, then a vocoder turns it back into sound.",
+      "section": "Beyond images",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-129",
+      "quote": "* **Music**: Riffusion, MusicLDM.",
+      "section": "Beyond images",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-130",
+      "quote": "* **Proteins**: RFdiffusion, Chroma, diffuse over 3D atomic coordinates of new proteins.",
+      "section": "Beyond images",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-131",
+      "quote": "* **Robotics**: Diffuser, diffuse over action sequences.",
+      "section": "Beyond images",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-132",
+      "quote": "* **Time-series**: TimeGrad, diffuse over weather, financial, or sensor data.",
+      "section": "Beyond images",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-133",
+      "quote": "The general principle is almost embarrassingly simple: **if you can blur it, you can unblur it; and if you can unblur it, you can generate it from scratch.**",
+      "section": "Beyond images",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-134",
+      "quote": "By 2025, many new systems use **flow matching** (\\cite[Lipman et al., 2023]{lipman2023flow}) or its rectified-flow variant, in which the path between data and noise is trained to be straighter than the curved diffusion path.",
+      "section": "Where the field is now",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-135",
+      "quote": "FLUX and Stable Diffusion 3 use rectified flow; DDPM/DDIM-style samplers remain widespread in older and distilled models.",
+      "section": "Where the field is now",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-136",
+      "quote": "The dominant backbone is no longer the U-Net but the **Diffusion Transformer (DiT)** (\\cite[Peebles & Xie, 2023]{peebles2023dit}), a vanilla Vision Transformer scaled up.",
+      "section": "Where the field is now",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-137",
+      "quote": "Sora, FLUX, and Stable Diffusion 3 all use DiT-style backbones.",
+      "section": "Where the field is now",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-138",
+      "quote": "The pattern is familiar: U-Net worked, then Transformers worked better once they were big enough.",
+      "section": "Where the field is now",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-139",
+      "quote": "Practical models have also become fast.",
+      "section": "Where the field is now",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-140",
+      "quote": "Modern systems generate images in **1–8 network evaluations** through clever solvers (DPM-Solver, EDM) and adversarial distillation (SDXL-Turbo, LCM).",
+      "section": "Where the field is now",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-141",
+      "quote": "Diffusion is no longer slow.",
+      "section": "Where the field is now",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-142",
+      "quote": "In five years, the technique went from “diffusion as a curiosity” to “diffusion as the universal generative recipe” for images, video, audio, and molecules.",
+      "section": "Where the field is now",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-143",
+      "quote": "Text adds a wrinkle: tokens are discrete, so you cannot gradually add Gaussian noise to them.",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-144",
+      "quote": "The dominant fix is an **absorbing-state** process.",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-145",
+      "quote": "Each token is independently replaced by a special `[MASK]` symbol with probability $\\beta_t$ per step, and once masked it stays masked:",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-146",
+      "quote": "Training is then a weighted masked-token cross-entropy over randomly sampled masking rates — BERT's fill-in-the-blank loss, rearranged into a generative process (\\cite[Austin et al., 2021]{austin2021d3pm}).",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-147",
+      "quote": "Sampling starts from a fully masked sequence, predicts every masked position in parallel, and commits the confident ones; easy tokens lock in first and hard content words last.",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-148",
+      "quote": "This is a **diffusion language model** (dLLM), and it replaces left-to-right decoding with a handful of bidirectional denoising passes.",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-149",
+      "quote": "The promise is throughput: one forward pass can commit many tokens, and the step count is an explicit quality-versus-speed dial.",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-150",
+      "quote": "**LLaDA** (2025), an 8B masked-diffusion model trained from scratch, reported instruction following competitive with Llama 3 8B — the first evidence that the recipe holds at open-model scale (\\cite[Nie et al., 2025]{nie2025llada}); Inception Labs' Mercury and Google DeepMind's Gemini Diffusion followed.",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-151",
+      "quote": "The cost is that bidirectional attention is incompatible with the standard KV cache, so each step recomputes over the whole sequence, and quality parity with autoregressive models at the frontier is still unresolved.",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-152",
+      "quote": "The architectural comparison is in [Beyond Transformers](alternative_architectures.php).",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-153",
+      "quote": "These are the tools the diffusion community actually uses:",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-154",
+      "quote": "* **[Stable Diffusion Web UI (AUTOMATIC1111)](https://github.com/AUTOMATIC1111/stable-diffusion-webui)**, the de facto local frontend.",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-155",
+      "quote": "One install, full access to SD 1.5, SDXL, and the entire community of fine-tunes.",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-156",
+      "quote": "* **[ComfyUI](https://github.com/comfyanonymous/ComfyUI)**, node-based, scriptable, the choice of power users.",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-157",
+      "quote": "Best for pipelines that mix ControlNet, LoRA, img2img, inpainting and upscaling.",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-158",
+      "quote": "* **[Fooocus](https://github.com/lllyasviel/Fooocus)**, minimal UI inspired by Midjourney.",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-159",
+      "quote": "Best if you want results without fiddling.",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-160",
+      "quote": "* **[Hugging Face Spaces](https://huggingface.co/spaces)**, free browser-based demos of the latest open models.",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-161",
+      "quote": "No installation, no GPU needed.",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-162",
+      "quote": "* **[InvokeAI](https://github.com/invoke-ai/InvokeAI)**, a polished commercial-grade CLI and web UI.",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-163",
+      "quote": "For *controlling* what the model draws:",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-164",
+      "quote": "* **[ControlNet](https://github.com/lllyasviel/ControlNet)** (\\cite[Zhang et al., 2023]{zhang2023controlnet}), spatial control from edge maps, depth maps, or pose skeletons, without retraining the base model.",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-165",
+      "quote": "* **LoRA** (\\cite[Hu et al., 2021]{hu2021lora}), small adapters that fine-tune the U-Net's attention layers on a few hundred images of your own style, in minutes on a single GPU.",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-166",
+      "quote": "If you would rather read the foundational papers, the trio that started it all is Sohl-Dickstein's 2015 thermodynamic framing (\\cite[Sohl-Dickstein et al., 2015]{sohl2015deep}), Song & Ermon's score-based 2019 paper (\\cite[Song & Ermon, 2019]{song2019score}), and Ho's DDPM in 2020 (\\cite[Ho et al., 2020]{ho2020ddpm}).",
+      "section": "Try it yourself",
+      "kind": "statement"
+    }
   ]
 }

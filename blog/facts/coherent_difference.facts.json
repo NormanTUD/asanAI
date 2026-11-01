@@ -451,5 +451,4147 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "coherent_difference-stmt-1",
+      "quote": "Before we open the Embeddings chapter , there is one idea worth holding in your head.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-2",
+      "quote": "It is not even an equation.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-3",
+      "quote": "It is the structural intuition that quietly holds together a surprising amount of what we are about to do, and that you will meet again and again in slightly different costumes: in topology, in sheaves, in category theory, in Homotopy Type Theory, in the geometry of an embedding space, and in how a Transformer turns a list of token IDs into something that means.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-4",
+      "quote": "This is the lens of the chapter.",
+      "section": "The one sentence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-5",
+      "quote": "Everything else is variations on it.",
+      "section": "The one sentence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-6",
+      "quote": "The whole idea can be written as one arrow chain.",
+      "section": "The chain",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-7",
+      "quote": "Each arrow is the same story told at a successively more structured level:",
+      "section": "The chain",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-8",
+      "quote": "* **Distinction.** Before anything can be related, something has to be marked off from something else.",
+      "section": "The chain",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-9",
+      "quote": "\\citeauthor{spencerbrown1969form} (\\citeyear{spencerbrown1969form}) made this the literal first axiom of his calculus: *Draw a distinction*, i.e. cross a boundary, and one side becomes marked, the other unmarked \\cite{spencerbrown1969form}.",
+      "section": "The chain",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-10",
+      "quote": "Without a first cut, there is nothing to talk about.",
+      "section": "The chain",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-11",
+      "quote": "The point is older than Spencer-Brown, and it is the same point:",
+      "section": "The chain",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-12",
+      "quote": "Couples are things whole and things not whole, what is drawn together and what is drawn asunder, the harmonious and the discordant.",
+      "section": "The chain",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-13",
+      "quote": "The one is made up of all things, and all things issue from the one.",
+      "section": "The chain",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-14",
+      "quote": "| Theory | Where it lands on the chain |",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-15",
+      "quote": "| Sets | Distinction, Relation |",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-16",
+      "quote": "| Type theory | Relation, Transformation, with type-level structure |",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-17",
+      "quote": "| Category theory | Transformation, Coherence |",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-18",
+      "quote": "| Sheaves | Compatibility → Gluing → Globality |",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-19",
+      "quote": "| ∞-Sheaves, HoTT | Compatibility as higher Coherence |",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-20",
+      "quote": "| Fiber bundles, manifolds | Globality + Invariance |",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-21",
+      "quote": "| Embedding spaces | All of the above, applied to meaning |",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-22",
+      "quote": "| Transformer architecture | Gluing local token data into a global sequence meaning |",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-23",
+      "quote": "| Deep ReLU net (Origami) | Crease = Distinction; regions = Locality; continuity on the crease = Compatibility |",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-24",
+      "quote": "This chapter does *not* introduce any new technical machinery.",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-25",
+      "quote": "There is no live demo, no equation to memorize, no Python cell to run.",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-26",
+      "quote": "It is a piece of conceptual scaffolding.",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-27",
+      "quote": "Its only job is to plant a single intuition in your head so that when you reach the Embeddings chapter, the word “space” does not feel like a metaphor and the word “local” does not feel like a convenience.",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-28",
+      "quote": "If you already know topology, sheaves, category theory and HoTT well, you can skim this chapter in two minutes.",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-29",
+      "quote": "If you know none of them, the chapter still works: every section is read on two levels, a hand-wavy English level, and a one-line formal level.",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-30",
+      "quote": "The hand-wavy level is the one that will stay with you.",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-31",
+      "quote": "The formal level is there to show that there is a real mathematical idea behind the metaphor.",
+      "section": "Where the chain shows up in this textbook",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-32",
+      "quote": "The mark of distinction from \\citealternativetitle{spencerbrown1969form}'s \\citetitle{spencerbrown1969form} (\\citeyear{spencerbrown1969form}), which turned “draw a distinction” into the foundation of a calculus (\\cite[Laws of Form diagram]{laws_of_form_diagram}).",
+      "section": "The first move: distinction",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-33",
+      "quote": "A set is the simplest structure that can hold distinctions.",
+      "section": "From distinction to structure",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-34",
+      "quote": "$A = \\{a,b,c\\}$ knows only that $a, b, c$ are inside $A$.",
+      "section": "From distinction to structure",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-35",
+      "quote": "It does not know whether $a$ is “near” $b$, or “more like” $b$ than $c$, or whether there is a path from $a$ to $c$ via $b$.",
+      "section": "From distinction to structure",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-36",
+      "quote": "A set is a thin container.",
+      "section": "From distinction to structure",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-37",
+      "quote": "A graph is a set with a relation $R(a,b)$ added.",
+      "section": "From distinction to structure",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-38",
+      "quote": "We can now ask who is connected to whom.",
+      "section": "From distinction to structure",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-39",
+      "quote": "A graph is a discrete, primitive notion of space.",
+      "section": "From distinction to structure",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-40",
+      "quote": "A type goes further still.",
+      "section": "From distinction to structure",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-41",
+      "quote": "In \\citetitle{typespaces_wiki}, a type $A$ is not just a collection but a *universe of discourse*, a place where certain terms can be constructed and certain judgments can be made \\cite{typespaces_wiki}.",
+      "section": "From distinction to structure",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-42",
+      "quote": "Type theory replaces the picture “elements inside a set” with the picture “terms inhabiting a type”, and lets us type the types themselves: $A : \\mathcal{U}$, $B : A \\to \\mathcal{U}$.",
+      "section": "From distinction to structure",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-43",
+      "quote": "is one of the oldest and most useful formalizations of the idea that “relations can themselves be related”.",
+      "section": "From distinction to structure",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-44",
+      "quote": "The chapter you are now reading is, in part, a way of preparing for it.",
+      "section": "From distinction to structure",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-45",
+      "quote": "Suppose you own things — books, socks, grievances, whatever.",
+      "section": "Relations and equivalence relations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-46",
+      "quote": "Call the set of your things $A$.",
+      "section": "Relations and equivalence relations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-47",
+      "quote": "A **relation** on $A$ is just a subset $R \\subseteq A \\times A$: for each ordered pair $(a, b)$, a decision whether $a$ stands to $b$ in the way $R$ names.",
+      "section": "Relations and equivalence relations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-48",
+      "quote": "Write $a \\mathrel{R} b$ when it does.",
+      "section": "Relations and equivalence relations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-49",
+      "quote": "That is all a relation is: a bookkeeping device for *some* structure between things.",
+      "section": "Relations and equivalence relations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-50",
+      "quote": "\"Is older than\", \"lives in the same drawer as\", \"owes money to\", \"is the square of\" — all relations.",
+      "section": "Relations and equivalence relations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-51",
+      "quote": "On the chain of the previous section, **distinction** gives you the elements of $A$; **relation** is the very next link.",
+      "section": "Relations and equivalence relations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-52",
+      "quote": "Out of the wilderness of possible relations, a handful keep showing up.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-53",
+      "quote": "The first three are the bones of *sameness*:",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-54",
+      "quote": "- **Reflexive**: $a \\mathrel{R} a$ for every $a \\in A$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-55",
+      "quote": "Every thing relates to itself.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-56",
+      "quote": "- **Symmetric**: $a \\mathrel{R} b \\Rightarrow b \\mathrel{R} a$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-57",
+      "quote": "The relation does not care about direction.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-58",
+      "quote": "- **Transitive**: $a \\mathrel{R} b$ and $b \\mathrel{R} c \\Rightarrow a \\mathrel{R} c$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-59",
+      "quote": "A relation with all three is an **equivalence relation**, usually written $\\sim$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-60",
+      "quote": "It behaves *like* equality — not quite equality, but the same kind of thing.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-61",
+      "quote": "The classic example: fix $n$ and declare $a \\sim b$ iff $n \\mid (a - b)$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-62",
+      "quote": "Congruence mod $n$ is equality's slightly more relaxed cousin.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-63",
+      "quote": "The next four are the bones of *order*:",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-64",
+      "quote": "- **Antisymmetric**: $a \\mathrel{R} b$ and $b \\mathrel{R} a \\Rightarrow a = b$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-65",
+      "quote": "Direction matters, but in a single controlled way: the two directions can only meet at identity.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-66",
+      "quote": "The running example is $\\le$ — if $x \\le y$ and $y \\le x$, then $x$ and $y$ are the same number.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-67",
+      "quote": "- **Asymmetric**: $a \\mathrel{R} b \\Rightarrow \\neg(b \\mathrel{R} a)$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-68",
+      "quote": "The two directions are strictly disjoint; no element can be related to another in both ways, not even to itself.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-69",
+      "quote": "(Asymmetry is stronger than antisymmetry — it rules out $a \\mathrel{R} a$ as a special case.)",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-70",
+      "quote": "- **Irreflexive** (or *antireflexive*): $\\neg(a \\mathrel{R} a)$ for every $a \\in A$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-71",
+      "quote": "Nothing relates to itself.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-72",
+      "quote": "The prototype is the strict order $<$, since no number is strictly less than itself.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-73",
+      "quote": "- **Total** (or *connex*): for every $a, b \\in A$, at least one of $a \\mathrel{R} b$, $b \\mathrel{R} a$, or $a = b$ holds.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-74",
+      "quote": "Any two elements are comparable — one beats the other, or they tie.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-75",
+      "quote": "One more, because \"total\" almost always wants to mean something sharper:",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-76",
+      "quote": "- **Trichotomous**: for every $a, b$, *exactly* one of $a \\mathrel{R} b$, $b \\mathrel{R} a$, $a = b$ holds.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-77",
+      "quote": "Total says \"at least one\"; trichotomy says \"exactly one\".",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-78",
+      "quote": "On $\\mathbb{Z}$ with $<$, every pair splits cleanly into one of the three cases.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-79",
+      "quote": "Reflexive + antisymmetric + transitive is a **partial order** ($\\le$, divisibility, set inclusion).",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-80",
+      "quote": "Irreflexive + transitive is a **strict partial order** ($<$, proper set inclusion).",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-81",
+      "quote": "Add totality to either and you get a **total order** — the familiar linear arrangement of $\\mathbb{Z}$ or $\\mathbb{R}$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-82",
+      "quote": "Equivalence, partial order, total order: three pieces of furniture almost every room of mathematics arranges itself around.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-83",
+      "quote": "A few more, each with its own habitat:",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-84",
+      "quote": "- **Coreflexive** (or *quasireflexive*): $a \\mathrel{R} b \\Rightarrow a = b$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-85",
+      "quote": "Only identity pairs relate.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-86",
+      "quote": "Reflexivity says every element self-loops; coreflexivity says *only* self-loops exist — the strictest nontrivial relation short of the empty one.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-87",
+      "quote": "Add reflexivity and $R$ collapses to literal equality: coreflexivity forces $a \\mathrel{R} b \\Rightarrow a=b$, so only diagonal pairs can relate, and reflexivity fills in the whole diagonal.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-88",
+      "quote": "- **Euclidean**: $a \\mathrel{R} b$ and $a \\mathrel{R} c \\Rightarrow b \\mathrel{R} c$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-89",
+      "quote": "Two arrows leaving the same source must point at each other.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-90",
+      "quote": "Reflexive + euclidean is itself an equivalence relation — it forces symmetry (from $a \\mathrel{R} b$, by reflexivity $a \\mathrel{R} a$, hence $b \\mathrel{R} a$ by euclidean at $a$), and once you have symmetry, transitivity follows: $a \\mathrel{R} b$ and $b \\mathrel{R} c$ give $b \\mathrel{R} a$ (by symmetry) and then $a \\mathrel{R} c$ by euclidean at $b$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-91",
+      "quote": "Its main life is in modal logic: the relation is the accessibility frame, and euclidean is the relation-theoretic shadow of the modal axiom $\\Diamond p \\to \\Box \\Diamond p$ (axiom $5$).",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-92",
+      "quote": "- **Serial** (or *left-total*): $\\forall a \\in A,\\ \\exists b \\in A : a \\mathrel{R} b$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-93",
+      "quote": "Every element has at least one outgoing arrow — no isolated vertices, no dead ends.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-94",
+      "quote": "Total says any two elements are comparable; serial only requires that nothing is stranded on the left.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-95",
+      "quote": "- **Functional** (or *right-unique*): $a \\mathrel{R} b$ and $a \\mathrel{R} c \\Rightarrow b = c$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-96",
+      "quote": "Each $a$ has at most one image.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-97",
+      "quote": "This *is* a function, once you forget the syntax $f : A \\to B$ and keep only the graph $\\{(a, f(a))\\} \\subseteq A \\times B$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-98",
+      "quote": "Serial + functional is a total function; add *injective* — $\\forall b, c : b \\mathrel{R} a$ and $c \\mathrel{R} a \\Rightarrow b = c$, i.e. *left-unique* — and you have a bijection onto the image.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-99",
+      "quote": "- **Dense**: $a \\mathrel{R} b$ and $a \\neq b \\Rightarrow \\exists c : a \\mathrel{R} c$ and $c \\mathrel{R} b$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-100",
+      "quote": "Between any two distinct related elements there is a third.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-101",
+      "quote": "The rationals $\\mathbb{Q}$ and reals $\\mathbb{R}$ under $<$ are dense; the integers $\\mathbb{Z}$ are not.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-102",
+      "quote": "It is the relation-theoretic seed of \"no gaps\" — the same gap that completing $\\mathbb{Q}$ to $\\mathbb{R}$ is built to fill.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-103",
+      "quote": "And a handful more — less universal, but unavoidable in their own territories:",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-104",
+      "quote": "- **Intransitive**: $a \\mathrel{R} b$ and $b \\mathrel{R} c \\Rightarrow \\neg(a \\mathrel{R} c)$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-105",
+      "quote": "Chains of length two are guaranteed to break.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-106",
+      "quote": "The textbook example is \"is a parent of\": if A is B's parent and B is C's parent, A is *not* C's parent.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-107",
+      "quote": "Intransitivity is also what makes rock–paper–scissors fail to be transitive, what keeps ancestry from collapsing, and what underlies the cycles (Condorcet paradox) that haunt collective choice.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-108",
+      "quote": "- **Left-unique** (or *injective* as a relation): $a \\mathrel{R} b$ and $c \\mathrel{R} b \\Rightarrow a = c$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-109",
+      "quote": "Each $b$ has at most one preimage.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-110",
+      "quote": "The mirror of *functional/right-unique* — functional says each input has one output, left-unique says each output comes from one input.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-111",
+      "quote": "Both together with serial gives a bijection onto the image.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-112",
+      "quote": "- **Acyclic**: there is no sequence $a_{1}, a_{2}, \\dots, a_{n}$ with $a_{1} \\mathrel{R} a_{2} \\mathrel{R} \\cdots \\mathrel{R} a_{n} \\mathrel{R} a_{1}$ and all $a_{i}$ distinct.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-113",
+      "quote": "No closed loops — only paths, trees, and DAGs.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-114",
+      "quote": "An irreflexive relation is acyclic iff it admits a topological ordering; strict partial orders are acyclic for free.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-115",
+      "quote": "Acyclic + irreflexive is the working definition of \"hierarchy without cycles\", and the combinatorial heart of half of computer science.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-116",
+      "quote": "- **Semiorder** (or *interval order*): a strict partial order equipped with a perceptual threshold $\\varepsilon > 0$ such that $a \\prec b$ iff the gap between them exceeds $\\varepsilon$ and anything smaller is registered as indifference.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-117",
+      "quote": "The motivating case is psychophysical comparison — you can feel that A is heavier than B and B heavier than C, but A versus C falls under the just-noticeable-difference and you shrug.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-118",
+      "quote": "Semiorders live between total orders (every difference sharp) and bare comparability (no structure at all); they are the order theory of perception.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-119",
+      "quote": "- **Quasi-transitive**: a relation whose *strict part* $\\{(a, b) : a \\mathrel{R} b \\text{ and } \\neg(b \\mathrel{R} a)\\}$ is transitive.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-120",
+      "quote": "Quasi-transitivity is the weakest condition that still rules out cycles among *strict* preferences, which is exactly why it shows up in social choice — Arrow's impossibility theorem operates on quasi-transitive preferences, where strict preferences are coherent but indifference is allowed to wander.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-121",
+      "quote": "Some are bundles of axioms already named:",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-122",
+      "quote": "- **Preorder** (or *quasi-order*): reflexive + transitive.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-123",
+      "quote": "Antisymmetry is dropped, so $a \\mathrel{R} b$ and $b \\mathrel{R} a$ can coexist for $a \\neq b$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-124",
+      "quote": "The prototype is \"is at least as good as\" on preferences: $A \\ge B$ and $B \\ge A$ does not force $A = B$, only that they are tied.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-125",
+      "quote": "Preorders are to partial orders what equivalences-with-overlap are to partitions — almost the same, slightly more permissive.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-126",
+      "quote": "- **Partial equivalence relation** (PER): symmetric + transitive, *not* necessarily reflexive.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-127",
+      "quote": "The missing reflexivity is the point: equivalence classes form only inside some subset of $A$, the rest is untouched.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-128",
+      "quote": "A **partial function**, read as a relation, is a **functional** (right-unique) one — at most one $b$ for each $a$; a PER is a different, stronger object (symmetric + transitive) that records a partial *equivalence*, not a general partial map.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-129",
+      "quote": "- **Tolerance relation** (or *compatibility relation*): reflexive + symmetric, *without* transitivity.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-130",
+      "quote": "$A$ similar to $B$, $B$ similar to $C$, but $A$ and $C$ need not be.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-131",
+      "quote": "Tolerance is the formal model of measurement noise and rough similarity — chain two tolerances and the error compounds, which is why the property deliberately breaks the triangle inequality.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-132",
+      "quote": "- **Congruence relation**: an equivalence relation that respects one or more operations.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-133",
+      "quote": "If $a \\sim a'$ and $b \\sim b'$, then $a \\star b \\sim a' \\star b'$ for every operation $\\star$ in the signature.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-134",
+      "quote": "Congruences are what let you pass from one algebraic structure to another (say from $\\mathbb{Z}$ to $\\mathbb{Z}/n\\mathbb{Z}$) without breaking the operations.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-135",
+      "quote": "Some are extremal — the smallest, the largest, the diagonal:",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-136",
+      "quote": "- **Universal relation**: $A \\times A$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-137",
+      "quote": "Every element relates to every element (including itself).",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-138",
+      "quote": "The maximal relation under $\\subseteq$, the identity of the algebra of relations under meet.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-139",
+      "quote": "- **Empty relation**: $\\varnothing$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-140",
+      "quote": "Nothing relates to anything.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-141",
+      "quote": "The minimal relation under $\\subseteq$, the identity under join.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-142",
+      "quote": "- **Identity relation** (or *diagonal*): $\\{(a, a) : a \\in A\\}$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-143",
+      "quote": "Each element relates only to itself.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-144",
+      "quote": "Reflexive, symmetric, transitive, *and* coreflexive — the smallest equivalence relation, the prototype of equality.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-145",
+      "quote": "Universal, empty, and identity are the $1$, $0$, and diagonal of the relation lattice.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-146",
+      "quote": "Some are structural — for termination, reachability, and rewriting:",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-147",
+      "quote": "- **Well-founded**: no infinite descending chain $a_{1} \\mathrel{R} a_{2} \\mathrel{R} a_{3} \\mathrel{R} \\cdots$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-148",
+      "quote": "Equivalently, every nonempty subset of $A$ has an $R$-minimal element.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-149",
+      "quote": "Well-foundedness is what makes induction valid: prove it for the minimal elements, push up.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-150",
+      "quote": "In computer science it is the formal justification of *termination* — every recursive definition on a well-founded order is guaranteed to halt.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-151",
+      "quote": "- **Right-total** (or *surjective*): $\\forall b \\in A,\\ \\exists a \\in A : a \\mathrel{R} b$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-152",
+      "quote": "Every element is hit by at least one arrow.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-153",
+      "quote": "Serial + functional + right-total is a surjective endofunction $A \\to A$; on a *finite* set this already forces a bijection, but on an infinite set (e.g. $n \\mapsto \\lfloor n/2 \\rfloor$ on $\\mathbb{N}$) surjectivity need not be injective — add *left-unique* to obtain a bijection.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-154",
+      "quote": "- **Confluent** (the **Church–Rosser property**): if $a \\mathrel{R}^* b$ and $a \\mathrel{R}^* c$, then some $d$ satisfies $b \\mathrel{R}^* d$ and $c \\mathrel{R}^* d$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-155",
+      "quote": "Two different ways of rewriting $a$ can be brought back together by further rewriting.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-156",
+      "quote": "The Church–Rosser theorem for the pure lambda calculus is the original instance: if $t \\to^* u$ and $t \\to^* v$, then some $w$ is reachable from both.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-157",
+      "quote": "Confluence is what makes the result of computation independent of the order in which rules were applied.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-158",
+      "quote": "- **Strongly confluent** (the **diamond property**): the same diagram but in one step.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-159",
+      "quote": "$a \\mathrel{R} b$ and $a \\mathrel{R} c$ implies $b \\mathrel{R} d$ and $c \\mathrel{R} d$ for some $d$, without the reflexive-transitive closure.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-160",
+      "quote": "Strictly stronger than confluence; when it holds, the uniqueness-of-normal-form proof is shorter.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-161",
+      "quote": "(Newman's lemma, the substitute: terminating + locally confluent $\\Rightarrow$ confluent.)",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-162",
+      "quote": "- **Circular**: $a \\mathrel{R} b$ and $b \\mathrel{R} c \\Rightarrow c \\mathrel{R} a$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-163",
+      "quote": "The relation closes back to its starting point on every two-step walk.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-164",
+      "quote": "\"Reachable from\" on a strongly connected directed graph is circular; so are most \"is in the same orbit as\" relations in group actions.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-165",
+      "quote": "And one synonym, for the record:",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-166",
+      "quote": "- **Antitransitive**: $a \\mathrel{R} b$ and $b \\mathrel{R} c \\Rightarrow \\neg(a \\mathrel{R} c)$.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-167",
+      "quote": "The strict negation of transitivity.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-168",
+      "quote": "Same as *intransitive* above — the names coexist, the property is one.",
+      "section": "Properties worth naming",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-169",
+      "quote": "Here is the theorem that makes equivalence relations worth caring about:",
+      "section": "The payoff: partitions",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-170",
+      "quote": "The **equivalence class** of $a$ is $[a] = \\{\\, x \\in A : a \\sim x \\,\\}$ — everything equivalent to $a$.",
+      "section": "The payoff: partitions",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-171",
+      "quote": "Two classes are either identical or disjoint; together they cover $A$.",
+      "section": "The payoff: partitions",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-172",
+      "quote": "So an equivalence relation is *literally* a way of sorting your stuff into non-overlapping boxes.",
+      "section": "The payoff: partitions",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-173",
+      "quote": "Deciding what counts as *the same* — for your purposes — is deciding what boxes exist.",
+      "section": "The payoff: partitions",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-174",
+      "quote": "Sock drawers and bookshelves are different equivalence relations on the same pile of stuff.",
+      "section": "The payoff: partitions",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-175",
+      "quote": "The relation *is* the sorting.",
+      "section": "The payoff: partitions",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-176",
+      "quote": "Once you have $\\sim$ on $A$, form the **quotient set**",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-177",
+      "quote": "— the set whose elements are the boxes themselves.",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-178",
+      "quote": "This is where difference gets *coarsened*: things distinct in $A$ become identical in $A/{\\sim}$ when they share a box.",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-179",
+      "quote": "**From a function.** Any $f : A \\to B$ induces an equivalence relation: $a \\sim a' \\iff f(a) = f(a')$.",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-180",
+      "quote": "Reflexive, symmetric, transitive for free.",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-181",
+      "quote": "The quotient $A/{\\sim}$ is a copy of the image of $f$.",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-182",
+      "quote": "This is \"collapse to what matters\" in practice.",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-183",
+      "quote": "**Closing up a relation.** Start with any $R$.",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-184",
+      "quote": "Add self-loops (reflexivity), reversed pairs (symmetry), composed pairs (transitivity), and iterate.",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-185",
+      "quote": "The result is the **equivalence closure** of $R$: the coarsest sorting compatible with the connections you insisted on.",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-186",
+      "quote": "The second move is where the previous section's chain shows up again.",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-187",
+      "quote": "Local data (some pairs you called \"related\") plus compatibility (symmetry on pairs) plus coherence (transitivity on triples) glues into a global partition.",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-188",
+      "quote": "An equivalence relation is a baby sheaf — the flattest possible one, where \"agreement on overlaps\" is literal equality rather than a homotopy.",
+      "section": "The quotient, and how relations adapt",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-189",
+      "quote": "The rest of mathematics is largely a catalogue of equivalence relations someone found useful:",
+      "section": "Everywhere, once you look",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-190",
+      "quote": "- Fractions: $(p, q) \\sim (p', q') \\iff pq' = p'q$.",
+      "section": "Everywhere, once you look",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-191",
+      "quote": "- Vector space quotients $V/W$: $v \\sim v' \\iff v - v' \\in W$.",
+      "section": "Everywhere, once you look",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-192",
+      "quote": "- Homotopy classes: paths modulo continuous deformation.",
+      "section": "Everywhere, once you look",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-193",
+      "quote": "- Angles: $\\mathbb{R}$ modulo $2\\pi$.",
+      "section": "Everywhere, once you look",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-194",
+      "quote": "Each is the same move: *declare what counts as the same, then work with the boxes*.",
+      "section": "Everywhere, once you look",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-195",
+      "quote": "The relation is the question (\"what do I care about?\"); the partition is the answer (\"here are the boxes\").",
+      "section": "Everywhere, once you look",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-196",
+      "quote": "Which equivalence relation to use is, secretly, almost every mathematical question you will ever be asked.",
+      "section": "Everywhere, once you look",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-197",
+      "quote": "So far everything we have said could be done with bare set theory.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-198",
+      "quote": "Topology adds the move that turns a set into a *place*, the introduction of locality without distance.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-199",
+      "quote": "A \\citetitle{topology_wiki} $\\mathcal{O}$ on a set $X$ is a collection of subsets (the “open sets”) closed under finite intersection and arbitrary union \\cite{topology_wiki}.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-200",
+      "quote": "That is the whole definition.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-201",
+      "quote": "From it follows everything else: neighborhoods $U \\ni x$, continuous maps $f^{-1}(\\mathcal{O}_Y) \\subseteq \\mathcal{O}_X$, limits, connectedness, compactness, the whole zoo.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-202",
+      "quote": "The formal definition is a single line.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-203",
+      "quote": "The intuition takes longer.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-204",
+      "quote": "For each point on the map, you can ask: which districts contain that point?",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-205",
+      "quote": "The answer is not a single number (that would be a distance), it is a *list of subsets*.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-206",
+      "quote": "“Times Square is in Midtown” and “Times Square is in Manhattan” and “Times Square is in New York City” are all true statements, and they get smaller and smaller as you zoom in.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-207",
+      "quote": "Open sets are exactly this: for each point $x$, the collection of all subsets that “contain $x$ with a little bit of room around it”.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-208",
+      "quote": "You don't measure the room.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-209",
+      "quote": "You just ask whether the room is there at all.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-210",
+      "quote": "A set is “open” if every point inside it has some room around it still inside the set.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-211",
+      "quote": "(Formally: $U$ is open iff for every $x \\in U$ there exists an open $V$ with $x \\in V \\subseteq U$.)",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-212",
+      "quote": "A continuous map is then the obvious thing: a map that sends nearby points to nearby points, where “nearby” is judged by which neighborhoods contain them, not by any numeric distance.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-213",
+      "quote": "A \\citetitle{category_diagram_image}: objects as dots, morphisms as arrows, relations as commuting squares \\cite{category_diagram_image}.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-214",
+      "quote": "A category is the algebra of “things you can do to things”.",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-215",
+      "quote": "Morphisms are the first-order transformations, and a commuting square says that the two ways round it agree (for example $h = g \\circ f$).",
+      "section": "Locality: the decisive turn",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-216",
+      "quote": "Once you have a topology, you can attach data to every open set.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-217",
+      "quote": "A \\citetitle{sheaf_mathematics} $\\mathcal{F}$ assigns to each open $U \\subseteq X$ a set $\\mathcal{F}(U)$, the *sections* over $U$, together with restriction maps $\\mathcal{F}(U) \\to \\mathcal{F}(V)$ for $V \\subseteq U$ \\cite{sheaf_mathematics}.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-218",
+      "quote": "The crucial axiom is the **gluing axiom**: if $U = \\bigcup_{i} U_{i}$ is an open cover and you have local sections $s_{i} \\in \\mathcal{F}(U_{i})$ which *agree on every pairwise overlap* $U_{i} \\cap U_{j}$, then there is a unique global section $s \\in \\mathcal{F}(U)$ whose restriction to each $U_{i}$ is $s_{i}$.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-219",
+      "quote": "\\citealternativetitle{sheaf_sections_image}: two local sections $s_{1} \\in \\mathcal{F}(U_{1})$ and $s_{2} \\in \\mathcal{F}(U_{2})$ lifted from open sets $U_{1}$ and $U_{2}$ of the two-point space \\cite{sheaf_sections_image}.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-220",
+      "quote": "\\citealternativetitle{sheaf_gluing_image}: where the local sections agree on $U_{1} \\cap U_{2}$, the sheaf guarantees a unique global section $s \\in \\mathcal{F}(U_{1} \\cup U_{2})$ that restricts back to each \\cite{sheaf_gluing_image}.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-221",
+      "quote": "Local agreement $\\Rightarrow$ global existence, and uniqueness.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-222",
+      "quote": "You're on a hilltop, photographing a valley.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-223",
+      "quote": "Five shots, panning left to right.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-224",
+      "quote": "Adjacent shots overlap: the same oak tree in shots 2 and 3, the same river bend in shots 3 and 4.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-225",
+      "quote": "If the overlaps match, you stitch them into one panorama.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-226",
+      "quote": "If the light shifted between shots and the oak is bright in one photo and dark in the other — you can't (easily at least).",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-227",
+      "quote": "If the mismatch is a *transformation* — a lighting shift, a time offset, or a rotation — rather than a genuine disagreement, a **stack** (or $\\infty$-sheaf) handles it: the overlaps need only agree *up to isomorphism*, and these isomorphisms must be coherent on triple overlaps.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-228",
+      "quote": "* **The space.** The valley is $X$.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-229",
+      "quote": "Each photo covers a *region* — an *open set* $U$.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-230",
+      "quote": "Open because: if a point is in the frame, a tiny neighborhood around it is too.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-231",
+      "quote": "You're photographing an area, not a pixel.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-232",
+      "quote": "* **A section.** Photo 3 is a *section* over its region $U_3$: the data (what the scene looks like) on that region.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-233",
+      "quote": "Formally: $s_3 \\in \\mathcal{F}(U_3)$.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-234",
+      "quote": "* **Restriction.** Crop photo 3 to just the river bend.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-235",
+      "quote": "Data on the big region, read on the small one: $s_3|_{U_3 \\cap U_4}$.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-236",
+      "quote": "The *restriction map* $\\mathcal{F}(U_3) \\to \\mathcal{F}(U_3 \\cap U_4)$.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-237",
+      "quote": "* **Compatibility.** Photos 3 and 4 both show the river bend.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-238",
+      "quote": "They are *compatible* if the bend looks the same in both: $s_3|_{U_3 \\cap U_4} = s_4|_{U_3 \\cap U_4}$.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-239",
+      "quote": "* **The sheaf condition.** If all overlaps match, the photos stitch into *exactly one* panorama.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-240",
+      "quote": "- *Gluing* (existence): compatible local data produces a global section.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-241",
+      "quote": "- *Separatedness* (uniqueness): the global section is determined by its local restrictions.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-242",
+      "quote": "Two panoramas that agree on every photo are the same panorama.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-243",
+      "quote": "A presheaf that isn't a sheaf: photo 3 shows the oak with leaves, photo 4 shows it bare.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-244",
+      "quote": "Each photo is locally fine.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-245",
+      "quote": "No global panorama exists.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-246",
+      "quote": "* **A germ.** Forget the photos.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-247",
+      "quote": "Stand at the river bend and ask: *what's right here?* Any photo covering this point answers.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-248",
+      "quote": "Two photos give the same *germ* at this point if they show the same thing on some small neighborhood around it.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-249",
+      "quote": "The germ $[s]_x$ is \"what the scene looks like at $x$,\" independent of which photo you read it from.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-250",
+      "quote": "* **A stalk.** Collect *all* germs at the river bend.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-251",
+      "quote": "Every local fact the photos carry about that one spot: water color, bank angle, reflection.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-252",
+      "quote": "That's the stalk $\\mathcal{F}_x$.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-253",
+      "quote": "* **A cut.** A presheaf is photos before you check the overlaps — a tentative assignment, a \"cut.\" It might glue; it might not.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-254",
+      "quote": "A sheaf is a cut that always glues.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-255",
+      "quote": "Three levels: **sections on regions, germs at points, stalks collecting all germs at one point.**",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-256",
+      "quote": "The same picture played out, over decades, in geology.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-257",
+      "quote": "In the early twentieth century, palaeontologists found fossils of the same species on continents now separated by oceans.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-258",
+      "quote": "The reptile *Cynognathus* and the freshwater reptile *Mesosaurus* in both southern Africa and southern South America; the *Glossopteris* flora across Africa, South America, India, Antarctica, and Australia; the reptile *Lystrosaurus* in Africa, India, and Antarctica.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-259",
+      "quote": "Each continent was an open set $U_i$ carrying local data — the fossil record found there.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-260",
+      "quote": "The overlaps were the distributions: the same species appearing on two continents meant the local sections had to agree on the pairwise intersection.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-261",
+      "quote": "The **Fixismus** — the prevailing geological orthodoxy — held that the continents had always been in their current positions.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-262",
+      "quote": "The sheaf problem was clear: the local data (fossils of the same terrestrial species on land masses separated by thousands of kilometres of ocean) did not glue.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-263",
+      "quote": "The overlap said \"these two continents were once connected\"; the geography said \"they are not.\" The Fixists proposed a **presheaf solution**: land bridges that once linked the continents and later sank beneath the sea.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-264",
+      "quote": "This was an attempt to define transition maps that would make the local sections compatible — to *force* the presheaf to glue by postulating hidden infrastructure.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-265",
+      "quote": "The land bridges left no geological trace on the ocean floor, and the Permanenztheorie — the doctrine that continents never move — sat uneasily beside the very data it was supposed to explain.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-266",
+      "quote": "The presheaf was not a sheaf: the local sections could not be extended to a global section without inventing auxiliary data (the bridges) that themselves refused to cohere with the rest of the picture.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-267",
+      "quote": "The resolution came from **Mobilismus**.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-268",
+      "quote": "Alfred Wegener proposed in 1912 that the continents had once formed a single landmass (which he later called *Urkontinent*; the name *Pangaea* entered use in the 1920 edition of his book) and had since drifted apart.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-269",
+      "quote": "The fossil distributions were not anomalies to be explained away; they were *compatible local sections* on a single, larger open set that had since been split.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-270",
+      "quote": "The sheaf condition was not violated; the *site* had been misread.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-271",
+      "quote": "The open sets were not static continents in fixed positions; they were regions of a moving surface, and the overlaps had to be computed in the surface's own history, not in its current geometry.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-272",
+      "quote": "Echo-sounding of the Mid-Atlantic Ridge in the 1920s mapped a continuous ridge running north–south down the middle of the ocean — a striking match to what continental drift predicted, though the notion of a “plate boundary” would not be formulated until the 1960s.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-273",
+      "quote": "By the 1960s, plate tectonics had unified the evidence into a global section: a single coherent picture in which the local data from every continent's fossil record, rock formations, magnetic striping, and seismic activity glues uniquely.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-274",
+      "quote": "The sheaf condition held — once the right site was chosen.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-275",
+      "quote": "The lesson, abstracted: **a presheaf that does not glue is not necessarily a failure of the data — it may be a failure of the site.** The local observations were fine.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-276",
+      "quote": "The overlapping distributions were fine.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-277",
+      "quote": "What was wrong was the background structure against which \"overlap\" and \"compatibility\" were being measured.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-278",
+      "quote": "Change the site — from a fixed geography to a moving one — and the same local sections that refused to glue now glue perfectly, producing a unique global section: the history of the Earth's surface.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-279",
+      "quote": "This is the sheaf-theoretic structure of a paradigm shift.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-280",
+      "quote": "The old paradigm declares the presheaf unglueable and invents auxiliary hypotheses (land bridges) to force a global section.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-281",
+      "quote": "The new paradigm changes the site, and the global section falls out for free.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-282",
+      "quote": "The condition we have just written down is a formalization of an observation that philosophers have made over and over.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-283",
+      "quote": "One of the earliest is \\citeauthor{heraclitus500fragments} (\\citeyear{heraclitus500fragments}), in fragment B89:",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-284",
+      "quote": "The waking have one and the same world, but the sleeping turn aside each into a world of his own.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-285",
+      "quote": "To make “overlap” less abstract, consider a train passing through a station.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-286",
+      "quote": "While it is approaching and passing, you experience several streams of data at once, and they all overlap in time:",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-287",
+      "quote": "* you *see* the locomotive entering from the left,",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-288",
+      "quote": "* you *hear* the rails starting to sing,",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-289",
+      "quote": "* you *feel* a low tremor in your chest as the carriages come alongside,",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-290",
+      "quote": "* the *spatial* layout shifts: the platform narrows, the perspective compresses.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-291",
+      "quote": "None of these streams is identical to the others.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-292",
+      "quote": "They are different modalities of one phenomenon.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-293",
+      "quote": "On their pairwise overlaps (the moment when you can both see and hear the train, the moment when you can both feel and spatially locate it) the data has to *agree* in some sense: if your visual stream says “the train is here” but your auditory stream says “the train is much further away”, something has gone wrong.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-294",
+      "quote": "When all the streams agree on the overlaps, the sheaf condition says they glue into a single coherent experience: a train passing you on the platform.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-295",
+      "quote": "A sheaf is just this, made formal.",
+      "section": "The sheaf picture: local islands, glued into a continent",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-296",
+      "quote": "In a classical sheaf, two sections are equal on the overlap: $s_{i}|_{U_{i} \\cap U_{j}} = s_{j}|_{U_{i} \\cap U_{j}}$.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-297",
+      "quote": "The equality sign is the flat equality of set theory: either the two things are the same element, or they are not.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-298",
+      "quote": "In an $\\infty$-sheaf, and in \\citetitle{hottbook} (\\citeyear{hottbook}) more generally, equality is replaced by *equivalence*:",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-299",
+      "quote": "Now there is a homotopy $\\alpha_{ij}$ between the two sections.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-300",
+      "quote": "But on a triple overlap $U_{i} \\cap U_{j} \\cap U_{k}$, the homotopies must themselves agree:",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-301",
+      "quote": "and the coherence between these higher homotopies is again a higher homotopy, ad infinitum \\cite{higher_category_wiki}.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-302",
+      "quote": "is the categorical expression of “relations can themselves be related” taken to its logical conclusion \\cite{higher_category_wiki}.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-303",
+      "quote": "Homotopy Type Theory makes this the very definition of what a type is: a type is a space, an element is a point, an identification $p : a =_{A} b$ is a path from $a$ to $b$, and an identification of identifications is a homotopy between paths \\cite{hottbook}.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-304",
+      "quote": "Sets, in this picture, are the special case where all higher homotopies are trivial, i.e. a set is a space whose only interesting structure is its points.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-305",
+      "quote": "A physical example of an $\\infty$-sheaf in disguise: lightning and thunder.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-306",
+      "quote": "Lightning and thunder are caused by the same event.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-307",
+      "quote": "They should be “the same thing” on the overlap of times when both are visible and audible.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-308",
+      "quote": "But light reaches us almost instantly, while sound lags behind by a measurable delay that depends on distance.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-309",
+      "quote": "So on the overlap (the time window when both are happening), the two signals are not *equal* in the set-theoretic sense.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-310",
+      "quote": "They are related by a *homotopy*: the data of how far away the strike was, encoded as a time-translation.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-311",
+      "quote": "An $\\infty$-sheaf handles this perfectly.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-312",
+      "quote": "The “overlap” is no longer a place where two sections have to be the same element.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-313",
+      "quote": "It is a place where two sections have to be connected by a coherent transformation, and the transformation can itself carry parameters (here: distance, equivalently delay).",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-314",
+      "quote": "The coherence axiom on triple overlaps becomes the requirement that all these delays compose consistently, which they do, because the underlying physics is consistent.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-315",
+      "quote": "This is why $\\infty$-sheaves matter: the world is full of phenomena that are not identical but are coherently related, and $\\infty$-sheaves are the formal language that lets us say so without forcing everything into the Procrustean bed of set-theoretic equality.",
+      "section": "Equality becomes coherence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-316",
+      "quote": "We have been speaking of “objects” and “morphisms” and “sections” without yet pinning down what a category formally is.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-317",
+      "quote": "Let's do that now, in two voices, because the answer sounds different depending on what kind of reader you are.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-318",
+      "quote": "If you are an interested programmer, a category is essentially three things:",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-319",
+      "quote": "A bunch of *types* (the objects).",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-320",
+      "quote": "A bunch of *pure functions* between them (the morphisms: $f : A \\to B$).",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-321",
+      "quote": "A way to *compose* functions, $g \\circ f : A \\to C$, with the usual associativity and identity laws.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-322",
+      "quote": "Everything else in category theory (functors, natural transformations, adjunctions) is a way of saying “here is a structure-preserving map between two such worlds” and “here is a structure-preserving map between two such maps”.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-323",
+      "quote": "The deep move is this: a category is a *type-safe world*, and category theory is the mathematics of talking about such worlds *without opening them up*.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-324",
+      "quote": "You never look inside the objects.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-325",
+      "quote": "You only ask what morphisms go between them, and how those morphisms compose.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-326",
+      "quote": "If you have ever enjoyed Haskell's type system, you have already been using category theory: the Haskell category has types as objects and pure functions as morphisms, and the `Functor`, `Applicative`, and `Monad` typeclasses are exactly the categorical concepts with the same names.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-327",
+      "quote": "If your background is in type theory, a category is the natural setting for “the smallest structure in which morphisms compose”:",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-328",
+      "quote": "* Objects are types, but you are forbidden to ask what is *inside* an object.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-329",
+      "quote": "* Morphisms $f : A \\to B$ are the primitive notion of “a way of turning an $A$ into a $B$”.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-330",
+      "quote": "They are *not* functions in the set-theoretic sense.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-331",
+      "quote": "* Composition $g \\circ f : A \\to C$ exists whenever the codomain of $f$ matches the domain of $g$, and it is associative with an identity $1_{A} : A \\to A$.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-332",
+      "quote": "From this thin starting point you can derive most of modern structural mathematics: functors (maps between categories that preserve the structure), natural transformations (maps between functors that commute with every morphism in the source category), and adjunctions (the universal “best approximation” of one functor by another).",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-333",
+      "quote": "\\citeauthor{awodey2010category}'s textbook \\citetitle{awodey2010category} is the standard gentle introduction; \\citeauthor{maclane1998categories}'s \\citetitle{maclane1998categories} is the canonical reference.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-334",
+      "quote": "\\citetitle{category_theory_wiki}, introduced by \\citeauthor{eilenberglane1945} (\\citeyear{eilenberglane1945}), is the cleanest formulation of the move “relations can be composed” \\cite{category_theory_wiki}.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-335",
+      "quote": "A category has three ingredients:",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-336",
+      "quote": "together with associativity and identity axioms \\cite{category_theory_wiki}.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-337",
+      "quote": "Categories are sometimes called the algebra of “doing things to things”: the objects are what the things are, the morphisms are what you can do to them.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-338",
+      "quote": "What we care about here is the higher generalization.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-339",
+      "quote": "In a 2-category, morphisms themselves can be related by 2-morphisms $\\alpha : f \\Rightarrow g$.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-340",
+      "quote": "In an $\\infty$-category, this continues all the way up \\cite{higher_category_wiki}.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-341",
+      "quote": "The conceptual content is the same as for $\\infty$-sheaves and HoTT: at every level of structure, the “things at that level” come with their own relation-of-relations, and the coherent compatibility of those relations is what makes the whole thing hang together.",
+      "section": "The categorical shape of the same story",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-342",
+      "quote": "Sheaves on a fixed space $X$ form a category $\\mathbf{Sh}(X)$, and this category has an extraordinary property: it behaves, in many respects, like the category of ordinary sets.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-343",
+      "quote": "You can form products, coproducts, function spaces, you can do logic inside it, you can define a notion of \"element of a sheaf\" that is just as comfortable as the ordinary notion of \"element of a set\".",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-344",
+      "quote": "Categories that behave this way are called **toposes** (singular: **topos**).",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-345",
+      "quote": "The concept was introduced by Grothendieck \\cite{grothendieck_sheaf} in the early 1960s and was given its modern axiomatic form by \\citeauthor{lawvere2007taking} and Myles Tierney in the late 1960s and early 1970s \\cite{lawvere2007taking}.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-346",
+      "quote": "The central axiom (the \"topos axiom\") is the existence of a *subobject classifier*: an object $\\Omega$ that plays the role of \"the set of truth values\" inside the topos \\cite{topos_wiki}.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-347",
+      "quote": "Lawvere, in particular, has insisted from the start that the right reading of category theory is not as a technical convenience for algebraic topology but as a precise formulation of the *qualitative* structure of being and becoming \\cite{lawvere1993categories} \\cite{lawvere2007taking}; in his hands, a topos is not just a generalization of $\\mathbf{Set}$ — it is the technical answer to the ancient metaphysical question of what structure the world has when you take seriously both what it *is* and what it *becomes* \\cite{lawvere1993categories}.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-348",
+      "quote": "For the reader who wants to go deeper: the defining textbook reference is \\citeauthor{goldblatt1979topoi}'s \\citetitle{goldblatt1979topoi}, still one of the clearest introductions; the canonical modern treatment is \\citeauthor{johnstone_elephant}'s two-volume \\citetitle{johnstone_elephant}; the standard first bridge from sheaf theory to logic is \\citeauthor{maclanemoerdijk1992}'s \\citetitle{maclanemoerdijk1992}; and the \"toposes-as-bridges\" programme of \\citeauthor{caramello2017theories} \\cite{caramello2017theories} is the contemporary extension that reads each topos as a *bridge* between the many mathematical theories that admit it as a classifying topos \\cite{nlab_topos}.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-349",
+      "quote": "The nLab's encyclopedic entry on topoi \\cite{nlab_topos} lists thirteen non-equivalent-sounding definitions, all known to be equivalent — \"however you approach it, it is still the same animal\".",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-350",
+      "quote": "In the hands of \\cite[the topos theorists]{topos_wiki}, a topos becomes more than a category.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-351",
+      "quote": "It is *a universe of mathematics*: a self-contained world with objects, morphisms, internal logic, and its own notion of truth.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-352",
+      "quote": "Different topoi correspond to different \"logics\": in a sheaf topos $\\mathbf{Sh}(X)$ the internal logic is *intuitionistic* (you can have statements that are neither provably true nor provably false on some open set), because the subobject classifier $\\Omega$ is the Heyting algebra of open subsets, not $\\{0,1\\}$.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-353",
+      "quote": "Only in a *Boolean* topos — one for which $\\Omega$ is internally $\\{0,1\\}$, as happens when every open subset of $X$ is also closed — does classical logic recover.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-354",
+      "quote": "This is why topos theory is the natural home of *constructive* mathematics, of synthetic differential geometry, and of the categorical logic that underlies some modern type theories \\cite{topos_wiki} \\cite{internal_logic_wiki} \\cite{tarski1938topos}.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-355",
+      "quote": "For our purposes, the picture to remember is this:",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-356",
+      "quote": "The slogan is right, but it is also underselling the subject.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-357",
+      "quote": "A topos is not just one kind of space; it is *the most general kind of structure in which mathematics as we know it can be done*.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-358",
+      "quote": "It generalizes the category of sets; it absorbs sheaf theory, type theory, intuitionistic logic, and synthetic differential geometry into a single framework; and it gives a precise meaning to the idea that \"the same mathematics can be done in many different worlds\".",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-359",
+      "quote": "The rest of this section is the formal unpacking of that slogan, the answer to a list of questions a topos raises, and a summary of what is and is not true in every topos.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-360",
+      "quote": "The technical details are in three optional boxes below; if you only want the slogan, the closing paragraph at the end of the section is enough to carry into the next chapter.",
+      "section": "Topoi: worlds where you can do mathematics",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-361",
+      "quote": "In the literature there are two non-equivalent but closely related notions.",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-362",
+      "quote": "The first is the older, more geometric one; the second is the more abstract, more algebraic one \\cite{elementary_topos_wiki} \\cite{nlab_topos}.",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-363",
+      "quote": "* **Grothendieck topos.** Defined, up to equivalence, as the category of sheaves on a *site* — a small category equipped with a notion of \"covering families\".",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-364",
+      "quote": "Equivalently (by a theorem of Jean Giraud \\cite{giraud1964descente}) a category $\\mathcal{E}$ satisfying four explicit axioms: a small set of *generators*, all small colimits, sums that are *disjoint* (the fiber product of $X$ and $Y$ over their sum $X \\sqcup Y$ is the initial object), and equivalence relations that are *effective* \\cite{topos_wiki}.",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-365",
+      "quote": "This is the topos most relevant to algebraic geometry.",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-366",
+      "quote": "* **Elementary topos.** Defined by Lawvere and Tierney as a category $\\mathcal{E}$ with the following four ingredients \\cite{elementary_topos_wiki} \\cite{goldblatt1979topoi}:",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-367",
+      "quote": "*Finite limits* exist (terminal object $1$, binary products $A \\times B$, equalizers — equivalently, all finite diagrams have a limit).",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-368",
+      "quote": "*Exponentials* $B^A$ exist for any two objects $A, B$, i.e. a morphism $\\mathrm{ev}: B^A \\times A \\to B$ universal with respect to morphisms $C \\times A \\to B$.",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-369",
+      "quote": "Together with the previous condition, this makes $\\mathcal{E}$ *Cartesian closed*: morphisms out of a product $C \\times A$ correspond to morphisms $C \\to B^A$.",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-370",
+      "quote": "A *subobject classifier* $\\Omega$ exists — an object together with a monomorphism $\\mathrm{true}: 1 \\hookrightarrow \\Omega$ such that every monomorphism $m: Y \\hookrightarrow X$ factors uniquely as a pullback of $\\mathrm{true}$ along some $\\chi_m: X \\to \\Omega$ \\cite{subobject_classifier_wiki}.",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-371",
+      "quote": "(Originally also finite colimits, but this was later observed to be redundant — it follows from the first three.)",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-372",
+      "quote": "Every Grothendieck topos is an elementary topos, but not conversely: the *effective topos* (a topos of \"computable mathematics\") is elementary but not Grothendieck; the category $\\mathbf{FinSet}$ of finite sets is elementary but not Grothendieck (it is not cocomplete: the countable coproduct of the terminal object would be $\\mathbb{N}$, which is infinite) \\cite{elementary_topos_wiki}.",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-373",
+      "quote": "The two notions share most of their theory; they diverge on questions of *size* — which categories are \"small enough\" to be considered.",
+      "section": "Two flavors of topos",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-374",
+      "quote": "The subobject classifier is the single axiom that does the most work.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-375",
+      "quote": "To see why, start from the familiar case.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-376",
+      "quote": "In $\\mathbf{Set}$, a subset $S \\subseteq X$ is determined by its indicator function $\\chi_S : X \\to \\{0, 1\\}$, and conversely every function $X \\to \\{0, 1\\}$ determines a subset.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-377",
+      "quote": "Subsets of $X$ are the same thing as functions from $X$ to a special two-element object.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-378",
+      "quote": "Generalize the special two-element object to a special object $\\Omega$ in any category with a terminal object $1$, and you obtain a notion of \"subset\" in any category where such an object exists \\cite{subobject_classifier_wiki}.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-379",
+      "quote": "Formally: a subobject classifier is a morphism",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-380",
+      "quote": "such that for every monomorphism $m: Y \\hookrightarrow X$ there is a unique $\\chi_{m}: X \\to \\Omega$ making the following square a pullback:",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-381",
+      "quote": "The intuition: every \"sub-object of $X$\" is the pullback of the truth morphism $\\mathrm{true}$ along some morphism to $\\Omega$.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-382",
+      "quote": "The morphism $\\chi_{m} : X \\to \\Omega$ is the *characteristic morphism* of the subobject.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-383",
+      "quote": "In $\\mathbf{Set}$, $\\Omega = \\{0, 1\\}$ and $\\chi_{S}$ is the indicator function; in $\\mathbf{Sh}(X)$ (sheaves on a topological space $X$), $\\Omega(U)$ is the set of all open subsets of $U$, and $\\mathrm{true}_{U}: \\{*\\} \\to \\Omega(U)$ sends the single point to the open subset $U$ itself \\cite{subobject_classifier_wiki}.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-384",
+      "quote": "This single piece of structure does enormous work.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-385",
+      "quote": "* a notion of *equality* (the diagonal $\\Delta_{X}: X \\to X \\times X$ is a subobject, so it has a characteristic morphism);",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-386",
+      "quote": "* a notion of *truth value* (a morphism $p: 1 \\to \\Omega$ is a \"truth value\");",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-387",
+      "quote": "* a notion of *subobject* in general (every monomorphism corresponds to a morphism to $\\Omega$);",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-388",
+      "quote": "* the logical connectives, by pulling back along morphisms $\\Omega \\times \\Omega \\to \\Omega$, $\\Omega \\to \\Omega$, etc.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-389",
+      "quote": "In this precise sense, $\\Omega$ is *the topos's own set of truth values*, and the existence of $\\Omega$ is what makes the category \"set-like\".",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-390",
+      "quote": "A second, slightly more conceptual reading.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-391",
+      "quote": "The subobject functor $\\mathrm{Sub}: \\mathcal{C}^{\\mathrm{op}} \\to \\mathbf{Set}$ that sends each object $X$ to the set of its subobjects (up to isomorphism) is representable, and the representing object is exactly $\\Omega$.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-392",
+      "quote": "So $\\Omega$ is the object whose generalized elements *are* all subobjects of all objects.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-393",
+      "quote": "It is, in a slogan, \"the shape of all possible shapes of sub-things\".",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-394",
+      "quote": "In $\\mathbf{Set}$ that shape is a two-point set; in $\\mathbf{Sh}(X)$ it is the lattice of open subsets; in the effective topos it is the lattice of recursively enumerable subsets of $\\mathbb{N}$.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-395",
+      "quote": "The subobject classifier is the topos's own classification of the kinds of distinction it can support — which is to say, the kinds of distinction its logic is willing to recognize \\cite{subobject_classifier_wiki} \\cite{internal_logic_wiki}.",
+      "section": "The subobject classifier $\\Omega$",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-396",
+      "quote": "The interesting question is the converse: what does *not* hold in every topos?",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-397",
+      "quote": "Several pieces of ordinary mathematics can fail, and the failure is informative \\cite{topos_wiki} \\cite{johnstone_elephant} \\cite{diaconescu1975}.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-398",
+      "quote": "* **The law of excluded middle.** In a sheaf topos $\\mathbf{Sh}(X)$, the subobject classifier $\\Omega$ assigns to each open $U$ the set of *open subsets of $U*$.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-399",
+      "quote": "A truth value is therefore a region of the space, not a Boolean bit.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-400",
+      "quote": "The statement $p \\vee \\neg p$ corresponds to \"every open subset of $U$ is either covered or its complement (in $U$) is covered\", which is false: there are plenty of open subsets that are neither wholly covered nor wholly uncovered.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-401",
+      "quote": "The internal logic is therefore *intuitionistic*, not classical.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-402",
+      "quote": "Only the *Boolean topoi* (those for which $\\Omega$ is internally $\\{0, 1\\}$) recover classical logic.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-403",
+      "quote": "* **The axiom of choice.** There are many useful variants — dependent choice, countable choice, global choice — and each can fail or hold independently in a given topos.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-404",
+      "quote": "The most striking fact here is **Diaconescu's theorem** (\\citeyear{diaconescu1975}): in any topos, the axiom of choice implies the law of excluded middle \\cite{diaconescu1975}.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-405",
+      "quote": "So the two principles, classically equivalent inside $\\mathbf{Set}$, become strictly separated as soon as we leave $\\mathbf{Set}$ behind: you can have LEM without AC (a Boolean topos can have a non-AC version); but AC without LEM is impossible — AC forces LEM.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-406",
+      "quote": "* **Existence of points.** A *point* of a topos $\\mathcal{E}$ is a geometric morphism $p: \\mathbf{Set} \\to \\mathcal{E}$ (see the maps-between-topoi section below).",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-407",
+      "quote": "Many topoi have no points at all: there is a famous example due to \\cite[Pierre Deligne]{topos_wiki} of a non-trivial topos with no points, arising from sheaves on a particular (large) site.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-408",
+      "quote": "In a point-less topos there is no way to \"evaluate\" an object at a classical location; everything must be done internally.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-409",
+      "quote": "This is not a pathological corner case: Deligne's example is a topos of sheaves on a perfectly respectable site, and the failure of points is a feature of the topos theory of cohesion.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-410",
+      "quote": "* **Unique factorization in Boolean form.** In *every* topos, each morphism factors uniquely (up to isomorphism) as an epimorphism followed by a monomorphism, and its coimage and image coincide (the canonical map $\\mathrm{coim}\\, f \\to \\mathrm{im}\\, f$ is an isomorphism).",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-411",
+      "quote": "What fails in a non-Boolean topos is the *Boolean* treatment of the resulting subobjects that $\\mathbf{Set}$ uses: a subobject need not have a complement, and excluded middle for subobjects can fail.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-412",
+      "quote": "In fact the slogan is even stronger: classical mathematics as we usually practice it is *one* topos ($\\mathbf{Set}$) with extra axioms.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-413",
+      "quote": "Every other topos is a different universe, with a different logic, in which different things are true.",
+      "section": "What can fail",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-414",
+      "quote": "What is a \"map\" between two topoi?",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-415",
+      "quote": "Not an ordinary functor: an ordinary functor $\\mathcal{E} \\to \\mathcal{F}$ need not preserve the structure that makes them topoi.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-416",
+      "quote": "The right notion was introduced by Grothendieck in the 1960s and is the *geometric morphism*.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-417",
+      "quote": "A geometric morphism $f: \\mathcal{F} \\to \\mathcal{E}$ is a pair of adjoint functors",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-418",
+      "quote": "with $f^*$ (the *inverse image*) left adjoint to $f_{*}$ (the *direct image*), and with $f^*$ required to preserve finite limits \\cite{geometric_morphism_wiki}.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-419",
+      "quote": "The analogy is exact: for a continuous map $\\varphi: X \\to Y$ between topological spaces, pulling back a sheaf on $Y$ gives a sheaf on $X$, and that pullback is left adjoint to pushing forward.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-420",
+      "quote": "This is why geometric morphisms are the right notion.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-421",
+      "quote": "A geometric morphism is exactly the categorical shadow of a \"geometric map of generalized spaces\".",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-422",
+      "quote": "The classification is exact: every continuous map $\\varphi: X \\to Y$ induces a geometric morphism $\\mathbf{Sh}(X) \\to \\mathbf{Sh}(Y)$, and conversely \"most\" geometric morphisms between sheaf topoi arise this way.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-423",
+      "quote": "Two special cases matter:",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-424",
+      "quote": "* **Points.** A point of a topos $\\mathcal{E}$ is a geometric morphism $p: \\mathbf{Set} \\to \\mathcal{E}$.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-425",
+      "quote": "Geometrically: a way of recovering a \"classical location\" inside the generalized space.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-426",
+      "quote": "Algebraically: a way of evaluating an internal object as an ordinary set.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-427",
+      "quote": "* **Essential geometric morphisms.** A geometric morphism $f$ is *essential* if $f^*$ has a further left adjoint $f_{!}$.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-428",
+      "quote": "These correspond to a particularly well-behaved kind of map of topoi, and they form the natural setting for notions like connectedness and local triviality in the topos-theoretic sense.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-429",
+      "quote": "A functor $\\mathcal{E} \\to \\mathcal{F}$ between topoi, if it preserves the right structure, induces a geometric morphism — but only one direction of it.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-430",
+      "quote": "The other direction, the \"extra\" functor $f_{*}$, is what distinguishes a geometric morphism from a plain functor, and it is essential: $f_{*}$ remembers the \"size\" or \"extension\" of objects under the map, and without it you do not have a map of spaces in the geometric sense.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-431",
+      "quote": "This is why topos theory has its own 2-category: objects are topoi, morphisms are geometric morphisms, 2-morphisms are natural transformations between the direct-image functors.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-432",
+      "quote": "The 2-categorical point of view is not a luxury; it is the only setting in which \"maps of spaces\" behave the way they do in classical topology \\cite{geometric_morphism_wiki}.",
+      "section": "Maps between topoi: geometric morphisms",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-433",
+      "quote": "We have used the word \"space\" four times in this section already, and each time we meant something slightly different.",
+      "section": "What is a \"space\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-434",
+      "quote": "The topos notion of \"space\" is genuinely multistable, and the multistability is a feature, not a bug \\cite{nlab_topos}.",
+      "section": "What is a \"space\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-435",
+      "quote": "At least five readings are alive in the literature:",
+      "section": "What is a \"space\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-436",
+      "quote": "**The topos *itself* is the space.** This is the most common usage in algebraic geometry: $\\mathbf{Sh}(X)$ is a \"topos\", and one writes $X \\mapsto \\mathbf{Sh}(X)$ as if $\\mathbf{Sh}(X)$ *were* $X$ in some new sense.",
+      "section": "What is a \"space\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-437",
+      "quote": "The slogan \"a topos is a generalized space\" lives here \\cite{nlab_topos}.",
+      "section": "What is a \"space\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-438",
+      "quote": "**The objects of the topos are the \"spaces over the base\".** In this reading, the topos $\\mathbf{Sh}(X)$ is a *category* of spaces (sheaves), and morphisms between them are \"maps of spaces\".",
+      "section": "What is a \"space\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-439",
+      "quote": "A sheaf $F$ on $X$ is itself a kind of space — the *étale space* of $F$ — sitting over $X$ via a local homeomorphism.",
+      "section": "What is a \"space\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-440",
+      "quote": "**The morphisms of the topos are the maps of spaces.** This is the dual reading: the topos is the *theory* of \"what counts as a map\", and its objects are whatever the maps are between.",
+      "section": "What is a \"space\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-441",
+      "quote": "**The subobject classifier $\\Omega$ is the topos's \"space of truths\".** This is the reading that matters for logic: a statement $P$ in the internal language is a subobject, and the corresponding morphism $1 \\to \\Omega$ is a point of the topos's own truth-space.",
+      "section": "What is a \"space\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-442",
+      "quote": "**The topos is a *world*, not a space at all.** This is the reading preferred by logicians: a topos is a universe in which one does mathematics, and the question \"what is its topology\" is the question \"what mathematics can be done here, and how do statements glue?\".",
+      "section": "What is a \"space\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-443",
+      "quote": "These readings are not mutually exclusive.",
+      "section": "What is a \"space\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-444",
+      "quote": "They are five different things one can mean when one says the word \"space\" in a topos-theoretic context, and the same word doing five jobs at once is, in fact, the kind of structural multiplicity this chapter has been about from the start.",
+      "section": "What is a \"space\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-445",
+      "quote": "Truth in a topos is local, contextual, and non-Boolean \\cite{internal_logic_wiki} \\cite{heyting_algebra_wiki}.",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-446",
+      "quote": "* **Truth values are objects.** A \"truth value\" in a topos $\\mathcal{E}$ is not a bit; it is a *morphism $p: 1 \\to \\Omega$* into the subobject classifier.",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-447",
+      "quote": "When $\\Omega = \\{0, 1\\}$ there are exactly two of them; when $\\Omega$ is larger there are more.",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-448",
+      "quote": "* **In $\\mathbf{Sh}(X)$, truth values are open sets.** A statement $P$ \"is true on $U$\" if $U \\subseteq \\{x : P(x)\\}$.",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-449",
+      "quote": "So a single statement can be true on one open region and false on another, and \"neither\" is a perfectly well-defined intermediate truth value.",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-450",
+      "quote": "* **In the effective topos, truth values are computable propositions.** A truth value is a \"truth tree\" — a possibly infinite computation that can produce 0 (false), 1 (true), or diverge (unknown).",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-451",
+      "quote": "* **In a presheaf topos $[\\mathcal{C}^{\\mathrm{op}}, \\mathbf{Set}]$, truth values are sieves.** A truth value on an object $c \\in \\mathcal{C}$ is a collection of morphisms into $c$ closed under precomposition — i.e. a \"way of covering $c$\".",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-452",
+      "quote": "* **$\\Omega$ is a Heyting algebra internally.** The connectives $\\wedge, \\vee, \\Rightarrow, \\bot, \\top$ are all given by morphisms of $\\Omega$, and they satisfy the axioms of a Heyting algebra.",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-453",
+      "quote": "They become the connectives of *intuitionistic* logic, not classical logic.",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-454",
+      "quote": "The law $p \\vee \\neg p = \\top$ holds in a topos exactly when the topos is Boolean.",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-455",
+      "quote": "The slogan is therefore: **Truth in a topos is not a bit.",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-456",
+      "quote": "It is a region, a computation, a sieve — the shape of \"where\" a statement holds**.",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-457",
+      "quote": "This is the radical move that the sheaf / topos picture makes.",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-458",
+      "quote": "Once truth becomes a region, the question \"is $P$ true?\" stops having a yes/no answer in general, and starts having the answer \"yes on $U$, no on $V$, indeterminate on the rest\".",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-459",
+      "quote": "The classical dichotomy is recovered as the special case where the topos is Boolean and every region is either everything or nothing.",
+      "section": "What is \"truth\" in a topos?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-460",
+      "quote": "A direct summary of what we have just learned, in the spirit of the question that motivates this section \\cite{nlab_topos} \\cite{maclanemoerdijk1992} \\cite{johnstone_elephant} \\cite{internal_logic_wiki}.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-461",
+      "quote": "Things that **hold in every (elementary) topos**:",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-462",
+      "quote": "* **Finite limits and colimits.** Products, coproducts, equalizers, pullbacks, pushouts, terminal and initial objects.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-463",
+      "quote": "* **Exponentials and Cartesian closure.** $B^A$ exists; currying works; evaluation works.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-464",
+      "quote": "* **Power objects and higher-order structure.** $\\Omega^X$ exists for every object $X$.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-465",
+      "quote": "* **Subobject classifier and internal logic.** $\\Omega$ exists; the Heyting algebra structure on $\\Omega$ exists; $\\wedge, \\vee, \\Rightarrow, \\bot, \\top, \\forall, \\exists, =$ all make sense internally.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-466",
+      "quote": "* **The internal language (Mitchell–Bénabou).** Anything provable in higher-order intuitionistic logic holds inside every topos.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-467",
+      "quote": "* **Locally Cartesian closed.** The slice $\\mathcal{E} / \\Gamma$ is itself a topos, for every object $\\Gamma$.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-468",
+      "quote": "* **Stability of epis under pullback.** The (epi, mono) factorization is a stable factorization system.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-469",
+      "quote": "* **Extensivity.** Coproducts are disjoint, and disjointness is part of the topos's structure.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-470",
+      "quote": "* **Adhesiveness.** A topos is an adhesive category, which is what makes pushout–pullback arguments work as well as they do.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-471",
+      "quote": "* **Barr's theorem.** Every Grothendieck topos admits a surjective geometric morphism from a topos satisfying the axiom of choice — which, by Diaconescu's theorem, is therefore Boolean (Barr 1974 \\cite{barr1974toposes}).",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-472",
+      "quote": "In particular, a geometric statement that holds in *all* Boolean toposes already holds in every Grothendieck topos, so results proved in a 'classical' setting often transfer to the general case.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-473",
+      "quote": "Things that **hold in every Grothendieck topos** (but not necessarily in every elementary topos):",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-474",
+      "quote": "* **Small colimits.** All colimits of small diagrams exist.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-475",
+      "quote": "* **A natural numbers object.** Every Grothendieck topos has *some* $\\mathbb{N}$.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-476",
+      "quote": "In an arbitrary elementary topos, $\\mathbb{N}$ may fail to exist (e.g. $\\mathbf{FinSet}$).",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-477",
+      "quote": "* **W-types and the apparatus of inductive definitions.** A consequence of having a NNO and being a Grothendieck topos.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-478",
+      "quote": "* **A presentation as sheaves on a site.** This is by definition.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-479",
+      "quote": "Things that **do not hold in every topos**, and which therefore require a choice of topos (or extra axioms) to be true:",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-480",
+      "quote": "* **The law of excluded middle** $P \\vee \\neg P$.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-481",
+      "quote": "Fails in every non-Boolean topos (e.g. $\\mathbf{Sh}(\\mathbb{R})$).",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-482",
+      "quote": "* **The axiom of choice.** Fails in many topoi.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-483",
+      "quote": "By **Diaconescu's theorem** \\cite{diaconescu1975}, AC implies LEM, so AC + non-Boolean is impossible.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-484",
+      "quote": "* **Existence of \"points\".** Fails in Deligne's point-free topos.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-485",
+      "quote": "* **Standard arithmetic.** Every Grothendieck topos has *some* natural numbers object, but it is not always the \"standard\" one of $\\mathbf{Set}$.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-486",
+      "quote": "(For instance, the natural numbers object in the effective topos is the set of \"computable natural numbers\", and the internal arithmetic is constructive, not classical.)",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-487",
+      "quote": "* **The axiom of replacement, the axiom of regularity, and other \"size\" axioms of ZFC.** These are properties of $\\mathbf{Set}$ as a model of ZFC, not of topoi in general.",
+      "section": "What \"remains true in all topoi\"?",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-488",
+      "quote": "It is worth saying the things we do *not* know, or that remain genuinely puzzling.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-489",
+      "quote": "None of the following is a claim of this textbook; they are questions that the topos picture makes it natural to ask, and that the topos picture does not, by itself, answer \\cite{nlab_topos} \\cite{johnstone_elephant} \\cite{internal_logic_wiki}.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-490",
+      "quote": "**Is a topos a space?** What kind of \"space\" is it — a topological space, a locale, a site, a type system, or something that resists all of these?",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-491",
+      "quote": "Or is the topos picture deliberately polymorphic on this point, the way a category is polymorphically an algebraic structure, a database, a type system, and a logic depending on what you do with it?",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-492",
+      "quote": "**Is a topos a logic?** Or is the logic only a *shadow* the topos casts?",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-493",
+      "quote": "A topos is, strictly speaking, a category with certain structure; the logic is the interpretation we get when we read that structure syntactically.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-494",
+      "quote": "How much of mathematics is \"really\" categorical, and how much is \"really\" logical?",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-495",
+      "quote": "**Is the classical / Boolean topos the \"true\" one?** Working mathematicians default to $\\mathbf{Set}$.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-496",
+      "quote": "Constructivists insist on topoi in which LEM fails.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-497",
+      "quote": "Or is the question malformed?",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-498",
+      "quote": "**What is the analogue of \"topology\" for a topos?** A topological space has open sets, a basis, a separation axiom, a notion of compactness.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-499",
+      "quote": "A topos has $\\Omega$, a natural numbers object, a notion of \"Boolean\", and several notions of \"compactness\" — there are at least three: *coherent*, *quasi-compact*, and *compact* — that do not coincide in general.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-500",
+      "quote": "How much of ordinary topology survives the generalization, and what new phenomena appear?",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-501",
+      "quote": "**Does a topos have \"size\"?** A Grothendieck topos has a small set of generators and all small colimits; an elementary topos has neither constraint.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-502",
+      "quote": "The notion of \"size\" inside a topos is given by the *universe* objects (Grothendieck universes, or type-theoretic universes $\\mathcal{U}_{i}$); these exist in most topoi but not all.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-503",
+      "quote": "What does \"small\" or \"large\" mean when the meta-theory is itself a topos?",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-504",
+      "quote": "**What is the analogue of \"continuity\"?** A continuous map between spaces preserves open sets.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-505",
+      "quote": "A geometric morphism between topoi preserves finite limits under $f^*$.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-506",
+      "quote": "The two notions agree on the sheaf topoi.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-507",
+      "quote": "Is the topos one the more general, or is there a still more general notion waiting to be found — perhaps some cohesion or differentiability structure on a higher topos?",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-508",
+      "quote": "**Can two different topoi be \"the same\"?** Yes: many non-equivalent sites give equivalent topoi.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-509",
+      "quote": "This is the *invariance of the topos*: the topos remembers the geometric content but forgets the particular presentation.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-510",
+      "quote": "Is the equivalence class the \"real\" object, or is each individual topos a real object, and the equivalences just accidental?",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-511",
+      "quote": "Olivia Caramello's \"topos-as-bridge\" program \\cite{topos_wiki} argues, persuasively, that the equivalence classes are the real objects and that topoi are best thought of as *bridges* between different mathematical theories.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-512",
+      "quote": "**Is there a \"fundamental theorem of toposes\"?** Not in the sense of Galois theory.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-513",
+      "quote": "But Barr's theorem \\cite{barr1974toposes} says every Grothendieck topos is covered by a Boolean topos, and Diaconescu's theorem gives the AC $\\Rightarrow$ LEM direction; together with Giraud's theorem \\cite{giraud1964descente} classifying Grothendieck topoi by their colimit structure, these are the closest things to a \"fundamental theorem\" the subject has.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-514",
+      "quote": "Whether a deeper unifying theorem is waiting to be found is open.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-515",
+      "quote": "**Is \"truth\" in a topos always intuitionistic?** No: the topos is *Boolean* exactly when its internal logic is classical.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-516",
+      "quote": "But the move from \"I work in $\\mathbf{Set}$\" to \"I work in *any* topos\" is the move from \"I assume classical logic\" to \"I do not assume classical logic\".",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-517",
+      "quote": "Constructivists have an answer; classical mathematicians have a different one.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-518",
+      "quote": "The topos itself refuses to adjudicate.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-519",
+      "quote": "**What is the role of the points?** Deligne's point-less topos is the canonical reminder that not every topos can be recovered from its classical points.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-520",
+      "quote": "A point-free topos forces the working mathematician to give up the intuition of \"evaluating at a location\" and replace it with the purely internal notion of a generalized element.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-521",
+      "quote": "How much of classical geometry survives the loss of points?",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-522",
+      "quote": "None of these questions has a settled answer.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-523",
+      "quote": "The honest report is: topos theory is the most general context in which we know how to do mathematics, and the moment you sit inside it, the question of *what mathematics is* — what is a space, what is a truth, what is a proof, what is a computation — stops being background and becomes the subject.",
+      "section": "Open questions a topos leaves behind",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-524",
+      "quote": "So far, the story has been mathematical.",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-525",
+      "quote": "The same shape, however, shows up outside mathematics, and that is the deeper reason it is worth knowing.",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-526",
+      "quote": "Take any object in your perceptual field.",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-527",
+      "quote": "Say, a train moving past you on a platform.",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-528",
+      "quote": "* a visual phenomenon, a shape of metal moving against a background,",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-529",
+      "quote": "* an auditory phenomenon, a sound whose pitch drops as it passes (the Doppler shift),",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-530",
+      "quote": "* a *\"leibliches\"* phenomenon, a pressure, a vibration, a slight tremor in your chest,",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-531",
+      "quote": "* a spatial phenomenon, something that has front, side, depth, and is moving from “there” to “less there”.",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-532",
+      "quote": "These appearances are not identical.",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-533",
+      "quote": "They are different modalities of one phenomenon, and they have different qualitative textures.",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-534",
+      "quote": "The phenomenological tradition, especially in the form developed by \\citeauthor{schmitz_neo_phenomenology} (\\citeyear{schmitz_neo_phenomenology}) as *Neue Phänomenologie* (neo-phenomenology), insists that lived space is structured first by such qualities: *Nähe* (nearness), *Ferne* (farness), *Weite* (openness), *Enge* (narrowness), *Richtung* (direction), bodily *Ergriffenheit* (being-seized), long before it is structured by Cartesian coordinates \\cite{schmitz_neo_phenomenology}.",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-535",
+      "quote": "The geometric space of physics is a specialization of this richer, qualitative space, not its foundation.",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-536",
+      "quote": "The most uncompromising philosophical statement of this move, before Schmitz, is \\citeauthor{whitehead_concept_nature}'s (\\citeyear{whitehead_concept_nature}) attack on the bifurcation of nature: the modern doctrine that splits off the \"primary\" mathematical qualities of physics from the \"secondary\" sensory qualities, leaving the latter as a mere projection, leaves the redness of the train on the wrong side of the cut.",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-537",
+      "quote": "Whitehead's correction is the relevant one:",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-538",
+      "quote": "The red glow of the sunset should be as much part of nature as are the molecules and electric waves by which men of science would explain the phenomenon.",
+      "section": "The phenomenology of one phenomenon",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-539",
+      "quote": "Embeddings are the place where all of the above comes together in modern AI.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-540",
+      "quote": "A tokenizer (see the Tokenization chapter ) hands the network a list of integers: token IDs.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-541",
+      "quote": "The next step, which the Embeddings chapter treats in detail, is to *place* every token at a point in a high-dimensional vector space $\\mathbb{R}^d$.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-542",
+      "quote": "From that point on, every operation in the network is an operation in that space: distances, dot products, attention weights, the residual stream.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-543",
+      "quote": "The conceptual move is the sheaf move in disguise.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-544",
+      "quote": "* **Distinction.** Tokens are distinct: “cat” and “dog” are different tokens.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-545",
+      "quote": "* **Relation.** After embedding, they are related by *distance*, by *angle*, by *neighborhood*.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-546",
+      "quote": "Their meanings are now positions in a shared space.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-547",
+      "quote": "* **Transformation.** Attention and feed-forward layers transform these positions into new positions.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-548",
+      "quote": "The same token in different contexts ends up at different points.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-549",
+      "quote": "* **Locality.** The neighborhood of “cat” in $\\mathbb{R}^d$ contains “dog”, “kitten”, “pet”, “meow”.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-550",
+      "quote": "The neighborhood is not a metric accident; it is the geometry of the network's accumulated knowledge of co-occurrence.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-551",
+      "quote": "* **Compatibility.** Two sentences using “cat” in similar ways will produce similar hidden states; that agreement on overlap is the compatibility condition.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-552",
+      "quote": "* **Coherence.** Those agreements are not coincidences, they are structured by the training objective, which is itself a kind of local-to-global consistency condition over the entire training corpus.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-553",
+      "quote": "* **Gluing.** At inference time, the network glues these local, contextual pieces into a single coherent prediction: the next token.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-554",
+      "quote": "* **Globality.** The whole sequence, the entire answer to your prompt, is that global section.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-555",
+      "quote": "* **Invariance.** The same prediction should come out whether we run the network left-to-right, in parallel, or chunked into overlapping windows with overlap merged.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-556",
+      "quote": "(It does, modulo rounding.)",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-557",
+      "quote": "So when the next chapter says “an embedding is a point in a high-dimensional space”, it is using “space” in exactly the sheaf-theoretic sense we have been building: a place whose structure is determined, in good part, by coherent local data, not a container that already exists waiting to be filled.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-558",
+      "quote": "The qualification “in good part” is honest: in practice an embedding space is not a strict sheaf.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-559",
+      "quote": "The local data is not perfectly coherent, the borders between neighborhoods are fuzzy, and small inconsistencies are smoothed by the training dynamics.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-560",
+      "quote": "An embedding space is, more accurately, an *approximate sheaf*, a structure whose ideal form is the sheaf but whose realized form is messier and only asymptotically faithful to the ideal.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-561",
+      "quote": "Once you have read it, come back to this chapter if the formal machinery starts to feel heavy.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-562",
+      "quote": "The chain on page one is the anchor.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-563",
+      "quote": "As long as you can place each new definition somewhere on the chain, the chapter will keep making sense.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-564",
+      "quote": "The idea that “space” is not a container but a structure of relations is older than modern mathematics.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-565",
+      "quote": "\\citeauthor{hypothesengeometrie} (\\citeyear{hypothesengeometrie}) generalized the very notion of space in his 1854 habilitation lecture by describing a *Mannigfaltigkeit*, a “manifold” or “many-fold”, as a continuous collection parameterized by $n$ real numbers, with the local-to-global structure provided by an inner product that could vary from point to point \\cite{hypothesengeometrie}.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-566",
+      "quote": "Einstein's general relativity then turned Riemann's local geometry into the geometry of spacetime itself: gravity is not a force but the curvature of a manifold whose local data is measured by freely falling observers.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-567",
+      "quote": "The point is not that Riemann or Einstein “knew about AI”.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-568",
+      "quote": "The point is that the move from “space as a container” to “space as a coherent gluing of local measurements” is one of the most successful structural ideas in the history of science, and it is exactly the move an embedding space makes.",
+      "section": "Why this is a lens for embeddings",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-569",
+      "quote": "Now notice: it is also the story of how a Transformer works on a sequence of tokens.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-570",
+      "quote": "The tokenizer distinguishes the tokens.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-571",
+      "quote": "The embedding layer puts them in relation to each other by giving each one a position in $\\mathbb{R}^d$.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-572",
+      "quote": "The attention and feed-forward layers transform them.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-573",
+      "quote": "Every layer's computation is *local* in the sense that it operates on a neighborhood of the residual stream.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-574",
+      "quote": "The compatibility between heads, between layers, between attention scores and value vectors is what the training process enforces.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-575",
+      "quote": "The coherence of those compatibilities across many heads and many layers is what makes a Transformer something more than a soup of weights.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-576",
+      "quote": "The gluing happens at every residual connection.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-577",
+      "quote": "The globality is the next-token prediction at the top of the stack.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-578",
+      "quote": "The invariance is the surprising fact that the same architecture, with the same weights, behaves the same way on every input we throw at it.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-579",
+      "quote": "The same chain also runs through:",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-580",
+      "quote": "* **Sets.** Distinction and Relation only.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-581",
+      "quote": "* **Groups, rings, algebras.** Distinction, Relation, Transformation.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-582",
+      "quote": "* **Topological spaces.** All the way to Locality.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-583",
+      "quote": "* **Sheaves, fiber bundles, manifolds.** All the way to Globality, often carrying Invariance with them.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-584",
+      "quote": "* **Embedding spaces.** All the way to Invariance, applied to language.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-585",
+      "quote": "* **A trained neural network.** All the way to Invariance, applied to whatever task it was trained on.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-586",
+      "quote": "That is why we are spending a chapter on it.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-587",
+      "quote": "The chain is the spine of modern AI.",
+      "section": "The chain, revisited",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-588",
+      "quote": "A second, equivalent form that we will use repeatedly:",
+      "section": "The central sentence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-589",
+      "quote": "A third form, more compressed:",
+      "section": "The central sentence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-590",
+      "quote": "These three sentences are not theorems.",
+      "section": "The central sentence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-591",
+      "quote": "If they are in your head when you open the Embeddings chapter , the chapter will be much easier to read, not because you will already know the math, but because you will already know what the math is *trying to say*.",
+      "section": "The central sentence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-592",
+      "quote": "Each is restated as a checklist item, the way you might want to read it once before clicking the link to the Embeddings chapter.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-593",
+      "quote": "**Meaning is relational, not intrinsic.** No word, no token, no vector has meaning in itself.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-594",
+      "quote": "Meaning is its position in the web of differences from the others.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-595",
+      "quote": "This is \\citeauthor{saussure1916}'s “language as a system of pure differences” \\cite{saussure1916}, \\citeauthor{firth1957distributive}'s “you shall know a word by the company it keeps” \\cite{firth1957distributive}, and the entire distributional semantics tradition, in one breath \\cite{distributional_hypothesis}.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-596",
+      "quote": "The same point, in the contemporary vocabulary of philosophy of language, is what \\citeauthor{brandom1994making} (\\citeyear{brandom1994making}) calls *inferentialism*: to grasp a concept is to know its inferential relations to other concepts \\cite{brandom1994making}.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-597",
+      "quote": "The formal echo of Brandom's claim is what an embedding space *measures*: not \"what the token is in itself\" but \"where it sits in the cloud of its typical co-occurrences\".",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-598",
+      "quote": "This is the same structural move as the sheaf condition — only now applied to tokens in context windows instead of sections on open sets.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-599",
+      "quote": "The same observation, almost eighteen centuries before Firth and over seventeen centuries before Saussure, is the core claim of Buddhist ontology, in the verse that is its best-known summary:",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-600",
+      "quote": "Whatever is dependently originated, that we declare to be emptiness.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-601",
+      "quote": "It is worth saying out loud what this chapter *is not* claiming.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-602",
+      "quote": "It is not claiming that the world is made of mathematics.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-603",
+      "quote": "It is not claiming that consciousness, space, language, and AI are “really” the same thing.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-604",
+      "quote": "It is not even claiming that the sheaf picture is the right formalism for everything.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-605",
+      "quote": "What it *is* claiming is the much weaker, but much more useful, observation that the same *structural shape* (distinction, relation, transformation, locality, compatibility, coherence, gluing, globality, invariance) shows up in genuinely different domains, and that this observation pays off when we want to reason about embeddings, because an embedding space is one more place where that shape is realized.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-606",
+      "quote": "This kind of cross-domain structural analogy is what the *structural realism* program in the philosophy of science (associated with Worrall, Ladyman and French) means by structural realism: take the structural shape seriously, treat the underlying substance as a placeholder, and see how far you can go \\cite{lumpschool}.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-607",
+      "quote": "For our purposes, the answer is: surprisingly far, but only as long as we remember that we are working with a lens, not with the thing-in-itself.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-608",
+      "quote": "The lens makes the next chapter legible.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-609",
+      "quote": "The next chapter makes the lens concrete.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-610",
+      "quote": "After that, the lens and the concrete picture will need to keep adjusting to each other.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-611",
+      "quote": "A short historical note, since the chapter's thesis is older than mathematics and keeps being rediscovered.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-612",
+      "quote": "The 5th-century BCE philosopher \\cite[Heraclitus]{heraclitus_unity} is reported (in fragment B12, in the Diels–Kranz numbering, with the wording \"you cannot step into the same river twice\" already current as a Platonic paraphrase in the *Cratylus* at 402a) to have said: *“You cannot step into the same river twice, for fresh waters are ever flowing in upon you.”* The fragment is usually read as a doctrine of *flux*, that everything changes, nothing stays.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-613",
+      "quote": "But it can equally be read as a doctrine of *coherent difference*: the river at time $t_{1}$ and the river at time $t_{2}$ are not identical, but they are related by a coherent transition (the flow of water), and the river-as-object is the coherent network of all those appearances across time.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-614",
+      "quote": "Heraclitus, on the second reading, is already gesturing at the sheaf picture.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-615",
+      "quote": "A little over two millennia later, \\citeauthor{whitehead_process} (\\citeyear{whitehead_process}) built an entire metaphysics on the idea that the world is made of *processes*, not *substances*, “becoming” rather than “being”.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-616",
+      "quote": "His word *concrescence* names exactly the operation we have been calling gluing: many prehensions (local graspings) come together into one actual occasion (a global entity) \\cite{whitehead_process}.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-617",
+      "quote": "Whitehead's *Process and Reality* can be interpreted as a sheaf-theoretic picture of the world, decades before sheaves were formulated in their modern form.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-618",
+      "quote": "The chapter's thesis — global unity as coherent local difference — has been recognized, in one vocabulary or another, by a long sequence of thinkers.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-619",
+      "quote": "The list below is selective, not exhaustive.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-620",
+      "quote": "Each entry is one philosopher, one sentence, one way of seeing the same structural shape.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-621",
+      "quote": "* **Parmenides** (\\citeyear{parmenides480fragments}), fragment B2.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-622",
+      "quote": "*“It is, and it is impossible for it not to be.”* The first explicit insistence that *being* and *difference* cannot be separated without the world falling apart.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-623",
+      "quote": "The later \\citeauthor{spinoza1677ethics} (\\citeyear{spinoza1677ethics}) formula “the order and connection of ideas is the same as the order and connection of things” is, in a sense, just Parmenides with the local-to-global clause made explicit.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-624",
+      "quote": "* **Anaxagoras** (\\citeyear{anaxagoras450fragments}), fragment B11.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-625",
+      "quote": "*“In everything there is a portion of everything, except nous; and there are some things in which there is nous also.”* The sheaf axiom in one line — with a deliberate exception — twenty-four centuries before sheaves.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-626",
+      "quote": "Nothing physical is locally clean: every local region of the world carries, in its own substance, a portion of every other kind of thing.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-627",
+      "quote": "To know what a thing is, look at the whole; the whole is precisely the assembly of these mutually-informing local portions, once they agree on their overlaps.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-628",
+      "quote": "The exception for *nous* (mind) is the load-bearing clause: mind is the unmixed, and that is what makes the world knowable at all.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-629",
+      "quote": "* **Heraclitus** (\\citeyear{heraclitus500fragments}), fragments B10, B54, B67, B89.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-630",
+      "quote": "The unity of opposites; the hidden attunement better than the open; the waking world that is one, the dreaming worlds that are many.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-631",
+      "quote": "Read together, these fragments sketch the local-to-global picture more clearly than any prose summary could.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-632",
+      "quote": "* **Laozi** (\\citeyear{laozi400taoteching}), *Tao Te Ching*, chapter 2.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-633",
+      "quote": "*“All in the world call beautiful what is beautiful, and thus ugliness appears.”* The act by which beauty is named is the same act by which ugliness is named.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-634",
+      "quote": "Spencer-Brown's *Draw a distinction* in Chinese.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-635",
+      "quote": "* **Aristotle**, *Metaphysics* \\cite{aristotle_metaphysics}.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-636",
+      "quote": "Hylomorphism: every concrete object is the *hylomorphic compound* of matter (ὕλη) and form (εἶδος).",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-637",
+      "quote": "Neither alone makes the object.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-638",
+      "quote": "The form is the local, organizing structure that gives the otherwise amorphous matter a *shape* — a coherent network of relations among parts.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-639",
+      "quote": "The whole is *something over and above* (παρά) the parts in a heap.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-640",
+      "quote": "* **Nagarjuna** (\\citeyear{nagarjuna150mmk}), *Mūlamadhyamakakārikā* 24:18.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-641",
+      "quote": "*“Whatever is dependently originated, that we declare to be emptiness.”* The radical distributional hypothesis, eighteen centuries before Firth.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-642",
+      "quote": "There is no *svabhāva* (intrinsic nature); there are only *pratītyasamutpāda* (dependent relations).",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-643",
+      "quote": "Every thing's identity is exactly the network of relations in which it arises.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-644",
+      "quote": "Read in modern terminology: a word's meaning is its position in the embedding space, and that is all the meaning there is.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-645",
+      "quote": "* **Plotinus** (\\citeyear{plotinus250enneads}), *Enneads* V.3 / V.8.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-646",
+      "quote": "The doctrine that each part of the Intellect contains the whole, and the whole is present in each part: *“all is each, each is all”* (πάντα ἐν πᾶσι).",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-647",
+      "quote": "The sheaf, three centuries into the Christian era.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-648",
+      "quote": "* **Nicholas of Cusa** (\\citeyear{cusanus1440docta}), *De Docta Ignorantia*.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-649",
+      "quote": "The doctrine of the *coincidentia oppositorum* — the coincidence of opposites — and the famous figure of God as *a sphere whose center is everywhere and its circumference nowhere*.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-650",
+      "quote": "Difference, on this picture, is the radius of a single sphere: each point sees the same whole from a different distance, and the whole is what holds every local view together as *aspects* of the same center.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-651",
+      "quote": "* **Spinoza** (\\citeyear{spinoza1677ethics}), *Ethics* II, Proposition 7.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-652",
+      "quote": "*“The order and connection of ideas is the same as the order and connection of things.”* The sheaf axiom as a sentence of metaphysics.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-653",
+      "quote": "Two hundred and eighty years before Grothendieck, Spinoza's geometry of attributes already encoded the exact same local-to-global principle we have been building.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-654",
+      "quote": "* **Leibniz** (\\citeyear{leibniz1714monadology}), *Monadology* §56.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-655",
+      "quote": "*“Each [substance] is a perpetual living mirror of the universe.”* The phenomenology-of-one-phenomenon section, three centuries before Schmitz.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-656",
+      "quote": "* **Whitehead** (\\citeyear{whitehead_process}), *Process and Reality*.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-657",
+      "quote": "*Concrescence*: many local prehensions glue into one global actual occasion.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-658",
+      "quote": "The same structural shape, made into a full metaphysics.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-659",
+      "quote": "The list could be longer.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-660",
+      "quote": "It includes Anaximander's *apeiron* (the boundless that contains all differences), the Indian *net of Indra* (every jewel reflects every other jewel), \\citeauthor{wittgenstein1953investigations}'s (\\citeyear{wittgenstein1953investigations}) “meaning is use”, \\citeauthor{saussure1916}'s (\\citeyear{saussure1916}) “language as a system of pure differences”, \\citeauthor{firth1957distributive}'s (\\citeyear{firth1957distributive}) “you shall know a word by the company it keeps”.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-661",
+      "quote": "What they all share is the structural shape: *distinction is foundational, identity is relational, unity is the coherence of well-related differences*.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-662",
+      "quote": "The mathematics of this chapter — sets, types, categories, sheaves, topoi, $\\infty$-sheaves, HoTT, embedding spaces — is the *technical crystallization* of this structural shape.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-663",
+      "quote": "Every new chapter of this textbook is, in this sense, the same old chapter.",
+      "section": "What to carry into the Embeddings chapter",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-664",
+      "quote": "This chapter walked *up* a ladder — from a first distinction to the invariant global whole of a sheaf.",
+      "section": "Coda: the ladder of embodiment",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-665",
+      "quote": "At the top, \"space\" no longer means container.",
+      "section": "Coda: the ladder of embodiment",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-666",
+      "quote": "Every embodied system climbs a second ladder, running the other way.",
+      "section": "Coda: the ladder of embodiment",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-667",
+      "quote": "Same rungs, opposite direction:",
+      "section": "Coda: the ladder of embodiment",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-668",
+      "quote": "Each downward step: loss of generality, gain of operational reality.",
+      "section": "Coda: the ladder of embodiment",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-669",
+      "quote": "Grammar read one way; pronunciation read the other.",
+      "section": "Coda: the ladder of embodiment",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-670",
+      "quote": "The condensation that matters carries the chain into a vector space of floats.",
+      "section": "The arithmetic shadow",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-671",
+      "quote": "Every link has an arithmetic image:",
+      "section": "The arithmetic shadow",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-672",
+      "quote": "The minimal structure in which the chain can be *arithmetically enacted*.",
+      "section": "The arithmetic shadow",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-673",
+      "quote": "A vector in an LLM is a point of $\\mathbb{R}^d$ — but only an approximate one.",
+      "section": "Two stacked approximations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-674",
+      "quote": "It is a tuple of **floats** — a finite, logarithmically-quantized lattice, dense near zero, coarse at the extremes.",
+      "section": "Two stacked approximations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-675",
+      "quote": "Two approximations stack: the chain approximated by $\\mathbb{R}^d$; $\\mathbb{R}^d$ approximated by the float lattice.",
+      "section": "Two stacked approximations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-676",
+      "quote": "The consequences are structural.",
+      "section": "Two stacked approximations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-677",
+      "quote": "Float addition is **not associative**: $(a + b) + c \\neq a + (b + c)$ in general.",
+      "section": "Two stacked approximations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-678",
+      "quote": "The vector space of an LLM is *not a vector space in the axiomatic sense*.",
+      "section": "Two stacked approximations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-679",
+      "quote": "It behaves like one only at the resolution of the floats.",
+      "section": "Two stacked approximations",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-680",
+      "quote": "- **Language is itself approximate.** Words are not sharply bounded, meanings not discrete, contexts blend.",
+      "section": "Why the shadow suffices",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-681",
+      "quote": "- **Backpropagation requires a metric.** A gradient needs a direction; a direction needs a metric; a metric needs numbers.",
+      "section": "Why the shadow suffices",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-682",
+      "quote": "A sheaf cannot descend a gradient.",
+      "section": "Why the shadow suffices",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-683",
+      "quote": "Aristotle's hylomorphism \\cite{aristotle_metaphysics}: form + matter = compound.",
+      "section": "The wider principle",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-684",
+      "quote": "The chain is the form; the floats are the matter; the running network is the compound.",
+      "section": "The wider principle",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-685",
+      "quote": "Structure alone does not compute, does not learn, does not answer a prompt.",
+      "section": "The wider principle",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-686",
+      "quote": "Every embodiment loses something.",
+      "section": "The wider principle",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-687",
+      "quote": "Every one, by losing, becomes able to act.",
+      "section": "The wider principle",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-688",
+      "quote": "When the next chapter says *\"an embedding is a point in a high-dimensional space\"*, it means: the entire chain, condensed through a finite arithmetic just faithful enough to carry meaning, and just concrete enough to be multiplied by a matrix a billion times per second.",
+      "section": "One sentence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-689",
+      "quote": "Abstraction and embodiment are the same object, read from opposite ends of the ladder.",
+      "section": "One sentence",
+      "kind": "statement"
+    },
+    {
+      "id": "coherent_difference-stmt-690",
+      "quote": "Coherent difference, made computable — and, at last, made *real*.",
+      "section": "One sentence",
+      "kind": "statement"
+    }
   ]
 }

@@ -488,5 +488,889 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "inference_optimization-stmt-1",
+      "quote": "Training a frontier model costs US Dollar 100M+; serving it can cost **US Dollar 1M+ per day at scale**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-2",
+      "quote": "Inference optimization makes LLMs economically viable.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-3",
+      "quote": "The frontier in 2025: serving millions of tokens per second across a large cluster with sub-100 ms latency.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-4",
+      "quote": "This chapter covers every lever: quantization, KV-cache management, paged attention, FlashAttention, speculative decoding, batching, distillation, and the serving stacks that tie it together.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-5",
+      "quote": "For a single token generation step on a 70B model (fp16):",
+      "section": "The Inference Math",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-6",
+      "quote": "| Component | Memory / Compute |",
+      "section": "The Inference Math",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-7",
+      "quote": "| Read all weights from HBM (70B bf16, split over 2 H100s) | 70 GB ÷ 3 TB/s ≈ 23 ms |",
+      "section": "The Inference Math",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-8",
+      "quote": "| Compute matmul (forward pass) | ~10 ms with batch=1, ~50 TFLOPS |",
+      "section": "The Inference Math",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-9",
+      "quote": "| Generate one token | dominated by memory bandwidth |",
+      "section": "The Inference Math",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-10",
+      "quote": "LLM inference is **memory-bandwidth bound**, not compute-bound.",
+      "section": "The Inference Math",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-11",
+      "quote": "* **Batching helps** (amortize weight read across many requests).",
+      "section": "The Inference Math",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-12",
+      "quote": "* **Quantization helps** (less data to move).",
+      "section": "The Inference Math",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-13",
+      "quote": "* **Caching helps** (avoid recomputing).",
+      "section": "The Inference Math",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-14",
+      "quote": "* **Smaller models help** (less memory pressure).",
+      "section": "The Inference Math",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-15",
+      "quote": "Reduce the bit precision of model weights:",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-16",
+      "quote": "| Format | Bits/weight | 70B size | Perplexity increase |",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-17",
+      "quote": "| FP32 | 32 | 280 GB | Baseline |",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-18",
+      "quote": "| FP16 / BF16 | 16 | 140 GB | ~0% |",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-19",
+      "quote": "| INT8 | 8 | 70 GB | <0.5% |",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-20",
+      "quote": "| INT4 (GPTQ, AWQ) | 4 | 35 GB | 1–3% |",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-21",
+      "quote": "| INT3 (QuIP, QuIP#) | 3 | 26 GB | 3–7% |",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-22",
+      "quote": "| INT2 (QuIP#) | 2 | 17 GB | 5–15% |",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-23",
+      "quote": "| 1.58-bit (BitNet b1.58) | 1.58 | 13 GB | Comparable to FP16 at scale |",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-24",
+      "quote": "* **GPTQ** (\\cite[Frantar et al., 2022]{frantar2022gptq}): post-training quantization using second-order information.",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-25",
+      "quote": "* **AWQ** (\\cite[Lin et al., 2023]{lin2023awq}): activation-aware weight quantization.",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-26",
+      "quote": "Identifies salient weight channels and preserves them at higher precision.",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-27",
+      "quote": "* **SmoothQuant** (\\cite[Xiao et al., 2022]{xiao2022smoothquant}): migrates quantization difficulty from activations to weights.",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-28",
+      "quote": "* **BitsAndBytes** (\\cite[Dettmers et al., 2022]{dettmers2022llmint8}): k-bit quantization for PyTorch (popular for QLoRA).",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-29",
+      "quote": "* **GGUF** (llama.cpp): many quantization schemes in a single file (Q2_K, Q3_K, Q4_K_M, Q5_K_M, Q6_K, Q8_0).",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-30",
+      "quote": "* **BitNet** (\\cite[Ma et al., 2024]{ma2024bitnet}): 1.58-bit ternary quantization.",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-31",
+      "quote": "Surprisingly competitive at scale.",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-32",
+      "quote": "* **QuIP#** (\\cite[Chee et al., 2024]{che2024quip}): lattice-based 2-bit quantization with incoherence processing.",
+      "section": "Weight Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-33",
+      "quote": "The KV-cache is the dominant memory cost for long contexts.",
+      "section": "KV-Cache Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-34",
+      "quote": "* **INT8 KV**: ~2× memory reduction, negligible quality loss.",
+      "section": "KV-Cache Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-35",
+      "quote": "* **INT4 KV**: ~4× memory reduction, 1–2% quality loss.",
+      "section": "KV-Cache Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-36",
+      "quote": "* **FP8 KV** (H100 native): same as INT8 in effect.",
+      "section": "KV-Cache Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-37",
+      "quote": "Used by vLLM, TGI, and most production stacks.",
+      "section": "KV-Cache Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-38",
+      "quote": "Critical for serving 100K+ contexts.",
+      "section": "KV-Cache Quantization",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-39",
+      "quote": "* **Multi-Query Attention (MQA)** (\\cite[Shazeer, 2019]{shazeer2019mqa}): all query heads share a single K and V head.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-40",
+      "quote": "* **Grouped-Query Attention (GQA)** (\\cite[Ainslie et al., 2023]{ainslie2023gqa}): middle ground, 8 KV heads for 64 query heads gives 8× reduction with quality close to MHA.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-41",
+      "quote": "Used by Llama 2/3, Mistral, Qwen.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-42",
+      "quote": "* **Multi-head latent attention (MLA)** (\\cite[DeepSeek-AI, 2024]{deepseek2024v2}): cache a low-rank latent per token and reconstruct the per-head keys and values on the fly.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-43",
+      "quote": "DeepSeek-V2 reported a KV cache an order of magnitude smaller than a comparable MHA model.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-44",
+      "quote": "* **Sliding Window Attention** (\\cite[Beltagy et al., 2020]{beltagy2020longformer}): only attend to the last $w$ tokens.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-45",
+      "quote": "KV memory is $O(w)$ instead of $O(n)$.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-46",
+      "quote": "Combine with a few “global” attention layers to preserve long-range context.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-47",
+      "quote": "* **Attention sinks / StreamingLLM** (\\cite[Xiao et al., 2024]{xiao2023streaming}): a plain sliding window fails once the very first tokens are evicted, because trained heads park their surplus softmax mass on them.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-48",
+      "quote": "Keeping the KV of roughly four initial tokens alongside the recent window restores stable generation over millions of tokens, with no fine-tuning.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-49",
+      "quote": "* **Paged Attention** (vLLM, 2023): non-contiguous KV allocation like OS virtual memory.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-50",
+      "quote": "Eliminates fragmentation.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-51",
+      "quote": "* **Prefix caching**: KV cache for a system prompt is computed once and reused across requests.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-52",
+      "quote": "Standard for chatbot APIs.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-53",
+      "quote": "* **Cross-request KV sharing**: identical prompts across users share KV blocks.",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-54",
+      "quote": "One caveat ties these together: the outlier coordinates that implement attention sinks — the “massive activations” that grow orders of magnitude larger than their neighbours — are exactly the values that low-precision KV quantization handles worst, so aggressive INT4 caching can disturb sink behaviour unless the scheme protects outliers (\\cite[Sun et al., 2024]{sun2024massive}).",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-55",
+      "quote": "A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to roughly 20–30 concurrent users on a single 8xH100 node (the 335 GB of fp16 KV per user drops to ~21 GB with GQA and INT8, and an 8xH100 node holds 640 GB).",
+      "section": "KV-Cache Optimizations",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-56",
+      "quote": "The single biggest speedup for training **and** inference in 2022–2023 (\\cite[Dao et al., 2022]{dao2022flashattention}).",
+      "section": "FlashAttention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-57",
+      "quote": "Reduces attention memory from $O(n^2)$ to $O(n)$ by **never materializing the full attention matrix**:",
+      "section": "FlashAttention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-58",
+      "quote": "FlashAttention computes the same result in tiles, with the softmax applied incrementally:",
+      "section": "FlashAttention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-59",
+      "quote": "This is mathematically equivalent but requires only $O(n)$ memory and exploits **SRAM** (the GPU's fast on-chip cache) to avoid round-trips to HBM.",
+      "section": "FlashAttention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-60",
+      "quote": "FlashAttention-2 (2023): further 2× speedup via better work partitioning.",
+      "section": "FlashAttention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-61",
+      "quote": "FlashAttention-3 (2024): asynchronous warp specialization on H100, FP8 support, ~2× over FA-2.",
+      "section": "FlashAttention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-62",
+      "quote": "FlashAttention is now standard in **all** major training and inference stacks (PyTorch SDPA, vLLM, TGI, TensorRT-LLM, llama.cpp).",
+      "section": "FlashAttention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-63",
+      "quote": "The OS-virtual-memory approach to KV management (\\cite[Kwon et al., 2023]{kwon2023vllm}):",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-64",
+      "quote": "* Allocate KV cache in fixed-size **blocks** (typically 16 tokens).",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-65",
+      "quote": "* Each request has a **block table** mapping logical → physical blocks.",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-66",
+      "quote": "* Blocks can be **shared** across requests with the same prefix.",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-67",
+      "quote": "* No fragmentation; near-100% memory utilization.",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-68",
+      "quote": "Effect: **2–4× throughput improvement** over contiguous allocation for chat workloads with varied sequence lengths.",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-69",
+      "quote": "The vLLM paper showed 14–24× throughput vs. naïve HuggingFace serving at high concurrency.",
+      "section": "Paged Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-70",
+      "quote": "LLM decoding is sequential: each token requires a full forward pass.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-71",
+      "quote": "**Speculative decoding** (\\cite[Leviathan et al., 2023]{leviathan2023speculative}) breaks this:",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-72",
+      "quote": "A small **draft model** generates $k$ candidate tokens autoregressively.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-73",
+      "quote": "The large **target model** verifies all $k$ in a **single parallel forward pass**.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-74",
+      "quote": "Accept the longest prefix where target agrees with draft.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-75",
+      "quote": "Resample from the target's corrected distribution on the first mismatch.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-76",
+      "quote": "If $k = 5$ speculative tokens are drafted and per-token acceptance rate is $\\alpha = 80\\%$, the expected number of tokens accepted per verification step is $\\frac{1 - \\alpha^{k+1}}{1 - \\alpha} = \\frac{1 - 0.8^6}{0.2} \\approx 3.69$.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-77",
+      "quote": "* **Self-speculative decoding**: use early-exit from the same model.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-78",
+      "quote": "* **Medusa** (\\cite[Cai et al., 2024]{cai2024medusa}): parallel draft heads attached to the main model.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-79",
+      "quote": "* **EAGLE** (\\cite[Li et al., 2024]{li2024eagle}): draft at the feature level, not the token level.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-80",
+      "quote": "* **Lookahead decoding**: parallel candidate generation with Jacobi iteration.",
+      "section": "Speculative Decoding",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-81",
+      "quote": "Generate one token for $B$ requests simultaneously.",
+      "section": "Static Batching",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-82",
+      "quote": "All requests advance in lockstep.",
+      "section": "Static Batching",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-83",
+      "quote": "Simple but **straggler-bound**: longest request dictates the batch's pace.",
+      "section": "Static Batching",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-84",
+      "quote": "Add new requests whenever an old one finishes.",
+      "section": "Dynamic Batching",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-85",
+      "quote": "Better throughput than static; still has stragglers.",
+      "section": "Dynamic Batching",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-86",
+      "quote": "After **every** generated token, swap finished sequences out and swap new ones in.",
+      "section": "Continuous Batching (Iteration-Level Scheduling)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-87",
+      "quote": "The GPU is never idle waiting for stragglers.",
+      "section": "Continuous Batching (Iteration-Level Scheduling)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-88",
+      "quote": "vLLM, TGI, TensorRT-LLM, and SGLang all implement continuous batching.",
+      "section": "Continuous Batching (Iteration-Level Scheduling)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-89",
+      "quote": "**Throughput improvement: 10–20×** over static batching for chat workloads.",
+      "section": "Continuous Batching (Iteration-Level Scheduling)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-90",
+      "quote": "Same idea as continuous batching but with tighter integration into TensorRT's kernel scheduling.",
+      "section": "In-flight Batching (NVIDIA TensorRT-LLM)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-91",
+      "quote": "A request with a 100K-token prompt would otherwise block the GPU for many seconds.",
+      "section": "Chunked Prefill",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-92",
+      "quote": "Chunked prefill splits the prompt into smaller chunks and interleaves them with decode steps of other requests.",
+      "section": "Chunked Prefill",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-93",
+      "quote": "Critical for long-context serving.",
+      "section": "Chunked Prefill",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-94",
+      "quote": "A small “student” model trained to mimic a larger “teacher”:",
+      "section": "Distillation Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-95",
+      "quote": "* **Logit distillation**: match full output distribution: $\\mathcal{L} = \\text{KL}(p_T \\| p_S)$",
+      "section": "Distillation Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-96",
+      "quote": "* **Hidden-state distillation**: match intermediate activations.",
+      "section": "Distillation Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-97",
+      "quote": "* **Attention distillation**: match attention matrices.",
+      "section": "Distillation Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-98",
+      "quote": "* **Generative distillation**: train on teacher text outputs.",
+      "section": "Distillation Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-99",
+      "quote": "* **Distillation with reasoning**: student trained on teacher's CoT traces (R1-distill style).",
+      "section": "Distillation Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-100",
+      "quote": "DeepSeek-R1's distillation experiments (\\cite[Guo et al., 2025]{guo2025deepseekr1}) show that even a small 1.5B student trained on R1's full reasoning traces captures a large fraction of the teacher's math ability for its size — evidence that the reasoning traces themselves carry much of the capability.",
+      "section": "Distillation Recap",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-101",
+      "quote": "Split weight matrices across GPUs.",
+      "section": "Tensor Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-102",
+      "quote": "Each GPU computes a partial output, all-reduces.",
+      "section": "Tensor Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-103",
+      "quote": "Split layers across GPUs.",
+      "section": "Pipeline Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-104",
+      "quote": "Required for very large models on low-GPU-count servers.",
+      "section": "Pipeline Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-105",
+      "quote": "For MoE models (Mixtral, DeepSeek-V3), different experts live on different GPUs.",
+      "section": "Expert Parallelism (MoE)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-106",
+      "quote": "Tokens routed to expert $i$ are sent to GPU $i$.",
+      "section": "Expert Parallelism (MoE)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-107",
+      "quote": "For fixed-shape models, the entire inference forward pass can be captured as a **CUDA graph**: a pre-compiled sequence of GPU operations with minimal launch overhead.",
+      "section": "CUDA Graph Capture",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-108",
+      "quote": "Reduces per-token latency by ~20%.",
+      "section": "CUDA Graph Capture",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-109",
+      "quote": "H100's **Transformer Engine** does FP8 matmuls natively.",
+      "section": "Mixed Precision (FP8, INT4)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-110",
+      "quote": "INT4 path for Hopper is via TensorRT-LLM.",
+      "section": "Mixed Precision (FP8, INT4)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-111",
+      "quote": "Speedups: 1.5–2× over BF16.",
+      "section": "Mixed Precision (FP8, INT4)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-112",
+      "quote": "When the prompt is long and the system has many concurrent decoders, prefill can preempt decode.",
+      "section": "Speculative Prefill",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-113",
+      "quote": "Some systems schedule prefill on a separate “prefill pool” of GPUs.",
+      "section": "Speculative Prefill",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-114",
+      "quote": "* **Exact prompt caching**: identical prompts reuse computed KV.",
+      "section": "Caching Strategies",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-115",
+      "quote": "Standard for system prompts.",
+      "section": "Caching Strategies",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-116",
+      "quote": "* **Semantic caching**: similar prompts (cosine > threshold) reuse responses.",
+      "section": "Caching Strategies",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-117",
+      "quote": "Saves API cost at the application layer.",
+      "section": "Caching Strategies",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-118",
+      "quote": "* **Speculative cache lookup**: precompute common responses (FAQ, help articles).",
+      "section": "Caching Strategies",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-119",
+      "quote": "* **CDN for LLM responses**: edge-cached LLM outputs for high-traffic questions.",
+      "section": "Caching Strategies",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-120",
+      "quote": "A good caching strategy can reduce effective cost by **5–10×** for chat workloads with predictable queries.",
+      "section": "Caching Strategies",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-121",
+      "quote": "| Stack | Best for | Notes |",
+      "section": "Choosing a Serving Stack",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-122",
+      "quote": "| **vLLM** | Most production workloads | Paged attention, continuous batching, broadest model support |",
+      "section": "Choosing a Serving Stack",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-123",
+      "quote": "| **TGI** | HuggingFace ecosystem | Clean Rust implementation, integrated with Hub |",
+      "section": "Choosing a Serving Stack",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-124",
+      "quote": "| **TensorRT-LLM** | Max throughput on NVIDIA | Tightest GPU optimization, requires more setup |",
+      "section": "Choosing a Serving Stack",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-125",
+      "quote": "| **SGLang** | Structured generation, agents | Optimized for JSON/grammar output |",
+      "section": "Choosing a Serving Stack",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-126",
+      "quote": "| **llama.cpp** | Local / consumer GPUs | GGUF format, single-user |",
+      "section": "Choosing a Serving Stack",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-127",
+      "quote": "| **MLX** | Apple Silicon | Optimized for M-series |",
+      "section": "Choosing a Serving Stack",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-128",
+      "quote": "| **OpenLLM** | Python-native deployments | Simpler than vLLM for small scale |",
+      "section": "Choosing a Serving Stack",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-129",
+      "quote": "| **Ray Serve + vLLM** | Autoscaling multi-model | Cloud-native orchestration |",
+      "section": "Choosing a Serving Stack",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-130",
+      "quote": "For most production deployments: **vLLM** is the default in 2025.",
+      "section": "Choosing a Serving Stack",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-131",
+      "quote": "For a 70B model on 8x H100:",
+      "section": "Practical Numbers (2025, approximate)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-132",
+      "quote": "| Optimization | Throughput (tokens/s) | vs. baseline |",
+      "section": "Practical Numbers (2025, approximate)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-133",
+      "quote": "| Naïve (HF generate) | 500 | 1× |",
+      "section": "Practical Numbers (2025, approximate)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-134",
+      "quote": "| + Continuous batching | 4,000 | 8× |",
+      "section": "Practical Numbers (2025, approximate)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-135",
+      "quote": "| + Paged attention | 6,000 | 12× |",
+      "section": "Practical Numbers (2025, approximate)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-136",
+      "quote": "| + INT8 quantization | 9,000 | 18× |",
+      "section": "Practical Numbers (2025, approximate)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-137",
+      "quote": "| + INT4 quantization | 12,000 | 24× |",
+      "section": "Practical Numbers (2025, approximate)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-138",
+      "quote": "| + Speculative decoding | 25,000 | 50× |",
+      "section": "Practical Numbers (2025, approximate)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-139",
+      "quote": "| + Multi-node | 100,000+ | 200× |",
+      "section": "Practical Numbers (2025, approximate)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-140",
+      "quote": "Combined, a single 8-GPU node can serve roughly 800 concurrent users generating at 30+ tokens/sec each; a 100-node cluster can serve **tens of thousands** of concurrent users, depending on context length and batching.",
+      "section": "Practical Numbers (2025, approximate)",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-141",
+      "quote": "* **Sub-quadratic architectures** for inference (see the Beyond Transformers chapter ), Mamba-2, Jamba.",
+      "section": "The Frontier of Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-142",
+      "quote": "* **FP4/FP6 inference**: lower precision for further speedups.",
+      "section": "The Frontier of Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-143",
+      "quote": "* **Network compression**: distilling large reasoning models into small fast ones.",
+      "section": "The Frontier of Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-144",
+      "quote": "* **Distributed speculative decoding**: one draft model serving many target models.",
+      "section": "The Frontier of Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-145",
+      "quote": "* **Energy-aware scheduling**: route to the most power-efficient GPU.",
+      "section": "The Frontier of Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-146",
+      "quote": "For most practitioners in 2025, **vLLM + INT4 + continuous batching + prefix caching + speculative decoding** is the production stack.",
+      "section": "The Frontier of Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "inference_optimization-stmt-147",
+      "quote": "It produces ~50× throughput over naïve serving and is the difference between an economically viable LLM product and a bankrupt one.",
+      "section": "The Frontier of Inference",
+      "kind": "statement"
+    }
   ]
 }

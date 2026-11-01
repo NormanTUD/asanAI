@@ -492,5 +492,979 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "contextwindows-stmt-1",
+      "quote": "Every time you send a message to an LLM, the model doesn't “remember” your previous conversations from some internal database.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-2",
+      "quote": "It doesn't have a persistent memory like a human brain.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-3",
+      "quote": "Instead, it reads **everything**, the system prompt, the conversation history, any retrieved documents, as a single, flat sequence of tokens.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-4",
+      "quote": "This sequence is the **context window**, and it is the LLM's entire universe of awareness for that single inference.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-5",
+      "quote": "**Key insight:** The context window is not “memory” in the human sense.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-6",
+      "quote": "It is a **fixed-size input buffer**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-7",
+      "quote": "Once it's full, something must be dropped.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-8",
+      "quote": "Once the conversation ends, everything is gone unless explicitly saved externally.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-9",
+      "quote": "A context window (also called “context length”) is the **maximum number of tokens** the model can process in a single forward pass.",
+      "section": "What Is a Context Window?",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-10",
+      "quote": "It includes *everything*: the system prompt, all previous messages in the conversation, any injected documents, and the new query.",
+      "section": "What Is a Context Window?",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-11",
+      "quote": "| Model | Context Window | Approximate Equivalent |",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-12",
+      "quote": "| GPT-2 (2019) | 1,024 tokens | ~750 words / 1.5 pages |",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-13",
+      "quote": "| GPT-3 (2020) | 2,048 tokens | ~1,500 words / 3 pages |",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-14",
+      "quote": "| GPT-3.5 (2022) | 4,096 tokens | ~3,000 words / 6 pages |",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-15",
+      "quote": "| GPT-4 (2023) | 8,192 tokens | ~6K words |",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-16",
+      "quote": "| GPT-4-32k (2023) | 32,000 tokens | ~24K words |",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-17",
+      "quote": "| GPT-4 Turbo (2023) | 128,000 tokens | ~96K words / 1 novel |",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-18",
+      "quote": "| Claude 3 (2024) | 200,000 tokens | ~150K words / 1 novel |",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-19",
+      "quote": "| Gemini 1.5 Pro (2024) | 1,000,000 tokens | ~750K words / 5 novels |",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-20",
+      "quote": "| Gemini 2.5 (2025) | 1,000,000+ tokens | ~750K+ words |",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-21",
+      "quote": "| Claude Opus 4 (2025) | 200,000 tokens | ~150K words |",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-22",
+      "quote": "| GPT-4.1 (2025) | 1,000,000 tokens | ~750K words |",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-23",
+      "quote": "The growth has been exponential: from 1K tokens in 2019 to 1M+ tokens in 2025, a **1000x increase** in just 6 years.",
+      "section": "Context Window Sizes (2025-2026)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-24",
+      "quote": "- **English:** 1 token ≈ 0.75 words (or ~4 characters)",
+      "section": "Tokens ≠ Words",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-25",
+      "quote": "- **Code:** 1 token ≈ 0.4 words (more tokens per “word” due to syntax)",
+      "section": "Tokens ≠ Words",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-26",
+      "quote": "- **Non-Latin scripts:** Often more tokens per word",
+      "section": "Tokens ≠ Words",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-27",
+      "quote": "The context window isn't an arbitrary limitation, it emerges from the **architecture** of the Transformer itself.",
+      "section": "Why Does the Context Window Exist?",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-28",
+      "quote": "In standard self-attention \\cite{vaswani2017attention}, every token attends to every other token.",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-29",
+      "quote": "For a sequence of length $n$:",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-30",
+      "quote": "The $QK^T$ matrix has dimensions $n \\times n$.",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-31",
+      "quote": "- **Compute:** $O(n^2 \\cdot d)$, quadratic in sequence length",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-32",
+      "quote": "- **Memory:** $O(n^2)$, the attention matrix must be stored for backpropagation",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-33",
+      "quote": "| Context Length | Attention Matrix Size | Memory (float16) |",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-34",
+      "quote": "| 1,024 | 1M entries | ~2 MB |",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-35",
+      "quote": "| 8,192 | 67M entries | ~134 MB |",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-36",
+      "quote": "| 32,768 | 1B entries | ~2 GB |",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-37",
+      "quote": "| 128,000 | 16B entries | ~32 GB |",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-38",
+      "quote": "| 1,000,000 | 1T entries | ~2 TB |",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-39",
+      "quote": "At 1 million tokens, the naive attention matrix would require **2 terabytes** of memory, clearly impossible.",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-40",
+      "quote": "So how do modern models handle it?",
+      "section": "The Self-Attention Bottleneck",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-41",
+      "quote": "During autoregressive generation (producing one token at a time), the model doesn't recompute attention over the entire sequence from scratch for each new token.",
+      "section": "1. KV Cache: Remembering Without Recomputing",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-42",
+      "quote": "Instead, it maintains a **Key-Value (KV) Cache**:",
+      "section": "1. KV Cache: Remembering Without Recomputing",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-43",
+      "quote": "Each new token only computes its own $Q_t$ and attends to the cached $K$ and $V$ from all previous tokens.",
+      "section": "1. KV Cache: Remembering Without Recomputing",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-44",
+      "quote": "This reduces generation from $O(n^2)$ to $O(n)$ per token, but the cache itself grows linearly with sequence length.",
+      "section": "1. KV Cache: Remembering Without Recomputing",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-45",
+      "quote": "For a 70B parameter model with 128K context:",
+      "section": "1. KV Cache: Remembering Without Recomputing",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-46",
+      "quote": "This is why long-context inference requires enormous GPU memory; the KV cache alone can exceed the model weights.",
+      "section": "1. KV Cache: Remembering Without Recomputing",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-47",
+      "quote": "**Flash Attention** (\\cite{dao2022flashattention}) doesn't change the *math* of attention, it changes the *memory access pattern*.",
+      "section": "2. Flash Attention: Taming the Quadratic Beast",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-48",
+      "quote": "Instead of materializing the full $n \\times n$ attention matrix in GPU high-bandwidth memory (HBM), it:",
+      "section": "2. Flash Attention: Taming the Quadratic Beast",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-49",
+      "quote": "Splits $Q$, $K$, $V$ into small blocks that fit in fast SRAM",
+      "section": "2. Flash Attention: Taming the Quadratic Beast",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-50",
+      "quote": "Computes attention block-by-block",
+      "section": "2. Flash Attention: Taming the Quadratic Beast",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-51",
+      "quote": "Never stores the full attention matrix",
+      "section": "2. Flash Attention: Taming the Quadratic Beast",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-52",
+      "quote": "Result: **exact** attention with $O(n)$ memory instead of $O(n^2)$, and 2-4x faster due to reduced memory bandwidth usage.",
+      "section": "2. Flash Attention: Taming the Quadratic Beast",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-53",
+      "quote": "Instead of attending to *all* previous tokens, each token only attends to the most recent $w$ tokens (the “window”):",
+      "section": "3. Sliding Window Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-54",
+      "quote": "With a window of $w = 4096$, a 128K-token sequence uses $O(n \\cdot w)$ instead of $O(n^2)$, a massive reduction.",
+      "section": "3. Sliding Window Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-55",
+      "quote": "**But doesn't this lose long-range information?** In deep networks, information propagates across layers.",
+      "section": "3. Sliding Window Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-56",
+      "quote": "If layer 1 sees tokens $[0, 4096]$ and layer 2 sees the *output* of layer 1 (which already encodes information from $[0, 4096]$), then layer 2 effectively has indirect access to a much wider range.",
+      "section": "3. Sliding Window Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-57",
+      "quote": "After $L$ layers with window $w$ and stride 1, the effective receptive field is $L(w-1)+1$ (often approximated as $L \\times w$).",
+      "section": "3. Sliding Window Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-58",
+      "quote": "Standard multi-head attention uses separate $K$ and $V$ projections for each head.",
+      "section": "4. Grouped-Query Attention (GQA)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-59",
+      "quote": "GQA \\cite{ainslie2023gqa} shares $K$ and $V$ across groups of heads:",
+      "section": "4. Grouped-Query Attention (GQA)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-60",
+      "quote": "| Variant | K/V heads | Q heads | KV Cache Size |",
+      "section": "4. Grouped-Query Attention (GQA)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-61",
+      "quote": "| Multi-Head (MHA) | 64 | 64 | 100% |",
+      "section": "4. Grouped-Query Attention (GQA)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-62",
+      "quote": "| Grouped-Query (GQA) | 8 | 64 | 12.5% |",
+      "section": "4. Grouped-Query Attention (GQA)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-63",
+      "quote": "| Multi-Query (MQA) \\cite{shazeer2019mqa} | 1 | 64 | 1.6% |",
+      "section": "4. Grouped-Query Attention (GQA)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-64",
+      "quote": "GQA reduces KV cache memory by 8x with minimal quality loss, essential for serving long-context models.",
+      "section": "4. Grouped-Query Attention (GQA)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-65",
+      "quote": "For extremely long sequences (1M+ tokens), the KV cache doesn't fit on a single GPU.",
+      "section": "5. Ring Attention / Sequence Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-66",
+      "quote": "**Ring Attention** \\cite{liu2023ringattention} distributes the sequence across multiple GPUs in a ring topology:",
+      "section": "5. Ring Attention / Sequence Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-67",
+      "quote": "- Each GPU holds a chunk of the sequence",
+      "section": "5. Ring Attention / Sequence Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-68",
+      "quote": "- KV blocks are passed around the ring",
+      "section": "5. Ring Attention / Sequence Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-69",
+      "quote": "- Each GPU computes its local attention against the circulating KV blocks",
+      "section": "5. Ring Attention / Sequence Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-70",
+      "quote": "This allows context windows to scale with the number of GPUs, limited only by hardware budget.",
+      "section": "5. Ring Attention / Sequence Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-71",
+      "quote": "Even if a model *can* process 200K tokens, does it actually *use* all of them equally?",
+      "section": "The “Lost in the Middle” Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-72",
+      "quote": "Research \\cite{liu2023lostmiddle} consistently shows that LLMs exhibit a **U-shaped attention pattern**: they attend most strongly to the **beginning** and **end** of the context, while information in the middle receives less attention.",
+      "section": "The “Lost in the Middle” Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-73",
+      "quote": "**Positional encoding bias:** Early tokens have well-learned positional embeddings; middle tokens are in a “flat” region",
+      "section": "Why does this happen?",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-74",
+      "quote": "**Recency bias:** The most recent tokens are closest in the KV cache and receive stronger attention",
+      "section": "Why does this happen?",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-75",
+      "quote": "**Training distribution:** During pre-training, the most important information (instructions, key facts) tends to appear at the beginning or end of documents",
+      "section": "Why does this happen?",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-76",
+      "quote": "There is now a mechanistic account of the first/last bias.",
+      "section": "Why does this happen?",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-77",
+      "quote": "To *copy* an item out of a list, a model has to **index** it — pick it out among all the others.",
+      "section": "Why does this happen?",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-78",
+      "quote": "Recent interpretability work on GPT-2 (\\cite[Merullo et al., 2024]{merullo2024talkingheads}) found that this indexing happens in a tiny low-rank (a few-dimensional) subspace of the residual stream, where each list item occupies a small \"wedge.\" The first and last items land in clean, well-separated wedges, while the middle items crowd one narrow region.",
+      "section": "Why does this happen?",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-79",
+      "quote": "As the list grows, those middle wedges fracture and the model can no longer tell the items apart — the U-shaped first/last bias above, and one reason retrieval systems push the facts that matter toward the ends of the context.",
+      "section": "Why does this happen?",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-80",
+      "quote": "| Important fact at position 1,000 of 100,000 | ✅ Likely found (near beginning) |",
+      "section": "Practical implications:",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-81",
+      "quote": "| Important fact at position 50,000 of 100,000 | ⚠️ May be missed (middle) |",
+      "section": "Practical implications:",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-82",
+      "quote": "| Important fact at position 99,000 of 100,000 | ✅ Likely found (near end) |",
+      "section": "Practical implications:",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-83",
+      "quote": "This is one reason **RAG remains valuable** even with million-token context windows: RAG places the most relevant information at the *top* of the context, where attention is strongest.",
+      "section": "Practical implications:",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-84",
+      "quote": "This is one of the most important practical decisions in building LLM applications:",
+      "section": "Context Window vs. RAG: When to Use Which?",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-85",
+      "quote": "| Situation | Best Approach |",
+      "section": "The Decision Framework",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-86",
+      "quote": "| Small document set (< 50 pages) | Long context, just put it all in |",
+      "section": "The Decision Framework",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-87",
+      "quote": "| Large corpus (1000+ documents) | RAG, can't fit everything |",
+      "section": "The Decision Framework",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-88",
+      "quote": "| Need to find unexpected connections | Long context, model sees everything |",
+      "section": "The Decision Framework",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-89",
+      "quote": "| Need precise, targeted answers | RAG, retrieves exactly what's relevant |",
+      "section": "The Decision Framework",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-90",
+      "quote": "| Cost-sensitive application | RAG, uses fewer tokens per query |",
+      "section": "The Decision Framework",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-91",
+      "quote": "| Simple Q&A over a single PDF | Long context, no infrastructure needed |",
+      "section": "The Decision Framework",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-92",
+      "quote": "| Production system with many users | RAG, amortized indexing cost |",
+      "section": "The Decision Framework",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-93",
+      "quote": "In practice, the most effective systems combine both:",
+      "section": "The Best of Both Worlds",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-94",
+      "quote": "RAG handles the *discovery* problem (finding needles in haystacks), while long context handles the *reasoning* problem (synthesizing information across multiple retrieved passages).",
+      "section": "The Best of Both Worlds",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-95",
+      "quote": "LLMs have **no built-in persistent memory**.",
+      "section": "How LLMs “Remember” Across Conversations",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-96",
+      "quote": "Each API call is stateless, the model has no idea what you asked it yesterday.",
+      "section": "How LLMs “Remember” Across Conversations",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-97",
+      "quote": "So how do systems like ChatGPT seem to “remember” you?",
+      "section": "How LLMs “Remember” Across Conversations",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-98",
+      "quote": "The simplest approach: prepend the entire conversation history to each new message.",
+      "section": "Strategy 1: Conversation History in Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-99",
+      "quote": "**Problem:** As conversations grow, they eventually exceed the context window.",
+      "section": "Strategy 1: Conversation History in Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-100",
+      "quote": "| Strategy | How it works | Tradeoff |",
+      "section": "Strategy 1: Conversation History in Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-101",
+      "quote": "| **Truncation** | Drop oldest messages | Loses early context |",
+      "section": "Strategy 1: Conversation History in Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-102",
+      "quote": "| **Summarization** | LLM summarizes old messages into a compact paragraph | Lossy compression |",
+      "section": "Strategy 1: Conversation History in Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-103",
+      "quote": "| **Sliding window** | Keep last N messages + system prompt | Simple but forgetful |",
+      "section": "Strategy 1: Conversation History in Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-104",
+      "quote": "| **Hierarchical** | Summarize old → keep recent in full | Best quality, more complex |",
+      "section": "Strategy 1: Conversation History in Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-105",
+      "quote": "For persistent memory across sessions, systems store information externally:",
+      "section": "Strategy 2: External Memory Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-106",
+      "quote": "| System | How it works |",
+      "section": "Strategy 2: External Memory Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-107",
+      "quote": "| **ChatGPT Memory** | Extracts key facts (“User prefers Python”) → stores in a database → injects into system prompt |",
+      "section": "Strategy 2: External Memory Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-108",
+      "quote": "| **Vector memory** | Embeds past conversations → stores in vector DB → retrieves relevant memories when similar topics arise |",
+      "section": "Strategy 2: External Memory Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-109",
+      "quote": "| **File-based memory** | Writes structured notes to files (CLAUDE.md, memory.json) → reads them at session start |",
+      "section": "Strategy 2: External Memory Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-110",
+      "quote": "| **Graph memory** | Stores entities and relationships in a knowledge graph → queries for relevant connections |",
+      "section": "Strategy 2: External Memory Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-111",
+      "quote": "The key insight: **memory is always external**.",
+      "section": "Strategy 2: External Memory Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-112",
+      "quote": "The LLM itself is stateless, it's the surrounding system that creates the illusion of continuity by carefully managing what goes into the context window at the start of each interaction.",
+      "section": "Strategy 2: External Memory Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-113",
+      "quote": "ChatGPT's memory works through a combination of detection of memory-worthy information, storing of such information, and retrieval-augmented generation.",
+      "section": "Strategy 2: External Memory Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-114",
+      "quote": "In addition to saved memories, it now references all past conversations to deliver responses that feel more relevant and tailored.",
+      "section": "Strategy 2: External Memory Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-115",
+      "quote": "Four layers working together create the illusion that ChatGPT knows you personally.",
+      "section": "Strategy 2: External Memory Systems",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-116",
+      "quote": "For very long-running sessions (like coding agents that run for hours), the context window eventually fills up.",
+      "section": "Strategy 3: Compaction (Summarize and Continue)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-117",
+      "quote": "**Compaction** summarizes the conversation so far and replaces the full history with a compressed version:",
+      "section": "Strategy 3: Compaction (Summarize and Continue)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-118",
+      "quote": "This is lossy, details are inevitably lost in summarization.",
+      "section": "Strategy 3: Compaction (Summarize and Continue)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-119",
+      "quote": "But combined with external memory files, critical information can persist across compaction boundaries.",
+      "section": "Strategy 3: Compaction (Summarize and Continue)",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-120",
+      "quote": "The most robust systems combine multiple approaches into a layered architecture:",
+      "section": "The Memory Hierarchy",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-121",
+      "quote": "| Layer | Mechanism | Persistence | Capacity |",
+      "section": "The Memory Hierarchy",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-122",
+      "quote": "| **Working memory** | Current context window | This session only | 128K–1M tokens |",
+      "section": "The Memory Hierarchy",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-123",
+      "quote": "| **Short-term memory** | Conversation buffer + summarization | This session | Unlimited (via compaction) |",
+      "section": "The Memory Hierarchy",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-124",
+      "quote": "| **Long-term memory** | Vector DB + structured files | Across sessions | Unlimited |",
+      "section": "The Memory Hierarchy",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-125",
+      "quote": "| **Episodic memory** | Timestamped interaction logs | Permanent | Unlimited |",
+      "section": "The Memory Hierarchy",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-126",
+      "quote": "Every token the model has ever seen in the current session lives in the **KV cache**, and this cache consumes GPU memory that grows linearly with context length.",
+      "section": "The KV Cache: The Hidden Memory Tax",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-127",
+      "quote": "| Context used | KV Cache (70B model) | Effect |",
+      "section": "Why this matters for users:",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-128",
+      "quote": "| 4K tokens | ~10 GB | Fast, cheap |",
+      "section": "Why this matters for users:",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-129",
+      "quote": "| 32K tokens | ~84 GB | Moderate cost |",
+      "section": "Why this matters for users:",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-130",
+      "quote": "| 128K tokens | ~335 GB | Expensive, slower |",
+      "section": "Why this matters for users:",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-131",
+      "quote": "| 1M tokens | ~2.6 TB | Requires multi-GPU, very expensive |",
+      "section": "Why this matters for users:",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-132",
+      "quote": "This is why **longer conversations cost more**, both in money (API pricing is per-token) and in latency (more KV cache = slower generation).",
+      "section": "Why this matters for users:",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-133",
+      "quote": "It's also why providers set context limits: the memory cost is real and physical.",
+      "section": "Why this matters for users:",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-134",
+      "quote": "| Technique | How it works | Savings |",
+      "section": "KV Cache Optimization Techniques",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-135",
+      "quote": "| **GQA** (Grouped-Query Attention) | Share K/V across head groups | 4-8x smaller cache |",
+      "section": "KV Cache Optimization Techniques",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-136",
+      "quote": "| **KV Cache Quantization** | Store K/V in int8 instead of float16 | 2x smaller |",
+      "section": "KV Cache Optimization Techniques",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-137",
+      "quote": "| **Sliding Window** | Only cache last $w$ tokens per layer | Bounded cache size |",
+      "section": "KV Cache Optimization Techniques",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-138",
+      "quote": "| **PagedAttention** (vLLM) \\cite{kwon2023vllm} | Manage cache like virtual memory pages | Better GPU utilization |",
+      "section": "KV Cache Optimization Techniques",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-139",
+      "quote": "| **Token eviction** | Drop least-attended tokens from cache | Bounded, but lossy |",
+      "section": "KV Cache Optimization Techniques",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-140",
+      "quote": "If you've had a long conversation and the model seems to forget something you said earlier, it's likely because:",
+      "section": "1. Why conversations “forget” things",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-141",
+      "quote": "- The conversation exceeded the context window and old messages were truncated",
+      "section": "1. Why conversations “forget” things",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-142",
+      "quote": "- The information is in the “middle” of a long context (lost-in-the-middle effect)",
+      "section": "1. Why conversations “forget” things",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-143",
+      "quote": "- The system used compaction and the detail was lost in summarization",
+      "section": "1. Why conversations “forget” things",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-144",
+      "quote": "A fresh conversation has an empty context window.",
+      "section": "2. Why “starting a new chat” sometimes helps",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-145",
+      "quote": "The model's full attention capacity is available for your new question, with no interference from irrelevant prior messages.",
+      "section": "2. Why “starting a new chat” sometimes helps",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-146",
+      "quote": "For a 10,000-page knowledge base:",
+      "section": "3. Why RAG beats “just paste everything”",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-147",
+      "quote": "- **Paste everything:** Impossible (exceeds any context window)",
+      "section": "3. Why RAG beats “just paste everything”",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-148",
+      "quote": "- **Long context (1M tokens):** Could fit ~750K words, but costs $$$, is slow, and suffers from lost-in-the-middle",
+      "section": "3. Why RAG beats “just paste everything”",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-149",
+      "quote": "- **RAG:** Retrieves only the 5 most relevant passages, places them at the top of context where attention is strongest, costs pennies",
+      "section": "3. Why RAG beats “just paste everything”",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-150",
+      "quote": "Every token in your prompt consumes:",
+      "section": "4. Why API pricing is per-token",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-151",
+      "quote": "- Compute (attention is $O(n^2)$ or $O(n \\cdot w)$)",
+      "section": "4. Why API pricing is per-token",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-152",
+      "quote": "- Memory (KV cache grows linearly)",
+      "section": "4. Why API pricing is per-token",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-153",
+      "quote": "- Bandwidth (data must flow through the GPU)",
+      "section": "4. Why API pricing is per-token",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-154",
+      "quote": "Longer prompts = more of all three = higher cost.",
+      "section": "4. Why API pricing is per-token",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-155",
+      "quote": "Research is pushing toward effectively unlimited context through several approaches:",
+      "section": "The Future: Towards Infinite Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-156",
+      "quote": "| Approach | Status (2026) | How it works |",
+      "section": "The Future: Towards Infinite Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-157",
+      "quote": "| **Ring Attention** | Production (Gemini) | Distribute sequence across GPU ring |",
+      "section": "The Future: Towards Infinite Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-158",
+      "quote": "| **Infini-Attention** | Research | Compressive memory + local attention |",
+      "section": "The Future: Towards Infinite Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-159",
+      "quote": "| **Landmark Attention** | Research | Mark important tokens, attend to landmarks |",
+      "section": "The Future: Towards Infinite Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-160",
+      "quote": "| **Retrieval-augmented generation** | Production | External memory via vector search |",
+      "section": "The Future: Towards Infinite Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-161",
+      "quote": "| **Memory-augmented Transformers** | Research | Learnable external memory banks |",
+      "section": "The Future: Towards Infinite Context",
+      "kind": "statement"
+    },
+    {
+      "id": "contextwindows-stmt-162",
+      "quote": "| **State-space hybrids** \\cite{gu2023mamba} | Production (Jamba, etc.) | SSM layers for long-range + attention for precision |",
+      "section": "The Future: Towards Infinite Context",
+      "kind": "statement"
+    }
   ]
 }

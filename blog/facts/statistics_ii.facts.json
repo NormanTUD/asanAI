@@ -465,5 +465,691 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "statistics_ii-stmt-1",
+      "quote": "This second statistics chapter covers **inference**: how we update our beliefs given new data, and how we measure uncertainty.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-2",
+      "quote": "These are the tools that turn raw distributions into actionable predictions.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-3",
+      "quote": "By the end, you will understand Bayesian reasoning, Shannon entropy, latent variable models (including EM), and Markov chains, all central to modern machine learning.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-4",
+      "quote": "While Gauß sought the “True Path” of planets among noisy observations, the Reverend **Thomas Bayes** was interested in a deeper philosophical question: how do we update our beliefs when we encounter new evidence?",
+      "section": "Bayesian Updating: The Logic of Science",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-5",
+      "quote": "His essay, that published posthumously in the year \\citeyear{bayes1763essay}, provides the mathematical engine for **induction**.",
+      "section": "Bayesian Updating: The Logic of Science",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-6",
+      "quote": "In modern AI, this is how a machine “changes its mind.” It doesn't just see a pixel; it calculates how that pixel changes its confidence in what it is looking at.",
+      "section": "Bayesian Updating: The Logic of Science",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-7",
+      "quote": "Thomas Bayes (1702–1761), whose posthumously published *Essay* (1763) gave Bayesian updating its name and its rule.",
+      "section": "Bayesian Updating: The Logic of Science",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-8",
+      "quote": "Image: \\cite[Mark Riehl]{thomas_bayes_image}, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), colorized from a public-domain portrait.",
+      "section": "Bayesian Updating: The Logic of Science",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-9",
+      "quote": "When you start a prompt, the model's probability distribution over its next token is very broad: it doesn't yet “know” whether you are a coder, a poet, or a chef.",
+      "section": "Bayesian Updating: The Logic of Science",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-10",
+      "quote": "Every word you type shifts that distribution, concentrating probability on some possibilities and away from others.",
+      "section": "Bayesian Updating: The Logic of Science",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-11",
+      "quote": "This is an *analogy*, not a quantum “superposition” that “collapses”: the model simply runs a deterministic forward pass, optionally sampling randomly at generation time.",
+      "section": "Bayesian Updating: The Logic of Science",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-12",
+      "quote": "This behavior can be pictured as **Bayesian inference**, the method named after **Thomas Bayes**: as if the model maintains an “internal map” of probabilities ($P$) and updates it based on new data ($D$).",
+      "section": "Bayesian Updating: The Logic of Science",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-13",
+      "quote": "It is a useful way to think about how context narrows predictions, not a claim that the network literally performs Bayesian updates.",
+      "section": "Bayesian Updating: The Logic of Science",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-14",
+      "quote": "Type a sentence in English, French, or German (e.g., *“Hello”* vs *“Bonjour”* vs *“Guten Tag”*).",
+      "section": "Bayesian Updating: The Logic of Science",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-15",
+      "quote": "Watch how the model's “Belief” shifts in real-time as it processes each word.",
+      "section": "Bayesian Updating: The Logic of Science",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-16",
+      "quote": "Before Claude Shannon made \"information\" a precise quantity in 1948, the idea was already circling the edge of physics, one engineer and one physicist at a time.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-17",
+      "quote": "The bridge from the thermal world to the communication world is the piece this chapter has been missing, and it is worth building in order.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-18",
+      "quote": "**Nyquist (1928).** In telephony, Harry Nyquist asked how fast you can sample a signal before you lose it: a signal with no frequencies above $B$ hertz is completely determined by samples taken at or faster than **$2B$ per second** \\cite[Nyquist (1928)]{nyquist_sampling}.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-19",
+      "quote": "(His 1924 paper, \"Certain Factors Affecting Telegraph Speed\", concerns bandwidth and signalling speed; the $2B$ criterion is from the 1928 paper, with earlier proofs by Whittaker (1915) and Ogura (1920).) The number of *distinct values* a signal can carry per unit time is therefore not a matter of opinion; it is a number, fixed by its bandwidth.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-20",
+      "quote": "\"How much can pass?\" had become a computable question.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-21",
+      "quote": "**Hartley (1928).** In the same year, Ralph Hartley made the first information-theoretic paper, *Transmission of Information*, and did what Shannon would later do rigorously: he measured the number of **decimal digits** a message of a given length could carry, treating information as a countable quantity with a unit (the *hartley*) \\cite[Hartley, *Transmission of Information* (1928)]{hartley1928transmission}.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-22",
+      "quote": "The concept of \"a quantity of information\" now existed, with a name and a unit.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-23",
+      "quote": "**Szilard (1929).** The decisive turn came from physics.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-24",
+      "quote": "Leo Szilard asked what a *single* yes/no measurement is worth, in the language of thermodynamics: for a particle in a two-state box, knowing which half it is in reduces the entropy by exactly **$k \\ln 2$** \\cite[Szilard (1929), the bit and entropy]{szilard1929entropy}.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-25",
+      "quote": "One bit of information and one unit of entropy had been made to *balance*.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-26",
+      "quote": "This is the hinge of the whole bridge: **information is a physical quantity**, and the unit of information (the bit) is the unit of a *reduction in entropy*.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-27",
+      "quote": "**The bridge.** Boltzmann's entropy, the \"messiness\" of a physical system, and Shannon's entropy, the \"surprise\" of a message, are the *same* formula in two guises.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-28",
+      "quote": "The difference is only what you count as a \"microstate\": for Boltzmann it is the arrangements of molecules; for Shannon it is the possible messages.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-29",
+      "quote": "When you measure which message arrived, you have performed a Szilard measurement, and you have *lowered* the entropy of your uncertainty by exactly the number of bits the message carried.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-30",
+      "quote": "Shannon did not invent a new kind of entropy; he *imported* the physical one into a new domain — communication — and found that the bit, the smallest unit of a digital signal, is the smallest unit of a reduction in disorder.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-31",
+      "quote": "The \"messiness scale\" in the next section is, in this light, not an analogy to thermodynamics; it is the *same mathematics*, wearing a different costume.",
+      "section": "The birth of information: from Boltzmann to Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-32",
+      "quote": "While Gauß sought to minimize error in orbits, **Claude Shannon** in \\citeyear{shannon1948communication} aimed to find the mathematical limit of communication.",
+      "section": "Entropy (The Messiness Scale)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-33",
+      "quote": "His goal was to quantify “Information” itself.",
+      "section": "Entropy (The Messiness Scale)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-34",
+      "quote": "He realized that information isn't about what is said, but about how **surprising** the outcome is.",
+      "section": "Entropy (The Messiness Scale)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-35",
+      "quote": "If we toss a coin, each outcome is a state $x_i$.",
+      "section": "Entropy (The Messiness Scale)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-36",
+      "quote": "* **$x_i$ Explained:** This represents the $i$-th possible outcome.",
+      "section": "Entropy (The Messiness Scale)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-37",
+      "quote": "For our coin, $x_1 = \\text{Heads}$ and $x_2 = \\text{Tails}$.",
+      "section": "Entropy (The Messiness Scale)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-38",
+      "quote": "* **The Goal:** Shannon wanted a measure that was maximal when uncertainty was highest.",
+      "section": "Entropy (The Messiness Scale)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-39",
+      "quote": "If a coin is “fair” ($0.5/0.5$), you are maximally surprised by the result.",
+      "section": "Entropy (The Messiness Scale)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-40",
+      "quote": "If a coin is “weighted” ($1.0/0.0$), there is no surprise, so Entropy is zero.",
+      "section": "Entropy (The Messiness Scale)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-41",
+      "quote": "This concept is the backbone of modern AI.",
+      "section": "Entropy (The Messiness Scale)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-42",
+      "quote": "When a model like GPT predicts the next word, it calculates the **Cross-Entropy** between its guess and the actual word.",
+      "section": "Entropy (The Messiness Scale)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-43",
+      "quote": "The lower this cross-entropy, the more “certain” and accurate the model has become.",
+      "section": "Entropy (The Messiness Scale)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-44",
+      "quote": "While Zipf's Law tells us how common words are, it doesn't explain how they “clump” together.",
+      "section": "The Dirichlet Distribution: The Probability of Probabilities",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-45",
+      "quote": "To understand how an AI chooses a “topic” before it chooses a word, we need the **Dirichlet Distribution**.",
+      "section": "The Dirichlet Distribution: The Probability of Probabilities",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-46",
+      "quote": "Named after **Peter Gustav Lejeune Dirichlet** in the 19th century, this distribution was a generalization of the Beta distribution.",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-47",
+      "quote": "Imagine an urn filled with marbles of $K$ different colors.",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-48",
+      "quote": "If you start with a few marbles and every time you pick one, you put it back along with *more* marbles of the same color, you create a “rich-get-richer” effect.",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-49",
+      "quote": "This is the **Pólya Urn Model**, and the Dirichlet distribution describes the resulting proportions of colors in the limit.",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-50",
+      "quote": "Mathematically, for a probability vector $p = (p_1, \\dots, p_K)$, the density is:",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-51",
+      "quote": "Where $\\alpha$ is the **concentration parameter**.",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-52",
+      "quote": "In topic models such as Latent Dirichlet Allocation (LDA), the Dirichlet distribution is used to model the “mixture” of topics in a document.",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-53",
+      "quote": "* Is this document 80% “Technical Manual” and 20% “Friendly Tutorial”?",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-54",
+      "quote": "* The $\\alpha$ values encode the prior over such mixtures, learned from how words group together in the training corpus.",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-55",
+      "quote": "A Transformer does not do this: it computes one deterministic distribution over the next token and, if sampling is enabled, draws from that distribution directly.",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-56",
+      "quote": "When $\\alpha < 1$, the distribution pushes probabilities toward the corners (the model becomes very “certain” and chooses one specific topic).",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-57",
+      "quote": "When $\\alpha > 1$, it pushes everything toward the center (a “vague” mixture of everything).",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-58",
+      "quote": "Adjust the $\\alpha$-parameters for three potential “Topics” (e.g., Science, Art, Sports).",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-59",
+      "quote": "Watch how the “Probability Space” (represented as a 3D simplex) shifts.",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-60",
+      "quote": "* **Low Alpha (< 1):** The AI is decisive; it picks one topic.",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-61",
+      "quote": "* **High Alpha (> 1):** The AI is “blending” topics together.",
+      "section": "History & The “Urn” Motivation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-62",
+      "quote": "When an AI reads a word, it faces a **Disambiguation Problem**.",
+      "section": "Latent Variables: The Hidden Logic of Context",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-63",
+      "quote": "In statistics, we model this using **Gaussian Mixture Models (GMMs)**.",
+      "section": "Latent Variables: The Hidden Logic of Context",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-64",
+      "quote": "This theory suggests that the data we see (tokens) is actually generated by several hidden (latent) distributions.",
+      "section": "Latent Variables: The Hidden Logic of Context",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-65",
+      "quote": "The algorithm used to solve this was formalized by **Arthur Dempster, Laird, and Rubin** in 1977; earlier special cases include Hartley (1958) and Sundberg (1974) (\\cite{em_algorithm_wiki}).",
+      "section": "Expectation-Maximization (EM)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-66",
+      "quote": "It works in two steps that mirror how a Transformer processes context:",
+      "section": "Expectation-Maximization (EM)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-67",
+      "quote": "**Expectation (E):** Based on the current words, what is the probability that we are in “Topic A” vs “Topic B”?",
+      "section": "Expectation-Maximization (EM)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-68",
+      "quote": "**Maximization (M):** Adjust the internal “weights” to favor the words that fit that topic.",
+      "section": "Expectation-Maximization (EM)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-69",
+      "quote": "By analogy, this is why a prompt works.",
+      "section": "The Statistical “Vibe”",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-70",
+      "quote": "Typing “Import torch” pushes the model's **hidden state** toward the “Coding” region, making “print” far more likely than “reproduction” (the biology cluster) — though a Transformer does not literally run EM.",
+      "section": "The Statistical “Vibe”",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-71",
+      "quote": "Adjust the “Cluster Separation.” When clusters overlap, the AI's “Choice” is statistically noisy (uncertain).",
+      "section": "The Statistical “Vibe”",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-72",
+      "quote": "As the Transformer sees more context, it effectively “pushes” these distributions apart to make a clear choice.",
+      "section": "The Statistical “Vibe”",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-73",
+      "quote": "Mathematically, the probability of a word $x$ given the mixture is:",
+      "section": "The Statistical “Vibe”",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-74",
+      "quote": "Where $\\pi_k$ is the weight of topic $k$, and $\\mathcal{N}$ is the Normal Distribution (the Bell Curve) you learned about in the Statistics section.",
+      "section": "The Statistical “Vibe”",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-75",
+      "quote": "In the real world, language is a **Non-Stationary Process**.",
+      "section": "The Law of Large Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-76",
+      "quote": "If you only read the first page of \\citetitle{nietzsche1883zarathustra}, your statistical “Prior” is heavily biased by the opening scene.",
+      "section": "The Law of Large Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-77",
+      "quote": "The **Law of Large Numbers** ensures that as our sample size $n$ grows, the observed frequency $\\bar{X}_n$ of words like “the” or “God” converges to their true mathematical mean $\\mu$ within the entire corpus.",
+      "section": "The Law of Large Numbers",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-78",
+      "quote": "An LLM is not just a list of word counts; it is a map of **Conditional Probabilities**.",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-79",
+      "quote": "This is the logic of **Andrey Markov** (1906).",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-80",
+      "quote": "He proposed that we can predict the future state of a system based solely on its current state.",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-81",
+      "quote": "In linguistics, we call this an **N-Gram**.",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-82",
+      "quote": "* A **Unigram** is just the chance of a word appearing ($P(w)$).",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-83",
+      "quote": "* A **Bigram** is the chance of a word appearing *given* the previous word ($P(w_n | w_{n-1})$).",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-84",
+      "quote": "If Nietzsche wrote “Thus spake” 100 times, but “Thus thought” only 5 times, the Markov-Chain “chooses” based on this statistical skew.",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-85",
+      "quote": "Select a word found in the \\citetitle{nietzsche1883zarathustra} by \\citeauthor{nietzsche1883zarathustra} to show you every word that ever followed it and how likely they are depending on their real statistics.",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-86",
+      "quote": "Now, we visualize the transition probabilities $P(w_n | w_{n-1})$.",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-87",
+      "quote": "The training process creates a map where each word points to its potential successors, weighted by their frequency in the source text.",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-88",
+      "quote": "**Likely next words (Likelihood %):**",
+      "section": "Markovian Transitions (The Probability of “Next”)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-89",
+      "quote": "Developed in *Statistical Mechanics* to describe the **distribution of molecular velocities** in a gas — first derived by Maxwell (1860) and generalized by **\\citeauthor{boltzmann}** — it asks: in a room full of gas, how many molecules are moving fast versus slow?",
+      "section": "Boltzmann Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-90",
+      "quote": "In LLMs, we apply this to the “vocabulary” instead of “molecules.” The **Temperature** ($T$) determines how much energy is in the system.",
+      "section": "Boltzmann Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-91",
+      "quote": "- **The Graph:** Shows the probability of picking specific tokens.",
+      "section": "Boltzmann Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-92",
+      "quote": "- **Live Logic:** At high $T$, the distribution flattens (Entropy increases).",
+      "section": "Boltzmann Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-93",
+      "quote": "At low $T$, the “cold” model only picks the most certain word.",
+      "section": "Boltzmann Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-94",
+      "quote": "Popularized by **Sir \\citeauthor{fisher1922}**, MLE was created to solve the problem of **Parameter Estimation**.",
+      "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-95",
+      "quote": "If you see 10 tall people, what is the “most likely” average height of the whole population?",
+      "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-96",
+      "quote": "LLMs use this to find the best weights ($\\theta$) for the model.",
+      "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-97",
+      "quote": "- **The Graph:** The red dots are your “observed data.” The blue curve is your model.",
+      "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-98",
+      "quote": "- **The Goal:** Move the slider to align the peak of the curve with the cluster of dots to maximize the “Likelihood” value.",
+      "section": "Maximum Likelihood Estimation (MLE): The Fisherian Fit",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-99",
+      "quote": "The **Chain Rule of Probability** follows directly from the definition of conditional probability, and sits within the rigorous axiomatic foundation of probability theory established by **\\citeauthor{kolmogorov1933}** in *\\citetitle{kolmogorov1933}* (\\citeyear{kolmogorov1933}).",
+      "section": "The Chain Rule of Probability: Kolmogorov's Logic",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-100",
+      "quote": "It solves the problem of **Sequential Dependencies**.",
+      "section": "The Chain Rule of Probability: Kolmogorov's Logic",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-101",
+      "quote": "(It is distinct from the calculus chain rule that powers backpropagation.) It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.",
+      "section": "The Chain Rule of Probability: Kolmogorov's Logic",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-102",
+      "quote": "In an LLM, the probability of the sentence “The cat sat” is calculated as:",
+      "section": "The Chain Rule of Probability: Kolmogorov's Logic",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-103",
+      "quote": "$P(\\text{The}) \\times P(\\text{cat} | \\text{The}) \\times P(\\text{sat} | \\text{The cat})$",
+      "section": "The Chain Rule of Probability: Kolmogorov's Logic",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-104",
+      "quote": "Introduced by **\\citeauthorlastnameand{leiblerkullback}** (\\citeyear{leiblerkullback}) to quantify the **information available to discriminate between two hypotheses**; Kullback, who developed it, was a military cryptanalyst at the NSA's predecessor agency; the NSA was not formed until 1952 (\\cite{kullback_wiki}).",
+      "section": "KL Divergence: Information Gain",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-105",
+      "quote": "It measures the “surprise” or extra bits of info needed if you use Distribution Q to approximate Distribution P.",
+      "section": "KL Divergence: Information Gain",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-106",
+      "quote": "\\citeauthor{colah2015visualinfo} (\\citeyear{colah2015visualinfo}) gives the whole tower — entropy, cross-entropy, and this asymmetry — a picture: KL divergence is *not* a true distance because it is not symmetric, $D_{KL}(P\\|Q) \\neq D_{KL}(Q\\|P)$; it measures *information gain* rather than geometry \\cite{colah2015visualinfo}.",
+      "section": "KL Divergence: Information Gain",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-107",
+      "quote": "- **The Graph:** Shows the overlap between P (Truth) and Q (Model).",
+      "section": "KL Divergence: Information Gain",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-108",
+      "quote": "- **Live Logic:** The divergence $D_{KL}$ is 0 only when the distributions are identical.",
+      "section": "KL Divergence: Information Gain",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-109",
+      "quote": "The “Distributional Hypothesis”, the idea that words occurring in similar contexts have similar meanings, was popularized by **\\citeauthor{zelligharris}** in his \\citeyear{zelligharris} article *\\citetitle{zelligharris}*.",
+      "section": "Bag of Words (BoW): The Linguistic Atom",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-110",
+      "quote": "It treats a document not as a sequence, but as a “bag”: you lose the grammar, the order, and the syntax, keeping only the raw counts.",
+      "section": "Bag of Words (BoW): The Linguistic Atom",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-111",
+      "quote": "This was the primary method for **Spam Filtering** and early **Search Engines** before LLMs.",
+      "section": "Bag of Words (BoW): The Linguistic Atom",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-112",
+      "quote": "- **The Graph:** Visualizes the “Vector” of your text.",
+      "section": "Bag of Words (BoW): The Linguistic Atom",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-113",
+      "quote": "Each unique word is a dimension.",
+      "section": "Bag of Words (BoW): The Linguistic Atom",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_ii-stmt-114",
+      "quote": "- **Live Logic:** Watch how “The cat sat” and “Sat the cat” produce the exact same statistical signature, demonstrating the model's “blindness” to word order.",
+      "section": "Bag of Words (BoW): The Linguistic Atom",
+      "kind": "statement"
+    }
   ]
 }

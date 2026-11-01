@@ -372,5 +372,139 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "december-stmt-1",
+      "quote": "This is a guided path for a curious person, not a course for specialists.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-2",
+      "quote": "You do not need calculus, programming, or a GPU.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-3",
+      "quote": "Each day opens one idea, points you to the clearest lesson that explains it, and tells you what you will be able to explain afterward.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-4",
+      "quote": "The month has six sections.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-5",
+      "quote": "The first days are the gentlest; the middle is the technical core; the last days zoom out.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-6",
+      "quote": "If a day feels heavy, read the first link and stop there.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-7",
+      "quote": "The calendar is a map, not a test -- and you can start today, not only in December.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-8",
+      "quote": "**How to use it:** each card gives a short reading path, a rough time, and how much math it uses.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-9",
+      "quote": "A \"Short on time?\" line points to the one article to read if you only have ten minutes.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-10",
+      "quote": "Optional deep dives are tucked away at the bottom of the card.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-11",
+      "quote": "Read one door a day, or jump to whatever you need.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-12",
+      "quote": "The last sections are a little denser; take two days for a card if you like.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-13",
+      "quote": "**Prefer ten-minute lessons?** The [31-door calendar](tenminutes/advent.html) opens the compact lessons in the ScaDS.AI visual style, with interactive demos and saved progress.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-14",
+      "quote": "Doors that are not distilled yet link to the full chapter.",
+      "section": "Thirty-One Doors into AI",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-15",
+      "quote": "You have not learned to train a frontier model, and that was never the point.",
+      "section": "After December",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-16",
+      "quote": "You have learned the vocabulary, the shape of the pipeline, and the questions worth asking.",
+      "section": "After December",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-17",
+      "quote": "If you want to keep going, the [course overview](index.php) has the full shelf, and the [Atlas](atlas.php) gives you the same material as a map.",
+      "section": "After December",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-18",
+      "quote": "A few specialist doors sit outside the main path: distributed training, serving stacks, inference kernels, and the deepest excursions into topology and category theory.",
+      "section": "After December",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-19",
+      "quote": "They are all still in the course.",
+      "section": "After December",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-20",
+      "quote": "Use the calendar as a route, not a fence.",
+      "section": "Further Doors",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-21",
+      "quote": "If a side question grabbed you, follow it: [Training Infrastructure](training_infrastructure.php), [Production Serving](production_serving.php), [Inference Optimization](inference_optimization.php), [Topology](topology.php), [The Shape of Holes](geometry_iii.php), and [The Foam of Meaning](foam_of_meaning.php) are all one click away.",
+      "section": "Further Doors",
+      "kind": "statement"
+    },
+    {
+      "id": "december-stmt-22",
+      "quote": "The [Atlas](atlas.php) is the best place to see how the people, places, and ideas in these pages connect.",
+      "section": "Further Doors",
+      "kind": "statement"
+    }
   ]
 }

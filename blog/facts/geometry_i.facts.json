@@ -560,5 +560,2695 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "geometry_i-stmt-1",
+      "quote": "The three math chapters before this one gave you the *numbers* a neural network manipulates — sums, products, vectors, gradients.",
+      "section": "Why geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-2",
+      "quote": "This chapter gives you the *stage* on which those numbers live: **space**, and the history of how we came to understand it.",
+      "section": "Why geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-3",
+      "quote": "Geometry is older than almost any other branch of mathematics.",
+      "section": "Why geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-4",
+      "quote": "Arithmetic needs counting; geometry needs a *landscape* to measure, a field to bound, a temple to square.",
+      "section": "Why geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-5",
+      "quote": "It is also, arguably, the most visual and the most \"alive\" of the disciplines — and the quote above, written for a modern textbook on the *shape of space* \\citeauthor{weeksshapespace} (\\citeyear{weeksshapespace}), makes the point: geometry is not a relic finished off in Alexandria.",
+      "section": "Why geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-6",
+      "quote": "Every few centuries it has had to grow, because real surfaces and models no longer fit inside flat, straight-line space.",
+      "section": "Why geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-7",
+      "quote": "This chapter follows that growth step by step.",
+      "section": "Why geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-8",
+      "quote": "For each turn we ask four questions: **what** was discovered, **who** did it, **when**, and — the question that makes a history interesting — **why**, what need of the age forced the result to exist.",
+      "section": "Why geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-9",
+      "quote": "We start where the physical evidence actually begins: with a hand tool pressing a zig-zag into a river shell, long before any Greek theorist.",
+      "section": "Why geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-10",
+      "quote": "We then cross the first cities, where geometry became a *job* (surveying land after the flood), pass through the Greek invention of *proof*, the medieval and early-modern reformulation of space in terms of projection and coordinates, and finally the 19th-century discovery that space need not be *flat* — the idea that later made general relativity possible, and that underlies the high-dimensional \"spaces of meaning\" you will meet in the [Embeddings](embeddinglab) chapter.",
+      "section": "Why geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-11",
+      "quote": "The oldest geometric objects we have are marks and shapes rather than calculations.",
+      "section": "I. Before writing: space etched in shell and bone",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-12",
+      "quote": "Their purpose seems to have been neither practical nor religious: they make space *orderly*.",
+      "section": "I. Before writing: space etched in shell and bone",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-13",
+      "quote": "The very oldest is a *shape* rather than a mark — a handaxe, a three-dimensional object worked to a mental template of symmetry and proportion about 1.26 million years before anyone etched a line.",
+      "section": "I. Before writing: space etched in shell and bone",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-14",
+      "quote": "After it come the *patterns*: marks made by a hand that was doing something else (shaping a tool, decorating, keeping score), in which a deliberate regularity shows up.",
+      "section": "I. Before writing: space etched in shell and bone",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-15",
+      "quote": "That regularity is the first thing geometry notices — the sense that *the same shape* can be repeated, and that repeating it is meaningful.",
+      "section": "I. Before writing: space etched in shell and bone",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-16",
+      "quote": "No one sat down to invent geometry; geometry is what a shape-making, pattern-making mind leaves behind when it is not, strictly, being *about* geometry at all.",
+      "section": "I. Before writing: space etched in shell and bone",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-17",
+      "quote": "Before there were etched shells or tally bones, there was the **handaxe**.",
+      "section": "The Acheulean handaxe (c. 1.76 million years ago)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-18",
+      "quote": "The Acheulean industry — the bifacial, almond- or pear-shaped handaxe — begins about **1.76 million years ago** at West Turkana in Kenya, where handaxes from the Kokiselei 4 site were dated by magnetostratigraphy to that age, pushing the start of the Acheulean back by roughly 350,000 years \\cite{achleuleankariandusi}.",
+      "section": "The Acheulean handaxe (c. 1.76 million years ago)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-19",
+      "quote": "That is about three and a half times older than the Trinil shell below, and the maker, almost certainly *Homo erectus* (or *H.",
+      "section": "The Acheulean handaxe (c. 1.76 million years ago)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-20",
+      "quote": "ergaster*), was shaping a volume rather than scratching a pattern.",
+      "section": "The Acheulean handaxe (c. 1.76 million years ago)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-21",
+      "quote": "Acheulean handaxes from the Kariandusi site, Kenya — a later Acheulean locality; the oldest known examples come from Kokiselei 4 in West Turkana (\\citealternativetitle{achleuleanhandaxe_image}).",
+      "section": "The Acheulean handaxe (c. 1.76 million years ago)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-22",
+      "quote": "Each one is a three-dimensional form worked to a template that existed in the maker's mind before the first blow.",
+      "section": "The Acheulean handaxe (c. 1.76 million years ago)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-23",
+      "quote": "\\citealternativetitle{trinilshell_image}: a freshwater river-clam shell engraved by Homo erectus at Trinil, Java, c.",
+      "section": "The Acheulean handaxe (c. 1.76 million years ago)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-24",
+      "quote": "500,000 years ago, showing a precise zig-zag of grooves (detail at right).",
+      "section": "The Acheulean handaxe (c. 1.76 million years ago)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-25",
+      "quote": "Engraved ochre from the \\cite[Blombos-Cave]{blombosochre}, South Africa.",
+      "section": "The Acheulean handaxe (c. 1.76 million years ago)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-26",
+      "quote": "The cross-hatching and rhomboid grids are among the earliest evidence of abstract, non-utilitarian spatial patterning.",
+      "section": "The Acheulean handaxe (c. 1.76 million years ago)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-27",
+      "quote": "For most of its early history geometry was not a body of theorems but a *technique of state*: the discipline of measuring fields, dividing inheritances, and erecting temples that had to be square — and it appears almost simultaneously in the first great urban cultures (Egypt, Mesopotamia, the Indus Valley, China), each with its own tools and its own number system.",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-28",
+      "quote": "The reason was a single, shared, unglamorous fact of land: **when the river rose, the boundaries vanished.**",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-29",
+      "quote": "In Egypt the Nile's annual inundation wiped out every field boundary, and each year the fields had to be *re-measured* — and, crucially, the crown's grain tax was assessed by the *area* of a holding, so a wrong area meant a wrong tax.",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-30",
+      "quote": "In Mesopotamia, where there was no single river but a dense mesh of canals and private plots, the need to settle *disputable* boundaries between neighbours was constant.",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-31",
+      "quote": "In China the state had to tax land, move armies, and move earth (dikes, canals, granaries), and every one of those is a *geometry* problem.",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-32",
+      "quote": "So in all three places the same small kit of formulas was invented, independently, for the same reason: to put an exact number on a piece of land.",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-33",
+      "quote": "The surveyor's core kit, in modern notation:",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-34",
+      "quote": "* **Rectangle / square:** $A = a\\,b$ (for a square, $A = a^{2}$)",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-35",
+      "quote": "* **Triangle:** $A = \\tfrac{1}{2}\\,b\\,h$",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-36",
+      "quote": "* **Trapezoid:** $A = \\tfrac{1}{2}\\,(a+b)\\,h$ (the \"average of the parallel sides, times the height\")",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-37",
+      "quote": "* **Circle (Egyptian rule):** $A = \\left(\\tfrac{8}{9}d\\right)^{2}$",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-38",
+      "quote": "* **Prism / cylinder:** $V = B\\,h$ (base area times height)",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-39",
+      "quote": "* **Pyramid / cone:** $V = \\tfrac{1}{3}\\,B\\,h$",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-40",
+      "quote": "* **Frustum of a square pyramid:** $V = \\tfrac{h}{3}\\left(a^{2} + ab + b^{2}\\right)$",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-41",
+      "quote": "That list is the entire practical geometry of the ancient world, and it is more sophisticated than it looks — especially the last two entries.",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-42",
+      "quote": "Let us see it culture by culture.",
+      "section": "II. Measuring the land: the surveyor's equations",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-43",
+      "quote": "A page of the Rhind Mathematical Papyrus (Papyrus Ahmes) in hieratic script: a column of word problems, each followed by its worked solution and a check — the recipe-style metric geometry described here \\cite{rhindpapyrus}.",
+      "section": "Egypt: the Rhind Papyrus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-44",
+      "quote": "The \\citealternativetitle{susa_geometry_tablet} — object Sb 13088 in the Louvre — a school exercise from the first half of the 2nd millennium BCE.",
+      "section": "Egypt: the Rhind Papyrus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-45",
+      "quote": "A geometry problem, set out in cuneiform on clay for a student to solve; the \"homework\" plate of an Old Babylonian mathematics class \\cite{susa_geometry_tablet}.",
+      "section": "Egypt: the Rhind Papyrus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-46",
+      "quote": "\\citealternativetitle{si427_image}, a hand-tablet from the Old Babylonian period (c.",
+      "section": "Egypt: the Rhind Papyrus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-47",
+      "quote": "1900–1600 BCE): a field being subdivided, its boundary lines set out with right angles made exact by Pythagorean triples.",
+      "section": "Egypt: the Rhind Papyrus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-48",
+      "quote": "Babylonian cuneiform — the medium of Si.427, Plimpton 322 and the BM/VAT tablets.",
+      "section": "Egypt: the Rhind Papyrus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-49",
+      "quote": "A single clay tablet could carry a field plan, a table of right-triangle ratios, and a worked solution of a \"complete the square\" problem, all in the same wedge-script \\cite{neugebauerexactsciences}.",
+      "section": "Egypt: the Rhind Papyrus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-50",
+      "quote": "This is the insight that separates modern scholarship from older accounts.",
+      "section": "Egypt: the Rhind Papyrus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-51",
+      "quote": "For most of the 20th century these texts were read as *numeric* algebra: the scribe was \"solving $x^{2}+x=a$\".",
+      "section": "Egypt: the Rhind Papyrus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-52",
+      "quote": "\\citeauthor{hoyrup2021algebra} showed that reading is impossible to sustain, because the terminology only makes sense against a *geometric* background — the operations are additions, subtractions and multiplications of *measurable* lengths and areas, and the \"quadratic completion\" is a literal rearrangement of square and rectangle pieces \\cite{hoyrup2021algebra} \\cite{hoyruplengths}.",
+      "section": "Egypt: the Rhind Papyrus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-53",
+      "quote": "The Babylonians did not have \"algebra\" and \"geometry\" as two subjects; they had one geometry that *happened* to compute.",
+      "section": "Egypt: the Rhind Papyrus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-54",
+      "quote": "Euclid, a millennium later, would re-cast much of this into the axiomatic *Elements*.",
+      "section": "Egypt: the Rhind Papyrus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-55",
+      "quote": "The Greeks did not invent geometry; they made it demonstrative.",
+      "section": "III. The Greek turn: from measuring to proving",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-56",
+      "quote": "The motive was not doubt but belief: the Pythagoreans held that *number* was the substance of reality (\"all is number\"), so a fact about number could not merely be *useful* — it had to be *necessary*, true in every possible world, not just in the field you are surveying today.",
+      "section": "III. The Greek turn: from measuring to proving",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-57",
+      "quote": "A Babylonian scribe could give you the right answer and trust the recipe; a Greek wanted to know **why it must be so, and why it cannot fail**.",
+      "section": "III. The Greek turn: from measuring to proving",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-58",
+      "quote": "That single demand — for *apodeixis*, proof — is what separates the *Elements* from everything before it, and it is the habit of mind that all of modern mathematics (and, in the end, all of the formal reasoning a computer performs) inherits.",
+      "section": "III. The Greek turn: from measuring to proving",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-59",
+      "quote": "\\marginfig{pythagoras_bust.jpg}{Pythagoras of Samos (c.",
+      "section": "Thales, Pythagoras and the theorem",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-60",
+      "quote": "570–495 BCE), founder of the school that gave its name to the most famous theorem in the world (\\cite[Pythagoras, Vatican bust]{pythagoras_portrait}).}",
+      "section": "Thales, Pythagoras and the theorem",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-61",
+      "quote": "The tradition places the first proofs with **Thales of Miletus** (c.",
+      "section": "Thales, Pythagoras and the theorem",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-62",
+      "quote": "624–546 BCE) — the circle bisection, the isosceles base angles, the vertical angles, ASA congruence, and the angle in a semicircle; the triangle angle-sum (I.32) is credited to the Pythagoreans, not to Thales \\cite{heathgreekmath}.",
+      "section": "Thales, Pythagoras and the theorem",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-63",
+      "quote": "Thales' theorem, in modern symbols: if $AC$ is a diameter of a circle and $B$ is any other point on it, then $\\angle ABC = 90^{\\circ}$.",
+      "section": "Thales, Pythagoras and the theorem",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-64",
+      "quote": "The Pythagoreans, the circle around **Pythagoras** (c.",
+      "section": "Thales, Pythagoras and the theorem",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-65",
+      "quote": "570–495 BCE), are credited with the first *proof* of what is now named after them: in any right triangle the square on the hypotenuse equals the sum of the squares on the two legs,",
+      "section": "Thales, Pythagoras and the theorem",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-66",
+      "quote": "and, more, they (allegedly) proved the converse — that a triangle with $a^{2}+b^{2}=c^{2}$ *must* be right-angled.",
+      "section": "Thales, Pythagoras and the theorem",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-67",
+      "quote": "The Babylonians and the Indians had *used* the relation for a thousand years; the Greeks *understood* it, and — for them, this was the dangerous part — the understanding led to a crisis, because they found figures (the diagonal of a square) whose side ratio could not be written as a ratio of whole numbers at all.",
+      "section": "Thales, Pythagoras and the theorem",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-68",
+      "quote": "The discovery of the incommensurable, $\\sqrt{2} \\notin \\mathbb{Q}$, is arguably the first genuine \"mathematical\" result: a statement about what *cannot* be done \\cite{heathgreekmath}.",
+      "section": "Thales, Pythagoras and the theorem",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-69",
+      "quote": "**Hippocrates of Chios** (c.",
+      "section": "Hippocrates and Eudoxus: the method of exhaustion",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-70",
+      "quote": "470–410 BCE) is said to have been the first to \"square the lunes\" — to cut a crescent-shaped figure bounded by two circular arcs and show it has an area exactly equal to a plain rectilinear one \\cite{heathgreekmath}.",
+      "section": "Hippocrates and Eudoxus: the method of exhaustion",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-71",
+      "quote": "It is the first *quadrature of a curved figure*, and it points the way to the circle itself.",
+      "section": "Hippocrates and Eudoxus: the method of exhaustion",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-72",
+      "quote": "A century later **Eudoxus of Cnidus** (c.",
+      "section": "Hippocrates and Eudoxus: the method of exhaustion",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-73",
+      "quote": "408–355 BCE) supplied the rigorous engine that had been missing: the **method of exhaustion**, the idea that a curved area can be pinned down by inscribing and circumscribing polygons and showing the \"remainder\" can be made smaller than *any* given piece.",
+      "section": "Hippocrates and Eudoxus: the method of exhaustion",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-74",
+      "quote": "This is the ancient ancestor of the integral.",
+      "section": "Hippocrates and Eudoxus: the method of exhaustion",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-75",
+      "quote": "Applied to the circle, it proves",
+      "section": "Hippocrates and Eudoxus: the method of exhaustion",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-76",
+      "quote": "and Euclid's *Elements* XII is built on it \\cite{heathgreekmath}.",
+      "section": "Hippocrates and Eudoxus: the method of exhaustion",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-77",
+      "quote": "\\marginfig{archimedes_fetti.jpg}{Archimedes of Syracuse (c.",
+      "section": "Archimedes: exhaustion perfected",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-78",
+      "quote": "287–212 BCE), who perfected the method of exhaustion and computed the sphere's volume and surface with proofs that survive today (\\cite[Archimedes, Fetti]{archimedes_portrait}).}",
+      "section": "Archimedes: exhaustion perfected",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-79",
+      "quote": "If Eudoxus gave the *method*, **Archimedes of Syracuse** (c.",
+      "section": "Archimedes: exhaustion perfected",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-80",
+      "quote": "287–212 BCE) gave it its masterpieces \\cite{heathgreekmath}.",
+      "section": "Archimedes: exhaustion perfected",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-81",
+      "quote": "Working with the same exhaustion engine, he computed, with proofs that survive today, the area and circumference of the circle, and then the *volumes* that were the great open problem: the sphere, the cone, the cylinder, the paraboloid and the spheroid.",
+      "section": "Archimedes: exhaustion perfected",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-82",
+      "quote": "His results, in modern symbols,",
+      "section": "Archimedes: exhaustion perfected",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-83",
+      "quote": "The cone result is $V=\\tfrac{1}{3}Bh$; the Rhind Papyrus's pyramid problems compute the *seked* (slope), not a cone volume — the frustum formula is Moscow Problem 14 — so the cone volume is the Greek result, now *proved*.",
+      "section": "Archimedes: exhaustion perfected",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-84",
+      "quote": "Archimedes showed the sphere is exactly two-thirds of the cylinder that circumscribes it, a ratio he considered his finest discovery and asked to be carved on his tomb.",
+      "section": "Archimedes: exhaustion perfected",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-85",
+      "quote": "The *why* here is not taxation but intellectual pride: Archimedes was answering the Pythagorean demand for proof at the hardest scale — three-dimensional curved bodies.",
+      "section": "Archimedes: exhaustion perfected",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-86",
+      "quote": "428–348 BCE), geometry was not a trade; it was the *entrance examination* to philosophy.",
+      "section": "Plato: geometry as the road to the Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-87",
+      "quote": "In the *Republic* the philosopher is told that \"if he has not a great natural gift for geometry he will get very little from the study of it\", because geometry \"draws the soul towards truth\" (*Republic* 527a) \\cite{platorepublic}.",
+      "section": "Plato: geometry as the road to the Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-88",
+      "quote": "In the *Meno* there is the famous scene in which Socrates leads an uneducated slave boy, by questions alone, to *discover* that doubling a square requires a side of $\\sqrt{2}$ times the original \\cite{platomeno}.",
+      "section": "Plato: geometry as the road to the Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-89",
+      "quote": "The point Plato wants is the philosophical one: the boy was not *taught* the fact from outside; the shape was already, in a sense, *known* to him, and proof merely *reminded* him of it.",
+      "section": "Plato: geometry as the road to the Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-90",
+      "quote": "Geometry, on this picture, is the study of what the mind already contains — the bridge between the changing world of things and the unchanging world of Forms.",
+      "section": "Plato: geometry as the road to the Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-91",
+      "quote": "The tradition also preserves the legend that Plato had written above the door of his Academy: *\"Let no one ignorant of geometry enter\"* — a slogan for the idea that the discipline was a *way of thinking* before it was a body of results.",
+      "section": "Plato: geometry as the road to the Forms",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-92",
+      "quote": "\\citeauthor{aristotlephysics}'s (*ca.",
+      "section": "Aristotle: place, continuity and the \"three principles\"",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-93",
+      "quote": "350* BCE) \\citetitle{aristotlephysics} is less a geometry than a *metaphysics of space* \\cite{aristotlephysics}.",
+      "section": "Aristotle: place, continuity and the \"three principles\"",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-94",
+      "quote": "His question is not \"how big\" but \"what is *where*?\": he defines **place** (the *topos*) as \"the innermost motionless boundary of what contains\", argues that the void is impossible, and lays down, in the *Posterior Analytics* (I.2, 71b–72a), what he calls the three principles on which mathematics stands: the **axiom** (a self-evident proposition), the **postulate/hypothesis** (a request to suppose something), and the **definition** (a name for a thing).",
+      "section": "Aristotle: place, continuity and the \"three principles\"",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-95",
+      "quote": "This threefold taxonomy is exactly the scaffold Euclid's *Elements* will use a generation later, and it is the seed of the whole modern notion of an *axiomatic theory*.",
+      "section": "Aristotle: place, continuity and the \"three principles\"",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-96",
+      "quote": "\\marginfig{euclid_ribera.jpg}{Euclid of Alexandria (c.",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-97",
+      "quote": "300 BCE) demonstrating a proposition to a student — the standard image of the man who set the template for every proof that followed (\\cite[Euclid, Ribera]{euclid_portrait}).}",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-98",
+      "quote": "Everything before Euclid was a collection of results; the **\\citealternativetitle{euclidelements}** (composed c.",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-99",
+      "quote": "300 BCE in Alexandria, the standard edition edited and translated by \\citeauthor{euclidelements_heath}) is the first *system* \\cite{euclidelements} \\cite{euclidelements_heath}.",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-100",
+      "quote": "The *why* is institutional: Alexandria was the library of the ancient world, and Euclid's book was a textbook for the students who flocked there — a way to organise *all* the known geometry into one sequence in which each result depends only on the ones before it.",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-101",
+      "quote": "Its structure is as famous as its content: a short list of definitions, **five postulates** (the working rules of compass and straightedge) and **five common notions** (self-evident truths about magnitudes) from which **465 propositions** follow, each ending with the little square — the *tombstone* (or *halmos*) — that marks \"it has been proved\".",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-102",
+      "quote": "That architecture is the template for every proof-based subject that followed:",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-103",
+      "quote": "* **Definitions** (point, line, circle, angle, …) — what the objects *are*.",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-104",
+      "quote": "* **Postulates** (five) — what you are *allowed to do* with them.",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-105",
+      "quote": "The first four are self-evident constructions; the **fifth** is the **parallel postulate**: through a point not on a line there passes *at most one* line that never meets the given line.",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-106",
+      "quote": "For over two thousand years this fifth postulate was treated as slightly less obvious than the others, and every attempt to \"fix\" it is, in retrospect, the road to non-Euclidean geometry (Section VII).",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-107",
+      "quote": "* **Common notions** (five) — the basic, self-evident truths about equality and magnitude (\"things equal to the same thing are equal to one another\").",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-108",
+      "quote": "* **Propositions** — statements proved *only* from the definitions, postulates and common notions, plus earlier propositions.",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-109",
+      "quote": "A page from a medieval manuscript of the \\citealternativetitle{euclidelements} (\\cite[Lüneburg manuscript]{euclid_lueneburg_ms}): definition, postulate, and proposition, each with its proof, in the unbroken chain Euclid designed.",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-110",
+      "quote": "This is what \"a proof\" looked like for two thousand years.",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-111",
+      "quote": "The five regular solids of Elements XIII — the only convex polyhedra whose faces are identical regular polygons and whose identical corners fit together.",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-112",
+      "quote": "Euclid constructs all five and proves in Elements XIII.18 itself that there can be no sixth \\cite{euclidelements} (\\cite[Platonic solids diagram]{platonic_solids_image}).",
+      "section": "Euclid's Elements: the machine of proof",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-113",
+      "quote": "Two threads push geometry past the plane and past the conic.",
+      "section": "Beyond Euclid: Heron, Apollonius and Menelaus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-114",
+      "quote": "**Heron of Alexandria** (1st century CE), in his *Metrica*, collected and proved the practical metric formulas, the most famous of them giving the **area of a triangle from its three sides** — no height required:",
+      "section": "Beyond Euclid: Heron, Apollonius and Menelaus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-115",
+      "quote": "This is the tool a surveyor actually needed — you can measure the three sides of an irregular field on the ground, but dropping a perpendicular to get a height is often impossible.",
+      "section": "Beyond Euclid: Heron, Apollonius and Menelaus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-116",
+      "quote": "It also generalises naturally, with two sides and the included angle $C$, to $A = \\tfrac{1}{2}ab\\sin C$, and, replacing the sine term, to the **law of cosines**, $c^{2} = a^{2} + b^{2} - 2ab\\cos C$, which is the Pythagorean theorem for *every* triangle (and reduces to it when $C = 90^{\\circ}$) \\cite{heronmetrica} \\cite{heathgreekmath}.",
+      "section": "Beyond Euclid: Heron, Apollonius and Menelaus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-117",
+      "quote": "**Apollonius of Perga** (c.",
+      "section": "Beyond Euclid: Heron, Apollonius and Menelaus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-118",
+      "quote": "262–190 BCE) wrote the eight-book **\\citealternativetitle{apolloniusconics}**, in which he names and classifies the **conic sections** — the ellipse, the parabola and the hyperbola — as the curves a plane cuts from a cone, and develops their full metric theory \\cite{apolloniusconics}.",
+      "section": "Beyond Euclid: Heron, Apollonius and Menelaus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-119",
+      "quote": "Written in the language of coordinates that Descartes would later supply, the three conics are simply",
+      "section": "Beyond Euclid: Heron, Apollonius and Menelaus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-120",
+      "quote": "The three conic sections (\\citealternativetitle{conicsections_wiki}): tilt a cutting plane against a cone and it carves out an ellipse (a shallow cut), a parabola (a plane parallel to a side), or a hyperbola (a steep cut through both nappes).",
+      "section": "Beyond Euclid: Heron, Apollonius and Menelaus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-121",
+      "quote": "All three are degree-two curves — the geometry that Descartes would turn into the $B^{2}-4AC$ sign test \\cite{apolloniusconics}.",
+      "section": "Beyond Euclid: Heron, Apollonius and Menelaus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-122",
+      "quote": "The Antikythera mechanism (c.",
+      "section": "Beyond Euclid: Heron, Apollonius and Menelaus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-123",
+      "quote": "BCE), a geared astronomical computer — the geometry of the heavens reduced to bronze gears and epicycles.",
+      "section": "Beyond Euclid: Heron, Apollonius and Menelaus",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-124",
+      "quote": "Muḥammad ibn Mūsā al-Khwārizmī (c.",
+      "section": "IV. Transmission: the Islamic Golden Age",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-125",
+      "quote": "780–850), whose treatise on al-jabr gave algebra its name — and whose surname gave us the word algorithm (\\cite[Al-Khwarizmi portrait]{alkhwarizmi_portrait}).",
+      "section": "IV. Transmission: the Islamic Golden Age",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-126",
+      "quote": "Ibn al-Haytham (Alhazen), c.",
+      "section": "IV. Transmission: the Islamic Golden Age",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-127",
+      "quote": "965–1040, whose Book of Optics made geometry the mathematics of how the world projects itself onto the eye (\\cite[Ibn al-Haytham, 1647]{alhazen_portrait}).",
+      "section": "IV. Transmission: the Islamic Golden Age",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-128",
+      "quote": "Up to now geometry has been about the ground — fields to square, altars to convert, temples to raise.",
+      "section": "V. The geometry of the sky: angles, sines and the functions of a triangle",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-129",
+      "quote": "But the merchant and the sailor out of sight of land, and the priest keeping the calendar, all measured the sky by *angles* — the height of a star, the run of the sun, the turning of the year.",
+      "section": "V. The geometry of the sky: angles, sines and the functions of a triangle",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-130",
+      "quote": "The same right triangle that measured a field can be turned around and pointed at the sky, and the moment it does, something new is born: a **function of an angle**.",
+      "section": "V. The geometry of the sky: angles, sines and the functions of a triangle",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-131",
+      "quote": "This is the load-bearing idea of the second half of the chapter, because it is the bridge from *shapes in the plane* to *a number attached to a direction* — and a direction, in the modern language, is exactly what a vector (and therefore an embedding) is.",
+      "section": "V. The geometry of the sky: angles, sines and the functions of a triangle",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-132",
+      "quote": "The need that created trigonometry was not the surveyor's but the astronomer's.",
+      "section": "The Greek chord: measuring the heavens",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-133",
+      "quote": "To predict the positions of the sun, moon and planets — and the eclipses that carried religious weight — you must measure *angles in the sky*, and angles in the sky are read by the lines they cut across the celestial sphere.",
+      "section": "The Greek chord: measuring the heavens",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-134",
+      "quote": "**Hipparchus of Nicaea** (c.",
+      "section": "The Greek chord: measuring the heavens",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-135",
+      "quote": "190–120 BCE; observations 162–127 BCE), called the \"father of trigonometry,\" was the first to tabulate them: for a series of arcs he listed the length of the **chord**, the straight line joining the two ends of the arc \\cite{hipparchuschords}.",
+      "section": "The Greek chord: measuring the heavens",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-136",
+      "quote": "A chord of an angle subtends that angle, and its perpendicular bisector runs through the centre and halves it, so one half of the bisected chord is $r\\sin(\\theta/2)$: the **sine is secretly the half-chord**.",
+      "section": "The Greek chord: measuring the heavens",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-137",
+      "quote": "Hipparchus' table is lost, but **Ptolemy's** *Almagest* (c.",
+      "section": "The Greek chord: measuring the heavens",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-138",
+      "quote": "150 CE) rebuilt and extended it, giving the chord of every half-degree up to a semicircle for a circle of diameter $120$, and in doing so fixed the **360° circle** and the **sexagesimal** division — sixty parts to a degree, sixty to a part — inherited from the Babylonian base-60, which is why a minute and a second of *angle* are the same words as a minute and a second of *time* \\cite{ptolemyalmagest} \\cite{neugebauerexactsciences}.",
+      "section": "The Greek chord: measuring the heavens",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-139",
+      "quote": "The decisive leap came in India.",
+      "section": "The Indian sine: the chord becomes a function",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-140",
+      "quote": "In the **\\citealternativetitle{aryabhatiya}** (composed **499 CE**), the mathematician-astronomer **Aryabhata** (476–550 CE) tabulated not the chord but the *half-chord* — the Sanskrit **jya**, literally \"bowstring\" — in steps of $3.75^{\\circ}$ from $0^{\\circ}$ to $90^{\\circ}$, recorded in sexagesimal minutes of arc (225, 224, 222, ...) and accurate to roughly three decimal digits \\cite{aryabhatiya}.",
+      "section": "The Indian sine: the chord becomes a function",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-141",
+      "quote": "That small change is the whole invention: a chord is a line segment in one particular circle, but the half-chord, measured as a *fraction of the radius*, is a **ratio that depends only on the angle**.",
+      "section": "The Indian sine: the chord becomes a function",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-142",
+      "quote": "The object stops being a bit of a diagram and becomes a *function* — a number you can attach to a direction.",
+      "section": "The Indian sine: the chord becomes a function",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-143",
+      "quote": "This is the sense in which the \"Indian guy\" invented the sine: not the shape, but the *function*.",
+      "section": "The Indian sine: the chord becomes a function",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-144",
+      "quote": "The companion function was there too, the **kojya** (the \"adjacent\" half-chord): what we now call the **cosine** — the sine of the *complementary* angle, $\\sin\\theta = \\cos(90^{\\circ} - \\theta)$ — and the \"co-\" prefix has meant exactly that, \"the one for the complement,\" ever since.",
+      "section": "The Indian sine: the chord becomes a function",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-145",
+      "quote": "The word *sine* itself is a happy accident: as the Indian tables were carried into Arabic in the 8th century, *jya* was misread as the Arabic **jayb** (\"a fold,\" or the open bay of a garment), and that became the Latin *sinus*, a bay.",
+      "section": "The Indian sine: the chord becomes a function",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-146",
+      "quote": "A bowstring, through two mistranslations, became a bay of the sea.",
+      "section": "The Indian sine: the chord becomes a function",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-147",
+      "quote": "Sine, cosine and tangent read off a single right triangle on the unit circle (\\citealternativetitle{trigfunctions_image}): $\\sin\\theta$ is the height, $\\cos\\theta$ the run, $\\tan\\theta$ the slope of the terminal side.",
+      "section": "The Indian sine: the chord becomes a function",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-148",
+      "quote": "So what does sine mean , in the end?",
+      "section": "The Indian sine: the chord becomes a function",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-149",
+      "quote": "It is a ratio — opposite over hypotenuse — and because it is a ratio, not a length, it generalises from the triangle, to the circle, to a function on the whole real line.",
+      "section": "The Indian sine: the chord becomes a function",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-150",
+      "quote": "For centuries the working method was the **trig table**: a list of sines at regular angles, with *interpolation* between the printed entries.",
+      "section": "Calculating the functions: from tables to infinite series",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-151",
+      "quote": "**Bhāskara I** (7th c.) did something better — a *formula* for the sine of an acute angle with no table at all, $\\sin x \\approx \\tfrac{16\\,x(\\pi - x)}{5\\pi^{2} - 4x(\\pi - x)}$, accurate to under two percent.",
+      "section": "Calculating the functions: from tables to infinite series",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-152",
+      "quote": "Then came the idea that would feed every numerical computation in this book: express the sine as an **infinite series**.",
+      "section": "Calculating the functions: from tables to infinite series",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-153",
+      "quote": "Astonishingly, it was done first in the **Kerala school** of India, by **Madhava of Sangamagrama** (c.",
+      "section": "Calculating the functions: from tables to infinite series",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-154",
+      "quote": "1340–1425) — some *three hundred years before Brook Taylor* (1715) lent his name to the construction.",
+      "section": "Calculating the functions: from tables to infinite series",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-155",
+      "quote": "The proof is preserved in the *Yuktibhāṣā* \\cite{madhava}:",
+      "section": "Calculating the functions: from tables to infinite series",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-156",
+      "quote": "Note the quiet trap in that formula: it is only true when $x$ is measured in **radians**, not degrees.",
+      "section": "Calculating the functions: from tables to infinite series",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-157",
+      "quote": "The degree is a human convenience ($360$ to a turn); the radian is the angle's *natural* unit, the one for which the arc-length equals the angle.",
+      "section": "Calculating the functions: from tables to infinite series",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-158",
+      "quote": "That the cleanest formula for sine *demands* radians is the first hint that the angle's real home is not the protractor but the circle.",
+      "section": "Calculating the functions: from tables to infinite series",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-159",
+      "quote": "**Taylor** (1715) and then **Euler** (1748) carried the idea to its modern form; Euler in particular made the functions functions of the *arc* and welded them to the exponential and the complex number in $e^{i\\theta} = \\cos\\theta + i\\sin\\theta$, the identity that ties geometry to growth and, downstream, to all of signal processing.",
+      "section": "Calculating the functions: from tables to infinite series",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-160",
+      "quote": "An angle is a *rotation*, so you measure it by comparing one direction to another — and, conversely, you can *calculate* an angle from a measured ratio by running the trig tables backwards (the inverse sine, or arctangent), which is the whole art of \"solving\" a triangle from a couple of given sides.",
+      "section": "How do you measure an angle? (the instruments)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-161",
+      "quote": "The **protractor** — a straight-edged half-circle ruled in degrees — does the measuring on the page.",
+      "section": "How do you measure an angle? (the instruments)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-162",
+      "quote": "The **astrolabe** does it in the sky: a portable model of the celestial sphere that you swing to a star and read off its altitude.",
+      "section": "How do you measure an angle? (the instruments)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-163",
+      "quote": "The **sextant**, invented independently in **1731** by John Hadley in England and Thomas Godfrey in America \\cite{sextanthistory}, is the astrolabe's successor at sea: by bouncing the image of a celestial body off a pair of mirrors onto the horizon, it measures the *angle between them* to a fraction of a degree; that angle, combined with a good chronometer, is what fixes your position on the globe.",
+      "section": "How do you measure an angle? (the instruments)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-164",
+      "quote": "Navigation is, at bottom, applied spherical trigonometry — the same triangle, scaled to the size of the Earth.",
+      "section": "How do you measure an angle? (the instruments)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-165",
+      "quote": "\\marginfig{sextant.jpg}{A sextant (this one made in London, 1773, and carried by Alexander von Humboldt).",
+      "section": "How do you measure an angle? (the instruments)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-166",
+      "quote": "It measures the angle between a star and the horizon; that angle plus the time is your position at sea (\\citealternativetitle{humboldtsextant}).}",
+      "section": "How do you measure an angle? (the instruments)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-167",
+      "quote": "Here the thread comes home.",
+      "section": "The payoff: dot product, cosine similarity, and how we measure spaces now",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-168",
+      "quote": "Place two vectors on the circle and the angle between them is read straight off their **dot product**:",
+      "section": "The payoff: dot product, cosine similarity, and how we measure spaces now",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-169",
+      "quote": "That quotient, $\\frac{\\mathbf{a} \\cdot \\mathbf{b}}{\\|\\mathbf{a}\\| \\|\\mathbf{b}\\|}$, is the **cosine similarity**.",
+      "section": "The payoff: dot product, cosine similarity, and how we measure spaces now",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-170",
+      "quote": "It is a measure of *direction*, not size: it is $1$ when the vectors point the same way, $0$ when they are at right angles, and $-1$ when they point opposite.",
+      "section": "The payoff: dot product, cosine similarity, and how we measure spaces now",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-171",
+      "quote": "Decades before the modern deep-learning era, **Salton's** vector-space model of information retrieval (1975) already used this exact quantity to decide how \"parallel\" two document vectors were — meaning how close in meaning \\cite{salton1975vectorspace}.",
+      "section": "The payoff: dot product, cosine similarity, and how we measure spaces now",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-172",
+      "quote": "That is the same machinery behind [the embeddings chapter](embeddinglab): a word or a document is a vector in a high-dimensional space, and **cosine similarity** asks how close two of them are *directionally* — which is why \"king\" lands near \"queen\" while both stay far from \"car.\" The geometry of a two-thousand-year-old triangle is doing the comparing.",
+      "section": "The payoff: dot product, cosine similarity, and how we measure spaces now",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-173",
+      "quote": "Step back and the pattern is a single idea refined again and again.",
+      "section": "The payoff: dot product, cosine similarity, and how we measure spaces now",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-174",
+      "quote": "A **metric** is a rule $d(a, b)$ that says how far two points are, obeying three laws: $d(a, b) \\ge 0$ with equality only for identical points, $d(a, b) = d(b, a)$ (symmetry), and the triangle inequality $d(a, c) \\le d(a, b) + d(b, c)$.",
+      "section": "The payoff: dot product, cosine similarity, and how we measure spaces now",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-175",
+      "quote": "The **Euclidean** distance $\\sqrt{\\sum_{i} (a_{i} - b_{i})^{2}}$ is the straight-line case; the **cosine distance** $(1 - \\cos\\theta)$ measures orientation rather than size; Minkowski and Mahalanobis distances generalise it further.",
+      "section": "The payoff: dot product, cosine similarity, and how we measure spaces now",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-176",
+      "quote": "And as Section VII will show, the most general \"distance\" of all is Riemann's **metric tensor** $g_{\\mu\\nu}$ — the rule that tells a curved space how to measure infinitesimal separation.",
+      "section": "The payoff: dot product, cosine similarity, and how we measure spaces now",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-177",
+      "quote": "So the chain runs: the right triangle, then a ratio of a side to the hypotenuse, then an angle, then the dot product, then cosine similarity, and finally the metric on a manifold.",
+      "section": "The payoff: dot product, cosine similarity, and how we measure spaces now",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-178",
+      "quote": "Every link is the same question — *how do I measure the relation between two things?* — answered a little more deeply each time.",
+      "section": "The payoff: dot product, cosine similarity, and how we measure spaces now",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-179",
+      "quote": "Two needs forced geometry to leave the page — the painter who had to persuade an eye, and the navigator who had to find a harbour without landmarks — and both could only be served by *flattening the world honestly*.",
+      "section": "VI. Space made visible: perspective, coordinates and projection",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-180",
+      "quote": "The mathematics of projection that Alhazen opened is taken up, on the *artistic* side, by the Renaissance, and on the *mathematical* side, by the 17th century; these two streams meet in a single, decisive idea: **space can be turned into numbers**.",
+      "section": "VI. Space made visible: perspective, coordinates and projection",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-181",
+      "quote": "**Leon Battista Alberti**, in his **\\citealternativetitle{albertidepictura}** (1435), gives the first *mathematical* account of **linear perspective** \\cite{albertidepictura}: the picture plane, the vanishing point, and the rule that all parallel lines receding into depth appear to meet at a single point on the horizon.",
+      "section": "Alberti and linear perspective (1435)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-182",
+      "quote": "The *why* is the painter's: Brunelleschi and the Florentine workshops had found, by experiment, how to make a flat panel look \"deep\", and Alberti was the first to write down the *rule* behind the trick.",
+      "section": "Alberti and linear perspective (1435)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-183",
+      "quote": "In modern language that rule is a **central projection** of 3-D space onto a 2-D plane.",
+      "section": "Alberti and linear perspective (1435)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-184",
+      "quote": "A point $(x, y, z)$ in front of a pinhole at focal length $f$ lands on the picture plane at",
+      "section": "Alberti and linear perspective (1435)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-185",
+      "quote": "a *projective* transformation.",
+      "section": "Alberti and linear perspective (1435)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-186",
+      "quote": "The Renaissance discovery of perspective is thus, in modern language, the birth of **projective geometry**, the geometry of what survives projection.",
+      "section": "Alberti and linear perspective (1435)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-187",
+      "quote": "\\marginfig{descartes_frans_hals.jpg}{René Descartes (1596–1650), painted by Frans Hals.",
+      "section": "Descartes and analytic geometry (1637)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-188",
+      "quote": "His *Géométrie* fused algebra and geometry into a single subject (\\cite[Descartes, after Frans Hals]{descartes_portrait}).}",
+      "section": "Descartes and analytic geometry (1637)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-189",
+      "quote": "\\citeauthor{descartesgeometrie}'s **\\citealternativetitle{descartesgeometrie}** (1637), the final part of his *Discourse on the Method*, is the hinge on which all of later mathematics turns \\cite{descartesgeometrie}.",
+      "section": "Descartes and analytic geometry (1637)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-190",
+      "quote": "His move is the simplest and most powerful in the book of mathematics: put a **grid of coordinates** on the plane, so that every point is a *pair of numbers* and every curve is an *equation*.",
+      "section": "Descartes and analytic geometry (1637)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-191",
+      "quote": "A line is $y = mx + c$; a circle is $x^{2} + y^{2} = r^{2}$; the conics are the degree-two equations.",
+      "section": "Descartes and analytic geometry (1637)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-192",
+      "quote": "Geometry and algebra, which had walked in parallel for two thousand years, are now *the same subject written in two languages*.",
+      "section": "Descartes and analytic geometry (1637)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-193",
+      "quote": "(It was **Fermat**, working independently, who developed the same idea in the same decade.)",
+      "section": "Descartes and analytic geometry (1637)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-194",
+      "quote": "Descartes' coordinates also give a clean *algebraic* re-statement of Apollonius' conics.",
+      "section": "Descartes and analytic geometry (1637)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-195",
+      "quote": "Every curve of degree two in the plane satisfies",
+      "section": "Descartes and analytic geometry (1637)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-196",
+      "quote": "and the single number $B^{2} - 4AC$ — the **discriminant** — tells you which conic it is: $<0$ an ellipse (or a point, or nothing), $=0$ a parabola, $>0$ a hyperbola.",
+      "section": "Descartes and analytic geometry (1637)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-197",
+      "quote": "Two thousand years of \"cutting a cone\" have become a sign test on a coefficient.",
+      "section": "Descartes and analytic geometry (1637)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-198",
+      "quote": "From this point on, \"the geometry of a thing\" can be *computed* by solving \"the equation of a thing\" — which is, one small step removed, exactly what a neural network does when it treats a geometric object as a set of numbers and a rule as a function.",
+      "section": "Descartes and analytic geometry (1637)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-199",
+      "quote": "Almost simultaneously, the French engineer **Gérard Desargues**, in his **\\citealternativetitle{desarguesbrouillon}** (1639), asked a different question: *which* facts about a figure are preserved when it is projected onto another plane — facts that stay true no matter how the picture is distorted \\cite{desarguesbrouillon}.",
+      "section": "Desargues and projective geometry (1639)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-200",
+      "quote": "His **Desargues' theorem** (two triangles are in perspective from a point iff their corresponding sides meet on a line) is one of the first clean statements of **projective geometry**, the geometry that later (with Pappus, Pascal, and then Möbius, Plücker and Klein) would be recast as the geometry of *lines, points and incidence* alone, with no length or angle at all.",
+      "section": "Desargues and projective geometry (1639)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-201",
+      "quote": "Perspective, algebra and projection — the three threads of the 17th century — were, in retrospect, all one subject: the geometry of *how space looks*.",
+      "section": "Desargues and projective geometry (1639)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-202",
+      "quote": "Projection was not only an art and a philosophy; it was a navigational *necessity*.",
+      "section": "Mercator: flattening the sphere (1569)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-203",
+      "quote": "In 1569 **Gerardus Mercator** published the world map that bears his name \\cite{mercatoratlas}, solving a problem that had defeated cartographers: how to draw a flat chart on which a straight line is a *constant compass bearing* (a *rhumb line*), so a sailor could steer by a straight edge.",
+      "section": "Mercator: flattening the sphere (1569)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-204",
+      "quote": "His answer is a genuine piece of differential geometry, the **Mercator projection**, which stretches a latitude $\\varphi$ to a vertical coordinate",
+      "section": "Mercator: flattening the sphere (1569)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-205",
+      "quote": "The map is **conformal** — it preserves *angles* (so compass bearings are right) at the price of wildly distorting *areas* (Greenland looks as big as Africa).",
+      "section": "Mercator: flattening the sphere (1569)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-206",
+      "quote": "It is the earliest example, in a working tool, of a deep fact we will meet in full in Section VII: that a curved surface (the sphere) can be flattened only by *distorting* it, and that the choice of *what to preserve* (angle?",
+      "section": "Mercator: flattening the sphere (1569)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-207",
+      "quote": "distance?) is a mathematical choice with no perfect answer.",
+      "section": "Mercator: flattening the sphere (1569)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-208",
+      "quote": "\\citealternativetitle{mercatoratlas}.",
+      "section": "Mercator: flattening the sphere (1569)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-209",
+      "quote": "Note how the map stretches toward the poles — Greenland and Antarctica balloon to fill the top and bottom, a visible record of the $\\ln(\\tan(\\tfrac{\\pi}{4}+\\tfrac{\\varphi}{2}))$ formula doing its conformal work \\cite{mercatoratlas}.",
+      "section": "Mercator: flattening the sphere (1569)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-210",
+      "quote": "For two thousand years \"the\" geometry was Euclid's, and everyone assumed that space *must* be flat — that the parallel postulate is a fact about the universe, not a convenient assumption.",
+      "section": "VII. When space bends: topology and non-Euclidean geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-211",
+      "quote": "The first crack was technical: the postulate refused every attempt to be proved from Euclid's other four axioms — a proposition that cannot be proved is a question wearing the mask of a fact.",
+      "section": "VII. When space bends: topology and non-Euclidean geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-212",
+      "quote": "The 18th and 19th centuries shattered the old certainty in two different directions at once: they found geometry *without metric* (topology), and geometry *without parallelism* (non-Euclidean space).",
+      "section": "VII. When space bends: topology and non-Euclidean geometry",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-213",
+      "quote": "\\citeauthor{eulerbridges} (1707–1783) was the first to notice that some questions about space do not care about *distance* at all.",
+      "section": "Euler: the geometry of connectivity",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-214",
+      "quote": "The *why* was a parlor puzzle: the city of Königsberg (now Kaliningrad) sits on a river with an island and two branches, joined by **seven bridges**, and the local question was whether one could take a walk that crossed each bridge exactly once.",
+      "section": "Euler: the geometry of connectivity",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-215",
+      "quote": "Euler's solution (1736, published \\citeyear{eulerbridges} \\cite{eulerbridges}) ignored the distances entirely and counted only *which banks are connected to which*.",
+      "section": "Euler: the geometry of connectivity",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-216",
+      "quote": "The walk is possible only if the number of points (banks/island) with an *odd* number of bridges attached is $0$ or $2$; Königsberg had **four** such points, so no such walk exists.",
+      "section": "Euler: the geometry of connectivity",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-217",
+      "quote": "The seven bridges of Königsberg.",
+      "section": "Euler: the geometry of connectivity",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-218",
+      "quote": "Euler replaced the river and the banks with four dots and seven lines, and the question became a statement about degrees : the sum of the degrees is always $2E$ (each edge touches two points), so the number of odd-degree vertices is even — here four, which is neither $0$ nor $2$, so the walk is impossible \\cite{eulerbridges}.",
+      "section": "Euler: the geometry of connectivity",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-219",
+      "quote": "\\marginfig{gauss_portrait_1840.jpg}{Carl Friedrich Gauss (1777–1855), who while surveying Hanover found that a surface can read its own curvature from the inside (\\cite[Gauss, 1840]{gauss_portrait}).}",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-220",
+      "quote": "**\\citeauthor{gaussdisquisitiones}** (1777–1855), while surveying the state of Hanover for a living, was led to a question that looks innocent and is profound \\cite{gaussdisquisitiones}.",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-221",
+      "quote": "Surveying means measuring the angles of a *triangle* of survey markers on the ground.",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-222",
+      "quote": "If the Earth's surface is truly flat, the three angles always sum to $180^{\\circ}$; if it is curved, the sum is *more* (the more, the larger and curvier the triangle).",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-223",
+      "quote": "So a sufficiently careful survey of a sufficiently large triangle could, in principle, tell us whether *space itself* is Euclidean.",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-224",
+      "quote": "That made the *parallel postulate* — the axiom that guarantees the flat angle-sum — into an **empirical** question about the physical world, which was a scandal for a subject that was supposed to be true by pure reason alone.",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-225",
+      "quote": "In the course of working out exactly how a surface curves, Gauss proved in his **\\citetitle{gaussdisquisitiones}** (1827) what he called the **Theorema Egregium**, the \"remarkable theorem\" \\cite{gaussdisquisitiones}.",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-226",
+      "quote": "at a point (where $R_{1}, R_{2}$ are the two principal radii of curvature — the radii of the steepest and shallowest normal sections) is *intrinsic*: it can be read off **entirely from the distances and angles measured on the surface itself**, and cannot be changed by bending the surface without stretching it.",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-227",
+      "quote": "A sheet of paper bent into a cylinder has $K = 0$ everywhere (you could have rolled it from flat, so it is \"still flat\"); a sphere has $K > 0$; a saddle has $K < 0$.",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-228",
+      "quote": "In terms of the metric coefficients $E, F, G$ of the first fundamental form,",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-229",
+      "quote": "so $K$ depends only on the surface's *own* measuring-stick, not on how it sits in a surrounding 3-D space \\cite{gaussdisquisitiones} \\cite{docarmo}.",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-230",
+      "quote": "Gauss's original statement of the Theorema Egregium.",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-231",
+      "quote": "The message, in a phrase, is that curvature is not a property of the shape embedded in a higher space, but a property of the space itself , readable from within — the theorem that makes general relativity possible \\cite{gaussdisquisitiones}.",
+      "section": "Gauss: curvature is intrinsic",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-232",
+      "quote": "The parallel postulate had resisted proof for 2,000 years.",
+      "section": "Lobachevsky and Bolyai: the parallel postulate is a choice",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-233",
+      "quote": "The breakthrough was to stop trying to prove it and to *negate* it.",
+      "section": "Lobachevsky and Bolyai: the parallel postulate is a choice",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-234",
+      "quote": "**\\citeauthor{lobachevskygeometry}** (1792–1856) and, independently, **\\citeauthor{bolyaiappendix}** (1802–1860), each discovered that if you *replace* Euclid's fifth postulate with \"through a point not on a line there pass *infinitely many* lines that never meet it\", a perfectly consistent geometry results — **hyperbolic (or \"non-Euclidean\") geometry** \\cite{lobachevskygeometry} \\cite{bolyaiappendix}.",
+      "section": "Lobachevsky and Bolyai: the parallel postulate is a choice",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-235",
+      "quote": "\\marginfig{lobachevsky_portrait.jpg}{Nikolai Lobachevsky (1792–1856), who published the first non-Euclidean geometry in 1829 (\\cite[Lobachevsky]{lobachevsky_portrait}).}",
+      "section": "Lobachevsky and Bolyai: the parallel postulate is a choice",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-236",
+      "quote": "The *why* is the 2,000-year hang-up on the fifth postulate itself: it had always looked less self-evident than the other four, and for two centuries mathematicians (Saccheri, Legendre, and others) had tried and failed to prove it from the rest.",
+      "section": "Lobachevsky and Bolyai: the parallel postulate is a choice",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-237",
+      "quote": "The daring move was to ask what happens if you *assume the opposite* — and to find not a contradiction but a *world*.",
+      "section": "Lobachevsky and Bolyai: the parallel postulate is a choice",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-238",
+      "quote": "In the hyperbolic plane, the angles of a triangle sum to *less* than two right angles, and the shortfall is not a bug but the *area*: for a triangle on a surface of curvature $K=-1$,",
+      "section": "Lobachevsky and Bolyai: the parallel postulate is a choice",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-239",
+      "quote": "So a triangle's area is read directly from its *angular defect*, and there is no largest triangle: every triangle's area is bounded above by $\\pi$ (the area of an ideal triangle), even though the plane itself extends without bound.",
+      "section": "Lobachevsky and Bolyai: the parallel postulate is a choice",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-240",
+      "quote": "(In the opposite, spherical geometry, the sum is *more* than $\\pi$ and the excess is the area.) The result was striking, because it was not a contradiction: it was a *different, equally valid, geometry of space*.",
+      "section": "Lobachevsky and Bolyai: the parallel postulate is a choice",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-241",
+      "quote": "The father **Farkas Bolyai** and **Gauss** (who had found the same geometry independently but never published) both recognised that the *truth* of Euclidean versus hyperbolic geometry is no longer a question of pure reason — it is, as Gauss put it, an **empirical** question, to be settled by measuring the angle-sum of a *very large* triangle in the real world.",
+      "section": "Lobachevsky and Bolyai: the parallel postulate is a choice",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-242",
+      "quote": "Geometry had become a question about *physical space*, not just a set of theorems.",
+      "section": "Lobachevsky and Bolyai: the parallel postulate is a choice",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-243",
+      "quote": "\\marginfig{bolyai_portrait.jpg}{János Bolyai (1802–1860), son of Farkas, who worked out the same geometry in the 1832 *Appendix* to his father's book (\\cite[Bolyai]{bolyai_portrait}).}",
+      "section": "Lobachevsky and Bolyai: the parallel postulate is a choice",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-244",
+      "quote": "I consider it necessary to examine in general the hypotheses on which geometry is based, and to inquire whether we cannot give a more general meaning to the proposition about the measure of extension.",
+      "section": "Riemann: the general idea of \"space\"",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-245",
+      "quote": "In the same decade the *metric-free* side was named.",
+      "section": "Möbius and Listing: the word \"topology\"",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-246",
+      "quote": "**\\citeauthor{mobiusband}** (1790–1868) discovered the one-sided band that bears his name (1858) \\cite{mobiusband}, and **\\citeauthor{listingtopologie}** (1808–1882) coined the very word **\"topology\"** (from *topos*, \"place\") in his *Vorstudien zur Topologie* (1847) \\cite{listingtopologie}.",
+      "section": "Möbius and Listing: the word \"topology\"",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-247",
+      "quote": "\\marginfig{moebius_portrait.jpg}{August Ferdinand Möbius (1790–1868), who, with Listing, named the study of shape up to continuous deformation (\\cite[Möbius]{moebius_portrait}).}",
+      "section": "Möbius and Listing: the word \"topology\"",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-248",
+      "quote": "The Möbius strip : a band with a single half-twist.",
+      "section": "Möbius and Listing: the word \"topology\"",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-249",
+      "quote": "It has only one surface and one boundary, so an ant walking along it returns to its starting point having traversed \"both sides\" without crossing an edge.",
+      "section": "Möbius and Listing: the word \"topology\"",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-250",
+      "quote": "Its Euler characteristic is $\\chi = 0$ and it is non-orientable — you cannot consistently mark a \"left\" and a \"right\" on it.",
+      "section": "Möbius and Listing: the word \"topology\"",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-251",
+      "quote": "It is the simplest possible object that is genuinely non-flat in the topological sense \\cite{mobiusband}.",
+      "section": "Möbius and Listing: the word \"topology\"",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-252",
+      "quote": "The last great reorganisation of the 19th century was **\\citeauthor{poincareanalysissitus}**'s **\\citetitle{poincareanalysissitus}** (1895), which turned topology from a collection of curiosities into a full theory \\cite{poincareanalysissitus}.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-253",
+      "quote": "Its concern was the reverse of the coordinate turn: once coordinates had turned all of space into numbers, the question became whether two shapes could be told apart *without* measuring at all — by how they fit together at a boundary, stretch for stretch.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-254",
+      "quote": "The *why* was to extend Euler's and Gauss's ideas from 2-D surfaces to *spaces* of any dimension, and to answer the question \"what does a space look like, up to deformation?\" Poincaré's answers were the **fundamental group** $\\pi_{1}$ (the algebraic record of all the ways a loop can be twisted around a space, up to continuous shrinking) and the beginnings of **homology** $H_{n}$ (counting \"holes\" of each dimension by signed sums of chains and boundaries) \\cite{poincareanalysissitus} \\cite{hatcher}.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-255",
+      "quote": "The conjecture in its modern form came later, in the 1904 fifth complement, after the Poincaré homology sphere showed that homology alone is insufficient: a closed 3-dimensional space in which every loop can be continuously shrunk to a point must be a 3-sphere.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-256",
+      "quote": "That is, *topology (how the loops behave) determines geometry (the space is a sphere)*.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-257",
+      "quote": "\\marginfig{poincare.jpg}{Henri Poincaré (1854–1912).",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-258",
+      "quote": "His conjecture resisted every tool 20th-century mathematics had.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-259",
+      "quote": "It was finally proved by **Grigori Perelman** in 2002–2003, who used **Richard Hamilton's Ricci flow** — a process that smooths the curvature of a space over \"time\", like heat diffusing — to show that any such space must flow to a round sphere \\cite{perelmanpoincare} \\cite{poincareanalysissitus}.}",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-260",
+      "quote": "So where does this leave us, and why is a history of geometry a chapter in a course about machines?",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-261",
+      "quote": "Because the discipline never stopped responding to the needs of its era, exactly as the opening line of \\citeauthor{weeksshapespace} (\\citeyear{weeksshapespace}) says \\cite{weeksshapespace}.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-262",
+      "quote": "Its \"needs\" have changed, not its method:",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-263",
+      "quote": "* **Prehistoric**, geometry was the *repetition of a shape* — a zig-zag in a shell.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-264",
+      "quote": "* **In the first cities**, it was the *measurement of the land* — the surveyor's right angle on clay, $A=\\tfrac{1}{2}bh$, $V=\\tfrac{1}{3}Bh$.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-265",
+      "quote": "* **In Greece**, it became *proof* — the Euclidean machine, $a^{2}+b^{2}=c^{2}$ with a reason attached.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-266",
+      "quote": "* **For the sky**, it turned a *shape into a function* — the Greek chord, the Indian sine, the six functions, Madhava's series, and the sextant that reads a star's height.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-267",
+      "quote": "* **In the Islamic and early-modern periods**, it became *projection and coordinates* — Alhazen, Descartes, Desargues, Mercator.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-268",
+      "quote": "* **In the 19th century**, it became *curved space and connectivity* — Gauss, Riemann, Poincaré, the Theorema Egregium and Gauss–Bonnet.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-269",
+      "quote": "* **Today**, the newest need is the geometry of **representation**: a word is no longer a letter but a *point in a high-dimensional space*, and \"meaning\" is the *distance* and *direction* between those points.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-270",
+      "quote": "The [Embeddings](embeddinglab) chapter is, in a very real sense, the latest chapter of this same story — the point where the two-thousand-year-old question \"what is the shape of space?\" is asked of the *space of ideas* instead of the space of the field.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-271",
+      "quote": "The thread that runs from *Homo erectus* to the embedding space is the same thread: the conviction that the world is made of *relations between points in a space*, and that those relations can be written down, proved, and, in the end, *computed*.",
+      "section": "VIII. The modern shape of space — and why it matters for AI",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-272",
+      "quote": "A problem with *n* quantities is a point in an *n*-dimensional space, so the number of dimensions a question needs is exactly the number of things it is keeping track of — baskets of goods, a year of weather, the state of a machine.",
+      "section": "IX. Higher dimensions: the space the machine lives in",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-273",
+      "quote": "Thus if the 19th century discovered that space can *bend*, the 20th discovered that it can have *any number of dimensions* — including infinitely many — and that geometry survives the trip.",
+      "section": "IX. Higher dimensions: the space the machine lives in",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-274",
+      "quote": "This is not an academic curiosity: the machine in this course computes *inside* that geometry.",
+      "section": "IX. Higher dimensions: the space the machine lives in",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-275",
+      "quote": "An embedding vector is a point in $\\mathbb{R}^{d}$, with $d$ in the hundreds or thousands; a training set is a cloud of such points; a neural network is a rule for moving those points around.",
+      "section": "IX. Higher dimensions: the space the machine lives in",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-276",
+      "quote": "Every tool built in this chapter — the dot product of Section V, the curvature of Section VII, the topology of Section VIII — is now applied to that high-dimensional space, and each of the modern insights below is a 20th- or 21st-century answer to the chapter's oldest question: *what space, and how do you measure distance in it?*",
+      "section": "IX. Higher dimensions: the space the machine lives in",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-277",
+      "quote": "At the turn of the 20th century, \\citeauthor{hilbert1903grundlagen} performed a double service.",
+      "section": "Hilbert: geometry with infinitely many dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-278",
+      "quote": "In his **\\citetitle{hilbert1903grundlagen}** (1899) he re-axiomatised Euclid — the first complete, rigorous rebuild of the *Elements* in 2,200 years — and in doing so made \"geometry\" mean *any* formal system that satisfies the axioms: \"point\", \"line\" and \"plane\" need no longer be Greek diagrams, they can stand for anything that obeys the rules \\cite{hilbert1903grundlagen}.",
+      "section": "Hilbert: geometry with infinitely many dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-279",
+      "quote": "That is the modern meaning of a *space*: not a fixed stage, but any domain in which the axioms hold.",
+      "section": "Hilbert: geometry with infinitely many dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-280",
+      "quote": "And in the same era, in his work on integral equations (with *Erhard Schmidt*), Hilbert exhibited the space that matters most to machines: a **Hilbert space** — a vector space of *functions* or feature vectors, equipped with a dot product and a length, in infinitely many dimensions.",
+      "section": "Hilbert: geometry with infinitely many dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-281",
+      "quote": "The dot product and the cosine of Section V survive unchanged; only the list of coordinates runs longer than $x, y, z$.",
+      "section": "Hilbert: geometry with infinitely many dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-282",
+      "quote": "The plane geometry of Euclid became, from then on, one special case among uncountably many.",
+      "section": "Hilbert: geometry with infinitely many dimensions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-283",
+      "quote": "The first *practical* payoff of higher-dimensional geometry came inside machine learning itself.",
+      "section": "The kernel trick: climb a dimension to draw a line",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-284",
+      "quote": "Some data simply cannot be separated by a straight line in the plane.",
+      "section": "The kernel trick: climb a dimension to draw a line",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-285",
+      "quote": "But lift the points by a map $\\phi$ into a higher-dimensional space, and a *hyperplane* up there separates them cleanly.",
+      "section": "The kernel trick: climb a dimension to draw a line",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-286",
+      "quote": "**Support-vector machines** (\\citeauthorlastnameand{boser1992svm}, \\citeyear{boser1992svm}) made this precise in the most economical way possible \\cite{boser1992svm} \\cite{vapnik1995book}: the learned classifier is defined entirely by dot products $\\langle \\phi(\\mathbf{x}), \\phi(\\mathbf{y}) \\rangle$, so instead of ever writing the high-dimensional coordinates — which may even be infinite — one supplies a **kernel** that returns that dot product directly,",
+      "section": "The kernel trick: climb a dimension to draw a line",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-287",
+      "quote": "so the high-dimensional coordinates never have to be written down at all.",
+      "section": "The kernel trick: climb a dimension to draw a line",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-288",
+      "quote": "The **Gaussian (RBF)** kernel, in particular, corresponds to a Hilbert space of *infinite* dimension, in which any data set free of exact-duplicate contradictions is separable.",
+      "section": "The kernel trick: climb a dimension to draw a line",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-289",
+      "quote": "The intuition of \\citeauthorlastnameand{vapnik1963pattern} in the 1960s, made computable by the 1990s \"kernel trick\", is thus an engineering use of Riemann's and Hilbert's century: *if the flat space is too small to draw the line, climb to a roomier one — without ever paying to write the extra coordinates.*",
+      "section": "The kernel trick: climb a dimension to draw a line",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-290",
+      "quote": "Here is where 20th-century insight overturns a two-thousand-year-old intuition.",
+      "section": "Concentration of measure: high dimensions are not the plane writ large",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-291",
+      "quote": "The Greeks reasoned in two and three dimensions, where \"distance\" behaves as it appears to.",
+      "section": "Concentration of measure: high dimensions are not the plane writ large",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-292",
+      "quote": "In high dimension it does not — and the failure is at once the **curse** and the **opportunity** of machine learning:",
+      "section": "Concentration of measure: high dimensions are not the plane writ large",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-293",
+      "quote": "* **The shell effect.** In $\\mathbb{R}^{d}$, essentially all of the volume of a sphere or cube lies within an $\\epsilon$-thin shell of its surface: the fraction of the cube within distance $\\epsilon$ of its surface is",
+      "section": "Concentration of measure: high dimensions are not the plane writ large",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-294",
+      "quote": "A \"random point\" drawn from a high-dimensional cloud is therefore almost surely *on its boundary*, not in its interior.",
+      "section": "Concentration of measure: high dimensions are not the plane writ large",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-295",
+      "quote": "* **Near-orthogonality.** The dot product of two independent random unit vectors has mean $0$ and standard deviation",
+      "section": "Concentration of measure: high dimensions are not the plane writ large",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-296",
+      "quote": "In an embedding space with $d \\approx 2000$, that spread is about $0.02$: two random directions are *almost exactly perpendicular*, in every practical sense.",
+      "section": "Concentration of measure: high dimensions are not the plane writ large",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-297",
+      "quote": "* **Distance concentration.** The *relative* gap between the nearest and the farthest neighbours shrinks: the standard deviation of pairwise distances of a random sample becomes comparable to (or smaller than) the mean, so a cloud of random points \"becomes equidistant\" in relative terms.",
+      "section": "Concentration of measure: high dimensions are not the plane writ large",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-298",
+      "quote": "Part of this is the famous **\"curse of dimensionality\"** of \\citeauthor{bellman1957dynamic}, the price of living in more and more coordinates: raw Euclidean distance among random points stops carrying information \\cite{bellman1957dynamic}.",
+      "section": "Concentration of measure: high dimensions are not the plane writ large",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-299",
+      "quote": "But the *near-orthogonality* half of the curse is also the opportunity.",
+      "section": "Concentration of measure: high dimensions are not the plane writ large",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-300",
+      "quote": "If thousands of directions are all mutually near-perpendicular, there is *room* for thousands of mutually distinct notions — which is precisely why a semantic space can park thousands of words in nearly separate directions, and why \"meaning\" must be read by **direction** (cosine similarity, Section V) rather than by raw distance.",
+      "section": "Concentration of measure: high dimensions are not the plane writ large",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-301",
+      "quote": "High dimensions do not ruin distance; they *retire it* in favour of angle.",
+      "section": "Concentration of measure: high dimensions are not the plane writ large",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-302",
+      "quote": "The resolution of the curse is the most consequential bet in modern geometry-for-AI: **data does not fill the space it is written in.** A natural image is a vector in a pixel space of dimension",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-303",
+      "quote": "but a random vector in that space is grey noise, not a face.",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-304",
+      "quote": "Real images, speech, and indeed the semantic embeddings of [the Embeddings](embeddinglab) chapter are confined to a **low-dimensional manifold** — a curved sheet, in the topologist's sense a space that near each point is just flat Euclidean space (\\cite[Morris, Topology Without Tears, §6.1, p.",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-305",
+      "quote": "120]{morris2007topology}) — embedded in the huge ambient space \\cite{manifold_wiki}.",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-306",
+      "quote": "The **manifold hypothesis** claims that the datasets that matter lie on or near such a manifold, and that its *intrinsic dimension* is far below the ambient one.",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-307",
+      "quote": "The scaffolding is classical: \\citeauthorlastnameand{whitney1936manifolds}'s theorem (1936) that any smooth $d$-dimensional manifold can be embedded in $\\mathbb{R}^{2d+1}$,",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-308",
+      "quote": "\\cite{whitney1936manifolds} — which quietly guarantees that the \"embed\" in *embeddings* is not a metaphor but a proven fact.",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-309",
+      "quote": "The hypothesis is what a dozen standard tools *assume*, and it explains why they work:",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-310",
+      "quote": "* **Autoencoders** bottle every sample through a few dozen numbers and rebuild it; the encoder is literally *computing coordinates on the manifold*, the decoder *evaluates the sheet at those coordinates* \\cite{hinton1989autoencoder}.",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-311",
+      "quote": "* **Dimensionality-reduction visualisations** — t-SNE (\\citeauthorlastnameand{vandermaaten2008tsne}, \\citeyear{vandermaaten2008tsne}) \\cite{vandermaaten2008tsne} and UMAP (\\citeauthorlastnameand{mcinnes2018umap}, \\citeyear{mcinnes2018umap}) — flatten the high-dimensional cloud onto the page while preserving neighbourhoods \\cite{mcinnes2018umap}, the computational heir of Mercator's flattening of the sphere (Section VI), now for a surface whose dimension we must first *infer*.",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-312",
+      "quote": "* **Interpolation and vector arithmetic work.** On the (locally near-flat) sheet, a weighted average of two points remains on the sheet — which is why \"king − man + woman ≈ queen\" and why morphing two images through the manifold yields meaningful intermediates.",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-313",
+      "quote": "If data filled its ambient space, every averaged point would be noise; that it does not is the entire reason \"vector semantics\" has a geometric meaning.",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-314",
+      "quote": "* **Only the intrinsic dimension matters.** A million-pixel image is, for geometry, a point on a sheet of perhaps a few dozen intrinsic dimensions; all the \"wasted\" coordinates are directions *off the data*, which is why the models can confidently ignore the noise directions that dominate the ambient space.",
+      "section": "The manifold hypothesis: data does not fill space",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-315",
+      "quote": "The newest chapter folds the old question back onto the machine itself.",
+      "section": "Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-316",
+      "quote": "**Geometric deep learning**, as systematised by \\citeauthorlastnameand{bronstein2021geometric} (2021), observes that the *architecture* of every successful neural network is a footprint of the *symmetries of the space its data lives on* \\cite{bronstein2021geometric}:",
+      "section": "Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-317",
+      "quote": "* **CNNs** live on a *regular grid*, and they are translation-equivariant by construction: the same filter slides to every cell of the grid, because on a grid every cell is geometrically the same as every other.",
+      "section": "Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-318",
+      "quote": "* **Graph networks** live on a *set with edges* (molecules, social networks), and their aggregations are permutation-equivariant, because the ordering of nodes is a convention of the file format, not a fact about the data.",
+      "section": "Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-319",
+      "quote": "* **Transformers** live on a *complete set of tokens*: attention weighs every token against every other regardless of position — which is exactly why they needed the hand-added *positional encodings* you read about in the [History of AI](history) chapter.",
+      "section": "Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-320",
+      "quote": "Ordered or not, the data's geometry is a design choice the architect must either respect or repair.",
+      "section": "Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-321",
+      "quote": "The three architectures of modern AI are therefore not arbitrary inventions: they are three answers to \"in what space does this data live?\", answered with the same 2,400-year-old strategy — *match the structure of the stage*.",
+      "section": "Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-322",
+      "quote": "This is the computing-age fulfilment of the chapter's opening line: geometry is a living subject, and now it literally determines the shape of the computer that learns.",
+      "section": "Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-323",
+      "quote": "And one recent, mildly startling data point closes the loop with Section III.",
+      "section": "Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-324",
+      "quote": "\\citeauthorlastnameand{huh2024platonic} (2024) found empirically that very different models, trained on different tasks, converge to **approximately the same internal representation** of the visual world \\cite{huh2024platonic} — a shared latent \"geometry of reality\" that seems to be learned, not invented, by whichever learner is pressed against the same visual data.",
+      "section": "Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-325",
+      "quote": "Whether that shared space is *the* true one is an open question — but it is hard to read the **Platonic representation hypothesis** as anything but the *Meno* argument, stated in 2024 computer science: there is a single latent geometry behind appearances, and \"learning\" is the process of *recovering* it.",
+      "section": "Geometric deep learning: the shape of the input dictates the machine (2021)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-326",
+      "quote": "Section VIII ended with a proof of Poincaré's conjecture; the century between Poincaré's question (1895) and Perelman's answer (2003) is itself a history of geometry, and the shortest way to see what \"space\" came to mean.",
+      "section": "X. A century that erased the points",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-327",
+      "quote": "In the 20th century topology stopped being the study of rubber surfaces and became the mathematics of *relations*, driven by a strange unease: coordinates had turned space into bookkeeping without saying anything about what a space *means* — and the meaning only survived once the points themselves were allowed to go.",
+      "section": "X. A century that erased the points",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-328",
+      "quote": "In the hands of **\\citeauthorlastnameand{grothedieck_res}** (1928–2014) the very notion of a space was rebuilt as the mathematics of *what a space can mean* \\cite{grothedieck_res}.",
+      "section": "X. A century that erased the points",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-329",
+      "quote": "This history never appears in a forward pass of a machine, and that is precisely the point: it is where \"space\" stopped meaning \"the room you live in\" and came to mean \"any world of points whose relationships can be written down\" — which is exactly what an embedding space is.",
+      "section": "X. A century that erased the points",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-330",
+      "quote": "Poincaré's *Analysis Situs* counted holes as *numbers*, the Betti numbers $b_{k}$ \\cite{poincareanalysissitus}.",
+      "section": "Brouwer and Noether: numbers become groups",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-331",
+      "quote": "Two people turned counting into structure.",
+      "section": "Brouwer and Noether: numbers become groups",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-332",
+      "quote": "**\\citeauthorlastnameand{brouwer1911fixed}** (1881–1966) found the first genuinely *algebraic* invariants of continuous maps — the **degree** of a map (how many sheets it lays over its image, with sign) and his celebrated **fixed-point theorem** of 1911: every continuous map of a closed ball to itself leaves some point alone (\\cite[Morris, Topology Without Tears, §5.2, p.",
+      "section": "Brouwer and Noether: numbers become groups",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-333",
+      "quote": "100]{morris2007topology}):",
+      "section": "Brouwer and Noether: numbers become groups",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-334",
+      "quote": "The weirdly strong content is all on the left: the map on the whole ball could send the centre anywhere, yet *some* point must land exactly on itself \\cite{brouwer1911fixed}.",
+      "section": "Brouwer and Noether: numbers become groups",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-335",
+      "quote": "The strange power of the theorem is that it is *topological*: the map may be folded or stretched any way you like, yet it cannot push every point away from itself.",
+      "section": "Brouwer and Noether: numbers become groups",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-336",
+      "quote": "It also carried a quiet philosophy that runs through the whole century: to distinguish maps from one another, attach to each an *algebraic* number and compare equations, not diagrams.",
+      "section": "Brouwer and Noether: numbers become groups",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-337",
+      "quote": "The decisive step came when **Emmy Noether** — visiting Brouwer's home in Blaricum in December 1925 — pointed out that the Betti numbers were not numbers at all but the *ranks of groups*.",
+      "section": "Brouwer and Noether: numbers become groups",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-338",
+      "quote": "A \"hole of dimension $k$\" is not a count; it is the group $H_{k}$, and two spaces differ when their hole-groups differ \\cite{mclarty2006noether}.",
+      "section": "Brouwer and Noether: numbers become groups",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-339",
+      "quote": "This one remark (\"Betti numbers are the ranks of homology groups\") turned topology into **algebraic topology**: shape, from then on, was to be studied by the algebra that summarises it — the same move the [Embeddings](embeddinglab) chapter makes when it replaces a word by a vector and studies the *numbers attached to it*.",
+      "section": "Brouwer and Noether: numbers become groups",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-340",
+      "quote": "Poincaré had counted the holes of a space; \\citeauthorlastnameand{morse1929foundations} (1892–1977) turned the question inside out and gave geometry one of its most used tools.",
+      "section": "Morse: one function carries the whole shape (1929)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-341",
+      "quote": "Instead of asking \"what holes does this space have?\", Morse asked the question this course keeps asking of every landscape, physical or learned: *if you may only watch a single function $f$ moving over an unfamiliar space — a height, an energy, a cost — what does that one function reveal about the whole shape?* His answer, the **calculus of variations in the large**, is that for any ordinary smooth function the **critical points** decide everything \\cite{morse1929foundations}: the peaks, pits and saddles of $f$ (the places where its slope vanishes) are the only places where anything happens.",
+      "section": "Morse: one function carries the whole shape (1929)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-342",
+      "quote": "Between two of them the level set $\\{f = c\\}$ drifts without changing its shape, and the moment the level crosses a critical point, exactly one **handle** is glued onto the space — a $k$-dimensional handle for a critical point with exactly $k$ independent downhill directions.",
+      "section": "Morse: one function carries the whole shape (1929)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-343",
+      "quote": "The whole space is assembled, one handle per critical point:",
+      "section": "Morse: one function carries the whole shape (1929)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-344",
+      "quote": "The pay-off is the **Morse inequalities**, one line that couples what you can measure with what you want to know:",
+      "section": "Morse: one function carries the whole shape (1929)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-345",
+      "quote": "\\cite{morse1929foundations}.",
+      "section": "Morse: one function carries the whole shape (1929)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-346",
+      "quote": "The shape of the landscape is forced by the function that crosses it, never the other way around: the function is free, and the *topology* is its consequence.",
+      "section": "Morse: one function carries the whole shape (1929)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-347",
+      "quote": "And this is where Morse's abstract century rejoins the machine \\cite{morse1929foundations}.",
+      "section": "Morse: one function carries the whole shape (1929)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-348",
+      "quote": "A network never \"sees\" its embedding space; it moves downhill on **one** function — the **loss** — defined on a manifold of millions of dimensions, and gradient descent is gradient *flow* on that function, directed toward its critical points.",
+      "section": "Morse: one function carries the whole shape (1929)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-349",
+      "quote": "Every minimum a training run settles into, every saddle it has to escape, is a critical point of an enormous loss landscape.",
+      "section": "Morse: one function carries the whole shape (1929)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-350",
+      "quote": "Morse's theorems are the guarantee that such a thin source — a single scalar field over a space of millions of dimensions — still carries the whole geometry: study the critical points of the loss, and you are studying the shape of every space a model can reach.",
+      "section": "Morse: one function carries the whole shape (1929)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-351",
+      "quote": "The two theorems of 1931 teach how topology and analysis became one language.",
+      "section": "Hopf and de Rham: two grammars for the hole (1931)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-352",
+      "quote": "**\\citeauthorlastnameand{hopf1931fibration}** discovered the **Hopf fibration** $S^{3}\\to S^{2}$ — a continuous map from the 3-sphere onto the ordinary sphere that is *essential*: it cannot be deformed to a constant map, even though every loop in $S^{3}$ contracts:",
+      "section": "Hopf and de Rham: two grammars for the hole (1931)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-353",
+      "quote": "\\cite{hopf1931fibration}.",
+      "section": "Hopf and de Rham: two grammars for the hole (1931)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-354",
+      "quote": "Its construction is pure algebra: write a point of $S^{3}$ as a pair of complex numbers $(z_{1}, z_{2})$ lying on the unit sphere in $\\mathbb{C}^{2}$,",
+      "section": "Hopf and de Rham: two grammars for the hole (1931)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-355",
+      "quote": "and send it to the ratio $z_{1}/z_{2}$ on the Riemann sphere; the fibre over each ratio is a full circle, and the whole ball collapses to those interlocking circles.",
+      "section": "Hopf and de Rham: two grammars for the hole (1931)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-356",
+      "quote": "Hopf discovered it in 1931 while asking, in effect, a question that would have seemed mad to the 19th century — \"can a higher-dimensional ball be wound around a lower-dimensional one in a way that is impossible to undo?\" — and its message, that attached to every continuous map is a *counting number* that can be nonzero, is the seed of the homotopy groups that structure the modern theory of data.",
+      "section": "Hopf and de Rham: two grammars for the hole (1931)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-357",
+      "quote": "That same year **\\citeauthorlastnameand{derham1931}** proved the complementary statement, which reads like a dictionary between two dialects: the topology of *chains* (Section VIII's way of counting holes) and the analysis of *differential forms* declare the same answer,",
+      "section": "Hopf and de Rham: two grammars for the hole (1931)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-358",
+      "quote": "What de Rham showed is that a hole can be detected either by drawing loops or by checking whether certain integrals vanish on every closed form — calculus and topology measure the same shape.",
+      "section": "Hopf and de Rham: two grammars for the hole (1931)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-359",
+      "quote": "One more kind of invariant completed the picture.",
+      "section": "Chern and Whitney: measuring the twist (mid-century)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-360",
+      "quote": "Curvature measures how a surface bends; **characteristic classes** measure how a *family of spaces attached along a base* — a fibre bundle — is twisted.",
+      "section": "Chern and Whitney: measuring the twist (mid-century)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-361",
+      "quote": "**\\citeauthorlastnameand{chern1946}** defined the **Chern classes** $c_{1}, c_{2}, \\ldots$ of a complex vector bundle, with",
+      "section": "Chern and Whitney: measuring the twist (mid-century)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-362",
+      "quote": "whose nonzero components record the genuine obstructions to straightening the family \\cite{chern1946}.",
+      "section": "Chern and Whitney: measuring the twist (mid-century)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-363",
+      "quote": "The lineage runs straight from Gauss: the classical **Gauss–Bonnet theorem**,",
+      "section": "Chern and Whitney: measuring the twist (mid-century)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-364",
+      "quote": "the integral of curvature of Section VII is a whole number fixed by the topology — is itself the statement that \"the top characteristic class evaluates to the Euler characteristic\" \\cite{docarmo} \\cite{chern1946}.",
+      "section": "Chern and Whitney: measuring the twist (mid-century)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-365",
+      "quote": "Chern's 1944 paper gave an intrinsic proof of the general Gauss–Bonnet theorem (found independently by Allendoerfer and Weil in 1943) so natural that it became the standard; it is one of the few times the \"why does this integer exist?\" question has a genuinely topological answer.",
+      "section": "Chern and Whitney: measuring the twist (mid-century)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-366",
+      "quote": "Then came the shock that the 20th-century \"counting of shapes\" could not be an infinite ladder, and that the objects in it could be *more* numerous than the dimensions suggest.",
+      "section": "Milnor, Smale, and the shape of the penalty (1956–1963)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-367",
+      "quote": "**\\citeauthorlastnameand{milnor1956exotic}** exhibited a manifold homeomorphic to the 7-sphere but *not* diffeomorphic to it: topologically a sphere, differentiably *another object* — there are 28 such **exotic spheres** in dimension 7, and, farther out, thousands \\cite{milnor1956exotic}.",
+      "section": "Milnor, Smale, and the shape of the penalty (1956–1963)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-368",
+      "quote": "The consequence is central: \"continuous\" and \"smooth\" are not the same relation, and the difference is measured in whole numbers — the same counting that, in a high-dimensional embedding space, decides how many genuinely distinct directions the geometry has.",
+      "section": "Milnor, Smale, and the shape of the penalty (1956–1963)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-369",
+      "quote": "**\\citeauthorlastnameand{smale1961hccobordism}** then proved, in 1961, the **h-cobordism theorem** in dimensions $\\ge 5$: two simply-connected and sufficiently *flat-between* manifolds are diffeomorphic, and — as a corollary — the Poincaré conjecture holds in all dimensions $n\\ge 5$ \\cite{smale1961hccobordism}.",
+      "section": "Milnor, Smale, and the shape of the penalty (1956–1963)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-370",
+      "quote": "In 1963 **\\citeauthorlastnameand{atiyahsinger1963}** proved the **index theorem**: for an elliptic operator $D$ the difference between the dimension of its kernel and of its cokernel — an analytic quantity — equals a purely topological one:",
+      "section": "Milnor, Smale, and the shape of the penalty (1956–1963)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-371",
+      "quote": "This is the theorem that makes \"number of solutions minus number of constraints\" computable from the shape of the space — the same pattern the kernel trick of Section IX exploits in reverse, when it computes with a function without ever writing its high-dimensional coordinates.",
+      "section": "Milnor, Smale, and the shape of the penalty (1956–1963)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-372",
+      "quote": "If the Poincaré conjecture is the mountain, the surrounding terrain is the **geometrisation program** of **\\citeauthorlastnameand{thurston1982geometrization}** (1978–1982): every closed 3-manifold should be cut along spheres and tori into pieces, each carrying one of *exactly eight* homogeneous geometries readable from the shape of the space — the round $S^{3}$, flat $\\mathbb{R}^{3}$, hyperbolic $\\mathbb{H}^{3}$, and five more (the fibred geometries $S^{2}\\times\\mathbb{R}$, $\\mathbb{H}^{2}\\times\\mathbb{R}$, $\\mathrm{Nil}$, $\\mathrm{Sol}$, and $\\widetilde{\\mathrm{SL}}(2,\\mathbb{R})$) \\cite{thurston1982geometrization}.",
+      "section": "Thurston, Freedman, Donaldson: dimension three and four (1982–1983)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-373",
+      "quote": "Thurston's extraordinary claim was that \"almost all\" 3-manifolds are hyperbolic — a prediction later given substance by the fact that most knot complements carry that geometry.",
+      "section": "Thurston, Freedman, Donaldson: dimension three and four (1982–1983)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-374",
+      "quote": "Perelman's Ricci-flow proof of the whole programme (2002–2003) is the cleanest modern statement: given the geometry, the topology is forced \\cite{perelmanpoincare} \\cite{weeksshapespace}.",
+      "section": "Thurston, Freedman, Donaldson: dimension three and four (1982–1983)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-375",
+      "quote": "Dimension four went differently, and here the (later) help of physics is real.",
+      "section": "Thurston, Freedman, Donaldson: dimension three and four (1982–1983)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-376",
+      "quote": "**\\citeauthorlastnameand{freedman1982topology}** (1982) classified *topological* closed simply-connected 4-manifolds: after Freedman they are completely determined by their intersection form (a symmetric unimodular integral form) together with the Kirby–Siebenmann invariant, and *every* such even form is realised — so there is exactly one topological manifold for each, an enormous list \\cite{freedman1982topology}.",
+      "section": "Thurston, Freedman, Donaldson: dimension three and four (1982–1983)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-377",
+      "quote": "But **\\citeauthorlastnameand{donaldson1983gauge}**, a 26-year-old at the time, proved in 1983 that among *smooth* 4-manifolds only the diagonal forms occur — using the solutions of the Yang–Mills equations (gauge theory), i.e. *partial differential equations constraining smooth topology* \\cite{donaldson1983gauge}.",
+      "section": "Thurston, Freedman, Donaldson: dimension three and four (1982–1983)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-378",
+      "quote": "Together the two theorems leave the scandal of their subject: $\\mathbb{R}^{4}$ itself admits *uncountably many* exotic smooth structures (Taubes, 1987; the first came from Freedman's own ideas), even though in every other dimension there is only one.",
+      "section": "Thurston, Freedman, Donaldson: dimension three and four (1982–1983)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-379",
+      "quote": "Dimension 4 is where \"space\" and its smooth model permanently diverge — a reminder that in high dimensions the answer \"the geometry exists\" and \"the geometry is computed\" can genuinely differ.",
+      "section": "Thurston, Freedman, Donaldson: dimension three and four (1982–1983)",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-380",
+      "quote": "\\marginfig{grothendieck_colorized.jpg}{Alexander Grothendieck (1928–2014).",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-381",
+      "quote": "Photograph by Konrad Jacobs / MFO, colorized by PhotoColor (\\cite[Grothendieck portrait]{grothendieck_image}).}",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-382",
+      "quote": "No-one bent the word \"geometry\" further and to greater effect than **\\citeauthor{grothedieck_res}** (1928–2014), and a short personal history is worth it: born in Berlin to a Russian anarchist father (Sascha Schapiro) and a German journalist mother, he grew up as a refugee: internment camps in southern France, then, self-taught, he walked into French mathematics as an adult and within two decades rebuilt most of its foundations \\cite{grothedieck_res}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-383",
+      "quote": "His ruling idea: a space is not its points, but the *functions* admitted to live on it.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-384",
+      "quote": "A **scheme** is a space whose \"points\" are not locations but *solutions of polynomial equations*; a **topos** is a space so general that it may have no points at all — it is recorded by the sheaves of functions that can be planted in it, and the space itself is defined *by those functions* \\cite{grothedieck_ega1960}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-385",
+      "quote": "The consequences sound like pure philosophy and are pure mathematics.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-386",
+      "quote": "The prime numbers become the points of a *line*: the scheme $\\mathrm{Spec}\\,\\mathbb{Z}$ records exactly one closed point for each prime, and number theory becomes the geometry of a curve — the dream, first voiced by Jacques Tits, of treating $\\mathrm{Spec}\\,\\mathbb{Z}$ as a curve over the \"field with one element\", whose Riemann hypothesis would then be a theorem of geometry \\cite{grothedieck_ega1960} \\cite{deligne1974weil}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-387",
+      "quote": "This is the same prioritisation the manifold hypothesis of Section IX makes: the *functions* (the measurable, computable quantities) come first, and the \"space\" is the shadow they cast.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-388",
+      "quote": "Grothendieck's organisational genius was of the same kind: at the IHÉS (1959–1970), where he directed the famous Séminaire, he wrote (with Dieudonné) the monumental *Éléments de géométrie algébrique*, which rewrote algebraic geometry as the study of objects — then left in 1970 in protest over the institute's military funding, refusing in 1988 the prestigious Crafoord Prize, and spending his last decades in retreat in the Pyrenean village of Lasserre, invisible to the discipline he had rebuilt \\cite{grothedieck_res}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-389",
+      "quote": "\"The introduction of the digit 0 and the decimal mark\", he once wrote, \"were also essential steps\" — a remark that ties the whole [History of AI](history) chapter's story of numerals to this one's story of spaces, and to *this* section's claim that geometry's history is the history of what *can* be written down.\\sidenote{Grothendieck's retreat was a disappearance, not a retirement.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-390",
+      "quote": "By around 1990 he had cut almost every tie to the mathematical world — refusing to answer letters, destroying or scattering portions of his unpublished writings, and turning away from mathematics itself.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-391",
+      "quote": "In Lasserre he lived close to a hermit: a vegetable garden, long walks, and a serious study of wild mushrooms, on a life he had deliberately shrunk to village scale (he had long given large sums of his own money to the ecology movement *Les Amis de la Terre*, \"Friends of the Earth\").",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-392",
+      "quote": "When he died in 2014, in the hospital at Saint-Girons, the mathematical world learned of it like everyone else: the greatest artist of geometric space had spent his final quarter-century refusing geometry entirely.}",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-393",
+      "quote": "His own description of that method — and the honest one, since he later names it in the same pages (*l'approche de la mer*, \"the approach of the sea\", by submersion and dissolution rather than by force) — defines the work the way this chapter has tried to measure it: a theorem is not conquered, it is slowly dissolved \\cite{grothedieck_res}:",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-394",
+      "quote": "Je pourrais illustrer la deuxième approche, en gardant l'image de la noix qu'il s'agit d'ouvrir.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-395",
+      "quote": "La première parabole qui m'est venue à l'esprit tantôt, c'est qu'on plonge la noix dans un liquide émollient, de l'eau simplement pourquoi pas, de temps en temps on frotte pour qu'elle pénètre mieux, pour le reste on laisse faire le temps.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-396",
+      "quote": "La coque s'assouplit au fil des semaines et des mois — quand le temps est mûr, une pression de la main suffit, la coque s'ouvre comme celle d'un avocat mûr à point !",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-397",
+      "quote": "Ou encore, on laisse mûrir la noix sous le soleil et sous la pluie et peut-être aussi sous les gelées de l'hiver.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-398",
+      "quote": "Quand le temps est mûr, c'est une pousse délicate sortie de la substantifique chair qui aura percé la coque, comme en se jouant — ou pour mieux dire, la coque se sera ouverte d'elle-même, pour lui laisser passage.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-399",
+      "quote": "1.76 Ma** — Acheulean handaxe: the first 3-D form, bilateral symmetry held in a mental template \\cite{achleuleankariandusi}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-400",
+      "quote": "500,000 BCE** — Trinil shell: oldest deliberate geometric incision \\cite{trinilshell}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-401",
+      "quote": "41,000 / 18,000 BCE** — Lebombo and Ishango bones: quantity as a spatial pattern \\cite{lebombobone} \\cite{ishangobone}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-402",
+      "quote": "75,000 BCE** — Blombos ochre: abstract grid patterning \\cite{emergenceofmodernhumanbehaviour}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-403",
+      "quote": "1850 BCE** — Moscow Papyrus: the frustum volume $V=\\tfrac{h}{3}(a^{2}+ab+b^{2})$ \\cite{moscowpapyrus}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-404",
+      "quote": "1650 BCE** — Rhind Papyrus: Egyptian areas and the circle rule $\\pi\\approx 256/81$ \\cite{rhindpapyrus}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-405",
+      "quote": "1900–1600 BCE** — Si.427 and Plimpton 322: Babylonian surveying geometry, Pythagorean triples \\cite{si427} \\cite{plimpton322}; BM 85200 + VAT 6599, Db2-146 \\cite{hoyrup2021algebra}; scribe-school geometry exercises \\cite{historyofmath_wikipedia} \\cite{susa_geometry_tablet}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-406",
+      "quote": "800 BCE** — Śulba Sūtras: the fire-altar geometry and a five-decimal $\\sqrt{2}$ \\cite{sulbasutras}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-407",
+      "quote": "BCE** — Jiuzhang Suanshu: Chinese metric geometry, the trapezoid area, and negative numbers \\cite{jiuzhangsuanshu}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-408",
+      "quote": "600–500 BCE** — Thales (angle in a semicircle) and the Pythagoreans (first proof of $a^{2}+b^{2}=c^{2}$; discovery of $\\sqrt{2}\\notin\\mathbb{Q}$) \\cite{heathgreekmath}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-409",
+      "quote": "400 / 370 BCE** — Hippocrates' lunes; Eudoxus's method of exhaustion \\cite{heathgreekmath}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-410",
+      "quote": "250 BCE** — Archimedes: $V_{\\text{sphere}}=\\tfrac{4}{3}\\pi r^{3}$, $S=4\\pi r^{2}$ \\cite{heathgreekmath}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-411",
+      "quote": "380 / 375 BCE** — Plato's *Meno* and *Republic*: geometry as a path to the Forms \\cite{platomeno} \\cite{platorepublic}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-412",
+      "quote": "350 BCE** — Aristotle's *Physics*: place and continuity; the three principles are set out in the *Posterior Analytics* \\cite{aristotlephysics} \\cite{aristotleposterior}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-413",
+      "quote": "300 BCE** — Euclid's *Elements*: the axiomatic system, I.47 the Pythagorean theorem \\cite{euclidelements}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-414",
+      "quote": "CE** — Heron's formula $A=\\sqrt{s(s-a)(s-b)(s-c)}$; Menelaus's *Sphaerica* (spherical geometry) \\cite{heronmetrica} \\cite{menelaussphaerica}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-415",
+      "quote": "215 BCE** — Apollonius's *Conics*: the ellipse, parabola and hyperbola \\cite{apolloniusconics}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-416",
+      "quote": "140 BCE** — Hipparchus' table of chords; the 360° circle and the sexagesimal division of angles \\cite{hipparchuschords} \\cite{ptolemyalmagest}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-417",
+      "quote": "* **499 CE** — Aryabhata's *Aryabhatiya*: the sine (*jya*) becomes a function of the angle \\cite{aryabhatiya}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-418",
+      "quote": "820 CE** — al-Khwārizmī: *al-jabr*, completing the square \\cite{hoyrup2021algebra}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-419",
+      "quote": "1021 CE** — Ibn al-Haytham's optics: the law of reflection and the geometry of projection \\cite{alhazenoetic}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-420",
+      "quote": "1265 CE** — al-Tusi: the first independent treatise on trigonometry, all six cases of a right spherical triangle, and the (spherical) law of sines \\cite{altusitrig}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-421",
+      "quote": "1400** — Madhava of Sangamagrama (Kerala): the power series for sine, cosine and tangent, $\\sin x = x - x^{3}/3!",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-422",
+      "quote": "+ \\cdots$ \\cite{madhava}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-423",
+      "quote": "* **1435 / 1569 / 1637 / 1639** — Alberti (perspective), Mercator (conformal map), Descartes (analytic geometry), Desargues (projective geometry) \\cite{albertidepictura} \\cite{mercatoratlas} \\cite{descartesgeometrie} \\cite{desarguesbrouillon}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-424",
+      "quote": "* **1609 / 1687** — Kepler (planetary ellipses) and Newton (conics as orbits) \\cite{keplerastronomianova} \\cite{newtonprincipia}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-425",
+      "quote": "* **1731** — the sextant (Hadley and Godfrey): a star's angle, plus the time, fixes a position at sea \\cite{sextanthistory}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-426",
+      "quote": "* **1736 / 1752** — Euler: Königsberg bridges (graph theory) and $V-E+F=2$ \\cite{eulerbridges} \\cite{eulersolids}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-427",
+      "quote": "* **1827 / 1848** — Gauss's Theorema Egregium (intrinsic curvature); the global Gauss–Bonnet theorem for closed surfaces, $\\iint K\\,dA = 2\\pi\\chi$, is Bonnet's (1848) \\cite{gaussdisquisitiones} \\cite{gaussbonnet_wiki} \\cite{docarmo}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-428",
+      "quote": "* **1829 / 1832** — Lobachevsky and Bolyai: hyperbolic geometry, triangle area $=\\pi-(A+B+C)$ \\cite{lobachevskygeometry} \\cite{bolyai1832appendix}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-429",
+      "quote": "* **1854** — Riemann: manifolds and the general metric $ds^{2}=g_{\\mu\\nu}dx^{\\mu}dx^{\\nu}$ \\cite{hypothesengeometrie}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-430",
+      "quote": "* **1858 / 1847** — Möbius's band; Listing's *Vorstudien zur Topologie* \\cite{mobiusband} \\cite{listingtopologie}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-431",
+      "quote": "* **1895 / 1904** — Poincaré's *Analysis Situs*: fundamental group and homology; the Poincaré conjecture follows in the 1904 fifth complement \\cite{poincareanalysissitus} \\cite{poincareconjecture1904}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-432",
+      "quote": "* **2002–2003** — Perelman proves the Poincaré conjecture via Ricci flow \\cite{perelmanpoincare}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-433",
+      "quote": "* **1899 / 1903** — Hilbert: *Grundlagen der Geometrie* — geometry as a formal axiomatic system, \"points\" need no longer be diagrams \\cite{hilbert1903grundlagen}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-434",
+      "quote": "* **1936** — Whitney: any smooth $d$-dimensional manifold embeds in $\\mathbb{R}^{2d+1}$ — the theorem behind \"embeddings\" \\cite{whitney1936manifolds}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-435",
+      "quote": "* **1911 / 1925** — Brouwer's fixed-point theorem (algebraic topology's first tool); Noether at Blaricum turns Betti numbers into *groups* \\cite{brouwer1911fixed} \\cite{mclarty2006noether}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-436",
+      "quote": "* **1929 / 1930 / 1934** — Morse: the topology of a space read from the critical points of one function — the ancestor of reading a machine's loss landscape \\cite{morse1929foundations}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-437",
+      "quote": "* **1931** — Hopf's fibration $S^{3}\\to S^{2}$ ($\\pi_{3}(S^{2})\\cong\\mathbb{Z}$); de Rham's theorem, calculus and chains counting the same holes \\cite{hopf1931fibration} \\cite{derham1931}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-438",
+      "quote": "* **1944 / 1946** — Chern: characteristic classes, the Gauss–Bonnet theorem made intrinsic \\cite{chern1946}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-439",
+      "quote": "* **1956** — Milnor's exotic 7-spheres: homeomorphic but not diffeomorphic \\cite{milnor1956exotic}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-440",
+      "quote": "* **1961** — Smale's h-cobordism theorem, the Poincaré conjecture in dimensions $\\ge 5$ \\cite{smale1961hccobordism}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-441",
+      "quote": "* **1963** — Atiyah–Singer index theorem: analysis measured by topology \\cite{atiyahsinger1963}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-442",
+      "quote": "* **1970 / 1974** — Grothendieck leaves the IHÉS over military funding; Deligne proves the Weil conjectures (the \"Riemann hypothesis over finite fields\") \\cite{grothedieck_res} \\cite{deligne1974weil}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-443",
+      "quote": "* **1982 / 1983** — Thurston's geometrisation programme; Freedman's classification of topological 4-manifolds; Donaldson's gauge-theoretic theorem — and exotic $\\mathbb{R}^{4}$s by the uncountably many \\cite{thurston1982geometrization} \\cite{freedman1982topology} \\cite{donaldson1983gauge}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-444",
+      "quote": "* **1957** — Bellman coins the \"curse of dimensionality\" \\cite{bellman1957dynamic}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-445",
+      "quote": "* **1963 / 1992 / 1995** — Vapnik–Chervonenkis, Boser–Guyon–Vapnik, Cortes–Vapnik: the kernel trick and support-vector machines — nonlinearity by climbing dimensions \\cite{vapnik1963pattern} \\cite{boser1992svm} \\cite{vapnik1995book}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-446",
+      "quote": "* **2006 / 2008 / 2018** — bottleneck autoencoders, t-SNE, UMAP: the manifold hypothesis turned into working tools \\cite{hinton2006} \\cite{vandermaaten2008tsne} \\cite{mcinnes2018umap}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-447",
+      "quote": "* **2021** — Geometric Deep Learning: the data's symmetry space dictates the network architecture \\cite{bronstein2021geometric}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    },
+    {
+      "id": "geometry_i-stmt-448",
+      "quote": "* **2024** — Platonic Representation Hypothesis: unrelated models converge on a shared internal geometry of reality \\cite{huh2024platonic}.",
+      "section": "Grothendieck: the space revealed by its functions",
+      "kind": "statement"
+    }
   ]
 }

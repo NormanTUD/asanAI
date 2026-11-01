@@ -32,6 +32,7 @@ uv run blog/tests/literature_dup_keys.py blog/
 echo "== fact ledger (unit tests + cross-lesson check)"
 uv run blog/tests/fact_ledger_test.py
 uv run blog/tests/content_claims_test.py
+uv run blog/tools/factcheck/extract_statements.py blog/ --check
 uv run blog/tools/factcheck/check_facts.py blog/ --strict-relations --strict-quotes --require-claims
 
 echo "== node unit tests"

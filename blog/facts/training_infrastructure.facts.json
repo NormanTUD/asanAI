@@ -83,5 +83,649 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "training_infrastructure-stmt-1",
+      "quote": "A 70B-parameter model in fp16 takes **140 GB just for the weights**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-2",
+      "quote": "With Adam optimizer states, gradients, and activations, a single training step requires **>1 TB** of GPU memory.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-3",
+      "quote": "Modern training infrastructure is the art of splitting this across thousands of GPUs while keeping them busy and synchronized.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-4",
+      "quote": "This chapter covers the core parallelism strategies: data, tensor, pipeline, sequence, and the FSDP/ZeRO families that underpin frontier training.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-5",
+      "quote": "A single training step requires storing:",
+      "section": "The Memory Budget",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-6",
+      "quote": "| Component | Size | Notes |",
+      "section": "The Memory Budget",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-7",
+      "quote": "| **Parameters (W)** | $2 \\cdot N$ bytes | fp16: $N \\cdot 2$; e.g. 70B = 140 GB |",
+      "section": "The Memory Budget",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-8",
+      "quote": "| **Optimizer states (O)** | $8 \\cdot N$ bytes | Adam: 2 moments × fp32 = 8 bytes/param |",
+      "section": "The Memory Budget",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-9",
+      "quote": "| **Gradients (G)** | $2 \\cdot N$ bytes | fp16 |",
+      "section": "The Memory Budget",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-10",
+      "quote": "| **Activations (A)** | $O(L \\cdot B \\cdot S \\cdot d)$ bytes | L layers, B batch, S seq, d hidden |",
+      "section": "The Memory Budget",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-11",
+      "quote": "For a 70B model: $W + G + O + M = 140 + 140 + 560 + 280 = 1120$ GB just for bf16 parameters, bf16 gradients, Adam's fp32 moments and the fp32 master weights.",
+      "section": "The Memory Budget",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-12",
+      "quote": "The model literally does not fit.",
+      "section": "The Memory Budget",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-13",
+      "quote": "This is why **distributed training** is mandatory.",
+      "section": "The Memory Budget",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-14",
+      "quote": "Each GPU holds a **full copy** of the model.",
+      "section": "Data Parallelism (DP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-15",
+      "quote": "Distribute a different **shard of the batch** to each GPU.",
+      "section": "Data Parallelism (DP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-16",
+      "quote": "Each GPU computes gradients on its shard.",
+      "section": "Data Parallelism (DP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-17",
+      "quote": "**All-reduce** the gradients across GPUs (average).",
+      "section": "Data Parallelism (DP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-18",
+      "quote": "Each GPU updates its model copy.",
+      "section": "Data Parallelism (DP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-19",
+      "quote": "Memory: $W + G + O$ per GPU.",
+      "section": "Data Parallelism (DP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-20",
+      "quote": "Compute: linear in number of GPUs.",
+      "section": "Data Parallelism (DP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-21",
+      "quote": "Communication: one all-reduce per step.",
+      "section": "Data Parallelism (DP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-22",
+      "quote": ")100 GPUs; beyond that, the all-reduce becomes the bottleneck.",
+      "section": "Data Parallelism (DP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-23",
+      "quote": "The key insight: in data parallelism, each GPU stores **redundant** optimizer states, gradients, and parameters (\\cite[Rajbhandari et al., 2019]{rajbhandari2019zero}).",
+      "section": "ZeRO (Zero Redundancy Optimizer)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-24",
+      "quote": "ZeRO partitions these across $P$ GPUs:",
+      "section": "ZeRO (Zero Redundancy Optimizer)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-25",
+      "quote": "* **ZeRO-1**: partition optimizer states → memory $\\frac{1}{P}$, communication same as DP.",
+      "section": "ZeRO (Zero Redundancy Optimizer)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-26",
+      "quote": "* **ZeRO-2**: partition optimizer states + gradients → memory $\\frac{1}{P}$, communication still same as DP.",
+      "section": "ZeRO (Zero Redundancy Optimizer)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-27",
+      "quote": "* **ZeRO-3** (FSDP): partition optimizer + gradients + parameters → memory $\\frac{1}{P}$, communication increases ca.",
+      "section": "ZeRO (Zero Redundancy Optimizer)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-28",
+      "quote": "50% (1.5× DP) but training fits much larger models.",
+      "section": "ZeRO (Zero Redundancy Optimizer)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-29",
+      "quote": "FSDP (Fully Sharded Data Parallel) is PyTorch's native implementation of ZeRO-3.",
+      "section": "ZeRO (Zero Redundancy Optimizer)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-30",
+      "quote": "With 64 H100s, you can train a 70B model that wouldn't fit on a single GPU.",
+      "section": "ZeRO (Zero Redundancy Optimizer)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-31",
+      "quote": "**Split individual weight matrices** across GPUs.",
+      "section": "Tensor Parallelism (TP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-32",
+      "quote": "For a $d \\times d$ linear layer:",
+      "section": "Tensor Parallelism (TP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-33",
+      "quote": "Each GPU computes half the output; results are concatenated (or all-gathered).",
+      "section": "Tensor Parallelism (TP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-34",
+      "quote": "TP requires **fast interconnect** (NVLink, InfiniBand) because every layer requires a sync.",
+      "section": "Tensor Parallelism (TP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-35",
+      "quote": "Megatron-LM (\\cite[Shoeybi et al., 2019]{shoeybi2019megatron}) tensor-parallels the MLP and attention blocks of a Transformer.",
+      "section": "Tensor Parallelism (TP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-36",
+      "quote": "The query, key, value heads are split across GPUs; each GPU computes a partial attention output, then an all-reduce aggregates.",
+      "section": "Tensor Parallelism (TP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-37",
+      "quote": "Communication per layer: 2 all-reduces.",
+      "section": "Tensor Parallelism (TP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-38",
+      "quote": "**Split the model depth-wise**: GPU 0 holds layers 0–7, GPU 1 holds layers 8–15, etc.",
+      "section": "Pipeline Parallelism (PP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-39",
+      "quote": "Each mini-batch propagates through the pipeline like data through a pipeline of CPUs.",
+      "section": "Pipeline Parallelism (PP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-40",
+      "quote": "The challenge: **pipeline bubbles**, idle time waiting for the previous stage to finish.",
+      "section": "Pipeline Parallelism (PP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-41",
+      "quote": "GPipe (\\cite[Huang et al., 2018]{huang2018gpipe}) splits each mini-batch into $m$ micro-batches, processing them in staggered fashion.",
+      "section": "Pipeline Parallelism (PP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-42",
+      "quote": "PipelineFLUSH and 1F1B (One-Forward-One-Backward, used in Megatron and DeepSpeed) reduce bubble overhead.",
+      "section": "Pipeline Parallelism (PP)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-43",
+      "quote": "For very long contexts, the attention matrix $QK^\\top$ is $O(n^2)$ per head.",
+      "section": "Sequence Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-44",
+      "quote": "**Sequence parallelism** splits the sequence dimension across GPUs: GPU $i$ holds tokens $[i \\cdot n/P, (i+1) \\cdot n/P)$.",
+      "section": "Sequence Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-45",
+      "quote": "Each computes attention on its local chunk; only the relevant $QK^\\top$ slice is computed, reducing memory by $1/P$.",
+      "section": "Sequence Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-46",
+      "quote": "Ring Attention (\\cite[Liu et al., 2023]{liu2023ring}) and Striped Attention implement sequence parallelism with overlapping communication, enabling million-token context training.",
+      "section": "Sequence Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-47",
+      "quote": "For Mixture-of-Experts (MoE) models \\cite{bubeck2023moeoverview} (see the Transformer chapter ): different experts live on different GPUs.",
+      "section": "Expert Parallelism (for MoE)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-48",
+      "quote": "Tokens routed to expert $E_i$ are sent to GPU $i$.",
+      "section": "Expert Parallelism (for MoE)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-49",
+      "quote": "**All-to-all** communication routes tokens to their expert GPU.",
+      "section": "Expert Parallelism (for MoE)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-50",
+      "quote": "Llama 3 (Meta, 2024) was trained on **16,384 H100s** using a combination:",
+      "section": "Putting It Together: A Real-World Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-51",
+      "quote": "* **Tensor Parallelism** = 8 (within a node, using NVLink)",
+      "section": "Putting It Together: A Real-World Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-52",
+      "quote": "* **Pipeline Parallelism** = 16 (across nodes, using InfiniBand)",
+      "section": "Putting It Together: A Real-World Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-53",
+      "quote": "* **Data Parallelism** = 128 (model replicas)",
+      "section": "Putting It Together: A Real-World Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-54",
+      "quote": "Total: $8 \\times 16 \\times 128 = 16{,}384$ GPUs, training a 405B model using $\\approx 3.8 \\times 10^{25}$ FLOPs.",
+      "section": "Putting It Together: A Real-World Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-55",
+      "quote": "GPT-4 was estimated at (ca.",
+      "section": "Putting It Together: A Real-World Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-56",
+      "quote": "The trend: more GPUs, larger models, longer training, but the math is the same.",
+      "section": "Putting It Together: A Real-World Recipe",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-57",
+      "quote": "Three primitives dominate:",
+      "section": "Communication: AllReduce and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-58",
+      "quote": "| Primitive | Description | Used by |",
+      "section": "Communication: AllReduce and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-59",
+      "quote": "| **AllReduce** | Sum across all GPUs, every GPU gets the result | DP gradient sync |",
+      "section": "Communication: AllReduce and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-60",
+      "quote": "| **AllGather** | Each GPU gets the full tensor | ZeRO-3 param fetch |",
+      "section": "Communication: AllReduce and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-61",
+      "quote": "| **ReduceScatter** | Each GPU gets a slice of the reduced tensor | ZeRO-3 + optimizer |",
+      "section": "Communication: AllReduce and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-62",
+      "quote": "| **AllToAll** | Every GPU sends a unique chunk to every other | MoE routing |",
+      "section": "Communication: AllReduce and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-63",
+      "quote": "Bandwidth hierarchy: NVLink 4 is a bidirectional aggregate of ca.",
+      "section": "Communication: AllReduce and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-64",
+      "quote": "900 GB/s per GPU (about 50 GB/s per link in each direction) $\\gg$ InfiniBand NDR (400 Gb/s $\\approx$ 50 GB/s) $\\gg$ 100GbE Ethernet (ca.",
+      "section": "Communication: AllReduce and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-65",
+      "quote": "Modern training uses **NVLink within a node, InfiniBand across nodes**.",
+      "section": "Communication: AllReduce and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-66",
+      "quote": "**Gradient accumulation** amortizes communication by computing gradients over multiple micro-batches before syncing.",
+      "section": "Communication: AllReduce and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-67",
+      "quote": "**Gradient compression** (1-bit Adam, PowerSGD) reduces the bytes sent.",
+      "section": "Communication: AllReduce and Friends",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-68",
+      "quote": "Activations dominate memory at training time.",
+      "section": "Activation Checkpointing (Gradient Checkpointing)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-69",
+      "quote": "For a 70B model with batch size 1 and 4K context, activations can reach hundreds of GB.",
+      "section": "Activation Checkpointing (Gradient Checkpointing)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-70",
+      "quote": "**Activation checkpointing** trades compute for memory: instead of storing all activations, store only every $k$-th.",
+      "section": "Activation Checkpointing (Gradient Checkpointing)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-71",
+      "quote": "During backward pass, recompute the missing ones.",
+      "section": "Activation Checkpointing (Gradient Checkpointing)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-72",
+      "quote": "With $k = \\sqrt{L}$, memory drops to $O(\\sqrt{L})$ at 33% extra compute.",
+      "section": "Activation Checkpointing (Gradient Checkpointing)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-73",
+      "quote": "Universal practice for frontier training.",
+      "section": "Activation Checkpointing (Gradient Checkpointing)",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-74",
+      "quote": "Modern training uses **bfloat16** (bf16) for forward and backward, **fp32** for optimizer states and master weights:",
+      "section": "Mixed Precision and bf16",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-75",
+      "quote": "* bf16 has the same dynamic range as fp32 (8 exponent bits) but only 7 mantissa bits.",
+      "section": "Mixed Precision and bf16",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-76",
+      "quote": "* Master weights in fp32 ensure optimizer updates are precise.",
+      "section": "Mixed Precision and bf16",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-77",
+      "quote": "* Loss scaling handles gradient underflow in earlier stages.",
+      "section": "Mixed Precision and bf16",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-78",
+      "quote": "NVIDIA's **Transformer Engine** (H100) supports fp8 matmul, halving memory and doubling throughput.",
+      "section": "Mixed Precision and bf16",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-79",
+      "quote": "Adoption is becoming standard.",
+      "section": "Mixed Precision and bf16",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-80",
+      "quote": "A 10,000-GPU training run experiences **multiple hardware failures per day**.",
+      "section": "Fault Tolerance",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-81",
+      "quote": "Naive checkpointing once a day wastes hours of compute on recovery.",
+      "section": "Fault Tolerance",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-82",
+      "quote": "* **Asynchronous checkpointing**: write checkpoints in parallel with training, every 30 minutes.",
+      "section": "Fault Tolerance",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-83",
+      "quote": "* **Elastic training**: nodes can drop out and rejoin; the training run continues.",
+      "section": "Fault Tolerance",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-84",
+      "quote": "* **Failure prediction**: ML models predict GPU failures minutes in advance.",
+      "section": "Fault Tolerance",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-85",
+      "quote": "* **Redundant computation**: double-check critical steps on a second GPU.",
+      "section": "Fault Tolerance",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-86",
+      "quote": "The result: training runs achieve **>95% efficiency** even on unreliable hardware.",
+      "section": "Fault Tolerance",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-87",
+      "quote": "* **Megatron-LM** (NVIDIA): the canonical tensor-parallel + pipeline-parallel implementation.",
+      "section": "Frameworks",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-88",
+      "quote": "* **DeepSpeed** (Microsoft): ZeRO, 3D parallelism, optimizer offload, compression.",
+      "section": "Frameworks",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-89",
+      "quote": "Now merged with PyTorch as FSDP2.",
+      "section": "Frameworks",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-90",
+      "quote": "* **FSDP** (PyTorch native): ZeRO-3 with PyTorch-native sharding.",
+      "section": "Frameworks",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-91",
+      "quote": "* **FairScale** (Meta, archived): predecessor of FSDP.",
+      "section": "Frameworks",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-92",
+      "quote": "* **JAX/pjit/pmap** (Google): functional programming model for distributed compute; underlies PaLM and Gemma.",
+      "section": "Frameworks",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-93",
+      "quote": "* **Hugging Face Accelerate**: lightweight wrapper around FSDP/DeepSpeed.",
+      "section": "Frameworks",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-94",
+      "quote": "* **torchtitan** (Meta, 2024): new PyTorch-native training stack.",
+      "section": "Frameworks",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-95",
+      "quote": "* **Nanotron** (HuggingFace, 2024): reference implementation for training a Llama-style model from scratch.",
+      "section": "Frameworks",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-96",
+      "quote": "For a new training run today, **FSDP-2 with bf16 + activation checkpointing** is the standard starting point.",
+      "section": "Frameworks",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-97",
+      "quote": "For a 70B model with bf16:",
+      "section": "Practical Sizing Guide",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-98",
+      "quote": "| Optimizer (Adam fp32 moments) | 560 GB |",
+      "section": "Practical Sizing Guide",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-99",
+      "quote": "| Master weights (fp32) | 280 GB |",
+      "section": "Practical Sizing Guide",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-100",
+      "quote": "| Gradients (bf16) | 140 GB |",
+      "section": "Practical Sizing Guide",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-101",
+      "quote": "| Activations (8K seq, bs=1, ckpt) | (ca.",
+      "section": "Practical Sizing Guide",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-102",
+      "quote": "On 8 H100s with 80 GB each = 640 GB total.",
+      "section": "Practical Sizing Guide",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-103",
+      "quote": "**FSDP across 16 H100s** (1280 GB) fits, with little headroom for activations.",
+      "section": "Practical Sizing Guide",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-104",
+      "quote": "With TP=8 within node + ZeRO-3 across 16 nodes = 128 GPUs, you have headroom for larger batch sizes.",
+      "section": "Practical Sizing Guide",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-105",
+      "quote": "For a 405B model (Llama 3): a *theoretical minimum* configuration with TP=8, PP=16, FSDP across 8 replicas = **1024 H100s** would suffice.",
+      "section": "Practical Sizing Guide",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-106",
+      "quote": "(In practice, Meta's published report for the same 405B run used the larger **16,384 H100s** configuration cited above, trading additional compute for faster wall-clock training.)",
+      "section": "Practical Sizing Guide",
+      "kind": "statement"
+    },
+    {
+      "id": "training_infrastructure-stmt-107",
+      "quote": "The frontier in 2025: **multi-trillion parameter models on 100,000+ GPU clusters**, with training runs costing $100M–$1B.",
+      "section": "Practical Sizing Guide",
+      "kind": "statement"
+    }
   ]
 }

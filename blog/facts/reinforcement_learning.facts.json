@@ -449,5 +449,601 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "reinforcement_learning-stmt-1",
+      "quote": "Reinforcement Learning (RL) is the third pillar of machine learning, alongside supervised and unsupervised learning.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-2",
+      "quote": "In RL, an **agent** takes **actions** in an **environment** to maximize a cumulative **reward** signal.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-3",
+      "quote": "It is the foundation of modern LLM alignment: **RLHF**, DPO, GRPO, and the o1/R1 paradigm all build on it.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-4",
+      "quote": "This chapter covers the mathematical core: Markov Decision Processes, value functions, policy gradients, and how modern preference optimization emerged, grouped from the foundations, through policy optimization, to the LLM-preference methods and the open problems that remain.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-5",
+      "quote": "An MDP is the formal setting for RL: $(\\mathcal{S}, \\mathcal{A}, P, R, \\gamma)$ where",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-6",
+      "quote": "* $\\mathcal{S}$: state space",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-7",
+      "quote": "* $\\mathcal{A}$: action space",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-8",
+      "quote": "* $P(s' \\mid s, a)$: transition probability",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-9",
+      "quote": "* $R(s, a)$: reward function",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-10",
+      "quote": "* $\\gamma \\in [0, 1)$: discount factor",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-11",
+      "quote": "The agent follows a **policy** $\\pi(a \\mid s)$: a probability distribution over actions given a state.",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-12",
+      "quote": "The goal is to find $\\pi^*$ that maximizes expected discounted return:",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-13",
+      "quote": "A few terms used throughout the chapter:",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-14",
+      "quote": "* **Trajectory** $\\tau = (s_0, a_0, r_0, s_1, a_1, r_1, \\dots, s_T)$: the full sequence of states, actions, and rewards produced by one rollout of a policy.",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-15",
+      "quote": "* **Return** $G_t = \\sum_{k=0}^{\\infty} \\gamma^k R(s_{t+k}, a_{t+k})$: the discounted sum of future rewards from time $t$ onward (the quantity inside the expectation above, anchored at $s_0 = s$).",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-16",
+      "quote": "* **Episode**: a single finite trajectory, from initial state to a terminal state (e.g., one game, one conversation, one user session).",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-17",
+      "quote": "For continuing tasks without a natural endpoint, RL uses “episodic” framing by resetting at fixed horizons.",
+      "section": "The Markov Decision Process",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-18",
+      "quote": "The **state-value function** measures how good a state is under policy $\\pi$:",
+      "section": "Value Functions",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-19",
+      "quote": "The **action-value (Q) function** measures how good taking action $a$ in state $s$ is:",
+      "section": "Value Functions",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-20",
+      "quote": "They satisfy the **Bellman equation**:",
+      "section": "Value Functions",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-21",
+      "quote": "The **Bellman optimality equation** characterizes the optimal policy:",
+      "section": "Value Functions",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-22",
+      "quote": "For an LLM, the “state” is the current context window, the “action” is the next token, and the “reward” comes from a reward model (**RLHF**) or verifier (reasoning training).",
+      "section": "Value Functions",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-23",
+      "quote": "Q-Learning (\\cite[Watkins, 1989]{watkins1989qlearning}) converges to $Q^*$ by iterative updates:",
+      "section": "Tabular RL: Q-Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-24",
+      "quote": "where $\\alpha$ is the learning rate and $r + \\gamma \\max_{a'} Q(s', a')$ is the **TD target**.",
+      "section": "Tabular RL: Q-Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-25",
+      "quote": "The agent samples actions by $\\epsilon$-greedy: with probability $\\epsilon$ take a random action (exploration), otherwise $\\arg\\max_a Q(s, a)$ (exploitation).",
+      "section": "Tabular RL: Q-Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-26",
+      "quote": "Deep Q-Networks replaced the table with a neural network $Q_\\theta(s, a)$; the 2013 paper (\\cite[Mnih et al., 2013]{mnih2013dqn}) added **experience replay**, and the 2015 *Nature* follow-up (\\cite[Mnih et al., 2015]{mnih2015dqn}) added a separate **target network** to stabilize training.",
+      "section": "Tabular RL: Q-Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-27",
+      "quote": "This enabled RL on high-dimensional inputs (Atari).",
+      "section": "Tabular RL: Q-Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-28",
+      "quote": "For continuous or large action spaces, parameterize the policy as $\\pi_\\theta(a \\mid s)$ and directly optimize:",
+      "section": "Policy Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-29",
+      "quote": "The **policy gradient theorem** (\\cite[Sutton & Barto, 2018]{sutton2018reinforcement}):",
+      "section": "Policy Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-30",
+      "quote": "where $\\hat A_t = \\sum_{t' \\geq t} \\gamma^{t'-t} R(s_{t'}, a_{t'}) - b(s_t)$ is the **advantage**: how much better this action was than the baseline $b(s_t)$.",
+      "section": "Policy Gradients",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-31",
+      "quote": "REINFORCE (\\cite[Williams, 1992]{williams1992reinforce}) has high variance.",
+      "section": "REINFORCE",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-32",
+      "quote": "The **baseline trick** (subtracting $b(s_t)$, often $V^\\pi(s_t)$) reduces variance without bias.",
+      "section": "REINFORCE",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-33",
+      "quote": "The same structure hides inside the transformer: the gradient backpropagated through an attention layer is *exactly* an advantage-based policy gradient — each key's score is updated in proportion to how far that key's marginal utility beats the attention distribution's own average \\cite[the attention gradient as an advantage-based policy gradient]{litman2025sdpaot}.",
+      "section": "REINFORCE",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-34",
+      "quote": "**Actor-critic** algorithms learn both a policy (actor) and a value function (critic):",
+      "section": "Actor-Critic Methods",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-35",
+      "quote": "* Actor update: $\\theta \\leftarrow \\theta + \\alpha_\\theta \\cdot \\hat A_t \\nabla_\\theta \\log \\pi_\\theta(a_t \\mid s_t)$",
+      "section": "Actor-Critic Methods",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-36",
+      "quote": "* Critic update: $\\phi \\leftarrow \\phi + \\alpha_\\phi (G_t - V_\\phi(s_t)) \\nabla_\\phi V_\\phi(s_t)$",
+      "section": "Actor-Critic Methods",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-37",
+      "quote": "The critic's TD-error $G_t - V_\\phi(s_t)$ is a low-variance estimate of the advantage.",
+      "section": "Actor-Critic Methods",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-38",
+      "quote": "**Asynchronous** Advantage Actor-Critic (\\cite[Mnih et al., 2016]{mnih2016a3c}): parallel workers update a shared model asynchronously.",
+      "section": "A2C / A3C",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-39",
+      "quote": "Stabilizes training; superseded by synchronous methods.",
+      "section": "A2C / A3C",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-40",
+      "quote": "**Proximal Policy Optimization** (\\cite[Schulman et al., 2017]{schulman2017ppo}) is the workhorse of modern RL.",
+      "section": "PPO",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-41",
+      "quote": "It constrains how far the policy can move per update using a **clipped surrogate objective**:",
+      "section": "PPO",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-42",
+      "quote": "where $r_t(\\theta) = \\pi_\\theta(a_t \\mid s_t) / \\pi_{\\theta_{\\text{old}}}(a_t \\mid s_t)$ is the probability ratio.",
+      "section": "PPO",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-43",
+      "quote": "The clip prevents destructively large updates.",
+      "section": "PPO",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-44",
+      "quote": "PPO is simple, stable, and the default choice for **RLHF** and many robotics tasks.",
+      "section": "PPO",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-45",
+      "quote": "**RLHF** (Christiano et al., 2017; Ouyang et al., InstructGPT, 2022) adapts RL to align LLMs with human preferences:",
+      "section": "RLHF: Reinforcement Learning from Human Feedback",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-46",
+      "quote": "**Collect comparison data**: humans rank multiple model outputs for the same prompt.",
+      "section": "RLHF: Reinforcement Learning from Human Feedback",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-47",
+      "quote": "**Train a reward model** $R_\\phi(x, y)$ that predicts the human's preference score.",
+      "section": "RLHF: Reinforcement Learning from Human Feedback",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-48",
+      "quote": "**Fine-tune the LLM** with PPO, using $R_\\phi$ as the reward signal.",
+      "section": "RLHF: Reinforcement Learning from Human Feedback",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-49",
+      "quote": "The core RLHF objective combines the reward with a KL penalty:",
+      "section": "RLHF: Reinforcement Learning from Human Feedback",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-50",
+      "quote": "The **KL penalty** prevents the policy from drifting too far from the reference (SFT) model, a critical stabilizer.",
+      "section": "RLHF: Reinforcement Learning from Human Feedback",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-51",
+      "quote": "The reward model is trained on Bradley-Terry comparisons:",
+      "section": "RLHF: Reinforcement Learning from Human Feedback",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-52",
+      "quote": "where $y_w$ is the “winner” and $y_l$ the “loser”.",
+      "section": "RLHF: Reinforcement Learning from Human Feedback",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-53",
+      "quote": "\\cite[Rafailov et al. (2023)]{rafailov2023dpo} showed that the **RLHF** objective has a **closed-form solution**:",
+      "section": "DPO: Direct Preference Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-54",
+      "quote": "Inverting gives the implicit reward:",
+      "section": "DPO: Direct Preference Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-55",
+      "quote": "Substituting into the Bradley-Terry loss:",
+      "section": "DPO: Direct Preference Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-56",
+      "quote": "**No reward model, no PPO, no rollouts**.",
+      "section": "DPO: Direct Preference Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-57",
+      "quote": "Just a supervised loss on (prompt, winner, loser) triples.",
+      "section": "DPO: Direct Preference Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-58",
+      "quote": "DPO matches **RLHF** on alignment benchmarks with much simpler infrastructure.",
+      "section": "DPO: Direct Preference Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-59",
+      "quote": "Variants have proliferated:",
+      "section": "DPO: Direct Preference Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-60",
+      "quote": "* **IPO** (\\cite[Azar et al., 2023]{azar2023ipo}): robust to deterministic preferences.",
+      "section": "DPO: Direct Preference Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-61",
+      "quote": "* **KTO** (\\cite[Ethayarajh et al., 2024]{ethayarajh2024kto}): uses binary good/bad labels instead of pairs.",
+      "section": "DPO: Direct Preference Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-62",
+      "quote": "* **ORPO** (\\cite[Hong et al., 2024]{hong2024orpo}): combines SFT and odds-ratio preference loss in one objective.",
+      "section": "DPO: Direct Preference Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-63",
+      "quote": "* **SimPO** (\\cite[Meng et al., 2024]{meng2024simpo}): length-normalized, no reference model.",
+      "section": "DPO: Direct Preference Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-64",
+      "quote": "GRPO (\\cite[Shao et al., DeepSeek, 2024]{shao2024grpo}) was the breakthrough that enabled **R1's pure-RL training**.",
+      "section": "GRPO: Group Relative Policy Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-65",
+      "quote": "Sample $G$ candidate responses from the current policy: $\\{y^{(1)}, \\dots, y^{(G)}\\}$.",
+      "section": "GRPO: Group Relative Policy Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-66",
+      "quote": "Score each with a reward model (or rule-based verifier).",
+      "section": "GRPO: Group Relative Policy Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-67",
+      "quote": "Compute the **group-relative advantage**:",
+      "section": "GRPO: Group Relative Policy Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-68",
+      "quote": "Update the policy using a PPO-style objective but **without a critic**:",
+      "section": "GRPO: Group Relative Policy Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-69",
+      "quote": "This is the response-level form; the actual DeepSeekMath objective is per-token, with the ratio and KL term inside a sum over tokens.",
+      "section": "GRPO: Group Relative Policy Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-70",
+      "quote": "By using the group mean as the baseline, GRPO eliminates the need for a separate value network.",
+      "section": "GRPO: Group Relative Policy Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-71",
+      "quote": "This made it possible to RL-train on **verifiable rewards** (math correctness, code test passage) at scale, producing emergent long-CoT reasoning.",
+      "section": "GRPO: Group Relative Policy Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-72",
+      "quote": "GRPO is the algorithm behind **DeepSeek-R1** (January 2025), a widely used open-weight model with emergent long chain-of-thought reasoning.",
+      "section": "GRPO: Group Relative Policy Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-73",
+      "quote": "See the Reasoning chapter § o1/R1 paradigm for the *result*; the math here is the *cause*.",
+      "section": "GRPO: Group Relative Policy Optimization",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-74",
+      "quote": "| Method | Reward signal | Critic | Reference model | Use case |",
+      "section": "The RLHF Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-75",
+      "quote": "| **SFT** | None | No | — | Pretraining alignment |",
+      "section": "The RLHF Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-76",
+      "quote": "| **RLHF (PPO)** | Learned RM | Yes | Yes | Industry standard until 2023 |",
+      "section": "The RLHF Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-77",
+      "quote": "| **DPO** | Implicit from policy ratio | No | Yes | Simple, no RL |",
+      "section": "The RLHF Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-78",
+      "quote": "| **IPO** | Implicit, regularized | No | Yes | Noisy preferences |",
+      "section": "The RLHF Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-79",
+      "quote": "| **KTO** | Implicit, asymmetric | No | Yes | Binary feedback |",
+      "section": "The RLHF Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-80",
+      "quote": "| **ORPO** | Odds ratio | No | No | Combined SFT + preference |",
+      "section": "The RLHF Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-81",
+      "quote": "| **SimPO** | Length-normalized log-prob | No | No | Reference-free |",
+      "section": "The RLHF Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-82",
+      "quote": "| **GRPO** | Verifier / RM | No (group baseline) | Yes | Reasoning RL (R1) |",
+      "section": "The RLHF Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-83",
+      "quote": "| **RLOO** | REINFORCE leave-one-out | No | Optional | Lightweight online RL |",
+      "section": "The RLHF Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-84",
+      "quote": "The trend: **simpler objectives that remove components** (critic, reference model, paired data) while matching or exceeding PPO performance.",
+      "section": "The RLHF Spectrum",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-85",
+      "quote": "A central problem in RL: a sufficiently clever agent finds **loopholes** in the reward function that don't reflect the actual intent.",
+      "section": "Reward Hacking",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-86",
+      "quote": "* CoastRunners (2016): an agent trained to maximize race score learned to turn in circles and repeatedly knock over the same power-ups, never finishing the race.",
+      "section": "Reward Hacking",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-87",
+      "quote": "* An LLM trained with reward hacking produces long, sycophantic responses that humans rate highly but are useless.",
+      "section": "Reward Hacking",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-88",
+      "quote": "* **Multiple reward models**: ensemble disagreement as an uncertainty signal.",
+      "section": "Reward Hacking",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-89",
+      "quote": "* **KL penalty to reference**: keeps the policy close to the human-aligned SFT model.",
+      "section": "Reward Hacking",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-90",
+      "quote": "* **Process reward**: score intermediate reasoning steps, not just final output.",
+      "section": "Reward Hacking",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-91",
+      "quote": "* **Constitutional AI** (Bai et al., Anthropic 2022): self-critique against a written “constitution” of principles.",
+      "section": "Reward Hacking",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-92",
+      "quote": "* **Multiagent debate** (\\cite[Du et al., 2023]{du2023multiagent}): several instances of the model propose and critique answers over rounds, converging on a shared answer that improves factuality and reasoning.",
+      "section": "Reward Hacking",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-93",
+      "quote": "* **Sample efficiency**: PPO needs millions of environment steps.",
+      "section": "Open Problems",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-94",
+      "quote": "RL for LLMs needs millions of rollouts.",
+      "section": "Open Problems",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-95",
+      "quote": "* **Reward modeling**: the reward model is a bottleneck; it inherits human biases and is gamed.",
+      "section": "Open Problems",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-96",
+      "quote": "* **Distributional shift**: PPO's current policy drifts from the sampling policy $\\pi_{\\text{old}}$ over the update epochs (the KL term additionally anchors it to $\\pi_{\\text{ref}}$); offline-correction methods (DPO, etc.) sidestep this but lose online improvement.",
+      "section": "Open Problems",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-97",
+      "quote": "* **Credit assignment over long horizons**: a 1000-token reasoning chain has sparse final reward.",
+      "section": "Open Problems",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-98",
+      "quote": "Process rewards help but are expensive.",
+      "section": "Open Problems",
+      "kind": "statement"
+    },
+    {
+      "id": "reinforcement_learning-stmt-99",
+      "quote": "RL is the engine of modern alignment and reasoning, but it remains one of the most sample-inefficient and brittlest components of the LLM stack.",
+      "section": "Open Problems",
+      "kind": "statement"
+    }
   ]
 }

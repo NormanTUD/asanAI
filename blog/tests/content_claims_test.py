@@ -44,6 +44,7 @@ def main() -> None:
     data = load_all()
     failures: list[str] = []
 
+    statement_exempt = {"knowledge_map", "search_lib"}
     for slug in sorted(LESSONS):
         if slug.startswith("_"):
             continue
@@ -56,6 +57,14 @@ def main() -> None:
             failures.append(f"{slug}: no non-metadata content claim")
         if "line" in document:
             failures.append(f"{slug}: top-level line field")
+        statements = document.get("statements", []) if isinstance(document, dict) else []
+        if slug not in statement_exempt and not statements:
+            failures.append(f"{slug}: no statements (prose not protocolled)")
+        for statement in statements:
+            if not statement.get("quote"):
+                failures.append(f"{slug}: statement {statement.get('id')} has no quote")
+            if "line" in statement:
+                failures.append(f"{slug}: statement {statement.get('id')} has a line field")
         for claim in content:
             if not claim.get("quote"):
                 failures.append(f"{slug}: claim {claim.get('id')} has no quote")
@@ -123,6 +132,7 @@ def main() -> None:
 
     print(
         f"[PASS] content claims: {len(LESSONS)} lessons, {len(all_claims)} claims, "
+        f"{sum(len(d.get('statements', [])) for d, _ in data.values())} statements, "
         f"{sum(len(d.get('relations', [])) for d, _ in data.values())} relations"
     )
 

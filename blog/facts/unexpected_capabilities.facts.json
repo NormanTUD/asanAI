@@ -490,5 +490,1495 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "unexpected_capabilities-stmt-1",
+      "quote": "This chapter is the curated companion to the deep-structure material scattered through the course: **grokking** (memorization-to-generalization, now in the How Algorithms Work lesson), the **wave geometry of transformer layers**, the **isosurface / “truth tunnel”** picture of how probability collapses as context tightens (now in The Foam of Meaning ), and the **group structure of positional embeddings** ( Basic Math IV and Positional Embeddings ).",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-2",
+      "quote": "It catalogues the most striking discoveries researchers did not anticipate from next-token prediction, emergent reasoning, theory of mind, world models, latent knowledge, self-improvement, and the patterns that tie them all together.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-3",
+      "quote": "LLMs were trained on a single, well-defined objective: **next-token prediction**.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-4",
+      "quote": "The architecture is a stack of attention layers, the data is text.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-5",
+      "quote": "Everything else, reasoning, world-modelling, theory of mind, tool use, was not specified, not rewarded, and in many cases not even expected to be possible.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-6",
+      "quote": "Yet, capability after capability kept *emerging* during scaling.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-7",
+      "quote": "The sections below catalogue the most striking of these discoveries, grouped by theme, each with a citation to the paper that first reported it and a short note on *why* it was unexpected.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-8",
+      "quote": "The first major surprise.",
+      "section": "Few-Shot In-Context Learning (GPT-3, 2020)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-9",
+      "quote": "(\\cite[Brown et al., 2020]{brown2020gpt3}) showed that a 175-billion parameter autoregressive language model could be conditioned on a handful of input-output examples written into the prompt and then continue the pattern on a new query, **without any weight updates, without gradient descent, without a fine-tuning loop**.",
+      "section": "Few-Shot In-Context Learning (GPT-3, 2020)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-10",
+      "quote": "This was not how language modelling was supposed to work.",
+      "section": "Few-Shot In-Context Learning (GPT-3, 2020)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-11",
+      "quote": "Prior to GPT-3, neural NLP required task-specific architectures, features, and training.",
+      "section": "Few-Shot In-Context Learning (GPT-3, 2020)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-12",
+      "quote": "After GPT-3, “prompting” became a programming interface.",
+      "section": "Few-Shot In-Context Learning (GPT-3, 2020)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-13",
+      "quote": "The deeper surprise was that the ability appeared *smoothly* with scale: at small scales models ignore the examples, at large scales they exploit them reliably.",
+      "section": "Few-Shot In-Context Learning (GPT-3, 2020)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-14",
+      "quote": "**What do the demonstrations actually teach?** A follow-up study replaced the gold labels in the demonstrations with *random* labels and found that performance on many tasks barely dropped (\\cite[Min et al., 2022]{min2022rethinking}).",
+      "section": "Few-Shot In-Context Learning (GPT-3, 2020)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-15",
+      "quote": "The input-label mapping was not the main thing being learned from the prompt.",
+      "section": "Few-Shot In-Context Learning (GPT-3, 2020)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-16",
+      "quote": "What the context supplied was the **task framing**: the format, the label space, the distribution of inputs, and the style of the expected answer.",
+      "section": "Few-Shot In-Context Learning (GPT-3, 2020)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-17",
+      "quote": "This is an important correction to the naive reading of in-context learning: the model is not necessarily inferring a new function from the examples, and a prompt can work for reasons that have little to do with the correctness of its examples.",
+      "section": "Few-Shot In-Context Learning (GPT-3, 2020)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-18",
+      "quote": "In 2022, (\\cite[Garg, Tsipras, Liang & Valiant, 2022]{garg2022incontext}) asked a sharper question: if a Transformer is trained on sequences drawn from a *family* of functions (e.g. linear functions $f(x) = w^\\top x$ with random $w$), can it in-context learn a *new* function from that family on the fly?",
+      "section": "In-Context Statistical Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-19",
+      "quote": "The answer was yes: at test time, given a few noisy $(x, y)$ pairs, the model produced predictions matching the **optimal least-squares estimator** for that function class, *without ever performing gradient descent at inference*.",
+      "section": "In-Context Statistical Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-20",
+      "quote": "The result extended to sparse linear functions, two-layer neural networks, and decision trees, in each case matching or exceeding specialised task-specific learning algorithms.",
+      "section": "In-Context Statistical Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-21",
+      "quote": "This established that in-context learning is not task recognition (looking up a similar pretraining task) but genuine inference-time algorithm execution.",
+      "section": "In-Context Statistical Learning",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-22",
+      "quote": "If in-context learning is real inference, it must be implemented in some specific circuitry.",
+      "section": "Induction Heads: The Circuit Behind ICL",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-23",
+      "quote": "(\\cite[Olsson et al., 2022]{olsson2022induction}) identified **induction heads**, pairs of attention heads that implement the simple algorithm “complete $[A][B]\\dots[A] \\to [B]$”.",
+      "section": "Induction Heads: The Circuit Behind ICL",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-24",
+      "quote": "Across six complementary lines of evidence, they showed that induction heads develop at *precisely the same training step* as a sudden jump in in-context learning ability (visible as a discontinuity in the loss curve).",
+      "section": "Induction Heads: The Circuit Behind ICL",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-25",
+      "quote": "The implication: many “emergent” capabilities of LLMs may be the macroscopic signature of a small, identifiable circuit forming inside the network.",
+      "section": "Induction Heads: The Circuit Behind ICL",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-26",
+      "quote": "This is now one of the cleanest examples of *mechanistic interpretability*, explaining a behaviour by finding the responsible weights.",
+      "section": "Induction Heads: The Circuit Behind ICL",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-27",
+      "quote": "What happens if you give an LLM the *algorithm* for a task instead of examples?",
+      "section": "Algorithmic Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-28",
+      "quote": "(\\cite[Zhou et al., 2022]{zhou2022algorithmic}) tested this on 19-digit addition: a plain few-shot baseline reached 9.5% accuracy; an in-context description of the addition algorithm reached **90.5%**.",
+      "section": "Algorithmic Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-29",
+      "quote": "The model was not memorising the answers (the numbers were random), not retrieving the algorithm from pretraining (it was given verbatim in the prompt), and not gradient-descenting on the task.",
+      "section": "Algorithmic Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-30",
+      "quote": "It was *executing* an algorithm it had never seen before, by reading the algorithm from natural-language instructions.",
+      "section": "Algorithmic Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-31",
+      "quote": "This is a strong empirical anchor for the claim that LLMs can perform general algorithmic computation when the procedure is specified unambiguously.",
+      "section": "Algorithmic Prompting",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-32",
+      "quote": "Through 2018 and 2019, “zero-shot” was almost a dirty word in NLP, you needed either labelled training examples or a very narrowly crafted prompt template.",
+      "section": "Zero-Shot Instruction Following",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-33",
+      "quote": "The **FLAN** paper (\\cite[Chung et al., 2022]{chung2022flan}) showed that fine-tuning a model on a *diverse collection of tasks phrased as instructions* produced a single model that could handle thousands of unseen tasks zero-shot.",
+      "section": "Zero-Shot Instruction Following",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-34",
+      "quote": "The surprise was not just the headline numbers, Flan-PaLM 540B reached 75.2% on five-shot MMLU, outperforming the base PaLM 540B by 9.4 points on average, but the *generalisation pattern*: improvements transferred even to *task categories* not represented in the fine-tuning mix (e.g. fine-tuning on English NLI tasks improved performance on non-English reasoning).",
+      "section": "Zero-Shot Instruction Following",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-35",
+      "quote": "Instruction tuning turned out to be a general method for unlocking latent capabilities, much like chain-of-thought later unlocked reasoning: the abilities were there, the model just needed to be told it was allowed to use them.",
+      "section": "Zero-Shot Instruction Following",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-36",
+      "quote": "In a result that foreshadowed chain-of-thought reasoning by two months, (\\cite[Nye et al., 2021]{nye2021scratchpad}) showed that a frozen language model could perform multi-step arithmetic, polynomial evaluation, and even the execution of short programs, provided it was given a *scratchpad*: a stretch of tokens to write down intermediate computation steps.",
+      "section": "Scratchpads: Showing Your Work",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-37",
+      "quote": "The model was never trained to use a scratchpad; the scratchpad was simply present in the few-shot examples.",
+      "section": "Scratchpads: Showing Your Work",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-38",
+      "quote": "The surprise is conceptual: a Transformer has a fixed-width context window, but it can effectively *expand* its working memory by writing into the context window and reading back what it wrote.",
+      "section": "Scratchpads: Showing Your Work",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-39",
+      "quote": "The architecture is constant-time, but the algorithm can be unbounded-depth.",
+      "section": "Scratchpads: Showing Your Work",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-40",
+      "quote": "This insight, that a language model is in some sense its own computer, is the conceptual seed of everything that followed.",
+      "section": "Scratchpads: Showing Your Work",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-41",
+      "quote": "In January 2022, (\\cite[Wei et al., 2022]{wei2022chainofthought}) demonstrated that appending *“Let's think step by step”* (or showing worked examples) to a prompt dramatically improves a model's performance on arithmetic, commonsense, and symbolic reasoning benchmarks, sometimes by **more than 50 percentage points**.",
+      "section": "Chain-of-Thought Reasoning Emerges From a Prompt",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-42",
+      "quote": "(\\cite[Kojima et al., 2022]{kojima2022zeroshot}) then showed the same effect *without any worked examples*, using only the “magic” suffix.",
+      "section": "Chain-of-Thought Reasoning Emerges From a Prompt",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-43",
+      "quote": "Before this work, the standard assumption was that a frozen language model performs a fixed amount of “reasoning” per forward pass.",
+      "section": "Chain-of-Thought Reasoning Emerges From a Prompt",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-44",
+      "quote": "Chain-of-Thought revealed that the model already contained latent multi-step reasoning capability, it merely needed permission (in the form of the right prompt) to surface it.",
+      "section": "Chain-of-Thought Reasoning Emerges From a Prompt",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-45",
+      "quote": "This finding directly enabled the entire modern reasoning paradigm culminating in o1, o3, and DeepSeek-R1.",
+      "section": "Chain-of-Thought Reasoning Emerges From a Prompt",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-46",
+      "quote": "Once reasoning can be sampled, two natural refinements appeared.",
+      "section": "Self-Consistency and Tree of Thoughts",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-47",
+      "quote": "(\\cite[Wang et al., 2022]{wang2022selfconsistency}) showed that sampling *many* chain-of-thought traces and taking the majority answer outperforms greedy decoding, on the intuition that correct reasoning paths converge while incorrect ones diverge.",
+      "section": "Self-Consistency and Tree of Thoughts",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-48",
+      "quote": "(\\cite[Yao et al., 2023]{yao2023tot}) pushed this further with **Tree of Thoughts**: the model generates multiple candidate next steps, *evaluates* each, and decides whether to continue, branch, or backtrack.",
+      "section": "Self-Consistency and Tree of Thoughts",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-49",
+      "quote": "On the Game of 24 (a combinatorial puzzle), chain-of-thought GPT-4 solved 4% of problems; Tree of Thoughts solved 74%.",
+      "section": "Self-Consistency and Tree of Thoughts",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-50",
+      "quote": "The surprise was not that the model could reason, but that the same model could be coaxed into *deliberate* search and self-evaluation by changes to the inference loop alone.",
+      "section": "Self-Consistency and Tree of Thoughts",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-51",
+      "quote": "Until late 2024, reasoning was something the model produced as visible tokens: write a chain-of-thought, then write the answer.",
+      "section": "Hidden Chain-of-Thought, Emergent Reasoning at Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-52",
+      "quote": "OpenAI's **o1** series and DeepSeek's **R1** (discussed at length in the Reasoning chapter) showed that the same capability can be pushed much further by *lengthening* the chain of thought and rewarding intermediate correctness rather than only the final answer.",
+      "section": "Hidden Chain-of-Thought, Emergent Reasoning at Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-53",
+      "quote": "The model is allowed (and incentivised) to “think for a long time” before answering, exploring many reasoning paths internally.",
+      "section": "Hidden Chain-of-Thought, Emergent Reasoning at Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-54",
+      "quote": "The surprise was that *more inference compute* reliably produces *more capability*, even on tasks where the base model has plateaued.",
+      "section": "Hidden Chain-of-Thought, Emergent Reasoning at Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-55",
+      "quote": "This is the test-time-compute paradigm.",
+      "section": "Hidden Chain-of-Thought, Emergent Reasoning at Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-56",
+      "quote": "It is one of the few results in deep learning where you can buy better answers with more thinking time, with no additional training.",
+      "section": "Hidden Chain-of-Thought, Emergent Reasoning at Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-57",
+      "quote": "The mechanism is still poorly understood (we cannot directly observe the model's hidden chain), but the empirical effect is large: o1 jumped several standard deviations on competition math, PhD-level science questions, and code generation compared to GPT-4, with the same pretraining data and a small amount of RL.",
+      "section": "Hidden Chain-of-Thought, Emergent Reasoning at Inference",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-58",
+      "quote": "A model that answers each fact correctly should be able to combine those facts.",
+      "section": "The Compositionality Gap",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-59",
+      "quote": "(\\cite[Press et al., 2023]{press2022compositionality}) measured this directly using multi-hop questions (“Who directed the film starring the actress who won the 2020 Best Actress Oscar?”).",
+      "section": "The Compositionality Gap",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-60",
+      "quote": "They found that **single-hop performance improves with scale, but multi-hop performance does not keep up**, the gap between “knows each fact” and “can compose the facts” actually *widens* in the GPT-3 family.",
+      "section": "The Compositionality Gap",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-61",
+      "quote": "The model *has* the necessary information in its parameters; it simply fails to compose it without explicit prompting.",
+      "section": "The Compositionality Gap",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-62",
+      "quote": "Chain-of-thought and the “self-ask” method (the model asks itself follow-up questions before answering) close this gap.",
+      "section": "The Compositionality Gap",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-63",
+      "quote": "The finding is important because it shows that scaling alone does not solve compositional reasoning, and that the right inference-time scaffolding can be the missing piece.",
+      "section": "The Compositionality Gap",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-64",
+      "quote": "The compositionality gap is a new measurement of an old philosophical objection.",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-65",
+      "quote": "In 1988, Fodor and Pylyshyn argued that **systematicity** — the ability to understand novel combinations of familiar components — comes free in symbolic systems but has to be stipulated in connectionist ones.",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-66",
+      "quote": "A learner who knows “red ball” and “blue cube” should understand “red cube” on first encounter.",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-67",
+      "quote": "Neural networks, the argument went, learn associations, not rules.",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-68",
+      "quote": "The modern benchmark program put the charge to a test.",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-69",
+      "quote": "\\citeauthor{lake2018scan}'s **SCAN** benchmark reduced the question to navigation commands and found that sequence-to-sequence models which parsed their training commands perfectly failed to compose the same words into new commands (\\cite[Lake & Baroni, 2018]{lake2018scan}).",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-70",
+      "quote": "COGS (\\cite[Kim & Linzen, 2020]{kim2020cogs}) reported the same pattern for semantic parsing.",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-71",
+      "quote": "Chollet's ARC widened the frame from language to abstraction itself, proposing that generalization be measured as the *efficiency* of acquiring skill on previously unseen tasks (\\cite[Chollet, 2019]{chollet2019measure}).",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-72",
+      "quote": "A compact failure case is the **reversal curse**: models trained on “A is B” routinely fail to infer “B is A” (\\cite[Berglund et al., 2023]{berglund2023reversal}).",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-73",
+      "quote": "The model has the fact in one direction and cannot use it in the other — exactly the kind of asymmetry a purely associative account predicts and a rule-based one does not.",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-74",
+      "quote": "The picture is not one-sided.",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-75",
+      "quote": "**Grokking** shows that a memorizing network can continue training into a generalizing one, so memorization and generalization behave as *phases* rather than mutually exclusive outcomes (\\cite[Power et al., 2022]{power2022grokking}).",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-76",
+      "quote": "And the sharpest caution about “emergent abilities” is that many of the dramatic curves were artifacts of discontinuous metrics: a benchmark that scores an answer as all-or-nothing can make a smooth improvement in per-token accuracy look like a sudden jump from zero to one (\\cite[Schaeffer et al., 2023]{schaeffer2023mirage}).",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-77",
+      "quote": "Whether the remaining gap closes through scale, through search at inference time, or through architectures built around abstraction explicitly is still open.",
+      "section": "Systematicity: The Old Question, Resurfacing",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-78",
+      "quote": "For decades, code generation was treated as its own sub-field with its own architectures (abstract syntax trees, program induction, neuro-symbolic systems).",
+      "section": "Spontaneous Coding Ability, Codex & HumanEval",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-79",
+      "quote": "Then (\\cite[Chen et al., 2021]{chen2021humaneval}) fine-tuned a 12-billion-parameter GPT on GitHub code and produced **Codex**.",
+      "section": "Spontaneous Coding Ability, Codex & HumanEval",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-80",
+      "quote": "On HumanEval, a benchmark of 164 hand-written Python problems, Codex solved 28.8% of problems in a single sample, while GPT-3 (a much larger general LM) solved 0%.",
+      "section": "Spontaneous Coding Ability, Codex & HumanEval",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-81",
+      "quote": "The surprise was twofold: first, that an essentially unmodified decoder Transformer could function as a competent programmer without any architectural changes; second, that **repeated sampling is itself a strategy**, drawing 100 samples per problem and selecting by majority vote or test-case filtering raised accuracy to 70.2%.",
+      "section": "Spontaneous Coding Ability, Codex & HumanEval",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-82",
+      "quote": "The same model, the same weights, but a different inference-time search strategy, and the model becomes competitive with skilled humans on introductory programming tasks.",
+      "section": "Spontaneous Coding Ability, Codex & HumanEval",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-83",
+      "quote": "A surprising empirical finding is that LLMs trained primarily on Python (and English text) can translate code between programming languages reasonably well: Python to JavaScript, Java to Rust, COBOL to Python, even between languages they have seen little of.",
+      "section": "Spontaneous Code Translation Between Languages",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-84",
+      "quote": "The model's code training distribution is heavily skewed (GitHub is roughly 25% JavaScript, 18% Python, 10% Java, much smaller percentages for everything else), but it has seen enough of each language that it can internalise their syntax, semantics, and idiomatic patterns.",
+      "section": "Spontaneous Code Translation Between Languages",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-85",
+      "quote": "Few-shot prompting with examples of the target language style dramatically improves translation quality.",
+      "section": "Spontaneous Code Translation Between Languages",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-86",
+      "quote": "The conceptual surprise is the same as for natural-language translation: the *abstract algorithm* is separable from the *surface syntax*, and the model has internalised the abstract layer.",
+      "section": "Spontaneous Code Translation Between Languages",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-87",
+      "quote": "A capability that emerged from the Codex/Codex-derivative generation of models: given code that fails a test, an LLM can read the error message, identify the bug, and produce a corrected version, often in a single round, sometimes in two or three.",
+      "section": "Spontaneous Self-Debugging",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-88",
+      "quote": "This is *not* trivial: the model has to (a) parse the error message, (b) map it back to the relevant part of the code, (c) hypothesise a cause, and (d) propose a fix that preserves the rest of the program's semantics.",
+      "section": "Spontaneous Self-Debugging",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-89",
+      "quote": "The capability is highly variable (it works much better for simple, well-isolated bugs than for distributed failures) but its existence at all surprised many researchers.",
+      "section": "Spontaneous Self-Debugging",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-90",
+      "quote": "Most pre-LLM code-generation systems had no self-debugging capability; they produced code once and stopped.",
+      "section": "Spontaneous Self-Debugging",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-91",
+      "quote": "The model's ability to read its own outputs, reason about them as *data*, and modify them is the same machinery as scratchpads and chain-of-thought, but applied to code rather than reasoning steps.",
+      "section": "Spontaneous Self-Debugging",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-92",
+      "quote": "LLMs trained on internet text, most of which is *not* game transcripts, can still play simple games surprisingly well.",
+      "section": "Spontaneous Game Play",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-93",
+      "quote": "GPT-4 can play chess at a weak club level, plays Go at a weak amateur level, plays tic-tac-toe and Connect-4 to expert level, and can reason through poker, Mastermind, and Wordle.",
+      "section": "Spontaneous Game Play",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-94",
+      "quote": "None of this was an explicit training target.",
+      "section": "Spontaneous Game Play",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-95",
+      "quote": "The training data contains chess PGN files, Go game records, online game discussions, and (much more recently) generated game transcripts from earlier LLMs.",
+      "section": "Spontaneous Game Play",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-96",
+      "quote": "What is striking is that the same model can play a game it has never been explicitly trained on, simply by being told the rules in natural language and asked to choose moves.",
+      "section": "Spontaneous Game Play",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-97",
+      "quote": "The ability degrades rapidly with game complexity (a strong human chess player crushes GPT-4, and Go is essentially lost at any serious level), but the *existence* of the ability, at all, in a model trained on next-token prediction, was not predicted.",
+      "section": "Spontaneous Game Play",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-98",
+      "quote": "A small but striking capability: given a table of $(x, y)$ pairs sampled from an unknown physical law, frontier LLMs can often produce a closed-form formula that fits the data.",
+      "section": "Spontaneous Symbolic Regression",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-99",
+      "quote": "The **AI Feynman** project (\\cite[Udrescu et al., 2020]{udrescu2020aifeynman}) showed that automated symbolic regression, working from raw numerical data alone and with no language model, can rediscover dozens of formulas from the Feynman Lectures on Physics, including Hamiltonians, equations of motion, and conservation laws.",
+      "section": "Spontaneous Symbolic Regression",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-100",
+      "quote": "AI Feynman itself is symbolic regression, not an LLM.",
+      "section": "Spontaneous Symbolic Regression",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-101",
+      "quote": "Separately, LLMs can propose candidate functional forms, which are then fitted and tested; the surprise is that an LLM's training set (which contains physics textbooks, Wikipedia, Stack Overflow) gives it a strong prior over which functional forms are plausible for a given setting.",
+      "section": "Spontaneous Symbolic Regression",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-102",
+      "quote": "This is symbolic regression from a language model, no neural network was designed for it, and yet, given a sensible prompt, the model produces something like Kepler's third law or the Gaussian integral.",
+      "section": "Spontaneous Symbolic Regression",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-103",
+      "quote": "LLMs trained on broad web text have seen enough cryptography-related material, papers, StackOverflow answers, blog posts, that they can perform a surprising range of cipher-related tasks: encrypt and decrypt messages using classical ciphers (Caesar, Vigenère, simple substitution), implement cryptographic protocols in code, reason about hash functions and Merkle trees, and even invent simple novel ciphers on the fly.",
+      "section": "Spontaneous Cryptography and Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-104",
+      "quote": "The surprising part is that **classical ciphers are not in the training objective**, the model learned to compute them from examples scattered through its data, and then generalises to unseen cipher parameters.",
+      "section": "Spontaneous Cryptography and Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-105",
+      "quote": "The capability degrades quickly as cipher complexity increases (modern symmetric ciphers like AES are out of reach), but for toy ciphers the success rate is high.",
+      "section": "Spontaneous Cryptography and Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-106",
+      "quote": "It is yet another instance of the same lesson: a model that *reads about* an algorithm often learns to *execute* it.",
+      "section": "Spontaneous Cryptography and Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-107",
+      "quote": "Perhaps the most surprising mechanistic finding of 2022.",
+      "section": "Emergent World Representations, Othello-GPT",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-108",
+      "quote": "(\\cite[Li et al., 2022]{li2022othello_iclr}) trained a small GPT on **move sequences from the board game Othello**, the model never saw the board, only the sequence of moves.",
+      "section": "Emergent World Representations, Othello-GPT",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-109",
+      "quote": "Probing the internal activations, they found a non-linear representation of the full board state had spontaneously formed inside the network: each cell's “colour” (black, white, empty) could be decoded from the internal activations — the paper reports an emergent *nonlinear* representation, recoverable with a nonlinear probe.",
+      "section": "Emergent World Representations, Othello-GPT",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-110",
+      "quote": "Causal interventions (artificially flipping a cell's representation) caused the model to predict legal moves as if the board had actually been flipped.",
+      "section": "Emergent World Representations, Othello-GPT",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-111",
+      "quote": "The model had invented a world model because predicting the next move required it.",
+      "section": "Emergent World Representations, Othello-GPT",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-112",
+      "quote": "The lesson: a sufficiently expressive next-token predictor, trained on a sufficiently structured sequence, builds internal representations of the underlying generative process whether or not we ask it to.",
+      "section": "Emergent World Representations, Othello-GPT",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-113",
+      "quote": "As vision models (CLIP, DINOv2), language models (GPT, Llama), and audio models (Whisper, Audio-MAE) scaled independently, researchers expected their internal representations to look different, they were trained on different modalities with different objectives.",
+      "section": "The Platonic Representation Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-114",
+      "quote": "(\\cite[Huh et al., 2024]{huh2024platonic}) showed the opposite: as models scale, their representations **converge**.",
+      "section": "The Platonic Representation Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-115",
+      "quote": "The similarity structure (which images are close to which, which sentences are close to which) becomes more and more alike across modalities and architectures.",
+      "section": "The Platonic Representation Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-116",
+      "quote": "The Platonic Representation Hypothesis proposes that there is a single statistical model of reality toward which all large models converge, the way all map projections converge toward an accurate map as their resolution increases.",
+      "section": "The Platonic Representation Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-117",
+      "quote": "If true, this would imply that the “universal” representations people intuited were waiting to be found are *forced into existence* by the data alone, irrespective of the architecture that learns them.",
+      "section": "The Platonic Representation Hypothesis",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-118",
+      "quote": "A finding that has surprised practitioners over and over again: an LLM trained on diverse internet text can perform well on tasks that look nothing like its training distribution, for instance, classifying bird species from verbal descriptions, parsing legal contracts into structured forms, generating synthetic medical dialogues in a specific style, or producing domain-specific code in obscure libraries.",
+      "section": "Out-of-Distribution Generalisation Without Fine-Tuning",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-119",
+      "quote": "The mechanism is the standard one, the model has seen enough examples of similar tasks that it can extrapolate, but the *degree* of generalisation is consistently larger than researchers expect.",
+      "section": "Out-of-Distribution Generalisation Without Fine-Tuning",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-120",
+      "quote": "Studies continue to report larger-than-expected transfer to tasks where the training set contained no examples of the exact task and the model had no fine-tuning.",
+      "section": "Out-of-Distribution Generalisation Without Fine-Tuning",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-121",
+      "quote": "This is the practical face of the Platonic Representation Hypothesis: the model has internalised general abstractions that transfer cleanly to new domains.",
+      "section": "Out-of-Distribution Generalisation Without Fine-Tuning",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-122",
+      "quote": "In 2022, GPT-3.5 and GPT-4 astonished users by drawing **recognisable pictures using only ASCII and Unicode characters**: a cat, a landscape, a portrait, even a small game of chess.",
+      "section": "Spontaneous Visual Generation in Text",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-123",
+      "quote": "The model had no image-generation capability (no diffusion, no pixel output).",
+      "section": "Spontaneous Visual Generation in Text",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-124",
+      "quote": "The drawings were composed of text characters that *look like* the image when viewed at a distance, a llama made of slashes, a face made of colons and parentheses.",
+      "section": "Spontaneous Visual Generation in Text",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-125",
+      "quote": "Later, LLMs produced correct **SVG** code that, when rendered, generated crisp vector graphics.",
+      "section": "Spontaneous Visual Generation in Text",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-126",
+      "quote": "None of this is “true” image generation, the model is producing a string of text that *represents* an image.",
+      "section": "Spontaneous Visual Generation in Text",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-127",
+      "quote": "But the fact that a model trained only on text can perform approximate *inverse graphics*, given “a picture of a cat”, produce text that, when read as visual symbols, looks like a cat, is a striking demonstration of how much world knowledge is encoded in the token distribution.",
+      "section": "Spontaneous Visual Generation in Text",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-128",
+      "quote": "It is the same world-model finding as Othello-GPT, just projected onto a different modality.",
+      "section": "Spontaneous Visual Generation in Text",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-129",
+      "quote": "LLMs are overwhelmingly trained on English text, yet they can solve reasoning problems in languages they have seen far less of, and they often solve them *better* when the reasoning trace is in English.",
+      "section": "Cross-Lingual Reasoning Transfer",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-130",
+      "quote": "(\\cite[Shi et al., 2023]{shi2023cottransfer}) (and parallel work) showed that prompting a model in Bengali or Swahili to “think in English then answer in Bengali” substantially outperforms prompting entirely in the low-resource language.",
+      "section": "Cross-Lingual Reasoning Transfer",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-131",
+      "quote": "The internal reasoning and the surface language are partially *disentangled*.",
+      "section": "Cross-Lingual Reasoning Transfer",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-132",
+      "quote": "The model has, in effect, an implicit representation of “the reasoning” that is partly language-agnostic.",
+      "section": "Cross-Lingual Reasoning Transfer",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-133",
+      "quote": "This is consistent with the Platonic Representation Hypothesis and has practical implications: multilingual chain-of-thought is one of the cheapest ways to improve performance on low-resource languages without ever training on more low-resource data.",
+      "section": "Cross-Lingual Reasoning Transfer",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-134",
+      "quote": "For decades, machine translation required parallel corpora: aligned sentences in two languages.",
+      "section": "Emergent Multilingual Translation Without Parallel Data",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-135",
+      "quote": "Then, around 2020, researchers noticed that multilingual LLMs (mBERT, mT5, GPT-style multilingual models) could translate between language pairs they had never seen paired, for instance, translating from Yoruba to Catalan despite the training data containing no Yoruba–Catalan sentence pairs.",
+      "section": "Emergent Multilingual Translation Without Parallel Data",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-136",
+      "quote": "The “pivot” happens *internally*: the model encodes Yoruba into a language-agnostic semantic representation and decodes Catalan from it.",
+      "section": "Emergent Multilingual Translation Without Parallel Data",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-137",
+      "quote": "(\\cite[Shi et al., 2023]{shi2023cottransfer}) made the effect measurable by introducing the MGSM benchmark (grade-school math problems translated into 10 typologically diverse languages including Swahili and Bengali); the model solved these problems despite seeing the surface language in only a small fraction of its training tokens.",
+      "section": "Emergent Multilingual Translation Without Parallel Data",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-138",
+      "quote": "The internal semantic space is, in a real sense, language-independent, exactly what the Platonic Representation Hypothesis predicts.",
+      "section": "Emergent Multilingual Translation Without Parallel Data",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-139",
+      "quote": "A deeper surprise came from mechanistic interpretability.",
+      "section": "Latent Knowledge, What Models Know But Don't Say",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-140",
+      "quote": "(\\cite[Burns, Ye, Klein & Steinhardt, 2023]{burns2022ccs}) showed that even when a model says something false, its *internal activations* often encode the correct answer.",
+      "section": "Latent Knowledge, What Models Know But Don't Say",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-141",
+      "quote": "They introduced **CCS (Contrast-Consistent Search)**: an unsupervised method that finds a direction in the residual-stream activation space corresponding to truthfulness, by exploiting the logical constraint that a statement and its negation should map to opposite values along that direction.",
+      "section": "Latent Knowledge, What Models Know But Don't Say",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-142",
+      "quote": "Crucially, this works even when the model is *prompted to lie*: the latent knowledge is there, intact, and can be extracted without ever sampling a token from the model.",
+      "section": "Latent Knowledge, What Models Know But Don't Say",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-143",
+      "quote": "The finding reframes hallucinations not as failures of knowledge but as failures of *reporting*, the model often knows better than it says.",
+      "section": "Latent Knowledge, What Models Know But Don't Say",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-144",
+      "quote": "This is also one of the cleanest pieces of evidence that, internally, language models organise truth along linear directions in activation space, a fact that powers the entire Representation Engineering programme.",
+      "section": "Latent Knowledge, What Models Know But Don't Say",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-145",
+      "quote": "A surprising and practically important finding.",
+      "section": "Language Models Know What They Know",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-146",
+      "quote": "\\cite[Kadavath et al. (2022)]{kadavath2022selfknowledge} (Anthropic) showed that LLMs can *evaluate their own claims*: given a question, they can produce a calibrated probability P(True) that their answer is correct, even on open-ended generation tasks where there is no single right answer.",
+      "section": "Language Models Know What They Know",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-147",
+      "quote": "They can also predict **P(IK)**, “the probability that I know”, without reference to any specific proposed answer.",
+      "section": "Language Models Know What They Know",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-148",
+      "quote": "This is the cleanest form of model *metacognition*: the model tracks, in its own activations, whether it has enough information to answer.",
+      "section": "Language Models Know What They Know",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-149",
+      "quote": "The same paper showed that P(IK) shifts appropriately when relevant source material is added to the context, and shifts upward when hints are given toward a math problem's solution.",
+      "section": "Language Models Know What They Know",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-150",
+      "quote": "The capability is far from perfect (P(IK) calibration is worse on out-of-distribution tasks), but the central finding, that the model has a usable internal sense of its own uncertainty, was a surprise.",
+      "section": "Language Models Know What They Know",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-151",
+      "quote": "This property underlies much of modern LLM-as-a-judge work and selective answering systems.",
+      "section": "Language Models Know What They Know",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-152",
+      "quote": "A naive expectation would be that each neuron in an LLM corresponds to a single, interpretable concept (one neuron for “cat”, one for “happy”, etc.).",
+      "section": "Superposition & Polysemantic Neurons",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-153",
+      "quote": "(\\cite[Elhage et al., 2022]{elhage2022superposition}) studied toy networks and found that, when the number of features in the data exceeds the number of dimensions in the model, networks store features in **superposition**, sparse linear combinations that pack many features into the same dimensions.",
+      "section": "Superposition & Polysemantic Neurons",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-154",
+      "quote": "The consequence is *polysemanticity*: a single neuron fires for multiple unrelated concepts (“cat” and “Friday”).",
+      "section": "Superposition & Polysemantic Neurons",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-155",
+      "quote": "Anthropic extended this finding to real models, (\\cite[Bricken et al., 2023]{monosemanticity}) showed that, using sparse autoencoders, the seemingly monosemantic features can be recovered.",
+      "section": "Superposition & Polysemantic Neurons",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-156",
+      "quote": "The takeaway: the network *is* representing the concepts cleanly; the unit of representation is not the artificial neuron but a *direction in activation space*.",
+      "section": "Superposition & Polysemantic Neurons",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-157",
+      "quote": "This discovery reshaped the entire mechanistic-interpretability programme.",
+      "section": "Superposition & Polysemantic Neurons",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-158",
+      "quote": "Theory of Mind, the ability to model that other agents hold beliefs that may differ from reality, was long considered a uniquely human cognitive capacity, emerging around age four.",
+      "section": "Theory of Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-159",
+      "quote": "(\\cite[Kosinski, 2024]{kosinski2023tom}) tested 11 LLMs on 40 False-Belief scenarios (640 prompts in total).",
+      "section": "Theory of Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-160",
+      "quote": "The result was striking: smaller and older models solved 0% of tasks; GPT-3-davinci-003 (Nov 2022) solved 20%; ChatGPT-3.5 (Mar 2023) solved 20%; **ChatGPT-4 (Jun 2023) solved 75%**, statistically indistinguishable from six-year-old children.",
+      "section": "Theory of Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-161",
+      "quote": "ToM was not in the training objective; it was not reinforced; it was not a benchmark anyone was optimising for.",
+      "section": "Theory of Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-162",
+      "quote": "It *emerged spontaneously* as a side-effect of language modelling scaling.",
+      "section": "Theory of Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-163",
+      "quote": "The result is contested in detail (subsequent papers find that small prompt perturbations break the ability), but the central finding, that frontier models display systematic ToM behaviour on standard tests, is robust.",
+      "section": "Theory of Mind",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-164",
+      "quote": "The Theory-of-Mind finding of (\\cite[Kosinski, 2024]{kosinski2023tom}) was the most visible, but other surprising cognitive abilities have followed.",
+      "section": "Spontaneous Theory-of-Mind Variants",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-165",
+      "quote": "Frontier models now pass the **false-photo** test (understanding that a Polaroid picture of a previous state can mislead a viewer), the **unexpected-contents** test (predicting that someone opening a candy box labelled “crayons” will be surprised), the **Sally–Anne** variant with nested beliefs, and several irony / sarcasm / faux-pas benchmarks.",
+      "section": "Spontaneous Theory-of-Mind Variants",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-166",
+      "quote": "None of these tests existed when GPT-3 was trained; none were in the optimisation objective; many were passed at levels comparable to young children by models that were never explicitly taught what a “belief” is.",
+      "section": "Spontaneous Theory-of-Mind Variants",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-167",
+      "quote": "The mechanisms are still debated (some evidence suggests shortcut pattern-matching rather than genuine mentalising), but the surface performance is a stark departure from the “stochastic parrot” predictions of 2019.",
+      "section": "Spontaneous Theory-of-Mind Variants",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-168",
+      "quote": "Classical word-embedding arithmetic (*king − man + woman ≈ queen*) was already a surprise in 2013.",
+      "section": "Spontaneous Analogy and Metaphor",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-169",
+      "quote": "The surprise with LLMs is how far this generalises.",
+      "section": "Spontaneous Analogy and Metaphor",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-170",
+      "quote": "Frontier models perform **structural** analogies that have nothing to do with word vectors: given the structure “electron : atom :: quark : ?”, they answer correctly; given “Mitochondria is to cell as chloroplast is to ?”, they answer “plant cell”; given complex metaphors about grief, time, or love, they produce fluent novel metaphors; their quality is not benchmarked.",
+      "section": "Spontaneous Analogy and Metaphor",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-171",
+      "quote": "The training data contains millions of analogies and metaphors, but no explicit instruction to “perform analogical inference”.",
+      "section": "Spontaneous Analogy and Metaphor",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-172",
+      "quote": "The ability emerges from the same next-token objective that produces summarisation and translation.",
+      "section": "Spontaneous Analogy and Metaphor",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-173",
+      "quote": "It is the cognitive operation that humans find most distinctive of “real understanding”, and it was never an explicit target.",
+      "section": "Spontaneous Analogy and Metaphor",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-174",
+      "quote": "Language models famously struggle with exact arithmetic and factual lookup.",
+      "section": "Self-Taught Tool Use, Toolformer",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-175",
+      "quote": "(\\cite[Schick et al., 2023]{schick2023toolformer}) showed that a model can teach *itself* to call external APIs (a calculator, a search engine, a translation system, a calendar) by a self-supervised procedure: write candidate API calls into text, execute them, keep the calls that *reduce the loss* on subsequent tokens, discard the rest.",
+      "section": "Self-Taught Tool Use, Toolformer",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-176",
+      "quote": "The resulting model, **Toolformer**, substantially improved zero-shot performance on a variety of downstream tasks, often matching much larger models.",
+      "section": "Self-Taught Tool Use, Toolformer",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-177",
+      "quote": "The surprise was twofold: (a) the supervision signal (loss reduction) was extremely weak, yet sufficient to teach tool use from raw text; (b) the model learned *which* tool to call, *when*, *with what arguments*, and *how to incorporate the result*, all without human-labelled tool-use examples.",
+      "section": "Self-Taught Tool Use, Toolformer",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-178",
+      "quote": "For a long time, reasoning and acting were treated as separate LLM capabilities: chain-of-thought for the former, tool-use agents for the latter.",
+      "section": "ReAct, Reasoning and Acting Interleaved",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-179",
+      "quote": "(\\cite[Yao et al., 2023]{yao2023react}) showed that the same model can do both at once, *interleaved in a single trajectory*: generate a thought, take an action, observe the result, generate another thought, take another action.",
+      "section": "ReAct, Reasoning and Acting Interleaved",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-180",
+      "quote": "On HotpotQA multi-hop question answering, ReAct over a simple Wikipedia API beat both pure-CoT and pure-acting baselines, because the reasoning traces let the model track what it had already looked up, while the actions let it ground claims in retrieved evidence.",
+      "section": "ReAct, Reasoning and Acting Interleaved",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-181",
+      "quote": "On ALFWorld (household tasks), ReAct beat imitation-learning and RL baselines by 34 absolute points with just one or two in-context examples.",
+      "section": "ReAct, Reasoning and Acting Interleaved",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-182",
+      "quote": "The surprise is conceptual: the same training objective, predict the next token, produces a system that can interleave internal monologue with external tool use, switching modes as the situation requires.",
+      "section": "ReAct, Reasoning and Acting Interleaved",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-183",
+      "quote": "This is the substrate that powers modern LLM agents.",
+      "section": "ReAct, Reasoning and Acting Interleaved",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-184",
+      "quote": "When LLMs are placed in interactive environments (text-based games, web navigation, coding tasks) with the right scaffolding, they exhibit *exploratory-looking behaviour*: visiting unfamiliar states, testing novel actions, and explicitly asking questions to reduce uncertainty.",
+      "section": "Spontaneous Curiosity and Exploration in Agent Settings",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-185",
+      "quote": "This was not designed in.",
+      "section": "Spontaneous Curiosity and Exploration in Agent Settings",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-186",
+      "quote": "The mechanism is that the base model's training text contains millions of examples of humans being curious, exploring, debugging, and writing things like “let me try a different approach”.",
+      "section": "Spontaneous Curiosity and Exploration in Agent Settings",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-187",
+      "quote": "When the agent's prompt encourages goal-directed behaviour, these patterns activate and produce exploration-like behaviour.",
+      "section": "Spontaneous Curiosity and Exploration in Agent Settings",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-188",
+      "quote": "The deeper surprise is that *the same model*, a next-token predictor, can be made to behave either as a cautious question-answerer or as a bold explorer purely by changing the surrounding scaffolding.",
+      "section": "Spontaneous Curiosity and Exploration in Agent Settings",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-189",
+      "quote": "The model's “personality” is not fixed in the weights; it is constructed at inference time.",
+      "section": "Spontaneous Curiosity and Exploration in Agent Settings",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-190",
+      "quote": "A long-standing assumption in machine learning was that improving a model's outputs required either better training data or a stronger reward signal.",
+      "section": "Self-Refine, Improving Its Own Outputs",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-191",
+      "quote": "(\\cite[Madaan et al., 2023]{madaan2023selfrefine}) showed that this is not always true.",
+      "section": "Self-Refine, Improving Its Own Outputs",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-192",
+      "quote": "Using a *single* frozen LLM in three roles, generator, critic, refiner, they ran a loop: the model produces an initial output, then provides natural-language feedback on its own output, then refines the output using that feedback.",
+      "section": "Self-Refine, Improving Its Own Outputs",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-193",
+      "quote": "Across 7 diverse tasks (dialogue, math reasoning, code generation, summarisation, sentiment reversal, acronym generation, constraint generation), the Self-Refine loop improved outputs by roughly 20 absolute points on average over one-shot generation, even with state-of-the-art GPT-3.5 and GPT-4 as the underlying model.",
+      "section": "Self-Refine, Improving Its Own Outputs",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-194",
+      "quote": "The implication is uncomfortable for any research programme that treats LLMs as static systems: the model's own assessment of its output is a usable training signal at inference time.",
+      "section": "Self-Refine, Improving Its Own Outputs",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-195",
+      "quote": "Self-Refine is the conceptual cousin of Constitutional AI, language being used by a model to evaluate language produced by the same model.",
+      "section": "Self-Refine, Improving Its Own Outputs",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-196",
+      "quote": "A still bolder claim: a model can become a better version of itself without any external supervision.",
+      "section": "Self-Improvement from Self-Generated Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-197",
+      "quote": "(\\cite[Huang et al., 2022]{huang2022selfimprove}) showed that a 540-billion-parameter PaLM could fine-tune itself on its own Chain-of-Thought traces.",
+      "section": "Self-Improvement from Self-Generated Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-198",
+      "quote": "The procedure: prompt the model on unlabeled questions, keep only the answers where the model is highly confident (filtered through self-consistency), then fine-tune on those self-generated, high-confidence rationales.",
+      "section": "Self-Improvement from Self-Generated Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-199",
+      "quote": "The result on GSM8K: **74.4% → 82.1%** with no ground-truth labels used at any stage.",
+      "section": "Self-Improvement from Self-Generated Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-200",
+      "quote": "The same self-improvement recipe boosted DROP, OpenBookQA, and ANLI-A3.",
+      "section": "Self-Improvement from Self-Generated Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-201",
+      "quote": "The constraints are real (you need a base model strong enough that its self-consistency correlates with correctness), but the existence of the effect is striking: a model can be its own teacher, provided it is large enough to grade itself reliably.",
+      "section": "Self-Improvement from Self-Generated Solutions",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-202",
+      "quote": "Alignment research initially assumed that human-labelled preference data was the only way to teach a model what behaviour was acceptable.",
+      "section": "Constitutional AI, Self-Critique Against Written Principles",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-203",
+      "quote": "(\\cite[Bai et al., 2022]{bai2022constitutional}) showed that a written *constitution*, a list of natural-language principles like “choose the response that is least harmful” or “choose the response that is most honest about its uncertainty”, could replace most of the human labelling.",
+      "section": "Constitutional AI, Self-Critique Against Written Principles",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-204",
+      "quote": "The model critiques its own outputs against the constitution, revises them, and the revised outputs are used for RL training.",
+      "section": "Constitutional AI, Self-Critique Against Written Principles",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-205",
+      "quote": "The surprise was that a model's *language understanding* of abstract principles was good enough to serve as a stand-in for a human judge in many situations.",
+      "section": "Constitutional AI, Self-Critique Against Written Principles",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-206",
+      "quote": "The broader lesson: when the model is strong enough to evaluate a piece of language, you can use it to grade, refine, and improve that language without an external oracle.",
+      "section": "Constitutional AI, Self-Critique Against Written Principles",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-207",
+      "quote": "The same insight later powered RLHF-free methods like DPO and Constitutional RLAIF.",
+      "section": "Constitutional AI, Self-Critique Against Written Principles",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-208",
+      "quote": "Honest self-assessment was long thought to be the hardest capability to elicit from a model trained only to imitate text.",
+      "section": "The Inverse of “Knowing What It Doesn't Know”",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-209",
+      "quote": "(\\cite[Lin, Hilton & Evans, 2022]{lin2021truthful}) constructed the TruthfulQA benchmark to test it.",
+      "section": "The Inverse of “Knowing What It Doesn't Know”",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-210",
+      "quote": "The results: GPT-3 base models were right and wrong in roughly equal measure, *but they were not random*, they were systematically biased toward *imitative falsehoods*: false statements that occur frequently in the training data (“If you crack your knuckles a lot, what happens?”, expected wrong answer: “you get arthritis”).",
+      "section": "The Inverse of “Knowing What It Doesn't Know”",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-211",
+      "quote": "Larger and instruction-tuned models actually did *worse* on TruthfulQA in early iterations, because they had become more *confident* in imitating common misconceptions.",
+      "section": "The Inverse of “Knowing What It Doesn't Know”",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-212",
+      "quote": "This is one of the cleanest demonstrations that fluency and truth are not the same thing, and that scaling can amplify the wrong signal as easily as the right one.",
+      "section": "The Inverse of “Knowing What It Doesn't Know”",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-213",
+      "quote": "The finding motivated the development of RLHF and later DPO as direct corrections for this failure mode.",
+      "section": "The Inverse of “Knowing What It Doesn't Know”",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-214",
+      "quote": "A more troubling surprise.",
+      "section": "Verbatim Memorisation of Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-215",
+      "quote": "(\\cite[Carlini et al., 2021]{carlini2021extracting}) showed that large LLMs, when prompted with the right prefixes, will emit *long verbatim passages* of their training data, including copyrighted text, personally identifying information, and content that was never intended to be reproduced.",
+      "section": "Verbatim Memorisation of Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-216",
+      "quote": "The New York Times sued OpenAI in 2023 partly on the basis of this memorisation.",
+      "section": "Verbatim Memorisation of Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-217",
+      "quote": "The phenomenon is not a bug in the usual sense: it falls out of the maximum-likelihood objective, which rewards models for perfectly predicting tokens they have seen many times.",
+      "section": "Verbatim Memorisation of Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-218",
+      "quote": "The surprise was quantitative: with the right prompt, hundreds of pages of copyrighted material can be extracted.",
+      "section": "Verbatim Memorisation of Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-219",
+      "quote": "It is the cleanest demonstration that an LLM is not “a database with fuzzy retrieval”, it is, in part, an actual database, sitting in the weights.",
+      "section": "Verbatim Memorisation of Training Data",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-220",
+      "quote": "The Inverse Scaling Prize set out to find tasks on which *bigger models do worse*; the follow-up work (\\cite[Wei et al., 2023]{mckenzie2023inverse}) examined those tasks at even larger scale and found that performance on 6 of the 11 tasks is **U-shaped**: it drops up to a point, then rises again.",
+      "section": "Inverse Scaling and U-Shaped Curves",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-221",
+      "quote": "The U-shape is driven by a phenomenon the authors call “distractor tasks”, patterns in the data that small models follow and that large models eventually learn to ignore.",
+      "section": "Inverse Scaling and U-Shaped Curves",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-222",
+      "quote": "The lesson: scaling is not monotone.",
+      "section": "Inverse Scaling and U-Shaped Curves",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-223",
+      "quote": "There are real failure modes of scale, often driven by the model learning surface patterns from human text that are not aligned with what we want.",
+      "section": "Inverse Scaling and U-Shaped Curves",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-224",
+      "quote": "Whether a given task is U-shaped, monotonically improving, or genuinely inverse-scaling is an empirical question that cannot be answered by extrapolation from smaller models.",
+      "section": "Inverse Scaling and U-Shaped Curves",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-225",
+      "quote": "In March 2023, a team at Microsoft Research published a 154-page investigation of an early GPT-4 checkpoint titled \\textit{Sparks of Artificial General Intelligence} (\\cite[Bubeck et al., 2023]{bubeck2023sparks}).",
+      "section": "Sparks of AGI (GPT-4)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-226",
+      "quote": "Their central claim was that GPT-4, beyond its mastery of language, could solve novel and difficult tasks spanning mathematics, coding, vision, medicine, law, and psychology, *without needing any special prompting*, and that its performance was “strikingly close to human-level performance” in many of these domains.",
+      "section": "Sparks of AGI (GPT-4)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-227",
+      "quote": "The paper documented abilities the authors had not anticipated: synthesising novel proofs, writing functioning code from a one-line description, explaining jokes, drawing ASCII art on request, and passing professional exams such as the bar exam at roughly the 90th percentile.",
+      "section": "Sparks of AGI (GPT-4)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-228",
+      "quote": "Whether or not one accepts the “AGI” framing, the paper is a careful catalogue of capabilities that nobody, including OpenAI, predicted when scaling GPT-3.",
+      "section": "Sparks of AGI (GPT-4)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-229",
+      "quote": "Taken together, these findings share a common structure that distinguishes them from ordinary engineering progress:",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-230",
+      "quote": "**None of them were in the training objective.** Few-shot learning, reasoning chains, world models, theory of mind, tool use, none were directly supervised.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-231",
+      "quote": "**All of them appeared *late* during scaling.** Below some threshold of parameters, data, or compute, the ability is essentially absent.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-232",
+      "quote": "Above the threshold, it is present.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-233",
+      "quote": "**Most are *non-smooth*, they appear as phase transitions.** The induction-heads loss curve has a sharp discontinuity.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-234",
+      "quote": "Chain-of-thought jumps from near-zero to substantial accuracy at a scale threshold.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-235",
+      "quote": "Theory-of-Mind goes from 0% to 20% to 75% across three GPT versions in eighteen months.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-236",
+      "quote": "The smooth scaling laws that describe loss do *not* describe capability.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-237",
+      "quote": "**Some scale the *opposite* way.** Truthfulness, compositional reasoning, and resistance to imitative falsehood can all degrade with scale before being rescued by alignment.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-238",
+      "quote": "There is no guarantee that a bigger model is a better model on any specific dimension.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-239",
+      "quote": "**The capabilities are *compositional* once present.** Chain-of-thought combines with self-consistency combines with tree-search combines with tool-use combines with self-refinement combines with constitutional self-critique.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-240",
+      "quote": "Each new layer of structure can be stacked on the others.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-241",
+      "quote": "**Capabilities often co-emerge and correlate.** The same model that gains strong chain-of-thought reasoning tends, at the same scale, to gain better theory of mind, better instruction following, and better cross-lingual transfer.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-242",
+      "quote": "The factors that drive emergence are not yet fully understood, but the cross-capability correlations are robust.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-243",
+      "quote": "The practical consequence: we cannot, in 2026, predict the full capability profile of a model 10× larger than today's frontier.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-244",
+      "quote": "Each past prediction underestimates what emerges.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-245",
+      "quote": "The next genuinely surprising capability is, by definition, the one nobody is currently working on.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-246",
+      "quote": "The conceptual consequence is harder.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-247",
+      "quote": "A language model trained on text is, in some deep sense, *forced* to build models of the world (because accurate next-token prediction requires modelling whatever process generated the text), models of agents (because human text describes mental states), models of algorithms (because text encodes procedures), models of its own reasoning (because text is full of corrections and second drafts), and an internal grading mechanism (because some training text compares and critiques other text).",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-248",
+      "quote": "The next-token objective is much richer than it appears, and so are the failure modes that fall out of it.",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    }
   ]
 }

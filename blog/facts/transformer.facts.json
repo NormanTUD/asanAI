@@ -102,5 +102,3109 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "transformer-stmt-1",
+      "quote": "Until now, this course has built one part of a machine at a time: [tokenization](tokenizerlab.php) chops text into integers, [embeddings](embeddinglab.php) turn the integers into vectors, [positional encoding](positionalembeddingslab.php) marks their order, [attention](attentionlab.php) lets tokens exchange information, the **FFN** transforms each token, the **unembedding** reads the result back out as a word, and the [loss](losslab.php), [backpropagation](backproplab.php) and [optimizer](optimizerlab.php) make the stack learn.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-2",
+      "quote": "This chapter assembles those parts into one machine and runs it.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-3",
+      "quote": "Every section below is one of those parts, shown as an equation and as its behavior on the live model; the chapter that introduced a part is linked where it first appears.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-4",
+      "quote": "An LLM is not a cloud: at this scale it is a stack of matrix multiplications that",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-5",
+      "quote": "fits entirely in your browser.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-6",
+      "quote": "The demo below trains one on the text you type, and",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-7",
+      "quote": "the rest of the chapter walks through that same run — every step of the machinery,",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-8",
+      "quote": "from tokenization over attention to the FFN block, the unembedding and the loss, is",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-9",
+      "quote": "executed on screen and shown where its equation is derived.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-10",
+      "quote": "below are the $d_{\\text{model}}$, $h$ and $N$ of those equations: move any of them",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-11",
+      "quote": "by one step and the change shows up, visibly, in the equations and plots that follow.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-12",
+      "quote": "Long before the Transformer, sequence models were recurrent.",
+      "section": "Before the Transformer",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-13",
+      "quote": "An encoder read a sentence one token at a time into a single fixed-length vector, and a decoder generated the translation from that vector alone.",
+      "section": "Before the Transformer",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-14",
+      "quote": "\\cite[Bahdanau et al. (2014)]{bahdanau2014} attacked that bottleneck: their decoder could look back at every encoder state and learn a soft alignment, so the relevant source words changed at each output step (\\cite[Bahdanau et al., 2014]{bahdanau2014}).",
+      "section": "Before the Transformer",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-15",
+      "quote": "This was attention before it had a Transformer to live in.",
+      "section": "Before the Transformer",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-16",
+      "quote": "A **hyperparameter** is a number you choose *before* training starts; the model learns everything else — its weights — from the data.",
+      "section": "Hyperparameters for this demo",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-17",
+      "quote": "This demo exposes four of them:",
+      "section": "Hyperparameters for this demo",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-18",
+      "quote": "| Hyperparameter | What it sets | Constraint |",
+      "section": "Hyperparameters for this demo",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-19",
+      "quote": "| $d_{\\text{model}}$ | the width of every vector in the network | a multiple of $h$ |",
+      "section": "Hyperparameters for this demo",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-20",
+      "quote": "| $h$ | the number of parallel attention heads | $d_{\\text{model}} / h$ must be an integer |",
+      "section": "Hyperparameters for this demo",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-21",
+      "quote": "| $N$ | the number of stacked mix-then-transform blocks | — |",
+      "section": "Hyperparameters for this demo",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-22",
+      "quote": "| context size | the maximum number of tokens visible at once | attention cost grows quadratically with it |",
+      "section": "Hyperparameters for this demo",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-23",
+      "quote": "Each slider below carries a short note on why its constraint exists.",
+      "section": "Hyperparameters for this demo",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-24",
+      "quote": "What hyperparameters are in general, and how practitioners find good values instead of guessing, is the subject of the [Hyperparameters](hyperparameters.php) chapter.",
+      "section": "Hyperparameters for this demo",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-25",
+      "quote": "A transformer never sees text — only a stream of vectors it can move around.",
+      "section": "Preparing the Input",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-26",
+      "quote": "This part turns a raw sentence into that stream: chop it into tokens, look each one up as a vector, tag each vector with its position, and see where the whole stream flows.",
+      "section": "Preparing the Input",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-27",
+      "quote": "The journey of a sentence begins with **Tokenization**, which decomposes raw text into **tokens**.",
+      "section": "Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-28",
+      "quote": "Real LLMs would use **Byte-Pair Encoding** (**BPE**), as this approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments.",
+      "section": "Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-29",
+      "quote": "In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language.",
+      "section": "Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-30",
+      "quote": "BPE is, at heart, a **data-compression** algorithm from \\citeyear{gage1994bpe} \\cite{gage1994bpe}: it repeatedly fuses the most frequent adjacent pair into one new symbol, so frequent (often long) patterns collapse into a single **short ID** while rare material stays a **long** run of symbols — which is why the token stream is usually much shorter than the raw text it losslessly encodes, and why the same rules pointed at a file literally compress it.",
+      "section": "Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-31",
+      "quote": "But since our embedding space and the amount of data browsers can process is too small for **BPE**, we stick with word-wise tokenization.",
+      "section": "Tokenization",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-32",
+      "quote": "Once tokenized, these units are converted into vectors.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-33",
+      "quote": "It is crucial to distinguish between the **Embedding Space** and the **Feature Space**:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-34",
+      "quote": "* **Embedding Space (Static):** This is the initial lookup table where each token is assigned a fixed vector.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-35",
+      "quote": "At this stage, the vector for “bank” is always the same, regardless of context.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-36",
+      "quote": "This is where the **Hidden State** $h_0$ starts at the beginning of the process.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-37",
+      "quote": "* **Feature Space (Dynamic):** As vectors pass through the layers, they enter the Feature Space.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-38",
+      "quote": "Here, the representation of a word is no longer fixed; it “migrates” based on the surrounding tokens.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-39",
+      "quote": "The hidden states $h_0, h_1, \\dots, h_n$ represent the coordinates of the word as it is refined by the model's internal logic.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-40",
+      "quote": "The **Feature Space** is highly abstract, and not humanly interpretable anymore.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-41",
+      "quote": "A single neuron computes $y = Wx + b$ with fixed-shape $W \\in \\mathbb{R}^{d_{\\text{out}} \\times d_{\\text{in}}}$.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-42",
+      "quote": "The architecture is fixed after training.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-43",
+      "quote": "**If the input grows from 1 token to $t$ tokens, how does the shape still match $W$ — and why is no retraining needed?**",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-44",
+      "quote": "**The answer: the sequence length $t$ is not a feature dimension.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-45",
+      "quote": "It is a repetition dimension.** Each neuron still sees exactly $d_{\\text{in}}$ inputs.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-46",
+      "quote": "It simply fires $t$ times — once per token — through the same fixed weights.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-47",
+      "quote": "This is the identical mechanism to batching: stacking 2 MNIST images into a $(2, 784)$ matrix and passing it through a FC layer with weight $(784, 256)$:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-48",
+      "quote": "The batch size \"2\" passes through the multiplication untouched.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-49",
+      "quote": "Each neuron sees 784 inputs, not 1568.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-50",
+      "quote": "The two images are processed by the same neurons, independently — neither image \"knows about\" the other.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-51",
+      "quote": "**The same shape rule applies to every Linear layer in a transformer.** The mapping from the analogy: \"batch of images\" → \"sequence of tokens\", \"one image\" → \"one token\".",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-52",
+      "quote": "After the embedding table looks up each token ID and stacks the resulting $d$-dim rows into a matrix, a Linear layer computes:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-53",
+      "quote": "The inner dimensions (768) cancel.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-54",
+      "quote": "The sequence length $t$ passes through without interacting with the weight.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-55",
+      "quote": "Whether $t = 1$ or $t = 1024$, the weight matrix has the same shape and the neurons see the same number of inputs (\\cite[Paszke et al., 2019]{pytorch}).",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-56",
+      "quote": "This is why variable-length input requires no architectural change or retraining (\\cite[Vaswani et al., 2017]{vaswani2017attention}).",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-57",
+      "quote": "Running one set of weights once per position is the same move a **fold** makes in functional programming, and reusing a single structure across every position is **weight sharing** — the neural-network analogue of writing a function once and calling it many times (\\cite[Olah, 2015]{colah2015types}).",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-58",
+      "quote": "Weight *tying* is a different trick: sharing the input embedding matrix with the output unembedding matrix, which saves parameters and often improves the language model (\\cite[Press & Wolf, 2017]{press2017tying}).",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-59",
+      "quote": "**What is variable, what is fixed.** The full input tensor after embedding has shape $(b, t, d)$.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-60",
+      "quote": "Of these three dimensions:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-61",
+      "quote": "| Dimension | Meaning | Variable?",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-62",
+      "quote": "| $b$ | batch size (independent sequences) | yes, chosen at runtime | hardware memory |",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-63",
+      "quote": "| $t$ | sequence length (number of tokens) | yes, chosen at runtime | $1 \\le t \\le L$ |",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-64",
+      "quote": "| $d$ | model dimension (vector width) | **no**, fixed by architecture | — |",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-65",
+      "quote": "Every weight matrix in the network has a shape that depends only on $d$, $d_k$, $d_{\\text{ff}}$, and $V$ — the fixed dimensions.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-66",
+      "quote": "None of them contain $t$ or $b$.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-67",
+      "quote": "The entire parameter set is the same whether the input is 1 token or 1024 tokens.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-68",
+      "quote": "The only constraint on $t$ comes from the two pre-allocated objects mentioned earlier: the position table ($L$ rows) and the causal mask ($L \\times L$) (\\cite[Karpathy, 2023]{nanogpt}).",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-69",
+      "quote": "**The one exception: attention, where $t$ becomes a feature dimension.** Attention is the only operation in the network where one token's representation is modified by *another* token's representation.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-70",
+      "quote": "**How does attention have access to all tokens at once?** They are already there.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-71",
+      "quote": "The input to every layer is the full $(t, d)$ matrix — all $t$ token vectors sit in memory simultaneously.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-72",
+      "quote": "A Linear layer's weight $W \\in \\mathbb{R}^{d \\times d'}$ is a *fixed parameter*: it has no $t$ in its shape, so the matmul $(t, d) \\times (d, d')$ cannot couple rows.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-73",
+      "quote": "Attention is different: its \"weights\" ($K$ and $V$) are *computed from the input itself* at runtime.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-74",
+      "quote": "Since the input contains all $t$ tokens, the computed $K, V \\in \\mathbb{R}^{t \\times d_k}$ also contain all $t$ tokens — and the matmul $(t, d_k) \\times (d_k, t)$ pairs every row against every other row.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-75",
+      "quote": "No gathering step is needed; the tokens were always in the matrix.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-76",
+      "quote": "Here is the computation in four steps:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-77",
+      "quote": "**Step 1 — Project each token into three roles.** The input $X \\in \\mathbb{R}^{t \\times d}$ is multiplied by three learned matrices, producing three $t \\times d_k$ matrices from the *same* input:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-78",
+      "quote": "- $Q = XW_Q$: each row is a token's **query** — \"what information am I looking for?\"",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-79",
+      "quote": "- $K = XW_K$: each row is a token's **key** — \"what information do I contain that others might want?\"",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-80",
+      "quote": "- $V = XW_V$: each row is a token's **value** — \"the actual content I can share if someone asks\"",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-81",
+      "quote": "All three are linear projections of the same token vectors; they are three different \"views\" of the same content.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-82",
+      "quote": "**Step 2 — Score every pair.** Multiply $Q$ by $K^\\top$:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-83",
+      "quote": "Entry $S_{ij} = q_i^\\top k_j$ is a scalar: \"how well does token $j$'s content match what token $i$ is looking for?\" The causal mask then sets $S_{ij} = -\\infty$ for $j > i$ (a token cannot see the future).",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-84",
+      "quote": "**Step 3 — Normalize to get routing weights.** Row-wise softmax converts the raw scores into $A \\in \\mathbb{R}^{t \\times t}$ where every entry is in $[0, 1]$ and each row sums to 1.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-85",
+      "quote": "**This is the matrix one might picture**: a $t \\times t$ grid of \"how much should token $i$ look at token $j$?\" values.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-86",
+      "quote": "But this matrix is an *intermediate result*, not the output of attention.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-87",
+      "quote": "**Step 4 — Use the weights to mix the content.** Multiply $A$ by $V$:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-88",
+      "quote": "This is where the \"copy\" happens.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-89",
+      "quote": "Row $i$ of the output $O$ is:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-90",
+      "quote": "A weighted average of the *value vectors* of all visible tokens.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-91",
+      "quote": "The output of attention is **not** the score matrix — it is a new set of $t$ vectors (same shape as the input), where each vector is now a blend of multiple tokens' content.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-92",
+      "quote": "**Concrete: 2 tokens, $d_v = 3$ (toy).** After steps 1–3, suppose the routing weights and content are:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-93",
+      "quote": "Row 0 of $A$: token 0 attends fully to itself (no prior tokens exist).",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-94",
+      "quote": "Row 1 of $A$: token 1 takes 70 percent from token 0 and 30 percent from itself.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-95",
+      "quote": "Now compute row 1 of the output $O$:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-96",
+      "quote": "Token 1's new representation is $[0.7,\\; 0.3,\\; 0]$ — a vector that **did not exist before** and physically contains 70 percent of token 0's content vector.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-97",
+      "quote": "The information was not \"sent\" or \"copied\" in any discrete sense; it was *linearly combined* into token 1's vector by the weighted sum.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-98",
+      "quote": "This new vector then flows into the FFN, which transforms it further (per-row, no more mixing).",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-99",
+      "quote": "After $N$ layers of this mix→transform cycle, the final row encodes the entire sequence.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-100",
+      "quote": "This is the **only** place in the network where one token's content enters another token's vector.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-101",
+      "quote": "Every other operation — Linear, LayerNorm, GELU, residual add, FFN — is strictly per-row.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-102",
+      "quote": "**How it all comes together.** The $N$ transformer layers alternate two operations:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-103",
+      "quote": "**Mix** (attention — the *only* mixing step): the $t \\times t$ score matrix lets each row incorporate information from all prior rows.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-104",
+      "quote": "After this step, row $i$ physically contains a weighted combination of tokens $0 \\dots i$.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-105",
+      "quote": "**Transform** (FFN — per-row, no mixing): a nonlinear function is applied to each row independently.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-106",
+      "quote": "The row's *content* is a mixture (from step 1), but the *operation* does not look at any other row.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-107",
+      "quote": "Weight shapes are fixed; $t$ passes through.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-108",
+      "quote": "So: no, the network does not \"know about\" other tokens in the FFN or the Linear layers.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-109",
+      "quote": "It knows about them only because attention already *copied* their information into the vector.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-110",
+      "quote": "After $N$ such mix→transform cycles, the final row (position $t{-}1$) carries a representation progressively enriched with information from the entire sequence — all computed in parallel, no recurrence (\\cite[Vaswani et al., 2017]{vaswani2017attention}).",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-111",
+      "quote": "**Shape walkthrough: GPT-2-small** ($d=768$, $d_k=64$, $h=12$ heads, $N=12$ layers \\cite[Radford et al., 2019]{gpt2}), 2 tokens, batch 1:",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-112",
+      "quote": "| Step | Shape | Role of $t=2$ |",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-113",
+      "quote": "| token IDs | $(1, 2)$ | 2 integers to look up |",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-114",
+      "quote": "| embedding + position | $(1, 2, 768)$ | 2 rows stacked |",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-115",
+      "quote": "| Linear (QKV proj.) | $(1, 2, 2304)$ | repetition: $W$ unchanged |",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-116",
+      "quote": "| split into heads | $(1, 12, 2, 64)$ | reshape |",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-117",
+      "quote": "| $QK^\\top$ | $(1, 12, \\mathbf{2}, \\mathbf{2})$ | **feature dim: pairwise scores** |",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-118",
+      "quote": "| softmax · $V$ | $(1, 12, 2, 64)$ | row $i$ = avg of rows $\\le i$ |",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-119",
+      "quote": "+ FFN | $(1, 2, 768)$ | repetition: $W$ unchanged |",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-120",
+      "quote": "| last row → unembed | $(1, 1, 50{,}257)$ | one logit per vocab entry |",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-121",
+      "quote": "Bold: the only step where $t$ determines the width of a computation.",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-122",
+      "quote": "Everywhere else, $t$ is an extensive property (how many times to repeat) and the weight shapes are intensive (fixed regardless of $t$).",
+      "section": "Embedding & The Feature Space",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-123",
+      "quote": "To address the lack of sequence order in transformers, a “position signal” is added to each token's embedding, forming the initial hidden state $h_{0}$:",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-124",
+      "quote": "The positional encoding is calculated using sine and cosine functions, which provide smooth, periodic patterns for each position.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-125",
+      "quote": "For each dimension $i$ in a vector of size $d_\\text{model}$, the encoding is defined as:",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-126",
+      "quote": "These functions were chosen because they create unique, continuous patterns for each position, enabling the model to infer both absolute and relative positions.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-127",
+      "quote": "Because the formula is defined for any position, the encoding can be *computed* beyond the training length; whether the trained model actually generalizes there is a separate empirical question, and in practice it often does not.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-128",
+      "quote": "Additionally, their multi-frequency nature allows the model to capture both local and global positional relationships.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-129",
+      "quote": "The network's layers learn to interpret these fixed “geometric fingerprints” by adjusting their weights, enabling the model to apply position-specific logic and reason about sequence structure effectively.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-130",
+      "quote": "The key to how the model infers relative positions lies in the mathematical properties of sine and cosine.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-131",
+      "quote": "For any fixed offset $k$, the positional encoding at position $\\text{pos} + k$ can be expressed as a linear transformation of the encoding at position $\\text{pos}$.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-132",
+      "quote": "This linearity is what lets the attention mechanism — through its $\\mathbf{q}\\cdot\\mathbf{k}$ dot products — score a relative offset in a position-invariant way, so a head can learn to “attend $k$ steps back” regardless of the absolute location.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-133",
+      "quote": "(The FFN, being a pointwise operation, operates on the features that attention has already mixed; the relative-position geometry itself comes from the sinusoidal encodings interacting inside attention.) Over multiple layers, the network entangles positional and semantic information, enabling it to reason about sequence structure and relationships.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-134",
+      "quote": "This is what lets the model generalize to unseen sequences and retain positional understanding even when tokens are shifted or reordered.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-135",
+      "quote": "This is required because the network looks at all words simultaneously, instead of after another.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-136",
+      "quote": "Since the matrix can be permuted and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-137",
+      "quote": "In this example, we're using a scaling factor of 0.1 because of the low dimensionality of our space.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-138",
+      "quote": "When you add “random” values to a vector, you change its location in the multidimensional embedding space.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-139",
+      "quote": "However, this doesn't “break” the word:",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-140",
+      "quote": "- **High-Dimensional Space:** In real models, the embedding space is massive.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-141",
+      "quote": "Adding a positional vector moves the word “King” to a new location, but it remains in a “neighborhood” that the model still recognizes as “King.”",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-142",
+      "quote": "- **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network's layers.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-143",
+      "quote": "Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-144",
+      "quote": "- **The Risk of Overlapping**: During training, the model learns to set the “scale” of the embeddings much larger than the “scale” of the positional encodings.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-145",
+      "quote": "This ensures the position “nudges” the meaning without overwriting it.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-146",
+      "quote": "Here, we do **not** use the original Encoder-Decoder architecture from Vaswani et al. (\\citeyear{vaswani2017attention}).",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-147",
+      "quote": "Instead, this example implements a **Decoder-only** Transformer with **Pre-Layer Normalization**, the same structural family that powers today's leading LLMs (GPT, Claude, Gemini and so on).",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-148",
+      "quote": "The entire model is a stack of identical Decoder (with different weights) blocks, each containing:",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-149",
+      "quote": "**Pre-LN**: Layer Normalization is applied *before* each sublayer (attention and FFN), rather than after.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-150",
+      "quote": "The arrangement was used in deep Transformers by \\cite[Wang et al. (2019)]{wang2019preln} and analyzed by \\cite[Xiong et al. (2020)]{xiong2020}, who showed that it keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-151",
+      "quote": "**Masked (Causal) Self-Attention**: Every token can only attend to itself and the tokens that came before it.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-152",
+      "quote": "This is enforced by setting the upper triangle of the attention score matrix to $-\\infty$ before the SoftMax.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-153",
+      "quote": "This causal constraint is what makes the model **autoregressive**: to predict token $t_{n+1}$, the model processes $[t_1, t_2, \\ldots, t_n]$ and prevents any token from “cheating” by looking at future positions.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-154",
+      "quote": "**A Feed-Forward Network (FFN)** with GELU activation and its own Pre-LN and residual connection.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-155",
+      "quote": "This is the architecture you are interacting with in every visualization here.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-156",
+      "quote": "When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always zero.",
+      "section": "Positional Encoding",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-157",
+      "quote": "You cannot step twice into the same rivers; for fresh waters are ever flowing in upon you.",
+      "section": "The Residual Stream",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-158",
+      "quote": "Attention is the heart of the transformer — the one place where one token's information can flow into another.",
+      "section": "Attention: Letting Tokens Talk",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-159",
+      "quote": "This part builds it up from a single head to the full multi-head mechanism.",
+      "section": "Attention: Letting Tokens Talk",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-160",
+      "quote": "Attention was not invented for translation alone.",
+      "section": "Attention: Letting Tokens Talk",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-161",
+      "quote": "In 2014 \\cite[Graves et al. (2014)]{graves2014ntm} gave a recurrent network a differentiable read/write head over an external memory — the Neural Turing Machine — so that where to look became a learned, end-to-end operation (\\cite[Graves et al., 2014]{graves2014ntm}).",
+      "section": "Attention: Letting Tokens Talk",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-162",
+      "quote": "Memory networks made the same move for question answering: a query retrieves relevant stored facts by similarity, and a controller reasons over them (\\cite[Weston et al., 2015]{weston2015memnn}; \\cite[Sukhbaatar et al., 2015]{sukhbaatar2015memnn}).",
+      "section": "Attention: Letting Tokens Talk",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-163",
+      "quote": "By 2015, soft attention over a set of vectors was a general computational primitive.",
+      "section": "Attention: Letting Tokens Talk",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-164",
+      "quote": "To ensure the model learns to generate text autoregressively, we prevent it from “looking into the future” during training.",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-165",
+      "quote": "For any token $i$, we restrict its focus to itself and preceding tokens $\\{1, \\dots, i\\}$.",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-166",
+      "quote": "We enforce this constraint by adding a **Causal Mask** ($M$) to the attention scores before the Softmax operation.",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-167",
+      "quote": "This lower-triangular matrix is defined as:",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-168",
+      "quote": "For a 4-token sequence, $M$ is:",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-169",
+      "quote": "The modified attention calculation then is:",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-170",
+      "quote": "Since $e^{-\\infty}$ approaches $0$, the Softmax function nullifies the weights for all “future” positions ($i < j$), effectively neutralizing those connections.",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-171",
+      "quote": "The causal mask creates an **information gradient** across the sequence.",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-172",
+      "quote": "Because later tokens attend to more preceding context, their representations are richer than those of earlier, “impoverished” tokens.",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-173",
+      "quote": "This **information funnel** makes the last token uniquely privileged: it is the only position that has “seen” the entire context, so at inference its hidden state is the one used for the next-token prediction.",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-174",
+      "quote": "During training, by contrast, every position predicts its own next token in parallel.",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-175",
+      "quote": "This is also important for **prompt engineering**:",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-176",
+      "quote": "* **Position matters:** Token position acts as a form of informational privilege.",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-177",
+      "quote": "* **Context accumulation:** Placing critical instructions at the *end* of a prompt ensures they are built from the full preceding context, whereas instructions at the *beginning* can only be passively attended to (and potentially diluted) by later tokens.",
+      "section": "Masked Self-Attention",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-178",
+      "quote": "The job of a Single Attention Head is to find some form of relation between all the input tokens after they've been multiplied with the $Q$, $K$ and $V$-matrices.",
+      "section": "The **Single-Head Attention**",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-179",
+      "quote": "This could be, for example, to detect which part of a sentence is a verb and which object it attends to.",
+      "section": "The **Single-Head Attention**",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-180",
+      "quote": "In real transformers, it rarely is *that* interpretable, though.",
+      "section": "The **Single-Head Attention**",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-181",
+      "quote": "Instead of one massive attention operation, we use **Multi-Head Attention**.",
+      "section": "Concatenation Definition",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-182",
+      "quote": "We split the hidden state's $d_{\\text{model}}$ into $h$ different “heads.” Each head $i$ has its own set of projection matrices $\\{W_i^Q, W_i^K, W_i^V\\}$, allowing the model to focus on different aspects (e.g., syntax, or resolving long-distance dependencies, but also very abstract features, for which human language doesn't have any names) simultaneously.",
+      "section": "Concatenation Definition",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-183",
+      "quote": "For $h$ heads, where each head has dimension $d_k$ (for keys and queries) and $d_v$ (for values):",
+      "section": "Concatenation Definition",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-184",
+      "quote": "If $d_\\text{model} = 512$ and we have $h = 8$ heads (with $d_k = d_v = 64$ in the original Transformer):",
+      "section": "Concatenation Definition",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-185",
+      "quote": "* **Each head:** $d_k = d_v = \\frac{512}{8} = 64$",
+      "section": "Concatenation Definition",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-186",
+      "quote": "After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-187",
+      "quote": "The intermediate state after the attention sub-layer (but before the FFN) is denoted $z_0$, the recurrence below uses $z_n$ for the same intermediate state at layer $n$, while $h_{n+1}$ denotes the *block-output* state after both attention and FFN:",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-188",
+      "quote": "This Layer Normalization ensures that the values don't 'explode' and get too large, since they are, after being normalized, always in around 0 with a variance of 1.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-189",
+      "quote": "Without it, the values might get bigger and bigger with many layers.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-190",
+      "quote": "* $B = \\text{Batch Size}$ (The number of independent sequences processed in a single forward pass)",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-191",
+      "quote": "* $T = \\text{Sequence Length}$ (The number of tokens/words in each sequence; **note**: $T$ is reused as the *temperature* symbol in the Sampling section, context disambiguates.)",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-192",
+      "quote": "* $d_k = \\text{Key/Query Head Dimension}$ (dimensionality of the projected keys and queries in each head; usually $d_\\text{model} / h$)",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-193",
+      "quote": "* $d_v = \\text{Value Head Dimension}$ (dimensionality of the projected values in each head; in the original Transformer $d_v = d_k$, but the two can differ in general)",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-194",
+      "quote": "For a single head, we say:",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-195",
+      "quote": "Which transforms the input in the shape of $(B, T, h \\cdot d_v)$ to $(B, T, d_{\\text{model}})$.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-196",
+      "quote": "The *Query* and *Key* rows still correspond to token positions in every layer; what changes is the content of those rows.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-197",
+      "quote": "In the first layer they are projected from the concrete token embeddings; in later layers they are projected from contextual, abstract features, so a head's query and key no longer mean “this word” so much as “this position's current role in the sentence”.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-198",
+      "quote": "In this stage, it is already abstracted away from the concrete Embedding Space (for example, by positional encoding).",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-199",
+      "quote": "Layer Normalization keeps activations stable, but during backpropagation, gradients can still explode.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-200",
+      "quote": "A single pathological training example can produce a gradient so large that it destroys all learned weights in one step, the **exploding gradient** problem.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-201",
+      "quote": "Gradient clipping is the complementary defense: it caps the magnitude of gradients so that no single update can change the model by more than a fixed amount.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-202",
+      "quote": "Mathematically, if the gradient vector $\\mathbf{g}$ has elements larger than a threshold $\\tau$, each element is rescaled:",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-203",
+      "quote": "In this implementation, gradients are clipped to the range $[-1, 1]$.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-204",
+      "quote": "This is the numerical equivalent of an immune system: the body allows gradual adaptation (learning) but violently rejects sudden massive changes.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-205",
+      "quote": "Without clipping, one bad sentence in the training data could corrupt the entire model.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-206",
+      "quote": "With it, the damage is bounded.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-207",
+      "quote": "However, like an immune system, it is imperfect, it can also suppress legitimate large updates that the model actually needs, slowing learning on genuinely novel patterns.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-208",
+      "quote": "The root cause of both vanishing and exploding gradients is the **chain rule** of calculus.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-209",
+      "quote": "During backpropagation, the gradient at layer $l$ is the product of all gradients from layer $L$ down to $l$:",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-210",
+      "quote": "Each term $\\frac{\\partial h_{k+1}}{\\partial h_k}$ contains the weight matrix $W_k$.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-211",
+      "quote": "If the eigenvalues (spectral radius) of these weight matrices are consistently less than 1, the product shrinks exponentially with depth, causing the gradient to **vanish**, early layers receive near-zero updates and stop learning.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-212",
+      "quote": "If the eigenvalues are greater than 1, the product grows exponentially, causing the gradient to **explode**, early layers receive destructive updates.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-213",
+      "quote": "This is why simple deep networks without residual connections and normalization are so hard to train: the product of 100 matrices, each with spectral radius 0.9, decays as $0.9^{100} \\approx 0.00003$, effectively killing learning in the first layers.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-214",
+      "quote": "The residual connection solves this by providing an additive identity path $x_{l+1} = x_l + F(x_l)$, which ensures that the gradient can flow backward through the skip connection without passing through any weight matrices:",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-215",
+      "quote": "The identity term $I$ ensures that the gradient has a “highway” that bypasses the multiplicative chain, preventing both vanishing and explosion regardless of depth.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-216",
+      "quote": "The formal backpropagation analysis — showing that the gradient recursion through a residual block involves the factor $\\mathbf{I} + J_F$ rather than $J_F$ alone — is in \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}), Ch.\\ 17.1.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-217",
+      "quote": "In the paper \\citealternativetitle{analyzingmultiheads}, the study identified that the most “important” heads in encoder models often perform three specific, interpretable functions:",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-218",
+      "quote": "* **Positional Heads**: These heads attend to adjacent tokens, usually the previous or the next token in the sequence.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-219",
+      "quote": "They are essential for capturing the local structural order of the sentence.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-220",
+      "quote": "* **Syntactic Heads**: These heads align with specific syntactic dependencies.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-221",
+      "quote": "They show a high success rate in identifying grammatical relationships, such as the relation between a verb and its direct object.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-222",
+      "quote": "* **Rare Words Heads**: Typically found in the first layer of the encoder, these heads specifically attend to the most infrequent tokens in a sentence, helping the model manage low-frequency vocabulary.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-223",
+      "quote": "However, research into larger Decoder-only models from (\\cite[Elhage et al., 2021]{elhage2021mathematical}) and (\\cite[Olsson et al., 2022]{incontextlearninghead}) and recent discoveries in mechanistic interpretability have revealed even more specialized mechanisms:",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-224",
+      "quote": "* **Induction Heads**: These specialized heads develop in the middle layers and are responsible for pattern matching.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-225",
+      "quote": "If they see a sequence like [A][B] and later encounter [A], they “induce” that [B] should follow.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-226",
+      "quote": "This is considered the primary mechanism behind a model's ability to follow instructions in a prompt.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-227",
+      "quote": "* **Successor Heads**: Identified as universal circuits across various architectures (\\cite[Gould et al., 2023]{successorheads}), these heads perform logical incrementation.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-228",
+      "quote": "They map tokens to their ordinal successors, such as “Monday” to “Tuesday”, “January” to “February”, or “1” to “2”.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-229",
+      "quote": "* **Name Mover Heads**: Observed in tasks like Indirect Object Identification by (\\cite[Wang et al., 2022]{interpretabilityinwild}), these heads extract specific entities (like names) from the earlier context and “move” them to the final token position to ensure logical consistency in the output.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-230",
+      "quote": "* **Negative / Copy Suppression Heads**: These heads, identified by (\\cite[McDougall et al., 2023]{copysuppression}), actively suppress tokens that are over-predicted by other circuits.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-231",
+      "quote": "They act as a corrective mechanism to prevent the model from repeating itself or making common probabilistic errors.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-232",
+      "quote": "* **Safety / Refusal Heads**: Recent research by \\cite[Zhou et al.]{safetyheads} identifies specific heads that act as “gatekeepers” for safety alignment.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-233",
+      "quote": "Ablating a *single* such head in Llama-2-7b-chat (≈0.006% of all parameters) raises the Attack Success Rate from 0.04 to 0.64, a 16× jump, after which the model fails to refuse harmful prompts.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-234",
+      "quote": "The mechanism is asymmetric: safety heads extract risk-relevant features through the *attention weights* ($W^Q, W^K$), not through the values ($W^V$).",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-235",
+      "quote": "Modifying the attention pattern to be uniform destroys safety; merely scaling the output does not.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-236",
+      "quote": "Strikingly, safety heads can be ablated with little impact on general helpfulness, a useful/harmless trade-off, and models fine-tuned from the same base share overlapping safety heads, suggesting pretraining pre-installs much of the safety-relevant structure.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-237",
+      "quote": "* **Delimiter Heads**: These heads act as structural anchors, often attending to punctuation or special tokens.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-238",
+      "quote": "They help the model manage signal-to-noise ratios by providing a “resting place” for attention when no relevant semantic information is found.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-239",
+      "quote": "Induction heads represent a specialized evolutionary step beyond the “Positional Heads”",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-240",
+      "quote": "described in Voita et al. (\\citeyear{analyzingmultiheads}).",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-241",
+      "quote": "While a standard positional head might only look at",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-242",
+      "quote": "the token immediately before it, the Induction Head circuit uses that information",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-243",
+      "quote": "to perform algorithmic copying.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-244",
+      "quote": "In a sequence like “Harry Potter ...",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-245",
+      "quote": "Harry”, the process unfolds as follows:",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-246",
+      "quote": "- **Step 1: The Previous Token Head (Early Layer):** This functions like the",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-247",
+      "quote": "At the first instance of [Potter], it looks back",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-248",
+      "quote": "at [Harry] and encodes that “Harry preceded me.”",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-249",
+      "quote": "- **Step 2: The Induction Head (Later Layer):** When the model sees [Harry]",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-250",
+      "quote": "a second time, this head searches the entire context for previous [Harry]",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-251",
+      "quote": "It ignores the current position and instead “attends” to the",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-252",
+      "quote": "[Potter] token because [Potter] carries the signal that it follows [Harry].",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-253",
+      "quote": "- **The Result:** The model copies [Potter] into its current prediction.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-254",
+      "quote": "This discovery is significant because it shows that models don't just learn",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-255",
+      "quote": "static “Syntactic” rules; they learn to build dynamic “search engines” that",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-256",
+      "quote": "allow them to learn new patterns in real-time during a single prompt.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-257",
+      "quote": "The progression of data through the layers of a Transformer follows a systematic evolution that mirrors the hierarchical structure of Convolutional Neural Networks.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-258",
+      "quote": "In a CNN, the initial layers focus on raw pixels while subsequent layers analyze the output of those earlier stages to form abstract concepts.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-259",
+      "quote": "Similarly, Transformer attention heads in the first layer look at the concrete sentence data itself.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-260",
+      "quote": "As information moves deeper, each layer processes the results of the previous one, gradually abstracting away from the specific training and inference data toward higher-level representations.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-261",
+      "quote": "This systematic change in attention patterns can be categorized as follows:",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-262",
+      "quote": "- **Early Layers:** Local and positional patterns dominate.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-263",
+      "quote": "The model focuses on the actual data tokens, looking at diagonal or adjacent positions similar to how a CNN identifies basic edges or pixels.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-264",
+      "quote": "- **Middle Layers:** Semantic and syntactic patterns emerge.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-265",
+      "quote": "Here, the model begins to identify dependency arcs and coreference resolution, focusing on the structural relationships between tokens.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-266",
+      "quote": "- **Late Layers:** Focus becomes diffuse or highly task-specific.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-267",
+      "quote": "These layers concentrate on tokens relevant to the final prediction, representing a high level of abstraction that is far removed from the concrete input values.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-268",
+      "quote": "By switching between layers in a visualization, you can observe this transition from raw data processing to complex, abstracted analysis.",
+      "section": "Multi-Head Attention: Lateral Parallelism",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-269",
+      "quote": "The layer-depth progression above says the **middle layers** \"begin to identify dependency arcs.\" That is a strong claim, and it deserves to be examined: does the model actually construct a *parse* — a syntactic structure it then manipulates — or does it only track shallow word co-occurrence?",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-270",
+      "quote": "The honest answer is a **distributed, hierarchical syntactic representation**, built the way a CNN builds edges-then-objects: bottom-up, across depth, spread over many specialist heads.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-271",
+      "quote": "There is no single parse object sitting in one place.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-272",
+      "quote": "**Specialist heads, one per relation.** (\\cite[Htut et al., 2019]{htu2019dependencies}) extracted implicit dependencies from BERT's attention and compared them to ground-truth Universal-Dependency trees.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-273",
+      "quote": "For several specific relation types there are heads that recover that dependency **significantly better than a baseline** — a head that tracks \"subject,\" another that tracks \"object,\" and so on.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-274",
+      "quote": "The crucial negative result: **no \"generalist\" head performs holistic parsing.** Syntax is not computed by one module; it is *partitioned across many heads*, each a proxy for one elementary relation.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-275",
+      "quote": "This is also what the reverse-engineered **indirect-object-identification circuit** shows in the mechanistic chapter (\\cite[Wang et al., 2022]{wang2022interpretability}): the elementary binding step (copy the subject or object across distance to the governing verb) is implemented by a handful of heads, not by a tree.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-276",
+      "quote": "**The structure is built bottom-up, across depth.** (\\cite[Someya et al., 2025]{someya2025derivational}) used \"derivational probing\" to track *when* different pieces of syntax form.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-277",
+      "quote": "The result is a clean **bottom-up derivation**: micro-syntactic units (a subject noun phrase) assemble in the *lower* layers and are integrated into macro-syntax (the relationship between a root verb and its dependents) in the *higher* layers — the constituency hierarchy emerging with depth, exactly as the CNN analogy predicts.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-278",
+      "quote": "And the *timing* of macro-syntax formation is not cosmetic: subject-verb number agreement accuracy depends on when the global syntactic information is integrated.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-279",
+      "quote": "**Is the structure real enough to induce?** Yes.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-280",
+      "quote": "(\\cite[Shen et al., 2021]{shen2021structformer}) induced both dependency and constituency structure *from* a transformer doing masked language modeling — if the representation were mere bag-of-words statistics, a coherent parse could not be recovered from it.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-281",
+      "quote": "The structure is real; it is just **relational and head-distributed** rather than a literal tree in a single location.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-282",
+      "quote": "The limit is the same one the fact-retrieval chapter meets: this distributed syntax is **fragile to the nesting and distractors** that break long-distance binding, because each dependency link costs attention and depth.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-283",
+      "quote": "The model builds syntax the way it does everything else — by distributed, depth-staged, head-parallel computation — not by manipulating a parse it can inspect.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-284",
+      "quote": "The **KV-Cache** (**Key-Value-Cache**) is an optimization that prevents $\\mathcal{O}(T^2)$ redundancy during generation.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-285",
+      "quote": "This would happen because every token needs to look at every other tokens, but it can be prevented:",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-286",
+      "quote": "Since the Transformer is autoregressive, the hidden states of past tokens remain static once computed.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-287",
+      "quote": "Instead of re-processing the entire sequence for every new word, we store the Key ($K$) and Value ($V$) vectors in a dedicated cache.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-288",
+      "quote": "During each step of inference:",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-289",
+      "quote": "Only the newest token is projected into its $Q$, $K$, and $V$ components.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-290",
+      "quote": "This new $K$ and $V$ pair is added to the cache history.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-291",
+      "quote": "The current Query ($Q$) performs a dot-product attention against all",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-292",
+      "quote": "cached Keys to determine relevance.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-293",
+      "quote": "The result is used to weigh the cached Values, producing the next",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-294",
+      "quote": "hidden state without re-calculating the past.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-295",
+      "quote": "This reduces the per-step attention computation from quadratic to $\\mathcal{O}(T)$ in the sequence length $T$: the new query is compared with the cached keys instead of rebuilding and rescoring the whole prefix.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-296",
+      "quote": "Across a full generation of $T$ tokens the total cost falls from $\\mathcal{O}(T^3)$ to $\\mathcal{O}(T^2)$, at the price of storing the cache.",
+      "section": "Does the Model Build a Syntax Tree?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-297",
+      "quote": "Attention and the feed-forward network are the two halves of a single block; a transformer is just that one block stacked $N$ times.",
+      "section": "The Transformer Block",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-298",
+      "quote": "The other route to parallelism was convolution.",
+      "section": "The Transformer Block",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-299",
+      "quote": "\\cite[Gehring et al. (2017)]{gehring2017convs2s} replaced the recurrent encoder–decoder with stacked convolutions and attention, so every position could be computed in parallel (\\cite[Gehring et al., 2017]{gehring2017convs2s}).",
+      "section": "The Transformer Block",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-300",
+      "quote": "ByteNet went further, using dilated convolutions to shorten the path between distant tokens (\\cite[van den Oord et al., 2016]{bytnet2016}).",
+      "section": "The Transformer Block",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-301",
+      "quote": "Both still needed depth proportional to distance.",
+      "section": "The Transformer Block",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-302",
+      "quote": "The Transformer made that path length one: every token attends to every other in a single layer, a computation that fills a GPU instead of serializing along the sequence (\\cite[Vaswani et al., 2017]{vaswani2017attention}).",
+      "section": "The Transformer Block",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-303",
+      "quote": "While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token's representation.",
+      "section": "The Feed-Forward Network",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-304",
+      "quote": "In this sense, it functions as the model's primary per-token computational stage, complementing attention's role in information routing and aggregation.",
+      "section": "The Feed-Forward Network",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-305",
+      "quote": "\\cite[Empirical studies]{keyvalmem} suggest that FFN layers are a major locus of memorized associations and factual patterns, although such knowledge is distributed across the network rather than localized to a single component.",
+      "section": "The Feed-Forward Network",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-306",
+      "quote": "To calculate the transformation of a contextual vector through the FFN, you apply two linear transformations with a non-linear activation and biases:",
+      "section": "The Feed-Forward Network",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-307",
+      "quote": "- $W_1$ is the first weight matrix (expansion to $d_\\text{ff}$, usually $4 \\times d_{\\text{model}}$).",
+      "section": "The Feed-Forward Network",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-308",
+      "quote": "- $b_1$ is the bias vector for the first layer.",
+      "section": "The Feed-Forward Network",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-309",
+      "quote": "- $\\sigma$ is the activation function (like GELU, which the nanoGPT architecture uses, replacing the original ReLU).",
+      "section": "The Feed-Forward Network",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-310",
+      "quote": "- $W_2$ is the second weight matrix (compression back to $d_{\\text{model}}$).",
+      "section": "The Feed-Forward Network",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-311",
+      "quote": "- $b_2$ is the bias vector for the second layer.",
+      "section": "The Feed-Forward Network",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-312",
+      "quote": "While attention decides *what to look at*, the FFN decides *what to do with it*.",
+      "section": "The Feed-Forward Network",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-313",
+      "quote": "The final state of this block, **$h_1$**, is formed by another residual connection:",
+      "section": "The Feed-Forward Network",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-314",
+      "quote": "In practice, a Transformer is not just two steps; it is a stack of $N$ structurally identical but independently weighted blocks, each moving the representation further through the Feature Space to refine meaning.",
+      "section": "The $N$-Layer Recurrence",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-315",
+      "quote": "The deeper pattern is that a network is assembled by *reusing* a small set of structural ideas many times over — in functional-programming terms, composing higher-order functions with learnable pieces in between — which is why these models read as a kind of **differentiable functional programming** (\\cite[Olah, 2015]{colah2015types}).",
+      "section": "The $N$-Layer Recurrence",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-316",
+      "quote": "For any layer $n$, the transition to the next hidden state $h_{n+1}$ can be generalized as:",
+      "section": "The $N$-Layer Recurrence",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-317",
+      "quote": "As $h$ progresses from $h_0$ to $h_{N}$, the vector for “apple” might move from being near “fruit” to being near “tech company” based on the contextual “nudges” received in the Feature Space during each Attention and FFN cycle.",
+      "section": "The $N$-Layer Recurrence",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-318",
+      "quote": "The equations above describe the 2017 Transformer.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-319",
+      "quote": "Open a 2025 open-weight model, however, and the same two sublayers are wired slightly differently.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-320",
+      "quote": "None of these changes alters the big picture — attention mixes, the FFN computes, residuals carry — but together they define the “LLaMA-style” block that most open models now share.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-321",
+      "quote": "The years after 2017 split the family in two.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-322",
+      "quote": "\\cite[Devlin et al. (2019)]{bert} kept the encoder and trained it bidirectionally with a masked-token objective, making fine-tuning on downstream tasks the default (\\cite[Devlin et al., 2019]{bert}).",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-323",
+      "quote": "\\cite[Radford et al. (2019)]{gpt2} kept the decoder, scaled it, and showed that one autoregressive model could perform tasks zero-shot from its prompt (\\cite[Radford et al., 2019]{gpt2}).",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-324",
+      "quote": "The split matters for this chapter: the causal mask you see here is the GPT branch, while BERT's bidirectional attention is the encoder branch.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-325",
+      "quote": "**Pre-norm, not post-norm.** The 2017 paper normalized *after* each residual addition.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-326",
+      "quote": "Modern stacks move the normalization *inside* the branch, so the residual stream itself is an unbroken identity path:",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-327",
+      "quote": "\\citeauthor{xiong2020} showed that this arrangement keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up (\\cite[Xiong et al., 2020]{xiong2020}).",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-328",
+      "quote": "The price is that the residual stream is no longer normalized; a final normalization before the output projection carries that burden.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-329",
+      "quote": "Layer normalization is younger than the Transformer.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-330",
+      "quote": "\\cite[Ba et al. (2016)]{ba2016layernorm} introduced it in 2016 as a batch-independent alternative to BatchNorm for recurrent networks, normalizing each example's features rather than a batch statistic (\\cite[Ba et al., 2016]{ba2016layernorm}).",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-331",
+      "quote": "The residual connection is older still, imported from ResNet's identity shortcuts (\\cite[He et al., 2015]{he2015resnet}); it gives gradients a path that bypasses the sublayer.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-332",
+      "quote": "The 2017 Transformer used both, but placed the normalization after each residual add — the post-LN arrangement that later deep stacks reversed.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-333",
+      "quote": "**RMSNorm instead of LayerNorm.** Most open-weight families replace LayerNorm with RMSNorm, which rescales each token by its root mean square but does not subtract the mean.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-334",
+      "quote": "It is cheaper, drops the learned shift, and matches LayerNorm's stability in practice (\\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}).",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-335",
+      "quote": "The [normalization lab](normalizationlab.php) derives both and works through the arithmetic.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-336",
+      "quote": "**SwiGLU instead of ReLU/GELU.** The dense FFN becomes a *gated* one:",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-337",
+      "quote": "with a third matrix $W_g$ whose output multiplies the activated branch elementwise.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-338",
+      "quote": "Because there are now three matrices rather than two, the hidden width is reduced to keep the parameter count comparable — LLaMA uses $d_{\\text{model}} = 4096$ and $d_{\\text{ff}} = 11008$, about $2.7\\,d_{\\text{model}}$ instead of $4\\,d_{\\text{model}}$ (\\cite[Shazeer, 2020]{shazeer2020glu}; \\cite[Touvron et al., 2023]{touvron2023llama}).",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-339",
+      "quote": "**RoPE instead of sinusoidal vectors.** Rotary position embedding rotates the query and key vectors by position-dependent angles, so their dot product depends only on the *relative* offset.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-340",
+      "quote": "It is now the default in the Llama, Mistral, Qwen, Gemma, and DeepSeek lines (\\cite[Su et al., 2021]{su2021rope}); the [positional embeddings lab](positionalembeddingslab.php) builds the rotation matrix step by step.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-341",
+      "quote": "**Fewer key/value heads.** Multi-head attention gives every query head its own key and value head.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-342",
+      "quote": "Multi-query attention (MQA) shares one K/V head across all query heads, and grouped-query attention (GQA) shares one per group.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-343",
+      "quote": "The attention computation is nearly unchanged, but the **KV cache** — the memory that dominates long-context serving — shrinks by the sharing factor (\\cite[Shazeer, 2019]{shazeer2019mqa}; \\cite[Ainslie et al., 2023]{ainslie2023gqa}).",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-344",
+      "quote": "DeepSeek-V2 went further with **multi-head latent attention** (MLA), caching a low-rank compressed latent instead of full per-head keys and values, and reconstructing them on the fly (\\cite[DeepSeek-AI, 2024]{deepseek2024v2}).",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-345",
+      "quote": "By 2025 the choice among MHA, GQA, and MLA had become one of the few architecture decisions still visibly separating frontier models.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-346",
+      "quote": "**The parameter budget is mostly FFN.** For a LLaMA-class layer with $d_{\\text{model}} = 4096$ and $d_{\\text{ff}} = 11008$, the three SwiGLU matrices hold $3 \\times 4096 \\times 11008 \\approx 1.35 \\times 10^{8}$ parameters.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-347",
+      "quote": "Across 32 layers that is roughly $4.3 \\times 10^{9}$ of the model's $6.7 \\times 10^{9}$ parameters — near two thirds.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-348",
+      "quote": "This is why the FFN is the main target of mixture-of-experts sparsity (see [Mixture of Experts](mixture_of_experts.php)) and of weight quantization.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-349",
+      "quote": "Scaling became a science in 2020.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-350",
+      "quote": "\\cite[Kaplan et al. (2020)]{kaplan2020scaling} measured how language-model loss falls as parameters, data and compute grow, and found smooth power laws across several orders of magnitude (\\cite[Kaplan et al., 2020]{kaplan2020scaling}).",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-351",
+      "quote": "That turned “make it bigger” from a hunch into a budget line: spend compute where the curve says the next unit buys the most loss.",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-352",
+      "quote": "GPT-3 followed the curve to 175 billion parameters and showed that scale alone produced usable few-shot behaviour (\\cite[Brown et al., 2020]{brown2020gpt3}).",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-353",
+      "quote": "The modern block, in one line: **normalize the branch, rotate positions, gate the FFN, and share the KV heads.**",
+      "section": "The Modern Block: What Changed After 2017",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-354",
+      "quote": "Everything above — the embeddings, the residual blocks, the attention, the final projection — is a lot of structure.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-355",
+      "quote": "Here is that exact structure as executable code, three ways, in the tabs below: a complete transformer written in pure Python with no framework at all, modelled on nanoGPT, plus the same model built with PyTorch and TensorFlow.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-356",
+      "quote": "Read any of them top to bottom and every line maps back to one of the equations on this page.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-357",
+      "quote": "`GPT.forward` (in every tab) chains the embedding, the `n_layer` blocks, the final `LayerNorm`, and the `lm_head` projection, and returns the logits — a score for every token in the vocabulary.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-358",
+      "quote": "Run any of the files and it walks a two-token prompt through the machine and prints the logits and the predicted next token.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-359",
+      "quote": "In a causal attention matrix, token $i$ can attend to tokens $0, 1, \\dots, i$, exactly $i + 1$ candidates.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-360",
+      "quote": "Since softmax forces each row to sum to 1:",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-361",
+      "quote": "When the model is **untrained**, $W_Q$ and $W_K$ are randomly initialized, so all dot-product scores $Q_i \\cdot K_j^T$ are roughly similar.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-362",
+      "quote": "Softmax over nearly-equal values produces a **near-uniform distribution**, meaning the self-attention weight on the diagonal is approximately:",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-363",
+      "quote": "Here is the theoretical attention matrix for a 5-token sequence under uniform attention:",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-364",
+      "quote": "The diagonal reads $\\frac{1}{1},\\; \\frac{1}{2},\\; \\frac{1}{3},\\; \\frac{1}{4},\\; \\frac{1}{5}$.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-365",
+      "quote": "The small deviations come from the random weights not producing *perfectly* identical scores, but they're close enough that softmax still spreads probability nearly uniformly.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-366",
+      "quote": "After training, $W_Q$ and $W_K$ learn to produce sharply different scores, so attention concentrates on semantically important tokens and this uniform $\\frac{1}{n}$ pattern disappears.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-367",
+      "quote": "The Feed-Forward Network (FFN) described above applies the same dense",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-368",
+      "quote": "transformation to every token: $\\text{FFN}(x) = \\sigma(xW_1 + b_1)W_2 + b_2$.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-369",
+      "quote": "This example uses exactly that standard, dense FFN.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-370",
+      "quote": "large-scale systems replace it with a **Mixture of Experts** (MoE)",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-371",
+      "quote": "layer to increase model capacity without proportionally",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-372",
+      "quote": "The core idea, first proposed in",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-373",
+      "quote": "\\cite[Adaptive Mixtures of Local Experts]{jacobs1991moe}, is to maintain",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-374",
+      "quote": "multiple parallel FFN sub-networks (experts) alongside a learned gating",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-375",
+      "quote": "network that routes each input to the most relevant expert, a",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-376",
+      "quote": "“divide and conquer” approach where specialised networks handle",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-377",
+      "quote": "different regions of the input space.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-378",
+      "quote": "This concept remained difficult to",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-379",
+      "quote": "scale until \\cite[the Sparsely-Gated MoE layer]{shazeer2017moe}",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-380",
+      "quote": "introduced the critical principle of **sparsity**: instead of",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-381",
+      "quote": "activating all experts for every token, a sparse gating function selects",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-382",
+      "quote": "only the top one or two, so the output becomes",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-383",
+      "quote": "$\\sum_{i \\in \\text{TopK}} G(x)_i \\cdot \\text{FFN}_i(x)$ over just the",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-384",
+      "quote": "This allows models to scale to trillions of total",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-385",
+      "quote": "parameters while keeping per-token compute roughly constant, since only",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-386",
+      "quote": "a small fraction of parameters are active for any given input.",
+      "section": "The Same, in Code: A Transformer You Can Run",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-387",
+      "quote": "With the final hidden state in hand, all that remains is to read it back out as a probability distribution over the vocabulary.",
+      "section": "From Vectors to Words",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-388",
+      "quote": "After passing through $N$ layers, we reach the final hidden state, **$h_{\\text{final}}$**.",
+      "section": "From Hidden States to Probabilities",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-389",
+      "quote": "To turn this into a word, we project it against the entire vocabulary:",
+      "section": "From Hidden States to Probabilities",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-390",
+      "quote": "**Logits**: Raw scores for every word in the dictionary.",
+      "section": "From Hidden States to Probabilities",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-391",
+      "quote": "**SoftMax**: Normalizes scores into probabilities (0 to 1).",
+      "section": "From Hidden States to Probabilities",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-392",
+      "quote": "**Temperature ($T$)**: Modifies the SoftMax: $\\sigma(z)_i = \\frac{e^{z_i/T}}{\\sum e^{z_j/T}}$.",
+      "section": "From Hidden States to Probabilities",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-393",
+      "quote": "This architecture subordinates to the Bitter Lesson by \\citeauthor{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.",
+      "section": "From Hidden States to Probabilities",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-394",
+      "quote": "We have arrived at the final vector $h_{\\text{final}}$ for the last token.",
+      "section": "From Hidden States to Probabilities",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-395",
+      "quote": "To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_\\text{vocab}$).",
+      "section": "From Hidden States to Probabilities",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-396",
+      "quote": "This effectively asks: “How similar is our current thought vector to every known word vector?”",
+      "section": "From Hidden States to Probabilities",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-397",
+      "quote": "To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_\\text{vocab}$.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-398",
+      "quote": "It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-399",
+      "quote": "The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\\text{FFN}$ matrices.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-400",
+      "quote": "They are just ignored in the last step, yet calculated because that is required by the structure.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-401",
+      "quote": "The hidden state vector $\\mathbf{h}_{\\text{last}}$ (represented by `h[pos]`) is dotted against each row $\\mathbf{e}_w$ of the unembedding matrix $W \\substack{\\text{vocab}}$ to produce the logit for word $w$:",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-402",
+      "quote": "This operation computes the entire logit vector $\\mathbf{L}$ simultaneously.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-403",
+      "quote": "If $W_{\\text{vocab}}$ is a matrix where each row is a word embedding, the operation is a matrix-vector multiplication:",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-404",
+      "quote": "This essentially iterates through the rows of $W_{\\text{vocab}}$, calculating the similarity of each word to the models final internal state.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-405",
+      "quote": "To get from the long matrix to the single vector, the model performs a **Terminal Selection**",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-406",
+      "quote": "If we represent the output of the last transformer block as a matrix $H$:",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-407",
+      "quote": "The “Migration Map” prints the entire flattened matrix because it wants to show the path of every word.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-408",
+      "quote": "However, the final projection is only interested in the **prediction**:",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-409",
+      "quote": "Remember that the $n$ is the number of tokens in the **Inference**-sequence, not in the training sequence, even though the $h_\\text{after}$ may be from the training data.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-410",
+      "quote": "This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-411",
+      "quote": "When the model is, for example, $d_{\\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\\text{model}$).",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-412",
+      "quote": "These 3 numbers are a “compressed summary” of the entire sequence's context, which is why the previous tokens can be “ignored” at this specific final stage, their influence is already baked into that last vector.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-413",
+      "quote": "The unembedding matrix $W_U$ (often identical to $W_E$ due to weight tying) does more than just produce logits.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-414",
+      "quote": "It defines a **dual space** where every direction in the residual stream has a direct linguistic interpretation.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-415",
+      "quote": "Each row of $W_U$ is a “detector” for a specific token: moving the residual stream vector in the direction of $W_U[\\text{“Paris”}]$ literally increases the probability of outputting “Paris.”",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-416",
+      "quote": "This leads to the **logit lens** technique: by applying $W_U$ to the residual stream at any intermediate layer (not just the final one), you can see what the model “would predict” at that point.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-417",
+      "quote": "Research shows that the model's belief about the next token evolves continuously through the layers, often settling on the correct answer many layers before the output.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-418",
+      "quote": "The attention heads and FFN layers are not performing abstract, uninterpretable operations, they are nudging the residual stream toward or away from specific words, and the unembedding matrix lets us read off what they are doing at every step.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-419",
+      "quote": "The softmax function converts raw logits into a probability distribution.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-420",
+      "quote": "It uses the **numerically stable** version by first subtracting the maximum logit $m = \\max(\\mathbf{L})$ to prevent overflow:",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-421",
+      "quote": "**Why subtract $m$?** Without this trick, $e^{\\text{logit}}$ can overflow to `Infinity` for large logits.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-422",
+      "quote": "Subtracting $m$ ensures the largest exponent is $e^0 = 1$, keeping all values in a safe numerical range.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-423",
+      "quote": "The **logit** and **probit** models are foundational tools in statistical modeling for",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-424",
+      "quote": "binary and categorical outcomes.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-425",
+      "quote": "The **logit function**, defined as",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-426",
+      "quote": "$\\log\\left(\\frac{p}{1 - p}\\right)$, was first introduced by \\citeauthor{logitorigin} in his \\citeyear{logitorigin} paper",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-427",
+      "quote": "“\\citetitle{logitorigin}”.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-428",
+      "quote": "Berkson coined the term “logit” as an",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-429",
+      "quote": "analogy to the already-established “probit.” The **probit model**, which uses the",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-430",
+      "quote": "inverse of the standard normal cumulative distribution function $\\Phi^{-1}\\left(p\\right)$ as its link",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-431",
+      "quote": "function, was developed earlier by \\citeauthor{probitorigin} in his \\citeyear{probitorigin} paper “\\citetitle{probitorigin}”.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-432",
+      "quote": "Beyond logits and probits, several other link functions serve similar purposes in",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-433",
+      "quote": "**generalized linear models (GLMs)**, a framework formalized by \\citeauthorlastnameand{generalizedlinearmodels}",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-434",
+      "quote": "in their seminal \\citeyear{generalizedlinearmodels} paper “\\citetitle{generalizedlinearmodels}”.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-435",
+      "quote": "The **complementary log-log",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-436",
+      "quote": "($\\text{cloglog}$)** link, defined as $\\log\\left(−\\log\\left(1 − p\\right)\\right)$, is useful for modeling asymmetric",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-437",
+      "quote": "binary outcomes and is closely tied to extreme value distributions, as explored by",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-438",
+      "quote": "\\citeauthor{statisticsofextremes} in his \\citeyear{statisticsofextremes} work",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-439",
+      "quote": "“\\citetitle{statisticsofextremes}”.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-440",
+      "quote": "The **cauchit** link uses the inverse of the Cauchy CDF and is more robust to outliers in the latent",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-441",
+      "quote": "variable, as discussed by \\citeauthorlastnameand{parametriclinks} in their",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-442",
+      "quote": "\\citeyear{parametriclinks} paper “\\citetitle{parametriclinks}”.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-443",
+      "quote": "Additionally, the **log-log link**, defined as $-\\log\\left(-\\log\\left(p\\right)\\right)$, mirrors the",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-444",
+      "quote": "$\\text{cloglog}$ for the opposite tail of the distribution, as detailed by",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-445",
+      "quote": "\\citeauthorlastnameand{glmsecondedition} in \\citeyear{glmsecondedition} in “\\citetitle{glmsecondedition}”.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-446",
+      "quote": "The **\\citeauthorlastnameand{shannon1948communication} entropy** $H = -\\sum_w P(w) \\log_2 P(w)$ measures the “randomness” of the distribution.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-447",
+      "quote": "Lower temperature decreases entropy (more confident), higher temperature increases it (more exploratory).",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-448",
+      "quote": "Maximum entropy $H_{\\max} = \\log_2(|V|)$ corresponds to a perfectly uniform distribution.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-449",
+      "quote": "Temperature controls the **sharpness** of the probability distribution by scaling the logits *before* the softmax.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-450",
+      "quote": "The modified softmax with temperature is:",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-451",
+      "quote": "Dividing by $T$ rescales the logit differences.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-452",
+      "quote": "When $T < 1$, the differences are *amplified*, making the distribution sharper (more deterministic).",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-453",
+      "quote": "When $T > 1$, the differences are *compressed*, making the distribution flatter (more random).",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-454",
+      "quote": "At $T = 1$, it behaves as the standard SoftMax.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-455",
+      "quote": "| Temperature | Effect | Behavior |",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-456",
+      "quote": "| $T \\to 0^+$ (Greedy) | $\\frac{z_i}{T} \\to \\pm\\infty$ | All probability mass on the argmax.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-457",
+      "quote": "| $T = 1$ (Standard) | $\\frac{z_i}{T} = z_i$ | Unmodified softmax.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-458",
+      "quote": "The model's learned distribution.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-459",
+      "quote": "| $T \\to \\infty$ (Uniform) | $\\frac{z_i}{T} \\to 0$ | All logits collapse to 0.",
+      "section": "Step-by-Step Logit Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-460",
+      "quote": "Zoom out: the full pipeline, how the model knows when to stop, and how the two operating modes differ.",
+      "section": "The Whole Machine",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-461",
+      "quote": "Here is the complete path a prompt takes through the system, from raw text to generated response:",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-462",
+      "quote": "**Tokenization**, The input string is chopped into subword tokens using BPE.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-463",
+      "quote": "Each token is mapped to an integer ID.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-464",
+      "quote": "In GPT-2's byte-level BPE, “The cat sat” becomes `[464, 3797, 3332]`.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-465",
+      "quote": "**Embedding**, Each token ID is looked up in the embedding matrix $W_E$, producing a dense vector of dimension $d_{\\text{model}}$.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-466",
+      "quote": "These vectors live in a semantic space where similar words are close together.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-467",
+      "quote": "**Positional Encoding**, A position signal is added to each embedding so the model knows the order of tokens.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-468",
+      "quote": "Without this, “dog bites man” and “man bites dog” would be identical to the model.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-469",
+      "quote": "**Transformer Layers ($N \\times$)**, Each layer applies two sub-modules, with **residual connections** so the original information is never lost:",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-470",
+      "quote": "- **Multi-Head Self-Attention:** Each token queries all others, computes relevance scores, and gathers contextual information.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-471",
+      "quote": "Multiple heads run in parallel, each specializing in different linguistic relationships (syntax, semantics, coreference).",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-472",
+      "quote": "- **Feed-Forward Network (FFN):** Each token is processed independently through an expanding activation layer (detectors) and a contracting projection layer (knowledge retrieval).",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-473",
+      "quote": "This is where memorized facts and patterns are applied.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-474",
+      "quote": "**Unembedding**, The final hidden state of the last token is multiplied by the unembedding matrix $W_U$ (often identical to $W_E$), producing a logit score for every word in the vocabulary.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-475",
+      "quote": "**Sampling**, Logits are scaled by temperature and passed through softmax to produce probabilities.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-476",
+      "quote": "A token is sampled from this distribution (greedy: pick the max; stochastic: sample proportionally).",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-477",
+      "quote": "The sampled token is appended to the input, and the process repeats from step 1 until the model emits an end-of-sequence token.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-478",
+      "quote": "Every step is differentiable, every transformation is a matrix operation, and no component has access to anything beyond the current context window.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-479",
+      "quote": "The entire architecture is a single, differentiable function $f_\\theta(\\text{prompt}) \\to \\text{next token distribution}$.",
+      "section": "How ChatGPT Actually Works: The Full Pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-480",
+      "quote": "Step 6 of the pipeline says generation runs \"until the model emits an end-of-sequence token.\" That sentence hides a genuinely interesting question: **how does the model *know* it is done?** There is no separate \"stop detector\"; stopping is just next-token prediction pointed at a special token.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-481",
+      "quote": "**The basic mechanism.** The end-of-sequence (EOS) token — the special *end* marker each tokenizer puts in its vocabulary, such as GPT-2's `<|endoftext|>` — is an ordinary member of the vocabulary.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-482",
+      "quote": "At every step the model produces a full distribution over *all* tokens, and one of those logits is for EOS.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-483",
+      "quote": "\"Stopping\" simply means that, at a natural boundary, the distribution puts **enough mass on EOS** that sampling picks it.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-484",
+      "quote": "The model learns this from the sheer fact that sequences in its training data *end*: after a complete sentence, an answer, or a list, the next token is the end marker.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-485",
+      "quote": "So the model internalizes the statistics of \"when a thought is over\" in the same way it learns everything else.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-486",
+      "quote": "**The deeper finding: it plans the shape in advance.** Stopping turns out to be *not purely local*.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-487",
+      "quote": "(\\cite[Dong et al., 2025]{dong2025planning}) showed that a simple linear probe can read the **total length of the model's future response** — along with other attributes like the multiple-choice answer it intends to give — straight out of the prompt's final hidden state, **before a single output token is emitted**.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-488",
+      "quote": "The model commits to a rough shape of its answer up front.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-489",
+      "quote": "(\\cite[Merzouk et al., 2026]{merzouk2026remaining}) sharpened this: there is a **linearly-decodable \"remaining length\" direction** that *decays* as the model generates, and it shifts at the moment the model retracts and restarts — a readable internal \"how much is left\" counter.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-490",
+      "quote": "(The honest caveat: this direction is *decodable*, which is evidence for a plan-like representation, not proof that the model causally reads it to decide.)",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-491",
+      "quote": "**The plan is installed by post-training.** A base model has essentially *no* such length plan — the same probes give near-zero or even negative $R^2$ on pre-trained weights, and strong $R^2$ only on instruction-tuned models (\\cite[Baghaei et al., 2026]{baghaei2026collapse}).",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-492",
+      "quote": "So **instruction tuning is what installs the planning structure**, and that is also why it is brittle: ban a single common word or punctuation mark and the planned response collapses by 14–48%, because competence has been coupled to narrow surface templates.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-493",
+      "quote": "Preference optimization then skews the plan further: (\\cite[Moya et al., 2026]{moya2026spurious}) show that DPO-style objectives lean on **length as a spurious reward cue** (length bias), nudging models to run longer or shorter to match the preference data rather than the task's actual need.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-494",
+      "quote": "**The limit.** The plan is an *estimate*, not an odometer.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-495",
+      "quote": "(\\cite[Xiao et al., 2026]{xiao2026length}) found models are poor at accurately measuring their *own* output length, which is why precise length control still needs explicit feedback.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-496",
+      "quote": "So stopping is best understood as a **learned distribution over the EOS token, driven by an instruction-tuned, plan-like estimate of remaining length that decays during generation** — not a hard \"I am finished\" switch.",
+      "section": "How Does the Model Know When to Stop?",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-497",
+      "quote": "At no point does the model manipulate symbols or rules, like non-connectionist AI systems tried to do.",
+      "section": "Key Intuitions about LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-498",
+      "quote": "- non-linear transformation.",
+      "section": "Key Intuitions about LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-499",
+      "quote": "Meaning emerges not from words themselves, but from how vectors **move, align, and combine** in space.",
+      "section": "Key Intuitions about LLMs",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-500",
+      "quote": "The most startling recent result is that a trained Transformer does not merely *predict* from its context — it **runs gradient descent on the examples in its prompt, right inside the forward pass**.",
+      "section": "The model as a machine that learns *inside* its forward pass",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-501",
+      "quote": "(\\cite[von Oswald et al., 2022]{vonoswald2022indc}) showed that the data transformation performed by a single linear self-attention layer is, to first order, *one step of gradient descent* on a squared-error regression loss: the attention weights play the role of a preconditioner, and the value vectors carry the residuals that the step moves along.",
+      "section": "The model as a machine that learns *inside* its forward pass",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-502",
+      "quote": "A trained model has learned to become a mesa-optimizer : hand it a few input/output pairs in its context and its forward pass takes a handful of gradient steps over them and reads off the answer.",
+      "section": "The model as a machine that learns *inside* its forward pass",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-503",
+      "quote": "That reinterprets **in-context learning** — the ability to \"learn\" a brand-new task from a handful of examples in the prompt, with no weight updates at all — as nothing mysterious: it is the same optimizer the model uses to *train itself*, reused at inference time on the prompt's own examples.",
+      "section": "The model as a machine that learns *inside* its forward pass",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-504",
+      "quote": "While the architecture is identical in both modes, the behavior of the model differs fundamentally between **inference** and **training**:",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-505",
+      "quote": "| Aspect | Inference | Training |",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-506",
+      "quote": "| **Goal** | Generate text | Update weights to minimize loss |",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-507",
+      "quote": "| **Weights** | Frozen, never change | Updated via gradient descent |",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-508",
+      "quote": "| **Dropout** | Not used in this model | Not used in this model |",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-509",
+      "quote": "| **Normalization** | LayerNorm (feature-wise, no running stats) | LayerNorm (feature-wise, no running stats) |",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-510",
+      "quote": "| **KV Cache** | Not used — the full context is recomputed every step | Not used (full sequence processed at once) |",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-511",
+      "quote": "| **Gradients** | Not computed | Computed via backpropagation |",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-512",
+      "quote": "| **Memory** | O(context²) attention matrix, recomputed each step | O(context²) attention matrix + stored activations for backprop |",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-513",
+      "quote": "| **Parallelism** | Sequential (one token at a time) | Parallel (all tokens in the batch processed simultaneously) |",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-514",
+      "quote": "| **Randomness** | Controlled by temperature / top-p | Deterministic (given the same initialization) |",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-515",
+      "quote": "**The key distinction:** During training, the model sees the entire target sequence and learns to predict each token conditioned on all previous tokens, computing gradients to update weights.",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-516",
+      "quote": "During inference, the model has no target, it generates tokens one at a time, using its own previous outputs as context for the next prediction.",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    },
+    {
+      "id": "transformer-stmt-517",
+      "quote": "This is why inference is inherently sequential while training can be parallelized across the sequence length.",
+      "section": "Inference vs. Training: Two Modes of Operation",
+      "kind": "statement"
+    }
   ]
 }

@@ -81,5 +81,2077 @@
       "citation_keys": [],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "statistics_i-stmt-1",
+      "quote": "This first statistics chapter introduces the mathematical framework for reasoning under uncertainty.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-2",
+      "quote": "The core idea: real-world data is not random noise; it follows **distributions** that we can model, sample from, and use to make decisions.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-3",
+      "quote": "By the end, you will recognize the key distributions (Normal, Bernoulli, Binomial, Chi-Square, Zipf) and understand how **statistical inference** lets us draw conclusions from samples.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-4",
+      "quote": "Artificial Intelligence is often described as “Applied Statistics”: at its core, every decision an AI makes is a calculation of likelihoods.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-5",
+      "quote": "The frameworks below come from diverse origins — games of chance, mapping the heavens — and now enable machines to learn from data.",
+      "section": "",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-6",
+      "quote": "The goal of studying distributions is not to memorize them, but to understand how large datasets behave.",
+      "section": "Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-7",
+      "quote": "Real-world data rarely matches a theoretical distribution perfectly, but studying the distributions changes how you see the data: not as isolated points, but as a cohesive whole.",
+      "section": "Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-8",
+      "quote": "In practice, many real-world datasets approximate a theoretical distribution closely enough for the model to be useful, and the statistical methods applied to them remain reliable even when the match is imperfect.",
+      "section": "Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-9",
+      "quote": "Methods used here are also applied in many areas of Machine Learning, such as **initializing neural networks**, **generating synthetic data**, **modeling uncertainty in predictions**, and **optimizing algorithms**.",
+      "section": "Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-10",
+      "quote": "Understanding distributions is a foundational skill that bridges statistical theory and practical applications in AI and data science.",
+      "section": "Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-11",
+      "quote": "Recognizing these distributions in real-world data — from telescope photons to pixel intensities in medical imaging — lets machines model uncertainty.",
+      "section": "How knowing about distributions helps in developing AI systems",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-12",
+      "quote": "Most natural phenomena are not random noise but follow mathematical patterns; by recognizing a Gaussian distribution, an AI can separate meaningful “signal” from background noise.",
+      "section": "How knowing about distributions helps in developing AI systems",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-13",
+      "quote": "For example, in autonomous driving, a sensor must decide whether a blurred shape is a pedestrian or a lens flare.",
+      "section": "How knowing about distributions helps in developing AI systems",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-14",
+      "quote": "Knowing the distribution of typical sensor errors lets the machine make a calculated “guess” rather than stalling on an exact match: abstracting the data into a probability curve is the “extra level of indirection” that, as David Wheeler is credited with saying, can solve any problem.",
+      "section": "How knowing about distributions helps in developing AI systems",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-15",
+      "quote": "These distributions also underpin the “scaling laws” that drive modern large language models.",
+      "section": "How knowing about distributions helps in developing AI systems",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-16",
+      "quote": "As described in \\citetitle{sutton2019bitter} by Rich Sutton, progress in AI comes from “general methods that leverage computation” rather than hand-coded human knowledge.",
+      "section": "How knowing about distributions helps in developing AI systems",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-17",
+      "quote": "When an AI is trained on vast datasets, it is essentially learning to map the distribution of human language; applications like predictive text and weather forecasting rely on the fact that the next word or the next storm front follows a predictable frequency distribution.",
+      "section": "How knowing about distributions helps in developing AI systems",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-18",
+      "quote": "Knowing these patterns lets developers make choices — from initializing neural networks to selecting training data — that match the variation actually present in the data.",
+      "section": "How knowing about distributions helps in developing AI systems",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-19",
+      "quote": "In \\citetitle{arsconjectandi} (\\citeyear{arsconjectandi}), \\citeauthor{arsconjectandi} defined the simplest possible random variable.",
+      "section": "The Bernoulli Distribution: The Atom of Probability",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-20",
+      "quote": "It models a single experiment with two outcomes: Success ($1$) and Failure ($0$).",
+      "section": "The Bernoulli Distribution: The Atom of Probability",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-21",
+      "quote": "It is the “atom” because all complex discrete distributions (like Binomial or Geometric) are just sequences of Bernoulli trials.",
+      "section": "The Bernoulli Distribution: The Atom of Probability",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-22",
+      "quote": "The probability $p$ is the only parameter.",
+      "section": "The Bernoulli Distribution: The Atom of Probability",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-23",
+      "quote": "If $p=0.8$, you have an $80\\%$ chance of success.",
+      "section": "The Bernoulli Distribution: The Atom of Probability",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-24",
+      "quote": "The math is expressed as:",
+      "section": "The Bernoulli Distribution: The Atom of Probability",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-25",
+      "quote": "The “Expected Value” is $E[X] = p$: for a biased coin, $p$ is the fraction of flips that land heads in the long run.",
+      "section": "The Bernoulli Distribution: The Atom of Probability",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-26",
+      "quote": "While people have rolled dice for millennia, the math of *sums* was long misunderstood.",
+      "section": "The Binomial Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-27",
+      "quote": "For centuries, gamblers thought all sums were equally likely, but they are not.",
+      "section": "The Binomial Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-28",
+      "quote": "There is only one way to get the sum 2 ($1+1$), but there are $2$ ways to get the sum $3$ ($1+2$ and $2+1$), and 3 ways to get 4 ($1+3$, $2+2$, $3+1$) and so on.",
+      "section": "The Binomial Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-29",
+      "quote": "Binomial coefficients, written as $\\binom{n}{k}$, represent the number of ways to choose $k$ successes from $n$ independent trials.",
+      "section": "The Binomial Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-30",
+      "quote": "In Pascal's Triangle, each value is the sum of the two directly above it, reflecting how independent “Bernoulli trials” (simple pass/fail events) combine into more complex patterns.",
+      "section": "The Binomial Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-31",
+      "quote": "The probability of achieving exactly $k$ successes is calculated using the Binomial Distribution formula, where the coefficient acts as a multiplier for the probability of a specific sequence:",
+      "section": "The Binomial Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-32",
+      "quote": "**The “Problem of Points” Example:**",
+      "section": "The Binomial Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-33",
+      "quote": "If two players are in a game where the first to 3 points wins, but the game is interrupted when the score is 2 to 1, Pascal and Fermat used these coefficients to determine fair prize splits.",
+      "section": "The Binomial Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-34",
+      "quote": "By looking at the triangle, they could count how many future “paths” (combinations of wins/losses) led to each player winning the overall pot.",
+      "section": "The Binomial Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-35",
+      "quote": "The earliest known mention of the differing frequencies of dice sums appears in a Latin poem called \\citetitle{devetula} (p.",
+      "section": "The Medieval Insight (c. 1250)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-36",
+      "quote": "32), whose author is unknown.",
+      "section": "The Medieval Insight (c. 1250)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-37",
+      "quote": "The poem correctly notes, for the first time, that some totals with three dice occur more often than others — the earliest recognition that dice sums are not equally likely.",
+      "section": "The Medieval Insight (c. 1250)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-38",
+      "quote": "The first systematic treatment came from **Gerolamo Cardano**, a physician and an inveterate gambler who also described the three-ring gimbal (Cardan suspension), not the universal joint/Cardan shaft named after him (\\cite{cardano_wiki}).",
+      "section": "The Gambler's Manual: Gerolamo Cardano (1564)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-39",
+      "quote": "In *\\citetitle{liberludo}* (written c.",
+      "section": "The Gambler's Manual: Gerolamo Cardano (1564)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-40",
+      "quote": "1564, published in the 1663 *Opera Omnia*; chapter 13, *On Composite Numbers Up to Six and Beyond and for Two and Three Dice*), he was probably the first to treat the **36** outcomes of two dice as equally likely, and he used this to calculate the odds for the lucky throw (\\cite{liberludo}).",
+      "section": "The Gambler's Manual: Gerolamo Cardano (1564)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-41",
+      "quote": "The context that solidified this into modern science was the **“Problem of Points.”** The **Chevalier de Méré** asked **Blaise Pascal** how to fairly split a prize pot if a game of dice is interrupted.",
+      "section": "The Great Correspondence: Pascal & Fermat (1654)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-42",
+      "quote": "Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considered the founding moment of probability theory.",
+      "section": "The Great Correspondence: Pascal & Fermat (1654)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-43",
+      "quote": "They moved beyond mere counting and used the **Binomial Coefficients** (Pascal's Triangle) to count the possible continuations of an interrupted game (\\citetitle{oeuvresdeformat}, p.",
+      "section": "The Great Correspondence: Pascal & Fermat (1654)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-44",
+      "quote": "\\citetitle{ceresimage} in \\citeyear{ceresimage}",
+      "section": "The Normal Distribution: From the Stars to AI",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-45",
+      "quote": "On January 1, 1801, the dwarf planet **Ceres** was spotted by \\citeauthor{ceresdiscovery}.",
+      "section": "The Astronomical Origin: Hunting Ceres",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-46",
+      "quote": "The find was short-lived: Ceres soon vanished into the Sun's glare, leaving astronomers with only 41 days of “noisy” and uncertain data.",
+      "section": "The Astronomical Origin: Hunting Ceres",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-47",
+      "quote": "To find it again, the world turned to **Carl Friedrich Gauß**, who solved the problem in 1801 by the method he later published in \\citetitle{gauss1809} (\\citeyear{gauss1809}, §§ 175–179, pp.",
+      "section": "The Astronomical Origin: Hunting Ceres",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-48",
+      "quote": "208–213): he considered all the observations together, since the true position must lie among them.",
+      "section": "The Astronomical Origin: Hunting Ceres",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-49",
+      "quote": "\\citealternativetitle{cerespath}",
+      "section": "The Astronomical Origin: Hunting Ceres",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-50",
+      "quote": "To find Ceres, Gauß worked from the **errors** of the measurements.",
+      "section": "The Astronomical Origin: Hunting Ceres",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-51",
+      "quote": "He assumed that while the planet follows a perfect path (green line), the telescope readings (blue dots) follow a **Bell Curve** centered on that path.",
+      "section": "The Astronomical Origin: Hunting Ceres",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-52",
+      "quote": "A fundamental rule in machine learning: **never evaluate your model on data it has already seen**.",
+      "section": "Dataset Splits: Why You Can't Test on the Same Data You Trained On",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-53",
+      "quote": "This is why datasets are split into separate subsets:",
+      "section": "Dataset Splits: Why You Can't Test on the Same Data You Trained On",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-54",
+      "quote": "* **Training Set (typically 70-80%):** Used to adjust the model's weights.",
+      "section": "Dataset Splits: Why You Can't Test on the Same Data You Trained On",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-55",
+      "quote": "The model sees this data and learns from it.",
+      "section": "Dataset Splits: Why You Can't Test on the Same Data You Trained On",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-56",
+      "quote": "* **Validation Set (typically 10-15%):** Used to tune hyperparameters (learning rate, architecture choices) and detect overfitting.",
+      "section": "Dataset Splits: Why You Can't Test on the Same Data You Trained On",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-57",
+      "quote": "The model does not learn from this data, but it influences human decisions about the model.",
+      "section": "Dataset Splits: Why You Can't Test on the Same Data You Trained On",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-58",
+      "quote": "* **Test Set (typically 10-15%):** Held back until the very end.",
+      "section": "Dataset Splits: Why You Can't Test on the Same Data You Trained On",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-59",
+      "quote": "Used only once to report final performance.",
+      "section": "Dataset Splits: Why You Can't Test on the Same Data You Trained On",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-60",
+      "quote": "If you ever use the test set to make decisions, you are cheating, and your reported accuracy will be optimistic.",
+      "section": "Dataset Splits: Why You Can't Test on the Same Data You Trained On",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-61",
+      "quote": "**Why three sets?** If you tune hyperparameters on the validation set, information about the validation set “leaks” into your model choices.",
+      "section": "Dataset Splits: Why You Can't Test on the Same Data You Trained On",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-62",
+      "quote": "You need a third, completely untouched set to get an honest measure of generalization.",
+      "section": "Dataset Splits: Why You Can't Test on the Same Data You Trained On",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-63",
+      "quote": "In small-data regimes (e.g., medical imaging with only hundreds of samples), **k-fold cross-validation** is used instead, where the data is repeatedly split into $k$ folds, and each fold takes a turn as the test set.",
+      "section": "Dataset Splits: Why You Can't Test on the Same Data You Trained On",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-64",
+      "quote": "A model is only as good as the data it is trained on.",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-65",
+      "quote": "If the training data contains historical biases, the model will learn and amplify them.",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-66",
+      "quote": "This is not a bug in the math, it is a feature of the statistical learning process: the model faithfully reproduces the patterns it observes.",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-67",
+      "quote": "**Common sources of bias in ML datasets:**",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-68",
+      "quote": "* **Historical Bias:** The data reflects existing societal inequalities.",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-69",
+      "quote": "A hiring model trained on historical hiring data will learn the gender and racial biases present in past decisions.",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-70",
+      "quote": "* **Representation Bias:** Certain groups are under-represented in the dataset.",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-71",
+      "quote": "A facial recognition system trained mostly on light-skinned faces will perform poorly on dark-skinned faces, as documented by \\citeauthor{buolamwini2018gender} in \\citeyear{buolamwini2018gender}.",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-72",
+      "quote": "* **Measurement Bias:** The features used to represent the data are noisy or systematically wrong for certain groups.",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-73",
+      "quote": "* **Label Bias:** Human annotators introduce their own subjective judgments into the training labels.",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-74",
+      "quote": "**The technical consequence:** Bias in data leads to systematically different performance across subgroups.",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-75",
+      "quote": "The model's overall accuracy may look good, but disaggregated by demographic group, it can reveal dramatic disparities.",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-76",
+      "quote": "Detecting and mitigating these biases is an active area of research in **fairness in machine learning**.",
+      "section": "Bias in Data: The Mirror of Society",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-77",
+      "quote": "The theoretical framework underlying much of supervised learning was formalized by \\citeauthor{vapnik} in the 1960s–1990s.",
+      "section": "Statistical Learning Theory and Vapnik's Contribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-78",
+      "quote": "His **Statistical Learning Theory** asks a fundamental question: given a finite set of training examples, how can we bound the error on unseen data?",
+      "section": "Statistical Learning Theory and Vapnik's Contribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-79",
+      "quote": "Three key concepts from this framework:",
+      "section": "Statistical Learning Theory and Vapnik's Contribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-80",
+      "quote": "* **VC-Dimension (Vapnik-Chervonenkis dimension):** A measure of a model's capacity or complexity.",
+      "section": "Statistical Learning Theory and Vapnik's Contribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-81",
+      "quote": "A model with higher VC-dimension can fit more complex patterns but risks overfitting.",
+      "section": "Statistical Learning Theory and Vapnik's Contribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-82",
+      "quote": "The VC-dimension of a linear classifier in $d$ dimensions is $d + 1$; for a neural network, it can be proportional to the number of parameters.",
+      "section": "Statistical Learning Theory and Vapnik's Contribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-83",
+      "quote": "* **Structural Risk Minimization (SRM):** Instead of minimizing only the training error (Empirical Risk Minimization), SRM minimizes a combination of training error and model complexity.",
+      "section": "Statistical Learning Theory and Vapnik's Contribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-84",
+      "quote": "This is the theoretical justification for regularization techniques like weight decay and dropout.",
+      "section": "Statistical Learning Theory and Vapnik's Contribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-85",
+      "quote": "* **The Bias-Variance Tradeoff:** Models with low capacity (high bias) underfit; models with high capacity (low bias, but high variance in predictions across different training sets) overfit.",
+      "section": "Statistical Learning Theory and Vapnik's Contribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-86",
+      "quote": "The optimal model balances both.",
+      "section": "Statistical Learning Theory and Vapnik's Contribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-87",
+      "quote": "A significant step toward reconciling this framework with practice: \\citeauthor{petersen2024mathdl} (\\citeyear{petersen2024mathdl}) derive generalization bounds from the covering number of the network class (Ch.\\ 14) and show that in the overparameterized regime, small weights (as initialization provides) make the relevant function class Lipschitz-bounded independently of the parameter count — so the bound no longer degrades as you add parameters (Ch.\\ 15).",
+      "section": "Statistical Learning Theory and Vapnik's Contribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-88",
+      "quote": "This is the theoretical content behind **“benign overfitting”**.",
+      "section": "Statistical Learning Theory and Vapnik's Contribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-89",
+      "quote": "Just as we learned to calculate exact probabilities with the Binomial formula $\\binom{n}{k} p^k (1-p)^{n-k}$, we can calculate with the Gauß distribution.",
+      "section": "How to Calculate with the Normal Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-90",
+      "quote": "However, there is one crucial difference: the Normal Distribution is **continuous**, so we never ask “What is the probability of *exactly* $x$?” (that is always 0 for a continuous variable).",
+      "section": "How to Calculate with the Normal Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-91",
+      "quote": "Instead, we ask: **“What is the probability that $X$ falls within a range?”**",
+      "section": "How to Calculate with the Normal Distribution",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-92",
+      "quote": "Every Normal Distribution is fully defined by just two numbers:",
+      "section": "Step 1: Know Your Parameters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-93",
+      "quote": "- **$\\mu$ (Mean):** The center of the bell curve.",
+      "section": "Step 1: Know Your Parameters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-94",
+      "quote": "- **$\\sigma$ (Standard Deviation):** The width/spread of the curve.",
+      "section": "Step 1: Know Your Parameters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-95",
+      "quote": "To look up probabilities, we convert any value $x$ into a **Z-score**, which tells us how many standard deviations $x$ is from the mean:",
+      "section": "Step 2: Standardize with the Z-Score",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-96",
+      "quote": "This transforms *any* Normal Distribution into the **Standard Normal Distribution** $\\mathcal{N}(0, 1)$, which has $\\mu = 0$ and $\\sigma = 1$.",
+      "section": "Step 2: Standardize with the Z-Score",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-97",
+      "quote": "This is the key trick: instead of needing a different table for every possible $\\mu$ and $\\sigma$, we only ever need one table.",
+      "section": "Step 2: Standardize with the Z-Score",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-98",
+      "quote": "**Why This Matters for AI: Batch Normalization**, one of the most important techniques in deep learning, is essentially computing Z-scores for every layer's activations during training.",
+      "section": "Step 2: Standardize with the Z-Score",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-99",
+      "quote": "At each layer, the network computes:",
+      "section": "Step 2: Standardize with the Z-Score",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-100",
+      "quote": "This is the same standardization Pearson used in his biometric work to make measurements on different scales comparable.",
+      "section": "Step 2: Standardize with the Z-Score",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-101",
+      "quote": "Without it, the activations in deep networks tend to drift toward extreme values (a problem called **internal covariate shift**), causing gradients to vanish or explode and training to stall.",
+      "section": "Step 2: Standardize with the Z-Score",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-102",
+      "quote": "By standardizing activations back to $\\mu = 0, \\sigma = 1$ at every layer, the network stays in a regime where learning is stable and fast.",
+      "section": "Step 2: Standardize with the Z-Score",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-103",
+      "quote": "Layer Normalization, used in every Transformer (including GPT), applies the same principle.",
+      "section": "Step 2: Standardize with the Z-Score",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-104",
+      "quote": "The function $\\Phi(z)$ answers one simple question: **“What percentage of all values fall to the LEFT of $z$ on the bell curve?”**",
+      "section": "Step 3: Use the $\\Phi$-Table (CDF)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-105",
+      "quote": "The formal equation for this is:",
+      "section": "Step 3: Use the $\\Phi$-Table (CDF)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-106",
+      "quote": "This looks intimidating, but here's what it actually says in plain words:",
+      "section": "Step 3: Use the $\\Phi$-Table (CDF)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-107",
+      "quote": "- The $\\int$ symbol (called an **integral**) just means **“add up the area.”** It's the same idea as counting squares on graph paper under a curve, you slice the area into thin strips and add them all together.",
+      "section": "Step 3: Use the $\\Phi$-Table (CDF)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-108",
+      "quote": "- The $-\\infty$ to $z$ at the bottom and top of $\\int$ means: start from the far left (negative infinity) and stop at the point $z$.",
+      "section": "Step 3: Use the $\\Phi$-Table (CDF)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-109",
+      "quote": "- The $e^{-\\frac{t^2}{2}}$ part is the **shape of the bell curve** itself; it is what makes it tall in the middle and flat at the edges.",
+      "section": "Step 3: Use the $\\Phi$-Table (CDF)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-110",
+      "quote": "- The $\\frac{1}{\\sqrt{2\\pi}}$ in front is just a **scaling factor** that makes the total area under the entire curve equal exactly $1$ (i.e., $100\\%$).",
+      "section": "Step 3: Use the $\\Phi$-Table (CDF)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-111",
+      "quote": "So the whole equation says: **“Take the bell curve, and measure the area from the far left up to the point $z$.",
+      "section": "Step 3: Use the $\\Phi$-Table (CDF)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-112",
+      "quote": "That area is your probability.”**",
+      "section": "Step 3: Use the $\\Phi$-Table (CDF)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-113",
+      "quote": "Unlike the Binomial formula, where you get an exact answer with multiplication, this integral has **no neat algebraic shortcut**: it cannot be simplified into a clean fraction or product.",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-114",
+      "quote": "But it can still be calculated — by **approximating** it numerically.",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-115",
+      "quote": "The idea is simple: **slice the area under the curve into many thin rectangles, calculate the area of each one, and add them up.** The thinner the slices, the more accurate your answer.",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-116",
+      "quote": "Let's calculate $\\Phi(1.0)$ step by step, the probability that $Z \\leq 1.0$:",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-117",
+      "quote": "**Step A: Define the bell curve function**",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-118",
+      "quote": "This is just a formula you plug numbers into.",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-119",
+      "quote": "**Step B: Slice the area into rectangles**",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-120",
+      "quote": "We can't start at $-\\infty$, but the curve is essentially zero for $z < -4$, so we start there.",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-121",
+      "quote": "Let's use a step size of $\\Delta t = 0.5$ (coarse, for illustration):",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-122",
+      "quote": "With our coarse $\\Delta t = 0.5$ slices the running total is a left-rectangle estimate of $\\Phi(t+\\Delta t)$, so the row $t=1.0$ (total $\\approx 0.90$) estimates $\\Phi(1.5)$; the true $\\Phi(1.5)$ is $0.9332$.",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-123",
+      "quote": "To estimate $\\Phi(1.0)$, read the row $t=0.5$: $\\approx 0.78$, against the true $0.8413$.",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-124",
+      "quote": "The difference exists because the rectangles are too wide to follow the curve closely.",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-125",
+      "quote": "**Step C: Make the slices thinner**",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-126",
+      "quote": "If we use $\\Delta t = 0.01$ instead of $0.5$, we get $\\Phi(1.0) \\approx 0.8413$, matching the table to 4 decimal places.",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-127",
+      "quote": "Use $\\Delta t = 0.001$ and you get even more precision.",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-128",
+      "quote": "This is exactly what Gauß did (by hand!), and what every calculator does today.",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-129",
+      "quote": "The whole process in one line:",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-130",
+      "quote": "The $\\int$ symbol in the original equation is the limit of this sum as $\\Delta t$ shrinks to zero: **the integral is a sum of rectangles, taken to the limit.**",
+      "section": "How to actually calculate $\\Phi(z)$, the way Gauß did it",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-131",
+      "quote": "| | Binomial | Normal (Gauß) |",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-132",
+      "quote": "| **How you calculate** | Exact: multiply factorials and powers | Approximate: sum up thin rectangles |",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-133",
+      "quote": "| **Why** | Finite number of discrete outcomes | Infinite smooth curve, no shortcut formula |",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-134",
+      "quote": "| **Precision** | Perfect every time | As precise as you want (thinner slices = better) |",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-135",
+      "quote": "| **Lookup tool** | Pascal's Triangle | $\\Phi$-Table (pre-computed rectangle sums) |",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-136",
+      "quote": "This is why $\\Phi$-tables exist: Gauß and his successors did the tedious rectangle-summing once, for every $z$ from $-3.49$ to $3.49$ in steps of $0.01$, and published the results so nobody else had to repeat the work.",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-137",
+      "quote": "Here are the most important values:",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-138",
+      "quote": "**Reading the table:** If $\\Phi(1.0) = 0.8413$, that means $84.13\\%$ of all values in a standard normal distribution are less than or equal to $1.0$.",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-139",
+      "quote": "The remaining $1 - 0.8413 = 15.87\\%$ are above it.",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-140",
+      "quote": "Think of it like this: imagine you filled the entire area under the bell curve with sand.",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-141",
+      "quote": "The total sand is exactly $1$ (i.e., $100\\%$).",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-142",
+      "quote": "$\\Phi(z)$ tells you what **fraction of the total sand** sits to the left of the point $z$.",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-143",
+      "quote": "That fraction *is* the probability.",
+      "section": "The key difference from the Binomial",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-144",
+      "quote": "Real $\\Phi$-tables are much larger than the one above, they typically list values for every $z$ from $-3.49$ to $3.49$ in steps of $0.01$.",
+      "section": "But what if your $z$ is not in the table?",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-145",
+      "quote": "For example, to look up $\\Phi(1.53)$:",
+      "section": "But what if your $z$ is not in the table?",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-146",
+      "quote": "Go to the row for $z = 1.5$",
+      "section": "But what if your $z$ is not in the table?",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-147",
+      "quote": "Go to the column for $0.03$",
+      "section": "But what if your $z$ is not in the table?",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-148",
+      "quote": "Read the value: $\\Phi(1.53) = 0.9370$",
+      "section": "But what if your $z$ is not in the table?",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-149",
+      "quote": "For values between table entries, you can **interpolate** (take the average of the two nearest values).",
+      "section": "But what if your $z$ is not in the table?",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-150",
+      "quote": "Or, in practice, you use a calculator, which is doing the exact same rectangle-summing, just very fast.",
+      "section": "But what if your $z$ is not in the table?",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-151",
+      "quote": "Suppose exam scores follow $X \\sim \\mathcal{N}(70, 10^2)$ (mean $\\mu = 70$, standard deviation $\\sigma = 10$).",
+      "section": "Worked Example: Exam Scores",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-152",
+      "quote": "**Question:** What percentage of students scored between 60 and 85?",
+      "section": "Worked Example: Exam Scores",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-153",
+      "quote": "**Answer:** Approximately **77.5%** of students scored between 60 and 85.",
+      "section": "Worked Example: Exam Scores",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-154",
+      "quote": "A quick mental shortcut that follows directly from the $\\Phi$-table:",
+      "section": "The Empirical Rule (68-95-99.7)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-155",
+      "quote": "This is the probabilistic logic that made predictions like Gauß's 1801 method of relocating the lost planet Ceres possible: a least-squares estimate comes with a quantified uncertainty, so the astronomers knew within a small region where to point their telescopes.",
+      "section": "The Empirical Rule (68-95-99.7)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-156",
+      "quote": "| **Type** | Discrete (counting) | Continuous (measuring) |",
+      "section": "Comparison: Binomial vs. Gauß Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-157",
+      "quote": "| **Question** | “Exactly $k$ successes?” | “Within a range $[a, b]$?” |",
+      "section": "Comparison: Binomial vs. Gauß Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-158",
+      "quote": "| **Tool** | $\\binom{n}{k} p^k (1-p)^{n-k}$ | $\\Phi(z_b) - \\Phi(z_a)$ |",
+      "section": "Comparison: Binomial vs. Gauß Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-159",
+      "quote": "| **Key Step** | Count combinations | Standardize to $z$ |",
+      "section": "Comparison: Binomial vs. Gauß Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-160",
+      "quote": "| **Lookup** | Pascal's Triangle | $\\Phi$-Table |",
+      "section": "Comparison: Binomial vs. Gauß Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-161",
+      "quote": "As $n$ grows large, the Binomial Distribution itself approaches the Normal Distribution (this is exactly what the Central Limit Theorem below demonstrates).",
+      "section": "Comparison: Binomial vs. Gauß Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-162",
+      "quote": "So the Gauß curve is not a replacement for the Binomial; it is its **natural limit**.",
+      "section": "Comparison: Binomial vs. Gauß Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-163",
+      "quote": "**Try it yourself:** Enter a Normal Distribution and a range to calculate the probability.",
+      "section": "Comparison: Binomial vs. Gauß Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-164",
+      "quote": "The shaded area under the curve shows your answer.",
+      "section": "Comparison: Binomial vs. Gauß Calculation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-165",
+      "quote": "Gauß solved the probable position of Ceres by treating every measurement as a composite of a “True Path” and random error.",
+      "section": "The Mathematical Foundation: The Law of Errors",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-166",
+      "quote": "He realized that the problem was “more than determined” ($n > v$); when you have more observations than variables, a perfect fit is impossible because human observation is never free from error.",
+      "section": "The Mathematical Foundation: The Law of Errors",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-167",
+      "quote": "For this, he used the **Method of Least Squares**: instead of a line passing through every noisy data point, he sought the most probable path — the one that minimizes the sum of the squares of the errors.",
+      "section": "The Mathematical Foundation: The Law of Errors",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-168",
+      "quote": "Legendre had published the method first in 1805; Gauss maintained he had used it since 1795 and published his account in *Theoria motus* (1809) (\\cite{legendre1805}; \\cite{gauss1809}).",
+      "section": "The Mathematical Foundation: The Law of Errors",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-169",
+      "quote": "The **Central Limit Theorem** is the bridge between randomness and order.",
+      "section": "The Central Limit Theorem (CLT)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-170",
+      "quote": "It explains why, even when individual events are chaotic or “flat,” their collective averages inevitably form the **Normal Distribution** (the “Bell Curve”).",
+      "section": "The Central Limit Theorem (CLT)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-171",
+      "quote": "De Moivre first proved the binomial case in the 1730s; \\citeauthor{laplace1810clt} generalized it to sums of independent variables in \\citeyear{laplace1810clt}.",
+      "section": "The Central Limit Theorem (CLT)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-172",
+      "quote": "The first version of the CLT came out of the eighteenth-century analysis of games of chance; **\\citeauthor{laplace1810clt}** generalized it in \\citeyear{laplace1810clt}, in the context of the “Problem of Errors” in astronomy.",
+      "section": "The Central Limit Theorem (CLT)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-173",
+      "quote": "Astronomers of the era faced a dilemma: every measurement taken via telescope or pendulum was slightly “noisy” due to atmospheric disturbances or human imperfection.",
+      "section": "The Central Limit Theorem (CLT)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-174",
+      "quote": "Laplace proved that the **average** of these independent errors follows a bell curve, whatever the shape of the individual error distribution, provided its variance is finite.",
+      "section": "The Central Limit Theorem (CLT)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-175",
+      "quote": "By aggregating many imprecise data points, one can mathematically “filter” the noise to recover the true position of a celestial body — a method that remains the foundation for how machines learn from “imperfect” real-world data.",
+      "section": "The Central Limit Theorem (CLT)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-176",
+      "quote": "**Individual Randomness**: A single die follows a **Uniform Distribution**; every face ($1$ to $6$) has an equal $1/6$ probability.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-177",
+      "quote": "**Aggregation**: When you roll $n$ dice and calculate their **average**, the probability shifts.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-178",
+      "quote": "It is much more likely to get an average near $3.5$ than to roll all $1$s or all $6$s.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-179",
+      "quote": "**The Convergence**: As $n$ increases, the distribution of these averages tightens around the mean ($\\mu = 3.5$).",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-180",
+      "quote": "**The Red Line**: This represents the **Probability Density Function (PDF)** for a Normal Distribution, calculated as:",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-181",
+      "quote": "where the standard deviation $\\sigma$ decreases as more dice are added ($\\sigma = \\sqrt{\\frac{35}{12n}}$).",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-182",
+      "quote": "* **Adjust $n$**: Choose how many dice to roll at once.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-183",
+      "quote": "Higher $n$ creates a thinner, sharper curve.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-184",
+      "quote": "* **Accrue Data**: Click “Roll” repeatedly.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-185",
+      "quote": "The blue bars represent your real-world samples, while the red line shows the mathematical ideal.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-186",
+      "quote": "* **Reset**: Clear the history to start a new experiment with a different $n$.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-187",
+      "quote": "**Adrien-Marie Legendre** \\citeyear{legendre1805} published the method first, but **Carl Friedrich Gauß** \\citeyear{gauss1809} proved why it works: he showed that if measurement errors follow a **Normal Distribution**, the least-squares estimate is the most probable one.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-188",
+      "quote": "The Normal Distribution, or Bell Curve, emerges from the **Central Limit Theorem**, the bridge between individual randomness and collective order: while a single event might be unpredictable, the average of many independent trials clusters around a central mean, forming the symmetrical shape.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-189",
+      "quote": "Historically, **Carl Friedrich Gauß** used it to filter “noise” from astronomical data, and **Laplace** to quantify the uncertainty of estimates.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-190",
+      "quote": "In modern AI it is foundational: it lets machines separate meaningful “signals” from background noise, and it is the standard choice for initializing the neural networks that power large language models.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-191",
+      "quote": "**Example:** If you roll a single die, the results are flat (Uniform Distribution), but as you increase the number of dice ($n$) and track their average, the distribution tightens and transforms into a smooth Bell Curve centered at 3.5.",
+      "section": "The Mechanics of the Simulation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-192",
+      "quote": "When we have “noisy” data points, we find the best-fitting line by minimizing the sum of the squares of the distances between the data and the line.",
+      "section": "The Principle of Least Squares",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-193",
+      "quote": "* **The Residual:** The distance between the “Truth” and the “Observation.”",
+      "section": "The Principle of Least Squares",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-194",
+      "quote": "* **Squaring the Error:** This ensures that large errors are punished more severely than small ones (a core principle of modern Loss Functions).",
+      "section": "The Principle of Least Squares",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-195",
+      "quote": "* **The Normal Link:** Gauß proved that if your errors are distributed as $\\mathcal{N}(0, \\sigma^2)$, then the line that minimizes these squares is the **Maximum Likelihood Estimate**.",
+      "section": "The Principle of Least Squares",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-196",
+      "quote": "While the Normal Distribution describes the “average” person, **Emil Gumbel** (1958) wanted to describe the “exceptional” event.",
+      "section": "The Gumbel Distribution: The Math of Disasters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-197",
+      "quote": "If you record the maximum river level every year for 50 years, those maximums will not follow a Bell Curve; they follow a Gumbel Distribution.",
+      "section": "The Gumbel Distribution: The Math of Disasters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-198",
+      "quote": "It is **asymmetrical** (skewed): the right tail, representing extreme “worst-case” values, decays much more slowly than the left tail.",
+      "section": "The Gumbel Distribution: The Math of Disasters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-199",
+      "quote": "- **$\\mu$ (Location):** Where the “most likely” extreme value sits.",
+      "section": "The Gumbel Distribution: The Math of Disasters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-200",
+      "quote": "- **$\\beta$ (Scale):** How spread out the extreme values are (the width of the disaster tail).",
+      "section": "The Gumbel Distribution: The Math of Disasters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-201",
+      "quote": "**Why This Matters for AI:** The Gumbel distribution is the secret ingredient behind the **Gumbel-Softmax trick** (also called the Concrete distribution).",
+      "section": "The Gumbel Distribution: The Math of Disasters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-202",
+      "quote": "In neural networks, we often need to *sample* from a categorical distribution (e.g., “pick one of 50,000 tokens”), but sampling is a discrete operation that breaks gradient-based training.",
+      "section": "The Gumbel Distribution: The Math of Disasters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-203",
+      "quote": "The trick works by adding Gumbel-distributed noise to the logits before applying softmax; this creates a differentiable approximation of discrete sampling.",
+      "section": "The Gumbel Distribution: The Math of Disasters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-204",
+      "quote": "It is how **Variational Autoencoders (VAEs)** with discrete latent variables and certain **reinforcement learning** methods that use straight-through estimators remain trainable end-to-end.",
+      "section": "The Gumbel Distribution: The Math of Disasters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-205",
+      "quote": "The same distribution that predicts 100-year floods now enables machines to “choose” while still learning from their choices.",
+      "section": "The Gumbel Distribution: The Math of Disasters",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-206",
+      "quote": "In \\citeyear{poisson}, **\\citeauthor{poisson}** published \\citetitle{poisson}, a broad work on judicial probability that included (in §§ 81–82, pp.",
+      "section": "The Poisson Distribution: The Law of Rare Events",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-207",
+      "quote": "205–207) a derivation of the limit of the Binomial distribution when the number of trials is very large ($n \\to \\infty$) and the probability is very small ($p \\to 0$).",
+      "section": "The Poisson Distribution: The Law of Rare Events",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-208",
+      "quote": "It became known as the **“Law of Small Numbers”** after \\citeauthor{gesetzderkleinenzahlen} applied it to the number of Prussian soldiers killed by horse kicks (p.",
+      "section": "The Poisson Distribution: The Law of Rare Events",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-209",
+      "quote": "23f, §12) — events that are rare but occur at a constant average rate $\\lambda$.",
+      "section": "The Poisson Distribution: The Law of Rare Events",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-210",
+      "quote": "Where $\\lambda$ represents the average number of events in a given interval.",
+      "section": "The Poisson Distribution: The Law of Rare Events",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-211",
+      "quote": "In modern AI, this is used to model everything from website traffic spikes to the arrival of tokens in a sequence.",
+      "section": "The Poisson Distribution: The Law of Rare Events",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-212",
+      "quote": "**Why This Matters for AI:** The Poisson distribution is used to model **token arrival rates in streaming and real-time AI systems**.",
+      "section": "The Poisson Distribution: The Law of Rare Events",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-213",
+      "quote": "When an LLM serves thousands of users simultaneously, the requests hitting the server per second follow a Poisson process, rare per individual user, but constant in aggregate.",
+      "section": "The Poisson Distribution: The Law of Rare Events",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-214",
+      "quote": "Understanding $\\lambda$ allows engineers to provision GPU capacity, set queue depths, and design auto-scaling policies.",
+      "section": "The Poisson Distribution: The Law of Rare Events",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-215",
+      "quote": "The same math Bortkiewicz used to count horse-kick fatalities now underlies how many inference servers a large provider spins up at peak hours.",
+      "section": "The Poisson Distribution: The Law of Rare Events",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-216",
+      "quote": "Before statistics was a neutral tool in a mathematician's hand, it was an instrument of the **state** — a way to know a population well enough to tax it, mobilize it, and govern it.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-217",
+      "quote": "Its origins are less mathematical than you might expect.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-218",
+      "quote": "The first step was to *count* people.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-219",
+      "quote": "In 1662, the London haberdasher John Graunt took the city's weekly Bills of Mortality — the death records the churches kept for burial fees — and turned them into a model.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-220",
+      "quote": "From a handful of parish records he estimated the size of the whole city, separated plague deaths from ordinary causes, and built what we would now call a **life table**: the probability of surviving to each age \\cite[Graunt, *Bills of Mortality* (1662)]{graunt1662}.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-221",
+      "quote": "This was the birth of **demography**, then known as *political arithmetic* — using numbers to understand a political body, not a probability.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-222",
+      "quote": "\\marginfig{john_graunt.png}{John Graunt (1620–1674), father of demography.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-223",
+      "quote": "Public domain (book illustration).}",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-224",
+      "quote": "The second step was to find the *average*.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-225",
+      "quote": "\\citeauthor{quetelet1835} (\\citeyear{quetelet1835}), a Belgian astronomer turned statistician, argued that human behavior obeys **social physics** as surely as weather does: crime rates, marriage ages, even suicide counts fluctuate around a stable mean.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-226",
+      "quote": "His device was the **l'homme moyen**, the *average man* — a hypothetical person defined by the mean value of every measured trait \\cite[Quetelet, *social physics* (1835)]{quetelet1835}.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-227",
+      "quote": "The average man was a **model of the population**, and once you have one, you can sort everyone by their deviation from it.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-228",
+      "quote": "(That machinery now underlies every \"typical user\" assumption and every outlier-detection step in a data pipeline.)",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-229",
+      "quote": "\\marginfig{adolphe_quetelet.jpg}{Adolphe Quetelet (1796–1874), inventor of the \"average man\".",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-230",
+      "quote": "Public domain (Demannez engraving).}",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-231",
+      "quote": "Here is the part most textbooks skip.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-232",
+      "quote": "The man who carried the average-man idea into its most consequential — and most troubling — application was \\cite[Francis Galton]{galton_eugenics}, and the data that produced your linear regression was a question of *breeding*.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-233",
+      "quote": "Galton, an inventor, an explorer, and Darwin's cousin, asked how strongly traits like height are **passed from parent to child**.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-234",
+      "quote": "Measuring hundreds of families, he found that tall parents' children tend to be shorter than them, and short parents' taller: offspring **regress toward the mean** \\cite[regression to the mean, from Galton's height data]{galton}.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-235",
+      "quote": "He coined the word **eugenics** in 1883, and he built this machinery to study hereditary variation with the explicit aim of *improving* — and later *controlling* — the human stock \\cite[Francis Galton (eugenics)]{galton_eugenics}.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-236",
+      "quote": "Linear regression was, in origin, a tool for measuring the transmission of traits across generations.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-237",
+      "quote": "\\marginfig{sir_francis_galton.jpg}{Francis Galton (1822–1911): origin of regression — and of eugenics.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-238",
+      "quote": "Public domain (Oakley, NPG).}",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-239",
+      "quote": "That history does not invalidate the mathematics — least squares is least squares regardless of who first applied it — but it belongs in the prehistory, not a footnote: **statistics was invented, in part, as a state technique for ranking populations**.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-240",
+      "quote": "The next section is that same data in Pearson's hands: parent-and-child heights, turned into a correlation coefficient.",
+      "section": "Statistics as a state technique: from mortality tables to the average man",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-241",
+      "quote": "In 1801, \\citeauthor{gauss1809} used least squares to find a planet; in 1895, \\citeauthor{pearson1895correlation} used correlation to study human heredity.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-242",
+      "quote": "Building on data originally collected by \\citeauthor{galton} — heights of parents and children in some 200 families — Pearson answered a fundamental question: *How much does one variable actually tell us about another?*",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-243",
+      "quote": "**The “Scale” Problem:** Pearson noticed that while a father's height clearly influenced his son's, the raw data was messy.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-244",
+      "quote": "If you measured the father in inches and the son in centimeters, the **Covariance** (the shared direction) would change purely because of the units.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-245",
+      "quote": "Pearson formalized the **Correlation Coefficient ($r$)**; the coefficient itself had been derived by Bravais (1846) and correlation developed by Galton (1888) (\\cite{karl_pearson_wiki}; \\cite{pearson1895correlation}).",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-246",
+      "quote": "By dividing the covariance by the product of both standard deviations ($\\sigma_X \\sigma_Y$), he “standardized” the relationship.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-247",
+      "quote": "This creates a pure number, independent of units, between **-1.0 and +1.0**.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-248",
+      "quote": "* **The Shared Signal**: He found a correlation of **$r \\approx 0.5$** for height: a strong link, but not a 1:1 “perfect” copy.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-249",
+      "quote": "* **Regression to the Mean**: He observed that exceptionally tall fathers often had sons who were slightly shorter (closer to the average), and vice versa.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-250",
+      "quote": "* **Modern AI Utility**: In Machine Learning, we use Pearson's $r$ for **Feature Selection**.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-251",
+      "quote": "If two inputs (like “Price in USD” and “Price in EUR”) have an $r$ of 1.0, they are “collinear.” To an AI, this is redundant noise; we drop one to prevent the model from becoming unstable.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-252",
+      "quote": "**Why This Matters for AI:** **Cosine similarity** in embedding spaces is a normalized correlation, and it is how **semantic search** works.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-253",
+      "quote": "When you type a query into a search engine powered by embeddings, both your query and every document are converted into high-dimensional vectors.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-254",
+      "quote": "The system then computes:",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-255",
+      "quote": "This is the same idea as Pearson's $r$, applied without centering: the dot product in the numerator captures the “shared signal”, while dividing by the magnitudes removes the effect of scale.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-256",
+      "quote": "Pearson's $r$ is the cosine of the *mean-centered* vectors; cosine similarity is the cosine of the raw vectors.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-257",
+      "quote": "A cosine similarity of $1.0$ means the vectors point in the same direction (semantically identical), $0$ means orthogonal (unrelated), and $-1$ means opposite.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-258",
+      "quote": "This is why “king” and “monarch” score high similarity despite being different strings: their embedding vectors, shaped by billions of training examples, point in nearly the same direction.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-259",
+      "quote": "Pearson's standardization now underlies every RAG pipeline, recommendation engine, and vector database in modern AI.",
+      "section": "Pearson's Biological Link: The Father-Son Study",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-260",
+      "quote": "Z-scores standardize a value to the standard Normal:",
+      "section": "Standardizing: Z-Scores & The Pearson Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-261",
+      "quote": "A value with $z = 1.5$ is 1.5 standard deviations above the mean.",
+      "section": "Standardizing: Z-Scores & The Pearson Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-262",
+      "quote": "By convention, $|z| > 2$ is “unusual” and $|z| > 3$ is “rare”.",
+      "section": "Standardizing: Z-Scores & The Pearson Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-263",
+      "quote": "**Pearson's problem**: how do you standardize when you don't know $\\mu$ and $\\sigma$?",
+      "section": "Standardizing: Z-Scores & The Pearson Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-264",
+      "quote": "Replace them with sample estimates $\\bar x$ and $s$.",
+      "section": "Standardizing: Z-Scores & The Pearson Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-265",
+      "quote": "The result is approximately standard Normal by the CLT.",
+      "section": "Standardizing: Z-Scores & The Pearson Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-266",
+      "quote": "In machine learning, **batch normalization** and **layer normalization** are continuous z-scoring applied to activations.",
+      "section": "Standardizing: Z-Scores & The Pearson Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-267",
+      "quote": "This is what makes training deep networks tractable.",
+      "section": "Standardizing: Z-Scores & The Pearson Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-268",
+      "quote": "The chi-square distribution arises as the sum of $k$ squared standard Normal variables:",
+      "section": "Chi-Square ($\\chi^2$): The Test of Independence",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-269",
+      "quote": "It has one parameter, $k$ (degrees of freedom), and is **asymmetric**, bounded below at 0, with a long right tail.",
+      "section": "Chi-Square ($\\chi^2$): The Test of Independence",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-270",
+      "quote": "The chi-square statistic measures how far observed counts are from expected counts:",
+      "section": "The Equation of “Surprise”",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-271",
+      "quote": "where $O_i$ is observed count and $E_i$ is expected count under the null hypothesis.",
+      "section": "The Equation of “Surprise”",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-272",
+      "quote": "Small $\\chi^2$ = data consistent with hypothesis; large $\\chi^2$ = data inconsistent.",
+      "section": "The Equation of “Surprise”",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-273",
+      "quote": "For a test with $k = 2$ categories and $\\alpha = 0.05$ significance level, the critical value is $\\chi^2_{1, 0.05} = 3.841$.",
+      "section": "Why 3.84?",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-274",
+      "quote": "This is the **magic number** for the famous “p < 0.05” threshold.",
+      "section": "Why 3.84?",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-275",
+      "quote": "If your $\\chi^2$ exceeds 3.84, you reject the null hypothesis at the 5% level.",
+      "section": "Why 3.84?",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-276",
+      "quote": "The 3.84 comes from inverting the chi-square CDF at the 95th percentile with 1 degree of freedom:",
+      "section": "Why 3.84?",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-277",
+      "quote": "For $k$ degrees of freedom and significance level $\\alpha$:",
+      "section": "The General Critical Value Equation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-278",
+      "quote": "(where $\\text{icdf}$ is the inverse CDF).",
+      "section": "The General Critical Value Equation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-279",
+      "quote": "Tables or software give the values.",
+      "section": "The General Critical Value Equation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-280",
+      "quote": "The error function is closely related to the Normal distribution:",
+      "section": "Deep Dive: The Error Function ($erf$)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-281",
+      "quote": "It has no closed form, it must be computed numerically or via series.",
+      "section": "Deep Dive: The Error Function ($erf$)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-282",
+      "quote": "Its derivative is $\\frac{2}{\\sqrt{\\pi}} e^{-x^2}$, a scaled Gaussian.",
+      "section": "Deep Dive: The Error Function ($erf$)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-283",
+      "quote": "The complementary error function $\\text{erfc}(x) = 1 - \\text{erf}(x)$ appears in diffusion models (see the Diffusion chapter), where the noise schedule often involves erfc.",
+      "section": "Deep Dive: The Error Function ($erf$)",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-284",
+      "quote": "You now hold both ingredients — a standard Normal in the numerator, a $\\chi^2$ in the denominator — for the most-used significance test in science.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-285",
+      "quote": "Its origin is one of the strangest in the history of statistics: not a university, but an Irish **brewery**.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-286",
+      "quote": "In \\citeyear{student1908probableerror}, the journal *Biometrika* published \"The Probable Error of a Mean\" under the pseudonym **\"Student\"** \\cite{student1908probableerror}.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-287",
+      "quote": "The author was **William Sealy Gosset** (1876–1937), a chemist who joined the Arthur Guinness & Son brewery in Dublin in 1899 and spent his whole career there \\cite{pearson1990studentbio}.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-288",
+      "quote": "Guinness was the world's largest brewery, and its quality control had grown beyond the eye and the nose: to judge a shipment of barley, malt, or hops from a **small sample** — testing the whole harvest was too costly and too destructive.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-289",
+      "quote": "In an internal report from 1904 he noticed that the usual \"law of error\" machinery was unreliable with only a handful of observations, and in 1906–07 the company sent him for two terms to **Karl Pearson's** Biometric Laboratory in London \\cite{studentstest_wiki}.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-290",
+      "quote": "Gosset's problem: the Z-score trick above is only approximately right, because the true $\\sigma$ is unknown and the sample standard deviation $s$ standing in for it is itself a noisy estimate.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-291",
+      "quote": "He worked out what happens when you divide a standard Normal $Z$ by the square root of an independent $\\chi^2$ variable with $\\nu$ degrees of freedom:",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-292",
+      "quote": "The result is the **t-distribution**: bell-shaped like the Normal, but with **heavier tails** — with little data, an extreme sample mean is more plausible, so a larger deviation is needed before a difference counts as \"real\".",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-293",
+      "quote": "As $n$ grows, $t$ converges to the Normal; the brewery's small-sample correction dissolves into the bell curve you already know.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-294",
+      "quote": "(The shape itself was older — it had appeared in 1876 as a posterior distribution and in Pearson's 1895 Type IV family — but the test as a working tool is Gosset's.)",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-295",
+      "quote": "The pseudonym had a commercial reason: after one of the lab's papers revealed details that might serve competitors, Guinness forbade its staff from mentioning beer, the brewery, or their real names in print \\cite{ziliak2008guinnessometrics}.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-296",
+      "quote": "The method therefore carried a false name for a century.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-297",
+      "quote": "It stayed obscure until **Ronald Fisher** — whom Gosset corresponded with in more than 150 letters between 1912 and 1934 — recognized what he had done: in a 1912 letter he pointed out that the scaling should use degrees of freedom, the corrected **Student's t** tables appeared in a 1925 special issue of *Metron*, and Fisher's applications of the test to regression appeared in the same volume \\cite{studentstest_wiki}.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-298",
+      "quote": "Fisher called it a \"logical revolution\"; Gosset's dry reply to an admirer was: \"Fisher would have discovered it all anyway.\" The brewery's barley trials also seeded the field's first great design debate — Gosset's **balanced** layouts (matching plots by soil and climate) against Fisher's **randomization**, a rivalry that shaped experimental design for decades \\cite{ziliak2008guinnessometrics}.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-299",
+      "quote": "**Why it matters for AI:** the t-test (and Welch's variant for unequal variances) is the workhorse of **model comparison** — \"is variant A really better than B, or is the difference noise?\" — and of testing whether individual regression coefficients are significant.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-300",
+      "quote": "Every time a team compares two models on a holdout set, or decides whether a new feature \"helps\", this is the arithmetic doing the accounting, a century after it was invented to judge a handful of barley samples \\cite{murtagh2024guinness}.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-301",
+      "quote": "And the Poisson connection is not coincidental: in 1907, \"Student\" had already published a counting-paper that unknowingly **rediscovered the Poisson distribution** you met earlier in this chapter \\cite{student1907haemocytometer}.",
+      "section": "The t-Test: A Dublin Brewery's Answer to Small Samples",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-302",
+      "quote": "Testing a difference is only half the discipline.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-303",
+      "quote": "The other half — the one that actually *creates* trustworthy evidence — is **designing an experiment** that produces a difference you can trust.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-304",
+      "quote": "That design was invented in three stages, and each is a direct ancestor of something you do in ML.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-305",
+      "quote": "The first stage was the **control group**.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-306",
+      "quote": "In 1747, the Royal Navy surgeon James Lind split twelve scorbutic sailors on the warship *Salisbury* into pairs, each pair given a different treatment — one pair took two oranges and a lemon a day.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-307",
+      "quote": "Within days, one of them was fit for duty and the other \"almost recovered\"; the pair on cider also improved, but the four other pairs — vitriol, vinegar, sea-water, and a balsam-of-Peru/garlic/myrrh/mustard/radish mixture — showed no improvement at all \\cite[Lind, *A Treatise of the Scurvy* (1753)]{lind1747scurvy} \\cite{scurvy_wiki}.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-308",
+      "quote": "Nobody *proved* citrus cured scurvy (the sample was tiny), but the **design** — pair the patients, give different treatments, compare — is the exact shape of a control group.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-309",
+      "quote": "\\marginfig{james_lind.jpg}{James Lind (1716–1794), whose 1747 scurvy trial was among the first controlled trials.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-310",
+      "quote": "Public domain (Chalmers, 1783).}",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-311",
+      "quote": "The second stage, and the one that matters most, was **randomization**, and it came from \\cite[Ronald Fisher, *The Design of Experiments* (1935)]{fisher1935design}.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-312",
+      "quote": "The problem Lind faced but could not fully solve: even with pairs, the two patients might differ in age, diet, or constitution, so *who* receives which treatment leaks into the comparison.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-313",
+      "quote": "Fisher's answer was to **assign treatments by chance**.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-314",
+      "quote": "Randomization does not remove hidden confounders; it *distributes* them across the groups on average, so the only systematic difference between the groups is the treatment itself.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-315",
+      "quote": "The book gave the null hypothesis its canonical exposition; randomization had already appeared in *Statistical Methods for Research Workers* (1925) and \"The Arrangement of Field Experiments\" (1926), and replication and factorial design were not new in 1935 (\\cite{design_of_experiments_wiki}).",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-316",
+      "quote": "The third stage was the **double-blind** procedure: neither the person giving the treatment nor the one receiving it knows who is in the control group, so that expectation — the experimenter's *or* the subject's — cannot tint the result \\cite[the double-blind study]{doubleblind}.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-317",
+      "quote": "It matured alongside the first large **randomized controlled trials**, the 1948 streptomycin studies that set the template for medical evidence \\cite[randomized controlled trial]{rct1948}.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-318",
+      "quote": "Now map it onto what you do.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-319",
+      "quote": "An **A/B test** — ship variant A of a page to half your users, variant B to the other half, compare the metric — is Fisher's randomization applied to software.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-320",
+      "quote": "And an **ablation study** — remove one component of the model and measure what the metric does — is Lind's control group applied to architecture: the full model is the control, the ablated model is the \"treatment\", and the question *is the drop from removing this layer real, or noise?* is answered by the t-test from the last section.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-321",
+      "quote": "The whole discipline of judging a model by **deliberately breaking it and measuring** descends, step for step, from a surgeon pairing up scurvy sailors on a warship.",
+      "section": "The controlled experiment: from scurvy to ablation",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-322",
+      "quote": "Real-world datasets are rarely perfectly Normal.",
+      "section": "The Statistical Soul: Dataset Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-323",
+      "quote": "* **Long-tailed**: power-law distributions where most values are small, a few are huge (income, city size, social network followers).",
+      "section": "The Statistical Soul: Dataset Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-324",
+      "quote": "* **Multimodal**: two or more peaks (heights of mixed populations).",
+      "section": "The Statistical Soul: Dataset Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-325",
+      "quote": "* **Heavy-tailed**: more extreme values than a Gaussian predicts (financial returns).",
+      "section": "The Statistical Soul: Dataset Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-326",
+      "quote": "* **Sparse**: many zeros, a few large values (word counts in documents).",
+      "section": "The Statistical Soul: Dataset Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-327",
+      "quote": "* **Discrete**: counts or categories, not continuous (clicks, votes, ratings).",
+      "section": "The Statistical Soul: Dataset Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-328",
+      "quote": "Recognizing the distribution of your data is the first step in choosing the right model.",
+      "section": "The Statistical Soul: Dataset Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-329",
+      "quote": "A Naive Bayes classifier assumes features are conditionally independent (often violated).",
+      "section": "The Statistical Soul: Dataset Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-330",
+      "quote": "A linear regression assumes Gaussian residuals (often violated).",
+      "section": "The Statistical Soul: Dataset Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-331",
+      "quote": "Knowing when these assumptions break down is essential in practice.",
+      "section": "The Statistical Soul: Dataset Distributions",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-332",
+      "quote": "In any natural-language corpus, the $k$-th most frequent word has frequency approximately:",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-333",
+      "quote": "This is **Zipf's Law**, which Zipf had already described in 1932 (crediting Estoup, 1916); 1949 is the date of *Human Behavior and the Principle of Least Effort*, and Auerbach (1913) had noted the analogous city-size regularity (\\cite{zipf_law_wiki}; \\cite{zipf1949human}).",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-334",
+      "quote": "For English, “the” appears ~7% of the time, “of” ~3.5%, “and” ~2.5%, and the 100th most common word ~0.05%.",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-335",
+      "quote": "Zipf's law is observed in many seemingly unrelated domains: city populations, income, web traffic, and more.",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-336",
+      "quote": "The mathematical reason is debated; competing theories include preferential attachment (“the rich get richer”), information-theoretic optimization, and self-organized criticality.",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-337",
+      "quote": "For LLMs, Zipf's law has two practical consequences:",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-338",
+      "quote": "* **Token imbalance**: a few tokens dominate training.",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-339",
+      "quote": "Effective sampling and loss weighting must account for this.",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-340",
+      "quote": "* **Long tail of rare words**: the model rarely sees most words.",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-341",
+      "quote": "Performance on the long tail is consistently worse.",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-342",
+      "quote": "The **Dirichlet distribution** (next chapter) is a natural prior over categorical distributions; on its own it does not reproduce a Zipfian tail.",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-343",
+      "quote": "Below, we analyze the actual word distribution of \\citetitle{nietzsche1883zarathustra}.",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-344",
+      "quote": "- **Linear Scale:** Shows the “Long Tail” (a few words dominate everything).",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    },
+    {
+      "id": "statistics_i-stmt-345",
+      "quote": "- **Log-Log Scale:** Reveals the underlying mathematical “straight line” of the language.",
+      "section": "Zipf's Law: The Physics of Language",
+      "kind": "statement"
+    }
   ]
 }

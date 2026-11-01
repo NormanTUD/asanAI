@@ -541,5 +541,1255 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "topology-stmt-1",
+      "quote": "In the [Origami chapter](origami) we met feed-forward networks as **paper folders**: a ReLU layer",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-2",
+      "quote": "is a hammer-blow that creases the data into a spare, higher dimension, and depth is a",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-3",
+      "quote": "cascade of such creases \\cite{keup2022origami}.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-4",
+      "quote": "That story is about *what a layer can do",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-5",
+      "quote": "when the activation is allowed to crush*.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-6",
+      "quote": "There is a second, cleaner story, and it starts",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-7",
+      "quote": "from a question \\citeauthor{colah2014manifolds} asked in \\citeyear{colah2014manifolds}: if",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-8",
+      "quote": "the activation is smooth and monotone — a tanh or a sigmoid rather than a ReLU — what can",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-9",
+      "quote": "a layer do to the data, and what is it forbidden from doing?",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-10",
+      "quote": "The answer is beautifully restrictive, and it is the whole reason the word *topology*",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-11",
+      "quote": "appears in a story about neural networks.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-12",
+      "quote": "Topology began with a puzzle about a city.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-13",
+      "quote": "In 1736 Euler proved that the seven bridges of Königsberg cannot be crossed once each, and he did it by throwing away distance and angle and keeping only which land mass connects to which (\\cite[Euler, 1736]{eulerbridges}).",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-14",
+      "quote": "The paper's title calls the subject *geometria situs*, the geometry of position.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-15",
+      "quote": "That is exactly the move a smooth layer makes: it may stretch the plane, but it cannot change which region surrounds which.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-16",
+      "quote": "[Geometry III](geometry_iii) tells the full history; here the point is narrower — the invariant that survives a homeomorphism is precisely what a linear readout cannot repair.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-17",
+      "quote": "Start with the simplest setting.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-18",
+      "quote": "A network with only a handful of neurons per layer is",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-19",
+      "quote": "Feed every point of a fine grid through the net and you can *watch* the",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-20",
+      "quote": "Each layer emits a **representation** — the data re-expressed in the coordinates",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-21",
+      "quote": "The very last layer is just a **linear readout**: it draws a single",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-22",
+      "quote": "flat hyperplane (a line in 2-D) and calls one side \"class 0\" and the other \"class 1\".",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-23",
+      "quote": "the entire job of every hidden layer is to *reshape the data until that final flat cut",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-24",
+      "quote": "And here is the surprise.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-25",
+      "quote": "With a **smooth, strictly monotone** activation, each layer is a",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-26",
+      "quote": "**homeomorphism** — as \\cite[Morris shows in Topology Without Tears (Ch.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-27",
+      "quote": "75)]{morris2007topology} — it can stretch and squish space, rotate and shear it, but it can **never",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-28",
+      "quote": "It preserves every topological property — a loop stays a loop, a",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-29",
+      "quote": "region that surrounds another still surrounds it, connected things stay connected (\\cite[Morris, Topology Without Tears, Ch.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-30",
+      "quote": "89]{morris2007topology}).",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-31",
+      "quote": "Poincaré gave the question its modern form in *Analysis Situs* (1895): two spaces are the same when a homeomorphism carries one to the other, and the fundamental group records the loops no such map can remove (\\cite[Poincaré, 1895]{poincareanalysissitus}).",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-32",
+      "quote": "Brouwer supplied the fact the width argument quietly leans on: a continuous injective map from an open subset of $\\mathbb{R}^n$ into $\\mathbb{R}^n$ is open, so it cannot lower dimension or squash a neighbourhood to a point (\\cite[Brouwer, 1911]{brouwer1911invariance}).",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-33",
+      "quote": "A singular weight matrix is exactly that forbidden collapse.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-34",
+      "quote": "A feed-forward layer computes $\\mathbf{h} = \\underbrace{\\Phi}_{\\text{pointwise activation}}(\\underbrace{W\\,\\mathbf{x}}_{\\text{linear map}} + \\underbrace{\\mathbf{b}}_{\\text{shift}})$: a linear",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-35",
+      "quote": "map, a shift, then a pointwise activation.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-36",
+      "quote": "Olah's claim is that — with $N$ inputs and",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-37",
+      "quote": "$N$ outputs — this is a **homeomorphism onto its image** whenever $W$ is non-singular and the activation is strictly monotone.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-38",
+      "quote": "\"three homeomorphisms glued together\":",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-39",
+      "quote": "**$\\mathbf{x} \\mapsto W\\,\\mathbf{x}$.** If $\\det W \\neq 0$ then $W$ is invertible, with",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-40",
+      "quote": "A linear map and its inverse are both continuous, so this is a",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-41",
+      "quote": "homeomorphism (\\cite[Morris, Topology Without Tears, Ch.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-42",
+      "quote": "95]{morris2007topology}).",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-43",
+      "quote": "(A non-singular matrix is exactly a change of basis — a reversible",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-44",
+      "quote": "stretch-and-rotate of the whole space.)",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-45",
+      "quote": "**$\\mathbf{u} \\mapsto \\mathbf{u} + \\mathbf{b}$.** A translation.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-46",
+      "quote": "**$\\mathbf{z} \\mapsto \\Phi(\\mathbf{z})$ applied coordinate-wise.** tanh, sigmoid and",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-47",
+      "quote": "softplus are continuous *and* have continuous inverses, so each is a homeomorphism of",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-48",
+      "quote": "the line **onto its image** (tanh lands in $(-1,1)$, sigmoid in $(0,1)$, softplus in",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-49",
+      "quote": "Applied to each coordinate independently, it is a homeomorphism of",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-50",
+      "quote": "$\\mathbb{R}^N$ onto an open box — enough for the argument below.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-51",
+      "quote": "A composition of homeomorphisms is a homeomorphism — as \\cite[Morris shows in Topology Without Tears (Ch.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-52",
+      "quote": "76)]{morris2007topology} — so the layer is one.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-53",
+      "quote": "stack of them.** $\\blacksquare$",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-54",
+      "quote": "Two cautions carry all the weight of what follows.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-55",
+      "quote": "First, the **width must be full**: if",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-56",
+      "quote": "$W$ is singular (more inputs than outputs, or dependent columns) the map *folds the space",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-57",
+      "quote": "onto a lower-dimensional set* and information is destroyed — that is the one moment a",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-58",
+      "quote": "\"smooth\" layer can actually crush data.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-59",
+      "quote": "Second, the activation must genuinely be invertible.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-60",
+      "quote": "**ReLU is not**: $\\max(0, x)$ flattens its entire negative half onto $0$.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-61",
+      "quote": "difference is the whole distance between this chapter and the last one — a ReLU layer is",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-62",
+      "quote": "free to *fold*, a tanh layer is not.",
+      "section": "Stretch, Squish — but Never Cut",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-63",
+      "quote": "Now the consequence that makes this more than a curiosity.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-64",
+      "quote": "Take the **\"2-D egg\"**: one",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-65",
+      "quote": "class is a solid **disk** in the middle, the other is a **ring** that completely surrounds",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-66",
+      "quote": "This is the same shape the origami chapter opened with, and the same honest first",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-67",
+      "quote": "question: *can a single flat line separate the two?* No — try dragging one and you'll see",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-68",
+      "quote": "it plateaus, no matter how you aim it.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-69",
+      "quote": "But the homeomorphism argument goes much deeper than \"a line won't do it\".",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-70",
+      "quote": "**2-wide** smooth, strictly monotone network — *any number of layers* — **cannot solve the egg at all**.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-71",
+      "quote": "> **Claim.** Let the inner class be a disk $\\underbrace{A}_{\\text{inner disk}} = \\{x : \\|x\\| < \\tfrac13\\}$ and the outer",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-72",
+      "quote": "> class a ring $\\underbrace{B}_{\\text{outer ring}} = \\{x : \\tfrac23 < \\|x\\| < 1\\}$.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-73",
+      "quote": "No network of width $\\le 2$ with smooth",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-74",
+      "quote": "> activations, **at any depth**, can separate $A$ from $B$.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-75",
+      "quote": "Add a **third** hidden unit and",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-76",
+      "quote": "> a single layer does it.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-77",
+      "quote": "The intuition is the homeomorphism again.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-78",
+      "quote": "Every width-2 layer either preserves the shape",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-79",
+      "quote": "(the disk is still *surrounded* by the ring, and no straight line separates a region from",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-80",
+      "quote": "the ring that encloses it) or, if some layer's $W$ is singular, it *collapses* the data",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-81",
+      "quote": "onto a line — at which moment points of the disk and the ring are squashed on top of each",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-82",
+      "quote": "other and can no longer be told apart.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-83",
+      "quote": "There is no width-2 move that escapes the enclosure.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-84",
+      "quote": "**The only way out is sideways into a new dimension.**",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-85",
+      "quote": "Give the network a third hidden unit and the enclosure breaks: the layer lifts the disk",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-86",
+      "quote": "*up* along that third axis into a little tent while the ring lies flat, and one horizontal",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-87",
+      "quote": "plane now separates them cleanly.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-88",
+      "quote": "Width — not depth — is the resource that unlocks the",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-89",
+      "quote": "This is a genuine **topological lower bound** on the width of a network, and it is",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-90",
+      "quote": "the first time a topological property of the *data* has produced a hard statement about the",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-91",
+      "quote": "*architecture* that is needed to solve it.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-92",
+      "quote": "Morse theory gives the smooth counterpart of the fold.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-93",
+      "quote": "For a smooth scalar function on a manifold, the topology of its sublevel sets changes only when the gradient vanishes, at a critical point (\\cite[Morse, 1929]{morse1929foundations}).",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-94",
+      "quote": "A layer with invertible $W$ and an activation whose derivative is positive everywhere (tanh, sigmoid, softplus) has an invertible Jacobian everywhere, so it contributes no such critical point: it can move the data, but it cannot change its topology.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-95",
+      "quote": "ReLU is different — its kink at zero is a whole critical locus, and that is where a fold can be born.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-96",
+      "quote": "In the demo below, train a 2-layer tanh net on the egg with **two** hidden units and watch",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-97",
+      "quote": "it flounder at a ceiling well short of 100%.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-98",
+      "quote": "Then switch to **three** and watch the same",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-99",
+      "quote": "network suddenly succeed.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-100",
+      "quote": "Nothing about the depth, the optimizer, or the data changed — only",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-101",
+      "quote": "the width, and only because a third dimension let the disk escape the ring.",
+      "section": "A Straight Line Has a Topology Problem",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-102",
+      "quote": "Strip the picture down to a single number and the mechanism becomes impossible to miss.",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-103",
+      "quote": "Put one class on the middle of a line — $A = [-\\tfrac13, \\tfrac13]$ — and the other on the",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-104",
+      "quote": "two ends — $B = [-1, -\\tfrac23] \\cup [\\tfrac23, 1]$.",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-105",
+      "quote": "A single neuron's activation is **monotone**; its decision boundary is a",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-106",
+      "quote": "single threshold, so it can carve out *one interval* — never the middle-with-ends-outside",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-107",
+      "quote": "pattern the task demands.",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-108",
+      "quote": "One hidden unit is topologically doomed, for exactly the same",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-109",
+      "quote": "reason the width-2 egg was.",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-110",
+      "quote": "But **two** hidden units learn a lovely trick: one fires for \"$x > -\\tfrac12$\", the other",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-111",
+      "quote": "Stacked, they lift the middle of the line *up* into a second",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-112",
+      "quote": "dimension while the two ends stay *down* — a curve in 2-D that a flat line now separates",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-113",
+      "quote": "Watch the representation below: with one unit the data stays a flat, inseparable",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-114",
+      "quote": "line; with two, it bends into an arch.",
+      "section": "The One-Dimensional Egg",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-115",
+      "quote": "The egg is a fixed puzzle; real data isn't.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-116",
+      "quote": "So let's do what \\citeauthor{karpathy2015convnetjs}",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-117",
+      "quote": "invites you to do \\cite{karpathy2015convnetjs}: **make your own data** and watch a small",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-118",
+      "quote": "network untangle it, live.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-119",
+      "quote": "Click to drop a **red** point, Shift -click a **green** one, and",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-120",
+      "quote": "Ctrl -click (or right-click) to remove the nearest point.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-121",
+      "quote": "in the background every few hundredths of a second, and its decision is painted across the",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-122",
+      "quote": "The payoff is the **second canvas**.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-123",
+      "quote": "It shows the data *after* the first layer — every point",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-124",
+      "quote": "expressed in the coordinates of two hidden neurons at a time (cycle through the pairs).",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-125",
+      "quote": "the start the two colours are hopelessly intermixed.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-126",
+      "quote": "As training runs you watch them **drift",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-127",
+      "quote": "apart** until a flat line between them exists.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-128",
+      "quote": "That drifting-apart *is* the network",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-129",
+      "quote": "learning; the hidden layer is slowly, continuously pulling the two manifolds apart in the",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-130",
+      "quote": "direction the third dimension allows.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-131",
+      "quote": "Noether's 1925 observation turned Betti numbers into homology groups, and that shift is what makes the shape of data computable (\\cite[McLarty, 2006]{mclarty2006noether}).",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-132",
+      "quote": "Once holes are group elements, they can be tracked across a growing radius: Edelsbrunner, Letscher and Zomorodian's persistence algorithm records when each hole is born and when it dies (\\cite[Edelsbrunner et al., 2002]{edelsbrunner2002persistent}), and Zomorodian and Carlsson gave the efficient algebraic formulation (\\cite[Zomorodian & Carlsson, 2005]{zomorodian2005}).",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-133",
+      "quote": "The output is a barcode — a summary of which loops are robust structure and which are noise.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-134",
+      "quote": "[Geometry III](geometry_iii) develops the algebra; here it is the bridge from \"the data is knotted\" to a measurable claim.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-135",
+      "quote": "The egg is a *surrounding*; a nastier tangle is a *link* — two rings threaded through each",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-136",
+      "quote": "other like a chain, which you cannot pull apart without cutting.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-137",
+      "quote": "network classifying such data is, in the language of knot theory, performing an **ambient",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-138",
+      "quote": "isotopy**: a *continuous family of homeomorphisms* that deforms one configuration into the",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-139",
+      "quote": "separated one, the data moving smoothly and never tearing.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-140",
+      "quote": "The continuous layer-by-layer",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-141",
+      "quote": "visualization is not just a pretty animation — it is the isotopy itself, made visible.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-142",
+      "quote": "And the dimension count returns with a vengeance: a single link of 1-D curves lives in 3-D",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-143",
+      "quote": "but can only be *pulled apart* in 4-D.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-144",
+      "quote": "In general, an $n$-dimensional manifold may need up to",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-145",
+      "quote": "$2n + 2$ dimensions to untangle.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-146",
+      "quote": "Topology keeps handing the network a price tag, and the",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-147",
+      "quote": "price is, again, **extra dimensions** — the same currency the fold-and-cut story paid with.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-148",
+      "quote": "There is a trap worth naming, because it is the trap an optimizer actually falls into.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-149",
+      "quote": "Faced with an entangled pair of manifolds, the *genuinely* correct move is to pull them",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-150",
+      "quote": "cleanly apart into a new dimension.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-151",
+      "quote": "The *lazy* move is to leave the tangle in place and",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-152",
+      "quote": "just **stretch the thin bits until they are near-singular** — pulling the boundary into an",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-153",
+      "quote": "ever-thinner sliver that threads the gaps.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-154",
+      "quote": "This can reach high training accuracy, so it",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-155",
+      "quote": "presents itself as a tempting local minimum, with very high derivatives and sharp",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-156",
+      "quote": "near-discontinuities exactly where the stretching happens.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-157",
+      "quote": "The tell is in the decision grid: instead of two clean regions, you get a boundary that",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-158",
+      "quote": "snakes and thins to a hair.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-159",
+      "quote": "The standard countermeasure is a **contractive penalty** —",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-160",
+      "quote": "regularize the derivative of each layer so the network is charged for precisely this kind of",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-161",
+      "quote": "near-singular stretching.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-162",
+      "quote": "It pushes training back toward the honest isotopy.",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-163",
+      "quote": "demo, a width-2 net that \"almost\" works by snaking a boundary is doing exactly this.)",
+      "section": "Now You Untangle It",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-164",
+      "quote": "Step back and the two chapters fit together into one picture of *what a hidden layer is for*.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-165",
+      "quote": "A layer is a change of coordinates.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-166",
+      "quote": "The final readout is a flat cut.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-167",
+      "quote": "topologically knotted around itself, and the network's job is to carry it, layer by layer,",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-168",
+      "quote": "to a place where one flat cut suffices.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-169",
+      "quote": "Two mechanisms do the carrying:",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-170",
+      "quote": "* **Smooth (tanh / sigmoid) layers** are *homeomorphisms* — they preserve topology, so they",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-171",
+      "quote": "can only **stretch and squish**.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-172",
+      "quote": "They cannot free a surrounded class on their own; they",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-173",
+      "quote": "need a **spare dimension** (width) to do it.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-174",
+      "quote": "Depth helps, but *width is what breaks the",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-175",
+      "quote": "enclosure* \\cite{colah2014manifolds}.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-176",
+      "quote": "* **ReLU layers** are *not* homeomorphisms — they **fold**.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-177",
+      "quote": "That single freedom lets them",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-178",
+      "quote": "manufacture separability by creasing the data into unoccupied dimensions, layer after",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-179",
+      "quote": "layer \\cite{keup2022origami}.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-180",
+      "quote": "So \"folding\" and \"topology\" are not two ideas; they are the *same* idea read from two",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-181",
+      "quote": "A network must move data through space to make a flat cut work.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-182",
+      "quote": "are homeomorphisms, topology dictates exactly how many extra dimensions the journey requires.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-183",
+      "quote": "If the moves are allowed to fold, the network spends those same dimensions as creases.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-184",
+      "quote": "The manifold hypothesis is an empirical claim, not a definition: natural data — images, sounds, word vectors — concentrates near a low-dimensional manifold inside its high-dimensional ambient space.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-185",
+      "quote": "Fefferman, Mitter and Narayanan give statistical tests for estimating a manifold's dimension and reach from finite samples (\\cite[Fefferman et al., 2016]{fefferman2016testing}).",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-186",
+      "quote": "That matters here because the width argument is only as good as the premise: if the data were truly high-dimensional, there would be no low-dimensional tangle to separate.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-187",
+      "quote": "This is the **manifold hypothesis** made mechanical \\cite{fefferman2016testing}: natural data sits",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-188",
+      "quote": "on low-dimensional manifolds, and classification is the business of **separating tangled",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-189",
+      "quote": "The theorem you can take away is a clean one —",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-190",
+      "quote": "> For smooth, strictly monotone layers, a network's reach is bounded by its **width**:",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-191",
+      "quote": "> depth can move the data, but it cannot change its topology.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-192",
+      "quote": "> network must be allowed to think in *more dimensions than the data itself has*.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-193",
+      "quote": "The topology program has produced results about networks, not only metaphors.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-194",
+      "quote": "Olah's original argument is the smooth-layer case: with full width and a strictly monotone activation, every layer is a homeomorphism onto its image, so a width-two stack can never separate a disk from a surrounding ring (\\cite[Olah, 2014]{colah2014manifolds}).",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-195",
+      "quote": "The barrier is not about depth: adding layers cannot buy a dimension.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-196",
+      "quote": "What buys it is width, or a non-injective activation such as ReLU, whose folds are the subject of the [Origami chapter](origami) (\\cite[Keup & Helias, 2022]{keup2022origami}).",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-197",
+      "quote": "Neural persistence carries the same tools into trained networks (\\cite[Rieck et al., 2019]{riek2019neural}).",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-198",
+      "quote": "That is the geometry of thought: not a set of numbers to memorize, but a shape to be",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-199",
+      "quote": "untangled, one reversible stretch (or one well-placed fold) at a time.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-200",
+      "quote": "* **Origami in N Dimensions** — the ReLU side of the same coin: folding as the",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-201",
+      "quote": "non-homeomorphic escape hatch, with the poker-hand experiment as the causal proof.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-202",
+      "quote": "* **Deep Learning** — the composition view and the Universal Approximation Theorem this",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-203",
+      "quote": "chapter gives a *topological* reason for.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-204",
+      "quote": "* **Basic Math III** — the manifold hypothesis and why intrinsic dimension is low.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-205",
+      "quote": "* **The foam of meaning** — the same \"data lives on a low-dimensional structure in a high-",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-206",
+      "quote": "dimensional void\" geometry, applied to language.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-207",
+      "quote": "* **Mechanistic Interpretability** — the \"easy way out\" (thin, high-derivative boundaries)",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    },
+    {
+      "id": "topology-stmt-208",
+      "quote": "is the same pathology interpretability research keeps hunting in trained nets.",
+      "section": "The Geometry of Thought",
+      "kind": "statement"
+    }
   ]
 }

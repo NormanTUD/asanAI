@@ -508,5 +508,805 @@
       ],
       "confidence": "provenance"
     }
+  ],
+  "statements": [
+    {
+      "id": "websearch-stmt-1",
+      "quote": "When you ask ChatGPT, Claude, or Gemini a question that requires up-to-date information, the model doesn't “browse the internet” the way you do.",
+      "section": "How LLMs Actually Search the Web",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-2",
+      "quote": "Instead, a **tool-use pipeline** orchestrates a series of API calls, content fetches, and text extractions *before* the LLM ever generates a single token of its answer.",
+      "section": "How LLMs Actually Search the Web",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-3",
+      "quote": "**Key insight:** The LLM itself cannot “see” the internet.",
+      "section": "How LLMs Actually Search the Web",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-4",
+      "quote": "It relies on **external tools**, search APIs, web scrapers, and content parsers, that are orchestrated by a surrounding system.",
+      "section": "How LLMs Actually Search the Web",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-5",
+      "quote": "The LLM's role is to *decide when to search*, *formulate the query*, and *synthesize the results*.",
+      "section": "How LLMs Actually Search the Web",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-6",
+      "quote": "Teaching models to invoke such tools autonomously is precisely what tool-augmented language models do (\\cite[Schick et al., 2023]{schick2023toolformer}), (\\cite[Mialon et al., 2023]{mialon2023augmented}).",
+      "section": "How LLMs Actually Search the Web",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-7",
+      "quote": "Not every question requires a web search.",
+      "section": "Step 1: Intent Detection, Does This Query Need a Search?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-8",
+      "quote": "The system (or the LLM itself) first determines whether the query can be answered from training data alone or needs fresh information.",
+      "section": "Step 1: Intent Detection, Does This Query Need a Search?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-9",
+      "quote": "| Signal | Example | Action |",
+      "section": "How the decision is made",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-10",
+      "quote": "| Temporal keywords | “latest”, “today”, “2026” | → Search |",
+      "section": "How the decision is made",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-11",
+      "quote": "| Named entities + recency | “current CEO of Twitter” | → Search |",
+      "section": "How the decision is made",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-12",
+      "quote": "| Evergreen knowledge | “What is the Pythagorean theorem?” | → Answer directly |",
+      "section": "How the decision is made",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-13",
+      "quote": "| Explicit request | “Search the web for…” | → Search |",
+      "section": "How the decision is made",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-14",
+      "quote": "| Ambiguity / uncertainty | Model unsure about facts | → Search |",
+      "section": "How the decision is made",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-15",
+      "quote": "Modern systems use **few-shot prompting** or **fine-tuned classifiers** to make this decision, an idea popularized by Toolformer, which trains a model to decide autonomously when calling a search tool would help (\\cite[Schick et al., 2023]{schick2023toolformer}).",
+      "section": "How the decision is made",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-16",
+      "quote": "The LLM is given a system prompt like the following:",
+      "section": "How the decision is made",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-17",
+      "quote": "Once the LLM decides to search, it doesn't just forward the user's raw question to a search engine.",
+      "section": "Step 2: Query Formulation",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-18",
+      "quote": "It **reformulates** the query into something optimized for search:",
+      "section": "Step 2: Query Formulation",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-19",
+      "quote": "| User says | LLM searches for |",
+      "section": "Step 2: Query Formulation",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-20",
+      "quote": "| “What's happening with the war?” | `\"Ukraine Russia conflict latest developments May 2026\"` |",
+      "section": "Step 2: Query Formulation",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-21",
+      "quote": "| “Did that company go bankrupt?” | `\"[company name from context] bankruptcy filing 2026\"` |",
+      "section": "Step 2: Query Formulation",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-22",
+      "quote": "| “How much does it cost now?” | `\"[product name] current price 2026\"` |",
+      "section": "Step 2: Query Formulation",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-23",
+      "quote": "This is called **query transformation** (\\cite[Ma et al., 2023]{ma2023queryrewriting}), the LLM uses conversational context to produce a precise, keyword-rich search string.",
+      "section": "Step 2: Query Formulation",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-24",
+      "quote": "Some systems generate **multiple queries** to cover different angles of the question.",
+      "section": "Step 2: Query Formulation",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-25",
+      "quote": "This is the question everyone asks: *“What search engine does ChatGPT use?”*",
+      "section": "Step 3: The Search Engine, What's Actually Used?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-26",
+      "quote": "| Provider | Search Backend | How it works |",
+      "section": "Commercial LLM providers use **Search APIs**:",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-27",
+      "quote": "| OpenAI (ChatGPT) | **Bing Search API** (Microsoft partnership) (\\cite[Reuters, 2023]{reuters2023chatgptbrowsing}) | JSON API returns titles, snippets, URLs |",
+      "section": "Commercial LLM providers use **Search APIs**:",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-28",
+      "quote": "| Google (Gemini) | **Google Search** (internal) (\\cite[Google, 2025]{google2025grounding}) | Direct access to Google's index |",
+      "section": "Commercial LLM providers use **Search APIs**:",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-29",
+      "quote": "| Anthropic (Claude) | **Claude web search tool** (\\cite[Anthropic, 2025]{anthropic2025websearch}) | Via tool use / function calling |",
+      "section": "Commercial LLM providers use **Search APIs**:",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-30",
+      "quote": "| Perplexity | **Own crawlers + LLM index** (\\cite[Wikipedia, 2026]{perplexityai}) | Synthesizes answers from live web results |",
+      "section": "Commercial LLM providers use **Search APIs**:",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-31",
+      "quote": "| You.com | **Web search APIs + LLM** (\\cite[Wikipedia, 2026]{youcom}) | Pivoted from consumer search to LLM APIs |",
+      "section": "Commercial LLM providers use **Search APIs**:",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-32",
+      "quote": "| Solution | Type | Notes |",
+      "section": "For local/open-source LLMs:",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-33",
+      "quote": "| **SearXNG** \\cite[SearXNG]{searxng} | Meta-search engine (self-hosted) | Aggregates Google, Bing, DuckDuckGo etc.",
+      "section": "For local/open-source LLMs:",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-34",
+      "quote": "| **Brave Search API** \\cite[Brave]{bravesearchapi} | Commercial API | Free tier available, privacy-focused |",
+      "section": "For local/open-source LLMs:",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-35",
+      "quote": "| **Google Custom Search API** \\cite[Google]{googlecustomsearch} | Commercial API | 100 free queries/day, then paid |",
+      "section": "For local/open-source LLMs:",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-36",
+      "quote": "| **Serper.dev** \\cite[Serper]{serper} | Google SERP API | Fast, cheap, returns structured results |",
+      "section": "For local/open-source LLMs:",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-37",
+      "quote": "| **Tavily** \\cite[Tavily]{tavily} | AI-optimized search API | Designed specifically for LLM consumption |",
+      "section": "For local/open-source LLMs:",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-38",
+      "quote": "The search API returns **structured JSON**, not rendered web pages:",
+      "section": "What does a Search API actually return?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-39",
+      "quote": "The LLM receives **titles, snippets, and URLs**, not full page content (at least not from the search step alone).",
+      "section": "What does a Search API actually return?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-40",
+      "quote": "This is similar to what you see on a Google results page before clicking any link.",
+      "section": "What does a Search API actually return?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-41",
+      "quote": "Snippets from search results are often too short to answer complex questions.",
+      "section": "Step 4: Content Fetching, Loading the Actual Web Pages",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-42",
+      "quote": "So the system **fetches full page content** from the top-ranked URLs.",
+      "section": "Step 4: Content Fetching, Loading the Actual Web Pages",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-43",
+      "quote": "This is where it gets interesting.",
+      "section": "Step 4: Content Fetching, Loading the Actual Web Pages",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-44",
+      "quote": "A server-side process makes an HTTP GET request to the URL.",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-45",
+      "quote": "This is *not* a browser, it's a headless HTTP client (like `curl`, Python's `requests`, or Node's `fetch`).",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-46",
+      "quote": "HTML Parsing & Cleaning**",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-47",
+      "quote": "Raw HTML is full of navigation bars, ads, scripts, and boilerplate.",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-48",
+      "quote": "The system uses content extraction tools:",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-49",
+      "quote": "| **Readability.js** (Mozilla) \\cite[Mozilla]{mozillareadability} | Extracts the “main content” from a page (like Reader Mode) |",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-50",
+      "quote": "| **Trafilatura** (Python) (\\cite[Barbaresi, 2021]{barbaresi2021trafilatura}) | Extracts and cleans article text from HTML |",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-51",
+      "quote": "| **BeautifulSoup** \\cite[Richardson]{beautifulsoup} | General HTML parser, extract specific elements |",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-52",
+      "quote": "| **Playwright / Puppeteer** \\cite[Microsoft]{playwright} \\cite[Google]{puppeteer} | Full headless browser, handles JavaScript-rendered pages |",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-53",
+      "quote": "| **Jina Reader API** \\cite[Jina AI]{jinareader} | Converts any URL to clean markdown via API call |",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-54",
+      "quote": "JavaScript-Rendered Pages (SPAs)**",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-55",
+      "quote": "Many modern websites render content with JavaScript.",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-56",
+      "quote": "A simple HTTP GET returns an empty ` `.",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-57",
+      "quote": "For these, the system needs a **headless browser** (Playwright/Puppeteer) that:",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-58",
+      "quote": "- Waits for content to render",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-59",
+      "quote": "- Then extracts the final DOM",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-60",
+      "quote": "Output: Clean Text or Markdown**",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-61",
+      "quote": "The extracted content is converted to plain text or markdown, stripping all HTML tags, scripts, styles, and navigation elements.",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-62",
+      "quote": "This clean text is what gets fed to the LLM.",
+      "section": "The technical pipeline",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-63",
+      "quote": "A single web page might contain 5,000+ tokens of text, too much to include for every result.",
+      "section": "Step 5: Chunking & Ranking Retrieved Content",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-64",
+      "quote": "**Chunks** the extracted text into passages (200–500 tokens each)",
+      "section": "Step 5: Chunking & Ranking Retrieved Content",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-65",
+      "quote": "**Re-ranks** chunks by relevance to the original query using either:",
+      "section": "Step 5: Chunking & Ranking Retrieved Content",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-66",
+      "quote": "- Cosine similarity (same as RAG) (\\cite[Reimers & Gurevych, 2019]{reimers2019sentencebert})",
+      "section": "Step 5: Chunking & Ranking Retrieved Content",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-67",
+      "quote": "- A **cross-encoder re-ranker** (a small model that scores query-passage pairs directly) (\\cite[Reimers & Gurevych, 2019]{reimers2019sentencebert})",
+      "section": "Step 5: Chunking & Ranking Retrieved Content",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-68",
+      "quote": "- Simple keyword/BM25 scoring (\\cite[Robertson & Zaragoza, 2009]{robertson2009bm25})",
+      "section": "Step 5: Chunking & Ranking Retrieved Content",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-69",
+      "quote": "Only the **top chunks** from the **top pages** make it into the final prompt.",
+      "section": "Step 5: Chunking & Ranking Retrieved Content",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-70",
+      "quote": "The system is conservative, it doesn't fill the entire context window with search results.",
+      "section": "Token budget management",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-71",
+      "quote": "It selects only the most relevant passages to keep the LLM focused.",
+      "section": "Token budget management",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-72",
+      "quote": "The final prompt sent to the LLM looks something like this:",
+      "section": "Step 6: Prompt Assembly & Generation",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-73",
+      "quote": "The LLM then generates an answer **grounded in these sources** (\\cite[Lewis et al., 2020]{lewis2020rag}), citing them inline, exactly like what you're reading right now.",
+      "section": "Step 6: Prompt Assembly & Generation",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-74",
+      "quote": "For privacy-conscious or self-hosted setups, **SearXNG** \\cite[SearXNG]{searxng} is the most popular choice.",
+      "section": "Open-Source Web Search: SearXNG",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-75",
+      "quote": "It's a meta-search engine that aggregates results from multiple search providers without sending user data to any of them.",
+      "section": "Open-Source Web Search: SearXNG",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-76",
+      "quote": "SearXNG queries Google, Bing, DuckDuckGo, Brave, and dozens of other engines simultaneously, then deduplicates and merges the results.",
+      "section": "Open-Source Web Search: SearXNG",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-77",
+      "quote": "The LLM system talks to SearXNG via a local API endpoint.",
+      "section": "Open-Source Web Search: SearXNG",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-78",
+      "quote": "The LLM doesn't have “built-in” web access.",
+      "section": "Tool Use / Function Calling: The Mechanism",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-79",
+      "quote": "Instead, it uses a protocol called **function calling** (or **tool use**) \\cite[OpenAI]{openai2023functioncalling}:",
+      "section": "Tool Use / Function Calling: The Mechanism",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-80",
+      "quote": "**1.** The system prompt defines available tools:",
+      "section": "Tool Use / Function Calling: The Mechanism",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-81",
+      "quote": "**2.** The LLM generates a **structured tool call** instead of a text response:",
+      "section": "Tool Use / Function Calling: The Mechanism",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-82",
+      "quote": "**3.** The orchestrator **executes** the tool call and returns results to the LLM.",
+      "section": "Tool Use / Function Calling: The Mechanism",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-83",
+      "quote": "**4.** The LLM reads the results and either:",
+      "section": "Tool Use / Function Calling: The Mechanism",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-84",
+      "quote": "- Generates a final answer, or",
+      "section": "Tool Use / Function Calling: The Mechanism",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-85",
+      "quote": "- Makes another tool call (e.g., `fetch_page` for more detail)",
+      "section": "Tool Use / Function Calling: The Mechanism",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-86",
+      "quote": "This loop can repeat multiple times: the LLM might search, read a page, search again with refined terms, then finally answer.",
+      "section": "Tool Use / Function Calling: The Mechanism",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-87",
+      "quote": "This interleaving of reasoning and tool calls is the defining pattern of LLM agents (\\cite[Yao et al., 2023]{yao2023react}).",
+      "section": "Tool Use / Function Calling: The Mechanism",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-88",
+      "quote": "There's an important distinction between how LLMs handle **specified URLs** versus **open web search**:",
+      "section": "Custom Sites vs. Open Web Browsing",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-89",
+      "quote": "| Step | Typical Latency | Notes |",
+      "section": "Latency Breakdown: Where Does the Time Go?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-90",
+      "quote": "| Intent detection | ~200ms | LLM decides whether to search |",
+      "section": "Latency Breakdown: Where Does the Time Go?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-91",
+      "quote": "| Query formulation | ~300ms | LLM rewrites query |",
+      "section": "Latency Breakdown: Where Does the Time Go?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-92",
+      "quote": "| Search API call | ~200-500ms | Network round-trip to Bing/Google |",
+      "section": "Latency Breakdown: Where Does the Time Go?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-93",
+      "quote": "| Content fetching | ~1-3s | Parallel HTTP requests to top URLs |",
+      "section": "Latency Breakdown: Where Does the Time Go?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-94",
+      "quote": "| JS rendering (if needed) | ~2-5s | Headless browser startup + render |",
+      "section": "Latency Breakdown: Where Does the Time Go?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-95",
+      "quote": "| Content extraction | ~50ms | HTML parsing is fast |",
+      "section": "Latency Breakdown: Where Does the Time Go?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-96",
+      "quote": "| Chunking & re-ranking | ~100-300ms | Depends on re-ranker model |",
+      "section": "Latency Breakdown: Where Does the Time Go?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-97",
+      "quote": "| LLM generation | ~1-5s | Token-by-token streaming |",
+      "section": "Latency Breakdown: Where Does the Time Go?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-98",
+      "quote": "| **Total** | **~3-10s** | This is why search answers take longer |",
+      "section": "Latency Breakdown: Where Does the Time Go?",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-99",
+      "quote": "- **Paywalls & login walls:** The fetcher can't access content behind authentication",
+      "section": "Limitations & Challenges",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-100",
+      "quote": "- **Rate limiting:** Websites may block rapid automated requests",
+      "section": "Limitations & Challenges",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-101",
+      "quote": "- **robots.txt:** Ethical systems respect crawling restrictions",
+      "section": "Limitations & Challenges",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-102",
+      "quote": "- **Stale search indices:** Search engines may not have indexed very recent pages",
+      "section": "Limitations & Challenges",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-103",
+      "quote": "- **JavaScript-heavy sites:** Require expensive headless browser rendering",
+      "section": "Limitations & Challenges",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-104",
+      "quote": "- **Multimedia content:** Images, videos, and interactive content can't be “read”",
+      "section": "Limitations & Challenges",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-105",
+      "quote": "- **Hallucinated citations:** The LLM might misattribute information to the wrong source",
+      "section": "Limitations & Challenges",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-106",
+      "quote": "- **Indirect prompt injection:** Malicious instructions embedded in retrieved web pages can attempt to override the system prompt (\\cite[Greshake et al., 2023]{greshake2023injection}) (see the Security chapter)",
+      "section": "Limitations & Challenges",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-107",
+      "quote": "| What search engine do LLMs use?",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-108",
+      "quote": "| Commercial APIs: Bing (ChatGPT), Google (Gemini), Brave.",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-109",
+      "quote": "| How do they load web pages?",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-110",
+      "quote": "| HTTP GET + content extraction (Readability.js, Trafilatura) or headless browser |",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-111",
+      "quote": "| Does the LLM itself browse?",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-112",
+      "quote": "| **No.** External tools fetch data; the LLM only sees extracted text in its prompt |",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-113",
+      "quote": "| How do they decide to search?",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-114",
+      "quote": "| Intent detection via system prompt rules or fine-tuned classifiers |",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-115",
+      "quote": "| How is relevance determined?",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-116",
+      "quote": "| Search API ranking + re-ranking of extracted chunks via embeddings or cross-encoders |",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-117",
+      "quote": "| Why does it take longer?",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-118",
+      "quote": "| Multiple network round-trips: search API + page fetches + LLM generation |",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-119",
+      "quote": "| How is this different from RAG?",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-120",
+      "quote": "| RAG searches a **private** vector DB.",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-121",
+      "quote": "Web search queries the **public** internet via APIs.",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-122",
+      "quote": "Same principle, different data source |",
+      "section": "Summary",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-123",
+      "quote": "If you understood the RAG chapter, web search is conceptually simple:",
+      "section": "Connecting It All: Web Search is RAG Over the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-124",
+      "quote": "The only differences are:",
+      "section": "Connecting It All: Web Search is RAG Over the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-125",
+      "quote": "**Discovery:** RAG has a pre-built index.",
+      "section": "Connecting It All: Web Search is RAG Over the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-126",
+      "quote": "Web search must *find* relevant pages first.",
+      "section": "Connecting It All: Web Search is RAG Over the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-127",
+      "quote": "**Freshness:** RAG indexes are updated periodically.",
+      "section": "Connecting It All: Web Search is RAG Over the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-128",
+      "quote": "Web search gets live results.",
+      "section": "Connecting It All: Web Search is RAG Over the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-129",
+      "quote": "**Scale:** RAG searches thousands–millions of your documents.",
+      "section": "Connecting It All: Web Search is RAG Over the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-130",
+      "quote": "Web search covers billions of pages.",
+      "section": "Connecting It All: Web Search is RAG Over the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-131",
+      "quote": "**Trust:** RAG sources are curated.",
+      "section": "Connecting It All: Web Search is RAG Over the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-132",
+      "quote": "Web sources may be unreliable.",
+      "section": "Connecting It All: Web Search is RAG Over the Internet",
+      "kind": "statement"
+    },
+    {
+      "id": "websearch-stmt-133",
+      "quote": "The core pattern is identical: **retrieve relevant text → inject into prompt → generate grounded answer.** (\\cite[Lewis et al., 2020]{lewis2020rag})",
+      "section": "Connecting It All: Web Search is RAG Over the Internet",
+      "kind": "statement"
+    }
   ]
 }
