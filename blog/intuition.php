@@ -12,40 +12,9 @@ tags: interested-layman
 -->
 <?php js("intuition_space_morph"); ?>
 <style>
-#autoregressive-viz .ar-sentence { padding:14px 16px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; min-height:48px; display:flex; align-items:center; flex-wrap:wrap; }
-#autoregressive-viz .ar-word { padding:1px 4px; border-radius:3px; margin-right:6px; }
-#autoregressive-viz .ar-orig { color:#b45309; background:#fef3c7; font-weight:bold; }
-#autoregressive-viz .ar-added { color:#16a34a; background:#dcfce7; font-weight:bold; }
-#autoregressive-viz .ar-ctx { color:#1e293b; }
-#autoregressive-viz .ar-row { display:flex; align-items:center; gap:10px; padding:10px 16px; margin-top:8px; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6; }
-#autoregressive-viz .ar-label { color:#64748b; }
-#autoregressive-viz .ar-prob { color:#94a3b8; font-size:0.8em; margin-left:auto; }
-#autoregressive-viz .ar-pill { padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out; cursor:pointer; }
-#autoregressive-viz .ar-pred { background:#dbeafe; color:#1e40af; transition: background 0.15s; }
-#autoregressive-viz .ar-pred:hover { background:#bfdbfe; }
-#autoregressive-viz .ar-stop { background:#fee2e2; color:#dc2626; }
-#autoregressive-viz .ar-legend { display:flex; align-items:center; margin-top:10px; padding:0 4px; }
-#autoregressive-viz .ar-legend-items { display:flex; gap:14px; font-size:0.75em; color:#64748b; }
-#autoregressive-viz .ar-swatch { padding:0 3px; border-radius:2px; }
-#autoregressive-viz .ar-swatch-input { color:#b45309; background:#fef3c7; }
-#autoregressive-viz .ar-swatch-gen { color:#1e293b; }
-#autoregressive-viz .ar-swatch-added { color:#16a34a; background:#dcfce7; }
-#autoregressive-viz .ar-swatch-next { color:#1e40af; background:#dbeafe; }
-html.dark #autoregressive-viz .ar-sentence { background:var(--mn-bg-subtle); border-color:var(--mn-border); }
-html.dark #autoregressive-viz .ar-ctx { color:var(--mn-text); }
-html.dark #autoregressive-viz .ar-orig { color:#fcd34d; background:#422006; }
-html.dark #autoregressive-viz .ar-added { color:#86efac; background:#022c22; }
-html.dark #autoregressive-viz .ar-row { background:#1e3a8a; }
-html.dark #autoregressive-viz .ar-label,
-html.dark #autoregressive-viz .ar-prob,
-html.dark #autoregressive-viz .ar-legend-items { color:var(--mn-text-muted); }
-html.dark #autoregressive-viz .ar-pred { background:#1e3a8a; color:#bfdbfe; }
-html.dark #autoregressive-viz .ar-pred:hover { background:#1e40af; }
-html.dark #autoregressive-viz .ar-stop { background:#450a0a; color:#fca5a5; }
-html.dark #autoregressive-viz .ar-swatch-input { color:#fcd34d; background:#422006; }
-html.dark #autoregressive-viz .ar-swatch-gen { color:var(--mn-text); }
-html.dark #autoregressive-viz .ar-swatch-added { color:#86efac; background:#022c22; }
-html.dark #autoregressive-viz .ar-swatch-next { color:#bfdbfe; background:#1e3a8a; }
+#autoregressive-viz .ar-math { display:flex; justify-content:center; align-items:center; min-height:96px; padding:6px 10px; background:var(--mn-bg-subtle); border-radius:8px; overflow-x:auto; color:var(--mn-text); }
+#autoregressive-viz .ar-math math { font-size:1.05em; }
+#autoregressive-viz .ar-fallback { font-family:var(--mn-font-mono); font-size:0.8em; color:var(--mn-text-muted); white-space:pre-wrap; }
 
 /* === Embedding demo (lndw style — Power / Gender) === */
 #embedding-demo {
@@ -574,8 +543,8 @@ $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\
 <!-- ============================================================ -->
 <div class="mn-demo-panel">
 	<div class="mn-demo-title">🔄 The Autoregressive Loop: One Word at a Time</div>
-	<div class="mn-demo-sub">Press play and watch the sentence build itself, one prediction at a time.</div>
-	<div id="autoregressive-viz" style="min-height:200px;"></div>
+	<div class="mn-demo-sub">Each word is appended and fed back in — the sentence builds one token at a time.</div>
+	<div id="autoregressive-viz" style="min-height:120px;"></div>
 	<div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
 		<button id="autoregressive-play" onclick="AutoregressiveViz.animate()"
 			style="background:#3b82f6; color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
@@ -591,7 +560,7 @@ $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\
 <div class="mn-aha">
 	<div class="mn-aha-kicker">The aha</div>
 	<p class="mn-aha-big">It writes by reading itself.</p>
-	<p class="mn-aha-sub">There is no plan, no outline, no “dragon” stored anywhere. Every word it produces is appended to its own input and becomes the context for the next — the output <b>is</b> the input, one step later.</p>
+	<p class="mn-aha-sub">There is no plan, no outline, no “dragon” stored anywhere. Its output is appended to its input, the whole new text is fed back into the model, and the next word is predicted from that — again and again, until it writes the stop token <code>|endoftext|</code>.</p>
 </div>
 
 <div class="mn-hook">

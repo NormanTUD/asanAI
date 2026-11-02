@@ -1703,131 +1703,43 @@ const AutoregressiveViz = {
 		return this.steps[Math.min(this.currentStep, this.steps.length - 1)];
 	},
 
-	getOriginalWordCount: function() {
-		return this.originalInput.split(' ').length;
-	},
-
-	getInputWords: function(stepData) {
-		return stepData.input.split(' ');
-	},
-
-	// ── Word classification ──
-
-	isOriginalWord: function(index, originalCount) {
-		return index < originalCount;
-	},
-
-	isJustAddedWord: function(index, totalWords, step) {
-		return index === totalWords - 1 && step > 0;
-	},
-
-	// ── Word HTML rendering ──
-
-	renderOriginalWord: function(word) {
-		return `<span class="ar-word ar-orig">${word}</span>`;
-	},
-
-	renderJustAddedWord: function(word) {
-		return `<span class="ar-word ar-added">${word}</span>`;
-	},
-
-	renderContextWord: function(word) {
-		return `<span class="ar-word ar-ctx">${word}</span>`;
-	},
-
-	renderWordSpan: function(word, index, totalWords, originalCount, step) {
-		if (this.isOriginalWord(index, originalCount)) {
-			return this.renderOriginalWord(word);
-		}
-		if (this.isJustAddedWord(index, totalWords, step)) {
-			return this.renderJustAddedWord(word);
-		}
-		return this.renderContextWord(word);
-	},
-
-	// ── Sentence HTML ──
-
-	buildSentenceHtml: function(inputWords, originalCount, step) {
-		let html = '';
-		inputWords.forEach((word, i) => {
-			html += this.renderWordSpan(word, i, inputWords.length, originalCount, step);
-		});
-		return html;
-	},
-
-	// ── Prediction HTML ──
+	// ── Formula ──
 
 	isEndToken: function(output) {
 		return output === '|endoftext|';
 	},
 
-	// In AutoregressiveViz, replace these three methods:
-
-	renderStopPrediction: function() {
-		return `<span class="ar-pill ar-stop"
-		  onclick="AutoregressiveViz.clickAdvance()"
-	    >⏹ STOP</span>`;
+	getGeneratedWords: function(input) {
+		return input.slice(this.originalInput.length).trim();
 	},
 
-	renderWordPrediction: function(output) {
-		return `<span class="ar-pill ar-pred"
-		  onclick="AutoregressiveViz.clickAdvance()"
-		  title="Click to add this word and continue"
-	    >${output}</span>`;
-	},
-
-	// Add this new method to AutoregressiveViz:
-	clickAdvance: function() {
-		// If currently animating, don't interfere
-		if (this.animating) return;
-
-		// If we're at the last step, reset
-		if (this.isAtEnd()) {
-			this.reset();
-			return;
+	buildLatex: function(stepData) {
+		const generated = this.getGeneratedWords(stepData.input);
+		const generatedWords = generated ? generated.split(' ') : [];
+		const inputParts = [
+			`\\underbrace{\\text{${this.originalInput}}}_{\\text{User Input}}`
+		];
+		if (generatedWords.length > 0) {
+			const label = generatedWords.length === 1
+				? 'Word 1'
+				: `Words 1–${generatedWords.length}`;
+			inputParts.push(`\\underbrace{\\text{${generated}}}_{\\text{${label}}}`);
 		}
-
-		// Advance to the next step and re-render
-		this.advanceStep();
-		this.render();
+		const output = this.isEndToken(stepData.output)
+			? `\\underbrace{\\texttt{|endoftext|}}_{\\text{Stop}}`
+			: `\\underbrace{\\text{${stepData.output}}}_{\\text{Word ${generatedWords.length + 1}}}`;
+		return `\\text{LLM}(${inputParts.join(' \\ ')}) \\rightarrow ${output}`;
 	},
 
-
-	buildPredictionHtml: function(output) {
-		if (this.isEndToken(output)) {
-			return this.renderStopPrediction();
+	renderLatex: function(latex) {
+		if (typeof temml !== 'undefined' && temml.renderToString) {
+			try {
+				return temml.renderToString(latex, { displayMode: true });
+			} catch (e) {
+				// fall back to the raw source below
+			}
 		}
-		return this.renderWordPrediction(output);
-	},
-
-	// ── Layout sections ──
-
-	buildSentenceDisplayHtml: function(sentenceHtml) {
-		return `
-	    <div class="ar-sentence">
-		${sentenceHtml}
-	    </div>`;
-	},
-
-	buildPredictionRowHtml: function(predictionHtml, prob) {
-		return `
-	    <div class="ar-row">
-		<span class="ar-label">→ Predicts:</span>
-		${predictionHtml}
-		<span class="ar-prob">(p=${prob.toFixed(2)})</span>
-	    </div>`;
-	},
-
-	buildLegendHtml: function() {
-		return `
-	    <div class="ar-legend">
-		<div class="ar-legend-items">
-		    <span><span class="ar-swatch ar-swatch-input">■</span> user input</span>
-		    <span><span class="ar-swatch ar-swatch-gen">■</span> generated</span>
-		    <span><span class="ar-swatch ar-swatch-added">■</span> just added</span>
-		    <span><span class="ar-swatch ar-swatch-next">■</span> next prediction</span>
-		</div>
-	    </div>`;
+		return `<span class="ar-fallback">${latex}</span>`;
 	},
 
 	// ── Main render ──
@@ -1836,21 +1748,8 @@ const AutoregressiveViz = {
 		const container = document.getElementById('autoregressive-viz');
 		if (!container) return;
 
-		const s = this.getCurrentStepData();
-		const inputWords = this.getInputWords(s);
-		const originalCount = this.getOriginalWordCount();
-
-		const sentenceHtml = this.buildSentenceHtml(inputWords, originalCount, this.currentStep);
-		const predictionHtml = this.buildPredictionHtml(s.output);
-
-		const html = `
-	    <div style="font-family:monospace; font-size:0.85em;">
-		${this.buildSentenceDisplayHtml(sentenceHtml)}
-		${this.buildPredictionRowHtml(predictionHtml, s.prob)}
-		${this.buildLegendHtml()}
-	    </div>`;
-
-		container.innerHTML = html;
+		const latex = this.buildLatex(this.getCurrentStepData());
+		container.innerHTML = `<div class="ar-math">${this.renderLatex(latex)}</div>`;
 	},
 
 	// ── Animation control ──

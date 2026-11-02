@@ -7306,7 +7306,7 @@
     },
     {
       "id": "intuition-stmt-4",
-      "quote": "🔄 The Autoregressive Loop: One Word at a Time Press play and watch the sentence build itself, one prediction at a time.",
+      "quote": "🔄 The Autoregressive Loop: One Word at a Time Each word is appended and fed back in — the sentence builds one token at a time.",
       "block_id": "intuition-block-3",
       "section": "",
       "kind": "statement"
@@ -7327,7 +7327,7 @@
     },
     {
       "id": "intuition-stmt-7",
-      "quote": "Every word it produces is appended to its own input and becomes the context for the next — the output is the input, one step later.",
+      "quote": "Its output is appended to its input, the whole new text is fed back into the model, and the next word is predicted from that — again and again, until it writes the stop token .",
       "block_id": "intuition-block-6",
       "section": "",
       "kind": "statement"
@@ -8930,7 +8930,7 @@
     },
     {
       "id": "intuition-block-3",
-      "quote": "🔄 The Autoregressive Loop: One Word at a Time Press play and watch the sentence build itself, one prediction at a time.",
+      "quote": "🔄 The Autoregressive Loop: One Word at a Time Each word is appended and fed back in — the sentence builds one token at a time.",
       "kind": "paragraph",
       "section": ""
     },
@@ -8948,7 +8948,7 @@
     },
     {
       "id": "intuition-block-6",
-      "quote": "The aha It writes by reading itself. There is no plan, no outline, no “dragon” stored anywhere. Every word it produces is appended to its own input and becomes the context for the next — the output is the input, one step later.",
+      "quote": "The aha It writes by reading itself. There is no plan, no outline, no “dragon” stored anywhere. Its output is appended to its input, the whole new text is fed back into the model, and the next word is predicted from that — again and again, until it writes the stop token .",
       "kind": "paragraph",
       "section": ""
     },
