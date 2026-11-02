@@ -275,25 +275,25 @@ Two threads push geometry past the plane and past the conic.
 
 $$\underbrace{A}_{\text{the area of the field}} = \sqrt{\;\underbrace{s(s-a)(s-b)(s-c)}_{\substack{\text{built only from the}\\\text{three measured sides}}}\;}, \qquad \underbrace{s}_{\text{half the perimeter}} = \frac{a+b+c}{2}$$
 
-\cite{heronmetrica}. This is the tool a surveyor actually needed — you can measure the three sides of an irregular field on the ground, but dropping a perpendicular to get a height is often impossible. It also generalises naturally, with two sides and the included angle $C$, to $A = \tfrac{1}{2}ab\sin C$, and, replacing the sine term, to the **law of cosines**, $c^{2} = a^{2} + b^{2} - 2ab\cos C$, which is the Pythagorean theorem for *every* triangle (and reduces to it when $C = 90^{\circ}$) \cite{heronmetrica} \cite{heathgreekmath}.
+\cite{heronmetrica}. This is the tool a surveyor actually needed: you can measure the three sides of an irregular field on the ground, but dropping a perpendicular to get a height is often impossible. It also generalises naturally, with two sides and the included angle $C$, to $A = \tfrac{1}{2}ab\sin C$, and, replacing the sine term, to the **law of cosines**, $c^{2} = a^{2} + b^{2} - 2ab\cos C$, which is the Pythagorean theorem for *every* triangle (and reduces to it when $C = 90^{\circ}$) \cite{heronmetrica} \cite{heathgreekmath}.
 
-**Apollonius of Perga** (c. 262–190 BCE) wrote the eight-book **\citealternativetitle{apolloniusconics}**, in which he names and classifies the **conic sections** — the ellipse, the parabola and the hyperbola — as the curves a plane cuts from a cone, and develops their full metric theory \cite{apolloniusconics}. Written in the language of coordinates that Descartes would later supply, the three conics are simply
+**Apollonius of Perga** (c. 262 to 190 BCE) wrote the eight-book **\citealternativetitle{apolloniusconics}**, in which he names and classifies the **conic sections** (the ellipse, the parabola and the hyperbola) as the curves a plane cuts from a cone, and develops their full metric theory \cite{apolloniusconics}. Written in the language of coordinates that Descartes would later supply, the three conics are simply
 
 $$\underbrace{\frac{x^{2}}{a^{2}} + \frac{y^{2}}{b^{2}} = 1}_{\text{a closed loop}} \qquad \underbrace{y^{2} = 4ax}_{\text{one open arc (focuses light)}} \qquad \underbrace{\frac{x^{2}}{a^{2}} - \frac{y^{2}}{b^{2}} = 1}_{\text{two open arcs}}$$
 
 <figure>
 	<img style="width: 100%" src="conic_sections.png" alt="The three conic sections: ellipse, parabola and hyperbola" />
-	<figcaption class="md">The three <strong>conic sections</strong> (\citealternativetitle{conicsections_wiki}): tilt a cutting plane against a cone and it carves out an ellipse (a shallow cut), a parabola (a plane parallel to a side), or a hyperbola (a steep cut through both nappes). All three are degree-two curves — the geometry that Descartes would turn into the $B^{2}-4AC$ sign test \cite{apolloniusconics}.</figcaption>
+	<figcaption class="md">The three <strong>conic sections</strong> (\citealternativetitle{conicsections_wiki}): tilt a cutting plane against a cone and it carves out an ellipse (a shallow cut), a parabola (a plane parallel to a side), or a hyperbola (a steep cut through both nappes). All three are degree-two curves, the geometry that Descartes would turn into the $B^{2}-4AC$ sign test \cite{apolloniusconics}.</figcaption>
 </figure>
 
-The *why* is partly optical and partly astronomical. The parabola is the only conic that **focuses**: a ray sent in parallel to its axis reflects through a single point (the focus), which is why parabolic mirrors and dishes concentrate light and sound — the old legend that Archimedes burned Roman ships with a focusing mirror is a story about this. And the ellipse is the shape of an orbit: it will take **Kepler** (1609) to read the conics back into the sky and discover that planets move on ellipses with the Sun at one focus \cite{keplerastronomianova}, and **Newton** (1687) to prove that an inverse-square force *must* produce conic orbits \cite{newtonprincipia}. The conics sit, in other words, exactly at the hinge between pure geometry and the physics of the heavens.
+The *why* is partly optical and partly astronomical. The parabola is the only conic that **focuses**: a ray sent in parallel to its axis reflects through a single point (the focus), which is why parabolic mirrors and dishes concentrate light and sound. The old legend that Archimedes burned Roman ships with a focusing mirror is a story about this. And the ellipse is the shape of an orbit: it will take **Kepler** (1609) to read the conics back into the sky and discover that planets move on ellipses with the Sun at one focus \cite{keplerastronomianova}, and **Newton** (1687) to prove that an inverse-square force *must* produce conic orbits \cite{newtonprincipia}. The conics sit, in other words, exactly at the hinge between pure geometry and the physics of the heavens.
 
 <figure>
 	<img style="width: 100%" src="antikythera.jpg" alt="The Antikythera mechanism" />
-	<figcaption class="md">The Antikythera mechanism (c. 2nd c. BCE), a geared astronomical computer — the geometry of the heavens reduced to bronze gears and epicycles.</figcaption>
+	<figcaption class="md">The Antikythera mechanism (c. 2nd c. BCE), a geared astronomical computer: the geometry of the heavens reduced to bronze gears and epicycles.</figcaption>
 </figure>
 
-**Menelaus of Alexandria** (c. 70–140 CE) wrote the **\citealternativetitle{menelaussphaerica}**, the earliest surviving systematic treatise on **spherical trigonometry** — the geometry of the *surface* of a sphere, where the straight line is replaced by a great circle and the angles of a triangle sum to *more* than two right angles \cite{menelaussphaerica}. Theodosius of Bithynia's *Sphaerics* had already treated spherical geometry a century earlier; Menelaus's advance was the trigonometric tool for astronomy. Menelaus' theorem is the spherical analogue of the sine rule, and it quietly plants the second seed of Section VII: *curved* space has its own, genuinely different, geometry.
+**Menelaus of Alexandria** (c. 70 to 140 CE) wrote the **\citealternativetitle{menelaussphaerica}**, the earliest surviving systematic treatise on **spherical trigonometry**: the geometry of the *surface* of a sphere, where the straight line is replaced by a great circle and the angles of a triangle sum to *more* than two right angles \cite{menelaussphaerica}. Theodosius of Bithynia's *Sphaerics* had already treated spherical geometry a century earlier; Menelaus's advance was the trigonometric tool for astronomy. Menelaus' theorem is the spherical analogue of the sine rule, and it quietly plants the second seed of Section VII: *curved* space has its own, genuinely different, geometry.
 </div>
 
 <div class="md" data-mathlevel="40">
@@ -302,11 +302,11 @@ The *why* is partly optical and partly astronomical. The parabola is the only co
 <div style="display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center; margin:0 0 1.5rem;">
 <figure style="margin:0; width:45%; max-width:260px;">
 <img style="width:100%; height:auto; border-radius:4px;" src="alkhwarizmi_portrait.jpg" alt="Muḥammad ibn Mūsā al-Khwārizmī" />
-<figcaption class="md" style="font-size:0.85rem; margin-top:0.4rem;">Muḥammad ibn Mūsā <strong>al-Khwārizmī</strong> (c. 780–850), whose treatise on <em>al-jabr</em> gave algebra its name — and whose surname gave us the word <em>algorithm</em> (\cite[Al-Khwarizmi portrait]{alkhwarizmi_portrait}).</figcaption>
+<figcaption class="md" style="font-size:0.85rem; margin-top:0.4rem;">Muḥammad ibn Mūsā <strong>al-Khwārizmī</strong> (c. 780 to 850), whose treatise on <em>al-jabr</em> gave algebra its name, and whose surname gave us the word <em>algorithm</em> (\cite[Al-Khwarizmi portrait]{alkhwarizmi_portrait}).</figcaption>
 </figure>
 <figure style="margin:0; width:45%; max-width:260px;">
 <img style="width:100%; height:auto; border-radius:4px;" src="alhazen_portrait.jpg" alt="Ibn al-Haytham (Alhazen)" />
-<figcaption class="md" style="font-size:0.85rem; margin-top:0.4rem;"><strong>Ibn al-Haytham</strong> (Alhazen), c. 965–1040, whose <em>Book of Optics</em> made geometry the mathematics of how the world projects itself onto the eye (\cite[Ibn al-Haytham, 1647]{alhazen_portrait}).</figcaption>
+<figcaption class="md" style="font-size:0.85rem; margin-top:0.4rem;"><strong>Ibn al-Haytham</strong> (Alhazen), c. 965 to 1040, whose <em>Book of Optics</em> made geometry the mathematics of how the world projects itself onto the eye (\cite[Ibn al-Haytham, 1647]{alhazen_portrait}).</figcaption>
 </figure>
 </div>
 
