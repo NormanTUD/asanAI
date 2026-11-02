@@ -247,7 +247,7 @@ Unix, Windows, and their war are the famous thread. But the space was crowded, a
 </div>
 
 <div class="md">
-Mach matters because it did not die in a journal. It became the *kernel* of **NeXTSTEP** (1989), the operating system of **Steve Jobs's** NeXT computer, which combined the Mach microkernel with a **BSD** user space and an **object-oriented** system built around **Objective-C** \cite{chm}. NeXTSTEP had a beautiful, consistent graphical interface (later **Aqua**) and a *modern* object model, and when Apple bought NeXT in 1997, NeXTSTEP became the foundation of **macOS** (and, with it, of **iOS**). So the microkernel that a CMU team built as a *research* kernel is, today, the *basis of the operating system on a billion phones* \cite{chm}. The “pure” research idea won — not by being *chosen*, but by being *bought*.
+Mach matters because it did not die in a journal. It became the *kernel* of **NeXTSTEP** (1989), the operating system of **Steve Jobs's** NeXT computer, which combined the Mach microkernel with a **BSD** user space and an **object-oriented** system built around **Objective-C** \cite{chm}. NeXTSTEP had a beautiful, consistent graphical interface (later **Aqua**) and a *modern* object model, and when Apple bought NeXT in 1997, NeXTSTEP became the foundation of **macOS** (and, with it, of **iOS**). So the microkernel that a CMU team built as a *research* kernel is, today, the *basis of the operating system on a billion phones* \cite{chm}. The “pure” research idea won: not by being *chosen*, but by being *bought*.
 </div>
 
 <div class="optional md" data-headline="The microkernel debate: purity versus speed">
