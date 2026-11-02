@@ -1366,57 +1366,66 @@ bash run_tests --no-smoke-tests --no-docker --chromium \
 
 State the claim positively. Most “X is not Y” sentences in the course do real
 work: they name a default the reader holds and replace it. Keep those. Cut the
-rare sentence that denies a claim nobody made, or that merely upgrades the
-text's own simplification.
+rare sentence that denies a claim nobody made, that merely upgrades the text's
+own simplification, or that dresses a plain point in metaphor.
 
-**Keep — the negation corrects a real default, dismissal, or understatement.**
-The test: has the surrounding prose given the reader a reason to hold the
-negated view? If yes, the contrast is content.
+**Keep: the negation is load-bearing.** The test: has the surrounding prose
+given the reader a reason to hold the negated view, or does the positive claim
+depend on rejecting it? If yes, the contrast is content.
 
 - “The key takeaway when studying distributions is not to memorize them, but to
-  understand how large datasets behave.” — corrects “studying = memorizing”.
-- “Alignment is not one technique; it is a family of problems …” — rejects the
-  expectation of a single method.
-- “Depth is not just “more capacity” — it is the composition budget.” — corrects
-  a common reading of what depth buys.
+  understand how large datasets behave.” (corrects “studying = memorizing”)
+- “Alignment is not one technique; it is a family of problems …” (rejects the
+  expectation of a single method)
+- “Depth is not just “more capacity” [...] it is the composition budget.”
+  (corrects a common reading of what depth buys)
 - “A vector is not a ‘list of numbers’. A vector is an *element* of a vector
-  space.” — the definition readers arrive with.
+  space.” (the definition readers arrive with)
 - “This is not a bug in the math, it is a feature of the statistical learning
-  process…” — the reader's likely reaction to bias.
-- “This is not just a notational trick.” — pre-empts dismissing currying as
-  syntax.
+  process…” (the reader's likely reaction to bias)
+- “This is not just a notational trick.” (pre-empts dismissing currying as
+  syntax)
 - “The verification crisis is not merely an epistemic inconvenience. It is a
-  strategic asset…” — the reader's likely understatement.
-- “The last comparison is the one people get wrong.” — names a common error.
-- “The history of AI is not only the history of algorithms. It is also…” —
-  widens the chapter's scope with a substantive second history.
+  strategic asset…” (the reader's likely understatement)
+- “The last comparison is the one people get wrong.” (names a common error)
+- “The history of AI is not only the history of algorithms. It is also…”
+  (widens the chapter's scope with a substantive second history)
 - “The point is not that Riemann or Einstein ‘knew about AI’. The point is
-  that…” — pre-empts an anachronistic misreading.
-- “The boundary is not just a lab curiosity; it is a window into…” — names the
-  deflationary reading and replaces it.
-- “Correlation is not causation.” — a stock phrase, but here it is the rule
-  being taught.
+  that…” (pre-empts an anachronistic misreading)
+- “The boundary is not just a lab curiosity; it is a window into…” (names the
+  deflationary reading and replaces it)
+- “Correlation is not causation.” (a stock phrase, but here it is the rule being
+  taught)
 - “AI is the newest version of a very old habit, and this page is about the
-  habit, not the machine.” — the habit/machine opposition is the chapter's
-  thesis, so it survives even though the sentence also names the page.
+  habit, not the machine.” (the habit/machine opposition is the chapter's
+  thesis, so it survives even though the sentence also names the page)
 - “X is not Y” when the negation *is* the lesson: “The model is not lying; it is
   completing a pattern.”
+- “So $T$ is not a knob we invented [...] it is a **temperature** in the
+  thermodynamic sense.” (corrects a belief a reader could hold, and the
+  correction carries the section's idea)
+- “a sheaf is not just a *tool for studying* a space [...] it *is* a space.”
+  (reframes the concept, and the paragraph argues for the reframe)
+- “Generative models now produce 3D and video, not just stills.” (adds scope
+  information the reader did not have)
 
-**Cut — the negation is a straw man, or merely upgrades the text's own
-simplification.**
+**Cut: the negation is a straw man, a heading, an upgrade of the text's own
+simplification, or decoration.**
 
-- “The checklist is not a bureaucratic ritual.” — nobody accused it; the list
-  that follows is the content. Open with the list.
-- A heading like “Data is not just Numbers; it is a Distribution” — headings
-  state the positive: “Data is a Distribution”.
+- “The checklist is not a bureaucratic ritual.” (nobody accused it; the list
+  that follows is the content. Open with the list.)
+- A heading like “Data is not just Numbers; it is a Distribution” (headings
+  state the positive: “Data is a Distribution”.)
 - “In practice, a Transformer is not just two steps; it is a stack of $N$
-  blocks…” — the text just gave the two-step simplification; state the stack
-  directly.
-- “Computation is not only silicon; it is also the electromagnetic spectrum.” —
-  the heading already says “The Spectrum”; lead with the second claim.
+  blocks…” (the text just gave the two-step simplification; state the stack
+  directly.)
+- “Computation is not only silicon; it is also the electromagnetic spectrum.”
+  (the heading already says “The Spectrum”; lead with the second claim.)
 - “An LLM is not just a list of word counts; it is a map of Conditional
-  Probabilities.” — “word counts” is a label the text never asked the reader to
-  hold.
+  Probabilities.” (“word counts” is a label the text never asked the reader to
+  hold.)
+- “This landscape is not flat; it is a jagged mountain range of probabilities.”
+  (the metaphor dresses a plain point: the distribution is uneven.)
 - “The point is not X; it is Y” when X was never on the table.
 - “It is worth …”, “Notice that …” when the sentence only flags that a point is
   coming. The phrase is fine when it marks a deliberate detour with a reason:
@@ -1436,3 +1445,16 @@ To list candidates for review, run:
 ```bash
 grep -rniE '\b(is|are|was|were) not\b|\bnot (just|only|merely)\b|this page (is|asks|gives|traces|turns|shows)' blog/*.php
 ```
+
+## Prose style: dashes, paragraphs, flow
+
+- **No em dash or en dash in lesson prose.** They read as machine-written. Use
+  a comma, a colon, parentheses, or two sentences. Keep the hyphen only in
+  compounds.
+- **Keep paragraphs short.** One idea per paragraph, usually three to six
+  sentences. Start a new paragraph when the idea changes.
+- **Group related sentences.** Do not scatter one idea across several short
+  paragraphs, and do not bury two ideas in one long block.
+- **Keep the argument in flow.** Each paragraph should connect to the one before
+  it. The prose should read as continuous reasoning, not a stack of disconnected
+  claims or a list of facts.
