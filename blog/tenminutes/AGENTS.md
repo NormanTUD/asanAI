@@ -238,6 +238,25 @@ connections, not the calendar cards.
 renders the pipeline shape line with `temml.renderToString(...)`. Keep the
 fallback to plain text if Temml is unavailable.
 
+## Prose style: no filler contrasts
+
+Do not write defensive filler such as:
+
+- “X is not Y” / “X is not just Y” — unless the negation is the actual lesson.
+- “This page is about / asks / gives / traces / turns / shows …” — state the idea
+  directly instead of announcing the page.
+- “The point is not X; it is Y”, “It is worth …”, “Notice that …” when the
+  sentence only announces the point.
+
+Prefer the positive claim. Keep a contrast only when the contrast *is* the
+insight, for example: “The model is not lying; it is completing a pattern.”
+
+To list candidates for review, run:
+
+```bash
+grep -rniE '\b(is|are|was|were) not\b|\bnot (just|only|merely)\b|this page (is|asks|gives|traces|turns|shows)' blog/tenminutes/*.html
+```
+
 ## Image credits (`history.html`)
 
 `assets/image-credits.json` is the local source of truth for the history
