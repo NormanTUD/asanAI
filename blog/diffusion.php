@@ -201,7 +201,8 @@ The denoiser is a **U-Net** built from:
 
 The only fully-connected layers are tiny MLPs for the time and text embeddings. Everything else is convolution or attention. Stable Diffusion 1.5's U-Net has ~860 M parameters (the full pipeline, including text encoder and VAE, is about 1 B). At each denoising step, the U-Net encodes $t$, runs the noisy latent down through four encoder blocks, applies self- and cross-attention at the bottleneck, runs back up through four decoder blocks with skip connections, and outputs the predicted noise.
 
-A model summary makes that wiring concrete. Install `diffusers`, `torch`, and `torchinfo`, then load a tiny test U-Net from Hugging Face and print its modules and parameter counts:
+A model summary makes that wiring concrete. Install `diffusers`, `torch`, and `torchinfo`, then load a tiny test U-Net from Hugging Face and print its modules and parameter counts.
+</div>
 
 <pre><code class="language-python">from diffusers import UNet2DConditionModel
 from torchinfo import summary
@@ -221,25 +222,45 @@ summary(
 )
 </code></pre>
 
-Trimmed output (the shape columns are omitted here):
+<div class="md">
+The same run gives this breakdown (shapes for the main path; inner ModuleLists by parameter count):
 
-<pre><code class="language-text">UNet2DConditionModel                          params
-├─ conv_in          Conv2d                     1,184
-├─ time_embedding   TimestepEmbedding         20,736
-├─ down_blocks      ModuleList               377,824
-│  ├─ 0             DownBlock2D               54,752
-│  └─ 1             CrossAttnDownBlock2D     323,072
-├─ mid_block        UNetMidBlock2DCrossAttn  252,096
-├─ up_blocks        ModuleList               773,952
-│  ├─ 0             CrossAttnUpBlock2D       661,312
-│  └─ 1             UpBlock2D                112,640
-├─ conv_norm_out    GroupNorm                     64
-├─ conv_act         SiLU                          0
-└─ conv_out         Conv2d                     1,156
-Total                                         1,427,012
-</code></pre>
+| Module | Type | Input shape | Output shape | Params |
+|---|---|---:|---:|---:|
+| `conv_in` | Conv2d | `[1, 4, 64, 64]` | `[1, 32, 64, 64]` | 1,184 |
+| `time_proj` | Timesteps | `[1]` | `[1, 32]` | 0 |
+| `time_embedding` | TimestepEmbedding | `[1, 32]` | `[1, 128]` | 20,736 |
+| `time_embedding.linear_1` | Linear | `[1, 32]` | `[1, 128]` | 4,224 |
+| `time_embedding.act` | SiLU | `[1, 128]` | `[1, 128]` | 0 |
+| `time_embedding.linear_2` | Linear | `[1, 128]` | `[1, 128]` | 16,512 |
+| `down_blocks` | ModuleList | `[1, 32, 64, 64]` | `[1, 64, 32, 32]` | 377,824 |
+| `down_blocks.0` | DownBlock2D | `[1, 32, 64, 64]` | `[1, 32, 32, 32]` | 54,752 |
+| `down_blocks.0.resnets` | ModuleList | | | 45,504 |
+| `down_blocks.0.downsamplers` | ModuleList | | | 9,248 |
+| `down_blocks.1` | CrossAttnDownBlock2D | `[1, 32, 32, 32]` | `[1, 64, 32, 32]` | 323,072 |
+| `down_blocks.1.attentions` | ModuleList | | | 174,720 |
+| `down_blocks.1.resnets` | ModuleList | | | 148,352 |
+| `mid_block` | UNetMidBlock2DCrossAttn | `[1, 64, 32, 32]` | `[1, 64, 32, 32]` | 252,096 |
+| `mid_block.attentions` | ModuleList | | | 87,360 |
+| `mid_block.attentions.0` | Transformer2DModel | | | 87,360 |
+| `mid_block.resnets` | ModuleList | | | 164,736 |
+| `mid_block.resnets.0` | ResnetBlock2D | | | 82,368 |
+| `mid_block.resnets.1` | ResnetBlock2D | | | 82,368 |
+| `up_blocks` | ModuleList | `[1, 64, 32, 32]` | `[1, 32, 64, 64]` | 773,952 |
+| `up_blocks.0` | CrossAttnUpBlock2D | `[1, 64, 32, 32]` | `[1, 64, 64, 64]` | 661,312 |
+| `up_blocks.0.attentions` | ModuleList | | | 262,080 |
+| `up_blocks.0.resnets` | ModuleList | | | 362,304 |
+| `up_blocks.0.upsamplers` | ModuleList | | | 36,928 |
+| `up_blocks.1` | UpBlock2D | `[1, 64, 64, 64]` | `[1, 32, 64, 64]` | 112,640 |
+| `up_blocks.1.resnets` | ModuleList | | | 112,640 |
+| `conv_norm_out` | GroupNorm | `[1, 32, 64, 64]` | `[1, 32, 64, 64]` | 64 |
+| `conv_act` | SiLU | `[1, 32, 64, 64]` | `[1, 32, 64, 64]` | 0 |
+| `conv_out` | Conv2d | `[1, 32, 64, 64]` | `[1, 4, 64, 64]` | 1,156 |
+| **Total** | | | | **1,427,012** |
 
 The test model has two down and two up blocks and only 1.4 M parameters. Stable Diffusion 1.5 uses four of each, but the module names and wiring are the same. Downsampling reduces the spatial grid; the cross-attention blocks read the text embedding; the skip connections carry detail across the bottleneck; and upsampling restores the original resolution.
+
+The block names in the table are the pieces from the list above. **TimestepEmbedding** turns the scalar timestep into a vector that tells every block how noisy the sample is. A **DownBlock2D** stacks residual convolutions and may downsample the grid; a **CrossAttnDownBlock2D** adds cross-attention to the text. The **UNetMidBlock2DCrossAttn** is the bottleneck, where residual convolutions and cross-attention run at the lowest resolution. A **CrossAttnUpBlock2D** upsamples, merges the matching skip connection, and attends to the text; an **UpBlock2D** does the same without text attention. **GroupNorm** normalizes each group of channels, and **SiLU** applies the smooth activation $x\cdot\sigma(x)$.
 
 ### Stable Diffusion: doing it in a compressed space
 
