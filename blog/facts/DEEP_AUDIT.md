@@ -1,12 +1,12 @@
 # Deep fact audit
 
 - lessons: 99
-- claims: 7292
-- statements: 16940
-- relations: 51356
+- claims: 7297
+- statements: 16985
+- relations: 51507
 - uncovered years: 46
-- uncovered quantities: 5
-- uncited specific claims: 306
+- uncovered quantities: 6
+- uncited specific claims: 307
 - citation keys not found in lesson: 0
 - relation grounding issues: 93
 - numeric range issues: 0
@@ -39,7 +39,7 @@
 | deeplearninglab | 23 | 100 | 337 | 0 | 1 |
 | derivativelab | 22 | 58 | 214 | 0 | 0 |
 | differentiation | 21 | 82 | 300 | 0 | 0 |
-| diffusion | 28 | 150 | 371 | 0 | 0 |
+| diffusion | 33 | 195 | 522 | 0 | 1 |
 | embeddinglab | 25 | 539 | 1398 | 0 | 0 |
 | evaluation | 36 | 132 | 435 | 2 | 0 |
 | fact_lookup | 37 | 213 | 560 | 0 | 0 |
@@ -159,6 +159,7 @@
 
 - alternative_architectures.php: 8B
 - deeplearninglab.php: 0 parameters
+- diffusion.php: 1.4 M
 - running_locally.php: 0.7 PARAMETER
 - topology.php: 2 layer
 - unexpected_capabilities.php: 1.5B
@@ -200,7 +201,7 @@
 - beyond_llms.php: beyond_llms-gap-11 sat-solver year=1962.0
 - beyond_llms.php: beyond_llms-gap-12 hierarchical-clustering year=1963.0
 - beyond_llms.php: beyond_llms-gap-14 hidden-markov-model year=1966.0
-- … and 271 more
+- … and 272 more
 
 ## Bad citations
 
