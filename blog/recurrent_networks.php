@@ -82,7 +82,7 @@ In a language model that has learned grammar, \citeauthor{colah2015lstm} notes t
 
 Forget the gate, keep the memory: that is the whole trick — an *elementwise* multiplication by a gate near 1 instead of a full matrix product, so the gradients survive the journey across a long sentence \cite{colah2015lstm}.
 
-The LSTM was not invented in a vacuum. In his 1991 diploma thesis, \citeauthor{hochreiter1991vanishing} analyzed why recurrent gradients decay; the solution he and Schmidhuber developed, the *constant error carousel*, appeared in the 1997 LSTM paper \cite{hochreiter1991vanishing,lstm}. The carousel is a self-connected unit whose error signal can flow backward without being multiplied by a weight matrix—the cell state made trainable. Learned input and output gates let the network decide when to write to it and when to read from it.
+The LSTM was not invented in a vacuum. In his 1991 diploma thesis, \citeauthor{hochreiter1991vanishing} analyzed why recurrent gradients decay; the solution he and Schmidhuber developed, the *constant error carousel*, appeared in the 1997 LSTM paper \cite{hochreiter1991vanishing,lstm}. The carousel is a self-connected unit whose error signal can flow backward without being multiplied by a weight matrix—the cell state made trainable. Learned input and output gates let the network decide when to write to it and when to read from it. The LSTM's dominance in speech came from **Alex Graves** and colleagues' **CTC** loss (2006), which let a recurrent network learn to align an unsegmented acoustic signal with its transcript; CTC-LSTM became the first end-to-end neural speech recogniser to beat the classical pipeline, and by 2015 it was running Google's Android speech recognition \cite{ctc2006}.
 </div>
 
 <div class="md">
