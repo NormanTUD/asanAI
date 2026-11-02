@@ -510,70 +510,29 @@ ${lhs} &= ${rhs}\\\\
 // ============================================================
 
 const PositionalEncodingViz = {
-    numDimensions: 8, // Show 8 dimensions of positional encoding
+    numDimensions: 8,
     maxPositions: 20,
+    dModel: 64,
 
-    // Compute sinusoidal positional encoding
+    // Sinusoidal positional encoding: even dimensions use sine, odd use cosine.
     computePE: function(pos, dim, dModel) {
         dModel = dModel || 64;
         if (dim % 2 === 0) {
             return Math.sin(pos / Math.pow(10000, dim / dModel));
-        } else {
-            return Math.cos(pos / Math.pow(10000, (dim - 1) / dModel));
         }
+        return Math.cos(pos / Math.pow(10000, (dim - 1) / dModel));
     },
 
     render: function() {
-        const plotDiv = document.getElementById('positional-encoding-plot');
-        if (!plotDiv) return;
-
         const numDims = parseInt(document.getElementById('pe-num-dims')?.value || 8);
-        const dModel = 64;
-
-        const traces = [];
-        const colors = [
-            '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
-            '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16',
-            '#f97316', '#6366f1', '#14b8a6', '#e11d48'
-        ];
-
-        for (let dim = 0; dim < numDims; dim++) {
-            const x = [];
-            const y = [];
-            for (let pos = 0; pos < this.maxPositions; pos++) {
-                x.push(pos);
-                y.push(this.computePE(pos, dim, dModel));
-            }
-            traces.push({
-                x: x, y: y,
-                mode: 'lines+markers',
-                name: `Dim ${dim} (${dim % 2 === 0 ? 'sin' : 'cos'})`,
-                line: { color: colors[dim % colors.length], width: 2 },
-                marker: { size: 4, color: colors[dim % colors.length] },
-                hovertemplate: `Dim ${dim}<br>Pos: %{x}<br>Value: %{y:.4f}<extra></extra>`
-            });
-        }
-
-        const layout = {
-            margin: { l: 50, r: 20, b: 50, t: 20 },
-            xaxis: { title: 'Token Position', dtick: 1, gridcolor: themeColor('#f1f5f9') },
-            yaxis: { title: 'Encoding Value', range: [-1.3, 1.3], gridcolor: themeColor('#f1f5f9') },
-            showlegend: true,
-            legend: { x: 1, y: 1, xanchor: 'right', bgcolor: isDarkMode() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)', font: { size: 10 } },
-            plot_bgcolor: themeColor('#fff'),
-            paper_bgcolor: themeColor('#fff'),
-        };
-
-        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
-
-        // Render the heatmap
-        this.renderHeatmap(numDims, dModel);
+        this.renderHeatmap(numDims, this.dModel);
     },
 
     renderHeatmap: function(numDims, dModel) {
         const plotDiv = document.getElementById('positional-encoding-heatmap');
         if (!plotDiv) return;
 
+        const dark = isDarkMode();
         const zData = [];
         for (let pos = 0; pos < this.maxPositions; pos++) {
             const row = [];
@@ -590,7 +549,7 @@ const PositionalEncodingViz = {
             type: 'heatmap',
             colorscale: [
                 [0, '#3b82f6'],
-                [0.5, '#f8fafc'],
+                [0.5, dark ? '#0f172a' : '#f8fafc'],
                 [1, '#ef4444']
             ],
             showscale: true,
@@ -599,8 +558,8 @@ const PositionalEncodingViz = {
 
         const layout = {
             margin: { l: 60, r: 20, b: 50, t: 10 },
-            xaxis: { title: 'Embedding Dimension' },
-            yaxis: { title: 'Token Position', autorange: 'reversed' },
+            xaxis: { title: 'Embedding Dimension', color: themeColor('#334155') },
+            yaxis: { title: 'Token Position', autorange: 'reversed', color: themeColor('#334155') },
             plot_bgcolor: themeColor('#fff'),
             paper_bgcolor: themeColor('#fff'),
         };
@@ -612,44 +571,35 @@ const PositionalEncodingViz = {
         const container = document.getElementById('pe-addition-demo');
         if (!container) return;
 
-        const word = document.getElementById('pe-demo-word')?.value || 'cat';
-        const pos1 = parseInt(document.getElementById('pe-demo-pos1')?.value || 0);
-        const pos2 = parseInt(document.getElementById('pe-demo-pos2')?.value || 5);
-        const dModel = 64;
-        const numDims = 4;
-
-        // Mock embedding for the word
+        const word = 'cat';
         const baseEmb = [0.22, 0.85, -0.41, 0.09];
+        const fmt = v => v.toFixed(2);
+        const vec = a => `\\left[${a.map(fmt).join(',\\; ')}\\right]`;
+        const NL = '\\\\';
 
-        const pe1 = [], pe2 = [], final1 = [], final2 = [];
-        for (let d = 0; d < numDims; d++) {
-            const p1 = this.computePE(pos1, d, dModel);
-            const p2 = this.computePE(pos2, d, dModel);
-            pe1.push(p1);
-            pe2.push(p2);
-            final1.push(baseEmb[d] + p1);
-            final2.push(baseEmb[d] + p2);
+        const block = (pos) => {
+            const pe = [], final = [];
+            for (let d = 0; d < 4; d++) {
+                const p = this.computePE(pos, d, this.dModel);
+                pe.push(p);
+                final.push(baseEmb[d] + p);
+            }
+            return [
+                `\\text{“${word}” at position ${pos}} &`,
+                `\\textcolor{#3b82f6}{\\text{Embedding}} &= ${vec(baseEmb)}`,
+                `\\textcolor{#10b981}{\\text{+ Position ${pos}}} &= ${vec(pe)}`,
+                `\\textcolor{#8b5cf6}{\\text{= Final}} &= ${vec(final)}`
+            ].join(NL);
+        };
+
+        const latex = `\\begin{aligned}${block(0)}${NL}[10pt]${block(5)}\\end{aligned}`;
+        if (typeof temml !== 'undefined' && temml.renderToString) {
+            try {
+                container.innerHTML = temml.renderToString(latex, { displayMode: true });
+                return;
+            } catch (e) { /* fall back to raw source */ }
         }
-
-        container.innerHTML = `
-            <div style="background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
-                <div style="margin-bottom:8px;">
-                    <b style="color:#3b82f6;">"${word}" at position ${pos1}:</b><br>
-                    Embedding: [${baseEmb.map(v => v.toFixed(2)).join(', ')}]<br>
-                    <span style="color:#10b981;">+ Position ${pos1}: [${pe1.map(v => v.toFixed(2)).join(', ')}]</span><br>
-                    <span style="color:#8b5cf6;">= Final: [${final1.map(v => v.toFixed(2)).join(', ')}]</span>
-                </div>
-                <div>
-                    <b style="color:#ef4444;">"${word}" at position ${pos2}:</b><br>
-                    Embedding: [${baseEmb.map(v => v.toFixed(2)).join(', ')}]<br>
-                    <span style="color:#10b981;">+ Position ${pos2}: [${pe2.map(v => v.toFixed(2)).join(', ')}]</span><br>
-                    <span style="color:#8b5cf6;">= Final: [${final2.map(v => v.toFixed(2)).join(', ')}]</span>
-                </div>
-                <div style="margin-top:10px; padding-top:10px; border-top:1px solid #e2e8f0; color:#64748b;">
-                    ⚡ Same word, different positions → <b>different vectors</b>!<br>
-                    This is how "The <b>dog</b> bites <b>man</b>" differs from "The <b>man</b> bites <b>dog</b>".
-                </div>
-            </div>`;
+        container.textContent = latex;
     }
 };
 
@@ -1738,11 +1688,6 @@ function loadIntuitionVizModule() {
 	PositionalEncodingViz.render();
 	PositionalEncodingViz.renderAdditionDemo();
 
-	// Position demo controls
-	['pe-demo-word', 'pe-demo-pos1', 'pe-demo-pos2'].forEach(id => {
-		const el = document.getElementById(id);
-		if (el) el.addEventListener('input', () => PositionalEncodingViz.renderAdditionDemo());
-	});
 
 	// Step 4: Residual Stream
 	ResidualStreamViz.init();
@@ -2471,7 +2416,7 @@ function loadIntuitionModule() {
     });
 
     // Step 3: Positional Encoding
-    _lazyRegister('positional-encoding-plot', () => {
+    _lazyRegister('positional-encoding-heatmap', () => {
         const peSlider = document.getElementById('pe-num-dims');
         if (peSlider) {
             peSlider.addEventListener('input', () => PositionalEncodingViz.render());
@@ -2479,10 +2424,6 @@ function loadIntuitionModule() {
         PositionalEncodingViz.render();
         PositionalEncodingViz.renderAdditionDemo();
 
-        ['pe-demo-word', 'pe-demo-pos1', 'pe-demo-pos2'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.addEventListener('input', () => PositionalEncodingViz.renderAdditionDemo());
-        });
     });
 
     // Step 4a: Attention (bank/river/money stepper)

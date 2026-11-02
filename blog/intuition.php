@@ -136,6 +136,18 @@ html.dark #embedding-demo .emb-hint {
 	border-color: rgba(148,163,184,.3);
 }
 
+#pe-addition-demo {
+	margin-top: 4px;
+	padding: 14px 16px;
+	background: var(--mn-bg-subtle);
+	border: 1px solid var(--mn-border-light);
+	border-radius: 10px;
+	text-align: center;
+	overflow-x: auto;
+	color: var(--mn-text);
+}
+#pe-addition-demo math { color: var(--mn-text); }
+
 /* === Attention bank/river/money demo (lndw style) === */
 #attn-demo {
 	background: var(--mn-surface);
@@ -717,24 +729,12 @@ Now each token carries two pieces of information: **what it is** and **where it 
 		<span style="font-weight:bold; color:#8b5cf6; min-width:24px;">8</span>
 	</div>
 
-	<!-- Sine/Cosine wave plot -->
-	<div id="positional-encoding-plot" data-plot-theme="self" style="height:300px; background:var(--mn-surface); border-radius:8px; border:1px solid var(--mn-border); margin-bottom:12px;"></div>
-
 	<!-- Heatmap -->
 	<div style="font-weight:bold; color:var(--mn-heading); margin-bottom:6px;">Positional Encoding Heatmap</div>
-	<div id="positional-encoding-heatmap" data-plot-theme="self" style="height:300px; background:var(--mn-surface); border-radius:8px; border:1px solid var(--mn-border); margin-bottom:12px;"></div>
+	<div id="positional-encoding-heatmap" data-plot-theme="self" style="height:420px; background:var(--mn-surface); border-radius:8px; border:1px solid var(--mn-border); margin-bottom:12px;"></div>
 
 	<!-- Same word, different positions demo -->
-	<div style="font-weight:bold; color:var(--mn-heading); margin-bottom:6px;">Same Word, Different Positions</div>
-	<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px; align-items:center;">
-		<input type="text" id="pe-demo-word" value="cat" placeholder="Word" class="mn-demo-input" style="width:96px;">
-		<label style="font-size:0.85em; color:var(--mn-text-secondary);">Pos 1:
-			<input type="number" id="pe-demo-pos1" value="0" min="0" max="19" class="mn-demo-input" style="width:68px;">
-		</label>
-		<label style="font-size:0.85em; color:var(--mn-text-secondary);">Pos 2:
-			<input type="number" id="pe-demo-pos2" value="5" min="0" max="19" class="mn-demo-input" style="width:68px;">
-		</label>
-	</div>
+	<div style="font-weight:bold; color:var(--mn-heading); margin-bottom:6px; margin-top:14px;">Same Word, Different Positions</div>
 	<div id="pe-addition-demo"></div>
 </div>
 
