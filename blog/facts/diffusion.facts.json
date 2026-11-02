@@ -5245,7 +5245,7 @@
     },
     {
       "id": "diffusion-stmt-117",
-      "quote": "This code loads a tiny test U-Net from Hugging Face and prints its modules and parameter counts:",
+      "quote": "Install `diffusers`, `torch`, and `torchinfo`, then load a tiny test U-Net from Hugging Face and print its modules and parameter counts:",
       "block_id": "diffusion-block-52",
       "section": "What's the network?",
       "kind": "statement"
@@ -5889,7 +5889,7 @@
     },
     {
       "id": "diffusion-block-52",
-      "quote": "A model summary makes that wiring concrete. This code loads a tiny test U-Net from Hugging Face and prints its modules and parameter counts:",
+      "quote": "A model summary makes that wiring concrete. Install `diffusers`, `torch`, and `torchinfo`, then load a tiny test U-Net from Hugging Face and print its modules and parameter counts:",
       "kind": "paragraph",
       "section": "What's the network?"
     },
