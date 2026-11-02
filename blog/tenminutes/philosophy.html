@@ -37,7 +37,7 @@
 						<div class="section-kicker"><span class="sk-num">02</span> Grounding and experience</div>
 						<h2 class="section-title">Meaning and the hard problem.</h2>
 						<div class="prose">
-							<p>Symbols in a computer are not connected to the world in the way human words are. The grounding problem asks how meaning gets attached to tokens. A model learns statistical relationships, but does it refer to anything? Searle's <strong>Chinese Room</strong> (<a href="https://doi.org/10.1017/S0140525X00005756" rel="noopener">Searle, 1980</a>) makes the worry vivid: a person in a room follows rules for manipulating Chinese symbols and produces plausible answers without understanding Chinese. If the room passes the test, has it understood? The argument is contested (the whole room might be the understanding system) but it names the gap precisely.</p>
+							<p>Symbols in a computer are not connected to the world in the way human words are. The grounding problem asks how meaning gets attached to tokens. A model learns statistical relationships, but does it refer to anything? Searle's <strong>Chinese Room</strong> (<a href="https://doi.org/10.1017/S0140525X00005756" rel="noopener">Searle, 1980</a>) makes the worry vivid: a person in a room follows rules for manipulating Chinese symbols and produces plausible answers without understanding Chinese. If the room passes the test, has it understood? The argument is contested (the whole room might be the understanding system) but it names the gap precisely. An LLM is in exactly that position: it follows learned statistical rules over tokens, without direct access to the world those tokens refer to. Whether the whole system understands is the same open question.</p>
 							<p>Mary's Room (<a href="https://www.sfu.ca/~jillmc/JacksonfromJStore.pdf" rel="noopener">Jackson, 1982</a>) and the hard problem of consciousness push on a different question: could a system know everything about colour and still never experience it? The <strong>hard problem</strong> (<a href="https://consc.net/papers/facing.pdf" rel="noopener">Chalmers, 1995</a>) is why any physical process feels like something at all; the easy problems are about function and behaviour, and the hard one is about experience. We have no accepted test for experience. That uncertainty is part of the answer, and it is also an ethical question: how should we treat systems whose status we cannot determine?</p>
 						</div>
 						<div class="keypoints">
@@ -76,6 +76,31 @@
 							<div class="tl-panel no-figure" data-timeline-panel aria-live="polite"></div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>Behaviour, grounding, and experience are separate questions.</span></div>
+					</div>
+
+					<div class="demo demo--paper wg-demo">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Winograd Schema <span>· demo</span></p>
+								<p class="demo-sub">One word changes the referent. A human uses a model of the situation; a surface matcher has to guess.</p>
+							</div>
+							<span class="demo-badge">interactive</span>
+						</div>
+						<div class="demo-body">
+							<div class="wg-cases">
+								<button class="wg-case is-on" type="button" data-wg-case="large">
+									<span class="wg-sentence">The trophy did not fit in the suitcase because <b>it</b> was too large.</span>
+									<span class="wg-answer">it = the trophy</span>
+									<span class="wg-why">A trophy can be too large for a suitcase. The suitcase is the container, not the oversized object.</span>
+								</button>
+								<button class="wg-case" type="button" data-wg-case="small">
+									<span class="wg-sentence">The trophy did not fit in the suitcase because <b>it</b> was too small.</span>
+									<span class="wg-answer">it = the suitcase</span>
+									<span class="wg-why">Now the container is too small. The syntax is almost identical, but the world picks a different referent.</span>
+								</button>
+							</div>
+							<div class="demo-hint">Click a sentence to see what “it” refers to.</div>
+						</div>
 					</div>
 
 					<div class="demo demo--paper" data-demo="mary">
@@ -158,6 +183,18 @@
 		</div>
 	</main>
 
+	<script>
+	(function () {
+		"use strict";
+		document.querySelectorAll("[data-wg-case]").forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				document.querySelectorAll("[data-wg-case]").forEach(function (b) {
+					b.classList.toggle("is-on", b === btn);
+				});
+			});
+		});
+	})();
+	</script>
 	<script src="assets/site.js"></script>
 	<script src="assets/demos.js"></script>
 	<script src="assets/chinese-room.js"></script>

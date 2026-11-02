@@ -86,9 +86,9 @@
 								others.
 							</p>
 						</div>
-						<div class="formula" data-tex="\begin{aligned} \operatorname{score}_{i,j} &amp;= \frac{q_i \cdot k_j^{\mathsf{T}}}{\sqrt{d_k}} \\ \alpha_{i,j} &amp;= \operatorname{softmax}_j(\operatorname{score}_{i,j}) \\ z_i &amp;= \sum_j \alpha_{i,j} v_j \end{aligned}"></div>
+						<div class="formula" data-tex="\begin{aligned} \operatorname{score}_{i,j} &amp;= \frac{q_i \cdot k_j^{\mathsf{T}}}{\sqrt{d_k}} \\ \alpha_{i,j} &amp;= \operatorname{softmax}_j(\operatorname{score}_{i,j}) \\ z_i &amp;= \sum_j \alpha_{i,j} v_j \end{aligned}">score(i,j) = (q_i · k_j^T) / √d_k; α(i,j) = softmax_j(score(i,j)); z_i = Σ_j α(i,j) v_j</div>
 						<div class="fieldnotes">
-							<h4>Why divide by <span data-tex="\sqrt{d_k}" data-tex-display="false"></span>?</h4>
+							<h4>Why divide by <span data-tex="\sqrt{d_k}" data-tex-display="false">√d_k</span>?</h4>
 							<p>As the dimension grows, dot products grow in magnitude and push softmax into a saturated regime with tiny gradients. The scaling keeps the scores in a healthy range. It changes the sharpness, not the meaning of the comparison.</p>
 						</div>
 					</section>
@@ -125,6 +125,8 @@
 									<button class="chip" type="button" data-att-preset="meaning">bank → loan</button>
 								</div>
 								<div class="att-sentence" id="att-sentence"></div>
+								<div class="att-budget" id="att-budget" aria-hidden="true"></div>
+								<p class="vec-note att-budget-note">One row's attention budget: the segments sum to 100%.</p>
 								<div class="demo-readout demo-readout--4">
 									<div><b>Query</b><span id="att-query">she</span></div>
 									<div><b>Top attended</b><span id="att-top">Maria</span></div>
@@ -132,15 +134,9 @@
 									<div><b>Row sum</b><span>1.00</span></div>
 								</div>
 								<p class="vec-note" id="att-top3" style="color:var(--tm-muted)">Top 3: Maria 48% · bank 12% · loan 8%. Every row sums to 1: attention is a finite budget.</p>
-								<div class="demo-controls">
-									<button class="btn-demo" type="button" id="att-matrix-toggle">Show attention matrix</button>
-									<label class="att-toggle" style="text-transform:none;letter-spacing:0;font-weight:500">
-										<input type="checkbox" id="att-causal"> Causal mask (decoder)
-									</label>
-								</div>
-								<div class="att-matrix" id="att-matrix" hidden>
+								<div class="att-matrix" id="att-matrix">
 									<canvas id="att-matrix-canvas" aria-label="Attention matrix: rows are queries, columns are keys"></canvas>
-									<p class="pipe-note">Rows = query, columns = key. The causal mask removes the future (upper-right triangle) and renormalizes each row.</p>
+									<p class="pipe-note">Rows = query, columns = key. The causal mask is always on: each row can see itself and the past, never the future. The row is renormalized over those positions only.</p>
 								</div>
 								<p class="meadow-caption" id="att-caption" style="color:var(--tm-muted)">The coreference head links “she” back to “Maria”.</p>
 							</div>
@@ -340,8 +336,7 @@
 		var heads = ["coref", "syntax", "meaning"];
 		var head = "coref";
 		var query = 5;
-		var showMatrix = false;
-		var causal = false;
+		var causal = true;
 		var sentenceEl = document.getElementById("att-sentence");
 		var headsEl = document.getElementById("att-heads");
 		var queryEl = document.getElementById("att-query");
@@ -350,8 +345,6 @@
 		var captionEl = document.getElementById("att-caption");
 		var matrixWrap = document.getElementById("att-matrix");
 		var matrixCanvas = document.getElementById("att-matrix-canvas");
-		var matrixToggle = document.getElementById("att-matrix-toggle");
-		var causalEl = document.getElementById("att-causal");
 		var matrixApi = null;
 
 		function weights(h, qi) {
@@ -393,7 +386,7 @@
 				b.addEventListener("click", function () {
 					query = i;
 					renderSentence();
-					if (showMatrix && matrixApi) matrixApi.redraw();
+					if (matrixApi) matrixApi.redraw();
 				});
 				sentenceEl.appendChild(b);
 			});
@@ -404,6 +397,14 @@
 			if (top3El) {
 				var ranked = w.map(function (p, i) { return { i: i, p: p }; }).sort(function (a, b) { return b.p - a.p; }).slice(0, 3);
 				top3El.textContent = "Top 3: " + ranked.map(function (x) { return tokens[x.i] + " " + Math.round(x.p * 100) + "%"; }).join(" · ") + ". Every row sums to 1: attention is a finite budget.";
+			}
+			var budgetEl = document.getElementById("att-budget");
+			if (budgetEl) {
+				var c = TM.colors();
+				var palette = [c.green, c.sky, c.gold, c.coral, c.blue, c.lime, c.teal, c.muted];
+				budgetEl.innerHTML = w.map(function (p, i) {
+					return '<span title="' + tokens[i] + ": " + Math.round(p * 100) + '%" style="width:' + (p * 100).toFixed(2) + '%;background:' + palette[i % palette.length] + '"></span>';
+				}).join("");
 			}
 			if (captionEl) {
 				var headName = { coref: "Coreference", syntax: "Syntax", meaning: "Meaning" }[head];
@@ -453,7 +454,7 @@
 					btn.classList.add("is-on");
 					head = btn.getAttribute("data-head");
 					renderSentence();
-					if (showMatrix && matrixApi) matrixApi.redraw();
+					if (matrixApi) matrixApi.redraw();
 				});
 			});
 			document.querySelectorAll("[data-att-preset]").forEach(function (btn) {
@@ -466,44 +467,28 @@
 					document.querySelectorAll("[data-att-preset]").forEach(function (x) { x.classList.remove("is-on"); });
 					btn.classList.add("is-on");
 					renderSentence();
-					if (showMatrix && matrixApi) matrixApi.redraw();
+					if (matrixApi) matrixApi.redraw();
 				});
 			});
-			if (matrixToggle) {
-				matrixToggle.addEventListener("click", function () {
-					showMatrix = !showMatrix;
-					matrixWrap.hidden = !showMatrix;
-					matrixToggle.textContent = showMatrix ? "Hide attention matrix" : "Show attention matrix";
-					if (showMatrix && matrixCanvas) {
-						if (!matrixApi) {
-							matrixApi = TM.initCanvas(matrixCanvas, drawMatrix);
-							matrixCanvas.addEventListener("click", function (ev) {
-							var rect = matrixCanvas.getBoundingClientRect();
-							var n = tokens.length;
-							var size = Math.min((rect.width - 12) / n, (rect.height - 12) / n);
-							var oy = (rect.height - size * n) / 2;
-							var i = Math.floor((ev.clientY - rect.top - oy) / size);
-								if (i >= 0 && i < n) {
-									query = i;
-									renderSentence();
-									matrixApi.redraw();
-								}
-							});
-						} else {
-							matrixApi.redraw();
-						}
+			if (matrixCanvas) {
+				matrixApi = TM.initCanvas(matrixCanvas, drawMatrix);
+				matrixCanvas.addEventListener("click", function (ev) {
+					var rect = matrixCanvas.getBoundingClientRect();
+					var n = tokens.length;
+					var size = Math.min((rect.width - 12) / n, (rect.height - 12) / n);
+					var oy = (rect.height - size * n) / 2;
+					var i = Math.floor((ev.clientY - rect.top - oy) / size);
+					if (i >= 0 && i < n) {
+						query = i;
+						renderSentence();
+						matrixApi.redraw();
 					}
 				});
 			}
-			if (causalEl) {
-				causalEl.addEventListener("change", function () {
-					causal = causalEl.checked;
-					renderSentence();
-					if (showMatrix && matrixApi) matrixApi.redraw();
-				});
-			}
-			window.addEventListener("tm:theme", function () { if (showMatrix && matrixApi) matrixApi.redraw(); });
+			window.addEventListener("tm:theme", function () { if (matrixApi) matrixApi.redraw(); });
 			renderSentence();
+			if (matrixApi) matrixApi.redraw();
+			if (window.TM && TM.typesetMath) TM.typesetMath();
 		}
 	})();
 	</script>

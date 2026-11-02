@@ -3100,6 +3100,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-diffusion-block-86-related_to-diffusion-block-49",
+      "from": "diffusion-block-86",
+      "to": "diffusion-block-49",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-diffusion-block-87-part_of-diffusion",
       "from": "diffusion-block-87",
       "to": "diffusion",
@@ -3114,16 +3124,6 @@
       "from": "diffusion-block-86",
       "to": "diffusion-block-87",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-diffusion-block-87-related_to-diffusion-block-86",
-      "from": "diffusion-block-87",
-      "to": "diffusion-block-86",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3150,9 +3150,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-88-related_to-diffusion-block-86",
+      "id": "struct-diffusion-block-88-related_to-diffusion-block-87",
       "from": "diffusion-block-88",
-      "to": "diffusion-block-86",
+      "to": "diffusion-block-87",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3180,9 +3180,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-89-related_to-diffusion-block-86",
+      "id": "struct-diffusion-block-89-related_to-diffusion-block-87",
       "from": "diffusion-block-89",
-      "to": "diffusion-block-86",
+      "to": "diffusion-block-87",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3210,9 +3210,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-90-related_to-diffusion-block-86",
+      "id": "struct-diffusion-block-90-related_to-diffusion-block-87",
       "from": "diffusion-block-90",
-      "to": "diffusion-block-86",
+      "to": "diffusion-block-87",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3240,9 +3240,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-91-related_to-diffusion-block-86",
+      "id": "struct-diffusion-block-91-related_to-diffusion-block-87",
       "from": "diffusion-block-91",
-      "to": "diffusion-block-86",
+      "to": "diffusion-block-87",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3270,9 +3270,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-92-related_to-diffusion-block-86",
+      "id": "struct-diffusion-block-92-related_to-diffusion-block-87",
       "from": "diffusion-block-92",
-      "to": "diffusion-block-86",
+      "to": "diffusion-block-87",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3300,6 +3300,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-diffusion-block-93-related_to-diffusion-block-87",
+      "from": "diffusion-block-93",
+      "to": "diffusion-block-87",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-diffusion-block-94-part_of-diffusion",
       "from": "diffusion-block-94",
       "to": "diffusion",
@@ -3314,16 +3324,6 @@
       "from": "diffusion-block-93",
       "to": "diffusion-block-94",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-diffusion-block-94-related_to-diffusion-block-93",
-      "from": "diffusion-block-94",
-      "to": "diffusion-block-93",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3350,9 +3350,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-95-related_to-diffusion-block-93",
+      "id": "struct-diffusion-block-95-related_to-diffusion-block-94",
       "from": "diffusion-block-95",
-      "to": "diffusion-block-93",
+      "to": "diffusion-block-94",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3380,6 +3380,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-diffusion-block-96-related_to-diffusion-block-94",
+      "from": "diffusion-block-96",
+      "to": "diffusion-block-94",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-diffusion-block-97-part_of-diffusion",
       "from": "diffusion-block-97",
       "to": "diffusion",
@@ -3394,16 +3404,6 @@
       "from": "diffusion-block-96",
       "to": "diffusion-block-97",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-diffusion-block-97-related_to-diffusion-block-96",
-      "from": "diffusion-block-97",
-      "to": "diffusion-block-96",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3430,9 +3430,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-98-related_to-diffusion-block-96",
+      "id": "struct-diffusion-block-98-related_to-diffusion-block-97",
       "from": "diffusion-block-98",
-      "to": "diffusion-block-96",
+      "to": "diffusion-block-97",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3460,9 +3460,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-99-related_to-diffusion-block-96",
+      "id": "struct-diffusion-block-99-related_to-diffusion-block-97",
       "from": "diffusion-block-99",
-      "to": "diffusion-block-96",
+      "to": "diffusion-block-97",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3490,9 +3490,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-100-related_to-diffusion-block-96",
+      "id": "struct-diffusion-block-100-related_to-diffusion-block-97",
       "from": "diffusion-block-100",
-      "to": "diffusion-block-96",
+      "to": "diffusion-block-97",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3520,6 +3520,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-diffusion-block-101-related_to-diffusion-block-97",
+      "from": "diffusion-block-101",
+      "to": "diffusion-block-97",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-diffusion-block-102-part_of-diffusion",
       "from": "diffusion-block-102",
       "to": "diffusion",
@@ -3534,16 +3544,6 @@
       "from": "diffusion-block-101",
       "to": "diffusion-block-102",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-diffusion-block-102-related_to-diffusion-block-101",
-      "from": "diffusion-block-102",
-      "to": "diffusion-block-101",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3570,9 +3570,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-103-related_to-diffusion-block-101",
+      "id": "struct-diffusion-block-103-related_to-diffusion-block-102",
       "from": "diffusion-block-103",
-      "to": "diffusion-block-101",
+      "to": "diffusion-block-102",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3600,9 +3600,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-104-related_to-diffusion-block-101",
+      "id": "struct-diffusion-block-104-related_to-diffusion-block-102",
       "from": "diffusion-block-104",
-      "to": "diffusion-block-101",
+      "to": "diffusion-block-102",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3630,6 +3630,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-diffusion-block-105-related_to-diffusion-block-102",
+      "from": "diffusion-block-105",
+      "to": "diffusion-block-102",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-diffusion-block-106-part_of-diffusion",
       "from": "diffusion-block-106",
       "to": "diffusion",
@@ -3644,16 +3654,6 @@
       "from": "diffusion-block-105",
       "to": "diffusion-block-106",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-diffusion-block-106-related_to-diffusion-block-105",
-      "from": "diffusion-block-106",
-      "to": "diffusion-block-105",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3680,9 +3680,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-107-related_to-diffusion-block-105",
+      "id": "struct-diffusion-block-107-related_to-diffusion-block-106",
       "from": "diffusion-block-107",
-      "to": "diffusion-block-105",
+      "to": "diffusion-block-106",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3710,9 +3710,39 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-block-108-related_to-diffusion-block-105",
+      "id": "struct-diffusion-block-108-related_to-diffusion-block-106",
       "from": "diffusion-block-108",
-      "to": "diffusion-block-105",
+      "to": "diffusion-block-106",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-diffusion-block-109-part_of-diffusion",
+      "from": "diffusion-block-109",
+      "to": "diffusion",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-diffusion-block-108-before-diffusion-block-109",
+      "from": "diffusion-block-108",
+      "to": "diffusion-block-109",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-diffusion-block-109-related_to-diffusion-block-106",
+      "from": "diffusion-block-109",
+      "to": "diffusion-block-106",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5240,9 +5270,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-153-part_of-diffusion-block-87",
+      "id": "struct-diffusion-stmt-153-part_of-diffusion-block-86",
       "from": "diffusion-stmt-153",
-      "to": "diffusion-block-87",
+      "to": "diffusion-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5250,9 +5280,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-154-part_of-diffusion-block-87",
+      "id": "struct-diffusion-stmt-154-part_of-diffusion-block-86",
       "from": "diffusion-stmt-154",
-      "to": "diffusion-block-87",
+      "to": "diffusion-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5260,9 +5290,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-155-part_of-diffusion-block-88",
+      "id": "struct-diffusion-stmt-155-part_of-diffusion-block-86",
       "from": "diffusion-stmt-155",
-      "to": "diffusion-block-88",
+      "to": "diffusion-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5270,9 +5300,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-156-part_of-diffusion-block-88",
+      "id": "struct-diffusion-stmt-156-part_of-diffusion-block-86",
       "from": "diffusion-stmt-156",
-      "to": "diffusion-block-88",
+      "to": "diffusion-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5300,9 +5330,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-159-part_of-diffusion-block-88",
+      "id": "struct-diffusion-stmt-159-part_of-diffusion-block-89",
       "from": "diffusion-stmt-159",
-      "to": "diffusion-block-88",
+      "to": "diffusion-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5340,9 +5370,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-163-part_of-diffusion-block-90",
+      "id": "struct-diffusion-stmt-163-part_of-diffusion-block-89",
       "from": "diffusion-stmt-163",
-      "to": "diffusion-block-90",
+      "to": "diffusion-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5360,9 +5390,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-165-part_of-diffusion-block-91",
+      "id": "struct-diffusion-stmt-165-part_of-diffusion-block-90",
       "from": "diffusion-stmt-165",
-      "to": "diffusion-block-91",
+      "to": "diffusion-block-90",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5370,8 +5400,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-166-part_of-diffusion-block-91",
+      "id": "struct-diffusion-stmt-166-part_of-diffusion-block-90",
       "from": "diffusion-stmt-166",
+      "to": "diffusion-block-90",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-diffusion-stmt-167-part_of-diffusion-block-91",
+      "from": "diffusion-stmt-167",
       "to": "diffusion-block-91",
       "kind": "part_of",
       "qualifiers": {},
@@ -5380,19 +5420,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-167-part_of-diffusion-block-92",
-      "from": "diffusion-stmt-167",
-      "to": "diffusion-block-92",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-diffusion-stmt-168-part_of-diffusion-block-92",
+      "id": "struct-diffusion-stmt-168-part_of-diffusion-block-91",
       "from": "diffusion-stmt-168",
-      "to": "diffusion-block-92",
+      "to": "diffusion-block-91",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5410,9 +5440,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-170-part_of-diffusion-block-94",
+      "id": "struct-diffusion-stmt-170-part_of-diffusion-block-92",
       "from": "diffusion-stmt-170",
-      "to": "diffusion-block-94",
+      "to": "diffusion-block-92",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5420,8 +5450,38 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-171-part_of-diffusion-block-95",
+      "id": "struct-diffusion-stmt-171-part_of-diffusion-block-93",
       "from": "diffusion-stmt-171",
+      "to": "diffusion-block-93",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-diffusion-stmt-172-part_of-diffusion-block-93",
+      "from": "diffusion-stmt-172",
+      "to": "diffusion-block-93",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-diffusion-stmt-173-part_of-diffusion-block-93",
+      "from": "diffusion-stmt-173",
+      "to": "diffusion-block-93",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-diffusion-stmt-174-part_of-diffusion-block-95",
+      "from": "diffusion-stmt-174",
       "to": "diffusion-block-95",
       "kind": "part_of",
       "qualifiers": {},
@@ -5430,39 +5490,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-172-part_of-diffusion-block-97",
-      "from": "diffusion-stmt-172",
-      "to": "diffusion-block-97",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-diffusion-stmt-173-part_of-diffusion-block-97",
-      "from": "diffusion-stmt-173",
-      "to": "diffusion-block-97",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-diffusion-stmt-174-part_of-diffusion-block-98",
-      "from": "diffusion-stmt-174",
-      "to": "diffusion-block-98",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-diffusion-stmt-175-part_of-diffusion-block-98",
+      "id": "struct-diffusion-stmt-175-part_of-diffusion-block-96",
       "from": "diffusion-stmt-175",
-      "to": "diffusion-block-98",
+      "to": "diffusion-block-96",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5480,9 +5510,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-177-part_of-diffusion-block-99",
+      "id": "struct-diffusion-stmt-177-part_of-diffusion-block-98",
       "from": "diffusion-stmt-177",
-      "to": "diffusion-block-99",
+      "to": "diffusion-block-98",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5510,8 +5540,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-180-part_of-diffusion-block-100",
+      "id": "struct-diffusion-stmt-180-part_of-diffusion-block-99",
       "from": "diffusion-stmt-180",
+      "to": "diffusion-block-99",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-diffusion-stmt-181-part_of-diffusion-block-100",
+      "from": "diffusion-stmt-181",
       "to": "diffusion-block-100",
       "kind": "part_of",
       "qualifiers": {},
@@ -5520,19 +5560,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-181-part_of-diffusion-block-102",
-      "from": "diffusion-stmt-181",
-      "to": "diffusion-block-102",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-diffusion-stmt-182-part_of-diffusion-block-102",
+      "id": "struct-diffusion-stmt-182-part_of-diffusion-block-100",
       "from": "diffusion-stmt-182",
-      "to": "diffusion-block-102",
+      "to": "diffusion-block-100",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5540,9 +5570,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-183-part_of-diffusion-block-102",
+      "id": "struct-diffusion-stmt-183-part_of-diffusion-block-100",
       "from": "diffusion-stmt-183",
-      "to": "diffusion-block-102",
+      "to": "diffusion-block-100",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5550,9 +5580,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-184-part_of-diffusion-block-103",
+      "id": "struct-diffusion-stmt-184-part_of-diffusion-block-101",
       "from": "diffusion-stmt-184",
-      "to": "diffusion-block-103",
+      "to": "diffusion-block-101",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5630,9 +5660,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-192-part_of-diffusion-block-104",
+      "id": "struct-diffusion-stmt-192-part_of-diffusion-block-105",
       "from": "diffusion-stmt-192",
-      "to": "diffusion-block-104",
+      "to": "diffusion-block-105",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5640,9 +5670,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-193-part_of-diffusion-block-106",
+      "id": "struct-diffusion-stmt-193-part_of-diffusion-block-105",
       "from": "diffusion-stmt-193",
-      "to": "diffusion-block-106",
+      "to": "diffusion-block-105",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5650,8 +5680,38 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-194-part_of-diffusion-block-107",
+      "id": "struct-diffusion-stmt-194-part_of-diffusion-block-105",
       "from": "diffusion-stmt-194",
+      "to": "diffusion-block-105",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-diffusion-stmt-195-part_of-diffusion-block-105",
+      "from": "diffusion-stmt-195",
+      "to": "diffusion-block-105",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-diffusion-stmt-196-part_of-diffusion-block-105",
+      "from": "diffusion-stmt-196",
+      "to": "diffusion-block-105",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-diffusion-stmt-197-part_of-diffusion-block-107",
+      "from": "diffusion-stmt-197",
       "to": "diffusion-block-107",
       "kind": "part_of",
       "qualifiers": {},
@@ -5660,9 +5720,19 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-diffusion-stmt-195-part_of-diffusion-block-108",
-      "from": "diffusion-stmt-195",
+      "id": "struct-diffusion-stmt-198-part_of-diffusion-block-108",
+      "from": "diffusion-stmt-198",
       "to": "diffusion-block-108",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-diffusion-stmt-199-part_of-diffusion-block-109",
+      "from": "diffusion-stmt-199",
+      "to": "diffusion-block-109",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -6527,21 +6597,21 @@
     },
     {
       "id": "diffusion-stmt-123",
-      "quote": "| `time_embedding.linear_1` | Linear | `[1, 32]` | `[1, 128]` | 4,224 |",
+      "quote": "| ├ `linear_1` | Linear | `[1, 32]` | `[1, 128]` | 4,224 |",
       "block_id": "diffusion-block-58",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-124",
-      "quote": "| `time_embedding.act` | SiLU | `[1, 128]` | `[1, 128]` | 0 |",
+      "quote": "| ├ `act` | SiLU | `[1, 128]` | `[1, 128]` | 0 |",
       "block_id": "diffusion-block-59",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-125",
-      "quote": "| `time_embedding.linear_2` | Linear | `[1, 128]` | `[1, 128]` | 16,512 |",
+      "quote": "| └ `linear_2` | Linear | `[1, 128]` | `[1, 128]` | 16,512 |",
       "block_id": "diffusion-block-60",
       "section": "What's the network?",
       "kind": "statement"
@@ -6555,42 +6625,42 @@
     },
     {
       "id": "diffusion-stmt-127",
-      "quote": "| `down_blocks.0` | DownBlock2D | `[1, 32, 64, 64]` | `[1, 32, 32, 32]` | 54,752 |",
+      "quote": "| ├ `0` | DownBlock2D | `[1, 32, 64, 64]` | `[1, 32, 32, 32]` | 54,752 |",
       "block_id": "diffusion-block-62",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-128",
-      "quote": "| `down_blocks.0.resnets` | ModuleList | | | 45,504 |",
+      "quote": "| │ ├ `resnets` | ModuleList | | | 45,504 |",
       "block_id": "diffusion-block-63",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-129",
-      "quote": "| `down_blocks.0.downsamplers` | ModuleList | | | 9,248 |",
+      "quote": "| │ └ `downsamplers` | ModuleList | | | 9,248 |",
       "block_id": "diffusion-block-64",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-130",
-      "quote": "| `down_blocks.1` | CrossAttnDownBlock2D | `[1, 32, 32, 32]` | `[1, 64, 32, 32]` | 323,072 |",
+      "quote": "| └ `1` | CrossAttnDownBlock2D | `[1, 32, 32, 32]` | `[1, 64, 32, 32]` | 323,072 |",
       "block_id": "diffusion-block-65",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-131",
-      "quote": "| `down_blocks.1.attentions` | ModuleList | | | 174,720 |",
+      "quote": "| ├ `attentions` | ModuleList | | | 174,720 |",
       "block_id": "diffusion-block-66",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-132",
-      "quote": "| `down_blocks.1.resnets` | ModuleList | | | 148,352 |",
+      "quote": "| └ `resnets` | ModuleList | | | 148,352 |",
       "block_id": "diffusion-block-67",
       "section": "What's the network?",
       "kind": "statement"
@@ -6604,35 +6674,35 @@
     },
     {
       "id": "diffusion-stmt-134",
-      "quote": "| `mid_block.attentions` | ModuleList | | | 87,360 |",
+      "quote": "| ├ `attentions` | ModuleList | | | 87,360 |",
       "block_id": "diffusion-block-69",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-135",
-      "quote": "| `mid_block.attentions.0` | Transformer2DModel | | | 87,360 |",
+      "quote": "| │ └ `0` | Transformer2DModel | | | 87,360 |",
       "block_id": "diffusion-block-70",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-136",
-      "quote": "| `mid_block.resnets` | ModuleList | | | 164,736 |",
+      "quote": "| └ `resnets` | ModuleList | | | 164,736 |",
       "block_id": "diffusion-block-71",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-137",
-      "quote": "| `mid_block.resnets.0` | ResnetBlock2D | | | 82,368 |",
+      "quote": "| ├ `0` | ResnetBlock2D | | | 82,368 |",
       "block_id": "diffusion-block-72",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-138",
-      "quote": "| `mid_block.resnets.1` | ResnetBlock2D | | | 82,368 |",
+      "quote": "| └ `1` | ResnetBlock2D | | | 82,368 |",
       "block_id": "diffusion-block-73",
       "section": "What's the network?",
       "kind": "statement"
@@ -6646,42 +6716,42 @@
     },
     {
       "id": "diffusion-stmt-140",
-      "quote": "| `up_blocks.0` | CrossAttnUpBlock2D | `[1, 64, 32, 32]` | `[1, 64, 64, 64]` | 661,312 |",
+      "quote": "| ├ `0` | CrossAttnUpBlock2D | `[1, 64, 32, 32]` | `[1, 64, 64, 64]` | 661,312 |",
       "block_id": "diffusion-block-75",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-141",
-      "quote": "| `up_blocks.0.attentions` | ModuleList | | | 262,080 |",
+      "quote": "| │ ├ `attentions` | ModuleList | | | 262,080 |",
       "block_id": "diffusion-block-76",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-142",
-      "quote": "| `up_blocks.0.resnets` | ModuleList | | | 362,304 |",
+      "quote": "| │ ├ `resnets` | ModuleList | | | 362,304 |",
       "block_id": "diffusion-block-77",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-143",
-      "quote": "| `up_blocks.0.upsamplers` | ModuleList | | | 36,928 |",
+      "quote": "| │ └ `upsamplers` | ModuleList | | | 36,928 |",
       "block_id": "diffusion-block-78",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-144",
-      "quote": "| `up_blocks.1` | UpBlock2D | `[1, 64, 64, 64]` | `[1, 32, 64, 64]` | 112,640 |",
+      "quote": "| └ `1` | UpBlock2D | `[1, 64, 64, 64]` | `[1, 32, 64, 64]` | 112,640 |",
       "block_id": "diffusion-block-79",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-145",
-      "quote": "| `up_blocks.1.resnets` | ModuleList | | | 112,640 |",
+      "quote": "| └ `resnets` | ModuleList | | | 112,640 |",
       "block_id": "diffusion-block-80",
       "section": "What's the network?",
       "kind": "statement"
@@ -6737,302 +6807,330 @@
     },
     {
       "id": "diffusion-stmt-153",
-      "quote": "Doing all this in raw pixel space at $512 \\times 512$ resolution is expensive.",
-      "block_id": "diffusion-block-87",
-      "section": "Stable Diffusion: doing it in a compressed space",
+      "quote": "The block names in the table are the pieces from the list above.",
+      "block_id": "diffusion-block-86",
+      "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-154",
-      "quote": "Each image is roughly 786,000 numbers, and every one of them has to pass through dozens of layers at every denoising step.",
-      "block_id": "diffusion-block-87",
-      "section": "Stable Diffusion: doing it in a compressed space",
+      "quote": "**Timesteps** turns the integer timestep into sinusoidal features, and **TimestepEmbedding** maps those features to a vector that tells every block how noisy the sample is.",
+      "block_id": "diffusion-block-86",
+      "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-155",
-      "quote": "Compression had a long history in generative modeling.",
-      "block_id": "diffusion-block-88",
-      "section": "Stable Diffusion: doing it in a compressed space",
+      "quote": "**ModuleList** is only a container; it adds no computation.",
+      "block_id": "diffusion-block-86",
+      "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-156",
-      "quote": "Autoencoders had long learned compact codes (\\cite[Kingma & Welling, 2014]{kingma2014vae}), and VQGAN showed that a discrete autoencoder plus a powerful prior could synthesize high-resolution images (\\cite[Esser et al., 2021]{esser2021taming}).",
-      "block_id": "diffusion-block-88",
-      "section": "Stable Diffusion: doing it in a compressed space",
+      "quote": "A **DownBlock2D** stacks residual convolutions and may downsample the grid; a **CrossAttnDownBlock2D** adds cross-attention to the text.",
+      "block_id": "diffusion-block-86",
+      "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-157",
-      "quote": "\\cite[Rombach et al. (2022)]{rombach2022ldm} made the decisive move for diffusion: train the autoencoder first, freeze it, and run the diffusion process entirely in its latent space.",
+      "quote": "Doing all this in raw pixel space at $512 \\times 512$ resolution is expensive.",
       "block_id": "diffusion-block-88",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-158",
-      "quote": "That made training cheaper.",
+      "quote": "Each image is roughly 786,000 numbers, and every one of them has to pass through dozens of layers at every denoising step.",
       "block_id": "diffusion-block-88",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-159",
-      "quote": "It also let the same denoiser scale to larger images by changing only the decoder.",
-      "block_id": "diffusion-block-88",
+      "quote": "Compression had a long history in generative modeling.",
+      "block_id": "diffusion-block-89",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-160",
-      "quote": "The key idea of **Latent Diffusion Models** (\\cite[Rombach et al., 2022]{rombach2022ldm}), the technology behind Stable Diffusion, is to *first* compress the image into a much smaller latent representation using a pretrained autoencoder, *then* do all the diffusion work in that compressed space, *then* decode the result back to pixels.",
+      "quote": "Autoencoders had long learned compact codes (\\cite[Kingma & Welling, 2014]{kingma2014vae}), and VQGAN showed that a discrete autoencoder plus a powerful prior could synthesize high-resolution images (\\cite[Esser et al., 2021]{esser2021taming}).",
       "block_id": "diffusion-block-89",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-161",
-      "quote": "The U-Net never sees a pixel; it only sees a $64 \\times 64$ latent map.",
+      "quote": "\\cite[Rombach et al. (2022)]{rombach2022ldm} made the decisive move for diffusion: train the autoencoder first, freeze it, and run the diffusion process entirely in its latent space.",
       "block_id": "diffusion-block-89",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-162",
-      "quote": "This makes training and inference roughly 64× cheaper.",
+      "quote": "That made training cheaper.",
       "block_id": "diffusion-block-89",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-163",
-      "quote": "In Stable Diffusion 1.5, the text prompt goes through CLIP, the latent goes through the U-Net, and at the end a frozen VAE decoder turns the clean latent back into an image.",
-      "block_id": "diffusion-block-90",
+      "quote": "It also let the same denoiser scale to larger images by changing only the decoder.",
+      "block_id": "diffusion-block-89",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-164",
-      "quote": "The VAE is never trained alongside the diffusion model; it was learned earlier as an ordinary autoencoder and frozen in place.",
+      "quote": "The key idea of **Latent Diffusion Models** (\\cite[Rombach et al., 2022]{rombach2022ldm}), the technology behind Stable Diffusion, is to *first* compress the image into a much smaller latent representation using a pretrained autoencoder, *then* do all the diffusion work in that compressed space, *then* decode the result back to pixels.",
       "block_id": "diffusion-block-90",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-165",
-      "quote": "The figure below shows a real Stable Diffusion 1.5 run using DDIM sampling.",
-      "block_id": "diffusion-block-91",
+      "quote": "The U-Net never sees a pixel; it only sees a $64 \\times 64$ latent map.",
+      "block_id": "diffusion-block-90",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-166",
-      "quote": "Read it from top-left to bottom-right: the network starts from pure noise and gradually reveals a coherent image of a European-style castle in Japan, adding detail with each step.",
-      "block_id": "diffusion-block-91",
+      "quote": "This makes training and inference roughly 64× cheaper.",
+      "block_id": "diffusion-block-90",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-167",
-      "quote": "Each frame is one denoising step of a Stable Diffusion 1.5 model using DDIM sampling.",
-      "block_id": "diffusion-block-92",
+      "quote": "In Stable Diffusion 1.5, the text prompt goes through CLIP, the latent goes through the U-Net, and at the end a frozen VAE decoder turns the clean latent back into an image.",
+      "block_id": "diffusion-block-91",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-168",
-      "quote": "Early steps establish rough shapes and color fields; later steps refine texture and fine detail.",
-      "block_id": "diffusion-block-92",
+      "quote": "The VAE is never trained alongside the diffusion model; it was learned earlier as an ordinary autoencoder and frozen in place.",
+      "block_id": "diffusion-block-91",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-169",
-      "quote": "\\cite[Image: DDIM denoising steps]{diffusion_ddim_img}",
+      "quote": "The figure below shows a real Stable Diffusion 1.5 run using DDIM sampling.",
       "block_id": "diffusion-block-92",
       "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-170",
-      "quote": "The same recipe works anywhere you can define a “noising” process and a network that can reverse it:",
-      "block_id": "diffusion-block-94",
-      "section": "Beyond images",
+      "quote": "Read it from top-left to bottom-right: the network starts from pure noise and gradually reveals a coherent image of a European-style castle in Japan, adding detail with each step.",
+      "block_id": "diffusion-block-92",
+      "section": "Stable Diffusion: doing it in a compressed space",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-171",
-      "quote": "The general principle is simple: **if you can blur it, you can unblur it; and if you can unblur it, you can generate it from scratch.**",
+      "quote": "Each frame is one denoising step of a Stable Diffusion 1.5 model using DDIM sampling.",
+      "block_id": "diffusion-block-93",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-172",
+      "quote": "Early steps establish rough shapes and color fields; later steps refine texture and fine detail.",
+      "block_id": "diffusion-block-93",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-173",
+      "quote": "\\cite[Image: DDIM denoising steps]{diffusion_ddim_img}",
+      "block_id": "diffusion-block-93",
+      "section": "Stable Diffusion: doing it in a compressed space",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-174",
+      "quote": "The same recipe works anywhere you can define a “noising” process and a network that can reverse it:",
       "block_id": "diffusion-block-95",
       "section": "Beyond images",
       "kind": "statement"
     },
     {
-      "id": "diffusion-stmt-172",
-      "quote": "By 2025, many new systems use **flow matching** (\\cite[Lipman et al., 2023]{lipman2023flow}) or its rectified-flow variant, in which the path between data and noise is trained to be straighter than the curved diffusion path.",
-      "block_id": "diffusion-block-97",
-      "section": "Where the field is now",
-      "kind": "statement"
-    },
-    {
-      "id": "diffusion-stmt-173",
-      "quote": "FLUX and Stable Diffusion 3 use rectified flow; DDPM/DDIM-style samplers remain widespread in older and distilled models.",
-      "block_id": "diffusion-block-97",
-      "section": "Where the field is now",
-      "kind": "statement"
-    },
-    {
-      "id": "diffusion-stmt-174",
-      "quote": "The dominant backbone is no longer the U-Net but the **Diffusion Transformer (DiT)** (\\cite[Peebles & Xie, 2023]{peebles2023dit}), a vanilla Vision Transformer scaled up.",
-      "block_id": "diffusion-block-98",
-      "section": "Where the field is now",
-      "kind": "statement"
-    },
-    {
       "id": "diffusion-stmt-175",
-      "quote": "Sora, FLUX, and Stable Diffusion 3 all use DiT-style backbones.",
-      "block_id": "diffusion-block-98",
-      "section": "Where the field is now",
+      "quote": "The general principle is simple: **if you can blur it, you can unblur it; and if you can unblur it, you can generate it from scratch.**",
+      "block_id": "diffusion-block-96",
+      "section": "Beyond images",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-176",
-      "quote": "The pattern is familiar: U-Net worked, then Transformers worked better once they were big enough.",
+      "quote": "By 2025, many new systems use **flow matching** (\\cite[Lipman et al., 2023]{lipman2023flow}) or its rectified-flow variant, in which the path between data and noise is trained to be straighter than the curved diffusion path.",
       "block_id": "diffusion-block-98",
       "section": "Where the field is now",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-177",
-      "quote": "Practical models have also become fast.",
-      "block_id": "diffusion-block-99",
+      "quote": "FLUX and Stable Diffusion 3 use rectified flow; DDPM/DDIM-style samplers remain widespread in older and distilled models.",
+      "block_id": "diffusion-block-98",
       "section": "Where the field is now",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-178",
-      "quote": "Modern systems generate images in **1 to 8 network evaluations** through clever solvers (DPM-Solver, EDM) and adversarial distillation (SDXL-Turbo, LCM).",
+      "quote": "The dominant backbone is no longer the U-Net but the **Diffusion Transformer (DiT)** (\\cite[Peebles & Xie, 2023]{peebles2023dit}), a vanilla Vision Transformer scaled up.",
       "block_id": "diffusion-block-99",
       "section": "Where the field is now",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-179",
-      "quote": "Diffusion is no longer slow.",
+      "quote": "Sora, FLUX, and Stable Diffusion 3 all use DiT-style backbones.",
       "block_id": "diffusion-block-99",
       "section": "Where the field is now",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-180",
-      "quote": "In five years, the technique went from “diffusion as a curiosity” to “diffusion as the universal generative recipe” for images, video, audio, and molecules.",
-      "block_id": "diffusion-block-100",
+      "quote": "The pattern is familiar: U-Net worked, then Transformers worked better once they were big enough.",
+      "block_id": "diffusion-block-99",
       "section": "Where the field is now",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-181",
-      "quote": "Text adds a wrinkle: tokens are discrete, so you cannot gradually add Gaussian noise to them.",
-      "block_id": "diffusion-block-102",
-      "section": "Diffusion for text: language models that denoise",
+      "quote": "Practical models have also become fast.",
+      "block_id": "diffusion-block-100",
+      "section": "Where the field is now",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-182",
-      "quote": "The dominant fix is an **absorbing-state** process.",
-      "block_id": "diffusion-block-102",
-      "section": "Diffusion for text: language models that denoise",
+      "quote": "Modern systems generate images in **1 to 8 network evaluations** through clever solvers (DPM-Solver, EDM) and adversarial distillation (SDXL-Turbo, LCM).",
+      "block_id": "diffusion-block-100",
+      "section": "Where the field is now",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-183",
-      "quote": "Each token is independently replaced by a special `[MASK]` symbol with probability $\\beta_t$ per step, and once masked it stays masked:",
-      "block_id": "diffusion-block-102",
-      "section": "Diffusion for text: language models that denoise",
+      "quote": "Diffusion is no longer slow.",
+      "block_id": "diffusion-block-100",
+      "section": "Where the field is now",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-184",
-      "quote": "Training is a weighted masked-token cross-entropy over randomly sampled masking rates.",
-      "block_id": "diffusion-block-103",
-      "section": "Diffusion for text: language models that denoise",
+      "quote": "In five years, the technique went from “diffusion as a curiosity” to “diffusion as the universal generative recipe” for images, video, audio, and molecules.",
+      "block_id": "diffusion-block-101",
+      "section": "Where the field is now",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-185",
-      "quote": "It is BERT's fill-in-the-blank loss, rearranged into a generative process (\\cite[Austin et al., 2021]{austin2021d3pm}).",
+      "quote": "Text adds a wrinkle: tokens are discrete, so you cannot gradually add Gaussian noise to them.",
       "block_id": "diffusion-block-103",
       "section": "Diffusion for text: language models that denoise",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-186",
-      "quote": "Sampling starts from a fully masked sequence, predicts every masked position in parallel, and commits the confident ones; easy tokens lock in first and hard content words last.",
+      "quote": "The dominant fix is an **absorbing-state** process.",
       "block_id": "diffusion-block-103",
       "section": "Diffusion for text: language models that denoise",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-187",
-      "quote": "This is a **diffusion language model** (dLLM), and it replaces left-to-right decoding with a handful of bidirectional denoising passes.",
+      "quote": "Each token is independently replaced by a special `[MASK]` symbol with probability $\\beta_t$ per step, and once masked it stays masked:",
       "block_id": "diffusion-block-103",
       "section": "Diffusion for text: language models that denoise",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-188",
-      "quote": "The promise is throughput: one forward pass can commit many tokens, and the step count is an explicit quality-versus-speed dial.",
+      "quote": "Training is a weighted masked-token cross-entropy over randomly sampled masking rates.",
       "block_id": "diffusion-block-104",
       "section": "Diffusion for text: language models that denoise",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-189",
-      "quote": "**LLaDA** (2025), an 8B masked-diffusion model trained from scratch, reported instruction following competitive with Llama 3 8B, the first evidence that the recipe holds at open-model scale (\\cite[Nie et al., 2025]{nie2025llada}).",
+      "quote": "It is BERT's fill-in-the-blank loss, rearranged into a generative process (\\cite[Austin et al., 2021]{austin2021d3pm}).",
       "block_id": "diffusion-block-104",
       "section": "Diffusion for text: language models that denoise",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-190",
-      "quote": "Inception Labs' Mercury and Google DeepMind's Gemini Diffusion followed.",
+      "quote": "Sampling starts from a fully masked sequence, predicts every masked position in parallel, and commits the confident ones; easy tokens lock in first and hard content words last.",
       "block_id": "diffusion-block-104",
       "section": "Diffusion for text: language models that denoise",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-191",
-      "quote": "The cost is that bidirectional attention is incompatible with the standard KV cache, so each step recomputes over the whole sequence, and quality parity with autoregressive models at the frontier is still unresolved.",
+      "quote": "This is a **diffusion language model** (dLLM), and it replaces left-to-right decoding with a handful of bidirectional denoising passes.",
       "block_id": "diffusion-block-104",
       "section": "Diffusion for text: language models that denoise",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-192",
-      "quote": "The architectural comparison is in [Beyond Transformers](alternative_architectures.php).",
-      "block_id": "diffusion-block-104",
+      "quote": "The promise is throughput: one forward pass can commit many tokens, and the step count is an explicit quality-versus-speed dial.",
+      "block_id": "diffusion-block-105",
       "section": "Diffusion for text: language models that denoise",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-193",
-      "quote": "These are the tools the diffusion community commonly uses:",
-      "block_id": "diffusion-block-106",
-      "section": "Try it yourself",
+      "quote": "**LLaDA** (2025), an 8B masked-diffusion model trained from scratch, reported instruction following competitive with Llama 3 8B, the first evidence that the recipe holds at open-model scale (\\cite[Nie et al., 2025]{nie2025llada}).",
+      "block_id": "diffusion-block-105",
+      "section": "Diffusion for text: language models that denoise",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-194",
-      "quote": "For *controlling* what the model draws:",
+      "quote": "Inception Labs' Mercury and Google DeepMind's Gemini Diffusion followed.",
+      "block_id": "diffusion-block-105",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-195",
+      "quote": "The cost is that bidirectional attention is incompatible with the standard KV cache, so each step recomputes over the whole sequence, and quality parity with autoregressive models at the frontier is still unresolved.",
+      "block_id": "diffusion-block-105",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-196",
+      "quote": "The architectural comparison is in [Beyond Transformers](alternative_architectures.php).",
+      "block_id": "diffusion-block-105",
+      "section": "Diffusion for text: language models that denoise",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-197",
+      "quote": "These are the tools the diffusion community commonly uses:",
       "block_id": "diffusion-block-107",
       "section": "Try it yourself",
       "kind": "statement"
     },
     {
-      "id": "diffusion-stmt-195",
-      "quote": "If you would rather read the foundational papers, the trio that started it all is Sohl-Dickstein's 2015 thermodynamic framing (\\cite[Sohl-Dickstein et al., 2015]{sohl2015deep}), Song & Ermon's score-based 2019 paper (\\cite[Song & Ermon, 2019]{song2019score}), and Ho's DDPM in 2020 (\\cite[Ho et al., 2020]{ho2020ddpm}).",
+      "id": "diffusion-stmt-198",
+      "quote": "For *controlling* what the model draws:",
       "block_id": "diffusion-block-108",
+      "section": "Try it yourself",
+      "kind": "statement"
+    },
+    {
+      "id": "diffusion-stmt-199",
+      "quote": "If you would rather read the foundational papers, the trio that started it all is Sohl-Dickstein's 2015 thermodynamic framing (\\cite[Sohl-Dickstein et al., 2015]{sohl2015deep}), Song & Ermon's score-based 2019 paper (\\cite[Song & Ermon, 2019]{song2019score}), and Ho's DDPM in 2020 (\\cite[Ho et al., 2020]{ho2020ddpm}).",
+      "block_id": "diffusion-block-109",
       "section": "Try it yourself",
       "kind": "statement"
     }
@@ -7382,19 +7480,19 @@
     },
     {
       "id": "diffusion-block-58",
-      "quote": "| `time_embedding.linear_1` | Linear | `[1, 32]` | `[1, 128]` | 4,224 |",
+      "quote": "| ├ `linear_1` | Linear | `[1, 32]` | `[1, 128]` | 4,224 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-59",
-      "quote": "| `time_embedding.act` | SiLU | `[1, 128]` | `[1, 128]` | 0 |",
+      "quote": "| ├ `act` | SiLU | `[1, 128]` | `[1, 128]` | 0 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-60",
-      "quote": "| `time_embedding.linear_2` | Linear | `[1, 128]` | `[1, 128]` | 16,512 |",
+      "quote": "| └ `linear_2` | Linear | `[1, 128]` | `[1, 128]` | 16,512 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
@@ -7406,37 +7504,37 @@
     },
     {
       "id": "diffusion-block-62",
-      "quote": "| `down_blocks.0` | DownBlock2D | `[1, 32, 64, 64]` | `[1, 32, 32, 32]` | 54,752 |",
+      "quote": "| ├ `0` | DownBlock2D | `[1, 32, 64, 64]` | `[1, 32, 32, 32]` | 54,752 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-63",
-      "quote": "| `down_blocks.0.resnets` | ModuleList | | | 45,504 |",
+      "quote": "| │ ├ `resnets` | ModuleList | | | 45,504 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-64",
-      "quote": "| `down_blocks.0.downsamplers` | ModuleList | | | 9,248 |",
+      "quote": "| │ └ `downsamplers` | ModuleList | | | 9,248 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-65",
-      "quote": "| `down_blocks.1` | CrossAttnDownBlock2D | `[1, 32, 32, 32]` | `[1, 64, 32, 32]` | 323,072 |",
+      "quote": "| └ `1` | CrossAttnDownBlock2D | `[1, 32, 32, 32]` | `[1, 64, 32, 32]` | 323,072 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-66",
-      "quote": "| `down_blocks.1.attentions` | ModuleList | | | 174,720 |",
+      "quote": "| ├ `attentions` | ModuleList | | | 174,720 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-67",
-      "quote": "| `down_blocks.1.resnets` | ModuleList | | | 148,352 |",
+      "quote": "| └ `resnets` | ModuleList | | | 148,352 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
@@ -7448,31 +7546,31 @@
     },
     {
       "id": "diffusion-block-69",
-      "quote": "| `mid_block.attentions` | ModuleList | | | 87,360 |",
+      "quote": "| ├ `attentions` | ModuleList | | | 87,360 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-70",
-      "quote": "| `mid_block.attentions.0` | Transformer2DModel | | | 87,360 |",
+      "quote": "| │ └ `0` | Transformer2DModel | | | 87,360 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-71",
-      "quote": "| `mid_block.resnets` | ModuleList | | | 164,736 |",
+      "quote": "| └ `resnets` | ModuleList | | | 164,736 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-72",
-      "quote": "| `mid_block.resnets.0` | ResnetBlock2D | | | 82,368 |",
+      "quote": "| ├ `0` | ResnetBlock2D | | | 82,368 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-73",
-      "quote": "| `mid_block.resnets.1` | ResnetBlock2D | | | 82,368 |",
+      "quote": "| └ `1` | ResnetBlock2D | | | 82,368 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
@@ -7484,37 +7582,37 @@
     },
     {
       "id": "diffusion-block-75",
-      "quote": "| `up_blocks.0` | CrossAttnUpBlock2D | `[1, 64, 32, 32]` | `[1, 64, 64, 64]` | 661,312 |",
+      "quote": "| ├ `0` | CrossAttnUpBlock2D | `[1, 64, 32, 32]` | `[1, 64, 64, 64]` | 661,312 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-76",
-      "quote": "| `up_blocks.0.attentions` | ModuleList | | | 262,080 |",
+      "quote": "| │ ├ `attentions` | ModuleList | | | 262,080 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-77",
-      "quote": "| `up_blocks.0.resnets` | ModuleList | | | 362,304 |",
+      "quote": "| │ ├ `resnets` | ModuleList | | | 362,304 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-78",
-      "quote": "| `up_blocks.0.upsamplers` | ModuleList | | | 36,928 |",
+      "quote": "| │ └ `upsamplers` | ModuleList | | | 36,928 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-79",
-      "quote": "| `up_blocks.1` | UpBlock2D | `[1, 64, 64, 64]` | `[1, 32, 64, 64]` | 112,640 |",
+      "quote": "| └ `1` | UpBlock2D | `[1, 64, 64, 64]` | `[1, 32, 64, 64]` | 112,640 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-80",
-      "quote": "| `up_blocks.1.resnets` | ModuleList | | | 112,640 |",
+      "quote": "| └ `resnets` | ModuleList | | | 112,640 |",
       "kind": "table-row",
       "section": "What's the network?"
     },
@@ -7550,138 +7648,144 @@
     },
     {
       "id": "diffusion-block-86",
+      "quote": "The block names in the table are the pieces from the list above. **Timesteps** turns the integer timestep into sinusoidal features, and **TimestepEmbedding** maps those features to a vector that tells every block how noisy the sample is. **ModuleList** is only a container; it adds no computation. A **DownBlock2D** stacks residual convolutions and may downsample the grid; a **CrossAttnDownBlock2D** adds cross-attention to the text.",
+      "kind": "paragraph",
+      "section": "What's the network?"
+    },
+    {
+      "id": "diffusion-block-87",
       "quote": "Stable Diffusion: doing it in a compressed space",
       "kind": "heading",
       "section": "Stable Diffusion: doing it in a compressed space"
     },
     {
-      "id": "diffusion-block-87",
+      "id": "diffusion-block-88",
       "quote": "Doing all this in raw pixel space at $512 \\times 512$ resolution is expensive. Each image is roughly 786,000 numbers, and every one of them has to pass through dozens of layers at every denoising step.",
       "kind": "paragraph",
       "section": "Stable Diffusion: doing it in a compressed space"
     },
     {
-      "id": "diffusion-block-88",
+      "id": "diffusion-block-89",
       "quote": "Compression had a long history in generative modeling. Autoencoders had long learned compact codes (\\cite[Kingma & Welling, 2014]{kingma2014vae}), and VQGAN showed that a discrete autoencoder plus a powerful prior could synthesize high-resolution images (\\cite[Esser et al., 2021]{esser2021taming}). \\cite[Rombach et al. (2022)]{rombach2022ldm} made the decisive move for diffusion: train the autoencoder first, freeze it, and run the diffusion process entirely in its latent space. That made training cheaper. It also let the same denoiser scale to larger images by changing only the decoder.",
       "kind": "paragraph",
       "section": "Stable Diffusion: doing it in a compressed space"
     },
     {
-      "id": "diffusion-block-89",
+      "id": "diffusion-block-90",
       "quote": "The key idea of **Latent Diffusion Models** (\\cite[Rombach et al., 2022]{rombach2022ldm}), the technology behind Stable Diffusion, is to *first* compress the image into a much smaller latent representation using a pretrained autoencoder, *then* do all the diffusion work in that compressed space, *then* decode the result back to pixels. The U-Net never sees a pixel; it only sees a $64 \\times 64$ latent map. This makes training and inference roughly 64× cheaper.",
       "kind": "paragraph",
       "section": "Stable Diffusion: doing it in a compressed space"
     },
     {
-      "id": "diffusion-block-90",
+      "id": "diffusion-block-91",
       "quote": "In Stable Diffusion 1.5, the text prompt goes through CLIP, the latent goes through the U-Net, and at the end a frozen VAE decoder turns the clean latent back into an image. The VAE is never trained alongside the diffusion model; it was learned earlier as an ordinary autoencoder and frozen in place.",
       "kind": "paragraph",
       "section": "Stable Diffusion: doing it in a compressed space"
     },
     {
-      "id": "diffusion-block-91",
+      "id": "diffusion-block-92",
       "quote": "The figure below shows a real Stable Diffusion 1.5 run using DDIM sampling. Read it from top-left to bottom-right: the network starts from pure noise and gradually reveals a coherent image of a European-style castle in Japan, adding detail with each step.",
       "kind": "paragraph",
       "section": "Stable Diffusion: doing it in a compressed space"
     },
     {
-      "id": "diffusion-block-92",
+      "id": "diffusion-block-93",
       "quote": "Each frame is one denoising step of a Stable Diffusion 1.5 model using DDIM sampling. Early steps establish rough shapes and color fields; later steps refine texture and fine detail. \\cite[Image: DDIM denoising steps]{diffusion_ddim_img}",
       "kind": "paragraph",
       "section": "Stable Diffusion: doing it in a compressed space"
     },
     {
-      "id": "diffusion-block-93",
+      "id": "diffusion-block-94",
       "quote": "Beyond images",
       "kind": "heading",
       "section": "Beyond images"
     },
     {
-      "id": "diffusion-block-94",
+      "id": "diffusion-block-95",
       "quote": "The same recipe works anywhere you can define a “noising” process and a network that can reverse it:",
       "kind": "paragraph",
       "section": "Beyond images"
     },
     {
-      "id": "diffusion-block-95",
+      "id": "diffusion-block-96",
       "quote": "The general principle is simple: **if you can blur it, you can unblur it; and if you can unblur it, you can generate it from scratch.**",
       "kind": "paragraph",
       "section": "Beyond images"
     },
     {
-      "id": "diffusion-block-96",
+      "id": "diffusion-block-97",
       "quote": "Where the field is now",
       "kind": "heading",
       "section": "Where the field is now"
     },
     {
-      "id": "diffusion-block-97",
+      "id": "diffusion-block-98",
       "quote": "By 2025, many new systems use **flow matching** (\\cite[Lipman et al., 2023]{lipman2023flow}) or its rectified-flow variant, in which the path between data and noise is trained to be straighter than the curved diffusion path. FLUX and Stable Diffusion 3 use rectified flow; DDPM/DDIM-style samplers remain widespread in older and distilled models.",
       "kind": "paragraph",
       "section": "Where the field is now"
     },
     {
-      "id": "diffusion-block-98",
+      "id": "diffusion-block-99",
       "quote": "The dominant backbone is no longer the U-Net but the **Diffusion Transformer (DiT)** (\\cite[Peebles & Xie, 2023]{peebles2023dit}), a vanilla Vision Transformer scaled up. Sora, FLUX, and Stable Diffusion 3 all use DiT-style backbones. The pattern is familiar: U-Net worked, then Transformers worked better once they were big enough.",
       "kind": "paragraph",
       "section": "Where the field is now"
     },
     {
-      "id": "diffusion-block-99",
+      "id": "diffusion-block-100",
       "quote": "Practical models have also become fast. Modern systems generate images in **1 to 8 network evaluations** through clever solvers (DPM-Solver, EDM) and adversarial distillation (SDXL-Turbo, LCM). Diffusion is no longer slow.",
       "kind": "paragraph",
       "section": "Where the field is now"
     },
     {
-      "id": "diffusion-block-100",
+      "id": "diffusion-block-101",
       "quote": "In five years, the technique went from “diffusion as a curiosity” to “diffusion as the universal generative recipe” for images, video, audio, and molecules.",
       "kind": "paragraph",
       "section": "Where the field is now"
     },
     {
-      "id": "diffusion-block-101",
+      "id": "diffusion-block-102",
       "quote": "Diffusion for text: language models that denoise",
       "kind": "heading",
       "section": "Diffusion for text: language models that denoise"
     },
     {
-      "id": "diffusion-block-102",
+      "id": "diffusion-block-103",
       "quote": "Text adds a wrinkle: tokens are discrete, so you cannot gradually add Gaussian noise to them. The dominant fix is an **absorbing-state** process. Each token is independently replaced by a special `[MASK]` symbol with probability $\\beta_t$ per step, and once masked it stays masked:",
       "kind": "paragraph",
       "section": "Diffusion for text: language models that denoise"
     },
     {
-      "id": "diffusion-block-103",
+      "id": "diffusion-block-104",
       "quote": "Training is a weighted masked-token cross-entropy over randomly sampled masking rates. It is BERT's fill-in-the-blank loss, rearranged into a generative process (\\cite[Austin et al., 2021]{austin2021d3pm}). Sampling starts from a fully masked sequence, predicts every masked position in parallel, and commits the confident ones; easy tokens lock in first and hard content words last. This is a **diffusion language model** (dLLM), and it replaces left-to-right decoding with a handful of bidirectional denoising passes.",
       "kind": "paragraph",
       "section": "Diffusion for text: language models that denoise"
     },
     {
-      "id": "diffusion-block-104",
+      "id": "diffusion-block-105",
       "quote": "The promise is throughput: one forward pass can commit many tokens, and the step count is an explicit quality-versus-speed dial. **LLaDA** (2025), an 8B masked-diffusion model trained from scratch, reported instruction following competitive with Llama 3 8B, the first evidence that the recipe holds at open-model scale (\\cite[Nie et al., 2025]{nie2025llada}). Inception Labs' Mercury and Google DeepMind's Gemini Diffusion followed. The cost is that bidirectional attention is incompatible with the standard KV cache, so each step recomputes over the whole sequence, and quality parity with autoregressive models at the frontier is still unresolved. The architectural comparison is in [Beyond Transformers](alternative_architectures.php).",
       "kind": "paragraph",
       "section": "Diffusion for text: language models that denoise"
     },
     {
-      "id": "diffusion-block-105",
+      "id": "diffusion-block-106",
       "quote": "Try it yourself",
       "kind": "heading",
       "section": "Try it yourself"
     },
     {
-      "id": "diffusion-block-106",
+      "id": "diffusion-block-107",
       "quote": "These are the tools the diffusion community commonly uses:",
       "kind": "paragraph",
       "section": "Try it yourself"
     },
     {
-      "id": "diffusion-block-107",
+      "id": "diffusion-block-108",
       "quote": "For *controlling* what the model draws:",
       "kind": "paragraph",
       "section": "Try it yourself"
     },
     {
-      "id": "diffusion-block-108",
+      "id": "diffusion-block-109",
       "quote": "If you would rather read the foundational papers, the trio that started it all is Sohl-Dickstein's 2015 thermodynamic framing (\\cite[Sohl-Dickstein et al., 2015]{sohl2015deep}), Song & Ermon's score-based 2019 paper (\\cite[Song & Ermon, 2019]{song2019score}), and Ho's DDPM in 2020 (\\cite[Ho et al., 2020]{ho2020ddpm}).",
       "kind": "paragraph",
       "section": "Try it yourself"

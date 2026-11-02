@@ -28041,14 +28041,14 @@
       "id": "philosophy-stmt-100",
       "quote": "\\citeauthor{levesque2014bestbehaviour} (\\citeyear{levesque2014bestbehaviour}) argued that the Turing Test is a poor instrument for three reasons: **deception** (the machine must fabricate a human identity, which is not itself a component of intelligence), **conversation** (small talk and parlor tricks can carry a machine to a pass without any real reasoning), and **evaluation** (human judges disagree and err).",
       "block_id": "philosophy-block-48",
-      "section": "Why a “test”, not just a task",
+      "section": "The Winograd Schema as a Test",
       "kind": "statement"
     },
     {
       "id": "philosophy-stmt-101",
       "quote": "The Winograd challenge repairs each: it is a **multiple-choice** question, it needs **no human judge**, and it is **engineered to demand world-knowledge** rather than mimicry.",
       "block_id": "philosophy-block-48",
-      "section": "Why a “test”, not just a task",
+      "section": "The Winograd Schema as a Test",
       "kind": "statement"
     },
     {
@@ -29147,77 +29147,77 @@
       "id": "philosophy-stmt-258",
       "quote": "While vector embeddings are incredibly powerful for mapping linguistic patterns, they remain **ontologically isolated**.",
       "block_id": "philosophy-block-164",
-      "section": "Why Embedding Spaces are not “Reality”",
+      "section": "The Gap Between Embedding Spaces and Reality",
       "kind": "statement"
     },
     {
       "id": "philosophy-stmt-259",
       "quote": "Here is why they aren't “in touch”:",
       "block_id": "philosophy-block-164",
-      "section": "Why Embedding Spaces are not “Reality”",
+      "section": "The Gap Between Embedding Spaces and Reality",
       "kind": "statement"
     },
     {
       "id": "philosophy-stmt-260",
       "quote": "**Lack of Causal Mapping**: Embedding spaces track **correlation**, not **causation**.",
       "block_id": "philosophy-block-165",
-      "section": "Why Embedding Spaces are not “Reality”",
+      "section": "The Gap Between Embedding Spaces and Reality",
       "kind": "statement"
     },
     {
       "id": "philosophy-stmt-261",
       "quote": "A model knows that “dropping a glass” is followed by “shattering,” but it has no internal “physics engine” to understand the gravity or tension involved.",
       "block_id": "philosophy-block-165",
-      "section": "Why Embedding Spaces are not “Reality”",
+      "section": "The Gap Between Embedding Spaces and Reality",
       "kind": "statement"
     },
     {
       "id": "philosophy-stmt-262",
       "quote": "It predicts the next word, not the next physical event.",
       "block_id": "philosophy-block-165",
-      "section": "Why Embedding Spaces are not “Reality”",
+      "section": "The Gap Between Embedding Spaces and Reality",
       "kind": "statement"
     },
     {
       "id": "philosophy-stmt-263",
       "quote": "**The Static Nature of Vectors**: Human experience is a continuous, temporal flow.",
       "block_id": "philosophy-block-166",
-      "section": "Why Embedding Spaces are not “Reality”",
+      "section": "The Gap Between Embedding Spaces and Reality",
       "kind": "statement"
     },
     {
       "id": "philosophy-stmt-264",
       "quote": "While we can update LLMs (RAG, fine-tuning), the underlying embedding space is a static snapshot of a training corpus.",
       "block_id": "philosophy-block-166",
-      "section": "Why Embedding Spaces are not “Reality”",
+      "section": "The Gap Between Embedding Spaces and Reality",
       "kind": "statement"
     },
     {
       "id": "philosophy-stmt-265",
       "quote": "It does not “learn” from a new sensation in real-time.",
       "block_id": "philosophy-block-166",
-      "section": "Why Embedding Spaces are not “Reality”",
+      "section": "The Gap Between Embedding Spaces and Reality",
       "kind": "statement"
     },
     {
       "id": "philosophy-stmt-266",
       "quote": "**The Absence of “Qualia”**: In philosophy, **qualia** are individual instances of subjective, conscious experience, like the *redness* of red, or the feeling of pain when hurt, or the feeling of love or happiness when you feel them in the moment.",
       "block_id": "philosophy-block-167",
-      "section": "Why Embedding Spaces are not “Reality”",
+      "section": "The Gap Between Embedding Spaces and Reality",
       "kind": "statement"
     },
     {
       "id": "philosophy-stmt-267",
       "quote": "LLMs may describe those feelings, but only from knowledge of descriptions of them, they are never able to *feel* them.",
       "block_id": "philosophy-block-167",
-      "section": "Why Embedding Spaces are not “Reality”",
+      "section": "The Gap Between Embedding Spaces and Reality",
       "kind": "statement"
     },
     {
       "id": "philosophy-stmt-268",
       "quote": "The vector space can simulate the *structure* of the experience but cannot capture the *essence* of it.",
       "block_id": "philosophy-block-168",
-      "section": "Why Embedding Spaces are not “Reality”",
+      "section": "The Gap Between Embedding Spaces and Reality",
       "kind": "statement"
     },
     {
@@ -35002,15 +35002,15 @@
     },
     {
       "id": "philosophy-block-47",
-      "quote": "Why a “test”, not just a task",
+      "quote": "The Winograd Schema as a Test",
       "kind": "heading",
-      "section": "Why a “test”, not just a task"
+      "section": "The Winograd Schema as a Test"
     },
     {
       "id": "philosophy-block-48",
       "quote": "\\citeauthor{levesque2014bestbehaviour} (\\citeyear{levesque2014bestbehaviour}) argued that the Turing Test is a poor instrument for three reasons: **deception** (the machine must fabricate a human identity, which is not itself a component of intelligence), **conversation** (small talk and parlor tricks can carry a machine to a pass without any real reasoning), and **evaluation** (human judges disagree and err). The Winograd challenge repairs each: it is a **multiple-choice** question, it needs **no human judge**, and it is **engineered to demand world-knowledge** rather than mimicry.",
       "kind": "paragraph",
-      "section": "Why a “test”, not just a task"
+      "section": "The Winograd Schema as a Test"
     },
     {
       "id": "philosophy-block-49",
@@ -35698,39 +35698,39 @@
     },
     {
       "id": "philosophy-block-163",
-      "quote": "Why Embedding Spaces are not “Reality”",
+      "quote": "The Gap Between Embedding Spaces and Reality",
       "kind": "heading",
-      "section": "Why Embedding Spaces are not “Reality”"
+      "section": "The Gap Between Embedding Spaces and Reality"
     },
     {
       "id": "philosophy-block-164",
       "quote": "While vector embeddings are incredibly powerful for mapping linguistic patterns, they remain **ontologically isolated**. Here is why they aren't “in touch”:",
       "kind": "paragraph",
-      "section": "Why Embedding Spaces are not “Reality”"
+      "section": "The Gap Between Embedding Spaces and Reality"
     },
     {
       "id": "philosophy-block-165",
       "quote": "1. **Lack of Causal Mapping**: Embedding spaces track **correlation**, not **causation**. A model knows that “dropping a glass” is followed by “shattering,” but it has no internal “physics engine” to understand the gravity or tension involved. It predicts the next word, not the next physical event.",
       "kind": "list-item",
-      "section": "Why Embedding Spaces are not “Reality”"
+      "section": "The Gap Between Embedding Spaces and Reality"
     },
     {
       "id": "philosophy-block-166",
       "quote": "2. **The Static Nature of Vectors**: Human experience is a continuous, temporal flow. While we can update LLMs (RAG, fine-tuning), the underlying embedding space is a static snapshot of a training corpus. It does not “learn” from a new sensation in real-time.",
       "kind": "list-item",
-      "section": "Why Embedding Spaces are not “Reality”"
+      "section": "The Gap Between Embedding Spaces and Reality"
     },
     {
       "id": "philosophy-block-167",
       "quote": "3. **The Absence of “Qualia”**: In philosophy, **qualia** are individual instances of subjective, conscious experience, like the *redness* of red, or the feeling of pain when hurt, or the feeling of love or happiness when you feel them in the moment. LLMs may describe those feelings, but only from knowledge of descriptions of them, they are never able to *feel* them.",
       "kind": "list-item",
-      "section": "Why Embedding Spaces are not “Reality”"
+      "section": "The Gap Between Embedding Spaces and Reality"
     },
     {
       "id": "philosophy-block-168",
       "quote": "The vector space can simulate the *structure* of the experience but cannot capture the *essence* of it.",
       "kind": "paragraph",
-      "section": "Why Embedding Spaces are not “Reality”"
+      "section": "The Gap Between Embedding Spaces and Reality"
     },
     {
       "id": "philosophy-block-169",

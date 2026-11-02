@@ -76,7 +76,7 @@
       "value": "Critique of Pure Reason, KrV A26/B40-42",
       "unit": "name",
       "qualifiers": {},
-      "quote": "first introduced in the *Critique of Pure Reason* at KrV A26/B40–42",
+      "quote": "first introduced in the *Critique of Pure Reason* at KrV A26/B40-42",
       "citation_keys": [
         "kant_critique_pure_reason"
       ],
@@ -280,7 +280,7 @@
       "value": "representing and intervening are the two epistemic relations to the world",
       "unit": "name",
       "qualifiers": {},
-      "quote": "representing is not the only epistemic relation we have to the world; *intervening* — doing something to the world, observing the difference, and so getting evidence about what is really there — is the other half",
+      "quote": "representing is not the only epistemic relation we have to the world; *intervening* (doing something to the world, observing the difference, and so getting evidence about what is really there) is the other half",
       "citation_keys": [
         "hacking1983representing"
       ],
@@ -337,7 +337,7 @@
       "value": "the same topos admits several presentations and invariant facts transfer",
       "unit": "name",
       "qualifiers": {},
-      "quote": "the same topos admits several presentations — as a sheaf topos over different sites, as the classifying topos of a geometric theory — and the facts invariant under that equivalence transfer between them",
+      "quote": "the same topos admits several presentations (as a sheaf topos over different sites, as the classifying topos of a geometric theory), and the facts invariant under that equivalence transfer between them",
       "citation_keys": [
         "caramello2017theories"
       ],
@@ -434,7 +434,7 @@
       "qualifiers": {
         "author": "Ladyman"
       },
-      "quote": "not \"we only know the structure\" but \"there *is* nothing but the structure\" — the world *is* the chain of admissible cover systems, not a thing-in-itself behind them",
+      "quote": "not \"we only know the structure\" but \"there *is* nothing but the structure\": the world *is* the chain of admissible cover systems, not a thing-in-itself behind them",
       "citation_keys": [
         "ladyman1998what",
         "ladymanross2007everything"
@@ -450,7 +450,7 @@
       "qualifiers": {
         "author": "Goodman"
       },
-      "quote": "there are no \"ready-made worlds\" *and* no minds constructing them from nothing — there are *many* worlds, made by different symbol systems, each as legitimate in its own right as any other",
+      "quote": "there are no \"ready-made worlds\" *and* no minds constructing them from nothing; there are *many* worlds, made by different symbol systems, each as legitimate in its own right as any other",
       "citation_keys": [
         "goodman1978ways"
       ],
@@ -550,7 +550,7 @@
       "qualifiers": {
         "author": "Einstein"
       },
-      "quote": "General relativity — \\citeauthor{einstein1916foundation}'s (\\citeyear{einstein1916foundation}) \\citetitle{einstein1916foundation}",
+      "quote": "General relativity, \\citeauthor{einstein1916foundation}'s (\\citeyear{einstein1916foundation}) \\citetitle{einstein1916foundation}",
       "citation_keys": [
         "einstein1916foundation"
       ],
@@ -577,7 +577,7 @@
         "author": "Popper",
         "work": "Conjectures and Refutations"
       },
-      "quote": "insisted that a scientific theory earns its status not from the accumulation of confirmations but from *risky* predictions — claims that, if they failed at a contact point, would refute it",
+      "quote": "insisted that a scientific theory earns its status not from the accumulation of confirmations but from *risky* predictions; claims that, if they failed at a contact point, would refute it",
       "citation_keys": [
         "popper1963conjectures"
       ],
@@ -781,7 +781,7 @@
       "to": "coherent-world-models",
       "kind": "mentioned_in",
       "qualifiers": {},
-      "quote": "first introduced in the *Critique of Pure Reason* at KrV A26/B40–42",
+      "quote": "first introduced in the *Critique of Pure Reason* at KrV A26/B40-42",
       "citation_keys": [
         "kant_critique_pure_reason"
       ],
@@ -937,7 +937,7 @@
       "to": "coherent-world-models",
       "kind": "mentioned_in",
       "qualifiers": {},
-      "quote": "representing is not the only epistemic relation we have to the world; *intervening* — doing something to the world, observing the difference, and so getting evidence about what is really there — is the other half",
+      "quote": "representing is not the only epistemic relation we have to the world; *intervening* (doing something to the world, observing the difference, and so getting evidence about what is really there) is the other half",
       "citation_keys": [
         "hacking1983representing"
       ],
@@ -989,7 +989,7 @@
       "to": "coherent-world-models",
       "kind": "mentioned_in",
       "qualifiers": {},
-      "quote": "the same topos admits several presentations — as a sheaf topos over different sites, as the classifying topos of a geometric theory — and the facts invariant under that equivalence transfer between them",
+      "quote": "the same topos admits several presentations (as a sheaf topos over different sites, as the classifying topos of a geometric theory), and the facts invariant under that equivalence transfer between them",
       "citation_keys": [
         "caramello2017theories"
       ],
@@ -1069,7 +1069,7 @@
       "to": "coherent-world-models",
       "kind": "mentioned_in",
       "qualifiers": {},
-      "quote": "not \"we only know the structure\" but \"there *is* nothing but the structure\" — the world *is* the chain of admissible cover systems, not a thing-in-itself behind them",
+      "quote": "not \"we only know the structure\" but \"there *is* nothing but the structure\": the world *is* the chain of admissible cover systems, not a thing-in-itself behind them",
       "citation_keys": [
         "ladyman1998what",
         "ladymanross2007everything"
@@ -1082,7 +1082,7 @@
       "to": "coherent-world-models",
       "kind": "mentioned_in",
       "qualifiers": {},
-      "quote": "there are no \"ready-made worlds\" *and* no minds constructing them from nothing — there are *many* worlds, made by different symbol systems, each as legitimate in its own right as any other",
+      "quote": "there are no \"ready-made worlds\" *and* no minds constructing them from nothing; there are *many* worlds, made by different symbol systems, each as legitimate in its own right as any other",
       "citation_keys": [
         "goodman1978ways"
       ],
@@ -1160,7 +1160,7 @@
       "to": "coherent-world-models",
       "kind": "mentioned_in",
       "qualifiers": {},
-      "quote": "General relativity — \\citeauthor{einstein1916foundation}'s (\\citeyear{einstein1916foundation}) \\citetitle{einstein1916foundation}",
+      "quote": "General relativity, \\citeauthor{einstein1916foundation}'s (\\citeyear{einstein1916foundation}) \\citetitle{einstein1916foundation}",
       "citation_keys": [
         "einstein1916foundation"
       ],
@@ -1182,7 +1182,7 @@
       "to": "coherent-world-models",
       "kind": "mentioned_in",
       "qualifiers": {},
-      "quote": "insisted that a scientific theory earns its status not from the accumulation of confirmations but from *risky* predictions — claims that, if they failed at a contact point, would refute it",
+      "quote": "insisted that a scientific theory earns its status not from the accumulation of confirmations but from *risky* predictions; claims that, if they failed at a contact point, would refute it",
       "citation_keys": [
         "popper1963conjectures"
       ],

@@ -148,7 +148,7 @@ after `assets/site.js`. The markup is keyed by `data-demo`:
 - `prompt` — prompt builder with candidate answers and sampling
 - `cot` — answer-only vs step-by-step reasoning (legacy)
 - `reasoning` — answer vs steps, token cost, self-consistency votes
-- `timeline` — generic clickable timeline / stepper (`.tl-node` + `.tl-panel`)
+- `timeline` — generic clickable timeline / stepper (`.tl-node` + `.tl-panel`). Optional `data-image`, `data-image-alt`, `data-image-caption`, and `data-image-link` on a node add a credited figure to the panel.
 - `contamination` — benchmark score vs true skill
 - `science` — pLDDT confidence + protein contact map
 - `position` — positional-encoding heatmap
@@ -227,11 +227,21 @@ cross-chapter connections on the synthesis page and in the prose, not in
 per-page navigation blocks. Prose links may point only to earlier compact
 pages; do not link ahead to a lesson the reader has not reached.
 
-`transformer.html` and `intuition.html` load Temml (`../Temml-Local.min.css`,
-`../temml.min.js`). `transformer.html` renders the pipeline shape line with
-`temml.renderToString(...)`. `intuition.html` renders every `[data-tex]` element
-(inline math uses `data-tex-display="false"`) and falls back to the TeX source
-if Temml is unavailable. Keep those fallbacks.
+Pages with mathematics load Temml (`../Temml-Local.min.css`, `../temml.min.js`).
+`transformer.html` renders the pipeline shape line with `temml.renderToString(...)`.
+`assets/site.js` exposes `TM.typesetMath()`, which typesets every `[data-tex]`
+element on page init (inline math uses `data-tex-display="false"`) and falls back
+to the TeX source if Temml is unavailable. Keep the fallback.
+
+`assets/space-morph.js` is the seven-step space-curvature demo used by
+`intuition.html`; `assets/chinese-room.js` is the Inuktitut Chinese Room
+simulator used by `philosophy.html`. Both are plain-JS and self-initialising.
+
+## Example content preferences
+
+- Avoid cooking, meat, and food examples in the language lesson. The author is
+  vegetarian; use the non-food ambiguity examples (telescope, flying planes,
+  visiting relatives) instead.
 
 ## Prose style: no filler contrasts
 
