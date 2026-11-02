@@ -1107,7 +1107,10 @@ class AnswerCache:
                 vector = np.frombuffer(blob, dtype=np.float32)
                 if vector.shape != query.shape:
                     continue
-                score = float(np.dot(query, vector))
+                vector_norm = float(np.linalg.norm(vector))
+                if vector_norm == 0:
+                    continue
+                score = float(np.dot(query, vector / vector_norm))
                 if score >= best_score:
                     best_score = score
                     best = {

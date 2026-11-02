@@ -14,7 +14,6 @@
     "elhage2022superposition",
     "bricken2023monosemanticity",
     "cunningham2023sparse",
-    "gardenfors2000conceptual",
     "vaswani2017attention",
     "shazeer2020glu",
     "elhage2021mathematical",
@@ -239,30 +238,6 @@
       "unit": "name",
       "quote": "The goal of minimizing cross-entropy loss is not a shallow objective. There is a deep connection between **prediction** and **compression**.",
       "citation_keys": [],
-      "qualifiers": {},
-      "confidence": "stated"
-    },
-    {
-      "id": "intuition-voronoi",
-      "subject": "word-meadow",
-      "predicate": "structure",
-      "value": "Voronoi partition",
-      "unit": "name",
-      "quote": "The meadow is a **Voronoi partition** of thought space.",
-      "citation_keys": [],
-      "qualifiers": {},
-      "confidence": "stated"
-    },
-    {
-      "id": "intuition-conceptual-spaces",
-      "subject": "conceptual-spaces",
-      "predicate": "year",
-      "value": 2000,
-      "unit": "year",
-      "quote": "the conceptual spaces of \\citeauthor{gardenfors2000conceptual} (\\citeyear{gardenfors2000conceptual})",
-      "citation_keys": [
-        "gardenfors2000conceptual"
-      ],
       "qualifiers": {},
       "confidence": "stated"
     },
@@ -543,28 +518,6 @@
       "qualifiers": {},
       "quote": "The goal of minimizing cross-entropy loss is not a shallow objective. There is a deep connection between **prediction** and **compression**.",
       "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-intuition-word-meadow",
-      "from": "word-meadow",
-      "to": "intuition",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "The meadow is a **Voronoi partition** of thought space.",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-intuition-conceptual-spaces",
-      "from": "conceptual-spaces",
-      "to": "intuition",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "the conceptual spaces of \\citeauthor{gardenfors2000conceptual} (\\citeyear{gardenfors2000conceptual})",
-      "citation_keys": [
-        "gardenfors2000conceptual"
-      ],
       "confidence": "provenance"
     },
     {
@@ -4962,6 +4915,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-intuition-block-149-related_to-intuition-block-137",
+      "from": "intuition-block-149",
+      "to": "intuition-block-137",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-intuition-block-150-part_of-intuition",
       "from": "intuition-block-150",
       "to": "intuition",
@@ -4982,9 +4945,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-block-150-related_to-intuition-block-149",
+      "id": "struct-intuition-block-150-related_to-intuition-block-137",
       "from": "intuition-block-150",
-      "to": "intuition-block-149",
+      "to": "intuition-block-137",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5012,16 +4975,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-block-151-related_to-intuition-block-149",
-      "from": "intuition-block-151",
-      "to": "intuition-block-149",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-intuition-block-152-part_of-intuition",
       "from": "intuition-block-152",
       "to": "intuition",
@@ -5042,9 +4995,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-block-152-related_to-intuition-block-149",
+      "id": "struct-intuition-block-152-related_to-intuition-block-151",
       "from": "intuition-block-152",
-      "to": "intuition-block-149",
+      "to": "intuition-block-151",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5072,9 +5025,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-block-153-related_to-intuition-block-149",
+      "id": "struct-intuition-block-153-related_to-intuition-block-151",
       "from": "intuition-block-153",
-      "to": "intuition-block-149",
+      "to": "intuition-block-151",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5102,9 +5055,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-block-154-related_to-intuition-block-149",
+      "id": "struct-intuition-block-154-related_to-intuition-block-151",
       "from": "intuition-block-154",
-      "to": "intuition-block-149",
+      "to": "intuition-block-151",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5132,149 +5085,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-block-155-related_to-intuition-block-149",
+      "id": "struct-intuition-block-155-related_to-intuition-block-151",
       "from": "intuition-block-155",
-      "to": "intuition-block-149",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-156-part_of-intuition",
-      "from": "intuition-block-156",
-      "to": "intuition",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-155-before-intuition-block-156",
-      "from": "intuition-block-155",
-      "to": "intuition-block-156",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-157-part_of-intuition",
-      "from": "intuition-block-157",
-      "to": "intuition",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-156-before-intuition-block-157",
-      "from": "intuition-block-156",
-      "to": "intuition-block-157",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-157-related_to-intuition-block-156",
-      "from": "intuition-block-157",
-      "to": "intuition-block-156",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-158-part_of-intuition",
-      "from": "intuition-block-158",
-      "to": "intuition",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-157-before-intuition-block-158",
-      "from": "intuition-block-157",
-      "to": "intuition-block-158",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-158-related_to-intuition-block-156",
-      "from": "intuition-block-158",
-      "to": "intuition-block-156",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-159-part_of-intuition",
-      "from": "intuition-block-159",
-      "to": "intuition",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-158-before-intuition-block-159",
-      "from": "intuition-block-158",
-      "to": "intuition-block-159",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-159-related_to-intuition-block-156",
-      "from": "intuition-block-159",
-      "to": "intuition-block-156",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-160-part_of-intuition",
-      "from": "intuition-block-160",
-      "to": "intuition",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-159-before-intuition-block-160",
-      "from": "intuition-block-159",
-      "to": "intuition-block-160",
-      "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-block-160-related_to-intuition-block-156",
-      "from": "intuition-block-160",
-      "to": "intuition-block-156",
+      "to": "intuition-block-151",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -7652,8 +7465,48 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-stmt-238-part_of-intuition-block-150",
+      "id": "struct-intuition-stmt-238-part_of-intuition-block-149",
       "from": "intuition-stmt-238",
+      "to": "intuition-block-149",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intuition-stmt-239-part_of-intuition-block-149",
+      "from": "intuition-stmt-239",
+      "to": "intuition-block-149",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intuition-stmt-240-part_of-intuition-block-149",
+      "from": "intuition-stmt-240",
+      "to": "intuition-block-149",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intuition-stmt-241-part_of-intuition-block-149",
+      "from": "intuition-stmt-241",
+      "to": "intuition-block-149",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-intuition-stmt-242-part_of-intuition-block-150",
+      "from": "intuition-stmt-242",
       "to": "intuition-block-150",
       "kind": "part_of",
       "qualifiers": {},
@@ -7662,49 +7515,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-stmt-239-part_of-intuition-block-151",
-      "from": "intuition-stmt-239",
-      "to": "intuition-block-151",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-stmt-240-part_of-intuition-block-152",
-      "from": "intuition-stmt-240",
-      "to": "intuition-block-152",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-stmt-241-part_of-intuition-block-152",
-      "from": "intuition-stmt-241",
-      "to": "intuition-block-152",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-stmt-242-part_of-intuition-block-153",
-      "from": "intuition-stmt-242",
-      "to": "intuition-block-153",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-stmt-243-part_of-intuition-block-153",
+      "id": "struct-intuition-stmt-243-part_of-intuition-block-152",
       "from": "intuition-stmt-243",
-      "to": "intuition-block-153",
+      "to": "intuition-block-152",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7722,9 +7535,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-stmt-245-part_of-intuition-block-154",
+      "id": "struct-intuition-stmt-245-part_of-intuition-block-153",
       "from": "intuition-stmt-245",
-      "to": "intuition-block-154",
+      "to": "intuition-block-153",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7732,9 +7545,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-stmt-246-part_of-intuition-block-154",
+      "id": "struct-intuition-stmt-246-part_of-intuition-block-153",
       "from": "intuition-stmt-246",
-      "to": "intuition-block-154",
+      "to": "intuition-block-153",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7742,9 +7555,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-stmt-247-part_of-intuition-block-154",
+      "id": "struct-intuition-stmt-247-part_of-intuition-block-153",
       "from": "intuition-stmt-247",
-      "to": "intuition-block-154",
+      "to": "intuition-block-153",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7762,9 +7575,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-stmt-249-part_of-intuition-block-155",
+      "id": "struct-intuition-stmt-249-part_of-intuition-block-154",
       "from": "intuition-stmt-249",
-      "to": "intuition-block-155",
+      "to": "intuition-block-154",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7772,9 +7585,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-stmt-250-part_of-intuition-block-157",
+      "id": "struct-intuition-stmt-250-part_of-intuition-block-154",
       "from": "intuition-stmt-250",
-      "to": "intuition-block-157",
+      "to": "intuition-block-154",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7782,9 +7595,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-stmt-251-part_of-intuition-block-158",
+      "id": "struct-intuition-stmt-251-part_of-intuition-block-154",
       "from": "intuition-stmt-251",
-      "to": "intuition-block-158",
+      "to": "intuition-block-154",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7792,79 +7605,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-intuition-stmt-252-part_of-intuition-block-158",
+      "id": "struct-intuition-stmt-252-part_of-intuition-block-155",
       "from": "intuition-stmt-252",
-      "to": "intuition-block-158",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-stmt-253-part_of-intuition-block-158",
-      "from": "intuition-stmt-253",
-      "to": "intuition-block-158",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-stmt-254-part_of-intuition-block-158",
-      "from": "intuition-stmt-254",
-      "to": "intuition-block-158",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-stmt-255-part_of-intuition-block-159",
-      "from": "intuition-stmt-255",
-      "to": "intuition-block-159",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-stmt-256-part_of-intuition-block-159",
-      "from": "intuition-stmt-256",
-      "to": "intuition-block-159",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-stmt-257-part_of-intuition-block-159",
-      "from": "intuition-stmt-257",
-      "to": "intuition-block-159",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-stmt-258-part_of-intuition-block-159",
-      "from": "intuition-stmt-258",
-      "to": "intuition-block-159",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-intuition-stmt-259-part_of-intuition-block-160",
-      "from": "intuition-stmt-259",
-      "to": "intuition-block-160",
+      "to": "intuition-block-155",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9534,155 +9277,106 @@
     },
     {
       "id": "intuition-stmt-238",
-      "quote": "- In **one dimension** the cells are intervals and the seams are isolated points.",
-      "block_id": "intuition-block-150",
-      "section": "The same construction in any dimension",
+      "quote": "The aha The vocabulary tiles the space of thoughts.",
+      "block_id": "intuition-block-149",
+      "section": "The Meadow of Words",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-239",
-      "quote": "- In **two dimensions** (the meadow) the cells are polygons and the seams are straight segments: the places where the thought is exactly equally far from two words.",
-      "block_id": "intuition-block-151",
-      "section": "The same construction in any dimension",
+      "quote": "Every word owns a cell; every thought falls into exactly one.",
+      "block_id": "intuition-block-149",
+      "section": "The Meadow of Words",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-240",
-      "quote": "- In the **thousands of dimensions** of a real LLM, the cells are convex polytopes whose shared walls are $(d-1)$-dimensional hyperplanes.",
-      "block_id": "intuition-block-152",
-      "section": "The same construction in any dimension",
+      "quote": "Choosing a word is not a lookup but a partition — and the seams, where two cells meet, are where the model is genuinely unsure.",
+      "block_id": "intuition-block-149",
+      "section": "The Meadow of Words",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-241",
-      "quote": "Nothing else changes: whichever cell contains the thought wins the word, and the distance to the nearest wall measures how undecided the model is.",
-      "block_id": "intuition-block-152",
-      "section": "The same construction in any dimension",
+      "quote": "Grow the dictionary and the cells shrink; the seams never vanish.",
+      "block_id": "intuition-block-149",
+      "section": "The Meadow of Words",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-242",
-      "quote": "The idea that a concept is a **region** rather than a single point is the conceptual spaces of \\citeauthor{gardenfors2000conceptual} (\\citeyear{gardenfors2000conceptual}).",
-      "block_id": "intuition-block-153",
-      "section": "The same construction in any dimension",
+      "quote": "Go deeper The Foam of Meaning — the geometry of ambiguity",
+      "block_id": "intuition-block-150",
+      "section": "The Meadow of Words",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-243",
-      "quote": "The machine-learning version — hidden states on a latent semantic manifold, tokens as Voronoi regions, and a lower bound on the share of states that no finite vocabulary can resolve — is worked out by \\citeauthor{mabrok2026latent} (\\citeyear{mabrok2026latent}).",
-      "block_id": "intuition-block-153",
-      "section": "The same construction in any dimension",
+      "quote": "A language model is a loop that turns geometry into words, and words back into geometry.",
+      "block_id": "intuition-block-152",
+      "section": "The loop, all the way down",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-244",
-      "quote": "Because the seam has no thickness in one place but wraps around every cell, the fraction of near-seam states does not go away when the dictionary grows; it only gets thinner, never empty.",
+      "quote": "Text arrives as **tokens** and becomes **vectors**.",
       "block_id": "intuition-block-153",
-      "section": "The same construction in any dimension",
+      "section": "The loop, all the way down",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-245",
-      "quote": "The aha The vocabulary tiles the space of thoughts.",
-      "block_id": "intuition-block-154",
-      "section": "The same construction in any dimension",
+      "quote": "Layer after layer, **attention** lets every vector look at its neighbours while the **residual stream** carries all earlier findings forward untouched.",
+      "block_id": "intuition-block-153",
+      "section": "The loop, all the way down",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-246",
-      "quote": "Every word owns a cell; every thought falls into exactly one.",
-      "block_id": "intuition-block-154",
-      "section": "The same construction in any dimension",
+      "quote": "The last vector is then scored against the entire **vocabulary** and turned into a probability distribution — and one word is drawn.",
+      "block_id": "intuition-block-153",
+      "section": "The loop, all the way down",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-247",
-      "quote": "Choosing a word is not a lookup but a partition — and the seams, where two cells meet, are where the model is genuinely unsure.",
-      "block_id": "intuition-block-154",
-      "section": "The same construction in any dimension",
+      "quote": "That word is appended to the input, and the loop starts again.",
+      "block_id": "intuition-block-153",
+      "section": "The loop, all the way down",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-248",
-      "quote": "Grow the dictionary and the cells shrink; the seams never vanish.",
+      "quote": "Nowhere in that loop is a shelf of stored facts, and nowhere is a little module labelled \"understanding\".",
       "block_id": "intuition-block-154",
-      "section": "The same construction in any dimension",
+      "section": "The loop, all the way down",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-249",
-      "quote": "Go deeper The Foam of Meaning — the geometry of ambiguity",
-      "block_id": "intuition-block-155",
-      "section": "The same construction in any dimension",
+      "quote": "Meaning lives in the **geometry** — in directions, distances, and regions — and the model's only task at each step is to place the next thought somewhere in that space.",
+      "block_id": "intuition-block-154",
+      "section": "The loop, all the way down",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-250",
-      "quote": "A language model is a loop that turns geometry into words, and words back into geometry.",
-      "block_id": "intuition-block-157",
+      "quote": "The meadow is that last step seen up close: a finite vocabulary cutting an infinite space of possible thoughts into cells, with a seam wherever two words are equally near.",
+      "block_id": "intuition-block-154",
       "section": "The loop, all the way down",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-251",
-      "quote": "Text arrives as **tokens** and becomes **vectors**.",
-      "block_id": "intuition-block-158",
+      "quote": "Prediction is the walk; language is the trail it leaves.",
+      "block_id": "intuition-block-154",
       "section": "The loop, all the way down",
       "kind": "statement"
     },
     {
       "id": "intuition-stmt-252",
-      "quote": "Layer after layer, **attention** lets every vector look at its neighbours while the **residual stream** carries all earlier findings forward untouched.",
-      "block_id": "intuition-block-158",
-      "section": "The loop, all the way down",
-      "kind": "statement"
-    },
-    {
-      "id": "intuition-stmt-253",
-      "quote": "The last vector is then scored against the entire **vocabulary** and turned into a probability distribution — and one word is drawn.",
-      "block_id": "intuition-block-158",
-      "section": "The loop, all the way down",
-      "kind": "statement"
-    },
-    {
-      "id": "intuition-stmt-254",
-      "quote": "That word is appended to the input, and the loop starts again.",
-      "block_id": "intuition-block-158",
-      "section": "The loop, all the way down",
-      "kind": "statement"
-    },
-    {
-      "id": "intuition-stmt-255",
-      "quote": "Nowhere in that loop is a shelf of stored facts, and nowhere is a little module labelled \"understanding\".",
-      "block_id": "intuition-block-159",
-      "section": "The loop, all the way down",
-      "kind": "statement"
-    },
-    {
-      "id": "intuition-stmt-256",
-      "quote": "Meaning lives in the **geometry** — in directions, distances, and regions — and the model's only task at each step is to place the next thought somewhere in that space.",
-      "block_id": "intuition-block-159",
-      "section": "The loop, all the way down",
-      "kind": "statement"
-    },
-    {
-      "id": "intuition-stmt-257",
-      "quote": "The meadow is that last step seen up close: a finite vocabulary cutting an infinite space of possible thoughts into cells, with a seam wherever two words are equally near.",
-      "block_id": "intuition-block-159",
-      "section": "The loop, all the way down",
-      "kind": "statement"
-    },
-    {
-      "id": "intuition-stmt-258",
-      "quote": "Prediction is the walk; language is the trail it leaves.",
-      "block_id": "intuition-block-159",
-      "section": "The loop, all the way down",
-      "kind": "statement"
-    },
-    {
-      "id": "intuition-stmt-259",
       "quote": "> **In one line:** a large language model is a next-word predictor trained on a vast slice of human text — and at scale, that simple loop starts to behave like a model of language, of reasoning, and of the world behind them.",
-      "block_id": "intuition-block-160",
+      "block_id": "intuition-block-155",
       "section": "The loop, all the way down",
       "kind": "statement"
     }
@@ -10578,72 +10272,42 @@
     },
     {
       "id": "intuition-block-149",
-      "quote": "The same construction in any dimension",
-      "kind": "heading",
-      "section": "The same construction in any dimension"
+      "quote": "The aha The vocabulary tiles the space of thoughts. Every word owns a cell; every thought falls into exactly one. Choosing a word is not a lookup but a partition — and the seams, where two cells meet, are where the model is genuinely unsure. Grow the dictionary and the cells shrink; the seams never vanish.",
+      "kind": "paragraph",
+      "section": "The Meadow of Words"
     },
     {
       "id": "intuition-block-150",
-      "quote": "- In **one dimension** the cells are intervals and the seams are isolated points.",
-      "kind": "list-item",
-      "section": "The same construction in any dimension"
+      "quote": "Go deeper The Foam of Meaning — the geometry of ambiguity",
+      "kind": "paragraph",
+      "section": "The Meadow of Words"
     },
     {
       "id": "intuition-block-151",
-      "quote": "- In **two dimensions** (the meadow) the cells are polygons and the seams are straight segments: the places where the thought is exactly equally far from two words.",
-      "kind": "list-item",
-      "section": "The same construction in any dimension"
-    },
-    {
-      "id": "intuition-block-152",
-      "quote": "- In the **thousands of dimensions** of a real LLM, the cells are convex polytopes whose shared walls are $(d-1)$-dimensional hyperplanes. Nothing else changes: whichever cell contains the thought wins the word, and the distance to the nearest wall measures how undecided the model is.",
-      "kind": "list-item",
-      "section": "The same construction in any dimension"
-    },
-    {
-      "id": "intuition-block-153",
-      "quote": "The idea that a concept is a **region** rather than a single point is the conceptual spaces of \\citeauthor{gardenfors2000conceptual} (\\citeyear{gardenfors2000conceptual}). The machine-learning version — hidden states on a latent semantic manifold, tokens as Voronoi regions, and a lower bound on the share of states that no finite vocabulary can resolve — is worked out by \\citeauthor{mabrok2026latent} (\\citeyear{mabrok2026latent}). Because the seam has no thickness in one place but wraps around every cell, the fraction of near-seam states does not go away when the dictionary grows; it only gets thinner, never empty.",
-      "kind": "paragraph",
-      "section": "The same construction in any dimension"
-    },
-    {
-      "id": "intuition-block-154",
-      "quote": "The aha The vocabulary tiles the space of thoughts. Every word owns a cell; every thought falls into exactly one. Choosing a word is not a lookup but a partition — and the seams, where two cells meet, are where the model is genuinely unsure. Grow the dictionary and the cells shrink; the seams never vanish.",
-      "kind": "paragraph",
-      "section": "The same construction in any dimension"
-    },
-    {
-      "id": "intuition-block-155",
-      "quote": "Go deeper The Foam of Meaning — the geometry of ambiguity",
-      "kind": "paragraph",
-      "section": "The same construction in any dimension"
-    },
-    {
-      "id": "intuition-block-156",
       "quote": "The loop, all the way down",
       "kind": "heading",
       "section": "The loop, all the way down"
     },
     {
-      "id": "intuition-block-157",
+      "id": "intuition-block-152",
       "quote": "A language model is a loop that turns geometry into words, and words back into geometry.",
       "kind": "paragraph",
       "section": "The loop, all the way down"
     },
     {
-      "id": "intuition-block-158",
+      "id": "intuition-block-153",
       "quote": "Text arrives as **tokens** and becomes **vectors**. Position is folded in. Layer after layer, **attention** lets every vector look at its neighbours while the **residual stream** carries all earlier findings forward untouched. The last vector is then scored against the entire **vocabulary** and turned into a probability distribution — and one word is drawn. That word is appended to the input, and the loop starts again.",
       "kind": "paragraph",
       "section": "The loop, all the way down"
     },
     {
-      "id": "intuition-block-159",
+      "id": "intuition-block-154",
       "quote": "Nowhere in that loop is a shelf of stored facts, and nowhere is a little module labelled \"understanding\". Meaning lives in the **geometry** — in directions, distances, and regions — and the model's only task at each step is to place the next thought somewhere in that space. The meadow is that last step seen up close: a finite vocabulary cutting an infinite space of possible thoughts into cells, with a seam wherever two words are equally near. Prediction is the walk; language is the trail it leaves.",
       "kind": "paragraph",
       "section": "The loop, all the way down"
     },
     {
-      "id": "intuition-block-160",
+      "id": "intuition-block-155",
       "quote": "> **In one line:** a large language model is a next-word predictor trained on a vast slice of human text — and at scale, that simple loop starts to behave like a model of language, of reasoning, and of the world behind them.",
       "kind": "paragraph",
       "section": "The loop, all the way down"

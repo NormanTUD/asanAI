@@ -1204,23 +1204,33 @@ This framing is best read as a productive working hypothesis, not a proved ident
 <!-- ============================================================ -->
 <style>
 #word-meadow-wrap .wm-tour {
-	display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
-	margin: 0 0 12px;
+	display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
+	margin: 0 0 14px;
+	padding: 5px;
+	background: color-mix(in srgb, var(--mn-bg-subtle) 65%, transparent);
+	border: 1px solid var(--mn-border-light);
+	border-radius: 14px;
 }
 #word-meadow-wrap .wm-step {
 	appearance: none; cursor: pointer;
-	padding: 5px 11px; border-radius: 999px;
-	border: 1px solid var(--mn-border);
-	background: var(--mn-bg);
+	padding: 7px 13px; border-radius: 10px;
+	border: 1px solid transparent;
+	background: transparent;
 	color: var(--mn-text-secondary);
-	font: 600 .72rem/1.2 inherit;
-	transition: background .15s ease, color .15s ease, border-color .15s ease;
+	font: 600 .73rem/1.2 inherit;
+	transition: background .16s ease, color .16s ease, border-color .16s ease, transform .16s ease, box-shadow .16s ease;
 }
-#word-meadow-wrap .wm-step:hover { border-color: var(--mn-accent); color: var(--mn-text); }
+#word-meadow-wrap .wm-step:hover {
+	background: var(--mn-surface);
+	border-color: var(--mn-border);
+	color: var(--mn-text);
+	transform: translateY(-1px);
+}
 #word-meadow-wrap .wm-step.is-active {
-	background: color-mix(in srgb, var(--mn-accent) 16%, var(--mn-surface));
-	border-color: color-mix(in srgb, var(--mn-accent) 55%, var(--mn-border));
-	color: var(--mn-heading);
+	background: linear-gradient(135deg, var(--mn-accent), color-mix(in srgb, var(--mn-accent) 72%, #7c3aed));
+	border-color: transparent;
+	color: #fff;
+	box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--mn-accent) 70%, transparent);
 }
 #word-meadow-wrap .wm-canvas {
 	display: block; width: 100%; height: 460px;
@@ -1261,15 +1271,26 @@ This framing is best read as a productive working hypothesis, not a proved ident
 }
 #word-meadow-wrap .wm-nav button {
 	appearance: none; cursor: pointer;
-	padding: 7px 16px; border-radius: 8px;
-	border: 1px solid var(--mn-border);
+	padding: 8px 18px; border-radius: 999px;
+	border: 1px solid color-mix(in srgb, var(--mn-accent) 35%, var(--mn-border));
 	background: var(--mn-bg);
 	color: var(--mn-text);
-	font: 600 .8rem/1.2 inherit;
-	transition: border-color .15s ease, background .15s ease;
+	font: 650 .8rem/1.2 inherit;
+	transition: border-color .16s ease, background .16s ease, color .16s ease, transform .16s ease, box-shadow .16s ease;
 }
-#word-meadow-wrap .wm-nav button:hover { border-color: var(--mn-accent); }
-#word-meadow-wrap .wm-nav button:disabled { opacity: .45; cursor: default; border-color: var(--mn-border); }
+#word-meadow-wrap .wm-nav button:hover {
+	border-color: var(--mn-accent);
+	background: color-mix(in srgb, var(--mn-accent) 10%, var(--mn-bg));
+	color: var(--mn-heading);
+	transform: translateY(-1px);
+	box-shadow: 0 6px 16px -10px color-mix(in srgb, var(--mn-accent) 60%, transparent);
+}
+#word-meadow-wrap .wm-nav button:active { transform: translateY(0); }
+#word-meadow-wrap .wm-nav button:disabled {
+	opacity: .45; cursor: default; border-color: var(--mn-border);
+	background: var(--mn-bg); color: var(--mn-text-muted);
+	transform: none; box-shadow: none;
+}
 #word-meadow-wrap .wm-readouts {
 	display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: 10px; margin-top: 13px;
@@ -1371,22 +1392,6 @@ A model thinks in a continuous space, yet it must speak in a **finite** vocabula
 
 	<div id="wm-caption" class="wm-caption"></div>
 
-</div>
-
-<div class="md" data-mathlevel="40">
-### The same construction in any dimension
-
-The meadow is a **Voronoi partition** of thought space. With word pins $a_1, \dots, a_n$, the cell of word $w$ is the set of thoughts for which $a_w$ is the nearest pin:
-
-<div>
-$$C_w = \{\, h : \|h - a_w\| \le \|h - a_v\| \ \text{for every } v \,\}$$
-</div>
-
-- In **one dimension** the cells are intervals and the seams are isolated points.
-- In **two dimensions** (the meadow) the cells are polygons and the seams are straight segments: the places where the thought is exactly equally far from two words.
-- In the **thousands of dimensions** of a real LLM, the cells are convex polytopes whose shared walls are $(d-1)$-dimensional hyperplanes. Nothing else changes: whichever cell contains the thought wins the word, and the distance to the nearest wall measures how undecided the model is.
-
-The idea that a concept is a **region** rather than a single point is the conceptual spaces of \citeauthor{gardenfors2000conceptual} (\citeyear{gardenfors2000conceptual}). The machine-learning version — hidden states on a latent semantic manifold, tokens as Voronoi regions, and a lower bound on the share of states that no finite vocabulary can resolve — is worked out by \citeauthor{mabrok2026latent} (\citeyear{mabrok2026latent}). Because the seam has no thickness in one place but wraps around every cell, the fraction of near-seam states does not go away when the dictionary grows; it only gets thinner, never empty.
 </div>
 
 <div class="mn-aha">

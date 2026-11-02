@@ -193,6 +193,23 @@ def main():
         broken.put("key", {"answer": "a", "grounded": True, "sources": []}, "en")
         check(True, "a broken answer cache writes safely")
 
+    with tempfile.TemporaryDirectory(prefix="asanai-rag-sem-cache-") as tmp:
+        sem = server.AnswerCache(Path(tmp) / "cache.sqlite")
+        sem.put(
+            "k",
+            {"answer": "a", "grounded": True, "sources": [], "query_en": "q"},
+            "en",
+            embedding=np.array([10.0, 0.0], dtype=np.float32),
+        )
+        check(
+            sem.get_semantic(np.array([0.6, 0.8], dtype=np.float32), "en") is None,
+            "semantic cache compares normalized vectors (no raw-dot false hit)",
+        )
+        check(
+            sem.get_semantic(np.array([1.0, 0.0], dtype=np.float32), "en") is not None,
+            "semantic cache matches an actually parallel vector",
+        )
+
     # Pure helpers.
     engine = object.__new__(server.RagEngine)
     chunks = [
