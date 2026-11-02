@@ -2,8 +2,8 @@
 
 - lessons: 99
 - claims: 7294
-- statements: 16902
-- relations: 51280
+- statements: 16908
+- relations: 51295
 - uncovered years: 45
 - uncovered quantities: 5
 - uncited specific claims: 306
@@ -29,7 +29,7 @@
 | attentionlab | 48 | 265 | 710 | 3 | 0 |
 | autodiff | 9 | 104 | 372 | 0 | 0 |
 | backproplab | 10 | 24 | 99 | 0 | 0 |
-| beyond_llms | 67 | 419 | 1213 | 0 | 0 |
+| beyond_llms | 67 | 421 | 1218 | 0 | 0 |
 | coherent_difference | 24 | 480 | 1221 | 0 | 0 |
 | coherent_world_models | 58 | 437 | 1291 | 0 | 0 |
 | computer_vision | 31 | 76 | 273 | 0 | 0 |
@@ -61,7 +61,7 @@
 | intro | 17 | 40 | 121 | 0 | 0 |
 | intuition | 28 | 233 | 687 | 0 | 0 |
 | knowledge_map | 15 | 0 | 14 | 0 | 0 |
-| language | 77 | 328 | 797 | 0 | 0 |
+| language | 77 | 330 | 802 | 0 | 0 |
 | law_regulation | 28 | 61 | 236 | 0 | 0 |
 | loss_landscape | 25 | 98 | 262 | 0 | 0 |
 | losslab | 23 | 66 | 210 | 0 | 0 |
@@ -88,7 +88,7 @@
 | promptengineering | 18 | 225 | 711 | 0 | 0 |
 | rag | 26 | 136 | 437 | 0 | 0 |
 | reasoning | 21 | 63 | 244 | 0 | 0 |
-| recurrent_networks | 24 | 71 | 187 | 1 | 0 |
+| recurrent_networks | 24 | 73 | 192 | 1 | 0 |
 | reinforcement_learning | 25 | 46 | 219 | 1 | 0 |
 | reliability | 21 | 26 | 81 | 4 | 0 |
 | resnetlab | 19 | 18 | 85 | 0 | 0 |
