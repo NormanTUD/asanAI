@@ -1792,6 +1792,7 @@
    "finetuninglab",
    "history",
    "hyperparameters",
+   "intuition",
    "mechanistic_interpretability",
    "multimodal",
    "music_video_generation",
@@ -2598,6 +2599,7 @@
   "cited_in": [
    "embeddinglab",
    "history",
+   "intuition",
    "people_of_ai",
    "tokenizerlab",
    "untold_history_iii"
@@ -6775,6 +6777,7 @@
   "cited_in": [
    "embeddinglab",
    "history",
+   "intuition",
    "people_of_ai",
    "tokenizerlab",
    "untold_history_iii"
@@ -24059,13 +24062,15 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 3,
+  "works": 4,
   "keys": [
    "unicode2022standard",
+   "unicodeblocks",
    "unicode_history",
    "unicode_tr15"
   ],
   "cited_in": [
+   "intuition",
    "untold_history_iii"
   ]
  },
@@ -24084,6 +24089,7 @@
    "rfc2279"
   ],
   "cited_in": [
+   "intuition",
    "untold_history_iii"
   ]
  },
@@ -30285,6 +30291,7 @@
   "cited_in": [
    "beyond_llms",
    "history",
+   "intuition",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -40883,6 +40890,7 @@
    "embeddinglab",
    "finetuninglab",
    "history",
+   "intuition",
    "overandunderfittinglab",
    "people_of_ai",
    "philosophy",
@@ -44094,6 +44102,7 @@
    "beyond_llms",
    "history",
    "hyperparameters",
+   "intuition",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -60306,6 +60315,7 @@
    "attentionlab",
    "embeddinglab",
    "history",
+   "intuition",
    "philosophy",
    "tokenizerlab",
    "training_data",
@@ -62380,6 +62390,7 @@
    "beyond_llms",
    "history",
    "hyperparameters",
+   "intuition",
    "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
@@ -62794,6 +62805,7 @@
    "attentionlab",
    "embeddinglab",
    "history",
+   "intuition",
    "normalizationlab",
    "people_of_ai",
    "tokenizerlab",

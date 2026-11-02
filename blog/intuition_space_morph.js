@@ -407,7 +407,7 @@
 	function drawClassLabels(alpha, C) {
 		if (alpha < 0.01) return;
 		const c0 = proj({ x: 0, y: 0, z: PLANE_Z });
-		const LX = Math.min(W - 16, W / 2 + base() * FIT * 1.12);
+		const LX = W - 18;
 		ctx.globalAlpha = alpha;
 		ctx.textAlign = "right";
 		ctx.font = "600 14px system-ui, sans-serif";

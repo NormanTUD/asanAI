@@ -21699,6 +21699,13 @@ window.bibData = {
 		url: "https://www.unicode.org/versions/Unicode15.0.0/ch02.pdf",
 		alternativetitle: "Unicode Standard, Chapter 2"
 	},
+	"unicodeblocks": {
+		title: "Unicode Character Database: Blocks",
+		author: "The Unicode Consortium",
+		year: 2026,
+		url: "https://www.unicode.org/Public/UCD/latest/ucd/Blocks.txt",
+		alternativetitle: "Unicode Blocks"
+	},
 	"rfc3629": {
 		title: "UTF-8, a transformation format of ISO 10646",
 		author: "F. Yergeau",

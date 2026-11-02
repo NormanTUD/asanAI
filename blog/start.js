@@ -117,7 +117,7 @@ function updateLoadingStatus(message) {
 		if (!subStatus) {
 			subStatus = document.createElement('p');
 			subStatus.id = 'loader-substatus';
-			subStatus.style.cssText = 'color: #94a3b8; font-size: 11px; margin-top: 2px; font-style: italic; transition: opacity 0.2s ease;';
+			statusText.parentNode.classList.add('has-substatus');
 			statusText.parentNode.insertBefore(subStatus, statusText.nextSibling);
 		}
 		subStatus.textContent = message;

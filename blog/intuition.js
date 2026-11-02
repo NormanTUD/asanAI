@@ -176,11 +176,7 @@ const TokenizerViz = {
 // ============================================================
 
 const EmbeddingViz = (() => {
-    // Two semantic axes that an LLM might plausibly discover.
-    // (X) Power   (Y) Gender
-    // Positions chosen so directions encode meaning:
-    //   Man → Woman  (gender)   and   Man → Prince → King  (power)
-    // are the SAME vector applied at different points.
+    // Two semantic axes an LLM might discover: Power (x) and Gender (y).
     const space = {
         vocab: {
             'Man':       [ 5, -10],
@@ -198,9 +194,15 @@ const EmbeddingViz = (() => {
         rangeY: [-30, 30]
     };
 
-    let result = null;        // { pos, nearest, steps }
+    const BLUE = '#3b82f6';
+    const GREEN = '#10b981';
+    const ORANGE = '#f59e0b';
+    const RED = '#ef4444';
+    const PLOT_CONFIG = { displayModeBar: false, responsive: true, scrollZoom: true, doubleClick: 'reset' };
 
-    // Theme helpers (resolved each render so they react to dark-mode toggles)
+    let current = { mode: 'expr', expr: 'King - Man + Woman' };
+    let result = null;
+
     const theme = () => {
         const dark = isDarkMode();
         return {
@@ -214,119 +216,31 @@ const EmbeddingViz = (() => {
         };
     };
 
-    // Tokenize "King - Man + Woman", "Woman + 2*Power" etc.
     function tokenize(expr) {
         return expr.match(/[a-zA-ZäöüÄÖÜß]+|\d+|[+\-*/()]/g) || [];
     }
 
-    function calc(parts) {
-        // parts = array of (word|k|num) with optional preceding sign
-        // We use a tiny recursive-descent so "Woman + 2*Power" and "(Man+Woman)/2" work.
-        let i = 0;
-        function parseFactor() {
-            const t = parts[i++];
-            if (t === '(') {
-                const v = parseExpr();
-                if (parts[i] === ')') i++;
-                return v;
-            }
-            if (/^\d+$/.test(t)) return { kind: 'num', n: parseInt(t, 10), sign: 1 };
-            const lc = t.toLowerCase();
-            const norm = Object.keys(space.vocab).find(w => w.toLowerCase() === lc);
-            if (norm) return { kind: 'vec', w: norm, sign: 1 };
-            return { kind: 'num', n: 0, sign: 1 };
-        }
-        function parseTerm(sign) {
-            let left = parseFactor();
-            left.sign *= sign;
-            while (i < parts.length && (parts[i] === '*' || parts[i] === '/')) {
-                const op = parts[i++];
-                const right = parseFactor();
-                right.sign = 1;
-                if (op === '*') {
-                    if (left.kind === 'num' && right.kind === 'num') { left.n *= right.n; }
-                    else if (left.kind === 'vec' && right.kind === 'num') { left = { kind: 'vec', w: left.w, scale: right.n, sign: left.sign }; }
-                    else if (left.kind === 'num' && right.kind === 'vec') { left = { kind: 'vec', w: right.w, scale: left.n, sign: 1 }; }
-                    else if (left.kind === 'vec' && right.kind === 'vec') {
-                        // dot product — uncommon, return scalar
-                        const a = space.vocab[left.w], b = space.vocab[right.w];
-                        left = { kind: 'num', n: a[0]*b[0] + a[1]*b[1], sign: left.sign };
-                    }
-                } else {
-                    if (right.kind === 'num' && right.n !== 0) {
-                        if (left.kind === 'num') left.n /= right.n;
-                        else left = { kind: 'vec', w: left.w, scale: 1/right.n, sign: left.sign };
-                    }
-                }
-            }
-            return left;
-        }
-        function parseExpr() {
-            let sign = 1;
-            if (parts[i] === '+') { i++; sign = 1; }
-            else if (parts[i] === '-') { i++; sign = -1; }
-            let left = parseTerm(sign);
-            while (i < parts.length && (parts[i] === '+' || parts[i] === '-')) {
-                const op = parts[i++];
-                const right = parseTerm(op === '-' ? -1 : 1);
-                // combine
-                if (left.kind === 'num' && right.kind === 'num') {
-                    left.n += right.n * right.sign;
-                } else if (left.kind === 'vec' && right.kind === 'vec') {
-                    const lScale = left.scale || 1;
-                    const rScale = right.scale || 1;
-                    left = {
-                        kind: 'vec',
-                        w: '__sum__',
-                        components: [
-                            space.vocab[left.w][0] * lScale * left.sign + space.vocab[right.w][0] * rScale * right.sign,
-                            space.vocab[left.w][1] * lScale * left.sign + space.vocab[right.w][1] * rScale * right.sign
-                        ]
-                    };
-                } else if (left.kind === 'vec' && right.kind === 'num') {
-                    const lScale = left.scale || 1;
-                    left = {
-                        kind: 'vec',
-                        w: '__sum__',
-                        components: [
-                            space.vocab[left.w][0] * lScale * left.sign + right.n * right.sign,
-                            space.vocab[left.w][1] * lScale * left.sign
-                        ]
-                    };
-                } else if (left.kind === 'num' && right.kind === 'vec') {
-                    const rScale = right.scale || 1;
-                    left = {
-                        kind: 'vec',
-                        w: '__sum__',
-                        components: [
-                            left.n * left.sign + space.vocab[right.w][0] * rScale * right.sign,
-                            space.vocab[right.w][1] * rScale * right.sign
-                        ]
-                    };
-                }
-            }
-            return left;
-        }
-        return parseExpr();
+    function wordFor(t) {
+        const lc = t.toLowerCase();
+        return Object.keys(space.vocab).find(w => w.toLowerCase() === lc) || null;
     }
 
-    function evaluate(expr) {
-        const parts = tokenize(expr);
-        if (!parts.length) return null;
-        try {
-            const r = calc(parts);
-            if (!r) return null;
-            if (r.kind === 'num') return { kind: 'num', n: r.n * r.sign };
-            if (r.kind === 'vec') {
-                if (r.w === '__sum__') return { kind: 'vec', pos: r.components };
-                const v = space.vocab[r.w];
-                const s = (r.scale || 1) * r.sign;
-                return { kind: 'vec', pos: [v[0] * s, v[1] * s] };
-            }
-            return null;
-        } catch (e) {
-            return null;
-        }
+    // Simple sum of signed, scaled word vectors, e.g. Woman + 2*Power.
+    function termsFor(expr) {
+        const terms = [];
+        let sign = 1, scale = 1;
+        tokenize(expr).forEach(t => {
+            if (t === '+') { sign = 1; return; }
+            if (t === '-') { sign = -1; return; }
+            if (t === '*' || t === '/' || t === '(' || t === ')') return;
+            if (/^\d+$/.test(t)) { scale = parseInt(t, 10); return; }
+            const word = wordFor(t);
+            if (!word) return;
+            terms.push({ word, sign, scale });
+            sign = 1;
+            scale = 1;
+        });
+        return terms;
     }
 
     function nearest(pos) {
@@ -338,15 +252,120 @@ const EmbeddingViz = (() => {
         return { word: best, dist: bd };
     }
 
-    // ── Drawing modes ──
+    function analyze(expr) {
+        const terms = termsFor(expr);
+        let pos = null;
+        const steps = [];
+        terms.forEach(term => {
+            const v = space.vocab[term.word];
+            const delta = [v[0] * term.scale * term.sign, v[1] * term.scale * term.sign];
+            if (!pos) {
+                pos = [delta[0], delta[1]];
+            } else {
+                const next = [pos[0] + delta[0], pos[1] + delta[1]];
+                steps.push({ from: [...pos], to: next });
+                pos = next;
+            }
+        });
+        if (!pos) return null;
+        const near = nearest(pos);
+        return { terms, pos, steps, nearest: near.word, dist: near.dist };
+    }
+
+    function pmat(v) {
+        return `\\begin{pmatrix}${v[0]}\\\\${v[1]}\\end{pmatrix}`;
+    }
+
+    function vtext(w) {
+        return `\\vec{\\text{${w}}}`;
+    }
+
+    function termVector(term, first) {
+        const sign = first ? (term.sign < 0 ? '-' : '') : (term.sign < 0 ? ' - ' : ' + ');
+        const scale = term.scale !== 1 ? `${term.scale}\\,` : '';
+        return `${sign}${scale}${vtext(term.word)}`;
+    }
+
+    function termComponents(term, first) {
+        const v = space.vocab[term.word];
+        const sign = first ? (term.sign < 0 ? '-' : '') : (term.sign < 0 ? ' - ' : ' + ');
+        const scale = term.scale !== 1 ? `${term.scale}\\,` : '';
+        return `${sign}${scale}\\underbrace{${pmat(v)}}_{\\text{${term.word}}}`;
+    }
+
+    function componentTerm(term, index, first) {
+        const v = space.vocab[term.word][index];
+        const sign = term.sign < 0 ? '-' : (first ? '' : '+');
+        let val = term.scale !== 1 ? `${term.scale}\\cdot ${v < 0 ? '(' + v + ')' : v}` : String(v);
+        if (sign && val.charAt(0) === '-') val = `(${val})`;
+        return `${sign}${val}`;
+    }
+
+    function equationLatex(expr, target) {
+        const terms = termsFor(expr);
+        const info = analyze(expr);
+        if (!terms.length || !info) return '';
+        const lhs = terms.map((t, i) => termVector(t, i === 0)).join('');
+        const rhs = terms.map((t, i) => termComponents(t, i === 0)).join('');
+        const xs = terms.map((t, i) => componentTerm(t, 0, i === 0)).join('');
+        const ys = terms.map((t, i) => componentTerm(t, 1, i === 0)).join('');
+        return `\\begin{aligned}
+${lhs} &= ${rhs}\\\\
+&= ${pmat([xs, ys])}\\\\
+&= ${pmat(info.pos)} = \\textcolor{${RED}}{${vtext(target)}}
+\\end{aligned}`;
+    }
+
+    function directionsLatex() {
+        return `\\begin{gathered}
+\\textcolor{${GREEN}}{\\text{Gender:}}\\quad \\vec{\\text{Woman}} - \\vec{\\text{Man}} = ${pmat([0, 20])},\\quad \\vec{\\text{Man}} - \\vec{\\text{Woman}} = ${pmat([0, -20])}\\\\
+\\textcolor{${ORANGE}}{\\text{Power:}}\\quad \\vec{\\text{Prince}} - \\vec{\\text{Man}} = ${pmat([10, 0])},\\quad \\vec{\\text{Man}} - \\vec{\\text{Prince}} = ${pmat([-10, 0])}
+\\end{gathered}`;
+    }
+
+    function renderEquations(latex) {
+        const el = document.getElementById('embedding-equations');
+        if (!el) return;
+        if (typeof temml !== 'undefined' && temml.renderToString) {
+            try {
+                el.innerHTML = temml.renderToString(latex, { displayMode: true });
+                return;
+            } catch (e) { /* fall back to raw source */ }
+        }
+        el.textContent = latex;
+    }
+
+    function baseLayout(t, annotations) {
+        return {
+            margin: { l: 55, r: 30, b: 55, t: 20 },
+            showlegend: false,
+            dragmode: 'pan',
+            hovermode: 'closest',
+            xaxis: {
+                title: { text: '⟶ ' + space.axes.x, font: { size: 13, color: t.axisTitle, family: 'system-ui, sans-serif' } },
+                range: space.rangeX,
+                gridcolor: t.grid, zeroline: true, zerolinecolor: t.grid,
+                tickfont: { size: 10, color: t.axis }
+            },
+            yaxis: {
+                title: { text: '⟶ ' + space.axes.y, font: { size: 13, color: t.axisTitle, family: 'system-ui, sans-serif' } },
+                range: space.rangeY,
+                gridcolor: t.grid, zeroline: true, zerolinecolor: t.grid,
+                tickfont: { size: 10, color: t.axis }
+            },
+            annotations,
+            plot_bgcolor: t.bg,
+            paper_bgcolor: t.bg
+        };
+    }
 
     function renderNormal(highlightWords) {
         const t = theme();
         const traces = [];
         const annotations = [];
+        const hi = new Set(highlightWords);
 
-        // Background vocabulary (greyed out but visible)
-        const bg = Object.keys(space.vocab).filter(w => w !== 'Power' && !highlightWords.includes(w));
+        const bg = Object.keys(space.vocab).filter(w => w !== 'Power' && !hi.has(w));
         traces.push({
             x: bg.map(w => space.vocab[w][0]),
             y: bg.map(w => space.vocab[w][1]),
@@ -359,7 +378,6 @@ const EmbeddingViz = (() => {
             hovertemplate: '<b>%{text}</b><br>(%{x:.1f}, %{y:.1f})<extra></extra>'
         });
 
-        // Highlighted words
         const palette = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
         highlightWords.forEach((w, i) => {
             if (!(w in space.vocab)) return;
@@ -377,24 +395,13 @@ const EmbeddingViz = (() => {
             });
         });
 
-        // Vector-arithmetic steps + result diamond
         if (result && result.steps) {
             result.steps.forEach(step => {
                 annotations.push({
                     ax: step.from[0], ay: step.from[1], axref: 'x', ayref: 'y',
                     x: step.to[0], y: step.to[1], xref: 'x', yref: 'y',
-                    showarrow: true, arrowhead: 3, arrowsize: 1.4, arrowwidth: 2.5,
-                    arrowcolor: '#3b82f6'
-                });
-                annotations.push({
-                    x: (step.from[0] + step.to[0]) / 2,
-                    y: (step.from[1] + step.to[1]) / 2 + 1.4,
-                    xref: 'x', yref: 'y',
-                    text: `<b>${step.label}</b>`,
-                    showarrow: false,
-                    font: { size: 11, color: '#3b82f6', family: 'system-ui, sans-serif' },
-                    bgcolor: t.dark ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.92)',
-                    borderpad: 3
+                    showarrow: true, arrowhead: 3, arrowsize: 1.4,
+                    arrowwidth: 2.5, arrowcolor: BLUE
                 });
             });
         }
@@ -402,43 +409,21 @@ const EmbeddingViz = (() => {
         if (result && result.pos) {
             traces.push({
                 x: [result.pos[0]], y: [result.pos[1]],
-                text: ['≈ ' + result.nearest],
-                mode: 'markers+text',
-                textposition: 'bottom center',
-                textfont: { size: 13, color: '#ef4444', family: 'system-ui, sans-serif' },
-                marker: { size: 16, color: '#ef4444', symbol: 'diamond', line: { width: 2, color: t.bg } },
+                mode: 'markers',
+                marker: { size: 18, color: RED, symbol: 'diamond', line: { width: 2, color: t.bg } },
                 showlegend: false,
-                hovertemplate: `<b>≈ ${result.nearest}</b><br>(${result.pos[0].toFixed(1)}, ${result.pos[1].toFixed(1)})<extra></extra>`
+                hovertemplate: `<b>result</b><br>(${result.pos[0].toFixed(1)}, ${result.pos[1].toFixed(1)})<extra></extra>`
             });
         }
 
-        Plotly.react('embedding-viz-plot', traces, {
-            margin: { l: 50, r: 30, b: 50, t: 10 },
-            showlegend: false,
-            xaxis: {
-                title: { text: '⟶ ' + space.axes.x, font: { size: 13, color: t.axisTitle, family: 'system-ui, sans-serif' } },
-                range: space.rangeX,
-                gridcolor: t.grid, zeroline: true, zerolinecolor: t.grid,
-                tickfont: { size: 10, color: t.axis }
-            },
-            yaxis: {
-                title: { text: '⟶ ' + space.axes.y, font: { size: 13, color: t.axisTitle, family: 'system-ui, sans-serif' } },
-                range: space.rangeY,
-                gridcolor: t.grid, zeroline: true, zerolinecolor: t.grid,
-                scaleanchor: 'x', tickfont: { size: 10, color: t.axis }
-            },
-            annotations,
-            plot_bgcolor: t.bg,
-            paper_bgcolor: t.bg
-        }, { displayModeBar: false, responsive: true });
+        Plotly.react('embedding-viz-plot', traces, baseLayout(t, annotations), PLOT_CONFIG);
     }
 
-    function renderDirections(stage) {
+    function renderDirections() {
         const t = theme();
         const traces = [];
         const annotations = [];
 
-        // Background vocabulary (subdued)
         Object.keys(space.vocab).forEach(w => {
             const v = space.vocab[w];
             traces.push({
@@ -446,189 +431,76 @@ const EmbeddingViz = (() => {
                 mode: 'markers+text',
                 text: [w], textposition: 'top center',
                 textfont: { size: 12, color: t.textMuted, family: 'system-ui, sans-serif' },
-                marker: { size: 8, color: t.labelIdle, opacity: 0.45 },
+                marker: { size: 8, color: t.labelIdle, opacity: 0.5 },
                 showlegend: false, cliponaxis: false
             });
         });
 
-        const GREEN = '#10b981';
-        const ORANGE = '#f59e0b';
-
-        function addArrow(x0, y0, x1, y1, color, dashed) {
+        function addArrow(x0, y0, x1, y1, color) {
             annotations.push({
                 ax: x0, ay: y0, axref: 'x', ayref: 'y',
                 x: x1, y: y1, xref: 'x', yref: 'y',
                 showarrow: true, arrowhead: 3, arrowsize: 1.6,
-                arrowwidth: 2.2, arrowcolor: color,
-                arrowdash: dashed ? 'dash' : 'solid'
+                arrowwidth: 2.4, arrowcolor: color,
+                arrowside: 'end+start'
             });
         }
 
-        // Gender direction: the same vector wherever you anchor it
-        addArrow( 5, -10,  5, 10, GREEN);   // Man → Woman
-        addArrow(25, -10, 25, 10, GREEN);   // King → Queen
-        annotations.push({
-            x: 15, y: 25, xref: 'x', yref: 'y',
-            text: '<b>“Gender”</b> — the same direction everywhere',
-            showarrow: false,
-            font: { size: 13, color: GREEN, family: 'system-ui, sans-serif' },
-            align: 'center'
-        });
+        addArrow( 5, -10,  5, 10, GREEN);
+        addArrow(25, -10, 25, 10, GREEN);
+        addArrow( 5, -10, 15, -10, ORANGE);
+        addArrow(15, -10, 25, -10, ORANGE);
+        addArrow( 5,  10, 15,  10, ORANGE);
+        addArrow(15,  10, 25,  10, ORANGE);
 
-        if (stage === 'power') {
-            addArrow( 5, -10, 15, -10, ORANGE);  // Man → Prince
-            addArrow(15, -10, 25, -10, ORANGE);  // Prince → King
-            addArrow( 5,  10, 15,  10, ORANGE);  // Woman → Princess
-            addArrow(15,  10, 25,  10, ORANGE);  // Princess → Queen
-            annotations.push({
-                x: 15, y: -25, xref: 'x', yref: 'y',
-                text: '<b>“Power”</b> — the same direction here too',
-                showarrow: false,
-                font: { size: 13, color: ORANGE, family: 'system-ui, sans-serif' },
-                align: 'center'
-            });
-        }
-
-        Plotly.react('embedding-viz-plot', traces, {
-            margin: { l: 50, r: 30, b: 50, t: 10 },
-            showlegend: false,
-            xaxis: {
-                title: { text: '⟶ ' + space.axes.x, font: { size: 13, color: t.axisTitle, family: 'system-ui, sans-serif' } },
-                range: space.rangeX,
-                gridcolor: t.grid, zeroline: true, zerolinecolor: t.grid,
-                tickfont: { size: 10, color: t.axis }
-            },
-            yaxis: {
-                title: { text: '⟶ ' + space.axes.y, font: { size: 13, color: t.axisTitle, family: 'system-ui, sans-serif' } },
-                range: space.rangeY,
-                gridcolor: t.grid, zeroline: true, zerolinecolor: t.grid,
-                scaleanchor: 'x', tickfont: { size: 10, color: t.axis }
-            },
-            annotations,
-            plot_bgcolor: t.bg,
-            paper_bgcolor: t.bg
-        }, { displayModeBar: false, responsive: true });
-
-        // Update the result line with an explanatory sentence
-        const r = document.getElementById('embedding-arithmetic-result');
-        if (r) {
-            if (stage === 'power') {
-                r.innerHTML = 'The direction <b style="color:#f59e0b">Man → Prince → King</b> is the same as <b style="color:#f59e0b">Woman → Princess → Queen</b>. Meaning lives not just in <b>position</b> but also in the <b>direction</b> between words.';
-            } else {
-                r.innerHTML = 'The vector <b style="color:#10b981">Man → Woman</b> points the same way as <b style="color:#10b981">King → Queen</b>: “Gender" is a <b>direction</b> in space — the same direction, no matter where you anchor it.';
-            }
-        }
+        Plotly.react('embedding-viz-plot', traces, baseLayout(t, annotations), PLOT_CONFIG);
     }
 
-    // ── Public surface ──
+    function selectExpression(expr) {
+        const info = analyze(expr);
+        if (!info) return;
+        result = { pos: info.pos, nearest: info.nearest, steps: info.steps };
+        current = { mode: 'expr', expr };
+        const highlight = [...new Set([...info.terms.map(t => t.word), info.nearest])];
+        renderNormal(highlight);
+        renderEquations(equationLatex(expr, info.nearest));
+    }
+
+    function selectDirections() {
+        result = null;
+        current = { mode: 'directions' };
+        renderDirections();
+        renderEquations(directionsLatex());
+    }
 
     function render() {
-        const t = theme();
-        const input = document.getElementById('embedding-viz-input');
-        if (!input) return;
-        const text = input.value || '';
-        const words = text.split(/[\s,]+/).filter(w => w in space.vocab);
-        renderNormal(words);
-    }
-
-    function doArithmetic() {
-        const inp = document.getElementById('embedding-arithmetic-input');
-        const r = document.getElementById('embedding-arithmetic-result');
-        if (!inp || !r) return;
-
-        const expr = inp.value.trim();
-        const ev = evaluate(expr);
-        if (!ev) { r.innerHTML = '<span class="res-dim">Invalid expression</span>'; result = null; render(); return; }
-
-        if (ev.kind === 'num') {
-            r.innerHTML = `Result: <b>${ev.n.toFixed(2)}</b> <span class="res-dim">(scalar)</span>`;
-            result = null;
-        } else {
-            const near = nearest(ev.pos);
-            result = { pos: ev.pos, nearest: near.word, steps: [] };
-            r.innerHTML = `→ <b>(${ev.pos[0].toFixed(1)}, ${ev.pos[1].toFixed(1)})</b> · nearest point: <b style="color:#ef4444">${near.word}</b> <span class="res-dim">(d=${near.dist.toFixed(2)})</span>`;
-        }
-        render();
-    }
-
-    // Pre-compute step-by-step arrows so the user sees how the expression builds up.
-    function doArithmeticWithSteps(expr) {
-        const inp = document.getElementById('embedding-arithmetic-input');
-        const r = document.getElementById('embedding-arithmetic-result');
-        if (!inp || !r) return;
-        inp.value = expr;
-
-        const parts = tokenize(expr);
-        if (!parts.length) return;
-
-        // Walk the expression left-to-right, computing partial position + emitting a step arrow
-        let pos = null;
-        const steps = [];
-        let sign = 1;
-        for (let i = 0; i < parts.length; i++) {
-            const t = parts[i];
-            if (t === '+') { sign = 1; continue; }
-            if (t === '-') { sign = -1; continue; }
-            if (t === '*' || t === '/' || t === '(' || t === ')') continue;
-            if (/^\d+$/.test(t)) continue;
-            const norm = Object.keys(space.vocab).find(w => w.toLowerCase() === t.toLowerCase());
-            if (!norm) continue;
-            const v = space.vocab[norm];
-            const next = pos ? [pos[0] + sign * v[0], pos[1] + sign * v[1]] : [v[0] * sign, v[1] * sign];
-            if (pos) {
-                steps.push({ from: [...pos], to: [...next], label: (sign === 1 ? '+ ' : '− ') + norm });
-            }
-            pos = next;
-            sign = 1;
-        }
-
-        if (!pos) { doArithmetic(); return; }
-        const near = nearest(pos);
-        result = { pos, nearest: near.word, steps };
-        r.innerHTML = `→ <b>(${pos[0].toFixed(1)}, ${pos[1].toFixed(1)})</b> · nearest point: <b style="color:#ef4444">${near.word}</b> <span class="res-dim">(d=${near.dist.toFixed(2)})</span>`;
-        render();
+        if (!document.getElementById('embedding-viz-plot')) return;
+        if (current.mode === 'directions') selectDirections();
+        else selectExpression(current.expr);
     }
 
     function bind() {
-        const inp = document.getElementById('embedding-viz-input');
-        if (inp) inp.addEventListener('input', render);
-
-        const arith = document.getElementById('embedding-arithmetic-input');
-        if (arith) {
-            arith.addEventListener('keyup', e => {
-                if (e.key === 'Enter') doArithmeticWithSteps(arith.value);
-            });
-            arith.addEventListener('input', () => {
-                // Live update — but without the elaborate steps (debounce via rAF)
-                if (arith._raf) cancelAnimationFrame(arith._raf);
-                arith._raf = requestAnimationFrame(() => doArithmeticWithSteps(arith.value));
-            });
-        }
-
-        // Quick-chips
         document.querySelectorAll('#embedding-demo .emb-chip').forEach(btn => {
             btn.addEventListener('click', () => {
-                const ex = btn.getAttribute('data-ex');
                 document.querySelectorAll('#embedding-demo .emb-chip').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                if (ex === 'directions') {
-                    renderDirections('gender');
-                    setTimeout(() => renderDirections('power'), 2200);
-                } else {
-                    doArithmeticWithSteps(ex);
-                }
+                const ex = btn.getAttribute('data-ex');
+                if (ex === 'directions') selectDirections();
+                else selectExpression(ex);
             });
         });
     }
 
     function init() {
         bind();
-        // Activate the first chip automatically
-        const firstChip = document.querySelector('#embedding-demo .emb-chip');
-        if (firstChip) firstChip.click();
+        const first = document.querySelector('#embedding-demo .emb-chip');
+        if (first) first.click();
+        if (window.__MN_DARK && typeof window.__MN_DARK.onChange === 'function') {
+            window.__MN_DARK.onChange(render);
+        }
     }
 
-    return { render, bind, init, doArithmetic, doArithmeticWithSteps, renderDirections };
+    return { render, bind, init, renderDirections: selectDirections, doArithmeticWithSteps: selectExpression };
 })();
 
 

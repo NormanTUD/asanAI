@@ -2,9 +2,9 @@
 
 - lessons: 99
 - claims: 7294
-- statements: 16908
-- relations: 51295
-- uncovered years: 45
+- statements: 16929
+- relations: 51337
+- uncovered years: 46
 - uncovered quantities: 5
 - uncited specific claims: 306
 - citation keys not found in lesson: 0
@@ -59,7 +59,7 @@
 | inference_vs_training | 19 | 14 | 47 | 0 | 0 |
 | information_market | 27 | 63 | 159 | 0 | 0 |
 | intro | 17 | 40 | 121 | 0 | 0 |
-| intuition | 28 | 233 | 687 | 0 | 0 |
+| intuition | 28 | 254 | 729 | 1 | 0 |
 | knowledge_map | 15 | 0 | 14 | 0 | 0 |
 | language | 77 | 330 | 802 | 0 | 0 |
 | law_regulation | 28 | 61 | 236 | 0 | 0 |
@@ -128,6 +128,7 @@
 - human_mind.php: 1986
 - human_mind.php: 2007
 - human_mind.php: 2013
+- intuition.php: 2016
 - overandunderfittinglab.php: 2017
 - recurrent_networks.php: 2015
 - reinforcement_learning.php: 2025
@@ -152,8 +153,7 @@
 - tokenizerlab.php: 1235
 - tokenizerlab.php: 2024
 - tokenizerlab.php: 2025
-- training_data.php: 2019
-- … and 10 more
+- … and 11 more
 
 ## Uncovered quantities
 

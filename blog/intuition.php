@@ -16,14 +16,16 @@ tags: interested-layman
 #autoregressive-viz .ar-math math { font-size:1.05em; }
 #autoregressive-viz .ar-fallback { font-family:var(--mn-font-mono); font-size:0.8em; color:var(--mn-text-muted); white-space:pre-wrap; }
 
-/* === Embedding demo (lndw style — Power / Gender) === */
+/* === Embedding demo (full-width plot + equations) === */
 #embedding-demo {
+	width: 100%;
+	max-width: 100%;
+	margin: 16px 0;
+	padding: 20px 22px 18px;
+	box-sizing: border-box;
 	background: var(--mn-surface);
 	border: 1px solid var(--mn-border);
 	border-radius: 16px;
-	padding: 20px 22px 18px;
-	margin: 16px auto;
-	max-width: 880px;
 	box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 14px 38px -20px rgba(0,0,0,.22);
 	transition: background .3s ease, border-color .3s ease;
 }
@@ -40,64 +42,31 @@ html.dark #embedding-demo {
 	margin-bottom: 14px;
 	letter-spacing: .01em;
 }
-#embedding-demo .emb-stage {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 14px;
-}
-@media (min-width: 860px) {
-	#embedding-demo .emb-stage { grid-template-columns: 1.6fr 1fr; }
-}
-#embedding-demo #embedding-viz-plot {
-	height: 460px;
-	background: var(--mn-bg);
-	border-radius: 12px;
-	border: 1px solid var(--mn-border-light);
-	transition: background .3s ease, border-color .3s ease;
-}
-html.dark #embedding-demo #embedding-viz-plot {
-	background: rgba(15,23,42,.55);
-	border-color: rgba(148,163,184,.18);
-}
-#embedding-demo .emb-toolbar {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-#embedding-demo .emb-toolbar input[type="text"] {
-	width: 100%;
-	padding: 9px 12px;
-	border-radius: 8px;
-	border: 1px solid var(--mn-border);
-	background: var(--mn-bg);
-	color: var(--mn-text);
-	font-size: .95em;
-	font-family: inherit;
-	box-sizing: border-box;
-	transition: border-color .15s, background .3s, color .3s;
-}
-#embedding-demo .emb-toolbar input[type="text"]:focus {
-	outline: none;
-	border-color: #6366f1;
-	box-shadow: 0 0 0 3px rgba(99,102,241,.18);
-}
-#embedding-demo #embedding-arithmetic-input { font-family: ui-monospace, "Cascadia Code", "JetBrains Mono", monospace; }
 #embedding-demo .emb-quick {
 	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
+	flex-wrap: nowrap;
+	justify-content: center;
+	gap: 5px;
+	margin-bottom: 2px;
+	padding: 8px 2px 6px;
+	overflow-x: auto;
 }
 #embedding-demo .emb-chip {
 	background: var(--mn-bg-subtle);
 	border: 1px solid var(--mn-border-light);
 	border-radius: 999px;
-	padding: 5px 12px;
-	font-size: .82em;
+	padding: 4px 10px;
+	font-size: .78em;
 	font-weight: 600;
 	color: var(--mn-text-secondary);
 	cursor: pointer;
 	transition: all .15s ease;
-	font-family: ui-monospace, "Cascadia Code", "JetBrains Mono", monospace;
+	font-family: inherit;
+	white-space: nowrap;
+	flex: 0 0 auto;
+}
+@media (max-width: 720px) {
+	#embedding-demo .emb-quick { justify-content: flex-start; }
 }
 #embedding-demo .emb-chip:hover {
 	background: linear-gradient(135deg, rgba(99,102,241,.12), rgba(99,102,241,.04));
@@ -115,24 +84,38 @@ html.dark #embedding-demo .emb-chip:hover {
 	color: #fff;
 	box-shadow: 0 4px 12px -4px rgba(99,102,241,.6);
 }
-#embedding-demo #embedding-arithmetic-result {
-	margin-top: 2px;
-	padding: 10px 12px;
-	border-radius: 8px;
-	background: var(--mn-bg-subtle);
-	border-left: 3px solid #10b981;
-	min-height: 24px;
-	font-size: .92em;
-	color: var(--mn-text);
-	font-family: ui-monospace, "Cascadia Code", "JetBrains Mono", monospace;
-	transition: background .3s, color .3s;
+#embedding-demo #embedding-viz-plot {
+	width: 100%;
+	height: 460px;
+	background: var(--mn-bg);
+	border-radius: 12px;
+	border: 1px solid var(--mn-border-light);
+	user-select: none;
+	transition: background .3s ease, border-color .3s ease;
 }
-#embedding-demo #embedding-arithmetic-result b { color: var(--mn-heading); }
-#embedding-demo #embedding-arithmetic-result .res-dim { color: var(--mn-text-muted); font-size: .85em; }
-html.dark #embedding-demo #embedding-arithmetic-result {
+html.dark #embedding-demo #embedding-viz-plot {
 	background: rgba(15,23,42,.55);
-	border-left-color: #34d399;
+	border-color: rgba(148,163,184,.18);
+}
+#embedding-demo #embedding-equations {
+	height: 330px;
+	margin-top: 14px;
+	padding: 10px 14px;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: auto;
+	background: var(--mn-bg-subtle);
+	border: 1px solid var(--mn-border-light);
+	border-radius: 10px;
 	color: var(--mn-text);
+	transition: background .3s ease, border-color .3s ease;
+}
+#embedding-demo #embedding-equations math { color: var(--mn-text); }
+html.dark #embedding-demo #embedding-equations {
+	background: rgba(15,23,42,.55);
+	border-color: rgba(148,163,184,.18);
 }
 #embedding-demo .emb-hint {
 	margin: 14px 0 0;
@@ -149,12 +132,9 @@ html.dark #embedding-demo #embedding-arithmetic-result {
 #embedding-demo .emb-hint b { color: var(--mn-text); }
 html.dark #embedding-demo .emb-hint {
 	background: rgba(15,23,42,.4);
-		color: #cbd5e1;
+	color: #cbd5e1;
 	border-color: rgba(148,163,184,.3);
 }
-
-
-
 
 /* === Attention bank/river/money demo (lndw style) === */
 #attn-demo {
@@ -560,7 +540,7 @@ $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\
 <div class="mn-aha">
 	<div class="mn-aha-kicker">The aha</div>
 	<p class="mn-aha-big">It writes by reading itself.</p>
-	<p class="mn-aha-sub">There is no plan, no outline, no “dragon” stored anywhere. Its output is appended to its input, the whole new text is fed back into the model, and the next word is predicted from that — again and again, until it writes the stop token <code>|endoftext|</code>.</p>
+	<p class="mn-aha-sub">Its output is appended to its input, the whole new text is fed back in, and the next token is predicted from that — again and again, until it emits <code>|endoftext|</code>.</p>
 </div>
 
 <div class="mn-hook">
@@ -578,11 +558,41 @@ The LLM learned to predict the next word by reading **massive** amounts of text 
 
 Computers don't understand words. They understand numbers. So the very first thing an LLM does is **chop the input into small pieces called tokens**. We can first think of these tokens as words, but they don't have to be. They can be sub-words, numbers, or any part of a text. While we humans think in words, the LLM “thinks” in tokens.
 
-$$\text{“Once upon a time”} \rightarrow [\text{“Once”}, \ \text{“upon”}, \ \text{“a”}, \ \text{“time”}]$$
+$$\text{“Once upon a time”} \quad \rightarrow \quad [\ \text{“Once”}, \ \text{“␣”}, \ \text{“upon”}, \ \text{“␣”}, \ \text{“a”}, \ \text{“␣”}, \ \text{“time”}\ ]$$
 
-Most tokens are common words or word fragments. `"understanding"` might split into `"under"` + `"standing"` — two tokens. That is the quiet genius of it: a word the model has never seen can still be assembled from pieces it knows by heart.
+Behind this sits **Byte Pair Encoding (BPE)** — and its origin is surprising. \citeauthor{gage1994bpe} invented it in \citeyear{gage1994bpe} as a **data-compression** algorithm, not for language at all. The rule is simple: repeatedly merge the most frequent neighbouring pair of symbols into one new symbol. Frequent patterns collapse into short IDs, so a large body of text can be written with as few tokens as possible — a shorter, *lossless* encoding. The learned merge table is the codebook; a tokenizer is that compressor repurposed (\cite[Sennrich et al., 2016]{sennrich2016subword}).
+
+The **vocabulary size** is a hyperparameter. A hyperparameter is a setting you have to choose yourself before training — the model does not learn it from the data. Here, you decide how many slots the tokenizer may use. The algorithm then decides which pieces fill them by merging the most frequent neighbours; the only entries normally added by hand are special tokens such as `|endoftext|`.
+</div>
+
+<div class="md">
+Byte-level tokenizers (\cite[GPT-2]{gpt2}) start with all 256 bytes — space (`0x20`) is just one of them — so every UTF-8 character is representable, even unseen ones. The main emoji region (`U+1F300`–`U+1FAFF`) always begins with the UTF-8 bytes `F0 9F` (\cite[Unicode Blocks]{unicodeblocks}; \cite[RFC 3629]{rfc3629}), so even a new emoji there shares bytes with ones the tokenizer has already seen.
+
+Production tokenizers learn their merge table once, on a huge corpus. What follows is a toy example: we trained a real byte-level BPE library (HuggingFace `tokenizers`) on just this sentence with a 260-token budget. It learns merges such as `at` and `the`, and its actual output — every token replaced by a letter — is:
+
+$$\textcolor{#6366f1}{\underbrace{\ \texttt{the}\ }_{A}}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{c}\ }_{C}\textcolor{#059669}{\underbrace{\ \texttt{at}\ }_{D}}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{s}\ }_{E}\textcolor{#059669}{\underbrace{\ \texttt{at}\ }_{D}}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{o}\ }_{F}\underbrace{\ \texttt{n}\ }_{G}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\textcolor{#6366f1}{\underbrace{\ \texttt{the}\ }_{A}}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{m}\ }_{H}\textcolor{#059669}{\underbrace{\ \texttt{at}\ }_{D}}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{a}\ }_{I}\underbrace{\ \texttt{n}\ }_{G}\underbrace{\ \texttt{d}\ }_{J}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{w}\ }_{K}\underbrace{\ \texttt{o}\ }_{F}\underbrace{\ \texttt{r}\ }_{L}\underbrace{\ \texttt{e}\ }_{M}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{a}\ }_{I}\textcolor{#d97706}{\underbrace{\ \texttt{␣}\ }_{B}}\underbrace{\ \texttt{h}\ }_{N}\textcolor{#059669}{\underbrace{\ \texttt{at}\ }_{D}}$$
+
+Every byte starts as its own token — space (`0x20`), `a`, `t`, all 256. So why does `cat` become `c` + `at` instead of `c` + `a` + `t`? The tokenizer does not split anything: it starts from the bytes and applies its learned merges in a fixed order, round after round. If `a+t → at` exists, `a` joins `t`; new tokens can merge again, as in `h+e → he`, then `t+he → the`. A byte stays alone only when no merge uses it.
+
+$$\begin{aligned}
+\texttt{c a t} &\;\longrightarrow\; \texttt{c}\,\textcolor{#059669}{\underbrace{\texttt{at}}_{\texttt{a+t}}}\\
+\texttt{t h e} &\;\longrightarrow\; \texttt{t}\,\textcolor{#6366f1}{\underbrace{\texttt{he}}_{\texttt{h+e}}} \;\longrightarrow\; \textcolor{#6366f1}{\underbrace{\texttt{the}}_{\texttt{t+he}}}\\
+\texttt{w o r e} &\;\longrightarrow\; \texttt{w o r e}\quad\text{(no merge)}
+\end{aligned}$$
+
+Merged tokens are coloured; the rest are single-character tokens or spaces. In a tokenizer trained on real text, frequent pieces such as `and` or `wore` would often be single tokens of their own.
+
+That economy is also why the vocabulary never has to grow. Because tokens are reusable fragments rather than whole words, an unfamiliar word is not a dead end: it can be rebuilt by combining pieces the compressor already knows. Most tokens are common words or word fragments. `"understanding"` might split into `"under"` + `"standing"` — two tokens. That is the quiet genius of it: a word the model has never seen can still be assembled from pieces it knows by heart.
 
 Where a word splits depends on the data the model was trained on. It chooses that automatically, and once chosen, the vocabulary stays fixed for the life of the model — a fixedness with strange consequences for the rare tokens almost nobody ever trained on (\cite[Li et al., 2024]{glitchtokens}).
+</div>
+
+<div class="optional md" data-headline="Which strange consequences?">
+Some tokens are almost never seen in training, so their embeddings stay nearly arbitrary. Feed one to a model and it can spill nonsense or start reciting its training data — the “understanding” only reaches as far as the text it happened to read. Researchers call them **glitch tokens** (\cite[Land &amp; Bartolo, 2024]{land2024fishing}; \cite[Li et al., 2024]{glitchtokens}).
+
+The most famous example is `SolidGoldMagikarp`. It is not a word and not a random string: it is the Reddit handle of a user who posted repeatedly in *r/counting*, a subreddit where people count upward, one number per comment. Such names appeared so often in that corner of the web that the tokenizer gave some of them their own tokens. But the vocabulary was built from a broader scrape of the web than the curated text used to train the model, so the model barely ever met them. Ask it to repeat `SolidGoldMagikarp` and it may answer “distribute”, refuse, or insult you. Other counter names such as `davidjl` can make a model start reciting numbers (\cite[Rumbelow &amp; Watkins, 2023]{rumbelow2023solidgold}).
+
+That is the lesson in miniature. A token is not a concept the model knows; it is a slot the model had to fill from data. If the slot was filled with almost nothing, there is almost nothing behind it — and what comes out is whatever the surrounding statistics happen to drag along.
 </div>
 
 <div class="mn-aha">
@@ -608,15 +618,6 @@ Where a word splits depends on the data the model was trained on. It chooses tha
 	Spaces are tokens too — the <b>␣</b> chips are the whitespace between words.
 	</div>
 </div>
-
-<details class="mn-psst">
-	<summary><span class="mn-psst-key" aria-hidden="true">+</span>A detour: tokens that break the machine<span class="mn-psst-hint">open</span></summary>
-	<div class="mn-psst-body md">
-		<p>Some tokens are almost never seen in training, so their embeddings stay nearly arbitrary. Feed one to a model and it can spill nonsense or start reciting its training data — the “understanding” only reaches as far as the text it happened to read. Researchers call them <b>glitch tokens</b> (\cite[Land &amp; Bartolo, 2024]{land2024fishing}; \cite[Li et al., 2024]{glitchtokens}).</p>
-		<p>The most famous example is <code>SolidGoldMagikarp</code>. It is not a word and not a random string: it is the Reddit handle of a user who posted repeatedly in <i>r/counting</i>, a subreddit where people count upward, one number per comment. Such names appeared so often in that corner of the web that the tokenizer gave some of them their own tokens. But the vocabulary was built from a broader scrape of the web than the curated text used to train the model, so the model barely ever met them. Ask it to repeat <code>SolidGoldMagikarp</code> and it may answer “distribute”, refuse, or insult you. Other counter names such as <code>davidjl</code> can make a model start reciting numbers (\cite[Rumbelow &amp; Watkins, 2023]{rumbelow2023solidgold}).</p>
-		<p>That is the lesson in miniature. A token is not a concept the model knows; it is a slot the model had to fill from data. If the slot was filled with almost nothing, there is almost nothing behind it — and what comes out is whatever the surrounding statistics happen to drag along.</p>
-	</div>
-</details>
 
 <div class="mn-thread">
 	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="tokenizerlab.php"><span class="mn-thread-label">Go deeper</span>Tokenization: How Words become Numbers</a>
@@ -652,25 +653,16 @@ Real networks don't use two dimensions but **thousands** — far too many to pic
 <div id="embedding-demo">
     <div class="emb-head">📍 Step 2: Embedding — Words as Points in Space</div>
 
-    <div class="emb-stage">
-	<div id="embedding-viz-plot" data-plot-theme="self"></div>
-	<div class="emb-toolbar">
-	    <input type="text" id="embedding-viz-input"
-		   placeholder="Words to highlight (e.g. Man Woman Prince King)"
-		   value="Man Woman Prince King">
-	    <div class="emb-quick">
-		<button class="emb-chip" data-ex="King - Man + Woman" type="button">King − Man + Woman</button>
-		<button class="emb-chip" data-ex="Man + Power" type="button">Man + Power</button>
-		<button class="emb-chip" data-ex="Woman + 2*Power" type="button">Woman + 2·Power</button>
-		<button class="emb-chip" data-ex="Prince + Power" type="button">Prince + Power</button>
-		<button class="emb-chip" data-ex="directions" type="button">↗ Directions</button>
-	    </div>
-	    <input type="text" id="embedding-arithmetic-input"
-		   placeholder="e.g. King - Man + Woman"
-		   value="King - Man + Woman">
-	    <div id="embedding-arithmetic-result"></div>
-	</div>
+    <div class="emb-quick">
+	<button class="emb-chip" data-ex="King - Man + Woman" type="button">King − Man + Woman</button>
+	<button class="emb-chip" data-ex="Man + Power" type="button">Man + Power</button>
+	<button class="emb-chip" data-ex="Woman + 2*Power" type="button">Woman + 2·Power</button>
+	<button class="emb-chip" data-ex="Prince + Power" type="button">Prince + Power</button>
+	<button class="emb-chip" data-ex="directions" type="button">↗ Directions</button>
     </div>
+
+    <div id="embedding-viz-plot" data-plot-theme="self"></div>
+    <div id="embedding-equations" aria-live="polite"></div>
 
     <p class="emb-hint">
 	💡 <b>Directions encode meaning.</b>
