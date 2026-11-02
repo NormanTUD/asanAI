@@ -19495,16 +19495,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 2,
-  "keys": [
-   "img_john_mccarthy",
-   "img_eliezer_yudkowsky"
-  ],
-  "cited_in": [
-   "history",
-   "people_of_ai",
-   "untold_history_iii"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Institute for Pure & Applied Mathematics (IPAM)",
@@ -22631,11 +22624,12 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 4,
+  "works": 5,
   "keys": [
    "img_claude_shannon",
    "wienerajedrecista",
    "perceptronimagecables",
+   "img_gottlob_frege",
    "aikenphoto"
   ],
   "cited_in": [
@@ -72028,14 +72022,13 @@
   "variants": [
    "W. Ross Ashby Digital Archive"
   ],
-  "works": 7,
+  "works": 6,
   "keys": [
    "riemann_portrait",
    "napier_portrait",
    "lagrange_portrait",
    "img_cai_lun",
    "img_george_boole",
-   "img_gottlob_frege",
    "ashbyphoto"
   ],
   "cited_in": [
@@ -72096,10 +72089,11 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 3,
+  "works": 4,
   "keys": [
    "wienerajedrecista",
    "perceptronimagecables",
+   "img_gottlob_frege",
    "aikenphoto"
   ],
   "cited_in": [
@@ -82185,6 +82179,25 @@
   ],
   "cited_in": [
    "philosophy"
+  ]
+ },
+ {
+  "name": "Flickr user null0",
+  "canon": "Flickr user null0",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2006,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "img_john_mccarthy",
+   "img_eliezer_yudkowsky"
+  ],
+  "cited_in": [
+   "history",
+   "untold_history_iii"
   ]
  },
  {

@@ -13454,13 +13454,13 @@
   },
   "img_gottlob_frege": {
    "title": "Gottlob Frege, c. 1879",
-   "author": "Unknown",
+   "author": "Unknown photographer",
    "year": "c. 1879",
    "url": "https://commons.wikimedia.org/wiki/File:Young_frege.jpg"
   },
   "img_john_mccarthy": {
    "title": "John McCarthy at Stanford, 2006",
-   "author": "null0",
+   "author": "Flickr user null0",
    "year": "2006",
    "url": "https://commons.wikimedia.org/wiki/File:John_McCarthy_Stanford.jpg"
   },
@@ -13502,7 +13502,7 @@
   },
   "img_eliezer_yudkowsky": {
    "title": "Eliezer Yudkowsky, Stanford, 2006",
-   "author": "null0",
+   "author": "Flickr user null0",
    "year": "2006",
    "url": "https://commons.wikimedia.org/wiki/File:Eliezer_Yudkowsky,_Stanford_2006_%28square_crop%29.jpg"
   },
@@ -25735,7 +25735,6 @@
   ],
   "img_john_mccarthy": [
    "history",
-   "people_of_ai",
    "untold_history_iii"
   ],
   "img_marvin_minsky": [
@@ -28584,9 +28583,6 @@
   "img_george_boole": [
    "people_of_ai"
   ],
-  "img_gottlob_frege": [
-   "people_of_ai"
-  ],
   "boole1854": [
    "people_of_ai"
   ],
@@ -28639,9 +28635,6 @@
    "people_of_ai"
   ],
   "img_nick_bostrom": [
-   "people_of_ai"
-  ],
-  "img_eliezer_yudkowsky": [
    "people_of_ai"
   ],
   "img_toby_ord": [
@@ -52158,7 +52151,7 @@
    ]
   },
   "Unknown": {
-   "count": 6,
+   "count": 5,
    "minyear": 1616,
    "maxyear": 1873,
    "keys": [
@@ -52166,8 +52159,7 @@
     "napier_portrait",
     "lagrange_portrait",
     "img_cai_lun",
-    "img_george_boole",
-    "img_gottlob_frege"
+    "img_george_boole"
    ]
   },
   "SharkD": {
@@ -61983,7 +61975,15 @@
     "img_widrow_adaline"
    ]
   },
-  "null0": {
+  "Unknown photographer": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_gottlob_frege"
+   ]
+  },
+  "Flickr user null0": {
    "count": 2,
    "minyear": 2006,
    "maxyear": 2006,
