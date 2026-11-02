@@ -173,6 +173,16 @@ Use the existing `.demo demo--paper` shell: `demo-head`, `demo-body`,
 `TM.colors()`, and re-render on `tm:theme`. Keep every demo inside the paper
 theme unless there is a specific reason not to.
 
+## Arrow-key navigation
+
+`assets/site.js` installs one global keydown handler for demos marked
+`data-arrow-nav`. Put `data-arrow-prev` and `data-arrow-next` on the demo's
+step buttons. When one or more such demos are visible, Left/Right click the
+button of the demo with the largest visible fraction; the topmost demo wins
+ties. Form fields are ignored. Use this mechanism instead of adding a local
+`keydown` handler. Timelines use it for their scroll buttons; the
+space-curvature demo uses it for its step buttons.
+
 ## Calendar conventions (`advent.html`)
 
 - The calendar has exactly **31 doors**: `id="day-1"` … `id="day-31"`.

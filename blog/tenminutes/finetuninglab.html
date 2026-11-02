@@ -48,7 +48,7 @@
 					</section>
 
 
-					<div class="demo demo--paper timeline-shell" data-demo="timeline">
+					<div class="demo demo--paper timeline-shell" data-demo="timeline" data-arrow-nav>
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">From raw model to assistant <span>· demo</span></p>
@@ -58,21 +58,21 @@
 						</div>
 						<div class="demo-body">
 							<div class="timeline-scroller">
-								<button class="tl-scroll-btn" type="button" data-timeline-prev aria-label="Scroll left">‹</button>
+								<button class="tl-scroll-btn" type="button" data-timeline-prev data-arrow-prev aria-label="Scroll left">‹</button>
 								<div class="timeline-track" data-timeline-track role="group" aria-label="From raw model to assistant">
 									<button class="tl-node is-active" type="button" data-meta="01 · Base" data-title="Pretraining" data-body="Next-token prediction on a huge corpus creates a fluent but uncontrolled model."><span class="tl-dot"></span><span class="tl-date">01</span><span class="tl-name">Base</span></button>
 									<button class="tl-node" type="button" data-meta="02 · SFT" data-title="Supervised fine-tuning" data-body="Instruction-and-answer examples teach the format of a conversation and the shape of a helpful response."><span class="tl-dot"></span><span class="tl-date">02</span><span class="tl-name">SFT</span></button>
 									<button class="tl-node" type="button" data-meta="03 · Prefs" data-title="Preference optimization" data-body="Humans or a model compare answers. The model learns to prefer the better one, using RLHF or DPO-style methods."><span class="tl-dot"></span><span class="tl-date">03</span><span class="tl-name">Prefs</span></button>
 									<button class="tl-node" type="button" data-meta="04 · Reason" data-title="Reasoning RL" data-body="Verifiable problems teach the model to think longer, backtrack, and check its work."><span class="tl-dot"></span><span class="tl-date">04</span><span class="tl-name">Reason</span></button>
 								</div>
-								<button class="tl-scroll-btn" type="button" data-timeline-next aria-label="Scroll right">›</button>
+								<button class="tl-scroll-btn" type="button" data-timeline-next data-arrow-next aria-label="Scroll right">›</button>
 							</div>
 							<div class="tl-panel no-figure" data-timeline-panel aria-live="polite"></div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>Each stage adds a different kind of behaviour: format, preferences, then reasoning.</span></div>
 					</div>
 
-					<div class="demo demo--paper" data-demo="preference">
+					<div class="demo demo--paper" data-demo="preference" data-arrow-nav>
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">A preference pair <span>· demo</span></p>
@@ -86,7 +86,7 @@
 								<button class="pref-card" type="button" data-pref="b"><b>Answer B</b><p></p></button>
 							</div>
 							<div class="demo-controls">
-								<button class="btn-demo" type="button" data-pref-next>Another pair →</button>
+								<button class="btn-demo" type="button" data-pref-next data-arrow-next>Another pair →</button>
 							</div>
 							<div class="demo-readout">
 								<div><b>Your choice</b><span data-pref-choice>...</span></div>

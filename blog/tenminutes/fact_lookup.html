@@ -48,7 +48,7 @@
 					</section>
 
 
-					<div class="demo demo--paper timeline-shell" data-demo="timeline">
+					<div class="demo demo--paper timeline-shell" data-demo="timeline" data-arrow-nav>
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">A forward pass in five steps <span>· demo</span></p>
@@ -58,7 +58,7 @@
 						</div>
 						<div class="demo-body">
 							<div class="timeline-scroller">
-								<button class="tl-scroll-btn" type="button" data-timeline-prev aria-label="Scroll left">‹</button>
+								<button class="tl-scroll-btn" type="button" data-timeline-prev data-arrow-prev aria-label="Scroll left">‹</button>
 								<div class="timeline-track" data-timeline-track role="group" aria-label="A forward pass in five steps">
 									<button class="tl-node is-active" type="button" data-meta="01 · Tokens" data-title="Tokens" data-body="The prompt becomes token IDs. The model still has no idea what a country is."><span class="tl-dot"></span><span class="tl-date">01</span><span class="tl-name">Tokens</span></button>
 									<button class="tl-node" type="button" data-meta="02 · Vectors" data-title="Embeddings" data-body="Each token becomes a vector. Similar meanings sit near each other, but no single number is a fact."><span class="tl-dot"></span><span class="tl-date">02</span><span class="tl-name">Vectors</span></button>
@@ -66,7 +66,7 @@
 									<button class="tl-node" type="button" data-meta="04 · Memory" data-title="MLP" data-body="The feed-forward layer writes an update into the residual stream. It can act like a learned key-value memory."><span class="tl-dot"></span><span class="tl-date">04</span><span class="tl-name">Memory</span></button>
 									<button class="tl-node" type="button" data-meta="05 · Scores" data-title="Logits" data-body="The final vector is scored against the vocabulary. “Paris” wins because the whole computation made it likely."><span class="tl-dot"></span><span class="tl-date">05</span><span class="tl-name">Scores</span></button>
 								</div>
-								<button class="tl-scroll-btn" type="button" data-timeline-next aria-label="Scroll right">›</button>
+								<button class="tl-scroll-btn" type="button" data-timeline-next data-arrow-next aria-label="Scroll right">›</button>
 							</div>
 							<div class="tl-panel no-figure" data-timeline-panel aria-live="polite"></div>
 						</div>

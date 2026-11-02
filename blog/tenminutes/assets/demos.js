@@ -3195,159 +3195,82 @@
 		api.redraw();
 	}
 
-	/* ── the layer that bends space ─────────────────────────── */
+	/* ── folds add up ───────────────────────────────────────── */
 
-	function initBend(root) {
-		var canvas = $("[data-bend-canvas]", root);
+	function initFolds(root) {
+		var canvas = $("[data-folds-canvas]", root);
 		if (!canvas) return;
-		var titleEl = $("[data-bend-title]", root);
-		var bodyEl = $("[data-bend-body]", root);
-		var countEl = $("[data-bend-count]", root);
-		var dotsEl = $("[data-bend-dots]", root);
-		var prevBtn = $("[data-bend-prev]", root);
-		var nextBtn = $("[data-bend-next]", root);
-		var resetBtn = $("[data-bend-reset]", root);
-		var steps = [
-			{ amt: 0, plane: false, title: "Two classes, no straight line", body: "The coral core sits inside the blue ring. No single straight cut in this plane separates them." },
-			{ amt: 0.24, plane: false, title: "Start bending", body: "A layer applies a nonlinear map. The space itself starts to curve, so distance means something new." },
-			{ amt: 0.58, plane: false, title: "Curve it further", body: "The map is a smooth bowl: the centre dips, the ring rises. The classes are now separated vertically." },
-			{ amt: 1, plane: false, title: "A bowl, not a line", body: "The original ring is still a ring when seen from above, but it now lives on a curved shell." },
-			{ amt: 1, plane: true, title: "A flat cut now works", body: "In the lifted space, one flat plane separates coral from blue. The classifier can stay simple." },
-			{ amt: 1, plane: true, title: "One score, one threshold", body: "Collapse the height into a single score and a threshold is enough. The hard part was the bend, not the cut." },
-			{ amt: 1, plane: true, title: "Depth did the work", body: "Stack these bends and a final linear readout can separate what looked inseparable. That is why depth helps." }
-		];
-		var step = 0;
-		var yaw = 0.72, pitch = -0.4;
-		var drag = null;
-		var rng = (function () {
-			var a = 17;
-			return function () {
-				a |= 0; a = a + 0x6D2B79F5 | 0;
-				var t = Math.imul(a ^ a >>> 15, 1 | a);
-				t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-				return ((t ^ t >>> 14) >>> 0) / 4294967296;
-			};
-		})();
-		var pts = [];
-		for (var i = 0; i < 70; i++) {
-			var th = rng() * Math.PI * 2;
-			var r = 0.05 + Math.sqrt(rng()) * 0.38;
-			pts.push({ x: Math.cos(th) * r, y: Math.sin(th) * r, c: "inner" });
-		}
-		for (var j = 0; j < 70; j++) {
-			var th2 = rng() * Math.PI * 2;
-			var r2 = 0.74 + rng() * 0.26;
-			pts.push({ x: Math.cos(th2) * r2, y: Math.sin(th2) * r2, c: "outer" });
-		}
-		function lift(p, amt) {
-			var r = Math.hypot(p.x, p.y);
-			return { x: p.x, y: p.y, z: (r * r - 0.34) * 3.2 * amt, c: p.c };
-		}
-		function project(p, W, H) {
-			var scale = Math.min(W, H) * 0.31;
-			var cy = Math.cos(yaw), sy = Math.sin(yaw);
-			var x1 = p.x * cy - p.y * sy;
-			var z1 = p.x * sy + p.y * cy;
-			var cp = Math.cos(pitch), sp = Math.sin(pitch);
-			var y1 = p.z * cp - z1 * sp;
-			var z2 = p.z * sp + z1 * cp;
-			var persp = 1 / (1 + z2 * 0.14);
-			return [W / 2 + x1 * scale * persp, H / 2 + 30 - y1 * scale * persp, z2];
-		}
-		function drawPlane(ctx, W, H, c) {
-			var corners = [[-1.15, -1.15], [1.15, -1.15], [1.15, 1.15], [-1.15, 1.15]];
-			ctx.beginPath();
-			corners.forEach(function (k, i) {
-				var q = project({ x: k[0], y: k[1], z: 0 }, W, H);
-				if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]);
-			});
-			ctx.closePath();
-			ctx.fillStyle = c.dark ? "rgba(134,155,85,.16)" : "rgba(134,155,85,.22)";
-			ctx.fill();
-			ctx.strokeStyle = c.lime;
-			ctx.lineWidth = 1.4;
-			ctx.stroke();
+		var depthEl = $("[data-folds-depth]", root);
+		var depthOut = $("[data-folds-depth-out]", root);
+		var depthReadout = $("[data-folds-depth-readout]", root);
+		var piecesEl = $("[data-folds-pieces]", root);
+		function value(x, depth) {
+			var periods = Math.pow(2, depth - 1);
+			var u = (x + 1) / 2 * periods;
+			var frac = u - Math.floor(u);
+			return (frac < 0.5 ? frac * 2 : (1 - frac) * 2) * 1.6 - 0.8;
 		}
 		function draw(ctx, W, H) {
 			var c = colors();
-			var s = steps[step];
-			var lifted = pts.map(function (p) { return lift(p, s.amt); });
+			var depth = clamp(parseInt(depthEl && depthEl.value, 10) || 3, 1, 7);
+			var pieces = Math.pow(2, depth);
+			if (depthOut) depthOut.textContent = depth;
+			if (depthReadout) depthReadout.textContent = depth;
+			if (piecesEl) piecesEl.textContent = pieces;
+			var padX = 30, padY = 26;
+			var x0 = padX, x1 = W - padX;
+			var y0 = H - padY, y1 = padY;
 			ctx.clearRect(0, 0, W, H);
-			var origin = project({ x: 0, y: 0, z: -1.2 }, W, H);
-			var top = project({ x: 0, y: 0, z: 1.2 }, W, H);
 			ctx.strokeStyle = c.line;
 			ctx.lineWidth = 1;
-			ctx.beginPath();
-			ctx.moveTo(origin[0], origin[1]); ctx.lineTo(top[0], top[1]);
-			ctx.stroke();
-			if (s.plane) drawPlane(ctx, W, H, c);
-			var projected = lifted.map(function (p) { return { q: project(p, W, H), c: p.c }; });
-			projected.sort(function (a, b) { return a.q[2] - b.q[2]; });
-			projected.forEach(function (item) {
-				var q = item.q;
+			for (var gx = 1; gx < 8; gx++) {
+				var xx = x0 + (x1 - x0) * gx / 8;
 				ctx.beginPath();
-				ctx.arc(q[0], q[1], 3.1, 0, Math.PI * 2);
-				ctx.fillStyle = item.c === "inner" ? c.coral : c.sky;
-				ctx.fill();
-				ctx.strokeStyle = c.card;
-				ctx.lineWidth = 0.9;
+				ctx.moveTo(xx, y1);
+				ctx.lineTo(xx, y0);
 				ctx.stroke();
-			});
+			}
+			for (var gy = 1; gy < 4; gy++) {
+				var yy = y1 + (y0 - y1) * gy / 4;
+				ctx.beginPath();
+				ctx.moveTo(x0, yy);
+				ctx.lineTo(x1, yy);
+				ctx.stroke();
+			}
+			ctx.strokeStyle = c.lineStrong;
+			ctx.lineWidth = 1.3;
+			ctx.beginPath();
+			ctx.moveTo(x0, y0);
+			ctx.lineTo(x1, y0);
+			ctx.moveTo(x0, y0);
+			ctx.lineTo(x0, y1);
+			ctx.stroke();
+			var steps = Math.max(240, pieces * 36);
+			ctx.beginPath();
+			for (var i = 0; i <= steps; i++) {
+				var t = i / steps;
+				var x = -1 + 2 * t;
+				var y = value(x, depth);
+				var px = x0 + (x1 - x0) * t;
+				var py = y0 - (y + 1) / 2 * (y0 - y1);
+				if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py);
+			}
+			ctx.strokeStyle = c.green;
+			ctx.lineWidth = 2.2;
+			ctx.stroke();
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.fillText("input", x1 - 28, y0 + 18);
+			ctx.fillText("output", x0 - 24, y1 + 8);
 			ctx.fillStyle = c.inkSoft;
 			ctx.font = "600 11px Barlow, system-ui, sans-serif";
-			ctx.textAlign = "left";
-			ctx.fillText("drag to rotate · coral = inner class · blue = ring", 14, 20);
-		}
-		function update() {
-			var s = steps[step];
-			if (titleEl) titleEl.textContent = s.title;
-			if (bodyEl) bodyEl.textContent = s.body;
-			if (countEl) countEl.textContent = (step + 1) + " / " + steps.length;
-			if (dotsEl) {
-				$$("[data-bend-dot]", dotsEl).forEach(function (dot, i) {
-					dot.classList.toggle("is-active", i === step);
-				});
-			}
-			if (prevBtn) prevBtn.disabled = step === 0;
-			if (nextBtn) nextBtn.disabled = step === steps.length - 1;
-			api.redraw();
-		}
-		function go(delta) {
-			step = clamp(step + delta, 0, steps.length - 1);
-			update();
+			ctx.fillText("depth " + depth + " · " + pieces + " linear pieces", x0 + 8, y1 + 16);
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
-		if (dotsEl && !$$("[data-bend-dot]", dotsEl).length) {
-			for (var d = 0; d < steps.length; d++) {
-				var dot = document.createElement("button");
-				dot.type = "button";
-				dot.className = "bend-dot";
-				dot.setAttribute("data-bend-dot", "");
-				dot.setAttribute("aria-label", "Step " + (d + 1));
-				dot.addEventListener("click", (function (k) {
-					return function () { step = k; update(); };
-				})(d));
-				dotsEl.appendChild(dot);
-			}
-		}
-		if (prevBtn) prevBtn.addEventListener("click", function () { go(-1); });
-		if (nextBtn) nextBtn.addEventListener("click", function () { go(1); });
-		if (resetBtn) resetBtn.addEventListener("click", function () { step = 0; update(); });
-		canvas.addEventListener("pointerdown", function (ev) {
-			drag = { x: ev.clientX, y: ev.clientY };
-			if (canvas.setPointerCapture) canvas.setPointerCapture(ev.pointerId);
-		});
-		canvas.addEventListener("pointermove", function (ev) {
-			if (!drag) return;
-			yaw += (ev.clientX - drag.x) * 0.01;
-			pitch = clamp(pitch + (ev.clientY - drag.y) * 0.01, -1.15, 1.15);
-			drag = { x: ev.clientX, y: ev.clientY };
-			api.redraw();
-		});
-		canvas.addEventListener("pointerup", function () { drag = null; });
-		canvas.addEventListener("pointercancel", function () { drag = null; });
-		update();
+		if (depthEl) depthEl.addEventListener("input", function () { api.redraw(); });
+		window.addEventListener("tm:theme", function () { api.redraw(); });
+		api.redraw();
 	}
 
 	/* ── one head, one attention budget ─────────────────────── */
@@ -3797,7 +3720,7 @@
 			else if (type === "reasoning") initReasoning(root);
 			else if (type === "prompt") initPrompt(root);
 			else if (type === "trajectory") initTrajectory(root);
-			else if (type === "bend") initBend(root);
+			else if (type === "folds") initFolds(root);
 			else if (type === "headbudget") initHeadBudget(root);
 			else if (type === "optimizer") initOptimizer(root);
 		});
