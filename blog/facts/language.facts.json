@@ -57,7 +57,8 @@
     "schlosser2018senses",
     "zhao2023survey",
     "mao2024jawear",
-    "cuevadelasmanos"
+    "cuevadelasmanos",
+    "chomsky1956three"
   ],
   "claims": [
     {
@@ -1113,6 +1114,19 @@
         "cuevadelasmanos"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "language-chomsky-hierarchy-1956",
+      "subject": "chomsky-hierarchy",
+      "predicate": "year",
+      "value": 1956,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 1956, **Noam Chomsky**'s *Three Models for the Description of Language* arranged grammars into the classes that became the **Chomsky hierarchy**",
+      "citation_keys": [
+        "chomsky1956three"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -1951,6 +1965,16 @@
       "quote": "part: 1",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "rel-language-chomsky-hierarchy-syntactic",
+      "from": "chomsky-hierarchy",
+      "to": "chomsky-syntactic-structures",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "stated"
     },
     {
       "id": "struct-language-block-1-part_of-language",
@@ -10351,7 +10375,7 @@
     },
     {
       "id": "language-stmt-166",
-      "quote": "A year later, his *Syntactic Structures* took the syntax level and turned it into a formal, *generative* system: a phrase-structure grammar of replacement rules, like `DET N → NP`, `V NP → VP`, `NP VP → S`, that generates exactly the legal sentences of a language and whose **parse trees** certify any given string as legal or not.",
+      "quote": "In 1957, **Noam Chomsky**'s *Syntactic Structures* took the syntax level and turned it into a formal, *generative* system (\\cite{chomsky1957syntactic}): a phrase-structure grammar of replacement rules, like `DET N → NP`, `V NP → VP`, `NP VP → S`, that generates exactly the legal sentences of a language and whose **parse trees** certify any given string as legal or not.",
       "block_id": "language-block-65",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
@@ -10365,14 +10389,14 @@
     },
     {
       "id": "language-stmt-168",
-      "quote": "Two years later, Chomsky's review of B.",
+      "quote": "Two years later, Chomsky attacked B.",
       "block_id": "language-block-65",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-169",
-      "quote": "Skinner's *Verbal Behavior* made the stakes explicit: Skinner had argued that language, like all behavior, is shaped by reinforcement, but the review concluded that Skinner's \"astonishing claims are far from justified\" — no one can, through experience alone, produce the potentially infinite variety of previously unheard sentences with arbitrarily complex structure that people do produce, so the missing \"factors of fundamental importance\" must be innate, \"human beings being somehow specially created\" for language with a \"universal grammar\" present at birth (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
+      "quote": "Skinner's *Verbal Behavior* directly: Skinner had argued that language, like all behavior, is shaped by reinforcement, but Chomsky said that Skinner's \"astonishing claims are far from justified\" — no one can, through experience alone, produce the potentially infinite variety of previously unheard sentences with arbitrarily complex structure that people do produce, so the missing \"factors of fundamental importance\" must be innate, \"human beings being somehow specially created\" for language with a \"universal grammar\" present at birth (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
       "block_id": "language-block-65",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
@@ -11878,7 +11902,7 @@
     },
     {
       "id": "language-block-65",
-      "quote": "Linguists recognized a hierarchy of levels at which language can be analyzed: **phonetics** and **phonology** (the sounds and their organization), **morphology** (how \"walking\" is \"walk\" plus \"-ing\"), **syntax** (which strings of words are grammatical), **semantics** (what a sentence means), and **pragmatics** (what it means *in this situation*) (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}). In 1956, **Noam Chomsky**'s *Three Models for the Description of Language* arranged grammars into the classes that became the **Chomsky hierarchy** — unrestricted (Type 0), context-sensitive (Type 1), context-free (Type 2) and regular (Type 3) — each paired with the machine needed to recognise it, from a Turing machine down to a finite-state automaton (\\cite{chomsky1956three}). A year later, his *Syntactic Structures* took the syntax level and turned it into a formal, *generative* system: a phrase-structure grammar of replacement rules, like `DET N → NP`, `V NP → VP`, `NP VP → S`, that generates exactly the legal sentences of a language and whose **parse trees** certify any given string as legal or not. It was Pāṇini's program, rediscovered as a branch of mathematics, and it gave the first NLP systems their engine: a parser, a dictionary, and a meaning representation. Two years later, Chomsky's review of B. F. Skinner's *Verbal Behavior* made the stakes explicit: Skinner had argued that language, like all behavior, is shaped by reinforcement, but the review concluded that Skinner's \"astonishing claims are far from justified\" — no one can, through experience alone, produce the potentially infinite variety of previously unheard sentences with arbitrarily complex structure that people do produce, so the missing \"factors of fundamental importance\" must be innate, \"human beings being somehow specially created\" for language with a \"universal grammar\" present at birth (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
+      "quote": "Linguists recognized a hierarchy of levels at which language can be analyzed: **phonetics** and **phonology** (the sounds and their organization), **morphology** (how \"walking\" is \"walk\" plus \"-ing\"), **syntax** (which strings of words are grammatical), **semantics** (what a sentence means), and **pragmatics** (what it means *in this situation*) (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}). In 1956, **Noam Chomsky**'s *Three Models for the Description of Language* arranged grammars into the classes that became the **Chomsky hierarchy** — unrestricted (Type 0), context-sensitive (Type 1), context-free (Type 2) and regular (Type 3) — each paired with the machine needed to recognise it, from a Turing machine down to a finite-state automaton (\\cite{chomsky1956three}). In 1957, **Noam Chomsky**'s *Syntactic Structures* took the syntax level and turned it into a formal, *generative* system (\\cite{chomsky1957syntactic}): a phrase-structure grammar of replacement rules, like `DET N → NP`, `V NP → VP`, `NP VP → S`, that generates exactly the legal sentences of a language and whose **parse trees** certify any given string as legal or not. It was Pāṇini's program, rediscovered as a branch of mathematics, and it gave the first NLP systems their engine: a parser, a dictionary, and a meaning representation. Two years later, Chomsky attacked B. F. Skinner's *Verbal Behavior* directly: Skinner had argued that language, like all behavior, is shaped by reinforcement, but Chomsky said that Skinner's \"astonishing claims are far from justified\" — no one can, through experience alone, produce the potentially infinite variety of previously unheard sentences with arbitrarily complex structure that people do produce, so the missing \"factors of fundamental importance\" must be innate, \"human beings being somehow specially created\" for language with a \"universal grammar\" present at birth (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
       "kind": "paragraph",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)"
     },

@@ -19,7 +19,8 @@
     "wu2016gnmt",
     "vaswani2017attention",
     "williams1989",
-    "bahdanau2014"
+    "bahdanau2014",
+    "ctc2006"
   ],
   "claims": [
     {
@@ -304,6 +305,19 @@
       "quote": "\\citeauthor{bahdanau2014} let the decoder compute, at every output step, a weighted sum over *all* encoder states",
       "citation_keys": [
         "bahdanau2014"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "recurrent-ctc-2006",
+      "subject": "ctc",
+      "predicate": "year",
+      "value": 2006,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "**CTC** loss (2006)",
+      "citation_keys": [
+        "ctc2006"
       ],
       "confidence": "stated"
     }

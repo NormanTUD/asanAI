@@ -1,14 +1,14 @@
 # Deep fact audit
 
 - lessons: 99
-- claims: 7270
-- statements: 16876
-- relations: 51219
-- uncovered years: 44
+- claims: 7293
+- statements: 16897
+- relations: 51272
+- uncovered years: 45
 - uncovered quantities: 5
 - uncited specific claims: 306
 - citation keys not found in lesson: 0
-- relation grounding issues: 84
+- relation grounding issues: 86
 - numeric range issues: 0
 - normalised year conflicts: 0
 
@@ -23,7 +23,7 @@
 | ai_existential_risk | 31 | 61 | 200 | 0 | 0 |
 | ai_for_science | 31 | 22 | 83 | 0 | 0 |
 | algorithms | 42 | 244 | 718 | 0 | 0 |
-| alignment | 30 | 26 | 97 | 0 | 0 |
+| alignment | 31 | 26 | 97 | 0 | 0 |
 | alternative_architectures | 28 | 35 | 151 | 0 | 1 |
 | atlas | 17 | 6 | 44 | 0 | 0 |
 | attentionlab | 48 | 265 | 710 | 3 | 0 |
@@ -51,7 +51,7 @@
 | geometry_iii | 51 | 129 | 345 | 0 | 0 |
 | global_ai_ecosystem | 30 | 41 | 184 | 0 | 0 |
 | hallucinations | 25 | 143 | 453 | 0 | 0 |
-| history | 1400 | 1155 | 3332 | 0 | 0 |
+| history | 1415 | 1171 | 3371 | 0 | 0 |
 | human_mind | 45 | 498 | 1085 | 5 | 0 |
 | hyperparameters | 25 | 55 | 175 | 0 | 0 |
 | inceptionism | 14 | 44 | 137 | 0 | 0 |
@@ -61,7 +61,7 @@
 | intro | 17 | 40 | 121 | 0 | 0 |
 | intuition | 28 | 233 | 687 | 0 | 0 |
 | knowledge_map | 15 | 0 | 14 | 0 | 0 |
-| language | 76 | 327 | 795 | 0 | 0 |
+| language | 77 | 328 | 797 | 0 | 0 |
 | law_regulation | 28 | 61 | 236 | 0 | 0 |
 | loss_landscape | 25 | 98 | 262 | 0 | 0 |
 | losslab | 23 | 66 | 210 | 0 | 0 |
@@ -81,14 +81,14 @@
 | optimizerlab | 33 | 145 | 487 | 0 | 0 |
 | origami | 47 | 172 | 476 | 0 | 0 |
 | overandunderfittinglab | 25 | 86 | 293 | 1 | 0 |
-| people_of_ai | 70 | 367 | 1016 | 0 | 0 |
+| people_of_ai | 73 | 370 | 1027 | 0 | 0 |
 | philosophy | 85 | 1048 | 2591 | 0 | 0 |
 | positionalembeddingslab | 30 | 45 | 183 | 0 | 0 |
 | production_serving | 36 | 122 | 399 | 0 | 0 |
 | promptengineering | 18 | 225 | 711 | 0 | 0 |
 | rag | 26 | 136 | 437 | 0 | 0 |
 | reasoning | 21 | 63 | 244 | 0 | 0 |
-| recurrent_networks | 23 | 70 | 186 | 0 | 0 |
+| recurrent_networks | 24 | 71 | 187 | 1 | 0 |
 | reinforcement_learning | 25 | 46 | 219 | 1 | 0 |
 | reliability | 21 | 26 | 81 | 4 | 0 |
 | resnetlab | 19 | 18 | 85 | 0 | 0 |
@@ -100,7 +100,7 @@
 | speech_audio | 23 | 33 | 137 | 1 | 0 |
 | statistics_i | 51 | 207 | 701 | 1 | 0 |
 | statistics_ii | 27 | 109 | 432 | 11 | 0 |
-| symbolic_ai | 39 | 116 | 386 | 0 | 0 |
+| symbolic_ai | 41 | 116 | 386 | 0 | 0 |
 | tokenizerlab | 23 | 146 | 399 | 4 | 0 |
 | topology | 25 | 89 | 254 | 0 | 1 |
 | training_data | 45 | 98 | 357 | 1 | 0 |
@@ -129,6 +129,7 @@
 - human_mind.php: 2007
 - human_mind.php: 2013
 - overandunderfittinglab.php: 2017
+- recurrent_networks.php: 2015
 - reinforcement_learning.php: 2025
 - reliability.php: 2021
 - reliability.php: 2022
@@ -152,8 +153,7 @@
 - tokenizerlab.php: 2024
 - tokenizerlab.php: 2025
 - training_data.php: 2019
-- unexpected_capabilities.php: 1988
-- … and 9 more
+- … and 10 more
 
 ## Uncovered quantities
 
@@ -232,16 +232,16 @@
 - history.php: rel-history-logicists-around-mccarthy: endpoint not near quote: john-mccarthy
 - history.php: rel-history-proceduralists-around-minsky: endpoint not near quote: marvin-minsky
 - history.php: rel-history-hochreiter-vanishing: endpoint not near quote: sepp-hochreiter
-- history.php: rel-history-hochreiter-residual: endpoint not near quote: sepp-hochreiter
 - history.php: rel-history-schmidhuber-lstm: endpoint not near quote: jurgen-schmidhuber
 - history.php: rel-history-weizenbaum-eliza: endpoint not near quote: joseph-weizenbaum
 - history.php: rel-history-schmidhuber-nplm: endpoint not near quote: jurgen-schmidhuber
 - history.php: rel-history-mccarthy-lisp: endpoint not near quote: john-mccarthy
+- language.php: rel-language-chomsky-hierarchy-syntactic: no quote
+- people_of_ai.php: rel-people-amodei-instructgpt: no quote
+- people_of_ai.php: rel-people-vapnik-svm: endpoint not near quote: vladimir-vapnik
 - philosophy.php: rel-phil-hard-problem-mary: endpoint not near quote: phil-hard-problem
 - philosophy.php: rel-phil-hard-problem-mary: endpoint not near quote: phil-mary-room
 - philosophy.php: rel-phil-sheaf-gluing: endpoint not near quote: phil-sheaf-gluing
-- philosophy.php: rel-phil-sheaf-gluing: endpoint not near quote: phil-sheaf-leray
-- transformer.php: transformer-rel-mqa-part-of-transformer: endpoint not near quote: transformer
 
 ## Range issues
 

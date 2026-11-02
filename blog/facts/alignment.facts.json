@@ -28,7 +28,8 @@
     "kadavath2022selfknowledge",
     "thought_crime",
     "eo14110",
-    "mech_interp_alignment"
+    "mech_interp_alignment",
+    "christiano2017rlhf"
   ],
   "claims": [
     {
@@ -428,6 +429,21 @@
       "quote": "(\\cite[Naseem, 2026]{mech_interp_alignment})",
       "citation_keys": [
         "mech_interp_alignment"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "alignment-christiano-rlhf-2017",
+      "subject": "rlhf",
+      "predicate": "introduced_by",
+      "value": "Paul Christiano and colleagues",
+      "unit": "name",
+      "qualifiers": {
+        "year": 2017
+      },
+      "quote": "introduced by **Paul Christiano** and colleagues in 2017",
+      "citation_keys": [
+        "christiano2017rlhf"
       ],
       "confidence": "stated"
     }

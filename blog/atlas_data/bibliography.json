@@ -12084,6 +12084,18 @@
    "year": "1955",
    "url": "https://doi.org/10.7249/p365"
   },
+  "chomsky1956three": {
+   "title": "Three Models for the Description of Language",
+   "author": "Noam Chomsky",
+   "year": "1956",
+   "url": "https://doi.org/10.1109/TIT.1956.1056813"
+  },
+  "chomsky1957syntactic": {
+   "title": "Syntactic Structures",
+   "author": "Noam Chomsky",
+   "year": "1957",
+   "url": "https://doi.org/10.1515/9783110218329"
+  },
   "chomsky1959review": {
    "title": "A Review of B. F. Skinner's Verbal Behavior",
    "author": "Noam Chomsky",
@@ -17694,6 +17706,18 @@
    "year": "2016",
    "url": "https://arxiv.org/abs/1606.06565"
   },
+  "sutskever_bio": {
+   "title": "Ilya Sutskever",
+   "author": "Wikipedia",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Ilya_Sutskever"
+  },
+  "anthropic_bio": {
+   "title": "Anthropic",
+   "author": "Wikipedia",
+   "year": "2026",
+   "url": "https://en.wikipedia.org/wiki/Anthropic"
+  },
   "russell2019human": {
    "title": "Human Compatible: Artificial Intelligence and the Problem of Control",
    "author": "Stuart Russell",
@@ -21916,11 +21940,13 @@
   ],
   "lecun2022path": [
    "frontier",
+   "history",
    "people_of_ai"
   ],
   "deepseek2024v3": [
    "frontier",
-   "global_ai_ecosystem"
+   "global_ai_ecosystem",
+   "history"
   ],
   "kimi2025k2": [
    "frontier",
@@ -21948,6 +21974,7 @@
    "finetuninglab",
    "frontier",
    "global_ai_ecosystem",
+   "history",
    "inference_optimization"
   ],
   "qwen2025qwen3": [
@@ -21957,7 +21984,8 @@
   "llama3herd2024": [
    "attentionlab",
    "contextwindows",
-   "frontier"
+   "frontier",
+   "history"
   ],
   "meta2025llama4": [
    "frontier"
@@ -22123,7 +22151,9 @@
   ],
   "cortes1995svm": [
    "beyond_llms",
-   "losslab"
+   "history",
+   "losslab",
+   "people_of_ai"
   ],
   "lin2017focal": [
    "losslab"
@@ -22665,10 +22695,16 @@
   ],
   "kowalski1974prolog": [
    "beyond_llms",
+   "history",
    "symbolic_ai"
   ],
   "colmerauer1973prolog": [
    "beyond_llms",
+   "history",
+   "symbolic_ai"
+  ],
+  "hnffifthgen2023": [
+   "history",
    "symbolic_ai"
   ],
   "bordes2013transe": [
@@ -22691,10 +22727,12 @@
   ],
   "feigenbaum1965dendral": [
    "beyond_llms",
+   "history",
    "symbolic_ai"
   ],
   "shortliffe1976mycin": [
    "beyond_llms",
+   "history",
    "people_of_ai",
    "symbolic_ai"
   ],
@@ -24164,6 +24202,7 @@
    "samplinglab"
   ],
   "sutskever2014seq2seq": [
+   "history",
    "people_of_ai",
    "recurrent_networks",
    "samplinglab"
@@ -25266,6 +25305,12 @@
   "kempelen_speaking_machine": [
    "language"
   ],
+  "chomsky1956three": [
+   "language"
+  ],
+  "chomsky1957syntactic": [
+   "language"
+  ],
   "firth_context": [
    "language"
   ],
@@ -25920,6 +25965,12 @@
    "history"
   ],
   "vapnik1964vc": [
+   "history",
+   "people_of_ai"
+  ],
+  "boser1992svm": [
+   "beyond_llms",
+   "geometry_i",
    "history"
   ],
   "kelley": [
@@ -25988,6 +26039,12 @@
   "harmon1981ai": [
    "history"
   ],
+  "feigenbaum1984expert": [
+   "beyond_llms",
+   "history",
+   "people_of_ai",
+   "promptengineering"
+  ],
   "schmidhuber2025cnn": [
    "history"
   ],
@@ -26005,7 +26062,8 @@
    "recurrent_networks"
   ],
   "ctc2006": [
-   "history"
+   "history",
+   "recurrent_networks"
   ],
   "deepblue": [
    "history"
@@ -26057,6 +26115,11 @@
   "socher2011": [
    "history"
   ],
+  "goodfellow2014gan": [
+   "beyond_llms",
+   "history",
+   "people_of_ai"
+  ],
   "alkindi_cryptanalysis": [
    "history"
   ],
@@ -26083,6 +26146,22 @@
   "clark2020electra": [
    "history"
   ],
+  "sutskever_bio": [
+   "history"
+  ],
+  "amodei2016concrete": [
+   "history",
+   "people_of_ai"
+  ],
+  "anthropic_bio": [
+   "history",
+   "people_of_ai"
+  ],
+  "amodei2024machines": [
+   "ai_existential_risk",
+   "history",
+   "people_of_ai"
+  ],
   "hnfchatgpt2023": [
    "history"
   ],
@@ -26094,9 +26173,6 @@
    "history"
   ],
   "hnfshakey2019": [
-   "history"
-  ],
-  "hnffifthgen2023": [
    "history"
   ],
   "hnfsteinbuch2017": [
@@ -26575,10 +26651,6 @@
   "dinh2017realnvp": [
    "beyond_llms"
   ],
-  "goodfellow2014gan": [
-   "beyond_llms",
-   "people_of_ai"
-  ],
   "devlin2019bert": [
    "beyond_llms",
    "embeddinglab",
@@ -26741,14 +26813,11 @@
   ],
   "vapnik1995book": [
    "beyond_llms",
-   "geometry_i"
+   "geometry_i",
+   "people_of_ai"
   ],
   "aizerman1964potential": [
    "beyond_llms"
-  ],
-  "boser1992svm": [
-   "beyond_llms",
-   "geometry_i"
   ],
   "jacot2018ntk": [
    "beyond_llms",
@@ -26975,11 +27044,6 @@
   ],
   "muggleton1991ilp": [
    "beyond_llms"
-  ],
-  "feigenbaum1984expert": [
-   "beyond_llms",
-   "people_of_ai",
-   "promptengineering"
   ],
   "mcdermott1982r1": [
    "beyond_llms"
@@ -28566,9 +28630,6 @@
   ],
   "burns2023weakstrong": [
    "mechanistic_interpretability",
-   "people_of_ai"
-  ],
-  "amodei2016concrete": [
    "people_of_ai"
   ],
   "irving2018debate": [
@@ -30303,9 +30364,6 @@
    "ai_existential_risk"
   ],
   "karnofsky2021": [
-   "ai_existential_risk"
-  ],
-  "amodei2024machines": [
    "ai_existential_risk"
   ],
   "jcgm2012vim": [
@@ -32734,14 +32792,16 @@
    ]
   },
   "Wikipedia": {
-   "count": 4,
+   "count": 6,
    "minyear": 2024,
    "maxyear": 2026,
    "keys": [
     "svd_wiki",
     "imo_wiki",
     "continuous_delivery_wiki",
-    "navier_stokes_priority"
+    "navier_stokes_priority",
+    "sutskever_bio",
+    "anthropic_bio"
    ]
   },
   "Carl Gustav Jacob Jacobi": {
@@ -59641,10 +59701,12 @@
    ]
   },
   "Noam Chomsky": {
-   "count": 1,
-   "minyear": 1959,
+   "count": 3,
+   "minyear": 1956,
    "maxyear": 1959,
    "keys": [
+    "chomsky1956three",
+    "chomsky1957syntactic",
     "chomsky1959review"
    ]
   },

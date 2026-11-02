@@ -67,7 +67,11 @@
     "radford2021clip",
     "nobel2024physics",
     "img_geoffrey_hinton",
-    "anthropic2025biology"
+    "anthropic2025biology",
+    "anthropic_bio",
+    "amodei2024machines",
+    "vapnik1964vc",
+    "cortes1995svm"
   ],
   "claims": [
     {
@@ -1027,6 +1031,48 @@
         "anthropic2025biology"
       ],
       "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-amodei-anthropic",
+      "subject": "dario-amodei",
+      "predicate": "role",
+      "value": "co-founded Anthropic in 2021",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "He later left OpenAI to co-found **Anthropic** in 2021",
+      "citation_keys": [
+        "anthropic_bio",
+        "amodei2024machines"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-vapnik-vc-theory",
+      "subject": "vladimir-vapnik",
+      "predicate": "contribution",
+      "value": "VC theory with Alexey Chervonenkis",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "Vapnik, working at the Institute for Control Sciences in Moscow, and Alexey Chervonenkis built the **VC theory** of generalisation",
+      "citation_keys": [
+        "vapnik1964vc"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "people_of_ai-cortes-svm-1995",
+      "subject": "support-vector-machine",
+      "predicate": "introduction_year",
+      "value": 1995,
+      "unit": "year",
+      "qualifiers": {
+        "authors": "Corinna Cortes, Vladimir Vapnik"
+      },
+      "quote": "turned the theory into the **support vector machine** (1995)",
+      "citation_keys": [
+        "cortes1995svm"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -1761,6 +1807,36 @@
         "anthropic2025biology"
       ],
       "confidence": "provenance"
+    },
+    {
+      "id": "rel-people-amodei-instructgpt",
+      "from": "dario-amodei",
+      "to": "instructgpt",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rel-people-sutskever-gpt3",
+      "from": "ilya-sutskever",
+      "to": "gpt-3",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "Sutskever went on to co-invent sequence-to-sequence learning, co-found OpenAI, and serve as its chief scientist through the GPT era.",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rel-people-vapnik-svm",
+      "from": "vladimir-vapnik",
+      "to": "support-vector-machine",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "At Bell Labs he and **Corinna Cortes** turned the theory into the **support vector machine** (1995)",
+      "citation_keys": [],
+      "confidence": "stated"
     },
     {
       "id": "struct-people_of_ai-block-1-part_of-people-of-ai",
@@ -13286,7 +13362,7 @@
     },
     {
       "id": "people_of_ai-stmt-271",
-      "quote": "Vapnik, working at the Institute for Control Sciences in Moscow, built with Alexey Chervonenkis the **VC theory** of generalisation: a distribution-free bound on test error in terms of the capacity of the hypothesis class, measured by the **VC dimension** (\\cite[Vapnik & Chervonenkis, 1971]{vapnik1964vc}).",
+      "quote": "Vapnik, working at the Institute for Control Sciences in Moscow, and Alexey Chervonenkis built the **VC theory** of generalisation: a distribution-free bound on test error in terms of the capacity of the hypothesis class, measured by the **VC dimension** (\\cite[Vapnik & Chervonenkis, 1971]{vapnik1964vc}).",
       "block_id": "people_of_ai-block-143",
       "section": "Vladimir Vapnik and Corinna Cortes",
       "kind": "statement"
@@ -14840,7 +14916,7 @@
     },
     {
       "id": "people_of_ai-block-143",
-      "quote": "Vapnik, working at the Institute for Control Sciences in Moscow, built with Alexey Chervonenkis the **VC theory** of generalisation: a distribution-free bound on test error in terms of the capacity of the hypothesis class, measured by the **VC dimension** (\\cite[Vapnik & Chervonenkis, 1971]{vapnik1964vc}). At Bell Labs he and **Corinna Cortes** turned the theory into the **support vector machine** (1995), which finds the maximum-margin separating hyperplane and uses the **kernel trick** to work in high-dimensional feature spaces implicitly; for a decade before deep learning it was the default strong baseline on small and medium-sized datasets (\\cite[Cortes & Vapnik, 1995]{cortes1995svm}; \\cite[Vapnik, 1995]{vapnik1995book}).",
+      "quote": "Vapnik, working at the Institute for Control Sciences in Moscow, and Alexey Chervonenkis built the **VC theory** of generalisation: a distribution-free bound on test error in terms of the capacity of the hypothesis class, measured by the **VC dimension** (\\cite[Vapnik & Chervonenkis, 1971]{vapnik1964vc}). At Bell Labs he and **Corinna Cortes** turned the theory into the **support vector machine** (1995), which finds the maximum-margin separating hyperplane and uses the **kernel trick** to work in high-dimensional feature spaces implicitly; for a decade before deep learning it was the default strong baseline on small and medium-sized datasets (\\cite[Cortes & Vapnik, 1995]{cortes1995svm}; \\cite[Vapnik, 1995]{vapnik1995book}).",
       "kind": "paragraph",
       "section": "Vladimir Vapnik and Corinna Cortes"
     },

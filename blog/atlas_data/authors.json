@@ -290,6 +290,7 @@
   "cited_in": [
    "beyond_llms",
    "embeddinglab",
+   "history",
    "people_of_ai",
    "transformer"
   ]
@@ -1400,6 +1401,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "symbolic_ai"
   ]
  },
@@ -2009,6 +2011,7 @@
    "history",
    "music_video_generation",
    "people_of_ai",
+   "recurrent_networks",
    "reinforcement_learning",
    "transformer"
   ]
@@ -2724,7 +2727,8 @@
   "cited_in": [
    "beyond_llms",
    "geometry_i",
-   "history"
+   "history",
+   "people_of_ai"
   ]
  },
  {
@@ -7475,7 +7479,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "geometry_i"
+   "geometry_i",
+   "history"
   ]
  },
  {
@@ -7735,6 +7740,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "people_of_ai"
   ]
  },
@@ -8518,6 +8524,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "people_of_ai",
    "symbolic_ai"
   ]
@@ -10284,6 +10291,7 @@
    "deconvolution",
    "embeddinglab",
    "fact_lookup",
+   "history",
    "intuition",
    "losslab",
    "math_ii",
@@ -17756,7 +17764,8 @@
    "hnfpapert2016"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "symbolic_ai"
   ]
  },
  {
@@ -22003,7 +22012,8 @@
   "cited_in": [
    "attentionlab",
    "contextwindows",
-   "frontier"
+   "frontier",
+   "history"
   ]
  },
  {
@@ -22022,7 +22032,8 @@
   "cited_in": [
    "attentionlab",
    "contextwindows",
-   "frontier"
+   "frontier",
+   "history"
   ]
  },
  {
@@ -22041,7 +22052,8 @@
   "cited_in": [
    "attentionlab",
    "contextwindows",
-   "frontier"
+   "frontier",
+   "history"
   ]
  },
  {
@@ -23255,6 +23267,7 @@
    "amodei2016concrete"
   ],
   "cited_in": [
+   "history",
    "people_of_ai"
   ]
  },
@@ -28223,7 +28236,9 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "losslab"
+   "history",
+   "losslab",
+   "people_of_ai"
   ]
  },
  {
@@ -30611,6 +30626,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "people_of_ai"
   ]
  },
@@ -30706,6 +30722,7 @@
    "finetuninglab",
    "frontier",
    "global_ai_ecosystem",
+   "history",
    "inference_optimization",
    "training_data"
   ]
@@ -30841,6 +30858,7 @@
   "cited_in": [
    "frontier",
    "global_ai_ecosystem",
+   "history",
    "inference_optimization",
    "mixture_of_experts",
    "transformer"
@@ -30864,6 +30882,7 @@
    "finetuninglab",
    "frontier",
    "global_ai_ecosystem",
+   "history",
    "inference_optimization",
    "training_data"
   ]
@@ -32468,6 +32487,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "people_of_ai",
    "promptengineering",
    "symbolic_ai"
@@ -32505,6 +32525,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "people_of_ai",
    "symbolic_ai"
   ]
@@ -34261,7 +34282,8 @@
    "ctc2006"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "recurrent_networks"
   ]
  },
  {
@@ -38704,6 +38726,7 @@
    "finetuninglab",
    "frontier",
    "global_ai_ecosystem",
+   "history",
    "inference_optimization"
   ]
  },
@@ -40498,6 +40521,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "people_of_ai"
   ]
  },
@@ -41153,7 +41177,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "geometry_i"
+   "geometry_i",
+   "history"
   ]
  },
  {
@@ -42288,6 +42313,7 @@
    "deeplearninglab",
    "fact_lookup",
    "frontier",
+   "history",
    "mechanistic_interpretability",
    "people_of_ai",
    "reliability",
@@ -43606,6 +43632,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "people_of_ai"
   ]
  },
@@ -47073,6 +47100,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "symbolic_ai"
   ]
  },
@@ -54196,6 +54224,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "people_of_ai",
    "reinforcement_learning"
   ]
@@ -58090,12 +58119,15 @@
   "city": "Cambridge, USA",
   "year": 1959.0,
   "conf": 1,
-  "works": 1,
+  "works": 3,
   "keys": [
+   "chomsky1956three",
+   "chomsky1957syntactic",
    "chomsky1959review"
   ],
   "cited_in": [
-   "human_mind"
+   "human_mind",
+   "language"
   ]
  },
  {
@@ -58727,6 +58759,7 @@
   "cited_in": [
    "beyond_llms",
    "finetuninglab",
+   "history",
    "math_iii",
    "music_video_generation",
    "people_of_ai",
@@ -60374,6 +60407,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "symbolic_ai"
   ]
  },
@@ -63217,6 +63251,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "symbolic_ai"
   ]
  },
@@ -65516,7 +65551,8 @@
    "ctc2006"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "recurrent_networks"
   ]
  },
  {
@@ -66832,6 +66868,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "people_of_ai"
   ]
  },
@@ -72885,7 +72922,8 @@
   "cited_in": [
    "beyond_llms",
    "geometry_i",
-   "history"
+   "history",
+   "people_of_ai"
   ]
  },
  {
@@ -72922,7 +72960,9 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "history",
    "losslab",
+   "people_of_ai",
    "statistics",
    "statistics_i"
   ]
@@ -73786,16 +73826,20 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 4,
+  "works": 6,
   "keys": [
    "svd_wiki",
    "imo_wiki",
    "continuous_delivery_wiki",
-   "navier_stokes_priority"
+   "navier_stokes_priority",
+   "sutskever_bio",
+   "anthropic_bio"
   ],
   "cited_in": [
    "ai_for_science",
    "geometry_ii",
+   "history",
+   "people_of_ai",
    "production_serving"
   ]
  },

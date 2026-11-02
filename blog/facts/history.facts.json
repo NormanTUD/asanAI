@@ -289,7 +289,19 @@
     "hnfki70jahre2026",
     "hnfsteinbuch2017",
     "hnfbonn2020",
-    "hnfki_frauen2023"
+    "hnfki_frauen2023",
+    "kowalski1974prolog",
+    "feigenbaum1965dendral",
+    "shortliffe1976mycin",
+    "hnffifthgen2023",
+    "goodfellow2014gan",
+    "sutskever2014seq2seq",
+    "sutskever_bio",
+    "amodei2016concrete",
+    "anthropic_bio",
+    "lecun2022path",
+    "deepseek2024v3",
+    "guo2025deepseekr1"
   ],
   "claims": [
     {
@@ -7170,7 +7182,7 @@
       "qualifiers": {
         "year": 1943
       },
-      "quote": "Its two founding papers both date to 1943 — McCulloch-Pitts (above), and *Behavior, Purpose and Teleology*",
+      "quote": "Its two founding papers both date to 1943 — McCulloch-Pitts (above), and **Arturo Rosenblueth, Norbert Wiener and Julian Bigelow's** *Behavior, Purpose and Teleology*",
       "citation_keys": [
         "behaviorpurpose1943"
       ],
@@ -15301,7 +15313,7 @@
       "value": 1995,
       "unit": "year",
       "qualifiers": {},
-      "quote": "Schmidhuber coined the term **\\citetitle{lstm}** in a 1995 tech report.",
+      "quote": "Schmidhuber coined the term in a 1995 tech report",
       "citation_keys": [
         "lstm"
       ],
@@ -15314,7 +15326,7 @@
       "value": 1997,
       "unit": "year",
       "qualifiers": {},
-      "quote": "The main peer-reviewed publication of \\citeyear{lstm} by \\citeauthorlastnameand{lstm} is often described as the most cited AI paper of the 20th century.",
+      "quote": "the main peer-reviewed publication of \\citeyear{lstm} by \\citeauthorlastnameand{lstm} is often described as the most cited AI paper of the 20th century.",
       "citation_keys": [
         "lstm"
       ],
@@ -15381,7 +15393,7 @@
       "value": 2006,
       "unit": "year",
       "qualifiers": {},
-      "quote": "In \\citeyear{ctc2006}, the training method **Connectionist Temporal Classification (CTC)** was introduced for simultaneous alignment and recognition of sequences.",
+      "quote": "In \\citeyear{ctc2006}, **Alex Graves** and colleagues introduced **Connectionist Temporal Classification (CTC)**, a loss that trains a recurrent network to label unsegmented sequences",
       "citation_keys": [
         "ctc2006"
       ],
@@ -18534,6 +18546,231 @@
       ],
       "source_url": "",
       "confidence": "stated"
+    },
+    {
+      "id": "history-frege-predicate-logic",
+      "subject": "gottlob-frege",
+      "predicate": "contribution",
+      "value": "first-order predicate logic",
+      "unit": "name",
+      "qualifiers": {
+        "work": "Begriffsschrift",
+        "year": 1879
+      },
+      "quote": "the book introduced **first-order predicate logic**",
+      "citation_keys": [
+        "frege1879",
+        "kowalski1974prolog"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-rosenblueth-wiener-bigelow-1943",
+      "subject": "behavior-purpose-teleology",
+      "predicate": "authors",
+      "value": "Arturo Rosenblueth, Norbert Wiener, Julian Bigelow",
+      "unit": "name",
+      "qualifiers": {
+        "year": 1943
+      },
+      "quote": "**Arturo Rosenblueth, Norbert Wiener and Julian Bigelow's** *Behavior, Purpose and Teleology*",
+      "citation_keys": [
+        "behaviorpurpose1943"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-dendral-search-space",
+      "subject": "dendral",
+      "predicate": "search_space",
+      "value": "more than eleven million to about twenty-two thousand candidate structures",
+      "unit": "count",
+      "qualifiers": {},
+      "quote": "cut the search from more than eleven million candidates to about twenty-two thousand",
+      "citation_keys": [
+        "feigenbaum1965dendral",
+        "crevier1993ai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-mycin-rule-count",
+      "subject": "mycin",
+      "predicate": "rule_count",
+      "value": "a few hundred IF–THEN rules",
+      "unit": "count",
+      "qualifiers": {
+        "approx": true
+      },
+      "quote": "diagnosed blood infections from a few hundred IF–THEN rules",
+      "citation_keys": [
+        "shortliffe1976mycin"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-xcon-rules",
+      "subject": "xcon",
+      "predicate": "rule_count",
+      "value": "about three hundred to more than three thousand",
+      "unit": "count",
+      "qualifiers": {
+        "interval": "1979-1984"
+      },
+      "quote": "growing from about three hundred rules in 1979 to more than three thousand by 1984",
+      "citation_keys": [
+        "crevier1993ai"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-fifth-generation-budget",
+      "subject": "japanese-fifth-generation",
+      "predicate": "budget",
+      "value": 400,
+      "unit": "USD",
+      "qualifiers": {
+        "approx": true,
+        "unit_scale": "million"
+      },
+      "quote": "spent roughly 400 million dollars",
+      "citation_keys": [
+        "hnffifthgen2023"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-hochreiter-schmidhuber-lstm",
+      "subject": "lstm",
+      "predicate": "developers",
+      "value": "Sepp Hochreiter, Jürgen Schmidhuber",
+      "unit": "name",
+      "qualifiers": {
+        "year": 1997
+      },
+      "quote": "**Sepp Hochreiter and Jürgen Schmidhuber** developed the **Long Short-Term Memory** architecture",
+      "citation_keys": [
+        "lstm"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-graves-ctc-2006",
+      "subject": "ctc",
+      "predicate": "developer",
+      "value": "Alex Graves",
+      "unit": "name",
+      "qualifiers": {
+        "year": 2006
+      },
+      "quote": "**Alex Graves** and colleagues introduced **Connectionist Temporal Classification (CTC)**",
+      "citation_keys": [
+        "ctc2006"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-goodfellow-gan-2014",
+      "subject": "gan",
+      "predicate": "introduction_year",
+      "value": 2014,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In 2014 **Ian Goodfellow** and colleagues introduced the **generative adversarial network (GAN)**",
+      "citation_keys": [
+        "goodfellow2014gan"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-sutskever-openai-role",
+      "subject": "ilya-sutskever",
+      "predicate": "role",
+      "value": "co-founded OpenAI and served as its chief scientist",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Ilya Sutskever**, co-inventor of sequence-to-sequence learning, co-founded OpenAI and served as its chief scientist through the GPT and ChatGPT era",
+      "citation_keys": [
+        "sutskever2014seq2seq",
+        "sutskever_bio"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-amodei-anthropic-2021",
+      "subject": "dario-amodei",
+      "predicate": "role",
+      "value": "co-founded Anthropic in 2021",
+      "unit": "name",
+      "qualifiers": {},
+      "quote": "**Dario Amodei**, co-author of the original RLHF study and of *Concrete Problems in AI Safety*, left OpenAI to co-found **Anthropic** in 2021",
+      "citation_keys": [
+        "amodei2016concrete",
+        "anthropic_bio"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-christiano-rlhf-2017",
+      "subject": "rlhf",
+      "predicate": "origin",
+      "value": "Paul Christiano and colleagues",
+      "unit": "name",
+      "qualifiers": {
+        "year": 2017
+      },
+      "quote": "The key idea came from **Paul Christiano** and colleagues in 2017",
+      "citation_keys": [
+        "christiano2017rlhf"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-llama-fair",
+      "subject": "llama",
+      "predicate": "developer",
+      "value": "Meta FAIR",
+      "unit": "name",
+      "qualifiers": {
+        "year": 2023
+      },
+      "quote": "Meta's **LLaMA** family, developed at its FAIR lab and championed by **Yann LeCun**",
+      "citation_keys": [
+        "touvron2023llama",
+        "lecun2022path"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-deepseek-v3-training",
+      "subject": "deepseek-v3",
+      "predicate": "training_compute",
+      "value": 2.788,
+      "unit": "GPU-hours",
+      "qualifiers": {
+        "unit_scale": "million",
+        "gpu": "H800"
+      },
+      "quote": "V3 trained for 2.788 million H800 GPU-hours",
+      "citation_keys": [
+        "deepseek2024v3"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "history-deepseek-r1-training",
+      "subject": "deepseek-r1",
+      "predicate": "training_method",
+      "value": "largely by reinforcement learning",
+      "unit": "name",
+      "qualifiers": {
+        "year": 2025
+      },
+      "quote": "R1 trained largely by reinforcement learning",
+      "citation_keys": [
+        "guo2025deepseekr1"
+      ],
+      "confidence": "stated"
     }
   ],
   "relations": [
@@ -21009,7 +21246,7 @@
       "to": "lstm",
       "kind": "invented",
       "qualifiers": {},
-      "quote": "Schmidhuber coined the term **\\citetitle{lstm}** in a 1995 tech report.",
+      "quote": "Schmidhuber coined the term in a 1995 tech report",
       "citation_keys": []
     },
     {
@@ -27574,6 +27811,36 @@
         "gpt2"
       ],
       "confidence": "provenance"
+    },
+    {
+      "id": "rel-history-behavior-purpose-cybernetics",
+      "from": "behavior-purpose-teleology",
+      "to": "cybernetics",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "Its two founding papers both date to 1943 — McCulloch-Pitts (above), and **Arturo Rosenblueth, Norbert Wiener and Julian Bigelow's** *Behavior, Purpose and Teleology*",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rel-history-amodei-rlhf",
+      "from": "dario-amodei",
+      "to": "rlhf",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "**Dario Amodei**, co-author of the original RLHF study and of *Concrete Problems in AI Safety*, left OpenAI to co-found **Anthropic** in 2021",
+      "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "rel-history-sutskever-gpt",
+      "from": "ilya-sutskever",
+      "to": "gpt",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "**Ilya Sutskever**, co-inventor of sequence-to-sequence learning, co-founded OpenAI and served as its chief scientist through the GPT and ChatGPT era",
+      "citation_keys": [],
+      "confidence": "stated"
     },
     {
       "id": "struct-history-block-1-part_of-history",
@@ -60694,7 +60961,7 @@
     },
     {
       "id": "history-stmt-1093",
-      "quote": "Meta's **LLaMA** family, developed at its FAIR lab under **Yann LeCun**, and later **DeepSeek's** open-weight V3 and R1 models — V3 trained for 2.788 million H800 GPU-hours, R1 trained largely by reinforcement learning — turned that movement into a market: the frontier was no longer defined only by closed APIs, but by how quickly open weights could close the gap (\\cite{touvron2023llama}; \\cite{llama3herd2024}; \\cite{deepseek2024v3}; \\cite{guo2025deepseekr1}; \\cite{lecun2022path}).",
+      "quote": "Meta's **LLaMA** family, developed at its FAIR lab and championed by **Yann LeCun**, and later **DeepSeek's** open-weight V3 and R1 models — V3 trained for 2.788 million H800 GPU-hours, R1 trained largely by reinforcement learning — turned that movement into a market: the frontier was no longer defined only by closed APIs, but by how quickly open weights could close the gap (\\cite{touvron2023llama}; \\cite{llama3herd2024}; \\cite{deepseek2024v3}; \\cite{guo2025deepseekr1}; \\cite{lecun2022path}).",
       "block_id": "history-block-468",
       "section": "From Language Models to LLMs",
       "kind": "statement"
@@ -60708,7 +60975,7 @@
     },
     {
       "id": "history-stmt-1095",
-      "quote": "**Ilya Sutskever**, co-inventor of sequence-to-sequence learning, co-founded OpenAI and served as its chief scientist through the GPT and ChatGPT era; **Dario Amodei**, co-author of *Concrete Problems in AI Safety*, left OpenAI to co-found **Anthropic** in 2021, which made safety its organising principle and built the Claude line (\\cite{sutskever2014seq2seq}; \\cite{sutskever_bio}; \\cite{amodei2016concrete}; \\cite{anthropic_bio}; \\cite{amodei2024machines}).",
+      "quote": "**Ilya Sutskever**, co-inventor of sequence-to-sequence learning, co-founded OpenAI and served as its chief scientist through the GPT and ChatGPT era; **Dario Amodei**, co-author of the original RLHF study and of *Concrete Problems in AI Safety*, left OpenAI to co-found **Anthropic** in 2021, which made safety its organising principle and built the Claude line (\\cite{sutskever2014seq2seq}; \\cite{sutskever_bio}; \\cite{amodei2016concrete}; \\cite{anthropic_bio}; \\cite{amodei2024machines}).",
       "block_id": "history-block-469",
       "section": "From Language Models to LLMs",
       "kind": "statement"
@@ -64051,13 +64318,13 @@
     },
     {
       "id": "history-block-468",
-      "quote": "A crucial refinement came with the **Chinchilla scaling laws** (\\citeauthor{hoffmann2022chinchilla}, \\citeyear{hoffmann2022chinchilla}), which showed that most large models were undertrained: for a given compute budget, the optimal strategy is to train a smaller model on far more data. This insight directly influenced the design of models like LLaMA (\\citeauthor{touvron2023llama}, \\citeyear{touvron2023llama}), which deliberately used more tokens (1.0–1.4 trillion) with a moderately sized 7B–65B parameter architecture, instead of pushing raw parameter counts higher. LLaMA's release was a pivotal moment for the democratization of AI: by showing that smaller, efficiently trained models could compete with GPT-3, it made advanced language modeling accessible to the broader research community, enabling fine-tuning on consumer hardware and sparking the open-source LLM movement. Meta's **LLaMA** family, developed at its FAIR lab under **Yann LeCun**, and later **DeepSeek's** open-weight V3 and R1 models — V3 trained for 2.788 million H800 GPU-hours, R1 trained largely by reinforcement learning — turned that movement into a market: the frontier was no longer defined only by closed APIs, but by how quickly open weights could close the gap (\\cite{touvron2023llama}; \\cite{llama3herd2024}; \\cite{deepseek2024v3}; \\cite{guo2025deepseekr1}; \\cite{lecun2022path}).",
+      "quote": "A crucial refinement came with the **Chinchilla scaling laws** (\\citeauthor{hoffmann2022chinchilla}, \\citeyear{hoffmann2022chinchilla}), which showed that most large models were undertrained: for a given compute budget, the optimal strategy is to train a smaller model on far more data. This insight directly influenced the design of models like LLaMA (\\citeauthor{touvron2023llama}, \\citeyear{touvron2023llama}), which deliberately used more tokens (1.0–1.4 trillion) with a moderately sized 7B–65B parameter architecture, instead of pushing raw parameter counts higher. LLaMA's release was a pivotal moment for the democratization of AI: by showing that smaller, efficiently trained models could compete with GPT-3, it made advanced language modeling accessible to the broader research community, enabling fine-tuning on consumer hardware and sparking the open-source LLM movement. Meta's **LLaMA** family, developed at its FAIR lab and championed by **Yann LeCun**, and later **DeepSeek's** open-weight V3 and R1 models — V3 trained for 2.788 million H800 GPU-hours, R1 trained largely by reinforcement learning — turned that movement into a market: the frontier was no longer defined only by closed APIs, but by how quickly open weights could close the gap (\\cite{touvron2023llama}; \\cite{llama3herd2024}; \\cite{deepseek2024v3}; \\cite{guo2025deepseekr1}; \\cite{lecun2022path}).",
       "kind": "paragraph",
       "section": "From Language Models to LLMs"
     },
     {
       "id": "history-block-469",
-      "quote": "The institutions mattered as much as the architectures. **Ilya Sutskever**, co-inventor of sequence-to-sequence learning, co-founded OpenAI and served as its chief scientist through the GPT and ChatGPT era; **Dario Amodei**, co-author of *Concrete Problems in AI Safety*, left OpenAI to co-found **Anthropic** in 2021, which made safety its organising principle and built the Claude line (\\cite{sutskever2014seq2seq}; \\cite{sutskever_bio}; \\cite{amodei2016concrete}; \\cite{anthropic_bio}; \\cite{amodei2024machines}).",
+      "quote": "The institutions mattered as much as the architectures. **Ilya Sutskever**, co-inventor of sequence-to-sequence learning, co-founded OpenAI and served as its chief scientist through the GPT and ChatGPT era; **Dario Amodei**, co-author of the original RLHF study and of *Concrete Problems in AI Safety*, left OpenAI to co-found **Anthropic** in 2021, which made safety its organising principle and built the Claude line (\\cite{sutskever2014seq2seq}; \\cite{sutskever_bio}; \\cite{amodei2016concrete}; \\cite{anthropic_bio}; \\cite{amodei2024machines}).",
       "kind": "paragraph",
       "section": "From Language Models to LLMs"
     },

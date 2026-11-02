@@ -31,7 +31,8 @@
     "manhaeve2018deepproblog",
     "garcez2020neurosymbolic",
     "schick2023toolformer",
-    "trinh2024alphageometry"
+    "trinh2024alphageometry",
+    "hnffifthgen2023"
   ],
   "claims": [
     {
@@ -392,7 +393,7 @@
       "qualifiers": {
         "example": true
       },
-      "quote": "(\\cite[Colmerauer & Roussel, 1973]{colmerauer1973prolog})",
+      "quote": "Colmerauer and Roussel's Prolog (1972-73) implemented that idea",
       "citation_keys": [
         "colmerauer1973prolog"
       ],
@@ -547,6 +548,37 @@
       },
       "quote": "**UMLS**: medical KG (3M+ concepts)",
       "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-frege-first-order",
+      "subject": "gottlob-frege",
+      "predicate": "contribution",
+      "value": "first-order predicate logic",
+      "unit": "name",
+      "qualifiers": {
+        "work": "Begriffsschrift",
+        "year": 1879
+      },
+      "quote": "**first-order predicate logic**",
+      "citation_keys": [
+        "frege1879"
+      ],
+      "confidence": "stated"
+    },
+    {
+      "id": "symbolic_ai-fifth-generation-prolog",
+      "subject": "japanese-fifth-generation",
+      "predicate": "language",
+      "value": "Prolog",
+      "unit": "name",
+      "qualifiers": {
+        "decade": "1980s"
+      },
+      "quote": "it was also the language Japan's Fifth Generation project chose for its logic-based bet in the 1980s",
+      "citation_keys": [
+        "hnffifthgen2023"
+      ],
       "confidence": "stated"
     }
   ],
