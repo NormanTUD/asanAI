@@ -95,6 +95,8 @@
 	const FLOAT_MIN_W     = 220;  /* px — never float narrower than this       */
 	const FLOAT_REACH_IN  = 90;   /* px the figure reaches into the text column, so the prose below is indented for it */
 	const FLOAT_TEXT_RATIO  = 0.60;/* need ≥ this fraction of float height as following text */
+	const FLOAT_VIEWPORT_GAP = 24; /* px — safe gap from the visible right edge (scrollbar-aware) */
+	const FLOAT_CLAMP_GAP    = 12; /* px — hard minimum gap used by the last-resort clamp */
 
 	let layoutRaf      = 0;
 	let layoutFailsafe = 0;       /* consecutive layout failures    */
@@ -1393,6 +1395,60 @@
 		} catch (_) { /* non-fatal */ }
 	}
 
+	/* Place a float's right edge a safe distance from the VISIBLE right
+	   edge. document.documentElement.clientWidth excludes a classic
+	   vertical scrollbar, unlike 100vw/innerWidth — which is exactly how
+	   the last letters of a newspaper scan ended up under the scrollbar. */
+	function _setFloatRightMargin(fig) {
+		try {
+			if (!fig || !fig.parentNode || fig.nodeType !== 1) return;
+			const root = document.documentElement;
+			const visibleRight = (root && root.clientWidth) || window.innerWidth || 0;
+			if (!Number.isFinite(visibleRight) || visibleRight <= 0) return;
+			const figRect = fig.getBoundingClientRect();
+			if (!figRect || !Number.isFinite(figRect.width) || figRect.width <= 1) return;
+			const parent = fig.parentNode;
+			const pr = parent.getBoundingClientRect();
+			if (!pr || !Number.isFinite(pr.right) || pr.width <= 1) return;
+			const pcs = window.getComputedStyle(parent);
+			const padRight = parseFloat(pcs.paddingRight) || 0;
+			const borderRight = parseFloat(pcs.borderRightWidth) || 0;
+			const containerRight = pr.right - padRight - borderRight;
+			if (!Number.isFinite(containerRight) || containerRight <= 1) return;
+			let marginRight = containerRight - (visibleRight - FLOAT_VIEWPORT_GAP);
+			if (!Number.isFinite(marginRight) || marginRight > 0) marginRight = 0;
+			const current = parseFloat(fig.style.getPropertyValue('--si-float-margin-right'));
+			if (!Number.isFinite(current) || Math.abs(current - marginRight) > 1) {
+				fig.style.setProperty('--si-float-margin-right', Math.round(marginRight) + 'px');
+			}
+		} catch (_) { /* non-fatal — the CSS fallback still keeps a 24px gap */ }
+	}
+
+	/* Last-resort guard: after the browser has applied the width and
+	   margin, measure the real right edge. If a scrollbar, zoom level or
+	   unexpected ancestor still pushes it past the visible viewport,
+	   shift the figure left by exactly the overflow. */
+	function _clampFloatRightEdge(fig) {
+		try {
+			if (!fig || !fig.classList || !fig.classList.contains('sideimage-float')) return;
+			const root = document.documentElement;
+			const visibleRight = (root && root.clientWidth) || window.innerWidth || 0;
+			if (!Number.isFinite(visibleRight) || visibleRight <= 0) return;
+			const rect = fig.getBoundingClientRect();
+			if (!rect || !Number.isFinite(rect.right)) return;
+			const maxRight = visibleRight - FLOAT_CLAMP_GAP;
+			if (rect.right <= maxRight + 0.5) return;
+			const current = parseFloat(fig.style.getPropertyValue('--si-float-margin-right')) || 0;
+			const fixed = current - (rect.right - maxRight);
+			if (!Number.isFinite(fixed)) return;
+			fig.style.setProperty('--si-float-margin-right', Math.round(fixed) + 'px');
+			logWarn('FLOAT_RIGHT_CLAMPED',
+				'\\sideimage[float] #' + (fig.getAttribute('data-si-id') || '?') +
+				' extended past the visible viewport by ' +
+				Math.round(rect.right - maxRight) + 'px; shifted left.');
+		} catch (_) { /* non-fatal */ }
+	}
+
 	/* Drop every float-only class/inline style from `fig`, and un-exempt
 	   the section that was hosting it. Idempotent. */
 	function _releaseFloatState(fig) {
@@ -1400,6 +1456,7 @@
 			if (!fig || !fig.classList) return;
 			fig.classList.remove('sideimage-float', 'sideimage-tall');
 			fig.style.setProperty('--si-float-width', '');
+			fig.style.setProperty('--si-float-margin-right', '');
 		} catch (_) { /* non-fatal */ }
 	}
 
@@ -1535,7 +1592,9 @@
 				fig.classList.add('sideimage-float');
 			}
 			_syncFloatActive();
+			_setFloatRightMargin(fig);
 			fig.style.setProperty('--si-float-width', targetW + 'px');
+			requestAnimationFrame(function () { _clampFloatRightEdge(fig); });
 			logInfo('\\sideimage[float] #' + entry.id + ' → FLOAT at ' +
 				targetW + 'px wide, ' + Math.round(targetH) + 'px tall (h/w=' +
 				aspect.toFixed(2) + '). The text below runs on indented ' +
@@ -1562,6 +1621,7 @@
 		fig.style.right       = '';
 		fig.style.width       = '';
 		fig.style.marginRight = '';
+		fig.style.setProperty('--si-float-margin-right', '');
 		fig.style.maxHeight   = '';
 		fig.style.overflow    = '';
 	}
@@ -1704,6 +1764,7 @@
 			fig.style.right       = '';
 			fig.style.width       = '';
 			fig.style.marginRight = '';
+			fig.style.setProperty('--si-float-margin-right', '');
 			fig.style.maxHeight   = '';
 			fig.style.overflow    = '';
 			fig.style.display     = '';
@@ -2157,6 +2218,16 @@
 				_reconcileSideimagesTo('margin', ir, null);
 			}
 		}
+
+		/* Keep floats scrollbar-safe on every resize/scroll pass. The width
+		   is deliberately stable; only the negative right margin and the
+		   hard clamp are refreshed. */
+		try {
+			document.querySelectorAll('.sideimage.sideimage-float').forEach(function (fig) {
+				_setFloatRightMargin(fig);
+				_clampFloatRightEdge(fig);
+			});
+		} catch (_) { /* non-fatal */ }
 	}
 
 	function scheduleLayout(immediate) {

@@ -8973,21 +8973,22 @@ html.dark #sidenotes-section .sidenote-fallback li::before {
 	pointer-events: none;
 	box-sizing: border-box;
 }
-@media (min-width: 1280px) {
+@media (min-width: 1100px) {
 	body.has-sidenotes #sideimages-rail {
 		display: block;
 	}
 }
 
-/* ANGLE 31 (sideimage overflow): in the 1280–1479px range the right
+/* ANGLE 31 (sideimage overflow): in the 1100–1539px range the right
    margin is narrower than 320px, so a left-anchored rail (50% + 420px)
-   would push its right edge past the viewport. Right-anchor it (20px
-   from the viewport edge) so the figures stay on screen — mirrors the
-   #sidenotes-rail rule. Must come after the base rule to win.     */
-@media (min-width: 1280px) and (max-width: 1479.98px) {
+   would push its right edge past the viewport. Right-anchor it (24px
+   from the viewport edge) so the figures stay clear of the scrollbar —
+   mirrors the #sidenotes-rail rule. Must come after the base rule to
+   win. At 1540px+ the left-anchored rail already leaves a ≥30px gap. */
+@media (min-width: 1100px) and (max-width: 1539.98px) {
 	body.has-sidenotes #sideimages-rail {
 		left:  auto !important;
-		right: 20px !important;
+		right: 24px !important;
 	}
 }
 
@@ -9092,7 +9093,7 @@ p:has(> .sideimage-marker:only-child) {
    back into an inline <figure> at its marker's position. sidenotes.js
    handles the DOM move on layout(); the resulting figure uses the
    page's existing <figure> styling.                                */
-@media (max-width: 1279.98px) {
+@media (max-width: 1099.98px) {
 	body.has-sidenotes #sideimages-rail { display: none !important; }
 }
 
@@ -9209,7 +9210,7 @@ p:has(> .sideimage-marker:only-child) {
 	width: var(--si-float-width, 420px) !important;
 	max-width: calc(100vw - 380px) !important;
 	margin: 0.5rem 0 1.5rem 1.5rem !important;
-	margin-right: calc(400px - 50vw + 8px) !important;
+	margin-right: var(--si-float-margin-right, calc(400px - 50vw + 24px)) !important;
 	left: auto !important;
 	right: auto !important;
 	top: auto !important;
