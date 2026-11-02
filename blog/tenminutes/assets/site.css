@@ -2414,6 +2414,7 @@ html[data-theme="dark"] .tl-panel .tl-era { color: var(--tm-green); }
 	line-height: 1.55;
 	color: var(--tm-muted);
 }
+.tl-panel .tl-copy { min-width: 0; }
 .tl-panel figure { margin: 0; align-self: start; }
 .tl-panel img { border-radius: 10px; }
 

@@ -1085,9 +1085,14 @@
 			var href = n.getAttribute("data-href");
 			var hrefLabel = n.getAttribute("data-href-label") || "Explore this section";
 			var link = href ? '<p class="tl-link"><a class="btn btn--green" href="' + href + '">' + escapeHtml(hrefLabel) + ' →</a></p>' : "";
-			panel.innerHTML = '<div class="tl-era">' + escapeHtml(n.getAttribute("data-meta") || "") + '</div>' +
+			var img = n.getAttribute("data-image");
+			var caption = n.getAttribute("data-image-caption");
+			var figure = img ? '<figure><img src="' + escapeHtml(img) + '" alt="' + escapeHtml(n.getAttribute("data-image-alt") || "") + '" loading="lazy">' +
+				(caption ? '<figcaption>' + escapeHtml(caption) + '</figcaption>' : '') + '</figure>' : "";
+			panel.classList.toggle("no-figure", !img);
+			panel.innerHTML = '<div class="tl-copy"><div class="tl-era">' + escapeHtml(n.getAttribute("data-meta") || "") + '</div>' +
 				'<h3>' + escapeHtml(n.getAttribute("data-title") || "") + '</h3>' +
-				'<p>' + escapeHtml(n.getAttribute("data-body") || "") + '</p>' + link;
+				'<p>' + escapeHtml(n.getAttribute("data-body") || "") + '</p>' + link + '</div>' + figure;
 		}
 		nodes.forEach(function (n, i) {
 			n.addEventListener("click", function () { select(i); n.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" }); });
