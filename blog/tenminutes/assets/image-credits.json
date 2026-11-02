@@ -58,11 +58,28 @@
 			"literatureKey": "img_walter_pitts"
 		},
 		{
-			"src": "assets/img/snarc-schematic.svg",
-			"title": "SNARC schematic",
-			"author": "Ten Minutes",
-			"license": "CC BY-SA 4.0",
-			"source": "assets/img/snarc-schematic.svg"
+			"src": "../marvin_minsky_portrait.jpg",
+			"title": "Marvin Minsky",
+			"author": "Steamtalks (Flickr)",
+			"license": "CC BY-SA 2.0",
+			"source": "https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg",
+			"literatureKey": "img_marvin_minsky"
+		},
+		{
+			"src": "../shannon.png",
+			"title": "Claude Shannon",
+			"author": "UM Bentley Historical Library",
+			"license": "Public domain",
+			"source": "https://commons.wikimedia.org/wiki/File:Claude_Shannon_c1930.png",
+			"literatureKey": "shannonphoto"
+		},
+		{
+			"src": "../theseus_maze_1952.jpg",
+			"title": "Shannon's Theseus maze",
+			"author": "Daderot (Wikimedia Commons)",
+			"license": "CC0",
+			"source": "https://commons.wikimedia.org/wiki/File:Theseus_Maze_by_Claude_Shannon,_1952_-_MIT_Museum_-_DSC03702.JPG",
+			"literatureKey": "theseus_maze_image"
 		},
 		{
 			"src": "../perceptron2.jpg",
