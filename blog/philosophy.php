@@ -160,7 +160,7 @@ Who wanted to prevent the violence: the councilmen, or the demonstrators?
 
 In the first sentence, *they* = the councilmen (they feared violence, so they refused the permit to stop it). In the second, *they* = the demonstrators (they advocated violence, so the councilmen refused the permit to stop *them*). A single word, *feared* / *advocated*, flips the referent. To a human reader this is effortless, a near-instantaneous act of world-modeling. To a system with no model of what city councils and protest movements typically do, it is a dead end: the two sentences are grammatically identical, and syntax alone underdetermines the answer.
 
-#### Why a “test”, not just a task
+#### The Winograd Schema as a Test
 
 \citeauthor{levesque2014bestbehaviour} (\citeyear{levesque2014bestbehaviour}) argued that the Turing Test is a poor instrument for three reasons: **deception** (the machine must fabricate a human identity, which is not itself a component of intelligence), **conversation** (small talk and parlor tricks can carry a machine to a pass without any real reasoning), and **evaluation** (human judges disagree and err). The Winograd challenge repairs each: it is a **multiple-choice** question, it needs **no human judge**, and it is **engineered to demand world-knowledge** rather than mimicry.
 
@@ -587,7 +587,7 @@ Imagine trying to learn a foreign language using only a dictionary written in th
 </div>
 
 <div class="md">
-### Why Embedding Spaces are not “Reality”
+### The Gap Between Embedding Spaces and Reality
 
 While vector embeddings are incredibly powerful for mapping linguistic patterns, they remain **ontologically isolated**. Here is why they aren't “in touch”:
 
