@@ -311,7 +311,7 @@ The people below built the formal and institutional foundations on which everyth
 ### George Boole and Gottlob Frege
 
 \marginfig{george_boole_portrait.jpg}{George Boole. \cite{img_george_boole}. Public domain.}
-\marginfig{gottlob_frege_portrait.jpg}{Gottlob Frege. \cite{img_gottlob_frege}. Public domain.}
+\marginfig{gottlob_frege_portrait.jpg}{Gottlob Frege, c. 1879. Photo: unknown photographer; public domain. [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Young_frege.jpg).}
 
 Boole's **Laws of Thought** (1854) turned Aristotle's syllogisms into algebra: propositions become variables, “and” and “or” become operations, and logical inference becomes calculation. Every digital circuit and every symbolic AI system is downstream of that move (\citetitle{boole1854}). Frege's **Begriffsschrift** (1879) went further, inventing predicate logic and the quantifier notation that made it possible to express statements about *all* or *some* objects — the logical grammar that Russell and Whitehead later built into *Principia Mathematica* (\citetitle{frege1879}).
 
@@ -321,7 +321,7 @@ Church's lambda calculus gave computation a second formal language, and his 1936
 
 ### John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon
 
-\marginfig{john_mccarthy_portrait.jpg}{John McCarthy. \cite{img_john_mccarthy}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).}
+\marginfig{john_mccarthy_portrait.jpg}{John McCarthy at Stanford, 2006. Photo: [Flickr user null0](https://www.flickr.com/photos/null0/), [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/). [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:John_McCarthy_Stanford.jpg).}
 
 The 1955 **Dartmouth proposal** named the field and set its first research agenda: language, neurons, abstraction, and creativity, all to be studied by building machines that could exhibit them (\cite[McCarthy et al., 1955]{mccarthy1955dartmouth}). McCarthy went on to invent LISP and to argue that common-sense knowledge could be represented as explicit logical statements — the symbolic programme that dominated AI's first decades. Minsky co-founded MIT's AI laboratory and later wrote *The Society of Mind*, a book-length argument that intelligence is a society of simpler agents rather than a single monolithic algorithm.
 
@@ -419,7 +419,7 @@ Burns' **weak-to-strong generalization** fine-tuned strong models on labels from
 
 \marginfig{stuart_russell_portrait.jpg}{Stuart Russell. \cite{img_stuart_russell}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).}
 \marginfig{nick_bostrom_portrait.jpg}{Nick Bostrom. \cite{img_nick_bostrom}. [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).}
-\marginfig{eliezer_yudkowsky_portrait.jpg}{Eliezer Yudkowsky. \cite{img_eliezer_yudkowsky}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).}
+\marginfig{eliezer_yudkowsky_portrait.jpg}{Eliezer Yudkowsky at Stanford, 2006. Photo: [Flickr user null0](https://www.flickr.com/photos/null0/), [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/). [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Eliezer_Yudkowsky,_Stanford_2006_(square_crop).jpg).}
 \marginfig{toby_ord_portrait.jpg}{Toby Ord. \cite{img_toby_ord}. [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).}
 
 Russell's **Human Compatible** argues that the standard objective-based model of AI is the problem: a machine optimizing a fixed objective will resist correction, so the design goal should be uncertainty about human preferences and a willingness to be switched off (\citetitle{russell2019human}). Bostrom's **Superintelligence** framed the control problem and the orthogonality thesis — intelligence and final goals are independent — for a broad audience (\citetitle{bostrom2014superintelligence}). Yudkowsky's earlier essay on AI as a global risk factor made the case that a sufficiently capable optimizer need not be malevolent to be dangerous (\cite[Yudkowsky, 2008]{yudkowsky2008ai}). Ord's **The Precipice** places AI risk alongside pandemics and nuclear war in a broader ethics of existential risk (\citetitle{ord2020precipice}).
