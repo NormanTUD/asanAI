@@ -197,6 +197,10 @@ jobs:
         run: |
           uv run blog/tests/php_render_validator.py blog/
 
+      - name: Run Sideimage Layout Regression Test
+        run: |
+          uv run blog/tests/sideimage_layout_test.py
+
       - name: Run Semantic Search Browser Test
         run: |
           uv run blog/tests/semantic_browser_test.py
