@@ -6,6 +6,7 @@
 	<meta name="description" content="A ten-minute interactive guide to attention: queries, keys, values, softmax, multi-head attention, and what attention maps do not tell you.">
 	<meta name="theme-color" content="#f7f3e8">
 	<title>The Semantic Tug-of-War | Ten Minutes</title>
+	<link rel="stylesheet" href="../Temml-Local.min.css">
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="attentionlab" data-page="lesson">
@@ -85,13 +86,9 @@
 								others.
 							</p>
 						</div>
-						<div class="formula">
-							<code>score<sub>i,j</sub> = (q<sub>i</sub> · k<sub>j</sub><sup>T</sup>) / √d<sub>k</sub><br>
-							α<sub>i,j</sub> = softmax<sub>j</sub>(score<sub>i,j</sub>)<br>
-							z<sub>i</sub> = Σ<sub>j</sub> α<sub>i,j</sub> v<sub>j</sub></code>
-						</div>
+						<div class="formula" data-tex="\begin{aligned} \operatorname{score}_{i,j} &amp;= \frac{q_i \cdot k_j^{\mathsf{T}}}{\sqrt{d_k}} \\ \alpha_{i,j} &amp;= \operatorname{softmax}_j(\operatorname{score}_{i,j}) \\ z_i &amp;= \sum_j \alpha_{i,j} v_j \end{aligned}"></div>
 						<div class="fieldnotes">
-							<h4>Why divide by √d<sub>k</sub>?</h4>
+							<h4>Why divide by <span data-tex="\sqrt{d_k}" data-tex-display="false"></span>?</h4>
 							<p>As the dimension grows, dot products grow in magnitude and push softmax into a saturated regime with tiny gradients. The scaling keeps the scores in a healthy range. It changes the sharpness, not the meaning of the comparison.</p>
 						</div>
 					</section>
@@ -316,6 +313,7 @@
 	</main>
 
 
+	<script src="../temml.min.js"></script>
 	<script src="assets/site.js"></script>
 	<script src="assets/demos.js"></script>
 	<script>

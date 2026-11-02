@@ -42,6 +42,21 @@
 	TM.lerp = function (a, b, t) { return a + (b - a) * t; };
 	TM.ease = function (t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; };
 
+	TM.typesetMath = function (root) {
+		if (!window.temml) return;
+		(root || document).querySelectorAll("[data-tex]").forEach(function (el) {
+			if (el.getAttribute("data-tex-rendered") === "1") return;
+			var tex = el.getAttribute("data-tex");
+			var displayMode = el.getAttribute("data-tex-display") !== "false";
+			try {
+				el.innerHTML = temml.renderToString(tex, { displayMode: displayMode });
+				el.setAttribute("data-tex-rendered", "1");
+			} catch (e) {
+				el.textContent = tex;
+			}
+		});
+	};
+
 	TM.colors = function () {
 		var css = getComputedStyle(document.documentElement);
 		var pick = function (name, fallback) {
@@ -227,6 +242,7 @@
 		initReveal();
 		initRail();
 		initCompletion();
+		TM.typesetMath();
 
 		var slug = document.body.getAttribute("data-lesson");
 		if (slug) TM.markSeen(slug);

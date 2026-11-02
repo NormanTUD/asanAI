@@ -118,7 +118,7 @@
 								<p class="meadow-caption nt-temp-note" id="nt-temp-note">
 									<b>Why "temperature"?</b> In a gas, temperature sets how widely molecular
 									speeds are spread (Maxwell-Boltzmann). Here it plays the same role for
-									logits: <span class="nt-formula">pᵢ ∝ exp(zᵢ / T)</span>. High T flattens the
+									logits: <span class="nt-formula" data-tex="p_i \propto \exp(z_i / T)" data-tex-display="false"></span>. High T flattens the
 									distribution; low T sharpens it; greedy is the limit T → 0. The name is a
 									metaphor: there is no gas inside the model.
 								</p>
@@ -323,26 +323,27 @@
 											<div class="activation-plots" id="activation-plots"></div>
 										</div>
 										<p class="step-note curve-intro">The demo below uses a smooth bend so you can see the shape. ReLU would crease the same space flat on one side of <span data-tex="z = 0" data-tex-display="false"></span>. The cut still happens: the layer changes the space in which the cut is made.</p>
-										<div class="demo demo--paper" data-demo="bend" style="margin-top:14px">
+										<div class="demo demo--paper ism-panel" style="margin-top:14px">
 											<div class="demo-head">
 												<div>
 													<p class="demo-title">A layer bends the space <span>· demo 07</span></p>
-													<p class="demo-sub">Step through seven stages: an inseparable ring becomes a bowl, and then one flat cut separates the classes.</p>
+													<p class="demo-sub">Seven steps from an inseparable ring to a single threshold on a one-dimensional score.</p>
 												</div>
 												<span class="demo-badge">drag / step</span>
 											</div>
 											<div class="demo-body">
-												<div class="bend-copy">
-													<div class="bend-title" data-bend-title>Two classes, no straight line</div>
-													<p class="bend-body" data-bend-body>The coral core sits inside the blue ring. No single straight cut in this plane separates them.</p>
+												<div id="ism-copy" class="ism-copy" aria-live="polite">
+													<div id="ism-title" class="ism-title"></div>
+													<div id="ism-body" class="ism-body"></div>
 												</div>
-												<canvas class="demo-canvas demo-canvas--lg" data-bend-canvas aria-label="A point cloud being lifted into a bowl until a flat plane separates the two classes"></canvas>
-												<div class="bend-controls">
-													<button class="btn-demo" type="button" data-bend-prev>← Prev</button>
-													<div class="bend-dots" data-bend-dots aria-hidden="true"></div>
-													<button class="btn-demo" type="button" data-bend-next>Next →</button>
-													<button class="btn-demo" type="button" data-bend-reset>Reset</button>
-													<span class="bend-count" data-bend-count>1 / 7</span>
+												<div id="ism-wrap" class="ism-wrap">
+													<canvas id="ism-canvas" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
+												</div>
+												<div class="ism-controls">
+													<button type="button" id="ism-prev" class="ism-btn" aria-label="Previous step">←</button>
+													<div id="ism-dots" class="ism-dots" aria-hidden="true"></div>
+													<button type="button" id="ism-next" class="ism-btn" aria-label="Next step">→</button>
+													<span id="ism-counter" class="ism-counter">1 / 7</span>
 												</div>
 											</div>
 											<div class="demo-insight"><b>Takeaway</b><span>The layer changes the coordinate system. A cut that was impossible becomes a threshold: that is what depth buys.</span></div>
@@ -497,22 +498,10 @@
 	<script src="../temml.min.js"></script>
 	<script src="assets/site.js"></script>
 	<script src="assets/demos.js"></script>
+	<script src="assets/space-morph.js"></script>
 	<script>
 	(function () {
 		"use strict";
-
-		/* ── typeset the layer equations ─────────────────────── */
-		document.querySelectorAll("[data-tex]").forEach(function (el) {
-			var tex = el.getAttribute("data-tex");
-			var displayMode = el.getAttribute("data-tex-display") !== "false";
-			if (window.temml) {
-				try {
-					el.innerHTML = temml.renderToString(tex, { displayMode: displayMode });
-					return;
-				} catch (e) { /* fall through to the TeX source */ }
-			}
-			el.textContent = tex;
-		});
 
 		/* ── demo 1: the autoregressive loop ─────────────────── */
 		var MAX_STEPS = 6;

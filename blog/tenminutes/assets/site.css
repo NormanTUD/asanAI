@@ -1475,6 +1475,93 @@ input[type="range"]::-moz-range-thumb {
 }
 .bend-controls button:disabled { opacity: 0.4; cursor: default; }
 
+.ism-copy {
+	max-width: 640px;
+	min-height: 5.6em;
+	margin: 0 auto 14px;
+	text-align: center;
+}
+.ism-title {
+	font-family: var(--tm-display);
+	font-size: 1.05rem;
+	font-weight: 600;
+	line-height: 1.25;
+	color: var(--tm-ink);
+	margin-bottom: 4px;
+}
+.ism-body {
+	font-size: 0.84rem;
+	line-height: 1.55;
+	color: var(--tm-muted);
+}
+.ism-wrap {
+	position: relative;
+	height: 480px;
+	overflow: hidden;
+	border: 1px solid var(--tm-line);
+	border-radius: 10px;
+	background: var(--tm-paper-2);
+}
+#ism-canvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+	cursor: grab;
+	touch-action: none;
+}
+#ism-canvas.is-dragging { cursor: grabbing; }
+.ism-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 12px;
+}
+.ism-btn {
+	padding: 6px 12px;
+	border: 1px solid var(--tm-line-strong);
+	border-radius: 8px;
+	background: var(--tm-paper-2);
+	color: var(--tm-ink);
+	font-family: var(--tm-ui);
+	font-size: 0.78rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+.ism-btn:hover { border-color: var(--tm-green); }
+.ism-dots {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 0 4px;
+}
+.ism-dot {
+	width: 9px;
+	height: 9px;
+	padding: 0;
+	border: 1px solid var(--tm-line-strong);
+	border-radius: 50%;
+	background: transparent;
+	transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.ism-dot.is-active {
+	background: var(--tm-green);
+	border-color: var(--tm-green);
+	transform: scale(1.3);
+}
+.ism-counter {
+	min-width: 3.2em;
+	color: var(--tm-muted);
+	font-family: var(--tm-mono);
+	font-size: 0.7rem;
+	text-align: center;
+}
+@media (max-width: 640px) {
+	.ism-wrap { height: 360px; }
+	.ism-copy { min-height: 6.8em; }
+}
+
 .dist-bars { display: flex; flex-direction: column; gap: 8px; margin: 4px 0 2px; }
 .dist-row { display: grid; grid-template-columns: 92px minmax(0, 1fr) 52px; align-items: center; gap: 10px; }
 .dist-label { font-family: var(--tm-mono); font-size: 0.72rem; color: var(--tm-ink); }
@@ -3232,6 +3319,7 @@ html[data-theme="dark"] .btn-demo.is-on { background: var(--tm-green); border-co
 	overflow-x: auto;
 }
 .formula code { background: transparent; padding: 0; color: inherit; }
+.formula math, .fc-formula math { font-size: 1.05rem; }
 
 .agent-msg--warning {
 	border-left: 2px solid var(--tm-coral);

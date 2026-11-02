@@ -6,6 +6,7 @@
 	<meta name="description" content="A very brief history of AI: a ten-minute timeline from tally bones and logic to cybernetics, the perceptron, and the transformer.">
 	<meta name="theme-color" content="#f7f3e8">
 	<title>A Very Brief History of AI | Ten Minutes</title>
+	<link rel="stylesheet" href="../Temml-Local.min.css">
 	<link rel="stylesheet" href="assets/site.css?v=20261102">
 </head>
 <body data-lesson="history" data-page="lesson">
@@ -386,7 +387,7 @@
 								absolutely prevents firing; and the structure of the net does not change with
 								time. The neuron fires when the excitatory input reaches its threshold and no
 								inhibition is present. The model counts synapses. The familiar
-								<code>y = σ(Σ wᵢxᵢ − θ)</code> belongs to the later perceptron; McCulloch and
+								<span data-tex="y = \sigma\left(\sum_i w_i x_i - \theta\right)" data-tex-display="false"></span> belongs to the later perceptron; McCulloch and
 								Pitts had no learned weights.
 							</p>
 							<p>
@@ -439,7 +440,7 @@
 							<p>
 								The press heard “a machine that will walk, talk, see, write, reproduce itself
 								and be conscious of its existence.” The science heard a learning rule,
-								<em>Δw = η · (target − output) · input</em>, that turns error into a weight
+								<span data-tex="\Delta w = \eta \cdot (\text{target} - \text{output}) \cdot \text{input}" data-tex-display="false"></span>, that turns error into a weight
 								change. Minsky and Papert’s <em>Perceptrons</em> (1969) then showed the limits
 								of a single-layer network (famously, XOR) and the first winter began. The
 								critique was about one layer; a multilayer network can represent XOR, and
@@ -899,6 +900,7 @@
 	</main>
 
 
+	<script src="../temml.min.js"></script>
 	<script src="assets/site.js"></script>
 	<script>
 	(function () {

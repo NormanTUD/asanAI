@@ -151,8 +151,8 @@
 								At the input, “bank” is already a vector. Then each block edits it. The
 								residual stream: the running vector from <a href="intuition.html#inside">the six-step demo</a>: carries the
 								old representation forward and adds a new one on
-								top: <code>z = x + Attention(Norm(x))</code>, then
-								<code>y = z + FFN(Norm(z))</code>. Nothing is overwritten; everything
+								top: <span data-tex="z = x + \operatorname{Attention}(\operatorname{Norm}(x))" data-tex-display="false"></span>, then
+								<span data-tex="y = z + \operatorname{FFN}(\operatorname{Norm}(z))" data-tex-display="false"></span>. Nothing is overwritten; everything
 								accumulates.
 							</p>
 							<p>
@@ -228,7 +228,7 @@
 							<p>
 								The dot product of a query and a key is a similarity score. Softmax turns the
 								scores into weights that sum to one, and the output is a weighted average of
-								the values. The scaling factor <code>1/√d_k</code> keeps those scores from
+								the values. The scaling factor <span data-tex="1/\sqrt{d_k}" data-tex-display="false"></span> keeps those scores from
 								growing too large as the head dimension grows; without it, softmax saturates
 								and the gradients shrink.
 							</p>
@@ -279,17 +279,17 @@
 						<div class="formula-grid">
 							<div class="formula-card">
 								<div class="fc-kicker">Attention · what it does</div>
-								<div class="fc-formula">Attention(Q, K, V) = softmax(QK<sup>T</sup> / √d<sub>k</sub>) V</div>
-								<p><b>Q</b> is what a token is looking for, <b>K</b> is what each token offers, and <b>V</b> is the content that travels. The dot product scores every pair, softmax turns the row into weights, and the output is a weighted mix of values. The <code>√d<sub>k</sub></code> keeps the scores from exploding as heads get wider.</p>
+								<div class="fc-formula" data-tex="\operatorname{Attention}(Q,K,V) = \operatorname{softmax}\left(\frac{QK^{\mathsf{T}}}{\sqrt{d_k}}\right)V" data-tex-display="false"></div>
+								<p><b>Q</b> is what a token is looking for, <b>K</b> is what each token offers, and <b>V</b> is the content that travels. The dot product scores every pair, softmax turns the row into weights, and the output is a weighted mix of values. The <span data-tex="\sqrt{d_k}" data-tex-display="false"></span> keeps the scores from exploding as heads get wider.</p>
 							</div>
 							<div class="formula-card">
 								<div class="fc-kicker">Residual · why depth works</div>
-								<div class="fc-formula">z = x + Attention(Norm(x))<br>y = z + FeedForward(Norm(z))</div>
+								<div class="fc-formula" data-tex="\begin{aligned} z &amp;= x + \operatorname{Attention}(\operatorname{Norm}(x)) \\ y &amp;= z + \operatorname{FeedForward}(\operatorname{Norm}(z)) \end{aligned}"></div>
 								<p>The plus sign is the residual stream. Each sublayer computes an <b>update</b> and adds it to what is already there. The identity path carries gradients backwards and gives every layer a shared workspace. Pre-norm moves the normalization into the branch so the main stream stays clean.</p>
 							</div>
 							<div class="formula-card">
 								<div class="fc-kicker">Feed-forward · what it computes</div>
-								<div class="fc-formula">FFN(x) = W<sub>2</sub> · act(W<sub>1</sub>x + b<sub>1</sub>) + b<sub>2</sub></div>
+								<div class="fc-formula" data-tex="\operatorname{FFN}(x) = W_2 \cdot \operatorname{act}(W_1 x + b_1) + b_2" data-tex-display="false"></div>
 								<p>The first matrix expands the vector, the nonlinearity lets the model combine features, and the second matrix contracts it back. This is per-token computation: no information moves between positions here. Much of the model’s stored association memory lives in these weights.</p>
 							</div>
 						</div>
@@ -336,13 +336,11 @@
 							<p class="aha-big">There is no stop button.</p>
 							<p class="aha-sub">EOS is just another token. The model stops when the next-token distribution has learned that a natural boundary is the most likely next move.</p>
 						</div>
-						<div class="formula">
-							<code>P(token) = softmax(logits / T)</code>
-						</div>
+						<div class="formula" data-tex="\operatorname{P}(\text{token}) = \operatorname{softmax}\left(\frac{\text{logits}}{T}\right)"></div>
 						<div class="prose">
 							<p>
-								Temperature <code>T</code> changes the shape of the distribution without
-								changing the model. At <code>T = 1</code> the softmax uses the logits as
+								Temperature <span data-tex="T" data-tex-display="false"></span> changes the shape of the distribution without
+								changing the model. At <span data-tex="T = 1" data-tex-display="false"></span> the softmax uses the logits as
 								they are. Lower values sharpen the distribution toward the top token; higher
 								values flatten it and give rare tokens more room.
 								<strong>Temperature is a dial on courage, not on knowledge.</strong> The
