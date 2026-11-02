@@ -47,29 +47,27 @@
 							<div class="keypoint"><b>Reuse</b><span>Depth saves the network from relearning the same feature.</span></div>
 						</div>
 
-						<div class="demo demo--paper" data-demo="bend" style="margin-top:18px">
+						<div class="demo demo--paper" data-demo="folds" style="margin-top:18px">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">A layer bends the space <span>· demo</span></p>
-									<p class="demo-sub">Step through seven stages: an inseparable ring becomes a bowl, and then one flat cut separates the classes.</p>
+									<p class="demo-title">Folds add up <span>· demo</span></p>
+									<p class="demo-sub">Each ReLU layer can fold the input line again. Depth multiplies the number of linear pieces the network can represent.</p>
 								</div>
-								<span class="demo-badge">drag / step</span>
+								<span class="demo-badge">illustrative</span>
 							</div>
 							<div class="demo-body">
-								<div class="bend-copy">
-									<div class="bend-title" data-bend-title>Two classes, no straight line</div>
-									<p class="bend-body" data-bend-body>The coral core sits inside the blue ring. No single straight cut in this plane separates them.</p>
+								<canvas class="demo-canvas demo-canvas--md" data-folds-canvas aria-label="A one-dimensional line folded into more and more linear pieces as depth increases"></canvas>
+								<div class="demo-controls">
+									<label>Depth <input type="range" data-folds-depth min="1" max="7" step="1" value="3"><output data-folds-depth-out>3</output></label>
 								</div>
-								<canvas class="demo-canvas demo-canvas--lg" data-bend-canvas aria-label="A point cloud being lifted into a bowl until a flat plane separates the two classes"></canvas>
-								<div class="bend-controls">
-									<button class="btn-demo" type="button" data-bend-prev>← Prev</button>
-									<div class="bend-dots" data-bend-dots aria-hidden="true"></div>
-									<button class="btn-demo" type="button" data-bend-next>Next →</button>
-									<button class="btn-demo" type="button" data-bend-reset>Reset</button>
-									<span class="bend-count" data-bend-count>1 / 7</span>
+								<div class="demo-readout">
+									<div><b>Depth</b><span data-folds-depth-readout>3</span></div>
+									<div><b>Linear pieces</b><span data-folds-pieces>8</span></div>
+									<div><b>What it buys</b><span>more bends</span></div>
 								</div>
+								<p class="demo-hint">Illustration, not a trained network: each ReLU layer can double the number of linear regions. The point is the composition, not the exact numbers.</p>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>The layer changes the coordinate system. A cut that was impossible becomes a threshold: that is what depth buys.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>Depth is not just more parameters. It is more compositions, and each composition can add folds.</span></div>
 						</div>
 					</section>
 

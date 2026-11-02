@@ -5802,3 +5802,45 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 @keyframes promptIn { from { opacity: 0; transform: translateY(4px) scale(0.99); } to { opacity: 1; transform: none; } }
 .cc-card, .vf-card { animation: promptIn 0.28s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 @media (prefers-reduced-motion: reduce) { [data-prompt-cands] .retrieval-item, .cc-card, .vf-card { animation: none; } }
+
+/* ── consistent interaction layer ─────────────────────────── */
+.btn-demo, .chip, .ism-btn, .cr-choice, .wg-case, .tl-node, .tl-scroll-btn,
+.pref-card, .rel-btn, .video-play, .day-card, .shelf-card {
+	transition:
+		background-color 0.18s ease,
+		border-color 0.18s ease,
+		color 0.18s ease,
+		box-shadow 0.18s ease,
+		transform 0.18s ease,
+		opacity 0.18s ease;
+}
+.btn-demo:active, .chip:active, .ism-btn:active, .cr-choice:active,
+.wg-case:active, .tl-scroll-btn:active, .pref-card:active, .rel-btn:active,
+.video-play:active {
+	transform: translateY(1px) scale(0.99);
+}
+.btn-demo:focus-visible, .chip:focus-visible, .ism-btn:focus-visible,
+.cr-choice:focus-visible, .wg-case:focus-visible, .tl-node:focus-visible,
+.tl-scroll-btn:focus-visible, .pref-card:focus-visible, .rel-btn:focus-visible,
+.video-play:focus-visible, .day-card:focus-visible, .shelf-card:focus-visible {
+	outline: 2px solid var(--tm-green);
+	outline-offset: 2px;
+}
+.wg-case:hover { border-color: var(--tm-green); }
+.tl-scroll-btn:hover { color: var(--tm-ink); border-color: var(--tm-line-strong); }
+.demo[data-reveal] { transition-duration: 0.32s; }
+
+/* ── short, consistent panel motion ───────────────────────── */
+.tl-panel .tl-copy, .tl-panel figure {
+	animation: tlPanelIn 0.26s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes tlPanelIn {
+	from { opacity: 0; transform: translateY(5px); }
+	to { opacity: 1; transform: none; }
+}
+.ism-scene { transition: opacity 0.22s ease; }
+.att-budget span { transition: width 0.25s ease; }
+@media (prefers-reduced-motion: reduce) {
+	.tl-panel .tl-copy, .tl-panel figure { animation: none; }
+	.ism-scene, .att-budget span { transition: none; }
+}

@@ -176,6 +176,9 @@
 	/* ── reveal ────────────────────────────────────────────── */
 
 	function initReveal() {
+		document.querySelectorAll(".demo").forEach(function (n) {
+			if (!n.hasAttribute("data-reveal")) n.setAttribute("data-reveal", "");
+		});
 		var nodes = document.querySelectorAll("[data-reveal]");
 		if (!nodes.length) return;
 		if (TM.prefersReduced() || !("IntersectionObserver" in window)) {
