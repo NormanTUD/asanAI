@@ -50,8 +50,25 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="machine">
+						<div class="section-kicker"><span class="sk-num">03</span> The machine learns to speak</div>
+						<h2 class="section-title">From bellows to text-to-speech.</h2>
+						<div class="prose">
+							<p>Wolfgang von Kempelen's speaking machine (1791) was the first serious attempt to build human speech from parts: a bellows for lungs, reeds for the larynx, and a leather mouth shaped by the operator's hand. It could say words and short phrases, and it made the point that speech is a physical process that can be engineered.</p>
+							<p>Kempelen's machine was mechanical, not digital, but it belongs to the same lineage as modern text-to-speech. The problem he posed, how to turn a stream of symbols into audible language, is still the problem a speech synthesizer solves.</p>
+						</div>
+						<figure>
+							<img src="assets/img/kempelen-speaking-machine.jpg" alt="A replica of Wolfgang von Kempelen's speaking machine" loading="lazy">
+							<figcaption>Replica of Kempelen's speaking machine. Image: Fabian Brackhane, <a href="https://commons.wikimedia.org/wiki/File:KEMPELEN_Speaking_Machine_Replica_2017.png" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0.</figcaption>
+						</figure>
+						<div class="video-embed">
+							<button type="button" class="video-play" data-youtube="vM8I_J-fdrE">Play a working replica of Kempelen's speaking machine</button>
+							<p class="video-note">Video: Alexander Steinbeißer, <a href="https://www.youtube.com/watch?v=vM8I_J-fdrE" rel="noopener">YouTube</a>.</p>
+						</div>
+					</section>
+
 					<section class="section-block" id="extra">
-						<div class="section-kicker"><span class="sk-num">03</span> What the model inherits</div>
+						<div class="section-kicker"><span class="sk-num">04</span> What the model inherits</div>
 						<h2 class="section-title">From text to vectors.</h2>
 						<div class="prose">
 							<p>Before a model can learn anything, text has to become a sequence of tokens. A tokenizer cuts the string into pieces from a fixed vocabulary: whole words, word fragments, punctuation, and bytes. The token ID is the only thing the model sees; the original characters are gone. That is why a model can be bad at spelling: it may never see the letters that make up a word, only the pieces the tokenizer chose.</p>
@@ -73,12 +90,12 @@
 								<button class="tl-scroll-btn" type="button" data-timeline-prev aria-label="Scroll left">‹</button>
 								<div class="timeline-track" data-timeline-track role="group" aria-label="Steps in the history of language technology">
 									<button class="tl-node is-active" type="button" data-meta="Before speech · Listening" data-title="Listening" data-body="Hearing is far older than speech. Hair cells, the cochlea, and the middle ear evolved long before humans, and a fetus hears the melody of its mother's voice before birth. The ear is the channel through which the structure of language enters the brain."><span class="tl-dot"></span><span class="tl-date">Before speech</span><span class="tl-name">Listening</span></button>
-									<button class="tl-node" type="button" data-meta="c. 135,000 BCE · Speech" data-title="Speech" data-body="Genomic evidence suggests the capacity for language was present at least 135,000 years ago. A descended larynx and a longer pharynx gave the tongue room to shape a wide range of sounds; spoken language made culture cumulative." data-image="../blombosochre.jpg" data-image-alt="Engraved ochre from Blombos Cave with a cross-hatched pattern" data-image-caption="Blombos Cave ochre, c. 73,000 BCE: symbolic marking, not speech itself. Image: Chris Henshilwood, CC BY 2.5."><span class="tl-dot"></span><span class="tl-date">c. 135,000 BCE</span><span class="tl-name">Speech</span></button>
-									<button class="tl-node" type="button" data-meta="c. 3200 BCE · Writing" data-title="Writing" data-body="Clay tokens appear around 8000 BCE; by c. 3200 BCE cuneiform tablets in Mesopotamia carried full writing systems. Writing stored language outside the speaker: it could travel, survive, and be inspected long after the conversation ended." data-image="../cuneiform.jpg" data-image-alt="An early cuneiform clay tablet" data-image-caption="Early cuneiform tablet, c. 2470 BCE. Image: Osama Shukir Muhammed Amin, CC BY-SA 4.0, via Wikimedia Commons."><span class="tl-dot"></span><span class="tl-date">c. 3200 BCE</span><span class="tl-name">Writing</span></button>
-									<button class="tl-node" type="button" data-meta="c. 1850–1050 BCE · Alphabet" data-title="Alphabet" data-body="Proto-Sinaitic writers repurposed Egyptian signs acrophonically; by c. 1050 BCE the Phoenician abjad had 22 letters. The Greek addition of vowels around 800 BCE made the first true alphabet." data-image="../history_of_a.png" data-image-alt="The history of the letter A, from an ox pictogram to the modern letter" data-image-caption="History of the letter A, from ox pictogram to alphabet. Image: Wikipedia contributors, CC BY-SA 4.0."><span class="tl-dot"></span><span class="tl-date">c. 1850–1050 BCE</span><span class="tl-name">Alphabet</span></button>
-									<button class="tl-node" type="button" data-meta="Before Pāṇini · Grammar" data-title="Grammar" data-body="Vedic phonetic and grammatical analysis, the Prātiśākhyas, and Yāska's Nirukta precede Pāṇini. His Aṣṭādhyāyī, around the 4th century BCE, is the most complete surviving formal grammar: a finite rule system that generates an unbounded set of sentences." data-image="../chomsky_hierarchy.svg" data-image-alt="Venn diagram of the Chomsky hierarchy of formal grammars" data-image-caption="The Chomsky hierarchy (1956) is a modern descendant of the rule-based view. Diagram: J. Finkelstein, CC BY-SA 3.0, via Wikimedia Commons."><span class="tl-dot"></span><span class="tl-date">Before Pāṇini</span><span class="tl-name">Grammar</span></button>
+									<button class="tl-node" type="button" data-meta="c. 135,000 BCE · Speech" data-title="Speech" data-body="Genomic evidence suggests the capacity for language was present at least 135,000 years ago. A descended larynx and a longer pharynx gave the tongue room to shape a wide range of sounds; spoken language made culture cumulative." data-image="../blombosochre.jpg" data-image-link="https://www.donsmaps.com/blombos.html" data-image-alt="Engraved ochre from Blombos Cave with a cross-hatched pattern" data-image-caption="Blombos Cave ochre, c. 73,000 BCE: symbolic marking, not speech itself. Image: Chris Henshilwood, CC BY 2.5."><span class="tl-dot"></span><span class="tl-date">c. 135,000 BCE</span><span class="tl-name">Speech</span></button>
+									<button class="tl-node" type="button" data-meta="c. 3200 BCE · Writing" data-title="Writing" data-body="Clay tokens appear around 8000 BCE; by c. 3200 BCE cuneiform tablets in Mesopotamia carried full writing systems. Writing stored language outside the speaker: it could travel, survive, and be inspected long after the conversation ended." data-image="../cuneiform.jpg" data-image-link="https://commons.wikimedia.org/wiki/File:Clay_tablet_mentioning_the_name_of_Eannatum,_prince_of_Lagash._From_Iraq,_c._2470_BCE._Iraq_Museum.jpg" data-image-alt="An early cuneiform clay tablet" data-image-caption="Early cuneiform tablet, c. 2470 BCE. Image: Osama Shukir Muhammed Amin, CC BY-SA 4.0, via Wikimedia Commons."><span class="tl-dot"></span><span class="tl-date">c. 3200 BCE</span><span class="tl-name">Writing</span></button>
+									<button class="tl-node" type="button" data-meta="c. 1850–1050 BCE · Alphabet" data-title="Alphabet" data-body="Proto-Sinaitic writers repurposed Egyptian signs acrophonically; by c. 1050 BCE the Phoenician abjad had 22 letters. The Greek addition of vowels around 800 BCE made the first true alphabet." data-image="../history_of_a.png" data-image-link="https://en.wikipedia.org/wiki/A" data-image-alt="The history of the letter A, from an ox pictogram to the modern letter" data-image-caption="History of the letter A, from ox pictogram to alphabet. Image: Wikipedia contributors, CC BY-SA 4.0."><span class="tl-dot"></span><span class="tl-date">c. 1850–1050 BCE</span><span class="tl-name">Alphabet</span></button>
+									<button class="tl-node" type="button" data-meta="Before Pāṇini · Grammar" data-title="Grammar" data-body="Vedic phonetic and grammatical analysis, the Prātiśākhyas, and Yāska's Nirukta precede Pāṇini. His Aṣṭādhyāyī, around the 4th century BCE, is the most complete surviving formal grammar: a finite rule system that generates an unbounded set of sentences." data-image="../chomsky_hierarchy.svg" data-image-link="https://commons.wikimedia.org/wiki/File:Chomsky-hierarchy.svg" data-image-alt="Venn diagram of the Chomsky hierarchy of formal grammars" data-image-caption="The Chomsky hierarchy (1956) is a modern descendant of the rule-based view. Diagram: J. Finkelstein, CC BY-SA 3.0, via Wikimedia Commons."><span class="tl-dot"></span><span class="tl-date">Before Pāṇini</span><span class="tl-name">Grammar</span></button>
 									<button class="tl-node" type="button" data-meta="c. 1440 · Printing" data-title="Printing" data-body="Movable type in Europe around 1440, followed by dictionaries and standard spelling, made text abundant and comparable. A model needs scale before it can learn patterns."><span class="tl-dot"></span><span class="tl-date">c. 1440</span><span class="tl-name">Printing</span></button>
-									<button class="tl-node" type="button" data-meta="1791 · Talking machine" data-title="Talking machine" data-body="Wolfgang von Kempelen built a speaking machine from bellows, reeds, and a hand-shaped mouth. It could say words and short phrases: the first mechanical speech synthesizer, and an ancestor of text-to-speech." data-image="assets/img/kempelen-speaking-machine.jpg" data-image-alt="A replica of Wolfgang von Kempelen's speaking machine" data-image-caption="Replica of Kempelen's speaking machine. Image: Fabian Brackhane, CC BY-SA 4.0, via Wikimedia Commons."><span class="tl-dot"></span><span class="tl-date">1791</span><span class="tl-name">Talking machine</span></button>
+									<button class="tl-node" type="button" data-meta="1791 · Talking machine" data-title="Talking machine" data-body="Wolfgang von Kempelen built a speaking machine from bellows, reeds, and a hand-shaped mouth. It could say words and short phrases: the first mechanical speech synthesizer, and an ancestor of text-to-speech." data-image="assets/img/kempelen-speaking-machine.jpg" data-image-link="https://commons.wikimedia.org/wiki/File:KEMPELEN_Speaking_Machine_Replica_2017.png" data-image-alt="A replica of Wolfgang von Kempelen's speaking machine" data-image-caption="Replica of Kempelen's speaking machine. Image: Fabian Brackhane, CC BY-SA 4.0, via Wikimedia Commons."><span class="tl-dot"></span><span class="tl-date">1791</span><span class="tl-name">Talking machine</span></button>
 									<button class="tl-node" type="button" data-meta="1948 · Information" data-title="Information" data-body="Shannon separated the message from its meaning and measured information in bits in 1948. That made language computable."><span class="tl-dot"></span><span class="tl-date">1948</span><span class="tl-name">Information</span></button>
 									<button class="tl-node" type="button" data-meta="2013–present · Tokens" data-title="Tokens" data-body="Word2vec (2013) made word vectors popular; subword tokenizers and transformers followed. Text became tokens, tokens became vectors, and meaning became geometry."><span class="tl-dot"></span><span class="tl-date">2013–present</span><span class="tl-name">Tokens</span></button>
 								</div>
@@ -111,7 +128,7 @@
 
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -124,6 +141,18 @@
 		</div>
 	</main>
 
+	<script>
+	(function () {
+		"use strict";
+		document.querySelectorAll("[data-youtube]").forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				var id = btn.getAttribute("data-youtube");
+				if (!/^[A-Za-z0-9_-]{11}$/.test(id)) return;
+				btn.outerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1" title="Kempelen speaking machine replica" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>';
+			});
+		});
+	})();
+	</script>
 	<script src="assets/site.js"></script>
 	<script src="assets/demos.js"></script>
 </body>

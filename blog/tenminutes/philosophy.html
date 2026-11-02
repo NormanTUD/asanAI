@@ -98,42 +98,50 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Knowing every fact is not obviously the same as having the experience. That gap is the hard part of the hard problem.</span></div>
 					</div>
 
-					<div class="demo demo--paper" data-demo="chinese">
+					<div class="demo demo--paper cr-sim" id="cr-sim">
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">The Chinese Room <span>· demo</span></p>
-								<p class="demo-sub">A person follows a rule book and returns perfect Chinese answers. Switch between the inside view and the whole room.</p>
+								<p class="demo-sub">You are locked inside the room. You do not speak Inuktitut. You have a rulebook. Follow it for six rounds.</p>
 							</div>
-							<span class="demo-badge">thought experiment</span>
+							<span class="demo-badge">interactive</span>
 						</div>
 						<div class="demo-body">
-							<div class="cr-wrap">
-								<div class="cr-room" data-chinese-room aria-label="A person in a room with a rule book and Chinese slips">
-									<div class="cr-person" aria-hidden="true"></div>
-									<div class="cr-slip in">你好</div>
-									<div class="cr-slip book">rule book</div>
-									<div class="cr-slip out">Hello</div>
+							<div class="cr-room" id="cr-room">
+								<div class="cr-round">Round <span id="cr-round-num">1</span> of <span id="cr-total-rounds">6</span></div>
+								<div class="cr-label">A note slides under the door:</div>
+								<div class="cr-incoming" id="cr-incoming-msg"></div>
+								<div class="cr-rulebook">
+									<div class="cr-label">Your rulebook says:</div>
+									<table class="cr-table">
+										<thead><tr><th>If you see…</th><th>Write back…</th></tr></thead>
+										<tbody id="cr-rulebook-body"></tbody>
+									</table>
 								</div>
-								<div>
-									<div class="seg" data-chinese-modes>
-										<button class="is-on" type="button" data-chinese-mode="inside">Inside the room</button>
-										<button type="button" data-chinese-mode="whole">The whole room</button>
-									</div>
-									<p class="cr-caption" style="margin-top:12px" data-chinese-caption></p>
-									<div class="demo-kpis">
-										<div class="demo-kpi"><b>Chinese in</b><span>✓</span></div>
-										<div class="demo-kpi"><b>Chinese out</b><span>✓</span></div>
-										<div class="demo-kpi"><b>Understanding</b><span data-chinese-understanding>...</span></div>
-									</div>
+								<div class="cr-label">Choose your response:</div>
+								<div class="cr-options" id="cr-options"></div>
+								<div class="cr-feedback" id="cr-feedback"></div>
+								<div class="cr-timer">⏱ <span id="cr-timer-val">0.0</span>s</div>
+							</div>
+							<div class="cr-reveal" id="cr-reveal" hidden>
+								<div class="cr-outside">“Incredible! You speak perfect Inuktitut!”</div>
+								<div class="cr-bars">
+									<div class="cr-bar-row"><b>Accuracy</b><span class="cr-bar"><i id="cr-accuracy-bar"></i></span><span id="cr-accuracy">0%</span></div>
+									<div class="cr-bar-row"><b>Understanding</b><span class="cr-bar"><i style="width:0%"></i></span><span>0%</span></div>
 								</div>
+								<div class="cr-lesson"><b>The lesson:</b> You never understood a single syllable. You matched shapes and followed rules. That is the gap Searle named: syntax is not semantics.</div>
+								<button type="button" class="btn-demo" id="cr-reveal-translations">What did I actually say?</button>
+								<div class="cr-translations" id="cr-translations" hidden>
+									<table class="cr-table">
+										<thead><tr><th>They asked</th><th>You replied</th><th>Actual conversation</th></tr></thead>
+										<tbody id="cr-translation-body"></tbody>
+									</table>
+								</div>
+								<button type="button" class="btn-demo" id="cr-restart">Try again</button>
 							</div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>The experiment does not prove machines cannot understand. It forces you to say where understanding would have to live.</span></div>
 					</div>
-
-
-
-
 
 					<section class="section-block" id="takeaway">
 						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
@@ -151,5 +159,6 @@
 
 	<script src="assets/site.js"></script>
 	<script src="assets/demos.js"></script>
+	<script src="assets/chinese-room.js"></script>
 </body>
 </html>

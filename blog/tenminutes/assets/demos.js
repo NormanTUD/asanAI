@@ -1087,8 +1087,10 @@
 			var link = href ? '<p class="tl-link"><a class="btn btn--green" href="' + href + '">' + escapeHtml(hrefLabel) + ' →</a></p>' : "";
 			var img = n.getAttribute("data-image");
 			var caption = n.getAttribute("data-image-caption");
-			var figure = img ? '<figure><img src="' + escapeHtml(img) + '" alt="' + escapeHtml(n.getAttribute("data-image-alt") || "") + '" loading="lazy">' +
-				(caption ? '<figcaption>' + escapeHtml(caption) + '</figcaption>' : '') + '</figure>' : "";
+			var imgLink = n.getAttribute("data-image-link");
+			var imgTag = img ? '<img src="' + escapeHtml(img) + '" alt="' + escapeHtml(n.getAttribute("data-image-alt") || "") + '" loading="lazy">' : "";
+			if (imgTag && imgLink) imgTag = '<a href="' + escapeHtml(imgLink) + '" rel="noopener">' + imgTag + '</a>';
+			var figure = img ? '<figure>' + imgTag + (caption ? '<figcaption>' + escapeHtml(caption) + '</figcaption>' : '') + '</figure>' : "";
 			panel.classList.toggle("no-figure", !img);
 			panel.innerHTML = '<div class="tl-copy"><div class="tl-era">' + escapeHtml(n.getAttribute("data-meta") || "") + '</div>' +
 				'<h3>' + escapeHtml(n.getAttribute("data-title") || "") + '</h3>' +
@@ -2504,113 +2506,6 @@
 		render();
 	}
 
-	/* ── Chinese room ───────────────────────────────────────── */
-
-	function initChinese(root) {
-		var buttons = $$("[data-chinese-mode]", root);
-		var caption = $("[data-chinese-caption]", root);
-		var understanding = $("[data-chinese-understanding]", root);
-		var room = $("[data-chinese-room]", root);
-		if (!buttons.length) return;
-		var copy = {
-			inside: {
-				cap: "Inside: a person follows a rule book, matching Chinese symbols to Chinese symbols. The answers are correct, but the person never learns Chinese.",
-				val: "none inside",
-				note: "The room passes the test. Does that settle whether it understands?"
-			},
-			whole: {
-				cap: "From outside: the room as a whole takes Chinese in and produces Chinese out. Perhaps the system, not the person, is what understands — if anything does.",
-				val: "possibly the system",
-				note: "Searle's argument is contested: the whole room might be the understanding system. The demo cannot settle it."
-			}
-		};
-		function select(mode) {
-			buttons.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-chinese-mode") === mode); });
-			var c = copy[mode];
-			if (caption) caption.textContent = c.cap;
-			if (understanding) understanding.textContent = c.val;
-			if (room) room.classList.toggle("is-whole", mode === "whole");
-		}
-		buttons.forEach(function (b) {
-			b.addEventListener("click", function () { select(b.getAttribute("data-chinese-mode")); });
-		});
-		select("inside");
-	}
-
-	/* ── ambiguity ──────────────────────────────────────────── */
-
-	function initAmbiguity(root) {
-		var chips = $("[data-ambiguity-chips]", root);
-		var sentenceEl = $("[data-ambiguity-sentence]", root);
-		var readingsEl = $("[data-ambiguity-readings]", root);
-		var noteEl = $("[data-ambiguity-note]", root);
-		if (!chips || !sentenceEl || !readingsEl) return;
-		var examples = [
-			{
-				label: "Telescope",
-				before: "I saw the man ",
-				amb: "with the telescope",
-				after: ".",
-				readings: [
-					["Reading A · the man has it", "I used the telescope to see the man."],
-					["Reading B · I have it", "I saw a man who was carrying a telescope."]
-				],
-				note: "The surface syntax is identical. World knowledge and context decide which reading survives."
-			},
-			{
-				label: "Chicken",
-				before: "The chicken is ready ",
-				amb: "to eat",
-				after: ".",
-				readings: [
-					["Reading A · the chicken eats", "The chicken is hungry and ready for its food."],
-					["Reading B · the chicken is eaten", "The chicken is cooked and ready to be served."]
-				],
-				note: "One adjective, two agents. A language model must choose a plausible world, not just parse a sentence."
-			},
-			{
-				label: "Cooking apples",
-				before: "They are ",
-				amb: "cooking apples",
-				after: ".",
-				readings: [
-					["Reading A · an action", "They are in the kitchen, cooking some apples."],
-					["Reading B · a kind of apple", "They are a variety of apple used for cooking."]
-				],
-				note: "Ambiguity is not a bug in language; it is a feature that context repairs. Models are good at the repair, and can still fail."
-			}
-		];
-		var current = 0;
-		chips.innerHTML = examples.map(function (ex, i) {
-			return '<button class="chip' + (i === 0 ? " is-on" : "") + '" type="button" data-ambiguity-i="' + i + '">' + escapeHtml(ex.label) + "</button>";
-		}).join("");
-		function render() {
-			var ex = examples[current];
-			sentenceEl.innerHTML = escapeHtml(ex.before) + '<span class="amb-tok" data-amb-token>' + escapeHtml(ex.amb) + "</span>" + escapeHtml(ex.after);
-			readingsEl.innerHTML = ex.readings.map(function (r) {
-				return '<div class="amb-reading"><b>' + escapeHtml(r[0]) + "</b><p>" + escapeHtml(r[1]) + "</p></div>";
-			}).join("");
-			if (noteEl) noteEl.textContent = ex.note;
-			$$(".amb-reading", readingsEl).forEach(function (r, i) {
-				r.classList.toggle("is-on", i === 0);
-			});
-			var tok = $("[data-amb-token]", sentenceEl);
-			if (tok) tok.addEventListener("click", function () {
-				tok.classList.toggle("is-on");
-				$$(".amb-reading", readingsEl).forEach(function (r) { r.classList.toggle("is-on"); });
-			});
-		}
-		$$("[data-ambiguity-i]", chips).forEach(function (chip) {
-			chip.addEventListener("click", function () {
-				$$("[data-ambiguity-i]", chips).forEach(function (x) { x.classList.remove("is-on"); });
-				chip.classList.add("is-on");
-				current = parseInt(chip.getAttribute("data-ambiguity-i"), 10) || 0;
-				render();
-			});
-		});
-		render();
-	}
-
 	/* ── receptive field ────────────────────────────────────── */
 
 	function initReceptive(root) {
@@ -3738,7 +3633,6 @@
 			else if (type === "perceptron") initPerceptron(root);
 			else if (type === "gradient") initGradient(root);
 			else if (type === "verify") initVerify(root);
-			else if (type === "chinese") initChinese(root);
 			else if (type === "ambiguity") initAmbiguity(root);
 			else if (type === "receptive") initReceptive(root);
 			else if (type === "citecheck") initCitecheck(root);

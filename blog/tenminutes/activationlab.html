@@ -6,6 +6,7 @@
 	<meta name="description" content="Activation functions are the gates that make depth meaningful, from ReLU to softmax.">
 	<meta name="theme-color" content="#f7f3e8">
 	<title>Why Networks Can Bend | Ten Minutes</title>
+	<link rel="stylesheet" href="../Temml-Local.min.css">
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="activationlab" data-page="lesson">
@@ -76,8 +77,22 @@
 
 
 
+					<section class="section-block" id="space">
+						<div class="section-kicker"><span class="sk-num">03</span> What the bend does to space</div>
+						<h2 class="section-title">Two layers, one map, until the bend.</h2>
+						<div class="prose">
+							<p>Write the two dense layers out. The second layer applies its own weights and bias to the output of the first, and the composition can be rearranged into a single affine map.</p>
+						</div>
+						<div class="formula" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \end{aligned}"></div>
+						<div class="prose">
+							<p>The product <span data-tex="W = W_2 W_1" data-tex-display="false"></span> is another weight matrix, and <span data-tex="b = W_2 b_1 + b_2" data-tex-display="false"></span> is another bias. So without an activation between them, two dense layers are exactly one dense layer. Depth adds no expressive power; the hidden layer disappears.</p>
+							<p>The geometric picture comes from Keup and Helias (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">2022</a>): a layer's job is to fold the data manifold into unused higher dimensions until a flat cut can separate the classes. A ReLU is a hard fold. It is not injective, so it can change the topology of the representation and pull a ring apart. A smooth tanh or sigmoid is a homeomorphism: it bends the space but preserves its topology. That is why ReLU can untangle a ring in one piece, while a smooth activation needs more width or depth to do the same work.</p>
+							<p>Precision adds a twist. A smooth tanh is only a faithful homeomorphism at enough numerical resolution. At low precision it saturates and quantizes into a staircase that maps many inputs to the same output. That many-to-one collapse is the same kind of move as a ReLU fold, which is why reduced-precision activations can sometimes make a hard problem easier instead of harder. The gain is not free: the same collapse throws information away. Low-precision polynomial approximations can match or beat full-precision baselines at the same accuracy budget (<a href="https://arxiv.org/abs/2402.11224" rel="noopener">Zhang et al., 2024</a>), but the effect depends on the task and the approximation.</p>
+						</div>
+					</section>
+
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -90,6 +105,7 @@
 		</div>
 	</main>
 
+	<script src="../temml.min.js"></script>
 	<script src="assets/site.js"></script>
 	<script src="assets/demos.js"></script>
 </body>
