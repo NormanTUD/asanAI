@@ -612,7 +612,117 @@ const PositionalEncodingViz = {
             } catch (e) { /* fall back to raw source */ }
         }
         container.textContent = latex;
-    }
+    },
+
+    trajectoryData: function(count) {
+        const base = [0.22, 0.85, -0.41];
+        const xs = [], ys = [], zs = [], ps = [];
+        for (let p = 0; p <= count; p++) {
+            xs.push(base[0] + this.computePE(p, 0, this.dModel));
+            ys.push(base[1] + this.computePE(p, 1, this.dModel));
+            zs.push(base[2] + this.computePE(p, 2, this.dModel));
+            ps.push(p);
+        }
+        return { base, xs, ys, zs, ps };
+    },
+
+    renderTrajectory: function() {
+        const slider = document.getElementById('pe-traj-count');
+        const count = Math.max(2, parseInt(slider?.value || 12, 10));
+        const label = document.getElementById('pe-traj-count-value');
+        if (label) label.textContent = count;
+        const d = this.trajectoryData(count);
+        this.renderTrajectory2D(d, count);
+        this.renderTrajectory3D(d, count);
+    },
+
+    renderTrajectory2D: function(d, count) {
+        const el = document.getElementById('pe-trajectory-2d');
+        if (!el) return;
+        const showText = count <= 16;
+        const trace = {
+            x: d.xs, y: d.ys, text: d.ps.map(String), type: 'scatter',
+            mode: showText ? 'lines+markers+text' : 'lines+markers',
+            textposition: 'top center',
+            textfont: { size: 9, color: themeColor('#64748b') },
+            line: { color: '#6366f1', width: 1.6 },
+            marker: {
+                size: 8, color: d.ps, colorscale: 'Viridis', showscale: true,
+                colorbar: { title: { text: 'pos', side: 'right' }, thickness: 10, len: 0.7 }
+            },
+            hovertemplate: 'position %{text}<br>(%{x:.2f}, %{y:.2f})<extra></extra>',
+            name: 'embedding + PE'
+        };
+        const original = {
+            x: [d.base[0]], y: [d.base[1]], type: 'scatter', mode: 'markers',
+            marker: { symbol: 'x', size: 14, color: themeColor('#64748b'), line: { width: 2, color: themeColor('#64748b') } },
+            name: 'original token',
+            hovertemplate: 'original token<br>(%{x:.2f}, %{y:.2f})<extra></extra>'
+        };
+        const offset = {
+            x: [d.base[0], d.xs[0]], y: [d.base[1], d.ys[0]], type: 'scatter', mode: 'lines',
+            line: { dash: 'dot', color: themeColor('#94a3b8'), width: 1.2 },
+            showlegend: false, hoverinfo: 'skip'
+        };
+        const grid = themeColor('#e2e8f0');
+        const layout = {
+            margin: { l: 50, r: 10, b: 45, t: 10 },
+            showlegend: false,
+            xaxis: { title: 'dim 0 (embedding + PE)', gridcolor: grid, zeroline: true, zerolinecolor: grid },
+            yaxis: { title: 'dim 1 (embedding + PE)', gridcolor: grid, zeroline: true, zerolinecolor: grid, scaleanchor: 'x', scaleratio: 1 },
+            plot_bgcolor: themeColor('#fff'),
+            paper_bgcolor: themeColor('#fff')
+        };
+        Plotly.react('pe-trajectory-2d', [trace, original, offset], layout, { displayModeBar: false, responsive: true, scrollZoom: true });
+    },
+
+    renderTrajectory3D: function(d) {
+        const el = document.getElementById('pe-trajectory-3d');
+        if (!el) return;
+        const trace = {
+            x: d.xs, y: d.ys, z: d.zs, text: d.ps.map(String), type: 'scatter3d',
+            mode: 'lines+markers',
+            line: { color: '#6366f1', width: 3 },
+            marker: {
+                size: 4, color: d.ps, colorscale: 'Viridis', showscale: true,
+                colorbar: { title: { text: 'pos', side: 'right' }, thickness: 10, len: 0.7 }
+            },
+            hovertemplate: 'position %{text}<br>(%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>',
+            name: 'embedding + PE'
+        };
+        const original = {
+            x: [d.base[0]], y: [d.base[1]], z: [d.base[2]], type: 'scatter3d', mode: 'markers',
+            marker: { symbol: 'x', size: 7, color: themeColor('#64748b') },
+            name: 'original token',
+            hovertemplate: 'original token<extra></extra>'
+        };
+        const offset = {
+            x: [d.base[0], d.xs[0]], y: [d.base[1], d.ys[0]], z: [d.base[2], d.zs[0]],
+            type: 'scatter3d', mode: 'lines',
+            line: { dash: 'dot', color: themeColor('#94a3b8'), width: 2 },
+            showlegend: false, hoverinfo: 'skip'
+        };
+        const axis = (title) => ({
+            title: title,
+            color: themeColor('#334155'),
+            gridcolor: themeColor('#e2e8f0'),
+            zerolinecolor: themeColor('#e2e8f0'),
+            backgroundcolor: themeColor('#fff')
+        });
+        const layout = {
+            margin: { l: 0, r: 0, b: 0, t: 0 },
+            showlegend: false,
+            scene: {
+                xaxis: axis('dim 0'),
+                yaxis: axis('dim 1'),
+                zaxis: axis('dim 2'),
+                camera: { eye: { x: 1.5, y: 1.4, z: 1.1 } },
+                bgcolor: themeColor('#fff')
+            },
+            paper_bgcolor: themeColor('#fff')
+        };
+        Plotly.react('pe-trajectory-3d', [trace, original, offset], layout, { displayModeBar: false, responsive: true, scrollZoom: true });
+    },
 };
 
 // ============================================================
@@ -2436,6 +2546,17 @@ function loadIntuitionModule() {
         PositionalEncodingViz.render();
         PositionalEncodingViz.renderAdditionDemo();
 
+    });
+
+    _lazyRegister('pe-trajectory-2d', () => {
+        const slider = document.getElementById('pe-traj-count');
+        if (slider) {
+            slider.addEventListener('input', () => PositionalEncodingViz.renderTrajectory());
+        }
+        PositionalEncodingViz.renderTrajectory();
+        if (window.__MN_DARK && typeof window.__MN_DARK.onChange === 'function') {
+            window.__MN_DARK.onChange(() => PositionalEncodingViz.renderTrajectory());
+        }
     });
 
     // Step 4a: Attention (bank/river/money stepper)

@@ -147,6 +147,20 @@ html.dark #embedding-demo .emb-hint {
 	color: var(--mn-text);
 }
 #pe-addition-demo math { color: var(--mn-text); }
+.pe-traj-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+}
+@media (min-width: 900px) {
+	.pe-traj-grid { grid-template-columns: 1fr 1fr; }
+}
+.pe-traj-grid > div {
+	height: 420px;
+	background: var(--mn-surface);
+	border: 1px solid var(--mn-border);
+	border-radius: 8px;
+}
 
 /* === Attention bank/river/money demo (lndw style) === */
 #attn-demo {
@@ -736,6 +750,24 @@ Now each token carries two pieces of information: **what it is** and **where it 
 	<!-- Same word, different positions demo -->
 	<div style="font-weight:bold; color:var(--mn-heading); margin-bottom:6px; margin-top:14px;">Same Word, Different Positions</div>
 	<div id="pe-addition-demo"></div>
+</div>
+
+<div class="mn-demo-panel">
+	<div class="mn-demo-title">🧭 The positional rail — one point, many positions</div>
+	<div class="mn-demo-sub">The grey × is the original token vector. Each coloured dot is that same vector plus PE(position); the line is its trajectory as the position grows.</div>
+
+	<div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+		<label style="font-size:0.85em; color:var(--mn-text-secondary); font-weight:bold;">Positions to show:</label>
+		<input type="range" id="pe-traj-count" min="2" max="40" step="1" value="12" style="flex:1; accent-color:#8b5cf6;">
+		<span id="pe-traj-count-value" style="font-weight:bold; color:#8b5cf6; min-width:34px; text-align:right;">12</span>
+	</div>
+
+	<div class="pe-traj-grid">
+		<div id="pe-trajectory-2d" data-plot-theme="self"></div>
+		<div id="pe-trajectory-3d" data-plot-theme="self"></div>
+	</div>
+
+	<div class="mn-demo-hint">The 2D view uses dimensions 0 and 1 — a circle that repeats after about six positions. Dimension 2 turns at a different frequency, so the 3D helix keeps moving and positions stay distinguishable.</div>
 </div>
 
 <div class="mn-thread">
