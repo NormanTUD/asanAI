@@ -277,17 +277,15 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            const path = process.env.GITHUB_WORKSPACE + '/browser-timings.json';
+            const path = require('path');
+            const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
+            const summarize = require(path.join(workspace, 'tests', 'job_timing_summary.js'));
 
-            if (!fs.existsSync(path)) {
-              core.info('No browser-timings.json produced');
-              return;
-            }
-
-            const timings = JSON.parse(fs.readFileSync(path, 'utf8'));
-            const summarize = require(process.env.GITHUB_WORKSPACE + '/tests/job_timing_summary.js');
-            await core.summary.addRaw(summarize.build_browser_summary('${{ matrix.os }}', timings)).write();
+            await summarize.write_browser_summary({
+              core,
+              os: '${{ matrix.os }}',
+              file: path.join(workspace, 'browser-timings.json')
+            });
 
       - name: Upload browser test log
         if: failure()
