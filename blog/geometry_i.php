@@ -271,7 +271,7 @@ The anecdote (told by Proclus) is that when **Ptolemy** complained the *Elements
 
 Two threads push geometry past the plane and past the conic.
 
-**Heron of Alexandria** (1st century CE), in his *Metrica*, collected and proved the practical metric formulas, the most famous of them giving the **area of a triangle from its three sides** — no height required:
+**Heron of Alexandria** (1st century CE), in his *Metrica*, collected and proved the practical metric formulas, the most famous of them giving the **area of a triangle from its three sides**, no height required:
 
 $$\underbrace{A}_{\text{the area of the field}} = \sqrt{\;\underbrace{s(s-a)(s-b)(s-c)}_{\substack{\text{built only from the}\\\text{three measured sides}}}\;}, \qquad \underbrace{s}_{\text{half the perimeter}} = \frac{a+b+c}{2}$$
 
