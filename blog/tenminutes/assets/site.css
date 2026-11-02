@@ -2677,7 +2677,7 @@ html[data-theme="dark"] .tl-panel .tl-era { color: var(--tm-green); }
 	left: 0;
 	bottom: 0;
 	height: 3px;
-	background: var(--tm-lime);
+	background: var(--tm-gold);
 	border-radius: 2px;
 }
 .att-word { position: relative; overflow: hidden; }
@@ -3432,13 +3432,24 @@ html[data-theme="dark"] .myth--ok b { color: var(--tm-green); }
 	bottom: 0;
 	width: 100%;
 	height: 3px;
-	background: linear-gradient(90deg, var(--tm-sky), var(--tm-green));
-	opacity: 0.9;
+	background: var(--tm-gold);
+	opacity: 0.95;
 	transition: height 0.2s ease;
 }
 .att-heads { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .att-heads .chip { color: var(--tm-petrol); border-color: var(--tm-line-strong); }
 .att-heads .chip.is-on { background: var(--tm-green); color: #000000; border-color: var(--tm-green); }
+.att-budget {
+	display: flex;
+	height: 14px;
+	margin: 10px 0 6px;
+	border: 1px solid var(--tm-line);
+	border-radius: 999px;
+	overflow: hidden;
+	background: var(--tm-line);
+}
+.att-budget span { display: block; height: 100%; }
+.att-budget-note { margin: 0 0 12px; font-size: 0.72rem; }
 .att-matrix { margin-top: 14px; }
 .att-matrix canvas { display: block; width: 100%; height: 300px; border-radius: 10px; border: 1px solid var(--tm-line); background: var(--tm-paper-2); }
 .att-toggle { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.7rem; color: var(--tm-muted); }
