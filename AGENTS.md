@@ -1364,38 +1364,72 @@ bash run_tests --no-smoke-tests --no-docker --chromium \
 
 ## Prose style: no filler contrasts
 
-State the claim positively. A contrast earns its place when the negation
-rejects something the intended reader actually believes or expects; otherwise it
-is defensive filler.
+State the claim positively. Most “X is not Y” sentences in the course do real
+work: they name a default the reader holds and replace it. Keep those. Cut the
+rare sentence that denies a claim nobody made, or that merely upgrades the
+text's own simplification.
 
-**Rewrite — the negation is a straw man or a bare page announcement.**
-
-- “The checklist is not a bureaucratic ritual.” — nobody accused it; the list
-  that follows is the content. Open with the list.
-- “This page is about / asks / gives / traces / turns / shows …” when it only
-  announces the topic. State the idea.
-- “The point is not X; it is Y”, “It is worth …”, “Notice that …” when the
-  sentence only flags that a point is coming.
-
-**Keep — the negation names the misconception or framing being rejected.** The
-reader learns something by seeing it denied:
+**Keep — the negation corrects a real default, dismissal, or understatement.**
+The test: has the surrounding prose given the reader a reason to hold the
+negated view? If yes, the contrast is content.
 
 - “The key takeaway when studying distributions is not to memorize them, but to
-  understand how large datasets behave.” — corrects the default “studying =
-  memorizing”.
+  understand how large datasets behave.” — corrects “studying = memorizing”.
 - “Alignment is not one technique; it is a family of problems …” — rejects the
   expectation of a single method.
 - “Depth is not just “more capacity” — it is the composition budget.” — corrects
   a common reading of what depth buys.
+- “A vector is not a ‘list of numbers’. A vector is an *element* of a vector
+  space.” — the definition readers arrive with.
+- “This is not a bug in the math, it is a feature of the statistical learning
+  process…” — the reader's likely reaction to bias.
+- “This is not just a notational trick.” — pre-empts dismissing currying as
+  syntax.
+- “The verification crisis is not merely an epistemic inconvenience. It is a
+  strategic asset…” — the reader's likely understatement.
+- “The last comparison is the one people get wrong.” — names a common error.
+- “The history of AI is not only the history of algorithms. It is also…” —
+  widens the chapter's scope with a substantive second history.
+- “The point is not that Riemann or Einstein ‘knew about AI’. The point is
+  that…” — pre-empts an anachronistic misreading.
+- “The boundary is not just a lab curiosity; it is a window into…” — names the
+  deflationary reading and replaces it.
+- “Correlation is not causation.” — a stock phrase, but here it is the rule
+  being taught.
 - “AI is the newest version of a very old habit, and this page is about the
   habit, not the machine.” — the habit/machine opposition is the chapter's
   thesis, so it survives even though the sentence also names the page.
+- “X is not Y” when the negation *is* the lesson: “The model is not lying; it is
+  completing a pattern.”
 
-**The test.** Can you name the reader who would otherwise believe the negated
-claim, or the framing being rejected? If yes, the contrast is content. If no —
-if it denies a claim nobody made — rewrite it as a positive statement. “X is
-not Y” is also fine when the negation *is* the lesson: “The model is not lying;
-it is completing a pattern.”
+**Cut — the negation is a straw man, or merely upgrades the text's own
+simplification.**
+
+- “The checklist is not a bureaucratic ritual.” — nobody accused it; the list
+  that follows is the content. Open with the list.
+- A heading like “Data is not just Numbers; it is a Distribution” — headings
+  state the positive: “Data is a Distribution”.
+- “In practice, a Transformer is not just two steps; it is a stack of $N$
+  blocks…” — the text just gave the two-step simplification; state the stack
+  directly.
+- “Computation is not only silicon; it is also the electromagnetic spectrum.” —
+  the heading already says “The Spectrum”; lead with the second claim.
+- “An LLM is not just a list of word counts; it is a map of Conditional
+  Probabilities.” — “word counts” is a label the text never asked the reader to
+  hold.
+- “The point is not X; it is Y” when X was never on the table.
+- “It is worth …”, “Notice that …” when the sentence only flags that a point is
+  coming. The phrase is fine when it marks a deliberate detour with a reason:
+  “Before the technical material, it is worth pausing on the manifesto…” and
+  “It is worth saying out loud what this chapter is not claiming…” both earn
+  their place. But “It is worth noting that X”, followed by X alone, is
+  throat-clearing.
+
+**Page announcements** are fine when they give a roadmap. “This page traces the
+argument from its literary origins through its modern formulation, the risk
+mechanisms, the evidence, and a considered view” earns its place in a long
+chapter. They are filler when they only re-label the topic (“This page is about
+alignment”) without adding the shape of the argument.
 
 To list candidates for review, run:
 

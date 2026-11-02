@@ -174,7 +174,7 @@ In **July 2024**, DeepMind's **AlphaProof** combined with **AlphaGeometry 2** so
 
 ### Pangu-Weather: AI Beats the Weather Forecast
 
-In **July 2023**, Huawei's **Pangu-Weather** — a 3D neural network trained on 40 years of ERA5 reanalysis data — published results in *Nature* showing it **outperformed the ECMWF IFS** (the best operational numerical weather prediction model in the world) on deterministic medium-range forecasts, while running **>10,000× faster** (\cite[Bi et al., 2023]{bi2023pangu}). Google's **GraphCast** (*Science*, 2023) achieved similar results. The implication: global weather forecasting, a 10-billion-dollar industry with direct impacts on agriculture, aviation, and disaster response, can be done in minutes rather than hours, at a fraction of the compute cost.
+In **July 2023**, Huawei's **Pangu-Weather** — a neural network trained on 40 years of ERA5 reanalysis data — published results in *Nature* showing it **outperformed the ECMWF IFS** (the best operational numerical weather prediction model in the world) on deterministic medium-range forecasts, while running **>10,000× faster** (\cite[Bi et al., 2023]{bi2023pangu}). Google's **GraphCast** (*Science*, 2023) achieved similar results. The implication: global weather forecasting, a 10-billion-dollar industry with direct impacts on agriculture, aviation, and disaster response, can be done in minutes rather than hours, at a fraction of the compute cost.
 
 ### The First AI-Designed Drug
 
