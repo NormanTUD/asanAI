@@ -511,7 +511,7 @@ ${lhs} &= ${rhs}\\\\
 
 const PositionalEncodingViz = {
     numDimensions: 8,
-    maxPositions: 20,
+    maxPositions: 100,
     dModel: 64,
 
     // Sinusoidal positional encoding: even dimensions use sine, odd use cosine.
@@ -524,7 +524,10 @@ const PositionalEncodingViz = {
     },
 
     render: function() {
-        const numDims = parseInt(document.getElementById('pe-num-dims')?.value || 8);
+        const slider = document.getElementById('pe-num-dims');
+        const numDims = parseInt(slider?.value || 8);
+        const label = document.getElementById('pe-dims-value');
+        if (label) label.textContent = numDims;
         this.renderHeatmap(numDims, this.dModel);
     },
 
@@ -558,8 +561,17 @@ const PositionalEncodingViz = {
 
         const layout = {
             margin: { l: 60, r: 20, b: 50, t: 10 },
-            xaxis: { title: 'Embedding Dimension', color: themeColor('#334155') },
-            yaxis: { title: 'Token Position', autorange: 'reversed', color: themeColor('#334155') },
+            xaxis: {
+                title: 'Embedding Dimension',
+                color: themeColor('#334155'),
+                dtick: numDims > 24 ? Math.ceil(numDims / 10) : 1
+            },
+            yaxis: {
+                title: 'Token Position',
+                autorange: 'reversed',
+                color: themeColor('#334155'),
+                dtick: 10
+            },
             plot_bgcolor: themeColor('#fff'),
             paper_bgcolor: themeColor('#fff'),
         };

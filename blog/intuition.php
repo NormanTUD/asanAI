@@ -725,13 +725,13 @@ Now each token carries two pieces of information: **what it is** and **where it 
 
 	<div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
 		<label style="font-size:0.85em; color:var(--mn-text-secondary); font-weight:bold;">Dimensions to show:</label>
-		<input type="range" id="pe-num-dims" min="2" max="12" step="1" value="8" style="flex:1; accent-color:#8b5cf6;">
-		<span style="font-weight:bold; color:#8b5cf6; min-width:24px;">8</span>
+		<input type="range" id="pe-num-dims" min="2" max="200" step="1" value="8" style="flex:1; accent-color:#8b5cf6;">
+		<span id="pe-dims-value" style="font-weight:bold; color:#8b5cf6; min-width:34px; text-align:right;">8</span>
 	</div>
 
 	<!-- Heatmap -->
 	<div style="font-weight:bold; color:var(--mn-heading); margin-bottom:6px;">Positional Encoding Heatmap</div>
-	<div id="positional-encoding-heatmap" data-plot-theme="self" style="height:420px; background:var(--mn-surface); border-radius:8px; border:1px solid var(--mn-border); margin-bottom:12px;"></div>
+	<div id="positional-encoding-heatmap" data-plot-theme="self" style="height:520px; background:var(--mn-surface); border-radius:8px; border:1px solid var(--mn-border); margin-bottom:12px;"></div>
 
 	<!-- Same word, different positions demo -->
 	<div style="font-weight:bold; color:var(--mn-heading); margin-bottom:6px; margin-top:14px;">Same Word, Different Positions</div>
