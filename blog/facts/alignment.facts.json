@@ -1568,7 +1568,7 @@
     },
     {
       "id": "alignment-stmt-18",
-      "quote": "The modern toolkit is a menu, not a fixed pipeline: **SFT** (demonstrations), then either **RLHF** (a learned reward model from human preferences), **RLAIF / Constitutional AI** (AI feedback instead), or **direct preference optimization** (DPO and successors), which learns the policy directly without an explicit RL loop.",
+      "quote": "The modern toolkit is a menu, not a fixed pipeline: **SFT** (demonstrations), then either **RLHF** (a learned reward model from human preferences, introduced by **Paul Christiano** and colleagues in 2017), **RLAIF / Constitutional AI** (AI feedback instead), or **direct preference optimization** (DPO and successors), which learns the policy directly without an explicit RL loop.",
       "block_id": "alignment-block-12",
       "section": "The current toolkit",
       "kind": "statement"
@@ -1699,7 +1699,7 @@
     },
     {
       "id": "alignment-block-12",
-      "quote": "The modern toolkit is a menu, not a fixed pipeline: **SFT** (demonstrations), then either **RLHF** (a learned reward model from human preferences), **RLAIF / Constitutional AI** (AI feedback instead), or **direct preference optimization** (DPO and successors), which learns the policy directly without an explicit RL loop. (\\cite[Christiano et al., 2017]{christiano2017rlhf}; \\cite[Ouyang et al., 2022]{ouyang2022instructgpt}; \\cite[Lee et al., 2023]{rlaif}; \\cite[Bai et al., 2022]{bai2022constitutional})",
+      "quote": "The modern toolkit is a menu, not a fixed pipeline: **SFT** (demonstrations), then either **RLHF** (a learned reward model from human preferences, introduced by **Paul Christiano** and colleagues in 2017), **RLAIF / Constitutional AI** (AI feedback instead), or **direct preference optimization** (DPO and successors), which learns the policy directly without an explicit RL loop. (\\cite[Christiano et al., 2017]{christiano2017rlhf}; \\cite[Ouyang et al., 2022]{ouyang2022instructgpt}; \\cite[Lee et al., 2023]{rlaif}; \\cite[Bai et al., 2022]{bai2022constitutional})",
       "kind": "paragraph",
       "section": "The current toolkit"
     },

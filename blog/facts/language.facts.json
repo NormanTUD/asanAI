@@ -7593,9 +7593,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-169-part_of-language-block-66",
+      "id": "struct-language-stmt-169-part_of-language-block-65",
       "from": "language-stmt-169",
-      "to": "language-block-66",
+      "to": "language-block-65",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7623,9 +7623,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-172-part_of-language-block-67",
+      "id": "struct-language-stmt-172-part_of-language-block-66",
       "from": "language-stmt-172",
-      "to": "language-block-67",
+      "to": "language-block-66",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7693,9 +7693,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-179-part_of-language-block-69",
+      "id": "struct-language-stmt-179-part_of-language-block-67",
       "from": "language-stmt-179",
-      "to": "language-block-69",
+      "to": "language-block-67",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7733,9 +7733,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-183-part_of-language-block-71",
+      "id": "struct-language-stmt-183-part_of-language-block-69",
       "from": "language-stmt-183",
-      "to": "language-block-71",
+      "to": "language-block-69",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7763,9 +7763,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-186-part_of-language-block-72",
+      "id": "struct-language-stmt-186-part_of-language-block-71",
       "from": "language-stmt-186",
-      "to": "language-block-72",
+      "to": "language-block-71",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7783,9 +7783,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-188-part_of-language-block-74",
+      "id": "struct-language-stmt-188-part_of-language-block-72",
       "from": "language-stmt-188",
-      "to": "language-block-74",
+      "to": "language-block-72",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7813,9 +7813,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-191-part_of-language-block-76",
+      "id": "struct-language-stmt-191-part_of-language-block-74",
       "from": "language-stmt-191",
-      "to": "language-block-76",
+      "to": "language-block-74",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7843,8 +7843,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-194-part_of-language-block-78",
+      "id": "struct-language-stmt-194-part_of-language-block-76",
       "from": "language-stmt-194",
+      "to": "language-block-76",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-stmt-195-part_of-language-block-78",
+      "from": "language-stmt-195",
       "to": "language-block-78",
       "kind": "part_of",
       "qualifiers": {},
@@ -7853,8 +7863,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-195-part_of-language-block-79",
-      "from": "language-stmt-195",
+      "id": "struct-language-stmt-196-part_of-language-block-79",
+      "from": "language-stmt-196",
       "to": "language-block-79",
       "kind": "part_of",
       "qualifiers": {},
@@ -7863,8 +7873,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-196-part_of-language-block-80",
-      "from": "language-stmt-196",
+      "id": "struct-language-stmt-197-part_of-language-block-80",
+      "from": "language-stmt-197",
       "to": "language-block-80",
       "kind": "part_of",
       "qualifiers": {},
@@ -7873,19 +7883,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-197-part_of-language-block-83",
-      "from": "language-stmt-197",
-      "to": "language-block-83",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-198-part_of-language-block-85",
+      "id": "struct-language-stmt-198-part_of-language-block-83",
       "from": "language-stmt-198",
-      "to": "language-block-85",
+      "to": "language-block-83",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7903,9 +7903,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-200-part_of-language-block-86",
+      "id": "struct-language-stmt-200-part_of-language-block-85",
       "from": "language-stmt-200",
-      "to": "language-block-86",
+      "to": "language-block-85",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7923,9 +7923,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-202-part_of-language-block-87",
+      "id": "struct-language-stmt-202-part_of-language-block-86",
       "from": "language-stmt-202",
-      "to": "language-block-87",
+      "to": "language-block-86",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -7953,9 +7953,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-205-part_of-language-block-88",
+      "id": "struct-language-stmt-205-part_of-language-block-87",
       "from": "language-stmt-205",
-      "to": "language-block-88",
+      "to": "language-block-87",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8003,9 +8003,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-210-part_of-language-block-90",
+      "id": "struct-language-stmt-210-part_of-language-block-88",
       "from": "language-stmt-210",
-      "to": "language-block-90",
+      "to": "language-block-88",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8023,9 +8023,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-212-part_of-language-block-92",
+      "id": "struct-language-stmt-212-part_of-language-block-90",
       "from": "language-stmt-212",
-      "to": "language-block-92",
+      "to": "language-block-90",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8043,8 +8043,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-214-part_of-language-block-94",
+      "id": "struct-language-stmt-214-part_of-language-block-92",
       "from": "language-stmt-214",
+      "to": "language-block-92",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-stmt-215-part_of-language-block-94",
+      "from": "language-stmt-215",
       "to": "language-block-94",
       "kind": "part_of",
       "qualifiers": {},
@@ -8053,8 +8063,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-215-part_of-language-block-95",
-      "from": "language-stmt-215",
+      "id": "struct-language-stmt-216-part_of-language-block-95",
+      "from": "language-stmt-216",
       "to": "language-block-95",
       "kind": "part_of",
       "qualifiers": {},
@@ -8063,19 +8073,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-216-part_of-language-block-96",
-      "from": "language-stmt-216",
-      "to": "language-block-96",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-217-part_of-language-block-97",
+      "id": "struct-language-stmt-217-part_of-language-block-96",
       "from": "language-stmt-217",
-      "to": "language-block-97",
+      "to": "language-block-96",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8093,9 +8093,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-219-part_of-language-block-98",
+      "id": "struct-language-stmt-219-part_of-language-block-97",
       "from": "language-stmt-219",
-      "to": "language-block-98",
+      "to": "language-block-97",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8133,9 +8133,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-223-part_of-language-block-99",
+      "id": "struct-language-stmt-223-part_of-language-block-98",
       "from": "language-stmt-223",
-      "to": "language-block-99",
+      "to": "language-block-98",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8143,9 +8143,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-224-part_of-language-block-100",
+      "id": "struct-language-stmt-224-part_of-language-block-99",
       "from": "language-stmt-224",
-      "to": "language-block-100",
+      "to": "language-block-99",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8163,9 +8163,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-226-part_of-language-block-101",
+      "id": "struct-language-stmt-226-part_of-language-block-100",
       "from": "language-stmt-226",
-      "to": "language-block-101",
+      "to": "language-block-100",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8183,9 +8183,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-228-part_of-language-block-102",
+      "id": "struct-language-stmt-228-part_of-language-block-101",
       "from": "language-stmt-228",
-      "to": "language-block-102",
+      "to": "language-block-101",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8213,9 +8213,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-231-part_of-language-block-103",
+      "id": "struct-language-stmt-231-part_of-language-block-102",
       "from": "language-stmt-231",
-      "to": "language-block-103",
+      "to": "language-block-102",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8243,9 +8243,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-234-part_of-language-block-104",
+      "id": "struct-language-stmt-234-part_of-language-block-103",
       "from": "language-stmt-234",
-      "to": "language-block-104",
+      "to": "language-block-103",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8283,9 +8283,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-238-part_of-language-block-105",
+      "id": "struct-language-stmt-238-part_of-language-block-104",
       "from": "language-stmt-238",
-      "to": "language-block-105",
+      "to": "language-block-104",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8313,9 +8313,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-241-part_of-language-block-106",
+      "id": "struct-language-stmt-241-part_of-language-block-105",
       "from": "language-stmt-241",
-      "to": "language-block-106",
+      "to": "language-block-105",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8363,9 +8363,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-246-part_of-language-block-107",
+      "id": "struct-language-stmt-246-part_of-language-block-106",
       "from": "language-stmt-246",
-      "to": "language-block-107",
+      "to": "language-block-106",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8393,9 +8393,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-249-part_of-language-block-108",
+      "id": "struct-language-stmt-249-part_of-language-block-107",
       "from": "language-stmt-249",
-      "to": "language-block-108",
+      "to": "language-block-107",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8453,9 +8453,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-255-part_of-language-block-110",
+      "id": "struct-language-stmt-255-part_of-language-block-108",
       "from": "language-stmt-255",
-      "to": "language-block-110",
+      "to": "language-block-108",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8483,9 +8483,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-258-part_of-language-block-111",
+      "id": "struct-language-stmt-258-part_of-language-block-110",
       "from": "language-stmt-258",
-      "to": "language-block-111",
+      "to": "language-block-110",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8513,9 +8513,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-261-part_of-language-block-113",
+      "id": "struct-language-stmt-261-part_of-language-block-111",
       "from": "language-stmt-261",
-      "to": "language-block-113",
+      "to": "language-block-111",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8523,9 +8523,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-262-part_of-language-block-114",
+      "id": "struct-language-stmt-262-part_of-language-block-113",
       "from": "language-stmt-262",
-      "to": "language-block-114",
+      "to": "language-block-113",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8613,9 +8613,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-271-part_of-language-block-116",
+      "id": "struct-language-stmt-271-part_of-language-block-114",
       "from": "language-stmt-271",
-      "to": "language-block-116",
+      "to": "language-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8693,9 +8693,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-279-part_of-language-block-117",
+      "id": "struct-language-stmt-279-part_of-language-block-116",
       "from": "language-stmt-279",
-      "to": "language-block-117",
+      "to": "language-block-116",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8713,9 +8713,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-281-part_of-language-block-118",
+      "id": "struct-language-stmt-281-part_of-language-block-117",
       "from": "language-stmt-281",
-      "to": "language-block-118",
+      "to": "language-block-117",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8743,8 +8743,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-284-part_of-language-block-121",
+      "id": "struct-language-stmt-284-part_of-language-block-118",
       "from": "language-stmt-284",
+      "to": "language-block-118",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-stmt-285-part_of-language-block-121",
+      "from": "language-stmt-285",
       "to": "language-block-121",
       "kind": "part_of",
       "qualifiers": {},
@@ -8753,8 +8763,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-285-part_of-language-block-122",
-      "from": "language-stmt-285",
+      "id": "struct-language-stmt-286-part_of-language-block-122",
+      "from": "language-stmt-286",
       "to": "language-block-122",
       "kind": "part_of",
       "qualifiers": {},
@@ -8763,8 +8773,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-286-part_of-language-block-123",
-      "from": "language-stmt-286",
+      "id": "struct-language-stmt-287-part_of-language-block-123",
+      "from": "language-stmt-287",
       "to": "language-block-123",
       "kind": "part_of",
       "qualifiers": {},
@@ -8773,8 +8783,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-287-part_of-language-block-124",
-      "from": "language-stmt-287",
+      "id": "struct-language-stmt-288-part_of-language-block-124",
+      "from": "language-stmt-288",
       "to": "language-block-124",
       "kind": "part_of",
       "qualifiers": {},
@@ -8783,8 +8793,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-288-part_of-language-block-125",
-      "from": "language-stmt-288",
+      "id": "struct-language-stmt-289-part_of-language-block-125",
+      "from": "language-stmt-289",
       "to": "language-block-125",
       "kind": "part_of",
       "qualifiers": {},
@@ -8793,8 +8803,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-289-part_of-language-block-126",
-      "from": "language-stmt-289",
+      "id": "struct-language-stmt-290-part_of-language-block-126",
+      "from": "language-stmt-290",
       "to": "language-block-126",
       "kind": "part_of",
       "qualifiers": {},
@@ -8803,19 +8813,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-290-part_of-language-block-127",
-      "from": "language-stmt-290",
-      "to": "language-block-127",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-291-part_of-language-block-128",
+      "id": "struct-language-stmt-291-part_of-language-block-127",
       "from": "language-stmt-291",
-      "to": "language-block-128",
+      "to": "language-block-127",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8833,9 +8833,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-293-part_of-language-block-129",
+      "id": "struct-language-stmt-293-part_of-language-block-128",
       "from": "language-stmt-293",
-      "to": "language-block-129",
+      "to": "language-block-128",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8853,9 +8853,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-295-part_of-language-block-131",
+      "id": "struct-language-stmt-295-part_of-language-block-129",
       "from": "language-stmt-295",
-      "to": "language-block-131",
+      "to": "language-block-129",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8903,9 +8903,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-300-part_of-language-block-132",
+      "id": "struct-language-stmt-300-part_of-language-block-131",
       "from": "language-stmt-300",
-      "to": "language-block-132",
+      "to": "language-block-131",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8933,9 +8933,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-303-part_of-language-block-133",
+      "id": "struct-language-stmt-303-part_of-language-block-132",
       "from": "language-stmt-303",
-      "to": "language-block-133",
+      "to": "language-block-132",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -8973,9 +8973,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-307-part_of-language-block-135",
+      "id": "struct-language-stmt-307-part_of-language-block-133",
       "from": "language-stmt-307",
-      "to": "language-block-135",
+      "to": "language-block-133",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9013,9 +9013,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-311-part_of-language-block-136",
+      "id": "struct-language-stmt-311-part_of-language-block-135",
       "from": "language-stmt-311",
-      "to": "language-block-136",
+      "to": "language-block-135",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9073,8 +9073,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-317-part_of-language-block-138",
+      "id": "struct-language-stmt-317-part_of-language-block-136",
       "from": "language-stmt-317",
+      "to": "language-block-136",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-stmt-318-part_of-language-block-138",
+      "from": "language-stmt-318",
       "to": "language-block-138",
       "kind": "part_of",
       "qualifiers": {},
@@ -9083,8 +9093,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-318-part_of-language-block-139",
-      "from": "language-stmt-318",
+      "id": "struct-language-stmt-319-part_of-language-block-139",
+      "from": "language-stmt-319",
       "to": "language-block-139",
       "kind": "part_of",
       "qualifiers": {},
@@ -9093,8 +9103,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-319-part_of-language-block-140",
-      "from": "language-stmt-319",
+      "id": "struct-language-stmt-320-part_of-language-block-140",
+      "from": "language-stmt-320",
       "to": "language-block-140",
       "kind": "part_of",
       "qualifiers": {},
@@ -9103,8 +9113,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-320-part_of-language-block-141",
-      "from": "language-stmt-320",
+      "id": "struct-language-stmt-321-part_of-language-block-141",
+      "from": "language-stmt-321",
       "to": "language-block-141",
       "kind": "part_of",
       "qualifiers": {},
@@ -9113,8 +9123,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-321-part_of-language-block-142",
-      "from": "language-stmt-321",
+      "id": "struct-language-stmt-322-part_of-language-block-142",
+      "from": "language-stmt-322",
       "to": "language-block-142",
       "kind": "part_of",
       "qualifiers": {},
@@ -9123,8 +9133,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-322-part_of-language-block-143",
-      "from": "language-stmt-322",
+      "id": "struct-language-stmt-323-part_of-language-block-143",
+      "from": "language-stmt-323",
       "to": "language-block-143",
       "kind": "part_of",
       "qualifiers": {},
@@ -9133,19 +9143,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-language-stmt-323-part_of-language-block-144",
-      "from": "language-stmt-323",
-      "to": "language-block-144",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-language-stmt-324-part_of-language-block-145",
+      "id": "struct-language-stmt-324-part_of-language-block-144",
       "from": "language-stmt-324",
-      "to": "language-block-145",
+      "to": "language-block-144",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -9175,6 +9175,16 @@
     {
       "id": "struct-language-stmt-327-part_of-language-block-145",
       "from": "language-stmt-327",
+      "to": "language-block-145",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-language-stmt-328-part_of-language-block-145",
+      "from": "language-stmt-328",
       "to": "language-block-145",
       "kind": "part_of",
       "qualifiers": {},
@@ -10334,1140 +10344,1147 @@
     },
     {
       "id": "language-stmt-165",
-      "quote": "In 1957, **Noam Chomsky**'s *Syntactic Structures* took the syntax level and turned it into a formal, *generative* system: a phrase-structure grammar of replacement rules, like `DET N → NP`, `V NP → VP`, `NP VP → S`, that generates exactly the legal sentences of a language and whose **parse trees** certify any given string as legal or not.",
+      "quote": "In 1956, **Noam Chomsky**'s *Three Models for the Description of Language* arranged grammars into the classes that became the **Chomsky hierarchy** — unrestricted (Type 0), context-sensitive (Type 1), context-free (Type 2) and regular (Type 3) — each paired with the machine needed to recognise it, from a Turing machine down to a finite-state automaton (\\cite{chomsky1956three}).",
       "block_id": "language-block-65",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-166",
-      "quote": "It was Pāṇini's program, rediscovered as a branch of mathematics, and it gave the first NLP systems their engine: a parser, a dictionary, and a meaning representation.",
+      "quote": "A year later, his *Syntactic Structures* took the syntax level and turned it into a formal, *generative* system: a phrase-structure grammar of replacement rules, like `DET N → NP`, `V NP → VP`, `NP VP → S`, that generates exactly the legal sentences of a language and whose **parse trees** certify any given string as legal or not.",
       "block_id": "language-block-65",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-167",
-      "quote": "Two years later, Chomsky's review of B.",
+      "quote": "It was Pāṇini's program, rediscovered as a branch of mathematics, and it gave the first NLP systems their engine: a parser, a dictionary, and a meaning representation.",
       "block_id": "language-block-65",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-168",
-      "quote": "Skinner's *Verbal Behavior* made the stakes explicit: Skinner had argued that language, like all behavior, is shaped by reinforcement, but the review concluded that Skinner's \"astonishing claims are far from justified\" — no one can, through experience alone, produce the potentially infinite variety of previously unheard sentences with arbitrarily complex structure that people do produce, so the missing \"factors of fundamental importance\" must be innate, \"human beings being somehow specially created\" for language with a \"universal grammar\" present at birth (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
+      "quote": "Two years later, Chomsky's review of B.",
       "block_id": "language-block-65",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
       "id": "language-stmt-169",
+      "quote": "Skinner's *Verbal Behavior* made the stakes explicit: Skinner had argued that language, like all behavior, is shaped by reinforcement, but the review concluded that Skinner's \"astonishing claims are far from justified\" — no one can, through experience alone, produce the potentially infinite variety of previously unheard sentences with arbitrarily complex structure that people do produce, so the missing \"factors of fundamental importance\" must be innate, \"human beings being somehow specially created\" for language with a \"universal grammar\" present at birth (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
+      "block_id": "language-block-65",
+      "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
+      "kind": "statement"
+    },
+    {
+      "id": "language-stmt-170",
       "quote": "But grammaticality alone is insufficient for determining meaning.",
       "block_id": "language-block-66",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-170",
+      "id": "language-stmt-171",
       "quote": "Chomsky's example \"Colorless green ideas sleep furiously\" might be considered grammatical, but it is nonsensical: through semantic analysis, an \"idea\" can't be both \"colorless\" and \"green\".",
       "block_id": "language-block-66",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-171",
+      "id": "language-stmt-172",
       "quote": "A system that parses a sentence correctly can still be talking nonsense, which is why every language system since has had to build syntax and semantics as separate machinery (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
       "block_id": "language-block-66",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-172",
+      "id": "language-stmt-173",
       "quote": "No grammar, no matter how elaborate, divides the legal sentences from the illegal ones cleanly.",
       "block_id": "language-block-67",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-173",
+      "id": "language-stmt-174",
       "quote": "The linguist and anthropologist **Edward Sapir** wrote in 1921 that \"no language is tyrannically consistent.",
       "block_id": "language-block-67",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-174",
+      "id": "language-stmt-175",
       "quote": "All grammars leak.\" The classic case is Groucho Marx: \"One morning I shot an elephant in my pajamas.",
       "block_id": "language-block-67",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-175",
+      "id": "language-stmt-176",
       "quote": "How he got into my pajamas I don't know.\" Two parse trees, two meanings, and only common sense picks the right one.",
       "block_id": "language-block-67",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-176",
+      "id": "language-stmt-177",
       "quote": "The fix, developed through the 1970s and 80s, was to stop asking *is this sentence legal?* and start asking *how probable is this parse?*: attach probabilities to grammar rules (the **probabilistic context-free grammars** of Taylor Booth, 1969, refined by Eugene Charniak), learn those probabilities from large annotated corpora such as the **Penn Treebank**, and let the most probable parse win (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
       "block_id": "language-block-67",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-177",
+      "id": "language-stmt-178",
       "quote": "That move, from hand-written rules to learned probabilities, is the same move that took the whole field from symbolic AI to the statistical geometry of the next section, and, finally, to the language models that predict the next token instead of parsing the sentence at all.",
       "block_id": "language-block-67",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-178",
+      "id": "language-stmt-179",
       "quote": "The community organized in the same period: the Association for Machine Translation and Computational Linguistics (AMTCL) held its first meeting in 1962, and in 1968 it became the **Association for Computational Linguistics (ACL)**, which still publishes *Computational Linguistics* and sponsors the field's main conferences (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
       "block_id": "language-block-67",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-179",
+      "id": "language-stmt-180",
       "quote": "Today's LLMs represent the convergence of all these histories.",
       "block_id": "language-block-69",
       "section": "The Modern Synthesis: Meaning as Geometry",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-180",
+      "id": "language-stmt-181",
       "quote": "We no longer manually code rules or categories into the machine.",
       "block_id": "language-block-69",
       "section": "The Modern Synthesis: Meaning as Geometry",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-181",
+      "id": "language-stmt-182",
       "quote": "Instead, we use massive computation to map the **statistical relationships** observed by **\\cite[J.R.",
       "block_id": "language-block-69",
       "section": "The Modern Synthesis: Meaning as Geometry",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-182",
+      "id": "language-stmt-183",
       "quote": "Firth]{firth_context}** (“You shall know a word by the company it keeps”) into a high-dimensional **vector space**.",
       "block_id": "language-block-69",
       "section": "The Modern Synthesis: Meaning as Geometry",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-183",
+      "id": "language-stmt-184",
       "quote": "Just as Sumerian scribes decomposed words into reusable phonetic signs (the Rebus Principle), modern LLMs decompose text into **tokens**, subword units that balance vocabulary size against expressiveness.",
       "block_id": "language-block-71",
       "section": "Tokenization: The Digital Rebus Principle",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-184",
+      "id": "language-stmt-185",
       "quote": "The word *“unbelievable”* might be split into `[\"un\", \"believ\", \"able\"]`, each mapped to a numerical ID.",
       "block_id": "language-block-71",
       "section": "Tokenization: The Digital Rebus Principle",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-185",
+      "id": "language-stmt-186",
       "quote": "This is the ancient insight reborn: meaning can be assembled from smaller, reusable parts.",
       "block_id": "language-block-71",
       "section": "Tokenization: The Digital Rebus Principle",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-186",
+      "id": "language-stmt-187",
       "quote": "The trade-off is the one Gleick traces through the history of codes: a vocabulary that is too small makes every message long, while a vocabulary that is too large makes the codebook expensive to store and slow to search (\\cite[Gleick, 2011]{gleick2011information}).",
       "block_id": "language-block-72",
       "section": "Tokenization: The Digital Rebus Principle",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-187",
+      "id": "language-stmt-188",
       "quote": "Byte-Pair Encoding resolves it much as a telegraph code does, by giving the most frequent strings the shortest available representation.",
       "block_id": "language-block-72",
       "section": "Tokenization: The Digital Rebus Principle",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-188",
+      "id": "language-stmt-189",
       "quote": "Each token is then mapped to a point in a high-dimensional **embedding space**, a coordinate system with hundreds or thousands of axes.",
       "block_id": "language-block-74",
       "section": "Embeddings: Wilkins' Dream Realized",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-189",
+      "id": "language-stmt-190",
       "quote": "In this space, words with similar meanings cluster together, and relationships between concepts are encoded as geometric directions.",
       "block_id": "language-block-74",
       "section": "Embeddings: Wilkins' Dream Realized",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-190",
+      "id": "language-stmt-191",
       "quote": "**\\cite[John Wilkins]{wilkins_real_character}**' 17th-century dream of a universal coordinate system for concepts has been realized, not through philosophical design, but through statistical learning over trillions of words.",
       "block_id": "language-block-74",
       "section": "Embeddings: Wilkins' Dream Realized",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-191",
+      "id": "language-stmt-192",
       "quote": "The **Transformer architecture** (Vaswani et al., 2017) introduced **self-attention** as its central mechanism, building on the general attention idea first introduced by Bahdanau, Cho & Bengio (2014).",
       "block_id": "language-block-76",
       "section": "Attention: Context as Structure",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-192",
+      "id": "language-stmt-193",
       "quote": "In self-attention, the model dynamically weighs the relevance of every other token when processing a given token.",
       "block_id": "language-block-76",
       "section": "Attention: Context as Structure",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-193",
+      "id": "language-stmt-194",
       "quote": "This is Firth's distributional hypothesis made computational: the model literally measures how much “company” each word keeps with every other word in a passage, building a rich, context-sensitive representation of meaning.",
       "block_id": "language-block-76",
       "section": "Attention: Context as Structure",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-194",
+      "id": "language-stmt-195",
       "quote": "The result is a form of “linguistic algebra” first dreamed of by the early grammarians:",
       "block_id": "language-block-78",
       "section": "Linguistic Algebra",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-195",
+      "id": "language-stmt-196",
       "quote": "This works because the model has learned, from billions of co-occurrence patterns, that the *direction* from “Woman” to “Queen” encodes the concept of “royalty”, and that same direction, applied to “Man,” lands near “King.” Meaning has become mathematics.",
       "block_id": "language-block-79",
       "section": "Linguistic Algebra",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-196",
+      "id": "language-stmt-197",
       "quote": "This is the ultimate evolution: we have moved from the biological vibrations of the **larynx**, through the deterministic **logic of Pāṇini**, and finally into a **statistical geometry** where the machine “understands” the world by measuring the distance between human ideas.",
       "block_id": "language-block-80",
       "section": "Linguistic Algebra",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-197",
+      "id": "language-stmt-198",
       "quote": "The evolution of writing is a multi-millennial journey of externalizing human thought, moving from biological speech to physical data storage.",
       "block_id": "language-block-83",
       "section": "The History of Writing",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-198",
+      "id": "language-stmt-199",
       "quote": "The earliest forms of “proto-writing” began with symbolic art.",
       "block_id": "language-block-85",
       "section": "Cave Paintings and Symbolic Art",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-199",
+      "id": "language-stmt-200",
       "quote": "These were the first instances of **exogrammatic storage**, information kept outside the human brain.",
       "block_id": "language-block-85",
       "section": "Cave Paintings and Symbolic Art",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-200",
+      "id": "language-stmt-201",
       "quote": "Hand stencils at \\cite[Cueva de las Manos]{cuevadelasmanos}, Argentina (c.",
       "block_id": "language-block-86",
       "section": "Cave Paintings and Symbolic Art",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-201",
+      "id": "language-stmt-202",
       "quote": "Paint was sprayed through bone pipes onto hands pressed against the rock wall.",
       "block_id": "language-block-86",
       "section": "Cave Paintings and Symbolic Art",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-202",
+      "id": "language-stmt-203",
       "quote": "The **Cueva de las Manos** (Cave of the Hands) in Patagonia, Argentina, contains hundreds of hand stencils created between approximately 7,300 BC and 700 AD \\cite{cuevadelasmanos}.",
       "block_id": "language-block-87",
       "section": "Cave Paintings and Symbolic Art",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-203",
+      "id": "language-stmt-204",
       "quote": "Artists sprayed mineral pigments, iron oxides, kaolin, manganese oxide, through hollow bone pipes over hands pressed against the rock face, producing negative imprints.",
       "block_id": "language-block-87",
       "section": "Cave Paintings and Symbolic Art",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-204",
+      "id": "language-stmt-205",
       "quote": "The site also features naturalistic hunting scenes depicting guanaco drives, geometric patterns, and abstract figures spanning multiple stylistic periods.",
       "block_id": "language-block-87",
       "section": "Cave Paintings and Symbolic Art",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-205",
+      "id": "language-stmt-206",
       "quote": "What makes these hand stencils significant in the trajectory toward artificial intelligence is not their aesthetic beauty but their cognitive implication: each handprint is an act of **self-referential symbolic displacement**.",
       "block_id": "language-block-88",
       "section": "Cave Paintings and Symbolic Art",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-206",
+      "id": "language-stmt-207",
       "quote": "The artist uses their own body as a template to produce a persistent, external representation of *themselves*, a mark that says “I was here” long after the hand is withdrawn.",
       "block_id": "language-block-88",
       "section": "Cave Paintings and Symbolic Art",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-207",
+      "id": "language-stmt-208",
       "quote": "This is the same cognitive operation that underlies all subsequent abstraction: the realization that a *sign* can stand for a *thing*, and that the sign persists independently of the thing it represents.",
       "block_id": "language-block-88",
       "section": "Cave Paintings and Symbolic Art",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-208",
+      "id": "language-stmt-209",
       "quote": "From hand stencils to tally marks, from tally marks to numerals, from numerals to variables, from variables to embeddings, the trajectory is unbroken.",
       "block_id": "language-block-88",
       "section": "Cave Paintings and Symbolic Art",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-209",
+      "id": "language-stmt-210",
       "quote": "The bone pipe that sprayed ochre onto a Patagonian cliff face 9,000 years ago performed, in miniature, the same operation as a modern tokenizer: transforming a continuous, embodied reality into a discrete, storable, transmissible representation.",
       "block_id": "language-block-88",
       "section": "Cave Paintings and Symbolic Art",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-210",
+      "id": "language-stmt-211",
       "quote": "8000 BCE), the transition to agriculture required better accounting.",
       "block_id": "language-block-90",
       "section": "Counting Stones and Tokens",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-211",
+      "id": "language-stmt-212",
       "quote": "People used small clay **tokens** of various shapes (cones, spheres, cylinders) to represent specific goods like grain or livestock.",
       "block_id": "language-block-90",
       "section": "Counting Stones and Tokens",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-212",
+      "id": "language-stmt-213",
       "quote": "Around 3500 BCE, tokens were replaced by flat clay tablets with incised **pictograms**.",
       "block_id": "language-block-92",
       "section": "Proto-Writing and the Rebus Principle",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-213",
+      "id": "language-stmt-214",
       "quote": "At this stage, a symbol of an ox head simply meant “ox.”",
       "block_id": "language-block-92",
       "section": "Proto-Writing and the Rebus Principle",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-214",
+      "id": "language-stmt-215",
       "quote": "\\marginfig{cuneiform.jpg}{Early Cuneiform Writing \\cite[Early Cuneiform Writing]{cuneiform}.}",
       "block_id": "language-block-94",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-215",
+      "id": "language-stmt-216",
       "quote": "By 3200 BCE in Mesopotamia, pictograms evolved into **Cuneiform**, characterized by wedge-shaped marks made with a reed stylus in soft clay.",
       "block_id": "language-block-95",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-216",
+      "id": "language-stmt-217",
       "quote": "This trajectory from biological vibrations to physical tokens, and finally to abstract geometry, forms the foundation for how modern systems now process meaning.",
       "block_id": "language-block-96",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-217",
+      "id": "language-stmt-218",
       "quote": "First described by \\citeauthor{acrophonic} in \\citeyear{acrophonic}, this is how the alphabet was actually derived.",
       "block_id": "language-block-97",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-218",
+      "id": "language-stmt-219",
       "quote": "The Phoenician letter *aleph* (𐤀) originally depicted an *ox* head (the word for *ox* was *ʾalp*).",
       "block_id": "language-block-97",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-219",
+      "id": "language-stmt-220",
       "quote": "Over time, the picture was stripped of its meaning and retained only the first phoneme, /ʔ/ (a glottal stop).",
       "block_id": "language-block-98",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-220",
+      "id": "language-stmt-221",
       "quote": "Similarly, bet (𐤁) was a *house* (*bayt*), reduced to /b/.",
       "block_id": "language-block-98",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-221",
+      "id": "language-stmt-222",
       "quote": "The Greek adaptation turned *aleph* into *alpha* (Α) and bet into beta (Β), giving us the word “alphabet” itself.",
       "block_id": "language-block-98",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-222",
+      "id": "language-stmt-223",
       "quote": "Where the Rebus Principle says “use the whole sound of a word,” the Acrophonic Principle says “use only the first sound.” It's a further compression, and it's the specific mechanism by which the Phoenician abjad was created from earlier pictographic systems.",
       "block_id": "language-block-98",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-223",
+      "id": "language-stmt-224",
       "quote": "First introduced by \\citeauthor{dualitypattern} in 1949 and elaborated in his \\citeyear{dualitypattern} *Éléments de linguistique générale*, human language operates on two levels:",
       "block_id": "language-block-99",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-224",
+      "id": "language-stmt-225",
       "quote": "- First articulation: Meaningful units (morphemes/words) combine into sentences.",
       "block_id": "language-block-100",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-225",
+      "id": "language-stmt-226",
       "quote": "(“un” + “believe” + “able”)",
       "block_id": "language-block-100",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-226",
+      "id": "language-stmt-227",
       "quote": "- Second articulation: Meaningless units (phonemes/letters) combine into meaningful units.",
       "block_id": "language-block-101",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-227",
+      "id": "language-stmt-228",
       "quote": "(b + e + l + i + e + f → “belief”)",
       "block_id": "language-block-101",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-228",
+      "id": "language-stmt-229",
       "quote": "No animal communication system has this.",
       "block_id": "language-block-102",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-229",
+      "id": "language-stmt-230",
       "quote": "A vervet monkey's eagle alarm call is a single, indivisible unit, you can't rearrange its “phonemes” to make a new call.",
       "block_id": "language-block-102",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-230",
+      "id": "language-stmt-231",
       "quote": "But in human language, the same ~40 phonemes can generate an infinite vocabulary.",
       "block_id": "language-block-102",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-231",
+      "id": "language-stmt-232",
       "quote": "Although first described by Friedrich Nietzsche in his essay \\citetitle{ueberwahrheitundluege} in an informal way, the **Principle of Arbitrariness** was first formalized by \\citeauthor{saussure1916} in \\citeyear{saussure1916}, and it states that there is no natural, intrinsic connection between a word and its meaning.",
       "block_id": "language-block-103",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-232",
+      "id": "language-stmt-233",
       "quote": "The word “dog” does not look, sound, or feel like a dog, the link between the *signifier* (the sound-image “dog”) and the *signified* (the concept of a dog) is a pure social convention.",
       "block_id": "language-block-103",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-233",
+      "id": "language-stmt-234",
       "quote": "Saussure called this the “arbitrariness of the sign,” and it applies at every level: the phonemes that make up a word, the morphemes that compose it, and the syntactic rules that govern its use are all products of historical accident and communal agreement, not physical necessity.",
       "block_id": "language-block-103",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-234",
+      "id": "language-stmt-235",
       "quote": "This principle is the theoretical reason that embeddings work at all.",
       "block_id": "language-block-104",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-235",
+      "id": "language-stmt-236",
       "quote": "If words had fixed, intrinsic meanings anchored to their sounds or shapes, we could deduce semantics from phonetics alone.",
       "block_id": "language-block-104",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-236",
+      "id": "language-stmt-237",
       "quote": "But precisely *because* the relationship between form and meaning is arbitrary, meaning can only be recovered from *patterns of use*, which is exactly what Firth's distributional hypothesis proposes and what a Transformer's attention mechanism computes.",
       "block_id": "language-block-104",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-237",
+      "id": "language-stmt-238",
       "quote": "Arbitrariness is the problem; statistical learning over context is the solution.",
       "block_id": "language-block-104",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-238",
+      "id": "language-stmt-239",
       "quote": "Popularised by \\citeauthor{zipf1949human} in \\citeyear{zipf1949human} (though the regularity had been noticed earlier, by Auerbach in 1913), the Principle of Economy observes that in any natural language corpus, the frequency of a word is inversely proportional to its rank.",
       "block_id": "language-block-105",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-239",
+      "id": "language-stmt-240",
       "quote": "The most common word (“the”) appears roughly twice as often as the second most common (“of”), three times as often as the third (“and”), and so on.",
       "block_id": "language-block-105",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-240",
+      "id": "language-stmt-241",
       "quote": "This is not a coincidence, it reflects a deep optimization pressure: speakers minimize articulatory effort by assigning the shortest, most accessible forms to the most frequent meanings, while rare concepts are expressed with longer, more complex words.",
       "block_id": "language-block-105",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-241",
+      "id": "language-stmt-242",
       "quote": "This principle operates at every scale of the history of writing.",
       "block_id": "language-block-106",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-242",
+      "id": "language-stmt-243",
       "quote": "Cuneiform signs for common words were simplified more aggressively than rare ones.",
       "block_id": "language-block-106",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-243",
+      "id": "language-stmt-244",
       "quote": "The Phoenician alphabet itself is an act of economy, 22 signs instead of hundreds.",
       "block_id": "language-block-106",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-244",
+      "id": "language-stmt-245",
       "quote": "And modern Byte-Pair Encoding tokenization is Zipf's Law made algorithmic: frequent subwords like “the” or “ing” earn their own token IDs, while rare strings are decomposed into smaller pieces.",
       "block_id": "language-block-106",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-245",
+      "id": "language-stmt-246",
       "quote": "When we say that a tokenizer balances “vocabulary size against expressiveness,” we are describing Zipf's tradeoff between effort and precision, a tradeoff that human languages have been optimizing for millennia.",
       "block_id": "language-block-106",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-246",
+      "id": "language-stmt-247",
       "quote": "While Saussure emphasized arbitrariness, writing systems almost always begin at the opposite pole: **iconicity**, the principle that a symbol's form *resembles* its referent.",
       "block_id": "language-block-107",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-247",
+      "id": "language-stmt-248",
       "quote": "The earliest Sumerian sign for “ox” was a recognizable sketch of an ox head; the sign for “water” depicted wavy lines.",
       "block_id": "language-block-107",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-248",
+      "id": "language-stmt-249",
       "quote": "Even the Phoenician alphabet, as the Acrophonic Principle describes, began with iconic pictograms, *aleph* looked like an ox, *bet* looked like a house, before those pictures were stripped down to abstract letterforms.",
       "block_id": "language-block-107",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-249",
+      "id": "language-stmt-250",
       "quote": "This trajectory from iconic to arbitrary is not a single historical event but a recurring, universal pattern.",
       "block_id": "language-block-108",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-250",
+      "id": "language-stmt-251",
       "quote": "Chinese characters began as oracle bone pictographs and gradually became the abstract strokes of modern *hanzi*.",
       "block_id": "language-block-108",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-251",
+      "id": "language-stmt-252",
       "quote": "Egyptian hieroglyphs started as vivid animal and object drawings and ended as the cursive shorthand of Demotic script.",
       "block_id": "language-block-108",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-252",
+      "id": "language-stmt-253",
       "quote": "In every case, the driving force is the same: as a writing system is used more frequently and by more people, speed and economy overwhelm fidelity to appearance.",
       "block_id": "language-block-108",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-253",
+      "id": "language-stmt-254",
       "quote": "Iconicity is the *starting condition* of every writing system; arbitrariness is the *attractor state* it evolves toward.",
       "block_id": "language-block-108",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-254",
+      "id": "language-stmt-255",
       "quote": "Understanding this arc, from picture to abstraction, from resemblance to convention, is essential for understanding why modern embeddings, which encode meaning as directions in a featureless vector space, represent the logical endpoint of a process that began with a Sumerian farmer scratching an ox into wet clay.",
       "block_id": "language-block-108",
       "section": "Cuneiform and Formal Grammar",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-255",
+      "id": "language-stmt-256",
       "quote": "The sixteen letters of inscription no.",
       "block_id": "language-block-110",
       "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-256",
+      "id": "language-stmt-257",
       "quote": "I, drawn on a block of limestone at the Wadi el-Hol \\cite[Wadi el-Hol inscription no.",
       "block_id": "language-block-110",
       "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-257",
+      "id": "language-stmt-258",
       "quote": "I, drawing]{wadielholinscription_i}.",
       "block_id": "language-block-110",
       "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-258",
+      "id": "language-stmt-259",
       "quote": "\\marginfig{wadielhol_inscription_ii.jpg}{Inscription no.",
       "block_id": "language-block-111",
       "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-259",
+      "id": "language-stmt-260",
       "quote": "II, the second of the two known texts \\cite[Wadi el-Hol inscription no.",
       "block_id": "language-block-111",
       "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-260",
+      "id": "language-stmt-261",
       "quote": "II, drawing]{wadielholinscription_ii}: its twelve letters include a sequence *pġʾl* that many read as a theophoric name, perhaps “boy of El”.}",
       "block_id": "language-block-111",
       "section": "Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-261",
+      "id": "language-stmt-262",
       "quote": "\\marginfig{history_of_a.png}{History of the letter A, from Ox to A \\cite[History of the letter A, from Ox to A]{history_of_a}.}",
       "block_id": "language-block-113",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-262",
+      "id": "language-stmt-263",
       "quote": "Around 1050 BCE, Phoenician traders along the eastern Mediterranean coast perfected what would become the most influential writing innovation in human history: a compact alphabet of just 22 consonantal signs.",
       "block_id": "language-block-114",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-263",
+      "id": "language-stmt-264",
       "quote": "Unlike the hundreds of symbols required by cuneiform or Egyptian hieroglyphics, the Phoenician system radically compressed the act of writing by applying the Acrophonic Principle, each letter was derived from a pictogram stripped down to represent only its initial sound.",
       "block_id": "language-block-114",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-264",
+      "id": "language-stmt-265",
       "quote": "The letter *aleph* originally depicted an ox head and was reduced to a glottal stop, while *bet* depicted a house and was reduced to /b/ first described by \\citeauthor{acrophonic}.",
       "block_id": "language-block-114",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-265",
+      "id": "language-stmt-266",
       "quote": "This was not merely a simplification; it was a cognitive revolution in economy.",
       "block_id": "language-block-114",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-266",
+      "id": "language-stmt-267",
       "quote": "For the first time, a merchant, a sailor, or a child could learn to read and write in days rather than years.",
       "block_id": "language-block-114",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-267",
+      "id": "language-stmt-268",
       "quote": "The Phoenician abjad became the direct ancestor of the Greek, Latin, Arabic, and Hebrew scripts, meaning that virtually every alphabetic writing system in use today descends from this single innovation.",
       "block_id": "language-block-114",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-268",
+      "id": "language-stmt-269",
       "quote": "In the broader arc of language history, it is the critical bridge between the Rebus Principle (c.",
       "block_id": "language-block-114",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-269",
+      "id": "language-stmt-270",
       "quote": "3500 BCE) and the formal grammars of \\citeauthor{panini_ashtadhyayi} and \\citeauthor{aristotle_categories}, the moment when writing became truly democratized and portable, setting the stage for the explosion of recorded thought that followed.",
       "block_id": "language-block-114",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-270",
+      "id": "language-stmt-271",
       "quote": "As \\citeauthor{zipf1949human} would later formalize, the pressure toward economy, 22 signs instead of hundreds, is a deep optimization that recurs at every scale of linguistic history, from ancient abjads to modern Byte-Pair Encoding tokenizers.",
       "block_id": "language-block-114",
       "section": "The Phoenician Alphabet (c. 1050 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-271",
+      "id": "language-stmt-272",
       "quote": "When the Greeks adopted the Phoenician abjad around 800 BCE, they made a seemingly small but profoundly consequential modification: they repurposed several Phoenician consonant signs that had no equivalent in Greek to represent **vowel sounds**.",
       "block_id": "language-block-116",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-272",
+      "id": "language-stmt-273",
       "quote": "Phoenician *aleph* (a glottal stop unused in Greek) became *alpha* (the vowel /a/); *he* became *epsilon* (/e/); *yod* became *iota* (/i/).",
       "block_id": "language-block-116",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-273",
+      "id": "language-stmt-274",
       "quote": "The result was the world's first **true alphabet**, a writing system that explicitly represented both consonants and vowels, providing a near-complete phonetic transcription of speech.",
       "block_id": "language-block-116",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-274",
+      "id": "language-stmt-275",
       "quote": "This mattered enormously because it eliminated the ambiguity inherent in abjads, where readers had to infer missing vowels from context.",
       "block_id": "language-block-116",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-275",
+      "id": "language-stmt-276",
       "quote": "With vowels written out, texts could be read aloud accurately by someone with no prior knowledge of the content, a property that made Greek the ideal medium for philosophy, science, drama, and democratic law.",
       "block_id": "language-block-116",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-276",
+      "id": "language-stmt-277",
       "quote": "The Acrophonic Principle (\\cite[Gardiner, 1916]{acrophonic}) already traces the lineage from Phoenician *aleph* to Greek *alpha* and *bet* to *beta*, noting that this adaptation gave us the very word “alphabet” itself.",
       "block_id": "language-block-116",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-277",
+      "id": "language-stmt-278",
       "quote": "The Greek innovation represents the moment when writing achieved full phonetic transparency, the same transparency that modern tokenizers strive for when they decompose text into subword units that capture every nuance of pronunciation and meaning.",
       "block_id": "language-block-116",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-278",
+      "id": "language-stmt-279",
       "quote": "It is also the precondition for \\citeauthor{saussure1916}'s insight about the arbitrariness of the sign: once letters are fully abstract and phonetic, the last residue of iconicity is severed, and the written word becomes a pure social convention.",
       "block_id": "language-block-116",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-279",
+      "id": "language-stmt-280",
       "quote": "The Rosetta Stone (196 BCE) is the first multi-lingual “parallel corpus”, a single decree inscribed in Egyptian hieroglyphics, Demotic script, and Greek, proving that distinct symbolic systems can map to the same underlying meaning.",
       "block_id": "language-block-117",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-280",
+      "id": "language-stmt-281",
       "quote": "When \\citeauthor{hieroglyphsdeciphered} deciphered Egyptian hieroglyphics in 1822, he did so by *aligning* the Greek text (which he could read) with the hieroglyphic text (which he could not), exploiting the assumption that both encoded the same content.",
       "block_id": "language-block-117",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-281",
+      "id": "language-stmt-282",
       "quote": "This is precisely the method that powered IBM's statistical machine translation models in the 1990s and that still underpins the training of modern multilingual LLMs: given two texts known to express the same meaning in different languages, the system learns a mapping between their symbolic systems.",
       "block_id": "language-block-118",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-282",
+      "id": "language-stmt-283",
       "quote": "The Rosetta Stone thus embodies a principle that connects directly to \\citeauthor{firth_context}'s distributional hypothesis and to the embedding spaces of modern Transformers: meaning is not locked inside any single symbol system but can be recovered from the *structural relationships* between symbols, whether those symbols are hieroglyphs, Greek letters, or high-dimensional vectors.",
       "block_id": "language-block-118",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-283",
+      "id": "language-stmt-284",
       "quote": "It is the ancient proof of concept for the idea that translation, and, by extension, understanding, is fundamentally an alignment problem.",
       "block_id": "language-block-118",
       "section": "The Greek Addition of Vowels (c. 800 BCE)",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-284",
+      "id": "language-stmt-285",
       "quote": "The story of language is a single, unbroken thread:",
       "block_id": "language-block-121",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-285",
+      "id": "language-stmt-286",
       "quote": "**Biology** gave us the descended larynx and the cochlea -- an instrument and a listener.",
       "block_id": "language-block-122",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-286",
+      "id": "language-stmt-287",
       "quote": "**Symbolic displacement** freed thought from the present moment, enabling abstraction.",
       "block_id": "language-block-123",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-287",
+      "id": "language-stmt-288",
       "quote": "**Writing** externalized memory, from tally bones to clay tokens to cuneiform.",
       "block_id": "language-block-124",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-288",
+      "id": "language-stmt-289",
       "quote": "**Formalization** (Pāṇini, Aristotle, Wilkins) revealed that language obeys rules, and rules can be encoded.",
       "block_id": "language-block-125",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-289",
+      "id": "language-stmt-290",
       "quote": "**Mechanization** (Kempelen) proved that speech could be reproduced by machines.",
       "block_id": "language-block-126",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-290",
+      "id": "language-stmt-291",
       "quote": "**Statistical geometry** (Firth → Transformers) showed that meaning itself can be computed.",
       "block_id": "language-block-127",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-291",
+      "id": "language-stmt-292",
       "quote": "Each step was a further **abstraction**: from vibrations in air, to marks on clay, to rules on paper, to vectors in silicon.",
       "block_id": "language-block-128",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-292",
+      "id": "language-stmt-293",
       "quote": "The LLM is not a break from this history, it is its latest chapter.",
       "block_id": "language-block-128",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-293",
+      "id": "language-stmt-294",
       "quote": "If Pāṇini formalized grammar and Firth formalized context, what will the next formalization look like?",
       "block_id": "language-block-129",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-294",
+      "id": "language-stmt-295",
       "quote": "Perhaps it will be the formalization of *reasoning itself*, closing the loop between the symbolic displacement that made us human and the artificial intelligence that now mirrors us.",
       "block_id": "language-block-129",
       "section": "Conclusion: 135,000 Years in a Single Thread",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-295",
+      "id": "language-stmt-296",
       "quote": "The title of Gleick's history carries an ambiguity that matters for LLMs.",
       "block_id": "language-block-131",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-296",
+      "id": "language-stmt-297",
       "quote": "“The Information” names both the mathematical quantity Shannon isolated and the deluge of data, text, images, and messages in which modern life is immersed (\\cite[Gleick, 2011]{gleick2011information}).",
       "block_id": "language-block-131",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-297",
+      "id": "language-stmt-298",
       "quote": "Gleick's closing chapters are about the second: an abundance of information does not automatically produce an abundance of understanding, and attention becomes the scarce resource.",
       "block_id": "language-block-131",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-298",
+      "id": "language-stmt-299",
       "quote": "His epilogue is called “The Return of Meaning” for a reason.",
       "block_id": "language-block-131",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-299",
+      "id": "language-stmt-300",
       "quote": "After a century of measuring messages without interpreting them, the question of what they mean comes back.",
       "block_id": "language-block-131",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-300",
+      "id": "language-stmt-301",
       "quote": "That distinction is the cleanest way to state what a language model does and does not do.",
       "block_id": "language-block-132",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-301",
+      "id": "language-stmt-302",
       "quote": "An LLM is a machine for estimating the probability of the next token from a vast corpus; it is exquisitely sensitive to the *statistical* structure of the flood, and it has no independent, non-statistical purchase on whether a sentence is true, important, or worth saying.",
       "block_id": "language-block-132",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-302",
+      "id": "language-stmt-303",
       "quote": "Shannon deliberately excluded meaning from his theory, and the exclusion is still built into the objective: cross-entropy rewards a good guess about what comes next, not a good answer about what is the case.",
       "block_id": "language-block-132",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-303",
+      "id": "language-stmt-304",
       "quote": "The history in this chapter therefore ends with a question rather than a triumph.",
       "block_id": "language-block-133",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-304",
+      "id": "language-stmt-305",
       "quote": "Writing externalized memory; printing and the telegraph externalized and accelerated its transmission; Shannon made its quantity measurable; the computer made it machine-processable; and the LLM has now made a statistical model of the whole archive.",
       "block_id": "language-block-133",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-305",
+      "id": "language-stmt-306",
       "quote": "What remains outside the model is the part the archive was always *for*: the act of a mind that means something by it.",
       "block_id": "language-block-133",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-306",
+      "id": "language-stmt-307",
       "quote": "Whether that act can itself be captured by information, or whether it is the one thing the flood cannot carry, is the question the rest of this course takes up.",
       "block_id": "language-block-133",
       "section": "After the Flood: Information Is Not Meaning",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-307",
+      "id": "language-stmt-308",
       "quote": "But the linguistic thread is only one of several.",
       "block_id": "language-block-135",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-308",
+      "id": "language-stmt-309",
       "quote": "It converges with a parallel history of **numeracy**, from tally marks to clay tokens to place-value arithmetic, that grounded equally abstract rules for quantity.",
       "block_id": "language-block-135",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-309",
+      "id": "language-stmt-310",
       "quote": "It converges with **logic**, from Aristotle's syllogisms to Boole's algebra to Shannon's switching circuits, that reduced reasoning itself to a physical process.",
       "block_id": "language-block-135",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-310",
+      "id": "language-stmt-311",
       "quote": "It converges with **mechanization**, from Jacquard's loom to Babbage's engine to the modern microprocessor, that gave these rules a substrate faster than any human mind.",
       "block_id": "language-block-135",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-311",
+      "id": "language-stmt-312",
       "quote": "The LLM is not the *only* possible outcome of this convergence.",
       "block_id": "language-block-136",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-312",
+      "id": "language-stmt-313",
       "quote": "The digital computer, the scientific method, and the modern university are equally its products.",
       "block_id": "language-block-136",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-313",
+      "id": "language-stmt-314",
       "quote": "But the LLM is the point where all the threads happen to meet: language, numeracy, logic, and mechanism woven into a single substrate.",
       "block_id": "language-block-136",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-314",
+      "id": "language-stmt-315",
       "quote": "The next formalization may not be about language at all.",
       "block_id": "language-block-136",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-315",
+      "id": "language-stmt-316",
       "quote": "The threads diverge again as soon as they converge.",
       "block_id": "language-block-136",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-316",
+      "id": "language-stmt-317",
       "quote": "What matters is the pattern: abstraction upon abstraction, each layer enabling the next, with no final destination in sight.",
       "block_id": "language-block-136",
       "section": "The Threads Are Many, Not One",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-317",
+      "id": "language-stmt-318",
       "quote": "For decades, natural-language processing was a **zoo**: one hand-built system per task, each with its own features, dataset, and state of the art.",
       "block_id": "language-block-138",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-318",
+      "id": "language-stmt-319",
       "quote": "| Task | Question it answered | Classic tool |",
       "block_id": "language-block-139",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-319",
+      "id": "language-stmt-320",
       "quote": "| Machine translation | Translate between languages | statistical, phrase-based MT |",
       "block_id": "language-block-140",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-320",
+      "id": "language-stmt-321",
       "quote": "| Part-of-speech / parsing | Label words / build the tree | HMMs, CFGs, CRFs |",
       "block_id": "language-block-141",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-321",
+      "id": "language-stmt-322",
       "quote": "| Named-entity recognition | Find people, places, dates | CRFs, sequence models |",
       "block_id": "language-block-142",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-322",
+      "id": "language-stmt-323",
       "quote": "| Sentiment analysis | Classify polarity | SVMs on bag-of-words |",
       "block_id": "language-block-143",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-323",
+      "id": "language-stmt-324",
       "quote": "| Question answering | Extract / generate an answer | retrieval + extraction |",
       "block_id": "language-block-144",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-324",
+      "id": "language-stmt-325",
       "quote": "The Transformer **collapsed the zoo**.",
       "block_id": "language-block-145",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-325",
+      "id": "language-stmt-326",
       "quote": "One pre-trained model, fine-tuned, now performs *most* of these as a single next-token task (\\cite[Zhao et al., 2023]{zhao2023survey}).",
       "block_id": "language-block-145",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-326",
+      "id": "language-stmt-327",
       "quote": "The tasks did not vanish — they were **absorbed** into a general sequence model.",
       "block_id": "language-block-145",
       "section": "The NLP Task Landscape, Unified",
       "kind": "statement"
     },
     {
-      "id": "language-stmt-327",
+      "id": "language-stmt-328",
       "quote": "That absorption is the same gesture as every thread in this chapter: a specific, hand-built mechanism giving way to a general one that subsumes it.",
       "block_id": "language-block-145",
       "section": "The NLP Task Landscape, Unified",
@@ -11861,7 +11878,7 @@
     },
     {
       "id": "language-block-65",
-      "quote": "Linguists recognized a hierarchy of levels at which language can be analyzed: **phonetics** and **phonology** (the sounds and their organization), **morphology** (how \"walking\" is \"walk\" plus \"-ing\"), **syntax** (which strings of words are grammatical), **semantics** (what a sentence means), and **pragmatics** (what it means *in this situation*) (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}). In 1957, **Noam Chomsky**'s *Syntactic Structures* took the syntax level and turned it into a formal, *generative* system: a phrase-structure grammar of replacement rules, like `DET N → NP`, `V NP → VP`, `NP VP → S`, that generates exactly the legal sentences of a language and whose **parse trees** certify any given string as legal or not. It was Pāṇini's program, rediscovered as a branch of mathematics, and it gave the first NLP systems their engine: a parser, a dictionary, and a meaning representation. Two years later, Chomsky's review of B. F. Skinner's *Verbal Behavior* made the stakes explicit: Skinner had argued that language, like all behavior, is shaped by reinforcement, but the review concluded that Skinner's \"astonishing claims are far from justified\" — no one can, through experience alone, produce the potentially infinite variety of previously unheard sentences with arbitrarily complex structure that people do produce, so the missing \"factors of fundamental importance\" must be innate, \"human beings being somehow specially created\" for language with a \"universal grammar\" present at birth (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
+      "quote": "Linguists recognized a hierarchy of levels at which language can be analyzed: **phonetics** and **phonology** (the sounds and their organization), **morphology** (how \"walking\" is \"walk\" plus \"-ing\"), **syntax** (which strings of words are grammatical), **semantics** (what a sentence means), and **pragmatics** (what it means *in this situation*) (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}). In 1956, **Noam Chomsky**'s *Three Models for the Description of Language* arranged grammars into the classes that became the **Chomsky hierarchy** — unrestricted (Type 0), context-sensitive (Type 1), context-free (Type 2) and regular (Type 3) — each paired with the machine needed to recognise it, from a Turing machine down to a finite-state automaton (\\cite{chomsky1956three}). A year later, his *Syntactic Structures* took the syntax level and turned it into a formal, *generative* system: a phrase-structure grammar of replacement rules, like `DET N → NP`, `V NP → VP`, `NP VP → S`, that generates exactly the legal sentences of a language and whose **parse trees** certify any given string as legal or not. It was Pāṇini's program, rediscovered as a branch of mathematics, and it gave the first NLP systems their engine: a parser, a dictionary, and a meaning representation. Two years later, Chomsky's review of B. F. Skinner's *Verbal Behavior* made the stakes explicit: Skinner had argued that language, like all behavior, is shaped by reinforcement, but the review concluded that Skinner's \"astonishing claims are far from justified\" — no one can, through experience alone, produce the potentially infinite variety of previously unheard sentences with arbitrarily complex structure that people do produce, so the missing \"factors of fundamental importance\" must be innate, \"human beings being somehow specially created\" for language with a \"universal grammar\" present at birth (\\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).",
       "kind": "paragraph",
       "section": "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)"
     },
