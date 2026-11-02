@@ -224,7 +224,8 @@ from `index.html`, `advent.html`, and `library.html`.
 
 Compact pages do not carry previous/next navigation or a day footer. Keep
 cross-chapter connections on the synthesis page and in the prose, not in
-per-page navigation blocks.
+per-page navigation blocks. Prose links may point only to earlier compact
+pages; do not link ahead to a lesson the reader has not reached.
 
 `transformer.html` and `intuition.html` load Temml (`../Temml-Local.min.css`,
 `../temml.min.js`). `transformer.html` renders the pipeline shape line with

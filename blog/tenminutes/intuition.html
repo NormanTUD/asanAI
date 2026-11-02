@@ -265,7 +265,7 @@
 										<canvas class="step-canvas" id="iatt-canvas" aria-label="Attention moving the embedding of bank toward the context"></canvas>
 										<div class="step-out" id="iatt-out">No context: bank stays in the middle, ambiguous.</div>
 									</div>
-									<p class="step-note"><b>This step is an intuition, not a literal simulation.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result (context changes the representation) with one hand-tuned head instead of the many heads and layers of a real model. For the full mechanism, see <a href="attentionlab.html">the attention lesson</a>.</p>
+									<p class="step-note"><b>This step is an intuition, not a literal simulation.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result (context changes the representation) with one hand-tuned head instead of the many heads and layers of a real model.</p>
 									<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the company it keeps, because the values it collects are different.</p>
 								</div>
 
