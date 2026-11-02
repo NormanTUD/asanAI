@@ -34,10 +34,6 @@ IMAGE_RE = re.compile(
     re.I,
 )
 ENTRY_RE = re.compile(r'\{\s*date:\s*"([^"]*)",(.*?)\n\t\t\t\}', re.S)
-IMAGE_ITEM_RE = re.compile(
-    r'\{\s*src:\s*"([^"]*)",\s*alt:\s*"([^"]*)",\s*cap:\s*"([^"]*)"\s*\}',
-    re.S,
-)
 
 
 def literature_entry(text: str, key: str) -> dict[str, str] | None:
@@ -99,13 +95,18 @@ def main() -> int:
         failures.append("could not parse timeline entries in history.html")
 
     checked = 0
-
-    def check_image(date: str, src: str, cap: str) -> None:
-        nonlocal checked
+    for date, body in timeline:
+        img_m = re.search(r'img:\s*"([^"]*)"', body)
+        cap_m = re.search(r'cap:\s*"([^"]*)"', body)
+        if not img_m:
+            failures.append(f"{date}: timeline entry has img: null")
+            continue
+        src = img_m.group(1)
+        cap = cap_m.group(1) if cap_m else ""
         item = by_src.get(src)
         if item is None:
             failures.append(f"{date}: {src} is not in image-credits.json")
-            return
+            continue
         if "<a href=" not in cap:
             failures.append(f"{date}: caption for {src} has no source link")
         if not LICENSE_RE.search(cap):
@@ -117,23 +118,6 @@ def main() -> int:
         if item["author"].lower() not in cap.lower():
             failures.append(f"{date}: caption for {src} does not contain author {item['author']}")
         checked += 1
-
-    for date, body in timeline:
-        img_m = re.search(r'img:\s*"([^"]*)"', body)
-        if img_m:
-            cap_m = re.search(r'cap:\s*"([^"]*)"', body)
-            check_image(date, img_m.group(1), cap_m.group(1) if cap_m else "")
-            continue
-        images_m = re.search(r'images:\s*\[(.*?)\]\s*,?\s*$', body, re.S)
-        if not images_m:
-            failures.append(f"{date}: timeline entry has neither img nor images")
-            continue
-        items = IMAGE_ITEM_RE.findall(images_m.group(1))
-        if not items:
-            failures.append(f"{date}: images block could not be parsed")
-            continue
-        for src, _alt, cap in items:
-            check_image(date, src, cap)
 
     # Every static figure must carry a visible credit and a source link.
     static = 0
