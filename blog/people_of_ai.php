@@ -331,6 +331,10 @@ The 1955 **Dartmouth proposal** named the field and set its first research agend
 
 Simon and Newell built the **Logic Theory Machine**, one of the first programs to prove theorems, and used it to argue that human problem solving is symbol manipulation. The program proved 38 of the first 52 theorems in *Principia Mathematica* and found a shorter proof of theorem 2.85 than Russell and Whitehead's; when the authors submitted that proof to the *Journal of Symbolic Logic* with the program listed as a co-author, the editor rejected it because proving a theorem in the outmoded system of *Principia* was no accomplishment \cite{crevier1993ai}. Their **physical symbol system hypothesis** — that a physical symbol system has the necessary and sufficient means for general intelligent action — became the philosophical core of classical AI. Simon also won the Nobel Prize in Economics for his work on bounded rationality, a reminder that the study of intelligence has always crossed disciplinary lines (\cite[Newell & Simon, 1956]{newell1956logic}).
 
+### Vladimir Vapnik and Corinna Cortes
+
+Vapnik, working at the Institute for Control Sciences in Moscow, and Alexey Chervonenkis built the **VC theory** of generalisation: a distribution-free bound on test error in terms of the capacity of the hypothesis class, measured by the **VC dimension** (\cite[Vapnik & Chervonenkis, 1971]{vapnik1964vc}). At Bell Labs he and **Corinna Cortes** turned the theory into the **support vector machine** (1995), which finds the maximum-margin separating hyperplane and uses the **kernel trick** to work in high-dimensional feature spaces implicitly; for a decade before deep learning it was the default strong baseline on small and medium-sized datasets (\cite[Cortes & Vapnik, 1995]{cortes1995svm}; \cite[Vapnik, 1995]{vapnik1995book}).
+
 ### W. Ross Ashby and Donald Hebb
 
 \marginfig{ashby.jpg}{W. Ross Ashby. \cite{ashbyphoto}. Public domain.}
@@ -409,7 +413,7 @@ Zou's **representation engineering** turned interpretability into a top-down too
 
 \marginfig{dario_amodei_portrait.jpg}{Dario Amodei. \cite{img_dario_amodei}. [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/).}
 
-Burns' **weak-to-strong generalization** fine-tuned strong models on labels from weak supervisors to measure how much latent capability could be elicited — a present-day proxy for the alignment problem (\cite[Burns et al., 2023]{burns2023weakstrong}). Amodei's **Concrete Problems in AI Safety** named the failure modes that the field still uses as its taxonomy: reward hacking, side effects, scalable oversight, safe exploration, and distributional shift (\cite[Amodei et al., 2016]{amodei2016concrete}). Irving's **AI safety via debate** proposed training two models to argue opposite sides of a question in front of a human judge, so that the judge can supervise answers too complex to verify directly (\cite[Irving et al., 2018]{irving2018debate}).
+Burns' **weak-to-strong generalization** fine-tuned strong models on labels from weak supervisors to measure how much latent capability could be elicited — a present-day proxy for the alignment problem (\cite[Burns et al., 2023]{burns2023weakstrong}). Amodei's **Concrete Problems in AI Safety** named the failure modes that the field still uses as its taxonomy: reward hacking, side effects, scalable oversight, safe exploration, and distributional shift (\cite[Amodei et al., 2016]{amodei2016concrete}). He later left OpenAI to co-found **Anthropic** in 2021, which built the Claude line and made safety its organising principle (\cite{anthropic_bio}; \cite{amodei2024machines}). Irving's **AI safety via debate** proposed training two models to argue opposite sides of a question in front of a human judge, so that the judge can supervise answers too complex to verify directly (\cite[Irving et al., 2018]{irving2018debate}).
 
 ### Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord
 
