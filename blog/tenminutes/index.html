@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="Ten-minute, interactive versions of From Nothing to Large Language Models. One idea, one demo, one clear takeaway per visit.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>Ten Minutes — From Nothing to Large Language Models</title>
+	<title>Ten Minutes | From Nothing to Large Language Models</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-page="home">
@@ -38,8 +38,7 @@
 					<h1>The whole course. <em>Ten minutes</em> at a time.</h1>
 					<p class="hero-deck">
 						A compact companion to the long textbook. Each visit gives you
-						<strong>one idea, something to try, and one clear takeaway</strong> —
-						then points you to the next door if the thread catches.
+						<strong>one idea, something to try, and one clear takeaway</strong>: then points you to the next door if the thread catches.
 					</p>
 					<div class="hero-actions">
 						<a class="btn btn--green" href="intuition.html">
@@ -63,8 +62,7 @@
 						<p class="kicker">The first ten minutes</p>
 						<h2>A machine that predicts one token at a time.</h2>
 						<p>
-							That is the whole trick. Everything else — chat, code, translation, reasoning —
-							is that one prediction repeated in a loop (<a href="https://arxiv.org/abs/2005.14165" rel="noopener">Brown et al., 2020</a>), at enormous scale (<a href="https://arxiv.org/abs/2203.15556" rel="noopener">Hoffmann et al., 2022</a>). The units are
+							That is the whole trick. Everything else (chat, code, translation, reasoning) is that one prediction repeated in a loop (<a href="https://arxiv.org/abs/2005.14165" rel="noopener">Brown et al., 2020</a>), at enormous scale (<a href="https://arxiv.org/abs/2203.15556" rel="noopener">Hoffmann et al., 2022</a>). The units are
 							<a href="https://arxiv.org/abs/1508.07909" rel="noopener">tokens</a>, not words: a token can be a whole word, a word fragment, or a piece of
 							punctuation, but the loop is the same (Sennrich et al., 2016). Follow a sentence from text to tokens to
 							probabilities, and watch the loop write.
@@ -80,7 +78,7 @@
 							<p>
 								The shelf is a library. This is the doorway: enough to build a correct
 								mental model, not enough to pretend you have mastered it. Ten minutes is
-								also a discipline — it forces every page to choose one claim and earn it
+								also a discipline: it forces every page to choose one claim and earn it
 								instead of hiding behind a wall of detail.
 							</p>
 						</div>
@@ -92,8 +90,8 @@
 					</div>
 				</div>
 				<div class="keypoints" style="margin-top:16px">
-					<div class="keypoint"><b>Read the claim</b><span>Each page states one thesis, then earns it with a compact argument — not a list of facts.</span></div>
-					<div class="keypoint"><b>Play the mechanism</b><span>Every lesson has something to try — a demo, a timeline, or a map. Change a number and watch what follows.</span></div>
+					<div class="keypoint"><b>Read the claim</b><span>Each page states one thesis, then earns it with a compact argument: not a list of facts.</span></div>
+					<div class="keypoint"><b>Play the mechanism</b><span>Every lesson has something to try: a demo, a timeline, or a map. Change a number and watch what follows.</span></div>
 					<div class="keypoint"><b>Explain it back</b><span>Every lesson ends with a one-sentence takeaway in an aha box. No score, no quiz, no timer; the explaining is yours.</span></div>
 				</div>
 			</section>
@@ -126,7 +124,7 @@
 					<a class="path-card" href="agents.html" data-reveal>
 						<span class="pc-num">Route 03 · 20 min</span>
 						<h3>From text to action</h3>
-						<p>What changes when a model gets tools, memory, and a loop — and why that is both useful and dangerous.</p>
+						<p>What changes when a model gets tools, memory, and a loop, and why that is both useful and dangerous.</p>
 						<span class="pc-foot">Agents → Advent calendar
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
 						</span>
@@ -206,7 +204,7 @@
 						<p class="kicker">Field notes</p>
 						<h2>Words that do a lot of work.</h2>
 					</div>
-					<p>Each term opens the lesson where it becomes concrete — no glossary memorisation required.</p>
+					<p>Each term opens the lesson where it becomes concrete: no glossary memorisation required.</p>
 				</div>
 				<div class="keypoints">
 					<a class="keypoint" href="intuition.html"><b>Next-token prediction</b><span>A probability distribution over the vocabulary, one selected token, then the loop repeats.</span></a>
@@ -216,7 +214,7 @@
 					<a class="keypoint" href="embeddinglab.html"><b>Cosine similarity</b><span>The angle between two vectors. It measures directional alignment, not magnitude.</span></a>
 					<a class="keypoint" href="attentionlab.html"><b>Attention</b><span>A learned routing operation: a query asks, keys answer, values travel.</span></a>
 					<a class="keypoint" href="transformer.html"><b>Residual stream</b><span>The shared workspace that each sublayer reads and adds its update back into.</span></a>
-					<a class="keypoint" href="agents.html"><b>Agent</b><span>An LLM in an observe–reason–act loop with tools, memory, and a permission model.</span></a>
+					<a class="keypoint" href="agents.html"><b>Agent</b><span>An LLM in an observe-reason-act loop with tools, memory, and a permission model.</span></a>
 				</div>
 			</section>
 
@@ -362,7 +360,7 @@
 				var cont = document.createElement("a");
 				cont.className = "btn";
 				cont.href = last.slug + ".html";
-				cont.textContent = "Continue: " + String(last.title || last.slug).replace(" — Ten Minutes", "");
+				cont.textContent = "Continue: " + String(last.title || last.slug).replace(" | Ten Minutes", "");
 				actions.insertBefore(cont, actions.firstChild);
 			}
 		}

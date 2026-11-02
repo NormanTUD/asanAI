@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="Why a model can fit the training data perfectly and still fail on the next example.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>Pattern or Memorization? — Ten Minutes</title>
+	<title>Pattern or Memorization? | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="overandunderfittinglab" data-page="lesson">
@@ -36,8 +36,8 @@
 						<div class="section-kicker"><span class="sk-num">02</span> How to tell the difference</div>
 						<h2 class="section-title">Test on what it has not seen.</h2>
 						<div class="prose">
-							<p>Measure performance on data the model did not train on. If training improves while validation gets worse, you are overfitting. If both stay bad, you are underfitting. Interpolation — a test point between known examples — is the easy case. Extrapolation, outside the training range, is where a low training error can hide a confident failure.</p>
-							<p>The fix is not always “more data” or “a bigger model”. It can be a simpler model, regularization, early stopping, or a training set that better represents the world. More data helps only if it is representative; weight decay, dropout, and early stopping make the model work harder to fit the same points. And very large networks often generalize well despite having enough parameters to memorize — the so-called double-descent curve (<a href="https://arxiv.org/abs/1803.08785" rel="noopener">Belkin et al., 2019</a>). The classical trade-off is a first map, not the whole territory. And a low test error on one dataset is not a guarantee: a model trained on one hospital's scans can fail at another hospital with different machines. Distribution shift is often invisible until deployment, so test the cases you actually care about.</p>
+							<p>Measure performance on data the model did not train on. If training improves while validation gets worse, you are overfitting. If both stay bad, you are underfitting. Interpolation (a test point between known examples) is the easy case. Extrapolation, outside the training range, is where a low training error can hide a confident failure.</p>
+							<p>The fix is not always “more data” or “a bigger model”. It can be a simpler model, regularization, early stopping, or a training set that better represents the world. More data helps only if it is representative; weight decay, dropout, and early stopping make the model work harder to fit the same points. And very large networks often generalize well despite having enough parameters to memorize: the so-called double-descent curve (<a href="https://arxiv.org/abs/1803.08785" rel="noopener">Belkin et al., 2019</a>). The classical trade-off is a first map, not the whole territory. And a low test error on one dataset is not a guarantee: a model trained on one hospital's scans can fail at another hospital with different machines. Distribution shift is often invisible until deployment, so test the cases you actually care about.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Underfitting</b><span>Too simple: the model misses the pattern.</span></div>
@@ -70,8 +70,8 @@
 								<label>Degree <input type="range" data-polyfit-degree min="1" max="11" step="1" value="2"><output data-polyfit-degree-out>2</output></label>
 							</div>
 							<div class="demo-readout">
-								<div><b>Training error</b><span data-polyfit-train>—</span></div>
-								<div><b>Test error</b><span data-polyfit-test>—</span></div>
+								<div><b>Training error</b><span data-polyfit-train>...</span></div>
+								<div><b>Test error</b><span data-polyfit-test>...</span></div>
 								<div><b>What to watch</b><span>the gap</span></div>
 							</div>
 							<p class="demo-hint" data-polyfit-note></p>

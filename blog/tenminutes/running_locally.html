@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="Quantization, GGUF, llama.cpp, and what it takes to run a capable model on a laptop.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>Running a Model Yourself — Ten Minutes</title>
+	<title>Running a Model Yourself | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="running_locally" data-page="lesson">
@@ -38,7 +38,7 @@
 						<h2 class="section-title">Privacy, control, and a trade-off.</h2>
 						<div class="prose">
 							<p>Local inference keeps your data on your machine. It works offline, has no per-token bill, and lets you experiment without an API. On Apple Silicon, unified memory makes larger models practical on a laptop.</p>
-							<p>The trade-off is real: a local model is usually smaller or more compressed than a frontier API model. For many tasks that is enough; for the hardest ones it is not. A hybrid is common: local for drafts, search, and private data; cloud for the hard final answer. And local does not automatically mean private — logs, plugins, and network calls can still leak information. The privacy case depends on the whole stack, not only on where the weights run.</p>
+							<p>The trade-off is real: a local model is usually smaller or more compressed than a frontier API model. For many tasks that is enough; for the hardest ones it is not. A hybrid is common: local for drafts, search, and private data; cloud for the hard final answer. And local does not automatically mean private: logs, plugins, and network calls can still leak information. The privacy case depends on the whole stack, not only on where the weights run.</p>
 							<p>Quality is the other hidden variable. A 4-bit model can be close to its 16-bit parent on many tasks and noticeably worse on long reasoning chains, code, and rare languages. The only reliable test is your own evaluation set, run on both versions. “It runs” is not the same as “it is good enough”.</p>
 						</div>
 						<div class="keypoints">
@@ -98,8 +98,8 @@
 								</div>
 							</div>
 							<div class="demo-readout">
-								<div><b>Weights + overhead</b><span data-vram-mem>—</span></div>
-								<div><b>Fit</b><span data-vram-fit>—</span></div>
+								<div><b>Weights + overhead</b><span data-vram-mem>...</span></div>
+								<div><b>Fit</b><span data-vram-fit>...</span></div>
 								<div><b>Precision</b><span>quantized</span></div>
 							</div>
 							<p class="mix-note" data-vram-note>Weights plus rough runtime overhead. Context length and KV cache can add several more gigabytes.</p>

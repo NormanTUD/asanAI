@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="A ten-minute interactive introduction to next-token prediction, the loop behind large language models.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>One Word at a Time — Ten Minutes</title>
+	<title>One Word at a Time | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 </head>
@@ -35,7 +35,7 @@
 						<div class="prose">
 							<p>
 								Here is the core idea. A language model reads a sequence of
-								tokens — words, in this toy — and returns a <strong>probability for every
+								tokens (words, in this toy) and returns a <strong>probability for every
 								possible next token</strong>. One is chosen, appended to the input, and the
 								whole thing runs again. That is the <strong>autoregressive loop</strong>.
 							</p>
@@ -45,17 +45,17 @@
 								assign a score. “Chosen” is a separate decision, called <strong>decoding</strong>:
 								the model supplies the distribution, and the decoder picks from it. The toy
 								calls its tokens words; in a real model a token can be a whole word, a word
-								fragment, or punctuation — which is the subject of tokenization.
+								fragment, or punctuation, which is the subject of tokenization.
 							</p>
 							<p>
 								This picture is deliberately incomplete. A real model adds layers of
 								attention, a feed-forward network, position information, training data, and
 								post-training. The loop comes first because everything else is machinery for
-								making this one prediction better — each part exists to solve a problem the
+								making this one prediction better: each part exists to solve a problem the
 								previous part created.
 							</p>
 							<p>
-								A conversation, a poem, a Python function — all of it is this loop. That sounds
+								A conversation, a poem, a Python function: all of it is this loop. That sounds
 								reductive until you notice what the context can contain: the question, a worked
 								example, a tool's output, or the model's own earlier reasoning. Each new token
 								conditions on all of it. Why not predict the whole answer at once? Because the
@@ -117,10 +117,10 @@
 								</div>
 								<p class="meadow-caption nt-temp-note" id="nt-temp-note">
 									<b>Why "temperature"?</b> In a gas, temperature sets how widely molecular
-									speeds are spread (Maxwell–Boltzmann). Here it plays the same role for
+									speeds are spread (Maxwell-Boltzmann). Here it plays the same role for
 									logits: <span class="nt-formula">pᵢ ∝ exp(zᵢ / T)</span>. High T flattens the
 									distribution; low T sharpens it; greedy is the limit T → 0. The name is a
-									metaphor — there is no gas inside the model.
+									metaphor: there is no gas inside the model.
 								</p>
 								<div class="demo-readout demo-readout--4">
 									<div><b>Step</b><span id="nt-step-count">0 / 6</span></div>
@@ -139,7 +139,7 @@
 						<div class="prose">
 							<p>
 								Temperature is only one decoding choice, and it changes style, not knowledge.
-								At temperature zero — greedy decoding — the top candidate is taken every
+								At temperature zero (greedy decoding) the top candidate is taken every
 								time: deterministic, often repetitive, but still a freshly computed
 								distribution rather than a lookup. Sampling draws from the distribution;
 								top-p keeps the smallest set of words whose probabilities reach 0.9 and
@@ -171,7 +171,7 @@
 						<div class="demo" id="inside-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">Inside the model <span>· demos 02–07</span></p>
+									<p class="demo-title">Inside the model <span>· demos 02-07</span></p>
 									<p class="demo-sub">Follow one word through six steps. Each step is a small toy, but the order and the division of labour are the real architecture.</p>
 								</div>
 								<span class="demo-badge">six steps</span>
@@ -286,7 +286,7 @@
 										<canvas class="step-canvas" id="iatt-canvas" aria-label="Attention moving the embedding of bank toward the context"></canvas>
 										<div class="step-out" id="iatt-out">No context: bank stays in the middle, ambiguous.</div>
 									</div>
-									<p class="step-note"><b>This step is an intuition, not a literal simulation.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result — context changes the representation — with one hand-tuned head instead of the many heads and layers of a real model. For the full mechanism, see <a href="attentionlab.html">the attention lesson</a>.</p>
+									<p class="step-note"><b>This step is an intuition, not a literal simulation.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result (context changes the representation) with one hand-tuned head instead of the many heads and layers of a real model. For the full mechanism, see <a href="attentionlab.html">the attention lesson</a>.</p>
 									<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the company it keeps, because the values it collects are different.</p>
 								</div>
 
@@ -333,7 +333,7 @@
 										<div class="collapse-card">
 											<div class="cc-label">two dense layers</div>
 											<div class="collapse-math" id="collapse-math">dense₂(dense₁(x)) = W₂(W₁x + b₁) + b₂ = (W₂W₁)x + (W₂b₁ + b₂) = Wx + b<br>W = W₂W₁ &nbsp;&nbsp; b = W₂b₁ + b₂</div>
-											<p>The product <b>W₂W₁</b> is itself a new single weight matrix: every row of W₁ is mixed through the columns of W₂. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <b>W</b> maps d inputs directly to k outputs — the hidden layer has disappeared. The biases also merge into <b>W₂b₁ + b₂</b>. So without a nonlinearity, two dense layers are exactly one dense layer with a combined <b>W</b>; depth adds no expressive power. The activation is what breaks the collapse.</p>
+											<p>The product <b>W₂W₁</b> is itself a new single weight matrix: every row of W₁ is mixed through the columns of W₂. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <b>W</b> maps d inputs directly to k outputs: the hidden layer has disappeared. The biases also merge into <b>W₂b₁ + b₂</b>. So without a nonlinearity, two dense layers are exactly one dense layer with a combined <b>W</b>; depth adds no expressive power. The activation is what breaks the collapse.</p>
 										</div>
 										<div class="activation-card">
 											<div class="activation-copy">
@@ -343,7 +343,7 @@
 											</div>
 											<div class="activation-plots" id="activation-plots"></div>
 										</div>
-										<p class="step-note curve-intro">The demo below uses a smooth bend so you can see the shape. ReLU would crease the same space flat on one side of z = 0. The cut still happens — the layer changes the space in which the cut is made.</p>
+										<p class="step-note curve-intro">The demo below uses a smooth bend so you can see the shape. ReLU would crease the same space flat on one side of z = 0. The cut still happens: the layer changes the space in which the cut is made.</p>
 										<div class="demo demo--paper" data-demo="bend" style="margin-top:14px">
 											<div class="demo-head">
 												<div>
@@ -366,7 +366,7 @@
 													<span class="bend-count" data-bend-count>1 / 7</span>
 												</div>
 											</div>
-											<div class="demo-insight"><b>Takeaway</b><span>The layer changes the coordinate system. A cut that was impossible becomes a threshold — that is what depth buys.</span></div>
+											<div class="demo-insight"><b>Takeaway</b><span>The layer changes the coordinate system. A cut that was impossible becomes a threshold: that is what depth buys.</span></div>
 										</div>
 										<div class="step-out">The cut still happens. The layer changes the space so that a straight cut in the new space separates the classes in the old one. ReLU is the sharp version: a fold along a crease.</div>
 										<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into something closer to a simple threshold.</p>
@@ -407,7 +407,7 @@
 							<p>
 								Under the hood, the model does not choose from a list. It arrives at a
 								<strong>point in a continuous space of possible next-thoughts</strong>. Every
-								word in the vocabulary owns the region of that space closest to it — like
+								word in the vocabulary owns the region of that space closest to it: like
 								pins in a meadow, each with its own territory. The thought falls into the
 								cell of the nearest word.
 							</p>
@@ -439,8 +439,8 @@
 								<canvas class="demo-canvas" id="meadow-canvas" style="height:340px" aria-label="A Voronoi field of words. Move the pointer to place a thought."></canvas>
 								<div class="demo-readout">
 									<div><b>Thought falls into</b><span id="md-word">dragon</span></div>
-									<div><b>Winning chance</b><span id="md-chance">—</span></div>
-									<div><b>Margin to seam</b><span id="md-margin">—</span></div>
+									<div><b>Winning chance</b><span id="md-chance">...</span></div>
+									<div><b>Margin to seam</b><span id="md-margin">...</span></div>
 								</div>
 								<div class="demo-controls">
 									<label>Temperature
@@ -477,7 +477,7 @@
 							<p>
 								No step has a tidy fact database, and no step “understands” in the human
 								sense. Knowledge is distributed across the weights; meaning lives in the
-								<strong>geometry</strong> — directions, distances, regions — and at each
+								<strong>geometry</strong> (directions, distances, regions) and at each
 								step the model places the next thought somewhere in that space. The meadow
 								is that last step, seen up close.
 							</p>
@@ -492,7 +492,7 @@
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>What it is</b><span>A next-token predictor: one distribution, one draw, one append, repeated.</span></div>
-							<div class="keypoint"><b>Why it scales</b><span>Better prediction usually means better compression — and compression needs more of the world’s structure.</span></div>
+							<div class="keypoint"><b>Why it scales</b><span>Better prediction usually means better compression, and compression needs more of the world’s structure.</span></div>
 							<div class="keypoint"><b>Its limits</b><span>It predicts plausible text. It can be fluent and wrong, and it offers no guarantee of truth.</span></div>
 							<div class="keypoint"><b>The contested part</b><span>Whether fluent prediction is genuine world knowledge or “stochastic parroting” is not settled.</span></div>
 						</div>
@@ -501,7 +501,7 @@
 								Compression-as-intelligence is a productive working hypothesis, not a proved
 								identity. Solomonoff’s theorem is about prediction, not understanding; it does
 								not settle whether a particular model grasps the world. The honest position is
-								that the evidence is still catching up to the philosophy — and that both the
+								that the evidence is still catching up to the philosophy, and that both the
 								awe and the scepticism are responses to the same remarkable fact: a loop this
 								simple gets this far. Put differently, a language model is a finite vocabulary
 								laid over a continuum of meaning, with a loop that keeps falling to the next word.
@@ -621,7 +621,7 @@
 				html += '<span class="' + item.cls + '">' + escapeHtml(item.tok) + "</span>";
 			});
 			if (stage >= MAX_STEPS) {
-				html += ' <span class="given" style="opacity:.55">— sequence complete</span>';
+				html += ' <span class="given" style="opacity:.55">sequence complete</span>';
 			} else {
 				html += '<span class="cursor" aria-hidden="true"></span>';
 			}

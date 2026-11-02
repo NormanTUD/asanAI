@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="How the whole compact course fits together: prediction, tokens, attention, training, assistants, and the larger questions.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>The Whole Arc — Ten Minutes</title>
+	<title>The Whole Arc | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="whole" data-page="lesson">
@@ -167,8 +167,7 @@
 							<p>
 								<strong>The representation stack.</strong> Text is cut into tokens. Tokens become
 								vectors. Position adds order. Attention mixes information across positions. The
-								residual stream (<a href="https://transformer-circuits.pub/2021/framework/index.html" rel="noopener">Elhage et al., 2021</a>) — the same running vector from the six-step demo, and the workspace every layer reads and adds to —
-								carries a running state. The MLP, the feed-forward network inside each block,
+								residual stream (<a href="https://transformer-circuits.pub/2021/framework/index.html" rel="noopener">Elhage et al., 2021</a>) (the same running vector from the six-step demo, and the workspace every layer reads and adds to) carries a running state. The MLP, the feed-forward network inside each block,
 								transforms each position on its own.</p>
 							<p>A transformer block repeats attention and
 								MLP; the final vector is unembedded, multiplied against the vocabulary, into a
@@ -178,7 +177,7 @@
 							</p>
 							<p>
 								<strong>The behaviour stack.</strong> Pretraining data decides what the model has
-								seen. The objective — the loss it is trained to minimise — decides what it
+								seen. The objective (the loss it is trained to minimise) decides what it
 								optimises. Post-training (<a href="https://arxiv.org/abs/2203.02155" rel="noopener">Ouyang et al., 2022</a>) decides how it behaves
 								as an assistant. Sampling, the rule
 								for turning probabilities into a chosen token, decides how adventurous it is.
@@ -191,7 +190,7 @@
 							<p>
 								<strong>The human stack.</strong> Evaluation asks whether it works. Safety asks what
 								can go wrong. Society, philosophy, AI for science, and the people behind the machine
-								ask what it is for, who is accountable, and what it can discover. A model is a stack of choices, not a single trick — and
+								ask what it is for, who is accountable, and what it can discover. A model is a stack of choices, not a single trick, and
 								the choices at one layer change what the next layer can do.
 							</p>
 						</div>

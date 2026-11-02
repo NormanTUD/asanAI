@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="How retrieval-augmented generation grounds an LLM in documents instead of memory.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>Giving It a Search Engine — Ten Minutes</title>
+	<title>Giving It a Search Engine | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="rag" data-page="lesson">
@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The pipeline</div>
 						<h2 class="section-title">Index, retrieve, generate.</h2>
 						<div class="prose">
-							<p>Fine-tuning shaped the assistant. Now it gets a library. RAG (<a href="https://arxiv.org/abs/2005.11401" rel="noopener">Lewis et al., 2020</a>) starts with a corpus. Documents are split into <strong>chunks</strong>: small, overlapping passages that can be retrieved independently. An <strong>embedding model</strong> turns each chunk into a vector. The same model turns the question into a vector in the same space — if the chunk model and the query model differ, the similarity scores are meaningless.</p>
+							<p>Fine-tuning shaped the assistant. Now it gets a library. RAG (<a href="https://arxiv.org/abs/2005.11401" rel="noopener">Lewis et al., 2020</a>) starts with a corpus. Documents are split into <strong>chunks</strong>: small, overlapping passages that can be retrieved independently. An <strong>embedding model</strong> turns each chunk into a vector. The same model turns the question into a vector in the same space, if the chunk model and the query model differ, the similarity scores are meaningless.</p>
 							<p>A similarity score, usually <strong>cosine similarity</strong> (the same cosine as in <a href="embeddinglab.html#metric">embeddings</a>), rates every chunk against the query. The score is not a probability; it is a measure of alignment in the embedding space. The system selects the top-k chunks (or everything above a score threshold) and formats those passages into the prompt. The language model then answers from that context.</p>
 							<p>The original RAG paired a dense retriever (<a href="https://arxiv.org/abs/2004.04906" rel="noopener">DPR</a>; Karpukhin et al., 2020) with a seq2seq generator; modern systems often keep the pattern and swap the components. The key division of labour: the <strong>embedding model and the index do the searching</strong>; the LLM only reads the selected passages. That is why the embedding model, the chunking strategy, and the ranking rule matter as much as the generator itself.</p>
 						</div>
@@ -53,7 +53,7 @@
 						<h2 class="section-title">Chunking, hybrid search, reranking.</h2>
 						<div class="prose">
 							<p>Chunking is a design decision. Too small and the passage lacks context; too large and the retriever has to match a lot of irrelevant text. Overlap helps avoid cutting a fact in half. Contextual retrieval adds a short summary of the surrounding document to each chunk.</p>
-							<p>Hybrid search combines keyword matching with dense vectors. Keyword search — BM25 is the standard (<a href="https://doi.org/10.1561/1500000019" rel="noopener">Robertson &amp; Zaragoza, 2009</a>) — is good at names and exact terms; dense retrieval is good at paraphrase. A reranker can then score the top candidates with a more expensive model before the answer is generated.</p>
+							<p>Hybrid search combines keyword matching with dense vectors. Keyword search: BM25 is the standard (<a href="https://doi.org/10.1561/1500000019" rel="noopener">Robertson &amp; Zaragoza, 2009</a>): is good at names and exact terms; dense retrieval is good at paraphrase. A reranker can then score the top candidates with a more expensive model before the answer is generated.</p>
 							<p>The failure modes are real: the right passage may be missing, the wrong passage may be ranked first, or the model may ignore the context. Evaluation and citations are what make RAG useful rather than decorative.</p>
 							<p>RAG and fine-tuning solve different problems. RAG changes what the model can <em>see</em>; fine-tuning changes what the model is <em>like</em>. Use RAG for facts that change, private documents, and anything that needs a citation. Use fine-tuning for a format, a tone, a tool-calling convention, or a behaviour the base model will not pick up from a prompt. The two can be combined: a fine-tuned model that reads retrieved passages is a common production pattern.</p>
 						</div>
@@ -91,9 +91,9 @@
 							</div>
 							<div class="retrieval-list" data-retrieval-list></div>
 							<div class="demo-readout">
-								<div><b>Top match</b><span data-retrieval-top>—</span></div>
-								<div><b>Selected</b><span data-retrieval-count>—</span></div>
-								<div><b>Score</b><span data-retrieval-score>—</span></div>
+								<div><b>Top match</b><span data-retrieval-top>...</span></div>
+								<div><b>Selected</b><span data-retrieval-count>...</span></div>
+								<div><b>Score</b><span data-retrieval-score>...</span></div>
 							</div>
 							<p class="demo-hint" data-retrieval-note></p>
 							<pre class="rag-prompt" data-retrieval-prompt>Context:
@@ -122,9 +122,9 @@ Answer:</pre>
 							</div>
 							<canvas class="demo-canvas demo-canvas--md" data-ragspace-canvas style="margin-top:12px" aria-label="A two-dimensional map of chunks and a query"></canvas>
 							<div class="demo-readout">
-								<div><b>Query</b><span data-ragspace-query>—</span></div>
-								<div><b>Nearest chunk</b><span data-ragspace-top>—</span></div>
-								<div><b>Distance</b><span data-ragspace-dist>—</span></div>
+								<div><b>Query</b><span data-ragspace-query>...</span></div>
+								<div><b>Nearest chunk</b><span data-ragspace-top>...</span></div>
+								<div><b>Distance</b><span data-ragspace-dist>...</span></div>
 							</div>
 							<p class="demo-hint">The query does not search the text. It searches the geometry. Change the query and the two green lines snap to a different neighbourhood.</p>
 						</div>

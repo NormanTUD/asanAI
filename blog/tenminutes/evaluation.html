@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="Benchmarks, contamination, judge bias, and how to measure an LLM without fooling yourself.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>Measuring What It Can Do — Ten Minutes</title>
+	<title>Measuring What It Can Do | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="evaluation" data-page="lesson">
@@ -36,7 +36,7 @@
 						<div class="section-kicker"><span class="sk-num">02</span> Contamination and the real task</div>
 						<h2 class="section-title">Measure your problem.</h2>
 						<div class="prose">
-							<p>Benchmark contamination is the central problem: if the test data appeared in training, a high score may measure memorization rather than capability. Deduplication helps, but it is hard to prove a negative. Leaderboard pressure makes it worse. Goodhart's law applies (<a href="https://books.google.de/books?id=OMe6UQxu1KcC&amp;pg=PA111&amp;redir_esc=y#v=onepage&amp;q&amp;f=false" rel="noopener">Goodhart, 1975</a>): when a measure becomes a target, it stops being a good measure.</p>
+							<p>Benchmark contamination is the central problem, if the test data appeared in training, a high score may measure memorization rather than capability. Deduplication helps, but it is hard to prove a negative. Leaderboard pressure makes it worse. Goodhart's law applies (<a href="https://books.google.de/books?id=OMe6UQxu1KcC&amp;pg=PA111&amp;redir_esc=y#v=onepage&amp;q&amp;f=false" rel="noopener">Goodhart, 1975</a>), when a measure becomes a target, it stops being a good measure.</p>
 							<p>For your own use case, build a small evaluation that reflects the real task. Define a rubric, collect examples, measure agreement, and check whether the difference you see is larger than the noise. A general benchmark is a starting point, not a verdict.</p>
 						</div>
 						<div class="keypoints">
@@ -57,7 +57,7 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">A score can be contaminated <span>· demo</span></p>
-								<p class="demo-sub">Slide the contamination up. The reported score rises while the true skill stays the same — the benchmark starts measuring memory.</p>
+								<p class="demo-sub">Slide the contamination up. The reported score rises while the true skill stays the same: the benchmark starts measuring memory.</p>
 							</div>
 							<span class="demo-badge">illustrative</span>
 						</div>
@@ -77,8 +77,8 @@
 							</div>
 							<div class="demo-readout">
 								<div><b>Lesson</b><span>check the data</span></div>
-								<div><b>Reported</b><span data-contam-score-val>—</span></div>
-								<div><b>True skill</b><span data-contam-skill-val>—</span></div>
+								<div><b>Reported</b><span data-contam-score-val>...</span></div>
+								<div><b>True skill</b><span data-contam-skill-val>...</span></div>
 							</div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>A benchmark is a proxy. If the test data leaked into training, a high score may measure memory rather than capability.</span></div>

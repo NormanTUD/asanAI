@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="Roles, specificity, delimiters, examples, and the practical craft of communicating with an LLM.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>The Craft of Asking — Ten Minutes</title>
+	<title>The Craft of Asking | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="promptengineering" data-page="lesson">
@@ -27,8 +27,8 @@
 						<div class="section-kicker"><span class="sk-num">01</span> Set the environment</div>
 						<h2 class="section-title">Role, specificity, structure.</h2>
 						<div class="prose">
-							<p>Retrieval gave it documents. A role primes the model with a style and a body of knowledge. Specific instructions reduce ambiguity. Delimiters separate instructions from data. Examples show the format you want better than a description often can. This is why a <strong>few-shot</strong> prompt (<a href="https://arxiv.org/abs/2005.14165" rel="noopener">Brown et al., 2020</a>) — a handful of input-output examples before the real request — often beats a longer description of the same rule.</p>
-							<p>All of this is context-window engineering: the prompt is the part of the window you control. The three message roles are not cosmetic either. The <strong>system</strong> message sets the standing instructions, the <strong>user</strong> message carries the request, and the <strong>assistant</strong> message holds the model's earlier turns. The model is trained to treat them differently, which is why a system instruction usually outranks a user instruction — and why prompt injection tries to smuggle a new system instruction into user data.</p>
+							<p>Retrieval gave it documents. A role primes the model with a style and a body of knowledge. Specific instructions reduce ambiguity. Delimiters separate instructions from data. Examples show the format you want better than a description often can. This is why a <strong>few-shot</strong> prompt (<a href="https://arxiv.org/abs/2005.14165" rel="noopener">Brown et al., 2020</a>) (a handful of input-output examples before the real request) often beats a longer description of the same rule.</p>
+							<p>All of this is context-window engineering: the prompt is the part of the window you control. The three message roles are not cosmetic either. The <strong>system</strong> message sets the standing instructions, the <strong>user</strong> message carries the request, and the <strong>assistant</strong> message holds the model's earlier turns. The model is trained to treat them differently, which is why a system instruction usually outranks a user instruction, and why prompt injection tries to smuggle a new system instruction into user data.</p>
 							<p>Negations are weak: telling a model not to think of a white bear can make the bear more likely. To suppress a concept, the model still has to represent it. Say what you want, not only what you do not want.</p>
 						</div>
 					</section>
@@ -62,7 +62,7 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">Build a brief, narrow the answer <span>· demo</span></p>
-								<p class="demo-sub">Every constraint removes degrees of freedom. Toggle them and watch one answer pull ahead of the others — then sample from what is left.</p>
+								<p class="demo-sub">Every constraint removes degrees of freedom. Toggle them and watch one answer pull ahead of the others: then sample from what is left.</p>
 							</div>
 							<span class="demo-badge">interactive</span>
 						</div>
@@ -76,13 +76,13 @@
 							<div class="demo-controls">
 								<span style="font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tm-muted)">Leading answer</span>
 								<div class="meter" style="flex:1 1 180px"><span data-prompt-meter></span></div>
-								<output data-prompt-value>—</output>
+								<output data-prompt-value>...</output>
 							</div>
 							<p class="entropy-preview" data-prompt-preview></p>
 							<div class="retrieval-list" data-prompt-cands></div>
 							<div class="demo-controls">
 								<button class="btn-demo btn-demo--green" type="button" data-prompt-sample>Sample an answer →</button>
-								<span class="nt-temp">Prompt cost <b data-prompt-tokens>—</b></span>
+								<span class="nt-temp">Prompt cost <b data-prompt-tokens>...</b></span>
 							</div>
 							<p class="demo-hint" data-prompt-sampled></p>
 						</div>

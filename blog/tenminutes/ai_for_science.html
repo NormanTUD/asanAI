@@ -3,9 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	<meta name="description" content="AlphaFold, materials, weather, and mathematics: how models trained to predict the world now help discover in it — and why verification is still the bottleneck.">
+	<meta name="description" content="AlphaFold, materials, weather, and mathematics: how models trained to predict the world now help discover in it, and why verification is still the bottleneck.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>AI for Science — Ten Minutes</title>
+	<title>AI for Science | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="ai_for_science" data-page="lesson">
@@ -34,7 +34,7 @@
 						<div class="prose">
 							<p>The course began with a loop: given a context, predict a distribution over the next token. The same engine now points at the world. The target is no longer a word but a protein's shape, a crystal's stability, a week of weather, or a theorem.</p>
 							<p>Science made AI possible in the first place: statistics, computation, data, and the habit of testing a model against the world. Now the loop runs the other way. Models trained to predict the world are being used to discover things in it.</p>
-							<p>The test is the overfitting test: a model that memorizes the training set fails on the next case; a model that learned the structure can extrapolate. In science, that extrapolation has a name — a hypothesis.</p>
+							<p>The test is the overfitting test: a model that memorizes the training set fails on the next case; a model that learned the structure can extrapolate. In science, that extrapolation has a name: a hypothesis.</p>
 						</div>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -47,7 +47,7 @@
 						<div class="section-kicker"><span class="sk-num">02</span> The flagship</div>
 						<h2 class="section-title">AlphaFold: sequence in, shape out.</h2>
 						<div class="prose">
-							<p>Protein folding — predicting a protein's three-dimensional shape from its amino-acid sequence — was a fifty-year grand challenge. AlphaFold 2 changed the picture at CASP14 in 2020, reaching accuracy competitive with experiment in a majority of cases (<a href="https://doi.org/10.1038/s41586-021-03819-2" rel="noopener">Jumper et al., 2021</a>). The work was honoured with the 2024 Nobel Prize in Chemistry (<a href="https://www.nobelprize.org/prizes/chemistry/2024/summary/" rel="noopener">Nobel Prize, 2024</a>).</p>
+							<p>Protein folding (predicting a protein's three-dimensional shape from its amino-acid sequence) was a fifty-year grand challenge. AlphaFold 2 changed the picture at CASP14 in 2020, reaching accuracy competitive with experiment in a majority of cases (<a href="https://doi.org/10.1038/s41586-021-03819-2" rel="noopener">Jumper et al., 2021</a>). The work was honoured with the 2024 Nobel Prize in Chemistry (<a href="https://www.nobelprize.org/prizes/chemistry/2024/summary/" rel="noopener">Nobel Prize, 2024</a>).</p>
 							<p>The database now offers open access to over 200 million predicted structures (<a href="https://www.alphafold.ebi.ac.uk/" rel="noopener">AlphaFold DB</a>). AlphaFold 3 extends the same idea to complexes of proteins, nucleic acids, small molecules, ions, and modified residues (<a href="https://doi.org/10.1038/s41586-024-07487-w" rel="noopener">Abramson et al., 2024</a>). AlphaMissense turns the machinery on variation: it predicts the effect of missense variants across the human proteome (<a href="https://doi.org/10.1126/science.adg7492" rel="noopener">Cheng et al., 2023</a>).</p>
 							<p>The most important output is not the ribbon diagram. It is the confidence. AlphaFold reports a per-residue score called <strong>pLDDT</strong>. A high score means the model is confident about that part of the chain; a low score often marks a disordered tail or a region the model cannot pin down. The structure comes with a map of where it is guessing.</p>
 						</div>
@@ -71,10 +71,10 @@
 									<label>Confidence threshold <input type="range" data-science-threshold min="0" max="100" step="1" value="70"><output data-science-threshold-out>70</output></label>
 								</div>
 								<div class="demo-readout demo-readout--4">
-									<div><b>Residues kept</b><span data-science-kept>—</span></div>
-									<div><b>Mean pLDDT</b><span data-science-mean>—</span></div>
+									<div><b>Residues kept</b><span data-science-kept>...</span></div>
+									<div><b>Mean pLDDT</b><span data-science-mean>...</span></div>
 									<div><b>Selected</b><span data-science-selected>residue 16</span></div>
-									<div><b>Confidence</b><span data-science-confidence>—</span></div>
+									<div><b>Confidence</b><span data-science-confidence>...</span></div>
 								</div>
 								<p class="vec-note" data-science-note>Click a residue in the map or a bar to inspect it.</p>
 							</div>
@@ -87,7 +87,7 @@
 						<div class="section-kicker"><span class="sk-num">03</span> Beyond proteins</div>
 						<h2 class="section-title">Materials, weather, mathematics.</h2>
 						<div class="prose">
-							<p><strong>Materials.</strong> GNoME, a graph network trained on crystal structures, predicted 2.2 million structures below the current convex hull — an order-of-magnitude expansion of the stable materials known to humanity. Of those, 736 had already been independently realized experimentally when the paper was published (<a href="https://doi.org/10.1038/s41586-023-06735-9" rel="noopener">Merchant et al., 2023</a>). The output is a shortlist for synthesis, not a guarantee.</p>
+							<p><strong>Materials.</strong> GNoME, a graph network trained on crystal structures, predicted 2.2 million structures below the current convex hull: an order-of-magnitude expansion of the stable materials known to humanity. Of those, 736 had already been independently realized experimentally when the paper was published (<a href="https://doi.org/10.1038/s41586-023-06735-9" rel="noopener">Merchant et al., 2023</a>). The output is a shortlist for synthesis, not a guarantee.</p>
 							<p><strong>Weather.</strong> FourCastNet produces a week-long global forecast in under two seconds, matching the ECMWF physics model at short lead times for large-scale variables and outperforming it on some fine-scale fields such as precipitation (<a href="https://arxiv.org/abs/2202.11214" rel="noopener">Pathak et al., 2022</a>). The point is not that physics is obsolete; it is that a learned surrogate can explore many more scenarios in the same time.</p>
 							<p><strong>Mathematics.</strong> AlphaTensor found faster, provably correct matrix-multiplication algorithms (<a href="https://doi.org/10.1038/s41586-022-05172-4" rel="noopener">Fawzi et al., 2022</a>). FunSearch found new constructions for open problems by searching over programs (<a href="https://doi.org/10.1038/s41586-023-06924-6" rel="noopener">Romera-Paredes et al., 2024</a>). AlphaEvolve extended the pattern to a broad set of open problems (<a href="https://arxiv.org/abs/2511.02864" rel="noopener">Georgiev et al., 2025</a>), and AlphaGeometry2 reached an average gold-medalist level on Olympiad geometry (<a href="https://arxiv.org/abs/2502.03544" rel="noopener">Chervonyi et al., 2025</a>). The 2024 IMO system reached silver-medal standard (<a href="https://deepmind.google/discover/blog/ai-solves-imo-problems-at-silver-medal-level/" rel="noopener">DeepMind, 2024</a>).</p>
 						</div>
@@ -104,7 +104,7 @@
 						<h2 class="section-title">What counts as a discovery?</h2>
 						<div class="prose">
 							<p>A proposal is not a discovery until someone can check it. A protein structure is checked against experiment; a material is synthesized; a proof is formalized in a proof assistant; a forecast is compared with what the atmosphere actually did. The model can generate candidates much faster than the world can verify them, which makes verification the scarce resource.</p>
-							<p>The 2026 Navier–Stokes episode is a cautionary tale. OpenAI reported that a multi-agent system produced an analytic proof, with a Lean formalization, of a finite-time singularity for the equations (<a href="https://openai.com/index/navier-stokes-solution/" rel="noopener">OpenAI, 2026</a>). The result was not yet peer-reviewed, and its priority was disputed (<a href="https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_priority_controversy" rel="noopener">Navier–Stokes priority controversy</a>). Later analysis argued that the Lean formalization did not faithfully match the natural-language proof (<a href="https://arxiv.org/abs/2610.08144" rel="noopener">Bastounis et al., 2026</a>). The episode shows that even a machine-checked artifact is not the same as a checked discovery.</p>
+							<p>The 2026 Navier-Stokes episode is a cautionary tale. OpenAI reported that a multi-agent system produced an analytic proof, with a Lean formalization, of a finite-time singularity for the equations (<a href="https://openai.com/index/navier-stokes-solution/" rel="noopener">OpenAI, 2026</a>). The result was not yet peer-reviewed, and its priority was disputed (<a href="https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_priority_controversy" rel="noopener">Navier-Stokes priority controversy</a>). Later analysis argued that the Lean formalization did not faithfully match the natural-language proof (<a href="https://arxiv.org/abs/2610.08144" rel="noopener">Bastounis et al., 2026</a>). The episode shows that even a machine-checked artifact is not the same as a checked discovery.</p>
 							<p>That is the same distinction hallucination made: plausible is not true. In science, the distinction has teeth, because the world can say no.</p>
 						</div>
 						<div class="aha">
@@ -120,7 +120,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">The model can point. The world has to confirm.</p>
-							<p class="aha-sub">Prediction becomes discovery only when the proposal survives a check — an experiment, a synthesis, a proof, or a measurement.</p>
+							<p class="aha-sub">Prediction becomes discovery only when the proposal survives a check: an experiment, a synthesis, a proof, or a measurement.</p>
 						</div>
 						<div class="prose">
 							<p>Next: <a href="people_of_ai.html">the people behind the machine</a>. Or step back to <a href="whole.html">the whole arc</a>.</p>

@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="Temperature, top-k, top-p, and the decoding choices that turn a probability distribution into a voice.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>Choosing the Next Token — Ten Minutes</title>
+	<title>Choosing the Next Token | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="samplinglab" data-page="lesson">
@@ -28,7 +28,7 @@
 						<h2 class="section-title">Sharp or flat.</h2>
 						<div class="prose">
 							<p>The transformer ended with a distribution. Now choose from it. The model ends with a vector of logits, one score per vocabulary token. Softmax turns those scores into probabilities (the same <a href="activationlab.html">softmax</a> as at the end of a classifier). Temperature divides the logits before the softmax: below one the gaps between scores widen and the distribution sharpens; above one the gaps shrink and the distribution flattens.</p>
-							<p>At temperature near zero, the most likely token gets almost all of the mass, so decoding becomes greedy and deterministic. At temperature one, you sample from the model's native distribution. Above one, rare tokens become reachable and the output becomes more surprising — and more likely to be incoherent.</p>
+							<p>At temperature near zero, the most likely token gets almost all of the mass, so decoding becomes greedy and deterministic. At temperature one, you sample from the model's native distribution. Above one, rare tokens become reachable and the output becomes more surprising, and more likely to be incoherent.</p>
 							<p>Greedy decoding is not 'the truth'; it is just the highest-probability continuation. It can be repetitive and can miss a better sentence that starts with a less likely token. Temperature changes the shape of the choice, not the model's knowledge.</p>
 						</div>
 					</section>
@@ -70,7 +70,7 @@
 						<div class="section-kicker"><span class="sk-num">04</span> Practice</div>
 						<h2 class="section-title">Greedy is not the truth.</h2>
 						<div class="prose">
-							<p>Greedy decoding is deterministic, fast, and often a good default for code or factual retrieval — but it can loop, because the most likely continuation is always the same continuation. Pure sampling is the opposite failure: the long tail stays reachable, so the text can wander. The filters keep the tail out while preserving choice. Temperature and the filter are not independent: a high temperature flattens the distribution, then the filter decides how much of that flatness survives.</p>
+							<p>Greedy decoding is deterministic, fast, and often a good default for code or factual retrieval, but it can loop, because the most likely continuation is always the same continuation. Pure sampling is the opposite failure: the long tail stays reachable, so the text can wander. The filters keep the tail out while preserving choice. Temperature and the filter are not independent: a high temperature flattens the distribution, then the filter decides how much of that flatness survives.</p>
 							<p>There is no universal setting. Code and facts often want a low temperature and a tight filter; brainstorming wants more diversity; dialogue sits in between. Change one knob, test it, and keep what works for the task.</p>
 							<p>One alternative deserves a mention: <strong>beam search</strong> (<a href="https://arxiv.org/abs/1409.3215" rel="noopener">Sutskever et al., 2014</a>) keeps several partial sequences alive at once and chooses the complete sequence with the best total score. It is useful when there is a single good answer and the score is reliable, as in some translation or speech tasks. It is a poor fit for open-ended conversation, where the highest-probability sequence is often bland, repetitive, or simply not what a person would say.</p>
 						</div>
@@ -85,7 +85,7 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">Decoding Studio <span>· demo</span></p>
-								<p class="demo-sub">The model has produced logits. Temperature reshapes the distribution; the filter decides which candidates survive. Faint bar: before the filter. Bright bar: after renormalisation.</p>
+								<p class="demo-sub">The model has produced logits. Temperature reshapes the distribution; the filter decides which candidates survive. Faint bar, before the filter. Bright bar, after renormalisation.</p>
 							</div>
 							<span class="demo-badge">live</span>
 						</div>
@@ -125,9 +125,9 @@
 							</div>
 							<div class="demo-readout demo-readout--4">
 								<div><b>Filter</b><span data-decoding-filter-name>top-p 0.90</span></div>
-								<div><b>Survivors</b><span data-decoding-count>—</span></div>
-								<div><b>Entropy</b><span data-decoding-entropy>—</span></div>
-								<div><b>Last draw</b><span data-decoding-draw>—</span></div>
+								<div><b>Survivors</b><span data-decoding-count>...</span></div>
+								<div><b>Entropy</b><span data-decoding-entropy>...</span></div>
+								<div><b>Last draw</b><span data-decoding-draw>...</span></div>
 							</div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>The model supplies one distribution. Decoding is the rule that turns it into a sequence: greedy, top-k, top-p, min-p, and temperature all answer the same question differently.</span></div>

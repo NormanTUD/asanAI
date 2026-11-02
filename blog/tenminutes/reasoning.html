@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="Chain-of-thought, self-consistency, test-time compute, and the shift from bigger training to longer inference.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>Thinking Longer — Ten Minutes</title>
+	<title>Thinking Longer | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="reasoning" data-page="lesson">
@@ -36,7 +36,7 @@
 						<div class="section-kicker"><span class="sk-num">02</span> Learning to reason</div>
 						<h2 class="section-title">More compute, more checking.</h2>
 						<div class="prose">
-							<p>The o1/R1 generation goes further: the model is trained with reinforcement learning on problems that can be checked (<a href="https://arxiv.org/abs/2402.03300" rel="noopener">Shao et al., 2024</a>), so it learns when to think longer, backtrack, and verify. The reasoning process can be much longer than the final answer. A user-facing “summary of reasoning” may be only that — a summary. It is not a guaranteed transcript of the computation that produced the answer, and a fluent explanation can be reconstructed after the fact.</p>
+							<p>The o1/R1 generation goes further: the model is trained with reinforcement learning on problems that can be checked (<a href="https://arxiv.org/abs/2402.03300" rel="noopener">Shao et al., 2024</a>), so it learns when to think longer, backtrack, and verify. The reasoning process can be much longer than the final answer. A user-facing “summary of reasoning” may be only that: a summary. It is not a guaranteed transcript of the computation that produced the answer, and a fluent explanation can be reconstructed after the fact.</p>
 							<p>More thinking is not always better. The model can reason confidently in the wrong direction, long chains are expensive, and on a simple task the extra tokens add latency without improving the answer. The useful question is whether the extra computation buys a real improvement on the task, not whether the explanation sounds thorough. The practical pattern is generate, then verify: use a checker when the answer can be checked, and a second model or prompt when it cannot.</p>
 						</div>
 						<div class="keypoints">
@@ -71,8 +71,8 @@
 							<div class="cot-steps" data-reasoning-steps></div>
 							<p class="cot-answer" data-reasoning-answer></p>
 							<div class="demo-kpis">
-								<div class="demo-kpi"><b>Tokens</b><span data-reasoning-tokens>—</span></div>
-								<div class="demo-kpi"><b>Confidence</b><span data-reasoning-confidence>—</span></div>
+								<div class="demo-kpi"><b>Tokens</b><span data-reasoning-tokens>...</span></div>
+								<div class="demo-kpi"><b>Confidence</b><span data-reasoning-confidence>...</span></div>
 							</div>
 							<div class="demo-controls">
 								<button class="btn-demo btn-demo--green" type="button" data-reasoning-sample>Sample 5 paths →</button>

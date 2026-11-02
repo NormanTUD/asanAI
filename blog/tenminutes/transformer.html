@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="A ten-minute interactive tour of the transformer block: tokens, positions, attention, feed-forward, residual stream, logits, and sampling.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>The Whole Machine — Ten Minutes</title>
+	<title>The Whole Machine | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 </head>
@@ -45,9 +45,8 @@
 							</p>
 							<p>
 								The transformer made that path short: in one attention step, every token can
-								read every other token — or every earlier token, in a decoder. The price is
-								<strong>quadratic work</strong> — each token compares with each other token —
-								but the comparison is a matrix multiplication, and matrix multiplications fill
+								read every other token, or every earlier token, in a decoder. The price is
+								<strong>quadratic work</strong> (each token compares with each other token) but the comparison is a matrix multiplication, and matrix multiplications fill
 								a GPU. That trade is what made scale practical.
 							</p>
 						</div>
@@ -59,7 +58,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">The transformer did not merely make language models deeper. It made them parallel.</p>
-							<p class="aha-sub">Every token can look at every other token in the same step. That one change turned a sequential bottleneck into a matrix multiplication — and made scale practical.</p>
+							<p class="aha-sub">Every token can look at every other token in the same step. That one change turned a sequential bottleneck into a matrix multiplication, and made scale practical.</p>
 						</div>
 					</section>
 
@@ -76,7 +75,7 @@
 								Training and generation share this route. In training, the model is shown the
 								next token and must make it more likely. In generation, it chooses one token,
 								appends it to the context, and starts again. <strong>The model never sees the
-								sentence it is about to write</strong> — only the tokens already on the page.
+								sentence it is about to write</strong>: only the tokens already on the page.
 							</p>
 							<p>
 								One detail confuses many readers: during training the model produces a
@@ -94,20 +93,20 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The transformer pipeline <span>· demo 01</span></p>
-									<p class="demo-sub">Start with “the cat sat”. Step through the six stages, predict the next token, append it, and run the loop again: on → the → mat → . Stages 04–05 are the transformer block; real models stack that block dozens to hundreds of times.</p>
+									<p class="demo-sub">Start with “the cat sat”. Step through the six stages, predict the next token, append it, and run the loop again: on → the → mat → . Stages 04-05 are the transformer block; real models stack that block dozens to hundreds of times.</p>
 								</div>
 								<span class="demo-badge">click / step</span>
 							</div>
 							<div class="demo-body">
 								<div class="pipe-tokens" id="pipe-tokens"></div>
 								<div class="flow flow--six" id="pipe-flow" role="group" aria-label="Transformer stages"></div>
-								<div class="flow-repeat">04 + 05 repeat × N blocks · often 32–100+ layers</div>
+								<div class="flow-repeat">04 + 05 repeat × N blocks · often 32-100+ layers</div>
 								<div class="flow-detail" id="pipe-detail">
 									<h4 id="pipe-title">Tokenize</h4>
 									<p id="pipe-text"></p>
 									<p class="pipe-shape" id="pipe-shape"></p>
 								</div>
-								<div class="pipe-prediction" id="pipe-prediction">Next token: <b>—</b></div>
+								<div class="pipe-prediction" id="pipe-prediction">Next token: <b>...</b></div>
 								<div class="demo-controls">
 									<button class="btn-demo btn-demo--green" type="button" id="pipe-next">Next step in pipeline →</button>
 									<button class="btn-demo" type="button" id="pipe-run">Run the loop ▶</button>
@@ -130,8 +129,8 @@
 
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">It predicts locally — and can still build a world model.</p>
-							<p class="aha-sub">The model has no explicit paragraph plan: it predicts one token, appends it, and predicts again. But next-token prediction can require a 								structured internal state. In the Othello (Reversi) experiment (<a href="https://arxiv.org/abs/2210.13382" rel="noopener">Li et al., 2022</a>), a transformer trained only on legal moves — with no board and no rules — spontaneously represented the board; intervening on that representation changed its next move. Coherence can therefore come from a learned world model in the residual stream, not only from a chain of surface bets. The model is still fallible: that world model is partial, and small errors can compound.</p>
+							<p class="aha-big">It predicts locally, and can still build a world model.</p>
+							<p class="aha-sub">The model has no explicit paragraph plan: it predicts one token, appends it, and predicts again. But next-token prediction can require a 								structured internal state. In the Othello (Reversi) experiment (<a href="https://arxiv.org/abs/2210.13382" rel="noopener">Li et al., 2022</a>), a transformer trained only on legal moves (with no board and no rules) spontaneously represented the board; intervening on that representation changed its next move. Coherence can therefore come from a learned world model in the residual stream, not only from a chain of surface bets. The model is still fallible, that world model is partial, and small errors can compound.</p>
 						</div>
 
 						<div class="trythis">
@@ -150,7 +149,7 @@
 						<div class="prose">
 							<p>
 								At the input, “bank” is already a vector. Then each block edits it. The
-								residual stream — the running vector from <a href="intuition.html#inside">the six-step demo</a> — carries the
+								residual stream: the running vector from <a href="intuition.html#inside">the six-step demo</a>: carries the
 								old representation forward and adds a new one on
 								top: <code>z = x + Attention(Norm(x))</code>, then
 								<code>y = z + FFN(Norm(z))</code>. Nothing is overwritten; everything
@@ -164,7 +163,7 @@
 								sentence contributes a little, so the path is not a clean straight line; it
 								picks up a small amount of noise along the way. Drag the layer slider and switch
 								the context. Real trajectories are high-dimensional and much messier; the
-								qualitative idea — context accumulates with depth — is the point.
+								qualitative idea (context accumulates with depth) is the point.
 							</p>
 							<p>
 								<strong>The word does not travel from layer to layer.</strong> The stream stays;
@@ -177,7 +176,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The layer lens <span>· demo 02</span></p>
-									<p class="demo-sub">Pick a context, then drag through layers 0–11.</p>
+									<p class="demo-sub">Pick a context, then drag through layers 0-11.</p>
 								</div>
 								<span class="demo-badge">illustrative</span>
 							</div>
@@ -238,7 +237,7 @@
 								it learns which positions should exchange information. Position is handled
 								before attention: the original block adds sinusoidal vectors, while modern
 								blocks often rotate queries and keys by position instead (<a href="https://arxiv.org/abs/2104.09864" rel="noopener">Su et al., 2021</a>). The link between “it” and
-								a noun is computed, not looked up — which is why the same head can resolve it
+								a noun is computed, not looked up, which is why the same head can resolve it
 								differently in different sentences. Several heads run in parallel in
 								lower-dimensional subspaces, so one head can track a pronoun while another
 								tracks a verb or a nearby adjective.
@@ -248,7 +247,7 @@
 								to a wider hidden dimension, apply a nonlinearity, contract back. Attention
 								decides <em>what to look at</em>; the FFN decides <em>what to do with it</em>.
 								The wide hidden layer gives the network room to combine features, and much of
-								the model’s factual recall is associated with these weights — though knowledge
+								the model’s factual recall is associated with these weights, though knowledge
 								is distributed, not stored in one place. The usual expansion factor is four;
 								it is an empirical convention, not a law. Modern models often use gated
 								variants such as SwiGLU with a different ratio, but the shape is the same:
@@ -424,7 +423,7 @@
 			{
 				name: "Embed",
 				title: "Embed",
-				text: "Each token ID indexes a row of the embedding matrix W_E, producing a dense vector of dimension d_model. Similar meanings end up near each other in this space — but this is only the first layer.",
+				text: "Each token ID indexes a row of the embedding matrix W_E, producing a dense vector of dimension d_model. Similar meanings end up near each other in this space, but this is only the first layer.",
 				shape: "[T] \\to [T, d_{\\text{model}}]"
 			},
 			{
@@ -437,7 +436,7 @@
 				name: "Attention",
 				repeat: true,
 				title: "Attention + residual",
-				text: "Each token projects to a query, key, and value. Scaled dot products decide who attends to whom; softmax normalizes the weights; values are averaged. A causal mask in a decoder hides the future. The result is added back to the residual stream. This is one block in a stack of N blocks; real models repeat that block dozens to hundreds of times, often 32–100+ layers.",
+				text: "Each token projects to a query, key, and value. Scaled dot products decide who attends to whom; softmax normalizes the weights; values are averaged. A causal mask in a decoder hides the future. The result is added back to the residual stream. This is one block in a stack of N blocks; real models repeat that block dozens to hundreds of times, often 32-100+ layers.",
 				shape: "[T, d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
 			},
 			{
@@ -504,7 +503,7 @@
 					prediction.innerHTML = 'Sequence complete: <b>' + sentence() + '</b>';
 				}
 			} else {
-				prediction.innerHTML = 'Next token: <b>—</b> · run to Unembed to predict';
+				prediction.innerHTML = 'Next token: <b>...</b> · run to Unembed to predict';
 			}
 		}
 		function selectStage(i) {
@@ -696,7 +695,7 @@
 			if (layerCaption) {
 				if (layer === 0) layerCaption.textContent = "At the input, “bank” sits between the clusters. Context has not pulled it yet.";
 				else if (context === "none") layerCaption.textContent = "Without context, the word has no target to move toward. The sentence is what gives it one.";
-				else if (layer > 7) layerCaption.textContent = "Deep in the stack, the pull is strong — but “bank” still keeps its lexical sense; it approaches the " + (context === "river" ? "river" : "finance") + " cluster without becoming that prototype. The small wobble is the rest of the sentence contributing.";
+				else if (layer > 7) layerCaption.textContent = "Deep in the stack, the pull is strong, but “bank” still keeps its lexical sense; it approaches the " + (context === "river" ? "river" : "finance") + " cluster without becoming that prototype. The small wobble is the rest of the sentence contributing.";
 				else layerCaption.textContent = "Each layer reads the residual stream, computes an update, and adds it back. The path wobbles a little: every token contributes, not only the word that sets the main direction.";
 			}
 		});

@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="One input, one output, two numbers to adjust: the smallest possible learner and the loop behind every neural network.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>A Tiny Example Network — Ten Minutes</title>
+	<title>A Tiny Example Network | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="minimalneuron" data-page="lesson">
@@ -29,7 +29,7 @@
 						<div class="prose">
 							<p>Hallucination showed the failure mode. The smallest learner starts with a line. The first formal neuron model was Lapicque’s integrate-and-fire cell of 1907 (<a href="https://archive.org/details/journaldephysiol0000vari_l4e0/page/n639/mode/2up" rel="noopener">Lapicque, 1907, p. 620</a>). McCulloch and Pitts added the logical neuron in 1943 (<a href="https://www.cs.cmu.edu/~epxing/Class/10715/reading/McCulloch.and.Pitts.pdf" rel="noopener">McCulloch &amp; Pitts, 1943</a>); the perceptron added the learning rule in 1958.</p>
 							<p>Take one input x, multiply it by a weight a, add a bias b, and you have a prediction y = ax + b. The weight decides the slope; the bias shifts the line. That is the entire model. Why bother with a line instead of just predicting the average? Because the average is the best constant guess; the line adds a relationship. It can say that when x rises, y tends to rise too, and by how much.</p>
-							<p>Learning is the search for better a and b. Show the model an example, compare its prediction with the target, and measure the error. The error is a number; the learning algorithm uses it to nudge the two knobs. A weight is simply a number the model is allowed to change; “parameter” is the general name for all such numbers. Neither knob has a physical meaning — they are not “the importance of x” in any human sense. They are coordinates in a space of possible lines, and learning is a walk through that space. The biological inspiration is Hebb’s rule — neurons that fire together wire together (<a href="https://archive.org/details/in.ernet.dli.2015.226341" rel="noopener">Hebb, 1949</a>).</p>
+							<p>Learning is the search for better a and b. Show the model an example, compare its prediction with the target, and measure the error. The error is a number; the learning algorithm uses it to nudge the two knobs. A weight is simply a number the model is allowed to change; “parameter” is the general name for all such numbers. Neither knob has a physical meaning (they are not “the importance of x” in any human sense. They are coordinates in a space of possible lines, and learning is a walk through that space. The biological inspiration is Hebb’s rule) neurons that fire together wire together (<a href="https://archive.org/details/in.ernet.dli.2015.226341" rel="noopener">Hebb, 1949</a>).</p>
 						</div>
 					</section>
 
@@ -37,7 +37,7 @@
 						<div class="section-kicker"><span class="sk-num">02</span> From one line to a network</div>
 						<h2 class="section-title">The loop repeats.</h2>
 						<div class="prose">
-							<p>A single affine map is not yet a full neural network. Stack many of these maps, put a nonlinearity between them, and you get a network that can bend. Without the nonlinearity, the stack collapses back into one line — two affine maps compose into a third affine map, so depth would buy nothing.</p>
+							<p>A single affine map is not yet a full neural network. Stack many of these maps, put a nonlinearity between them, and you get a network that can bend. Without the nonlinearity, the stack collapses back into one line: two affine maps compose into a third affine map, so depth would buy nothing.</p>
 							<p>The smallest learner is still the right place to start. Every larger model repeats the same loop at a different scale: predict, measure the error, adjust the parameters. What changes is the shape of the error surface. For a line, the mean squared error is a bowl with one bottom, so with a suitable learning rate gradient descent converges to it. For a deep network, the surface has plateaus, valleys, and saddle points, which is why initialization, learning rate, and architecture start to matter.</p>
 						</div>
 						<div class="keypoints">
@@ -77,8 +77,8 @@
 							</div>
 							<div class="demo-readout">
 								<div><b>Model</b><span>y = ax + b</span></div>
-								<div><b>Training error</b><span data-linefit-loss>—</span></div>
-								<div><b>Good fit</b><span data-linefit-best-val>—</span></div>
+								<div><b>Training error</b><span data-linefit-loss>...</span></div>
+								<div><b>Good fit</b><span data-linefit-best-val>...</span></div>
 							</div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>Learning is the search for a and b that make the error smaller. A larger network repeats this loop with many more numbers.</span></div>
@@ -88,7 +88,7 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">The perceptron draws a border <span>· demo</span></p>
-								<p class="demo-sub">Two classes, one straight line. Train the weights and watch the border move. Then switch to XOR and watch the line get stuck — the failure that makes hidden layers necessary.</p>
+								<p class="demo-sub">Two classes, one straight line. Train the weights and watch the border move. Then switch to XOR and watch the line get stuck: the failure that makes hidden layers necessary.</p>
 							</div>
 							<span class="demo-badge">interactive</span>
 						</div>
@@ -107,12 +107,12 @@
 									</div>
 								</div>
 								<div class="pc-legend">
-									<div class="pc-class"><i></i>Class A <b data-perceptron-acc-a>—</b></div>
-									<div class="pc-class b"><i></i>Class B <b data-perceptron-acc-b>—</b></div>
+									<div class="pc-class"><i></i>Class A <b data-perceptron-acc-a>...</b></div>
+									<div class="pc-class b"><i></i>Class B <b data-perceptron-acc-b>...</b></div>
 									<div class="demo-kpis">
-										<div class="demo-kpi"><b>Accuracy</b><span data-perceptron-acc>—</span></div>
-										<div class="demo-kpi"><b>Weights</b><span data-perceptron-w>—</span></div>
-										<div class="demo-kpi"><b>Bias</b><span data-perceptron-b>—</span></div>
+										<div class="demo-kpi"><b>Accuracy</b><span data-perceptron-acc>...</span></div>
+										<div class="demo-kpi"><b>Weights</b><span data-perceptron-w>...</span></div>
+										<div class="demo-kpi"><b>Bias</b><span data-perceptron-b>...</span></div>
 									</div>
 									<p class="demo-hint" data-perceptron-note></p>
 								</div>

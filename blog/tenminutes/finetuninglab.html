@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="Pretraining, SFT, preference optimization, and the post-training stack that makes a model helpful.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>Turning a Predictor into an Assistant — Ten Minutes</title>
+	<title>Turning a Predictor into an Assistant | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="finetuninglab" data-page="lesson">
@@ -27,8 +27,8 @@
 						<div class="section-kicker"><span class="sk-num">01</span> From raw text to instructions</div>
 						<h2 class="section-title">Teaching the format.</h2>
 						<div class="prose">
-							<p>Sampling chose tokens. Now the predictor becomes an assistant. Pretraining teaches next-token prediction on a huge corpus — the <a href="intuition.html">next-token loop</a>. The result is fluent but uncontrolled. Supervised fine-tuning then shows the model examples of instructions and good answers, teaching it the format of a conversation (<a href="https://arxiv.org/abs/2203.02155" rel="noopener">Ouyang et al., 2022</a>).</p>
-							<p>Fine-tuning changes behaviour: when to answer, when to refuse, how to structure a response, and which tone to use. Why not just prompt? A prompt can shape one conversation; fine-tuning bakes a behaviour into the weights, so it survives across prompts and users.</p>
+							<p>Sampling chose tokens. Now the predictor becomes an assistant. Pretraining teaches next-token prediction on a huge corpus: the <a href="intuition.html">next-token loop</a>. The result is fluent but uncontrolled. Supervised fine-tuning then shows the model examples of instructions and good answers, teaching it the format of a conversation (<a href="https://arxiv.org/abs/2203.02155" rel="noopener">Ouyang et al., 2022</a>).</p>
+							<p>Fine-tuning changes behaviour, when to answer, when to refuse, how to structure a response, and which tone to use. Why not just prompt? A prompt can shape one conversation; fine-tuning bakes a behaviour into the weights, so it survives across prompts and users.</p>
 						</div>
 					</section>
 
@@ -37,7 +37,7 @@
 						<h2 class="section-title">Aligning behaviour.</h2>
 						<div class="prose">
 							<p>Preference optimization goes further. Humans (or a model) compare answers, and the model is trained to prefer the better one. RLHF uses a reward model (<a href="https://arxiv.org/abs/1706.03741" rel="noopener">Christiano et al., 2017</a>); DPO-style methods learn directly from preference pairs (<a href="https://arxiv.org/abs/2305.18290" rel="noopener">Rafailov et al., 2023</a>).</p>
-							<p>Reasoning models add another stage: reinforcement learning on problems with verifiable answers (<a href="https://arxiv.org/abs/2402.03300" rel="noopener">Shao et al., 2024</a>), so the model learns to think longer and check its work. The total post-training cost is small compared with pretraining, but it shapes most of what users experience. It cannot add knowledge the base model never saw, and narrow instruction data can degrade general language ability — catastrophic forgetting. Labs often mix some pretraining data back in to keep the base capabilities alive.</p>
+							<p>Reasoning models add another stage: reinforcement learning on problems with verifiable answers (<a href="https://arxiv.org/abs/2402.03300" rel="noopener">Shao et al., 2024</a>), so the model learns to think longer and check its work. The total post-training cost is small compared with pretraining, but it shapes most of what users experience. It cannot add knowledge the base model never saw, and narrow instruction data can degrade general language ability: catastrophic forgetting. Labs often mix some pretraining data back in to keep the base capabilities alive.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Pretraining</b><span>Next-token prediction on a large corpus creates a raw model.</span></div>
@@ -76,7 +76,7 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">A preference pair <span>· demo</span></p>
-								<p class="demo-sub">Which answer would you prefer for: <span data-pref-question>—</span></p>
+								<p class="demo-sub">Which answer would you prefer for: <span data-pref-question>...</span></p>
 							</div>
 							<span class="demo-badge">RLHF / DPO</span>
 						</div>
@@ -89,8 +89,8 @@
 								<button class="btn-demo" type="button" data-pref-next>Another pair →</button>
 							</div>
 							<div class="demo-readout">
-								<div><b>Your choice</b><span data-pref-choice>—</span></div>
-								<div><b>Signal</b><span data-pref-signal>—</span></div>
+								<div><b>Your choice</b><span data-pref-choice>...</span></div>
+								<div><b>Signal</b><span data-pref-signal>...</span></div>
 								<div><b>What changes</b><span>the policy</span></div>
 							</div>
 						</div>

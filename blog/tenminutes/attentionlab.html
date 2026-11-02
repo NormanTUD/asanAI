@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="A ten-minute interactive guide to attention: queries, keys, values, softmax, multi-head attention, and what attention maps do not tell you.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>The Semantic Tug-of-War — Ten Minutes</title>
+	<title>The Semantic Tug-of-War | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="attentionlab" data-page="lesson">
@@ -64,9 +64,9 @@
 								state with three learned matrices:
 							</p>
 							<ul>
-								<li><strong>Query (q)</strong> — what this token is looking for.</li>
-								<li><strong>Key (k)</strong> — what this token offers as a descriptor.</li>
-								<li><strong>Value (v)</strong> — the content this token will pass on if chosen.</li>
+								<li><strong>Query (q)</strong>: what this token is looking for.</li>
+								<li><strong>Key (k)</strong>: what this token offers as a descriptor.</li>
+								<li><strong>Value (v)</strong>: the content this token will pass on if chosen.</li>
 							</ul>
 							<p>
 								The separation is the point. If the model compared raw token vectors, it would
@@ -195,7 +195,7 @@
 								budget, its own query/key/value projections, and its own idea of what matters.
 								One head can spend most of its budget on coreference, another on syntax, another
 								on nearby punctuation. The budgets are separate, so heads do not compete with
-								each other — but inside one head, they do.
+								each other, but inside one head, they do.
 							</p>
 							<p>
 								This is <strong>not</strong> redundancy. Studies of BERT find that a small
@@ -238,7 +238,7 @@
 								<div class="demo-readout">
 									<div><b>Head</b><span data-hb-head-name>Coreference</span></div>
 									<div><b>Top token</b><span data-hb-top>Maria</span></div>
-									<div><b>Concentration</b><span data-hb-conc>—</span></div>
+									<div><b>Concentration</b><span data-hb-conc>...</span></div>
 								</div>
 								<p class="demo-hint" data-hb-note></p>
 							</div>
@@ -259,7 +259,7 @@
 								decoder-only models, a large share of attention flows to the first token even
 								when it carries no content. When streaming with a sliding window, evicting
 								that first token can collapse the model; keeping a few sink tokens pinned fixes
-								it. The model is not remembering their meaning — it is using them as a resting
+								it. The model is not remembering their meaning: it is using them as a resting
 								place for the attention budget.
 							</p>
 							<p>

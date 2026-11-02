@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="Words as points, relationships as directions: an interactive ten-minute tour of embeddings and cosine similarity.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>Meaning as Geometry — Ten Minutes</title>
+	<title>Meaning as Geometry | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="embeddinglab" data-page="lesson">
@@ -21,7 +21,7 @@
 						An embedding turns a token into a point in a high-dimensional space. Similar
 						meanings land near each other; <strong>relationships become directions</strong>.
 						Move the points, follow the arrows, and see why <em>king − man + woman</em> can
-						land on <em>queen</em> — and where the metaphor breaks.
+						land on <em>queen</em>, and where the metaphor breaks.
 					</p>
 				</div>
 			</section>
@@ -50,8 +50,8 @@
 							</p>
 							<p>
 								One axis is already a model of similarity; language needs many. More dimensions
-								let the model keep many distinctions independent — tense, number, register,
-								topic, sentiment — without forcing them onto the same line. Two dimensions
+								let the model keep many distinctions independent (tense, number, register,
+								topic, sentiment) without forcing them onto the same line. Two dimensions
 								can separate a couple of distinctions, but not dozens at once. More
 								dimensions are not free, though: the space becomes hard
 								to visualize, distances concentrate, and most directions stop having a human
@@ -64,7 +64,7 @@
 						</div>
 						<div class="fieldnotes">
 							<h4>What the coordinate means</h4>
-							<p>There is no “temperature neuron” in a real model. A dimension is a latent feature — a direction the optimization found useful, not a label a human chose. The 1-D line is a teaching device.</p>
+							<p>There is no “temperature neuron” in a real model. A dimension is a latent feature: a direction the optimization found useful, not a label a human chose. The 1-D line is a teaching device.</p>
 						</div>
 					</section>
 
@@ -78,7 +78,7 @@
 								arrow as <strong>king</strong> to <strong>queen</strong>, and
 								<strong>uncle</strong> to <strong>aunt</strong>: gender is one direction you
 								can pick up and carry to another word. Nobody typed that rule in. It fell
-								out of the statistics of the text (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>): because “man” and “woman” appear in similar
+								out of the statistics of the text (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>), because “man” and “woman” appear in similar
 								grammatical slots, the difference between them becomes a consistent direction
 								that the model can reuse.
 							</p>
@@ -122,7 +122,7 @@
 									<div><b>Analogy lands on</b><span id="emb-result">Queen</span></div>
 									<div><b>Arrow alignment</b><span id="emb-align">1.00</span></div>
 								</div>
-								<p class="vec-note" id="emb-arrow-note" style="color:var(--tm-muted)">The two relationship arrows are exactly parallel in this toy. In a real embedding the same direction is approximate — which is why analogy arithmetic is suggestive, not a law.</p>
+								<p class="vec-note" id="emb-arrow-note" style="color:var(--tm-muted)">The two relationship arrows are exactly parallel in this toy. In a real embedding the same direction is approximate, which is why analogy arithmetic is suggestive, not a law.</p>
 								<div class="demo-controls">
 									<button class="btn-demo rel-btn" type="button" data-direction="gender" style="--rel:#5c9baf">Gender →</button>
 									<button class="btn-demo rel-btn" type="button" data-direction="royalty" style="--rel:#63a44b">Royalty ↑</button>
@@ -170,8 +170,7 @@
 								the same way count as identical.
 							</p>
 							<p>
-								Magnitude often varies for reasons that have little to do with meaning —
-								frequency, initialization, and the optimizer all leave a trace in the norm.
+								Magnitude often varies for reasons that have little to do with meaning: frequency, initialization, and the optimizer all leave a trace in the norm.
 								Cosine is blind to that artefact. It is not a perfect measure of meaning, but it
 								asks a cleaner question: do these tokens point in the same direction?
 							</p>
@@ -212,7 +211,7 @@
 								</div>
 								<p class="meadow-caption" id="cos-caption" style="color:var(--tm-muted)">The dashed line is the Euclidean gap. Stretch B: the gap grows, but the directions stay the same.</p>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Cosine asks whether two vectors point the same way. Magnitude can change without changing the angle — which is why direction is the better default.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>Cosine asks whether two vectors point the same way. Magnitude can change without changing the angle, which is why direction is the better default.</span></div>
 							<div class="demo-foot">
 								In high dimensions, almost all random vectors are nearly orthogonal. That is
 								one reason a “nearest neighbour” can feel surprising: the space is vast, and
@@ -254,7 +253,7 @@
 							</div>
 							<div class="myth myth--ok">
 								<b>Better frame</b>
-								<span>Meaning is a region, not a coordinate. A concept is a neighbourhood, a direction, or a subspace — often distributed across many dimensions.</span>
+								<span>Meaning is a region, not a coordinate. A concept is a neighbourhood, a direction, or a subspace: often distributed across many dimensions.</span>
 							</div>
 							<div class="myth">
 								<b>Common misreading</b>
@@ -295,7 +294,7 @@
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">Meaning is geometry — but the geometry is learned, not given.</p>
+							<p class="aha-big">Meaning is geometry, but the geometry is learned, not given.</p>
 							<p class="aha-sub">Tokens become points, relationships become directions, and context moves the point. The map is useful; the territory is statistical.</p>
 						</div>
 					</section>
@@ -465,7 +464,7 @@
 			});
 
 			if (selectedEl) selectedEl.textContent = selected;
-			if (nearestEl) nearestEl.textContent = nearest ? nearest.w : "—";
+			if (nearestEl) nearestEl.textContent = nearest ? nearest.w : "...";
 			if (resultEl) resultEl.textContent = res.nearest.w;
 			var alignEl = document.getElementById("emb-align");
 			if (alignEl) {

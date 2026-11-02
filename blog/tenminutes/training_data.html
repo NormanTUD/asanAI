@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="The text diet behind a frontier model: web, code, books, papers, filtering, deduplication, and contamination.">
 	<meta name="theme-color" content="#f7f3e8">
-	<title>What a Model Reads — Ten Minutes</title>
+	<title>What a Model Reads | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="training_data" data-page="lesson">
@@ -27,7 +27,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The scale and the mix</div>
 						<h2 class="section-title">Trillions of tokens.</h2>
 						<div class="prose">
-							<p>Learning was about the learner. Its diet is the next question. Frontier models are trained on trillions of tokens. The bulk comes from the web, with code, books, scientific papers, and reference text mixed in. Each source brings a different style and a different kind of knowledge. To make the number concrete: a token is roughly three quarters of an English word, so ten trillion tokens is on the order of seven trillion words — more than any person could read in a thousand lifetimes, and on the order of large estimates of all the books ever published.</p>
+							<p>Learning was about the learner. Its diet is the next question. Frontier models are trained on trillions of tokens. The bulk comes from the web, with code, books, scientific papers, and reference text mixed in. Each source brings a different style and a different kind of knowledge. To make the number concrete: a token is roughly three quarters of an English word, so ten trillion tokens is on the order of seven trillion words: more than any person could read in a thousand lifetimes, and on the order of large estimates of all the books ever published.</p>
 							<p>The mixture is a design choice. Too much web text and the model learns noise and spam; too little code and it cannot program; too little long-form text and it struggles with structure. The word “choice” is literal: labs tune the proportions, and changing them changes what the model is good at.</p>
 						</div>
 					</section>
@@ -36,10 +36,10 @@
 						<div class="section-kicker"><span class="sk-num">02</span> Cleaning is part of the model</div>
 						<h2 class="section-title">Quality, dedupe, decontamination.</h2>
 						<div class="prose">
-							<p>Raw web text is messy. Pipelines filter for quality, remove duplicates, and try to remove test sets that would contaminate later benchmarks. Deduplication matters because repeated text can make a model memorize instead of generalize: if the same paragraph appears a thousand times, the cheapest way to reduce loss is to store it, not to learn the pattern behind it. Duplicates also waste compute and make the corpus look larger than its effective diversity.</p>
+							<p>Raw web text is messy. Pipelines filter for quality, remove duplicates, and try to remove test sets that would contaminate later benchmarks. Deduplication matters because repeated text can make a model memorize instead of generalize, if the same paragraph appears a thousand times, the cheapest way to reduce loss is to store it, not to learn the pattern behind it. Duplicates also waste compute and make the corpus look larger than its effective diversity.</p>
 							<p>Contamination is the benchmark version of the same problem. If examples from a test set appear in training, a high score may measure recall rather than ability. The leak can be direct (the exact question) or indirect (a paraphrase, a solution posted online, or the same underlying document). Detecting it is hard, which is why benchmark claims deserve a second look.</p>
 							<p>Data recipes are closely guarded. The same architecture trained on a better corpus can outperform a larger model trained on a worse one. Synthetic data can fill gaps, but it can also amplify the generator's biases and, at the limit, cause model collapse (<a href="https://arxiv.org/abs/2305.17493" rel="noopener">Shumailov et al., 2023</a>). Much web text is also copyrighted, some of it personal; whether training on it is fair use is a live dispute, not a settled technical detail.</p>
-							<p>How is “quality” scored? Usually by a stack of imperfect proxies: length, punctuation, and repetition heuristics; a classifier trained on pages humans rated as useful; perplexity under a reference model; and spot checks. None is neutral — a filter trained on one kind of writing quietly prefers that kind, which is one way a corpus acquires a house style. When a model behaves strangely, the training data is often part of the explanation.</p>
+							<p>How is “quality” scored? Usually by a stack of imperfect proxies: length, punctuation, and repetition heuristics; a classifier trained on pages humans rated as useful; perplexity under a reference model; and spot checks. None is neutral: a filter trained on one kind of writing quietly prefers that kind, which is one way a corpus acquires a house style. When a model behaves strangely, the training data is often part of the explanation.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Scale</b><span>Modern corpora are measured in trillions of tokens.</span></div>
@@ -61,9 +61,9 @@
 						<div class="demo-body">
 							<div class="mix-bar" data-mix-bar></div>
 							<div class="mix-legend" data-mix-legend></div>
-							<p class="mix-note" data-mix-note>Approximate ranges adapted from the composition discussed earlier: web 50–70%, code 10–15%, books 5–10%, papers 3–5%, Wikipedia 1–2%, math 2–5%, conversation 2–5%, multimodal 5–10%. Tap a source to see what it contributes.</p>
+							<p class="mix-note" data-mix-note>Approximate ranges adapted from the composition discussed earlier: web 50-70%, code 10-15%, books 5-10%, papers 3-5%, Wikipedia 1-2%, math 2-5%, conversation 2-5%, multimodal 5-10%. Tap a source to see what it contributes.</p>
 							<div class="demo-readout">
-								<div><b>Scale</b><span>10–15T tokens</span></div>
+								<div><b>Scale</b><span>10-15T tokens</span></div>
 								<div><b>Sources</b><span>web · code · books · multimodal</span></div>
 								<div><b>Key step</b><span>filtering</span></div>
 							</div>
@@ -86,9 +86,9 @@
 								<label>Minimum quality <input type="range" data-filter-strength min="0" max="3" step="1" value="1"><output data-filter-strength-out>1</output></label>
 							</div>
 							<div class="demo-readout">
-								<div><b>Kept</b><span data-filter-kept>—</span></div>
-								<div><b>Dropped</b><span data-filter-dropped>—</span></div>
-								<div><b>Avg quality</b><span data-filter-quality>—</span></div>
+								<div><b>Kept</b><span data-filter-kept>...</span></div>
+								<div><b>Dropped</b><span data-filter-dropped>...</span></div>
+								<div><b>Avg quality</b><span data-filter-quality>...</span></div>
 							</div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>Quality and quantity pull in different directions. The useful recipe is the one that keeps enough scale without teaching the model noise.</span></div>
