@@ -323,7 +323,7 @@
 											<div class="activation-plots" id="activation-plots"></div>
 										</div>
 										<p class="step-note curve-intro">The demo below uses a smooth bend so you can see the shape. ReLU would crease the same space flat on one side of <span data-tex="z = 0" data-tex-display="false"></span>. The cut still happens: the layer changes the space in which the cut is made.</p>
-										<div class="demo demo--paper ism-panel" style="margin-top:14px">
+										<div class="demo demo--paper ism-panel" data-arrow-nav style="margin-top:14px">
 											<div class="demo-head">
 												<div>
 													<p class="demo-title">A layer bends the space <span>· demo 07</span></p>
@@ -340,9 +340,9 @@
 													<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
 												</div>
 												<div class="ism-controls">
-													<button type="button" id="ism-prev" class="ism-btn" aria-label="Previous step">←</button>
+													<button type="button" id="ism-prev" data-arrow-prev class="ism-btn" aria-label="Previous step">←</button>
+													<button type="button" id="ism-next" data-arrow-next class="ism-btn" aria-label="Next step">→</button>
 													<div id="ism-dots" class="ism-dots" aria-hidden="true"></div>
-													<button type="button" id="ism-next" class="ism-btn" aria-label="Next step">→</button>
 													<span id="ism-counter" class="ism-counter">1 / 7</span>
 												</div>
 											</div>

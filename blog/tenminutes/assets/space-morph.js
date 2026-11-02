@@ -104,14 +104,35 @@
 		return document.getElementById(id);
 	}
 
+	function buildSceneStack() {
+		const copy = copyEl("ism-copy");
+		if (!copy) return;
+		copy.innerHTML = "";
+		SCENES.forEach(function (scene, i) {
+			const item = document.createElement("div");
+			item.className = "ism-scene" + (i === 0 ? " is-active" : "");
+			const title = document.createElement("div");
+			title.className = "ism-title";
+			title.textContent = scene.title;
+			const body = document.createElement("div");
+			body.className = "ism-body";
+			body.textContent = scene.body;
+			item.appendChild(title);
+			item.appendChild(body);
+			copy.appendChild(item);
+		});
+	}
+
 	function renderCopy() {
-		const s = SCENES[cur];
-		const title = copyEl("ism-title");
-		const body = copyEl("ism-body");
 		const counter = copyEl("ism-counter");
-		if (title) title.textContent = s.title;
-		if (body) body.textContent = s.body;
 		if (counter) counter.textContent = (cur + 1) + " / " + SCENES.length;
+
+		const copy = copyEl("ism-copy");
+		if (copy) {
+			copy.querySelectorAll(".ism-scene").forEach(function (el, i) {
+				el.classList.toggle("is-active", i === cur);
+			});
+		}
 
 		const dots = copyEl("ism-dots");
 		if (!dots) return;
@@ -599,6 +620,7 @@
 		inited = true;
 		ctx = canvas.getContext("2d");
 		buildDots();
+		buildSceneStack();
 		renderCopy();
 		bindDrag();
 

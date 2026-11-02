@@ -355,9 +355,11 @@ The companion function was there too, the **kojya** (the "adjacent" half-chord):
 
 ### The Islamic formalisation: six functions and a subject of its own
 
-In the medieval Islamic world trigonometry was pulled out of astronomy and made a subject in its own right. The six functions — sine, cosine, tangent, cotangent, secant, cosecant — were already in use before al-Tusi (Abu al-Wafāʾ al-Būzjānī, al-Bīrūnī). **Nasir al-Din al-Tusi** (1201–1274) wrote the first independent treatise on trigonometry, systematically treating all six cases of a right spherical triangle and giving the plane and spherical **laws of sines** in exactly the form still taught today \cite{altusitrig}. The **tangent** and **secant** take their names straight from the circle: a *tangent* line *touches* it (Latin *tangens*), a *secant* line *cuts* it (*secans*). What drove all of it was the **spherical** version — the geometry of the *celestial sphere*, where the "straight line" is a great circle. Spherical trigonometry is what lets you find the **qibla** (the direction of Mecca) from anywhere on Earth, and it is the same engine that later made navigation possible: a problem on the sphere, not on the plane.
+In the medieval Islamic world trigonometry was pulled out of astronomy and made a subject in its own right. The six functions (sine, cosine, tangent, cotangent, secant, cosecant) were already in use before al-Tusi (Abu al-Wafāʾ al-Būzjānī, al-Bīrūnī). **Nasir al-Din al-Tusi** (1201 to 1274) wrote the first independent treatise on trigonometry, systematically treating all six cases of a right spherical triangle and giving the plane and spherical **laws of sines** in exactly the form still taught today \cite{altusitrig}.
 
-\marginfig{astrolabe.jpg}{A Persian astrolabe (made 1715). A model of the celestial sphere on a metal plate — swing it to a star and it reads the star's altitude, a portable protractor for the sky (\citealternativetitle{astrolabe_image}).}
+The **tangent** and **secant** take their names straight from the circle: a *tangent* line *touches* it (Latin *tangens*), a *secant* line *cuts* it (*secans*). What drove all of it was the **spherical** version: the geometry of the *celestial sphere*, where the "straight line" is a great circle. Spherical trigonometry is what lets you find the **qibla** (the direction of Mecca) from anywhere on Earth, and it is the same engine that later made navigation possible: a problem on the sphere, not on the plane.
+
+\marginfig{astrolabe.jpg}{A Persian astrolabe (made 1715). A model of the celestial sphere on a metal plate: swing it to a star and it reads the star's altitude, a portable protractor for the sky (\citealternativetitle{astrolabe_image}).}
 </div>
 
 <div class="md" data-mathlevel="60">

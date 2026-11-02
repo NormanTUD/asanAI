@@ -127,15 +127,15 @@
 								<p class="vec-note" id="emb-arrow-note" style="color:var(--tm-muted)">The two relationship arrows are exactly parallel in this toy. In a real embedding the same direction is approximate, which is why analogy arithmetic is suggestive, not a law.</p>
 								<div class="demo-controls">
 									<button class="btn-demo rel-btn" type="button" data-direction="gender" style="--rel:#5c9baf">Gender →</button>
-									<button class="btn-demo rel-btn" type="button" data-direction="royalty" style="--rel:#63a44b">Royalty ↑</button>
+									<button class="btn-demo rel-btn" type="button" data-direction="royalty" style="--rel:#63a44b">Power ↑</button>
 									<button class="btn-demo rel-btn" type="button" data-direction="capital" style="--rel:#9f9700">Capital ↗</button>
-									<button class="btn-demo rel-btn" type="button" data-direction="young" style="--rel:#9185be">Young ↖</button>
+									<button class="btn-demo rel-btn" type="button" data-direction="young" style="--rel:#9185be">Age ↖</button>
 									<button class="btn-demo" type="button" data-direction="all">Show all</button>
 									<button class="btn-demo" type="button" id="emb-clear">Clear</button>
 								</div>
 								<p class="vec-note" id="emb-direction-note" style="color:var(--tm-muted)">Each relation has its own arrow. The direction buttons overlay one family at a time; “all” shows that they are deliberately distinct.</p>
 								<p class="embed-legend" id="emb-caption" style="color:var(--tm-muted)">
-									<span><i style="background:#63a44b"></i>royalty</span>
+									<span><i style="background:#63a44b"></i>power</span>
 									<span><i style="background:#5c9baf"></i>gender</span>
 									<span><i style="background:#9f9700"></i>country / capital</span>
 									<span><i style="background:#9185be"></i>animal / age</span>
@@ -337,9 +337,9 @@
 		};
 		var directionMeta = {
 			gender: { label: "gender", color: "#5c9baf", hint: "a horizontal arrow, repeated across four pairs" },
-			royalty: { label: "royalty", color: "#63a44b", hint: "a vertical arrow: an ordinary person becomes a royal" },
+			royalty: { label: "power", color: "#63a44b", hint: "a vertical arrow: an ordinary person becomes a ruler" },
 			capital: { label: "capital", color: "#9f9700", hint: "a diagonal up-right arrow: a country resolves to its capital" },
-			young: { label: "young", color: "#9185be", hint: "a diagonal up-left arrow: an adult becomes a juvenile" }
+			young: { label: "age", color: "#9185be", hint: "a diagonal up-left arrow: an adult becomes a juvenile" }
 		};
 		var selected = "King";
 		var analogyIndex = 0;
@@ -415,7 +415,7 @@
 						var a = get(pair[0]), b = get(pair[1]);
 						var x1 = a.x * w, y1 = a.y * h, x2 = b.x * w, y2 = b.y * h;
 						drawArrow(ctx, x1, y1, x2, y2, meta.color, false);
-						drawArrowLabel(ctx, x1, y1, x2, y2, showDirection === "all" ? meta.label : pair[0] + " → " + pair[1], meta.color, c);
+						drawArrowLabel(ctx, x1, y1, x2, y2, meta.label, meta.color, c);
 					});
 				});
 			}
@@ -484,7 +484,7 @@
 			var note = document.getElementById("emb-direction-note");
 			if (note) {
 				if (!showDirection) note.textContent = "Each relation has its own arrow. The direction buttons overlay one family at a time; “all” shows that they are deliberately distinct.";
-				else if (showDirection === "all") note.textContent = "Four relations, four different directions. Gender is horizontal, royalty vertical, capital up-right, young up-left. Real embeddings are noisier, but this is why a direction can act as a reusable operator.";
+				else if (showDirection === "all") note.textContent = "Four relations, four different directions. Gender is horizontal, power vertical, capital up-right, age up-left. Real embeddings are noisier, but this is why a direction can act as a reusable operator.";
 				else note.textContent = "The " + directionMeta[showDirection].label + " direction is " + directionMeta[showDirection].hint + ". The same arrow appears in every pair of that family.";
 			}
 		}
@@ -510,7 +510,7 @@
 				if (!an) {
 					el.removeAttribute("data-tex");
 					el.removeAttribute("data-tex-rendered");
-					el.innerHTML = '<span class="emb-equation-hint">Pick an analogy to see the equation.</span>';
+					el.innerHTML = "";
 					return;
 				}
 				el.setAttribute("data-tex", "\\text{" + an.a + "} - \\text{" + an.b + "} + \\text{" + an.c + "} \\approx \\text{" + an.target + "}");

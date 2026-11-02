@@ -234,6 +234,38 @@
 		setTimeout(check, 400);
 	}
 
+	/* ── arrow-key navigation ──────────────────────────────── */
+
+	function initArrowNav() {
+		document.addEventListener("keydown", function (event) {
+			if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+			var target = event.target;
+			var tag = target && target.tagName ? target.tagName.toLowerCase() : "";
+			if (tag === "input" || tag === "textarea" || tag === "select" || (target && target.isContentEditable)) return;
+			var navs = Array.prototype.slice.call(document.querySelectorAll("[data-arrow-nav]"));
+			if (!navs.length) return;
+			var viewport = window.innerHeight || document.documentElement.clientHeight || 0;
+			var best = null, bestRatio = 0, bestTop = Infinity;
+			navs.forEach(function (nav) {
+				var rect = nav.getBoundingClientRect();
+				var visible = Math.min(rect.bottom, viewport) - Math.max(rect.top, 0);
+				if (visible <= 0) return;
+				var ratio = visible / Math.min(rect.height || 1, viewport || 1);
+				if (ratio > bestRatio + 0.001 || (Math.abs(ratio - bestRatio) <= 0.001 && rect.top < bestTop)) {
+					best = nav;
+					bestRatio = ratio;
+					bestTop = rect.top;
+				}
+			});
+			if (!best) return;
+			var selector = event.key === "ArrowLeft" ? "[data-arrow-prev]" : "[data-arrow-next]";
+			var button = best.querySelector(selector);
+			if (!button || button.disabled) return;
+			event.preventDefault();
+			button.click();
+		});
+	}
+
 	/* ── page chrome ───────────────────────────────────────── */
 
 	function initPage() {
@@ -243,6 +275,7 @@
 		initRail();
 		initCompletion();
 		TM.typesetMath();
+		initArrowNav();
 
 		var slug = document.body.getAttribute("data-lesson");
 		if (slug) TM.markSeen(slug);

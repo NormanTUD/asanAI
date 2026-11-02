@@ -1477,12 +1477,13 @@ input[type="range"]::-moz-range-thumb {
 
 .ism-copy {
 	max-width: 640px;
-	height: clamp(9.5em, 14vw, 12em);
+	min-height: 12em;
 	margin: 0 auto 14px;
-	overflow-y: auto;
-	scrollbar-gutter: stable;
 	text-align: center;
+	display: grid;
 }
+.ism-scene { grid-area: 1 / 1; visibility: hidden; opacity: 0; pointer-events: none; }
+.ism-scene.is-active { visibility: visible; opacity: 1; pointer-events: auto; }
 .ism-title {
 	font-family: var(--tm-display);
 	font-size: 1.05rem;
@@ -1567,7 +1568,6 @@ input[type="range"]::-moz-range-thumb {
 }
 @media (max-width: 640px) {
 	.ism-wrap { height: 360px; }
-	.ism-copy { height: 10.5em; }
 }
 
 .wg-cases {
@@ -3502,7 +3502,6 @@ html[data-theme="dark"] .myth--ok b { color: var(--tm-green); }
 	overflow-y: hidden;
 }
 .emb-equation math { font-size: 1.08rem; }
-.emb-equation-hint { font-family: var(--tm-ui); font-size: 0.8rem; color: var(--tm-muted); }
 .att-budget {
 	display: flex;
 	height: 14px;
