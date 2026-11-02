@@ -1804,6 +1804,7 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	display: grid;
 	gap: 2px;
 	min-width: 440px;
+	padding: 4px;
 }
 .llm-matrix-row {
 	display: grid;
@@ -1841,6 +1842,7 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	border-radius: 4px;
 	font-family: var(--tm-mono);
 	font-size: 0.58rem;
+	font-weight: 600;
 	color: var(--tm-ink);
 }
 .llm-matrix-cell.is-future {
@@ -1848,13 +1850,45 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	background: transparent !important;
 	border-style: dashed;
 }
+.llm-matrix-row.is-selected {
+	border-radius: 6px;
+	background: color-mix(in srgb, var(--tm-green) 10%, transparent);
+	outline: 2px solid color-mix(in srgb, var(--tm-green) 62%, var(--tm-line));
+	outline-offset: 2px;
+}
 .llm-matrix-row.is-selected .llm-matrix-label {
 	font-weight: 700;
 	color: var(--tm-petrol);
 }
+.llm-matrix-row.is-selected .llm-matrix-label::before {
+	content: "▸";
+	margin-right: 3px;
+	color: var(--tm-green);
+}
 .llm-matrix-row.is-selected .llm-matrix-cell:not(.is-future) {
-	outline: 1px solid color-mix(in srgb, var(--tm-green) 55%, transparent);
+	outline: 1px solid color-mix(in srgb, var(--tm-petrol) 55%, transparent);
 	outline-offset: -1px;
+}
+.llm-mask-note {
+	margin-top: 6px;
+	padding-left: 10px;
+	border-left: 2px solid var(--tm-gold);
+}
+.llm-matrix-legend {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 8px;
+	font-family: var(--tm-mono);
+	font-size: 0.56rem;
+	color: var(--tm-faint);
+}
+.llm-matrix-legend i {
+	flex: 1 1 auto;
+	height: 7px;
+	border: 1px solid var(--tm-line);
+	border-radius: 999px;
+	background: linear-gradient(90deg, var(--tm-card), var(--tm-green));
 }
 .llm-matrix-note { margin: 8px 0 0; }
 .llm-qkv {

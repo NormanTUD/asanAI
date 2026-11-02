@@ -741,7 +741,7 @@
 									<h4 class="llm-pane-title">Mechanism · Attention</h4>
 									<div class="llm-attn-head">
 										<p class="llm-note">Attention is a mechanism inside the block: it routes information between positions. Click a token. Each arc is one attention weight, and the matrix below shows the whole routing table.</p>
-										<label class="llm-switch"><input type="checkbox" id="llm-causal"> causal mask <span>(GPT)</span></label>
+										<label class="llm-switch"><input type="checkbox" id="llm-causal" checked> causal mask <span>(GPT / autoregressive)</span></label>
 									</div>
 									<div class="llm-sentence" id="llm-sentence">
 										<svg class="llm-arcs" id="llm-arcs" aria-hidden="true">
@@ -757,18 +757,20 @@
 									<div class="llm-matrix-wrap">
 										<div class="llm-matrix-head">
 											<b>Attention matrix</b>
-											<span>rows = queries · columns = keys · every row sums to <b>1.00</b></span>
+											<span>rows = queries · columns = keys · every row sums to <b>1.00</b> · selected query: <b id="llm-matrix-selected">sat</b></span>
 										</div>
 										<div class="llm-matrix" id="llm-matrix" role="img" aria-label="Attention matrix. Each row is a query and sums to one.">
 											<div class="llm-matrix-row llm-matrix-row--head"><span></span><span>the</span><span>cat</span><span>sat</span><span>on</span><span>the</span><span>mat</span><span>Σ</span></div>
-											<div class="llm-matrix-row"><span class="llm-matrix-label">the</span><span class="llm-matrix-cell">0.30</span><span class="llm-matrix-cell">0.22</span><span class="llm-matrix-cell">0.18</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-sum">1.00</span></div>
-											<div class="llm-matrix-row"><span class="llm-matrix-label">cat</span><span class="llm-matrix-cell">0.14</span><span class="llm-matrix-cell">0.30</span><span class="llm-matrix-cell">0.26</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-sum">1.00</span></div>
-											<div class="llm-matrix-row is-selected"><span class="llm-matrix-label">sat</span><span class="llm-matrix-cell">0.12</span><span class="llm-matrix-cell">0.42</span><span class="llm-matrix-cell">0.20</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-cell">0.08</span><span class="llm-matrix-cell">0.08</span><span class="llm-matrix-sum">1.00</span></div>
-											<div class="llm-matrix-row"><span class="llm-matrix-label">on</span><span class="llm-matrix-cell">0.08</span><span class="llm-matrix-cell">0.16</span><span class="llm-matrix-cell">0.30</span><span class="llm-matrix-cell">0.18</span><span class="llm-matrix-cell">0.16</span><span class="llm-matrix-cell">0.12</span><span class="llm-matrix-sum">1.00</span></div>
-											<div class="llm-matrix-row"><span class="llm-matrix-label">the</span><span class="llm-matrix-cell">0.06</span><span class="llm-matrix-cell">0.12</span><span class="llm-matrix-cell">0.18</span><span class="llm-matrix-cell">0.16</span><span class="llm-matrix-cell">0.26</span><span class="llm-matrix-cell">0.22</span><span class="llm-matrix-sum">1.00</span></div>
-											<div class="llm-matrix-row"><span class="llm-matrix-label">mat</span><span class="llm-matrix-cell">0.05</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-cell">0.12</span><span class="llm-matrix-cell">0.14</span><span class="llm-matrix-cell">0.24</span><span class="llm-matrix-cell">0.35</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">the</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 68%, var(--tm-card));color:#071a22">0.30</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 46%, var(--tm-card));color:var(--tm-ink)">0.22</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 35%, var(--tm-card));color:var(--tm-ink)">0.18</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">cat</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 24%, var(--tm-card));color:var(--tm-ink)">0.14</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 68%, var(--tm-card));color:#071a22">0.30</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 57%, var(--tm-card));color:var(--tm-ink)">0.26</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row is-selected"><span class="llm-matrix-label">sat</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 19%, var(--tm-card));color:var(--tm-ink)">0.12</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 100%, var(--tm-card));color:#071a22">0.42</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 41%, var(--tm-card));color:var(--tm-ink)">0.20</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 8%, var(--tm-card));color:var(--tm-ink)">0.08</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 8%, var(--tm-card));color:var(--tm-ink)">0.08</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">on</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 8%, var(--tm-card));color:var(--tm-ink)">0.08</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 30%, var(--tm-card));color:var(--tm-ink)">0.16</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 68%, var(--tm-card));color:#071a22">0.30</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 35%, var(--tm-card));color:var(--tm-ink)">0.18</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 30%, var(--tm-card));color:var(--tm-ink)">0.16</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 19%, var(--tm-card));color:var(--tm-ink)">0.12</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">the</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 3%, var(--tm-card));color:var(--tm-ink)">0.06</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 19%, var(--tm-card));color:var(--tm-ink)">0.12</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 35%, var(--tm-card));color:var(--tm-ink)">0.18</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 30%, var(--tm-card));color:var(--tm-ink)">0.16</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 57%, var(--tm-card));color:var(--tm-ink)">0.26</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 46%, var(--tm-card));color:var(--tm-ink)">0.22</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">mat</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 0%, var(--tm-card));color:var(--tm-ink)">0.05</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 19%, var(--tm-card));color:var(--tm-ink)">0.12</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 24%, var(--tm-card));color:var(--tm-ink)">0.14</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 51%, var(--tm-card));color:var(--tm-ink)">0.24</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 81%, var(--tm-card));color:#071a22">0.35</span><span class="llm-matrix-sum">1.00</span></div>
 										</div>
+										<div class="llm-matrix-legend"><span>min</span><i></i><span>max</span></div>
 										<p class="llm-note llm-matrix-note">Softmax gives each query exactly <b>1.00</b> of attention mass. The row is a probability distribution: if one key gets more, every other key gets less. The last column shows the sum.</p>
+										<p class="llm-note llm-mask-note"><b>Causal mask</b> (also called an autoregressive mask): a word may only see itself and the words before it. Future cells are set to zero before the softmax and the row is renormalised, so it still sums to <b>1.00</b>. That is what stops the model from reading the answer it is about to write.</p>
 									</div>
 									<div class="llm-qkv">
 										<span class="is-q">query</span><span class="llm-arrow">×</span><span class="is-k">keys</span><span class="llm-arrow">→</span><span class="is-s">softmax</span><span class="llm-arrow">→</span><span class="is-v">mix values</span>
@@ -1238,6 +1240,7 @@
 		var arcs = document.getElementById("llm-arcs");
 		var bars = document.getElementById("llm-bars");
 		var matrix = document.getElementById("llm-matrix");
+		var matrixSelected = document.getElementById("llm-matrix-selected");
 		var causal = document.getElementById("llm-causal");
 		var selected = 2;
 		var attnTokens = [];
@@ -1287,25 +1290,40 @@
 		function renderMatrix() {
 			if (!matrix) return;
 			var maskOn = !!(causal && causal.checked);
+			var rows = [];
+			var min = Infinity;
+			var max = -Infinity;
+			for (var i = 0; i < WORDS.length; i++) {
+				var row = rowWeights(i, maskOn);
+				rows.push(row);
+				for (var j = 0; j < WORDS.length; j++) {
+					if (maskOn && j > i) continue;
+					if (row[j] < min) min = row[j];
+					if (row[j] > max) max = row[j];
+				}
+			}
+			var span = max - min;
 			var html = '<div class="llm-matrix-row llm-matrix-row--head"><span></span>' +
 				WORDS.map(function (word) { return "<span>" + word + "</span>"; }).join("") +
 				"<span>Σ</span></div>";
-			for (var i = 0; i < WORDS.length; i++) {
-				var w = rowWeights(i, maskOn);
+			for (i = 0; i < WORDS.length; i++) {
 				html += '<div class="llm-matrix-row' + (i === selected ? " is-selected" : "") + '">';
 				html += '<span class="llm-matrix-label">' + WORDS[i] + "</span>";
-				for (var j = 0; j < WORDS.length; j++) {
+				for (j = 0; j < WORDS.length; j++) {
 					var future = maskOn && j > i;
-					var v = w[j];
-					var alpha = future ? 0 : 0.05 + v * 0.55;
+					var v = rows[i][j];
+					var pct = future ? 0 : (span > 0 ? Math.round((v - min) / span * 100) : 100);
+					var textColor = future ? "var(--tm-faint)" : (pct > 60 ? "#071a22" : "var(--tm-ink)");
 					html += '<span class="llm-matrix-cell' + (future ? " is-future" : "") +
-						'" style="background:rgba(99,164,75,' + alpha.toFixed(3) + ')"' +
+						'" style="background:color-mix(in srgb, var(--tm-green) ' + pct +
+						'%, var(--tm-card));color:' + textColor + '"' +
 						' title="' + WORDS[i] + " → " + WORDS[j] + ": " + v.toFixed(3) + '">' +
 						(future ? "·" : v.toFixed(2)) + "</span>";
 				}
 				html += '<span class="llm-matrix-sum">1.00</span></div>';
 			}
 			matrix.innerHTML = html;
+			if (matrixSelected) matrixSelected.textContent = WORDS[selected];
 		}
 
 		function renderAttention() {
