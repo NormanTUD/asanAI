@@ -719,26 +719,28 @@
 								difference is that the distribution has been shaped toward answers people find
 								useful, honest, and harmless.
 							</p>
+							<p>
+								The three panels below are not three stages of one pipeline.
+								<strong>Attention</strong> is a mechanism inside the block;
+								<strong>pretraining</strong> is a training objective; <strong>scale</strong>
+								is a strategy for spending compute. They are different kinds of
+								contribution — and each one was necessary.
+							</p>
 						</div>
 
 						<div class="demo demo--paper llm-demo" id="llm-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">Inside the LLM line <span>· demo 02</span></p>
-									<p class="demo-sub">Route information with attention, learn from unlabelled text, then spend compute on the right model size.</p>
+									<p class="demo-title">Three different levers <span>· demo 02</span></p>
+									<p class="demo-sub">Attention is a mechanism, pretraining is an objective, and scale is a strategy. They are not three stages of one pipeline.</p>
 								</div>
-								<span class="demo-badge">toy model</span>
+								<span class="demo-badge">not a pipeline</span>
 							</div>
 							<div class="demo-body">
-								<div class="llm-tabs" role="tablist" aria-label="LLM demo stages">
-									<button class="chip is-on" type="button" role="tab" aria-selected="true" data-llm-tab="attention">1 · Attention</button>
-									<button class="chip" type="button" role="tab" aria-selected="false" data-llm-tab="pretraining">2 · Pretraining</button>
-									<button class="chip" type="button" role="tab" aria-selected="false" data-llm-tab="scale">3 · Scale</button>
-								</div>
-
-								<div class="llm-pane is-on" data-llm-pane="attention">
+								<div class="llm-pane" data-llm-pane="attention">
+									<h4 class="llm-pane-title">Mechanism · Attention</h4>
 									<div class="llm-attn-head">
-										<p class="llm-note">Click a token. Each arc is one attention weight: how much that token borrows from another.</p>
+										<p class="llm-note">Attention is a mechanism inside the block: it routes information between positions. Click a token. Each arc is one attention weight, and the matrix below shows the whole routing table.</p>
 										<label class="llm-switch"><input type="checkbox" id="llm-causal"> causal mask <span>(GPT)</span></label>
 									</div>
 									<div class="llm-sentence" id="llm-sentence">
@@ -752,12 +754,21 @@
 										</svg>
 									</div>
 									<div class="llm-bars" id="llm-bars"></div>
+									<div class="llm-matrix-wrap">
+										<div class="llm-matrix-head">
+											<b>Attention matrix</b>
+											<span>rows = queries · columns = keys · every row sums to <b>1.00</b></span>
+										</div>
+										<div class="llm-matrix" id="llm-matrix" role="img" aria-label="Attention matrix. Each row is a query and sums to one."></div>
+										<p class="llm-note llm-matrix-note">Softmax gives each query exactly <b>1.00</b> of attention mass. The row is a probability distribution: if one key gets more, every other key gets less. The last column shows the sum.</p>
+									</div>
 									<div class="llm-qkv">
 										<span class="is-q">query</span><span class="llm-arrow">×</span><span class="is-k">keys</span><span class="llm-arrow">→</span><span class="is-s">softmax</span><span class="llm-arrow">→</span><span class="is-v">mix values</span>
 									</div>
 								</div>
 
 								<div class="llm-pane" data-llm-pane="pretraining">
+									<h4 class="llm-pane-title">Objective · Pretraining</h4>
 									<div class="llm-obj-switch">
 										<button class="chip is-on" type="button" aria-pressed="true" data-llm-objective="bert">BERT · fill the blank</button>
 										<button class="chip" type="button" aria-pressed="false" data-llm-objective="gpt">GPT · predict the next</button>
@@ -771,11 +782,12 @@
 										<span class="llm-step">small labelled set</span><span class="llm-arrow">→</span>
 										<span class="llm-step">fine-tune</span>
 									</div>
-									<p class="llm-note">The label is the text itself. BERT hides a token and reads both sides; GPT hides the future and reads only the past. Click any token to move the blank.</p>
+									<p class="llm-note">Pretraining is an objective, not an architecture: the label is the text itself. BERT hides a token and reads both sides; GPT hides the future and reads only the past. Click any token to move the blank.</p>
 								</div>
 
 								<div class="llm-pane" data-llm-pane="scale">
-									<p class="llm-note">For a fixed compute budget, the best model size changes: a large model with too few tokens loses to a smaller, better-trained one. The curves use a Chinchilla-style scaling law; the numbers are illustrative.</p>
+									<h4 class="llm-pane-title">Strategy · Scale</h4>
+									<p class="llm-note">Scale is a strategy for spending a compute budget, not a part of the block. For a fixed budget, the best model size changes: a large model with too few tokens loses to a smaller, better-trained one. The curves use a Chinchilla-style scaling law; the numbers are illustrative.</p>
 									<div class="llm-scale-legend">
 										<span><i style="background:var(--tm-sky)"></i>1B params</span>
 										<span><i style="background:var(--tm-green)"></i>7B params</span>
@@ -790,7 +802,7 @@
 									<div class="llm-scale-readout" id="llm-scale-readout"></div>
 								</div>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>The transformer made context parallel. Pretraining turned raw text into a self-supervised lesson. Scale only works when parameters and tokens are balanced.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>Look at the kind of contribution, not the order: attention is the mechanism, pretraining is the objective, scale is the strategy. They are different levers, not three stages of one pipeline.</span></div>
 							<div class="demo-foot">
 								Toy sentence, toy attention weights, and a Chinchilla-style scaling law. The point is the mechanism, not the exact numbers.
 							</div>
@@ -1204,26 +1216,6 @@
 		var root = document.getElementById("llm-demo");
 		if (!root) return;
 
-		/* ── tabs ─────────────────────────────────────────────── */
-		var tabs = root.querySelectorAll("[data-llm-tab]");
-		var panes = root.querySelectorAll("[data-llm-pane]");
-		var activeTab = "attention";
-		function showTab(name) {
-			activeTab = name;
-			tabs.forEach(function (b) {
-				var on = b.getAttribute("data-llm-tab") === name;
-				b.classList.toggle("is-on", on);
-				b.setAttribute("aria-selected", on ? "true" : "false");
-			});
-			panes.forEach(function (p) {
-				p.classList.toggle("is-on", p.getAttribute("data-llm-pane") === name);
-			});
-			if (name === "attention") requestAnimationFrame(function () { drawArcs(); });
-		}
-		tabs.forEach(function (b) {
-			b.addEventListener("click", function () { showTab(b.getAttribute("data-llm-tab")); });
-		});
-
 		/* ── attention ────────────────────────────────────────── */
 		var WORDS = ["the", "cat", "sat", "on", "the", "mat"];
 		var WEIGHTS = [
@@ -1237,6 +1229,7 @@
 		var attnSentence = document.getElementById("llm-sentence");
 		var arcs = document.getElementById("llm-arcs");
 		var bars = document.getElementById("llm-bars");
+		var matrix = document.getElementById("llm-matrix");
 		var causal = document.getElementById("llm-causal");
 		var selected = 2;
 		var attnTokens = [];
@@ -1270,14 +1263,41 @@
 			barEls.push({ row: row, fill: fill, num: num });
 		});
 
-		function activeWeights() {
-			var w = WEIGHTS[selected].slice();
-			if (causal && causal.checked) {
-				for (var i = 0; i < w.length; i++) if (i > selected) w[i] = 0;
+		function rowWeights(row, maskOn) {
+			var w = WEIGHTS[row].slice();
+			if (maskOn) {
+				for (var i = 0; i < w.length; i++) if (i > row) w[i] = 0;
 				var sum = w.reduce(function (a, b) { return a + b; }, 0) || 1;
 				w = w.map(function (x) { return x / sum; });
 			}
 			return w;
+		}
+		function activeWeights() {
+			return rowWeights(selected, !!(causal && causal.checked));
+		}
+
+		function renderMatrix() {
+			if (!matrix) return;
+			var maskOn = !!(causal && causal.checked);
+			var html = '<div class="llm-matrix-row llm-matrix-row--head"><span></span>' +
+				WORDS.map(function (word) { return "<span>" + word + "</span>"; }).join("") +
+				"<span>Σ</span></div>";
+			for (var i = 0; i < WORDS.length; i++) {
+				var w = rowWeights(i, maskOn);
+				html += '<div class="llm-matrix-row' + (i === selected ? " is-selected" : "") + '">';
+				html += '<span class="llm-matrix-label">' + WORDS[i] + "</span>";
+				for (var j = 0; j < WORDS.length; j++) {
+					var future = maskOn && j > i;
+					var v = w[j];
+					var alpha = future ? 0 : 0.05 + v * 0.55;
+					html += '<span class="llm-matrix-cell' + (future ? " is-future" : "") +
+						'" style="background:rgba(99,164,75,' + alpha.toFixed(3) + ')"' +
+						' title="' + WORDS[i] + " → " + WORDS[j] + ": " + v.toFixed(3) + '">' +
+						(future ? "·" : v.toFixed(2)) + "</span>";
+				}
+				html += '<span class="llm-matrix-sum">1.00</span></div>';
+			}
+			matrix.innerHTML = html;
 		}
 
 		function renderAttention() {
@@ -1292,6 +1312,7 @@
 				bar.num.textContent = w[i].toFixed(2);
 				bar.row.classList.toggle("is-future", maskOn && i > selected);
 			});
+			renderMatrix();
 			drawArcs(w);
 		}
 
@@ -1325,10 +1346,10 @@
 		var attnTimer = null;
 		window.addEventListener("resize", function () {
 			clearTimeout(attnTimer);
-			attnTimer = setTimeout(function () { if (activeTab === "attention") drawArcs(); }, 120);
+			attnTimer = setTimeout(drawArcs, 120);
 		});
 		if (document.fonts && document.fonts.ready) {
-			document.fonts.ready.then(function () { if (activeTab === "attention") drawArcs(); });
+			document.fonts.ready.then(function () { drawArcs(); });
 		}
 
 		/* ── pretraining ──────────────────────────────────────── */
