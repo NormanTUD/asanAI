@@ -16147,7 +16147,7 @@ window.bibData = {
 	},
 	"img_gottlob_frege": {
 		title: "Gottlob Frege, c. 1879",
-		author: "Unknown",
+		author: "Unknown photographer",
 		year: "c. 1879",
 		url: "https://commons.wikimedia.org/wiki/File:Young_frege.jpg",
 		license: "Public domain",
@@ -16155,7 +16155,7 @@ window.bibData = {
 	},
 	"img_john_mccarthy": {
 		title: "John McCarthy at Stanford, 2006",
-		author: "null0",
+		author: "Flickr user null0",
 		year: 2006,
 		url: "https://commons.wikimedia.org/wiki/File:John_McCarthy_Stanford.jpg",
 		license: "CC BY-SA 2.0",
@@ -16211,7 +16211,7 @@ window.bibData = {
 	},
 	"img_eliezer_yudkowsky": {
 		title: "Eliezer Yudkowsky, Stanford, 2006",
-		author: "null0",
+		author: "Flickr user null0",
 		year: 2006,
 		url: "https://commons.wikimedia.org/wiki/File:Eliezer_Yudkowsky,_Stanford_2006_%28square_crop%29.jpg",
 		license: "CC BY-SA 2.0",
