@@ -16,13 +16,13 @@ tags: code-heavy, interested-layman
 
 ### Software: The Layer That Made Everything Else Possible
 
-Every large language model runs on a stack of software that is, strictly speaking, older than the idea of an LLM by several decades. The GPU does the matrix math; but *something* has to decide which GPU runs which layer, when to move data between memory and disk, how a process that has run for a week keeps from corrupting its neighbor, and how a line of Python becomes a billion instructions on a specific chip. That something is not a single invention. It is a **ladder of abstractions** — an operating system, a compiler, a library, a runtime, a framework — each rung hiding the messy reality of the rung below and exposing a small, clean interface to the rung above.
+Every large language model runs on a stack of software that is, strictly speaking, older than the idea of an LLM by several decades. The GPU does the matrix math; but *something* has to decide which GPU runs which layer, when to move data between memory and disk, how a process that has run for a week keeps from corrupting its neighbor, and how a line of Python becomes a billion instructions on a specific chip. That something is not a single invention. It is a **ladder of abstractions**: an operating system, a compiler, a library, a runtime, a framework, each rung hiding the messy reality of the rung below and exposing a small, clean interface to the rung above.
 
 This is the same idea that runs through the whole of this course, the “extra level of indirection” that David Wheeler named and that the wheel itself prefigured. Hardware gives you *transistors*. The **operating system** gives you *files, processes and memory*. A **programming language** and its **compiler** give you *expressions and functions*. A **library** gives you *data structures*. A **framework** gives you *neural layers*. And a **model** gives you *text*. Remove any single rung and the ones above it fall; add a rung and the ones above it become possible.
 
-This page is a deep dive into that ladder. It is deliberately broader than a “history of Unix” or a “top ten programming languages.” It covers the operating systems you will rarely hear named (GM-NAA I/O, Multics, VMS, Plan 9, the Hurd, BeOS), the languages that shaped how we *think* about computation (Lisp, ALGOL, Smalltalk, Prolog, APL), the tools that made it possible to *maintain* software complex enough to be useful (compilers, `make`, version control), and the people and ideas — their rivalries, their ideologies, their stubbornness — that decided which abstractions survived. Because the single most important fact about software is not technical: it is that software was built by **rival minds competing over the shape of thought itself**, and without that competition there is no stack, and no AI on top of it.
+This page is a deep dive into that ladder. It is deliberately broader than a “history of Unix” or a “top ten programming languages.” It covers the operating systems you will rarely hear named (GM-NAA I/O, Multics, VMS, Plan 9, the Hurd, BeOS), the languages that shaped how we *think* about computation (Lisp, ALGOL, Smalltalk, Prolog, APL), the tools that made it possible to *maintain* software complex enough to be useful (compilers, `make`, version control), and the people and ideas (their rivalries, their ideologies, their stubbornness) that decided which abstractions survived. Because the single most important fact about software is not technical: it is that software was built by **rival minds competing over the shape of thought itself**, and without that competition there is no stack, and no AI on top of it.
 
-The framing borrowed from the [Untold History](untold_history_i) chapter applies directly here: the operating system, the compiler and the version-control system are all **displaced prerequisites**. They were invented to solve problems that had nothing to do with intelligence — scheduling batch jobs at a car factory, translating one notation into another, keeping a team's code from colliding — and yet every one of them is a load-bearing fact of modern machine learning.
+The framing borrowed from the [Untold History](untold_history_i) chapter applies directly here: the operating system, the compiler and the version-control system are all **displaced prerequisites**. They were invented to solve problems that had nothing to do with intelligence (scheduling batch jobs at a car factory, translating one notation into another, keeping a team's code from colliding), and yet every one of them is a load-bearing fact of modern machine learning.
 </div>
 
 <div class="md">
@@ -30,21 +30,21 @@ The framing borrowed from the [Untold History](untold_history_i) chapter applies
 
 To keep the thread visible while we climb, here is the whole stack, from the first mechanical gears to the final sentence, with the historical moment each rung was nailed down:
 
-* **The automatic machine** (Hero of Alexandria, 1st c. CE) — the first *self-acting* machines; the ancestors of the automaton.
-* **The mechanical computer** (Leibniz’s Stepped Reckoner, 1673–1694) — the first machine that could *multiply and divide*, and Leibniz’s parallel development of the **binary** system.
-* **The programmable engine** (Babbage’s Analytical Engine, 1837) — the first machine *designed to be reprogrammed* by punched cards.
-* **The working computer** (Zuse Z3, 1941) — the first *automatic, fully programmable* computer actually built and running.
-* **Silicon / the transistor** (1947) — the physical switch.
-* **The stored program** (1948) — the idea that the *instructions* live in the same memory as the *data* (\citeauthor{vonneumann}'s \citeyear{vonneumann} report is the canonical statement of this).
-* **The assembler** (1952) — the first *translator* that maps a human-readable mnemonic to machine code.
-* **The compiler** (1952; see Grace Hopper below) — the first *translator* from a whole language.
-* **The operating system** (1956) — the first program that *manages the machine for you*.
-* **The high-level language** (FORTRAN 1957, Lisp 1958) — the first languages that let you speak about *mathematics* and *symbols*, not about *wires*.
-* **The portable systems language** (C, 1972) — the first language an operating system could be *written in* and then *moved* to a new machine.
-* **The toolchain** (`make` 1976, version control 1972–2005) — the first tools that let a *team* build and keep software.
-* **The GUI / the personal computer** (Smalltalk 1972, Alto 1973) — the first software that treated the *person* as the user, not the operator.
-* **The library & framework** (1980s–now) — the first software that packaged *algorithms* for reuse.
-* **The model** (2012–now) — the trained weights, the thing that predicts the next token.
+* **The automatic machine** (Hero of Alexandria, 1st c. CE): the first *self-acting* machines; the ancestors of the automaton.
+* **The mechanical computer** (Leibniz’s Stepped Reckoner, 1673-1694): the first machine that could *multiply and divide*, and Leibniz’s parallel development of the **binary** system.
+* **The programmable engine** (Babbage’s Analytical Engine, 1837): the first machine *designed to be reprogrammed* by punched cards.
+* **The working computer** (Zuse Z3, 1941): the first *automatic, fully programmable* computer actually built and running.
+* **Silicon / the transistor** (1947): the physical switch.
+* **The stored program** (1948): the idea that the *instructions* live in the same memory as the *data* (\citeauthor{vonneumann}'s \citeyear{vonneumann} report is the canonical statement of this).
+* **The assembler** (1952): the first *translator* that maps a human-readable mnemonic to machine code.
+* **The compiler** (1952; see Grace Hopper below): the first *translator* from a whole language.
+* **The operating system** (1956): the first program that *manages the machine for you*.
+* **The high-level language** (FORTRAN 1957, Lisp 1958): the first languages that let you speak about *mathematics* and *symbols*, not about *wires*.
+* **The portable systems language** (C, 1972): the first language an operating system could be *written in* and then *moved* to a new machine.
+* **The toolchain** (`make` 1976, version control 1972-2005): the first tools that let a *team* build and keep software.
+* **The GUI / the personal computer** (Smalltalk 1972, Alto 1973): the first software that treated the *person* as the user, not the operator.
+* **The library & framework** (1980s-now): the first software that packaged *algorithms* for reuse.
+* **The model** (2012-now): the trained weights, the thing that predicts the next token.
 
 We will climb this ladder from the bottom up, because that is the order the rungs were actually built, and because it is the only order in which the ideas make sense.
 </div>
