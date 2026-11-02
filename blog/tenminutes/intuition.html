@@ -328,22 +328,22 @@
 											<span class="sp-kicker">The whole layer</span>
 											<h3 class="sp-title">The nonlinearity bends the space</h3>
 										</div>
-										<p class="step-note curve-intro">The FFN above works on one token. A dense layer computes an affine projection, <b>Ax + b</b>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
-										<div class="layer-formula">layer(x) = activation(Ax + b)</div>
+										<p class="step-note curve-intro">The FFN above works on one token. A dense layer computes an affine projection, <span data-tex="Ax + b" data-tex-display="false"></span>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
+										<div class="layer-formula" data-tex="\operatorname{layer}(x) = \operatorname{activation}(Ax + b)" data-tex-display="false"></div>
 										<div class="collapse-card">
 											<div class="cc-label">two dense layers</div>
-											<div class="collapse-math" id="collapse-math">dense₂(dense₁(x)) = W₂(W₁x + b₁) + b₂ = (W₂W₁)x + (W₂b₁ + b₂) = Wx + b<br>W = W₂W₁ &nbsp;&nbsp; b = W₂b₁ + b₂</div>
-											<p>The product <b>W₂W₁</b> is itself a new single weight matrix: every row of W₁ is mixed through the columns of W₂. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <b>W</b> maps d inputs directly to k outputs: the hidden layer has disappeared. The biases also merge into <b>W₂b₁ + b₂</b>. So without a nonlinearity, two dense layers are exactly one dense layer with a combined <b>W</b>; depth adds no expressive power. The activation is what breaks the collapse.</p>
+											<div class="collapse-math" id="collapse-math" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \\[4pt] W &amp;= W_2 W_1, \qquad b = W_2 b_1 + b_2 \end{aligned}"></div>
+											<p>The product <span data-tex="W_2 W_1" data-tex-display="false"></span> is itself a new single weight matrix: every row of <span data-tex="W_1" data-tex-display="false"></span> is mixed through the columns of <span data-tex="W_2" data-tex-display="false"></span>. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <span data-tex="W" data-tex-display="false"></span> maps d inputs directly to k outputs: the hidden layer has disappeared. The biases also merge into <span data-tex="W_2 b_1 + b_2" data-tex-display="false"></span>. So without a nonlinearity, two dense layers are exactly one dense layer with a combined <span data-tex="W" data-tex-display="false"></span>; depth adds no expressive power. The activation is what breaks the collapse.</p>
 										</div>
 										<div class="activation-card">
 											<div class="activation-copy">
 												<p>The term <b>activation</b> means the activation function: it is applied to each coordinate after the projection. It was introduced to add the nonlinearity that a stack of dense layers otherwise lacks.</p>
-												<p><b>ReLU(z) = max(0, z)</b> passes positive values unchanged and sends the entire negative half-space to zero. The graph is flat, then a straight rise: a hard fold at <b>z = 0</b>. Because many inputs become the same output, ReLU is not injective; it can change the topology of the representation.</p>
+												<p><span data-tex="\operatorname{ReLU}(z) = \max(0, z)" data-tex-display="false"></span> passes positive values unchanged and sends the entire negative half-space to zero. The graph is flat, then a straight rise: a hard fold at <span data-tex="z = 0" data-tex-display="false"></span>. Because many inputs become the same output, ReLU is not injective; it can change the topology of the representation.</p>
 												<p><b>Sigmoid</b> and <b>tanh</b> are strictly increasing, so they bend smoothly without mapping distinct inputs to the same output. <b>GELU</b> is smooth but not monotonic: it dips slightly below zero, so it is also many-to-one. Other choices include SiLU/Swish, ELU, and gated variants such as SwiGLU.</p>
 											</div>
 											<div class="activation-plots" id="activation-plots"></div>
 										</div>
-										<p class="step-note curve-intro">The demo below uses a smooth bend so you can see the shape. ReLU would crease the same space flat on one side of z = 0. The cut still happens: the layer changes the space in which the cut is made.</p>
+										<p class="step-note curve-intro">The demo below uses a smooth bend so you can see the shape. ReLU would crease the same space flat on one side of <span data-tex="z = 0" data-tex-display="false"></span>. The cut still happens: the layer changes the space in which the cut is made.</p>
 										<div class="demo demo--paper" data-demo="bend" style="margin-top:14px">
 											<div class="demo-head">
 												<div>
@@ -521,6 +521,19 @@
 	<script>
 	(function () {
 		"use strict";
+
+		/* ── typeset the layer equations ─────────────────────── */
+		document.querySelectorAll("[data-tex]").forEach(function (el) {
+			var tex = el.getAttribute("data-tex");
+			var displayMode = el.getAttribute("data-tex-display") !== "false";
+			if (window.temml) {
+				try {
+					el.innerHTML = temml.renderToString(tex, { displayMode: displayMode });
+					return;
+				} catch (e) { /* fall through to the TeX source */ }
+			}
+			el.textContent = tex;
+		});
 
 		/* ── demo 1: the autoregressive loop ─────────────────── */
 		var MAX_STEPS = 6;

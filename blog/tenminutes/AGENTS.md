@@ -226,9 +226,11 @@ Compact pages do not carry previous/next navigation or a day footer. Keep
 cross-chapter connections on the synthesis page and in the prose, not in
 per-page navigation blocks.
 
-`transformer.html` loads Temml (`../Temml-Local.min.css`, `../temml.min.js`) and
-renders the pipeline shape line with `temml.renderToString(...)`. Keep the
-fallback to plain text if Temml is unavailable.
+`transformer.html` and `intuition.html` load Temml (`../Temml-Local.min.css`,
+`../temml.min.js`). `transformer.html` renders the pipeline shape line with
+`temml.renderToString(...)`. `intuition.html` renders every `[data-tex]` element
+(inline math uses `data-tex-display="false"`) and falls back to the TeX source
+if Temml is unavailable. Keep those fallbacks.
 
 ## Prose style: no filler contrasts
 
