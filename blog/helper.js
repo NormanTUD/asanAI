@@ -2932,6 +2932,11 @@ const GLOSSARY = {
 	'UNetMidBlock2DCrossAttn': 'The U-Net bottleneck: residual convolutions plus cross-attention at the lowest spatial resolution, where the network has the most context.',
 	'CrossAttnUpBlock2D': 'A U-Net decoder block that upsamples features, merges the matching encoder skip connection, and applies cross-attention to the text.',
 	'UpBlock2D': 'A U-Net decoder block that upsamples features and merges the matching encoder skip connection, without text cross-attention.',
+	'ModuleList': 'A PyTorch container that holds an ordered list of submodules and registers them with the model; it adds no computation of its own.',
+	'Timesteps': 'The layer that turns integer diffusion timesteps into sinusoidal features before the TimestepEmbedding MLP.',
+	'ResnetBlock2D': 'A 2D residual block: two convolutions with normalization and activation, plus a skip connection that adds the input back to the output.',
+	'Transformer2DModel': 'A small transformer block applied to a 2D feature map; it mixes spatial positions with self-attention and reads the text with cross-attention.',
+	'Linear': 'A fully connected layer: it multiplies the input by a learned weight matrix and adds a learned bias.',
 
 	// Core ML Concepts
 	'neural network': 'A computational model inspired by biological neurons, composed of layers of interconnected nodes that transform inputs through weighted connections and nonlinear activations.',
