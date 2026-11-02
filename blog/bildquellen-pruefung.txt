@@ -1594,3 +1594,11 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand November 202
    Lokal: svm_margin.png (800x862)
    Genutzt in: beyond_llms.php § "Support Vector Machines"
    Status: OK - Public Domain
+
+4. kempelen_speaking_machine_replica
+   URL: https://commons.wikimedia.org/wiki/File:KEMPELEN_Speaking_Machine_Replica_2017.png
+   Lizenz: CC BY-SA 4.0
+   Autor: Fabian Brackhane
+   Lokal: tenminutes/assets/img/kempelen-speaking-machine.jpg (900x1521, verkleinert aus PNG)
+   Genutzt in: tenminutes/language.html § "The machine learns to speak" und Timeline "Talking machine"
+   Status: OK - CC BY-SA 4.0
