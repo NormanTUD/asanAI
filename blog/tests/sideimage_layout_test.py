@@ -93,6 +93,11 @@ def get_chrome_driver(headless: bool = True) -> webdriver.Chrome:
 	options.add_argument("--disable-gpu")
 	options.add_argument("--window-size=1920,1080")
 	options.add_argument("--remote-debugging-pipe")
+	# The history page is very tall and carries many images. Waiting for the
+	# full load event over a single-threaded php -S can exceed Selenium's
+	# HTTP timeout; DOMContentLoaded is enough because the test then waits
+	# for the two figures it actually measures.
+	options.page_load_strategy = "eager"
 	options.add_argument("--disable-extensions")
 	options.add_argument("--disable-background-networking")
 
@@ -173,13 +178,11 @@ def main() -> int:
 	try:
 		driver = get_chrome_driver(headless=True)
 		for width in WIDTHS:
+			driver.get("about:blank")
 			driver.set_window_size(width, 1000)
 			driver.get(URL_TEMPLATE.format(port=port))
-			WebDriverWait(driver, 30).until(
-				lambda d: d.execute_script("return document.readyState") == "complete"
-			)
-			WebDriverWait(driver, 30).until(lambda d: d.execute_script(WAIT_FOR_FIGURES))
-			time.sleep(0.6)
+			WebDriverWait(driver, 45).until(lambda d: d.execute_script(WAIT_FOR_FIGURES))
+			time.sleep(0.8)
 			data = driver.execute_script(MEASURE)
 			client = data["clientWidth"]
 			inner = data["innerWidth"]
