@@ -243,27 +243,6 @@
 											<span><i class="pl-pos"></i>+1</span>
 										</div>
 										<div class="step-out" id="ipe-out">Each row is one position; each column is one dimension. Drag the context length to 128 and watch the low-frequency waves repeat while the high-frequency ones keep moving.</div>
-										<div class="demo demo--paper" data-demo="trajectory" style="margin-top:14px">
-											<div class="demo-head">
-												<div>
-													<p class="demo-title">The positional rail <span>· demo 03</span></p>
-													<p class="demo-sub">The grey cross is the token vector. Each coloured dot is that vector plus one position; drag the 3D view to see the helix.</p>
-												</div>
-												<span class="demo-badge">2D / 3D</span>
-											</div>
-											<div class="demo-body">
-												<canvas class="demo-canvas demo-canvas--md" data-trajectory-canvas aria-label="A token vector plus positional encodings, drawn as a circle in 2D and a helix in 3D"></canvas>
-												<div class="demo-controls">
-													<label>Positions <input type="range" data-trajectory-count min="2" max="96" step="1" value="32"><output data-trajectory-count-out>32</output></label>
-													<label>Dimension pair <input type="range" data-trajectory-dim min="0" max="62" step="2" value="0"><output data-trajectory-dim-out>0 / 1</output></label>
-													<div class="chip-row">
-														<button class="chip is-on" type="button" data-trajectory-view="2d">2D circle</button>
-														<button class="chip" type="button" data-trajectory-view="3d">3D helix</button>
-													</div>
-													<span class="vec-note" style="color:var(--tm-muted)">view: <b data-trajectory-view-out>circle</b></span>
-												</div>
-											</div>
-										</div>
 									</div>
 									<p class="step-note">Attention has no built-in sense of order. A <b>positional encoding</b> adds a unique fingerprint to every position, so “dog bites man” and “man bites dog” stop looking like the same bag of vectors. Why not simply number the positions? Because a raw index grows without bound and says nothing about relative distance; a pattern of waves gives every position a distinct fingerprint and makes nearby positions share some structure.</p>
 								</div>
