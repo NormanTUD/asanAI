@@ -133,7 +133,6 @@ after `assets/site.js`. The markup is keyed by `data-demo`:
 - `perceptron` — trainable 2-D decision boundary
 - `gradient` — gradient descent on a loss landscape + loss curve
 - `optimizer` — SGD / momentum / Adam race on a shared loss surface
-- `dream` — stylized Inceptionism noise reveal
 - `polyfit` — polynomial degree, true curve, train/test gap
 - `activation` — ReLU / tanh / sigmoid / GELU plots
 - `datamix` — training-corpus composition

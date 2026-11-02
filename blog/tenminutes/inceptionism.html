@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	<meta name="description" content="Freeze the weights, tune the image, and watch the network's learned features appear in the noise.">
+	<meta name="description" content="From Inceptionism's dreams to diffusion: how a network turns random noise into an image.">
 	<meta name="theme-color" content="#f7f3e8">
 	<title>What the Network Dreams | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
@@ -17,7 +17,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>Turn the network <em>around.</em></h1>
-					<p class="hero-deck">Normally we adjust the weights to fit an image. Inceptionism flips the direction: freeze the weights and adjust the image until it becomes what the network recognizes.</p>
+					<p class="hero-deck">Normally we adjust the weights to fit an image. Inceptionism flips the direction: freeze the weights and adjust the image until it becomes what the network recognizes. Diffusion models go further and learn to reverse noise itself.</p>
 				</div>
 			</section>
 
@@ -60,44 +60,50 @@
 						</figure>
 					</div>
 
-					<div class="demo demo--paper" data-demo="dream">
-						<div class="demo-head">
-							<div>
-								<p class="demo-title">Turn the network around <span>· demo</span></p>
-								<p class="demo-sub">Choose a class and turn up the strength. The pixels start as noise; the network's learned template slowly emerges.</p>
-							</div>
-							<span class="demo-badge">illustrative</span>
-						</div>
-						<div class="demo-body">
-							<canvas class="demo-canvas demo-canvas--md" data-dream-canvas aria-label="Noise with a learned class template emerging"></canvas>
-							<div class="chip-row" style="margin-top:12px">
-								<button class="chip is-on" type="button" data-dream-class="banana">banana</button>
-								<button class="chip" type="button" data-dream-class="dumbbell">dumbbell</button>
-								<button class="chip" type="button" data-dream-class="tower">tower</button>
-							</div>
-							<div class="demo-controls">
-								<label>Strength <input type="range" data-dream-strength min="0" max="1" step="0.01" value="0.6"><output data-dream-strength-out>0.60</output></label>
-							</div>
-							<div class="demo-readout">
-								<div><b>Class</b><span data-dream-label>class: banana</span></div>
-								<div><b>Input</b><span>noise</span></div>
-								<div><b>Direction</b><span>gradient ascent</span></div>
-							</div>
-						</div>
-						<div class="demo-insight"><b>Takeaway</b><span>Inceptionism freezes the weights and optimizes the image. What appears is the network's learned template, not a photograph.</span></div>
+					<div class="split-figure">
+						<figure>
+							<img src="../inceptionism_ibis.png" alt="A photo of grazing addax antelopes next to a low-layer deep dream that turns the scene into strokes and ornaments" loading="lazy">
+							<figcaption>A low layer reads the photo as strokes and ornament, not as antelopes. Composite: Mordvintsev, Olah &amp; Tyka, <a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Inceptionism</a>, CC BY 4.0. Original photo by Zachi Evenor; low-layer processing by Günther Noack.</figcaption>
+						</figure>
+						<figure>
+							<img src="../inceptionism_sky_arrow.png" alt="A blue sky with clouds next to a deep dream that turns the clouds into bird-like forms" loading="lazy">
+							<figcaption>Clouds become birds. The loop is the lesson: recognize a hint of a pattern, amplify it, recognize it again. Image: Mordvintsev, Olah &amp; Tyka, <a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Inceptionism</a>, CC BY 4.0.</figcaption>
+						</figure>
 					</div>
 
+					<div class="split-figure">
+						<figure>
+							<img src="../inceptionism_funny_animals.png" alt="Four deep-dream panels with hybrid animals named Admiral Dog, Pig-Snail, Camel-Bird, and Dog-Fish" loading="lazy">
+							<figcaption>Admiral Dog, Pig-Snail, Camel-Bird, Dog-Fish. The network remixes learned features into hybrids. Image: Mordvintsev, Olah &amp; Tyka, <a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Inceptionism</a>, CC BY 4.0.</figcaption>
+						</figure>
+						<figure>
+							<img src="../inceptionism_dream_map.png" alt="A transformed photograph with the object labels the network assigns to different regions" loading="lazy">
+							<figcaption>Start from a real photo and the network edits where it already sees something: towers here, animals there. Image: Mordvintsev, Olah &amp; Tyka, <a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Inceptionism</a>, CC BY 4.0.</figcaption>
+						</figure>
+					</div>
 
-
+					<section class="section-block" id="diffusion">
+						<div class="section-kicker"><span class="sk-num">03</span> How generators learn it</div>
+						<h2 class="section-title">Destroy a picture. Learn to undo it.</h2>
+						<div class="prose">
+							<p>Modern image generators learn the same trick from data. Take a training photograph, add a little random noise, record the result. Add more noise, record again. Repeat until the picture is pure static. Do this for millions of images and you have a long record of pictures dissolving.</p>
+							<p>A network is then trained to reverse one step at a time. Given a noisy image, it predicts the noise that was just added and subtracts it. The forward destruction is fixed, so all the learning goes into the repair. This is a diffusion model (<a href="https://arxiv.org/abs/2006.11239" rel="noopener">Ho et al., 2020</a>), the recipe behind Stable Diffusion, DALL·E 2, and Imagen.</p>
+							<p>At generation time there is no training image to destroy. You start with fresh random noise and run the learned repair steps in reverse. Each step removes a little noise, and a new picture appears. Inceptionism asks what a fixed classifier responds to. Diffusion learns the distribution of images well enough to build one from nothing.</p>
+						</div>
+						<figure>
+							<img src="../diffusion_ddim_steps.jpg" alt="A grid of denoising steps, from noisy colour fields to a detailed castle" loading="lazy">
+							<figcaption>Denoising steps from a Stable Diffusion model. Each frame is one step from noise toward a finished image. Image: Benlisquare, <a href="https://commons.wikimedia.org/wiki/File:X-Y_plot_of_algorithmically-generated_AI_art_of_European-style_castle_in_Japan_demonstrating_DDIM_diffusion_steps.png" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0.</figcaption>
+						</figure>
+					</section>
 
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">A network's knowledge can be turned into an image.</p>
-							<p class="aha-sub">The dream is not imagination; it is the network's learned templates projected onto noise.</p>
+							<p class="aha-big">Start with random noise. Learn to reverse the damage. Get an image.</p>
+							<p class="aha-sub">A diffusion model is trained on real images that are destroyed step by step with random noise. It learns to undo each step, so generation begins at pure noise and ends with a new picture.</p>
 						</div>
 					</section>
 

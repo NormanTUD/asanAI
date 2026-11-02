@@ -446,98 +446,6 @@
 		redraw();
 	}
 
-	/* ── dream ──────────────────────────────────────────────── */
-
-	function initDream(root) {
-		var canvas = $("[data-dream-canvas]", root);
-		var strength = $("[data-dream-strength]", root);
-		var out = $("[data-dream-strength-out]", root);
-		var label = $("[data-dream-label]", root);
-		var chips = $$("[data-dream-class]", root);
-		var current = "banana";
-		if (!canvas) return;
-		function rnd(i) {
-			var x = Math.sin(i * 12.9898) * 43758.5453;
-			return x - Math.floor(x);
-		}
-		function drawShape(ctx, W, H, kind, alpha) {
-			ctx.save();
-			ctx.globalAlpha = alpha;
-			var cx = W / 2, cy = H / 2;
-			if (kind === "banana") {
-				ctx.fillStyle = "#9f9700";
-				ctx.strokeStyle = "#004b6f";
-				ctx.lineWidth = 2;
-				ctx.beginPath();
-				ctx.moveTo(cx - 95, cy + 35);
-				ctx.bezierCurveTo(cx - 70, cy - 55, cx + 45, cy - 75, cx + 100, cy - 25);
-				ctx.bezierCurveTo(cx + 55, cy + 5, cx - 25, cy + 40, cx - 95, cy + 35);
-				ctx.closePath();
-				ctx.fill();
-				ctx.stroke();
-			} else if (kind === "dumbbell") {
-				ctx.fillStyle = "#5c9baf";
-				ctx.strokeStyle = "#004b6f";
-				ctx.lineWidth = 2;
-				ctx.fillRect(cx - 55, cy - 7, 110, 14);
-				ctx.strokeRect(cx - 55, cy - 7, 110, 14);
-				[-1, 1].forEach(function (s) {
-					ctx.beginPath();
-					ctx.arc(cx + s * 72, cy, 25, 0, Math.PI * 2);
-					ctx.fill();
-					ctx.stroke();
-				});
-			} else {
-				ctx.fillStyle = "#9185be";
-				ctx.strokeStyle = "#004b6f";
-				ctx.lineWidth = 2;
-				var widths = [90, 64, 110];
-				var y = cy - 50;
-				widths.forEach(function (w) {
-					ctx.fillRect(cx - w / 2, y, w, 24);
-					ctx.strokeRect(cx - w / 2, y, w, 24);
-					y += 32;
-				});
-			}
-			ctx.restore();
-		}
-		function draw(ctx, W, H) {
-			var c = colors();
-			var t = clamp(parseFloat(strength && strength.value) || 0.6, 0, 1);
-			if (out) out.textContent = t.toFixed(2);
-			if (label) label.textContent = "class: " + current;
-			ctx.clearRect(0, 0, W, H);
-			var cols = 82, rows = Math.max(24, Math.round(cols * H / W));
-			var cw = W / cols, ch = H / rows;
-			for (var y = 0; y < rows; y++) {
-				for (var x = 0; x < cols; x++) {
-					var v = rnd(x * 97 + y * 131);
-					var g = Math.round(30 + v * 150);
-					ctx.fillStyle = c.dark
-						? "rgba(" + g + "," + (g + 20) + "," + (g + 30) + ",0.75)"
-						: "rgba(" + (235 - Math.round(v * 70)) + "," + (240 - Math.round(v * 70)) + "," + (238 - Math.round(v * 70)) + ",0.8)";
-					ctx.fillRect(x * cw, y * ch, cw + 1, ch + 1);
-				}
-			}
-			drawShape(ctx, W, H, current, 0.08 + t * 0.82);
-			ctx.fillStyle = c.muted;
-			ctx.font = "600 11px Barlow, system-ui, sans-serif";
-			ctx.fillText("network noise + learned template", 12, H - 12);
-		}
-		var api = canvasDemo(canvas, draw);
-		if (!api) return;
-		if (strength) strength.addEventListener("input", function () { api.redraw(); });
-		chips.forEach(function (chip) {
-			chip.addEventListener("click", function () {
-				chips.forEach(function (x) { x.classList.remove("is-on"); });
-				chip.classList.add("is-on");
-				current = chip.getAttribute("data-dream-class");
-				api.redraw();
-			});
-		});
-		api.redraw();
-	}
-
 	/* ── polynomial fit ─────────────────────────────────────── */
 
 	function solve(A, b) {
@@ -3799,7 +3707,6 @@
 			if (type === "sampling") initSampling(root);
 			else if (type === "decoding") initDecoding(root);
 			else if (type === "linefit") initLineFit(root);
-			else if (type === "dream") initDream(root);
 			else if (type === "polyfit") initPolyFit(root);
 			else if (type === "activation") initActivation(root);
 			else if (type === "datamix") initDataMix(root);
