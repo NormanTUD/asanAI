@@ -1003,20 +1003,6 @@
 		});
 	}
 
-	function chromeBottom() {
-		var bottom = 0;
-		["#search-trigger", "#theme-toggle", "#topics-toggle", "#reader-toggle", "#paths-toggle"].forEach(function (selector) {
-			var el = document.querySelector(selector);
-			if (!el) return;
-			var style = window.getComputedStyle(el);
-			if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") return;
-			var rect = el.getBoundingClientRect();
-			if (rect.width > 0 && rect.height > 0) {
-				bottom = Math.max(bottom, rect.bottom);
-			}
-		});
-		return bottom;
-	}
 
 	function position() {
 		if (!open || !panel || !pending) {
@@ -1042,13 +1028,26 @@
 			return;
 		}
 		var blockRect = block.getBoundingClientRect();
-		var chrome = chromeBottom();
-		var minTop = Math.max(12, chrome > 0 ? chrome + 20 : 12);
-		var maxHeight = Math.max(180, window.innerHeight - minTop - 12);
+		var selectionTop = null;
+		if (pending.ranges && pending.ranges.length) {
+			for (var ri = 0; ri < pending.ranges.length; ri++) {
+				try {
+					var rr = pending.ranges[ri].getBoundingClientRect();
+					if (rr && (rr.width > 0 || rr.height > 0)) {
+						selectionTop = rr.top;
+						break;
+					}
+				} catch (e) { /* ignore */ }
+			}
+		}
+		if (selectionTop === null) {
+			selectionTop = blockRect.top;
+		}
+		var maxHeight = Math.max(180, window.innerHeight - 24);
 		panel.style.maxHeight = Math.round(maxHeight) + "px";
 		var panelHeight = panel.offsetHeight || 300;
-		var maxTop = Math.max(minTop, window.innerHeight - panelHeight - 12);
-		var top = Math.max(minTop, Math.min(maxTop, blockRect.top));
+		var maxTop = Math.max(12, window.innerHeight - panelHeight - 12);
+		var top = Math.min(selectionTop, maxTop);
 		panel.style.top = Math.round(top) + "px";
 		var contentRect = contents.getBoundingClientRect();
 		var panelWidth = panel.offsetWidth || 300;

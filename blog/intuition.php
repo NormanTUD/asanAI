@@ -756,10 +756,16 @@ Now each token carries two pieces of information: **what it is** and **where it 
 	<div class="mn-demo-title">🧭 The positional rail — one point, many positions</div>
 	<div class="mn-demo-sub">The grey × is the original token vector. Each coloured dot is that same vector plus PE(position); the line is its trajectory as the position grows.</div>
 
-	<div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+	<div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
 		<label style="font-size:0.85em; color:var(--mn-text-secondary); font-weight:bold;">Positions to show:</label>
 		<input type="range" id="pe-traj-count" min="2" max="40" step="1" value="12" style="flex:1; accent-color:#8b5cf6;">
 		<span id="pe-traj-count-value" style="font-weight:bold; color:#8b5cf6; min-width:34px; text-align:right;">12</span>
+	</div>
+
+	<div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+		<label style="font-size:0.85em; color:var(--mn-text-secondary); font-weight:bold;">Start dimension:</label>
+		<input type="range" id="pe-traj-dim" min="0" max="62" step="2" value="0" style="flex:1; accent-color:#8b5cf6;">
+		<span id="pe-traj-dim-value" style="font-weight:bold; color:#8b5cf6; min-width:34px; text-align:right;">0</span>
 	</div>
 
 	<div class="pe-traj-grid">
@@ -767,7 +773,7 @@ Now each token carries two pieces of information: **what it is** and **where it 
 		<div id="pe-trajectory-3d" data-plot-theme="self"></div>
 	</div>
 
-	<div class="mn-demo-hint">The 2D view uses dimensions 0 and 1 — a circle that repeats after about six positions. Dimension 2 turns at a different frequency, so the 3D helix keeps moving and positions stay distinguishable.</div>
+	<div class="mn-demo-hint">The 2D view uses the chosen dimension and its partner — a circle. The 3D view adds the next dimension. Higher dimensions turn faster, so the rail tightens; the 2D circle repeats, while the 3D helix keeps moving.</div>
 </div>
 
 <div class="mn-thread">

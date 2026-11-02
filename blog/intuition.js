@@ -514,6 +514,18 @@ const PositionalEncodingViz = {
     maxPositions: 100,
     dModel: 64,
 
+    // Toy 64-dim embedding for "cat"; the first four values are the ones used in the prose.
+    baseEmbedding: (() => {
+        const v = [0.22, 0.85, -0.41, 0.09];
+        let seed = 1234567;
+        const rnd = () => {
+            seed = (seed * 16807) % 2147483647;
+            return (seed - 1) / 2147483646;
+        };
+        while (v.length < 64) v.push((rnd() * 2 - 1) * 0.5);
+        return v;
+    })(),
+
     // Sinusoidal positional encoding: even dimensions use sine, odd use cosine.
     computePE: function(pos, dim, dModel) {
         dModel = dModel || 64;
@@ -614,24 +626,32 @@ const PositionalEncodingViz = {
         container.textContent = latex;
     },
 
-    trajectoryData: function(count) {
-        const base = [0.22, 0.85, -0.41];
+    trajectoryData: function(count, startDim) {
+        const base = [
+            this.baseEmbedding[startDim],
+            this.baseEmbedding[startDim + 1],
+            this.baseEmbedding[startDim + 2]
+        ];
         const xs = [], ys = [], zs = [], ps = [];
         for (let p = 0; p <= count; p++) {
-            xs.push(base[0] + this.computePE(p, 0, this.dModel));
-            ys.push(base[1] + this.computePE(p, 1, this.dModel));
-            zs.push(base[2] + this.computePE(p, 2, this.dModel));
+            xs.push(base[0] + this.computePE(p, startDim, this.dModel));
+            ys.push(base[1] + this.computePE(p, startDim + 1, this.dModel));
+            zs.push(base[2] + this.computePE(p, startDim + 2, this.dModel));
             ps.push(p);
         }
-        return { base, xs, ys, zs, ps };
+        return { base, xs, ys, zs, ps, startDim };
     },
 
     renderTrajectory: function() {
         const slider = document.getElementById('pe-traj-count');
         const count = Math.max(2, parseInt(slider?.value || 12, 10));
+        const dimSlider = document.getElementById('pe-traj-dim');
+        const startDim = Math.max(0, parseInt(dimSlider?.value || 0, 10));
         const label = document.getElementById('pe-traj-count-value');
         if (label) label.textContent = count;
-        const d = this.trajectoryData(count);
+        const dimLabel = document.getElementById('pe-traj-dim-value');
+        if (dimLabel) dimLabel.textContent = startDim;
+        const d = this.trajectoryData(count, startDim);
         this.renderTrajectory2D(d, count);
         this.renderTrajectory3D(d, count);
     },
@@ -668,8 +688,8 @@ const PositionalEncodingViz = {
         const layout = {
             margin: { l: 50, r: 10, b: 45, t: 10 },
             showlegend: false,
-            xaxis: { title: 'dim 0 (embedding + PE)', gridcolor: grid, zeroline: true, zerolinecolor: grid },
-            yaxis: { title: 'dim 1 (embedding + PE)', gridcolor: grid, zeroline: true, zerolinecolor: grid, scaleanchor: 'x', scaleratio: 1 },
+            xaxis: { title: `dim ${d.startDim} (embedding + PE)`, gridcolor: grid, zeroline: true, zerolinecolor: grid },
+            yaxis: { title: `dim ${d.startDim + 1} (embedding + PE)`, gridcolor: grid, zeroline: true, zerolinecolor: grid, scaleanchor: 'x', scaleratio: 1 },
             plot_bgcolor: themeColor('#fff'),
             paper_bgcolor: themeColor('#fff')
         };
@@ -713,9 +733,9 @@ const PositionalEncodingViz = {
             margin: { l: 0, r: 0, b: 0, t: 0 },
             showlegend: false,
             scene: {
-                xaxis: axis('dim 0'),
-                yaxis: axis('dim 1'),
-                zaxis: axis('dim 2'),
+                xaxis: axis(`dim ${d.startDim}`),
+                yaxis: axis(`dim ${d.startDim + 1}`),
+                zaxis: axis(`dim ${d.startDim + 2}`),
                 camera: { eye: { x: 1.5, y: 1.4, z: 1.1 } },
                 bgcolor: themeColor('#fff')
             },
@@ -2552,6 +2572,10 @@ function loadIntuitionModule() {
         const slider = document.getElementById('pe-traj-count');
         if (slider) {
             slider.addEventListener('input', () => PositionalEncodingViz.renderTrajectory());
+        }
+        const dimSlider = document.getElementById('pe-traj-dim');
+        if (dimSlider) {
+            dimSlider.addEventListener('input', () => PositionalEncodingViz.renderTrajectory());
         }
         PositionalEncodingViz.renderTrajectory();
         if (window.__MN_DARK && typeof window.__MN_DARK.onChange === 'function') {

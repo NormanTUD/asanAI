@@ -2,8 +2,8 @@
 
 - lessons: 99
 - claims: 7294
-- statements: 16933
-- relations: 51347
+- statements: 16934
+- relations: 51354
 - uncovered years: 46
 - uncovered quantities: 5
 - uncited specific claims: 306
@@ -59,7 +59,7 @@
 | inference_vs_training | 19 | 14 | 47 | 0 | 0 |
 | information_market | 27 | 63 | 159 | 0 | 0 |
 | intro | 17 | 40 | 121 | 0 | 0 |
-| intuition | 28 | 258 | 739 | 1 | 0 |
+| intuition | 28 | 259 | 746 | 1 | 0 |
 | knowledge_map | 15 | 0 | 14 | 0 | 0 |
 | language | 77 | 330 | 802 | 0 | 0 |
 | law_regulation | 28 | 61 | 236 | 0 | 0 |
