@@ -1962,6 +1962,7 @@ var _PREDICT_DEFER_MAX = 20;
 
 var _write_latex_pending_args = null;
 var _write_latex_running = false;
+var _write_latex_running_promise = null;
 var _write_latex_visibility_observer = null;
 var _write_latex_poll_timer = null;
 var _write_latex_chain_count = 0;

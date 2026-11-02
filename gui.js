@@ -2337,7 +2337,13 @@ function invert_elements_in_dark_mode () {
 
 async function onclick_math_mode (t, e) {
 	await write_model_to_latex_to_page();
-	_temml();
+
+	// A running (or deferred) LaTeX write will render and call _temml itself
+	// after swapping the new DOM in. Typesetting the old content now can hit
+	// nodes that are mid-replacement and was a source of transient failures.
+	if (!_write_latex_running && !_write_latex_pending_args) {
+		_temml();
+	}
 }
 
 async function set_all_strides () {

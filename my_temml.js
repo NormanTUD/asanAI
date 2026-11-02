@@ -162,10 +162,11 @@ function render_temml_quick(e, force_math_tab_trust) {
 			span.textContent = "ParseError: " + err.message;
 			e.innerHTML = "";
 			e.appendChild(span);
-		} else {
-			wrn("temml error:", err);
+			wrn("temml error after retry:", err);
 			wrn(`latex:\n>>>>\n${latex}\n<<<<\n`);
-			wrn(get_stack_trace(1));
+		} else {
+			dbg("temml error (will retry):", err);
+			dbg(`latex:\n>>>>\n${latex}\n<<<<\n`);
 		}
 	}
 }

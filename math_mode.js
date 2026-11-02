@@ -139,7 +139,7 @@ function stop_math_tab_visibility_watch() {
 // ============================================================
 
 function run_pending_latex_write() {
-	if (_write_latex_running) return;
+	if (_write_latex_running) return _write_latex_running_promise;
 	if (!_write_latex_pending_args) return;
 	if (!is_math_tab_visible()) return;
 
@@ -203,7 +203,7 @@ function run_pending_latex_write() {
 	// poll timer running would force a layout flush every 500 ms forever.
 	stop_math_tab_visibility_watch();
 
-	Promise.resolve(_write_model_to_latex_to_page_internal.apply(null, args))
+	_write_latex_running_promise = Promise.resolve(_write_model_to_latex_to_page_internal.apply(null, args))
 		.catch(function(e) {
 			console.error('Latex write error:', e);
 		})
@@ -216,6 +216,8 @@ function run_pending_latex_write() {
 				run_pending_latex_write();
 			}
 		});
+
+	return _write_latex_running_promise;
 }
 
 // ============================================================
@@ -226,7 +228,7 @@ async function write_model_to_latex_to_page(force) {
 	_write_latex_pending_args = arguments;
 
 	if (is_math_tab_visible() || force) {
-		run_pending_latex_write();
+		return run_pending_latex_write();
 	} else {
 		ensure_math_tab_visibility_watch();
 	}

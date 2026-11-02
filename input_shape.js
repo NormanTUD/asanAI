@@ -207,7 +207,7 @@ async function change_width_or_height(name, inputshape_index) {
 		l(language[lang]["done_changing"] + " " + language[lang][name] + ", " + language[lang]["took"] + " " + hrt + " (" + used_time + ")");
 	}
 
-	log("Changed width or height");
+	log_once_recent("Changed width or height");
 }
 
 function change_output_and_example_image_size() {

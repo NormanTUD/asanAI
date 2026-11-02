@@ -1751,6 +1751,10 @@ function start_gremlins () {
 function showCustomTensors() {
 	_clean_custom_tensors();
 
+	if(!debug) {
+		return;
+	}
+
 	Object.entries(_custom_tensors).forEach(([key, arr]) => {
 		console.log('ID:', key);
 		console.log('UUID:', arr[0]);

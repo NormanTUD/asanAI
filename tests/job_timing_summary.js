@@ -82,6 +82,32 @@ function build_browser_summary (os, timings) {
 	return lines.join("\n") + "\n";
 }
 
+function read_timings_file (file) {
+	if (!file) return null;
+
+	try {
+		const data = JSON.parse(fs.readFileSync(file, "utf8"));
+		return Array.isArray(data) ? data : null;
+	} catch (e) {
+		return null;
+	}
+}
+
+async function write_browser_summary ({ core, os, file }) {
+	const timings = read_timings_file(file);
+
+	if (!timings) {
+		core.info("No valid browser timings found at " + file);
+		return;
+	}
+
+	try {
+		await core.summary.addRaw(build_browser_summary(os, timings)).write();
+	} catch (e) {
+		core.warning("Could not write the browser timing summary: " + (e && e.message ? e.message : e));
+	}
+}
+
 function read_browser_timings (root) {
 	const result = [];
 
@@ -191,4 +217,4 @@ async function write_run_summary ({ github, context, core }) {
 	await core.summary.addRaw(build_summary(data.jobs, run, browser_timings)).write();
 }
 
-module.exports = { parse_job_name, format_duration, format_seconds, format_status, build_browser_summary, read_browser_timings, build_summary, write_run_summary };
+module.exports = { parse_job_name, format_duration, format_seconds, format_status, build_browser_summary, read_timings_file, write_browser_summary, read_browser_timings, build_summary, write_run_summary };

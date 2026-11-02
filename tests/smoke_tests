@@ -33,5 +33,15 @@ fi
 echo ""
 echo -e "${GREEN}-> tests/js_coverage_test.py OK${RESET}"
 
+if command -v node >/dev/null 2>&1; then
+	echo -e "${YELLOW}Testing tests/job_timing_summary_test.js ...${RESET}"
+	if ! node tests/job_timing_summary_test.js; then
+		echo -e "${RED}tests/job_timing_summary_test.js failed${RESET}"
+		exit 1
+	fi
+	echo ""
+	echo -e "${GREEN}-> tests/job_timing_summary_test.js OK${RESET}"
+fi
+
 echo -e "${GREEN}Smoke tests passed${RESET}"
 exit 0
