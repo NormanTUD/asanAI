@@ -2,13 +2,13 @@
 
 - lessons: 99
 - claims: 7292
-- statements: 16927
-- relations: 51331
+- statements: 16940
+- relations: 51356
 - uncovered years: 46
 - uncovered quantities: 5
 - uncited specific claims: 306
 - citation keys not found in lesson: 0
-- relation grounding issues: 86
+- relation grounding issues: 93
 - numeric range issues: 0
 - normalised year conflicts: 0
 
@@ -39,7 +39,7 @@
 | deeplearninglab | 23 | 100 | 337 | 0 | 1 |
 | derivativelab | 22 | 58 | 214 | 0 | 0 |
 | differentiation | 21 | 82 | 300 | 0 | 0 |
-| diffusion | 28 | 143 | 361 | 0 | 0 |
+| diffusion | 28 | 150 | 371 | 0 | 0 |
 | embeddinglab | 25 | 539 | 1398 | 0 | 0 |
 | evaluation | 36 | 132 | 435 | 2 | 0 |
 | fact_lookup | 37 | 213 | 560 | 0 | 0 |
@@ -82,7 +82,7 @@
 | origami | 47 | 172 | 476 | 0 | 0 |
 | overandunderfittinglab | 25 | 86 | 293 | 1 | 0 |
 | people_of_ai | 73 | 371 | 1028 | 0 | 0 |
-| philosophy | 85 | 1048 | 2591 | 0 | 0 |
+| philosophy | 85 | 1054 | 2606 | 0 | 0 |
 | positionalembeddingslab | 30 | 45 | 183 | 0 | 0 |
 | production_serving | 36 | 122 | 399 | 0 | 0 |
 | promptengineering | 18 | 225 | 711 | 0 | 0 |
@@ -229,19 +229,19 @@
 - history.php: rel-history-universals-pitts-author: endpoint not near quote: walter-pitts
 - history.php: rel-history-wiener-bridge-von-neumann: endpoint not near quote: norbert-wiener
 - history.php: rel-history-shannon-invent-theseus: quote not found
+- history.php: rel-history-mcp-before-hebb: quote not found
+- history.php: rel-history-hebb-before-perceptron: quote not found
+- history.php: rel-history-perceptron-before-hopfield: quote not found
 - history.php: rel-history-logicists-around-mccarthy: endpoint not near quote: john-mccarthy
 - history.php: rel-history-proceduralists-around-minsky: endpoint not near quote: marvin-minsky
+- history.php: rel-history-lernmatrix-related-mcculloch-pitts: quote not found
 - history.php: rel-history-hochreiter-vanishing: endpoint not near quote: sepp-hochreiter
 - history.php: rel-history-schmidhuber-lstm: endpoint not near quote: jurgen-schmidhuber
 - history.php: rel-history-weizenbaum-eliza: endpoint not near quote: joseph-weizenbaum
 - history.php: rel-history-schmidhuber-nplm: endpoint not near quote: jurgen-schmidhuber
+- history.php: rel-history-dartmouth-first-summer: quote not found
+- history.php: rel-history-rosenblatt-first-summer: quote not found
 - history.php: rel-history-mccarthy-lisp: endpoint not near quote: john-mccarthy
-- language.php: rel-language-chomsky-hierarchy-syntactic: no quote
-- people_of_ai.php: rel-people-amodei-instructgpt: no quote
-- people_of_ai.php: rel-people-vapnik-svm: endpoint not near quote: vladimir-vapnik
-- philosophy.php: rel-phil-hard-problem-mary: endpoint not near quote: phil-hard-problem
-- philosophy.php: rel-phil-hard-problem-mary: endpoint not near quote: phil-mary-room
-- philosophy.php: rel-phil-sheaf-gluing: endpoint not near quote: phil-sheaf-gluing
 
 ## Range issues
 
