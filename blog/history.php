@@ -853,7 +853,7 @@ In algebra, such an equation defines a **plane**, a linear boundary, in the thre
 <div class="md" data-mathlevel="40">
 ### From Hebb's Rule to Error Correction
 
-The Perceptron learning rule $\Delta w = \eta \cdot (\text{target} - \text{output}) \cdot \text{input}$ is not a fundamentally new idea, it is Hebb's rule made precise by adding an error signal.
+The Perceptron learning rule $\Delta w = \eta \cdot (\text{target} - \text{output}) \cdot \text{input}$ is not a fundamentally new idea: it is Hebb's rule made precise by adding an error signal.
 
 Hebb's rule states: “Neurons that fire together, wire together.” The weight between two neurons increases when they activate simultaneously. This is an unsupervised, purely correlation-based rule, it strengthens connections regardless of whether the result is correct or not.
 
@@ -1272,7 +1272,7 @@ The realization that simple neural networks couldn't handle basic logic gates, c
 * **Shift in Focus:** Research into connectionism (neural networks) stopped for a decade, shifting instead toward “symbolic AI” and expert systems.
 * **The “Winter”:** Connectionism (neural network research) entered a deep freeze for a decade, as the industry shifted toward “symbolic AI” and expert systems.
 
-It is worth noting that this “AI Winter” was primarily an **Anglosphere phenomenon**. Deep learning research remained alive and productive throughout the 1960s and 70s outside the English-speaking world, particularly in the Soviet Union (Ivakhnenko), Japan (Amari, Fukushima), and continental Europe, where funding for such “blue skies” mathematical research continued.
+This “AI Winter” was primarily an **Anglosphere phenomenon**. Deep learning research remained alive and productive throughout the 1960s and 70s outside the English-speaking world, particularly in the Soviet Union (Ivakhnenko), Japan (Amari, Fukushima), and continental Europe, where funding for such “blue skies” mathematical research continued.
 
 The Lighthill debate had a specific date and venue: on **9 May 1973**, at the **Royal Institution** in London, the BBC broadcast a 90-minute televised debate in which Lighthill faced off against **Donald Michie** (Edinburgh), **John McCarthy** (Stanford) and the psychologist **Richard Gregory** (Bristol). The transcripts show the AI researchers struggling to rebut Lighthill's central claim that **Category B** (his name for robotics and integrated common-sense reasoning) had produced nothing of substance; McCarthy in particular was put on the defensive about his own laboratory's modest progress. The audience poll, taken before and after the debate, shifted decisively against AI. Within a year, the British Science Research Council had moved to cut AI funding in most UK universities, giving the Anglosphere winter its sharpest edge.
 
@@ -1460,7 +1460,7 @@ Supervised classification was only half the revival. In 2014 **Ian Goodfellow** 
 
 #### Breaking the Bottleneck: The Birth of Attention
 
-Before the modern Transformer, neural networks suffered from a “representational bottleneck.” Systems like the LSTM attempted to compress the entire meaning of a long sentence into a single, fixed-length vector, a task as impossible as summarizing a complex novel into a single word without losing the nuance. The philosopher-engineer *\cite[Dzmitry Bahdanau]{bahdanau2014}* shattered this constraint by introducing the **Attention Mechanism**. Instead of forcing the model to remember everything at once, Bahdanau proposed a system that allows the decoder to “look back” at the input sequence and selectively focus on the most relevant words for each step of the translation. This shift from static compression to dynamic alignment was the pivotal moment that allowed machines to handle long-range dependencies. Without this breakthrough, the later “Self-Attention” of the Transformer would have had no foundation; Bahdanau taught the machine not just to see, but to observe what matters.
+Before the modern Transformer, neural networks suffered from a “representational bottleneck.” Systems like the LSTM attempted to compress the entire meaning of a long sentence into a single, fixed-length vector, a task as impossible as summarizing a complex novel into a single word without losing the nuance. The philosopher-engineer *\cite[Dzmitry Bahdanau]{bahdanau2014}* shattered this constraint by introducing the **Attention Mechanism**. Instead of forcing the model to remember everything at once, Bahdanau proposed a system that allows the decoder to “look back” at the input sequence and selectively focus on the most relevant words for each step of the translation. This shift from static compression to dynamic alignment was the pivotal moment that allowed machines to handle long-range dependencies. Without this breakthrough, the later “Self-Attention” of the Transformer would have had no foundation; Bahdanau taught the machine to observe what matters.
 
 #### Highway Networks: The First Very Deep Feedforward NNs (2015)
 
