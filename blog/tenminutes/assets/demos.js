@@ -3026,6 +3026,430 @@
 		render();
 	}
 
+	/* ── positional rail ────────────────────────────────────── */
+
+	function initTrajectory(root) {
+		var canvas = $("[data-trajectory-canvas]", root);
+		if (!canvas) return;
+		var count = $("[data-trajectory-count]", root);
+		var countOut = $("[data-trajectory-count-out]", root);
+		var dim = $("[data-trajectory-dim]", root);
+		var dimOut = $("[data-trajectory-dim-out]", root);
+		var viewOut = $("[data-trajectory-view-out]", root);
+		var view = "2d";
+		var yaw = 0.6, pitch = -0.34;
+		var drag = null;
+
+		function pe(pos, d) {
+			var pair = Math.floor(d / 2);
+			var angle = pos / Math.pow(10000, (2 * pair) / 64);
+			return d % 2 === 0 ? Math.sin(angle) : Math.cos(angle);
+		}
+		function point(pos, startDim) {
+			return [
+				pe(pos, startDim),
+				pe(pos, startDim + 1),
+				pe(pos, startDim + 2)
+			];
+		}
+		function palette(c) {
+			return [c.green, c.sky, c.gold, c.coral, c.lime, c.blue, c.petrol, c.faint]
+				.map(hexToRgb);
+		}
+		function draw2d(ctx, W, H, pts, pal, c) {
+			var cx = W / 2, cy = H / 2 + 8;
+			var scale = Math.min(W, H) * 0.31;
+			ctx.strokeStyle = c.lineStrong;
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(cx - scale * 1.9, cy); ctx.lineTo(cx + scale * 1.9, cy);
+			ctx.moveTo(cx, cy - scale * 1.5); ctx.lineTo(cx, cy + scale * 1.5);
+			ctx.stroke();
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "left";
+			ctx.fillText("dimension pair", cx + scale * 1.95, cy + 3);
+
+			ctx.beginPath();
+			pts.forEach(function (p, i) {
+				var x = cx + p[0] * scale;
+				var y = cy - p[1] * scale;
+				if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+			});
+			ctx.strokeStyle = c.lineStrong;
+			ctx.lineWidth = 1.2;
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(cx - 6, cy - 6); ctx.lineTo(cx + 6, cy + 6);
+			ctx.moveTo(cx + 6, cy - 6); ctx.lineTo(cx - 6, cy + 6);
+			ctx.strokeStyle = c.muted;
+			ctx.lineWidth = 1.5;
+			ctx.stroke();
+
+			var labelStep = Math.max(1, Math.round(pts.length / 6));
+			pts.forEach(function (p, i) {
+				var x = cx + p[0] * scale;
+				var y = cy - p[1] * scale;
+				ctx.beginPath();
+				ctx.arc(x, y, i === pts.length - 1 ? 5 : 3.6, 0, Math.PI * 2);
+				ctx.fillStyle = rgb(pal[i % pal.length]);
+				ctx.fill();
+				ctx.strokeStyle = c.card;
+				ctx.lineWidth = 1.2;
+				ctx.stroke();
+				if (i === 0 || i === pts.length - 1 || i % labelStep === 0) {
+					ctx.fillStyle = c.inkSoft;
+					ctx.font = "600 9px ui-monospace, monospace";
+					ctx.textAlign = "left";
+					ctx.fillText("p" + i, x + 6, y - 5);
+				}
+			});
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 9px ui-monospace, monospace";
+			ctx.textAlign = "center";
+			ctx.fillText("token", cx, cy + 20);
+			ctx.textAlign = "left";
+			ctx.fillStyle = c.inkSoft;
+			ctx.font = "600 11px Barlow, system-ui, sans-serif";
+			ctx.fillText("the grey cross is the token vector; each dot is + position", 14, 20);
+		}
+		function project(p, W, H) {
+			var scale = Math.min(W, H) * 0.28;
+			var cy = Math.cos(yaw), sy = Math.sin(yaw);
+			var x1 = p[0] * cy - p[2] * sy;
+			var z1 = p[0] * sy + p[2] * cy;
+			var cp = Math.cos(pitch), sp = Math.sin(pitch);
+			var y1 = p[1] * cp - z1 * sp;
+			var z2 = p[1] * sp + z1 * cp;
+			var persp = 1 / (1 + z2 * 0.16);
+			return [W / 2 + x1 * scale * persp, H / 2 - y1 * scale * persp, z2];
+		}
+		function draw3d(ctx, W, H, pts, pal, c) {
+			var origin = project([0, 0, 0], W, H);
+			var axes = [
+				{ p: [1.8, 0, 0], label: "d" },
+				{ p: [0, 1.5, 0], label: "d+1" },
+				{ p: [0, 0, 1.8], label: "d+2" }
+			];
+			axes.forEach(function (a) {
+				var q = project(a.p, W, H);
+				ctx.strokeStyle = c.line;
+				ctx.lineWidth = 1;
+				ctx.beginPath();
+				ctx.moveTo(origin[0], origin[1]);
+				ctx.lineTo(q[0], q[1]);
+				ctx.stroke();
+				ctx.fillStyle = c.muted;
+				ctx.font = "600 10px Barlow, system-ui, sans-serif";
+				ctx.fillText(a.label, q[0] + 4, q[1] - 3);
+			});
+			var projected = pts.map(function (p, i) { return { q: project(p, W, H), i: i }; });
+			ctx.globalAlpha = 0.55;
+			for (var li = 1; li < projected.length; li++) {
+				ctx.strokeStyle = rgb(pal[li % pal.length]);
+				ctx.lineWidth = 1.8;
+				ctx.beginPath();
+				ctx.moveTo(projected[li - 1].q[0], projected[li - 1].q[1]);
+				ctx.lineTo(projected[li].q[0], projected[li].q[1]);
+				ctx.stroke();
+			}
+			ctx.globalAlpha = 1;
+			ctx.beginPath();
+			ctx.moveTo(origin[0] - 5, origin[1] - 5); ctx.lineTo(origin[0] + 5, origin[1] + 5);
+			ctx.moveTo(origin[0] + 5, origin[1] - 5); ctx.lineTo(origin[0] - 5, origin[1] + 5);
+			ctx.strokeStyle = c.muted;
+			ctx.lineWidth = 1.5;
+			ctx.stroke();
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 9px ui-monospace, monospace";
+			ctx.textAlign = "center";
+			ctx.fillText("token", origin[0], origin[1] + 16);
+			var labelStep = Math.max(1, Math.round(projected.length / 6));
+			projected.sort(function (a, b) { return a.q[2] - b.q[2]; });
+			projected.forEach(function (item) {
+				var q = item.q;
+				ctx.beginPath();
+				ctx.arc(q[0], q[1], 3.4, 0, Math.PI * 2);
+				ctx.fillStyle = rgb(pal[item.i % pal.length]);
+				ctx.fill();
+				ctx.strokeStyle = c.card;
+				ctx.lineWidth = 1;
+				ctx.stroke();
+				if (item.i === 0 || item.i === projected.length - 1 || item.i % labelStep === 0) {
+					ctx.fillStyle = c.inkSoft;
+					ctx.font = "600 9px ui-monospace, monospace";
+					ctx.textAlign = "left";
+					ctx.fillText("p" + item.i, q[0] + 5, q[1] - 4);
+				}
+			});
+			ctx.textAlign = "left";
+			ctx.fillStyle = c.inkSoft;
+			ctx.font = "600 11px Barlow, system-ui, sans-serif";
+			ctx.fillText("drag to rotate · the line follows positions 0, 1, 2, …", 14, 20);
+		}
+		function draw(ctx, W, H) {
+			var c = colors();
+			var n = clamp(parseInt(count && count.value, 10) || 32, 2, 96);
+			var d = clamp(parseInt(dim && dim.value, 10) || 0, 0, 62);
+			if (countOut) countOut.textContent = n;
+			if (dimOut) dimOut.textContent = d + " / " + (d + 1);
+			if (viewOut) viewOut.textContent = view === "2d" ? "circle" : "helix";
+			var pts = [];
+			for (var i = 0; i < n; i++) pts.push(point(i, d));
+			var pal = palette(c);
+			ctx.clearRect(0, 0, W, H);
+			if (view === "2d") draw2d(ctx, W, H, pts, pal, c);
+			else draw3d(ctx, W, H, pts, pal, c);
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		if (count) count.addEventListener("input", function () { api.redraw(); });
+		if (dim) dim.addEventListener("input", function () { api.redraw(); });
+		$$("[data-trajectory-view]", root).forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				view = btn.getAttribute("data-trajectory-view");
+				$$("[data-trajectory-view]", root).forEach(function (b) { b.classList.toggle("is-on", b === btn); });
+				api.redraw();
+			});
+		});
+		canvas.addEventListener("pointerdown", function (ev) {
+			if (view !== "3d") return;
+			drag = { x: ev.clientX, y: ev.clientY };
+			if (canvas.setPointerCapture) canvas.setPointerCapture(ev.pointerId);
+		});
+		canvas.addEventListener("pointermove", function (ev) {
+			if (!drag) return;
+			yaw += (ev.clientX - drag.x) * 0.01;
+			pitch = clamp(pitch + (ev.clientY - drag.y) * 0.01, -1.2, 1.2);
+			drag = { x: ev.clientX, y: ev.clientY };
+			api.redraw();
+		});
+		canvas.addEventListener("pointerup", function () { drag = null; });
+		canvas.addEventListener("pointercancel", function () { drag = null; });
+		api.redraw();
+	}
+
+	/* ── the layer that bends space ─────────────────────────── */
+
+	function initBend(root) {
+		var canvas = $("[data-bend-canvas]", root);
+		if (!canvas) return;
+		var titleEl = $("[data-bend-title]", root);
+		var bodyEl = $("[data-bend-body]", root);
+		var countEl = $("[data-bend-count]", root);
+		var dotsEl = $("[data-bend-dots]", root);
+		var prevBtn = $("[data-bend-prev]", root);
+		var nextBtn = $("[data-bend-next]", root);
+		var resetBtn = $("[data-bend-reset]", root);
+		var steps = [
+			{ amt: 0, plane: false, title: "Two classes, no straight line", body: "The coral core sits inside the blue ring. No single straight cut in this plane separates them." },
+			{ amt: 0.24, plane: false, title: "Start bending", body: "A layer applies a nonlinear map. The space itself starts to curve, so distance means something new." },
+			{ amt: 0.58, plane: false, title: "Curve it further", body: "The map is a smooth bowl: the centre dips, the ring rises. The classes are now separated vertically." },
+			{ amt: 1, plane: false, title: "A bowl, not a line", body: "The original ring is still a ring when seen from above, but it now lives on a curved shell." },
+			{ amt: 1, plane: true, title: "A flat cut now works", body: "In the lifted space, one flat plane separates coral from blue. The classifier can stay simple." },
+			{ amt: 1, plane: true, title: "One score, one threshold", body: "Collapse the height into a single score and a threshold is enough. The hard part was the bend, not the cut." },
+			{ amt: 1, plane: true, title: "Depth did the work", body: "Stack these bends and a final linear readout can separate what looked inseparable. That is why depth helps." }
+		];
+		var step = 0;
+		var yaw = 0.72, pitch = -0.4;
+		var drag = null;
+		var rng = (function () {
+			var a = 17;
+			return function () {
+				a |= 0; a = a + 0x6D2B79F5 | 0;
+				var t = Math.imul(a ^ a >>> 15, 1 | a);
+				t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+				return ((t ^ t >>> 14) >>> 0) / 4294967296;
+			};
+		})();
+		var pts = [];
+		for (var i = 0; i < 70; i++) {
+			var th = rng() * Math.PI * 2;
+			var r = 0.05 + Math.sqrt(rng()) * 0.38;
+			pts.push({ x: Math.cos(th) * r, y: Math.sin(th) * r, c: "inner" });
+		}
+		for (var j = 0; j < 70; j++) {
+			var th2 = rng() * Math.PI * 2;
+			var r2 = 0.74 + rng() * 0.26;
+			pts.push({ x: Math.cos(th2) * r2, y: Math.sin(th2) * r2, c: "outer" });
+		}
+		function lift(p, amt) {
+			var r = Math.hypot(p.x, p.y);
+			return { x: p.x, y: p.y, z: (r * r - 0.34) * 3.2 * amt, c: p.c };
+		}
+		function project(p, W, H) {
+			var scale = Math.min(W, H) * 0.31;
+			var cy = Math.cos(yaw), sy = Math.sin(yaw);
+			var x1 = p.x * cy - p.y * sy;
+			var z1 = p.x * sy + p.y * cy;
+			var cp = Math.cos(pitch), sp = Math.sin(pitch);
+			var y1 = p.z * cp - z1 * sp;
+			var z2 = p.z * sp + z1 * cp;
+			var persp = 1 / (1 + z2 * 0.14);
+			return [W / 2 + x1 * scale * persp, H / 2 + 30 - y1 * scale * persp, z2];
+		}
+		function drawPlane(ctx, W, H, c) {
+			var corners = [[-1.15, -1.15], [1.15, -1.15], [1.15, 1.15], [-1.15, 1.15]];
+			ctx.beginPath();
+			corners.forEach(function (k, i) {
+				var q = project({ x: k[0], y: k[1], z: 0 }, W, H);
+				if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]);
+			});
+			ctx.closePath();
+			ctx.fillStyle = c.dark ? "rgba(134,155,85,.16)" : "rgba(134,155,85,.22)";
+			ctx.fill();
+			ctx.strokeStyle = c.lime;
+			ctx.lineWidth = 1.4;
+			ctx.stroke();
+		}
+		function draw(ctx, W, H) {
+			var c = colors();
+			var s = steps[step];
+			var lifted = pts.map(function (p) { return lift(p, s.amt); });
+			ctx.clearRect(0, 0, W, H);
+			var origin = project({ x: 0, y: 0, z: -1.2 }, W, H);
+			var top = project({ x: 0, y: 0, z: 1.2 }, W, H);
+			ctx.strokeStyle = c.line;
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(origin[0], origin[1]); ctx.lineTo(top[0], top[1]);
+			ctx.stroke();
+			if (s.plane) drawPlane(ctx, W, H, c);
+			var projected = lifted.map(function (p) { return { q: project(p, W, H), c: p.c }; });
+			projected.sort(function (a, b) { return a.q[2] - b.q[2]; });
+			projected.forEach(function (item) {
+				var q = item.q;
+				ctx.beginPath();
+				ctx.arc(q[0], q[1], 3.1, 0, Math.PI * 2);
+				ctx.fillStyle = item.c === "inner" ? c.coral : c.sky;
+				ctx.fill();
+				ctx.strokeStyle = c.card;
+				ctx.lineWidth = 0.9;
+				ctx.stroke();
+			});
+			ctx.fillStyle = c.inkSoft;
+			ctx.font = "600 11px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "left";
+			ctx.fillText("drag to rotate · coral = inner class · blue = ring", 14, 20);
+		}
+		function update() {
+			var s = steps[step];
+			if (titleEl) titleEl.textContent = s.title;
+			if (bodyEl) bodyEl.textContent = s.body;
+			if (countEl) countEl.textContent = (step + 1) + " / " + steps.length;
+			if (dotsEl) {
+				$$("[data-bend-dot]", dotsEl).forEach(function (dot, i) {
+					dot.classList.toggle("is-active", i === step);
+				});
+			}
+			if (prevBtn) prevBtn.disabled = step === 0;
+			if (nextBtn) nextBtn.disabled = step === steps.length - 1;
+			api.redraw();
+		}
+		function go(delta) {
+			step = clamp(step + delta, 0, steps.length - 1);
+			update();
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		if (dotsEl && !$$("[data-bend-dot]", dotsEl).length) {
+			for (var d = 0; d < steps.length; d++) {
+				var dot = document.createElement("button");
+				dot.type = "button";
+				dot.className = "bend-dot";
+				dot.setAttribute("data-bend-dot", "");
+				dot.setAttribute("aria-label", "Step " + (d + 1));
+				dot.addEventListener("click", (function (k) {
+					return function () { step = k; update(); };
+				})(d));
+				dotsEl.appendChild(dot);
+			}
+		}
+		if (prevBtn) prevBtn.addEventListener("click", function () { go(-1); });
+		if (nextBtn) nextBtn.addEventListener("click", function () { go(1); });
+		if (resetBtn) resetBtn.addEventListener("click", function () { step = 0; update(); });
+		canvas.addEventListener("pointerdown", function (ev) {
+			drag = { x: ev.clientX, y: ev.clientY };
+			if (canvas.setPointerCapture) canvas.setPointerCapture(ev.pointerId);
+		});
+		canvas.addEventListener("pointermove", function (ev) {
+			if (!drag) return;
+			yaw += (ev.clientX - drag.x) * 0.01;
+			pitch = clamp(pitch + (ev.clientY - drag.y) * 0.01, -1.15, 1.15);
+			drag = { x: ev.clientX, y: ev.clientY };
+			api.redraw();
+		});
+		canvas.addEventListener("pointerup", function () { drag = null; });
+		canvas.addEventListener("pointercancel", function () { drag = null; });
+		update();
+	}
+
+	/* ── one head, one attention budget ─────────────────────── */
+
+	function initHeadBudget(root) {
+		var bars = $("[data-hb-bars]", root);
+		if (!bars) return;
+		var headEl = $("[data-hb-head-name]", root);
+		var topEl = $("[data-hb-top]", root);
+		var concEl = $("[data-hb-conc]", root);
+		var budgetEl = $("[data-hb-budget]", root);
+		var noteEl = $("[data-hb-note]", root);
+		var tokens = ["Maria", "told", "the", "bank", "she", "loan"];
+		var heads = {
+			coref: [0.46, 0.04, 0.03, 0.08, 0.14, 0.25],
+			syntax: [0.18, 0.28, 0.19, 0.10, 0.15, 0.10],
+			meaning: [0.04, 0.05, 0.04, 0.40, 0.10, 0.37]
+		};
+		var names = { coref: "Coreference", syntax: "Syntax", meaning: "Meaning" };
+		var head = "coref";
+		var weights = heads[head].slice();
+
+		function normalise(a) {
+			var sum = a.reduce(function (x, y) { return x + y; }, 0) || 1;
+			return a.map(function (x) { return x / sum; });
+		}
+		function render() {
+			weights = normalise(weights);
+			var top = 0;
+			weights.forEach(function (w, i) { if (w > weights[top]) top = i; });
+			bars.innerHTML = tokens.map(function (tok, i) {
+				var pct = Math.round(weights[i] * 100);
+				return '<button class="dist-row" type="button" data-hb-token="' + i + '">' +
+					'<span class="dist-label">' + escapeHtml(tok) + '</span>' +
+					'<span class="dist-track"><span class="dist-fill" style="width:' + pct + '%;background:' +
+					(i === top ? "var(--tm-green)" : "var(--tm-sky)") + '"></span></span>' +
+					'<span class="dist-val">' + pct + '%</span></button>';
+			}).join("");
+			$$("[data-hb-token]", bars).forEach(function (row) {
+				row.addEventListener("click", function () {
+					var i = parseInt(row.getAttribute("data-hb-token"), 10);
+					weights = weights.map(function (w) { return w * 0.8; });
+					weights[i] += 0.2;
+					render();
+				});
+			});
+			if (headEl) headEl.textContent = names[head];
+			if (topEl) topEl.textContent = tokens[top];
+			if (concEl) concEl.textContent = Math.round(weights[top] * 100) + "% on one token";
+			if (budgetEl) budgetEl.textContent = "1.00 / 1.00";
+			if (noteEl) noteEl.textContent = "One head, one budget. A click moves 0.20 of the budget to that token; every other token gives up its share. Switch heads: each has its own budget.";
+		}
+		$$("[data-hb-head]", root).forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				head = btn.getAttribute("data-hb-head");
+				weights = heads[head].slice();
+				$$("[data-hb-head]", root).forEach(function (b) { b.classList.toggle("is-on", b === btn); });
+				render();
+			});
+		});
+		var reset = $("[data-hb-reset]", root);
+		if (reset) reset.addEventListener("click", function () { weights = heads[head].slice(); render(); });
+		var spread = $("[data-hb-spread]", root);
+		if (spread) spread.addEventListener("click", function () { weights = tokens.map(function () { return 1; }); render(); });
+		render();
+	}
+
 	/* ── boot ───────────────────────────────────────────────── */
 
 	function boot() {
@@ -3067,6 +3491,9 @@
 			else if (type === "citecheck") initCitecheck(root);
 			else if (type === "reasoning") initReasoning(root);
 			else if (type === "prompt") initPrompt(root);
+			else if (type === "trajectory") initTrajectory(root);
+			else if (type === "bend") initBend(root);
+			else if (type === "headbudget") initHeadBudget(root);
 		});
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

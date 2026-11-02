@@ -38,7 +38,7 @@
 						<h2 class="section-title">Iterate, do not decorate.</h2>
 						<div class="prose">
 							<p>Long prompts are not automatically better. Every irrelevant sentence adds noise and costs tokens. Canonicalise the input, remove boilerplate, and make the task easy to verify.</p>
-							<p>Prompting is empirical. Change one thing, test it, and keep what works. <a href="https://arxiv.org/abs/2303.17651" rel="noopener">Self-Refine</a> turns that loop inward: the model critiques and revises its own output (Madaan et al., 2023). A prompt that is clear to a human is usually a good starting point for a model.</p>
+							<p>Prompting is empirical. Change one thing, test it, and keep what works. <a href="https://arxiv.org/abs/2303.17651" rel="noopener">Self-Refine</a> turns that loop inward: the model critiques and revises its own output (Madaan et al., 2023). A prompt is also model-specific; the same wording can work on one model and fail on another because their instruction tuning differs. Treat it as part of the system, version it, and re-test after a model upgrade.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Role</b><span>A persona primes style and knowledge.</span></div>
@@ -89,56 +89,11 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Prompting is distribution engineering. Each clear constraint closes a door the model would otherwise have walked through.</span></div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">The Master Principle</h2>
-						<div class="prose">
-							<p>All prompt engineering techniques reduce to one idea: <strong>control the probability distribution.</strong> Every technique -- roles, delimiters, CoT, few-shot, structured output -- is a tool for collapsing the model's output space from “anything” to “exactly what I need.”</p>
-							<p>The best prompt engineers do not memorize techniques; they understand which <strong>degrees of freedom</strong> the model has, and systematically lock them down until only the correct output path remains. The most familiar example is <strong>chain-of-thought</strong> (<a href="https://arxiv.org/abs/2201.11903" rel="noopener">Wei et al., 2022</a>): asking for intermediate steps keeps the model from committing to an answer in a single token and gives it a place to check its work. It is a prompt-level version of the scratchpad idea, and it is the subject of reasoning. Extensions such as Tree of Thoughts explore several branches before committing (<a href="https://arxiv.org/abs/2305.10601" rel="noopener">Yao et al., 2023</a>).</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Specify Output Format</h2>
-						<div class="prose">
-							<p>Define a strict schema (JSON, CSV, YAML) that constrains the model's generation pathway. This reduces format errors, not factual ones: a syntactically perfect object can still contain a wrong value. If the runtime supports constrained decoding, the schema can be enforced token by token; otherwise the model can drift, and the output needs validation.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Use Delimiters</h2>
-						<div class="prose">
-							<p>Triple quotes, XML tags, and dashed lines create <strong>hard boundaries</strong> between instructions and data. This reduces prompt leakage where the model confuses your system prompt with the user content.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">The Art of Talking to a Stochastic Parrot</h2>
-						<div class="prose">
-							<p>Prompt engineering is the practical craft of communicating with Large Language Models, not by hacking their weights, but by hacking their <strong>input</strong>. Since an LLM is fundamentally a next-token predictor wrapped in a chatbot interface, the way you phrase, structure, and constrain your input is the single most powerful lever you have.</p>
-							<p>Think of it like this: you are not programming the model. You are <strong>creating a linguistic environment</strong> that statistically steers it toward your desired outcome. Every word you choose reduces the entropy of what comes next.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">Define the Role</h2>
-						<div class="prose">
-							<p>Assigning a persona acts as a <strong>semantic filter</strong> that primes the model to activate specific regions of its training distribution. A “senior Rust engineer” persona pulls different weights than a “Shakespearean poet,” even on the exact same question.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Practical notes</div>
-						<h2 class="section-title">When a good prompt still fails.</h2>
-						<div class="prose">
-							<p>A prompt can be clear and still fail because the model lacks the knowledge, the task is ambiguous, or the context is too long. Prompting cannot fix a missing capability. A prompt is also model-specific: the same wording can work on one model and fail on another because their instruction-following training differs. Treat a prompt as part of the system, version it, and re-test it after a model upgrade.</p>
-							<p>Prompt injection, contradictory instructions, and untrusted text are security and design problems. Use permissions, validation, and human review for anything that matters.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="takeaway">
 						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
@@ -150,6 +105,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="rag.html"><span class="ln-label">← Previous · Day 25</span><span class="ln-title">Giving It a Search Engine</span></a>
+							<a href="reasoning.html"><span class="ln-label">Next · Day 27 →</span><span class="ln-title">Thinking Longer</span></a>
+						</nav>
+						<p class="lesson-footer">Day 26 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>

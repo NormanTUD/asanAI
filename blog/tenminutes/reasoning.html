@@ -37,7 +37,7 @@
 						<h2 class="section-title">More compute, more checking.</h2>
 						<div class="prose">
 							<p>The o1/R1 generation goes further: the model is trained with reinforcement learning on problems that can be checked (<a href="https://arxiv.org/abs/2402.03300" rel="noopener">Shao et al., 2024</a>), so it learns when to think longer, backtrack, and verify. The reasoning process can be much longer than the final answer. A user-facing “summary of reasoning” may be only that — a summary. It is not a guaranteed transcript of the computation that produced the answer, and a fluent explanation can be reconstructed after the fact.</p>
-							<p>More thinking is not always better. The model can reason confidently in the wrong direction, and long chains are expensive. The useful question is whether the extra computation buys a real improvement on the task, not whether the explanation sounds thorough.</p>
+							<p>More thinking is not always better. The model can reason confidently in the wrong direction, long chains are expensive, and on a simple task the extra tokens add latency without improving the answer. The useful question is whether the extra computation buys a real improvement on the task, not whether the explanation sounds thorough. The practical pattern is generate, then verify: use a checker when the answer can be checked, and a second model or prompt when it cannot.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Chain-of-thought</b><span>Write intermediate steps instead of jumping to an answer.</span></div>
@@ -47,15 +47,6 @@
 						</div>
 					</section>
 
-					<section class="section-block" id="extra">
-						<div class="section-kicker"><span class="sk-num">03</span> When thinking longer helps</div>
-						<h2 class="section-title">Verification is the bottleneck.</h2>
-						<div class="prose">
-							<p>Chain-of-thought gives the model a scratchpad. Self-consistency samples several paths and compares answers. Tree of thoughts explores branches. All of these methods spend more computation at inference time in exchange for a better chance of finding a correct path.</p>
-							<p>The o1/R1 generation trains the model to use that computation. Reinforcement learning on problems with verifiable answers teaches it when to backtrack, when to check, and when to stop. Process reward models can score the intermediate steps, not only the final answer.</p>
-							<p>More thinking is not always better. Long chains are expensive, and a model can reason confidently in the wrong direction. The useful question is whether the extra computation buys a real improvement on the task, and whether the steps can be checked.</p>
-						</div>
-					</section>
 
 					<figure>
 						<img src="../image.php?f=theseus_minotaur_mosaic.jpg&amp;w=900&amp;q=82" alt="Theseus and the Minotaur mosaic" loading="lazy">
@@ -92,50 +83,13 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Thinking longer helps when the steps can be checked. Majority voting only helps when the errors are not all identical.</span></div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Process Reward Models (PRMs)</h2>
-						<div class="prose">
-							<p>A process reward model (PRM) (<a href="https://arxiv.org/abs/2312.08935" rel="noopener">Zhang et al., 2024</a>) scores each intermediate step, not only the final answer. That is a better training signal than a single right/wrong label: it can tell the model that a chain went wrong at step two, even if it later recovered. At inference, beam search guided by the PRM can improve accuracy on math; the cost is labelling data, and synthetic PRMs (auto-labelling with a stronger model) are now competitive.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Inference-Time Scaling Laws</h2>
-						<div class="prose">
-							<p>Compare this with training: achieving 85% on AIME, the American Invitational Mathematics Examination, by training alone would require either a much larger base model or domain-specific data (<a href="https://arxiv.org/abs/2408.03314" rel="noopener">Snell et al., 2024</a>). <strong>Inference-time scaling is often cheaper and more flexible</strong> — but it moves the cost to every query rather than paying it once. A model that thinks for ten thousand tokens on every request is expensive to serve, which is why adaptive thinking matters.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Summary</h2>
-						<div class="prose">
-							<p>The era of “scale by training” is now supplemented by <strong>scale by thinking</strong>. The frontier in 2025 is figuring out how to spend inference compute <em>adaptively</em>, think hard when it matters, save tokens when it doesn't.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Practical notes</div>
-						<h2 class="section-title">More tokens, more money, more risk.</h2>
-						<div class="prose">
-							<p>Reasoning with more tokens costs more compute and latency. It can improve hard maths and code, but it can also make a model stall, loop, or justify a wrong answer with more confidence.</p>
-							<p>The useful pattern is generate, then verify. Use a checker when the answer can be checked; use a second model or a different prompt when it cannot. More thinking is a tool, not a universal upgrade.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">The fine print</div>
-						<h2 class="section-title">What the benchmarks show.</h2>
-						<div class="prose">
-							<p>Chain-of-thought and test-time compute improve hard maths, code, and multi-step logic, but they are not a universal upgrade. On simple tasks they can add cost and latency without improving the answer. On some tasks they can make a wrong answer look more considered.</p>
-							<p>The evaluation question is whether the model is better at the task, not whether the reasoning text sounds good. A correct answer with a flawed chain and a wrong answer with a perfect-looking chain are both possible. Verification is the difference between thinking and performance.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -144,6 +98,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="promptengineering.html"><span class="ln-label">← Previous · Day 26</span><span class="ln-title">The Craft of Asking</span></a>
+							<a href="ai_and_society.html"><span class="ln-label">Next · Day 28 →</span><span class="ln-title">What AI Is Doing to Us</span></a>
+						</nav>
+						<p class="lesson-footer">Day 27 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>

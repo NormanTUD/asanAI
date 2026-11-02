@@ -38,7 +38,8 @@
 						<h2 class="section-title">The task stack.</h2>
 						<div class="prose">
 							<p>The basic task is classification: what is in the image? Detection asks where; segmentation asks which pixels belong to which object; 3D understanding adds depth and geometry. Each task needs a different output, but the feature extractor is often shared.</p>
-							<p>Vision Transformers (<a href="https://arxiv.org/abs/2010.11929" rel="noopener">Dosovitskiy et al., 2020</a>) replace the sliding kernel with attention over image patches, but the idea is similar: turn the image into tokens and let the model learn relationships between them.</p>
+							<p>Vision Transformers (<a href="https://arxiv.org/abs/2010.11929" rel="noopener">Dosovitskiy et al., 2020</a>) replace the sliding kernel with attention over image patches, but the idea is similar: turn the image into tokens and let the model learn relationships between them. A convolution brings a strong assumption that nearby pixels belong together; a ViT has less built-in locality, needs more data, but can connect distant regions.</p>
+							<p>Both approaches need data, augmentation, and careful evaluation. A model can be excellent at recognising a pattern and still fail on a new viewpoint, a rare object, or a misleading context. The sharpest version is the adversarial example: a small, often invisible change to the pixels can flip a confident classification. The decision boundary is geometric, and a point near it can be pushed across without changing what a human sees. Seeing is not the same as understanding.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Pixels</b><span>An image is a grid of numbers, not a picture of a cat.</span></div>
@@ -48,15 +49,6 @@
 						</div>
 					</section>
 
-					<section class="section-block" id="extra">
-						<div class="section-kicker"><span class="sk-num">03</span> From CNN to ViT</div>
-						<h2 class="section-title">Two ways to see.</h2>
-						<div class="prose">
-							<p>A convolutional network has a strong built-in assumption: nearby pixels matter together. The sliding kernel shares weights across the image, which makes the model efficient and gives it translation equivariance. Pooling reduces resolution and builds a hierarchy.</p>
-							<p>A Vision Transformer makes a different assumption. It cuts the image into patches, treats each patch as a token, and lets attention learn relationships between patches. It has less built-in locality, so it often needs more data, but it scales well and can connect distant regions.</p>
-							<p>Both approaches need data, augmentation, and careful evaluation. A model can be excellent at recognising a pattern and still fail on a new viewpoint, a rare object, or a misleading context. The sharpest version of this is the adversarial example: a small, often invisible change to the pixels can flip a confident classification. The model's decision boundary is geometric, and a point near the boundary can be pushed across it without changing what a human sees. Seeing is not the same as understanding.</p>
-						</div>
-					</section>
 
 					<figure>
 						<img src="../image.php?f=sam_demo.png&amp;w=900&amp;q=82&amp;fmt=jpg" alt="Segment Anything Model segmentation examples" loading="lazy">
@@ -154,41 +146,12 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Depth multiplies context. A 3×3 kernel stacked four times sees a 9×9 patch — without a 9×9 weight matrix.</span></div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">The Power of Hierarchy: Building Complexity from Simplicity</h2>
-						<div class="prose">
-							<p>A deep learning model doesn't identify a “stop sign” in a single leap. Instead, it constructs an understanding through a <strong>layered hierarchy of abstraction</strong>, where each successive layer examines the output of the previous one to discover increasingly complex patterns. This mirrors the architecture of the human visual cortex (<a href="https://papers.baulab.info/papers/also/HubelWiesel-1962.pdf" rel="noopener">Hubel &amp; Wiesel, 1962</a>), where neurons in area V1 respond to simple oriented edges, while neurons in higher areas respond to faces and objects.</p>
-							<p>The more layers, the more abstract and complex the representations become. However, adding layers also increases the risk of <strong>overfitting</strong> (memorizing training data rather than learning general patterns) and <strong>vanishing gradients</strong> (where learning signals fade to zero in very deep networks, a problem addressed by skip connections in ResNets).</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Beyond 2D: the world</h2>
-						<div class="prose">
-							<p>Real vision is 3D and dynamic: <strong>pose</strong> (keypoints), <strong>depth</strong>, <strong>point clouds</strong>, and <strong>NeRF</strong>-style radiance fields that render novel views. Generative models now produce 3D and video, not just stills (see Diffusion).</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">What is a Convolution?</h2>
-						<div class="prose">
-							<p>A <strong>convolution</strong> is a mathematical operation that slides a small grid of numbers (the <strong>kernel</strong> or <strong>filter</strong>) across an image, computing a weighted sum at every position. This single operation is the fundamental building block of <strong>Convolutional Neural Networks (CNNs)</strong>, the technology behind facial recognition, autonomous vehicles, medical imaging, and satellite analysis.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">Why Does This Matter for AI?</h2>
-						<div class="prose">
-							<p>In traditional computer vision, engineers <strong>manually designed</strong> kernels (like Sobel, Gaussian, or Laplacian filters) to detect edges, blur noise, or sharpen details. These hand-crafted filters work well for specific tasks but cannot generalize.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -197,6 +160,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="training_data.html"><span class="ln-label">← Previous · Day 12</span><span class="ln-title">What a Model Reads</span></a>
+							<a href="multimodal.html"><span class="ln-label">Next · Day 14 →</span><span class="ln-title">Connecting Images and Words</span></a>
+						</nav>
+						<p class="lesson-footer">Day 13 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>

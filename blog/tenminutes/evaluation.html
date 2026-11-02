@@ -36,7 +36,7 @@
 						<div class="section-kicker"><span class="sk-num">02</span> Contamination and the real task</div>
 						<h2 class="section-title">Measure your problem.</h2>
 						<div class="prose">
-							<p>Benchmark contamination is the central problem: if the test data appeared in training, a high score may measure memorization rather than capability. Deduplication helps, but it is hard to prove a negative.</p>
+							<p>Benchmark contamination is the central problem: if the test data appeared in training, a high score may measure memorization rather than capability. Deduplication helps, but it is hard to prove a negative. Leaderboard pressure makes it worse. Goodhart's law applies (<a href="https://books.google.de/books?id=OMe6UQxu1KcC&amp;pg=PA111&amp;redir_esc=y#v=onepage&amp;q&amp;f=false" rel="noopener">Goodhart, 1975</a>): when a measure becomes a target, it stops being a good measure.</p>
 							<p>For your own use case, build a small evaluation that reflects the real task. Define a rubric, collect examples, measure agreement, and check whether the difference you see is larger than the noise. A general benchmark is a starting point, not a verdict.</p>
 						</div>
 						<div class="keypoints">
@@ -47,15 +47,6 @@
 						</div>
 					</section>
 
-					<section class="section-block" id="extra">
-						<div class="section-kicker"><span class="sk-num">03</span> The contamination crisis</div>
-						<h2 class="section-title">When the test is in the training set.</h2>
-						<div class="prose">
-							<p>Benchmark contamination happens when test questions appear in the training data. The model may then memorize the answer instead of learning the skill. Deduplication helps, but it is hard to prove that a test set never leaked, especially when the test set is public.</p>
-							<p>Leaderboard pressure makes the problem worse. If a benchmark becomes a target, models and labs optimise for it. Goodhart's law applies (<a href="https://books.google.de/books?id=OMe6UQxu1KcC&amp;pg=PA111&amp;redir_esc=y#v=onepage&amp;q&amp;f=false" rel="noopener">Goodhart, 1975</a>): when a measure becomes a target, it ceases to be a good measure. The benchmark was a proxy for capability; once it is the goal, effort flows into the proxy — prompt formats, answer conventions, data cleaning aimed at the test — rather than into the capability. LLM judges add another layer of bias.</p>
-							<p>The most useful evaluation is the one built for your task: a rubric, a set of examples, a measure of agreement, and a check that the effect you see is larger than the noise. A general benchmark is a starting point, not a verdict.</p>
-						</div>
-					</section>
 
 					<figure>
 						<img src="../canary_coal_mine.jpg" alt="A foreman holding a canary in a coal mine" loading="lazy">
@@ -93,51 +84,12 @@
 						<div class="demo-insight"><b>Takeaway</b><span>A benchmark is a proxy. If the test data leaked into training, a high score may measure memory rather than capability.</span></div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">From benchmark to your-own eval</h2>
-						<div class="prose">
-							<p>A public benchmark answers a <em>fixed</em> question ("can the model do general knowledge?"). Your product has its own question — "does it extract the invoice fields correctly?", "does it refuse the out-of-scope request?", "does it sound like our voice?" — and no leaderboard answers it for you. Building your own eval is the move from the fixed question to the specific one, and it has three parts: a <strong>set of inputs</strong> that represent the real cases you care about, a <strong>way to score</strong> each answer, and a <strong>number</strong> that lets you compare two versions.</p>
-							<p>The trap is that the scoring part is where it goes wrong. A score is only as good as the <em>standard</em> behind it, and a standard that lives only in your head ("this looks right") is not a standard — it is a mood, and it will drift between you, your teammate, and your judge. So the first real task is to write the standard down.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Rubric design: a specification, not a vibe</h2>
-						<div class="prose">
-							<p>A <strong>rubric</strong> turns "good answer" into a scored, written standard: a small set of <strong>criteria</strong> (what matters), a <strong>scale</strong> (what a 1, 3, 5 each means), and <strong>anchors</strong> (a concrete example of what each score looks like). The anchors are the load-bearing part — they are the difference between a rubric that two people can apply identically and one they cannot.</p>
-							<p>A useful pattern is <em>dimensional</em> scoring rather than a single holistic score, because a single score hides <em>what</em> went wrong. For a "write a support reply" task, you might score separately:</p>
-							<ul>
-								<li><strong>Accuracy</strong> — are the facts and the policy correct?</li>
-								<li><strong>Completeness</strong> — does it address every part of the request?</li>
-								<li><strong>Tone</strong> — does it match the voice you want?</li>
-								<li><strong>Safety</strong> — does it avoid promises, blame, and out-of-scope advice?</li>
-								<li><strong>Format</strong> — does it follow the required structure?</li>
-							</ul>
-							<p>Then write down what a 1, 3, and 5 look like for each criterion, with a real example at each level. The examples are the anchors, and they are what makes the rubric reproducible. How many examples do you need? For a smoke test, thirty to fifty well-chosen cases are enough to catch obvious regressions; for a decision you intend to defend, use a few hundred and report a confidence interval. The right number depends on the size of the effect you need to detect.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">Benchmark Contamination: The Crisis</h2>
-						<div class="prose">
-							<p>The dirty secret of LLM evaluation: <strong>most public benchmarks have been seen during pretraining</strong>. GPT-4's pretraining data cuts off in September 2021; many benchmarks were uploaded to GitHub, posted on Stack Overflow, or discussed on Reddit before then.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">Calibrating an LLM judge: trust it only where it agrees</h2>
-						<div class="prose">
-							<p>You will want to scale this past two humans — human scoring is slow and costs money. The obvious move is to use a strong LLM as the judge. The failure is that a judge <em>inherits its own biases</em> (it prefers its own style, longer answers, a particular phrasing, and often the first option in a pairwise comparison), so an uncalibrated judge can systematically prefer the wrong thing.</p>
-							<p><strong>Calibration</strong> is the fix, and it is the same idea as inter-annotator agreement (IAA) applied to the machine: first measure how much two humans agree on a sample, then measure how often the judge agrees with the human consensus. Trust the judge only in the categories where it agrees, randomise the order of paired answers, hide which model produced which, and re-check the calibration when the task, the prompt, or the judge model changes. A judge is a measuring instrument; an uncalibrated instrument reports numbers, not measurements.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -146,6 +98,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="running_locally.html"><span class="ln-label">← Previous · Day 16</span><span class="ln-title">Running a Model Yourself</span></a>
+							<a href="attentionlab.html"><span class="ln-label">Next · Day 18 →</span><span class="ln-title">Attention: The Tug-of-War</span></a>
+						</nav>
+						<p class="lesson-footer">Day 17 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>

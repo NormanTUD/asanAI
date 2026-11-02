@@ -37,6 +37,7 @@
 						<h2 class="section-title">Confidence is not evidence.</h2>
 						<div class="prose">
 							<p>Confidence is a property of the text, not of the model's knowledge. A fluent answer with a plausible citation can be wrong in every detail. Temperature makes this worse: a higher temperature flattens the distribution and can push the model toward less likely, more inventive continuations (<a href="https://arxiv.org/abs/1904.09751" rel="noopener">Holtzman et al., 2020</a>). It is worth asking why the model does not simply say “I don't know”. Sometimes it does — but that is a behaviour learned in post-training, not a reading from an internal truth meter. One common failure is <strong>sycophancy</strong>: the model agrees with a false premise and invents a justification (<a href="https://arxiv.org/abs/2310.13548" rel="noopener">Sharma et al., 2023</a>). There is no dial inside the model labelled certainty.</p>
+							<p>Hallucination is not uniform. Models are most reliable where the pattern is dense and redundant — common syntax, well-known facts, code idioms — and least reliable where the pattern is sparse, recent, private, or contradictory. Scale lowers the error rate on many benchmarks, but it also makes a wrong answer sound better; it shifts the odds, it does not install a guarantee.</p>
 							<p>Use the model as a draft, a tutor, or a search aid — not as an oracle. Verify names, numbers, quotes, and citations. Give it documents with retrieval, ask it to show its sources, and keep a human in the loop for anything that matters. Retrieval helps because it changes the task: instead of recalling a fact from compressed weights, the model can copy a passage that is present in the context. It is not a guarantee — the model can still misread the passage — but it makes “where did this come from?” a question with an answer.</p>
 						</div>
 						<div class="keypoints">
@@ -47,16 +48,6 @@
 						</div>
 					</section>
 
-					<section class="section-block" id="extra">
-						<div class="section-kicker"><span class="sk-num">03</span> A practical checklist</div>
-						<h2 class="section-title">How to use a plausible machine.</h2>
-						<div class="prose">
-							<p>Treat the output as a draft, not an answer. Verify names, dates, numbers, quotations, and citations against a source you trust. If the model gives you a study, a law, or a URL, check that it exists. A fluent paragraph is not evidence of a real source.</p>
-							<p>Use retrieval and tools when the answer depends on documents. Ask the model to quote the passage it is relying on, and keep the retrieved text visible. For anything that matters, separate generation from verification: let the model draft, then check the draft with a different process or a different model.</p>
-							<p>Temperature and decoding change how adventurous the model is, not whether it is right. Low temperature makes the answer more predictable; high temperature makes it more inventive and more likely to drift. Neither setting installs a fact-checker. The workflow has to do that.</p>
-							<p>Hallucination is also not uniform. Models are most reliable where the pattern is dense and redundant — common syntax, well-known facts, code idioms — and least reliable where the pattern is sparse, recent, private, or contradictory. That is why the same model can write flawless Python and invent a court case. Scale reduces the error rate on many benchmarks, but it also makes the wrong answer sound better; it shifts the odds, it does not install a guarantee.</p>
-						</div>
-					</section>
 
 					<div class="demo demo--paper" data-demo="sampling">
 						<div class="demo-head">
@@ -102,38 +93,11 @@
 						<div class="demo-foot">The real references are real; the fabricated ones are invented for the exercise. Verify any citation before you use it.</div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">The Problem: Why AI Lies to You</h2>
-						<div class="prose">
-							<p>One of the biggest dangers of modern AI (Large Language Models) is that they can sound incredibly confident while saying something completely untrue. We call this a <strong>Hallucination</strong>.</p>
-							<p>To understand why this happens, we have to stop thinking of AI as a “Database of Knowledge” and start thinking of it as a <strong>Pattern Completion Engine</strong>. Deliberately over-driving that engine — tuning the input instead of the weights — is what the Inceptionism dreams do: the network projects its learned templates onto noise until it sees towers in rocks and birds in clouds, engineered pareidolia. The broader point is the one the <a href="https://dl.acm.org/doi/pdf/10.1145/3442188.3445922" rel="noopener">stochastic-parrots critique</a> makes: fluent text can be produced without a model of truth (Bender et al., 2021).</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Problems with AI</h2>
-						<div class="prose">
-							<h3 class="sub-title">The training-data cutoff and zeitgeist bias</h3>
-							<p>A primary driver of hallucinations is the static nature of an AI's knowledge. Because models are trained up to a specific point in time, they often “invent” information about events occurring after that date, attempting to force new facts into existing, outdated patterns.</p>
-							<p>This is compounded by popularity bias: the AI tends to provide the statistically most likely answer even if it is incorrect. If training data contains a myth more frequently than the historical truth, the AI will reproduce it as fact because the linguistic pattern is simply stronger. The same mechanism explains why a model can be confidently wrong about a person who shares a name with someone more famous: the stronger pattern wins.</p>
-							<p>A related failure is the <strong>reversal curse</strong>: a model trained on “A is B” may fail to infer “B is A” (<a href="https://arxiv.org/abs/2309.12288" rel="noopener">Berglund et al., 2023</a>).</p>
-							<h3 class="sub-title">The black box of interpretability</h3>
-							<p>A deep-seated challenge remains the lack of transparency in neural networks. Even at a low temperature, it is often impossible to pinpoint exactly why a specific neuron “fired” to trigger a hallucination. The field of <strong>mechanistic interpretability</strong> is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source, within the model's weights, rather than simply filtering the output after the fact. That is a research programme, not a solved problem: today's practical defence is still verification, retrieval, and a workflow that separates drafting from checking.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">The Mechanism: Next-Token Prediction</h2>
-						<div class="prose">
-							<p>At its core, an LLM is a giant mathematical function that calculates probabilities. It looks at the text you have written so far (the Context) and calculates a probability score for every single word in its vocabulary to see which one should come next.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -142,6 +106,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="embeddinglab.html"><span class="ln-label">← Previous · Day 5</span><span class="ln-title">Meaning as Geometry</span></a>
+							<a href="minimalneuron.html"><span class="ln-label">Next · Day 7 →</span><span class="ln-title">A Tiny Example Network</span></a>
+						</nav>
+						<p class="lesson-footer">Day 6 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>

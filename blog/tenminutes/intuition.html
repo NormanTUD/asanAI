@@ -49,27 +49,19 @@
 								fragment, or punctuation — which is the subject of tokenization.
 							</p>
 							<p>
-								This picture is deliberately incomplete. A real model has many layers
-								of attention, a feed-forward network, positional information, training data,
-								and post-training; these will be discussed later in the course. This page starts
-								with the loop because almost everything else can be read as machinery that
-								makes this one prediction better. The order matters: each layer exists because
-								the previous one created a problem it has to solve.
+								This picture is deliberately incomplete. A real model adds layers of
+								attention, a feed-forward network, position information, training data, and
+								post-training. The loop comes first because everything else is machinery for
+								making this one prediction better — each part exists to solve a problem the
+								previous part created.
 							</p>
 							<p>
-								A conversation, a poem, a Python function — all of it is this loop, writing
-								one word at a time. That sounds reductive until you notice what the context can
-								contain: the question, a worked example, the output of a tool, or the model's own
-								earlier reasoning. Each new token conditions on all of it. In this picture,
-								reasoning is text the model writes to itself so that the next step has something
-								to continue.
-							</p>
-							<p>
-								Why not predict the whole answer at once? Because the model's output is a
-								distribution over the <em>next</em> slot. Predicting a whole sequence in one step
-								would mean choosing from an astronomically large space of sentences and would
-								lose the ability to condition each word on the words already written. The loop is
-								slower, but it makes the answer a response to itself.
+								A conversation, a poem, a Python function — all of it is this loop. That sounds
+								reductive until you notice what the context can contain: the question, a worked
+								example, a tool's output, or the model's own earlier reasoning. Each new token
+								conditions on all of it. Why not predict the whole answer at once? Because the
+								model outputs a distribution over the <em>next</em> slot; the loop lets every
+								word respond to the words already written.
 							</p>
 						</div>
 						<div class="aha">
@@ -156,21 +148,18 @@
 								the pool before drawing.
 							</p>
 							<p>
-								The decoder in the demo is a choice, not a property of the model. <strong>Greedy</strong>
-								always takes the top word; <strong>sampling</strong> draws from the whole
-								distribution; <strong>top-p</strong> first keeps the smallest set of words whose
-								probabilities reach 0.9 and then samples among them. The competence lives in the
-								learned distribution; the decoder only selects from it. Variation is not
-								creativity: useful novelty depends on structure, context, and the quality of the
-								distribution, and raising the temperature usually trades coherence for surprise.
-								A useful rule of thumb: temperature changes the style of an answer; it does not
-								add knowledge. If the model does not know a fact, no setting makes it appear.
+								The decoder is a choice, not a property of the model. Greedy takes the top
+								word; sampling draws from the distribution; top-p keeps the smallest set of
+								words whose probabilities reach 0.9 and samples among them. The competence
+								lives in the learned distribution; the decoder only selects. Temperature
+								changes the style of an answer, not its knowledge — if the model does not know
+								a fact, no setting makes it appear.
 							</p>
 						</div>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">Prediction and compression are the same goal.</p>
-							<p class="aha-sub">To predict the next word well, a model must find the shortest description of the data — and the shortest description of language keeps requiring a model of the world that produced it.</p>
+							<p class="aha-big">Prediction rewards compression.</p>
+							<p class="aha-sub">A model that predicts the next word well has found a short description of the data. Whether that short description amounts to understanding the world is a live question, not a settled fact.</p>
 						</div>
 					</section>
 
@@ -247,18 +236,43 @@
 											<h3 class="sp-title">Every slot gets its own fingerprint</h3>
 										</div>
 										<div class="step-toolbar">
+											<label>Context length
+												<input type="range" id="ipe-pos" min="16" max="128" step="8" value="64">
+												<output id="ipe-pos-out">64 positions</output>
+											</label>
 											<label>Dimensions
-												<input type="range" id="ipe-dims" min="2" max="12" step="1" value="8">
-												<output id="ipe-dims-out">8</output>
+												<input type="range" id="ipe-dims" min="2" max="64" step="2" value="24">
+												<output id="ipe-dims-out">24</output>
 											</label>
 										</div>
-										<canvas class="step-canvas" id="ipe-canvas" aria-label="A heatmap of positional encodings for twenty positions"></canvas>
+										<canvas class="step-canvas" id="ipe-canvas" style="height:340px" aria-label="A heatmap of positional encodings for a long context"></canvas>
 										<div class="pos-legend" aria-hidden="true">
 											<span><i class="pl-neg"></i>−1</span>
 											<span><i class="pl-zero"></i>0</span>
 											<span><i class="pl-pos"></i>+1</span>
 										</div>
-										<div class="step-out" id="ipe-out">Each row is one position. Each column is one dimension of the position signal.</div>
+										<div class="step-out" id="ipe-out">Each row is one position; each column is one dimension. Drag the context length to 128 and watch the low-frequency waves repeat while the high-frequency ones keep moving.</div>
+										<div class="demo demo--paper" data-demo="trajectory" style="margin-top:14px">
+											<div class="demo-head">
+												<div>
+													<p class="demo-title">The positional rail <span>· demo 03</span></p>
+													<p class="demo-sub">The grey cross is the token vector. Each coloured dot is that vector plus one position; drag the 3D view to see the helix.</p>
+												</div>
+												<span class="demo-badge">2D / 3D</span>
+											</div>
+											<div class="demo-body">
+												<canvas class="demo-canvas demo-canvas--md" data-trajectory-canvas aria-label="A token vector plus positional encodings, drawn as a circle in 2D and a helix in 3D"></canvas>
+												<div class="demo-controls">
+													<label>Positions <input type="range" data-trajectory-count min="2" max="96" step="1" value="32"><output data-trajectory-count-out>32</output></label>
+													<label>Dimension pair <input type="range" data-trajectory-dim min="0" max="62" step="2" value="0"><output data-trajectory-dim-out>0 / 1</output></label>
+													<div class="chip-row">
+														<button class="chip is-on" type="button" data-trajectory-view="2d">2D circle</button>
+														<button class="chip" type="button" data-trajectory-view="3d">3D helix</button>
+													</div>
+													<span class="vec-note" style="color:var(--tm-muted)">view: <b data-trajectory-view-out>circle</b></span>
+												</div>
+											</div>
+										</div>
 									</div>
 									<p class="step-note">Attention has no built-in sense of order. A <b>positional encoding</b> adds a unique fingerprint to every position, so “dog bites man” and “man bites dog” stop looking like the same bag of vectors. Why not simply number the positions? Because a raw index grows without bound and says nothing about relative distance; a pattern of waves gives every position a distinct fingerprint and makes nearby positions share some structure.</p>
 								</div>
@@ -281,7 +295,8 @@
 										<canvas class="step-canvas" id="iatt-canvas" aria-label="Attention moving the embedding of bank toward the context"></canvas>
 										<div class="step-out" id="iatt-out">No context: bank stays in the middle, ambiguous.</div>
 									</div>
-									<p class="step-note">An <b>attention head</b> compares a token with the other tokens and moves its representation toward the evidence. The same word can end up in a different place depending on the company it keeps. The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database.</p>
+									<p class="step-note"><b>This step is an intuition, not a literal simulation.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result — context changes the representation — with one hand-tuned head instead of the many heads and layers of a real model. For the full mechanism, see <a href="attentionlab.html">the attention lesson</a>.</p>
+									<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the company it keeps, because the values it collects are different.</p>
 								</div>
 
 								<div class="step-pane" id="step-ffn">
@@ -337,35 +352,33 @@
 											</div>
 											<div class="activation-plots" id="activation-plots"></div>
 										</div>
-										<p class="step-note curve-intro">The demo below uses a smooth, injective bend so you can see the shape. ReLU would crease the same space flat on one side of z = 0. The cut still happens — the layer changes the space in which the cut is made.</p>
-										<div class="curve-stage">
-											<canvas id="curve-canvas" aria-label="A point cloud being lifted into an egg-shaped surface, then projected onto a line"></canvas>
-											<div class="curve-caption" aria-live="polite">
-												<span class="cc-step" id="curve-step">1 / 6</span>
-												<h4 id="curve-title">Two classes, no straight line</h4>
-												<p id="curve-body">An inner cloud and an outer ring. No single straight line separates coral from blue.</p>
+										<p class="step-note curve-intro">The demo below uses a smooth bend so you can see the shape. ReLU would crease the same space flat on one side of z = 0. The cut still happens — the layer changes the space in which the cut is made.</p>
+										<div class="demo demo--paper" data-demo="bend" style="margin-top:14px">
+											<div class="demo-head">
+												<div>
+													<p class="demo-title">A layer bends the space <span>· demo 07</span></p>
+													<p class="demo-sub">Step through seven stages: an inseparable ring becomes a bowl, and then one flat cut separates the classes.</p>
+												</div>
+												<span class="demo-badge">drag / step</span>
 											</div>
-											<div class="curve-points" id="curve-points">
-												<div class="cp-head">Example points <span>· symbolic</span></div>
-												<table>
-													<thead><tr><th></th><th>x</th><th class="cp-y">y</th><th class="cp-z">z</th></tr></thead>
-													<tbody id="curve-points-body"></tbody>
-												</table>
+											<div class="demo-body">
+												<div class="bend-copy">
+													<div class="bend-title" data-bend-title>Two classes, no straight line</div>
+													<p class="bend-body" data-bend-body>The coral core sits inside the blue ring. No single straight cut in this plane separates them.</p>
+												</div>
+												<canvas class="demo-canvas demo-canvas--lg" data-bend-canvas aria-label="A point cloud being lifted into a bowl until a flat plane separates the two classes"></canvas>
+												<div class="bend-controls">
+													<button class="btn-demo" type="button" data-bend-prev>← Prev</button>
+													<div class="bend-dots" data-bend-dots aria-hidden="true"></div>
+													<button class="btn-demo" type="button" data-bend-next>Next →</button>
+													<button class="btn-demo" type="button" data-bend-reset>Reset</button>
+													<span class="bend-count" data-bend-count>1 / 7</span>
+												</div>
 											</div>
-										</div>
-										<div class="curve-legend" aria-hidden="true">
-											<span><i class="cl-inner"></i>inner class</span>
-											<span><i class="cl-outer"></i>outer class</span>
-											<span><i class="cl-plane"></i>separating plane</span>
-										</div>
-										<div class="demo-controls">
-											<button class="btn-demo" type="button" id="curve-prev">← Prev</button>
-											<button class="btn-demo" type="button" id="curve-next">Next →</button>
-											<button class="btn-demo" type="button" id="curve-reset">Reset</button>
-											<span class="curve-dots" id="curve-dots" aria-hidden="true"></span>
+											<div class="demo-insight"><b>Takeaway</b><span>The layer changes the coordinate system. A cut that was impossible becomes a threshold — that is what depth buys.</span></div>
 										</div>
 										<div class="step-out">The cut still happens. The layer changes the space so that a straight cut in the new space separates the classes in the old one. ReLU is the sharp version: a fold along a crease.</div>
-										<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into something closer to a simple threshold. That is the sense in which depth helps: it changes the geometry in which the final decision is made.</p>
+										<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into something closer to a simple threshold.</p>
 										<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>). The animation is an illustration, not a proof.</p>
 									</div>
 								</div>
@@ -488,35 +501,34 @@
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>What it is</b><span>A next-token predictor: one distribution, one draw, one append, repeated.</span></div>
-							<div class="keypoint"><b>Why it scales</b><span>Prediction is compression; better compression needs more of the world’s structure.</span></div>
+							<div class="keypoint"><b>Why it scales</b><span>Better prediction usually means better compression — and compression needs more of the world’s structure.</span></div>
 							<div class="keypoint"><b>Its limits</b><span>It predicts plausible text. It can be fluent and wrong, and it offers no guarantee of truth.</span></div>
 							<div class="keypoint"><b>The contested part</b><span>Whether fluent prediction is genuine world knowledge or “stochastic parroting” is not settled.</span></div>
 						</div>
 						<div class="prose">
 							<p>
-								That last point matters. The compression-as-intelligence view is a productive
-								working hypothesis, not a proved identity. Solomonoff’s theorem is about
-								prediction, not understanding; roughly, it says that the best predictor is the
-								one that finds the shortest program generating the data, which is a statement
-								about compression, not about a particular model's grasp of the world. It does not
-								settle whether a particular model has world knowledge. The defensible position is that the empirical evidence is
-								still catching up to the philosophy — and that both the awe and the scepticism
-								are responses to the same remarkable fact: a loop this simple gets this far.
-							</p>
-						</div>
-						<div class="prose">
-							<p>
-								Put differently: a large language model is a finite vocabulary laid over an
-								infinite space of meaning — and a loop that keeps falling from one point in
-								that space to the next word. The space is finite-dimensional, not literally
-								infinite; the phrase is a way of saying that the vocabulary is a coarse grid
-								over a continuum the model can represent.
+								Compression-as-intelligence is a productive working hypothesis, not a proved
+								identity. Solomonoff’s theorem is about prediction, not understanding; it does
+								not settle whether a particular model grasps the world. The honest position is
+								that the evidence is still catching up to the philosophy — and that both the
+								awe and the scepticism are responses to the same remarkable fact: a loop this
+								simple gets this far. Put differently, a language model is a finite vocabulary
+								laid over a continuum of meaning, with a loop that keeps falling to the next word.
 							</p>
 						</div>
 					</section>
 
 
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="history.html"><span class="ln-label">Next · Day 2 →</span><span class="ln-title">Where AI Came From</span></a>
+						</nav>
+						<p class="lesson-footer">Day 1 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>
@@ -524,6 +536,7 @@
 
 	<script src="../temml.min.js"></script>
 	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
 	<script>
 	(function () {
 		"use strict";
@@ -1328,10 +1341,12 @@
 		var posCanvas = document.getElementById("ipe-canvas");
 		var posOut = document.getElementById("ipe-out");
 		var posApi = null;
-		var posDims = 8;
-		function peValue(pos, dim, dims) {
+		var posDims = 24;
+		var posCount = 64;
+		var D_MODEL = 64;
+		function peValue(pos, dim) {
 			var pair = Math.floor(dim / 2) * 2;
-			var denom = Math.pow(10000, pair / dims);
+			var denom = Math.pow(10000, pair / D_MODEL);
 			return dim % 2 === 0 ? Math.sin(pos / denom) : Math.cos(pos / denom);
 		}
 		function posColor(v, c) {
@@ -1345,7 +1360,7 @@
 		}
 		function drawPos(ctx, w, h) {
 			var c = TM.colors();
-			var positions = 24;
+			var positions = posCount;
 			var padL = 38, padR = 10, padT = 8;
 			var heatH = Math.round(h * 0.64);
 			var heatW = w - padL - padR;
@@ -1354,13 +1369,13 @@
 			var stats = [];
 			for (var sd = 0; sd < posDims; sd++) {
 				var vals = [];
-				for (var sp = 0; sp < positions; sp++) vals.push(peValue(sp, sd, posDims));
+				for (var sp = 0; sp < positions; sp++) vals.push(peValue(sp, sd));
 				var mean = vals.reduce(function (a, b) { return a + b; }, 0) / positions;
 				var maxDev = Math.max.apply(null, vals.map(function (v) { return Math.abs(v - mean); })) || 1;
 				stats.push({ mean: mean, maxDev: maxDev });
 			}
 			function cellT(pos, dim) {
-				return (peValue(pos, dim, posDims) - stats[dim].mean) / stats[dim].maxDev;
+				return (peValue(pos, dim) - stats[dim].mean) / stats[dim].maxDev;
 			}
 			ctx.clearRect(0, 0, w, h);
 			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.18)" : "rgba(0,75,111,.18)";
@@ -1378,7 +1393,8 @@
 			ctx.fillStyle = c.muted;
 			ctx.font = "500 9px Barlow, system-ui, sans-serif";
 			ctx.textAlign = "center";
-			for (var p2 = 0; p2 < positions; p2 += 4) {
+			var labelStep = Math.max(4, Math.round(positions / 8));
+			for (var p2 = 0; p2 < positions; p2 += labelStep) {
 				ctx.fillText(String(p2), padL + p2 * cw + cw / 2, padT + heatH + 13);
 			}
 			ctx.textAlign = "right";
@@ -1393,7 +1409,7 @@
 			ctx.fillStyle = c.muted;
 			ctx.font = "500 9px Barlow, system-ui, sans-serif";
 			ctx.fillText("fingerprints", padL, stripTop - 6);
-			[0, 5].forEach(function (pos, row) {
+			[0, positions - 1].forEach(function (pos, row) {
 				var y = stripTop + row * (stripH + 6);
 				ctx.textAlign = "right";
 				ctx.fillStyle = pos === 0 ? c.coral : c.green;
@@ -1407,12 +1423,12 @@
 				}
 			});
 			if (posOut) {
-				var p0 = [], p5 = [];
+				var p0 = [], pn = [];
 				for (var k = 0; k < Math.min(4, posDims); k++) {
-					p0.push(peValue(0, k, posDims).toFixed(2));
-					p5.push(peValue(5, k, posDims).toFixed(2));
+					p0.push(peValue(0, k).toFixed(2));
+					pn.push(peValue(positions - 1, k).toFixed(2));
 				}
-				posOut.innerHTML = 'Position 0: <b>[' + p0.join(", ") + ']</b> · Position 5: <b>[' + p5.join(", ") + ']</b> <span class="pos-note">· rows scaled to their own range</span>';
+				posOut.innerHTML = 'Position 0: <b>[' + p0.join(", ") + ']</b> · Position ' + (positions - 1) + ': <b>[' + pn.join(", ") + ']</b> <span class="pos-note">· each column scaled to its own range</span>';
 			}
 		}
 		if (posCanvas) {
@@ -1423,6 +1439,15 @@
 				posSlider.addEventListener("input", function () {
 					posDims = parseInt(posSlider.value, 10);
 					if (posDimsOut) posDimsOut.textContent = String(posDims);
+					if (posApi) posApi.redraw();
+				});
+			}
+			var posCountSlider = document.getElementById("ipe-pos");
+			var posCountOut = document.getElementById("ipe-pos-out");
+			if (posCountSlider) {
+				posCountSlider.addEventListener("input", function () {
+					posCount = parseInt(posCountSlider.value, 10);
+					if (posCountOut) posCountOut.textContent = posCount + " positions";
 					if (posApi) posApi.redraw();
 				});
 			}
@@ -1623,437 +1648,12 @@
 		}
 		renderRes();
 
-		/* ── layer as space curvature ────────────────────────── */
-		var curveCanvas = document.getElementById("curve-canvas");
-		var curveStepEl = document.getElementById("curve-step");
-		var curveTitleEl = document.getElementById("curve-title");
-		var curveBodyEl = document.getElementById("curve-body");
-		var curveDotsEl = document.getElementById("curve-dots");
-		var curvePrevBtn = document.getElementById("curve-prev");
-		var curveNextBtn = document.getElementById("curve-next");
-		var curveResetBtn = document.getElementById("curve-reset");
-		var curveIdx = 0, curvePrev = 0, curveT0 = performance.now() - 2000;
-		var curveDur = 850;
-		var curveDragA = 0, curveDragB = 0;
-		var curveDragging = false, curveLastX = 0, curveLastY = 0;
-		var curveApi = null;
-		var curvePointsEl = document.getElementById("curve-points");
-		var curvePointsBody = document.getElementById("curve-points-body");
-		var curveExamples = [
-			{ label: "inner₁", x: 0.20, y: 0, c: 0 },
-			{ label: "inner₂", x: 0, y: 0.25, c: 0 },
-			{ label: "outer₁", x: 0.90, y: 0, c: 1 },
-			{ label: "outer₂", x: 0, y: 0.95, c: 1 }
-		];
-		var KZ = 1.15, KB = 0.40, PLANE_Z = 0.18;
-		var SMIN = -0.62, SMAX = 1.05;
-		var curveSteps = [
-			{
-				t: "Two classes, no straight line",
-				b: "An inner cloud and an outer ring. No single straight line separates coral from blue.",
-				L: 0, A: 0, B: -Math.PI / 2, P: 0, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0
-			},
-			{
-				t: "Every attempt fails",
-				b: "A linear classifier draws a straight line. The ring wraps around the cloud, so every line cuts through it. A flat cut cannot open a closed ring.",
-				L: 0, A: 0, B: -Math.PI / 2, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0
-			},
-			{
-				t: "One more dimension of space",
-				b: "The old picture becomes the floor. A new axis, z, opens above it. A layer can fold data into an unused dimension, provided it is wider than the data.",
-				L: 0, A: 0.38, B: -0.62, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1
-			},
-			{
-				t: "The layer bends the space",
-				b: "The grid lifts into a shell: the centre sinks and the ring rises. The deformation is smooth and injective, so it tears nothing and collapses no distinct points. The ring is lifted above the cloud.",
-				L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0
-			},
-			{
-				t: "The separating plane",
-				b: "The plane appears immediately between the classes. In the new geometry, a linear cut works.",
-				L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 1, pr: 0, box: 0
-			},
-			{
-				t: "The space becomes a line",
-				b: "Points and grid move together. The inner cloud and the outer ring land on opposite sides of s = 0. A single threshold now separates them.",
-				L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0
-			}
-		];
-		function erf(x) {
-			var sign = x < 0 ? -1 : 1;
-			x = Math.abs(x);
-			var t = 1 / (1 + 0.3275911 * x);
-			var y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
-			return sign * y;
-		}
-		function gelu(z) { return 0.5 * z * (1 + erf(z / Math.SQRT2)); }
-		function activationPlot(fn, label, formula, yMin, yMax, variant) {
-			var W = 140, H = 86, padL = 10, padR = 8, padT = 8, padB = 18;
-			var x0 = -3, x1 = 3;
-			var pts = [];
-			for (var i = 0; i <= 80; i++) {
-				var z = x0 + (x1 - x0) * i / 80;
-				var v = fn(z);
-				var px = padL + (z - x0) / (x1 - x0) * (W - padL - padR);
-				var py = padT + (yMax - v) / (yMax - yMin) * (H - padT - padB);
-				pts.push((i ? "L" : "M") + px.toFixed(1) + " " + py.toFixed(1));
-			}
-			var zeroY = padT + (yMax - 0) / (yMax - yMin) * (H - padT - padB);
-			var zeroX = padL + (0 - x0) / (x1 - x0) * (W - padL - padR);
-			return '<figure class="ap ap-' + variant + '">' +
-				'<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + label + ' activation plot">' +
-				'<line x1="' + padL + '" y1="' + zeroY.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + zeroY.toFixed(1) + '" class="ap-axis"/>' +
-				'<line x1="' + zeroX.toFixed(1) + '" y1="' + padT + '" x2="' + zeroX.toFixed(1) + '" y2="' + (H - padB) + '" class="ap-axis"/>' +
-				'<path d="' + pts.join(" ") + '" class="ap-curve"/>' +
-				'<text x="' + (W - padR - 2) + '" y="' + (H - 4) + '" class="ap-label" text-anchor="end">z</text>' +
-				'</svg><figcaption><b>' + label + '</b><span>' + formula + '</span></figcaption></figure>';
-		}
-		var collapseMath = document.getElementById("collapse-math");
-		if (collapseMath && window.temml) {
-			var collapseTex = '\\begin{aligned}' +
-				'\\text{dense}_2(\\text{dense}_1(x)) &= W_2(W_1x + b_1) + b_2 \\\\' +
-				'&= (W_2W_1)x + (W_2b_1 + b_2) \\\\' +
-				'&= \\text{one dense layer}' +
-				'\\end{aligned}';
-			try { collapseMath.innerHTML = temml.renderToString(collapseTex, { displayMode: true }); } catch (e) {}
-		}
-		var activationPlots = document.getElementById("activation-plots");
-		if (activationPlots) {
-			activationPlots.innerHTML =
-				activationPlot(function (z) { return Math.max(0, z); }, "ReLU", "max(0, z)", -0.5, 3.2, "relu") +
-				activationPlot(function (z) { return 1 / (1 + Math.exp(-z)); }, "Sigmoid", "1 / (1 + e⁻ᶻ)", -0.2, 1.2, "sigmoid") +
-				activationPlot(gelu, "GELU", "z · Φ(z)", -0.6, 3.2, "gelu");
-		}
-		var curveRng = 42;
-		function curveRandom() {
-			curveRng = (curveRng * 1103515245 + 12345) & 0x7fffffff;
-			return curveRng / 0x7fffffff;
-		}
-		var curvePts = [];
-		for (var ci = 0; ci < 140; ci++) {
-			var ca = curveRandom() * 6.2832, cr = Math.sqrt(curveRandom()) * 0.40;
-			curvePts.push({ x: Math.cos(ca) * cr, y: Math.sin(ca) * cr, c: 0 });
-		}
-		for (var cj = 0; cj < 220; cj++) {
-			var ca2 = curveRandom() * 6.2832, cr2 = 0.82 + Math.sqrt(curveRandom()) * 0.26;
-			curvePts.push({ x: Math.cos(ca2) * cr2, y: Math.sin(ca2) * cr2, c: 1 });
-		}
-		function curveScore(x, y) { return (x * x + y * y) * KZ - KB - PLANE_Z; }
-		function curveLift(x, y, t) {
-			var r2 = x * x + y * y;
-			return {
-				x: x * (1 - 0.12 * t * r2),
-				y: y * (1 - 0.12 * t * r2),
-				z: (r2 * KZ - KB) * t
-			};
-		}
-		function curveEase(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-		if (curvePointsBody) {
-			curvePointsBody.innerHTML = curveExamples.map(function (ex) {
-				return '<tr class="' + (ex.c ? "cp-outer" : "cp-inner") + '">' +
-					'<td>' + ex.label + '</td>' +
-					'<td class="cp-x">' + ex.x.toFixed(2) + '</td>' +
-					'<td class="cp-y">' + ex.y.toFixed(2) + '</td>' +
-					'<td class="cp-z">0.00</td></tr>';
-			}).join("");
-		}
-		function curveFmt(v) { return Math.abs(v) < 0.005 ? "0" : v.toFixed(2); }
-		function curveUpdateTable() {
-			var step = curveSteps[curveIdx];
-			var is1D = curveIdx === curveSteps.length - 1;
-			var showZ = curveIdx >= 2 && curveIdx < curveSteps.length - 1;
-			if (curvePointsEl) {
-				curvePointsEl.classList.toggle("hide-y", is1D);
-				curvePointsEl.classList.toggle("hide-z", !showZ);
-				curvePointsEl.classList.toggle("is-hidden", curveIdx === curveSteps.length - 1);
-			}
-			if (!curvePointsBody) return;
-			curveExamples.forEach(function (ex, i) {
-				var row = curvePointsBody.rows[i];
-				if (!row) return;
-				var score = ex.x * ex.x + ex.y * ex.y;
-				var xv = is1D ? score : ex.x;
-				row.querySelector(".cp-x").textContent = curveFmt(xv);
-				row.querySelector(".cp-y").textContent = curveFmt(ex.y);
-				row.querySelector(".cp-z").textContent = curveFmt(score * (step.L || 0));
-			});
-		}
-		function curveParams() {
-			var raw = TM.clamp((performance.now() - curveT0) / curveDur, 0, 1);
-			var u = curveEase(raw);
-			var a = curveSteps[curvePrev], b = curveSteps[curveIdx];
-			function pick(key) { return TM.lerp(a[key] || 0, b[key] || 0, u); }
-			return {
-				L: pick("L"), A: pick("A"), B: pick("B"), P: pick("P"),
-				pl: pick("pl"), sq: pick("sq"), fail: pick("fail"),
-				lab: pick("lab"), pr: pick("pr"), box: pick("box")
-			};
-		}
-		function drawCurve(ctx, W, H) {
-			var c = TM.colors();
-			var p = curveParams();
-			var dark = c.dark;
-			var S0 = Math.min(W, H) * 0.30;
-			var camA = p.A + curveDragA;
-			var camB = p.B + curveDragB;
-			var flat = 1 - TM.clamp(Math.abs(camB) / 1.5708, 0, 1);
-			var FIT = TM.lerp(1.0, 0.34, flat);
-			var YOFF = TM.lerp(0, H * 0.10, flat);
-			var AX_Y = H * 0.80, AX_L = W / 2 - S0 * 1.05, AX_R = W / 2 + S0 * 1.05;
-			function proj(pt) {
-				var x = pt.x * Math.cos(camA) - pt.y * Math.sin(camA);
-				var y = pt.x * Math.sin(camA) + pt.y * Math.cos(camA);
-				var y2 = -y * Math.sin(camB) + pt.z * Math.cos(camB);
-				var z2 = y * Math.cos(camB) + pt.z * Math.sin(camB);
-				var d = 4.6;
-				var k = p.P < 0.02 ? 1 : d / (d + z2 * 0.80 * p.P);
-				return { X: W / 2 + x * S0 * FIT * k, Y: H / 2 - y2 * S0 * FIT * k + YOFF, d: z2, k: k };
-			}
-			function sx(s) {
-				return AX_L + (AX_R - AX_L) * TM.clamp((s - SMIN) / (SMAX - SMIN), 0, 1);
-			}
-			function warp(x, y, L, t) {
-				var P = proj(curveLift(x, y, L));
-				if (t < 0.0005) return P;
-				var tx = sx(curveScore(x, y)), ty = AX_Y - 46 * (1 - t);
-				var hop = Math.sin(t * Math.PI) * 34;
-				return { X: TM.lerp(P.X, tx, t), Y: TM.lerp(P.Y, ty, t) - hop, k: TM.lerp(P.k, 1, t) };
-			}
-			ctx.clearRect(0, 0, W, H);
-
-			if (p.box > 0.01) {
-				var ZT = 1.35;
-				ctx.globalAlpha = p.box * 0.85;
-				ctx.strokeStyle = c.muted;
-				ctx.lineWidth = 1.6;
-				var o = proj({ x: 0, y: 0, z: 0 }), tp = proj({ x: 0, y: 0, z: ZT });
-				ctx.beginPath(); ctx.moveTo(o.X, o.Y); ctx.lineTo(tp.X, tp.Y); ctx.stroke();
-				ctx.fillStyle = c.muted;
-				ctx.beginPath();
-				ctx.moveTo(tp.X, tp.Y - 1);
-				ctx.lineTo(tp.X - 4.5, tp.Y + 11);
-				ctx.lineTo(tp.X + 4.5, tp.Y + 11);
-				ctx.closePath(); ctx.fill();
-				ctx.font = "italic 15px Georgia, serif";
-				ctx.fillText("z", tp.X + 12, tp.Y + 5);
-				ctx.globalAlpha = 1;
-			}
-
-			if (p.pr > 0.01) {
-				ctx.globalAlpha = p.pr;
-				ctx.strokeStyle = c.muted;
-				ctx.lineWidth = 1.6;
-				ctx.beginPath(); ctx.moveTo(AX_L, AX_Y); ctx.lineTo(AX_R, AX_Y); ctx.stroke();
-				for (var ti = 0; ti <= 10; ti++) {
-					var TX = TM.lerp(AX_L, AX_R, ti / 10);
-					ctx.beginPath(); ctx.moveTo(TX, AX_Y - 4); ctx.lineTo(TX, AX_Y + 4); ctx.stroke();
-				}
-				var zero = sx(0);
-				ctx.strokeStyle = c.gold;
-				ctx.lineWidth = 2.6;
-				ctx.beginPath(); ctx.moveTo(zero, AX_Y - 36); ctx.lineTo(zero, AX_Y + 36); ctx.stroke();
-				ctx.textAlign = "center";
-				ctx.fillStyle = c.gold;
-				ctx.font = "13px Georgia, serif";
-				ctx.fillText("s = 0", zero, AX_Y + 56);
-				ctx.font = "600 12px Barlow, system-ui, sans-serif";
-				ctx.fillStyle = c.coral;
-				ctx.fillText("s < 0 · inner core", TM.lerp(AX_L, zero, 0.42), AX_Y + 56);
-				ctx.fillStyle = c.sky;
-				ctx.fillText("s > 0 · outer ring", TM.lerp(zero, AX_R, 0.58), AX_Y + 56);
-				ctx.textAlign = "left";
-				ctx.globalAlpha = 1;
-			}
-
-			var gA = (0.22 + 0.24 * p.L) * (1 - p.pr * 0.35);
-			ctx.strokeStyle = dark ? "rgba(148,163,184," + gA + ")" : "rgba(100,116,139," + gA + ")";
-			ctx.lineWidth = 1;
-			var N = 14, EXT = 1.12, RES = 64;
-			for (var gi = 0; gi <= N; gi++) {
-				var gv = -EXT + 2 * EXT * gi / N;
-				for (var sw = 0; sw < 2; sw++) {
-					ctx.beginPath();
-					for (var gj = 0; gj <= RES; gj++) {
-						var gu = -EXT + 2 * EXT * gj / RES;
-						var q = warp(sw ? gv : gu, sw ? gu : gv, p.L, p.pr);
-						if (gj) ctx.lineTo(q.X, q.Y); else ctx.moveTo(q.X, q.Y);
-					}
-					ctx.stroke();
-				}
-			}
-
-			if (p.fail > 0.01) {
-				ctx.globalAlpha = p.fail * 0.7;
-				ctx.lineWidth = 1.6;
-				ctx.strokeStyle = c.muted;
-				ctx.setLineDash([5, 5]);
-				for (var fk = 0; fk < 5; fk++) {
-					var fa = fk * 0.63 + 0.2;
-					var fp = proj({ x: Math.cos(fa) * -1.2, y: Math.sin(fa) * -1.2, z: 0 });
-					var fq = proj({ x: Math.cos(fa) * 1.2, y: Math.sin(fa) * 1.2, z: 0 });
-					ctx.beginPath(); ctx.moveTo(fp.X, fp.Y); ctx.lineTo(fq.X, fq.Y); ctx.stroke();
-				}
-				ctx.setLineDash([]);
-				ctx.globalAlpha = 1;
-			}
-
-			var items = [];
-			curvePts.forEach(function (pt) {
-				var P = warp(pt.x, pt.y, p.L, p.pr);
-				var dep = proj(curveLift(pt.x, pt.y, p.L)).d;
-				items.push({ d: dep, s: P, c: pt.c });
-			});
-
-			if (p.pl > 0.01) {
-				var PE = 0.92, PM = 7, rows = [];
-				for (var pi = 0; pi <= PM; pi++) {
-					var yv = (-PE + 2 * PE * pi / PM) * (1 - p.sq);
-					var row = [];
-					for (var pj = 0; pj <= PM; pj++) {
-						row.push(proj({ x: -PE + 2 * PE * pj / PM, y: yv, z: PLANE_Z }));
-					}
-					rows.push(row);
-				}
-				items.push({ d: PLANE_Z, type: "plane", rows: rows, a: p.pl, sq: p.sq });
-			}
-
-			items.sort(function (a, b) { return a.d - b.d; });
-			items.forEach(function (it) {
-				if (it.type === "plane") {
-					var R = it.rows, M = R.length - 1;
-					ctx.globalAlpha = it.a * 0.17 * (1 - it.sq);
-					ctx.fillStyle = c.gold;
-					ctx.beginPath();
-					ctx.moveTo(R[0][0].X, R[0][0].Y);
-					for (var pj2 = 1; pj2 <= M; pj2++) ctx.lineTo(R[0][pj2].X, R[0][pj2].Y);
-					for (var pj3 = M; pj3 >= 0; pj3--) ctx.lineTo(R[M][pj3].X, R[M][pj3].Y);
-					ctx.closePath(); ctx.fill();
-					ctx.globalAlpha = it.a * 0.45 * (1 - it.sq);
-					ctx.strokeStyle = c.gold;
-					ctx.lineWidth = 1;
-					for (var ri = 0; ri <= M; ri++) {
-						ctx.beginPath();
-						R[ri].forEach(function (rp, rj) { if (rj) ctx.lineTo(rp.X, rp.Y); else ctx.moveTo(rp.X, rp.Y); });
-						ctx.stroke();
-					}
-					for (var rj2 = 0; rj2 <= M; rj2++) {
-						ctx.beginPath();
-						for (var ri2 = 0; ri2 <= M; ri2++) {
-							var rp2 = R[ri2][rj2];
-							if (ri2) ctx.lineTo(rp2.X, rp2.Y); else ctx.moveTo(rp2.X, rp2.Y);
-						}
-						ctx.stroke();
-					}
-					var mid = R[Math.floor(M / 2)];
-					ctx.globalAlpha = it.a * (0.45 + 0.55 * it.sq);
-					ctx.lineWidth = 1.4 + 2.4 * it.sq;
-					ctx.strokeStyle = c.gold;
-					ctx.beginPath();
-					mid.forEach(function (mp, mi) { if (mi) ctx.lineTo(mp.X, mp.Y); else ctx.moveTo(mp.X, mp.Y); });
-					ctx.stroke();
-					ctx.globalAlpha = 1;
-				} else {
-					var rr = (2.8 + 0.7 * it.s.k) * it.s.k;
-					ctx.beginPath();
-					ctx.arc(it.s.X, it.s.Y, rr, 0, Math.PI * 2);
-					ctx.fillStyle = it.c ? c.sky : c.coral;
-					ctx.globalAlpha = 0.55 + 0.45 * it.s.k;
-					ctx.fill();
-					ctx.globalAlpha = 1;
-				}
-			});
-
-			if (p.lab > 0.01) {
-				ctx.globalAlpha = p.lab;
-				ctx.font = "600 13px Barlow, system-ui, sans-serif";
-				ctx.fillStyle = c.sky;
-				ctx.fillText("outer ring", W * 0.76, H * 0.30);
-				ctx.fillStyle = c.coral;
-				ctx.fillText("inner core", W * 0.76, H * 0.38);
-				ctx.fillStyle = c.gold;
-				ctx.font = "13px Georgia, serif";
-				ctx.fillText("separating plane", W * 0.76, H * 0.34);
-				ctx.globalAlpha = 1;
-			}
-		}
-		if (curveCanvas) {
-			curveApi = TM.initCanvas(curveCanvas, drawCurve);
-			var curveDots = [];
-			if (curveDotsEl) {
-				curveSteps.forEach(function (s, i) {
-					var d = document.createElement("span");
-					d.className = "curve-dot" + (i === 0 ? " is-on" : "");
-					curveDotsEl.appendChild(d);
-					curveDots.push(d);
-				});
-			}
-			function curveUpdateUI() {
-				var s = curveSteps[curveIdx];
-				if (curveStepEl) curveStepEl.textContent = (curveIdx + 1) + " / " + curveSteps.length;
-				if (curveTitleEl) curveTitleEl.textContent = s.t;
-				if (curveBodyEl) curveBodyEl.textContent = s.b;
-				curveDots.forEach(function (d, i) { d.classList.toggle("is-on", i === curveIdx); });
-				if (curvePrevBtn) curvePrevBtn.disabled = curveIdx === 0;
-				if (curveNextBtn) curveNextBtn.textContent = curveIdx === curveSteps.length - 1 ? "Restart ↺" : "Next →";
-				curveUpdateTable();
-			}
-			function curveLoop() {
-				if (curveApi) curveApi.redraw();
-				if (performance.now() - curveT0 < curveDur + 120) requestAnimationFrame(curveLoop);
-			}
-			function curveSet(i, animate) {
-				i = TM.clamp(i, 0, curveSteps.length - 1);
-				if (i === curveIdx && animate !== false) return;
-				curvePrev = curveIdx;
-				curveIdx = i;
-				curveT0 = performance.now() - (animate === false ? curveDur + 200 : 0);
-				curveDragA = 0;
-				curveDragB = 0;
-				curveUpdateUI();
-				if (animate === false) {
-					if (curveApi) curveApi.redraw();
-				} else {
-					curveLoop();
-				}
-			}
-			if (curvePrevBtn) curvePrevBtn.addEventListener("click", function () { curveSet(curveIdx - 1, true); });
-			if (curveNextBtn) curveNextBtn.addEventListener("click", function () { curveSet(curveIdx >= curveSteps.length - 1 ? 0 : curveIdx + 1, true); });
-						if (curveResetBtn) curveResetBtn.addEventListener("click", function () { curveSet(0, true); });
-			curveCanvas.addEventListener("pointerdown", function (e) {
-				curveDragging = true;
-				curveLastX = e.clientX;
-				curveLastY = e.clientY;
-				curveCanvas.classList.add("is-dragging");
-				if (curveCanvas.setPointerCapture) curveCanvas.setPointerCapture(e.pointerId);
-			});
-			curveCanvas.addEventListener("pointermove", function (e) {
-				if (!curveDragging) return;
-				curveDragA += (e.clientX - curveLastX) * 0.008;
-				curveDragB = TM.clamp(curveDragB - (e.clientY - curveLastY) * 0.006, -0.9, 0.9);
-				curveLastX = e.clientX;
-				curveLastY = e.clientY;
-				if (curveApi) curveApi.redraw();
-			});
-			function curveEndDrag(e) {
-				if (!curveDragging) return;
-				curveDragging = false;
-				curveCanvas.classList.remove("is-dragging");
-				if (curveCanvas.releasePointerCapture && e && e.pointerId != null) {
-					try { curveCanvas.releasePointerCapture(e.pointerId); } catch (err) {}
-				}
-			}
-			curveCanvas.addEventListener("pointerup", curveEndDrag);
-			curveCanvas.addEventListener("pointercancel", curveEndDrag);
-			curveCanvas.addEventListener("pointerleave", curveEndDrag);
-			curveUpdateUI();
-		}
 
 		window.addEventListener("tm:theme", function () {
 			if (api) api.redraw();
 			if (embApi) embApi.redraw();
 			if (posApi) posApi.redraw();
 			if (attApi) attApi.redraw();
-			if (curveApi) curveApi.redraw();
 		});
 	})();
 	</script>

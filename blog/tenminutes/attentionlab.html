@@ -188,6 +188,16 @@
 								coreference; the final output projection mixes them back together.
 							</p>
 							<p>
+								Think of each head as having a fixed <strong>budget of attention</strong>: for
+								one query token, its softmax row sums to exactly 1. If the head gives 0.8 to
+								one token, only 0.2 is left for every other token. It cannot look strongly at
+								everything at once. That is why multiple heads exist: each head gets its own
+								budget, its own query/key/value projections, and its own idea of what matters.
+								One head can spend most of its budget on coreference, another on syntax, another
+								on nearby punctuation. The budgets are separate, so heads do not compete with
+								each other — but inside one head, they do.
+							</p>
+							<p>
 								This is <strong>not</strong> redundancy. Studies of BERT find that a small
 								number of heads do most of the work, some specialize in dependency relations,
 								and many can be pruned with little loss. But no single head is a clean parser,
@@ -202,6 +212,39 @@
 							<div class="keypoint"><b>Context window</b><span>Attention can only see tokens inside the window. Memory and compute grow quadratically with window size.</span></div>
 							<div class="keypoint"><b>KV cache</b><span>During generation, past keys and values are cached so each new query need not recompute the whole prefix.</span></div>
 						</div>
+
+						<div class="demo demo--paper" data-demo="headbudget">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">One head, one budget <span>· demo 02</span></p>
+									<p class="demo-sub">Each head has exactly 1.00 to spend per query. Click a token to move 0.20 of the budget to it; every other token gives up its share. Switch heads and watch a different token win.</p>
+								</div>
+								<span class="demo-badge">zero-sum row</span>
+							</div>
+							<div class="demo-body">
+								<div class="chip-row" role="group" aria-label="Attention heads">
+									<button class="chip is-on" type="button" data-hb-head="coref">Coreference</button>
+									<button class="chip" type="button" data-hb-head="syntax">Syntax</button>
+									<button class="chip" type="button" data-hb-head="meaning">Meaning</button>
+								</div>
+								<div class="dist-bars" data-hb-bars style="margin-top:12px"></div>
+								<div class="demo-controls">
+									<span style="font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tm-muted)">Budget</span>
+									<div class="meter" style="flex:1 1 160px"><span style="width:100%"></span></div>
+									<b data-hb-budget style="font-family:var(--tm-mono);font-size:.78rem">1.00 / 1.00</b>
+									<button class="btn-demo" type="button" data-hb-reset>Reset head</button>
+									<button class="btn-demo" type="button" data-hb-spread>Spread evenly</button>
+								</div>
+								<div class="demo-readout">
+									<div><b>Head</b><span data-hb-head-name>Coreference</span></div>
+									<div><b>Top token</b><span data-hb-top>Maria</span></div>
+									<div><b>Concentration</b><span data-hb-conc>—</span></div>
+								</div>
+								<p class="demo-hint" data-hb-note></p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>A head cannot attend strongly to everything: the row is a fixed budget. Multi-head attention works because each head brings a separate budget and a separate question.</span></div>
+						</div>
+
 						<div class="prose">
 							<p>
 								Two beautiful connections are worth knowing. The attention operation is a
@@ -268,6 +311,16 @@
 
 
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="evaluation.html"><span class="ln-label">← Previous · Day 17</span><span class="ln-title">Measuring What It Can Do</span></a>
+							<a href="contextwindows.html"><span class="ln-label">Next · Day 19 →</span><span class="ln-title">The Memory It Can Hold</span></a>
+						</nav>
+						<p class="lesson-footer">Day 18 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>
@@ -275,6 +328,7 @@
 
 
 	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
 	<script>
 	(function () {
 		"use strict";

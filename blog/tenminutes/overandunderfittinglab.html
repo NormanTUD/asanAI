@@ -36,8 +36,8 @@
 						<div class="section-kicker"><span class="sk-num">02</span> How to tell the difference</div>
 						<h2 class="section-title">Test on what it has not seen.</h2>
 						<div class="prose">
-							<p>Measure performance on data the model did not train on. If training improves while validation gets worse, you are overfitting. If both stay bad, you are underfitting.</p>
-							<p>The fix is not always 'more data' or 'a bigger model'. It can be a simpler model, regularization, early stopping, or a training set that better represents the world. The goal is not to fit the past; it is to generalize to the future.</p>
+							<p>Measure performance on data the model did not train on. If training improves while validation gets worse, you are overfitting. If both stay bad, you are underfitting. Interpolation — a test point between known examples — is the easy case. Extrapolation, outside the training range, is where a low training error can hide a confident failure.</p>
+							<p>The fix is not always “more data” or “a bigger model”. It can be a simpler model, regularization, early stopping, or a training set that better represents the world. More data helps only if it is representative; weight decay, dropout, and early stopping make the model work harder to fit the same points. And very large networks often generalize well despite having enough parameters to memorize — the so-called double-descent curve (<a href="https://arxiv.org/abs/1803.08785" rel="noopener">Belkin et al., 2019</a>). The classical trade-off is a first map, not the whole territory. And a low test error on one dataset is not a guarantee: a model trained on one hospital's scans can fail at another hospital with different machines. Distribution shift is often invisible until deployment, so test the cases you actually care about.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Underfitting</b><span>Too simple: the model misses the pattern.</span></div>
@@ -47,15 +47,6 @@
 						</div>
 					</section>
 
-					<section class="section-block" id="extra">
-						<div class="section-kicker"><span class="sk-num">03</span> The extrapolation trap</div>
-						<h2 class="section-title">Outside the data.</h2>
-						<div class="prose">
-							<p>Interpolation is the easy case: the test point lies between examples the model has seen. Extrapolation is the hard case: the test point lies outside the range of the training data. A model can look excellent inside its range and fail outside it, even when the training error is low.</p>
-							<p>The bias-variance trade-off explains part of this. A simple model has high bias: it misses the pattern. A flexible model has high variance: it follows the noise. Regularisation, early stopping, more data, and a simpler model all try to move the balance toward generalisation.</p>
-							<p>The practical test is always held-out data, ideally from a distribution that resembles the real world. A benchmark is a proxy; a low test error is not a guarantee that the model will behave well on the next surprise.</p>
-						</div>
-					</section>
 
 					<div class="demo demo--paper" data-demo="polyfit">
 						<div class="demo-head">
@@ -88,44 +79,12 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Watch the gap between training and test error: it grows when the curve starts memorizing.</span></div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">The Bias–Variance Tradeoff</h2>
-						<div class="prose">
-							<p>As model complexity increases, bias falls but variance rises. The sweet spot, the lowest total error, lies somewhere in between. The idea here is to let you <em>see</em> that tradeoff in action.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Underfitting vs. Overfitting</h2>
-						<div class="prose">
-							<p><strong>Key insight:</strong> Watch the <strong>two MSE numbers</strong> as you increase the degree. When training MSE keeps falling but test MSE starts rising, the model has crossed from learning the signal to memorizing the noise. This gap between training and test performance is the most reliable diagnostic for overfitting in practice.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Practical notes</div>
-						<h2 class="section-title">More signal, less noise.</h2>
-						<div class="prose">
-							<p>More data helps if it is representative. Regularisation, such as weight decay or dropout, discourages the model from relying on brittle noise: weight decay penalizes large parameters (<a href="https://homepages.math.uic.edu/~lreyzin/papers/ridge.pdf" rel="noopener">Hoerl &amp; Kennard, 1970</a>), dropout randomly removes units during training so no single path becomes indispensable (<a href="https://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf?utm_content=buffer79b4" rel="noopener">Srivastava et al., 2014</a>), and early stopping halts before the model has time to memorize. All three are ways of making the model work harder to fit the same training data.</p>
-							<p>A simpler model can generalise better; a bigger model can overfit. The bias-variance trade-off is not a law that tells you which one to choose; it is a way to reason about the failure. Bias is the error from a model that is too rigid to represent the rule; variance is the error from a model that is so sensitive to the sample that a different draw would produce a very different fit.</p>
-							<p>There is a modern wrinkle worth knowing: very large networks often generalise well even though they have enough parameters to memorize the training set. The classical curve says error should rise after some point; in practice it can fall again — the so-called double-descent phenomenon (<a href="https://arxiv.org/abs/1803.08785" rel="noopener">Belkin et al., 2019</a>). The explanations involve implicit regularization, the geometry of overparameterized models, and the fact that stochastic gradient descent prefers “simple” solutions. The practical lesson is unchanged: held-out data decides, and the classical trade-off is a first map, not the whole territory.</p>
-							<p>The best test is a held-out set that resembles the real world, plus a stress test on the cases you care about. A perfect training score is not the goal.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">The fine print</div>
-						<h2 class="section-title">Where it still breaks.</h2>
-						<div class="prose">
-							<p>A low test error on one dataset is not a guarantee of generalisation. If the real world differs from the test set, the model can fail in ways the benchmark never sees. Distribution shift, rare cases, and adversarial inputs are the hard part. A model trained on one hospital's scans can fail at another hospital with different machines, even though both sets look like “medical images” to a human. The shift is often invisible until deployment.</p>
-							<p>The best practice is to test on the cases you care about, not only on a random split. A model that is excellent on average can still be dangerous on the edge. The gap between training and deployment is the gap that matters.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -134,6 +93,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="inceptionism.html"><span class="ln-label">← Previous · Day 8</span><span class="ln-title">What the Network Dreams</span></a>
+							<a href="deeplearninglab.html"><span class="ln-label">Next · Day 10 →</span><span class="ln-title">Why Depth Helps</span></a>
+						</nav>
+						<p class="lesson-footer">Day 9 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>

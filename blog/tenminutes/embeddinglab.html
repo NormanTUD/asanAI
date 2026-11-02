@@ -300,6 +300,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="tokenizerlab.html"><span class="ln-label">← Previous · Day 4</span><span class="ln-title">Chopping Text into Tokens</span></a>
+							<a href="hallucinations.html"><span class="ln-label">Next · Day 6 →</span><span class="ln-title">When the Model Does Not Know</span></a>
+						</nav>
+						<p class="lesson-footer">Day 5 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>
@@ -446,7 +456,7 @@
 				ctx.fillStyle = word.c;
 				ctx.fill();
 				ctx.lineWidth = isSel ? 2.5 : 1.5;
-				ctx.strokeStyle = isSel ? "#f4fbf7" : (c.dark ? "rgba(4,30,40,.8)" : "rgba(255,253,247,.9)");
+				ctx.strokeStyle = isSel ? c.card : (c.dark ? "rgba(4,30,40,.8)" : "rgba(255,253,247,.9)");
 				ctx.stroke();
 				ctx.font = (isSel ? "700 " : "600 ") + "11px Barlow, system-ui, sans-serif";
 				ctx.textAlign = "center";

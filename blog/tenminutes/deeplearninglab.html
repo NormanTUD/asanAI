@@ -46,6 +46,31 @@
 							<div class="keypoint"><b>Nonlinearity</b><span>Without a bend, depth collapses into one linear map.</span></div>
 							<div class="keypoint"><b>Reuse</b><span>Depth saves the network from relearning the same feature.</span></div>
 						</div>
+
+						<div class="demo demo--paper" data-demo="bend" style="margin-top:18px">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">A layer bends the space <span>· demo</span></p>
+									<p class="demo-sub">Step through seven stages: an inseparable ring becomes a bowl, and then one flat cut separates the classes.</p>
+								</div>
+								<span class="demo-badge">drag / step</span>
+							</div>
+							<div class="demo-body">
+								<div class="bend-copy">
+									<div class="bend-title" data-bend-title>Two classes, no straight line</div>
+									<p class="bend-body" data-bend-body>The coral core sits inside the blue ring. No single straight cut in this plane separates them.</p>
+								</div>
+								<canvas class="demo-canvas demo-canvas--lg" data-bend-canvas aria-label="A point cloud being lifted into a bowl until a flat plane separates the two classes"></canvas>
+								<div class="bend-controls">
+									<button class="btn-demo" type="button" data-bend-prev>← Prev</button>
+									<div class="bend-dots" data-bend-dots aria-hidden="true"></div>
+									<button class="btn-demo" type="button" data-bend-next>Next →</button>
+									<button class="btn-demo" type="button" data-bend-reset>Reset</button>
+									<span class="bend-count" data-bend-count>1 / 7</span>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The layer changes the coordinate system. A cut that was impossible becomes a threshold — that is what depth buys.</span></div>
+						</div>
 					</section>
 
 					<section class="section-block" id="extra">
@@ -82,51 +107,9 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Each layer reuses the features of the layer below.</span></div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Why Depth Beats Width: Reuse</h2>
-						<div class="prose">
-							<p>The mechanical reason depth is so effective is <strong>reuse</strong>. A sub-result computed by an early layer is reused by everything downstream. Depth turns "compute, throw away, recompute" into "compute once, reuse everywhere."</p>
-							<p>This matches how <strong>the real world is structured</strong>: pixels → edges → parts → objects; sounds → phonemes → words → meaning. Deep networks are compact for the same reason: the world itself is compositional.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">How the Knowledge Gets Into the Weights</h2>
-						<div class="prose">
-							<p>The clever part is that backprop <strong>reuses intermediate results</strong>, walking the error signal <em>backward</em> through the network. What would naively require recomputing every path separately becomes a single backward pass whose cost is roughly the same order as the forward pass. That is the algorithmic reason deep networks are trainable at all.</p>
-							<p>Repeat millions of times. The <strong>trajectory of the weights through weight-space</strong> is literally what writes the knowledge into the matrices. There is no separate memory — the knowledge <em>is</em> the final numbers. This is also why “the model knows X” is a compressed way of speaking: nothing is stored as a sentence or a fact; the behaviour is a property of the whole matrix.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">Why Deep Learning Works (And Why It Works <em>So</em> Well)</h2>
-						<div class="prose">
-							<p>Here's the mechanical answer to why "a big pile of matrix multiplications" ends up being able to translate languages, recognize faces, and play chess better than any human. It comes down to four ingredients working together: <strong>depth</strong>, <strong>nonlinearity</strong>, <strong>backpropagation</strong>, and the <strong>optimizer's hidden preferences</strong>.</p>
-							<p><strong>Depth</strong> supplies composition: later layers reuse the features earlier layers built, so the network can represent a hierarchy without relearning each level. <strong>Nonlinearity</strong> is what keeps the composition from collapsing into one affine map. <strong>Backpropagation</strong> assigns credit efficiently: it computes how each of the millions of parameters contributed to the error, at roughly the cost of one extra forward pass.</p>
-							<p>The <strong>optimizer's preferences</strong> are subtler: stochastic gradient descent does not merely find any fit; it tends to prefer solutions that are flat and simple in a way that correlates with generalisation. None of the four is sufficient alone. Depth without nonlinearity is linear; nonlinearity without credit assignment cannot learn; credit assignment without an optimizer that generalises can memorize.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">Residual Connections: How We Actually Train <em>Really</em> Deep Networks</h2>
-						<div class="prose">
-							<p>There's a practical problem with stacking many layers. When backprop sends the error signal backward through, say, 100 layers, it gets multiplied by many small numbers along the way. The signal often <strong>shrinks to nearly zero</strong> (the "vanishing gradient" problem) or occasionally explodes. Early layers stop learning because they receive no meaningful feedback.</p>
-							<p>The residual connection is the fix. Instead of forcing the signal through the whole transformation, the layer computes an update and adds it to its input: <strong>x → x + f(x)</strong>. The identity path gives the gradient a direct route back, so even if <em>f</em> is badly scaled, the signal can still reach the early layers. Normalisation keeps the activations in a healthy range, and careful initialisation keeps the variance from compounding. This is why “depth” in practice means residual connections and normalisation, not just more matrix multiplications.</p>
-						</div>
-					</section>
-
-					<section class="section-block">
-						<div class="section-kicker">The fine print</div>
-						<h2 class="section-title">What depth costs.</h2>
-						<div class="prose">
-							<p>Deep networks are harder to train. Gradients can vanish or explode, activations can drift, and the loss surface can be unfriendly. Residual connections, normalisation, careful initialisation, and learning-rate schedules are not decoration; they are what make depth practical.</p>
-							<p>Depth also costs compute and data. A deeper model is not automatically better; it needs enough signal to learn the hierarchy. The architecture is powerful, but the optimisation and the data are part of the result.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="residual">
 						<div class="section-kicker">The residual stream</div>
@@ -214,6 +197,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="overandunderfittinglab.html"><span class="ln-label">← Previous · Day 9</span><span class="ln-title">Pattern or Memorization?</span></a>
+							<a href="activationlab.html"><span class="ln-label">Next · Day 11 →</span><span class="ln-title">Why Networks Can Bend</span></a>
+						</nav>
+						<p class="lesson-footer">Day 10 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>

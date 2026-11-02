@@ -131,51 +131,10 @@ Answer:</pre>
 						<div class="demo-insight"><b>Takeaway</b><span>Retrieval is nearest-neighbour search in an embedding space. If the geometry is wrong, the prompt contains the wrong world.</span></div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Making RAG work</h2>
-						<div class="prose">
-							<p>RAG mitigates the “lost in the middle” problem (<a href="https://arxiv.org/abs/2307.03172" rel="noopener">Liu et al., 2023</a>) by shrinking the context to a handful of chunks, but it does not abolish it: a relevant chunk placed in the middle of even a short retrieved set can be underused, so ordering matters. Put the strongest evidence first or last, and keep the set small enough that the model can actually weigh it.</p>
-							<p>When RAG fails, the first diagnostic question is where. If the answer is not in the retrieved chunks, it is a <strong>retrieval failure</strong>: fix the chunking, the embedding model, the index, or the query. If the answer is in the chunks and the model still gets it wrong, it is a <strong>generation failure</strong>: fix the prompt, the ordering, or the model. Treating every bad answer as a model problem wastes time on the wrong half of the pipeline.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Retrieval, in Depth</h2>
-						<div class="prose">
-							<p>The happy path — embed the corpus, retrieve the nearest chunks, hand them to the model — is what the sections above walk (see also Semantic search). This deeper half is what happens in practice, and it is mostly about the parts the happy path hides. First, <strong>how you cut the corpus into chunks</strong> — the single highest-leverage, least-discussed knob. Second, <strong>how you combine keyword and semantic search</strong>. Third, <strong>how you rerank</strong> with a second, more expensive model. And fourth — the half the demos never show — <strong>why retrieval-augmented generation so often underperforms</strong>, and how to find out whether <em>your</em> failure is in retrieval or generation.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">RAG and Long Context Windows</h2>
-						<div class="prose">
-							<p>In-context learning (ICL) relies on whatever the user manually puts in the prompt. RAG <strong>automates the selection</strong> using vector search. The LLM itself does not know the difference; it just sees tokens in its context window either way. The magic of RAG is in the retrieval step <em>before</em> the LLM runs. That also means RAG cannot create knowledge that is absent from the corpus: it can only put the right page in front of the model.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">The RAG Pipeline, Step by Step</h2>
-						<div class="prose">
-							<p><strong>Step 1, Chunk the documents.</strong> Split each source (PDF, webpage, database row) into small, overlapping passages, typically 200–500 tokens. Overlap ensures no information falls between the cracks.</p>
-							<p><strong>Step 2, Embed and index.</strong> Run each chunk through the embedding model and store the vector together with the text and its metadata (source, date, section). A vector database is the system that holds those vectors and can return the nearest ones quickly; it is a search index, not a second model. The common index is HNSW (<a href="https://arxiv.org/abs/1603.09320" rel="noopener">Malkov &amp; Yashunin, 2018</a>).</p>
-							<p><strong>Step 3, Embed the query.</strong> Use the same embedding model, or the vectors live in different spaces and the comparison is meaningless.</p>
-							<p><strong>Step 4, Retrieve.</strong> Score the query against the index, usually with cosine similarity, and take the top-k chunks or everything above a threshold. Hybrid search adds keyword matching for names and exact terms.</p>
-							<p><strong>Step 5, Rerank (optional).</strong> A cross-encoder or a stronger model re-scores the shortlist by reading the query and the passage together. It is slower than vector search and usually more accurate.</p>
-							<p><strong>Step 6, Generate.</strong> Insert the selected passages into the prompt, instruct the model to answer from them, and ask for citations. The model is now doing reading comprehension, not recall.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">RAG vs. In-Context Learning (ICL)</h2>
-						<div class="prose">
-							<p><strong>In-Context Learning</strong> is when you put examples or instructions directly in the prompt and the LLM “learns” the task on the fly, with no weight updates, just pattern-matching over the provided tokens. ICL and RAG are complementary: ICL shows the model the task, RAG supplies the facts. A good prompt often uses both — a few worked examples plus the relevant passages.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="takeaway">
 						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
@@ -187,6 +146,16 @@ Answer:</pre>
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="finetuninglab.html"><span class="ln-label">← Previous · Day 24</span><span class="ln-title">Turning a Predictor into an Assistant</span></a>
+							<a href="promptengineering.html"><span class="ln-label">Next · Day 26 →</span><span class="ln-title">The Craft of Asking</span></a>
+						</nav>
+						<p class="lesson-footer">Day 25 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>

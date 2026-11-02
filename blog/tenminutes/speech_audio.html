@@ -37,7 +37,7 @@
 						<h2 class="section-title">The same machinery, a different front end.</h2>
 						<div class="prose">
 							<p>Speech recognition maps audio tokens to text tokens. Text-to-speech goes the other way. Music generation predicts audio tokens with a model that has learned long-range structure.</p>
-							<p>The hard part is not only the architecture. Audio is noisy, speakers vary, and timing matters. The model needs a representation that preserves the information people actually use.</p>
+							<p>The hard part is not only the architecture. Audio is noisy, speakers vary, and timing matters. Generated speech can sound completely natural and still mispronounce the one word that matters, because the model predicts acoustics rather than reading a dictionary. Evaluation has to match the task: word error rate for transcription, intelligibility and naturalness for speech, musical structure for generation.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Waveform</b><span>Audio is a dense one-dimensional signal.</span></div>
@@ -47,15 +47,6 @@
 						</div>
 					</section>
 
-					<section class="section-block" id="extra">
-						<div class="section-kicker"><span class="sk-num">03</span> Why audio is hard</div>
-						<h2 class="section-title">Noise, timing, and meaning.</h2>
-						<div class="prose">
-							<p>Audio is noisy. A waveform contains the speaker, the room, the microphone, and the background at the same time. The model has to separate what matters from what does not. Speakers vary in pitch, accent, and speed, and the same word can sound different every time.</p>
-							<p>Timing matters. Speech is not a bag of sounds; the order and duration carry meaning. Music adds long-range structure: rhythm, harmony, and repetition. A model that predicts the next audio token has to learn structure at several timescales.</p>
-							<p>Speech recognition, text-to-speech, and music generation have different objectives and different evaluations. Intelligibility, naturalness, and meaning are not the same thing. The representation has to preserve the information people actually use.</p>
-						</div>
-					</section>
 
 					<figure>
 						<img src="../image.php?f=spectrogram_speech_open.png&amp;w=900&amp;q=82" alt="Spectrogram of the spoken word open" loading="lazy">
@@ -84,66 +75,15 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Once sound is a sequence of tokens, the same transformer machinery can listen, transcribe, and generate.</span></div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Speech Recognition: Whisper and Friends</h2>
-						<div class="prose">
-							<p>The model is trained with a multi-task objective: transcribe, translate to English, detect language, timestamp. Whisper was trained on 680,000 hours of weakly supervised audio; the 2023 large-v3 checkpoint of the model described by <a href="https://arxiv.org/abs/2212.04356" rel="noopener">Radford et al. (2022)</a> achieves under 3% word error rate on clean English and ~10% on noisy multilingual. Word error rate is the edit distance between the transcript and the reference, divided by the number of reference words: substitutions, insertions, and deletions all count. A 3% WER still means roughly one wrong word in thirty-three, which matters for names, numbers, and anything legally binding.</p>
-							<p><strong>Conformer</strong> (<a href="https://arxiv.org/abs/2005.08100" rel="noopener">Gulati et al., 2020</a>) is the dominant architecture for streaming ASR. It combines convolutions (for local patterns) with self-attention (for global context) in each block. USM (Google, 2023) and SeamlessM4T (Meta, 2023) extend this to 100+ languages.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Unified Speech–Text Models (2024+)</h2>
-						<div class="prose">
-							<p>The training data for these is massive: trillions of audio-text interleaved examples. Internally, audio is encoded into the LLM's vocabulary; the model is trained as a normal next-token predictor.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">From Waveform to Tokens: Three Representations</h2>
-						<div class="prose">
-							<p>A raw audio waveform is a 1-D signal sampled at 16 kHz or 44.1 kHz, a sequence of 16,000 to 44,100 floats <strong>per second</strong>. That is too dense for any model to ingest directly. Modern systems compress audio through one of three representations:</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">1. Spectrograms (and Mel-spectrograms)</h2>
-						<div class="prose">
-							<p>A spectrogram is a 2-D representation: <strong>time on the x-axis, frequency on the y-axis, intensity as colour</strong>. It is computed by Short-Time Fourier Transform (STFT): split the waveform into 20–40 ms windows, compute the magnitude of the FFT, stack them.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">2. Neural Audio Codecs</h2>
-						<div class="prose">
-							<p>A neural codec learns an encoder that turns a short window of audio into a latent vector, a quantizer that snaps that vector to the nearest entry in a learned codebook, and a decoder that reconstructs the waveform. The token is the codebook index. Because the decoder is trained to preserve what listeners hear, the tokens keep the information that matters for speech and music while discarding the raw sample-by-sample detail. This is the representation that makes audio look like text to a transformer.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">3. Self-Supervised Representations</h2>
-						<div class="prose">
-							<p>Models like <strong><a href="https://arxiv.org/abs/2006.11477" rel="noopener">wav2vec 2.0</a></strong>, <strong><a href="https://arxiv.org/abs/2106.07447" rel="noopener">HuBERT</a></strong>, and <strong>WavLM</strong> learn speech representations by masking spans of audio and predicting the discrete latent units of a teacher model. The output is a sequence of 50 Hz contextualized vectors, perfect input for downstream ASR, speaker ID, or emotion recognition. The difference from a codec is the objective: a codec is trained to reconstruct the sound, a self-supervised model is trained to predict what was masked.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Practical notes</div>
-						<h2 class="section-title">Audio is not text.</h2>
-						<div class="prose">
-							<p>Speech models can fail on accents, background noise, overlapping speakers, and rare names. Music models can produce pleasant textures that lack long-range structure. Generated speech can sound natural and still mispronounce the important word. That last failure is structural: a text-to-speech model predicts acoustics, not a dictionary pronunciation, so a rare name or a heteronym can be voiced with complete confidence and the wrong phonemes. Systems often add a pronunciation lexicon or a separate grapheme-to-phoneme step for exactly this reason.</p>
-							<p>Evaluation has to match the task: word error rate for transcription, intelligibility and naturalness for speech, musical structure for generation. A single score is not enough.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -152,6 +92,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="multimodal.html"><span class="ln-label">← Previous · Day 14</span><span class="ln-title">Connecting Images and Words</span></a>
+							<a href="running_locally.html"><span class="ln-label">Next · Day 16 →</span><span class="ln-title">Running a Model Yourself</span></a>
+						</nav>
+						<p class="lesson-footer">Day 15 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>

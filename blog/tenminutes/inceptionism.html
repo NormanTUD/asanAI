@@ -38,7 +38,7 @@
 						<h2 class="section-title">A window into learned features.</h2>
 						<div class="prose">
 							<p>Inceptionism (<a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Mordvintsev et al., 2015</a>) is a simple interpretability tool. It shows that the network's knowledge is distributed across layers and can be visualized by optimizing the input. It also explains pareidolia: like a child seeing animals in clouds, the network finds its templates in noise.</p>
-							<p>The images are not evidence that the model is conscious or dreaming in the human sense. They are a picture of what the weights have learned to respond to. Nor is this how modern image generators work: a diffusion model is trained to reverse noise, so it learns the distribution of images. Inceptionism interrogates a classifier that was never trained to make images at all. That is exactly why its “dreams” look like the inside of a feature detector rather than a photograph.</p>
+							<p>The dreams also reveal associations in the training data. A dumbbell may appear with an arm because the two co-occur; a tower may grow fractal copies of itself because the network has learned a texture. These are not symbols the model understands; they are patterns it has learned to expect. The images are not evidence that the model is conscious or dreaming in the human sense. They are a picture of what the weights have learned to respond to. Nor is this how modern image generators work: a diffusion model is trained to reverse noise, so it learns the distribution of images. Inceptionism interrogates a classifier that was never trained to make images at all. That is exactly why its “dreams” look like the inside of a feature detector rather than a photograph.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Freeze the weights</b><span>The parameters stay fixed; the input becomes the variable.</span></div>
@@ -48,15 +48,6 @@
 						</div>
 					</section>
 
-					<section class="section-block" id="extra">
-						<div class="section-kicker"><span class="sk-num">03</span> The dream map</div>
-						<h2 class="section-title">What the layer sees.</h2>
-						<div class="prose">
-							<p>The layer you optimise changes the dream. Early layers respond to edges, colours, and simple textures; deeper layers assemble parts and whole objects. The same image can be pushed toward a class at different depths, and the result looks like a different kind of hallucination.</p>
-							<p>The dreams also reveal associations in the training data. A dumbbell may appear with an arm because the two co-occur; a tower may grow fractal copies of itself because the network has learned a texture. These are not symbols the model understands; they are patterns it has learned to expect.</p>
-							<p>Inceptionism is an interpretability tool, and like every interpretability tool it shows a partial picture. The image is a projection of learned features back into pixel space, not evidence of consciousness or human-like imagination.</p>
-						</div>
-					</section>
 
 					<div class="split-figure">
 						<figure>
@@ -96,41 +87,12 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Inceptionism freezes the weights and optimizes the image. What appears is the network's learned template, not a photograph.</span></div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Dream Logic: The Weightlifter's Dumbbells</h2>
-						<div class="prose">
-							<p>The same effect recurs everywhere: clouds swirled into <strong>birds</strong>, rocks rebuilt as <strong>towers and pagodas</strong>, leaves peppered with <strong>animals</strong>, even a <strong>duck-billed platypus</strong> appearing in a portrait's armpit. Each is a feedback loop — <em>recognize, amplify, repeat</em> — until the network's own expectation takes over. This is <strong>engineered pareidolia</strong>, the machine counterpart of the face in the Jupiter photograph or in everyday household objects: our visual system and a convolutional net both <strong>project trained patterns onto ambiguous input</strong>.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">The Dream Map</h2>
-						<div class="prose">
-							<p>But because the data is stored at such a high abstraction, the results are an interesting remix of these learned features — neither faithful reproductions nor noise, but the network's own hybrids.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">A Tool, Not a Mirror</h2>
-						<div class="prose">
-							<p><em>All images on this page come from the original blog post and are licensed by <strong>Google Inc.</strong> under a Creative Commons Attribution 4.0 International License, except for the MIT Places-database images, which are not used here.</em></p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Practical notes</div>
-						<h2 class="section-title">Dreams with a method.</h2>
-						<div class="prose">
-							<p>The <a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">original essay</a> showed noise turning into a banana, and a cascade of surreal objects when the process was iterated with zoom. It also showed dumbbells with arms, because the network had learned the co-occurrence of the two in its training data.</p>
-							<p>The images are not random; they are the network's learned features projected back into pixel space. The method is a diagnostic: it shows what a layer responds to, and how the training data shaped it. It is a tool, not a mirror of a mind.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -139,6 +101,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="minimalneuron.html"><span class="ln-label">← Previous · Day 7</span><span class="ln-title">A Tiny Example Network</span></a>
+							<a href="overandunderfittinglab.html"><span class="ln-label">Next · Day 9 →</span><span class="ln-title">Pattern or Memorization?</span></a>
+						</nav>
+						<p class="lesson-footer">Day 8 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>

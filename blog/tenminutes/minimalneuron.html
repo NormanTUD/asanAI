@@ -122,46 +122,10 @@
 						<div class="demo-foot">A misclassified point gets a lilac ring. The rule is the original perceptron update: nudge the line toward the correct side, one mistake at a time.</div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">The Statistical Nature of Learning</h2>
-						<div class="prose">
-							<p>We often think of Neural Networks as “learning” in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Data is not just Numbers; it is a Distribution</h2>
-						<div class="prose">
-							<p>If our training data is a “representative sample” (meaning it follows the same statistical distribution as the real world example you're trying to model), the weights of the network will converge to the “True” relationship. If the data is biased (a bad sample), the model learns a skewed reality. This is why knowing your data's distribution is critical. You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">Output Layer: The Mirror of the Target</h2>
-						<div class="prose">
-							<p>The final layer of a neural network is not arbitrary; it is a mathematical mirror of the data you want to predict. Its shape, the number of neurons it contains, must match the dimensionality of your “Labels” (the ground truth).</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">Spatial and Complex Outputs</h2>
-						<div class="prose">
-							<p>If the output layer's dimensions do not match the target data's dimensions, the <strong>Loss Function</strong> will be unable to compare the prediction to the reality, and the “loop” of learning will break.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Practical notes</div>
-						<h2 class="section-title">From two knobs to billions.</h2>
-						<div class="prose">
-							<p>The toy has one input and one output. A real network has many inputs, many outputs, and many layers. The output layer has to match the target: a number, a class, a probability distribution, or a spatial map. If the output does not match the data, the loss cannot compare the prediction with reality.</p>
-							<p>Training uses batches, epochs, validation, regularisation, and hardware. The loop is the same, but the engineering is not. The toy is a lens on the loop, not a miniature of a frontier model.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="takeaway">
 						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
@@ -173,6 +137,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="hallucinations.html"><span class="ln-label">← Previous · Day 6</span><span class="ln-title">When the Model Does Not Know</span></a>
+							<a href="inceptionism.html"><span class="ln-label">Next · Day 8 →</span><span class="ln-title">What the Network Dreams</span></a>
+						</nav>
+						<p class="lesson-footer">Day 7 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>

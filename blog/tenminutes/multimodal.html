@@ -37,7 +37,7 @@
 						<h2 class="section-title">Pixels become tokens.</h2>
 						<div class="prose">
 							<p>A multimodal LLM goes further. Pixels are turned into visual tokens (<a href="https://arxiv.org/abs/2304.08485" rel="noopener">Liu et al., 2023</a>), projected into the language model's embedding space, and then processed together with text tokens. The model can answer questions about an image, describe it, or use it as context. Architectures differ: some concatenate visual tokens with text, others use cross-attention so the text can query the image (<a href="https://arxiv.org/abs/2204.14198" rel="noopener">Alayrac et al., 2022</a>). Either way, the trick is to make vision look like another language the model already knows how to read.</p>
-							<p>The alignment is not perfect. The model can miss small details, misread text in images, or inherit biases from its training data. Reading text in an image is a good example of why: a visual encoder often works on coarse patches (<a href="https://arxiv.org/abs/2010.11929" rel="noopener">Dosovitskiy et al., 2020</a>), so the fine strokes of a label or a receipt may simply not survive the tokenization. Multimodality adds a new input, not a guarantee of understanding.</p>
+							<p>The alignment is not perfect. The model can miss small details, misread text in images, or inherit biases from its training data. Reading text in an image is a good example of why: a visual encoder often works on coarse patches (<a href="https://arxiv.org/abs/2010.11929" rel="noopener">Dosovitskiy et al., 2020</a>), so the fine strokes of a label or a receipt may simply not survive the tokenization. Multimodality adds a new input, not a guarantee of understanding. Evaluation is hard too: a model can score well on a benchmark and still fail on a new viewpoint, a rare object, or a misleading caption. Use it as an assistant, not as an oracle.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Two encoders</b><span>Images and text are embedded separately before they can be compared.</span></div>
@@ -47,15 +47,6 @@
 						</div>
 					</section>
 
-					<section class="section-block" id="extra">
-						<div class="section-kicker"><span class="sk-num">03</span> What alignment buys you</div>
-						<h2 class="section-title">Zero-shot and cross-attention.</h2>
-						<div class="prose">
-							<p>Once an image and a caption share a space, you can compare them. CLIP uses this for zero-shot classification: embed the image, embed a set of candidate captions, and choose the closest pair. No task-specific classifier is needed for every new label set.</p>
-							<p>A multimodal LLM goes further. Visual tokens are projected into the language model's space, and cross-attention lets the text query the image. The model can answer questions, describe a scene, or use the image as context for a longer conversation.</p>
-							<p>The alignment is statistical, not perfect. The model can miss small details, misread text in an image, or inherit biases from its training data. Multimodality adds a new input, not a guarantee of understanding.</p>
-						</div>
-					</section>
 
 					<div class="demo demo--paper timeline-shell" data-demo="timeline">
 						<div class="demo-head">
@@ -104,50 +95,13 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Alignment is a learned geometry. It makes a picture and its caption comparable without making them the same thing.</span></div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Multimodal LLMs: How a Text Model Learns to See</h2>
-						<div class="prose">
-							<p>A pretrained vision encoder (e.g., CLIP-ViT) produces a sequence of visual tokens. A small <strong>projection MLP</strong> maps each visual token from the vision space into the LLM's text-token embedding space:</p>
-							<p>The projected visual tokens are concatenated with the text-token sequence and fed to the LLM as if they were ordinary words. <strong>Only the projection layer is trained initially</strong>; the LLM is frozen. The visual tokens literally become “foreign-language words” the LLM learns to read. Later stages usually unfreeze the LLM and instruction-tune the whole stack on multimodal conversations, which is how the model learns to answer questions rather than merely describe what it sees.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">How a Multimodal LLM Answers a Question</h2>
-						<div class="prose">
-							<p>The LLM treats the visual tokens as if they were a foreign language it has been taught to read. No new attention mechanism is required, the same Q/K/V machinery already described in attention handles the cross-modal mixing, because visual and text tokens occupy the same vector space.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">Visual Question Answering Benchmarks</h2>
-						<div class="prose">
-							<p>The leaderboard has shifted dramatically: in 2022, GPT-3.5 with no vision got ~0% on MMMU, a benchmark of university-level questions that require interpreting diagrams, charts, and images. By 2025, top models (GPT-4o, Claude 3.5, Gemini 1.5 Pro) exceed 70%, and on VQA v2 they exceed 85%. A benchmark score is still a proxy: it says the model can handle the kinds of images and questions the benchmark contains, not that it sees the world the way you do.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">Summary</h2>
-						<div class="prose">
-							<p>The hard parts are data (curating trillions of matched image-text-audio samples, see training data), compute (vision towers + LLMs + alignment data = massive training runs), and evaluation (the benchmarks above are still being developed). But the architectural recipe is now standard and reproducible, which is why every frontier lab ships multimodal-by-default in 2025.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Practical notes</div>
-						<h2 class="section-title">Alignment is not understanding.</h2>
-						<div class="prose">
-							<p>Multimodal models can miss small details, misread text in images, or hallucinate an object that is not there. The shared space is statistical; it does not guarantee that the model saw what you saw.</p>
-							<p>Evaluation is hard. A model can score well on a benchmark and still fail on a new viewpoint, a rare object, or a misleading caption. Use the model as an assistant, not as an oracle.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -156,6 +110,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="computer_vision.html"><span class="ln-label">← Previous · Day 13</span><span class="ln-title">How Machines See</span></a>
+							<a href="speech_audio.html"><span class="ln-label">Next · Day 15 →</span><span class="ln-title">Sound, Music, and Video</span></a>
+						</nav>
+						<p class="lesson-footer">Day 14 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>

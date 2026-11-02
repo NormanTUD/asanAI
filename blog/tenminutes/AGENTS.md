@@ -152,6 +152,9 @@ after `assets/site.js`. The markup is keyed by `data-demo`:
 - `contamination` — benchmark score vs true skill
 - `science` — pLDDT confidence + protein contact map
 - `position` — positional-encoding heatmap
+- `trajectory` — positional rail: one token \(+\) many positions, 2-D circle / 3-D helix
+- `bend` — a layer bends space until a flat cut separates the classes
+- `headbudget` — one attention head's zero-sum budget across tokens
 - `waveform` — waveform + spectrogram + codec tokens
 - `align` — image/text embedding alignment toggle
 - `preference` — preference-pair choice for post-training

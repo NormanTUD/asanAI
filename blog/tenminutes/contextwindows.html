@@ -36,8 +36,7 @@
 						<div class="section-kicker"><span class="sk-num">02</span> Why long context is hard</div>
 						<h2 class="section-title">Attention has a cost.</h2>
 						<div class="prose">
-							<p>Self-attention (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>) compares every token with every other token, so the cost grows roughly quadratically with length. Techniques such as KV caching and FlashAttention make long context practical, but they do not make the model infinitely attentive.</p>
-							<p>For knowledge outside the window, systems use retrieval: search a document store and inject the relevant passages. That is why context and RAG are close cousins.</p>
+							<p>Self-attention (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>) compares every token with every other token, so the cost grows roughly quadratically with length. For knowledge outside the window, systems use retrieval: search a document store and inject the relevant passages. That is why context and RAG are close cousins.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Input buffer</b><span>The context window is the model's entire view for one inference.</span></div>
@@ -100,46 +99,10 @@
 						<div class="demo-insight"><b>Takeaway</b><span>A bigger window helps, but it is still a budget. Retrieval exists because the model cannot keep everything in view.</span></div>
 					</div>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">The Best of Both Worlds</h2>
-						<div class="prose">
-							<p>RAG handles the <em>discovery</em> problem (finding needles in haystacks), while long context handles the <em>reasoning</em> problem (synthesizing information across multiple retrieved passages).</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">Background</div>
-						<h2 class="section-title">Compaction (Summarize and Continue)</h2>
-						<div class="prose">
-							<p>The key insight: <strong>memory is always external</strong>. The LLM itself is stateless; the surrounding system creates the illusion of continuity by carefully managing what goes into the context window at the start of each interaction. ChatGPT's memory works through a combination of detecting memory-worthy information, storing it, and retrieving it later. Four layers working together create the illusion that ChatGPT knows you personally: the current conversation, saved memories, past-conversation search, and the system prompt that tells the model how to use them.</p>
-							<p>For very long-running sessions (like coding agents that run for hours), the context window eventually fills up. <strong>Compaction</strong> summarizes the conversation so far and replaces the full history with a compressed version: the decisions made, the files touched, the constraints that still apply, and the open questions. The model then continues from the summary rather than the transcript. This saves space, but it is lossy. A summary that drops a constraint can cause the agent to repeat a mistake it had already been corrected for. The other common strategies are a sliding window (keep the most recent turns) and retrieval (keep a store outside the window and inject only what is relevant).</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">What Is a Context Window?</h2>
-						<div class="prose">
-							<p>A context window (also called “context length”) is the <strong>maximum number of tokens</strong> the model can process in a single forward pass. It includes <em>everything</em>: the system prompt, all previous messages in the conversation, any injected documents, and the new query.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">1. KV Cache: Remembering Without Recomputing</h2>
-						<div class="prose">
-							<p>During autoregressive generation (producing one token at a time), the model doesn't recompute attention over the entire sequence from scratch for each new token. Instead, it maintains a <strong>Key-Value (KV) Cache</strong>: for every token already processed, it stores the key and value vectors that attention will need later. When a new token arrives, the model computes only its query and attends against the cached keys and values. The cache turns the repeated work into a lookup, at the cost of memory that grows with the context.</p>
-						</div>
-					</section>
 
-					<section class="section-block">
-						<div class="section-kicker">More background</div>
-						<h2 class="section-title">Practical implications:</h2>
-						<div class="prose">
-							<p>This is one reason <strong>RAG remains valuable</strong> even with million-token context windows. Retrieval puts the most relevant passages near the start or end of the context, where models tend to use information more reliably than in the middle. That “lost in the middle” effect is empirical, not a law, but it is a good reason to curate the context rather than merely enlarge it.</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="takeaway">
 						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
@@ -151,6 +114,16 @@
 						</div>
 					</section>
 
+
+					<section class="section-block" id="fits">
+						<div class="section-kicker"><span class="sk-num">→</span> Where this fits</div>
+						<h2 class="section-title">Keep the thread.</h2>
+						<nav class="lesson-nav" aria-label="Lesson navigation">
+							<a href="attentionlab.html"><span class="ln-label">← Previous · Day 18</span><span class="ln-title">Attention: The Tug-of-War</span></a>
+							<a href="positionalembeddingslab.html"><span class="ln-label">Next · Day 20 →</span><span class="ln-title">How Order Survives</span></a>
+						</nav>
+						<p class="lesson-footer">Day 19 of 31 · <a href="whole.html">The whole arc</a> · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a></p>
+					</section>
 				</article>
 			</div>
 		</div>
