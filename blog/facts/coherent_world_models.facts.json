@@ -434,7 +434,7 @@
       "qualifiers": {
         "author": "Ladyman"
       },
-      "quote": "not \"we only know the structure\" but \"there *is* nothing but the structure\": the world *is* the chain of admissible cover systems, not a thing-in-itself behind them",
+      "quote": "not \"we only know the structure\" but \"there *is* nothing but the structure\"; the world *is* the chain of admissible cover systems, not a thing-in-itself behind them",
       "citation_keys": [
         "ladyman1998what",
         "ladymanross2007everything"
@@ -1069,7 +1069,7 @@
       "to": "coherent-world-models",
       "kind": "mentioned_in",
       "qualifiers": {},
-      "quote": "not \"we only know the structure\" but \"there *is* nothing but the structure\": the world *is* the chain of admissible cover systems, not a thing-in-itself behind them",
+      "quote": "not \"we only know the structure\" but \"there *is* nothing but the structure\"; the world *is* the chain of admissible cover systems, not a thing-in-itself behind them",
       "citation_keys": [
         "ladyman1998what",
         "ladymanross2007everything"
@@ -13729,14 +13729,14 @@
     },
     {
       "id": "coherent_world_models-stmt-2",
-      "quote": "Even the listener who reaches out to touch the speaker meets only a transformed trace — never the sound source as it would be apart from any perception.",
+      "quote": "Even the listener who reaches out to touch the speaker meets only a transformed trace, never the sound source as it would be apart from any perception.",
       "block_id": "coherent_world_models-block-3",
       "section": "The question",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-3",
-      "quote": "What arrives in every domain — empirical, formal, archival — is the same: *transformed traces*.",
+      "quote": "What arrives in every domain (empirical, formal, archival) is the same: *transformed traces*.",
       "block_id": "coherent_world_models-block-3",
       "section": "The question",
       "kind": "statement"
@@ -13771,7 +13771,7 @@
     },
     {
       "id": "coherent_world_models-stmt-8",
-      "quote": "It is the central claim of the coherence theory of truth (Bradley, Blanshard, BonJour): a model is true insofar as its parts hang together — a self-consistent system of beliefs whose local sections agree on overlaps.",
+      "quote": "It is the central claim of the coherence theory of truth (Bradley, Blanshard, BonJour): a model is true insofar as its parts hang together, a self-consistent system of beliefs whose local sections agree on overlaps.",
       "block_id": "coherent_world_models-block-5",
       "section": "The question",
       "kind": "statement"
@@ -13792,7 +13792,7 @@
     },
     {
       "id": "coherent_world_models-stmt-11",
-      "quote": "Sheaf theory, coherence theory, and post-foundationalist epistemology are not three answers to three different questions; they are three vocabularies for one discipline — the discipline of asking when a collection of partial views deserves the name *one description*.",
+      "quote": "Sheaf theory, coherence theory, and post-foundationalist epistemology are not three answers to three different questions; they are three vocabularies for one discipline, the discipline of asking when a collection of partial views deserves the name *one description*.",
       "block_id": "coherent_world_models-block-7",
       "section": "The question",
       "kind": "statement"
@@ -13820,7 +13820,7 @@
     },
     {
       "id": "coherent_world_models-stmt-15",
-      "quote": "Whether a trace is *of* something — and *what* — is a substantive question, not given in advance, and establishing it is most of the work of inference.",
+      "quote": "Whether a trace is *of* something (and *what*) is a substantive question, not given in advance, and establishing it is most of the work of inference.",
       "block_id": "coherent_world_models-block-10",
       "section": "Traces",
       "kind": "statement"
@@ -13974,7 +13974,7 @@
     },
     {
       "id": "coherent_world_models-stmt-37",
-      "quote": "Kant's name for what is forever on the other side of this mediation is the *thing in itself* (*Ding an sich*), first introduced in the *Critique of Pure Reason* at KrV A26/B40–42 (the Transcendental Exposition of the Concept of Space, the second part of §1 of the Transcendental Aesthetic) and developed systematically in the chapter \"Of Phenomena and Noumena\" at A235/B294 \\cite{kant_critique_pure_reason}; the technical term here is **the subject matter as it would be independent of any access**.",
+      "quote": "Kant's name for what is forever on the other side of this mediation is the *thing in itself* (*Ding an sich*), first introduced in the *Critique of Pure Reason* at KrV A26/B40-42 (the Transcendental Exposition of the Concept of Space, the second part of §1 of the Transcendental Aesthetic) and developed systematically in the chapter \"Of Phenomena and Noumena\" at A235/B294 \\cite{kant_critique_pure_reason}; the technical term here is **the subject matter as it would be independent of any access**.",
       "block_id": "coherent_world_models-block-20",
       "section": "Commitments",
       "kind": "statement"
@@ -14016,14 +14016,14 @@
     },
     {
       "id": "coherent_world_models-stmt-43",
-      "quote": "One symptom, three places it can originate — the diagnostic picture:",
+      "quote": "One symptom, three places it can originate: the diagnostic picture:",
       "block_id": "coherent_world_models-block-27",
       "section": "Three kinds of difference",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-44",
-      "quote": "The distinction between channels and interpretation is in part the moral of \\citeauthor{cartwright1983laws}'s (\\citeyear{cartwright1983laws}) *How the Laws of Physics Lie*: the equations of fundamental physics are *true* of the highly idealized model setups in which they were derived — a frictionless plane, an isolated system, an exactly spherical earth — and *approximately* true of many real systems, but often false of the messy, multifactorial, *dappled* world in which we actually use them \\cite{cartwright1983laws} \\cite{cartwright1999dappled}.",
+      "quote": "The distinction between channels and interpretation is in part the moral of \\citeauthor{cartwright1983laws}'s (\\citeyear{cartwright1983laws}) *How the Laws of Physics Lie*: the equations of fundamental physics are *true* of the highly idealized model setups in which they were derived (a frictionless plane, an isolated system, an exactly spherical earth) and *approximately* true of many real systems, but often false of the messy, multifactorial, *dappled* world in which we actually use them \\cite{cartwright1983laws} \\cite{cartwright1999dappled}.",
       "block_id": "coherent_world_models-block-28",
       "section": "Three kinds of difference",
       "kind": "statement"
@@ -14086,14 +14086,14 @@
     },
     {
       "id": "coherent_world_models-stmt-53",
-      "quote": "The whole hierarchy, with its witness at each level — each $\\Downarrow$ is a weakening; the forbidden move is to read them silently upwards.",
+      "quote": "The whole hierarchy, with its witness at each level: each $\\Downarrow$ is a weakening; the forbidden move is to read them silently upwards.",
       "block_id": "coherent_world_models-block-34",
       "section": "Notions of sameness",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-54",
-      "quote": "Qualifier: the first four steps (identity $\\Rightarrow$ iso $\\Rightarrow$ homotopy $\\Rightarrow$ approximation) are automatic — a witness of the stronger row is literally a witness of the weaker.",
+      "quote": "Qualifier: the first four steps (identity $\\Rightarrow$ iso $\\Rightarrow$ homotopy $\\Rightarrow$ approximation) are automatic; a witness of the stronger row is literally a witness of the weaker.",
       "block_id": "coherent_world_models-block-34",
       "section": "Notions of sameness",
       "kind": "statement"
@@ -14177,7 +14177,7 @@
     },
     {
       "id": "coherent_world_models-stmt-66",
-      "quote": "The picture we want — boxes for kinds of things, labelled arrows for functional relations, commutativity as an explicit constraint — has a name: the **olog**, short for *ontology log*.",
+      "quote": "The picture we want (boxes for kinds of things, labelled arrows for functional relations, commutativity as an explicit constraint) has a name: the **olog**, short for *ontology log*.",
       "block_id": "coherent_world_models-block-44",
       "section": "Ologs: a diagram that pays its way",
       "kind": "statement"
@@ -14198,7 +14198,7 @@
     },
     {
       "id": "coherent_world_models-stmt-69",
-      "quote": "**Types** are drawn as boxes labelled with a *singular noun-phrase* — a kind of thing.",
+      "quote": "**Types** are drawn as boxes labelled with a *singular noun-phrase*, a kind of thing.",
       "block_id": "coherent_world_models-block-45",
       "section": "Ologs: a diagram that pays its way",
       "kind": "statement"
@@ -14212,7 +14212,7 @@
     },
     {
       "id": "coherent_world_models-stmt-71",
-      "quote": "**Arrows** are drawn between boxes with a *singular verb-phrase* — a *functional* relation: every entity of the source type maps to exactly one entity of the target type.",
+      "quote": "**Arrows** are drawn between boxes with a *singular verb-phrase*, a *functional* relation: every entity of the source type maps to exactly one entity of the target type.",
       "block_id": "coherent_world_models-block-46",
       "section": "Ologs: a diagram that pays its way",
       "kind": "statement"
@@ -14233,7 +14233,7 @@
     },
     {
       "id": "coherent_world_models-stmt-74",
-      "quote": "A worked fragment — the olog for a calibrated thermometer, with three distinct types and one clean question:",
+      "quote": "A worked fragment, the olog for a calibrated thermometer, with three distinct types and one clean question:",
       "block_id": "coherent_world_models-block-47",
       "section": "Ologs: a diagram that pays its way",
       "kind": "statement"
@@ -14247,7 +14247,7 @@
     },
     {
       "id": "coherent_world_models-stmt-76",
-      "quote": "There are two routes from Thermometer to Temperature — the *true* temperature (left column) and the *indicated* temperature (top row, then right column).",
+      "quote": "There are two routes from Thermometer to Temperature: the *true* temperature (left column) and the *indicated* temperature (top row, then right column).",
       "block_id": "coherent_world_models-block-48",
       "section": "Ologs: a diagram that pays its way",
       "kind": "statement"
@@ -14275,7 +14275,7 @@
     },
     {
       "id": "coherent_world_models-stmt-80",
-      "quote": "The olog shows the discrepancy *where* it lives — at the contact point between the indicated reading and the true temperature — and tells you exactly which licensed transition ($\\mathcal{T}$-arrow) has failed.",
+      "quote": "The olog shows the discrepancy *where* it lives (at the contact point between the indicated reading and the true temperature) and tells you exactly which licensed transition ($\\mathcal{T}$-arrow) has failed.",
       "block_id": "coherent_world_models-block-48",
       "section": "Ologs: a diagram that pays its way",
       "kind": "statement"
@@ -14345,7 +14345,7 @@
     },
     {
       "id": "coherent_world_models-stmt-90",
-      "quote": "- **Subcategory** — $\\mathcal{T}$ is the *list of permitted arrows*.",
+      "quote": "- **Subcategory**: $\\mathcal{T}$ is the *list of permitted arrows*.",
       "block_id": "coherent_world_models-block-59",
       "section": "Admissible transitions",
       "kind": "statement"
@@ -14366,7 +14366,7 @@
     },
     {
       "id": "coherent_world_models-stmt-93",
-      "quote": "- **Bayesian prior** — $\\mathcal{T}$ is the *prior* the modelling setup carries before any data are seen.",
+      "quote": "- **Bayesian prior**: $\\mathcal{T}$ is the *prior* the modelling setup carries before any data are seen.",
       "block_id": "coherent_world_models-block-60",
       "section": "Admissible transitions",
       "kind": "statement"
@@ -14387,35 +14387,35 @@
     },
     {
       "id": "coherent_world_models-stmt-96",
-      "quote": "- **Occam penalty** — the *richer* $\\mathcal{T}$ is, the wider the space of admissible world-models; the wider the space, the easier the data are fitted by accident.",
+      "quote": "- **Occam penalty**: the *richer* $\\mathcal{T}$ is, the wider the space of admissible world-models; the wider the space, the easier the data are fitted by accident.",
       "block_id": "coherent_world_models-block-61",
       "section": "Admissible transitions",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-97",
-      "quote": "Enlarging $\\mathcal{T}$ is therefore an act of over-fitting in its own right — even before a single comparison is run.",
+      "quote": "Enlarging $\\mathcal{T}$ is therefore an act of over-fitting in its own right, even before a single comparison is run.",
       "block_id": "coherent_world_models-block-61",
       "section": "Admissible transitions",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-98",
-      "quote": "Three names, one *kind* of restriction: the same comparison space is kept small for three different reasons — the morphisms it allows (subcategory), the beliefs it carries before data (prior), the model complexity it imposes (Occam).",
+      "quote": "Three names, one *kind* of restriction: the same comparison space is kept small for three different reasons, the morphisms it allows (subcategory), the beliefs it carries before data (prior), the model complexity it imposes (Occam).",
       "block_id": "coherent_world_models-block-62",
       "section": "Admissible transitions",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-99",
-      "quote": "These are three *distinct* mathematical objects (a subset, a measure, a real-valued functional); the chapter reads them as three *motives* for a single discipline — *do not let the space of licensed comparisons grow without paying for it* — and it does **not** claim the three are provably the same object, only that they point the same way.",
+      "quote": "These are three *distinct* mathematical objects (a subset, a measure, a real-valued functional); the chapter reads them as three *motives* for a single discipline (*do not let the space of licensed comparisons grow without paying for it*) and it does **not** claim the three are provably the same object, only that they point the same way.",
       "block_id": "coherent_world_models-block-62",
       "section": "Admissible transitions",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-100",
-      "quote": "The contrast with the classical foundationalist picture — there *must* be a privileged class of transitions that need no prior justification — is exactly the picture \\citeauthor{sellars1956empiricism} (\\citeyear{sellars1956empiricism}) rejects in his critique of the \"myth of the given\" \\cite{sellars1956empiricism}:",
+      "quote": "The contrast with the classical foundationalist picture (there *must* be a privileged class of transitions that need no prior justification) is exactly the picture \\citeauthor{sellars1956empiricism} (\\citeyear{sellars1956empiricism}) rejects in his critique of the \"myth of the given\" \\cite{sellars1956empiricism}:",
       "block_id": "coherent_world_models-block-63",
       "section": "Admissible transitions",
       "kind": "statement"
@@ -14436,7 +14436,7 @@
     },
     {
       "id": "coherent_world_models-stmt-103",
-      "quote": "The two pictures — the first is the foundationalist picture (rejected); the second is what this chapter builds.",
+      "quote": "The two pictures: the first is the foundationalist picture (rejected); the second is what this chapter builds.",
       "block_id": "coherent_world_models-block-65",
       "section": "Admissible transitions",
       "kind": "statement"
@@ -14660,14 +14660,14 @@
     },
     {
       "id": "coherent_world_models-stmt-135",
-      "quote": "For a cover of two patches, the whole condition is one square — and it is a pullback:",
+      "quote": "For a cover of two patches, the whole condition is one square, and it is a pullback:",
       "block_id": "coherent_world_models-block-85",
       "section": "Sheaves: coherence = descent",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-136",
-      "quote": "For two patches, coherence *is* a pullback — the object of agreements, exactly as in the section \"Pullbacks: agreement through a shared target\" below.",
+      "quote": "For two patches, coherence *is* a pullback, the object of agreements, exactly as in the section \"Pullbacks: agreement through a shared target\" below.",
       "block_id": "coherent_world_models-block-86",
       "section": "Sheaves: coherence = descent",
       "kind": "statement"
@@ -14723,7 +14723,7 @@
     },
     {
       "id": "coherent_world_models-stmt-144",
-      "quote": "The same shape governs **mathematical data** — here genuinely as a flat cover, with no downstream chain.",
+      "quote": "The same shape governs **mathematical data**, here genuinely as a flat cover, with no downstream chain.",
       "block_id": "coherent_world_models-block-93",
       "section": "The running example (now that we have sheaves)",
       "kind": "statement"
@@ -14821,14 +14821,14 @@
     },
     {
       "id": "coherent_world_models-stmt-158",
-      "quote": "The homotopical case, drawn — the $\\Downarrow$ in the interior is the filler $\\alpha_{ABC}$:",
+      "quote": "The homotopical case, drawn: the $\\Downarrow$ in the interior is the filler $\\alpha_{ABC}$:",
       "block_id": "coherent_world_models-block-102",
       "section": "Higher coherence",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-159",
-      "quote": "The two routes — $\\phi_{AC}$ directly, and $\\phi_{BC} \\circ \\phi_{AB}$ by composition — are not equal; the filler says they can be deformed into one another, and the filler is itself data you can ask further questions about.",
+      "quote": "The two routes ($\\phi_{AC}$ directly, and $\\phi_{BC} \\circ \\phi_{AB}$ by composition) are not equal; the filler says they can be deformed into one another, and the filler is itself data you can ask further questions about.",
       "block_id": "coherent_world_models-block-103",
       "section": "Higher coherence",
       "kind": "statement"
@@ -15115,7 +15115,7 @@
     },
     {
       "id": "coherent_world_models-stmt-200",
-      "quote": "It is the explicit programme of \\citeauthor{caramello2017theories}'s (\\citeyear{caramello2017theories}) *toposes-as-bridges* programme \\cite{caramello2017theories}: the same topos admits several presentations — as a sheaf topos over different sites, as the classifying topos of a geometric theory — and the facts invariant under that equivalence transfer between them: the transfer is by *equivalence of presentations* (the same topos, several sites), of which descent is one of the working parts.",
+      "quote": "It is the explicit programme of \\citeauthor{caramello2017theories}'s (\\citeyear{caramello2017theories}) *toposes-as-bridges* programme \\cite{caramello2017theories}: the same topos admits several presentations (as a sheaf topos over different sites, as the classifying topos of a geometric theory), and the facts invariant under that equivalence transfer between them: the transfer is by *equivalence of presentations* (the same topos, several sites), of which descent is one of the working parts.",
       "block_id": "coherent_world_models-block-139",
       "section": "The one diagram",
       "kind": "statement"
@@ -15206,7 +15206,7 @@
     },
     {
       "id": "coherent_world_models-stmt-213",
-      "quote": "The move was sharpened by \\citeauthor{ladyman1998what} (\\citeyear{ladyman1998what}) into \\emph{ontic structural realism}: not \"we only know the structure\" but \"there *is* nothing but the structure\" — the world *is* the chain of admissible cover systems, not a thing-in-itself behind them \\cite{ladyman1998what} \\cite{ladymanross2007everything}.",
+      "quote": "The move was sharpened by \\citeauthor{ladyman1998what} (\\citeyear{ladyman1998what}) into \\emph{ontic structural realism}: not \"we only know the structure\" but \"there *is* nothing but the structure\"; the world *is* the chain of admissible cover systems, not a thing-in-itself behind them \\cite{ladyman1998what} \\cite{ladymanross2007everything}.",
       "block_id": "coherent_world_models-block-151",
       "section": "Where each theory lives on one chain",
       "kind": "statement"
@@ -15227,7 +15227,7 @@
     },
     {
       "id": "coherent_world_models-stmt-216",
-      "quote": "What is required is that the differences factor through admissible transitions — and factor *within the licensed regime* (isomorphic, homotopic, approximate, or statistical, as the case warrants):",
+      "quote": "What is required is that the differences factor through admissible transitions, and factor *within the licensed regime* (isomorphic, homotopic, approximate, or statistical, as the case warrants):",
       "block_id": "coherent_world_models-block-153",
       "section": "Perspectival difference is not erased",
       "kind": "statement"
@@ -15241,7 +15241,7 @@
     },
     {
       "id": "coherent_world_models-stmt-218",
-      "quote": "And the safeguard, once more (its warrant — the distinction between coherence and correspondence — is developed in the very next section, \"Truth: coherence and correspondence\"):",
+      "quote": "And the safeguard, once more (its warrant, the distinction between coherence and correspondence, is developed in the very next section, \"Truth: coherence and correspondence\"):",
       "block_id": "coherent_world_models-block-158",
       "section": "One sentence",
       "kind": "statement"
@@ -15500,7 +15500,7 @@
     },
     {
       "id": "coherent_world_models-stmt-255",
-      "quote": "A caveat, in the chapter's own spirit (see \"The status of this chapter\"): this is a *working definition* — a stipulation about how the chapter will use the word \"coherence\" — not a discovered identity between two pre-existing things.",
+      "quote": "A caveat, in the chapter's own spirit (see \"The status of this chapter\"): this is a *working definition* (a stipulation about how the chapter will use the word \"coherence\"), not a discovered identity between two pre-existing things.",
       "block_id": "coherent_world_models-block-181",
       "section": "The coherence tradition",
       "kind": "statement"
@@ -15514,7 +15514,7 @@
     },
     {
       "id": "coherent_world_models-stmt-257",
-      "quote": "And the declaration is *conditional, not free*: the gluing theorems attach to an object **only if it is actually a sheaf**, and an object is a sheaf **only if it carries the structure a presheaf requires** — a *site* of contexts, *restriction maps* saying how a claim on one context reads on a sub-context, and *overlaps* on which those restrictions are compared.",
+      "quote": "And the declaration is *conditional, not free*: the gluing theorems attach to an object **only if it is actually a sheaf**, and an object is a sheaf **only if it carries the structure a presheaf requires**, a *site* of contexts, *restriction maps* saying how a claim on one context reads on a sub-context, and *overlaps* on which those restrictions are compared.",
       "block_id": "coherent_world_models-block-181",
       "section": "The coherence tradition",
       "kind": "statement"
@@ -15528,7 +15528,7 @@
     },
     {
       "id": "coherent_world_models-stmt-259",
-      "quote": "So the honest form of the definition is a *testable hypothesis* about a given system — *does it admit the structure, and, on its admissible covers, does descent hold?* — not a stipulation that it is a sheaf with a derivation hanging off the stipulation.",
+      "quote": "So the honest form of the definition is a *testable hypothesis* about a given system (*does it admit the structure, and, on its admissible covers, does descent hold?*), not a stipulation that it is a sheaf with a derivation hanging off the stipulation.",
       "block_id": "coherent_world_models-block-181",
       "section": "The coherence tradition",
       "kind": "statement"
@@ -15563,14 +15563,14 @@
     },
     {
       "id": "coherent_world_models-stmt-264",
-      "quote": "(A footnote on Bradley and Blanshard, consistent with the reconstruction flagged above: the straight reading of both is *pure* coherence — Bradley's \"reality\" is the Absolute, Blanshard's \"whole of reality\" the coherent whole — and the table below follows that common reading.",
+      "quote": "(A footnote on Bradley and Blanshard, consistent with the reconstruction flagged above: the straight reading of both is *pure* coherence (Bradley's \"reality\" is the Absolute, Blanshard's \"whole of reality\" the coherent whole) and the table below follows that common reading.",
       "block_id": "coherent_world_models-block-183",
       "section": "The synthesis: coherence and correspondence",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-265",
-      "quote": "That they can also be read *as* gesturing toward correspondence (the \"reality which the idea endeavours to represent\", \"the whole of reality\") is the charitable reconstruction the chapter uses to anchor the two-leg test — held at reconstruction-strength, not exegesis.)",
+      "quote": "That they can also be read *as* gesturing toward correspondence (the \"reality which the idea endeavours to represent\", \"the whole of reality\") is the charitable reconstruction the chapter uses to anchor the two-leg test, held at reconstruction-strength, not exegesis.)",
       "block_id": "coherent_world_models-block-183",
       "section": "The synthesis: coherence and correspondence",
       "kind": "statement"
@@ -15605,21 +15605,21 @@
     },
     {
       "id": "coherent_world_models-stmt-270",
-      "quote": "This is the precise statement of what it means to say that a coherent world model is *true* — read as an *ideal the model converges to*, since the correspondence leg is a limit rather than a state it attains.",
+      "quote": "This is the precise statement of what it means to say that a coherent world model is *true*, read as an *ideal the model converges to*, since the correspondence leg is a limit rather than a state it attains.",
       "block_id": "coherent_world_models-block-188",
       "section": "The synthesis: coherence and correspondence",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-271",
-      "quote": "Not true as a slogan: it is the conjunction of two conditions, one structural (checkable on the current cover) and one empirical (approached as the cover is widened); the operational, fallible criterion — *justified acceptance* — is drawn in the closing synthesis.",
+      "quote": "Not true as a slogan: it is the conjunction of two conditions, one structural (checkable on the current cover) and one empirical (approached as the cover is widened); the operational, fallible criterion (*justified acceptance*) is drawn in the closing synthesis.",
       "block_id": "coherent_world_models-block-188",
       "section": "The synthesis: coherence and correspondence",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-272",
-      "quote": "The two are independent *precisely because* they run in different directions: coherence is checked *within* a fixed admissible cover, while correspondence — as the preceding subsection fixed it — is checked *across* the sequence of covers, as that cover is widened.",
+      "quote": "The two are independent *precisely because* they run in different directions: coherence is checked *within* a fixed admissible cover, while correspondence (as the preceding subsection fixed it) is checked *across* the sequence of covers, as that cover is widened.",
       "block_id": "coherent_world_models-block-188",
       "section": "The synthesis: coherence and correspondence",
       "kind": "statement"
@@ -15640,7 +15640,7 @@
     },
     {
       "id": "coherent_world_models-stmt-275",
-      "quote": "This is the positive form of what the *factbook* pathology — the second of the five — is the absence of: a heap of individually true, individually well-calibrated claims that no morphism connects.",
+      "quote": "This is the positive form of what the *factbook* pathology (the second of the five) is the absence of: a heap of individually true, individually well-calibrated claims that no morphism connects.",
       "block_id": "coherent_world_models-block-190",
       "section": "Contact points: where consistency stops being enough",
       "kind": "statement"
@@ -15689,7 +15689,7 @@
     },
     {
       "id": "coherent_world_models-stmt-282",
-      "quote": "From the few proper names that overlapped — Ptolemy on the stone, Cleopatra on the Philae obelisk — the phonetic value of each sign was fixed by *comparison on the overlaps*, then tested against further cartouches, and it held everywhere:",
+      "quote": "From the few proper names that overlapped (Ptolemy on the stone, Cleopatra on the Philae obelisk) the phonetic value of each sign was fixed by *comparison on the overlaps*, then tested against further cartouches, and it held everywhere:",
       "block_id": "coherent_world_models-block-193",
       "section": "Contact points: where consistency stops being enough",
       "kind": "statement"
@@ -15710,7 +15710,7 @@
     },
     {
       "id": "coherent_world_models-stmt-285",
-      "quote": "That is descent in miniature: local agreement on a cover (the shared names) — unique global section (the whole script, *erschlossen aus dem Zusammenhang*, recovered from context).",
+      "quote": "That is descent in miniature: local agreement on a cover (the shared names); unique global section (the whole script, *erschlossen aus dem Zusammenhang*, recovered from context).",
       "block_id": "coherent_world_models-block-195",
       "section": "Contact points: where consistency stops being enough",
       "kind": "statement"
@@ -15724,14 +15724,14 @@
     },
     {
       "id": "coherent_world_models-stmt-287",
-      "quote": "A logic, a corpus, a language model stays sealed until a licensed contact point touches it — and the touch, not the elegance of the internal architecture, is what opens the content.",
+      "quote": "A logic, a corpus, a language model stays sealed until a licensed contact point touches it, and the touch, not the elegance of the internal architecture, is what opens the content.",
       "block_id": "coherent_world_models-block-195",
       "section": "Contact points: where consistency stops being enough",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-288",
-      "quote": "| yes | yes | *a good indicator of being right* — but not a proof |",
+      "quote": "| yes | yes | *a good indicator of being right*, but not a proof |",
       "block_id": "coherent_world_models-block-196",
       "section": "Contact points: where consistency stops being enough",
       "kind": "statement"
@@ -15766,14 +15766,14 @@
     },
     {
       "id": "coherent_world_models-stmt-293",
-      "quote": "\\citeauthor{popper1963conjectures} (\\citeyear{popper1963conjectures}), in \\citetitle{popper1963conjectures}, insisted that a scientific theory earns its status not from the accumulation of confirmations but from *risky* predictions — claims that, if they failed at a contact point, would refute it \\cite{popper1963conjectures}.",
+      "quote": "\\citeauthor{popper1963conjectures} (\\citeyear{popper1963conjectures}), in \\citetitle{popper1963conjectures}, insisted that a scientific theory earns its status not from the accumulation of confirmations but from *risky* predictions; claims that, if they failed at a contact point, would refute it \\cite{popper1963conjectures}.",
       "block_id": "coherent_world_models-block-200",
       "section": "Contact points: where consistency stops being enough",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-294",
-      "quote": "In this chapter's vocabulary: a theory is *empirical* only if it licenses contact points at which it could fail; a theory with no such point is, on the account this chapter has been building, not a coherent-but-untested theory but a *coherent-only* object — a mathematical fantasy wearing the costume of physics.",
+      "quote": "In this chapter's vocabulary: a theory is *empirical* only if it licenses contact points at which it could fail; a theory with no such point is, on the account this chapter has been building, not a coherent-but-untested theory but a *coherent-only* object, a mathematical fantasy wearing the costume of physics.",
       "block_id": "coherent_world_models-block-200",
       "section": "Contact points: where consistency stops being enough",
       "kind": "statement"
@@ -15794,7 +15794,7 @@
     },
     {
       "id": "coherent_world_models-stmt-297",
-      "quote": "A single overlapping contact point — even a spectacular one, even Mercury — is a necessary start, not a finish line.",
+      "quote": "A single overlapping contact point (even a spectacular one, even Mercury) is a necessary start, not a finish line.",
       "block_id": "coherent_world_models-block-201",
       "section": "Contact points: where consistency stops being enough",
       "kind": "statement"
@@ -15822,7 +15822,7 @@
     },
     {
       "id": "coherent_world_models-stmt-301",
-      "quote": "A *single* genuine contact point — a measurement, correctly licensed, with the confounders controlled — at which the model's prediction and the world's fact do *not* overlap is decisive: it is the sheaf condition failing at a bridge, and the global section it was supposed to reconstruct does not exist.",
+      "quote": "A *single* genuine contact point (a measurement, correctly licensed, with the confounders controlled) at which the model's prediction and the world's fact do *not* overlap is decisive: it is the sheaf condition failing at a bridge, and the global section it was supposed to reconstruct does not exist.",
       "block_id": "coherent_world_models-block-202",
       "section": "Contact points: where consistency stops being enough",
       "kind": "statement"
@@ -15857,7 +15857,7 @@
     },
     {
       "id": "coherent_world_models-stmt-306",
-      "quote": "The model's honest domain is the *largest region on which descent holds* — its region of validity — and a failure *retracts* that region to a smaller one.",
+      "quote": "The model's honest domain is the *largest region on which descent holds* (its region of validity) and a failure *retracts* that region to a smaller one.",
       "block_id": "coherent_world_models-block-202",
       "section": "Contact points: where consistency stops being enough",
       "kind": "statement"
@@ -15878,7 +15878,7 @@
     },
     {
       "id": "coherent_world_models-stmt-309",
-      "quote": "Three sorts of arrows, each with a separate *condition* — but only two of those conditions are truth conditions proper; the first is a prerequisite that makes the test meaningful.",
+      "quote": "Three sorts of arrows, each with a separate *condition*, but only two of those conditions are truth conditions proper; the first is a prerequisite that makes the test meaningful.",
       "block_id": "coherent_world_models-block-204",
       "section": "The diagram, completed",
       "kind": "statement"
@@ -15892,7 +15892,7 @@
     },
     {
       "id": "coherent_world_models-stmt-311",
-      "quote": "The fifth breaks neither — it is a failure of *scope*: the query lies outside the cover, so there is no contact point at all.",
+      "quote": "The fifth breaks neither; it is a failure of *scope*: the query lies outside the cover, so there is no contact point at all.",
       "block_id": "coherent_world_models-block-206",
       "section": "Five pathologies",
       "kind": "statement"
@@ -15920,7 +15920,7 @@
     },
     {
       "id": "coherent_world_models-stmt-315",
-      "quote": "The remedy is unlike 1–4: not more coherence, not more grounding *of the claim*, but **detecting non-coverage** — confidence/coverage calibration, an explicit \"I don't know\", retrieval that is allowed to return *no* passage.",
+      "quote": "The remedy is unlike 1-4: not more coherence, not more grounding *of the claim*, but **detecting non-coverage**: confidence/coverage calibration, an explicit \"I don't know\", retrieval that is allowed to return *no* passage.",
       "block_id": "coherent_world_models-block-211",
       "section": "Five pathologies",
       "kind": "statement"
@@ -15934,7 +15934,7 @@
     },
     {
       "id": "coherent_world_models-stmt-317",
-      "quote": "The first three break-points, located on the one diagram (the fourth — the calibrated error — has no single spot to mark: a bias across *passing* contacts; the fifth — the out-of-cover query — has *no* contact point at all: the query is outside the cover, so there is nothing in the diagram to break):",
+      "quote": "The first three break-points, located on the one diagram (the fourth, the calibrated error, has no single spot to mark: a bias across *passing* contacts; the fifth, the out-of-cover query, has *no* contact point at all: the query is outside the cover, so there is nothing in the diagram to break):",
       "block_id": "coherent_world_models-block-212",
       "section": "Five pathologies",
       "kind": "statement"
@@ -16067,14 +16067,14 @@
     },
     {
       "id": "coherent_world_models-stmt-336",
-      "quote": "Two conditions, each **necessary** — jointly sufficient only *in the limit* the model approaches and never reaches.",
+      "quote": "Two conditions, each **necessary**, jointly sufficient only *in the limit* the model approaches and never reaches.",
       "block_id": "coherent_world_models-block-227",
       "section": "The closing synthesis",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-337",
-      "quote": "So \"true\" is a *regulative ideal* (as true as possible), not an attained state; the question we can actually answer is the operational one — has the model failed at any contact point where it *could* be checked?",
+      "quote": "So \"true\" is a *regulative ideal* (as true as possible), not an attained state; the question we can actually answer is the operational one: has the model failed at any contact point where it *could* be checked?",
       "block_id": "coherent_world_models-block-227",
       "section": "The closing synthesis",
       "kind": "statement"
@@ -16102,7 +16102,7 @@
     },
     {
       "id": "coherent_world_models-stmt-341",
-      "quote": "Convention T is a *criterion* a truth definition must satisfy — and Tarski's *theorem* is that it is satisfiable by a recursive definition, while a language rich enough to express its own semantics cannot satisfy it internally (the undefinability result).",
+      "quote": "Convention T is a *criterion* a truth definition must satisfy, and Tarski's *theorem* is that it is satisfiable by a recursive definition, while a language rich enough to express its own semantics cannot satisfy it internally (the undefinability result).",
       "block_id": "coherent_world_models-block-230",
       "section": "The closing synthesis",
       "kind": "statement"
@@ -16123,14 +16123,14 @@
     },
     {
       "id": "coherent_world_models-stmt-344",
-      "quote": "The point was what the diagram *buys you* when you point it at something concrete — and the most concrete subject matter the reader of this textbook is likely to care about is the AI system on the desk.",
+      "quote": "The point was what the diagram *buys you* when you point it at something concrete, and the most concrete subject matter the reader of this textbook is likely to care about is the AI system on the desk.",
       "block_id": "coherent_world_models-block-232",
       "section": "What this offers AI systems",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-345",
-      "quote": "The discipline built in the previous sections — traces, admissible transitions, descent, the Tarskian if-and-only-if, the five pathologies — was a *specification*.",
+      "quote": "The discipline built in the previous sections (traces, admissible transitions, descent, the Tarskian if-and-only-if, the five pathologies) was a *specification*.",
       "block_id": "coherent_world_models-block-232",
       "section": "What this offers AI systems",
       "kind": "statement"
@@ -16186,14 +16186,14 @@
     },
     {
       "id": "coherent_world_models-stmt-353",
-      "quote": "None of these is a bridge from the model to the world; all of them are bridges *inside* the model — operations on its own representations.",
+      "quote": "None of these is a bridge from the model to the world; all of them are bridges *inside* the model, operations on its own representations.",
       "block_id": "coherent_world_models-block-236",
       "section": "The LLM in the master diagram",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-354",
-      "quote": "Once this picture is in place, the LLM's *strengths* fall out as properties of internal descent — that is, coherence *within the model's own state space*, with no world involved.",
+      "quote": "Once this picture is in place, the LLM's *strengths* fall out as properties of internal descent, that is, coherence *within the model's own state space*, with no world involved.",
       "block_id": "coherent_world_models-block-238",
       "section": "What the LLM does: internal descent",
       "kind": "statement"
@@ -16242,7 +16242,7 @@
     },
     {
       "id": "coherent_world_models-stmt-361",
-      "quote": "With augmentation — in-context evidence, retrieval, tool use, code execution, formal proof — it acquires *live* external arrows, with the licensing earned piecemeal and audited per tool.",
+      "quote": "With augmentation (in-context evidence, retrieval, tool use, code execution, formal proof), it acquires *live* external arrows, with the licensing earned piecemeal and audited per tool.",
       "block_id": "coherent_world_models-block-242",
       "section": "What the LLM lacks: grounded observation",
       "kind": "statement"
@@ -16270,7 +16270,7 @@
     },
     {
       "id": "coherent_world_models-stmt-365",
-      "quote": "A *presheaf* assigns a section to each patch, but the *sheaf condition* — that compatible local sections glue into a unique global section — need not hold.",
+      "quote": "A *presheaf* assigns a section to each patch, but the *sheaf condition* (that compatible local sections glue into a unique global section) need not hold.",
       "block_id": "coherent_world_models-block-244",
       "section": "Hallucination, precisely",
       "kind": "statement"
@@ -16291,7 +16291,7 @@
     },
     {
       "id": "coherent_world_models-stmt-368",
-      "quote": "But a model that *resolves* the conflicting patches by picking one and flattening the rest produces a *coherent* output — the dominant hallucination — and the residue of the flattening is a *correspondence* error, not a coherence one.",
+      "quote": "But a model that *resolves* the conflicting patches by picking one and flattening the rest produces a *coherent* output (the dominant hallucination), and the residue of the flattening is a *correspondence* error, not a coherence one.",
       "block_id": "coherent_world_models-block-244",
       "section": "Hallucination, precisely",
       "kind": "statement"
@@ -16305,7 +16305,7 @@
     },
     {
       "id": "coherent_world_models-stmt-370",
-      "quote": "- **Coherence failure (distinct, less common): non-glueable.** The model *contradicts itself* across contexts — three answers to one question, a claim refuted in a later paragraph.",
+      "quote": "- **Coherence failure (distinct, less common): non-glueable.** The model *contradicts itself* across contexts: three answers to one question, a claim refuted in a later paragraph.",
       "block_id": "coherent_world_models-block-246",
       "section": "Hallucination, precisely",
       "kind": "statement"
@@ -16319,14 +16319,14 @@
     },
     {
       "id": "coherent_world_models-stmt-372",
-      "quote": "A model can suffer *both* — a locally coherent fabrication that also contradicts another part of the output — and then it needs *both* remedies.",
+      "quote": "A model can suffer *both* (a locally coherent fabrication that also contradicts another part of the output), and then it needs *both* remedies.",
       "block_id": "coherent_world_models-block-246",
       "section": "Hallucination, precisely",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-373",
-      "quote": "- **Licensing was granted, but the licence does not deliver contact.** The model's internal operations are licensed — they are admissible in $\\mathcal{T}$ — but no transition inside the model reaches from the model's claims to the world.",
+      "quote": "- **Licensing was granted, but the licence does not deliver contact.** The model's internal operations are licensed (they are admissible in $\\mathcal{T}$), but no transition inside the model reaches from the model's claims to the world.",
       "block_id": "coherent_world_models-block-247",
       "section": "Hallucination, precisely",
       "kind": "statement"
@@ -16361,14 +16361,14 @@
     },
     {
       "id": "coherent_world_models-stmt-378",
-      "quote": "| Self-consistent fantasy (**dominant**) | Confident fluent fabrication: fake citation, wrong fact, plausible wrong code — *locally coherent* | Correspondence (coherence intact) | Grounding: retrieval, tools, formal verification |",
+      "quote": "| Self-consistent fantasy (**dominant**) | Confident fluent fabrication: fake citation, wrong fact, plausible wrong code, *locally coherent* | Correspondence (coherence intact) | Grounding: retrieval, tools, formal verification |",
       "block_id": "coherent_world_models-block-250",
       "section": "Hallucination, precisely",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-379",
-      "quote": "| Non-glueable presheaf (self-contradiction) | Three answers to one question; a claim refuted later in the same output | Coherence + correspondence | More coherence: scratchpads, cleaner data, self-consistency — *plus* grounding |",
+      "quote": "| Non-glueable presheaf (self-contradiction) | Three answers to one question; a claim refuted later in the same output | Coherence + correspondence | More coherence: scratchpads, cleaner data, self-consistency, *plus* grounding |",
       "block_id": "coherent_world_models-block-251",
       "section": "Hallucination, precisely",
       "kind": "statement"
@@ -16396,14 +16396,14 @@
     },
     {
       "id": "coherent_world_models-stmt-383",
-      "quote": "| Out-of-cover query | Fluent, confident answer to a question outside the training cover (long-tail / out-of-distribution) | Coverage — no contact point exists to check | Detect non-coverage: coverage calibration, \"I don't know\", retrieval allowed to return nothing |",
+      "quote": "| Out-of-cover query | Fluent, confident answer to a question outside the training cover (long-tail / out-of-distribution) | Coverage: no contact point exists to check | Detect non-coverage: coverage calibration, \"I don't know\", retrieval allowed to return nothing |",
       "block_id": "coherent_world_models-block-255",
       "section": "Hallucination, precisely",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-384",
-      "quote": "The diagnosis matters because the *remedy* differs in each case — and getting the type right is what selects the remedy.",
+      "quote": "The diagnosis matters because the *remedy* differs in each case, and getting the type right is what selects the remedy.",
       "block_id": "coherent_world_models-block-256",
       "section": "Hallucination, precisely",
       "kind": "statement"
@@ -16431,7 +16431,7 @@
     },
     {
       "id": "coherent_world_models-stmt-388",
-      "quote": "A single fix does not address all of them, and conflating them — treating hallucination as *purely* a coherence problem (just scale up) or *purely* a correspondence problem (just retrieve more) — systematically undershoots the diagnosis.",
+      "quote": "A single fix does not address all of them, and conflating them, treating hallucination as *purely* a coherence problem (just scale up) or *purely* a correspondence problem (just retrieve more), systematically undershoots the diagnosis.",
       "block_id": "coherent_world_models-block-256",
       "section": "Hallucination, precisely",
       "kind": "statement"
@@ -16466,7 +16466,7 @@
     },
     {
       "id": "coherent_world_models-stmt-393",
-      "quote": "The new row — the tool/verifier between the LLM's output and the world fact — is what each remedy below installs.",
+      "quote": "The new row (the tool/verifier between the LLM's output and the world fact) is what each remedy below installs.",
       "block_id": "coherent_world_models-block-259",
       "section": "What helps: adding admissible transitions",
       "kind": "statement"
@@ -16578,7 +16578,7 @@
     },
     {
       "id": "coherent_world_models-stmt-409",
-      "quote": "The procedure is the same for any model — scientific, mathematical, historical, LLM — because the chapter's claim is that the *shape* is the same.",
+      "quote": "The procedure is the same for any model (scientific, mathematical, historical, LLM) because the chapter's claim is that the *shape* is the same.",
       "block_id": "coherent_world_models-block-267",
       "section": "The nine-step audit, applied to an LLM",
       "kind": "statement"
@@ -16683,14 +16683,14 @@
     },
     {
       "id": "coherent_world_models-stmt-424",
-      "quote": "**The chapter must refuse to upgrade a historical reading into a theorem, or a structural analogy into a biconditional** — its own forbidden move #1, applied to itself.",
+      "quote": "**The chapter must refuse to upgrade a historical reading into a theorem, or a structural analogy into a biconditional**: its own forbidden move #1, applied to itself.",
       "block_id": "coherent_world_models-block-276",
       "section": "The framework, applied to itself",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-425",
-      "quote": "**Residuals — the honest part.** Running the audit, the framework *finds residuals in itself*, and records them:",
+      "quote": "**Residuals: the honest part.** Running the audit, the framework *finds residuals in itself*, and records them:",
       "block_id": "coherent_world_models-block-277",
       "section": "The framework, applied to itself",
       "kind": "statement"
@@ -16704,7 +16704,7 @@
     },
     {
       "id": "coherent_world_models-stmt-427",
-      "quote": "- **Specific over-licensed claims, checked by name.** Rather than assert the residual, the audit runs the Tarski check on its own load-bearing attributions and *locates* them: **(i)** the reading of **Bradley** (and Blanshard) as \"not separating coherence from correspondence\" is a *charitable reconstruction that serves the unification*, not an exegesis — on the standard reading Bradley's \"reality\" is the Absolute, so \"coherence determined by reality\" is intra-systemic and he is a pure coherentist; re-licensed here as a reconstruction.",
+      "quote": "- **Specific over-licensed claims, checked by name.** Rather than assert the residual, the audit runs the Tarski check on its own load-bearing attributions and *locates* them: **(i)** the reading of **Bradley** (and Blanshard) as \"not separating coherence from correspondence\" is a *charitable reconstruction that serves the unification*, not an exegesis; on the standard reading Bradley's \"reality\" is the Absolute, so \"coherence determined by reality\" is intra-systemic and he is a pure coherentist; re-licensed here as a reconstruction.",
       "block_id": "coherent_world_models-block-279",
       "section": "The framework, applied to itself",
       "kind": "statement"
@@ -16753,14 +16753,14 @@
     },
     {
       "id": "coherent_world_models-stmt-434",
-      "quote": "The chapter's honest range is exactly the region those transitions cover — and every such check the reader performs *widens the cover* and tests the correspondence leg the way the framework says truth is tested.",
+      "quote": "The chapter's honest range is exactly the region those transitions cover, and every such check the reader performs *widens the cover* and tests the correspondence leg the way the framework says truth is tested.",
       "block_id": "coherent_world_models-block-281",
       "section": "The framework, applied to itself",
       "kind": "statement"
     },
     {
       "id": "coherent_world_models-stmt-435",
-      "quote": "Three honest claims, to leave the chapter with — and one demonstration that earned them.",
+      "quote": "Three honest claims, to leave the chapter with, and one demonstration that earned them.",
       "block_id": "coherent_world_models-block-283",
       "section": "An honest closing",
       "kind": "statement"
@@ -16774,7 +16774,7 @@
     },
     {
       "id": "coherent_world_models-stmt-437",
-      "quote": "Two corrections — both the move \"locate the difference at the right level, never silently upgrade\": code execution and formal verification are *live observation arrows* an earlier draft underweighted (the training corpus, meanwhile, is a *frozen, mediated* one — the LLM has no *live* arrow at inference, but is not \"without observation\"); and the *dominant* hallucination is a *coherent-but-ungrounded* output (a correspondence failure), with the *self-contradicting* non-glueable case as a distinct, less common type.",
+      "quote": "Two corrections (both the move \"locate the difference at the right level, never silently upgrade\"): code execution and formal verification are *live observation arrows* an earlier draft underweighted (the training corpus, meanwhile, is a *frozen, mediated* one; the LLM has no *live* arrow at inference, but is not \"without observation\"); and the *dominant* hallucination is a *coherent-but-ungrounded* output (a correspondence failure), with the *self-contradicting* non-glueable case as a distinct, less common type.",
       "block_id": "coherent_world_models-block-284",
       "section": "An honest closing",
       "kind": "statement"
@@ -16795,7 +16795,7 @@
     },
     {
       "id": "coherent_world_models-block-3",
-      "quote": "What is a *world model*? A physicist never grasps an electron *as it is in itself*; a mathematician never inspects an abstract structure from a *view from nowhere*; a historian never enters the past. Even the listener who reaches out to touch the speaker meets only a transformed trace — never the sound source as it would be apart from any perception. What arrives in every domain — empirical, formal, archival — is the same: *transformed traces*. Measurements, sense-data, formal reports, proof scripts, embeddings, archival documents.",
+      "quote": "What is a *world model*? A physicist never grasps an electron *as it is in itself*; a mathematician never inspects an abstract structure from a *view from nowhere*; a historian never enters the past. Even the listener who reaches out to touch the speaker meets only a transformed trace, never the sound source as it would be apart from any perception. What arrives in every domain (empirical, formal, archival) is the same: *transformed traces*. Measurements, sense-data, formal reports, proof scripts, embeddings, archival documents.",
       "kind": "paragraph",
       "section": "The question"
     },
@@ -16807,7 +16807,7 @@
     },
     {
       "id": "coherent_world_models-block-5",
-      "quote": "- **In philosophy** the operation is called *coherence*. It is the central claim of the coherence theory of truth (Bradley, Blanshard, BonJour): a model is true insofar as its parts hang together — a self-consistent system of beliefs whose local sections agree on overlaps.",
+      "quote": "- **In philosophy** the operation is called *coherence*. It is the central claim of the coherence theory of truth (Bradley, Blanshard, BonJour): a model is true insofar as its parts hang together, a self-consistent system of beliefs whose local sections agree on overlaps.",
       "kind": "list-item",
       "section": "The question"
     },
@@ -16819,7 +16819,7 @@
     },
     {
       "id": "coherent_world_models-block-7",
-      "quote": "The unification is the chapter's central claim. Sheaf theory, coherence theory, and post-foundationalist epistemology are not three answers to three different questions; they are three vocabularies for one discipline — the discipline of asking when a collection of partial views deserves the name *one description*. The chapter closes where it opened, by joining that discipline to Tarski's correspondence, so that a coherent model is *true* (not merely internally consistent) at every licensed contact point with the world.",
+      "quote": "The unification is the chapter's central claim. Sheaf theory, coherence theory, and post-foundationalist epistemology are not three answers to three different questions; they are three vocabularies for one discipline, the discipline of asking when a collection of partial views deserves the name *one description*. The chapter closes where it opened, by joining that discipline to Tarski's correspondence, so that a coherent model is *true* (not merely internally consistent) at every licensed contact point with the world.",
       "kind": "paragraph",
       "section": "The question"
     },
@@ -16837,7 +16837,7 @@
     },
     {
       "id": "coherent_world_models-block-10",
-      "quote": "4. *Possibly indexical.* A trace *may* point beyond itself to a source, but not every trace does: a genuine measurement of a specific system is indexical; a hallucination shaped like a measurement is not; pure noise is not; a free pattern in a derivation points only to the derivation. Whether a trace is *of* something — and *what* — is a substantive question, not given in advance, and establishing it is most of the work of inference. A trace without indexicality is not yet evidence; it is data awaiting a source.",
+      "quote": "4. *Possibly indexical.* A trace *may* point beyond itself to a source, but not every trace does: a genuine measurement of a specific system is indexical; a hallucination shaped like a measurement is not; pure noise is not; a free pattern in a derivation points only to the derivation. Whether a trace is *of* something (and *what*) is a substantive question, not given in advance, and establishing it is most of the work of inference. A trace without indexicality is not yet evidence; it is data awaiting a source.",
       "kind": "list-item",
       "section": "Traces"
     },
@@ -16897,7 +16897,7 @@
     },
     {
       "id": "coherent_world_models-block-20",
-      "quote": "Inside our default, there is no Archimedean point from which the world shows itself untransformed. Kant's name for what is forever on the other side of this mediation is the *thing in itself* (*Ding an sich*), first introduced in the *Critique of Pure Reason* at KrV A26/B40–42 (the Transcendental Exposition of the Concept of Space, the second part of §1 of the Transcendental Aesthetic) and developed systematically in the chapter \"Of Phenomena and Noumena\" at A235/B294 \\cite{kant_critique_pure_reason}; the technical term here is **the subject matter as it would be independent of any access**. We never get there. The right question is therefore not \"how do we reach it?\" but \"what can we honestly do with the traces we have?\"",
+      "quote": "Inside our default, there is no Archimedean point from which the world shows itself untransformed. Kant's name for what is forever on the other side of this mediation is the *thing in itself* (*Ding an sich*), first introduced in the *Critique of Pure Reason* at KrV A26/B40-42 (the Transcendental Exposition of the Concept of Space, the second part of §1 of the Transcendental Aesthetic) and developed systematically in the chapter \"Of Phenomena and Noumena\" at A235/B294 \\cite{kant_critique_pure_reason}; the technical term here is **the subject matter as it would be independent of any access**. We never get there. The right question is therefore not \"how do we reach it?\" but \"what can we honestly do with the traces we have?\"",
       "kind": "paragraph",
       "section": "Commitments"
     },
@@ -16939,13 +16939,13 @@
     },
     {
       "id": "coherent_world_models-block-27",
-      "quote": "One symptom, three places it can originate — the diagnostic picture:",
+      "quote": "One symptom, three places it can originate: the diagnostic picture:",
       "kind": "paragraph",
       "section": "Three kinds of difference"
     },
     {
       "id": "coherent_world_models-block-28",
-      "quote": "The distinction between channels and interpretation is in part the moral of \\citeauthor{cartwright1983laws}'s (\\citeyear{cartwright1983laws}) *How the Laws of Physics Lie*: the equations of fundamental physics are *true* of the highly idealized model setups in which they were derived — a frictionless plane, an isolated system, an exactly spherical earth — and *approximately* true of many real systems, but often false of the messy, multifactorial, *dappled* world in which we actually use them \\cite{cartwright1983laws} \\cite{cartwright1999dappled}. The right model is rarely the one whose equations are most elegant; it is the one that respects which factors actually matter for the phenomenon at hand and which are genuinely absent. Conflating \"the law is true\" (a statement about a clean laboratory model) with \"the law applies here\" (a statement about a real situation) is one of the most common forms of silent upgrade between world-level and channel-level difference.",
+      "quote": "The distinction between channels and interpretation is in part the moral of \\citeauthor{cartwright1983laws}'s (\\citeyear{cartwright1983laws}) *How the Laws of Physics Lie*: the equations of fundamental physics are *true* of the highly idealized model setups in which they were derived (a frictionless plane, an isolated system, an exactly spherical earth) and *approximately* true of many real systems, but often false of the messy, multifactorial, *dappled* world in which we actually use them \\cite{cartwright1983laws} \\cite{cartwright1999dappled}. The right model is rarely the one whose equations are most elegant; it is the one that respects which factors actually matter for the phenomenon at hand and which are genuinely absent. Conflating \"the law is true\" (a statement about a clean laboratory model) with \"the law applies here\" (a statement about a real situation) is one of the most common forms of silent upgrade between world-level and channel-level difference.",
       "kind": "paragraph",
       "section": "Three kinds of difference"
     },
@@ -16981,7 +16981,7 @@
     },
     {
       "id": "coherent_world_models-block-34",
-      "quote": "The whole hierarchy, with its witness at each level — each $\\Downarrow$ is a weakening; the forbidden move is to read them silently upwards. Qualifier: the first four steps (identity $\\Rightarrow$ iso $\\Rightarrow$ homotopy $\\Rightarrow$ approximation) are automatic — a witness of the stronger row is literally a witness of the weaker. The last step (statistical $\\Rightarrow$ model-theoretic) is *not* automatic in the same way: high likelihood under a probabilistic model does not, by itself, guarantee a common classical model of the theories. It is a genuine step of the ladder, but a *contested* one, licensed only where the statistical and the model-theoretic descriptions pick out the same structures.",
+      "quote": "The whole hierarchy, with its witness at each level: each $\\Downarrow$ is a weakening; the forbidden move is to read them silently upwards. Qualifier: the first four steps (identity $\\Rightarrow$ iso $\\Rightarrow$ homotopy $\\Rightarrow$ approximation) are automatic; a witness of the stronger row is literally a witness of the weaker. The last step (statistical $\\Rightarrow$ model-theoretic) is *not* automatic in the same way: high likelihood under a probabilistic model does not, by itself, guarantee a common classical model of the theories. It is a genuine step of the ladder, but a *contested* one, licensed only where the statistical and the model-theoretic descriptions pick out the same structures.",
       "kind": "paragraph",
       "section": "Notions of sameness"
     },
@@ -17041,31 +17041,31 @@
     },
     {
       "id": "coherent_world_models-block-44",
-      "quote": "Before going further it is worth naming the kind of diagram this chapter has been drawing. The picture we want — boxes for kinds of things, labelled arrows for functional relations, commutativity as an explicit constraint — has a name: the **olog**, short for *ontology log*. The term is due to Spivak & Kent's \"Ologs: A Categorical Framework for Knowledge Representation\" \\cite{spivak2012ologs} (used more broadly in Spivak, *Category Theory for the Sciences* \\cite{spivak2014cts}). The rules are simple enough to use without ever saying the words *category* or *functor*.",
+      "quote": "Before going further it is worth naming the kind of diagram this chapter has been drawing. The picture we want (boxes for kinds of things, labelled arrows for functional relations, commutativity as an explicit constraint) has a name: the **olog**, short for *ontology log*. The term is due to Spivak & Kent's \"Ologs: A Categorical Framework for Knowledge Representation\" \\cite{spivak2012ologs} (used more broadly in Spivak, *Category Theory for the Sciences* \\cite{spivak2014cts}). The rules are simple enough to use without ever saying the words *category* or *functor*.",
       "kind": "paragraph",
       "section": "Ologs: a diagram that pays its way"
     },
     {
       "id": "coherent_world_models-block-45",
-      "quote": "1. **Types** are drawn as boxes labelled with a *singular noun-phrase* — a kind of thing. *A person*, *a temperature*, *a trace*, *a theorem*.",
+      "quote": "1. **Types** are drawn as boxes labelled with a *singular noun-phrase*, a kind of thing. *A person*, *a temperature*, *a trace*, *a theorem*.",
       "kind": "list-item",
       "section": "Ologs: a diagram that pays its way"
     },
     {
       "id": "coherent_world_models-block-46",
-      "quote": "2. **Arrows** are drawn between boxes with a *singular verb-phrase* — a *functional* relation: every entity of the source type maps to exactly one entity of the target type. *mother-of : Person → Person*. *born-in : Person → City*.",
+      "quote": "2. **Arrows** are drawn between boxes with a *singular verb-phrase*, a *functional* relation: every entity of the source type maps to exactly one entity of the target type. *mother-of : Person → Person*. *born-in : Person → City*.",
       "kind": "list-item",
       "section": "Ologs: a diagram that pays its way"
     },
     {
       "id": "coherent_world_models-block-47",
-      "quote": "A worked fragment — the olog for a calibrated thermometer, with three distinct types and one clean question:",
+      "quote": "A worked fragment, the olog for a calibrated thermometer, with three distinct types and one clean question:",
       "kind": "paragraph",
       "section": "Ologs: a diagram that pays its way"
     },
     {
       "id": "coherent_world_models-block-48",
-      "quote": "The arrows are functional: each thermometer has exactly one current reading; each reading indicates exactly one temperature; each temperature is identical with itself. There are two routes from Thermometer to Temperature — the *true* temperature (left column) and the *indicated* temperature (top row, then right column). The olog *asks* whether these two routes deliver the same answer. If yes, the thermometer is calibrated: its reading reflects the truth. If no, the diagram has a hole: the sensor drifts, or its calibration curve is wrong, or someone has applied the wrong correction. The olog shows the discrepancy *where* it lives — at the contact point between the indicated reading and the true temperature — and tells you exactly which licensed transition ($\\mathcal{T}$-arrow) has failed.",
+      "quote": "The arrows are functional: each thermometer has exactly one current reading; each reading indicates exactly one temperature; each temperature is identical with itself. There are two routes from Thermometer to Temperature: the *true* temperature (left column) and the *indicated* temperature (top row, then right column). The olog *asks* whether these two routes deliver the same answer. If yes, the thermometer is calibrated: its reading reflects the truth. If no, the diagram has a hole: the sensor drifts, or its calibration curve is wrong, or someone has applied the wrong correction. The olog shows the discrepancy *where* it lives (at the contact point between the indicated reading and the true temperature) and tells you exactly which licensed transition ($\\mathcal{T}$-arrow) has failed.",
       "kind": "paragraph",
       "section": "Ologs: a diagram that pays its way"
     },
@@ -17131,31 +17131,31 @@
     },
     {
       "id": "coherent_world_models-block-59",
-      "quote": "- **Subcategory** — $\\mathcal{T}$ is the *list of permitted arrows*. An arrow that is not on the list has no licence to appear in any comparison. The bare claim \"there is a transformation\" is therefore empty until you can name the arrow and find it in $\\mathcal{T}$.",
+      "quote": "- **Subcategory**: $\\mathcal{T}$ is the *list of permitted arrows*. An arrow that is not on the list has no licence to appear in any comparison. The bare claim \"there is a transformation\" is therefore empty until you can name the arrow and find it in $\\mathcal{T}$.",
       "kind": "list-item",
       "section": "Admissible transitions"
     },
     {
       "id": "coherent_world_models-block-60",
-      "quote": "- **Bayesian prior** — $\\mathcal{T}$ is the *prior* the modelling setup carries before any data are seen. Choosing what to admit encodes background knowledge: a Fourier transform is licensed in physics, a hand-wave is not. The arrows on the list are the comparisons the setup is willing to take seriously *a priori*; everything else is treated as a coincidence until proven otherwise.",
+      "quote": "- **Bayesian prior**: $\\mathcal{T}$ is the *prior* the modelling setup carries before any data are seen. Choosing what to admit encodes background knowledge: a Fourier transform is licensed in physics, a hand-wave is not. The arrows on the list are the comparisons the setup is willing to take seriously *a priori*; everything else is treated as a coincidence until proven otherwise.",
       "kind": "list-item",
       "section": "Admissible transitions"
     },
     {
       "id": "coherent_world_models-block-61",
-      "quote": "- **Occam penalty** — the *richer* $\\mathcal{T}$ is, the wider the space of admissible world-models; the wider the space, the easier the data are fitted by accident. Enlarging $\\mathcal{T}$ is therefore an act of over-fitting in its own right — even before a single comparison is run.",
+      "quote": "- **Occam penalty**: the *richer* $\\mathcal{T}$ is, the wider the space of admissible world-models; the wider the space, the easier the data are fitted by accident. Enlarging $\\mathcal{T}$ is therefore an act of over-fitting in its own right, even before a single comparison is run.",
       "kind": "list-item",
       "section": "Admissible transitions"
     },
     {
       "id": "coherent_world_models-block-62",
-      "quote": "Three names, one *kind* of restriction: the same comparison space is kept small for three different reasons — the morphisms it allows (subcategory), the beliefs it carries before data (prior), the model complexity it imposes (Occam). These are three *distinct* mathematical objects (a subset, a measure, a real-valued functional); the chapter reads them as three *motives* for a single discipline — *do not let the space of licensed comparisons grow without paying for it* — and it does **not** claim the three are provably the same object, only that they point the same way.",
+      "quote": "Three names, one *kind* of restriction: the same comparison space is kept small for three different reasons, the morphisms it allows (subcategory), the beliefs it carries before data (prior), the model complexity it imposes (Occam). These are three *distinct* mathematical objects (a subset, a measure, a real-valued functional); the chapter reads them as three *motives* for a single discipline (*do not let the space of licensed comparisons grow without paying for it*) and it does **not** claim the three are provably the same object, only that they point the same way.",
       "kind": "paragraph",
       "section": "Admissible transitions"
     },
     {
       "id": "coherent_world_models-block-63",
-      "quote": "The contrast with the classical foundationalist picture — there *must* be a privileged class of transitions that need no prior justification — is exactly the picture \\citeauthor{sellars1956empiricism} (\\citeyear{sellars1956empiricism}) rejects in his critique of the \"myth of the given\" \\cite{sellars1956empiricism}:",
+      "quote": "The contrast with the classical foundationalist picture (there *must* be a privileged class of transitions that need no prior justification) is exactly the picture \\citeauthor{sellars1956empiricism} (\\citeyear{sellars1956empiricism}) rejects in his critique of the \"myth of the given\" \\cite{sellars1956empiricism}:",
       "kind": "paragraph",
       "section": "Admissible transitions"
     },
@@ -17167,7 +17167,7 @@
     },
     {
       "id": "coherent_world_models-block-65",
-      "quote": "The two pictures — the first is the foundationalist picture (rejected); the second is what this chapter builds.",
+      "quote": "The two pictures: the first is the foundationalist picture (rejected); the second is what this chapter builds.",
       "kind": "paragraph",
       "section": "Admissible transitions"
     },
@@ -17287,13 +17287,13 @@
     },
     {
       "id": "coherent_world_models-block-85",
-      "quote": "For a cover of two patches, the whole condition is one square — and it is a pullback:",
+      "quote": "For a cover of two patches, the whole condition is one square, and it is a pullback:",
       "kind": "paragraph",
       "section": "Sheaves: coherence = descent"
     },
     {
       "id": "coherent_world_models-block-86",
-      "quote": "For two patches, coherence *is* a pullback — the object of agreements, exactly as in the section \"Pullbacks: agreement through a shared target\" below. For more patches the same shape runs over the full Čech nerve.",
+      "quote": "For two patches, coherence *is* a pullback, the object of agreements, exactly as in the section \"Pullbacks: agreement through a shared target\" below. For more patches the same shape runs over the full Čech nerve.",
       "kind": "paragraph",
       "section": "Sheaves: coherence = descent"
     },
@@ -17335,7 +17335,7 @@
     },
     {
       "id": "coherent_world_models-block-93",
-      "quote": "The same shape governs **mathematical data** — here genuinely as a flat cover, with no downstream chain. A group presented by generators-and-relations, by a Cayley table, by a permutation action, by a matrix representation, by a character table: five sibling presentations, five channels, one group, provided the transitions between presentations are admissible (isomorphisms of the appropriate kind).",
+      "quote": "The same shape governs **mathematical data**, here genuinely as a flat cover, with no downstream chain. A group presented by generators-and-relations, by a Cayley table, by a permutation action, by a matrix representation, by a character table: five sibling presentations, five channels, one group, provided the transitions between presentations are admissible (isomorphisms of the appropriate kind).",
       "kind": "paragraph",
       "section": "The running example (now that we have sheaves)"
     },
@@ -17389,13 +17389,13 @@
     },
     {
       "id": "coherent_world_models-block-102",
-      "quote": "The homotopical case, drawn — the $\\Downarrow$ in the interior is the filler $\\alpha_{ABC}$:",
+      "quote": "The homotopical case, drawn: the $\\Downarrow$ in the interior is the filler $\\alpha_{ABC}$:",
       "kind": "paragraph",
       "section": "Higher coherence"
     },
     {
       "id": "coherent_world_models-block-103",
-      "quote": "The two routes — $\\phi_{AC}$ directly, and $\\phi_{BC} \\circ \\phi_{AB}$ by composition — are not equal; the filler says they can be deformed into one another, and the filler is itself data you can ask further questions about.",
+      "quote": "The two routes ($\\phi_{AC}$ directly, and $\\phi_{BC} \\circ \\phi_{AB}$ by composition) are not equal; the filler says they can be deformed into one another, and the filler is itself data you can ask further questions about.",
       "kind": "paragraph",
       "section": "Higher coherence"
     },
@@ -17611,7 +17611,7 @@
     },
     {
       "id": "coherent_world_models-block-139",
-      "quote": "Different mathematics; one shape. The unification is not a metaphor. It is the explicit programme of \\citeauthor{caramello2017theories}'s (\\citeyear{caramello2017theories}) *toposes-as-bridges* programme \\cite{caramello2017theories}: the same topos admits several presentations — as a sheaf topos over different sites, as the classifying topos of a geometric theory — and the facts invariant under that equivalence transfer between them: the transfer is by *equivalence of presentations* (the same topos, several sites), of which descent is one of the working parts. The diagram above is the one shape that all five rows exhibit; the rows differ only in the underlying category.",
+      "quote": "Different mathematics; one shape. The unification is not a metaphor. It is the explicit programme of \\citeauthor{caramello2017theories}'s (\\citeyear{caramello2017theories}) *toposes-as-bridges* programme \\cite{caramello2017theories}: the same topos admits several presentations (as a sheaf topos over different sites, as the classifying topos of a geometric theory), and the facts invariant under that equivalence transfer between them: the transfer is by *equivalence of presentations* (the same topos, several sites), of which descent is one of the working parts. The diagram above is the one shape that all five rows exhibit; the rows differ only in the underlying category.",
       "kind": "paragraph",
       "section": "The one diagram"
     },
@@ -17683,7 +17683,7 @@
     },
     {
       "id": "coherent_world_models-block-151",
-      "quote": "The chain has a direct counterpart in contemporary ontology of science. \\citeauthor{worrall1989structural} (\\citeyear{worrall1989structural}) proposed \\emph{structural realism} as the philosophical position that takes seriously the chain's signature fact: across theory change (Fresnel → Maxwell, classical → relativistic), what is preserved is not the ontology of unobservables but the *structure* of the equations that relate them \\cite{worrall1989structural}. The move was sharpened by \\citeauthor{ladyman1998what} (\\citeyear{ladyman1998what}) into \\emph{ontic structural realism}: not \"we only know the structure\" but \"there *is* nothing but the structure\" — the world *is* the chain of admissible cover systems, not a thing-in-itself behind them \\cite{ladyman1998what} \\cite{ladymanross2007everything}. The present chapter's position is weaker and more operational: it does not commit to OSR, but it does commit to the structural-relational claim that any successful world model is the *global section of some admissible cover*, and that what survives an admissible change of cover is precisely the structural content.",
+      "quote": "The chain has a direct counterpart in contemporary ontology of science. \\citeauthor{worrall1989structural} (\\citeyear{worrall1989structural}) proposed \\emph{structural realism} as the philosophical position that takes seriously the chain's signature fact: across theory change (Fresnel → Maxwell, classical → relativistic), what is preserved is not the ontology of unobservables but the *structure* of the equations that relate them \\cite{worrall1989structural}. The move was sharpened by \\citeauthor{ladyman1998what} (\\citeyear{ladyman1998what}) into \\emph{ontic structural realism}: not \"we only know the structure\" but \"there *is* nothing but the structure\"; the world *is* the chain of admissible cover systems, not a thing-in-itself behind them \\cite{ladyman1998what} \\cite{ladymanross2007everything}. The present chapter's position is weaker and more operational: it does not commit to OSR, but it does commit to the structural-relational claim that any successful world model is the *global section of some admissible cover*, and that what survives an admissible change of cover is precisely the structural content.",
       "kind": "paragraph",
       "section": "Where each theory lives on one chain"
     },
@@ -17695,7 +17695,7 @@
     },
     {
       "id": "coherent_world_models-block-153",
-      "quote": "Two observers, two instruments, two cultures, two centuries, two formal systems: their reports need not coincide to be about one subject. What is required is that the differences factor through admissible transitions — and factor *within the licensed regime* (isomorphic, homotopic, approximate, or statistical, as the case warrants):",
+      "quote": "Two observers, two instruments, two cultures, two centuries, two formal systems: their reports need not coincide to be about one subject. What is required is that the differences factor through admissible transitions, and factor *within the licensed regime* (isomorphic, homotopic, approximate, or statistical, as the case warrants):",
       "kind": "paragraph",
       "section": "Perspectival difference is not erased"
     },
@@ -17725,7 +17725,7 @@
     },
     {
       "id": "coherent_world_models-block-158",
-      "quote": "And the safeguard, once more (its warrant — the distinction between coherence and correspondence — is developed in the very next section, \"Truth: coherence and correspondence\"):",
+      "quote": "And the safeguard, once more (its warrant, the distinction between coherence and correspondence, is developed in the very next section, \"Truth: coherence and correspondence\"):",
       "kind": "paragraph",
       "section": "One sentence"
     },
@@ -17863,7 +17863,7 @@
     },
     {
       "id": "coherent_world_models-block-181",
-      "quote": "What the coherence tradition gives us, in the language of this chapter, is **the sheaf condition**: a coherent model is one whose local sections agree on overlaps. A caveat, in the chapter's own spirit (see \"The status of this chapter\"): this is a *working definition* — a stipulation about how the chapter will use the word \"coherence\" — not a discovered identity between two pre-existing things. It is an upgrade the chapter *declares*, not one it silently assumes. And the declaration is *conditional, not free*: the gluing theorems attach to an object **only if it is actually a sheaf**, and an object is a sheaf **only if it carries the structure a presheaf requires** — a *site* of contexts, *restriction maps* saying how a claim on one context reads on a sub-context, and *overlaps* on which those restrictions are compared. A web of beliefs, a corpus, or a model does **not** come with canonical restriction maps already attached; the mathematics is precise about what that structure *is*, and the chapter does not get it for free. So the honest form of the definition is a *testable hypothesis* about a given system — *does it admit the structure, and, on its admissible covers, does descent hold?* — not a stipulation that it is a sheaf with a derivation hanging off the stipulation. Where the structure can be supplied (a calibrated instrument, a formal system, a manifold), descent is a theorem about the object; where it cannot, the object is a *candidate*, and \"does it glue?\" is an open question the framework is built to *ask*, not a fact it assumes. With those boundaries marked, coherence is, for this chapter, the structural heart of descent:",
+      "quote": "What the coherence tradition gives us, in the language of this chapter, is **the sheaf condition**: a coherent model is one whose local sections agree on overlaps. A caveat, in the chapter's own spirit (see \"The status of this chapter\"): this is a *working definition* (a stipulation about how the chapter will use the word \"coherence\"), not a discovered identity between two pre-existing things. It is an upgrade the chapter *declares*, not one it silently assumes. And the declaration is *conditional, not free*: the gluing theorems attach to an object **only if it is actually a sheaf**, and an object is a sheaf **only if it carries the structure a presheaf requires**, a *site* of contexts, *restriction maps* saying how a claim on one context reads on a sub-context, and *overlaps* on which those restrictions are compared. A web of beliefs, a corpus, or a model does **not** come with canonical restriction maps already attached; the mathematics is precise about what that structure *is*, and the chapter does not get it for free. So the honest form of the definition is a *testable hypothesis* about a given system (*does it admit the structure, and, on its admissible covers, does descent hold?*), not a stipulation that it is a sheaf with a derivation hanging off the stipulation. Where the structure can be supplied (a calibrated instrument, a formal system, a manifold), descent is a theorem about the object; where it cannot, the object is a *candidate*, and \"does it glue?\" is an open question the framework is built to *ask*, not a fact it assumes. With those boundaries marked, coherence is, for this chapter, the structural heart of descent:",
       "kind": "paragraph",
       "section": "The coherence tradition"
     },
@@ -17875,7 +17875,7 @@
     },
     {
       "id": "coherent_world_models-block-183",
-      "quote": "The two traditions look opposed only if read carelessly. Read carefully, they are *complementary*: each names a necessary condition that the other ignores. (A footnote on Bradley and Blanshard, consistent with the reconstruction flagged above: the straight reading of both is *pure* coherence — Bradley's \"reality\" is the Absolute, Blanshard's \"whole of reality\" the coherent whole — and the table below follows that common reading. That they can also be read *as* gesturing toward correspondence (the \"reality which the idea endeavours to represent\", \"the whole of reality\") is the charitable reconstruction the chapter uses to anchor the two-leg test — held at reconstruction-strength, not exegesis.)",
+      "quote": "The two traditions look opposed only if read carelessly. Read carefully, they are *complementary*: each names a necessary condition that the other ignores. (A footnote on Bradley and Blanshard, consistent with the reconstruction flagged above: the straight reading of both is *pure* coherence (Bradley's \"reality\" is the Absolute, Blanshard's \"whole of reality\" the coherent whole) and the table below follows that common reading. That they can also be read *as* gesturing toward correspondence (the \"reality which the idea endeavours to represent\", \"the whole of reality\") is the charitable reconstruction the chapter uses to anchor the two-leg test, held at reconstruction-strength, not exegesis.)",
       "kind": "paragraph",
       "section": "The synthesis: coherence and correspondence"
     },
@@ -17905,7 +17905,7 @@
     },
     {
       "id": "coherent_world_models-block-188",
-      "quote": "This is the precise statement of what it means to say that a coherent world model is *true* — read as an *ideal the model converges to*, since the correspondence leg is a limit rather than a state it attains. Not true as a slogan: it is the conjunction of two conditions, one structural (checkable on the current cover) and one empirical (approached as the cover is widened); the operational, fallible criterion — *justified acceptance* — is drawn in the closing synthesis. The two are independent *precisely because* they run in different directions: coherence is checked *within* a fixed admissible cover, while correspondence — as the preceding subsection fixed it — is checked *across* the sequence of covers, as that cover is widened. One is a spatial condition on the patches; the other is a structural condition on the *sequence* of patches. That independence is what keeps the test from being circular, and it is also why neither alone suffices.",
+      "quote": "This is the precise statement of what it means to say that a coherent world model is *true*, read as an *ideal the model converges to*, since the correspondence leg is a limit rather than a state it attains. Not true as a slogan: it is the conjunction of two conditions, one structural (checkable on the current cover) and one empirical (approached as the cover is widened); the operational, fallible criterion (*justified acceptance*) is drawn in the closing synthesis. The two are independent *precisely because* they run in different directions: coherence is checked *within* a fixed admissible cover, while correspondence (as the preceding subsection fixed it) is checked *across* the sequence of covers, as that cover is widened. One is a spatial condition on the patches; the other is a structural condition on the *sequence* of patches. That independence is what keeps the test from being circular, and it is also why neither alone suffices.",
       "kind": "paragraph",
       "section": "The synthesis: coherence and correspondence"
     },
@@ -17917,7 +17917,7 @@
     },
     {
       "id": "coherent_world_models-block-190",
-      "quote": "This is the positive form of what the *factbook* pathology — the second of the five — is the absence of: a heap of individually true, individually well-calibrated claims that no morphism connects. Every part of a genuine world model must, at least in theory, be *reducible to* every other part by some chain of licensed transitions. The morphisms are the connective tissue that turns \"a collection of claims\" into \"one model of one subject matter\"; a model whose parts are only co-present, never interconnectable, is not a model at all but a list.",
+      "quote": "This is the positive form of what the *factbook* pathology (the second of the five) is the absence of: a heap of individually true, individually well-calibrated claims that no morphism connects. Every part of a genuine world model must, at least in theory, be *reducible to* every other part by some chain of licensed transitions. The morphisms are the connective tissue that turns \"a collection of claims\" into \"one model of one subject matter\"; a model whose parts are only co-present, never interconnectable, is not a model at all but a list.",
       "kind": "paragraph",
       "section": "Contact points: where consistency stops being enough"
     },
@@ -17935,7 +17935,7 @@
     },
     {
       "id": "coherent_world_models-block-193",
-      "quote": "From the few proper names that overlapped — Ptolemy on the stone, Cleopatra on the Philae obelisk — the phonetic value of each sign was fixed by *comparison on the overlaps*, then tested against further cartouches, and it held everywhere:",
+      "quote": "From the few proper names that overlapped (Ptolemy on the stone, Cleopatra on the Philae obelisk) the phonetic value of each sign was fixed by *comparison on the overlaps*, then tested against further cartouches, and it held everywhere:",
       "kind": "paragraph",
       "section": "Contact points: where consistency stops being enough"
     },
@@ -17947,13 +17947,13 @@
     },
     {
       "id": "coherent_world_models-block-195",
-      "quote": "That is descent in miniature: local agreement on a cover (the shared names) — unique global section (the whole script, *erschlossen aus dem Zusammenhang*, recovered from context). The moral is the chapter's own: coherence of a symbol system is not yet *semantics*. A logic, a corpus, a language model stays sealed until a licensed contact point touches it — and the touch, not the elegance of the internal architecture, is what opens the content.",
+      "quote": "That is descent in miniature: local agreement on a cover (the shared names); unique global section (the whole script, *erschlossen aus dem Zusammenhang*, recovered from context). The moral is the chapter's own: coherence of a symbol system is not yet *semantics*. A logic, a corpus, a language model stays sealed until a licensed contact point touches it, and the touch, not the elegance of the internal architecture, is what opens the content.",
       "kind": "paragraph",
       "section": "Contact points: where consistency stops being enough"
     },
     {
       "id": "coherent_world_models-block-196",
-      "quote": "| yes | yes | *a good indicator of being right* — but not a proof |",
+      "quote": "| yes | yes | *a good indicator of being right*, but not a proof |",
       "kind": "table-row",
       "section": "Contact points: where consistency stops being enough"
     },
@@ -17977,19 +17977,19 @@
     },
     {
       "id": "coherent_world_models-block-200",
-      "quote": "This is the falsificationist spine of the picture made explicit. \\citeauthor{popper1963conjectures} (\\citeyear{popper1963conjectures}), in \\citetitle{popper1963conjectures}, insisted that a scientific theory earns its status not from the accumulation of confirmations but from *risky* predictions — claims that, if they failed at a contact point, would refute it \\cite{popper1963conjectures}. In this chapter's vocabulary: a theory is *empirical* only if it licenses contact points at which it could fail; a theory with no such point is, on the account this chapter has been building, not a coherent-but-untested theory but a *coherent-only* object — a mathematical fantasy wearing the costume of physics. The more contact points a theory exposes, the harder it is to fit them all by luck, and the cheaper each potential refutation becomes.",
+      "quote": "This is the falsificationist spine of the picture made explicit. \\citeauthor{popper1963conjectures} (\\citeyear{popper1963conjectures}), in \\citetitle{popper1963conjectures}, insisted that a scientific theory earns its status not from the accumulation of confirmations but from *risky* predictions; claims that, if they failed at a contact point, would refute it \\cite{popper1963conjectures}. In this chapter's vocabulary: a theory is *empirical* only if it licenses contact points at which it could fail; a theory with no such point is, on the account this chapter has been building, not a coherent-but-untested theory but a *coherent-only* object, a mathematical fantasy wearing the costume of physics. The more contact points a theory exposes, the harder it is to fit them all by luck, and the cheaper each potential refutation becomes.",
       "kind": "paragraph",
       "section": "Contact points: where consistency stops being enough"
     },
     {
       "id": "coherent_world_models-block-201",
-      "quote": "And the *count* of such points matters. A single overlapping contact point — even a spectacular one, even Mercury — is a necessary start, not a finish line. The more independent, hard, low-confounder points the model survives, the less room there is for the lucky fit, and the closer the *good indicator* approaches a *certificate*. This is the operational content of corroboration: not that any single point proves the theory, but that the *set* of points, each independently licensed and each low-confounder, makes the alternative (a lucky fit) progressively more improbable.",
+      "quote": "And the *count* of such points matters. A single overlapping contact point (even a spectacular one, even Mercury) is a necessary start, not a finish line. The more independent, hard, low-confounder points the model survives, the less room there is for the lucky fit, and the closer the *good indicator* approaches a *certificate*. This is the operational content of corroboration: not that any single point proves the theory, but that the *set* of points, each independently licensed and each low-confounder, makes the alternative (a lucky fit) progressively more improbable.",
       "kind": "paragraph",
       "section": "Contact points: where consistency stops being enough"
     },
     {
       "id": "coherent_world_models-block-202",
-      "quote": "The converse is what makes the criterion asymmetric and usable. A *single* genuine contact point — a measurement, correctly licensed, with the confounders controlled — at which the model's prediction and the world's fact do *not* overlap is decisive: it is the sheaf condition failing at a bridge, and the global section it was supposed to reconstruct does not exist. A hundred passes do not make a theory \"proven\"; one clean failure makes it wrong, at least in the region that failure touches. (The two spines reconcile here, and the reconciliation is itself a sheaf statement. There is no \"partially glued sheaf\": on a given cover the global section either exists or it does not. A failed contact point does not therefore \"poke a hole\" in an existing global section; it tells you the *cover you were working on was too large* for the data to be compatible. The model's honest domain is the *largest region on which descent holds* — its region of validity — and a failure *retracts* that region to a smaller one. \"Wrong in the region that failure touches\" means precisely that the model is a sheaf on a *smaller* region than the one it was claiming. The global section is the ideal; the region of validity is the real, partial object, and \"as true as possible\" is a statement about how far that region extends.) The model is true *only insofar as* no such point has been found, and the discipline of the whole chapter is the standing willingness to keep engineering harder contact points until one is.",
+      "quote": "The converse is what makes the criterion asymmetric and usable. A *single* genuine contact point (a measurement, correctly licensed, with the confounders controlled) at which the model's prediction and the world's fact do *not* overlap is decisive: it is the sheaf condition failing at a bridge, and the global section it was supposed to reconstruct does not exist. A hundred passes do not make a theory \"proven\"; one clean failure makes it wrong, at least in the region that failure touches. (The two spines reconcile here, and the reconciliation is itself a sheaf statement. There is no \"partially glued sheaf\": on a given cover the global section either exists or it does not. A failed contact point does not therefore \"poke a hole\" in an existing global section; it tells you the *cover you were working on was too large* for the data to be compatible. The model's honest domain is the *largest region on which descent holds* (its region of validity) and a failure *retracts* that region to a smaller one. \"Wrong in the region that failure touches\" means precisely that the model is a sheaf on a *smaller* region than the one it was claiming. The global section is the ideal; the region of validity is the real, partial object, and \"as true as possible\" is a statement about how far that region extends.) The model is true *only insofar as* no such point has been found, and the discipline of the whole chapter is the standing willingness to keep engineering harder contact points until one is.",
       "kind": "paragraph",
       "section": "Contact points: where consistency stops being enough"
     },
@@ -18001,7 +18001,7 @@
     },
     {
       "id": "coherent_world_models-block-204",
-      "quote": "Three sorts of arrows, each with a separate *condition* — but only two of those conditions are truth conditions proper; the first is a prerequisite that makes the test meaningful.",
+      "quote": "Three sorts of arrows, each with a separate *condition*, but only two of those conditions are truth conditions proper; the first is a prerequisite that makes the test meaningful.",
       "kind": "paragraph",
       "section": "The diagram, completed"
     },
@@ -18013,7 +18013,7 @@
     },
     {
       "id": "coherent_world_models-block-206",
-      "quote": "The first four each break exactly one of the two conditions (or, for the fourth, both are intact but *calibrated* wrong). The fifth breaks neither — it is a failure of *scope*: the query lies outside the cover, so there is no contact point at all.",
+      "quote": "The first four each break exactly one of the two conditions (or, for the fourth, both are intact but *calibrated* wrong). The fifth breaks neither; it is a failure of *scope*: the query lies outside the cover, so there is no contact point at all.",
       "kind": "paragraph",
       "section": "Five pathologies"
     },
@@ -18043,13 +18043,13 @@
     },
     {
       "id": "coherent_world_models-block-211",
-      "quote": "The remedy is unlike 1–4: not more coherence, not more grounding *of the claim*, but **detecting non-coverage** — confidence/coverage calibration, an explicit \"I don't know\", retrieval that is allowed to return *no* passage. A model that knows the edge of its own cover is doing what none of the in-cover pathologies can: *declining the question.*",
+      "quote": "The remedy is unlike 1-4: not more coherence, not more grounding *of the claim*, but **detecting non-coverage**: confidence/coverage calibration, an explicit \"I don't know\", retrieval that is allowed to return *no* passage. A model that knows the edge of its own cover is doing what none of the in-cover pathologies can: *declining the question.*",
       "kind": "paragraph",
       "section": "Five pathologies"
     },
     {
       "id": "coherent_world_models-block-212",
-      "quote": "The first three break-points, located on the one diagram (the fourth — the calibrated error — has no single spot to mark: a bias across *passing* contacts; the fifth — the out-of-cover query — has *no* contact point at all: the query is outside the cover, so there is nothing in the diagram to break):",
+      "quote": "The first three break-points, located on the one diagram (the fourth, the calibrated error, has no single spot to mark: a bias across *passing* contacts; the fifth, the out-of-cover query, has *no* contact point at all: the query is outside the cover, so there is nothing in the diagram to break):",
       "kind": "paragraph",
       "section": "Five pathologies"
     },
@@ -18139,7 +18139,7 @@
     },
     {
       "id": "coherent_world_models-block-227",
-      "quote": "Two conditions, each **necessary** — jointly sufficient only *in the limit* the model approaches and never reaches. So \"true\" is a *regulative ideal* (as true as possible), not an attained state; the question we can actually answer is the operational one — has the model failed at any contact point where it *could* be checked?",
+      "quote": "Two conditions, each **necessary**, jointly sufficient only *in the limit* the model approaches and never reaches. So \"true\" is a *regulative ideal* (as true as possible), not an attained state; the question we can actually answer is the operational one: has the model failed at any contact point where it *could* be checked?",
       "kind": "paragraph",
       "section": "The closing synthesis"
     },
@@ -18157,7 +18157,7 @@
     },
     {
       "id": "coherent_world_models-block-230",
-      "quote": "A useful analogy is not a theorem. Convention T is a *criterion* a truth definition must satisfy — and Tarski's *theorem* is that it is satisfiable by a recursive definition, while a language rich enough to express its own semantics cannot satisfy it internally (the undefinability result). The use we make of it here is a *discipline* about how to live with models.",
+      "quote": "A useful analogy is not a theorem. Convention T is a *criterion* a truth definition must satisfy, and Tarski's *theorem* is that it is satisfiable by a recursive definition, while a language rich enough to express its own semantics cannot satisfy it internally (the undefinability result). The use we make of it here is a *discipline* about how to live with models.",
       "kind": "paragraph",
       "section": "The closing synthesis"
     },
@@ -18169,7 +18169,7 @@
     },
     {
       "id": "coherent_world_models-block-232",
-      "quote": "The point of this chapter was never the diagram. The point was what the diagram *buys you* when you point it at something concrete — and the most concrete subject matter the reader of this textbook is likely to care about is the AI system on the desk. The discipline built in the previous sections — traces, admissible transitions, descent, the Tarskian if-and-only-if, the five pathologies — was a *specification*. What follows is the specification, applied.",
+      "quote": "The point of this chapter was never the diagram. The point was what the diagram *buys you* when you point it at something concrete, and the most concrete subject matter the reader of this textbook is likely to care about is the AI system on the desk. The discipline built in the previous sections (traces, admissible transitions, descent, the Tarskian if-and-only-if, the five pathologies) was a *specification*. What follows is the specification, applied.",
       "kind": "paragraph",
       "section": "What this offers AI systems"
     },
@@ -18193,7 +18193,7 @@
     },
     {
       "id": "coherent_world_models-block-236",
-      "quote": "- **The admissible transitions $\\mathcal{T}$** are the model's *internal operations*: tokenisation, embedding, attention, layer normalisation, MLP transformations, logit computation, sampling. None of these is a bridge from the model to the world; all of them are bridges *inside* the model — operations on its own representations.",
+      "quote": "- **The admissible transitions $\\mathcal{T}$** are the model's *internal operations*: tokenisation, embedding, attention, layer normalisation, MLP transformations, logit computation, sampling. None of these is a bridge from the model to the world; all of them are bridges *inside* the model, operations on its own representations.",
       "kind": "list-item",
       "section": "The LLM in the master diagram"
     },
@@ -18205,7 +18205,7 @@
     },
     {
       "id": "coherent_world_models-block-238",
-      "quote": "Once this picture is in place, the LLM's *strengths* fall out as properties of internal descent — that is, coherence *within the model's own state space*, with no world involved.",
+      "quote": "Once this picture is in place, the LLM's *strengths* fall out as properties of internal descent, that is, coherence *within the model's own state space*, with no world involved.",
       "kind": "paragraph",
       "section": "What the LLM does: internal descent"
     },
@@ -18229,7 +18229,7 @@
     },
     {
       "id": "coherent_world_models-block-242",
-      "quote": "The reading, then: the LLM, *at inference and by default*, has only internal arrows *of its own*; its external access is the *frozen* residue of the training pipeline plus whatever is attached at query time. With augmentation — in-context evidence, retrieval, tool use, code execution, formal proof — it acquires *live* external arrows, with the licensing earned piecemeal and audited per tool. None of this removes the structural gap; it narrows it. And the gap is *structural*: it lives in the inference-time architecture, not in any particular model's training, and it is the reason the next subsection's diagnosis (hallucination) reads the way it does.",
+      "quote": "The reading, then: the LLM, *at inference and by default*, has only internal arrows *of its own*; its external access is the *frozen* residue of the training pipeline plus whatever is attached at query time. With augmentation (in-context evidence, retrieval, tool use, code execution, formal proof), it acquires *live* external arrows, with the licensing earned piecemeal and audited per tool. None of this removes the structural gap; it narrows it. And the gap is *structural*: it lives in the inference-time architecture, not in any particular model's training, and it is the reason the next subsection's diagnosis (hallucination) reads the way it does.",
       "kind": "paragraph",
       "section": "What the LLM lacks: grounded observation"
     },
@@ -18241,7 +18241,7 @@
     },
     {
       "id": "coherent_world_models-block-244",
-      "quote": "The terminology still matters, for that second type. A *presheaf* assigns a section to each patch, but the *sheaf condition* — that compatible local sections glue into a unique global section — need not hold. The training corpus, as the previous section argued, contains contradictory patches: the same facts, different answers; the same code idiom, different conventions; the same historical event, different framings. Where a model *carries those contradictions forward* instead of resolving them, its local sections are *not* compatible on overlaps and no single coherent global section exists; at best an $\\infty$-sheaf gluing recovers a coherence class when the homotopies compose coherently on triple overlaps, which the corpus does not satisfy in general. But a model that *resolves* the conflicting patches by picking one and flattening the rest produces a *coherent* output — the dominant hallucination — and the residue of the flattening is a *correspondence* error, not a coherence one.",
+      "quote": "The terminology still matters, for that second type. A *presheaf* assigns a section to each patch, but the *sheaf condition* (that compatible local sections glue into a unique global section) need not hold. The training corpus, as the previous section argued, contains contradictory patches: the same facts, different answers; the same code idiom, different conventions; the same historical event, different framings. Where a model *carries those contradictions forward* instead of resolving them, its local sections are *not* compatible on overlaps and no single coherent global section exists; at best an $\\infty$-sheaf gluing recovers a coherence class when the homotopies compose coherently on triple overlaps, which the corpus does not satisfy in general. But a model that *resolves* the conflicting patches by picking one and flattening the rest produces a *coherent* output (the dominant hallucination), and the residue of the flattening is a *correspondence* error, not a coherence one.",
       "kind": "paragraph",
       "section": "Hallucination, precisely"
     },
@@ -18253,13 +18253,13 @@
     },
     {
       "id": "coherent_world_models-block-246",
-      "quote": "- **Coherence failure (distinct, less common): non-glueable.** The model *contradicts itself* across contexts — three answers to one question, a claim refuted in a later paragraph. Here the local sections genuinely do not agree on overlaps, so the output is a *broken presheaf*; the remedy is *more coherence* (structured scratchpads, cleaner training data, self-consistency checks). A model can suffer *both* — a locally coherent fabrication that also contradicts another part of the output — and then it needs *both* remedies.",
+      "quote": "- **Coherence failure (distinct, less common): non-glueable.** The model *contradicts itself* across contexts: three answers to one question, a claim refuted in a later paragraph. Here the local sections genuinely do not agree on overlaps, so the output is a *broken presheaf*; the remedy is *more coherence* (structured scratchpads, cleaner training data, self-consistency checks). A model can suffer *both* (a locally coherent fabrication that also contradicts another part of the output), and then it needs *both* remedies.",
       "kind": "list-item",
       "section": "Hallucination, precisely"
     },
     {
       "id": "coherent_world_models-block-247",
-      "quote": "- **Licensing was granted, but the licence does not deliver contact.** The model's internal operations are licensed — they are admissible in $\\mathcal{T}$ — but no transition inside the model reaches from the model's claims to the world. The Tarski if-and-only-if never gets evaluated, *except* in the partial ways the previous section described: in-context learning, retrieval, tool use, formal verification. In those cases the licence is real, and so is the Tarski check, but only at the augmented contact points; everywhere else, the licence is just a permit for the model to keep talking.",
+      "quote": "- **Licensing was granted, but the licence does not deliver contact.** The model's internal operations are licensed (they are admissible in $\\mathcal{T}$), but no transition inside the model reaches from the model's claims to the world. The Tarski if-and-only-if never gets evaluated, *except* in the partial ways the previous section described: in-context learning, retrieval, tool use, formal verification. In those cases the licence is real, and so is the Tarski check, but only at the augmented contact points; everywhere else, the licence is just a permit for the model to keep talking.",
       "kind": "list-item",
       "section": "Hallucination, precisely"
     },
@@ -18277,13 +18277,13 @@
     },
     {
       "id": "coherent_world_models-block-250",
-      "quote": "| Self-consistent fantasy (**dominant**) | Confident fluent fabrication: fake citation, wrong fact, plausible wrong code — *locally coherent* | Correspondence (coherence intact) | Grounding: retrieval, tools, formal verification |",
+      "quote": "| Self-consistent fantasy (**dominant**) | Confident fluent fabrication: fake citation, wrong fact, plausible wrong code, *locally coherent* | Correspondence (coherence intact) | Grounding: retrieval, tools, formal verification |",
       "kind": "table-row",
       "section": "Hallucination, precisely"
     },
     {
       "id": "coherent_world_models-block-251",
-      "quote": "| Non-glueable presheaf (self-contradiction) | Three answers to one question; a claim refuted later in the same output | Coherence + correspondence | More coherence: scratchpads, cleaner data, self-consistency — *plus* grounding |",
+      "quote": "| Non-glueable presheaf (self-contradiction) | Three answers to one question; a claim refuted later in the same output | Coherence + correspondence | More coherence: scratchpads, cleaner data, self-consistency, *plus* grounding |",
       "kind": "table-row",
       "section": "Hallucination, precisely"
     },
@@ -18307,13 +18307,13 @@
     },
     {
       "id": "coherent_world_models-block-255",
-      "quote": "| Out-of-cover query | Fluent, confident answer to a question outside the training cover (long-tail / out-of-distribution) | Coverage — no contact point exists to check | Detect non-coverage: coverage calibration, \"I don't know\", retrieval allowed to return nothing |",
+      "quote": "| Out-of-cover query | Fluent, confident answer to a question outside the training cover (long-tail / out-of-distribution) | Coverage: no contact point exists to check | Detect non-coverage: coverage calibration, \"I don't know\", retrieval allowed to return nothing |",
       "kind": "table-row",
       "section": "Hallucination, precisely"
     },
     {
       "id": "coherent_world_models-block-256",
-      "quote": "The diagnosis matters because the *remedy* differs in each case — and getting the type right is what selects the remedy. The *dominant* hallucination, coherent but ungrounded, needs *correspondence* (retrieval, tools, verification) *first*; piling on more coherence (longer chains of thought) does not fix a fluent fabrication. The *self-contradicting* type needs *coherence* (cleaner data, structured scratchpads). The factbook needs more coherence; the calibrated error needs re-licensing. A single fix does not address all of them, and conflating them — treating hallucination as *purely* a coherence problem (just scale up) or *purely* a correspondence problem (just retrieve more) — systematically undershoots the diagnosis. And because the line between the first two rows is not always observable, the disciplined move is to *add the cheapest grounded contact point* (a retrieval, a tool call) and let the output's behaviour *there*, not a prior label, decide which remedy is doing the work.",
+      "quote": "The diagnosis matters because the *remedy* differs in each case, and getting the type right is what selects the remedy. The *dominant* hallucination, coherent but ungrounded, needs *correspondence* (retrieval, tools, verification) *first*; piling on more coherence (longer chains of thought) does not fix a fluent fabrication. The *self-contradicting* type needs *coherence* (cleaner data, structured scratchpads). The factbook needs more coherence; the calibrated error needs re-licensing. A single fix does not address all of them, and conflating them, treating hallucination as *purely* a coherence problem (just scale up) or *purely* a correspondence problem (just retrieve more), systematically undershoots the diagnosis. And because the line between the first two rows is not always observable, the disciplined move is to *add the cheapest grounded contact point* (a retrieval, a tool call) and let the output's behaviour *there*, not a prior label, decide which remedy is doing the work.",
       "kind": "paragraph",
       "section": "Hallucination, precisely"
     },
@@ -18331,7 +18331,7 @@
     },
     {
       "id": "coherent_world_models-block-259",
-      "quote": "The new row — the tool/verifier between the LLM's output and the world fact — is what each remedy below installs. The arrow from the tool to the world fact is the licensed transition that closes the loop. Without it, the diagram is the baseline LLM: a coherence engine with no correspondence check.",
+      "quote": "The new row (the tool/verifier between the LLM's output and the world fact) is what each remedy below installs. The arrow from the tool to the world fact is the licensed transition that closes the loop. Without it, the diagram is the baseline LLM: a coherence engine with no correspondence check.",
       "kind": "paragraph",
       "section": "What helps: adding admissible transitions"
     },
@@ -18379,7 +18379,7 @@
     },
     {
       "id": "coherent_world_models-block-267",
-      "quote": "The procedure is the same for any model — scientific, mathematical, historical, LLM — because the chapter's claim is that the *shape* is the same. That is why the very next section runs these nine steps on the chapter *itself*: the one model in this book that is also its own author, and therefore the one where the question \"where is the licensed transition?\" is hardest to answer honestly.",
+      "quote": "The procedure is the same for any model (scientific, mathematical, historical, LLM) because the chapter's claim is that the *shape* is the same. That is why the very next section runs these nine steps on the chapter *itself*: the one model in this book that is also its own author, and therefore the one where the question \"where is the licensed transition?\" is hardest to answer honestly.",
       "kind": "paragraph",
       "section": "The nine-step audit, applied to an LLM"
     },
@@ -18433,13 +18433,13 @@
     },
     {
       "id": "coherent_world_models-block-276",
-      "quote": "6. **Which sameness.** The math claims aim at *equality* (theorem-level); the historical and philosophical claims aim at *approximation* (a reading, not a quotation); the LLM claims aim at *statistical* agreement. **The chapter must refuse to upgrade a historical reading into a theorem, or a structural analogy into a biconditional** — its own forbidden move #1, applied to itself.",
+      "quote": "6. **Which sameness.** The math claims aim at *equality* (theorem-level); the historical and philosophical claims aim at *approximation* (a reading, not a quotation); the LLM claims aim at *statistical* agreement. **The chapter must refuse to upgrade a historical reading into a theorem, or a structural analogy into a biconditional**: its own forbidden move #1, applied to itself.",
       "kind": "list-item",
       "section": "The framework, applied to itself"
     },
     {
       "id": "coherent_world_models-block-277",
-      "quote": "8. **Residuals — the honest part.** Running the audit, the framework *finds residuals in itself*, and records them:",
+      "quote": "8. **Residuals: the honest part.** Running the audit, the framework *finds residuals in itself*, and records them:",
       "kind": "list-item",
       "section": "The framework, applied to itself"
     },
@@ -18451,7 +18451,7 @@
     },
     {
       "id": "coherent_world_models-block-279",
-      "quote": "- **Specific over-licensed claims, checked by name.** Rather than assert the residual, the audit runs the Tarski check on its own load-bearing attributions and *locates* them: **(i)** the reading of **Bradley** (and Blanshard) as \"not separating coherence from correspondence\" is a *charitable reconstruction that serves the unification*, not an exegesis — on the standard reading Bradley's \"reality\" is the Absolute, so \"coherence determined by reality\" is intra-systemic and he is a pure coherentist; re-licensed here as a reconstruction. **(ii)** the equation \"$\\mathcal{T}$ *is* the Sellarsian space of reasons\" is a *structural analogy* stated with the force of an *identity*; re-licensed as \"the *shape* of the space of reasons.\" **(iii)** Caramello's \"facts transfer between presentations by the descent machinery\" is imprecise; re-licensed as transfer by *equivalence of presentations* of the same topos. In each case the fix is the chapter's own rule: state the claim at its *actual* licence (reconstruction / analogy / equivalence), not the strongest one it could be read as.",
+      "quote": "- **Specific over-licensed claims, checked by name.** Rather than assert the residual, the audit runs the Tarski check on its own load-bearing attributions and *locates* them: **(i)** the reading of **Bradley** (and Blanshard) as \"not separating coherence from correspondence\" is a *charitable reconstruction that serves the unification*, not an exegesis; on the standard reading Bradley's \"reality\" is the Absolute, so \"coherence determined by reality\" is intra-systemic and he is a pure coherentist; re-licensed here as a reconstruction. **(ii)** the equation \"$\\mathcal{T}$ *is* the Sellarsian space of reasons\" is a *structural analogy* stated with the force of an *identity*; re-licensed as \"the *shape* of the space of reasons.\" **(iii)** Caramello's \"facts transfer between presentations by the descent machinery\" is imprecise; re-licensed as transfer by *equivalence of presentations* of the same topos. In each case the fix is the chapter's own rule: state the claim at its *actual* licence (reconstruction / analogy / equivalence), not the strongest one it could be read as.",
       "kind": "list-item",
       "section": "The framework, applied to itself"
     },
@@ -18463,7 +18463,7 @@
     },
     {
       "id": "coherent_world_models-block-281",
-      "quote": "9. **Next observation.** The *reader* is the contact point. A reader who checks a citation against the source, or a math claim against a textbook, is *adding an admissible transition* to this chapter's cover. The chapter's honest range is exactly the region those transitions cover — and every such check the reader performs *widens the cover* and tests the correspondence leg the way the framework says truth is tested.",
+      "quote": "9. **Next observation.** The *reader* is the contact point. A reader who checks a citation against the source, or a math claim against a textbook, is *adding an admissible transition* to this chapter's cover. The chapter's honest range is exactly the region those transitions cover, and every such check the reader performs *widens the cover* and tests the correspondence leg the way the framework says truth is tested.",
       "kind": "list-item",
       "section": "The framework, applied to itself"
     },
@@ -18475,13 +18475,13 @@
     },
     {
       "id": "coherent_world_models-block-283",
-      "quote": "Three honest claims, to leave the chapter with — and one demonstration that earned them.",
+      "quote": "Three honest claims, to leave the chapter with, and one demonstration that earned them.",
       "kind": "paragraph",
       "section": "An honest closing"
     },
     {
       "id": "coherent_world_models-block-284",
-      "quote": "A useful analogy is not a theorem, and the chapter now *marks its analogies as analogies* rather than letting them masquerade as biconditionals. Two corrections — both the move \"locate the difference at the right level, never silently upgrade\": code execution and formal verification are *live observation arrows* an earlier draft underweighted (the training corpus, meanwhile, is a *frozen, mediated* one — the LLM has no *live* arrow at inference, but is not \"without observation\"); and the *dominant* hallucination is a *coherent-but-ungrounded* output (a correspondence failure), with the *self-contradicting* non-glueable case as a distinct, less common type.",
+      "quote": "A useful analogy is not a theorem, and the chapter now *marks its analogies as analogies* rather than letting them masquerade as biconditionals. Two corrections (both the move \"locate the difference at the right level, never silently upgrade\"): code execution and formal verification are *live observation arrows* an earlier draft underweighted (the training corpus, meanwhile, is a *frozen, mediated* one; the LLM has no *live* arrow at inference, but is not \"without observation\"); and the *dominant* hallucination is a *coherent-but-ungrounded* output (a correspondence failure), with the *self-contradicting* non-glueable case as a distinct, less common type.",
       "kind": "paragraph",
       "section": "An honest closing"
     },

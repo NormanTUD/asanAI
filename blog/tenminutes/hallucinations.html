@@ -96,8 +96,23 @@
 
 
 
+					<section class="section-block" id="mitigate">
+						<div class="section-kicker"><span class="sk-num">03</span> Detection and mitigation</div>
+						<h2 class="section-title">A workflow, not a detector.</h2>
+						<div class="prose">
+							<p>No single detector is reliable. A watermark can be removed, a classifier can be fooled, and an LLM asked to grade its own answer can be confidently wrong. The practical response is a chain: retrieve documents and ask for citations, cross-check names, numbers, and quotes, run self-consistency or a second model, and use tools for arithmetic and code. For high-stakes work, a human reads the evidence.</p>
+							<p>It helps to separate <strong>bullshit</strong> from lying in Harry Frankfurt's sense: a liar knows the truth and tries to hide it, while the model is indifferent to truth and produces what fits the context. The output can be fluent, useful, and false at the same time. Sycophancy and length bias make it worse: the model may agree with a false premise or pad an answer because longer, agreeable text is a common pattern in the training data.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Retrieve</b><span>Put the evidence in the context and ask for citations.</span></div>
+							<div class="keypoint"><b>Cross-check</b><span>Verify names, numbers, quotes, and DOIs independently.</span></div>
+							<div class="keypoint"><b>Use tools</b><span>Let code, search, or a calculator do the exact part.</span></div>
+							<div class="keypoint"><b>Abstain</b><span>Make “I don't know” an acceptable answer.</span></div>
+						</div>
+					</section>
+
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

@@ -3439,6 +3439,40 @@ html[data-theme="dark"] .myth--ok b { color: var(--tm-green); }
 .att-heads { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .att-heads .chip { color: var(--tm-petrol); border-color: var(--tm-line-strong); }
 .att-heads .chip.is-on { background: var(--tm-green); color: #000000; border-color: var(--tm-green); }
+.code-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 10px; }
+.code-block {
+	display: none;
+	margin: 0 0 14px;
+	padding: 14px 16px;
+	border: 1px solid var(--tm-line);
+	border-radius: 10px;
+	background: var(--tm-paper-2);
+	overflow-x: auto;
+}
+.code-block.is-on { display: block; }
+.code-block pre { margin: 0; }
+.code-block code {
+	font-family: var(--tm-mono);
+	font-size: 0.8rem;
+	line-height: 1.65;
+	color: var(--tm-ink);
+	white-space: pre;
+}
+.name-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px 20px;
+	margin: 18px 0;
+}
+.name-grid div {
+	font-size: 0.8rem;
+	line-height: 1.45;
+	color: var(--tm-muted);
+}
+.name-grid b { color: var(--tm-ink); }
+@media (max-width: 640px) {
+	.name-grid { grid-template-columns: 1fr; }
+}
 .portrait-grid {
 	display: grid;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -3468,6 +3502,7 @@ html[data-theme="dark"] .myth--ok b { color: var(--tm-green); }
 	overflow-y: hidden;
 }
 .emb-equation math { font-size: 1.08rem; }
+.emb-equation-hint { font-family: var(--tm-ui); font-size: 0.8rem; color: var(--tm-muted); }
 .att-budget {
 	display: flex;
 	height: 14px;

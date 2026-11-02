@@ -134,8 +134,24 @@
 						<div class="demo-foot">Try top-p 0.9 on the story prompt, then switch to top-k 2 and watch the candidate set collapse.</div>
 					</div>
 
+					<section class="section-block" id="beyond">
+						<div class="section-kicker"><span class="sk-num">05</span> Beyond the filter</div>
+						<h2 class="section-title">Repetition, search, speculation.</h2>
+						<div class="prose">
+							<p>Temperature and truncation are the first knobs, not the only ones. A <strong>repetition penalty</strong> lowers the score of tokens that already appeared; <strong>DRY</strong> (Don't Repeat Yourself) penalises repeated sequences rather than single tokens; <strong>XTC</strong> removes the most obvious choices to increase diversity. <strong>Contrastive search</strong> balances likelihood against novelty, and <strong>mirostat</strong> targets a fixed perplexity instead of a fixed candidate set. Each is a different answer to the same problem: the model's most likely continuation is often bland or repetitive.</p>
+							<p>Search changes the shape of the whole sequence. <strong>Beam search</strong> keeps several partial continuations alive and picks the best complete one; it is useful when there is one good answer and the score is reliable, as in some translation tasks, and a poor fit for open-ended conversation. <strong>Speculative sampling</strong> uses a small draft model to propose several tokens, then verifies them with the large model; it speeds up generation without changing the target distribution.</p>
+							<p>Practical starting points: code and factual answers at temperature 0 to 0.3 with top-p 0.9; chat at 0.7 to 1.0 with top-p 0.9; creative writing at 1.0 or higher with top-p 0.95 and a small min-p. These are starting points, not laws. Test on your own prompts and keep the setting that works.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Repetition controls</b><span>Penalise tokens or sequences that already appeared.</span></div>
+							<div class="keypoint"><b>Contrastive / XTC</b><span>Trade raw likelihood for novelty and diversity.</span></div>
+							<div class="keypoint"><b>Beam search</b><span>Keep several partial sequences and choose the best complete one.</span></div>
+							<div class="keypoint"><b>Speculative</b><span>Draft with a small model, verify with the large one.</span></div>
+						</div>
+					</section>
+
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">06</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

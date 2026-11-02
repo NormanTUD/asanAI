@@ -468,7 +468,7 @@
       "value": "Border Cave, Lebombo Mountains, South Africa–Eswatini border",
       "unit": "name",
       "qualifiers": {},
-      "quote": "Border Cave in the Lebombo Mountains on the South Africa–Eswatini border",
+      "quote": "Border Cave in the Lebombo Mountains on the South Africa-Eswatini border",
       "citation_keys": [
         "lebomboboneoriginal"
       ],
@@ -484,7 +484,7 @@
         "approx": true,
         "age_text": "42,000–43,000 years ago"
       },
-      "quote": "dated to approximately 42,000–43,000 years ago (c. 41,000 BCE)",
+      "quote": "dated to approximately 42,000 to 43,000 years ago (c. 41,000 BCE)",
       "citation_keys": [
         "lebomboboneoriginal"
       ],
@@ -618,7 +618,7 @@
         "approx": true,
         "culture": "Gravettian"
       },
-      "quote": "c. 27,000–20,000 BC",
+      "quote": "c. 27,000 to 20,000 BC",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -680,7 +680,7 @@
       "qualifiers": {
         "hypothesis": true
       },
-      "quote": "The marks are interpreted as tally marks — some researchers read them as a record of lunar months.",
+      "quote": "The marks are interpreted as tally marks: some researchers read them as a record of lunar months.",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -723,7 +723,7 @@
         "approx": true,
         "age_text": "71,000–73,000 years ago"
       },
-      "quote": "dated to about **71,000–73,000 years ago**",
+      "quote": "dated to about **71,000 to 73,000 years ago**",
       "citation_keys": [
         "henshilwood2018blombos"
       ],
@@ -751,7 +751,7 @@
       "qualifiers": {
         "approx": true
       },
-      "quote": "roughly **540,000–430,000 years old**",
+      "quote": "roughly **540,000 to 430,000 years old**",
       "citation_keys": [
         "trinilshell"
       ],
@@ -815,7 +815,7 @@
         "min": true,
         "direction": "years_ago"
       },
-      "quote": "a pig hunt in Leang Bulu' Sipong 4 — at least **43,900**",
+      "quote": "a pig hunt in Leang Bulu' Sipong 4, at least **43,900**",
       "citation_keys": [
         "aubert2019sulawesi"
       ],
@@ -1163,7 +1163,7 @@
       "value": "negative quantities as book-keeping entries in systems of simultaneous linear equations",
       "unit": "name",
       "qualifiers": {},
-      "quote": "handles negative quantities as book-keeping entries in systems of simultaneous linear equations — the first use of negative numbers anywhere",
+      "quote": "handles negative quantities as book-keeping entries in systems of simultaneous linear equations, the first use of negative numbers anywhere",
       "citation_keys": [
         "historyofmath_wikipedia"
       ],
@@ -1250,7 +1250,7 @@
         "approx": true,
         "century_text": "3rd–1st century BCE"
       },
-      "quote": "**Pingala** (c. 3rd–1st century BCE)",
+      "quote": "**Pingala** (c. 3rd to 1st century BCE)",
       "citation_keys": [
         "historyofmath_wikipedia"
       ],
@@ -1483,7 +1483,7 @@
       "value": "first school to study mathematics for its own sake",
       "unit": "name",
       "qualifiers": {},
-      "quote": "was coined by the Pythagoreans — the first school to study the subject *for its own sake*, not for surveying or taxes",
+      "quote": "was coined by the Pythagoreans, the first school to study the subject *for its own sake*, not for surveying or taxes",
       "citation_keys": [
         "historyofmath_wikipedia"
       ],
@@ -1499,7 +1499,7 @@
         "approx": true,
         "century_text": "5th–4th century BCE"
       },
-      "quote": "### The oldest grammar: Pāṇini (c. 5th–4th century BCE)",
+      "quote": "### The oldest grammar: Pāṇini (c. 5th to 4th century BCE)",
       "citation_keys": [
         "panini_ashtadhyayi"
       ],
@@ -1795,7 +1795,7 @@
       "value": "carved an ivory statue that Aphrodite brought to life and he married",
       "unit": "name",
       "qualifiers": {},
-      "quote": "the sculptor **Pygmalion** carved an ivory statue so perfect that he fell in love with it, and the goddess **Aphrodite** granted his wish — the statue *came to life* and became his wife",
+      "quote": "the sculptor **Pygmalion** carved an ivory statue so perfect that he fell in love with it, and the goddess **Aphrodite** granted his wish: the statue *came to life* and became his wife",
       "citation_keys": [
         "pygmalionmyth"
       ],
@@ -2233,7 +2233,7 @@
       "qualifiers": {
         "by": "Pope Gregory XI"
       },
-      "quote": "condemned as heretical by one pope — Gregory XI., in 1376",
+      "quote": "condemned as heretical by one pope (Gregory XI., in 1376)",
       "citation_keys": [
         "arsmagnavolvelle"
       ],
@@ -2670,7 +2670,7 @@
       "value": "1866 to 1952",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "Louis Lapicque, 1866–1952",
+      "quote": "Louis Lapicque, 1866-1952",
       "citation_keys": [
         "lapicque_portrait"
       ],
@@ -2709,7 +2709,7 @@
       "value": "parallel capacitor–resistor circuit",
       "unit": "name",
       "qualifiers": {},
-      "quote": "a parallel capacitor–resistor circuit representing the membrane's capacitance and leakage resistance",
+      "quote": "a parallel capacitor-resistor circuit representing the membrane's capacitance and leakage resistance",
       "citation_keys": [
         "lapicque1907"
       ],
@@ -3158,7 +3158,7 @@
       "value": "1899 to 1972",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "Nicolas Rashevsky (1899–1972)",
+      "quote": "Nicolas Rashevsky (1899-1972)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -3230,7 +3230,7 @@
       "value": "1885 to 1940",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "Johannes Gregorius Dusser de Barenne (1885–1940)",
+      "quote": "Johannes Gregorius Dusser de Barenne (1885-1940)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -3241,7 +3241,7 @@
       "value": "chemical neuronography with strychnine-soaked paper",
       "unit": "name",
       "qualifiers": {},
-      "quote": "by applying small squares of paper soaked in strychnine — “chemical neuronography” — instead of the usual electrical stimulation",
+      "quote": "by applying small squares of paper soaked in strychnine (“chemical neuronography”) instead of the usual electrical stimulation",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -3356,7 +3356,7 @@
       "value": "1893 to 1958",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "Eilhard von Domarus (1893–1958)",
+      "quote": "Eilhard von Domarus (1893-1958)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -3371,7 +3371,7 @@
         "supervisor": "F. S. C. Northrop",
         "institution": "Yale"
       },
-      "quote": "Von Domarus had written a Yale dissertation under F. S. C. Northrop — *The Logical Structure of Mind*",
+      "quote": "Von Domarus had written a Yale dissertation under F. S. C. Northrop, *The Logical Structure of Mind*",
       "citation_keys": [
         "domarus1930logicalstructure"
       ],
@@ -4042,7 +4042,7 @@
       "value": "no counting device older than the Lebombo bone is known today",
       "unit": "name",
       "qualifiers": {},
-      "quote": "No counting device older than the Lebombo bone (~42,000–43,000 years) is known today.",
+      "quote": "No counting device older than the Lebombo bone (~42,000 to 43,000 years) is known today.",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -4081,7 +4081,7 @@
       "value": "oldest narrative scene",
       "unit": "name",
       "qualifiers": {},
-      "quote": "the oldest *narrative* scene — a pig hunt in Leang Bulu' Sipong 4",
+      "quote": "the oldest *narrative* scene, a pig hunt in Leang Bulu' Sipong 4",
       "citation_keys": [
         "aubert2019sulawesi"
       ],
@@ -4443,7 +4443,7 @@
       "value": "Yale Navy officers' training programme; never saw active service",
       "unit": "name",
       "qualifiers": {},
-      "quote": "He moved to Yale for the Navy's officers' training programme — he never saw active service",
+      "quote": "He moved to Yale for the Navy's officers' training programme (he never saw active service)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -4683,7 +4683,7 @@
       "value": "wrote poetry, hosted bohemian evenings, designed buildings and a dam, posted Experimental Epistemology sign",
       "unit": "name",
       "qualifiers": {},
-      "quote": "He wrote poetry, hosted bohemian evenings at his farm in Old Lyme — where he also designed buildings and a dam — and posted a sign on the door of his MIT lab reading “Experimental Epistemology.”",
+      "quote": "He wrote poetry, hosted bohemian evenings at his farm in Old Lyme, where he also designed buildings and a dam, and posted a sign on the door of his MIT lab reading “Experimental Epistemology.”",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -4860,7 +4860,7 @@
       "value": "an idea wrenched out of time",
       "unit": "name",
       "qualifiers": {},
-      "quote": "McCulloch called the result “an idea wrenched out of time” — a memory",
+      "quote": "McCulloch called the result “an idea wrenched out of time”, a memory",
       "citation_keys": [
         "gefter2015pitts"
       ],
@@ -4959,7 +4959,7 @@
       "value": "Bulletin of Mathematical Biophysics 5 (1943), 115–133",
       "unit": "name",
       "qualifiers": {},
-      "quote": "appeared in the *Bulletin of Mathematical Biophysics* 5 (1943), 115–133",
+      "quote": "appeared in the *Bulletin of Mathematical Biophysics* 5 (1943), 115-133",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -5054,7 +5054,7 @@
       "qualifiers": {
         "paper": "A Logical Calculus"
       },
-      "quote": "cited exactly one paper — “A Logical Calculus”",
+      "quote": "cited exactly one paper, “A Logical Calculus”",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -5065,7 +5065,7 @@
       "value": "McCulloch–Pitts-style logic gates",
       "unit": "name",
       "qualifiers": {},
-      "quote": "proposed building the machine from McCulloch–Pitts-style logic gates",
+      "quote": "proposed building the machine from McCulloch-Pitts-style logic gates",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -5089,7 +5089,7 @@
       "qualifiers": {
         "event": "von Neumann presented McCulloch–Pitts nets"
       },
-      "quote": "At the 1948 Hixon Symposium, von Neumann gave the McCulloch–Pitts nets their first wide audience",
+      "quote": "At the 1948 Hixon Symposium, von Neumann gave the McCulloch-Pitts nets their first wide audience",
       "citation_keys": [
         "vonneumann1951automata"
       ],
@@ -5216,7 +5216,7 @@
       "value": "Don't bite my finger — look where I am pointing.",
       "unit": "name",
       "qualifiers": {},
-      "quote": "“Don't bite my finger — look where I am pointing.”",
+      "quote": "“Don't bite my finger: look where I am pointing.”",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -5557,7 +5557,7 @@
       "value": "left a–c files; center d–e files; right f–h files",
       "unit": "name",
       "qualifiers": {},
-      "quote": "partitioned the board into three zones (left: a–c files; center: d–e files; right: f–h files)",
+      "quote": "partitioned the board into three zones (left: a-c files; center: d-e files; right: f-h files)",
       "citation_keys": [
         "torres1914"
       ],
@@ -6046,7 +6046,7 @@
       "qualifiers": {
         "description": "theoretical model reading symbols on a tape"
       },
-      "quote": "**Turing Machine (1936–37):** A theoretical model",
+      "quote": "**Turing Machine (1936-37):** A theoretical model",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -6721,7 +6721,7 @@
       "qualifiers": {
         "birthplace": "Kansas City, Missouri"
       },
-      "quote": "(1910–1977, born in Kansas City, Missouri)",
+      "quote": "(1910-1977, born in Kansas City, Missouri)",
       "citation_keys": [
         "nilsson1984qai"
       ],
@@ -6734,7 +6734,7 @@
       "value": "machine that looks",
       "unit": "name",
       "qualifiers": {},
-      "quote": "Walter gave them the taxonomic name ***Machina speculatrix*** — \"machine that looks\".",
+      "quote": "Walter gave them the taxonomic name ***Machina speculatrix***, \"machine that looks\".",
       "citation_keys": [
         "nilsson1984qai"
       ],
@@ -6977,7 +6977,7 @@
       "value": "McCulloch–Pitts 1943, Hebb 1949, perceptron 1958, Amari 1972 / Hopfield 1982",
       "unit": "name",
       "qualifiers": {},
-      "quote": "jumps from the McCulloch–Pitts 1943 logical neuron, through the Hebb 1949 learning rule, to the perceptron 1958 and the Amari 1972 / Hopfield 1982 attractor networks",
+      "quote": "jumps from the McCulloch-Pitts 1943 logical neuron, through the Hebb 1949 learning rule, to the perceptron 1958 and the Amari 1972 / Hopfield 1982 attractor networks",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -6988,7 +6988,7 @@
       "value": "Amari 1977, Wilson–Cowan 1972/73, Jirsa–Kelso 2000",
       "unit": "name",
       "qualifiers": {},
-      "quote": "modern neural-field theories (Amari 1977, Wilson–Cowan 1972/73, Jirsa–Kelso 2000)",
+      "quote": "modern neural-field theories (Amari 1977, Wilson-Cowan 1972/73, Jirsa-Kelso 2000)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -7021,7 +7021,7 @@
       "value": "κυβερνήτης (kybernētēs), the steersman",
       "unit": "name",
       "qualifiers": {},
-      "quote": "The word is Greek — κυβερνήτης, *kybernētēs*, \"the steersman\".",
+      "quote": "The word is Greek: κυβερνήτης, *kybernētēs*, \"the steersman\".",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -7182,7 +7182,7 @@
       "qualifiers": {
         "year": 1943
       },
-      "quote": "Its two founding papers both date to 1943 — McCulloch-Pitts (above), and **Arturo Rosenblueth, Norbert Wiener and Julian Bigelow's** *Behavior, Purpose and Teleology*",
+      "quote": "Its two founding papers both date to 1943: McCulloch-Pitts (above), and **Arturo Rosenblueth, Norbert Wiener and Julian Bigelow's** *Behavior, Purpose and Teleology*",
       "citation_keys": [
         "behaviorpurpose1943"
       ],
@@ -7417,7 +7417,7 @@
       "value": "essential variables such as blood glucose and body temperature",
       "unit": "name",
       "qualifiers": {},
-      "quote": "**essential variables** — blood glucose, body temperature, and the like",
+      "quote": "**essential variables** (blood glucose, body temperature, and the like)",
       "citation_keys": [
         "ashbydesigndbrain1952"
       ],
@@ -7445,7 +7445,7 @@
       "qualifiers": {
         "archive": "W. Ross Ashby Digital Archive"
       },
-      "quote": "Ashby kept a private notebook of ideas for 44 years — 25 volumes, 7,189 pages",
+      "quote": "Ashby kept a private notebook of ideas for 44 years: 25 volumes, 7,189 pages",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -7544,7 +7544,7 @@
       "qualifiers": {
         "year": 1973
       },
-      "quote": "In 1973 he went further: only two events, he argued, were anthropologically important in the twentieth century — the Treaty of Versailles, and cybernetics.",
+      "quote": "In 1973 he went further: only two events, he argued, were anthropologically important in the twentieth century: the Treaty of Versailles, and cybernetics.",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -7895,7 +7895,7 @@
       "qualifiers": {
         "work": "Artificial Intelligence: A Modern Approach"
       },
-      "quote": "lay it out along two axes — should the system *think* or merely *act*, and should it be judged against *human behavior* or against *rational optimality*",
+      "quote": "lay it out along two axes: should the system *think* or merely *act*, and should it be judged against *human behavior* or against *rational optimality*",
       "citation_keys": [
         "russell2021aima"
       ],
@@ -7908,7 +7908,7 @@
       "value": "behavior test: pass if the machine conducts itself like a person",
       "unit": "name",
       "qualifiers": {},
-      "quote": "* **Acting humanly** — the behavior test: pass if the machine conducts itself like a person.",
+      "quote": "* **Acting humanly**: the behavior test: pass if the machine conducts itself like a person.",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -7919,7 +7919,7 @@
       "value": "cognitive-model test: pass if it reasons the way people do",
       "unit": "name",
       "qualifiers": {},
-      "quote": "* **Thinking humanly** — the cognitive-model test: pass if it reasons the way people do.",
+      "quote": "* **Thinking humanly**: the cognitive-model test: pass if it reasons the way people do.",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -7930,7 +7930,7 @@
       "value": "rational-agent test: pass if it does the best it can, by any means",
       "unit": "name",
       "qualifiers": {},
-      "quote": "* **Acting rationally** — the rational-agent test: pass if it does the best it can, by any means.",
+      "quote": "* **Acting rationally**: the rational-agent test: pass if it does the best it can, by any means.",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -7941,7 +7941,7 @@
       "value": "laws of thought test: pass if it reasons correctly",
       "unit": "name",
       "qualifiers": {},
-      "quote": "* **Thinking rationally** — the “laws of thought” test: pass if it reasons correctly.",
+      "quote": "* **Thinking rationally**: the “laws of thought” test: pass if it reasons correctly.",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -8670,7 +8670,7 @@
       "qualifiers": {
         "name_source": "Saki's Clovis"
       },
-      "quote": "his follow-on machine, **Tobermory** — named after the cat in \\citetitle{saki1911clovis} — was designed for *speech recognition*",
+      "quote": "his follow-on machine, **Tobermory**, named after the cat in \\citetitle{saki1911clovis}, was designed for *speech recognition*",
       "citation_keys": [
         "lefkowitz2019perceptron",
         "saki1911clovis"
@@ -9245,7 +9245,7 @@
       "value": "80%-100%",
       "unit": "%",
       "qualifiers": {},
-      "quote": "maintaining high performance (80%–100%) despite variations in position and rotation",
+      "quote": "maintaining high performance (80% to 100%) despite variations in position and rotation",
       "citation_keys": [
         "rosenblattperceptronresults"
       ],
@@ -9408,7 +9408,7 @@
       "value": "90-95%",
       "unit": "%",
       "qualifiers": {},
-      "quote": "Osborn could train it to around 90–95% accuracy on letter recognition",
+      "quote": "Osborn could train it to around 90 to 95% accuracy on letter recognition",
       "citation_keys": [
         "jensen2026perceptron"
       ],
@@ -9499,7 +9499,7 @@
       "value": "plane in three-dimensional input space",
       "unit": "name",
       "qualifiers": {},
-      "quote": "In algebra, such an equation defines a **plane** — a linear boundary — in the three-dimensional space of possible inputs",
+      "quote": "In algebra, such an equation defines a **plane**, a linear boundary, in the three-dimensional space of possible inputs",
       "citation_keys": [
         "nilsson1984qai"
       ],
@@ -9641,7 +9641,7 @@
       "value": "only linearly separable functions",
       "unit": "name",
       "qualifiers": {},
-      "quote": "a single adaptive layer can only represent linearly separable functions, and characterizing that limit became the substance of the Minsky–Papert critique",
+      "quote": "a single adaptive layer can only represent linearly separable functions, and characterizing that limit became the substance of the Minsky-Papert critique",
       "citation_keys": [
         "rosenblatt1962neurodynamics",
         "block1962perceptron",
@@ -9834,7 +9834,7 @@
       "value": "canonical case of monotypic models",
       "unit": "name",
       "qualifiers": {},
-      "quote": "the McCulloch–Pitts logical neuron and the automata built on it are the canonical case",
+      "quote": "the McCulloch-Pitts logical neuron and the automata built on it are the canonical case",
       "citation_keys": [
         "rosenblatt1962neurodynamics"
       ],
@@ -10004,7 +10004,7 @@
       "value": "relative localization",
       "unit": "name",
       "qualifiers": {},
-      "quote": "later work modified the extreme hypothesis of equipotentiality toward “relative localization” — strict for sensory projection areas, weak for association cortex, memory, and higher control",
+      "quote": "later work modified the extreme hypothesis of equipotentiality toward “relative localization”: strict for sensory projection areas, weak for association cortex, memory, and higher control",
       "citation_keys": [
         "rosenblatt1962neurodynamics"
       ],
@@ -10043,7 +10043,7 @@
       "value": "essential variable kept within limits",
       "unit": "name",
       "qualifiers": {},
-      "quote": "the idea of an **essential variable** — a quantity the system must keep within limits, with adaptation redefined as the restoration of stability rather than the pursuit of reward",
+      "quote": "the idea of an **essential variable**: a quantity the system must keep within limits, with adaptation redefined as the restoration of stability rather than the pursuit of reward",
       "citation_keys": [
         "ashbydesigndbrain1952"
       ],
@@ -10334,7 +10334,7 @@
       "value": "proposed marriage in 1963-64 while saying he would not expect sex",
       "unit": "name",
       "qualifiers": {},
-      "quote": "he proposed marriage to her in 1963–64 while saying he would not expect sex, and that he was deeply attached to a male student to whom he left his estate",
+      "quote": "he proposed marriage to her in 1963-64 while saying he would not expect sex, and that he was deeply attached to a male student to whom he left his estate",
       "citation_keys": [
         "koken2021remembering"
       ],
@@ -10584,7 +10584,7 @@
       "value": "first microprocessor at Intel",
       "unit": "name",
       "qualifiers": {},
-      "quote": "**Marcian \"Ted\" Hoff Jr.** — who would a decade later invent the first microprocessor at Intel",
+      "quote": "**Marcian \"Ted\" Hoff Jr.** (who would a decade later invent the first microprocessor at Intel)",
       "citation_keys": [
         "widrow1960adaline"
       ],
@@ -10610,7 +10610,7 @@
       "value": "least-mean-squares (LMS), direct ancestor of delta rule",
       "unit": "name",
       "qualifiers": {},
-      "quote": "the **Widrow–Hoff least-mean-squares (LMS) algorithm** \\cite{widrow1960adaline}, is the direct ancestor of the delta rule",
+      "quote": "the **Widrow-Hoff least-mean-squares (LMS) algorithm** \\cite{widrow1960adaline}, is the direct ancestor of the delta rule",
       "citation_keys": [
         "widrow1960adaline"
       ],
@@ -10799,7 +10799,7 @@
       "value": "TH Karlsruhe learning automata conference 13-14 April 1961",
       "unit": "name",
       "qualifiers": {},
-      "quote": "on 13–14 April 1961, two days after Yuri Gagarin's flight, the TH Karlsruhe hosted a conference on learning automata organised by the Nachrichtentechnische Gesellschaft of the VDE",
+      "quote": "on 13-14 April 1961, two days after Yuri Gagarin's flight, the TH Karlsruhe hosted a conference on learning automata organised by the Nachrichtentechnische Gesellschaft of the VDE",
       "citation_keys": [
         "hnflernendeautomaten2021"
       ],
@@ -10944,7 +10944,7 @@
       "value": "character and speech recognition, translation, retrieval, control, forecasting, chemical analysis, diagnosis",
       "unit": "name",
       "qualifiers": {},
-      "quote": "the 1961 paper already lists the intended applications — automatic character and speech recognition, word understanding and translation, information retrieval, process and traffic control, weather forecasting, chemical analysis, and medical diagnosis",
+      "quote": "the 1961 paper already lists the intended applications: automatic character and speech recognition, word understanding and translation, information retrieval, process and traffic control, weather forecasting, chemical analysis, and medical diagnosis",
       "citation_keys": [
         "steinbuch1961matrix",
         "steinbuch1963learningmatrices"
@@ -10958,7 +10958,7 @@
       "value": "missing link between 1943 McCulloch-Pitts neuron and 1982 Hopfield attractor network",
       "unit": "name",
       "qualifiers": {},
-      "quote": "The Lernmatrix is the missing link between the 1943 McCulloch–Pitts logical neuron and the 1982 Hopfield attractor network.",
+      "quote": "The Lernmatrix is the missing link between the 1943 McCulloch-Pitts logical neuron and the 1982 Hopfield attractor network.",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -10969,7 +10969,7 @@
       "value": "no error-correction rule, convergence proof, or gradient",
       "unit": "name",
       "qualifiers": {},
-      "quote": "unlike the perceptron, it has no error-correction rule, no convergence proof, and no gradient — it accumulates a coincidence statistic and thresholds it.",
+      "quote": "unlike the perceptron, it has no error-correction rule, no convergence proof, and no gradient: it accumulates a coincidence statistic and thresholds it.",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -11246,7 +11246,7 @@
       "value": "random operator pool, population evaluation, mutation and recombination",
       "unit": "name",
       "qualifiers": {},
-      "quote": "The Uhr–Vossler system started with a small, randomly-initialised pool of candidate operators",
+      "quote": "The Uhr-Vossler system started with a small, randomly-initialised pool of candidate operators",
       "citation_keys": [
         "uhrvossler1961operators"
       ],
@@ -11483,7 +11483,7 @@
       "value": "one of the first computers built with silicon transistors",
       "unit": "name",
       "qualifiers": {},
-      "quote": "the net now ran alongside an SDS 910 — one of the first computers built with silicon transistors",
+      "quote": "the net now ran alongside an SDS 910, one of the first computers built with silicon transistors",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -11840,7 +11840,7 @@
       "value": "1947-1966",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "## Natural Language Processing Before LLMs (1947–1966)",
+      "quote": "## Natural Language Processing Before LLMs (1947-1966)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -12096,7 +12096,7 @@
       "value": "1967-1976",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "leaving what MT's historian W. John Hutchins called the **\"quiet decade\"** (1967–1976)",
+      "quote": "leaving what MT's historian W. John Hutchins called the **\"quiet decade\"** (1967-1976)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -12166,7 +12166,7 @@
       "value": "98-99%",
       "unit": "%",
       "qualifiers": {},
-      "quote": "against 98–99% for human translators",
+      "quote": "against 98-99% for human translators",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -12214,7 +12214,7 @@
       "value": "tree of word-to-word dependencies with main verb at root",
       "unit": "name",
       "qualifiers": {},
-      "quote": "a **stemma** — a tree of word-to-word dependencies, with the main verb at the root and each word hanging directly off the word whose meaning it modifies, with no intermediate phrasal nodes",
+      "quote": "a **stemma**: a tree of word-to-word dependencies, with the main verb at the root and each word hanging directly off the word whose meaning it modifies, with no intermediate phrasal nodes",
       "citation_keys": [
         "tesniere1959deps"
       ],
@@ -12240,7 +12240,7 @@
       "value": "dominated syntactic theory in the 1960s-80s",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "Constituent-structure trees dominated the syntactic theory of the 1960s–80s",
+      "quote": "Constituent-structure trees dominated the syntactic theory of the 1960s-80s",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -12671,7 +12671,7 @@
       "value": "1932-2010",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "**Theo Lutz** (1932–2010)",
+      "quote": "**Theo Lutz** (1932-2010)",
       "citation_keys": [
         "lutzobituary"
       ],
@@ -12995,7 +12995,7 @@
       "value": "Rosenblatt perceptron, Widrow ADALINE, Rumelhart backpropagation, LeCun ConvNets, Hinton deep belief nets, Sutskever sequence-to-sequence",
       "unit": "name",
       "qualifiers": {},
-      "quote": "The Anglosphere's contribution — Rosenblatt's perceptron, Widrow's ADALINE, Rumelhart's backpropagation, LeCun's ConvNets, Hinton's deep belief nets, Sutskever's sequence-to-sequence",
+      "quote": "The Anglosphere's contribution (Rosenblatt's perceptron, Widrow's ADALINE, Rumelhart's backpropagation, LeCun's ConvNets, Hinton's deep belief nets, Sutskever's sequence-to-sequence)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -13476,7 +13476,7 @@
       "value": "1941-2010",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "**Henry Edward “Ed” Roberts** (\\citeauthor{edroberts}, 1941–2010)",
+      "quote": "**Henry Edward “Ed” Roberts** (\\citeauthor{edroberts}, 1941-2010)",
       "citation_keys": [
         "edroberts"
       ],
@@ -13817,7 +13817,7 @@
       "value": "1969-1986",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "## The First AI Winter and the Connectionist Revival (1969–1986)",
+      "quote": "## The First AI Winter and the Connectionist Revival (1969-1986)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -14122,7 +14122,7 @@
       "value": 1973,
       "unit": "year",
       "qualifiers": {},
-      "quote": "The Lighthill Report (1973) and the Collapse (1974–1980)",
+      "quote": "The Lighthill Report (1973) and the Collapse (1974-1980)",
       "citation_keys": [
         "lighthillreport"
       ],
@@ -14135,7 +14135,7 @@
       "value": "1974–1980",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "The Lighthill Report (1973) and the Collapse (1974–1980)",
+      "quote": "The Lighthill Report (1973) and the Collapse (1974-1980)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -14211,7 +14211,7 @@
       "value": "Anglosphere phenomenon",
       "unit": "name",
       "qualifiers": {},
-      "quote": "this “AI Winter” was primarily an **Anglosphere phenomenon**.",
+      "quote": "This “AI Winter” was primarily an **Anglosphere phenomenon**.",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -14591,7 +14591,7 @@
       "value": "1922–1983",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "**Leon Harmon** (1922–1983)",
+      "quote": "**Leon Harmon** (1922-1983)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -14748,7 +14748,7 @@
       "value": "1980–1986",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "### The Road Back: Neocognitron, Backpropagation, and the Deep-Learning Revival (1980–1986)",
+      "quote": "### The Road Back: Neocognitron, Backpropagation, and the Deep-Learning Revival (1980-1986)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -14976,7 +14976,7 @@
       "value": "1989–2003",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "## The Road to Deep Learning: CNNs, LSTM, and the Neural Turn (1989–2003)",
+      "quote": "## The Road to Deep Learning: CNNs, LSTM, and the Neural Turn (1989-2003)",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -15492,7 +15492,7 @@
       "value": "approx. 1997–2017",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "LSTMs were the “workhorse” of AI for two decades (approx. 1997–2017).",
+      "quote": "LSTMs were the “workhorse” of AI for two decades (approx. 1997-2017).",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -15527,7 +15527,7 @@
       "value": "2018–2020",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "the transformer-based Large Language Models (LLMs) in the modern sense arrived with the GPT series (2018–2020).",
+      "quote": "the transformer-based Large Language Models (LLMs) in the modern sense arrived with the GPT series (2018-2020).",
       "citation_keys": [],
       "confidence": "stated"
     },
@@ -16270,7 +16270,7 @@
       "value": 2012,
       "unit": "year",
       "qualifiers": {},
-      "quote": "In \\citeyear{krizhevsky2012imagenet}, a team in Geoffrey Hinton's group at the University of Toronto — led by Alex Krizhevsky",
+      "quote": "In \\citeyear{krizhevsky2012imagenet}, a team in Geoffrey Hinton's group at the University of Toronto, led by Alex Krizhevsky",
       "citation_keys": [
         "krizhevsky2012imagenet"
       ],
@@ -16283,7 +16283,7 @@
       "value": "Geoffrey Hinton's group at the University of Toronto, led by Alex Krizhevsky",
       "unit": "name",
       "qualifiers": {},
-      "quote": "a team in Geoffrey Hinton's group at the University of Toronto — led by Alex Krizhevsky",
+      "quote": "a team in Geoffrey Hinton's group at the University of Toronto, led by Alex Krizhevsky",
       "citation_keys": [
         "krizhevsky2012imagenet"
       ],
@@ -16710,7 +16710,7 @@
       "value": "learned position vectors and rotary embeddings (RoPE)",
       "unit": "name",
       "qualifiers": {},
-      "quote": "Its descendants — learned position vectors, and later **rotary** embeddings (RoPE)",
+      "quote": "Its descendants (learned position vectors, and later **rotary** embeddings (RoPE)",
       "citation_keys": [
         "vaswani2017attention"
       ],
@@ -16825,7 +16825,7 @@
       "value": "c. 801–873",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "The great Arab polymath \\citeauthor{alkindi_cryptanalysis} (c. 801–873)",
+      "quote": "The great Arab polymath \\citeauthor{alkindi_cryptanalysis} (c. 801-873)",
       "citation_keys": [
         "alkindi_cryptanalysis",
         "historyofmath_wikipedia"
@@ -17165,7 +17165,7 @@
       "qualifiers": {
         "approx": true
       },
-      "quote": "which deliberately used more tokens (1.0–1.4 trillion)",
+      "quote": "which deliberately used more tokens (1.0 to 1.4 trillion)",
       "citation_keys": [
         "touvron2023llama"
       ],
@@ -17180,7 +17180,7 @@
       "qualifiers": {
         "range": true
       },
-      "quote": "with a moderately sized 7B–65B parameter architecture",
+      "quote": "with a moderately sized 7B to 65B parameter architecture",
       "citation_keys": [
         "touvron2023llama"
       ],
@@ -17587,7 +17587,7 @@
       "value": "1956–1969",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "The first summer (1956–1969) was fueled by the Dartmouth workshop and Rosenblatt's Perceptron",
+      "quote": "The first summer (1956-1969) was fueled by the Dartmouth workshop and Rosenblatt's Perceptron",
       "citation_keys": [
         "toosi2021history"
       ],
@@ -17757,7 +17757,7 @@
       "value": 1969,
       "unit": "year",
       "qualifiers": {},
-      "quote": "The mathematical **Minsky–Papert critique** of the single-layer Perceptron (1969)",
+      "quote": "The mathematical **Minsky-Papert critique** of the single-layer Perceptron (1969)",
       "citation_keys": [
         "toosi2021history"
       ],
@@ -17826,7 +17826,7 @@
       "value": "1982–1994",
       "unit": "interval",
       "qualifiers": {},
-      "quote": "The Japanese Fifth Generation project (1982–1994) is the canonical case",
+      "quote": "The Japanese Fifth Generation project (1982-1994) is the canonical case",
       "citation_keys": [
         "toosi2021history"
       ],
@@ -18602,7 +18602,7 @@
       "qualifiers": {
         "approx": true
       },
-      "quote": "diagnosed blood infections from a few hundred IF–THEN rules",
+      "quote": "diagnosed blood infections from a few hundred IF-THEN rules",
       "citation_keys": [
         "shortliffe1976mycin"
       ],

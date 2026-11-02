@@ -49,8 +49,61 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="start">
+						<div class="section-kicker"><span class="sk-num">03</span> Your first local model</div>
+						<h2 class="section-title">Pick your shell, run three commands.</h2>
+						<div class="prose">
+							<p>The fastest route is <a href="https://ollama.com/" rel="noopener">Ollama</a>. Install it once, pull a small model, and run it. The commands are the same idea on every platform; the shell syntax is different. Choose your system:</p>
+						</div>
+						<div class="code-tabs" role="group" aria-label="Choose your shell">
+							<button class="chip is-on" type="button" data-shell="unix">Linux / macOS</button>
+							<button class="chip" type="button" data-shell="powershell">Windows PowerShell</button>
+							<button class="chip" type="button" data-shell="cmd">Windows CMD</button>
+						</div>
+						<div class="code-block is-on" data-shell-panel="unix">
+						<pre><code># install Ollama (Linux; on macOS use the app or: brew install ollama)
+curl -fsSL https://ollama.com/install.sh | sh
+
+# download and run a small model
+ollama pull llama3.1:8b
+ollama run llama3.1:8b "Explain transformers in three sentences."
+
+# check what is running and what you have
+ollama ps
+ollama list</code></pre>
+						</div>
+						<div class="code-block" data-shell-panel="powershell">
+						<pre><code># install Ollama (or download the Windows installer from ollama.com)
+winget install Ollama.Ollama
+
+# download and run a small model
+ollama pull llama3.1:8b
+ollama run llama3.1:8b "Explain transformers in three sentences."
+
+# call the local API from PowerShell
+Invoke-RestMethod http://localhost:11434/api/generate -Method Post -Body '{"model":"llama3.1:8b","prompt":"Hello"}'</code></pre>
+						</div>
+						<div class="code-block" data-shell-panel="cmd">
+						<pre><code>:: install Ollama from ollama.com, then open a new terminal
+ollama pull llama3.1:8b
+ollama run llama3.1:8b "Explain transformers in three sentences."
+ollama ps
+ollama list</code></pre>
+						</div>
+						<div class="prose">
+							<p>If you prefer llama.cpp directly, the CLI is one file plus a model. On Linux or macOS: <code>./llama-cli -m model.gguf -p "Hello" -n 200</code>. On Windows the binary is <code>llama-cli.exe</code>. The <code>-n</code> flag is the number of tokens to generate; <code>-c</code> sets the context window.</p>
+							<p>Start small. A 7B or 8B model at 4-bit is the easiest first run; it fits on a laptop and downloads quickly. Move up only when a task actually fails. The <strong>quantization level</strong> is the next knob: Q4_K_M is a common balance, Q5 or Q6 preserve more quality, Q2 or Q3 are smaller but noticeably rougher. The <strong>context length</strong> is the memory multiplier: a long conversation needs a larger KV cache, so a model that fits at 4K may not fit at 32K.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Install</b><span>Ollama is the shortest path; llama.cpp is the reference engine.</span></div>
+							<div class="keypoint"><b>Pull and run</b><span><code>ollama pull</code>, then <code>ollama run</code>.</span></div>
+							<div class="keypoint"><b>Quantization</b><span>Q4_K_M is a good default; higher Q keeps more quality.</span></div>
+							<div class="keypoint"><b>Context</b><span>The KV cache grows with context length and can break the fit.</span></div>
+						</div>
+					</section>
+
 					<section class="section-block" id="extra">
-						<div class="section-kicker"><span class="sk-num">03</span> The hardware reality</div>
+						<div class="section-kicker"><span class="sk-num">04</span> The hardware reality</div>
 						<h2 class="section-title">VRAM, unified memory, context.</h2>
 						<div class="prose">
 							<p>The weights are only part of the memory bill. A model also needs room for activations, the KV cache, and the runtime. The KV cache grows with the context length, so a long conversation can use much more memory than the model alone.</p>
@@ -113,7 +166,7 @@
 
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -126,6 +179,18 @@
 		</div>
 	</main>
 
+	<script>
+	(function () {
+		"use strict";
+		document.querySelectorAll("[data-shell]").forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				var key = btn.getAttribute("data-shell");
+				document.querySelectorAll("[data-shell]").forEach(function (b) { b.classList.toggle("is-on", b === btn); });
+				document.querySelectorAll("[data-shell-panel]").forEach(function (p) { p.classList.toggle("is-on", p.getAttribute("data-shell-panel") === key); });
+			});
+		});
+	})();
+	</script>
 	<script src="assets/site.js"></script>
 	<script src="assets/demos.js"></script>
 </body>

@@ -103,8 +103,23 @@
 
 
 
+					<section class="section-block" id="lora">
+						<div class="section-kicker"><span class="sk-num">03</span> Making it affordable</div>
+						<h2 class="section-title">LoRA, QLoRA, and when to fine-tune.</h2>
+						<div class="prose">
+							<p>Full fine-tuning updates every weight and needs memory for gradients, optimizer state, and activations. <strong>LoRA</strong> (<a href="https://arxiv.org/abs/2106.09685" rel="noopener">Hu et al., 2021</a>) freezes the base model and trains two small low-rank matrices per layer. The update is a low-rank product, so the adapter is tiny and can be swapped at inference. <strong>QLoRA</strong> (<a href="https://arxiv.org/abs/2305.14314" rel="noopener">Dettmers et al., 2023</a>) quantizes the frozen base to 4-bit and trains the adapters on top, which is how a single consumer GPU can fine-tune a 7B model.</p>
+							<p>Fine-tuning is not the first tool to reach for. Try prompting, few-shot examples, and retrieval first. Fine-tune when you need a consistent style or format, a domain vocabulary, or a narrow task with many examples. It is a poor way to add fresh facts: the knowledge has to come from data, and narrow instruction data can cause catastrophic forgetting. A practical recipe mixes some general data back in, holds out a real evaluation set, and compares against the base model before shipping.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>LoRA</b><span>Train small low-rank adapters; keep the base frozen.</span></div>
+							<div class="keypoint"><b>QLoRA</b><span>Quantize the base to 4-bit, train adapters on top.</span></div>
+							<div class="keypoint"><b>Data</b><span>Quality and coverage matter more than the optimizer.</span></div>
+							<div class="keypoint"><b>When not to</b><span>Use prompting, retrieval, or tools before fine-tuning.</span></div>
+						</div>
+					</section>
+
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

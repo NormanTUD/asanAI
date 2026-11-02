@@ -168,8 +168,39 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="opencode">
+						<div class="section-kicker"><span class="sk-num">04</span> A real agent</div>
+						<h2 class="section-title">An agent you can run today.</h2>
+						<div class="prose">
+							<p><a href="https://opencode.ai" rel="noopener">OpenCode</a> is an open-source AI coding agent for the terminal, with desktop and IDE variants. Unlike the scripted demo above, it can read files, edit them, run commands, and use tools. That makes it a good way to see the loop in production, and a good reminder that capability and risk arrive together.</p>
+						</div>
+						<div class="code-block">
+						<pre><code># install (Linux / macOS; on Windows use WSL)
+curl -fsSL https://opencode.ai/install | bash
+
+# open a project and start the TUI
+cd /path/to/project
+opencode
+
+# inside the TUI
+/connect        # choose a provider and paste an API key
+/init           # analyse the project and write AGENTS.md
+# Tab toggles Plan mode; @ fuzzy-searches files; /undo reverts</code></pre>
+						</div>
+						<div class="prose">
+							<p>Start in <strong>Plan mode</strong>. It proposes changes without editing files, which is the cheapest place to catch a wrong assumption. Review the plan, switch to Build mode, and keep the project in git so every edit is inspectable. <code>/undo</code> and <code>/redo</code> are not a substitute for version control, but they make experimentation cheap.</p>
+							<p>The practical safety rules are the same as for any agent. It can run shell commands, so give it the least privilege it needs, run it in a sandbox or WSL, and read the diff before you accept it. A coding agent is useful precisely because it has hands. That is also the attack surface.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Install</b><span>One install script, or Homebrew, npm, or a release binary.</span></div>
+							<div class="keypoint"><b>Initialize</b><span><code>/init</code> writes an AGENTS.md the agent can follow.</span></div>
+							<div class="keypoint"><b>Plan first</b><span>Press Tab, review the plan, then build.</span></div>
+							<div class="keypoint"><b>Undo</b><span><code>/undo</code> and <code>/redo</code>; git remains the real safety net.</span></div>
+						</div>
+					</section>
+
 					<section class="section-block" id="memory">
-						<div class="section-kicker"><span class="sk-num">04</span> Memory and planning</div>
+						<div class="section-kicker"><span class="sk-num">05</span> Memory and planning</div>
 						<h2 class="section-title">A stateless model, a stateful system.</h2>
 						<div class="prose">
 							<p>
@@ -206,7 +237,7 @@
 					</section>
 
 					<section class="section-block" id="safety">
-						<div class="section-kicker"><span class="sk-num">05</span> The hard part</div>
+						<div class="section-kicker"><span class="sk-num">06</span> The hard part</div>
 						<h2 class="section-title">Every document is a potential instruction.</h2>
 						<div class="prose">
 							<p>

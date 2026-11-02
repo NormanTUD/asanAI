@@ -149,14 +149,6 @@
 							</div>
 						</div>
 
-						<div class="trythis">
-							<b>Try this</b>
-							<ol>
-								<li>Find a pair whose arrow is parallel to <strong>man → woman</strong>. Then try to find one that breaks.</li>
-								<li>Click <strong>Paris</strong>. Is “Berlin” its nearest neighbour? What does that tell you about what the axes capture?</li>
-								<li>Overlay the <strong>capital arrow</strong>. Carry it from France to Germany. Where does it land?</li>
-							</ol>
-						</div>
 					</section>
 
 					<section class="section-block" id="metric">
@@ -428,10 +420,10 @@
 				});
 			}
 
-			var an = analogies[analogyIndex];
-			var res = analogyResult(an);
-			var a = get(an.a), b = get(an.b), cc = get(an.c);
-			if (!showDirection) {
+			var an = analogyIndex >= 0 ? analogies[analogyIndex] : null;
+			var res = an ? analogyResult(an) : null;
+			var a = an ? get(an.a) : null, b = an ? get(an.b) : null, cc = an ? get(an.c) : null;
+			if (an && !showDirection) {
 				drawArrow(ctx, b.x * w, b.y * h, a.x * w, a.y * h, c.sky, true);
 				drawArrow(ctx, cc.x * w, cc.y * h, res.p.x * w, res.p.y * h, c.gold, true);
 				ctx.beginPath();
@@ -458,7 +450,7 @@
 			words.forEach(function (word) {
 				var x = word.x * w, y = word.y * h;
 				var isSel = word.w === selected;
-				var isOperand = word.w === an.a || word.w === an.b || word.w === an.c;
+				var isOperand = an && (word.w === an.a || word.w === an.b || word.w === an.c);
 				ctx.beginPath();
 				ctx.arc(x, y, isSel ? 7 : 4.5, 0, Math.PI * 2);
 				ctx.fillStyle = word.c;
@@ -474,15 +466,21 @@
 
 			if (selectedEl) selectedEl.textContent = selected;
 			if (nearestEl) nearestEl.textContent = nearest ? nearest.w : "...";
-			if (resultEl) resultEl.textContent = res.nearest.w;
+			if (resultEl) resultEl.textContent = res ? res.nearest.w : "—";
 			var alignEl = document.getElementById("emb-align");
 			if (alignEl) {
-				var u = { x: a.x - b.x, y: a.y - b.y };
-				var v = { x: res.p.x - cc.x, y: res.p.y - cc.y };
-				var denom = Math.hypot(u.x, u.y) * Math.hypot(v.x, v.y) || 1;
-				alignEl.textContent = ((u.x * v.x + u.y * v.y) / denom).toFixed(2);
+				if (!res) alignEl.textContent = "—";
+				else {
+					var u = { x: a.x - b.x, y: a.y - b.y };
+					var v = { x: res.p.x - cc.x, y: res.p.y - cc.y };
+					var denom = Math.hypot(u.x, u.y) * Math.hypot(v.x, v.y) || 1;
+					alignEl.textContent = ((u.x * v.x + u.y * v.y) / denom).toFixed(2);
+				}
 			}
-			if (captionEl) captionEl.setAttribute("aria-label", an.label + " lands near " + res.nearest.w);
+			if (captionEl) {
+				if (an) captionEl.setAttribute("aria-label", an.label + " lands near " + res.nearest.w);
+				else captionEl.removeAttribute("aria-label");
+			}
 			var note = document.getElementById("emb-direction-note");
 			if (note) {
 				if (!showDirection) note.textContent = "Each relation has its own arrow. The direction buttons overlay one family at a time; “all” shows that they are deliberately distinct.";
@@ -509,6 +507,12 @@
 			function setEquation(an) {
 				var el = document.getElementById("emb-equation");
 				if (!el) return;
+				if (!an) {
+					el.removeAttribute("data-tex");
+					el.removeAttribute("data-tex-rendered");
+					el.innerHTML = '<span class="emb-equation-hint">Pick an analogy to see the equation.</span>';
+					return;
+				}
 				el.setAttribute("data-tex", "\\text{" + an.a + "} - \\text{" + an.b + "} + \\text{" + an.c + "} \\approx \\text{" + an.target + "}");
 				el.removeAttribute("data-tex-rendered");
 				if (window.TM && TM.typesetMath) TM.typesetMath();
@@ -516,11 +520,18 @@
 			setEquation(analogies[analogyIndex]);
 			document.querySelectorAll("[data-analogy]").forEach(function (btn) {
 				btn.addEventListener("click", function () {
-					document.querySelectorAll("[data-analogy]").forEach(function (x) { x.classList.remove("is-on"); });
-					btn.classList.add("is-on");
-					analogyIndex = parseInt(btn.getAttribute("data-analogy"), 10);
-					selected = analogies[analogyIndex].nearestTarget || analogies[analogyIndex].target;
-					setEquation(analogies[analogyIndex]);
+					var next = parseInt(btn.getAttribute("data-analogy"), 10);
+					if (analogyIndex === next) {
+						analogyIndex = -1;
+						document.querySelectorAll("[data-analogy]").forEach(function (x) { x.classList.remove("is-on"); });
+						setEquation(null);
+					} else {
+						document.querySelectorAll("[data-analogy]").forEach(function (x) { x.classList.remove("is-on"); });
+						btn.classList.add("is-on");
+						analogyIndex = next;
+						selected = analogies[analogyIndex].nearestTarget || analogies[analogyIndex].target;
+						setEquation(analogies[analogyIndex]);
+					}
 					if (api) api.redraw();
 				});
 			});
