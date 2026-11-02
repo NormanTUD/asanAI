@@ -307,7 +307,21 @@ This “Symbolic AI” dominated the field for nearly forty years. It was believ
 
 The mathematical birth of the neuron model predates McCulloch and Pitts by 36 years. In \citeyear{lapicque1907}, French neuroscientist \citeauthor{lapicque1907} published \citealternativetitle{lapicque1907}, the paper that introduced what we now call the **integrate-and-fire** neuron. Working at the Sorbonne, Lapicque replaced the messy biophysics of the nerve membrane with the simplest possible electrical analogue: a parallel capacitor–resistor circuit representing the membrane's capacitance and leakage resistance, charged by an input current until its voltage crosses a fixed threshold, at which point a “spike” is emitted and the capacitor discharges back to rest. In modern notation, the non-leaky form he wrote down is
 
-$$ I(t) = C \,\frac{dV(t)}{dt}, \qquad V(t) \;\mapsto\; V_\text{rest} \;\;\text{whenever}\;\; V(t) \geq V_\text{th}, $$
+$$
+\begin{aligned}
+&\underbrace{
+  \underbrace{I(t)}_{\substack{\text{injected}\\\text{current}}}
+  =
+  \underbrace{C}_{\substack{\text{membrane}\\\text{capacitance}}}
+  \underbrace{\frac{dV(t)}{dt}}_{\substack{\text{rate of change}\\\text{of voltage}}}
+}_{\substack{\text{the membrane integrates}\\\text{the current it receives}}}, \\[6pt]
+&\underbrace{
+  \underbrace{V(t) \mapsto V_\text{rest}}_{\substack{\text{reset the voltage}\\\text{to rest}}}
+  \;\;\text{when}\;\;
+  \underbrace{V(t) \geq V_\text{th}}_{\substack{\text{voltage reaches}\\\text{firing threshold}}}
+}_{\substack{\text{fire a spike when}\\\text{the threshold is crossed}}}
+\end{aligned}
+$$
 
 and the **leaky** variant he added later, $C\,\dot V = I(t) - V/R$, is essentially the equation that, more than a century on, still powers large-scale spiking neural network simulations. With this model Lapicque computed the firing frequency of a nerve fiber resistively coupled to a stimulating electrode held at fixed voltage, a calculation that \citeauthor{abbott1999lapicque}, writing in \citeyear{abbott1999lapicque} \cite{abbott1999lapicque}, calls a “remarkable achievement” given that it was made long before the mechanisms responsible for action-potential generation were known. The achievement, Abbott argues, “stresses that, in neural modeling, studies of function do not necessarily require an understanding of mechanism”: significant progress is possible if a phenomenon is adequately described, even if its biophysical basis cannot yet be modeled. He further notes that the model's enduring utility comes from the **separation of time scales** between the extremely rapid action potential and the slower processes, synaptic integration, bursting, and adaptation, so that today one avoids recomputing the voltage trajectory during a spike and concentrates instead on the computation-relevant dynamics. Even with Hodgkin and Huxley's 1952 conductance-based models available, the simple integrate-and-fire cell remains adequate for many purposes and has been used in simulations of networks containing hundreds of thousands of neurons; Abbott observed at the close of the twentieth century that “the utility of this model, devised early in the 20th century, is likely to last well into the 21st” \cite{abbott1999lapicque}. So strictly speaking, the often-cited McCulloch-Pitts cell of 1943 is *not* the first artificial neuron; it is the first **logical** one. Lapicque's integrate-and-fire came first, and is still the workhorse of modern spiking networks.
 </div>
