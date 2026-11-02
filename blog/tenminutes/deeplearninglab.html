@@ -37,7 +37,7 @@
 						<h2 class="section-title">The bend prevents the collapse.</h2>
 						<div class="prose">
 							<p>If every layer is affine, the whole stack collapses into one affine map. The nonlinearity between layers is what prevents the collapse and allows the composition to create new, curved features.</p>
-							<p>Deep learning is not magic. It is function composition plus a lot of data, a good loss, and an optimizer that can find useful parameters. Training is the hard part.</p>
+							<p>Deep learning is function composition plus a lot of data, a good loss, and an optimizer that can find useful parameters. Training is the hard part.</p>
 							<p>Why start with random weights? Because perfect symmetry is a trap. If every weight in a layer began at the same value, every unit would receive the same gradient and stay identical, so the layer would learn one feature many times over. Small random values break the symmetry. The scale matters too: too large and activations explode, too small and the signal vanishes before it reaches the next layer. Initialization is the first place where the arithmetic of depth becomes visible.</p>
 						</div>
 						<div class="keypoints">

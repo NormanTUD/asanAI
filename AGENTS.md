@@ -1364,19 +1364,41 @@ bash run_tests --no-smoke-tests --no-docker --chromium \
 
 ## Prose style: no filler contrasts
 
-Do not write defensive filler such as:
+State the claim positively. A contrast earns its place when the negation
+rejects something the intended reader actually believes or expects; otherwise it
+is defensive filler.
 
-- “X is not Y” / “X is not just Y” — unless the negation is the actual lesson.
-- “This page is about / asks / gives / traces / turns / shows …” — state the idea
-  directly instead of announcing the page.
+**Rewrite — the negation is a straw man or a bare page announcement.**
+
+- “The checklist is not a bureaucratic ritual.” — nobody accused it; the list
+  that follows is the content. Open with the list.
+- “This page is about / asks / gives / traces / turns / shows …” when it only
+  announces the topic. State the idea.
 - “The point is not X; it is Y”, “It is worth …”, “Notice that …” when the
-  sentence only announces the point.
+  sentence only flags that a point is coming.
 
-Prefer the positive claim. Keep a contrast only when the contrast *is* the
-insight, for example: “The model is not lying; it is completing a pattern.”
+**Keep — the negation names the misconception or framing being rejected.** The
+reader learns something by seeing it denied:
+
+- “The key takeaway when studying distributions is not to memorize them, but to
+  understand how large datasets behave.” — corrects the default “studying =
+  memorizing”.
+- “Alignment is not one technique; it is a family of problems …” — rejects the
+  expectation of a single method.
+- “Depth is not just “more capacity” — it is the composition budget.” — corrects
+  a common reading of what depth buys.
+- “AI is the newest version of a very old habit, and this page is about the
+  habit, not the machine.” — the habit/machine opposition is the chapter's
+  thesis, so it survives even though the sentence also names the page.
+
+**The test.** Can you name the reader who would otherwise believe the negated
+claim, or the framing being rejected? If yes, the contrast is content. If no —
+if it denies a claim nobody made — rewrite it as a positive statement. “X is
+not Y” is also fine when the negation *is* the lesson: “The model is not lying;
+it is completing a pattern.”
 
 To list candidates for review, run:
 
 ```bash
-grep -rniE '\b(is|are|was|were) not\b|\bnot (just|only|merely)\b|this page (is|asks|gives|traces|turns|shows)' blog/tenminutes/*.html
+grep -rniE '\b(is|are|was|were) not\b|\bnot (just|only|merely)\b|this page (is|asks|gives|traces|turns|shows)' blog/*.php
 ```
