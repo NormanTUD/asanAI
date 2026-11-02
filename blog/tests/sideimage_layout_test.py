@@ -28,6 +28,7 @@ Run from the repository root:
 
 from __future__ import annotations
 
+import os
 import shutil
 import socket
 import subprocess
@@ -72,10 +73,13 @@ def free_port() -> int:
 
 
 def start_php_server(port: int) -> subprocess.Popen:
+	env = dict(os.environ)
+	env.setdefault("PHP_CLI_SERVER_WORKERS", "4")
 	proc = subprocess.Popen(
 		["php", "-S", f"localhost:{port}", "-t", str(BLOG)],
 		stdout=subprocess.DEVNULL,
 		stderr=subprocess.PIPE,
+		env=env,
 	)
 	time.sleep(1.5)
 	if proc.poll() is not None:
@@ -177,12 +181,17 @@ def main() -> int:
 	driver = None
 	try:
 		driver = get_chrome_driver(headless=True)
-		for width in WIDTHS:
-			driver.get("about:blank")
+		# Load once, then exercise the real resize/zoom path in both
+		# directions. Re-loading this very tall page for every width made
+		# the single-threaded PHP server the bottleneck, not the layout.
+		driver.set_window_size(WIDTHS[0], 1000)
+		driver.get(URL_TEMPLATE.format(port=port))
+		WebDriverWait(driver, 45).until(lambda d: d.execute_script(WAIT_FOR_FIGURES))
+		time.sleep(0.8)
+		for width in WIDTHS + tuple(reversed(WIDTHS)):
 			driver.set_window_size(width, 1000)
-			driver.get(URL_TEMPLATE.format(port=port))
-			WebDriverWait(driver, 45).until(lambda d: d.execute_script(WAIT_FOR_FIGURES))
-			time.sleep(0.8)
+			WebDriverWait(driver, 30).until(lambda d: d.execute_script(WAIT_FOR_FIGURES))
+			time.sleep(0.9)
 			data = driver.execute_script(MEASURE)
 			client = data["clientWidth"]
 			inner = data["innerWidth"]
@@ -220,7 +229,7 @@ def main() -> int:
 					f"left={fig['figLeft']:.1f}",
 				)
 
-			if width >= 1100:
+			if inner >= 1100:
 				check(
 					"sideimage-inline" not in margin["className"],
 					f"{width}px: margin figure stays in the right margin",

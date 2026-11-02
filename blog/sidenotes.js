@@ -100,6 +100,7 @@
 
 	let layoutRaf      = 0;
 	let layoutFailsafe = 0;       /* consecutive layout failures    */
+	let lastFloatViewportWidth = 0; /* re-place floats only when the viewport width changes */
 	let relayoutObserver = null;
 	let ioObserver       = null;  /* IntersectionObserver           */
 	let visibilityMap  = {};      /* { id: boolean } — markers currently in viewport */
@@ -2178,51 +2179,69 @@
 	   flopping while the window is resized across the boundary. */
 		if (ir) {
 			if (!irVisible) {
-				/* Below BREAKPOINT there is no room for a margin column
-				   at all — every \marginfig becomes a centred inline
-				   figure in the article flow. */
+				/* Below 1100px there is no room for a margin column at
+				   all — every \marginfig becomes a centred inline figure
+				   in the article flow. Do NOT return here: the float
+				   figures below still need their viewport-width refresh. */
 				sideimageWrapActive = false;
 				_reconcileSideimagesTo('inline', ir, null);
-				return;
-			}
-
-			/* The rail is visible: measure how far its left edge intrudes
-			   into the article. Guard W9: if the measurement fails for
-			   any reason, default to 'margin' (the previous, safe
-			   behaviour) rather than guessing. */
-			const m       = _measureRailOverlap(ir);
-			const overlap = (m && Number.isFinite(m.overlap)) ? m.overlap : 0;
-
-			/* Hysteresis: enter wrap only once clearly intruding, leave
-			   only once clearly clear. This is what prevents the figure
-			   from bouncing between the rail and the flow while the user
-			   hovers the window edge near the boundary. */
-			const shouldWrap = sideimageWrapActive
-				? !(overlap <= -WRAP_EXIT)   // already wrapping → stay until clearly clear
-				: (overlap >= WRAP_ENTER);   // not wrapping  → enter once clearly intruding
-
-			if (shouldWrap) {
-				if (!sideimageWrapActive) {
-					logInfo('sideimages → WRAP mode (rail intrudes ' +
-						Math.round(overlap) + 'px into the text; ' +
-						'figures now float and the prose bends around them).');
-				}
-				sideimageWrapActive = true;
-				_reconcileSideimagesTo('wrap', ir, m);
 			} else {
-				if (sideimageWrapActive) {
-					logInfo('sideimages → MARGIN mode (rail is ' +
-						Math.round(-overlap) + 'px clear of the text).');
+				/* The rail is visible: measure how far its left edge
+				   intrudes into the article. Guard W9: if the measurement
+				   fails for any reason, default to 'margin' (the previous,
+				   safe behaviour) rather than guessing. */
+				const m       = _measureRailOverlap(ir);
+				const overlap = (m && Number.isFinite(m.overlap)) ? m.overlap : 0;
+
+				/* Hysteresis: enter wrap only once clearly intruding, leave
+				   only once clearly clear. This is what prevents the figure
+				   from bouncing between the rail and the flow while the user
+				   hovers the window edge near the boundary. */
+				const shouldWrap = sideimageWrapActive
+					? !(overlap <= -WRAP_EXIT)   // already wrapping → stay until clearly clear
+					: (overlap >= WRAP_ENTER);   // not wrapping  → enter once clearly intruding
+
+				if (shouldWrap) {
+					if (!sideimageWrapActive) {
+						logInfo('sideimages → WRAP mode (rail intrudes ' +
+							Math.round(overlap) + 'px into the text; ' +
+							'figures now float and the prose bends around them).');
+					}
+					sideimageWrapActive = true;
+					_reconcileSideimagesTo('wrap', ir, m);
+				} else {
+					if (sideimageWrapActive) {
+						logInfo('sideimages → MARGIN mode (rail is ' +
+							Math.round(-overlap) + 'px clear of the text).');
+					}
+					sideimageWrapActive = false;
+					_reconcileSideimagesTo('margin', ir, null);
 				}
-				sideimageWrapActive = false;
-				_reconcileSideimagesTo('margin', ir, null);
 			}
 		}
 
-		/* Keep floats scrollbar-safe on every resize/scroll pass. The width
-		   is deliberately stable; only the negative right margin and the
-		   hard clamp are refreshed. */
+		/* Keep floats scrollbar-safe on every pass. On a viewport-width
+		   change (resize or browser zoom) re-run _placeFloat() so the
+		   float/inline decision and the width track the new geometry; on
+		   ordinary scroll passes only refresh the right margin. */
 		try {
+			const viewportWidth = (document.documentElement && document.documentElement.clientWidth) || window.innerWidth || 0;
+			if (viewportWidth !== lastFloatViewportWidth) {
+				lastFloatViewportWidth = viewportWidth;
+				store.images.forEach(function (entry) {
+					if (entry.mode !== 'float') return;
+					let fig = null;
+					let img = null;
+					try {
+						fig = document.querySelector('.sideimage[data-si-id="' + entry.id + '"]');
+						img = fig ? fig.querySelector('img') : null;
+					} catch (_) { fig = null; }
+					if (fig && img) {
+						try { _placeFloat(entry, fig, img); }
+						catch (_) { /* _placeFloat is self-guarding */ }
+					}
+				});
+			}
 			document.querySelectorAll('.sideimage.sideimage-float').forEach(function (fig) {
 				_setFloatRightMargin(fig);
 				_clampFloatRightEdge(fig);

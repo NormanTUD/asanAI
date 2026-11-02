@@ -8547,16 +8547,18 @@ body.has-sidenotes #sidenotes-rail {
 	width: var(--sn-rail-max) !important;
 }
 
-/* Narrow-but-not-tiny viewports (1280–1479px): the right margin
+/* Narrow-but-not-tiny viewports (1280–1539px): the right margin
    is narrower than 320px. Switch the rail to right-edge
    anchoring so it overlaps the right edge of the content from
-   the left instead of pushing past the viewport. This rule
-   must come AFTER the final !important rule above so its
-   left: auto !important wins.                                */
-@media (min-width: 1280px) and (max-width: 1479.98px) {
+   the left instead of pushing past the viewport. 24px keeps it
+   clear of a classic scrollbar; at 1540px+ the left-anchored
+   rail already leaves a ≥30px gap. This rule must come AFTER
+   the final !important rule above so its left: auto !important
+   wins.                                                      */
+@media (min-width: 1280px) and (max-width: 1539.98px) {
 	body.has-sidenotes #sidenotes-rail {
 		left:  auto !important;
-		right: 20px !important;
+		right: 24px !important;
 	}
 }
 
