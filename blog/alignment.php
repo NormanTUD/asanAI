@@ -57,7 +57,7 @@ Soft law supplies the vocabulary that hard law borrows. The OECD AI Principles (
 
 ### The current toolkit
 
-The modern toolkit is a menu, not a fixed pipeline: **SFT** (demonstrations), then either **RLHF** (a learned reward model from human preferences), **RLAIF / Constitutional AI** (AI feedback instead), or **direct preference optimization** (DPO and successors), which learns the policy directly without an explicit RL loop. (\cite[Christiano et al., 2017]{christiano2017rlhf}; \cite[Ouyang et al., 2022]{ouyang2022instructgpt}; \cite[Lee et al., 2023]{rlaif}; \cite[Bai et al., 2022]{bai2022constitutional})
+The modern toolkit is a menu, not a fixed pipeline: **SFT** (demonstrations), then either **RLHF** (a learned reward model from human preferences, introduced by **Paul Christiano** and colleagues in 2017), **RLAIF / Constitutional AI** (AI feedback instead), or **direct preference optimization** (DPO and successors), which learns the policy directly without an explicit RL loop. (\cite[Christiano et al., 2017]{christiano2017rlhf}; \cite[Ouyang et al., 2022]{ouyang2022instructgpt}; \cite[Lee et al., 2023]{rlaif}; \cite[Bai et al., 2022]{bai2022constitutional})
 
 **DPO** closed the loop into a single classification-style objective, and its successors (ORPO, SimPO) drop the reference model entirely (\cite[Rafailov et al., 2023]{rafailov2023dpo}; \cite[Hong et al., 2024]{orpo}). **Rejection-sampling / RL-from-verifiable-rewards (RFT)** closes the loop another way: generate many answers, keep the ones a *verifier* accepts, and retrain on them — the recipe that powers reasoning models.
 

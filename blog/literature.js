@@ -14313,6 +14313,20 @@ window.bibData = {
 		url: "https://doi.org/10.7249/p365",
 		alternativetitle: "Simon, A Behavioral Model of Rational Choice"
 	},
+	"chomsky1956three": {
+		title: "Three Models for the Description of Language",
+		author: "Noam Chomsky",
+		year: 1956,
+		url: "https://doi.org/10.1109/TIT.1956.1056813",
+		alternativetitle: "Chomsky's three models"
+	},
+	"chomsky1957syntactic": {
+		title: "Syntactic Structures",
+		author: "Noam Chomsky",
+		year: 1957,
+		url: "https://doi.org/10.1515/9783110218329",
+		alternativetitle: "Chomsky, Syntactic Structures"
+	},
 	"chomsky1959review": {
 		title: "A Review of B. F. Skinner's Verbal Behavior",
 		author: "Noam Chomsky",
@@ -21426,6 +21440,20 @@ window.bibData = {
 		author: "Dario Amodei, Chris Olah, Jacob Steinhardt, Paul Christiano, John Schulman, Dan Mané",
 		year: 2016,
 		alternativetitle: "Concrete Problems in AI Safety"
+	},
+	"sutskever_bio": {
+		url: "https://en.wikipedia.org/wiki/Ilya_Sutskever",
+		title: "Ilya Sutskever",
+		author: "Wikipedia",
+		year: 2026,
+		alternativetitle: "Ilya Sutskever (biography)"
+	},
+	"anthropic_bio": {
+		url: "https://en.wikipedia.org/wiki/Anthropic",
+		title: "Anthropic",
+		author: "Wikipedia",
+		year: 2026,
+		alternativetitle: "Anthropic (company history)"
 	},
 	"russell2019human": {
 		url: "https://www.penguinrandomhouse.com/books/566677/human-compatible-by-stuart-russell/",
