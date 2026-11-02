@@ -3439,6 +3439,35 @@ html[data-theme="dark"] .myth--ok b { color: var(--tm-green); }
 .att-heads { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .att-heads .chip { color: var(--tm-petrol); border-color: var(--tm-line-strong); }
 .att-heads .chip.is-on { background: var(--tm-green); color: #000000; border-color: var(--tm-green); }
+.portrait-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 14px;
+	margin: 18px 0;
+}
+.portrait-grid figure { margin: 0; }
+.portrait-grid img {
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+	object-position: center top;
+}
+.portrait-grid figcaption { font-size: 0.68rem; line-height: 1.4; }
+@media (max-width: 900px) {
+	.portrait-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+	.portrait-grid { grid-template-columns: 1fr; }
+}
+.emb-equation {
+	height: 3.6rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 4px 0 10px;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+.emb-equation math { font-size: 1.08rem; }
 .att-budget {
 	display: flex;
 	height: 14px;

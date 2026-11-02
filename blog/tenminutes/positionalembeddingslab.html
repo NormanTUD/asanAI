@@ -6,6 +6,7 @@
 	<meta name="description" content="Why attention needs positional information, and how sine, cosine, and RoPE encode order.">
 	<meta name="theme-color" content="#f7f3e8">
 	<title>How Order Survives | Ten Minutes</title>
+	<link rel="stylesheet" href="../Temml-Local.min.css">
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="positionalembeddingslab" data-page="lesson">
@@ -52,8 +53,16 @@
 						<h2 class="section-title">A manifold, not just labels.</h2>
 						<div class="prose">
 							<p>Sine and cosine at different frequencies create a smooth fingerprint for every position. Nearby positions share low-frequency patterns; distant positions differ in the high-frequency dimensions. The set of position vectors forms a manifold rather than a set of unrelated labels. Why waves? Because a wave is bounded, smooth, and periodic, so every position gets a distinct pattern without the values growing without bound. The different frequencies encode different scales: a slow wave distinguishes the beginning from the end of a long text, while a fast wave distinguishes neighbouring positions.</p>
+							<div class="formula" data-tex="PE_{(pos,\,2i)} = \sin\!\left(\frac{pos}{10000^{2i/d_{\mathrm{model}}}}\right), \qquad PE_{(pos,\,2i+1)} = \cos\!\left(\frac{pos}{10000^{2i/d_{\mathrm{model}}}}\right)"></div>
+							<p>The denominator is a geometric progression. The slowest pair completes one cycle every <span data-tex="10000 \cdot 2\pi" data-tex-display="false"></span> positions; each faster pair is a fixed factor quicker. That is why the encoding behaves like a multi-scale clock: coarse hands mark the beginning and end of a long text, fine hands separate neighbouring positions. The scheme is also linear in a precise sense: for a fixed offset <span data-tex="k" data-tex-display="false"></span>, <span data-tex="PE_{pos+k}" data-tex-display="false"></span> is a fixed linear function of <span data-tex="PE_{pos}" data-tex-display="false"></span>. Attention can therefore learn relative distance without a lookup table.</p>
 							<p>Modern models often use rotary position embeddings. RoPE (<a href="https://arxiv.org/abs/2104.09864" rel="noopener">Su et al., 2021</a>) rotates the query and key vectors by an amount that depends on position, so the dot product between them depends on relative distance. That makes relative position easier to learn. Concretely, a query at position <em>m</em> and a key at position <em>n</em> are rotated by angles proportional to <em>m</em> and <em>n</em>; when you take the dot product, the absolute angles cancel and what remains depends on <em>m − n</em>. The model gets “how far apart” almost for free.</p>
 							<p>The details matter for long context. A model trained on one range of positions may not extrapolate gracefully to a much longer range. Position is a coordinate, and the coordinate system has to fit the data.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Sinusoidal</b><span>Fixed sine/cosine waves at many frequencies. No learned parameters; every integer position has a vector.</span></div>
+							<div class="keypoint"><b>Learned absolute</b><span>A trainable lookup table per position. Strong inside the trained window, impossible beyond it.</span></div>
+							<div class="keypoint"><b>Relative</b><span>Learn or bias by distance, not by absolute index. Generalises better to longer sequences.</span></div>
+							<div class="keypoint"><b>RoPE / ALiBi</b><span>Rotate query and key vectors, or add a distance penalty. Both make relative position the default.</span></div>
 						</div>
 					</section>
 
@@ -91,13 +100,14 @@
 							<canvas class="demo-canvas demo-canvas--md" data-trajectory-canvas aria-label="A token vector plus positional encodings, drawn as a circle in 2D and a helix in 3D"></canvas>
 							<div class="demo-controls">
 								<label>Positions <input type="range" data-trajectory-count min="2" max="96" step="1" value="32"><output data-trajectory-count-out>32</output></label>
-								<label>Dimension pair <input type="range" data-trajectory-dim min="0" max="62" step="2" value="0"><output data-trajectory-dim-out>0 / 1</output></label>
+								<label>Which dimensions <input type="range" data-trajectory-dim min="0" max="62" step="2" value="0"><output data-trajectory-dim-out>0 / 1</output></label>
 								<div class="chip-row">
 									<button class="chip is-on" type="button" data-trajectory-view="2d">2D circle</button>
 									<button class="chip" type="button" data-trajectory-view="3d">3D helix</button>
 								</div>
 								<span class="vec-note" style="color:var(--tm-muted)">view: <b data-trajectory-view-out>circle</b></span>
 							</div>
+							<p class="vec-note" data-trajectory-dim-note style="color:var(--tm-muted)">Pair 0 / 1: the slowest waves. Raise the slider to draw faster dimensions.</p>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>Every position adds a different offset. Neighbouring positions stay close; higher dimensions turn faster, so the rail tightens.</span></div>
 					</div>
@@ -116,6 +126,7 @@
 		</div>
 	</main>
 
+	<script src="../temml.min.js"></script>
 	<script src="assets/site.js"></script>
 	<script src="assets/demos.js"></script>
 </body>

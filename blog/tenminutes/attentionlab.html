@@ -401,7 +401,7 @@
 			var budgetEl = document.getElementById("att-budget");
 			if (budgetEl) {
 				var c = TM.colors();
-				var palette = [c.green, c.sky, c.gold, c.coral, c.blue, c.lime, c.teal, c.muted];
+				var palette = [c.green, c.sky, c.gold, c.coral, c.blue, c.lime, c.petrol, c.muted];
 				budgetEl.innerHTML = w.map(function (p, i) {
 					return '<span title="' + tokens[i] + ": " + Math.round(p * 100) + '%" style="width:' + (p * 100).toFixed(2) + '%;background:' + palette[i % palette.length] + '"></span>';
 				}).join("");

@@ -45,11 +45,47 @@
 							<div class="keypoint"><b>Specificity</b><span>Concrete instructions reduce ambiguity.</span></div>
 							<div class="keypoint"><b>Structure</b><span>Delimiters and examples show the shape of the answer.</span></div>
 							<div class="keypoint"><b>Iteration</b><span>Test prompts; do not assume a longer prompt is better.</span></div>
+							<div class="keypoint"><b>Few-shot</b><span>Show the format with a few worked examples.</span></div>
+							<div class="keypoint"><b>Delimiters</b><span>Separate instructions from data before the model reads either.</span></div>
+							<div class="keypoint"><b>Positive constraints</b><span>Say what to do; “do not X” still requires representing X.</span></div>
+							<div class="keypoint"><b>Chain-of-thought</b><span>Ask for intermediate steps when the task needs them.</span></div>
+						</div>
+						<div class="fieldnotes">
+							<h4>The reversal curse</h4>
+							<p>Autoregressive training learns <span data-tex="P(\text{attribute} \mid \text{name})" data-tex-display="false"></span> much better than <span data-tex="P(\text{name} \mid \text{attribute})" data-tex-display="false"></span>. If a model learns “Valentina Tereshkova was the first woman in space”, it may fail when asked “Who was the first woman in space?” because the causal mask never made it predict the name from the attribute. If the reverse direction matters, put both directions in the prompt.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="negation">
+						<div class="section-kicker"><span class="sk-num">03</span> The negation trap</div>
+						<h2 class="section-title">“Not happy” is not “sad”.</h2>
+						<div class="prose">
+							<p>Negation is a weak lever because of how meaning is learned. “Not happy” and “happy” co-occur constantly, so their vectors stay close. “Sad” lives in a different region of the space. The model sees the token “not” and processes it, but attention spreads its influence across the whole phrase; the strong semantic signal of “happy” survives. The result is a nudge, not a logical inversion.</p>
+							<p>This is why “do not be angry” can produce an angry-sounding answer while “write a calm, neutral reply” gives the model a positive target. If you need to exclude something, pair the exclusion with the behaviour you want. The prompt is a distribution, and a positive constraint moves it more reliably than a negation.</p>
+						</div>
+						<div class="demo demo--paper" data-demo="negation">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Where “not happy” lives <span>· demo</span></p>
+									<p class="demo-sub">The sentence “not happy” stays near “happy” in the toy space. “Sad” is a different direction, not the logical complement.</p>
+								</div>
+								<span class="demo-badge">2-D toy</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas demo-canvas--md" data-negation-canvas aria-label="A two-dimensional embedding space with happy, not happy, sad, and unhappy"></canvas>
+								<div class="demo-readout">
+									<div><b>Nearest to “not happy”</b><span>happy</span></div>
+									<div><b>Distance to “happy”</b><span>short</span></div>
+									<div><b>Distance to “sad”</b><span>long</span></div>
+								</div>
+								<p class="demo-hint">In a real embedding, negation is noisier and context-dependent. The point is the geometry: the negated phrase is not automatically the opposite concept.</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>State the behaviour you want. A negation names the concept you are trying to suppress.</span></div>
 						</div>
 					</section>
 
 					<section class="section-block" id="extra">
-						<div class="section-kicker"><span class="sk-num">03</span> Prompting is not security</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Prompting is not security</div>
 						<h2 class="section-title">Untrusted text is an attack surface.</h2>
 						<div class="prose">
 							<p>Prompt injection happens when text the model is supposed to read contains instructions (<a href="https://arxiv.org/abs/2302.12173" rel="noopener">Greshake et al., 2023</a>). A web page, a document, or an email can tell the model to ignore its system prompt. Delimiters and clear roles help, but they are not a security boundary.</p>
@@ -96,7 +132,7 @@
 
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

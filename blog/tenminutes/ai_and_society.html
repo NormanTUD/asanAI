@@ -68,11 +68,11 @@
 							<div class="timeline-scroller">
 								<button class="tl-scroll-btn" type="button" data-timeline-prev aria-label="Scroll left">‹</button>
 								<div class="timeline-track" data-timeline-track role="group" aria-label="Expectation cycles and consequences">
-									<button class="tl-node is-active" type="button" data-meta="1956 · Dartmouth" data-title="Dartmouth" data-body="A small summer workshop named the field and made a bold conjecture: every aspect of intelligence might be simulated."><span class="tl-dot"></span><span class="tl-date">1956</span><span class="tl-name">Dartmouth</span></button>
-									<button class="tl-node" type="button" data-meta="1970s · First winter" data-title="The first winter" data-body="The promises outran the results. Funding left, and the field learned that progress is uneven."><span class="tl-dot"></span><span class="tl-date">1970s</span><span class="tl-name">First winter</span></button>
-									<button class="tl-node" type="button" data-meta="2012 · Deep learning" data-title="Deep learning" data-body="Big data, GPUs, and deep networks produced a step change in vision and speech. The spring returned."><span class="tl-dot"></span><span class="tl-date">2012</span><span class="tl-name">Deep learning</span></button>
-									<button class="tl-node" type="button" data-meta="2022 · LLM era" data-title="The LLM era" data-body="Chat interfaces made language models a mass medium. The technology moved from labs into everyday work."><span class="tl-dot"></span><span class="tl-date">2022</span><span class="tl-name">LLM era</span></button>
-									<button class="tl-node" type="button" data-meta="now · Synthetic media" data-title="Synthetic media" data-body="Cheap generation changes creation and deception at the same time. Trust becomes a design problem."><span class="tl-dot"></span><span class="tl-date">now</span><span class="tl-name">Synthetic media</span></button>
+									<button class="tl-node is-active" type="button" data-meta="1956 · Dartmouth" data-title="Dartmouth" data-body="A small summer workshop named the field and made a bold conjecture: every aspect of intelligence might be simulated." data-image="../john_mccarthy_portrait.jpg" data-image-alt="Portrait of John McCarthy" data-image-link="https://commons.wikimedia.org/wiki/File:John_McCarthy_Stanford.jpg" data-image-caption="John McCarthy, co-author of the 1955 Dartmouth proposal. Photo: null0, CC BY-SA 2.0."><span class="tl-dot"></span><span class="tl-date">1956</span><span class="tl-name">Dartmouth</span></button>
+									<button class="tl-node" type="button" data-meta="1970s · First winter" data-title="The first winter" data-body="The promises outran the results. Funding left, and the field learned that progress is uneven." data-image="../perceptron2.jpg" data-image-alt="The Mark I Perceptron" data-image-link="https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg" data-image-caption="The Mark I Perceptron, 1958. Photo: U.S. Navy, public domain."><span class="tl-dot"></span><span class="tl-date">1970s</span><span class="tl-name">First winter</span></button>
+									<button class="tl-node" type="button" data-meta="2012 · Deep learning" data-title="Deep learning" data-body="Big data, GPUs, and deep networks produced a step change in vision and speech. The spring returned." data-image="../alexnet_architecture.png" data-image-alt="The AlexNet architecture" data-image-link="https://commons.wikimedia.org/wiki/File:AlexNet_architecture.png" data-image-caption="AlexNet, 2012. Image: Daniel Voigt Godoy, CC BY 4.0."><span class="tl-dot"></span><span class="tl-date">2012</span><span class="tl-name">Deep learning</span></button>
+									<button class="tl-node" type="button" data-meta="2022 · LLM era" data-title="The LLM era" data-body="Chat interfaces made language models a mass medium. The technology moved from labs into everyday work." data-image="assets/img/chatgpt.png" data-image-alt="The ChatGPT interface" data-image-link="https://commons.wikimedia.org/wiki/File:ChatGPT.png" data-image-caption="ChatGPT interface. Image: Lugab89, CC BY 3.0."><span class="tl-dot"></span><span class="tl-date">2022</span><span class="tl-name">LLM era</span></button>
+									<button class="tl-node" type="button" data-meta="now · Synthetic media" data-title="Synthetic media" data-body="Cheap generation changes creation and deception at the same time. Trust becomes a design problem." data-image="../diffusion_astronaut.webp" data-image-alt="An AI-generated astronaut riding a horse" data-image-link="https://commons.wikimedia.org/wiki/File:Astronaut_Riding_a_Horse_(SD3.5).webp" data-image-caption="An AI-generated image: astronaut riding a horse, Stable Diffusion 3.5. Image: VulcanSphere, public domain."><span class="tl-dot"></span><span class="tl-date">now</span><span class="tl-name">Synthetic media</span></button>
 								</div>
 								<button class="tl-scroll-btn" type="button" data-timeline-next aria-label="Scroll right">›</button>
 							</div>
@@ -117,8 +117,25 @@
 
 
 
+					<section class="section-block" id="problems">
+						<div class="section-kicker"><span class="sk-num">03</span> The hard problems</div>
+						<h2 class="section-title">What we have to decide.</h2>
+						<div class="prose">
+							<p><strong>Power and compute.</strong> The frontier is expensive. Training runs need specialised chips, energy, data, and capital, and those advantages compound. A handful of firms can shape the default model that everyone else fine-tunes or rents. Public compute, transparency about training data and evaluation, competition policy, and a healthy open-weight ecosystem are the counterweights (<a href="https://ainowinstitute.org/publication/policy/compute-and-ai" rel="noopener">AI Now Institute, 2023</a>).</p>
+							<p><strong>Environment and labour.</strong> Inference and training consume electricity and water, and the supply chain includes hidden human labour: data annotation, content moderation, and the mining and manufacturing behind the hardware (<a href="https://arxiv.org/abs/1906.02243" rel="noopener">Strubell et al., 2019</a>). Efficiency helps, but it can also increase total use. The labour question is task-level: automation changes a bundle of tasks, and the gains go to whoever owns the tool and the data.</p>
+							<p><strong>Truth and accountability.</strong> Synthetic media makes deception cheap and denial cheaper. Provenance standards, signed capture, and independent fact-checking help, but they are only as strong as the chain of custody. The deeper question is liability: when a model causes harm, the developer, the deployer, and the platform should not all be able to point at one another.</p>
+							<p><strong>Governance.</strong> The EU AI Act sorts systems by risk and imposes documentation, evaluation, and post-market monitoring on the higher-risk tiers (<a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj" rel="noopener">Regulation (EU) 2024/1689</a>). The NIST AI Risk Management Framework offers a voluntary process for mapping, measuring, and managing risk (<a href="https://www.nist.gov/itl/ai-risk-management-framework" rel="noopener">NIST, 2023</a>). Neither is a solution by itself. They are ways to make the trade-offs explicit and reversible.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Concentration</b><span>Compute and data advantages can become political advantages.</span></div>
+							<div class="keypoint"><b>Environment</b><span>Training and serving have a material footprint; efficiency is not automatically savings.</span></div>
+							<div class="keypoint"><b>Accountability</b><span>Provenance and liability need a chain, not a single detector.</span></div>
+							<div class="keypoint"><b>Governance</b><span>Risk tiers, documentation, audits, and independent evaluation make choices visible.</span></div>
+						</div>
+					</section>
+
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

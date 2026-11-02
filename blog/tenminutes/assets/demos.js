@@ -2580,6 +2580,84 @@
 		render();
 	}
 
+	/* ── negation geometry ─────────────────────────────────── */
+
+	function initNegation(root) {
+		var canvas = $("[data-negation-canvas]", root);
+		if (!canvas) return;
+		var pts = [
+			{ x: 0.72, y: 0.34, label: "happy", role: "happy" },
+			{ x: 0.46, y: 0.20, label: "not happy", role: "not" },
+			{ x: -0.54, y: -0.42, label: "sad", role: "sad" },
+			{ x: -0.18, y: -0.16, label: "unhappy", role: "unhappy" },
+			{ x: 0.60, y: 0.56, label: "joyful", role: "joyful" }
+		];
+		function draw(ctx, W, H) {
+			var c = colors();
+			var ox = W / 2, oy = H / 2 + 6;
+			var scale = Math.min(W, H) * 0.36;
+			ctx.clearRect(0, 0, W, H);
+			ctx.strokeStyle = c.line;
+			ctx.lineWidth = 1;
+			for (var gx = -4; gx <= 4; gx++) {
+				ctx.beginPath();
+				ctx.moveTo(ox + gx * scale / 4, oy - scale);
+				ctx.lineTo(ox + gx * scale / 4, oy + scale);
+				ctx.stroke();
+				ctx.beginPath();
+				ctx.moveTo(ox - scale, oy + gx * scale / 4);
+				ctx.lineTo(ox + scale, oy + gx * scale / 4);
+				ctx.stroke();
+			}
+			ctx.strokeStyle = c.lineStrong;
+			ctx.beginPath();
+			ctx.moveTo(ox - scale * 1.1, oy);
+			ctx.lineTo(ox + scale * 1.1, oy);
+			ctx.moveTo(ox, oy - scale * 1.1);
+			ctx.lineTo(ox, oy + scale * 1.1);
+			ctx.stroke();
+			var colorsByRole = { happy: c.green, not: c.sky, sad: c.coral, unhappy: c.gold, joyful: c.lime };
+			pts.forEach(function (p) {
+				var x = ox + p.x * scale, y = oy - p.y * scale;
+				ctx.strokeStyle = colorsByRole[p.role];
+				ctx.lineWidth = 1.4;
+				ctx.beginPath();
+				ctx.moveTo(ox, oy);
+				ctx.lineTo(x, y);
+				ctx.stroke();
+				ctx.beginPath();
+				ctx.arc(x, y, 5, 0, Math.PI * 2);
+				ctx.fillStyle = colorsByRole[p.role];
+				ctx.fill();
+				ctx.fillStyle = c.inkSoft;
+				ctx.font = "600 11px Barlow, system-ui, sans-serif";
+				ctx.fillText(p.label, x + 8, y - 6);
+			});
+			var happy = pts[0], notHappy = pts[1], sad = pts[2];
+			function seg(a, b, color, dash) {
+				ctx.save();
+				ctx.setLineDash(dash || []);
+				ctx.strokeStyle = color;
+				ctx.lineWidth = 1.4;
+				ctx.beginPath();
+				ctx.moveTo(ox + a.x * scale, oy - a.y * scale);
+				ctx.lineTo(ox + b.x * scale, oy - b.y * scale);
+				ctx.stroke();
+				ctx.restore();
+			}
+			seg(happy, notHappy, c.sky, [4, 4]);
+			seg(happy, sad, c.coral, [4, 4]);
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.fillText("short distance: negation stays nearby", ox + 14, oy - scale * 0.86);
+			ctx.fillText("long distance: the opposite concept", ox - scale * 0.86, oy + scale * 0.92);
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		window.addEventListener("tm:theme", function () { api.redraw(); });
+		api.redraw();
+	}
+
 	/* ── receptive field ────────────────────────────────────── */
 
 	function initReceptive(root) {
@@ -2917,6 +2995,7 @@
 		var countOut = $("[data-trajectory-count-out]", root);
 		var dim = $("[data-trajectory-dim]", root);
 		var dimOut = $("[data-trajectory-dim-out]", root);
+		var dimNote = $("[data-trajectory-dim-note]", root);
 		var viewOut = $("[data-trajectory-view-out]", root);
 		var view = "2d";
 		var yaw = 0.6, pitch = -0.34;
@@ -3076,6 +3155,10 @@
 			var d = clamp(parseInt(dim && dim.value, 10) || 0, 0, 62);
 			if (countOut) countOut.textContent = n;
 			if (dimOut) dimOut.textContent = d + " / " + (d + 1);
+			if (dimNote) {
+				var speed = d < 16 ? "slow" : d < 40 ? "medium" : "fast";
+				dimNote.textContent = "Pair " + d + " / " + (d + 1) + ": " + speed + " waves. Higher pairs turn faster, so the circle tightens.";
+			}
 			if (viewOut) viewOut.textContent = view === "2d" ? "circle" : "helix";
 			var pts = [];
 			for (var i = 0; i < n; i++) pts.push(point(i, d));
@@ -3708,6 +3791,7 @@
 			else if (type === "gradient") initGradient(root);
 			else if (type === "verify") initVerify(root);
 			else if (type === "ambiguity") initAmbiguity(root);
+			else if (type === "negation") initNegation(root);
 			else if (type === "receptive") initReceptive(root);
 			else if (type === "citecheck") initCitecheck(root);
 			else if (type === "reasoning") initReasoning(root);
