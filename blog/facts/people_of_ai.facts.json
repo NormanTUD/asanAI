@@ -10299,9 +10299,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-254-part_of-people_of_ai-block-133",
+      "id": "struct-people_of_ai-stmt-254-part_of-people_of_ai-block-132",
       "from": "people_of_ai-stmt-254",
-      "to": "people_of_ai-block-133",
+      "to": "people_of_ai-block-132",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10329,9 +10329,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-257-part_of-people_of_ai-block-135",
+      "id": "struct-people_of_ai-stmt-257-part_of-people_of_ai-block-133",
       "from": "people_of_ai-stmt-257",
-      "to": "people_of_ai-block-135",
+      "to": "people_of_ai-block-133",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10359,9 +10359,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-260-part_of-people_of_ai-block-137",
+      "id": "struct-people_of_ai-stmt-260-part_of-people_of_ai-block-135",
       "from": "people_of_ai-stmt-260",
-      "to": "people_of_ai-block-137",
+      "to": "people_of_ai-block-135",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10379,9 +10379,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-262-part_of-people_of_ai-block-138",
+      "id": "struct-people_of_ai-stmt-262-part_of-people_of_ai-block-137",
       "from": "people_of_ai-stmt-262",
-      "to": "people_of_ai-block-138",
+      "to": "people_of_ai-block-137",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10389,9 +10389,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-263-part_of-people_of_ai-block-138",
+      "id": "struct-people_of_ai-stmt-263-part_of-people_of_ai-block-137",
       "from": "people_of_ai-stmt-263",
-      "to": "people_of_ai-block-138",
+      "to": "people_of_ai-block-137",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10409,9 +10409,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-265-part_of-people_of_ai-block-140",
+      "id": "struct-people_of_ai-stmt-265-part_of-people_of_ai-block-138",
       "from": "people_of_ai-stmt-265",
-      "to": "people_of_ai-block-140",
+      "to": "people_of_ai-block-138",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10419,8 +10419,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-266-part_of-people_of_ai-block-140",
+      "id": "struct-people_of_ai-stmt-266-part_of-people_of_ai-block-138",
       "from": "people_of_ai-stmt-266",
+      "to": "people_of_ai-block-138",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-people_of_ai-stmt-267-part_of-people_of_ai-block-140",
+      "from": "people_of_ai-stmt-267",
       "to": "people_of_ai-block-140",
       "kind": "part_of",
       "qualifiers": {},
@@ -10429,19 +10439,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-267-part_of-people_of_ai-block-141",
-      "from": "people_of_ai-stmt-267",
-      "to": "people_of_ai-block-141",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-people_of_ai-stmt-268-part_of-people_of_ai-block-141",
+      "id": "struct-people_of_ai-stmt-268-part_of-people_of_ai-block-140",
       "from": "people_of_ai-stmt-268",
-      "to": "people_of_ai-block-141",
+      "to": "people_of_ai-block-140",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10469,9 +10469,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-271-part_of-people_of_ai-block-143",
+      "id": "struct-people_of_ai-stmt-271-part_of-people_of_ai-block-141",
       "from": "people_of_ai-stmt-271",
-      "to": "people_of_ai-block-143",
+      "to": "people_of_ai-block-141",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10479,8 +10479,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-272-part_of-people_of_ai-block-143",
+      "id": "struct-people_of_ai-stmt-272-part_of-people_of_ai-block-141",
       "from": "people_of_ai-stmt-272",
+      "to": "people_of_ai-block-141",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-people_of_ai-stmt-273-part_of-people_of_ai-block-143",
+      "from": "people_of_ai-stmt-273",
       "to": "people_of_ai-block-143",
       "kind": "part_of",
       "qualifiers": {},
@@ -10489,19 +10499,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-273-part_of-people_of_ai-block-146",
-      "from": "people_of_ai-stmt-273",
-      "to": "people_of_ai-block-146",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-people_of_ai-stmt-274-part_of-people_of_ai-block-146",
+      "id": "struct-people_of_ai-stmt-274-part_of-people_of_ai-block-143",
       "from": "people_of_ai-stmt-274",
-      "to": "people_of_ai-block-146",
+      "to": "people_of_ai-block-143",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10519,9 +10519,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-276-part_of-people_of_ai-block-149",
+      "id": "struct-people_of_ai-stmt-276-part_of-people_of_ai-block-146",
       "from": "people_of_ai-stmt-276",
-      "to": "people_of_ai-block-149",
+      "to": "people_of_ai-block-146",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10529,9 +10529,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-277-part_of-people_of_ai-block-149",
+      "id": "struct-people_of_ai-stmt-277-part_of-people_of_ai-block-146",
       "from": "people_of_ai-stmt-277",
-      "to": "people_of_ai-block-149",
+      "to": "people_of_ai-block-146",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10559,9 +10559,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-280-part_of-people_of_ai-block-151",
+      "id": "struct-people_of_ai-stmt-280-part_of-people_of_ai-block-149",
       "from": "people_of_ai-stmt-280",
-      "to": "people_of_ai-block-151",
+      "to": "people_of_ai-block-149",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10569,8 +10569,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-281-part_of-people_of_ai-block-151",
+      "id": "struct-people_of_ai-stmt-281-part_of-people_of_ai-block-149",
       "from": "people_of_ai-stmt-281",
+      "to": "people_of_ai-block-149",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-people_of_ai-stmt-282-part_of-people_of_ai-block-151",
+      "from": "people_of_ai-stmt-282",
       "to": "people_of_ai-block-151",
       "kind": "part_of",
       "qualifiers": {},
@@ -10579,19 +10589,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-282-part_of-people_of_ai-block-153",
-      "from": "people_of_ai-stmt-282",
-      "to": "people_of_ai-block-153",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-people_of_ai-stmt-283-part_of-people_of_ai-block-153",
+      "id": "struct-people_of_ai-stmt-283-part_of-people_of_ai-block-151",
       "from": "people_of_ai-stmt-283",
-      "to": "people_of_ai-block-153",
+      "to": "people_of_ai-block-151",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10609,9 +10609,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-285-part_of-people_of_ai-block-155",
+      "id": "struct-people_of_ai-stmt-285-part_of-people_of_ai-block-153",
       "from": "people_of_ai-stmt-285",
-      "to": "people_of_ai-block-155",
+      "to": "people_of_ai-block-153",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10619,9 +10619,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-286-part_of-people_of_ai-block-155",
+      "id": "struct-people_of_ai-stmt-286-part_of-people_of_ai-block-153",
       "from": "people_of_ai-stmt-286",
-      "to": "people_of_ai-block-155",
+      "to": "people_of_ai-block-153",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10639,9 +10639,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-288-part_of-people_of_ai-block-157",
+      "id": "struct-people_of_ai-stmt-288-part_of-people_of_ai-block-155",
       "from": "people_of_ai-stmt-288",
-      "to": "people_of_ai-block-157",
+      "to": "people_of_ai-block-155",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10649,8 +10649,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-289-part_of-people_of_ai-block-157",
+      "id": "struct-people_of_ai-stmt-289-part_of-people_of_ai-block-155",
       "from": "people_of_ai-stmt-289",
+      "to": "people_of_ai-block-155",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-people_of_ai-stmt-290-part_of-people_of_ai-block-157",
+      "from": "people_of_ai-stmt-290",
       "to": "people_of_ai-block-157",
       "kind": "part_of",
       "qualifiers": {},
@@ -10659,18 +10669,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-290-part_of-people_of_ai-block-159",
-      "from": "people_of_ai-stmt-290",
-      "to": "people_of_ai-block-159",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-people_of_ai-stmt-291-part_of-people_of_ai-block-159",
+      "id": "struct-people_of_ai-stmt-291-part_of-people_of_ai-block-157",
       "from": "people_of_ai-stmt-291",
+      "to": "people_of_ai-block-157",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-people_of_ai-stmt-292-part_of-people_of_ai-block-159",
+      "from": "people_of_ai-stmt-292",
       "to": "people_of_ai-block-159",
       "kind": "part_of",
       "qualifiers": {},
@@ -10679,19 +10689,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-292-part_of-people_of_ai-block-160",
-      "from": "people_of_ai-stmt-292",
-      "to": "people_of_ai-block-160",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-people_of_ai-stmt-293-part_of-people_of_ai-block-160",
+      "id": "struct-people_of_ai-stmt-293-part_of-people_of_ai-block-159",
       "from": "people_of_ai-stmt-293",
-      "to": "people_of_ai-block-160",
+      "to": "people_of_ai-block-159",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10709,9 +10709,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-295-part_of-people_of_ai-block-162",
+      "id": "struct-people_of_ai-stmt-295-part_of-people_of_ai-block-160",
       "from": "people_of_ai-stmt-295",
-      "to": "people_of_ai-block-162",
+      "to": "people_of_ai-block-160",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10719,8 +10719,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-296-part_of-people_of_ai-block-162",
+      "id": "struct-people_of_ai-stmt-296-part_of-people_of_ai-block-160",
       "from": "people_of_ai-stmt-296",
+      "to": "people_of_ai-block-160",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-people_of_ai-stmt-297-part_of-people_of_ai-block-162",
+      "from": "people_of_ai-stmt-297",
       "to": "people_of_ai-block-162",
       "kind": "part_of",
       "qualifiers": {},
@@ -10729,19 +10739,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-297-part_of-people_of_ai-block-164",
-      "from": "people_of_ai-stmt-297",
-      "to": "people_of_ai-block-164",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-people_of_ai-stmt-298-part_of-people_of_ai-block-164",
+      "id": "struct-people_of_ai-stmt-298-part_of-people_of_ai-block-162",
       "from": "people_of_ai-stmt-298",
-      "to": "people_of_ai-block-164",
+      "to": "people_of_ai-block-162",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10759,9 +10759,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-300-part_of-people_of_ai-block-166",
+      "id": "struct-people_of_ai-stmt-300-part_of-people_of_ai-block-164",
       "from": "people_of_ai-stmt-300",
-      "to": "people_of_ai-block-166",
+      "to": "people_of_ai-block-164",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10769,8 +10769,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-301-part_of-people_of_ai-block-166",
+      "id": "struct-people_of_ai-stmt-301-part_of-people_of_ai-block-164",
       "from": "people_of_ai-stmt-301",
+      "to": "people_of_ai-block-164",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-people_of_ai-stmt-302-part_of-people_of_ai-block-166",
+      "from": "people_of_ai-stmt-302",
       "to": "people_of_ai-block-166",
       "kind": "part_of",
       "qualifiers": {},
@@ -10779,19 +10789,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-302-part_of-people_of_ai-block-168",
-      "from": "people_of_ai-stmt-302",
-      "to": "people_of_ai-block-168",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-people_of_ai-stmt-303-part_of-people_of_ai-block-169",
+      "id": "struct-people_of_ai-stmt-303-part_of-people_of_ai-block-166",
       "from": "people_of_ai-stmt-303",
-      "to": "people_of_ai-block-169",
+      "to": "people_of_ai-block-166",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10799,9 +10799,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-304-part_of-people_of_ai-block-169",
+      "id": "struct-people_of_ai-stmt-304-part_of-people_of_ai-block-168",
       "from": "people_of_ai-stmt-304",
-      "to": "people_of_ai-block-169",
+      "to": "people_of_ai-block-168",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10819,9 +10819,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-306-part_of-people_of_ai-block-171",
+      "id": "struct-people_of_ai-stmt-306-part_of-people_of_ai-block-169",
       "from": "people_of_ai-stmt-306",
-      "to": "people_of_ai-block-171",
+      "to": "people_of_ai-block-169",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10829,9 +10829,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-307-part_of-people_of_ai-block-171",
+      "id": "struct-people_of_ai-stmt-307-part_of-people_of_ai-block-169",
       "from": "people_of_ai-stmt-307",
-      "to": "people_of_ai-block-171",
+      "to": "people_of_ai-block-169",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10849,9 +10849,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-309-part_of-people_of_ai-block-174",
+      "id": "struct-people_of_ai-stmt-309-part_of-people_of_ai-block-171",
       "from": "people_of_ai-stmt-309",
-      "to": "people_of_ai-block-174",
+      "to": "people_of_ai-block-171",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10859,9 +10859,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-310-part_of-people_of_ai-block-174",
+      "id": "struct-people_of_ai-stmt-310-part_of-people_of_ai-block-171",
       "from": "people_of_ai-stmt-310",
-      "to": "people_of_ai-block-174",
+      "to": "people_of_ai-block-171",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10879,9 +10879,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-312-part_of-people_of_ai-block-176",
+      "id": "struct-people_of_ai-stmt-312-part_of-people_of_ai-block-174",
       "from": "people_of_ai-stmt-312",
-      "to": "people_of_ai-block-176",
+      "to": "people_of_ai-block-174",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10889,8 +10889,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-313-part_of-people_of_ai-block-176",
+      "id": "struct-people_of_ai-stmt-313-part_of-people_of_ai-block-174",
       "from": "people_of_ai-stmt-313",
+      "to": "people_of_ai-block-174",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-people_of_ai-stmt-314-part_of-people_of_ai-block-176",
+      "from": "people_of_ai-stmt-314",
       "to": "people_of_ai-block-176",
       "kind": "part_of",
       "qualifiers": {},
@@ -10899,19 +10909,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-314-part_of-people_of_ai-block-178",
-      "from": "people_of_ai-stmt-314",
-      "to": "people_of_ai-block-178",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-people_of_ai-stmt-315-part_of-people_of_ai-block-179",
+      "id": "struct-people_of_ai-stmt-315-part_of-people_of_ai-block-176",
       "from": "people_of_ai-stmt-315",
-      "to": "people_of_ai-block-179",
+      "to": "people_of_ai-block-176",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10919,9 +10919,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-316-part_of-people_of_ai-block-179",
+      "id": "struct-people_of_ai-stmt-316-part_of-people_of_ai-block-178",
       "from": "people_of_ai-stmt-316",
-      "to": "people_of_ai-block-179",
+      "to": "people_of_ai-block-178",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10949,9 +10949,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-319-part_of-people_of_ai-block-181",
+      "id": "struct-people_of_ai-stmt-319-part_of-people_of_ai-block-179",
       "from": "people_of_ai-stmt-319",
-      "to": "people_of_ai-block-181",
+      "to": "people_of_ai-block-179",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -10959,9 +10959,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-320-part_of-people_of_ai-block-181",
+      "id": "struct-people_of_ai-stmt-320-part_of-people_of_ai-block-179",
       "from": "people_of_ai-stmt-320",
-      "to": "people_of_ai-block-181",
+      "to": "people_of_ai-block-179",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -11009,9 +11009,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-325-part_of-people_of_ai-block-182",
+      "id": "struct-people_of_ai-stmt-325-part_of-people_of_ai-block-181",
       "from": "people_of_ai-stmt-325",
-      "to": "people_of_ai-block-182",
+      "to": "people_of_ai-block-181",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -11049,9 +11049,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-329-part_of-people_of_ai-block-185",
+      "id": "struct-people_of_ai-stmt-329-part_of-people_of_ai-block-182",
       "from": "people_of_ai-stmt-329",
-      "to": "people_of_ai-block-185",
+      "to": "people_of_ai-block-182",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -11079,9 +11079,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-332-part_of-people_of_ai-block-187",
+      "id": "struct-people_of_ai-stmt-332-part_of-people_of_ai-block-185",
       "from": "people_of_ai-stmt-332",
-      "to": "people_of_ai-block-187",
+      "to": "people_of_ai-block-185",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -11099,9 +11099,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-334-part_of-people_of_ai-block-189",
+      "id": "struct-people_of_ai-stmt-334-part_of-people_of_ai-block-187",
       "from": "people_of_ai-stmt-334",
-      "to": "people_of_ai-block-189",
+      "to": "people_of_ai-block-187",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -11119,8 +11119,18 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-336-part_of-people_of_ai-block-190",
+      "id": "struct-people_of_ai-stmt-336-part_of-people_of_ai-block-189",
       "from": "people_of_ai-stmt-336",
+      "to": "people_of_ai-block-189",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-people_of_ai-stmt-337-part_of-people_of_ai-block-190",
+      "from": "people_of_ai-stmt-337",
       "to": "people_of_ai-block-190",
       "kind": "part_of",
       "qualifiers": {},
@@ -11129,8 +11139,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-337-part_of-people_of_ai-block-191",
-      "from": "people_of_ai-stmt-337",
+      "id": "struct-people_of_ai-stmt-338-part_of-people_of_ai-block-191",
+      "from": "people_of_ai-stmt-338",
       "to": "people_of_ai-block-191",
       "kind": "part_of",
       "qualifiers": {},
@@ -11139,8 +11149,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-338-part_of-people_of_ai-block-192",
-      "from": "people_of_ai-stmt-338",
+      "id": "struct-people_of_ai-stmt-339-part_of-people_of_ai-block-192",
+      "from": "people_of_ai-stmt-339",
       "to": "people_of_ai-block-192",
       "kind": "part_of",
       "qualifiers": {},
@@ -11149,8 +11159,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-339-part_of-people_of_ai-block-193",
-      "from": "people_of_ai-stmt-339",
+      "id": "struct-people_of_ai-stmt-340-part_of-people_of_ai-block-193",
+      "from": "people_of_ai-stmt-340",
       "to": "people_of_ai-block-193",
       "kind": "part_of",
       "qualifiers": {},
@@ -11159,8 +11169,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-340-part_of-people_of_ai-block-194",
-      "from": "people_of_ai-stmt-340",
+      "id": "struct-people_of_ai-stmt-341-part_of-people_of_ai-block-194",
+      "from": "people_of_ai-stmt-341",
       "to": "people_of_ai-block-194",
       "kind": "part_of",
       "qualifiers": {},
@@ -11169,8 +11179,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-341-part_of-people_of_ai-block-195",
-      "from": "people_of_ai-stmt-341",
+      "id": "struct-people_of_ai-stmt-342-part_of-people_of_ai-block-195",
+      "from": "people_of_ai-stmt-342",
       "to": "people_of_ai-block-195",
       "kind": "part_of",
       "qualifiers": {},
@@ -11179,8 +11189,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-342-part_of-people_of_ai-block-196",
-      "from": "people_of_ai-stmt-342",
+      "id": "struct-people_of_ai-stmt-343-part_of-people_of_ai-block-196",
+      "from": "people_of_ai-stmt-343",
       "to": "people_of_ai-block-196",
       "kind": "part_of",
       "qualifiers": {},
@@ -11189,8 +11199,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-343-part_of-people_of_ai-block-197",
-      "from": "people_of_ai-stmt-343",
+      "id": "struct-people_of_ai-stmt-344-part_of-people_of_ai-block-197",
+      "from": "people_of_ai-stmt-344",
       "to": "people_of_ai-block-197",
       "kind": "part_of",
       "qualifiers": {},
@@ -11199,8 +11209,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-344-part_of-people_of_ai-block-198",
-      "from": "people_of_ai-stmt-344",
+      "id": "struct-people_of_ai-stmt-345-part_of-people_of_ai-block-198",
+      "from": "people_of_ai-stmt-345",
       "to": "people_of_ai-block-198",
       "kind": "part_of",
       "qualifiers": {},
@@ -11209,8 +11219,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-345-part_of-people_of_ai-block-199",
-      "from": "people_of_ai-stmt-345",
+      "id": "struct-people_of_ai-stmt-346-part_of-people_of_ai-block-199",
+      "from": "people_of_ai-stmt-346",
       "to": "people_of_ai-block-199",
       "kind": "part_of",
       "qualifiers": {},
@@ -11219,8 +11229,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-346-part_of-people_of_ai-block-200",
-      "from": "people_of_ai-stmt-346",
+      "id": "struct-people_of_ai-stmt-347-part_of-people_of_ai-block-200",
+      "from": "people_of_ai-stmt-347",
       "to": "people_of_ai-block-200",
       "kind": "part_of",
       "qualifiers": {},
@@ -11229,8 +11239,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-347-part_of-people_of_ai-block-201",
-      "from": "people_of_ai-stmt-347",
+      "id": "struct-people_of_ai-stmt-348-part_of-people_of_ai-block-201",
+      "from": "people_of_ai-stmt-348",
       "to": "people_of_ai-block-201",
       "kind": "part_of",
       "qualifiers": {},
@@ -11239,8 +11249,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-348-part_of-people_of_ai-block-202",
-      "from": "people_of_ai-stmt-348",
+      "id": "struct-people_of_ai-stmt-349-part_of-people_of_ai-block-202",
+      "from": "people_of_ai-stmt-349",
       "to": "people_of_ai-block-202",
       "kind": "part_of",
       "qualifiers": {},
@@ -11249,8 +11259,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-349-part_of-people_of_ai-block-203",
-      "from": "people_of_ai-stmt-349",
+      "id": "struct-people_of_ai-stmt-350-part_of-people_of_ai-block-203",
+      "from": "people_of_ai-stmt-350",
       "to": "people_of_ai-block-203",
       "kind": "part_of",
       "qualifiers": {},
@@ -11259,8 +11269,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-350-part_of-people_of_ai-block-204",
-      "from": "people_of_ai-stmt-350",
+      "id": "struct-people_of_ai-stmt-351-part_of-people_of_ai-block-204",
+      "from": "people_of_ai-stmt-351",
       "to": "people_of_ai-block-204",
       "kind": "part_of",
       "qualifiers": {},
@@ -11269,8 +11279,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-351-part_of-people_of_ai-block-205",
-      "from": "people_of_ai-stmt-351",
+      "id": "struct-people_of_ai-stmt-352-part_of-people_of_ai-block-205",
+      "from": "people_of_ai-stmt-352",
       "to": "people_of_ai-block-205",
       "kind": "part_of",
       "qualifiers": {},
@@ -11279,8 +11289,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-352-part_of-people_of_ai-block-206",
-      "from": "people_of_ai-stmt-352",
+      "id": "struct-people_of_ai-stmt-353-part_of-people_of_ai-block-206",
+      "from": "people_of_ai-stmt-353",
       "to": "people_of_ai-block-206",
       "kind": "part_of",
       "qualifiers": {},
@@ -11289,8 +11299,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-353-part_of-people_of_ai-block-207",
-      "from": "people_of_ai-stmt-353",
+      "id": "struct-people_of_ai-stmt-354-part_of-people_of_ai-block-207",
+      "from": "people_of_ai-stmt-354",
       "to": "people_of_ai-block-207",
       "kind": "part_of",
       "qualifiers": {},
@@ -11299,8 +11309,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-354-part_of-people_of_ai-block-208",
-      "from": "people_of_ai-stmt-354",
+      "id": "struct-people_of_ai-stmt-355-part_of-people_of_ai-block-208",
+      "from": "people_of_ai-stmt-355",
       "to": "people_of_ai-block-208",
       "kind": "part_of",
       "qualifiers": {},
@@ -11309,8 +11319,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-355-part_of-people_of_ai-block-209",
-      "from": "people_of_ai-stmt-355",
+      "id": "struct-people_of_ai-stmt-356-part_of-people_of_ai-block-209",
+      "from": "people_of_ai-stmt-356",
       "to": "people_of_ai-block-209",
       "kind": "part_of",
       "qualifiers": {},
@@ -11319,8 +11329,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-356-part_of-people_of_ai-block-210",
-      "from": "people_of_ai-stmt-356",
+      "id": "struct-people_of_ai-stmt-357-part_of-people_of_ai-block-210",
+      "from": "people_of_ai-stmt-357",
       "to": "people_of_ai-block-210",
       "kind": "part_of",
       "qualifiers": {},
@@ -11329,8 +11339,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-357-part_of-people_of_ai-block-211",
-      "from": "people_of_ai-stmt-357",
+      "id": "struct-people_of_ai-stmt-358-part_of-people_of_ai-block-211",
+      "from": "people_of_ai-stmt-358",
       "to": "people_of_ai-block-211",
       "kind": "part_of",
       "qualifiers": {},
@@ -11339,8 +11349,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-358-part_of-people_of_ai-block-212",
-      "from": "people_of_ai-stmt-358",
+      "id": "struct-people_of_ai-stmt-359-part_of-people_of_ai-block-212",
+      "from": "people_of_ai-stmt-359",
       "to": "people_of_ai-block-212",
       "kind": "part_of",
       "qualifiers": {},
@@ -11349,8 +11359,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-359-part_of-people_of_ai-block-213",
-      "from": "people_of_ai-stmt-359",
+      "id": "struct-people_of_ai-stmt-360-part_of-people_of_ai-block-213",
+      "from": "people_of_ai-stmt-360",
       "to": "people_of_ai-block-213",
       "kind": "part_of",
       "qualifiers": {},
@@ -11359,8 +11369,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-360-part_of-people_of_ai-block-214",
-      "from": "people_of_ai-stmt-360",
+      "id": "struct-people_of_ai-stmt-361-part_of-people_of_ai-block-214",
+      "from": "people_of_ai-stmt-361",
       "to": "people_of_ai-block-214",
       "kind": "part_of",
       "qualifiers": {},
@@ -11369,8 +11379,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-361-part_of-people_of_ai-block-215",
-      "from": "people_of_ai-stmt-361",
+      "id": "struct-people_of_ai-stmt-362-part_of-people_of_ai-block-215",
+      "from": "people_of_ai-stmt-362",
       "to": "people_of_ai-block-215",
       "kind": "part_of",
       "qualifiers": {},
@@ -11379,8 +11389,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-362-part_of-people_of_ai-block-216",
-      "from": "people_of_ai-stmt-362",
+      "id": "struct-people_of_ai-stmt-363-part_of-people_of_ai-block-216",
+      "from": "people_of_ai-stmt-363",
       "to": "people_of_ai-block-216",
       "kind": "part_of",
       "qualifiers": {},
@@ -11389,19 +11399,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-363-part_of-people_of_ai-block-217",
-      "from": "people_of_ai-stmt-363",
-      "to": "people_of_ai-block-217",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-people_of_ai-stmt-364-part_of-people_of_ai-block-219",
+      "id": "struct-people_of_ai-stmt-364-part_of-people_of_ai-block-217",
       "from": "people_of_ai-stmt-364",
-      "to": "people_of_ai-block-219",
+      "to": "people_of_ai-block-217",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -11449,9 +11449,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-people_of_ai-stmt-369-part_of-people_of_ai-block-220",
+      "id": "struct-people_of_ai-stmt-369-part_of-people_of_ai-block-219",
       "from": "people_of_ai-stmt-369",
-      "to": "people_of_ai-block-220",
+      "to": "people_of_ai-block-219",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -11461,6 +11461,16 @@
     {
       "id": "struct-people_of_ai-stmt-370-part_of-people_of_ai-block-220",
       "from": "people_of_ai-stmt-370",
+      "to": "people_of_ai-block-220",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-people_of_ai-stmt-371-part_of-people_of_ai-block-220",
+      "from": "people_of_ai-stmt-371",
       "to": "people_of_ai-block-220",
       "kind": "part_of",
       "qualifiers": {},
@@ -13229,832 +13239,839 @@
     },
     {
       "id": "people_of_ai-stmt-252",
-      "quote": "Public domain.} \\marginfig{gottlob_frege_portrait.jpg}{Gottlob Frege.",
+      "quote": "Public domain.} \\marginfig{gottlob_frege_portrait.jpg}{Gottlob Frege, c.",
       "block_id": "people_of_ai-block-132",
       "section": "George Boole and Gottlob Frege",
       "kind": "statement"
     },
     {
       "id": "people_of_ai-stmt-253",
-      "quote": "\\cite{img_gottlob_frege}.",
+      "quote": "Photo: unknown photographer; public domain.",
       "block_id": "people_of_ai-block-132",
       "section": "George Boole and Gottlob Frege",
       "kind": "statement"
     },
     {
       "id": "people_of_ai-stmt-254",
+      "quote": "[Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Young_frege.jpg).}",
+      "block_id": "people_of_ai-block-132",
+      "section": "George Boole and Gottlob Frege",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-255",
       "quote": "Boole's **Laws of Thought** (1854) turned Aristotle's syllogisms into algebra: propositions become variables, “and” and “or” become operations, and logical inference becomes calculation.",
       "block_id": "people_of_ai-block-133",
       "section": "George Boole and Gottlob Frege",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-255",
+      "id": "people_of_ai-stmt-256",
       "quote": "Every digital circuit and every symbolic AI system is downstream of that move (\\citetitle{boole1854}).",
       "block_id": "people_of_ai-block-133",
       "section": "George Boole and Gottlob Frege",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-256",
+      "id": "people_of_ai-stmt-257",
       "quote": "Frege's **Begriffsschrift** (1879) went further, inventing predicate logic and the quantifier notation that made it possible to express statements about *all* or *some* objects — the logical grammar that Russell and Whitehead later built into *Principia Mathematica* (\\citetitle{frege1879}).",
       "block_id": "people_of_ai-block-133",
       "section": "George Boole and Gottlob Frege",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-257",
+      "id": "people_of_ai-stmt-258",
       "quote": "Church's lambda calculus gave computation a second formal language, and his 1936 proof that the Entscheidungsproblem is unsolvable established that not every well-defined mathematical question has a mechanical answer (\\cite[Church, 1936]{church1936}).",
       "block_id": "people_of_ai-block-135",
       "section": "Alonzo Church and Alan Turing",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-258",
+      "id": "people_of_ai-stmt-259",
       "quote": "Turing's contemporaneous paper on computable numbers introduced the abstract machine that now bears his name, proved the same negative result by a different route, and gave the field its standard model of what a computer *is* (\\citetitle{turing1936}).",
       "block_id": "people_of_ai-block-135",
       "section": "Alonzo Church and Alan Turing",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-259",
+      "id": "people_of_ai-stmt-260",
       "quote": "The Church–Turing thesis — that every effectively calculable function is computable by a Turing machine — is the unspoken premise of every neural network.",
       "block_id": "people_of_ai-block-135",
       "section": "Alonzo Church and Alan Turing",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-260",
-      "quote": "\\marginfig{john_mccarthy_portrait.jpg}{John McCarthy.",
-      "block_id": "people_of_ai-block-137",
-      "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon",
-      "kind": "statement"
-    },
-    {
       "id": "people_of_ai-stmt-261",
-      "quote": "\\cite{img_john_mccarthy}.",
+      "quote": "\\marginfig{john_mccarthy_portrait.jpg}{John McCarthy at Stanford, 2006.",
       "block_id": "people_of_ai-block-137",
       "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon",
       "kind": "statement"
     },
     {
       "id": "people_of_ai-stmt-262",
+      "quote": "Photo: [Flickr user null0](https://www.flickr.com/photos/null0/), [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).",
+      "block_id": "people_of_ai-block-137",
+      "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-263",
+      "quote": "[Wikimedia Commons](https://commons.wikimedia.org/wiki/File:John_McCarthy_Stanford.jpg).}",
+      "block_id": "people_of_ai-block-137",
+      "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-264",
       "quote": "The 1955 **Dartmouth proposal** named the field and set its first research agenda: language, neurons, abstraction, and creativity, all to be studied by building machines that could exhibit them (\\cite[McCarthy et al., 1955]{mccarthy1955dartmouth}).",
       "block_id": "people_of_ai-block-138",
       "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-263",
+      "id": "people_of_ai-stmt-265",
       "quote": "McCarthy went on to invent LISP and to argue that common-sense knowledge could be represented as explicit logical statements — the symbolic programme that dominated AI's first decades.",
       "block_id": "people_of_ai-block-138",
       "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-264",
+      "id": "people_of_ai-stmt-266",
       "quote": "Minsky co-founded MIT's AI laboratory and later wrote *The Society of Mind*, a book-length argument that intelligence is a society of simpler agents rather than a single monolithic algorithm.",
       "block_id": "people_of_ai-block-138",
       "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-265",
+      "id": "people_of_ai-stmt-267",
       "quote": "\\marginfig{simon_newell.jpg}{Herbert A.",
       "block_id": "people_of_ai-block-140",
       "section": "Herbert Simon and Allen Newell",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-266",
+      "id": "people_of_ai-stmt-268",
       "quote": "\\cite{simonnewell_image}.",
       "block_id": "people_of_ai-block-140",
       "section": "Herbert Simon and Allen Newell",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-267",
+      "id": "people_of_ai-stmt-269",
       "quote": "Simon and Newell built the **Logic Theory Machine**, one of the first programs to prove theorems, and used it to argue that human problem solving is symbol manipulation.",
       "block_id": "people_of_ai-block-141",
       "section": "Herbert Simon and Allen Newell",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-268",
+      "id": "people_of_ai-stmt-270",
       "quote": "The program proved 38 of the first 52 theorems in *Principia Mathematica* and found a shorter proof of theorem 2.85 than Russell and Whitehead's; when the authors submitted that proof to the *Journal of Symbolic Logic* with the program listed as a co-author, the editor rejected it because proving a theorem in the outmoded system of *Principia* was no accomplishment \\cite{crevier1993ai}.",
       "block_id": "people_of_ai-block-141",
       "section": "Herbert Simon and Allen Newell",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-269",
+      "id": "people_of_ai-stmt-271",
       "quote": "Their **physical symbol system hypothesis** — that a physical symbol system has the necessary and sufficient means for general intelligent action — became the philosophical core of classical AI.",
       "block_id": "people_of_ai-block-141",
       "section": "Herbert Simon and Allen Newell",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-270",
+      "id": "people_of_ai-stmt-272",
       "quote": "Simon also won the Nobel Prize in Economics for his work on bounded rationality, a reminder that the study of intelligence has always crossed disciplinary lines (\\cite[Newell & Simon, 1956]{newell1956logic}).",
       "block_id": "people_of_ai-block-141",
       "section": "Herbert Simon and Allen Newell",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-271",
+      "id": "people_of_ai-stmt-273",
       "quote": "Vapnik, working at the Institute for Control Sciences in Moscow, and Alexey Chervonenkis built the **VC theory** of generalisation: a distribution-free bound on test error in terms of the capacity of the hypothesis class, measured by the **VC dimension** (\\cite[Vapnik & Chervonenkis, 1971]{vapnik1964vc}).",
       "block_id": "people_of_ai-block-143",
       "section": "Vladimir Vapnik and Corinna Cortes",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-272",
+      "id": "people_of_ai-stmt-274",
       "quote": "At Bell Labs he and **Corinna Cortes** turned the theory into the **support vector machine** (1995), which finds the maximum-margin separating hyperplane and uses the **kernel trick** to work in high-dimensional feature spaces implicitly; for a decade before deep learning it was the default strong baseline on small and medium-sized datasets (\\cite[Cortes & Vapnik, 1995]{cortes1995svm}; \\cite[Vapnik, 1995]{vapnik1995book}).",
       "block_id": "people_of_ai-block-143",
       "section": "Vladimir Vapnik and Corinna Cortes",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-273",
+      "id": "people_of_ai-stmt-275",
       "quote": "Ashby's **Design for a Brain** defined adaptation as the maintenance of essential variables within viable limits and built the **Homeostat**, a machine that reorganized its own connections until it recovered stability.",
       "block_id": "people_of_ai-block-146",
       "section": "W. Ross Ashby and Donald Hebb",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-274",
+      "id": "people_of_ai-stmt-276",
       "quote": "His “law of requisite variety” — only variety can absorb variety — is still the best one-line statement of why control requires internal complexity (\\citetitle{ashbydesigndbrain1952}).",
       "block_id": "people_of_ai-block-146",
       "section": "W. Ross Ashby and Donald Hebb",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-275",
+      "id": "people_of_ai-stmt-277",
       "quote": "Hebb's **The Organization of Behavior** proposed that repeated co-activation strengthens synapses, the rule that Rosenblatt turned into the perceptron's error-correction mechanism (\\citetitle{hebb1949organizationofbehaviour}).",
       "block_id": "people_of_ai-block-146",
       "section": "W. Ross Ashby and Donald Hebb",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-276",
+      "id": "people_of_ai-stmt-278",
       "quote": "He's **ResNet** introduced the residual connection — learn a *delta* rather than a full transformation — and made networks with hundreds of layers trainable.",
       "block_id": "people_of_ai-block-149",
       "section": "Kaiming He and Alexey Dosovitskiy",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-277",
+      "id": "people_of_ai-stmt-279",
       "quote": "The idea is so basic that it now appears in almost every deep architecture, including the Transformer's own residual stream (\\cite[He et al., 2016]{he2016resnet}).",
       "block_id": "people_of_ai-block-149",
       "section": "Kaiming He and Alexey Dosovitskiy",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-278",
+      "id": "people_of_ai-stmt-280",
       "quote": "Dosovitskiy's **Vision Transformer** treated an image as a sequence of patches and showed that a plain Transformer, with enough data, could match or beat convolutional networks.",
       "block_id": "people_of_ai-block-149",
       "section": "Kaiming He and Alexey Dosovitskiy",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-279",
+      "id": "people_of_ai-stmt-281",
       "quote": "That result opened the path to the unified multimodal models of the 2020s (\\cite[Dosovitskiy et al., 2020]{dosovitskiy2020vit}).",
       "block_id": "people_of_ai-block-149",
       "section": "Kaiming He and Alexey Dosovitskiy",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-280",
+      "id": "people_of_ai-stmt-282",
       "quote": "The **U-Net** paired a contracting encoder with an expanding decoder and skip connections, giving image generation and segmentation a precise spatial backbone; it is still the default architecture inside diffusion models (\\cite[Ronneberger et al., 2015]{ronneberger2015unet}).",
       "block_id": "people_of_ai-block-151",
       "section": "Olaf Ronneberger and Phillip Isola",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-281",
+      "id": "people_of_ai-stmt-283",
       "quote": "**pix2pix** showed that a conditional GAN could learn image-to-image translation from paired examples — edges to photographs, maps to aerial views, day to night — and made “image translation” a standard task (\\cite[Isola et al., 2017]{isola2017pix2pix}).",
       "block_id": "people_of_ai-block-151",
       "section": "Olaf Ronneberger and Phillip Isola",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-282",
+      "id": "people_of_ai-stmt-284",
       "quote": "Ho's **DDPM** made diffusion models practical by learning to reverse a fixed noising process one small step at a time (\\cite[Ho et al., 2020]{ho2020ddpm}).",
       "block_id": "people_of_ai-block-153",
       "section": "Jonathan Ho, Yang Song, and Robin Rombach",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-283",
+      "id": "people_of_ai-stmt-285",
       "quote": "Song's score-based formulation provided the continuous-time view — learn the gradient of the log density, then follow it back to data — that unified diffusion with earlier energy-based methods (\\cite[Song & Ermon, 2019]{song2019score}).",
       "block_id": "people_of_ai-block-153",
       "section": "Jonathan Ho, Yang Song, and Robin Rombach",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-284",
+      "id": "people_of_ai-stmt-286",
       "quote": "Rombach's **latent diffusion** moved the whole process into a compressed image space, cutting the compute enough to put Stable Diffusion on a consumer GPU (\\cite[Rombach et al., 2022]{rombach2022ldm}).",
       "block_id": "people_of_ai-block-153",
       "section": "Jonathan Ho, Yang Song, and Robin Rombach",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-285",
+      "id": "people_of_ai-stmt-287",
       "quote": "Ramesh's **DALL·E** was an autoregressive Transformer over discrete image tokens — a direct application of the language-model recipe to pixels (\\cite[Ramesh et al., 2021]{ramesh2021dalle}).",
       "block_id": "people_of_ai-block-155",
       "section": "Aditya Ramesh, Alec Radford, and William Peebles",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-286",
+      "id": "people_of_ai-stmt-288",
       "quote": "Radford's **CLIP** learned a shared image-text space from hundreds of millions of pairs by contrastive training, giving text-to-image systems a semantic steering wheel (\\cite[Radford et al., 2021]{radford2021clip}); his GPT-2 and Whisper work did the same for open-ended text and speech (\\cite[Radford et al., 2019]{radford2019language}; \\cite[Radford et al., 2022]{radford2022whisper}).",
       "block_id": "people_of_ai-block-155",
       "section": "Aditya Ramesh, Alec Radford, and William Peebles",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-287",
+      "id": "people_of_ai-stmt-289",
       "quote": "Peebles' **Diffusion Transformer** replaced the U-Net with a plain Transformer over latent patches and became the backbone of Sora, FLUX, and Stable Diffusion 3 (\\cite[Peebles & Xie, 2023]{peebles2023dit}).",
       "block_id": "people_of_ai-block-155",
       "section": "Aditya Ramesh, Alec Radford, and William Peebles",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-288",
+      "id": "people_of_ai-stmt-290",
       "quote": "The language-model stack was assembled from many small inventions.",
       "block_id": "people_of_ai-block-157",
       "section": "The NLP Lineage",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-289",
+      "id": "people_of_ai-stmt-291",
       "quote": "These are the people whose papers supply the pieces.",
       "block_id": "people_of_ai-block-157",
       "section": "The NLP Lineage",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-290",
+      "id": "people_of_ai-stmt-292",
       "quote": "\\marginfig{tomas_mikolov_portrait.jpg}{Tomáš Mikolov.",
       "block_id": "people_of_ai-block-159",
       "section": "Tomas Mikolov and Jeffrey Pennington",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-291",
+      "id": "people_of_ai-stmt-293",
       "quote": "\\cite{img_tomas_mikolov}.",
       "block_id": "people_of_ai-block-159",
       "section": "Tomas Mikolov and Jeffrey Pennington",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-292",
+      "id": "people_of_ai-stmt-294",
       "quote": "Mikolov's **word2vec** trained dense word vectors on local context windows and showed that their differences encode analogies — “king − man + woman ≈ queen” (\\cite[Mikolov et al., 2013]{mikolov2013word2vec}).",
       "block_id": "people_of_ai-block-160",
       "section": "Tomas Mikolov and Jeffrey Pennington",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-293",
+      "id": "people_of_ai-stmt-295",
       "quote": "Pennington's **GloVe** reached the same geometry from the opposite direction, factorizing the global co-occurrence matrix so that dot products approximate log counts (\\cite[Pennington et al., 2014]{pennington2014glove}).",
       "block_id": "people_of_ai-block-160",
       "section": "Tomas Mikolov and Jeffrey Pennington",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-294",
+      "id": "people_of_ai-stmt-296",
       "quote": "Together they made the embedding layer a standard component of neural language models.",
       "block_id": "people_of_ai-block-160",
       "section": "Tomas Mikolov and Jeffrey Pennington",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-295",
+      "id": "people_of_ai-stmt-297",
       "quote": "Sennrich's **subword BPE** solved the out-of-vocabulary problem by learning a vocabulary of frequent character fragments, so any word can be reconstructed from pieces (\\cite[Sennrich et al., 2016]{sennrich2016subword}).",
       "block_id": "people_of_ai-block-162",
       "section": "Rico Sennrich and Taku Kudo",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-296",
+      "id": "people_of_ai-stmt-298",
       "quote": "Kudo's **SentencePiece** made the same idea language-independent by treating whitespace as a normal symbol, which is why multilingual models can tokenize Chinese, English, and code with one vocabulary (\\cite[Kudo & Richardson, 2018]{kudo2018sentencepiece}).",
       "block_id": "people_of_ai-block-162",
       "section": "Rico Sennrich and Taku Kudo",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-297",
+      "id": "people_of_ai-stmt-299",
       "quote": "Devlin's **BERT** trained a bidirectional encoder with masked language modelling and established the pretrain-then-fine-tune paradigm for understanding tasks (\\cite[Devlin et al., 2019]{devlin2019bert}).",
       "block_id": "people_of_ai-block-164",
       "section": "Jacob Devlin, Yinhan Liu, and Colin Raffel",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-298",
+      "id": "people_of_ai-stmt-300",
       "quote": "Liu's **RoBERTa** showed that BERT was undertrained: remove next-sentence prediction, resample masks dynamically, train longer on more data, and the same architecture sets new records (\\cite[Liu et al., 2019]{liu2019roberta}).",
       "block_id": "people_of_ai-block-164",
       "section": "Jacob Devlin, Yinhan Liu, and Colin Raffel",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-299",
+      "id": "people_of_ai-stmt-301",
       "quote": "Raffel's **T5** unified translation, summarization, classification, and question answering into one text-to-text format with span-corruption pretraining (\\cite[Raffel et al., 2020]{raffel2020t5}).",
       "block_id": "people_of_ai-block-164",
       "section": "Jacob Devlin, Yinhan Liu, and Colin Raffel",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-300",
+      "id": "people_of_ai-stmt-302",
       "quote": "A frontier model is not just an algorithm; it is a distributed system.",
       "block_id": "people_of_ai-block-166",
       "section": "Systems and Efficiency",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-301",
+      "id": "people_of_ai-stmt-303",
       "quote": "These people made the difference between a paper and a training run.",
       "block_id": "people_of_ai-block-166",
       "section": "Systems and Efficiency",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-302",
+      "id": "people_of_ai-stmt-304",
       "quote": "\\marginfig{jeff_dean_portrait.jpg}{Jeff Dean.",
       "block_id": "people_of_ai-block-168",
       "section": "Jeff Dean, Samyam Rajbhandari, and Dmitry Lepikhin",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-303",
+      "id": "people_of_ai-stmt-305",
       "quote": "Dean's **DistBelief** showed that neural networks could be trained across thousands of machines, and his later work on TensorFlow and TPUs made that infrastructure usable (\\cite[Dean et al., 2012]{dean2012large}).",
       "block_id": "people_of_ai-block-169",
       "section": "Jeff Dean, Samyam Rajbhandari, and Dmitry Lepikhin",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-304",
+      "id": "people_of_ai-stmt-306",
       "quote": "Rajbhandari's **ZeRO** partitioned optimizer states, gradients, and parameters across data-parallel workers, removing the memory duplication that had blocked trillion-parameter training (\\cite[Rajbhandari et al., 2020]{rajbhandari2020zero}).",
       "block_id": "people_of_ai-block-169",
       "section": "Jeff Dean, Samyam Rajbhandari, and Dmitry Lepikhin",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-305",
+      "id": "people_of_ai-stmt-307",
       "quote": "Lepikhin's **GShard** combined mixture-of-experts routing with automatic sharding, making sparse models practical at scale (\\cite[Lepikhin et al., 2021]{lepikhin2021gshard}).",
       "block_id": "people_of_ai-block-169",
       "section": "Jeff Dean, Samyam Rajbhandari, and Dmitry Lepikhin",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-306",
+      "id": "people_of_ai-stmt-308",
       "quote": "Fedus's **Switch Transformer** simplified MoE routing to one expert per token and scaled it to trillion-parameter models (\\cite[Fedus et al., 2022]{fedus2022switch}).",
       "block_id": "people_of_ai-block-171",
       "section": "William Fedus, Tri Dao, and Woosuk Kwon",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-307",
+      "id": "people_of_ai-stmt-309",
       "quote": "Dao's **FlashAttention** made exact attention IO-aware: it tiles the computation to fit in GPU on-chip memory instead of materializing the full attention matrix (\\cite[Dao et al., 2022]{dao2022flashattention}).",
       "block_id": "people_of_ai-block-171",
       "section": "William Fedus, Tri Dao, and Woosuk Kwon",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-308",
+      "id": "people_of_ai-stmt-310",
       "quote": "Kwon's **vLLM** introduced PagedAttention, managing the KV cache in fixed-size blocks like an operating system's virtual memory; it turned serving from a memory-fragmentation problem into a throughput problem (\\cite[Kwon et al., 2023]{kwon2023vllm}).",
       "block_id": "people_of_ai-block-171",
       "section": "William Fedus, Tri Dao, and Woosuk Kwon",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-309",
+      "id": "people_of_ai-stmt-311",
       "quote": "Olah's **circuits thread** reframed neural networks as objects to be reverse-engineered: features are directions, circuits are subgraphs, and the goal is a mechanistic explanation of behavior (\\cite[Olah et al., 2020]{olaha2020zoomin}).",
       "block_id": "people_of_ai-block-174",
       "section": "Chris Olah, Nelson Elhage, and Trenton Bricken",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-310",
+      "id": "people_of_ai-stmt-312",
       "quote": "Elhage's **Mathematical Framework for Transformer Circuits** formalized the residual stream and the QK/OV circuits, and his **Toy Models of Superposition** explained why neurons are polysemantic: networks pack more features than dimensions by using nearly orthogonal directions (\\cite[Elhage et al., 2021]{elhage2021mathematical}; \\cite[Elhage et al., 2022]{elhage2022superposition}).",
       "block_id": "people_of_ai-block-174",
       "section": "Chris Olah, Nelson Elhage, and Trenton Bricken",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-311",
+      "id": "people_of_ai-stmt-313",
       "quote": "Bricken's **Towards Monosemanticity** showed that sparse autoencoders could recover interpretable features from superposition, the technique later scaled to production models (\\cite[Bricken et al., 2023]{bricken2023monosemanticity}).",
       "block_id": "people_of_ai-block-174",
       "section": "Chris Olah, Nelson Elhage, and Trenton Bricken",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-312",
+      "id": "people_of_ai-stmt-314",
       "quote": "Zou's **representation engineering** turned interpretability into a top-down toolkit for reading and controlling high-level properties such as honesty and power-seeking (\\cite[Zou et al., 2023]{zou2023repeng}).",
       "block_id": "people_of_ai-block-176",
       "section": "Andy Zou and Alexander Matt Turner",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-313",
+      "id": "people_of_ai-stmt-315",
       "quote": "Turner's **activation addition** showed that a single contrastive direction — “Love” minus “Hate” — could steer a model's sentiment at inference time without any training (\\cite[Turner et al., 2023]{turner2023actadd}).",
       "block_id": "people_of_ai-block-176",
       "section": "Andy Zou and Alexander Matt Turner",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-314",
+      "id": "people_of_ai-stmt-316",
       "quote": "\\marginfig{dario_amodei_portrait.jpg}{Dario Amodei.",
       "block_id": "people_of_ai-block-178",
       "section": "Collin Burns, Dario Amodei, and Geoffrey Irving",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-315",
+      "id": "people_of_ai-stmt-317",
       "quote": "Burns' **weak-to-strong generalization** fine-tuned strong models on labels from weak supervisors to measure how much latent capability could be elicited — a present-day proxy for the alignment problem (\\cite[Burns et al., 2023]{burns2023weakstrong}).",
       "block_id": "people_of_ai-block-179",
       "section": "Collin Burns, Dario Amodei, and Geoffrey Irving",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-316",
+      "id": "people_of_ai-stmt-318",
       "quote": "Amodei's **Concrete Problems in AI Safety** named the failure modes that the field still uses as its taxonomy: reward hacking, side effects, scalable oversight, safe exploration, and distributional shift (\\cite[Amodei et al., 2016]{amodei2016concrete}).",
       "block_id": "people_of_ai-block-179",
       "section": "Collin Burns, Dario Amodei, and Geoffrey Irving",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-317",
+      "id": "people_of_ai-stmt-319",
       "quote": "He later left OpenAI to co-found **Anthropic** in 2021, which built the Claude line and made safety its organising principle (\\cite{anthropic_bio}; \\cite{amodei2024machines}).",
       "block_id": "people_of_ai-block-179",
       "section": "Collin Burns, Dario Amodei, and Geoffrey Irving",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-318",
+      "id": "people_of_ai-stmt-320",
       "quote": "Irving's **AI safety via debate** proposed training two models to argue opposite sides of a question in front of a human judge, so that the judge can supervise answers too complex to verify directly (\\cite[Irving et al., 2018]{irving2018debate}).",
       "block_id": "people_of_ai-block-179",
       "section": "Collin Burns, Dario Amodei, and Geoffrey Irving",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-319",
+      "id": "people_of_ai-stmt-321",
       "quote": "\\marginfig{stuart_russell_portrait.jpg}{Stuart Russell.",
       "block_id": "people_of_ai-block-181",
       "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-320",
+      "id": "people_of_ai-stmt-322",
       "quote": "\\cite{img_stuart_russell}.",
       "block_id": "people_of_ai-block-181",
       "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-321",
+      "id": "people_of_ai-stmt-323",
       "quote": "[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).} \\marginfig{nick_bostrom_portrait.jpg}{Nick Bostrom.",
       "block_id": "people_of_ai-block-181",
       "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-322",
-      "quote": "[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).} \\marginfig{eliezer_yudkowsky_portrait.jpg}{Eliezer Yudkowsky.",
-      "block_id": "people_of_ai-block-181",
-      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
-      "kind": "statement"
-    },
-    {
-      "id": "people_of_ai-stmt-323",
-      "quote": "\\cite{img_eliezer_yudkowsky}.",
-      "block_id": "people_of_ai-block-181",
-      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
-      "kind": "statement"
-    },
-    {
       "id": "people_of_ai-stmt-324",
-      "quote": "[CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).} \\marginfig{toby_ord_portrait.jpg}{Toby Ord.",
+      "quote": "[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).} \\marginfig{eliezer_yudkowsky_portrait.jpg}{Eliezer Yudkowsky at Stanford, 2006.",
       "block_id": "people_of_ai-block-181",
       "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
       "kind": "statement"
     },
     {
       "id": "people_of_ai-stmt-325",
+      "quote": "[Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Eliezer_Yudkowsky,_Stanford_2006_(square_crop).jpg).} \\marginfig{toby_ord_portrait.jpg}{Toby Ord.",
+      "block_id": "people_of_ai-block-181",
+      "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
+      "kind": "statement"
+    },
+    {
+      "id": "people_of_ai-stmt-326",
       "quote": "Russell's **Human Compatible** argues that the standard objective-based model of AI is the problem: a machine optimizing a fixed objective will resist correction, so the design goal should be uncertainty about human preferences and a willingness to be switched off (\\citetitle{russell2019human}).",
       "block_id": "people_of_ai-block-182",
       "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-326",
+      "id": "people_of_ai-stmt-327",
       "quote": "Bostrom's **Superintelligence** framed the control problem and the orthogonality thesis — intelligence and final goals are independent — for a broad audience (\\citetitle{bostrom2014superintelligence}).",
       "block_id": "people_of_ai-block-182",
       "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-327",
+      "id": "people_of_ai-stmt-328",
       "quote": "Yudkowsky's earlier essay on AI as a global risk factor made the case that a sufficiently capable optimizer need not be malevolent to be dangerous (\\cite[Yudkowsky, 2008]{yudkowsky2008ai}).",
       "block_id": "people_of_ai-block-182",
       "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-328",
+      "id": "people_of_ai-stmt-329",
       "quote": "Ord's **The Precipice** places AI risk alongside pandemics and nuclear war in a broader ethics of existential risk (\\citetitle{ord2020precipice}).",
       "block_id": "people_of_ai-block-182",
       "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-329",
+      "id": "people_of_ai-stmt-330",
       "quote": "Tesauro's **TD-Gammon** combined self-play with temporal-difference learning and a neural network, reaching master-level backgammon and demonstrating that value learning from self-generated experience could work at scale (\\cite[Tesauro, 1995]{tesauro1995tdgammon}).",
       "block_id": "people_of_ai-block-185",
       "section": "Gerald Tesauro, Volodymyr Mnih, and John Schulman",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-330",
+      "id": "people_of_ai-stmt-331",
       "quote": "Mnih's **DQN** learned Atari games directly from pixels with a convolutional network and experience replay, the result that launched deep reinforcement learning (\\cite[Mnih et al., 2015]{mnih2015dqn}).",
       "block_id": "people_of_ai-block-185",
       "section": "Gerald Tesauro, Volodymyr Mnih, and John Schulman",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-331",
+      "id": "people_of_ai-stmt-332",
       "quote": "Schulman's **PPO** made policy-gradient training stable enough to become the default algorithm for RLHF and for many game-playing systems (\\cite[Schulman et al., 2017]{schulman2017ppo}).",
       "block_id": "people_of_ai-block-185",
       "section": "Gerald Tesauro, Volodymyr Mnih, and John Schulman",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-332",
+      "id": "people_of_ai-stmt-333",
       "quote": "Shao's **DeepSeekMath** introduced **GRPO**, the group-relative policy optimization that removes the critic by normalizing rewards across sampled answers to the same prompt.",
       "block_id": "people_of_ai-block-187",
       "section": "Zhihong Shao",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-333",
+      "id": "people_of_ai-stmt-334",
       "quote": "GRPO made verifiable-reward RL cheap enough to run at scale and became the optimization engine behind DeepSeek-R1 and many open reasoning models (\\cite[Shao et al., 2024]{shao2024grpo}).",
       "block_id": "people_of_ai-block-187",
       "section": "Zhihong Shao",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-334",
+      "id": "people_of_ai-stmt-335",
       "quote": "These are the names that appear most often across the course, counted approximately by citation keys plus full-name mentions in the top-level lesson files.",
       "block_id": "people_of_ai-block-189",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-335",
+      "id": "people_of_ai-stmt-336",
       "quote": "The right-hand column points to the lessons where their work does the most work.",
       "block_id": "people_of_ai-block-189",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-336",
+      "id": "people_of_ai-stmt-337",
       "quote": "| Person | Recurring in |",
       "block_id": "people_of_ai-block-190",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-337",
+      "id": "people_of_ai-stmt-338",
       "quote": "| **Geoffrey Hinton** | [History](history.php), [Backpropagation](backproplab.php), [Optimizers](optimizerlab.php), [Deep Learning](deeplearninglab.php) |",
       "block_id": "people_of_ai-block-191",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-338",
+      "id": "people_of_ai-stmt-339",
       "quote": "| **Alan Turing** | [History](history.php), [Algorithms](algorithms.php), [Philosophy](philosophy.php), [Myths](myths.php) |",
       "block_id": "people_of_ai-block-192",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-339",
+      "id": "people_of_ai-stmt-340",
       "quote": "| **Norbert Wiener** | [History](history.php), [Untold History](untold_history_iii.php) |",
       "block_id": "people_of_ai-block-193",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-340",
+      "id": "people_of_ai-stmt-341",
       "quote": "| **John von Neumann** | [History](history.php), [Software](software.php), [Untold History](untold_history_iii.php) |",
       "block_id": "people_of_ai-block-194",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-341",
+      "id": "people_of_ai-stmt-342",
       "quote": "| **Ada Lovelace** | [History](history.php), [Software](software.php), [Untold History](untold_history_iii.php) |",
       "block_id": "people_of_ai-block-195",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-342",
+      "id": "people_of_ai-stmt-343",
       "quote": "| **Charles Babbage** | [History](history.php), [Software](software.php), [Untold History](untold_history_iii.php) |",
       "block_id": "people_of_ai-block-196",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-343",
+      "id": "people_of_ai-stmt-344",
       "quote": "| **Marvin Minsky** | [History](history.php), [AI and Society](ai_and_society.php) |",
       "block_id": "people_of_ai-block-197",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-344",
+      "id": "people_of_ai-stmt-345",
       "quote": "| **Seymour Papert** | [History](history.php), [Philosophy](philosophy.php) |",
       "block_id": "people_of_ai-block-198",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-345",
+      "id": "people_of_ai-stmt-346",
       "quote": "| **John Hopfield** | [History](history.php), [The Mirror in the Machine](mirror_in_machine.php) |",
       "block_id": "people_of_ai-block-199",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-346",
+      "id": "people_of_ai-stmt-347",
       "quote": "| **Paul Werbos** | [History](history.php), [Backpropagation](backproplab.php) |",
       "block_id": "people_of_ai-block-200",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-347",
+      "id": "people_of_ai-stmt-348",
       "quote": "| **Demis Hassabis** | [AI and Society](ai_and_society.php), [AI for Science](ai_for_science.php) |",
       "block_id": "people_of_ai-block-201",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-348",
+      "id": "people_of_ai-stmt-349",
       "quote": "| **David Silver** | [Reinforcement Learning](reinforcement_learning.php), [AI for Science](ai_for_science.php) |",
       "block_id": "people_of_ai-block-202",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-349",
+      "id": "people_of_ai-stmt-350",
       "quote": "| **John Jumper** | [AI for Science](ai_for_science.php) |",
       "block_id": "people_of_ai-block-203",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-350",
+      "id": "people_of_ai-stmt-351",
       "quote": "| **Andrew Ng** | [History](history.php), [Software](software.php) |",
       "block_id": "people_of_ai-block-204",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-351",
+      "id": "people_of_ai-stmt-352",
       "quote": "| **Yann LeCun** | [Computer Vision](computer_vision.php), [History](history.php), [AI Existential Risk](ai_existential_risk.php) |",
       "block_id": "people_of_ai-block-205",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-352",
+      "id": "people_of_ai-stmt-353",
       "quote": "| **Yoshua Bengio** | [Language](language.php), [History](history.php), [AI Existential Risk](ai_existential_risk.php) |",
       "block_id": "people_of_ai-block-206",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-353",
+      "id": "people_of_ai-stmt-354",
       "quote": "| **Frank Rosenblatt** | [History](history.php), [Smallest Neural Network](minimalneuron.php), [Activation Functions](activationlab.php) |",
       "block_id": "people_of_ai-block-207",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-354",
+      "id": "people_of_ai-stmt-355",
       "quote": "| **Warren McCulloch & Walter Pitts** | [History](history.php), [The Mirror in the Machine](mirror_in_machine.php), [Philosophy](philosophy.php) |",
       "block_id": "people_of_ai-block-208",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-355",
+      "id": "people_of_ai-stmt-356",
       "quote": "| **Claude Shannon** | [History](history.php), [Language](language.php), [Statistics I](statistics_i.php), [Tokenization](tokenizerlab.php) |",
       "block_id": "people_of_ai-block-209",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-356",
+      "id": "people_of_ai-stmt-357",
       "quote": "| **Ashish Vaswani** | [Transformer](transformer.php), [Attention](attentionlab.php), [Context Windows](contextwindows.php) |",
       "block_id": "people_of_ai-block-210",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-357",
+      "id": "people_of_ai-stmt-358",
       "quote": "| **Richard Sutton** | [Reinforcement Learning](reinforcement_learning.php), [AI Existential Risk](ai_existential_risk.php), [Myths](myths.php) |",
       "block_id": "people_of_ai-block-211",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-358",
+      "id": "people_of_ai-stmt-359",
       "quote": "| **Sepp Hochreiter** | [Recurrent Networks](recurrent_networks.php), [Attention](attentionlab.php), [Automatic Differentiation](autodiff.php) |",
       "block_id": "people_of_ai-block-212",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-359",
+      "id": "people_of_ai-stmt-360",
       "quote": "| **Fei-Fei Li** | [Computer Vision](computer_vision.php), [Multimodal](multimodal.php), [Evaluation](evaluation.php) |",
       "block_id": "people_of_ai-block-213",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-360",
+      "id": "people_of_ai-stmt-361",
       "quote": "| **David Rumelhart** | [Backpropagation](backproplab.php), [Automatic Differentiation](autodiff.php), [Loss Landscape](loss_landscape.php) |",
       "block_id": "people_of_ai-block-214",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-361",
+      "id": "people_of_ai-stmt-362",
       "quote": "| **Noam Shazeer** | [Transformer](transformer.php), [Mixture of Experts](mixture_of_experts.php), [Inference Optimization](inference_optimization.php) |",
       "block_id": "people_of_ai-block-215",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-362",
+      "id": "people_of_ai-stmt-363",
       "quote": "| **Catherine Olsson** | [In-Context Learning](unexpected_capabilities.php), [Mechanistic Interpretability](mechanistic_interpretability.php) |",
       "block_id": "people_of_ai-block-216",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-363",
+      "id": "people_of_ai-stmt-364",
       "quote": "| **François Chollet** | [Unexpected Capabilities](unexpected_capabilities.php), [Global AI Ecosystem](global_ai_ecosystem.php) |",
       "block_id": "people_of_ai-block-217",
       "section": "The Recurring Cast",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-364",
+      "id": "people_of_ai-stmt-365",
       "quote": "The history of AI is not a list of lone geniuses.",
       "block_id": "people_of_ai-block-219",
       "section": "A Note on Credit",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-365",
+      "id": "people_of_ai-stmt-366",
       "quote": "Ideas arrive in clusters, are independently discovered, and are often named after the person who made them famous rather than the person who had them first.",
       "block_id": "people_of_ai-block-219",
       "section": "A Note on Credit",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-366",
+      "id": "people_of_ai-stmt-367",
       "quote": "Backpropagation is the canonical example: Werbos derived it in 1974, Rumelhart, Hinton, and Williams made it famous in 1986, and Linnainmaa had described the reverse-mode chain rule earlier still.",
       "block_id": "people_of_ai-block-219",
       "section": "A Note on Credit",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-367",
+      "id": "people_of_ai-stmt-368",
       "quote": "The perceptron has its own priority dispute: Farley and Clark built a perceptron-like device before Rosenblatt, but did not build the theory around it.",
       "block_id": "people_of_ai-block-219",
       "section": "A Note on Credit",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-368",
+      "id": "people_of_ai-stmt-369",
       "quote": "The Transformer had eight authors, and its key ideas drew on attention mechanisms developed for translation.",
       "block_id": "people_of_ai-block-219",
       "section": "A Note on Credit",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-369",
+      "id": "people_of_ai-stmt-370",
       "quote": "This chapter names people because names are how the course's citations, biographies, and Atlas entries are organized — not because the field's progress can be reduced to a list of individuals.",
       "block_id": "people_of_ai-block-220",
       "section": "A Note on Credit",
       "kind": "statement"
     },
     {
-      "id": "people_of_ai-stmt-370",
+      "id": "people_of_ai-stmt-371",
       "quote": "The primary sources are the point.",
       "block_id": "people_of_ai-block-220",
       "section": "A Note on Credit",
@@ -14850,7 +14867,7 @@
     },
     {
       "id": "people_of_ai-block-132",
-      "quote": "\\marginfig{george_boole_portrait.jpg}{George Boole. \\cite{img_george_boole}. Public domain.} \\marginfig{gottlob_frege_portrait.jpg}{Gottlob Frege. \\cite{img_gottlob_frege}. Public domain.}",
+      "quote": "\\marginfig{george_boole_portrait.jpg}{George Boole. \\cite{img_george_boole}. Public domain.} \\marginfig{gottlob_frege_portrait.jpg}{Gottlob Frege, c. 1879. Photo: unknown photographer; public domain. [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Young_frege.jpg).}",
       "kind": "paragraph",
       "section": "George Boole and Gottlob Frege"
     },
@@ -14880,7 +14897,7 @@
     },
     {
       "id": "people_of_ai-block-137",
-      "quote": "\\marginfig{john_mccarthy_portrait.jpg}{John McCarthy. \\cite{img_john_mccarthy}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).}",
+      "quote": "\\marginfig{john_mccarthy_portrait.jpg}{John McCarthy at Stanford, 2006. Photo: [Flickr user null0](https://www.flickr.com/photos/null0/), [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/). [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:John_McCarthy_Stanford.jpg).}",
       "kind": "paragraph",
       "section": "John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon"
     },
@@ -15144,7 +15161,7 @@
     },
     {
       "id": "people_of_ai-block-181",
-      "quote": "\\marginfig{stuart_russell_portrait.jpg}{Stuart Russell. \\cite{img_stuart_russell}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).} \\marginfig{nick_bostrom_portrait.jpg}{Nick Bostrom. \\cite{img_nick_bostrom}. [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).} \\marginfig{eliezer_yudkowsky_portrait.jpg}{Eliezer Yudkowsky. \\cite{img_eliezer_yudkowsky}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).} \\marginfig{toby_ord_portrait.jpg}{Toby Ord. \\cite{img_toby_ord}. [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).}",
+      "quote": "\\marginfig{stuart_russell_portrait.jpg}{Stuart Russell. \\cite{img_stuart_russell}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).} \\marginfig{nick_bostrom_portrait.jpg}{Nick Bostrom. \\cite{img_nick_bostrom}. [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).} \\marginfig{eliezer_yudkowsky_portrait.jpg}{Eliezer Yudkowsky at Stanford, 2006. Photo: [Flickr user null0](https://www.flickr.com/photos/null0/), [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/). [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Eliezer_Yudkowsky,_Stanford_2006_(square_crop).jpg).} \\marginfig{toby_ord_portrait.jpg}{Toby Ord. \\cite{img_toby_ord}. [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).}",
       "kind": "paragraph",
       "section": "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord"
     },
