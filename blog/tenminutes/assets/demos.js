@@ -2506,6 +2506,80 @@
 		render();
 	}
 
+	/* ── ambiguity ─────────────────────────────────────────── */
+
+	function initAmbiguity(root) {
+		var chips = $("[data-ambiguity-chips]", root);
+		var sentenceEl = $("[data-ambiguity-sentence]", root);
+		var readingsEl = $("[data-ambiguity-readings]", root);
+		var noteEl = $("[data-ambiguity-note]", root);
+		if (!chips || !sentenceEl || !readingsEl) return;
+		var examples = [
+			{
+				label: "Telescope",
+				before: "I saw the man ",
+				amb: "with the telescope",
+				after: ".",
+				readings: [
+					["Reading A · the man has it", "I used the telescope to see the man."],
+					["Reading B · I have it", "I saw a man who was carrying a telescope."]
+				],
+				note: "The surface syntax is identical. World knowledge and context decide which reading survives."
+			},
+			{
+				label: "Flying planes",
+				before: "",
+				amb: "Flying planes",
+				after: " can be dangerous.",
+				readings: [
+					["Reading A · the act", "The act of flying planes can be dangerous."],
+					["Reading B · the objects", "Planes that are flying can be dangerous."]
+				],
+				note: "One phrase, two grammatical roles. A language model must choose a plausible structure, not just parse the words."
+			},
+			{
+				label: "Visiting relatives",
+				before: "",
+				amb: "Visiting relatives",
+				after: " can be exhausting.",
+				readings: [
+					["Reading A · the act", "The act of visiting relatives can be exhausting."],
+					["Reading B · the people", "Relatives who are visiting can be exhausting."]
+				],
+				note: "Ambiguity is not a bug in language; it is a feature that context repairs. Models are good at the repair, and can still fail."
+			}
+		];
+		var current = 0;
+		chips.innerHTML = examples.map(function (ex, i) {
+			return '<button class="chip' + (i === 0 ? " is-on" : "") + '" type="button" data-ambiguity-i="' + i + '">' + escapeHtml(ex.label) + "</button>";
+		}).join("");
+		function render() {
+			var ex = examples[current];
+			sentenceEl.innerHTML = escapeHtml(ex.before) + '<span class="amb-tok" data-amb-token>' + escapeHtml(ex.amb) + "</span>" + escapeHtml(ex.after);
+			readingsEl.innerHTML = ex.readings.map(function (r) {
+				return '<div class="amb-reading"><b>' + escapeHtml(r[0]) + "</b><p>" + escapeHtml(r[1]) + "</p></div>";
+			}).join("");
+			if (noteEl) noteEl.textContent = ex.note;
+			$$(".amb-reading", readingsEl).forEach(function (r, i) {
+				r.classList.toggle("is-on", i === 0);
+			});
+			var tok = $("[data-amb-token]", sentenceEl);
+			if (tok) tok.addEventListener("click", function () {
+				tok.classList.toggle("is-on");
+				$$(".amb-reading", readingsEl).forEach(function (r) { r.classList.toggle("is-on"); });
+			});
+		}
+		$$("[data-ambiguity-i]", chips).forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				$$("[data-ambiguity-i]", chips).forEach(function (x) { x.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				current = parseInt(chip.getAttribute("data-ambiguity-i"), 10) || 0;
+				render();
+			});
+		});
+		render();
+	}
+
 	/* ── receptive field ────────────────────────────────────── */
 
 	function initReceptive(root) {
