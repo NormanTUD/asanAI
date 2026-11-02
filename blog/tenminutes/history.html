@@ -6,7 +6,7 @@
 	<meta name="description" content="A very brief history of AI: a ten-minute timeline from tally bones and logic to cybernetics, the perceptron, and the transformer.">
 	<meta name="theme-color" content="#f7f3e8">
 	<title>A Very Brief History of AI — Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=20261102">
 </head>
 <body data-lesson="history" data-page="lesson">
 	<a class="skip" href="#main">Skip to content</a>
@@ -737,7 +737,7 @@
 								<span class="demo-badge">not a pipeline</span>
 							</div>
 							<div class="demo-body">
-								<div class="llm-pane" data-llm-pane="attention">
+								<div class="llm-pane is-on" data-llm-pane="attention">
 									<h4 class="llm-pane-title">Mechanism · Attention</h4>
 									<div class="llm-attn-head">
 										<p class="llm-note">Attention is a mechanism inside the block: it routes information between positions. Click a token. Each arc is one attention weight, and the matrix below shows the whole routing table.</p>
@@ -759,7 +759,15 @@
 											<b>Attention matrix</b>
 											<span>rows = queries · columns = keys · every row sums to <b>1.00</b></span>
 										</div>
-										<div class="llm-matrix" id="llm-matrix" role="img" aria-label="Attention matrix. Each row is a query and sums to one."></div>
+										<div class="llm-matrix" id="llm-matrix" role="img" aria-label="Attention matrix. Each row is a query and sums to one.">
+											<div class="llm-matrix-row llm-matrix-row--head"><span></span><span>the</span><span>cat</span><span>sat</span><span>on</span><span>the</span><span>mat</span><span>Σ</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">the</span><span class="llm-matrix-cell">0.30</span><span class="llm-matrix-cell">0.22</span><span class="llm-matrix-cell">0.18</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">cat</span><span class="llm-matrix-cell">0.14</span><span class="llm-matrix-cell">0.30</span><span class="llm-matrix-cell">0.26</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row is-selected"><span class="llm-matrix-label">sat</span><span class="llm-matrix-cell">0.12</span><span class="llm-matrix-cell">0.42</span><span class="llm-matrix-cell">0.20</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-cell">0.08</span><span class="llm-matrix-cell">0.08</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">on</span><span class="llm-matrix-cell">0.08</span><span class="llm-matrix-cell">0.16</span><span class="llm-matrix-cell">0.30</span><span class="llm-matrix-cell">0.18</span><span class="llm-matrix-cell">0.16</span><span class="llm-matrix-cell">0.12</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">the</span><span class="llm-matrix-cell">0.06</span><span class="llm-matrix-cell">0.12</span><span class="llm-matrix-cell">0.18</span><span class="llm-matrix-cell">0.16</span><span class="llm-matrix-cell">0.26</span><span class="llm-matrix-cell">0.22</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">mat</span><span class="llm-matrix-cell">0.05</span><span class="llm-matrix-cell">0.10</span><span class="llm-matrix-cell">0.12</span><span class="llm-matrix-cell">0.14</span><span class="llm-matrix-cell">0.24</span><span class="llm-matrix-cell">0.35</span><span class="llm-matrix-sum">1.00</span></div>
+										</div>
 										<p class="llm-note llm-matrix-note">Softmax gives each query exactly <b>1.00</b> of attention mass. The row is a probability distribution: if one key gets more, every other key gets less. The last column shows the sum.</p>
 									</div>
 									<div class="llm-qkv">
@@ -767,7 +775,7 @@
 									</div>
 								</div>
 
-								<div class="llm-pane" data-llm-pane="pretraining">
+								<div class="llm-pane is-on" data-llm-pane="pretraining">
 									<h4 class="llm-pane-title">Objective · Pretraining</h4>
 									<div class="llm-obj-switch">
 										<button class="chip is-on" type="button" aria-pressed="true" data-llm-objective="bert">BERT · fill the blank</button>
@@ -785,7 +793,7 @@
 									<p class="llm-note">Pretraining is an objective, not an architecture: the label is the text itself. BERT hides a token and reads both sides; GPT hides the future and reads only the past. Click any token to move the blank.</p>
 								</div>
 
-								<div class="llm-pane" data-llm-pane="scale">
+								<div class="llm-pane is-on" data-llm-pane="scale">
 									<h4 class="llm-pane-title">Strategy · Scale</h4>
 									<p class="llm-note">Scale is a strategy for spending a compute budget, not a part of the block. For a fixed budget, the best model size changes: a large model with too few tokens loses to a smaller, better-trained one. The curves use a Chinchilla-style scaling law; the numbers are illustrative.</p>
 									<div class="llm-scale-legend">
