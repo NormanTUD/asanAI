@@ -738,6 +738,14 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
     Genutzt in: history.php § "Zhang Heng's seismoscope: the first instrument that sensed the world (132 CE)"
     Status: OK - Public Domain (1886 Illustration)
 
+65a. img_frege_begriffsschrift
+    URL: https://commons.wikimedia.org/wiki/File:One_page_from_Frege%27s_Begriffsschrift.png
+    Lizenz: Public domain (PD-old-70-expired)
+    Autor: Gottlob Frege, Begriffsschrift (1879); Scan via informationphilosopher.com
+    Lokal: frege_begriffsschrift_page.png (454x524)
+    Genutzt in: history.php § "Frege & Russell: The Longing for Determinism"
+    Status: OK - Public Domain (1879)
+
 === MEMORY PALACE / MNEMONICS (memorypalace.php, Stand: Oktober 2026) ===
 ================================================================================
 
