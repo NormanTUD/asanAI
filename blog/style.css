@@ -7179,23 +7179,25 @@ html.dark #theme-toggle .ti-moon { display: none; }
 }
 .glossary-tooltip {
 	position: fixed;
-	background: var(--mn-heading);
-	color: var(--mn-bg);
-	font-family: var(--mn-font-body);
-	font-size: 0.78rem;
+	background: var(--mn-surface);
+	color: var(--mn-text);
+	border: 1px solid var(--mn-border);
+	font-family: sans-serif;
+	font-size: 0.82rem;
 	font-weight: 400;
 	line-height: 1.5;
 	padding: 10px 14px;
 	border-radius: 8px;
-	width: max(180px, 28vw);
+	width: max-content;
+	min-width: 180px;
 	max-width: 360px;
 	pointer-events: none;
 	opacity: 0;
-	transition: opacity 0.2s ease;
+	transition: opacity 0.15s ease;
 	z-index: 2147483647 !important;
 	isolation: isolate;
 	text-align: left;
-	box-shadow: var(--mn-shadow-lg);
+	box-shadow: 0 12px 36px rgba(0,0,0,.18);
 	visibility: hidden;
 	/* GUARDRAIL (cause 1): the tooltip is portaled to <body>, so its
 	   containing block is the viewport — nothing the term's ancestors
@@ -7254,27 +7256,17 @@ body > .cl-fn-tip {
 	opacity: 1;
 	visibility: visible;
 }
-.glossary-tooltip::after {
-	content: '';
-	position: absolute;
-	top: 100%;
-	left: var(--arrow-x, 50%);
-	transform: translateX(-50%);
-	border: 6px solid transparent;
-	border-top-color: var(--mn-heading);
-}
-.glossary-tooltip--below::after {
-	top: auto;
-	bottom: 100%;
-	border-top-color: transparent;
-	border-bottom-color: var(--mn-heading);
+html.dark .glossary-tooltip {
+	background: var(--mn-surface-raised);
+	box-shadow: 0 12px 36px rgba(0,0,0,.5);
 }
 
 @media (max-width: 600px) {
 	.glossary-tooltip {
-		width: max(160px, 40vw);
-		font-size: 0.75rem;
-		padding: 8px 10px;
+		max-width: min(360px, 86vw);
+		min-width: 160px;
+		font-size: 0.78rem;
+		padding: 8px 12px;
 	}
 }
 
