@@ -230,29 +230,29 @@ The same run gives this breakdown (shapes for the main path; inner ModuleLists b
 | `conv_in` | Conv2d | `[1, 4, 64, 64]` | `[1, 32, 64, 64]` | 1,184 |
 | `time_proj` | Timesteps | `[1]` | `[1, 32]` | 0 |
 | `time_embedding` | TimestepEmbedding | `[1, 32]` | `[1, 128]` | 20,736 |
-| `time_embedding.linear_1` | Linear | `[1, 32]` | `[1, 128]` | 4,224 |
-| `time_embedding.act` | SiLU | `[1, 128]` | `[1, 128]` | 0 |
-| `time_embedding.linear_2` | Linear | `[1, 128]` | `[1, 128]` | 16,512 |
+| &nbsp;&nbsp;├ `linear_1` | Linear | `[1, 32]` | `[1, 128]` | 4,224 |
+| &nbsp;&nbsp;├ `act` | SiLU | `[1, 128]` | `[1, 128]` | 0 |
+| &nbsp;&nbsp;└ `linear_2` | Linear | `[1, 128]` | `[1, 128]` | 16,512 |
 | `down_blocks` | ModuleList | `[1, 32, 64, 64]` | `[1, 64, 32, 32]` | 377,824 |
-| `down_blocks.0` | DownBlock2D | `[1, 32, 64, 64]` | `[1, 32, 32, 32]` | 54,752 |
-| `down_blocks.0.resnets` | ModuleList | | | 45,504 |
-| `down_blocks.0.downsamplers` | ModuleList | | | 9,248 |
-| `down_blocks.1` | CrossAttnDownBlock2D | `[1, 32, 32, 32]` | `[1, 64, 32, 32]` | 323,072 |
-| `down_blocks.1.attentions` | ModuleList | | | 174,720 |
-| `down_blocks.1.resnets` | ModuleList | | | 148,352 |
+| &nbsp;&nbsp;├ `0` | DownBlock2D | `[1, 32, 64, 64]` | `[1, 32, 32, 32]` | 54,752 |
+| &nbsp;&nbsp;│&nbsp;&nbsp;├ `resnets` | ModuleList | | | 45,504 |
+| &nbsp;&nbsp;│&nbsp;&nbsp;└ `downsamplers` | ModuleList | | | 9,248 |
+| &nbsp;&nbsp;└ `1` | CrossAttnDownBlock2D | `[1, 32, 32, 32]` | `[1, 64, 32, 32]` | 323,072 |
+| &nbsp;&nbsp;&nbsp;&nbsp;├ `attentions` | ModuleList | | | 174,720 |
+| &nbsp;&nbsp;&nbsp;&nbsp;└ `resnets` | ModuleList | | | 148,352 |
 | `mid_block` | UNetMidBlock2DCrossAttn | `[1, 64, 32, 32]` | `[1, 64, 32, 32]` | 252,096 |
-| `mid_block.attentions` | ModuleList | | | 87,360 |
-| `mid_block.attentions.0` | Transformer2DModel | | | 87,360 |
-| `mid_block.resnets` | ModuleList | | | 164,736 |
-| `mid_block.resnets.0` | ResnetBlock2D | | | 82,368 |
-| `mid_block.resnets.1` | ResnetBlock2D | | | 82,368 |
+| &nbsp;&nbsp;├ `attentions` | ModuleList | | | 87,360 |
+| &nbsp;&nbsp;│&nbsp;&nbsp;└ `0` | Transformer2DModel | | | 87,360 |
+| &nbsp;&nbsp;└ `resnets` | ModuleList | | | 164,736 |
+| &nbsp;&nbsp;&nbsp;&nbsp;├ `0` | ResnetBlock2D | | | 82,368 |
+| &nbsp;&nbsp;&nbsp;&nbsp;└ `1` | ResnetBlock2D | | | 82,368 |
 | `up_blocks` | ModuleList | `[1, 64, 32, 32]` | `[1, 32, 64, 64]` | 773,952 |
-| `up_blocks.0` | CrossAttnUpBlock2D | `[1, 64, 32, 32]` | `[1, 64, 64, 64]` | 661,312 |
-| `up_blocks.0.attentions` | ModuleList | | | 262,080 |
-| `up_blocks.0.resnets` | ModuleList | | | 362,304 |
-| `up_blocks.0.upsamplers` | ModuleList | | | 36,928 |
-| `up_blocks.1` | UpBlock2D | `[1, 64, 64, 64]` | `[1, 32, 64, 64]` | 112,640 |
-| `up_blocks.1.resnets` | ModuleList | | | 112,640 |
+| &nbsp;&nbsp;├ `0` | CrossAttnUpBlock2D | `[1, 64, 32, 32]` | `[1, 64, 64, 64]` | 661,312 |
+| &nbsp;&nbsp;│&nbsp;&nbsp;├ `attentions` | ModuleList | | | 262,080 |
+| &nbsp;&nbsp;│&nbsp;&nbsp;├ `resnets` | ModuleList | | | 362,304 |
+| &nbsp;&nbsp;│&nbsp;&nbsp;└ `upsamplers` | ModuleList | | | 36,928 |
+| &nbsp;&nbsp;└ `1` | UpBlock2D | `[1, 64, 64, 64]` | `[1, 32, 64, 64]` | 112,640 |
+| &nbsp;&nbsp;&nbsp;&nbsp;└ `resnets` | ModuleList | | | 112,640 |
 | `conv_norm_out` | GroupNorm | `[1, 32, 64, 64]` | `[1, 32, 64, 64]` | 64 |
 | `conv_act` | SiLU | `[1, 32, 64, 64]` | `[1, 32, 64, 64]` | 0 |
 | `conv_out` | Conv2d | `[1, 32, 64, 64]` | `[1, 4, 64, 64]` | 1,156 |
@@ -260,7 +260,9 @@ The same run gives this breakdown (shapes for the main path; inner ModuleLists b
 
 The test model has two down and two up blocks and only 1.4 M parameters. Stable Diffusion 1.5 uses four of each, but the module names and wiring are the same. Downsampling reduces the spatial grid; the cross-attention blocks read the text embedding; the skip connections carry detail across the bottleneck; and upsampling restores the original resolution.
 
-The block names in the table are the pieces from the list above. **TimestepEmbedding** turns the scalar timestep into a vector that tells every block how noisy the sample is. A **DownBlock2D** stacks residual convolutions and may downsample the grid; a **CrossAttnDownBlock2D** adds cross-attention to the text. The **UNetMidBlock2DCrossAttn** is the bottleneck, where residual convolutions and cross-attention run at the lowest resolution. A **CrossAttnUpBlock2D** upsamples, merges the matching skip connection, and attends to the text; an **UpBlock2D** does the same without text attention. **GroupNorm** normalizes each group of channels, and **SiLU** applies the smooth activation $x\cdot\sigma(x)$.
+The block names in the table are the pieces from the list above. **Timesteps** turns the integer timestep into sinusoidal features, and **TimestepEmbedding** maps those features to a vector that tells every block how noisy the sample is. **ModuleList** is only a container; it adds no computation. A **DownBlock2D** stacks residual convolutions and may downsample the grid; a **CrossAttnDownBlock2D** adds cross-attention to the text.
+
+The **UNetMidBlock2DCrossAttn** is the bottleneck, where residual convolutions and cross-attention run at the lowest resolution. **ResnetBlock2D** is one of those residual convolution blocks, **Transformer2DModel** is the attention block, and **Linear** is a fully connected layer. A **CrossAttnUpBlock2D** upsamples, merges the matching skip connection, and attends to the text; an **UpBlock2D** does the same without text attention. **GroupNorm** normalizes each group of channels, and **SiLU** applies the smooth activation $x\cdot\sigma(x)$.
 
 ### Stable Diffusion: doing it in a compressed space
 
