@@ -240,22 +240,55 @@ fallback to plain text if Temml is unavailable.
 
 ## Prose style: no filler contrasts
 
-Do not write defensive filler such as:
+State the claim positively. Most “X is not Y” sentences do real work: they name
+a default the reader holds and replace it. Keep those. Cut the sentence that
+denies a claim nobody made, merely upgrades the text's own simplification, or
+dresses a plain point in metaphor.
 
-- “X is not Y” / “X is not just Y” — unless the negation is the actual lesson.
-- “This page is about / asks / gives / traces / turns / shows …” — state the idea
-  directly instead of announcing the page.
-- “The point is not X; it is Y”, “It is worth …”, “Notice that …” when the
-  sentence only announces the point.
+**Keep: the negation is load-bearing.** The test: has the surrounding prose
+given the reader a reason to hold the negated view, or does the positive claim
+depend on rejecting it? If yes, the contrast is content.
 
-Prefer the positive claim. Keep a contrast only when the contrast *is* the
-insight, for example: “The model is not lying; it is completing a pattern.”
+- “The key takeaway when studying distributions is not to memorize them, but to
+  understand how large datasets behave.” (corrects “studying = memorizing”)
+- “Alignment is not one technique; it is a family of problems …” (rejects the
+  expectation of a single method)
+- “Depth is not just ‘more capacity’ […] it is the composition budget.”
+- “A vector is not a ‘list of numbers’. A vector is an *element* of a vector
+  space.”
+- “The model is not lying; it is completing a pattern.” (the negation is the
+  lesson)
+- “Generative models now produce 3D and video, not just stills.” (adds scope)
+
+**Cut: the negation is a straw man, a heading, an upgrade of the text's own
+simplification, or decoration.**
+
+- “The checklist is not a bureaucratic ritual.” (nobody accused it)
+- A heading like “Data is not just Numbers; it is a Distribution”.
+- “This landscape is not flat; it is a jagged mountain range of probabilities.”
+- “The point is not X; it is Y” when X was never on the table.
+- “It is worth …”, “Notice that …” when the sentence only flags that a point is
+  coming.
+
+**Page announcements** are fine when they give a roadmap. They are filler when
+they only re-label the topic (“This page is about alignment”).
 
 To list candidates for review, run:
 
 ```bash
 grep -rniE '\b(is|are|was|were) not\b|\bnot (just|only|merely)\b|this page (is|asks|gives|traces|turns|shows)' blog/tenminutes/*.html
 ```
+
+## Prose style: dashes, paragraphs, flow
+
+- **No em dash or en dash in lesson prose.** Use a comma, a colon,
+  parentheses, or two sentences. Keep the hyphen only in compounds and numeric
+  ranges.
+- **Keep paragraphs short.** One idea per paragraph, usually three to six
+  sentences. Start a new paragraph when the idea changes.
+- **Group related sentences.**
+- **Keep the argument in flow.** Each paragraph should connect to the one before
+  it.
 
 ## Image credits (`history.html`)
 
