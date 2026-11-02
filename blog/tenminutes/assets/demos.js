@@ -3210,13 +3210,21 @@
 			var frac = u - Math.floor(u);
 			return (frac < 0.5 ? frac * 2 : (1 - frac) * 2) * 1.6 - 0.8;
 		}
-		function draw(ctx, W, H) {
-			var c = colors();
-			var depth = clamp(parseInt(depthEl && depthEl.value, 10) || 3, 1, 7);
+		function readDepth() {
+			return clamp(parseInt(depthEl && depthEl.value, 10) || 3, 1, 7);
+		}
+		function update() {
+			var depth = readDepth();
 			var pieces = Math.pow(2, depth);
 			if (depthOut) depthOut.textContent = depth;
 			if (depthReadout) depthReadout.textContent = depth;
 			if (piecesEl) piecesEl.textContent = pieces;
+			return depth;
+		}
+		function draw(ctx, W, H) {
+			var c = colors();
+			var depth = update();
+			var pieces = Math.pow(2, depth);
 			var padX = 30, padY = 26;
 			var x0 = padX, x1 = W - padX;
 			var y0 = H - padY, y1 = padY;
@@ -3268,8 +3276,9 @@
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
-		if (depthEl) depthEl.addEventListener("input", function () { api.redraw(); });
+		if (depthEl) depthEl.addEventListener("input", function () { update(); api.redraw(); });
 		window.addEventListener("tm:theme", function () { api.redraw(); });
+		update();
 		api.redraw();
 	}
 
