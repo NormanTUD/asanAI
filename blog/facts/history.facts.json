@@ -2724,7 +2724,7 @@
       "qualifiers": {
         "variant": "non-leaky"
       },
-      "quote": "I(t) = C \\,\\frac{dV(t)}{dt}",
+      "quote": "In modern notation, the non-leaky form he wrote down is",
       "citation_keys": [
         "lapicque1907"
       ],
