@@ -1,0 +1,114 @@
+{
+	"schema_version": 1,
+	"scope": "history.html timeline images",
+	"note": "Ten Minutes keeps its own image credits; literature.js is not loaded at runtime. Entries with literatureKey are checked against blog/literature.js by blog/tests/tenminutes_image_credits_test.py.",
+	"images": [
+		{
+			"src": "../ishango.jpg",
+			"title": "The Ishango bone",
+			"author": "Ben2",
+			"license": "CC BY-SA 3.0",
+			"source": "https://commons.wikimedia.org/wiki/File:Os_d%27Ishango_IRSNB.JPG"
+		},
+		{
+			"src": "../salamic_table.jpg",
+			"title": "The Salamis Tablet",
+			"author": "Wilhelm Kubitschek",
+			"license": "Public domain",
+			"source": "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg",
+			"literatureKey": "salamictablet"
+		},
+		{
+			"src": "../Sanzio_01_Plato_Aristotle.jpg",
+			"title": "Plato and Aristotle in Raphael's School of Athens",
+			"author": "Raphael",
+			"license": "Public domain",
+			"source": "https://commons.wikimedia.org/wiki/File:Sanzio_01_Plato_Aristotle.jpg",
+			"literatureKey": "aristotleandplato",
+			"literatureAuthor": "Raffael"
+		},
+		{
+			"src": "../antikythera.jpg",
+			"title": "Fragments of the Antikythera mechanism",
+			"author": "Therese Clutario",
+			"license": "CC BY 2.0",
+			"source": "https://commons.wikimedia.org/wiki/File:Fragments_of_the_Antikythera_Mechanism.jpg"
+		},
+		{
+			"src": "../FigurScheiben.jpg",
+			"title": "A Llull volvelle",
+			"author": "Ramon Llull",
+			"license": "Public domain",
+			"source": "https://blog.hnf.de/das-universum-des-ramon-llull/"
+		},
+		{
+			"src": "../babbage.jpg",
+			"title": "Babbage's Analytical Engine",
+			"author": "John Cummings",
+			"license": "CC BY-SA 2.0",
+			"source": "https://commons.wikimedia.org/wiki/File:Babbages_Analytical_Engine,_1834-1871._(9660574685).jpg",
+			"literatureKey": "babbage"
+		},
+		{
+			"src": "../walter_pitts_1954.jpg",
+			"title": "Walter Pitts in 1954",
+			"author": "Francis Bello",
+			"license": "Public domain",
+			"source": "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg",
+			"literatureKey": "img_walter_pitts"
+		},
+		{
+			"src": "assets/img/snarc-schematic.svg",
+			"title": "SNARC schematic",
+			"author": "Ten Minutes",
+			"license": "CC BY-SA 4.0",
+			"source": "assets/img/snarc-schematic.svg"
+		},
+		{
+			"src": "../perceptron2.jpg",
+			"title": "The Mark I Perceptron",
+			"author": "U.S. Navy",
+			"license": "Public domain",
+			"source": "https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg",
+			"literatureKey": "perceptronimagedetection"
+		},
+		{
+			"src": "../shrdlu.gif",
+			"title": "SHRDLU",
+			"author": "ai.lect",
+			"license": "CC BY-SA 4.0",
+			"source": "https://commons.wikimedia.org/wiki/File:Ailect15shrdlu1.gif"
+		},
+		{
+			"src": "../alphago_leesedol.jpg",
+			"title": "Lee Sedol vs AlphaGo, Game 4",
+			"author": "Korea Baduk Association",
+			"license": "CC BY-SA 4.0",
+			"source": "https://commons.wikimedia.org/wiki/File:Lee_Sedol_(B)_vs_AlphaGo_(W)_-_Game_4.jpg",
+			"literatureKey": "alphago_leesedol_image"
+		},
+		{
+			"src": "../transformer_attention_heads.png",
+			"title": "Two attention heads from the original Transformer",
+			"author": "Google",
+			"license": "CC BY-SA 4.0",
+			"source": "https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Full_attentions_for_head_5.png",
+			"literatureKey": "img_transformer_attention_heads"
+		},
+		{
+			"src": "../data_center.jpg",
+			"title": "A data center aisle",
+			"author": "Christopher Bowns",
+			"license": "CC BY-SA 2.0",
+			"source": "https://commons.wikimedia.org/wiki/File:Virginia_Tech_-_data_center.jpg",
+			"literatureKey": "img_data_center"
+		},
+		{
+			"src": "assets/img/chatgpt.png",
+			"title": "ChatGPT interface",
+			"author": "Lugab89",
+			"license": "CC BY 3.0",
+			"source": "https://commons.wikimedia.org/wiki/File:ChatGPT.png"
+		}
+	]
+}
