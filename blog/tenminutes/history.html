@@ -741,7 +741,7 @@
 									<h4 class="llm-pane-title">Mechanism · Attention</h4>
 									<div class="llm-attn-head">
 										<p class="llm-note">Attention is a mechanism inside the block: it routes information between positions. Click a token. Each arc is one attention weight, and the matrix below shows the whole routing table.</p>
-										<label class="llm-switch"><input type="checkbox" id="llm-causal" checked> causal mask <span>(GPT / autoregressive)</span></label>
+										<label class="llm-switch"><input type="checkbox" id="llm-causal" checked> causal mask <span>· each word sees only its past</span></label>
 									</div>
 									<div class="llm-sentence" id="llm-sentence">
 										<svg class="llm-arcs" id="llm-arcs" aria-hidden="true">
@@ -753,22 +753,22 @@
 											</defs>
 										</svg>
 									</div>
+									<div class="llm-mask-status" id="llm-mask-status" aria-live="polite"></div>
 									<div class="llm-bars" id="llm-bars"></div>
 									<div class="llm-matrix-wrap">
 										<div class="llm-matrix-head">
 											<b>Attention matrix</b>
-											<span>rows = queries · columns = keys · every row sums to <b>1.00</b> · selected query: <b id="llm-matrix-selected">sat</b></span>
+											<span>each row is a word looking back · columns are the words it can see · every row sums to <b>1.00</b> · selected: <b id="llm-matrix-selected">sat</b></span>
 										</div>
 										<div class="llm-matrix" id="llm-matrix" role="img" aria-label="Attention matrix. Each row is a query and sums to one.">
 											<div class="llm-matrix-row llm-matrix-row--head"><span></span><span>the</span><span>cat</span><span>sat</span><span>on</span><span>the</span><span>mat</span><span>Σ</span></div>
-											<div class="llm-matrix-row"><span class="llm-matrix-label">the</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 68%, var(--tm-card));color:#071a22">0.30</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 46%, var(--tm-card));color:var(--tm-ink)">0.22</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 35%, var(--tm-card));color:var(--tm-ink)">0.18</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-sum">1.00</span></div>
-											<div class="llm-matrix-row"><span class="llm-matrix-label">cat</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 24%, var(--tm-card));color:var(--tm-ink)">0.14</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 68%, var(--tm-card));color:#071a22">0.30</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 57%, var(--tm-card));color:var(--tm-ink)">0.26</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-sum">1.00</span></div>
-											<div class="llm-matrix-row is-selected"><span class="llm-matrix-label">sat</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 19%, var(--tm-card));color:var(--tm-ink)">0.12</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 100%, var(--tm-card));color:#071a22">0.42</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 41%, var(--tm-card));color:var(--tm-ink)">0.20</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 8%, var(--tm-card));color:var(--tm-ink)">0.08</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 8%, var(--tm-card));color:var(--tm-ink)">0.08</span><span class="llm-matrix-sum">1.00</span></div>
-											<div class="llm-matrix-row"><span class="llm-matrix-label">on</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 8%, var(--tm-card));color:var(--tm-ink)">0.08</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 30%, var(--tm-card));color:var(--tm-ink)">0.16</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 68%, var(--tm-card));color:#071a22">0.30</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 35%, var(--tm-card));color:var(--tm-ink)">0.18</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 30%, var(--tm-card));color:var(--tm-ink)">0.16</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 19%, var(--tm-card));color:var(--tm-ink)">0.12</span><span class="llm-matrix-sum">1.00</span></div>
-											<div class="llm-matrix-row"><span class="llm-matrix-label">the</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 3%, var(--tm-card));color:var(--tm-ink)">0.06</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 19%, var(--tm-card));color:var(--tm-ink)">0.12</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 35%, var(--tm-card));color:var(--tm-ink)">0.18</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 30%, var(--tm-card));color:var(--tm-ink)">0.16</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 57%, var(--tm-card));color:var(--tm-ink)">0.26</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 46%, var(--tm-card));color:var(--tm-ink)">0.22</span><span class="llm-matrix-sum">1.00</span></div>
-											<div class="llm-matrix-row"><span class="llm-matrix-label">mat</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 0%, var(--tm-card));color:var(--tm-ink)">0.05</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 19%, var(--tm-card));color:var(--tm-ink)">0.12</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 24%, var(--tm-card));color:var(--tm-ink)">0.14</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 51%, var(--tm-card));color:var(--tm-ink)">0.24</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 81%, var(--tm-card));color:#071a22">0.35</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">the</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 36%, var(--tm-sky));color:#071a22">0.30</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 92%, var(--tm-card));color:#071a22">0.22</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 70%, var(--tm-card));color:#071a22">0.18</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 28%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 28%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 28%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">cat</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 48%, var(--tm-card));color:var(--tm-ink)">0.14</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 36%, var(--tm-sky));color:#071a22">0.30</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-sky));color:#071a22">0.26</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 28%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 28%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 28%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row is-selected"><span class="llm-matrix-label">sat</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 38%, var(--tm-card));color:var(--tm-ink)">0.12</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 100%, var(--tm-sky));color:#071a22">0.42</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 82%, var(--tm-card));color:#071a22">0.20</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 28%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 16%, var(--tm-card));color:var(--tm-ink)">0.08</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 16%, var(--tm-card));color:var(--tm-ink)">0.08</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">on</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 16%, var(--tm-card));color:var(--tm-ink)">0.08</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 60%, var(--tm-card));color:var(--tm-ink)">0.16</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 36%, var(--tm-sky));color:#071a22">0.30</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 70%, var(--tm-card));color:#071a22">0.18</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 60%, var(--tm-card));color:var(--tm-ink)">0.16</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 38%, var(--tm-card));color:var(--tm-ink)">0.12</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">the</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 6%, var(--tm-card));color:var(--tm-ink)">0.06</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 38%, var(--tm-card));color:var(--tm-ink)">0.12</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 70%, var(--tm-card));color:#071a22">0.18</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 60%, var(--tm-card));color:var(--tm-ink)">0.16</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 14%, var(--tm-sky));color:#071a22">0.26</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 92%, var(--tm-card));color:#071a22">0.22</span><span class="llm-matrix-sum">1.00</span></div>
+											<div class="llm-matrix-row"><span class="llm-matrix-label">mat</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 0%, var(--tm-card));color:var(--tm-ink)">0.05</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 28%, var(--tm-card));color:var(--tm-ink)">0.10</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 38%, var(--tm-card));color:var(--tm-ink)">0.12</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-sky) 48%, var(--tm-card));color:var(--tm-ink)">0.14</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 2%, var(--tm-sky));color:#071a22">0.24</span><span class="llm-matrix-cell" style="background:color-mix(in srgb, var(--tm-green) 62%, var(--tm-sky));color:#071a22">0.35</span><span class="llm-matrix-sum">1.00</span></div>
 										</div>
-										<div class="llm-matrix-legend"><span>min</span><i></i><span>max</span></div>
 										<p class="llm-note llm-matrix-note">Softmax gives each query exactly <b>1.00</b> of attention mass. The row is a probability distribution: if one key gets more, every other key gets less. The last column shows the sum.</p>
 										<p class="llm-note llm-mask-note"><b>Causal mask</b> (also called an autoregressive mask): a word may only see itself and the words before it. Future cells are set to zero before the softmax and the row is renormalised, so it still sums to <b>1.00</b>. That is what stops the model from reading the answer it is about to write.</p>
 									</div>
@@ -1242,9 +1242,35 @@
 		var matrix = document.getElementById("llm-matrix");
 		var matrixSelected = document.getElementById("llm-matrix-selected");
 		var causal = document.getElementById("llm-causal");
+		var maskStatus = document.getElementById("llm-mask-status");
 		var selected = 2;
 		var attnTokens = [];
 		var barEls = [];
+
+		function hexToRgb(hex) {
+			hex = String(hex || "").replace("#", "");
+			if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+			return [
+				parseInt(hex.slice(0, 2), 16) || 0,
+				parseInt(hex.slice(2, 4), 16) || 0,
+				parseInt(hex.slice(4, 6), 16) || 0
+			];
+		}
+		function mixRgb(a, b, t) {
+			return [
+				Math.round(a[0] + (b[0] - a[0]) * t),
+				Math.round(a[1] + (b[1] - a[1]) * t),
+				Math.round(a[2] + (b[2] - a[2]) * t)
+			];
+		}
+		function rgbCss(c) { return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")"; }
+		function relativeLum(c) {
+			function f(v) {
+				v /= 255;
+				return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+			}
+			return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]);
+		}
 
 		WORDS.forEach(function (word, i) {
 			var b = document.createElement("button");
@@ -1287,9 +1313,40 @@
 			return rowWeights(selected, !!(causal && causal.checked));
 		}
 
+		function renderMaskStatus(maskOn) {
+			if (!maskStatus) return;
+			var visible = WORDS.slice(0, selected + 1);
+			var blocked = WORDS.slice(selected + 1);
+			var seen = visible.map(function (word) {
+				return '<span class="llm-ms-chip is-seen">' + word + "</span>";
+			}).join("");
+			var hidden = blocked.map(function (word) {
+				return '<span class="llm-ms-chip is-blocked">' + word + "</span>";
+			}).join("");
+			if (!maskOn) {
+				maskStatus.innerHTML = '<span class="llm-ms-lead"><b>' + WORDS[selected] +
+					"</b> can see the whole sentence</span>" +
+					'<span class="llm-ms-chips">' + WORDS.map(function (word) {
+						return '<span class="llm-ms-chip is-seen">' + word + "</span>";
+					}).join("") + "</span>";
+				return;
+			}
+			maskStatus.innerHTML = '<span class="llm-ms-lead"><b>' + WORDS[selected] +
+				"</b> can see</span>" +
+				'<span class="llm-ms-chips">' + seen +
+				(blocked.length ? '<span class="llm-ms-arrow">but not</span>' + hidden : "") +
+				"</span>" +
+				'<span class="llm-ms-count">' + visible.length + " of " + WORDS.length +
+				" words visible</span>";
+		}
+
 		function renderMatrix() {
 			if (!matrix) return;
 			var maskOn = !!(causal && causal.checked);
+			var palette = (window.TM && TM.colors) ? TM.colors() : {};
+			var low = hexToRgb(palette.card || "#fffdf7");
+			var mid = hexToRgb(palette.sky || "#5c9baf");
+			var high = hexToRgb(palette.green || "#63a44b");
 			var rows = [];
 			var min = Infinity;
 			var max = -Infinity;
@@ -1313,10 +1370,12 @@
 					var future = maskOn && j > i;
 					var v = rows[i][j];
 					var pct = future ? 0 : (span > 0 ? Math.round((v - min) / span * 100) : 100);
-					var textColor = future ? "var(--tm-faint)" : (pct > 60 ? "#071a22" : "var(--tm-ink)");
+					var t = pct / 100;
+					var rgb = t < 0.5 ? mixRgb(low, mid, t * 2) : mixRgb(mid, high, (t - 0.5) * 2);
+					var textColor = future ? "var(--tm-faint)" :
+						(relativeLum(rgb) > 0.2 ? "#071a22" : "#fdfbf4");
 					html += '<span class="llm-matrix-cell' + (future ? " is-future" : "") +
-						'" style="background:color-mix(in srgb, var(--tm-green) ' + pct +
-						'%, var(--tm-card));color:' + textColor + '"' +
+						'" style="background:' + rgbCss(rgb) + ";color:" + textColor + '"' +
 						' title="' + WORDS[i] + " → " + WORDS[j] + ": " + v.toFixed(3) + '">' +
 						(future ? "·" : v.toFixed(2)) + "</span>";
 				}
@@ -1338,6 +1397,7 @@
 				bar.num.textContent = w[i].toFixed(2);
 				bar.row.classList.toggle("is-future", maskOn && i > selected);
 			});
+			renderMaskStatus(maskOn);
 			renderMatrix();
 			drawArcs(w);
 		}

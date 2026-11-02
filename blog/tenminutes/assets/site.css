@@ -1685,6 +1685,55 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	gap: 10px;
 }
 .llm-attn-head .llm-note { margin: 0; }
+.llm-mask-status {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 10px;
+	margin: 10px 0 4px;
+	padding: 9px 12px;
+	border: 1px dashed color-mix(in srgb, var(--tm-gold) 45%, var(--tm-line-strong));
+	border-radius: 10px;
+	background: color-mix(in srgb, var(--tm-gold) 7%, transparent);
+	font-family: var(--tm-ui);
+	font-size: 0.68rem;
+	color: var(--tm-muted);
+}
+.llm-ms-lead b { color: var(--tm-ink); }
+.llm-ms-chips {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px;
+}
+.llm-ms-chip {
+	padding: 2px 6px;
+	border-radius: 5px;
+	border: 1px solid var(--tm-line);
+	font-family: var(--tm-mono);
+	font-size: 0.6rem;
+}
+.llm-ms-chip.is-seen {
+	border-color: color-mix(in srgb, var(--tm-green) 45%, var(--tm-line));
+	background: color-mix(in srgb, var(--tm-green) 11%, transparent);
+	color: var(--tm-green-deep);
+}
+.llm-ms-chip.is-blocked {
+	border-style: dashed;
+	border-color: color-mix(in srgb, var(--tm-faint) 45%, var(--tm-line));
+	color: var(--tm-faint);
+	text-decoration: line-through;
+}
+.llm-ms-arrow {
+	font-size: 0.6rem;
+	color: var(--tm-faint);
+}
+.llm-ms-count {
+	margin-left: auto;
+	font-family: var(--tm-mono);
+	font-size: 0.6rem;
+	color: var(--tm-faint);
+}
 .llm-switch {
 	display: inline-flex;
 	align-items: center;
@@ -1726,7 +1775,11 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	border-color: var(--tm-green);
 	box-shadow: 0 0 0 3px color-mix(in srgb, var(--tm-green) 16%, transparent);
 }
-.llm-token.is-future { opacity: 0.28; }
+.llm-token.is-future {
+	opacity: 0.45;
+	border-style: dashed;
+	background: color-mix(in srgb, var(--tm-faint) 9%, var(--tm-paper-2));
+}
 .llm-token.is-mask {
 	border-style: dashed;
 	border-color: var(--tm-sky);
@@ -1888,7 +1941,7 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	height: 7px;
 	border: 1px solid var(--tm-line);
 	border-radius: 999px;
-	background: linear-gradient(90deg, var(--tm-card), var(--tm-green));
+	background: linear-gradient(90deg, var(--tm-card), var(--tm-sky), var(--tm-green));
 }
 .llm-matrix-note { margin: 8px 0 0; }
 .llm-qkv {
