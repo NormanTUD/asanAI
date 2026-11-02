@@ -1566,3 +1566,31 @@ Autor, Lizenz und Quellenlink direkt in der Abbildung.
    Lokal: elektro_sparko.jpg (2448x3264; ausgeliefert via image.php w=900)
    Genutzt in: history.php § "Elektro the Moto-Man: the robot as theatre (1939)"
    Status: OK - Public domain
+
+=== NEUE CC/PD-DIAGRAMME (language.php, recurrent_networks.php, beyond_llms.php, Stand: November 2026) ===
+================================================================================
+Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand November 2026.
+
+1. chomsky_hierarchy
+   URL: https://commons.wikimedia.org/wiki/File:Chomsky-hierarchy.svg
+   Lizenz: CC BY-SA 3.0
+   Autor: J. Finkelstein
+   Lokal: chomsky_hierarchy.svg (714x515)
+   Genutzt in: language.php § "Grammar Becomes a Machine: The Linguistic Levels and Chomsky (1957)"
+   Status: OK - Lizenz klar (CC BY-SA 3.0)
+
+2. lstm_cell
+   URL: https://commons.wikimedia.org/wiki/File:Long_Short-Term_Memory.svg
+   Lizenz: CC BY-SA 4.0
+   Autor: fdeloche
+   Lokal: lstm_cell.svg (1594x709)
+   Genutzt in: recurrent_networks.php § "The LSTM's Conveyor Belt"
+   Status: OK - Lizenz klar (CC BY-SA 4.0)
+
+3. svm_margin
+   URL: https://commons.wikimedia.org/wiki/File:Svm_max_sep_hyperplane_with_margin.png
+   Lizenz: Public domain
+   Autor: Cyc
+   Lokal: svm_margin.png (800x862)
+   Genutzt in: beyond_llms.php § "Support Vector Machines"
+   Status: OK - Public Domain

@@ -368,6 +368,9 @@ def render_stage(mode: str) -> Stage | None:
                 "--check-math",
             ),
         )
+    commands = commands + (
+        uv("blog/tests/sideimage_layout_test.py"),
+    )
     return Stage("render", "optional", commands, needs=("uv",))
 
 
