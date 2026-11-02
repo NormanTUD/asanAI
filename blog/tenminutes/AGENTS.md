@@ -132,6 +132,7 @@ after `assets/site.js`. The markup is keyed by `data-demo`:
 - `linefit` — weight/bias line fitting with real gradient steps
 - `perceptron` — trainable 2-D decision boundary
 - `gradient` — gradient descent on a loss landscape + loss curve
+- `optimizer` — SGD / momentum / Adam race on a shared loss surface
 - `dream` — stylized Inceptionism noise reveal
 - `polyfit` — polynomial degree, true curve, train/test gap
 - `activation` — ReLU / tanh / sigmoid / GELU plots
@@ -237,6 +238,17 @@ connections, not the calendar cards.
 renders the pipeline shape line with `temml.renderToString(...)`. Keep the
 fallback to plain text if Temml is unavailable.
 
+## Image credits (`history.html`)
+
+`assets/image-credits.json` is the local source of truth for the history
+timeline images. The page does **not** load `literature.js`; the manifest copies
+the author, license, and source URL, and entries with a `literatureKey` are
+cross-checked against the bibliography by the test below. Every timeline image
+needs a manifest entry and a caption with the same author, license, and source
+link. Static figures need a visible `<figcaption>` with a source link and a
+license keyword. Original diagrams are credited as `Ten Minutes` with a local
+source link and a CC BY-SA 4.0 licence.
+
 ## Validation
 
 The blog validators are built around lesson `.php` files and the main blog's
@@ -247,7 +259,11 @@ finishing, run these light checks:
 2. Check inline scripts, for example by extracting each inline `<script>` to a
    temporary `.js` file and running `node --check` on it.
 3. Check HTML tag balance and that every `href` target exists.
-4. `git diff --check` to catch whitespace errors.
+4. `python3 blog/tests/tenminutes_image_credits_test.py` — checks the history
+   image credits against `assets/image-credits.json` and cross-checks entries
+   with a `literatureKey` against `literature.js`. The page never loads
+   `literature.js`; the JSON is the local source of truth.
+5. `git diff --check` to catch whitespace errors.
 
 The pages are static; there is no compile, test, or deploy step in this
 directory.

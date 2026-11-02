@@ -4864,6 +4864,35 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	transition: width 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .meter--warm > span { background: linear-gradient(90deg, var(--tm-gold), var(--tm-coral)); }
+.or-board {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-top: 12px;
+}
+.or-row {
+	display: grid;
+	grid-template-columns: 12px 1fr auto;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 10px;
+	border: 1px solid var(--tm-line);
+	border-radius: 8px;
+	background: var(--tm-paper-2);
+	font-family: var(--tm-ui);
+	font-size: 0.72rem;
+}
+.or-row b { font-weight: 600; color: var(--tm-ink); }
+.or-dot {
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+}
+.or-st {
+	font-family: var(--tm-mono);
+	font-size: 0.62rem;
+	color: var(--tm-muted);
+}
 .legend-dots {
 	display: flex;
 	flex-wrap: wrap;

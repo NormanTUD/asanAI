@@ -150,7 +150,7 @@
 						<div class="prose">
 							<p>
 								At the input, “bank” is already a vector. Then each block edits it. The
-								residual stream — the running vector from the six-step demo — carries the
+								residual stream — the running vector from <a href="intuition.html#inside">the six-step demo</a> — carries the
 								old representation forward and adds a new one on
 								top: <code>z = x + Attention(Norm(x))</code>, then
 								<code>y = z + FFN(Norm(z))</code>. Nothing is overwritten; everything
@@ -347,8 +347,7 @@
 								they are. Lower values sharpen the distribution toward the top token; higher
 								values flatten it and give rare tokens more room.
 								<strong>Temperature is a dial on courage, not on knowledge.</strong> The
-								knowledge sits in the logits; temperature and top-p decide how boldly the
-								decoder reads them.
+								knowledge sits in the logits; the rest is in <a href="samplinglab.html">the decoding lesson</a>.
 							</p>
 						</div>
 						<div class="myth-grid">
@@ -373,7 +372,7 @@
 							<p>
 								One last surprise from recent research: in a simplified setting, a linear
 								attention layer can implement a step of gradient descent on the examples in the
-								prompt. That reframes in-context learning as an optimizer the model learned to
+								prompt (<a href="https://arxiv.org/abs/2212.07677" rel="noopener">von Oswald et al., 2022</a>). That reframes in-context learning as an optimizer the model learned to
 								run inside its forward pass. The result is suggestive, not a complete
 								explanation; it is one of the most interesting open threads in the field.
 							</p>

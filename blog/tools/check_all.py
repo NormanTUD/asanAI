@@ -110,6 +110,12 @@ STAGES: tuple[Stage, ...] = (
         needs=("uv",),
     ),
     Stage(
+        "tenminutes-image-credits",
+        "static",
+        (uv("blog/tests/tenminutes_image_credits_test.py"),),
+        needs=("uv",),
+    ),
+    Stage(
         "lesson-guards",
         "static",
         (uv("blog/tests/lesson_guard.py", "blog/"),),

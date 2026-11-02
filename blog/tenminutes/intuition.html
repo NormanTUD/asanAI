@@ -19,11 +19,10 @@
 				<div>
 					<h1>One word <em>at a time.</em></h1>
 					<p class="hero-deck">
-						This is the December end-of-year calendar: one compact LLM topic is released
-						each day. Read along and you will gain a good intuitive understanding of how
-						LLMs work and how they came to be. Today starts with the intuition we will build
-						on: a model predicting the next word from the text so far, the loop behind
-						<strong>chat, code, translation, and reasoning</strong>.
+						A language model predicts the next word from the text so far. That one loop is
+						the engine behind <strong>chat, code, translation, and reasoning</strong>. Start
+						here: the rest of the calendar is machinery for making this single prediction
+						better.
 					</p>
 				</div>
 			</section>
@@ -139,21 +138,13 @@
 
 						<div class="prose">
 							<p>
-								Temperature is only one decoding choice, and it does not change what the model
-								knows. At temperature zero — greedy decoding — the top candidate is taken every
+								Temperature is only one decoding choice, and it changes style, not knowledge.
+								At temperature zero — greedy decoding — the top candidate is taken every
 								time: deterministic, often repetitive, but still a freshly computed
-								distribution rather than a lookup. Above zero, sampling draws from the
-								distribution. Low temperature concentrates on likely words; high temperature
-								flattens the distribution and can produce incoherence. Top-k and top-p restrict
-								the pool before drawing.
-							</p>
-							<p>
-								The decoder is a choice, not a property of the model. Greedy takes the top
-								word; sampling draws from the distribution; top-p keeps the smallest set of
-								words whose probabilities reach 0.9 and samples among them. The competence
-								lives in the learned distribution; the decoder only selects. Temperature
-								changes the style of an answer, not its knowledge — if the model does not know
-								a fact, no setting makes it appear.
+								distribution rather than a lookup. Sampling draws from the distribution;
+								top-p keeps the smallest set of words whose probabilities reach 0.9 and
+								samples among them. The competence lives in the learned distribution, so if
+								the model does not know a fact, no decoder setting makes it appear.
 							</p>
 						</div>
 						<div class="aha">

@@ -3450,6 +3450,347 @@
 		render();
 	}
 
+	/* ── optimizer race ─────────────────────────────────────── */
+
+	function initOptimizer(root) {
+		var canvas = $("[data-opt-canvas]", root);
+		if (!canvas) return;
+		var board = $("[data-opt-board]", root);
+		var leaderEl = $("[data-opt-leader]", root);
+		var stepEl = $("[data-opt-stepout]", root);
+		var lossEl = $("[data-opt-loss]", root);
+		var noteEl = $("[data-opt-note]", root);
+		var playBtn = $("[data-opt-play]", root);
+		var stepBtn = $("[data-opt-step]", root);
+		var resetBtn = $("[data-opt-reset]", root);
+		var lrInput = $("[data-opt-lr]", root);
+		var lrOut = $("[data-opt-lr-out]", root);
+		var MAX = 300;
+
+		var surfaces = {
+			ravine: {
+				f: function (x, y) { return 0.05 * x * x + 2.5 * y * y; },
+				g: function (x, y) { return [0.1 * x, 5 * y]; },
+				box: [-6, 6, -3, 3], start: [-5.2, 1.6], min: [[0, 0]], fmin: 0,
+				lr: { sgd: 0.38, mom: 0.04, adam: 0.4 }
+			},
+			banana: {
+				f: function (x, y) { return (1 - x) * (1 - x) + 10 * (y - x * x) * (y - x * x); },
+				g: function (x, y) { return [-2 * (1 - x) - 40 * x * (y - x * x), 20 * (y - x * x)]; },
+				box: [-2, 2, -1, 3], start: [-1.6, 2.6], min: [[1, 1]], fmin: 0,
+				lr: { sgd: 0.012, mom: 0.003, adam: 0.04 }
+			},
+			saddle: {
+				f: function (x, y) { return x * x - y * y + 0.25 * Math.pow(y, 4); },
+				g: function (x, y) { return [2 * x, -2 * y + Math.pow(y, 3)]; },
+				box: [-3, 3, -2.6, 2.6], start: [2.6, 0.02], min: [[0, Math.SQRT2], [0, -Math.SQRT2]], fmin: -1,
+				lr: { sgd: 0.03, mom: 0.01, adam: 0.2 }
+			}
+		};
+		var racers = [
+			{ id: "sgd", name: "SGD", key: "blue" },
+			{ id: "mom", name: "Momentum", key: "gold" },
+			{ id: "adam", name: "Adam", key: "green" }
+		];
+
+		var current = "ravine";
+		var state = [];
+		var startPt = null;
+		var step = 0;
+		var running = false;
+		var raf = null;
+		var bg = null;
+		var bgKey = "";
+		var api = canvasDemo(canvas, paint);
+		if (!api) return;
+
+		function col(rc) {
+			var c = colors();
+			if (rc.key === "blue") return c.blue || "#1275ac";
+			if (rc.key === "gold") return c.gold || "#9f9700";
+			return c.green || "#63a44b";
+		}
+		function bgKeyNow() {
+			return current + "|" + (document.documentElement.getAttribute("data-theme") || "light") +
+				"|" + (canvas.clientWidth | 0) + "x" + (canvas.clientHeight | 0);
+		}
+		function lrMul() {
+			return lrInput ? (parseFloat(lrInput.value) || 1) : 1;
+		}
+		function fmt(n) {
+			if (!isFinite(n)) return "∞";
+			if (n === 0) return "0";
+			if (Math.abs(n) < 0.001) return n.toExponential(1);
+			return n.toFixed(3);
+		}
+
+		function buildBg(w, h) {
+			var c = colors();
+			var low = hexToRgb(c.card || "#fffdf7");
+			var mid = hexToRgb(c.dark ? (c.blue || "#009299") : (c.sky || "#5c9baf"));
+			var high = hexToRgb(c.petrol || "#004b6f");
+			var S = surfaces[current];
+			var gw = 110;
+			var gh = Math.max(56, Math.round(gw * h / Math.max(1, w)));
+			var off = document.createElement("canvas");
+			off.width = gw;
+			off.height = gh;
+			var octx = off.getContext("2d");
+			var img = octx.createImageData(gw, gh);
+			var vals = new Float32Array(gw * gh);
+			var lo = Infinity, hi = -Infinity;
+			for (var j = 0; j < gh; j++) {
+				for (var i = 0; i < gw; i++) {
+					var x = S.box[0] + (i + 0.5) / gw * (S.box[1] - S.box[0]);
+					var y = S.box[3] - (j + 0.5) / gh * (S.box[3] - S.box[2]);
+					var v = Math.log(S.f(x, y) - S.fmin + 0.02);
+					vals[j * gw + i] = v;
+					if (v < lo) lo = v;
+					if (v > hi) hi = v;
+				}
+			}
+			var band = function (v) {
+				return Math.min(13, Math.floor((v - lo) / (hi - lo + 1e-9) * 14));
+			};
+			var dark = c.dark;
+			for (j = 0; j < gh; j++) {
+				for (i = 0; i < gw; i++) {
+					var k = j * gw + i;
+					var t = clamp((vals[k] - lo) / (hi - lo + 1e-9), 0, 1);
+					var base = t < 0.5 ? mix(low, mid, t * 2) : mix(mid, high, (t - 0.5) * 2);
+					var b0 = band(vals[k]);
+					var edge = (i + 1 < gw && band(vals[k + 1]) !== b0) ||
+						(j + 1 < gh && band(vals[k + gw]) !== b0);
+					var s = edge ? (dark ? 1.16 : 0.9) : 1;
+					img.data[k * 4] = clamp(Math.round(base[0] * s), 0, 255);
+					img.data[k * 4 + 1] = clamp(Math.round(base[1] * s), 0, 255);
+					img.data[k * 4 + 2] = clamp(Math.round(base[2] * s), 0, 255);
+					img.data[k * 4 + 3] = 255;
+				}
+			}
+			octx.putImageData(img, 0, 0);
+			return off;
+		}
+
+		function paint(ctx, w, h) {
+			if (!state.length) {
+				ctx.clearRect(0, 0, w, h);
+				return;
+			}
+			var key = bgKeyNow();
+			if (!bg || bgKey !== key) {
+				bg = buildBg(w, h);
+				bgKey = key;
+			}
+			ctx.clearRect(0, 0, w, h);
+			ctx.drawImage(bg, 0, 0, w, h);
+			var S = surfaces[current];
+			var c = colors();
+			function px(x, y) {
+				return [
+					(x - S.box[0]) / (S.box[1] - S.box[0]) * w,
+					(S.box[3] - y) / (S.box[3] - S.box[2]) * h
+				];
+			}
+			ctx.strokeStyle = c.inkSoft || "#2c464d";
+			ctx.lineWidth = 1.2;
+			S.min.forEach(function (m) {
+				var p = px(m[0], m[1]);
+				ctx.beginPath();
+				ctx.arc(p[0], p[1], 5, 0, Math.PI * 2);
+				ctx.stroke();
+			});
+			var sp = px(startPt[0], startPt[1]);
+			ctx.setLineDash([3, 3]);
+			ctx.strokeStyle = c.muted || "#627476";
+			ctx.beginPath();
+			ctx.arc(sp[0], sp[1], 8, 0, Math.PI * 2);
+			ctx.stroke();
+			ctx.setLineDash([]);
+			racers.forEach(function (rc, i) {
+				var r = state[i];
+				var color = col(rc);
+				ctx.strokeStyle = color;
+				ctx.lineWidth = 2;
+				ctx.lineJoin = "round";
+				ctx.beginPath();
+				r.path.forEach(function (p, idx) {
+					var q = px(p[0], p[1]);
+					if (idx) ctx.lineTo(q[0], q[1]);
+					else ctx.moveTo(q[0], q[1]);
+				});
+				ctx.stroke();
+				var head = px(r.x, r.y);
+				if (head[0] > -20 && head[0] < w + 20 && head[1] > -20 && head[1] < h + 20) {
+					ctx.fillStyle = color;
+					ctx.beginPath();
+					ctx.arc(head[0], head[1], 5.5, 0, Math.PI * 2);
+					ctx.fill();
+					ctx.strokeStyle = c.card || "#fffdf7";
+					ctx.lineWidth = 1.5;
+					ctx.stroke();
+				}
+			});
+		}
+
+		function renderBoard() {
+			if (!board) return;
+			var S = surfaces[current];
+			var order = state.map(function (r, i) {
+				return { r: r, rc: racers[i] };
+			}).sort(function (a, b) {
+				var da = a.r.done === null ? Infinity : a.r.done;
+				var db = b.r.done === null ? Infinity : b.r.done;
+				if (da !== db) return da - db;
+				if (a.r.dead !== b.r.dead) return a.r.dead ? 1 : -1;
+				return a.r.losses[a.r.losses.length - 1] - b.r.losses[b.r.losses.length - 1];
+			});
+			board.innerHTML = order.map(function (o) {
+				var L = o.r.losses[o.r.losses.length - 1] - S.fmin;
+				var status = o.r.dead ? "diverged" : o.r.done !== null ? "goal in " + o.r.done : "loss " + fmt(L);
+				return '<div class="or-row"><span class="or-dot" style="background:' + col(o.rc) + '"></span><b>' +
+					escapeHtml(o.rc.name) + '</b><span class="or-st">' + status + "</span></div>";
+			}).join("");
+			if (leaderEl) leaderEl.textContent = order[0] ? order[0].rc.name : "—";
+			if (lossEl) lossEl.textContent = order[0] ? fmt(order[0].r.losses[order[0].r.losses.length - 1] - S.fmin) : "—";
+			if (stepEl) stepEl.textContent = step + " / " + MAX;
+			if (noteEl) {
+				var anyDead = state.some(function (r) { return r.dead; });
+				if (step === 0) noteEl.textContent = "Press Race, or click the map to start all three from that point.";
+				else if (anyDead) noteEl.textContent = "Someone left the map. A learning rate that suits SGD can be too large for momentum or Adam.";
+				else if (order[0].r.done !== null) noteEl.textContent = order[0].rc.name + " reached the minimum first, in " + order[0].r.done + " steps. Try another surface: the ranking changes.";
+				else noteEl.textContent = "Racing: " + order[0].rc.name + " currently has the lowest loss.";
+			}
+		}
+
+		function reset(pt) {
+			pause();
+			var S = surfaces[current];
+			var s = pt || S.start;
+			startPt = s.slice();
+			step = 0;
+			state = racers.map(function (r) {
+				return {
+					id: r.id, x: s[0], y: s[1], vx: 0, vy: 0, m: [0, 0], v: [0, 0],
+					path: [[s[0], s[1]]], losses: [S.f(s[0], s[1])], done: null, dead: false
+				};
+			});
+			api.redraw();
+			renderBoard();
+		}
+
+		function advance(n) {
+			var S = surfaces[current];
+			var mul = lrMul();
+			var span = Math.max(S.box[1] - S.box[0], S.box[3] - S.box[2]);
+			for (var k = 0; k < n && step < MAX; k++) {
+				step++;
+				state.forEach(function (r) {
+					if (r.dead || r.done !== null) return;
+					var g = S.g(r.x, r.y);
+					var lr = S.lr[r.id] * mul;
+					if (r.id === "sgd") {
+						r.x -= lr * g[0];
+						r.y -= lr * g[1];
+					} else if (r.id === "mom") {
+						r.vx = 0.9 * r.vx + g[0];
+						r.vy = 0.9 * r.vy + g[1];
+						r.x -= lr * r.vx;
+						r.y -= lr * r.vy;
+					} else {
+						var b1 = 0.9, b2 = 0.999, t = step;
+						r.m[0] = b1 * r.m[0] + (1 - b1) * g[0];
+						r.m[1] = b1 * r.m[1] + (1 - b1) * g[1];
+						r.v[0] = b2 * r.v[0] + (1 - b2) * g[0] * g[0];
+						r.v[1] = b2 * r.v[1] + (1 - b2) * g[1] * g[1];
+						var mh0 = r.m[0] / (1 - Math.pow(b1, t));
+						var mh1 = r.m[1] / (1 - Math.pow(b1, t));
+						var vh0 = r.v[0] / (1 - Math.pow(b2, t));
+						var vh1 = r.v[1] / (1 - Math.pow(b2, t));
+						r.x -= lr * mh0 / (Math.sqrt(vh0) + 1e-8);
+						r.y -= lr * mh1 / (Math.sqrt(vh1) + 1e-8);
+					}
+					var L = S.f(r.x, r.y);
+					if (!isFinite(L) || Math.abs(r.x) > span * 4 || Math.abs(r.y) > span * 4) {
+						r.dead = true;
+						return;
+					}
+					r.path.push([r.x, r.y]);
+					if (r.path.length > 500) r.path.shift();
+					r.losses.push(L);
+					var near = S.min.some(function (m) {
+						return Math.hypot(r.x - m[0], r.y - m[1]) < 0.05 * span / 6;
+					});
+					if (near && L - S.fmin < 1e-3) r.done = step;
+				});
+			}
+			renderBoard();
+		}
+
+		function updatePlay() {
+			if (playBtn) playBtn.textContent = running ? "Pause" : "Race";
+		}
+		function pause() {
+			running = false;
+			cancelAnimationFrame(raf);
+			updatePlay();
+		}
+		function play() {
+			if (running) return;
+			if (step >= MAX || state.every(function (r) { return r.done !== null || r.dead; })) reset(startPt);
+			running = true;
+			updatePlay();
+			function loop() {
+				if (!running) return;
+				advance(4);
+				api.redraw();
+				if (step >= MAX || state.every(function (r) { return r.done !== null || r.dead; })) {
+					pause();
+					api.redraw();
+					return;
+				}
+				raf = requestAnimationFrame(loop);
+			}
+			raf = requestAnimationFrame(loop);
+		}
+
+		$$("[data-opt-surface]", root).forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				current = btn.getAttribute("data-opt-surface");
+				$$("[data-opt-surface]", root).forEach(function (b) {
+					b.classList.toggle("is-on", b === btn);
+				});
+				bg = null;
+				reset();
+			});
+		});
+		if (playBtn) playBtn.addEventListener("click", function () {
+			if (running) pause();
+			else play();
+		});
+		if (stepBtn) stepBtn.addEventListener("click", function () {
+			pause();
+			advance(1);
+			api.redraw();
+		});
+		if (resetBtn) resetBtn.addEventListener("click", function () { reset(); });
+		if (lrInput) lrInput.addEventListener("input", function () {
+			if (lrOut) lrOut.textContent = "×" + lrMul().toFixed(2);
+			reset();
+		});
+		canvas.addEventListener("click", function (e) {
+			var rect = canvas.getBoundingClientRect();
+			if (!rect.width) return;
+			var S = surfaces[current];
+			var x = S.box[0] + (e.clientX - rect.left) / rect.width * (S.box[1] - S.box[0]);
+			var y = S.box[3] - (e.clientY - rect.top) / rect.height * (S.box[3] - S.box[2]);
+			reset([x, y]);
+			play();
+		});
+		if (lrOut) lrOut.textContent = "×" + lrMul().toFixed(2);
+		reset();
+	}
+
 	/* ── boot ───────────────────────────────────────────────── */
 
 	function boot() {
@@ -3494,6 +3835,7 @@
 			else if (type === "trajectory") initTrajectory(root);
 			else if (type === "bend") initBend(root);
 			else if (type === "headbudget") initHeadBudget(root);
+			else if (type === "optimizer") initOptimizer(root);
 		});
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

@@ -185,6 +185,42 @@
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>The gradient is local. A good learning rate turns local information into global progress; a bad one turns it into oscillation or divergence.</span></div>
 						</div>
+
+						<div class="prose">
+							<p>If plain gradient descent works, why do real systems use momentum and Adam? Because the surface is rarely a round bowl. In a narrow ravine, plain SGD bounces between the walls while it crawls along the floor; momentum averages the bouncing away, and Adam rescales each direction separately. The race below makes the difference visible.</p>
+							<p>These are not different definitions of the gradient. They are different ways of using the same local slope: remember the last steps, or divide each coordinate by its recent magnitude. The right learning rate depends on both the surface and the optimizer.</p>
+						</div>
+						<div class="demo demo--paper" data-demo="optimizer">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Three optimizers, one surface <span>· demo</span></p>
+									<p class="demo-sub">SGD, momentum, and Adam start together. Pick a surface and run the race; the same learning rate can be fine for one and fatal for another.</p>
+								</div>
+								<span class="demo-badge">optimizer race</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas demo-canvas--md" data-opt-canvas aria-label="Three optimizers descending the same two-dimensional loss surface"></canvas>
+								<div class="chip-row" style="margin-top:12px">
+									<button class="chip is-on" type="button" data-opt-surface="ravine">narrow ravine</button>
+									<button class="chip" type="button" data-opt-surface="banana">banana valley</button>
+									<button class="chip" type="button" data-opt-surface="saddle">saddle</button>
+								</div>
+								<div class="demo-controls">
+									<button class="btn-demo btn-demo--green" type="button" data-opt-play>Race</button>
+									<button class="btn-demo" type="button" data-opt-step>Step →</button>
+									<button class="btn-demo" type="button" data-opt-reset>Reset</button>
+									<label>Learning rate × <input type="range" data-opt-lr min="0.5" max="2" step="0.05" value="1"><output data-opt-lr-out>×1.00</output></label>
+								</div>
+								<div class="demo-kpis">
+									<div class="demo-kpi"><b>Leader</b><span data-opt-leader>—</span></div>
+									<div class="demo-kpi"><b>Step</b><span data-opt-stepout>0 / 300</span></div>
+									<div class="demo-kpi"><b>Best loss</b><span data-opt-loss>—</span></div>
+								</div>
+								<div class="or-board" data-opt-board></div>
+								<p class="demo-hint" data-opt-note>Press Race, or click the map to start all three from that point.</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The gradient is the same for everyone; the optimizer decides how to use it. Momentum smooths a ravine, Adam rescales each direction, and the right learning rate depends on both.</span></div>
+						</div>
 					</section>
 
 					<section class="section-block" id="takeaway">

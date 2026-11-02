@@ -66,7 +66,7 @@
 					</section>
 
 					<section class="section-block" id="timeline">
-						<div class="section-kicker"><span class="sk-num">02</span> Twelve turning points</div>
+						<div class="section-kicker"><span class="sk-num">02</span> Fourteen turning points</div>
 						<h2 class="section-title">Follow the fuse.</h2>
 						<div class="prose">
 							<p>
@@ -78,7 +78,7 @@
 						<div class="demo demo--paper timeline-shell" id="timeline-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">Twelve turning points <span>· demo 01</span></p>
+									<p class="demo-title">Fourteen turning points <span>· demo 01</span></p>
 									<p class="demo-sub">Drag the line, scroll sideways, or use the arrow buttons. Select a node to read its story.</p>
 								</div>
 								<span class="demo-badge">43,000 BCE → today</span>
@@ -920,10 +920,10 @@
 				name: "Logic & grammar",
 				era: "Antiquity · formal rules",
 				title: "Reason and speech become calculi",
-				text: "Aristotle’s syllogism separates the structure of an argument from its content: all M are P; S is M; therefore S is P. In India, Pāṇini’s Aṣṭādhyāyī gives Sanskrit a fully generative grammar of metarules, transformations, and recursion — a compiler-like contract centuries before Aristotle. Reasoning and speech both become formal systems that can, in principle, be executed.",
-				img: null,
-				alt: "",
-				cap: ""
+				text: "Aristotle’s syllogism separates the structure of an argument from its content: all M are P; S is M; therefore S is P. In India, Pāṇini’s Aṣṭādhyāyī gives Sanskrit a fully generative grammar of metarules, transformations, and recursion — a compiler-like contract long before the European grammatical tradition. Reasoning and speech both become formal systems that can, in principle, be executed.",
+				img: "../Sanzio_01_Plato_Aristotle.jpg",
+				alt: "Plato and Aristotle in Raphael's School of Athens",
+				cap: "Plato and Aristotle in Raphael’s <em>School of Athens</em>. Image: Raphael, <a href='https://commons.wikimedia.org/wiki/File:Sanzio_01_Plato_Aristotle.jpg' rel='noopener'>public domain</a>."
 			},
 			{
 				date: "c. 200–60 BCE",
@@ -956,21 +956,41 @@
 				cap: "Babbage’s Analytical Engine. Image: John Cummings, <a href='https://commons.wikimedia.org/wiki/File:Babbages_Analytical_Engine,_1834-1871._(9660574685).jpg' rel='noopener'>CC BY-SA 2.0</a>."
 			},
 			{
-				date: "1943–1958",
+				date: "1943",
 				name: "Neurons",
-				era: "Cybernetics · learning machines",
+				era: "Cybernetics · logical neurons",
 				title: "The first logical neurons",
-				text: "McCulloch and Pitts (1943) model a neuron as a logical threshold unit. Their networks without loops compute Boolean functions; networks with loops can hold a state, and von Neumann used those loops as memory in the stored-program computer. Wiener’s cybernetics, Ashby’s homeostat, and Grey Walter’s tortoise explore feedback and adaptation. The SNARC (1951) is the first physical neural network; Rosenblatt’s perceptron (1958) learns weights from examples and is announced by the U.S. Navy. The idea that a machine could learn from data enters the room.",
-				img: "../perceptron2.jpg",
-				alt: "The Mark I Perceptron",
-				cap: "The Mark I Perceptron. Image: U.S. Navy, <a href='https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg' rel='noopener'>public domain</a>."
+				text: "McCulloch and Pitts (1943) model a neuron as a logical threshold unit. Their networks without loops compute Boolean functions; networks with loops can hold a state, and von Neumann used those loops as memory in the stored-program computer. Wiener’s cybernetics, Ashby’s homeostat, and Grey Walter’s tortoise explore feedback and adaptation. The idea that a machine could compute with neurons enters the room.",
+				img: "../walter_pitts_1954.jpg",
+				alt: "Walter Pitts in 1954",
+				cap: "Walter Pitts in 1954. Image: Francis Bello, <a href='https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg' rel='noopener'>public domain</a>."
 			},
 			{
-				date: "1956–2011",
+				date: "1951",
+				name: "SNARC",
+				era: "Cybernetics · learning hardware",
+				title: "The first physical neural network",
+				text: "Marvin Minsky and Dean Edmonds build the SNARC, a randomly connected network of 40 vacuum-tube neurons that learns by reinforcement. It is the first physical neural network: no program, just knobs and clutches that change with success. The machine is a rat in a maze made of hardware.",
+				img: "assets/img/snarc-schematic.svg",
+				alt: "Schematic of the SNARC machine",
+				cap: "Schematic of the SNARC: 40 vacuum-tube neurons, a reinforcement signal, and a clutch that changes the weights. The only surviving SNARC photograph is not freely licensed. Drawing: Ten Minutes, <a href='assets/img/snarc-schematic.svg' rel='noopener'>CC BY-SA 4.0</a>."
+			},
+			{
+				date: "1958–1960",
+				name: "Perceptron",
+				era: "Learning machines · weights from error",
+				title: "A machine that learns from its mistakes",
+				text: "Frank Rosenblatt’s perceptron learns weights from examples and is announced by the U.S. Navy. The Mark I Perceptron uses 400 photocells and motor-driven potentiometers; its learning rule updates weights directly from error. The press hears a machine that will walk, talk, and see; the science hears a learning rule.",
+				img: "../perceptron2.jpg",
+				alt: "The Mark I Perceptron",
+				cap: "The Mark I Perceptron, announced by the U.S. Navy in 1958. Image: U.S. Navy, <a href='https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg' rel='noopener'>public domain</a>."
+			},
+			{
+				date: "1959–2011",
 				name: "Winters & narrow AI",
 				era: "Cold War · promises and detours",
 				title: "The name, the winters, the slow climb",
-				text: "The Dartmouth workshop of 1956 names the field. Symbolic AI builds expert systems, planners, and microworlds such as SHRDLU, then hits the frame problem and the limits of hand-coded rules. Funding freezes in the first AI winter; connectionism returns in the 1980s; a second winter follows. Deep Blue beats Kasparov in 1997, but it is still a narrow, hand-tuned system. The pattern is repeated: promise, disappointment, quiet accumulation.",
+				text: "The Dartmouth workshop of 1956 had named the field. Symbolic AI builds expert systems, planners, and microworlds such as SHRDLU, then hits the frame problem and the limits of hand-coded rules. Minsky and Papert’s 1969 <em>Perceptrons</em> critique exposes the limits of a single layer; funding freezes in the first AI winter. Connectionism returns in the 1980s; a second winter follows. Deep Blue beats Kasparov in 1997, but it is still a narrow, hand-tuned system.",
 				img: "../shrdlu.gif",
 				alt: "Screenshot of the SHRDLU blocks-world natural-language interface",
 				cap: "SHRDLU (1972), Terry Winograd's blocks-world program. Image: ai.lect, <a href='https://commons.wikimedia.org/wiki/File:Ailect15shrdlu1.gif' rel='noopener'>CC BY-SA 4.0</a>."
@@ -1001,9 +1021,9 @@
 				era: "LLMs · post-training",
 				title: "Scale, then steer",
 				text: "GPT-3 (Brown et al., 2020) shows that a 175-billion-parameter decoder can learn from a handful of examples in the prompt. Chinchilla (Hoffmann et al., 2022) shows that many models were too large for their training data: for the same compute, a smaller model on more tokens does better. LLaMA brings that lesson to open weights. RLHF and InstructGPT shape the next-token distribution toward answers people find helpful.",
-				img: null,
-				alt: "",
-				cap: ""
+				img: "../data_center.jpg",
+				alt: "A data center aisle of server racks",
+				cap: "A data center aisle: the compute behind the scale era. Image: Christopher Bowns, <a href='https://commons.wikimedia.org/wiki/File:Virginia_Tech_-_data_center.jpg' rel='noopener'>CC BY-SA 2.0</a>."
 			},
 			{
 				date: "2022–today",
@@ -1011,9 +1031,9 @@
 				era: "Scaling · assistants",
 				title: "A loop that got good enough to talk",
 				text: "ChatGPT makes the next-token loop a public interface. The ingredients were already in place: tokens, vectors, attention, gradient descent, more data, and post-training. The history is still being written — and the same convergence that produced the model also produced its limitations, its costs, and the arguments about what it means.",
-				img: null,
-				alt: "",
-				cap: ""
+				img: "assets/img/chatgpt.png",
+				alt: "A ChatGPT conversation window",
+				cap: "ChatGPT turns the next-token loop into a public interface. Image: Lugab89, <a href='https://commons.wikimedia.org/wiki/File:ChatGPT.png' rel='noopener'>CC BY 3.0</a>."
 			}
 		];
 
