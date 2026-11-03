@@ -1401,3 +1401,7 @@ td .bad { color: var(--rose); font-weight: 650; }
 @media (max-width: 680px) {
   .plot-wrap { height: 340px; }
 }
+
+.formula-card { overflow-x: auto; }
+.formula-card .tex { overflow-x: auto; }
+.exercise .ex-body { overflow-x: auto; }

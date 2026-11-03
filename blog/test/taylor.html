@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taylorreihen: Jede glatte Kurve als Polynom</title>
+<meta name="description" content="Taylorreihen von der Idee bis zur Fehlerabschätzung. Mit Temml, interaktiven Plots, Canvas-Experimenten und jedem Rechenschritt.">
+<link rel="stylesheet" href="../Temml-Local.css">
+<link rel="stylesheet" href="fourier_taylor.css">
+</head>
+<body>
+
+<div id="read-progress"></div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="taylor.html">
+      <span class="brand-mark">T</span>
+      <span>Taylor visuell<small>Lokale Polynome, Fehler, Anwendungen</small></span>
+    </a>
+    <nav class="topnav" aria-label="Seitennavigation">
+      <a href="fourier.html">Fourier</a>
+      <a class="active" href="taylor.html">Taylor</a>
+      <a href="#uebungen">Übungen</a>
+      <a href="#quellen">Quellen</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="badge"><span class="dot"></span> Vom Tangens zur Fehlerabschätzung</div>
+      <h1>Jede glatte Kurve ist<br><em>lokal ein Polynom.</em></h1>
+      <p class="lede">
+        Taylorreihen beantworten eine einfache Frage: Wie sieht eine Funktion
+        ganz in der Nähe eines Punktes aus? Die Antwort ist ein Polynom, das
+        Höhe, Steigung, Krümmung und alle höheren Ableitungen an diesem Punkt
+        nachbaut. Diese Seite zeigt, wie das Rezept entsteht, wie du es von
+        Hand anwendest, wo es versagt und warum es in Physik, Numerik und
+        maschinellem Lernen überall auftaucht.
+      </p>
+      <div class="meta-chips">
+        <span>14 Abschnitte</span>
+        <span>5 interaktive Labore</span>
+        <span>Rechnen von Hand</span>
+        <span>e^x, sin, ln, Wurzel, mehrere Variablen</span>
+      </div>
+    </div>
+    <div class="hero-art">
+      <canvas id="taylorHero" aria-label="Animation einer Tangente an eine Sinuskurve"></canvas>
+      <div class="hero-caption">Funktion &nbsp;·&nbsp; Tangente &nbsp;·&nbsp; Krümmung</div>
+    </div>
+  </div>
+</section>
+
+<div class="shell">
+  <aside class="toc" aria-label="Inhaltsverzeichnis">
+    <div class="toc-title">Inhalt</div>
+    <a href="#idee"><span class="n">01</span> Die Idee</a>
+    <a href="#herkunft"><span class="n">02</span> Herkunft</a>
+    <a href="#ableitung"><span class="n">03</span> Vom Wunsch zum Rezept</a>
+    <a href="#kochrezept"><span class="n">04</span> Kochrezept und Fehler</a>
+    <a href="#beispiele"><span class="n">05</span> Durchgerechnete Beispiele</a>
+    <a href="#serien"><span class="n">06</span> Reihen aus Reihen</a>
+    <a href="#konvergenz"><span class="n">07</span> Radius und Singularitäten</a>
+    <a href="#euler"><span class="n">08</span> Euler aus Taylor</a>
+    <a href="#mehrdimensional"><span class="n">09</span> Mehrere Variablen</a>
+    <a href="#newton"><span class="n">10</span> Newton und Optimierung</a>
+    <a href="#wofuer"><span class="n">11</span> Wofür das Ganze</a>
+    <a href="#fallen"><span class="n">12</span> Fallen und Fehler</a>
+    <a href="#uebungen"><span class="n">13</span> Selbst rechnen</a>
+    <a href="#quellen"><span class="n">14</span> Quellen</a>
+  </aside>
+
+  <main class="article">
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="idee">
+      <div class="sec-head">
+        <div class="sec-num">01</div>
+        <div>
+          <div class="sec-kicker">Der eine Gedanke</div>
+          <h2>Die Idee: lokal gerade denken</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Wenn du weit genug in eine glatte Kurve hineinzoomst, sieht sie fast
+          wie eine Gerade aus. Das ist die geometrische Bedeutung der
+          Ableitung. Die Tangente ist die beste lineare Näherung an einem
+          Punkt. Taylor geht einen Schritt weiter: Wenn eine Gerade nicht
+          reicht, nimm eine Parabel. Wenn die auch nicht reicht, nimm ein
+          Polynom dritten Grades, vierten Grades, und so weiter.
+        </p>
+        <p>
+          Das Entscheidende ist, was „beste Näherung“ heißt. Ein Taylor-Polynom
+          vom Grad <span class="tex">n</span> ist das einzige Polynom vom Grad
+          höchstens <span class="tex">n</span>, das an der Stelle
+          <span class="tex">a</span> dieselben ersten
+          <span class="tex">n</span> Ableitungen hat wie die Funktion. Es
+          stimmt also nicht nur im Funktionswert überein, sondern auch in der
+          Steigung, in der Krümmung, im Ruck und in allen weiteren
+          Ableitungen, die du mitnimmst.
+        </p>
+        <p>
+          Im Labor unten kannst du das sehen. Wähle eine Funktion, einen
+          Entwicklungspunkt und einen Grad. Die dicke Kurve ist die Funktion,
+          die farbige Kurve das Taylor-Polynom. Mit dem Zoom-Regler änderst du
+          den Ausschnitt. Nah am Entwicklungspunkt liegen die beiden Kurven
+          fast aufeinander. Weit weg können sie sich dramatisch trennen.
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 1: Der Taylor-Baukasten</h3>
+            <div class="lab-sub">Funktion, Entwicklungspunkt, Grad und Ausschnitt frei wählen.</div>
+          </div>
+          <span class="lab-tag">Kernlabor</span>
+        </div>
+        <div class="controls">
+          <label class="control">
+            <span class="row"><span>Funktion</span><b>&nbsp;</b></span>
+            <select id="taylorFn">
+              <option value="sin" selected>sin x</option>
+              <option value="cos">cos x</option>
+              <option value="exp">eˣ</option>
+              <option value="ln">ln(1+x)</option>
+              <option value="sqrt">√(1+x)</option>
+              <option value="geom">1/(1−x)</option>
+            </select>
+          </label>
+          <label class="control">
+            <span class="row"><span>Entwicklungspunkt a</span><b id="taylorAVal">0.00</b></span>
+            <input type="range" id="taylorA" min="-2" max="2" step="0.25" value="0">
+          </label>
+          <label class="control">
+            <span class="row"><span>Grad n</span><b id="taylorNVal" class="amber">3</b></span>
+            <input type="range" class="amber" id="taylorN" min="0" max="12" step="1" value="3">
+          </label>
+          <label class="control">
+            <span class="row"><span>Ausschnitt</span><b id="taylorZoomVal" class="violet">±4</b></span>
+            <input type="range" class="violet" id="taylorZoom" min="0.6" max="7" step="0.1" value="4">
+          </label>
+        </div>
+        <div class="canvas-wrap h-lg">
+          <canvas id="taylorCanvas" aria-label="Funktion und Taylor-Polynom"></canvas>
+        </div>
+        <div class="legend">
+          <span><i></i> Taylor-Polynom</span>
+          <span><i class="dim"></i> Funktion</span>
+          <span><i class="rose"></i> Entwicklungspunkt</span>
+        </div>
+        <div class="btnrow">
+          <button class="primary" id="taylorPlay">Terme aufbauen</button>
+          <button id="taylorReset">Zurücksetzen</button>
+        </div>
+        <div class="mini-label">Das Polynom</div>
+        <div class="math-block" style="margin-top:6px">
+          <div id="taylorFormula" class="formula-live"></div>
+        </div>
+        <div class="mini-label">Ableitungen und Koeffizienten an der Stelle a</div>
+        <div class="table-wrap">
+          <table class="deriv-table" id="taylorTable">
+            <thead>
+              <tr><th>k</th><th>f⁽ᵏ⁾(a)</th><th>cₖ = f⁽ᵏ⁾(a)/k!</th><th>Term</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="readout">
+          <div class="ro-box"><div class="k">Polynomgrad</div><div class="v" id="taylorDegOut">3</div></div>
+          <div class="ro-box amber"><div class="k">Entwicklungspunkt</div><div class="v" id="taylorAOut">0.00</div></div>
+          <div class="ro-box violet"><div class="k">Nächster Term</div><div class="v" id="taylorNextOut">x⁴/24</div></div>
+        </div>
+      </div>
+
+      <div class="insight">
+        <div class="insight-title">Das mentale Bild</div>
+        <p>
+          Stell dir vor, du legst ein Lineal an einen Punkt. Das ist die
+          Tangente. Dann biegst du das Lineal zu einer Parabel, damit auch die
+          Krümmung passt. Dann zu einer Kurve dritten Grades, damit auch die
+          Änderung der Krümmung passt. Jeder zusätzliche Term kauft dir eine
+          weitere Ableitung, die an diesem einen Punkt übereinstimmt. Der
+          Preis: Du brauchst immer mehr Informationen über die Funktion, und
+          die Gültigkeit bleibt zunächst lokal.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="herkunft">
+      <div class="sec-head">
+        <div class="sec-num">02</div>
+        <div>
+          <div class="sec-kicker">Woher die Idee kommt</div>
+          <h2>Herkunft: Taylor, Maclaurin und die Suche nach Näherung</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Brook Taylor veröffentlichte 1715 die <em>Methodus Incrementorum
+          Directa et Inversa</em>. Darin steht die nach ihm benannte Reihe,
+          allerdings noch ohne die moderne Konvergenztheorie. Taylor dachte in
+          Differenzen und Fluxionen, nicht in Grenzwerten. Die Formel war
+          brauchbar, aber der Begriff der Konvergenz war noch nicht sauber
+          geklärt.
+        </p>
+        <p>
+          Colin Maclaurin popularisierte 1742 den wichtigen Spezialfall um
+          <span class="tex">a=0</span>, die später so genannte
+          Maclaurin-Reihe. Die Idee selbst hatte Vorläufer: James Gregory
+          benutzte um 1671 ähnliche Entwicklungen, und Newton interpolierte
+          mit Polynomen. Der entscheidende Fortschritt kam später, als
+          Lagrange, Cauchy und andere den Fehler und die Konvergenz präzise
+          beschrieben.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <div class="tl-item amber">
+          <div class="tl-year">um 1671</div>
+          <div class="tl-title">Gregory und die frühen Reihen</div>
+          <div class="tl-text">
+            James Gregory entwickelt Reihen für trigonometrische und
+            logarithmische Funktionen. Die Technik ist da, aber die Begriffe
+            Grenzwert und Konvergenz sind noch im Werden.
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">1715</div>
+          <div class="tl-title">Brook Taylors Methodus Incrementorum</div>
+          <div class="tl-text">
+            Taylor schreibt die Entwicklung einer Funktion in Potenzen von
+            <span class="tex">(x-a)</span> hin. Die Koeffizienten kommen aus
+            den Ableitungen an der Stelle <span class="tex">a</span>.
+          </div>
+        </div>
+        <div class="tl-item amber">
+          <div class="tl-year">1742</div>
+          <div class="tl-title">Maclaurins Treatise of Fluxions</div>
+          <div class="tl-text">
+            Colin Maclaurin macht die Entwicklung um null populär. Viele
+            Reihen, die heute „Maclaurin-Reihen“ heißen, sind Spezialfälle der
+            Taylor-Reihe.
+          </div>
+        </div>
+        <div class="tl-item violet">
+          <div class="tl-year">1797</div>
+          <div class="tl-title">Lagranges Restglied</div>
+          <div class="tl-text">
+            Joseph-Louis Lagrange gibt eine Formel für den Fehler an. Damit
+            wird aus einer formalen Entwicklung ein Satz mit kontrollierbarer
+            Genauigkeit.
+          </div>
+        </div>
+        <div class="tl-item violet">
+          <div class="tl-year">19. Jahrhundert</div>
+          <div class="tl-title">Cauchy, analytische Funktionen, Konvergenzradius</div>
+          <div class="tl-text">
+            Augustin-Louis Cauchy und andere verbinden Taylor-Reihen mit der
+            komplexen Analysis. Der Konvergenzradius wird als Abstand zur
+            nächsten Singularität verstanden. Das erklärt, warum eine reelle
+            Funktion manchmal nur in einem kleinen Intervall konvergiert.
+          </div>
+        </div>
+      </div>
+
+      <div class="history">
+        <div class="history-title">Warum die Geschichte zählt</div>
+        <p>
+          Taylor-Reihen sind ein gutes Beispiel dafür, dass eine Formel nicht
+          automatisch eine Theorie ist. Die Koeffizientenformel ist einfach.
+          Die schwierigen Fragen sind: Konvergiert die Reihe? Gegen was? Wie
+          groß ist der Fehler nach endlich vielen Termen? Genau diese Fragen
+          entscheiden, ob du die Reihe in einem Programm oder einer
+          physikalischen Näherung gefahrlos benutzen darfst.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="ableitung">
+      <div class="sec-head">
+        <div class="sec-num">03</div>
+        <div>
+          <div class="sec-kicker">Die Herleitung</div>
+          <h2>Vom Wunsch zum Rezept</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Wir wollen eine Funktion <span class="tex">f</span> in der Nähe von
+          <span class="tex">a</span> durch ein Polynom ersetzen. Der einfachste
+          Ansatz ist eine Potenzreihe in <span class="tex">(x-a)</span>:
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">f(x)=c_0+c_1(x-a)+c_2(x-a)^2+c_3(x-a)^3+\cdots</div>
+        </div>
+        <p>
+          Die Frage ist nur: Wie findest du die Koeffizienten
+          <span class="tex">c_k</span>? Die Antwort ist verblüffend direkt.
+          Setze <span class="tex">x=a</span> ein, dann bleiben alle Terme mit
+          <span class="tex">(x-a)</span> übrig und verschwinden. Es bleibt
+          <span class="tex">c_0=f(a)</span>.
+        </p>
+        <p>
+          Für die höheren Koeffizienten differenzierst du die Reihe. Jedes Mal,
+          wenn du ableitest, kommt der Exponent als Faktor nach vorne und der
+          Exponent sinkt um eins. Nach <span class="tex">k</span> Ableitungen
+          ist aus <span class="tex">(x-a)^k</span> die Zahl
+          <span class="tex">k!</span> geworden. Alle Terme mit niedrigerem
+          Exponenten sind verschwunden, alle mit höherem enthalten noch ein
+          <span class="tex">(x-a)</span> und werden bei
+          <span class="tex">x=a</span> null.
+        </p>
+      </div>
+
+      <div class="note">
+        <div class="note-title">So liest du die Rechenschritte</div>
+        <p>
+          Die folgenden Schritte sind zunächst eingeklappt. Versuche den
+          nächsten Schritt erst selbst, dann decke ihn auf. Mit „Alle zeigen“
+          siehst du die vollständige Herleitung auf einmal.
+        </p>
+      </div>
+
+      <div class="steps" id="derivSteps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <p><strong>Wert bei <span class="tex">x=a</span>.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">f(a)=c_0.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <p><strong>Erste Ableitung.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">f'(x)=c_1+2c_2(x-a)+3c_3(x-a)^2+\cdots \quad\Rightarrow\quad f'(a)=c_1.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <p><strong>Zweite Ableitung.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">f''(x)=2c_2+6c_3(x-a)+12c_4(x-a)^2+\cdots \quad\Rightarrow\quad f''(a)=2c_2.</div></div>
+            <p>Also <span class="tex">c_2=f''(a)/2</span>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <p><strong>Dritte Ableitung.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">f'''(x)=6c_3+24c_4(x-a)+\cdots \quad\Rightarrow\quad f'''(a)=6c_3.</div></div>
+            <p>Also <span class="tex">c_3=f'''(a)/6=f'''(a)/3!</span>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <p><strong>Das Muster.</strong> Nach <span class="tex">k</span> Ableitungen bleibt</p>
+            <div class="math-block"><div class="tex" data-display="1">f^{(k)}(a)=k!\,c_k.</div></div>
+            <p>Teile durch <span class="tex">k!</span> und du hast den Koeffizienten:</p>
+            <div class="math-block amber"><div class="tex" data-display="1">c_k=\frac{f^{(k)}(a)}{k!}.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <p><strong>Das Taylor-Polynom.</strong> Brich nach dem Grad <span class="tex">n</span> ab:</p>
+            <div class="math-block"><div class="tex" data-display="1">T_n(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k.</div></div>
+            <p>Für <span class="tex">n\to\infty</span> wird daraus die Taylor-Reihe.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-title">Warum die Fakultät im Nenner steht</div>
+        <p>
+          Die Fakultät ist keine Dekoration. Sie korrigiert genau den Faktor,
+          der beim wiederholten Ableiten entsteht. Ohne sie würde das Polynom
+          nach <span class="tex">n</span> Ableitungen um
+          <span class="tex">n!</span> zu groß sein. Mit ihr stimmen die
+          Ableitungen exakt überein.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="kochrezept">
+      <div class="sec-head">
+        <div class="sec-num">04</div>
+        <div>
+          <div class="sec-kicker">Das Werkzeug</div>
+          <h2>Kochrezept und Fehlerabschätzung</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Für die Praxis brauchst du nicht nur die Formel, sondern auch eine
+          Aussage darüber, wie gut die Näherung ist. Dafür gibt es das
+          Restglied. Wenn du nach dem Grad <span class="tex">n</span> abbrichst,
+          bleibt ein Fehler
+        </p>
+        <div class="math-block rose">
+          <div class="tex" data-display="1">R_n(x)=f(x)-T_n(x).</div>
+        </div>
+        <p>
+          Der Satz von Taylor sagt, dass es unter geeigneten Bedingungen eine
+          Stelle <span class="tex">\xi</span> zwischen
+          <span class="tex">a</span> und <span class="tex">x</span> gibt, an
+          der
+        </p>
+        <div class="math-block rose">
+          <div class="tex" data-display="1">R_n(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1}.</div>
+        </div>
+        <p>
+          Das ist die Lagrange-Form des Restglieds. Du kennst
+          <span class="tex">\xi</span> nicht genau, aber du kannst oft eine
+          Schranke für <span class="tex">|f^{(n+1)}|</span> auf dem Intervall
+          angeben. Dann gilt
+        </p>
+        <div class="math-block rose">
+          <div class="tex" data-display="1">|R_n(x)|\le \frac{M_{n+1}}{(n+1)!}|x-a|^{n+1}, \qquad M_{n+1}=\max_{\xi\in I}|f^{(n+1)}(\xi)|.</div>
+        </div>
+        <p>
+          Damit kannst du vorher sagen, wie viele Terme du brauchst, um eine
+          gewünschte Genauigkeit zu erreichen. Das ist der Unterschied zwischen
+          einer formalen Reihe und einer kontrollierten Näherung.
+        </p>
+      </div>
+
+      <div class="note">
+        <div class="note-title">Der Rechenweg für eine neue Funktion</div>
+        <p>
+          <strong>1.</strong> Wähle den Entwicklungspunkt
+          <span class="tex">a</span> und den Grad <span class="tex">n</span>.
+          <strong>2.</strong> Berechne <span class="tex">f(a), f'(a), f''(a),
+          \dots, f^{(n)}(a)</span>. <strong>3.</strong> Teile jede Ableitung
+          durch <span class="tex">k!</span>. <strong>4.</strong> Schreibe die
+          Summe <span class="tex">\sum c_k(x-a)^k</span> hin.
+          <strong>5.</strong> Bestimme den Konvergenzradius, zum Beispiel mit
+          dem Quotientenkriterium oder über die nächste Singularität.
+          <strong>6.</strong> Schätze den Fehler mit dem Restglied ab.
+          <strong>7.</strong> Prüfe das Ergebnis an einer Stelle, an der du den
+          Funktionswert kennst.
+        </p>
+      </div>
+
+      <div class="insight">
+        <div class="insight-title">Der wichtigste Spezialfall: alternierende Reihen</div>
+        <p>
+          Wenn die Reihe alterniert und die Beträge monoton fallen, ist der
+          Fehler höchstens so groß wie der erste weggelassene Term. Das ist
+          eine schnelle und sehr nützliche Abschätzung. Sie gilt aber nur unter
+          diesen Voraussetzungen. Bei einer allgemeinen Reihe ist der erste
+          weggelassene Term <strong>keine</strong> garantierte Fehlerschranke.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="beispiele">
+      <div class="sec-head">
+        <div class="sec-num">05</div>
+        <div>
+          <div class="sec-kicker">Vollständig gerechnet</div>
+          <h2>Die Reihen, die du auswendig können solltest</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Die folgenden Beispiele decken fast alles ab, was dir in Übungen und
+          Anwendungen begegnet. Rechne sie einmal selbst nach. Wenn du die
+          Muster siehst, kannst du viele neue Reihen durch Einsetzen,
+          Ableiten oder Integrieren gewinnen, ohne jedes Mal die
+          Ableitungstabelle neu zu bauen.
+        </p>
+      </div>
+
+      <div class="prose">
+        <h3>1. Die Exponentialfunktion um 0</h3>
+        <p>
+          Die Exponentialfunktion ist die einfachste Funktion für Taylor, weil
+          jede Ableitung wieder <span class="tex">e^x</span> ist.
+        </p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="deriv-table">
+          <thead><tr><th>k</th><th>f⁽ᵏ⁾(x)</th><th>f⁽ᵏ⁾(0)</th><th>cₖ</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>eˣ</td><td>1</td><td>1</td></tr>
+            <tr><td>1</td><td>eˣ</td><td>1</td><td>1</td></tr>
+            <tr><td>2</td><td>eˣ</td><td>1</td><td>1/2</td></tr>
+            <tr><td>3</td><td>eˣ</td><td>1</td><td>1/6</td></tr>
+            <tr><td>4</td><td>eˣ</td><td>1</td><td>1/24</td></tr>
+            <tr><td>5</td><td>eˣ</td><td>1</td><td>1/120</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="math-block">
+        <div class="tex" data-display="1">e^x=1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\frac{x^4}{4!}+\cdots=\sum_{k=0}^{\infty}\frac{x^k}{k!}.</div>
+      </div>
+      <div class="prose">
+        <p>
+          Der Konvergenzradius ist unendlich. Das Quotientenkriterium zeigt es:
+          Der Quotient aufeinanderfolgender Terme ist
+          <span class="tex">|x|/(k+1)</span> und geht für jedes feste
+          <span class="tex">x</span> gegen null. Die Reihe konvergiert also
+          überall.
+        </p>
+        <p>
+          Wie gut ist die Näherung bei <span class="tex">x=1</span>? Nach
+          <span class="tex">n</span> Termen ist der Fehler höchstens
+          <span class="tex">e/(n+1)!</span>, weil
+          <span class="tex">e^\xi\le e</span> für
+          <span class="tex">\xi\in[0,1]</span>. Für
+          <span class="tex">n=10</span> ist das etwa
+          <span class="tex">6.8\cdot10^{-8}</span>. Zehn Terme reichen also für
+          mindestens sechs Nachkommastellen von <span class="tex">e</span>.
+        </p>
+      </div>
+
+      <div class="prose">
+        <h3>2. Sinus und Cosinus um 0</h3>
+        <p>
+          Hier ist die Ableitung ein Zyklus der Länge vier. Das ist der Grund,
+          warum nur jede zweite Potenz vorkommt.
+        </p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="deriv-table">
+          <thead><tr><th>k</th><th>f⁽ᵏ⁾(x) für sin x</th><th>bei 0</th><th>cₖ</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>sin x</td><td>0</td><td>0</td></tr>
+            <tr><td>1</td><td>cos x</td><td>1</td><td>1</td></tr>
+            <tr><td>2</td><td>−sin x</td><td>0</td><td>0</td></tr>
+            <tr><td>3</td><td>−cos x</td><td>−1</td><td>−1/6</td></tr>
+            <tr><td>4</td><td>sin x</td><td>0</td><td>0</td></tr>
+            <tr><td>5</td><td>cos x</td><td>1</td><td>1/120</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="math-block">
+        <div class="tex" data-display="1">\sin x=x-\frac{x^3}{3!}+\frac{x^5}{5!}-\frac{x^7}{7!}+\cdots=\sum_{k=0}^{\infty}\frac{(-1)^k x^{2k+1}}{(2k+1)!}.</div>
+      </div>
+      <div class="math-block">
+        <div class="tex" data-display="1">\cos x=1-\frac{x^2}{2!}+\frac{x^4}{4!}-\frac{x^6}{6!}+\cdots=\sum_{k=0}^{\infty}\frac{(-1)^k x^{2k}}{(2k)!}.</div>
+      </div>
+      <div class="prose">
+        <p>
+          Beide Reihen konvergieren für alle <span class="tex">x</span>. Die
+          Fakultät wächst schneller als jede Potenz, deshalb werden die Terme
+          irgendwann beliebig klein. Für kleine Winkel ist
+          <span class="tex">\sin x\approx x</span> und
+          <span class="tex">\cos x\approx 1-x^2/2</span>. Das ist die
+          Grundlage der Kleinwinkelnäherung im Pendel.
+        </p>
+      </div>
+
+      <div class="prose">
+        <h3>3. Der Logarithmus um 0: ln(1+x)</h3>
+        <p>
+          Hier lohnt es sich, die Ableitungen einmal vollständig
+          aufzuschreiben, weil das Muster nicht sofort offensichtlich ist.
+        </p>
+      </div>
+
+      <div class="steps" id="lnSteps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <p><strong>Erste Ableitungen.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">f(x)=\ln(1+x),\quad f'(x)=\frac{1}{1+x},\quad f''(x)=-\frac{1}{(1+x)^2},\quad f'''(x)=\frac{2}{(1+x)^3}.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <p><strong>Muster erkennen.</strong> Jede Ableitung bringt einen Faktor <span class="tex">-1</span> und einen Faktor <span class="tex">k-1</span> mit:</p>
+            <div class="math-block"><div class="tex" data-display="1">f^{(k)}(x)=\frac{(-1)^{k-1}(k-1)!}{(1+x)^k}, \qquad k\ge 1.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <p><strong>An der Stelle 0.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">f^{(k)}(0)=(-1)^{k-1}(k-1)!.</div></div>
+            <p>Teilen durch <span class="tex">k!</span> ergibt</p>
+            <div class="math-block"><div class="tex" data-display="1">c_k=\frac{(-1)^{k-1}(k-1)!}{k!}=\frac{(-1)^{k-1}}{k}.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <p><strong>Reihe.</strong></p>
+            <div class="math-block amber"><div class="tex" data-display="1">\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}-\frac{x^4}{4}+\cdots=\sum_{k=1}^{\infty}\frac{(-1)^{k-1}}{k}x^k.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <p><strong>Radius und Rand.</strong> Die nächste Singularität liegt bei <span class="tex">x=-1</span>, also ist der Radius 1. Bei <span class="tex">x=1</span> konvergiert die Reihe (alternierende harmonische Reihe) gegen <span class="tex">\ln 2</span>. Bei <span class="tex">x=-1</span> divergiert sie, weil die harmonische Reihe divergiert.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h3>4. Die Wurzel um 0: √(1+x)</h3>
+        <p>
+          Für beliebige Exponenten <span class="tex">\alpha</span> gilt die
+          Binomialreihe
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">(1+x)^\alpha=\sum_{k=0}^{\infty}\binom{\alpha}{k}x^k, \qquad \binom{\alpha}{k}=\frac{\alpha(\alpha-1)\cdots(\alpha-k+1)}{k!}.</div>
+        </div>
+        <p>
+          Für <span class="tex">\alpha=1/2</span> bekommst du
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">\sqrt{1+x}=1+\frac{x}{2}-\frac{x^2}{8}+\frac{x^3}{16}-\frac{5x^4}{128}+\cdots</div>
+        </div>
+        <p>
+          Der Radius ist 1, weil bei <span class="tex">x=-1</span> ein
+          Verzweigungspunkt liegt. Für
+          <span class="tex">|x|\lt 1</span> konvergiert die Reihe. Das ist der
+          schnellste Weg, eine Wurzel ohne Ableitungen zu entwickeln: Setze
+          <span class="tex">\alpha=1/2</span> in die Binomialreihe ein.
+        </p>
+      </div>
+
+      <div class="prose">
+        <h3>5. Die geometrische Reihe</h3>
+        <p>
+          Die Reihe <span class="tex">1/(1-x)</span> ist die Mutter vieler
+          anderer Reihen. Für <span class="tex">|x|\lt 1</span> gilt
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">\frac{1}{1-x}=1+x+x^2+x^3+\cdots=\sum_{k=0}^{\infty}x^k.</div>
+        </div>
+        <p>
+          Der Radius ist 1. Bei <span class="tex">x=1</span> steht eine Polstelle,
+          bei <span class="tex">x=-1</span> divergiert die Reihe. Aus dieser
+          Reihe kannst du durch Einsetzen, Ableiten und Integrieren viele
+          weitere gewinnen. Das ist das Thema des nächsten Abschnitts.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="serien">
+      <div class="sec-head">
+        <div class="sec-num">06</div>
+        <div>
+          <div class="sec-kicker">Der Trick mit dem Baukasten</div>
+          <h2>Reihen aus Reihen</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Wenn du eine Taylor-Reihe kennst, musst du für verwandte Funktionen
+          nicht wieder die Ableitungstabelle ausfüllen. Innerhalb des
+          Konvergenzradius darfst du eine Potenzreihe gliedweise ableiten,
+          integrieren und substituieren. Das ist erlaubt, weil Potenzreihen
+          dort gleichmäßig konvergieren.
+        </p>
+      </div>
+
+      <div class="formula-grid">
+        <div class="formula-card">
+          <div class="fc-title">Einsetzen</div>
+          <div class="tex" data-display="0">e^{-x^2}=\sum_{k=0}^{\infty}\frac{(-1)^k x^{2k}}{k!}</div>
+          <div class="fc-note">Setze <span class="tex">-x^2</span> in die e-Reihe ein. Radius bleibt unendlich.</div>
+        </div>
+        <div class="formula-card">
+          <div class="fc-title">Ableiten</div>
+          <div class="tex" data-display="0">\frac{1}{(1-x)^2}=\sum_{k=1}^{\infty}k\,x^{k-1}</div>
+          <div class="fc-note">Leite die geometrische Reihe ab. Der Radius bleibt 1.</div>
+        </div>
+        <div class="formula-card">
+          <div class="fc-title">Integrieren</div>
+          <div class="tex" data-display="0">\ln(1+x)=\int_0^x\frac{1}{1+t}\,dt=\sum_{k=1}^{\infty}\frac{(-1)^{k-1}}{k}x^k</div>
+          <div class="fc-note">Integriere die geometrische Reihe mit <span class="tex">-t</span>. Radius 1.</div>
+        </div>
+        <div class="formula-card">
+          <div class="fc-title">Arctan</div>
+          <div class="tex" data-display="0">\arctan x=\int_0^x\frac{1}{1+t^2}\,dt=\sum_{k=0}^{\infty}\frac{(-1)^k x^{2k+1}}{2k+1}</div>
+          <div class="fc-note">Setze <span class="tex">-t^2</span> ein und integriere. Bei <span class="tex">x=1</span> ergibt sich die Leibniz-Reihe für <span class="tex">\pi/4</span>.</div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>
+          Der Arctan ist ein besonders schönes Beispiel. Die Reihe
+          <span class="tex">\arctan x=x-\frac{x^3}{3}+\frac{x^5}{5}-\cdots</span>
+          konvergiert für <span class="tex">|x|\le 1</span> punktweise. Bei
+          <span class="tex">x=1</span> bekommst du
+          <span class="tex">\pi/4=1-\frac13+\frac15-\cdots</span>. Das ist
+          mathematisch korrekt, aber numerisch langsam: Für zehn
+          Nachkommastellen brauchst du etwa fünf Milliarden Terme, weil die
+          Terme nur wie <span class="tex">1/n</span> fallen. Für die Praxis
+          benutzt man bessere Formeln, zum Beispiel Machin-Formeln.
+        </p>
+        <p>
+          Trotzdem ist die Idee mächtig: Du kannst eine neue Funktion
+          entwickeln, indem du sie als Integral oder Ableitung einer bekannten
+          Funktion erkennst. Das ist oft viel schneller, als die
+          Ableitungen von Hand zu berechnen.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">Vorsicht bei Grenzen</div>
+        <p>
+          Gliedweises Ableiten und Integrieren ist innerhalb des offenen
+          Konvergenzintervalls erlaubt. An den Randpunkten kann sich das
+          Verhalten ändern. Die integrierte Reihe kann dort konvergieren, obwohl
+          die ursprüngliche Reihe divergiert, oder umgekehrt. Prüfe die Ränder
+          separat.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="konvergenz">
+      <div class="sec-head">
+        <div class="sec-num">07</div>
+        <div>
+          <div class="sec-kicker">Wo die Reihe gilt</div>
+          <h2>Radius, Singularitäten und die komplexe Ebene</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Eine Taylor-Reihe um <span class="tex">a</span> konvergiert in einem
+          offenen Intervall <span class="tex">(a-R,a+R)</span>. Die Zahl
+          <span class="tex">R</span> heißt Konvergenzradius. Innerhalb des
+          Radius darfst du die Reihe wie ein Polynom behandeln. Außerhalb
+          divergiert sie meistens. Am Rand ist alles möglich.
+        </p>
+        <p>
+          Für reelle Funktionen wirkt der Radius manchmal willkürlich. Warum
+          sollte <span class="tex">1/(1+x^2)</span> nur für
+          <span class="tex">|x|\lt 1</span> eine Taylor-Reihe um 0 haben? Die
+          Funktion ist doch überall glatt. Der Grund liegt in der komplexen
+          Ebene: Bei <span class="tex">x=\pm i</span> hat sie Polstellen. Der
+          Abstand von 0 zu diesen Polstellen ist 1. Genau dieser Abstand ist
+          der Radius.
+        </p>
+      </div>
+
+      <div class="formula-grid">
+        <div class="formula-card">
+          <div class="fc-title">Quotientenkriterium</div>
+          <div class="tex" data-display="0">R=\lim_{k\to\infty}\left|\frac{c_k}{c_{k+1}}\right|</div>
+          <div class="fc-note">Wenn der Grenzwert existiert. Sonst hilft das Wurzelkriterium.</div>
+        </div>
+        <div class="formula-card">
+          <div class="fc-title">Wurzelkriterium</div>
+          <div class="tex" data-display="0">\frac{1}{R}=\limsup_{k\to\infty}\sqrt[k]{|c_k|}</div>
+          <div class="fc-note">Funktioniert auch, wenn der Quotient nicht konvergiert.</div>
+        </div>
+        <div class="formula-card">
+          <div class="fc-title">Singularitäten</div>
+          <div class="tex" data-display="0">R=\min_{s\in S}|s-a|</div>
+          <div class="fc-note">Für analytische Funktionen ist der Radius der Abstand zur nächsten Singularität in der komplexen Ebene.</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Funktion</th><th>Reihe um 0</th><th>Radius</th><th>Grund</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tex">e^x</span></td><td><span class="tex">\sum x^k/k!</span></td><td><span class="tex">\infty</span></td><td>ganze Funktion</td></tr>
+            <tr><td><span class="tex">\sin x,\ \cos x</span></td><td>alternierende Fakultätsreihen</td><td><span class="tex">\infty</span></td><td>ganze Funktionen</td></tr>
+            <tr><td><span class="tex">1/(1-x)</span></td><td><span class="tex">\sum x^k</span></td><td>1</td><td>Pol bei <span class="tex">x=1</span></td></tr>
+            <tr><td><span class="tex">\ln(1+x)</span></td><td><span class="tex">\sum(-1)^{k-1}x^k/k</span></td><td>1</td><td>Verzweigung bei <span class="tex">x=-1</span></td></tr>
+            <tr><td><span class="tex">\sqrt{1+x}</span></td><td>Binomialreihe</td><td>1</td><td>Verzweigung bei <span class="tex">x=-1</span></td></tr>
+            <tr><td><span class="tex">\arctan x</span></td><td><span class="tex">\sum(-1)^k x^{2k+1}/(2k+1)</span></td><td>1</td><td>Verzweigung bei <span class="tex">x=\pm i</span></td></tr>
+            <tr><td><span class="tex">1/(1+x^2)</span></td><td><span class="tex">\sum(-1)^k x^{2k}</span></td><td>1</td><td>Pol bei <span class="tex">x=\pm i</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 2: Der Konvergenzradius</h3>
+            <div class="lab-sub">Links die reelle Näherung, rechts die Singularitäten in der komplexen Ebene.</div>
+          </div>
+          <span class="lab-tag violet">Komplexe Ebene</span>
+        </div>
+        <div class="controls">
+          <label class="control">
+            <span class="row"><span>Funktion</span><b>&nbsp;</b></span>
+            <select id="radiusFn">
+              <option value="geom" selected>1/(1−x)</option>
+              <option value="ln">ln(1+x)</option>
+              <option value="sqrt">√(1+x)</option>
+              <option value="atan">arctan x</option>
+              <option value="inv">1/(1+x²)</option>
+              <option value="exp">eˣ</option>
+              <option value="sin">sin x</option>
+            </select>
+          </label>
+          <label class="control">
+            <span class="row"><span>Grad n</span><b id="radiusNVal" class="amber">8</b></span>
+            <input type="range" class="amber" id="radiusN" min="0" max="40" step="1" value="8">
+          </label>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="mini-label">Reelle Achse</div>
+            <div class="canvas-wrap h-sm"><canvas id="radiusReal" aria-label="Funktion und Taylor-Polynom auf der reellen Achse"></canvas></div>
+          </div>
+          <div>
+            <div class="mini-label">Komplexe Ebene</div>
+            <div class="canvas-wrap h-sm"><canvas id="radiusPlane" aria-label="Singularitäten und Konvergenzkreis in der komplexen Ebene"></canvas></div>
+          </div>
+        </div>
+        <div class="legend">
+          <span><i class="dim"></i> Funktion</span>
+          <span><i></i> Taylor-Polynom</span>
+          <span><i class="rose"></i> Singularität</span>
+          <span><i class="dash"></i> Konvergenzkreis</span>
+        </div>
+        <div class="readout">
+          <div class="ro-box"><div class="k">Radius R</div><div class="v" id="radiusOut">1.00</div></div>
+          <div class="ro-box rose"><div class="k">Nächste Singularität</div><div class="v" id="radiusSing">1</div></div>
+          <div class="ro-box amber"><div class="k">Verhalten</div><div class="v" id="radiusBehavior">Pol</div></div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-title">Randpunkte sind eine eigene Geschichte</div>
+        <p>
+          Der Radius sagt nichts über die Randpunkte. Bei
+          <span class="tex">1/(1-x)</span> divergiert die Reihe an beiden
+          Rändern. Bei <span class="tex">\ln(1+x)</span> konvergiert sie bei
+          <span class="tex">x=1</span> und divergiert bei
+          <span class="tex">x=-1</span>. Bei
+          <span class="tex">\arctan x</span> konvergiert sie an beiden Rändern
+          (bedingt). Prüfe die Ränder immer separat, zum Beispiel mit dem
+          Leibniz-Kriterium.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="euler">
+      <div class="sec-head">
+        <div class="sec-num">08</div>
+        <div>
+          <div class="sec-kicker">Die schönste Formel</div>
+          <h2>Euler aus Taylor</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Setze in die Exponentialreihe <span class="tex">x=i\theta</span> ein.
+          Die Potenzen von <span class="tex">i</span> wiederholen sich:
+          <span class="tex">i^0=1,\ i^1=i,\ i^2=-1,\ i^3=-i,\ i^4=1</span>.
+          Damit zerfällt die Reihe in einen geraden und einen ungeraden Teil.
+        </p>
+        <div class="math-block violet">
+          <div class="tex" data-display="1">
+            \begin{aligned}
+            e^{i\theta}&amp;=\sum_{k=0}^{\infty}\frac{(i\theta)^k}{k!}\\
+            &amp;=\left(1-\frac{\theta^2}{2!}+\frac{\theta^4}{4!}-\cdots\right)
+            +i\left(\theta-\frac{\theta^3}{3!}+\frac{\theta^5}{5!}-\cdots\right)\\[4pt]
+            &amp;=\cos\theta+i\sin\theta.
+            \end{aligned}
+          </div>
+        </div>
+        <p>
+          Das ist Eulers Formel. Sie ist kein Zufall und kein Trick, sondern
+          eine direkte Folge der Taylor-Reihen von Exponentialfunktion, Sinus
+          und Cosinus. Gleichzeitig ist sie die Brücke zur Fourier-Analyse:
+          Eine komplexe Exponentialfunktion ist eine rotierende Schwingung.
+        </p>
+        <p>
+          Im Labor siehst du die Partialsummen von
+          <span class="tex">e^{i\theta}</span> als Polygonzug in der komplexen
+          Ebene. Jeder Term ist ein Vektor. Die Summe der Vektoren landet für
+          <span class="tex">n\to\infty</span> auf dem Einheitskreis.
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 3: Die Exponentialreihe dreht sich</h3>
+            <div class="lab-sub">Mehr Terme heißt: Der Polygonzug schmiegt sich an den Einheitskreis.</div>
+          </div>
+          <span class="lab-tag violet">Komplexe Zahlen</span>
+        </div>
+        <div class="canvas-wrap h-md">
+          <canvas id="eulerCanvas" aria-label="Partialsummen der komplexen Exponentialreihe"></canvas>
+        </div>
+        <div class="controls compact">
+          <label class="control">
+            <span class="row"><span>Winkel θ</span><b id="eulerThetaVal" class="violet">90°</b></span>
+            <input type="range" class="violet" id="eulerTheta" min="0" max="360" step="1" value="90">
+          </label>
+          <label class="control">
+            <span class="row"><span>Terme n</span><b id="eulerNVal" class="amber">5</b></span>
+            <input type="range" class="amber" id="eulerN" min="0" max="20" step="1" value="5">
+          </label>
+        </div>
+        <div class="btnrow">
+          <button class="primary" id="eulerPlay">Animation</button>
+          <button id="eulerReset">Zurücksetzen</button>
+        </div>
+        <div class="readout">
+          <div class="ro-box"><div class="k">Partialsumme</div><div class="v" id="eulerSum">0.540 + 0.842i</div></div>
+          <div class="ro-box violet"><div class="k">Exakt e^{iθ}</div><div class="v" id="eulerExact">0.000 + 1.000i</div></div>
+          <div class="ro-box rose"><div class="k">Abstand</div><div class="v" id="eulerErr">0.540</div></div>
+        </div>
+      </div>
+
+      <div class="insight">
+        <div class="insight-title">Real- und Imaginärteil getrennt</div>
+        <p>
+          Aus <span class="tex">e^{i\theta}=\cos\theta+i\sin\theta</span>
+          folgen sofort die Reihen für Sinus und Cosinus. Der Realteil ist die
+          Cosinusreihe, der Imaginärteil die Sinusreihe. Das ist der sauberste
+          Beweis dafür, dass die trigonometrischen Funktionen und die
+          Exponentialfunktion dieselbe Struktur haben.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="mehrdimensional">
+      <div class="sec-head">
+        <div class="sec-num">09</div>
+        <div>
+          <div class="sec-kicker">Taylor in mehreren Richtungen</div>
+          <h2>Mehrere Variablen: Gradient und Hessematrix</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Bis hierher gab es nur eine Variable. In der Praxis hängt eine
+          Funktion oft von vielen Dingen ab: Ein Verlust hängt von Millionen
+          Gewichten ab, ein physikalisches System von Ort und Geschwindigkeit.
+          Die Taylor-Idee bleibt dieselbe, nur die Ableitungen werden zu
+          Vektoren und Matrizen.
+        </p>
+        <p>
+          Für eine Funktion <span class="tex">f(x,y)</span> um den Punkt
+          <span class="tex">(a,b)</span> lautet die Entwicklung bis zur zweiten
+          Ordnung
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">
+            \begin{aligned}
+            f(x,y)\approx{}&amp;f(a,b)+f_x(a,b)(x-a)+f_y(a,b)(y-b)\\
+            &amp;+\frac12\Big[f_{xx}(a,b)(x-a)^2+2f_{xy}(a,b)(x-a)(y-b)+f_{yy}(a,b)(y-b)^2\Big].
+            \end{aligned}
+          </div>
+        </div>
+        <p>
+          Der erste Teil ist die Tangentialebene. Der zweite Teil ist die
+          quadratische Korrektur. In Vektorform schreibt man das oft als
+        </p>
+        <div class="math-block violet">
+          <div class="tex" data-display="1">f(\mathbf{x})\approx f(\mathbf{a})+\nabla f(\mathbf{a})^{\mathsf T}(\mathbf{x}-\mathbf{a})+\frac12(\mathbf{x}-\mathbf{a})^{\mathsf T}H(\mathbf{a})(\mathbf{x}-\mathbf{a}).</div>
+        </div>
+        <p>
+          <span class="tex">\nabla f</span> ist der Gradient, also der Vektor
+          der ersten Ableitungen. <span class="tex">H</span> ist die
+          Hessematrix der zweiten Ableitungen. Der Gradient zeigt in die
+          Richtung des steilsten Anstiegs. Die Hessematrix beschreibt die
+          Krümmung in alle Richtungen.
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 4: Tangentialebene und quadratische Näherung</h3>
+            <div class="lab-sub">Verschiebe den Entwicklungspunkt und schalte zwischen linear und quadratisch um.</div>
+          </div>
+          <span class="lab-tag amber">3-D</span>
+        </div>
+        <div class="plot-wrap" id="surfacePlot"></div>
+        <div class="controls compact">
+          <label class="control">
+            <span class="row"><span>a (x-Richtung)</span><b id="surfAVal" class="amber">0.50</b></span>
+            <input type="range" class="amber" id="surfA" min="-1.8" max="1.8" step="0.05" value="0.5">
+          </label>
+          <label class="control">
+            <span class="row"><span>b (y-Richtung)</span><b id="surfBVal" class="amber">0.50</b></span>
+            <input type="range" class="amber" id="surfB" min="-1.8" max="1.8" step="0.05" value="0.5">
+          </label>
+          <label class="control">
+            <span class="row"><span>Näherung</span><b>&nbsp;</b></span>
+            <select id="surfOrder">
+              <option value="1">linear (Tangentialebene)</option>
+              <option value="2" selected>quadratisch</option>
+            </select>
+          </label>
+        </div>
+        <div class="readout">
+          <div class="ro-box"><div class="k">f(a,b)</div><div class="v" id="surfF">0.000</div></div>
+          <div class="ro-box amber"><div class="k">Gradient</div><div class="v" id="surfGrad">(0, 0)</div></div>
+          <div class="ro-box violet"><div class="k">Hessematrix</div><div class="v" id="surfHess">[[1,0],[0,2]]</div></div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-title">Die Funktion im Labor</div>
+        <p>
+          Wir benutzen <span class="tex">f(x,y)=\tfrac12x^2+y^2+0.6\sin x\cos y</span>.
+          Ihre Ableitungen sind
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">
+            \begin{aligned}
+            f_x&amp;=x+0.6\cos x\cos y, &amp; f_y&amp;=2y-0.6\sin x\sin y,\\
+            f_{xx}&amp;=1-0.6\sin x\cos y, &amp; f_{xy}&amp;=-0.6\cos x\sin y,\\
+            f_{yy}&amp;=2-0.6\sin x\cos y.
+            \end{aligned}
+          </div>
+        </div>
+        <p>
+          Die Funktion ist glatt und hat ein eindeutiges Minimum in der Nähe
+          des Ursprungs. Die Tangentialebene ist dort eine gute Näherung, die
+          quadratische Fläche noch besser. Weit weg siehst du, wie die
+          Näherung die Krümmung falsch wiedergibt.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="newton">
+      <div class="sec-head">
+        <div class="sec-num">10</div>
+        <div>
+          <div class="sec-kicker">Taylor als Rechenmaschine</div>
+          <h2>Newton-Verfahren und Optimierung</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Eine der wichtigsten Anwendungen der ersten Taylor-Ordnung ist das
+          Newton-Verfahren. Du willst eine Nullstelle von
+          <span class="tex">f</span> finden. In der Nähe einer Vermutung
+          <span class="tex">x_n</span> ersetzt du <span class="tex">f</span>
+          durch die Tangente:
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">f(x)\approx f(x_n)+f'(x_n)(x-x_n).</div>
+        </div>
+        <p>
+          Setze die Näherung null und löse nach <span class="tex">x</span>:
+        </p>
+        <div class="math-block amber">
+          <div class="tex" data-display="1">x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}.</div>
+        </div>
+        <p>
+          Das ist die Newton-Iteration. Geometrisch: Lege die Tangente an,
+          schaue, wo sie die x-Achse schneidet, und nimm diesen Schnittpunkt
+          als neue Vermutung. In der Nähe einer einfachen Nullstelle
+          konvergiert das quadratisch, die Zahl der richtigen Stellen
+          verdoppelt sich ungefähr mit jedem Schritt.
+        </p>
+        <p>
+          Für Optimierung willst du keine Nullstelle von
+          <span class="tex">f</span>, sondern von
+          <span class="tex">f'</span>. Wendest du Newton auf
+          <span class="tex">f'</span> an, bekommst du
+        </p>
+        <div class="math-block violet">
+          <div class="tex" data-display="1">x_{n+1}=x_n-\frac{f'(x_n)}{f''(x_n)}.</div>
+        </div>
+        <p>
+          Das ist die zweite Taylor-Ordnung, nach der man das Minimum eines
+          quadratischen Modells sucht. In höheren Dimensionen wird daraus
+          <span class="tex">\mathbf{x}_{n+1}=\mathbf{x}_n-H^{-1}\nabla f</span>.
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 5: Newton Schritt für Schritt</h3>
+            <div class="lab-sub">Wähle eine Funktion und einen Startwert, dann verfolge die Tangente.</div>
+          </div>
+          <span class="lab-tag amber">Numerik</span>
+        </div>
+        <div class="controls compact">
+          <label class="control">
+            <span class="row"><span>Funktion</span><b>&nbsp;</b></span>
+            <select id="newtonFn">
+              <option value="sq" selected>x² − 2</option>
+              <option value="cos">cos x</option>
+              <option value="cubic">x³ − 2x − 5</option>
+              <option value="exp">eˣ − 2</option>
+            </select>
+          </label>
+          <label class="control">
+            <span class="row"><span>Startwert x₀</span><b id="newtonX0Val" class="amber">1.00</b></span>
+            <input type="range" class="amber" id="newtonX0" min="-3" max="4" step="0.05" value="1">
+          </label>
+        </div>
+        <div class="canvas-wrap h-md">
+          <canvas id="newtonCanvas" aria-label="Newton-Verfahren mit Tangenten"></canvas>
+        </div>
+        <div class="btnrow">
+          <button class="primary" id="newtonStep">Nächster Schritt</button>
+          <button id="newtonAuto">Auto</button>
+          <button id="newtonReset">Zurücksetzen</button>
+        </div>
+        <div class="readout">
+          <div class="ro-box"><div class="k">Iteration</div><div class="v" id="newtonIter">0</div></div>
+          <div class="ro-box amber"><div class="k">xₙ</div><div class="v" id="newtonX">1.000</div></div>
+          <div class="ro-box violet"><div class="k">f(xₙ)</div><div class="v" id="newtonFx">-1.000</div></div>
+        </div>
+        <div class="mini-label">Letzte Schritte</div>
+        <div class="table-wrap">
+          <table class="deriv-table" id="newtonTable">
+            <thead><tr><th>n</th><th>xₙ</th><th>f(xₙ)</th><th>f'(xₙ)</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">Newton ist schnell, aber nicht sicher</div>
+        <p>
+          Wenn <span class="tex">f'(x_n)</span> nahe null ist, wird der Schritt
+          riesig oder undefiniert. Wenn du weit von der Nullstelle startest,
+          kann das Verfahren divergieren oder in einem Zyklus landen. In der
+          Praxis kombiniert man Newton deshalb mit Dämpfung, Intervallschachtelung
+          oder einem Globalisierungsverfahren.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="wofuer">
+      <div class="sec-head">
+        <div class="sec-num">11</div>
+        <div>
+          <div class="sec-kicker">Warum das Spaß macht</div>
+          <h2>Wofür das Ganze</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Taylor-Reihen sind die Standardübersetzung zwischen einer
+          komplizierten Funktion und einem Polynom. Immer wenn ein Problem
+          lokal zu schwierig ist, ersetzt man es durch die ersten Terme. Die
+          Kunst besteht darin, zu wissen, wie viele Terme nötig sind und wo die
+          Näherung zusammenbricht.
+        </p>
+      </div>
+
+      <div class="app-grid">
+        <div class="app-card">
+          <div class="app-icon">01</div>
+          <h3>Taschenrechner</h3>
+          <p>
+            Sinus, Cosinus, Exponentialfunktion und Logarithmus werden intern
+            mit Polynomen berechnet. Zuerst reduziert man den Winkel oder den
+            Exponenten in einen kleinen Bereich, dann wertet man eine
+            Taylor- oder Minimax-Näherung aus. Genau das passiert, wenn du auf
+            <span class="tex">\sin</span> drückst.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">02</div>
+          <h3>Physik: kleine Winkel</h3>
+          <p>
+            Für kleine Auslenkungen gilt
+            <span class="tex">\sin\theta\approx\theta</span> und
+            <span class="tex">\cos\theta\approx1-\theta^2/2</span>. Damit wird
+            aus dem nichtlinearen Pendel eine harmonische Schwingung. Die
+            nächste Ordnung liefert die Korrektur der Periodendauer.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">03</div>
+          <h3>Relativität</h3>
+          <p>
+            Für kleine Geschwindigkeiten ist
+            <span class="tex">1/\sqrt{1-\beta^2}\approx1+\beta^2/2</span>.
+            Multipliziert mit <span class="tex">mc^2</span> ergibt das die
+            Ruheenergie plus die klassische kinetische Energie
+            <span class="tex">\tfrac12mv^2</span>. Die Relativität enthält die
+            Newtonsche Mechanik als erste Ordnung.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">04</div>
+          <h3>Numerik</h3>
+          <p>
+            Newton-Verfahren, Finite Differenzen und Fehlerfortpflanzung
+            benutzen Taylor-Entwicklungen. Auch die Stabilität und
+            Genauigkeit numerischer Verfahren wird damit analysiert.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">05</div>
+          <h3>Maschinelles Lernen</h3>
+          <p>
+            Gradientenabstieg ist eine erste Taylor-Näherung: Man nimmt an,
+            dass die Verlustfunktion lokal linear ist. Newton und
+            Quasi-Newton-Verfahren nutzen die zweite Ordnung. Die
+            Laplace-Approximation ersetzt eine komplizierte Posterior-Verteilung
+            durch eine Gaußverteilung, die aus der Hessematrix am Modus
+            entsteht.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">06</div>
+          <h3>Regelungstechnik</h3>
+          <p>
+            Ein nichtlineares System wird um einen Arbeitspunkt linearisiert.
+            Der linearisierte Zustandsraum ist die Grundlage für Regler, die
+            das System in der Nähe dieses Punktes stabil halten.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">07</div>
+          <h3>Wirtschaft</h3>
+          <p>
+            Grenzkosten, Grenzertrag und Elastizität sind erste Ableitungen.
+            Die zweite Ableitung sagt, ob eine Funktion konvex oder konkav ist.
+            Taylor liefert die lokale Interpretation dieser Begriffe.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">08</div>
+          <h3>Analysis und komplexe Zahlen</h3>
+          <p>
+            Euler, die Konvergenzradius-Theorie und die Klassifikation von
+            Singularitäten beruhen auf Taylor-Reihen. Die komplexe Analysis ist
+            ohne sie nicht denkbar.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="fallen">
+      <div class="sec-head">
+        <div class="sec-num">12</div>
+        <div>
+          <div class="sec-kicker">Was schiefgehen kann</div>
+          <h2>Fallen und Fehler</h2>
+        </div>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">1. Glatt heißt nicht analytisch</div>
+        <p>
+          Die Funktion <span class="tex">f(x)=e^{-1/x^2}</span> für
+          <span class="tex">x\ne0</span> und <span class="tex">f(0)=0</span>
+          ist unendlich oft differenzierbar. Alle Ableitungen an der Stelle 0
+          sind null. Ihre Taylor-Reihe ist also die Nullreihe. Die Funktion
+          selbst ist aber für <span class="tex">x\ne0</span> nicht null. Die
+          Taylor-Reihe konvergiert, aber nicht gegen die Funktion. Das zeigt:
+          Aus „unendlich oft differenzierbar“ folgt nicht „durch die
+          Taylor-Reihe darstellbar“.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">2. Der Radius ist oft kleiner als erwartet</div>
+        <p>
+          Eine reelle Funktion kann überall glatt aussehen und trotzdem einen
+          kleinen Konvergenzradius haben, weil in der komplexen Ebene eine
+          Singularität liegt. <span class="tex">1/(1+x^2)</span> ist das
+          Standardbeispiel: reell harmlos, komplex mit Polen bei
+          <span class="tex">\pm i</span>, Radius 1.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">3. Höherer Grad ist nicht immer besser</div>
+        <p>
+          Ein Taylor-Polynom hohen Grades kann weit weg vom Entwicklungspunkt
+          wild oszillieren. Es ist eine lokale Näherung. Wenn du einen großen
+          Bereich brauchst, ist ein anderes Verfahren oft besser:
+          Stützstelleninterpolation, Splines, rationale Approximation oder eine
+          Reihe um einen anderen Punkt.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">4. Der erste weggelassene Term ist nicht automatisch der Fehler</div>
+        <p>
+          Bei einer alternierenden Reihe mit monoton fallenden Beträgen ist der
+          Fehler höchstens der erste weggelassene Term. Bei einer allgemeinen
+          Reihe kann der Fehler viel größer sein. Benutze dann das Restglied
+          oder eine andere Fehlerschranke.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">5. Numerische Auslöschung</div>
+        <p>
+          Wenn du ein Polynom mit großen Koeffizienten an einer Stelle
+          auswertest, an der sich die Terme fast aufheben, verlierst du
+          Genauigkeit. Die Horner-Form ist stabiler und schneller als die
+          direkte Auswertung. Für sehr große Argumente brauchst du zusätzlich
+          eine Bereichsreduktion.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">6. Die Hessematrix entscheidet nicht allein</div>
+        <p>
+          In mehreren Variablen reicht die zweite Ableitung nicht immer, um ein
+          Minimum zu erkennen. Du brauchst die Definitheit der Hessematrix. Ist
+          sie indefinit, hast du einen Sattelpunkt. Ist sie singulär, brauchst
+          du höhere Ableitungen oder eine andere Analyse.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">7. Der Entwicklungspunkt verändert alles</div>
+        <p>
+          <span class="tex">\ln x</span> um <span class="tex">a=1</span> hat
+          einen anderen Konvergenzbereich als um
+          <span class="tex">a=2</span>. Wähle den Punkt so, dass er nahe an der
+          Stelle liegt, die dich interessiert, und dass keine Singularität
+          dazwischen liegt.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="uebungen">
+      <div class="sec-head">
+        <div class="sec-num">13</div>
+        <div>
+          <div class="sec-kicker">Jetzt du</div>
+          <h2>Selbst rechnen</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Versuche die Aufgaben zuerst ohne Lösung. Die vollständigen
+          Rechenschritte stehen in den aufgeklappten Kästen.
+        </p>
+      </div>
+
+      <details class="exercise">
+        <summary>
+          <span class="ex-num">1</span>
+          <span>ln x um <span class="tex">a=2</span> bis zur dritten Ordnung</span>
+          <span class="ex-chev">›</span>
+        </summary>
+        <div class="ex-body">
+          <p>
+            Berechne das Taylor-Polynom dritten Grades von
+            <span class="tex">f(x)=\ln x</span> um
+            <span class="tex">a=2</span>.
+          </p>
+          <div class="math-block">
+            <div class="tex" data-display="1">
+              \begin{aligned}
+              f(2)&amp;=\ln2,\\
+              f'(x)&amp;=\frac1x, &amp; f'(2)&amp;=\frac12,\\
+              f''(x)&amp;=-\frac1{x^2}, &amp; f''(2)&amp;=-\frac14,\\
+              f'''(x)&amp;=\frac2{x^3}, &amp; f'''(2)&amp;=\frac14.
+              \end{aligned}
+            </div>
+          </div>
+          <p>Also</p>
+          <div class="math-block">
+            <div class="tex" data-display="1">T_3(x)=\ln2+\frac{x-2}{2}-\frac{(x-2)^2}{8}+\frac{(x-2)^3}{24}.</div>
+          </div>
+          <p>
+            Der Radius ist 2, weil die nächste Singularität bei
+            <span class="tex">x=0</span> liegt und der Abstand von 2 dorthin 2
+            ist.
+          </p>
+        </div>
+      </details>
+
+      <details class="exercise">
+        <summary>
+          <span class="ex-num">2</span>
+          <span>e<sup>−x</sup> und die Näherung für e<sup>−0.2</sup></span>
+          <span class="ex-chev">›</span>
+        </summary>
+        <div class="ex-body">
+          <p>
+            Entwickle <span class="tex">e^{-x}</span> um 0 und approximiere
+            <span class="tex">e^{-0.2}</span> mit dem Polynom vierten Grades.
+            Schätze den Fehler ab.
+          </p>
+          <p>
+            Setze <span class="tex">-x</span> in die e-Reihe ein:
+          </p>
+          <div class="math-block">
+            <div class="tex" data-display="1">e^{-x}=1-x+\frac{x^2}{2!}-\frac{x^3}{3!}+\frac{x^4}{4!}-\cdots</div>
+          </div>
+          <p>
+            Für <span class="tex">x=0.2</span>:
+          </p>
+          <div class="math-block">
+            <div class="tex" data-display="1">1-0.2+\frac{0.04}{2}-\frac{0.008}{6}+\frac{0.0016}{24}=0.8187333\ldots</div>
+          </div>
+          <p>
+            Der exakte Wert ist <span class="tex">e^{-0.2}=0.81873075\ldots</span>.
+            Die Reihe alterniert und die Beträge fallen, also ist der Fehler
+            höchstens der nächste Term:
+            <span class="tex">0.2^5/5!=2.67\cdot10^{-6}</span>.
+          </p>
+        </div>
+      </details>
+
+      <details class="exercise">
+        <summary>
+          <span class="ex-num">3</span>
+          <span>cos x um <span class="tex">a=\pi/3</span> bis zur zweiten Ordnung</span>
+          <span class="ex-chev">›</span>
+        </summary>
+        <div class="ex-body">
+          <p>
+            Berechne das Taylor-Polynom zweiten Grades von
+            <span class="tex">\cos x</span> um
+            <span class="tex">a=\pi/3</span>.
+          </p>
+          <div class="math-block">
+            <div class="tex" data-display="1">
+              \begin{aligned}
+              f(\pi/3)&amp;=\frac12,\\
+              f'(x)&amp;=-\sin x, &amp; f'(\pi/3)&amp;=-\frac{\sqrt3}{2},\\
+              f''(x)&amp;=-\cos x, &amp; f''(\pi/3)&amp;=-\frac12.
+              \end{aligned}
+            </div>
+          </div>
+          <p>Damit</p>
+          <div class="math-block">
+            <div class="tex" data-display="1">T_2(x)=\frac12-\frac{\sqrt3}{2}\left(x-\frac{\pi}{3}\right)-\frac14\left(x-\frac{\pi}{3}\right)^2.</div>
+          </div>
+          <p>
+            Der Radius ist unendlich, weil der Cosinus eine ganze Funktion ist.
+          </p>
+        </div>
+      </details>
+
+      <details class="exercise">
+        <summary>
+          <span class="ex-num">4</span>
+          <span>Konvergenzradien bestimmen</span>
+          <span class="ex-chev">›</span>
+        </summary>
+        <div class="ex-body">
+          <p>
+            Bestimme die Radien von
+            <span class="tex">\sum n!x^n</span>,
+            <span class="tex">\sum x^n/n!</span> und
+            <span class="tex">\sum (x-1)^n/2^n</span>.
+          </p>
+          <p>
+            <strong>Erste Reihe.</strong> Quotient
+            <span class="tex">(n+1)!/n!=n+1\to\infty</span>. Also
+            <span class="tex">R=0</span>. Die Reihe konvergiert nur bei
+            <span class="tex">x=0</span>.
+          </p>
+          <p>
+            <strong>Zweite Reihe.</strong> Quotient
+            <span class="tex">(n!)/(n+1)!=1/(n+1)\to0</span>. Also
+            <span class="tex">R=\infty</span>.
+          </p>
+          <p>
+            <strong>Dritte Reihe.</strong> Quotient
+            <span class="tex">(1/2^n)/(1/2^{n+1})=2</span>. Also
+            <span class="tex">R=2</span>, und der Entwicklungspunkt ist
+            <span class="tex">a=1</span>.
+          </p>
+        </div>
+      </details>
+
+      <details class="exercise">
+        <summary>
+          <span class="ex-num">5</span>
+          <span>Linearisieren in zwei Variablen</span>
+          <span class="ex-chev">›</span>
+        </summary>
+        <div class="ex-body">
+          <p>
+            Linearisiere <span class="tex">f(x,y)=x^2y+e^{xy}</span> am Punkt
+            <span class="tex">(1,0)</span>.
+          </p>
+          <div class="math-block">
+            <div class="tex" data-display="1">
+              \begin{aligned}
+              f(1,0)&amp;=0+1=1,\\
+              f_x&amp;=2xy+ye^{xy}, &amp; f_x(1,0)&amp;=0,\\
+              f_y&amp;=x^2+xe^{xy}, &amp; f_y(1,0)&amp;=1+1=2.
+              \end{aligned}
+            </div>
+          </div>
+          <p>Also</p>
+          <div class="math-block">
+            <div class="tex" data-display="1">f(x,y)\approx 1+2y.</div>
+          </div>
+          <p>
+            Die Tangentialebene hängt in erster Ordnung nicht von
+            <span class="tex">x</span> ab, weil die x-Ableitung an diesem
+            Punkt verschwindet.
+          </p>
+        </div>
+      </details>
+
+      <details class="exercise">
+        <summary>
+          <span class="ex-num">6</span>
+          <span>1/(2−x) aus der geometrischen Reihe</span>
+          <span class="ex-chev">›</span>
+        </summary>
+        <div class="ex-body">
+          <p>
+            Entwickle <span class="tex">1/(2-x)</span> um 0 mit der
+            geometrischen Reihe und gib den Radius an.
+          </p>
+          <div class="math-block">
+            <div class="tex" data-display="1">\frac{1}{2-x}=\frac12\cdot\frac{1}{1-x/2}=\frac12\sum_{k=0}^{\infty}\left(\frac{x}{2}\right)^k=\sum_{k=0}^{\infty}\frac{x^k}{2^{k+1}}.</div>
+          </div>
+          <p>
+            Die Reihe konvergiert für <span class="tex">|x/2|\lt 1</span>, also
+            für <span class="tex">|x|\lt 2</span>. Der Radius ist 2. Das passt
+            zur Polstelle bei <span class="tex">x=2</span>.
+          </p>
+        </div>
+      </details>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="quellen">
+      <div class="sec-head">
+        <div class="sec-num">14</div>
+        <div>
+          <div class="sec-kicker">Zum Weiterlesen</div>
+          <h2>Quellen</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Die historischen Angaben stützen sich auf die Originalwerke und auf
+          Standardlehrbücher. Die Rechnungen auf dieser Seite sind eigenständig
+          ausgeschrieben.
+        </p>
+      </div>
+      <ul class="sources">
+        <li>
+          <span class="src-title">Brook Taylor, <em>Methodus Incrementorum Directa et Inversa</em>, 1715.</span>
+          <a href="https://archive.org/details/bim_eighteenth-century_methodus-incrementorum-d_taylor-brook_1715" target="_blank" rel="noopener">archive.org</a>.
+          Die Erstveröffentlichung der Taylor-Entwicklung.
+        </li>
+        <li>
+          <span class="src-title">Colin Maclaurin, <em>A Treatise of Fluxions</em>, 1742.</span>
+          <a href="https://archive.org/details/atreatisefluxio00conggoog" target="_blank" rel="noopener">archive.org</a>.
+          Die populäre Darstellung der Entwicklung um null.
+        </li>
+        <li>
+          <span class="src-title">Walter Rudin, <em>Principles of Mathematical Analysis</em>.</span>
+          Der saubere Zugang zu Taylor-Satz, Restglied und gleichmäßiger
+          Konvergenz.
+        </li>
+        <li>
+          <span class="src-title">Michael Spivak, <em>Calculus</em>.</span>
+          Eine ausführliche und anschauliche Behandlung von Taylor-Reihen und
+          ihrer Geschichte.
+        </li>
+        <li>
+          <span class="src-title">Richard L. Burden, J. Douglas Faires, <em>Numerical Analysis</em>.</span>
+          Newton-Verfahren, Fehlerabschätzung und numerische Stabilität.
+        </li>
+        <li>
+          <span class="src-title">Christopher M. Bishop, <em>Pattern Recognition and Machine Learning</em>.</span>
+          Die Laplace-Approximation und Taylor-Entwicklungen in der
+          Wahrscheinlichkeitstheorie.
+        </li>
+        <li>
+          <span class="src-title">Taylor series, Taylor's theorem, Laplace's method.</span>
+          <a href="https://en.wikipedia.org/wiki/Taylor_series" target="_blank" rel="noopener">Taylor series</a>,
+          <a href="https://en.wikipedia.org/wiki/Taylor%27s_theorem" target="_blank" rel="noopener">Taylor's theorem</a>,
+          <a href="https://en.wikipedia.org/wiki/Laplace%27s_method" target="_blank" rel="noopener">Laplace's method</a>.
+          Zum Nachschlagen und für weitere Literatur.
+        </li>
+      </ul>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">
+  <span>Taylor visuell · ein Lernexperiment im Blog-Verzeichnis</span>
+  <span><a href="fourier.html">← Zurück zu den Fourierreihen</a></span>
+</footer>
+
+<script src="../temml.min.js"></script>
+<script src="../plotly-2.24.1.min.js"></script>
+<script src="taylor.js"></script>
+</body>
+</html>

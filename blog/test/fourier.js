@@ -208,6 +208,10 @@
   /* ---------- Mathematik rendern ---------- */
 
   function renderMath() {
+    if (typeof temml === "undefined") {
+      console.warn("Temml ist nicht geladen; die Formeln bleiben als Quelltext stehen.");
+      return;
+    }
     $$(".tex").forEach(function (el) {
       const tex = el.textContent;
       const display = el.dataset.display === "1";
@@ -225,6 +229,10 @@
 
   function setTex(el, tex, display) {
     if (!el) return;
+    if (typeof temml === "undefined") {
+      el.textContent = tex;
+      return;
+    }
     try {
       el.innerHTML = temml.renderToString(tex, {
         displayMode: display !== false,
@@ -711,6 +719,10 @@
     function tick(now) {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
+      if (!visible || document.hidden) {
+        requestAnimationFrame(tick);
+        return;
+      }
       if (playing && visible && !document.hidden) {
         angle += 2 * Math.PI * parseFloat(freq.value) * dt;
       }
@@ -1124,6 +1136,10 @@
     function tick(now) {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
+      if (!visible || document.hidden) {
+        requestAnimationFrame(tick);
+        return;
+      }
       if (playing && visible && !document.hidden) {
         theta += dt * parseFloat(speedSlider.value);
       }

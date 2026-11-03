@@ -41,8 +41,8 @@
         analysieren.
       </p>
       <div class="meta-chips">
-        <span>17 Abschnitte</span>
-        <span>8 interaktive Labore</span>
+        <span>16 Abschnitte</span>
+        <span>9 interaktive Labore</span>
         <span>Rechnen von Hand</span>
         <span>Rechteck, Sägezahn, DFT, FFT</span>
       </div>
@@ -430,6 +430,15 @@
         </p>
       </div>
 
+      <div class="note">
+        <div class="note-title">So liest du die Rechenschritte</div>
+        <p>
+          Die folgenden Schritte sind zunächst eingeklappt. Versuche den
+          nächsten Schritt erst selbst auf einem Zettel, dann decke ihn auf.
+          Mit „Alle zeigen“ siehst du die vollständige Rechnung auf einmal.
+        </p>
+      </div>
+
       <div class="steps" id="orthoSteps">
         <div class="step">
           <div class="step-num">1</div>
@@ -544,6 +553,30 @@
           <span class="tex">2/T</span> macht daraus <span class="tex">a_n</span>.
           Für <span class="tex">a_0</span> multiplizierst du mit
           <span class="tex">1</span> und integrierst direkt.
+        </p>
+        <p>
+          Oft will man gar nicht <span class="tex">a_n</span> und
+          <span class="tex">b_n</span> getrennt wissen, sondern nur, wie stark
+          eine Frequenz insgesamt mitschwingt. Dafür fasst man Cosinus und
+          Sinus zu einer einzigen Schwingung mit Amplitude
+          <span class="tex">A_n</span> und Phase <span class="tex">\varphi_n</span>
+          zusammen:
+        </p>
+        <div class="math-block amber">
+          <div class="tex" data-display="1">a_n\cos(n\omega_0 t)+b_n\sin(n\omega_0 t)=A_n\cos(n\omega_0 t-\varphi_n),</div>
+        </div>
+        <div class="math-block amber">
+          <div class="tex" data-display="1">A_n=\sqrt{a_n^2+b_n^2}, \qquad \tan\varphi_n=\frac{b_n}{a_n}.</div>
+        </div>
+        <p>
+          Das <strong>Amplitudenspektrum</strong> zeichnet
+          <span class="tex">A_n</span> gegen die Frequenz. Das
+          <strong>Phasenspektrum</strong> zeichnet
+          <span class="tex">\varphi_n</span>. Für die komplexe Form gilt
+          <span class="tex">|c_n|=A_n/2</span> für
+          <span class="tex">n\ge1</span>, weil sich positive und negative
+          Frequenz die Amplitude teilen. In der DFT zeigt man deshalb oft nur
+          den Betrag <span class="tex">|X_k|</span>.
         </p>
         <p>
           Bevor du rechnest, lohnt sich ein Blick auf Symmetrien. Sie sparen
@@ -1381,7 +1414,7 @@
           DFTs der geraden und ungeraden Teilfolgen sind. Jede wird rekursiv
           halbiert. Aus <span class="tex">N^2</span> werden
           <span class="tex">N\log_2 N</span>. Für eine Million Werte ist das
-          der Unterschied zwischen Stunden und Millisekunden.
+          der Unterschied zwischen Stunden und Sekunden.
         </p>
       </div>
 
