@@ -17902,7 +17902,7 @@ window.bibData = {
 		title: "The Areni-1 shoe, the oldest known leather shoe",
 		author: "David Castor",
 		year: 2025,
-		url: "https://commons.wikimedia.org/wiki/File:Areni_Leather_Shoe.jpg",
+		url: "https://upload.wikimedia.org/wikipedia/commons/c/cd/Areni_Leather_Shoe.jpg",
 		license: "CC0",
 		alternativetitle: "Areni-1 shoe"
 	},
