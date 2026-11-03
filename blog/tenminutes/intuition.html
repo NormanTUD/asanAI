@@ -34,22 +34,26 @@
 						<div class="prose">
 							<p>
 								Here is the core idea. A language model reads a sequence of
-								tokens (think: words) and returns a <strong>probability for every
-								possible next token</strong>. One is chosen, appended to the input, and the
-								whole thing runs again. That is the <strong>autoregressive loop</strong>.
+								tokens and returns a <strong>probability for every possible next
+								token</strong>. One is chosen, appended to the input, and the whole thing
+								runs again. That is the <strong>autoregressive loop</strong>.
 							</p>
 							<p>
 								Two words in that description are doing quiet work. “Probability” means the
 								model ranks all candidates at once; it does not know the answer and then
-								assign a score. The toy calls its tokens words; in a real model a token can be a whole word, a word
-								fragment, or punctuation, which is the subject of tokenization.
+								assign a score. The other word is “token”. The demo below calls its tokens
+								words because that is easiest to follow, but a token can be a whole word, a
+								word fragment, a single character, a group of characters, a space, or a
+								punctuation mark. “Unbelievable” may arrive as several pieces such as
+								“un”, “believ”, and “able”. A leading space can be its own token. The loop
+								does not care what the pieces are; it predicts the next one.
 							</p>
 							<p>
-								This picture is deliberately incomplete. A real model adds layers of
-								attention, a feed-forward network, position information, training data, and
-								post-training. The loop comes first because everything else is machinery for
-								making this one prediction better: each part exists to solve a problem the
-								previous part created.
+								This page is the start of a technical intuition, not the complete picture.
+								A real model adds a tokenizer, layers of attention, a feed-forward network,
+								position information, training data, and post-training. The loop comes first
+								because everything else is machinery for making this one prediction better:
+								each part exists to solve a problem the previous part created.
 							</p>
 							<p>
 								A conversation, a poem, a Python function: all of it is this loop. That sounds
@@ -72,12 +76,13 @@
 						<h2 class="section-title">Write a sentence, one word at a time.</h2>
 						<div class="prose">
 							<p>
-								Below is a deliberately tiny toy model. It knows a handful of continuations
-								for a small story. It is a lookup tree, not a neural network: a real model
-								computes the distribution from learned weights. The toy isolates the loop,
-								which is the part that stays the same. Pick a word or let it draw one; the new
-								word becomes part of the context, and the next distribution is computed from
-								everything so far.
+								Below is a deliberately small demo, not a real model. It has no learned
+								weights and no training; it just stores a handful of hand-written
+								continuations for a small story. What it reproduces is the autoregressive
+								idea: the next token is chosen from a distribution, appended to the
+								context, and the whole thing runs again. A real model computes that
+								distribution from learned weights. Watch the loop, not the size of the
+								demo.
 							</p>
 						</div>
 
@@ -85,7 +90,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The autoregressive loop <span>· demo 01</span></p>
-									<p class="demo-sub">Click a candidate or let the toy model choose. Each choice opens only the continuations that make sense from there, so the tree narrows as you go.</p>
+									<p class="demo-sub">Click a candidate or let the demo choose. Each choice opens only the continuations that make sense from there, so the tree narrows as you go.</p>
 								</div>
 								<span class="demo-badge">live</span>
 							</div>
@@ -116,7 +121,8 @@
 									<b>Why "temperature"?</b> In a gas, temperature sets how widely molecular
 									speeds are spread (Maxwell-Boltzmann). Here it plays the same role for
 									logits: <span class="nt-formula" data-tex="p_i \propto \exp(z_i / T)" data-tex-display="false"></span>. High T flattens the
-									distribution; low T sharpens it; greedy is the limit T → 0. The name is a
+									distribution; low T sharpens it; greedy is the limit T → 0, and exact
+									zero is handled by taking the top token directly. The name is a
 									metaphor: there is no gas inside the model.
 								</p>
 								<div class="demo-readout demo-readout--4">
@@ -135,19 +141,36 @@
 
 						<div class="prose">
 							<p>
-								Temperature is only one decoding choice, and it changes style, not knowledge.
-								At temperature zero (greedy decoding) the top candidate is taken every
-								time: deterministic, often repetitive, but still a freshly computed
-								distribution rather than a lookup. Sampling draws from the distribution;
-								top-p keeps the smallest set of words whose probabilities reach 0.9 and
-								samples among them. The competence lives in the learned distribution, so if
-								the model does not know a fact, no decoder setting makes it appear.
+								Sampling is one decoding choice. Greedy takes the most likely token every
+								time, which makes the text deterministic and often repetitive. Top-p keeps
+								the smallest set of tokens whose probabilities reach a threshold and samples
+								among them. Beam search keeps several candidate continuations alive and
+								picks the best-scoring one. Temperature shapes the distribution before any
+								of these choices: low values concentrate it, high values flatten it.
+							</p>
+							<p>
+								Temperature is used because exact repetition is not how people write. Human
+								answers vary from one telling to the next, and a little randomness makes
+								generated text feel less mechanical. Higher temperatures widen the field of
+								plausible continuations, which can be creative and surprising in a story and
+								careless in a balance sheet. Different sampled tokens also lead to different
+								follow-on contexts, so temperature changes which path the text takes, not
+								just its tone.
+							</p>
+							<p>
+								The formula puts <span data-tex="T" data-tex-display="false"></span> in the
+								denominator, so an exact temperature of zero would mean dividing by zero. In
+								practice greedy decoding is treated as the limit
+								<span data-tex="T \to 0" data-tex-display="false"></span>, and
+								implementations special-case zero by taking the top token directly. No
+								decoder setting can make the model report a fact it never learned, but the
+								setting does change which of its plausible continuations you see.
 							</p>
 						</div>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">Prediction rewards compression.</p>
-							<p class="aha-sub">A model that predicts the next word well has found a short description of the data. Whether that short description amounts to understanding the world is a live question, not a settled fact.</p>
+							<p class="aha-big">A good predictor compresses.</p>
+							<p class="aha-sub">To predict the next word well, a model has to capture regularities in the data, and a compact description of those regularities is a form of compression. Whether that description amounts to understanding the world is a live question, not a settled fact.</p>
 						</div>
 					</section>
 
@@ -156,12 +179,25 @@
 						<h2 class="section-title">Six steps, one running vector.</h2>
 						<div class="prose">
 							<p>
-								The loop is the outside view. Inside, one word passes through a fixed
+								The loop is the outside view. Inside, one token passes through a fixed
 								pipeline. Each step changes the representation in a different way, and each
 								is a small idea you can play with. The steps follow the order of a real
 								transformer pass (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>): text becomes ids, ids become vectors, position adds order,
 								attention adds context, the feed-forward network computes, and the residual
 								stream carries the result forward.
+							</p>
+							<p>
+								A transformer is a stack of layers, each applied to the output of the one
+								before it:
+								<span data-tex="\operatorname{layer}_3(\operatorname{layer}_2(\operatorname{layer}_1(x)))" data-tex-display="false"></span>.
+								Early layers work on the token vectors directly. Later layers work on the
+								original signal plus everything the earlier layers have written into it.
+							</p>
+							<p>
+								The six steps below are a technical intuition, not a complete circuit
+								diagram. Each step isolates one job and shows a small, hand-built version of
+								it. The notes mark what is simplified, so the picture does not pretend to be
+								the whole machine.
 							</p>
 						</div>
 
