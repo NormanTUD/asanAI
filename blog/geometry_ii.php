@@ -103,15 +103,15 @@ The picture is always *a target, a family of allowed answers, keep the shadow.* 
 	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
 		<label><b>P x:</b></label>
 		<input type="range" id="geo2-proj-px" min="-4" max="4" step="0.1" value="3" style="width:120px; vertical-align:middle;">
-		<span id="geo2-proj-pxv" style="font-family:monospace; font-weight:bold; color:#2563eb;">3.0</span>
+		<span id="geo2-proj-pxv" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">3.0</span>
 		<label><b>P y:</b></label>
 		<input type="range" id="geo2-proj-py" min="-4" max="4" step="0.1" value="2.2" style="width:120px; vertical-align:middle;">
-		<span id="geo2-proj-pyv" style="font-family:monospace; font-weight:bold; color:#2563eb;">2.2</span>
+		<span id="geo2-proj-pyv" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">2.2</span>
 		<label><b>line angle φ:</b></label>
 		<input type="range" id="geo2-proj-phi" min="0" max="180" step="1" value="35" style="width:140px; vertical-align:middle;">
-		<span id="geo2-proj-phiv" style="font-family:monospace; font-weight:bold; color:#2563eb;">35°</span>
+		<span id="geo2-proj-phiv" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">35°</span>
 	</div>
-	<div id="geo2-projection" class="plot-container" style="width:100%; height:380px;"></div>
+	<div id="geo2-projection" class="plot-container" data-plot-theme="self" style="width:100%; height:380px;"></div>
 	<div id="geo2-proj-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:var(--mn-text-secondary);"></div>
 </div>
 
@@ -160,15 +160,15 @@ The interactive shows the unit circle (white) and its image under a map with sin
 	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
 		<label><b>σ₁ (major):</b></label>
 		<input type="range" id="geo2-svd-s1" min="0.2" max="4" step="0.1" value="3" style="width:130px; vertical-align:middle;">
-		<span id="geo2-svd-s1v" style="font-family:monospace; font-weight:bold; color:#2563eb;">3.0</span>
+		<span id="geo2-svd-s1v" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">3.0</span>
 		<label><b>σ₂ (minor):</b></label>
 		<input type="range" id="geo2-svd-s2" min="0" max="4" step="0.1" value="1.5" style="width:130px; vertical-align:middle;">
-		<span id="geo2-svd-s2v" style="font-family:monospace; font-weight:bold; color:#2563eb;">1.5</span>
+		<span id="geo2-svd-s2v" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">1.5</span>
 		<label><b>rotation θ:</b></label>
 		<input type="range" id="geo2-svd-th" min="0" max="90" step="1" value="25" style="width:120px; vertical-align:middle;">
-		<span id="geo2-svd-thv" style="font-family:monospace; font-weight:bold; color:#2563eb;">25°</span>
+		<span id="geo2-svd-thv" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">25°</span>
 	</div>
-	<div id="geo2-svd" class="plot-container" style="width:100%; height:380px;"></div>
+	<div id="geo2-svd" class="plot-container" data-plot-theme="self" style="width:100%; height:380px;"></div>
 	<div id="geo2-svd-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:var(--mn-text-secondary);"></div>
 </div>
 
@@ -198,15 +198,15 @@ The *schedule* on top of this fact — momentum, Adam, learning-rate decay — i
 	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
 		<label><b>x:</b></label>
 		<input type="range" id="geo2-des-px" min="-3" max="3" step="0.05" value="1.5" style="width:120px; vertical-align:middle;">
-		<span id="geo2-des-pxv" style="font-family:monospace; font-weight:bold; color:#2563eb;">1.5</span>
+		<span id="geo2-des-pxv" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">1.5</span>
 		<label><b>y:</b></label>
 		<input type="range" id="geo2-des-py" min="-3" max="3" step="0.05" value="1.2" style="width:120px; vertical-align:middle;">
-		<span id="geo2-des-pyv" style="font-family:monospace; font-weight:bold; color:#2563eb;">1.2</span>
+		<span id="geo2-des-pyv" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">1.2</span>
 		<label><b>valley width $w$:</b></label>
 		<input type="range" id="geo2-des-w" min="1" max="6" step="0.1" value="2" style="width:130px; vertical-align:middle;">
-		<span id="geo2-des-wv" style="font-family:monospace; font-weight:bold; color:#2563eb;">2.0</span>
+		<span id="geo2-des-wv" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">2.0</span>
 	</div>
-	<div id="geo2-descent" class="plot-container" style="width:100%; height:380px;"></div>
+	<div id="geo2-descent" class="plot-container" data-plot-theme="self" style="width:100%; height:380px;"></div>
 	<div id="geo2-des-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:var(--mn-text-secondary);"></div>
 </div>
 
@@ -246,22 +246,22 @@ This is not a curiosity. “Smooth the signal” means multiply its spectrum by 
 	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
 		<label><b>left $c_{-1}$:</b></label>
 		<input type="range" id="geo2-conv-c0" min="0" max="0.5" step="0.01" value="0.25" style="width:110px; vertical-align:middle;">
-		<span id="geo2-conv-c0v" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.25</span>
+		<span id="geo2-conv-c0v" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">0.25</span>
 		<label><b>center $c_0$:</b></label>
 		<input type="range" id="geo2-conv-c1" min="0" max="1" step="0.01" value="0.5" style="width:110px; vertical-align:middle;">
-		<span id="geo2-conv-c1v" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.50</span>
+		<span id="geo2-conv-c1v" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">0.50</span>
 		<label><b>right $c_1$:</b></label>
 		<input type="range" id="geo2-conv-c2" min="0" max="0.5" step="0.01" value="0.25" style="width:110px; vertical-align:middle;">
-		<span id="geo2-conv-c2v" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.25</span>
+		<span id="geo2-conv-c2v" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">0.25</span>
 	</div>
 	<div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
 		<div style="flex:0 0 300px; max-width:100%; overflow:hidden;">
 			<div style="font-size:0.85em; color:var(--mn-text-secondary); margin-bottom:4px;">time domain — $y = c * x$</div>
-			<div id="geo2-conv-time" class="plot-container" style="width:100%; height:300px;"></div>
+			<div id="geo2-conv-time" class="plot-container" data-plot-theme="self" style="width:100%; height:300px;"></div>
 		</div>
 		<div style="flex:0 0 300px; max-width:100%; overflow:hidden;">
 			<div style="font-size:0.85em; color:var(--mn-text-secondary); margin-bottom:4px;">frequency domain — $|F(y)| = |F(c)|\cdot|F(x)|$</div>
-			<div id="geo2-conv-freq" class="plot-container" style="width:100%; height:300px;"></div>
+			<div id="geo2-conv-freq" class="plot-container" data-plot-theme="self" style="width:100%; height:300px;"></div>
 		</div>
 	</div>
 	<div id="geo2-conv-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:var(--mn-text-secondary);"></div>
@@ -317,9 +317,9 @@ The interactive holds a bag of six “tokens.” Drag the **shift** to reorder t
 	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
 		<label><b>shift (reorder):</b></label>
 		<input type="range" id="geo2-sym-shift" min="0" max="5" step="1" value="0" style="width:150px; vertical-align:middle;">
-		<span id="geo2-sym-shv" style="font-family:monospace; font-weight:bold; color:#2563eb;">0</span>
+		<span id="geo2-sym-shv" style="font-family:monospace; font-weight:bold; color:var(--mn-accent);">0</span>
 	</div>
-	<div id="geo2-sym" class="plot-container" style="width:100%; height:380px;"></div>
+	<div id="geo2-sym" class="plot-container" data-plot-theme="self" style="width:100%; height:380px;"></div>
 	<div id="geo2-sym-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:var(--mn-text-secondary);"></div>
 </div>
 

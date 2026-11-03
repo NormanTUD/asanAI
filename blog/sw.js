@@ -1,14 +1,20 @@
 "use strict";
 
-const CACHE_VERSION = "1";
+// Bump this whenever the cache layout or a stable-URL index changes. The
+// activate handler deletes every asanai-blog-* cache with another version.
+const CACHE_VERSION = "2";
 const SHELL_CACHE = "asanai-blog-shell-v" + CACHE_VERSION;
 const PAGES_CACHE = "asanai-blog-pages-v" + CACHE_VERSION;
 const ASSETS_CACHE = "asanai-blog-assets-v" + CACHE_VERSION;
 const CACHE_PREFIX = "asanai-blog-";
-const MAX_PAGES = 80;
-const MAX_ASSETS = 400;
+const MAX_PAGES = 400;
+const MAX_ASSETS = 4000;
 const NETWORK_TIMEOUT = 6000;
 const BATCH_SIZE = 6;
+const STORAGE_TRIGGER_RATIO = 0.8;
+const STORAGE_TARGET_RATIO = 0.6;
+const STORAGE_CHECK_DELAY = 5000;
+let storageCheckTimer = null;
 
 const SCOPE_URL = new URL(self.registration.scope);
 const OFFLINE_URL = new URL("offline.html", SCOPE_URL).href;
