@@ -112,7 +112,6 @@ $simDateLabel = $today->format('j F Y');
 	<main id="main">
 		<div class="shell">
 			<section class="hero">
-				<canvas class="constellation" id="constellation" aria-hidden="true"></canvas>
 				<div>
 					<p class="kicker">ScaDS.AI Dresden/Leipzig · end-of-year AI calendar</p>
 					<h1>Learn something about AI <em>every day.</em></h1>
@@ -141,56 +140,6 @@ $simDateLabel = $today->format('j F Y');
 	<script>
 	(function () {
 		"use strict";
-		var canvas = document.getElementById("constellation");
-		if (canvas) {
-			var pts = [];
-			var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-			for (var i = 0; i < 38; i++) {
-				pts.push({
-					x: Math.random(),
-					y: Math.random(),
-					r: 0.7 + Math.random() * 1.8,
-					s: 0.004 + Math.random() * 0.012
-				});
-			}
-			var api = TM.initCanvas(canvas, function (ctx, w, h) {
-				var c = TM.colors();
-				var now = performance.now() / 1000;
-				ctx.clearRect(0, 0, w, h);
-				var green = c.dark ? "143,217,119" : "61,140,47";
-				var blue = c.dark ? "74,180,224" : "0,116,172";
-				pts.forEach(function (p) {
-					var y = reduce ? p.y : (p.y - now * p.s) % 1;
-					if (y < 0) y += 1;
-					ctx.beginPath();
-					ctx.arc(p.x * w, y * h, p.r, 0, Math.PI * 2);
-					ctx.fillStyle = "rgba(" + blue + ",0.42)";
-					ctx.fill();
-				});
-				for (var a = 0; a < pts.length; a++) {
-					var ay = reduce ? pts[a].y : ((pts[a].y - now * pts[a].s) % 1 + 1) % 1;
-					for (var b = a + 1; b < pts.length; b++) {
-						var by = reduce ? pts[b].y : ((pts[b].y - now * pts[b].s) % 1 + 1) % 1;
-						var dx = (pts[a].x - pts[b].x) * w;
-						var dy = (ay - by) * h;
-						var d = Math.hypot(dx, dy);
-						if (d < 128) {
-							ctx.strokeStyle = "rgba(" + green + "," + (0.13 * (1 - d / 128)) + ")";
-							ctx.lineWidth = 0.7;
-							ctx.beginPath();
-							ctx.moveTo(pts[a].x * w, ay * h);
-							ctx.lineTo(pts[b].x * w, by * h);
-							ctx.stroke();
-						}
-					}
-				}
-			});
-			if (!reduce) {
-				(function loop() { api.redraw(); requestAnimationFrame(loop); })();
-			}
-			window.addEventListener("tm:theme", function () { api.redraw(); });
-		}
-
 		var done = TM.done();
 		document.querySelectorAll(".day-card").forEach(function (card) {
 			var slug = card.getAttribute("data-slug");

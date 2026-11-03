@@ -6,12 +6,24 @@ Language Models*. It is mostly plain HTML + shared CSS/JS, with one small
 package manager. The root `AGENTS.md` still applies; this file records choices
 that are specific to this directory.
 
-## Typography
+## Typography and scads.ai visual match
 
-Body and prose use **Lingua Franca** (the same webfont as the main blog's
-`utopia` setting), loaded from `../../fonts/`. Headings use the blog's
-`system-ui` stack. Barlow remains the compact-page UI font. Do not switch the
-body back to Source Serif 4 without checking against a live scads.ai lesson.
+The Ten Minutes pages follow the public scads.ai theme, not the standalone
+`asanai.scads.ai` site and not the blog's Lingua Franca stack.
+
+- Body and prose: **Open Sans 300**, 18px / 30px, self-hosted from
+  `assets/fonts/open-sans-v40-latin-*.woff2`.
+- Headings and display type: **Barlow 700**, self-hosted from
+  `assets/fonts/barlow-*.woff2`.
+- UI labels and buttons: Open Sans.
+- Surfaces are square: no rounded cards or buttons. Cards are white with thin
+  borders and a subtle hover shadow.
+- Primary buttons are square, green `#63a44b` or dark blue `#004B6F`, with
+  white text.
+- The calendar landing page uses a full-bleed `#004B6F` title band. `calendar`,
+  `advent`, and `library` pages sit on `#F9F9F9` in light mode.
+- Do not switch back to Lingua Franca / system-ui / Source Serif 4 without
+  checking against the live scads.ai theme.
 
 ## Branding and page chrome
 
