@@ -86,25 +86,8 @@ $simDateLabel = $today->format('j F Y');
 	<title>Ten Minutes | From Nothing to Large Language Models</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
-<body data-page="home">
+<body data-page="calendar">
 	<div class="readbar" aria-hidden="true"><span></span></div>
-
-	<header class="topbar">
-		<a class="brand" href="index.php" aria-label="Ten Minutes, home">
-			<span class="brand-mark">10<sup>′</sup></span>
-			<span class="brand-name"><b>Ten</b> Minutes</span>
-			<span class="brand-by">ScaDS.AI Dresden/Leipzig</span>
-		</a>
-		<nav class="topnav" aria-label="Main">
-			<a href="index.php" aria-current="page">Home</a>
-			<a href="advent.html"><span class="nav-long">Advent </span>Calendar</a>
-			<a href="library.html">Library</a>
-			<button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Dark mode">
-				<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.7 6.7 0 0 0 9.8 9.8z"/></svg>
-				<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-			</button>
-		</nav>
-	</header>
 
 	<main id="main">
 		<div class="shell">
@@ -159,23 +142,6 @@ $simDateLabel = $today->format('j F Y');
 			</section>
 		</div>
 	</main>
-
-	<footer class="footer">
-		<div class="shell footer-grid">
-			<div>
-				<div class="footer-brand">10<sup>′</sup> Minutes</div>
-				<p>A compact, interactive companion to the From Nothing to Large Language Models project.</p>
-			</div>
-			<div>
-				<nav aria-label="Footer">
-					<a href="advent.html">Advent calendar</a>
-					<a href="library.html">Library</a>
-					<a href="whole.html">The whole arc</a>
-				</nav>
-				<p style="margin-top:10px">ScaDS.AI Dresden/Leipzig · no tracking · progress stays in your browser.</p>
-			</div>
-		</div>
-	</footer>
 
 	<script src="assets/site.js"></script>
 	<script>

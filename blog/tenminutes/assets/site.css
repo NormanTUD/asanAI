@@ -358,6 +358,12 @@ main { position: relative; z-index: 1; }
 	padding: clamp(58px, 8vw, 112px) 0 clamp(46px, 6vw, 78px);
 	max-width: 980px;
 }
+body[data-page="calendar"] .shell {
+	width: 100%;
+	max-width: none;
+	padding-inline: clamp(18px, 2.4vw, 44px);
+}
+body[data-page="calendar"] .hero { max-width: none; }
 
 .hero--lesson { padding-bottom: clamp(34px, 4vw, 54px); }
 
@@ -416,7 +422,8 @@ html[data-theme="dark"] .kicker { color: var(--tm-green); }
 	.hero h1,
 	.advent-hero h1 { white-space: nowrap; }
 	body[data-page="home"] .hero h1,
-	body[data-page="advent"] .hero h1 { font-size: clamp(2.3rem, 4.4vw, 4rem); }
+	body[data-page="advent"] .hero h1,
+	body[data-page="calendar"] .hero h1 { font-size: clamp(2.3rem, 4.4vw, 4rem); }
 }
 
 .hero-deck {
