@@ -45,7 +45,7 @@
 			if (!el.hasAttribute(name)) return;
 			var value = el.getAttribute(name);
 			var key = norm(value);
-			if (attrs[key] != null) el.setAttribute(name, attrs[key]);
+			if (attrs[key] != null && value !== attrs[key]) el.setAttribute(name, attrs[key]);
 		});
 	}
 
@@ -55,14 +55,14 @@
 		var match = raw.match(/^(\s*)([\s\S]*?)(\s*)$/);
 		if (!match) return;
 		var key = norm(match[2]);
-		if (texts[key] != null) node.nodeValue = match[1] + texts[key] + match[3];
+		if (texts[key] != null && match[2] !== texts[key]) node.nodeValue = match[1] + texts[key] + match[3];
 	}
 
 	function translateElement(el) {
 		if (!(el instanceof Element) || skip(el)) return;
 		if (el.matches(BLOCK_SELECTOR)) {
 			var html = norm(el.innerHTML);
-			if (blocks[html] != null) {
+			if (blocks[html] != null && html !== blocks[html]) {
 				el.innerHTML = blocks[html];
 				return;
 			}
@@ -97,10 +97,10 @@
 		rewriteLinks();
 		if (lang !== "de") return;
 		applying = true;
-		if (data.title) document.title = data.title;
+		if (data.title && document.title !== data.title) document.title = data.title;
 		if (data.description) {
 			var meta = document.querySelector('meta[name="description"]');
-			if (meta) meta.setAttribute("content", data.description);
+			if (meta && meta.getAttribute("content") !== data.description) meta.setAttribute("content", data.description);
 		}
 		translateElement(document.body);
 		applying = false;
