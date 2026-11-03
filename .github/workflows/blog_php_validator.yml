@@ -102,6 +102,12 @@ jobs:
         run: |
           uv run --with playwright python3 blog/tests/loss_landscape_test.py
 
+      - name: Run blog PWA offline test
+        # Registers the Toolkit worker first, then checks that a visited blog
+        # lesson and its images survive an offline reload.
+        run: |
+          uv run blog/tests/pwa_offline_test.py
+
   # Fast, dependency-free node unit tests for the client-side interactivity:
   # topic/interest registry, tone picker, learned state + course progress,
   # math-comfort 5-stop snapping, math-alternative text, keypoint cards, search.
