@@ -211,7 +211,8 @@ space-curvature demo uses it for its step buttons.
   cards with a `?` placeholder and no link. `index.php?date=1.12.2026` or
   `index.php?datum=1.12.2026` simulates a date for testing.
 - A week label whose first day is still locked is reduced server-side to
-  “Section N · Locked”, so the section theme is not revealed early.
+  “Section N · Locked · Opens on <date>”, so the section theme is not revealed
+  early but the unlock date stays visible.
 - The calendar has exactly **31 doors**: `id="day-1"` … `id="day-31"`.
   `data-day`, `.dc-num` (zero-padded), and the `id` must agree.
 - Compact doors use:
@@ -219,8 +220,8 @@ space-curvature demo uses it for its step buttons.
   <a class="day-card is-available" id="day-4" href="tokenizerlab.html"
      data-day="4" data-slug="tokenizerlab">
   ```
-  They carry the green top bar, `Open compact →`, and feed the local progress
-  counter.
+  They carry the green top bar, `Open lesson →`, and feed the local progress
+  counter. The day cards do not show duration or math-level tags.
 - Original-lesson doors link to `../<lesson>.php` and have no `data-slug`.
 - Every card keeps a hidden `<span class="dc-today">`; the script reveals it in
   December.

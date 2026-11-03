@@ -82,9 +82,10 @@ foreach ($chunks as $chunk) {
 	if (preg_match('/<p class="week-label">Section (\d+)[^<]*Days (\d+)-(\d+)<\/p>/u', $chunk, $label)) {
 		$firstDay = (int) $label[2];
 		if ($firstDay > $unlocked) {
+			$sectionOpens = $unlockStart->modify('+' . ($firstDay - 1) . ' days')->format('j F Y');
 			$chunk = preg_replace(
 				'/<p class="week-label">.*?<\/p>/u',
-				'<p class="week-label">Section ' . $label[1] . ' · Locked</p>',
+				'<p class="week-label">Section ' . $label[1] . ' · Locked · Opens on ' . htmlspecialchars($sectionOpens, ENT_QUOTES, 'UTF-8') . '</p>',
 				$chunk,
 				1
 			);
