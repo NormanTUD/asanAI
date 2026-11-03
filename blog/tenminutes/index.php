@@ -101,9 +101,9 @@ $simDateLabel = $today->format('j F Y');
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	<meta name="description" content="A compact, interactive companion to From Nothing to Large Language Models: 31 doors, ten minutes each.">
+	<meta name="description" content="An end-of-year AI calendar from ScaDS.AI Dresden/Leipzig: one short article, roughly ten minutes, with an interactive demo for every day.">
 	<meta name="theme-color" content="#ffffff">
-	<title>Ten Minutes | From Nothing to Large Language Models</title>
+	<title>End-of-Year AI Calendar | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-page="calendar">
@@ -114,16 +114,16 @@ $simDateLabel = $today->format('j F Y');
 			<section class="hero">
 				<canvas class="constellation" id="constellation" aria-hidden="true"></canvas>
 				<div>
-					<p class="kicker">From Nothing to Large Language Models · compact edition</p>
-					<h1>The whole course. <em>Ten minutes</em> at a time.</h1>
+					<p class="kicker">ScaDS.AI Dresden/Leipzig · end-of-year AI calendar</p>
+					<h1>Learn something about AI <em>every day.</em></h1>
 					<p class="hero-deck">
-						A compact, interactive companion to the long textbook, made at
-						<strong>ScaDS.AI Dresden/Leipzig</strong>. Each door is a self-contained lesson:
-						one idea, something to try, and one clear takeaway.
+						A guided path for a curious person. Each day opens a short article, roughly ten
+						minutes, with an interactive demo or something to try: a small daily dose of AI,
+						one idea at a time.
 					</p>
 					<p class="hero-deck">
-						The calendar is a reading route through the whole arc, from the first next-token
-						prediction to the larger questions. Read one door a day, or follow the thread.
+						The calendar follows the ideas behind modern AI, from next-token prediction to the
+						larger questions. Read one door a day, or follow the thread at your own pace.
 					</p>
 				</div>
 			</section>
