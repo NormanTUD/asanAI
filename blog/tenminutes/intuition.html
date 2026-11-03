@@ -205,12 +205,13 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Inside the model <span>· demos 02-07</span></p>
-									<p class="demo-sub">Follow one word through six steps. Each step is a small toy, but the order and the division of labour are the real architecture.</p>
+									<p class="demo-sub">Follow one token through six steps. Each step is a small hand-built demo, but the order and the division of labour are the real architecture.</p>
 								</div>
 								<span class="demo-badge">six steps</span>
 							</div>
 							<div class="demo-body">
 								<div class="step-pane" id="step-tokenize">
+									<p class="step-note step-lead">A token is not a word. Before the model can read anything, text is encoded as numbers. Every character has a number called a Unicode code point, and an encoding turns that number into bytes. A byte-level tokenizer starts from all 256 possible bytes, so every piece of text is representable, including characters it never saw in training. Rare words split into smaller pieces the vocabulary already knows. New emoji still work because related emoji share their first bytes: most characters in the main emoji block begin with <code>F0 9F</code>. A space is a byte too, and it can be a token of its own.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 1 · Tokenize</span>
