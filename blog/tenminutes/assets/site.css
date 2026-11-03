@@ -5560,3 +5560,96 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	.video-play { font-size: 0.85rem; padding: 16px; }
 	.video-play::before { width: 44px; height: 44px; font-size: 1rem; }
 }
+
+/* ── space-curvature demo ─────────────────────────────────── */
+.ism-copy {
+	max-width: 640px;
+	min-height: 12em;
+	margin: 0 auto 14px;
+	text-align: center;
+	display: grid;
+}
+.ism-scene {
+	grid-area: 1 / 1;
+	visibility: hidden;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.22s ease;
+}
+.ism-scene.is-active { visibility: visible; opacity: 1; pointer-events: auto; }
+.ism-title {
+	font-family: var(--tm-display);
+	font-size: 1.05rem;
+	font-weight: 600;
+	line-height: 1.25;
+	color: var(--tm-ink);
+	margin-bottom: 4px;
+}
+.ism-body {
+	font-size: 0.84rem;
+	line-height: 1.55;
+	color: var(--tm-muted);
+}
+.ism-wrap {
+	position: relative;
+	height: 480px;
+	overflow: hidden;
+	border: 1px solid var(--tm-line);
+	border-radius: 10px;
+	background: var(--tm-paper-2);
+}
+#ism-canvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+	cursor: grab;
+	touch-action: none;
+}
+#ism-canvas.is-dragging { cursor: grabbing; }
+.ism-controls {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 12px;
+}
+.ism-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 1px solid var(--tm-line-strong);
+	border-radius: 50%;
+	background: var(--tm-paper-2);
+	color: var(--tm-ink);
+	font-family: var(--tm-ui);
+	font-size: 1.15rem;
+	line-height: 1;
+	cursor: pointer;
+}
+.ism-btn:hover { border-color: var(--tm-green); }
+.ism-btn:focus-visible { outline: 2px solid var(--tm-green); outline-offset: 2px; }
+.ism-dots { display: flex; align-items: center; gap: 6px; padding: 0 4px; }
+.ism-dot {
+	width: 9px;
+	height: 9px;
+	padding: 0;
+	border: 1px solid var(--tm-line-strong);
+	border-radius: 50%;
+	background: transparent;
+	transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.ism-dot.is-active { background: var(--tm-green); border-color: var(--tm-green); transform: scale(1.3); }
+.ism-counter {
+	min-width: 3.2em;
+	color: var(--tm-muted);
+	font-family: var(--tm-mono);
+	font-size: 0.7rem;
+	text-align: center;
+}
+@media (max-width: 640px) {
+	.ism-wrap { height: 360px; }
+}
