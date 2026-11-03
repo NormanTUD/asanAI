@@ -19372,7 +19372,7 @@
       "to": "mcculloch-pitts-neuron",
       "kind": "influenced",
       "qualifiers": {},
-      "quote": "the paper grew out of a specific Chicago milieu — Rashevsky's mathematical biophysics",
+      "quote": "the paper grew out of a specific Chicago milieu: Rashevsky's mathematical biophysics",
       "citation_keys": [
         "abraham2002physio"
       ],
@@ -19602,7 +19602,7 @@
       "to": "mcculloch-pitts-1943",
       "kind": "cites",
       "qualifiers": {},
-      "quote": "cited exactly one paper — “A Logical Calculus”",
+      "quote": "cited exactly one paper, “A Logical Calculus”",
       "citation_keys": [],
       "confidence": "inferred"
     },
@@ -19612,7 +19612,7 @@
       "to": "mcculloch-pitts-net",
       "kind": "uses",
       "qualifiers": {},
-      "quote": "proposed building the machine from McCulloch–Pitts-style logic gates",
+      "quote": "proposed building the machine from McCulloch-Pitts-style logic gates",
       "citation_keys": [],
       "confidence": "inferred"
     },
@@ -19924,7 +19924,7 @@
       "to": "beurle-1956",
       "kind": "derived_from",
       "qualifiers": {},
-      "quote": "it anticipates the **continuum-field** model of cortical activity that modern neural-field theories (Amari 1977, Wilson–Cowan 1972/73, Jirsa–Kelso 2000) all descend from",
+      "quote": "it anticipates the **continuum-field** model of cortical activity that modern neural-field theories (Amari 1977, Wilson-Cowan 1972/73, Jirsa-Kelso 2000) all descend from",
       "citation_keys": [],
       "confidence": "inferred"
     },
@@ -19934,7 +19934,7 @@
       "to": "hebb-1949",
       "kind": "before",
       "qualifiers": {},
-      "quote": "jumps from the McCulloch–Pitts 1943 logical neuron, through the Hebb 1949 learning rule, to the perceptron 1958 and the Amari 1972 / Hopfield 1982 attractor networks",
+      "quote": "jumps from the McCulloch-Pitts 1943 logical neuron, through the Hebb 1949 learning rule, to the perceptron 1958 and the Amari 1972 / Hopfield 1982 attractor networks",
       "citation_keys": []
     },
     {
@@ -19943,7 +19943,7 @@
       "to": "perceptron",
       "kind": "before",
       "qualifiers": {},
-      "quote": "jumps from the McCulloch–Pitts 1943 logical neuron, through the Hebb 1949 learning rule, to the perceptron 1958 and the Amari 1972 / Hopfield 1982 attractor networks",
+      "quote": "jumps from the McCulloch-Pitts 1943 logical neuron, through the Hebb 1949 learning rule, to the perceptron 1958 and the Amari 1972 / Hopfield 1982 attractor networks",
       "citation_keys": []
     },
     {
@@ -19952,7 +19952,7 @@
       "to": "hopfield-network",
       "kind": "before",
       "qualifiers": {},
-      "quote": "jumps from the McCulloch–Pitts 1943 logical neuron, through the Hebb 1949 learning rule, to the perceptron 1958 and the Amari 1972 / Hopfield 1982 attractor networks",
+      "quote": "jumps from the McCulloch-Pitts 1943 logical neuron, through the Hebb 1949 learning rule, to the perceptron 1958 and the Amari 1972 / Hopfield 1982 attractor networks",
       "citation_keys": []
     },
     {
@@ -20349,7 +20349,7 @@
       "to": "monotypic-model",
       "kind": "instance_of",
       "qualifiers": {},
-      "quote": "the McCulloch–Pitts logical neuron and the automata built on it are the canonical case",
+      "quote": "the McCulloch-Pitts logical neuron and the automata built on it are the canonical case",
       "citation_keys": [
         "rosenblatt1962neurodynamics"
       ],
@@ -20449,7 +20449,7 @@
       "to": "perceptron",
       "kind": "critiques",
       "qualifiers": {},
-      "quote": "characterizing that limit became the substance of the Minsky–Papert critique",
+      "quote": "characterizing that limit became the substance of the Minsky-Papert critique",
       "citation_keys": [
         "rosenblatt1962neurodynamics",
         "block1962perceptron",
@@ -20531,7 +20531,7 @@
       "to": "mcculloch-pitts",
       "kind": "related_to",
       "qualifiers": {},
-      "quote": "The Lernmatrix is the missing link between the 1943 McCulloch–Pitts logical neuron and the 1982 Hopfield attractor network.",
+      "quote": "The Lernmatrix is the missing link between the 1943 McCulloch-Pitts logical neuron and the 1982 Hopfield attractor network.",
       "citation_keys": []
     },
     {
@@ -20540,7 +20540,7 @@
       "to": "perceptron",
       "kind": "related_to",
       "qualifiers": {},
-      "quote": "Like the perceptron, it learns input–output associations from examples",
+      "quote": "Like the perceptron, it learns input-output associations from examples",
       "citation_keys": [],
       "confidence": "inferred"
     },
@@ -21522,7 +21522,7 @@
       "to": "positional-encodings",
       "kind": "derived_from",
       "qualifiers": {},
-      "quote": "Its descendants — learned position vectors, and later **rotary** embeddings (RoPE)",
+      "quote": "Its descendants (learned position vectors, and later **rotary** embeddings (RoPE)",
       "citation_keys": [],
       "confidence": "inferred"
     },
@@ -21668,7 +21668,7 @@
       "to": "first-ai-summer",
       "kind": "caused",
       "qualifiers": {},
-      "quote": "The first summer (1956–1969) was fueled by the Dartmouth workshop and Rosenblatt's Perceptron",
+      "quote": "The first summer (1956-1969) was fueled by the Dartmouth workshop and Rosenblatt's Perceptron",
       "citation_keys": []
     },
     {
@@ -21677,7 +21677,7 @@
       "to": "first-ai-summer",
       "kind": "caused",
       "qualifiers": {},
-      "quote": "The first summer (1956–1969) was fueled by the Dartmouth workshop and Rosenblatt's Perceptron",
+      "quote": "The first summer (1956-1969) was fueled by the Dartmouth workshop and Rosenblatt's Perceptron",
       "citation_keys": []
     },
     {
@@ -27833,7 +27833,7 @@
       "to": "cybernetics",
       "kind": "related_to",
       "qualifiers": {},
-      "quote": "Its two founding papers both date to 1943 — McCulloch-Pitts (above), and **Arturo Rosenblueth, Norbert Wiener and Julian Bigelow's** *Behavior, Purpose and Teleology*",
+      "quote": "Its two founding papers both date to 1943: McCulloch-Pitts (above), and **Arturo Rosenblueth, Norbert Wiener and Julian Bigelow's** *Behavior, Purpose and Teleology*",
       "citation_keys": [],
       "confidence": "stated"
     },
