@@ -179,6 +179,43 @@ headers, rewrites links/forms/CSS/fonts and the analytics endpoint, and makes
 stats login/CSV/backup work through the proxy. Override its remote base with
 `ASANAI_BLOG_PROXY_REMOTE` for staging/tests.
 
+## The Blog: PWA / offline
+
+Two service workers with separate scopes and cache namespaces:
+
+- **Toolkit** — `/sw.js`, scope `/`, caches `asanai-pwa-*`. It denies
+  `blog`, `api/`, `rag/`, `stats`, `feedback` and `questions`; prefixes are
+  relative to `self.registration.scope`, so subpath deployments are safe.
+- **Blog** — `/blog/sw.js`, scope `/blog/` (or `/` when the blog is its own
+  document root), caches `asanai-blog-*`. `blog/pwa.js` registers it from
+  `load_base_js()`; `print_pwa_head()` emits the manifest and iOS meta tags.
+
+**There is no save/install/offline UI.** Every page the reader opens is cached
+automatically together with all same-origin assets it loaded. A page opened
+before the blog worker controlled it is handed over after activation:
+`pwa.js` waits for the **blog registration's** active worker instead of
+`navigator.serviceWorker.controller`, which may still be the Toolkit worker.
+`CACHE_PAGE` with `page: null` refreshes assets only.
+
+Cache semantics in `blog/sw.js`:
+
+- versioned/immutable assets (`?v=`, images, fonts, binaries) are cache-first
+  and are **not** re-downloaded in the background;
+- other assets use stale-while-revalidate;
+- when `navigator.storage.estimate()` reports >80 % quota, the oldest pages
+  and assets are evicted automatically (FIFO approximation of LRU);
+- `CACHE_VERSION` must be bumped when the cache layout or a stable-URL index
+  (`semantic_index.json`, `semantic_vectors.bin`, …) changes, so `activate`
+  deletes the old namespace.
+
+Private/dynamic endpoints must be added to `EXCLUDED_FILES`/`EXCLUDED_PREFIXES`
+in `blog/sw.js` and to `blog/tests/pwa_test.py`. Offline search uses the cached
+semantic index because `search.php` is deliberately excluded.
+
+Tests: `uv run blog/tests/pwa_test.py blog/` (static, also in
+`blog/tools/check_all.py`) and
+`uv run blog/tests/pwa_offline_test.py` (Playwright; visit → offline reload).
+
 ## The Blog: load & render pipeline (order matters)
 
 1. PHP emits the page shell: theme class on `<html>`, `load_base_js()` in
