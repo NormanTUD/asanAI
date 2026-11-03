@@ -228,10 +228,11 @@
 										<div class="token-chips" id="itok-out" aria-live="polite"></div>
 										<div class="demo-readout demo-readout--4" id="itok-stats"></div>
 									</div>
-									<p class="step-note">A model does not read words. It reads <b>tokens</b>: common words, word fragments, punctuation, and whitespace, each with a fixed numeric id. The words in the toy above are a useful stand-in; rare words split into pieces the vocabulary already knows.</p>
+									<p class="step-note">The demo shows the pieces and their ids. A real tokenizer learns its merge table from text, so frequent pieces become single tokens and rare ones split. That is how a fixed vocabulary can cover an open-ended set of strings. The ids carry no meaning on their own; they are addresses into an embedding table.</p>
 								</div>
 
 								<div class="step-pane" id="step-embed">
+									<p class="step-note step-lead">Each token id points to a vector of learned parameters. A real model uses thousands of dimensions, often around ten thousand; this demo uses two so the picture fits on screen. The vector is the token's starting representation. Training arranges these points so that related tokens sit near each other and directions carry relationships, which is what the demo below lets you move around.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 2 · Embed</span>
@@ -255,6 +256,7 @@
 								</div>
 
 								<div class="step-pane" id="step-position">
+									<p class="step-note step-lead">Attention, explained in the next step, compares tokens with each other but has no built-in sense of order. Without a position signal, “man bites dog” and “dog bites man” contain exactly the same vectors and look identical. A positional encoding adds a distinct fingerprint to every slot, so order becomes part of the representation.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 3 · Position</span>
@@ -278,10 +280,11 @@
 										</div>
 										<div class="step-out" id="ipe-out">Each row is one position; each column is one dimension. Drag the context length to 128 and watch the low-frequency waves repeat while the high-frequency ones keep moving.</div>
 									</div>
-									<p class="step-note">Attention has no built-in sense of order. A <b>positional encoding</b> adds a unique fingerprint to every position, so “dog bites man” and “man bites dog” stop looking like the same bag of vectors. Why not simply number the positions? Because a raw index grows without bound and says nothing about relative distance; a pattern of waves gives every position a distinct fingerprint and makes nearby positions share some structure.</p>
+									<p class="step-note">The heatmap shows one common scheme. Each position gets a mix of slow and fast waves, so nearby positions share some structure while every position stays distinct. A raw index would grow without bound and say nothing about relative distance; a wave pattern does not.</p>
 								</div>
 
 								<div class="step-pane" id="step-attention">
+									<p class="step-note step-lead">Attention lets each token look at the other tokens in the context, decide which ones matter for it, and pull their information into its own vector. That is how “bank” moves toward the river reading or the money reading. The demo follows one hand-tuned head; a real layer runs many heads in parallel.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 4 · Attend</span>
@@ -303,7 +306,100 @@
 									<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the company it keeps, because the values it collects are different.</p>
 								</div>
 
+								<div class="step-pane layer-pane" id="layer-detail">
+									<div class="step-pane-head">
+										<span class="sp-kicker">The layer in detail · projection and bend</span>
+										<h3 class="sp-title">A projection, a bias, a bend</h3>
+									</div>
+									<p class="step-note step-lead">A dense layer computes an affine projection, <span data-tex="Wx + b" data-tex-display="false"></span>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
+									<div class="layer-formula" data-tex="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{weight}\\\text{matrix}}}\,x + \underbrace{b}_{\text{bias}}\right)"></div>
+									<div class="collapse-card">
+										<div class="cc-label">Worked example · 2 inputs, 3 outputs</div>
+										<div class="collapse-math" data-tex="\begin{aligned} W &amp;= \begin{pmatrix} 1 &amp; 2 \\ 0 &amp; -1 \\ 2 &amp; 1 \end{pmatrix}, \quad x = \begin{pmatrix} 3 \\ 1 \end{pmatrix}, \quad b = \begin{pmatrix} 0 \\ 0 \\ -2 \end{pmatrix} \\[6pt] Wx &amp;= \begin{pmatrix} 1\cdot 3 + 2\cdot 1 \\ 0\cdot 3 + (-1)\cdot 1 \\ 2\cdot 3 + 1\cdot 1 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \\ 7 \end{pmatrix} \\[6pt] z = Wx + b &amp;= \begin{pmatrix} 5 \\ -1 \\ 7 \end{pmatrix} + \begin{pmatrix} 0 \\ 0 \\ -2 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \\ 5 \end{pmatrix} \\[6pt] \operatorname{ReLU}(z) &amp;= \begin{pmatrix} 5 \\ 0 \\ 5 \end{pmatrix} \end{aligned}"></div>
+										<p>Read <span data-tex="W" data-tex-display="false"></span> row by row: the first output mixes the inputs as <span data-tex="1\cdot 3 + 2\cdot 1" data-tex-display="false"></span>, the second as <span data-tex="0\cdot 3 + (-1)\cdot 1" data-tex-display="false"></span>, the third as <span data-tex="2\cdot 3 + 1\cdot 1" data-tex-display="false"></span>. The bias adds <span data-tex="0" data-tex-display="false"></span>, <span data-tex="0" data-tex-display="false"></span>, and <span data-tex="-2" data-tex-display="false"></span>, so <span data-tex="z = (5, -1, 5)" data-tex-display="false"></span>. ReLU, the activation introduced below, sends the negative entry to zero and leaves the other two unchanged. A real layer runs the same dot products and the same bend with thousands of rows and columns.</p>
+									</div>
+									<h4 class="layer-subhead">Two dense layers without an activation</h4>
+									<div class="collapse-card">
+										<div class="cc-label">two dense layers without a nonlinearity</div>
+										<div class="collapse-math" id="collapse-math" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \\[4pt] W &amp;= W_2 W_1, \qquad b = W_2 b_1 + b_2 \end{aligned}"></div>
+										<p>Stack two dense layers and let the first feed the second. The product <span data-tex="W_2 W_1" data-tex-display="false"></span> is itself a new single weight matrix: every row of <span data-tex="W_1" data-tex-display="false"></span> is mixed through the columns of <span data-tex="W_2" data-tex-display="false"></span>. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <span data-tex="W" data-tex-display="false"></span> maps d inputs directly to k outputs: the hidden layer has disappeared. The biases also merge into <span data-tex="W_2 b_1 + b_2" data-tex-display="false"></span>. Without a nonlinearity, two dense layers are exactly one dense layer with a combined <span data-tex="W" data-tex-display="false"></span>; depth adds no expressive power. That is why an activation function is needed.</p>
+									</div>
+									<h4 class="layer-subhead">Activation functions</h4>
+									<div class="activation-card">
+										<div class="activation-copy">
+											<p>An <b>activation function</b> is applied to each coordinate after the projection. It adds the nonlinearity that a stack of dense layers otherwise lacks.</p>
+											<p><span data-tex="\operatorname{ReLU}(z) = \max(0, z)" data-tex-display="false"></span> passes positive values unchanged and sends the entire negative half-space to zero. The graph is flat, then a straight rise: a hard fold at <span data-tex="z = 0" data-tex-display="false"></span>. Because many inputs become the same output, ReLU is not injective; it can change the topology of the representation.</p>
+											<p><b>Sigmoid</b> squashes every value into (0, 1); <b>tanh</b> squashes it into (-1, 1). Both are strictly increasing, so they bend smoothly without mapping distinct inputs to the same output. <b>GELU</b> is smooth but not monotonic: it dips slightly below zero, so it is also many-to-one. Other choices include SiLU/Swish, ELU, and gated variants such as SwiGLU.</p>
+										</div>
+										<div class="activation-plots" id="activation-plots">
+											<figure class="ap ap-relu">
+												<svg viewBox="0 0 60 44" role="img" aria-label="ReLU: zero for negative inputs, then a straight rise">
+													<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
+													<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
+													<path class="ap-curve" d="M2.00,28.67 L6.67,28.67 L11.33,28.67 L16.00,28.67 L20.67,28.67 L25.33,28.67 L30.00,28.67 L34.67,24.22 L39.33,19.78 L44.00,15.33 L48.67,10.89 L53.33,6.44 L58.00,2.00"></path>
+												</svg>
+												<figcaption><b>ReLU</b><span>flat, then a rise</span></figcaption>
+											</figure>
+											<figure class="ap ap-gelu">
+												<svg viewBox="0 0 60 44" role="img" aria-label="GELU: a smooth curve that dips slightly below zero">
+													<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
+													<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
+													<path class="ap-curve" d="M2.00,28.70 L6.67,28.80 L11.33,29.07 L16.00,29.56 L20.67,30.08 L25.33,30.04 L30.00,28.67 L34.67,25.59 L39.33,21.19 L44.00,16.22 L48.67,11.29 L53.33,6.58 L58.00,2.04"></path>
+												</svg>
+												<figcaption><b>GELU</b><span>smooth, small dip</span></figcaption>
+											</figure>
+											<figure class="ap ap-sigmoid">
+												<svg viewBox="0 0 60 44" role="img" aria-label="Sigmoid: an S-shaped curve between zero and one">
+													<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
+													<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
+													<path class="ap-curve" d="M2.00,28.25 L6.67,27.99 L11.33,27.61 L16.00,27.05 L20.67,26.28 L25.33,25.31 L30.00,24.22 L34.67,23.13 L39.33,22.17 L44.00,21.40 L48.67,20.84 L53.33,20.45 L58.00,20.20"></path>
+												</svg>
+												<figcaption><b>Sigmoid</b><span>S-shape, 0 to 1</span></figcaption>
+											</figure>
+											<figure class="ap ap-tanh">
+												<svg viewBox="0 0 60 44" role="img" aria-label="Tanh: an S-shaped curve between minus one and one">
+													<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
+													<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
+													<path class="ap-curve" d="M2.00,37.51 L6.67,37.44 L11.33,37.24 L16.00,36.71 L20.67,35.44 L25.33,32.77 L30.00,28.67 L34.67,24.56 L39.33,21.90 L44.00,20.62 L48.67,20.10 L53.33,19.90 L58.00,19.82"></path>
+												</svg>
+												<figcaption><b>tanh</b><span>S-shape, -1 to 1</span></figcaption>
+											</figure>
+										</div>
+									</div>
+									<h4 class="layer-subhead">A layer bends the space</h4>
+									<p class="step-note curve-intro">A dense layer works on one token at a time. With a smooth activation it bends the surrounding space instead of only stretching it. ReLU would crease the same space flat on one side of <span data-tex="z = 0" data-tex-display="false"></span>. The cut still happens: the layer changes the space in which the cut is made.</p>
+									<div class="demo demo--paper ism-panel" data-arrow-nav style="margin-top:14px">
+										<div class="demo-head">
+											<div>
+												<p class="demo-title">A layer bends the space <span>· demo 07</span></p>
+												<p class="demo-sub">Seven steps from an inseparable ring to a single threshold on a one-dimensional score.</p>
+											</div>
+											<span class="demo-badge">drag / step</span>
+										</div>
+										<div class="demo-body">
+											<div id="ism-copy" class="ism-copy" aria-live="polite">
+												<div id="ism-title" class="ism-title"></div>
+												<div id="ism-body" class="ism-body"></div>
+											</div>
+											<div id="ism-wrap" class="ism-wrap" style="height:clamp(360px, 55vw, 480px)">
+												<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
+											</div>
+											<div class="ism-controls">
+												<button type="button" id="ism-prev" data-arrow-prev class="ism-btn" aria-label="Previous step">←</button>
+												<button type="button" id="ism-next" data-arrow-next class="ism-btn" aria-label="Next step">→</button>
+												<div id="ism-dots" class="ism-dots" aria-hidden="true"></div>
+												<span id="ism-counter" class="ism-counter">1 / 7</span>
+											</div>
+										</div>
+										<div class="demo-insight"><b>Takeaway</b><span>The layer changes the coordinate system. A cut that was impossible becomes a threshold: that is what depth buys.</span></div>
+									</div>
+									<div class="step-out">The cut still happens. The layer changes the space so that a straight cut in the new space separates the classes in the old one. ReLU is the sharp version: a fold along a crease.</div>
+									<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into something closer to a simple threshold.</p>
+									<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>). The animation is an illustration, not a proof.</p>
+								</div>
+
 								<div class="step-pane" id="step-ffn">
+									<p class="step-note step-lead">A feed-forward network works on each token separately. It expands the vector into a wider hidden layer, applies an activation, and projects back to the original width. Attention mixes information across tokens; the feed-forward part does the per-token computation. The labelled patterns below are a reading aid, not stored rules.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 5 · Feed-forward</span>
@@ -335,61 +431,6 @@
 										</div>
 										<div class="step-out" id="iffn-out"></div>
 										<p class="step-note ffn-caveat"><b>What is simplified:</b> a real FFN has no labelled keys or values. The “patterns” are learned directions in W₁; the “pull” is a learned direction in W₂ that changes the next-token distribution. The labels are a reading aid, not stored rules.</p>
-									</div>
-									<div class="step-stage">
-										<div class="step-pane-head">
-											<span class="sp-kicker">The whole layer</span>
-											<h3 class="sp-title">The nonlinearity bends the space</h3>
-										</div>
-										<p class="step-note curve-intro">The FFN above works on one token. A dense layer computes an affine projection, <span data-tex="Wx + b" data-tex-display="false"></span>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
-										<div class="layer-formula" data-tex="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{weight}\\\text{matrix}}}\,x + \underbrace{b}_{\text{bias}}\right)"></div>
-										<div class="collapse-card">
-											<div class="cc-label">Worked example · 2 inputs, 3 outputs</div>
-											<div class="collapse-math" data-tex="\begin{aligned} W &amp;= \begin{pmatrix} 1 &amp; 2 \\ 0 &amp; -1 \\ 2 &amp; 1 \end{pmatrix}, \quad x = \begin{pmatrix} 3 \\ 1 \end{pmatrix}, \quad b = \begin{pmatrix} 0 \\ 0 \\ -2 \end{pmatrix} \\[6pt] Wx &amp;= \begin{pmatrix} 1\cdot 3 + 2\cdot 1 \\ 0\cdot 3 + (-1)\cdot 1 \\ 2\cdot 3 + 1\cdot 1 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \\ 7 \end{pmatrix} \\[6pt] z = Wx + b &amp;= \begin{pmatrix} 5 \\ -1 \\ 7 \end{pmatrix} + \begin{pmatrix} 0 \\ 0 \\ -2 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \\ 5 \end{pmatrix} \\[6pt] \operatorname{ReLU}(z) &amp;= \begin{pmatrix} 5 \\ 0 \\ 5 \end{pmatrix} \end{aligned}"></div>
-											<p>Read <span data-tex="W" data-tex-display="false"></span> row by row: the first output mixes the inputs as <span data-tex="1\cdot 3 + 2\cdot 1" data-tex-display="false"></span>, the second as <span data-tex="0\cdot 3 + (-1)\cdot 1" data-tex-display="false"></span>, the third as <span data-tex="2\cdot 3 + 1\cdot 1" data-tex-display="false"></span>. The bias adds <span data-tex="0" data-tex-display="false"></span>, <span data-tex="0" data-tex-display="false"></span>, and <span data-tex="-2" data-tex-display="false"></span>, so <span data-tex="z = (5, -1, 5)" data-tex-display="false"></span>. ReLU, the activation introduced below, sends the negative entry to zero and leaves the other two unchanged. A real layer runs the same dot products and the same bend with thousands of rows and columns.</p>
-										</div>
-										<div class="collapse-card">
-											<div class="cc-label">two dense layers</div>
-											<div class="collapse-math" id="collapse-math" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \\[4pt] W &amp;= W_2 W_1, \qquad b = W_2 b_1 + b_2 \end{aligned}"></div>
-											<p>The product <span data-tex="W_2 W_1" data-tex-display="false"></span> is itself a new single weight matrix: every row of <span data-tex="W_1" data-tex-display="false"></span> is mixed through the columns of <span data-tex="W_2" data-tex-display="false"></span>. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <span data-tex="W" data-tex-display="false"></span> maps d inputs directly to k outputs: the hidden layer has disappeared. The biases also merge into <span data-tex="W_2 b_1 + b_2" data-tex-display="false"></span>. So without a nonlinearity, two dense layers are exactly one dense layer with a combined <span data-tex="W" data-tex-display="false"></span>; depth adds no expressive power. The activation is what breaks the collapse.</p>
-										</div>
-										<div class="activation-card">
-											<div class="activation-copy">
-												<p>The term <b>activation</b> means the activation function: it is applied to each coordinate after the projection. It was introduced to add the nonlinearity that a stack of dense layers otherwise lacks.</p>
-												<p><span data-tex="\operatorname{ReLU}(z) = \max(0, z)" data-tex-display="false"></span> passes positive values unchanged and sends the entire negative half-space to zero. The graph is flat, then a straight rise: a hard fold at <span data-tex="z = 0" data-tex-display="false"></span>. Because many inputs become the same output, ReLU is not injective; it can change the topology of the representation.</p>
-												<p><b>Sigmoid</b> and <b>tanh</b> are strictly increasing, so they bend smoothly without mapping distinct inputs to the same output. <b>GELU</b> is smooth but not monotonic: it dips slightly below zero, so it is also many-to-one. Other choices include SiLU/Swish, ELU, and gated variants such as SwiGLU.</p>
-											</div>
-											<div class="activation-plots" id="activation-plots"></div>
-										</div>
-										<p class="step-note curve-intro">The demo below uses a smooth bend so you can see the shape. ReLU would crease the same space flat on one side of <span data-tex="z = 0" data-tex-display="false"></span>. The cut still happens: the layer changes the space in which the cut is made.</p>
-										<div class="demo demo--paper ism-panel" data-arrow-nav style="margin-top:14px">
-											<div class="demo-head">
-												<div>
-													<p class="demo-title">A layer bends the space <span>· demo 07</span></p>
-													<p class="demo-sub">Seven steps from an inseparable ring to a single threshold on a one-dimensional score.</p>
-												</div>
-												<span class="demo-badge">drag / step</span>
-											</div>
-											<div class="demo-body">
-												<div id="ism-copy" class="ism-copy" aria-live="polite">
-													<div id="ism-title" class="ism-title"></div>
-													<div id="ism-body" class="ism-body"></div>
-												</div>
-												<div id="ism-wrap" class="ism-wrap" style="height:clamp(360px, 55vw, 480px)">
-													<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
-												</div>
-												<div class="ism-controls">
-													<button type="button" id="ism-prev" data-arrow-prev class="ism-btn" aria-label="Previous step">←</button>
-													<button type="button" id="ism-next" data-arrow-next class="ism-btn" aria-label="Next step">→</button>
-													<div id="ism-dots" class="ism-dots" aria-hidden="true"></div>
-													<span id="ism-counter" class="ism-counter">1 / 7</span>
-												</div>
-											</div>
-											<div class="demo-insight"><b>Takeaway</b><span>The layer changes the coordinate system. A cut that was impossible becomes a threshold: that is what depth buys.</span></div>
-										</div>
-										<div class="step-out">The cut still happens. The layer changes the space so that a straight cut in the new space separates the classes in the old one. ReLU is the sharp version: a fold along a crease.</div>
-										<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into something closer to a simple threshold.</p>
-										<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>). The animation is an illustration, not a proof.</p>
 									</div>
 								</div>
 
