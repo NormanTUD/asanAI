@@ -202,6 +202,20 @@ def main() -> int:
 				)
 				check(backup.status_code == 200 and backup.content.startswith(b"SQLite format 3\x00"), "SQLite backup through proxy", f"{backup.status_code} {backup.headers.get('content-type')}")
 
+			course = session.get(f"{proxy_url}?tenminutes/intuition.html", timeout=20)
+			check(course.status_code == 200 and "One Word" in course.text, "tenminutes page through proxy")
+			check('src="asanai_blog_proxy.php?tenminutes/assets/site.js' in course.text, "tenminutes script path is resolved")
+			check('src="asanai_blog_proxy.php?temml.min.js"' in course.text, "tenminutes parent script path is resolved")
+			check('href="asanai_blog_proxy.php?tenminutes/assets/site.css' in course.text, "tenminutes stylesheet path is resolved")
+			for asset in ("tenminutes/assets/site.js", "tenminutes/assets/site.css", "temml.min.js", "Temml-Local.min.css"):
+				asset_response = session.get(f"{proxy_url}?{asset}", timeout=20)
+				asset_type = asset_response.headers.get("content-type", "").lower()
+				check(
+					asset_response.status_code == 200 and "text/html" not in asset_type,
+					f"proxied {asset}",
+					f"{asset_response.status_code} {asset_type}",
+				)
+
 			public_session = requests.Session()
 			public = public_session.get(f"{proxy_url}?index.php", timeout=30)
 			check(public.status_code == 200 and "Fatal error" not in public.text, "public page through proxy")
