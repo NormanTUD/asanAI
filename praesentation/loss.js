@@ -12,6 +12,10 @@
 // 3 · Die Loss-Kurve über das Training: eine einzige Linie, die
 //     sinkt. Nicht der einzelne Wert zählt, sondern der Verlauf.
 //
+// Der Loss ist CCE = −ln(p_katze). Die Wahrscheinlichkeiten
+// gleiten zwischen den Schritten, der Loss folgt dabei
+// logarithmisch.
+//
 // Die Szene zeichnet in einem festen 1100×420-Raster und wird auf
 // die Canvas-Größe skaliert; so bleibt das Layout auf jedem Beamer
 // identisch.
@@ -34,17 +38,17 @@ const LossDemo = (() => {
 
 	const ASSESS = [
 		{
-			cat: 0.60, dog: 0.40, loss: '0,5',
+			cat: 0.60, dog: 0.40,
 			verdict: 'richtig, aber unsicher',
 			col: C.amberDark, soft: C.amberSoft, line: C.amberLine
 		},
 		{
-			cat: 0.95, dog: 0.05, loss: '0,05',
+			cat: 0.95, dog: 0.05,
 			verdict: 'richtig und sicher',
 			col: C.greenDark, soft: C.greenSoft, line: C.greenLine
 		},
 		{
-			cat: 0.05, dog: 0.95, loss: '3,0',
+			cat: 0.05, dog: 0.95,
 			verdict: 'falsch erkannt',
 			col: C.roseDark, soft: C.roseSoft, line: C.roseLine
 		}
@@ -54,9 +58,11 @@ const LossDemo = (() => {
 	IMG.src = 'cat.jpg';
 
 	let reveal = 0;
+	const anim = { cat: 0.5, dog: 0.5 };
 
 	const clamp01 = t => Math.max(0, Math.min(1, t));
 	const easeOut = t => 1 - Math.pow(1 - t, 3);
+	const fmtLoss = v => (v >= 0.095 ? v.toFixed(1) : v.toFixed(2)).replace('.', ',');
 
 	function label(ctx, s, x, y, o) {
 		o = o || {};
@@ -133,10 +139,10 @@ const LossDemo = (() => {
 		return d.dog >= 0.8 ? C.rose : C.axis;
 	}
 
-	function drawProbRow(ctx, name, p, color, y, wrong, t) {
+	function drawProbRow(ctx, name, p, color, y, wrong, fade) {
 		const neutral = color === C.axis;
 		const xLabel = 285, xBar = 395, barW = 360, bh = 14, xPct = 785;
-		const ta = easeOut(clamp01((t - 0.15) / 0.5));
+		const ta = easeOut(clamp01((fade - 0.15) / 0.5));
 
 		ctx.save();
 		ctx.globalAlpha = ta;
@@ -147,16 +153,19 @@ const LossDemo = (() => {
 		ctx.restore();
 
 		bar(ctx, xBar, y - bh / 2, barW, bh, C.track, bh / 2);
-		bar(ctx, xBar, y - bh / 2, barW * p * t, bh, color, bh / 2);
+		bar(ctx, xBar, y - bh / 2, barW * p, bh, color, bh / 2);
 	}
 
-	function drawVerdict(ctx, d, a) {
+	function drawVerdict(ctx, d, lossText, a) {
 		if (a < 0.01) return;
 		ctx.save();
 		ctx.globalAlpha = a;
-		const text = 'Loss ≈ ' + d.loss + '  ·  ' + d.verdict;
+		const text = 'Loss ≈ ' + lossText + '  ·  ' + d.verdict;
+		// Feste Pillenbreite: der Live-Wert zählt während des Übergangs
+		// hoch/runter und darf die Kapsel nicht zittern lassen.
+		const widthText = 'Loss ≈ 0,00  ·  ' + d.verdict;
 		ctx.font = '800 15px ' + FONT;
-		const pw = ctx.measureText(text).width + 44;
+		const pw = ctx.measureText(widthText).width + 44;
 		const ph = 36, x = VW / 2 - pw / 2, y = 392 - ph / 2;
 		ctx.fillStyle = d.soft;
 		KatzeKit.roundRect(ctx, x, y, pw, ph, ph / 2);
@@ -172,7 +181,8 @@ const LossDemo = (() => {
 	// ── Schritte 0–2: eine Katze, zwei Ausgaben ────────────────
 	function drawAssess(ctx, step) {
 		const d = ASSESS[step];
-		const t = easeOut(clamp01(reveal / 0.55));
+		const fade = easeOut(clamp01(reveal / 0.55));
+		const loss = -Math.log(Math.max(anim.cat, 1e-9));
 		const iw = 320, ih = 214;
 		const ix = (VW - iw) / 2, iy = 44;
 
@@ -189,10 +199,11 @@ const LossDemo = (() => {
 		drawPhoto(ctx, IMG, ix, iy, iw, ih, 12);
 		truthBadge(ctx, ix + 14, iy + 14);
 
-		drawProbRow(ctx, 'Katze', d.cat, catBarColor(d), 290, false, t);
-		drawProbRow(ctx, 'Hund', d.dog, dogBarColor(d), 342, d.dog >= 0.8, t);
+		drawProbRow(ctx, 'Katze', anim.cat, catBarColor(d), 290, false, fade);
+		drawProbRow(ctx, 'Hund', anim.dog, dogBarColor(d), 342, d.dog >= 0.8, fade);
 
-		drawVerdict(ctx, d, easeOut(clamp01((reveal - 0.35) / 0.45)));
+		drawVerdict(ctx, d, fmtLoss(loss),
+			easeOut(clamp01((reveal - 0.35) / 0.45)));
 	}
 
 	// ── Schritt 3: eine Loss-Kurve über das Training ───────────
@@ -277,20 +288,20 @@ const LossDemo = (() => {
 			{
 				k: 'Schritt 1 · Richtig, aber unsicher',
 				t: 'Richtig erkannt:<br>der Loss ist <em>gut</em>.',
-				p: 'Katze 60 % · Loss ≈ 0,5',
+				p: 'Katze 60 % · Hund 40 %',
 				c: '<span class="kz-chip g">richtig, aber unsicher</span>',
 				i: 'Der Loss sagt dem Netz, wie falsch es liegt: niedriger Loss = weniger falsch.'
 			},
 			{
 				k: 'Schritt 2 · Richtig und sicher',
 				t: 'Richtig und sicher:<br>der Loss ist <em>noch besser</em>.',
-				p: 'Katze 95 % · Loss ≈ 0,05',
+				p: 'Katze 95 % · Hund 5 %',
 				c: '<span class="kz-chip g">richtig und sicher</span>'
 			},
 			{
 				k: 'Schritt 3 · Falsche Kategorie',
 				t: 'Falsch erkannt:<br>der Loss ist <em>hoch</em>.',
-				p: 'Hund 95 % statt Katze · Loss ≈ 3,0',
+				p: 'Katze 5 % · Hund 95 %',
 				c: '<span class="kz-chip r">falsch erkannt</span>'
 			},
 			{
@@ -308,8 +319,13 @@ const LossDemo = (() => {
 			reveal = 0;
 		},
 
-		tick(dt) {
+		tick(dt, k, S) {
 			reveal = Math.min(1, reveal + dt / 55);
+			if (S.step > 2) return;
+			const T = ASSESS[S.step];
+			const a = Math.min(1, k * 1.3);
+			anim.cat += (T.cat - anim.cat) * a;
+			anim.dog += (T.dog - anim.dog) * a;
 		},
 
 		draw(ctx, S) {

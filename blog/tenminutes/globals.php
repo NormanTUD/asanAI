@@ -44,7 +44,38 @@ const TM_FULL_LESSON_MAP = [
 	'people_of_ai' => ['people_of_ai'],
 ];
 
+const TM_FULL_LESSON_TITLES_DE = [
+	'intuition' => 'Eine Intuition, wie Large Language Models (LLMs) funktionieren',
+	'transformer' => 'Die Architektur der Bedeutung: Ein tiefer Einblick in Transformer',
+	'samplinglab' => 'Temperatur & Sampling',
+	'history' => 'Kurze Geschichte der KI',
+	'untold_history_i' => 'Die unerzählte Geschichte der KI I: Vom Urknall zur Zivilisation',
+	'untold_history_ii' => 'Die unerzählte Geschichte der KI II: Die materiellen Grundlagen',
+	'untold_history_iii' => 'Die unerzählte Geschichte der KI III: Der moderne Stack',
+	'tokenizerlab' => 'Tokenisierung: Wie Wörter zu Zahlen werden',
+	'embeddinglab' => 'Embeddings: Die Geometrie der Bedeutung',
+];
+
 function tm_blog_lesson_url(string $slug): string
 {
 	return rtrim(TM_BLOG_BASE, '/') . '/' . $slug . TM_BLOG_LESSON_SUFFIX;
+}
+
+/* Each map entry is either a full-lesson slug or an array:
+   ['slug' => 'history'] or
+   ['page' => 'https://example.org/custom', 'title' => 'Custom', 'title_de' => 'Benutzerdefiniert'].
+   A page key overrides the generated TM_BLOG_BASE URL. */
+function tm_full_lesson_entry(string|array $entry): array
+{
+	if (is_string($entry)) {
+		return ['slug' => $entry, 'page' => tm_blog_lesson_url($entry)];
+	}
+	$slug = (string) ($entry['slug'] ?? '');
+	$page = (string) ($entry['page'] ?? ($slug !== '' ? tm_blog_lesson_url($slug) : ''));
+	return [
+		'slug' => $slug,
+		'page' => $page,
+		'title' => $entry['title'] ?? null,
+		'title_de' => $entry['title_de'] ?? null,
+	];
 }
