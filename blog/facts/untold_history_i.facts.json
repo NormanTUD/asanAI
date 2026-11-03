@@ -22641,9 +22641,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-427-part_of-untold_history_i-block-172",
+      "id": "struct-untold_history_i-stmt-427-part_of-untold_history_i-block-173",
       "from": "untold_history_i-stmt-427",
-      "to": "untold_history_i-block-172",
+      "to": "untold_history_i-block-173",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22671,9 +22671,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-430-part_of-untold_history_i-block-173",
+      "id": "struct-untold_history_i-stmt-430-part_of-untold_history_i-block-175",
       "from": "untold_history_i-stmt-430",
-      "to": "untold_history_i-block-173",
+      "to": "untold_history_i-block-175",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22691,9 +22691,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-432-part_of-untold_history_i-block-175",
+      "id": "struct-untold_history_i-stmt-432-part_of-untold_history_i-block-176",
       "from": "untold_history_i-stmt-432",
-      "to": "untold_history_i-block-175",
+      "to": "untold_history_i-block-176",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22701,9 +22701,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-433-part_of-untold_history_i-block-176",
+      "id": "struct-untold_history_i-stmt-433-part_of-untold_history_i-block-177",
       "from": "untold_history_i-stmt-433",
-      "to": "untold_history_i-block-176",
+      "to": "untold_history_i-block-177",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22771,9 +22771,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-440-part_of-untold_history_i-block-177",
+      "id": "struct-untold_history_i-stmt-440-part_of-untold_history_i-block-179",
       "from": "untold_history_i-stmt-440",
-      "to": "untold_history_i-block-177",
+      "to": "untold_history_i-block-179",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22791,9 +22791,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-442-part_of-untold_history_i-block-179",
+      "id": "struct-untold_history_i-stmt-442-part_of-untold_history_i-block-180",
       "from": "untold_history_i-stmt-442",
-      "to": "untold_history_i-block-179",
+      "to": "untold_history_i-block-180",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22821,9 +22821,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-445-part_of-untold_history_i-block-180",
+      "id": "struct-untold_history_i-stmt-445-part_of-untold_history_i-block-181",
       "from": "untold_history_i-stmt-445",
-      "to": "untold_history_i-block-180",
+      "to": "untold_history_i-block-181",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22841,9 +22841,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-447-part_of-untold_history_i-block-181",
+      "id": "struct-untold_history_i-stmt-447-part_of-untold_history_i-block-182",
       "from": "untold_history_i-stmt-447",
-      "to": "untold_history_i-block-181",
+      "to": "untold_history_i-block-182",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22881,9 +22881,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-451-part_of-untold_history_i-block-182",
+      "id": "struct-untold_history_i-stmt-451-part_of-untold_history_i-block-183",
       "from": "untold_history_i-stmt-451",
-      "to": "untold_history_i-block-182",
+      "to": "untold_history_i-block-183",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22901,9 +22901,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-453-part_of-untold_history_i-block-183",
+      "id": "struct-untold_history_i-stmt-453-part_of-untold_history_i-block-184",
       "from": "untold_history_i-stmt-453",
-      "to": "untold_history_i-block-183",
+      "to": "untold_history_i-block-184",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22911,9 +22911,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-454-part_of-untold_history_i-block-184",
+      "id": "struct-untold_history_i-stmt-454-part_of-untold_history_i-block-186",
       "from": "untold_history_i-stmt-454",
-      "to": "untold_history_i-block-184",
+      "to": "untold_history_i-block-186",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22931,9 +22931,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-456-part_of-untold_history_i-block-186",
+      "id": "struct-untold_history_i-stmt-456-part_of-untold_history_i-block-187",
       "from": "untold_history_i-stmt-456",
-      "to": "untold_history_i-block-186",
+      "to": "untold_history_i-block-187",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22961,9 +22961,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-459-part_of-untold_history_i-block-187",
+      "id": "struct-untold_history_i-stmt-459-part_of-untold_history_i-block-188",
       "from": "untold_history_i-stmt-459",
-      "to": "untold_history_i-block-187",
+      "to": "untold_history_i-block-188",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22973,16 +22973,6 @@
     {
       "id": "struct-untold_history_i-stmt-460-part_of-untold_history_i-block-188",
       "from": "untold_history_i-stmt-460",
-      "to": "untold_history_i-block-188",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-461-part_of-untold_history_i-block-188",
-      "from": "untold_history_i-stmt-461",
       "to": "untold_history_i-block-188",
       "kind": "part_of",
       "qualifiers": {},
@@ -25942,279 +25932,272 @@
     },
     {
       "id": "untold_history_i-stmt-422",
-      "quote": "The latest step is the one this book is about.",
+      "quote": "The newest building type is the data center, a building whose main product is computation.",
       "block_id": "untold_history_i-block-172",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
       "id": "untold_history_i-stmt-423",
-      "quote": "A data center is a building whose main product is computation.",
-      "block_id": "untold_history_i-block-172",
-      "section": "Buildings: From Monument to Server Hall",
-      "kind": "statement"
-    },
-    {
-      "id": "untold_history_i-stmt-424",
       "quote": "Its history begins with the room-sized machines of the 1940s, such as ENIAC, and runs through the air-conditioned mainframe halls of the mid-20th century to the hyperscale campuses of the early 21st, which can hold thousands of servers and cover millions of square feet (\\cite[Data center, 2026]{data_center_wiki}).",
       "block_id": "untold_history_i-block-172",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-425",
+      "id": "untold_history_i-stmt-424",
       "quote": "In an AI training cluster, the architecture is designed around power delivery, cooling, and the weight of racks, not around the people who work there.",
       "block_id": "untold_history_i-block-172",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-426",
+      "id": "untold_history_i-stmt-425",
       "quote": "The building has become a machine for keeping other machines alive.",
       "block_id": "untold_history_i-block-172",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-427",
+      "id": "untold_history_i-stmt-426",
       "quote": "The same chain that began with a windbreak and a hearth now ends in a hall of fans and cables.",
       "block_id": "untold_history_i-block-172",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-428",
+      "id": "untold_history_i-stmt-427",
       "quote": "The \\citealternativetitle{img_server_room} (CC BY-SA 3.0): a server room, the latest stage of the building.",
       "block_id": "untold_history_i-block-173",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-429",
+      "id": "untold_history_i-stmt-428",
       "quote": "Racks of machines replace rooms of people, and the architecture is organized around power, cooling, and cable runs.",
       "block_id": "untold_history_i-block-173",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-430",
+      "id": "untold_history_i-stmt-429",
       "quote": "Source: \\citeauthor{img_server_room}, \\citeyear{img_server_room}, \\citealternativetitle{img_server_room}, Wikimedia Commons.",
       "block_id": "untold_history_i-block-173",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-431",
+      "id": "untold_history_i-stmt-430",
       "quote": "Childe's second coinage, the **Urban Revolution** (\\cite[Childe 1950]{childe1950urban}), names what happened around 4000 BCE in southern Mesopotamia: the small farming villages of the Uruk period coalesced into cities.",
       "block_id": "untold_history_i-block-175",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-432",
+      "id": "untold_history_i-stmt-431",
       "quote": "**Uruk** itself grew to perhaps 50,000 inhabitants by 3100 BCE; comparable trajectories played out in Egypt, the Indus valley, the Yellow River basin, and later Mesoamerica.",
       "block_id": "untold_history_i-block-175",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-433",
+      "id": "untold_history_i-stmt-432",
       "quote": "In a 1950 *Town Planning Review* paper, Childe listed ten diagnostic features of the first cities — large population, full-time specialists, concentration of surplus, monumental architecture, a ruling class freed from manual labour, systems of recording and writing, exact and predictive sciences, representational art, long-distance trade, and a state organisation based on residence rather than kinship (\\cite[Childe 1950]{childe1950urban}) — almost every one of which is a step in the chain that ends at a printed circuit.",
       "block_id": "untold_history_i-block-176",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-434",
+      "id": "untold_history_i-stmt-433",
       "quote": "The **Bronze Age** — Near East c.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-435",
+      "id": "untold_history_i-stmt-434",
       "quote": "3300–1200 BCE — ran on long-distance trade in tin and copper; Childe, in *Man Makes Himself*, makes the deeper argument about why: \"The bronze axe which replaces it is not only a superior implement, it also presupposes a more complex economic and social structure.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-436",
+      "id": "untold_history_i-stmt-435",
       "quote": "The casting of bronze is too difficult a process to be carried out by anyone in the intervals of growing or catching his food or minding her babies.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-437",
+      "id": "untold_history_i-stmt-436",
       "quote": "It is a specialist's job, and these specialists must rely for such primary necessities as food upon a surplus produced by other specialists.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-438",
+      "id": "untold_history_i-stmt-437",
       "quote": "Again, the copper and tin of which the bronze axe is composed are comparatively rare, and very seldom occur together.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-439",
+      "id": "untold_history_i-stmt-438",
       "quote": "One or both of the constituents will almost certainly have to be imported.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-440",
+      "id": "untold_history_i-stmt-439",
       "quote": "Such importation is possible only if some sort of communications and trade have been established and if there is a surplus of some local product to barter for the metals\" (\\cite[Childe 1936, ch.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-441",
+      "id": "untold_history_i-stmt-440",
       "quote": "The single most consequential innovation of the Urban Revolution for this lesson is **writing**.",
       "block_id": "untold_history_i-block-179",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-442",
+      "id": "untold_history_i-stmt-441",
       "quote": "It emerged not from literary ambition but from bookkeeping.",
       "block_id": "untold_history_i-block-179",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-443",
+      "id": "untold_history_i-stmt-442",
       "quote": "In **Denise Schmandt-Besserat**'s reconstruction, the first system was a set of small shaped clay **tokens** — cones, spheres, disks, cylinders — in use across the Near East from the eighth millennium BCE.",
       "block_id": "untold_history_i-block-180",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-444",
+      "id": "untold_history_i-stmt-443",
       "quote": "Her original 1978 paper in *Scientific American* put the thesis crisply: \"Long before the Sumerians invented writing, accounts in western Asia were kept with clay tokens of various distinctive shapes.",
       "block_id": "untold_history_i-block-180",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-445",
+      "id": "untold_history_i-stmt-444",
       "quote": "It appears that the tokens gave rise to the Sumerian ideographs\" (\\cite[Schmandt-Besserat 1978]{schmandtbesserat1978}; \\cite[Schmandt-Besserat 1992]{schmandtbesserat1992}; \\cite[Schmandt-Besserat 1996]{schmandtbesserat1996}).",
       "block_id": "untold_history_i-block-180",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-446",
+      "id": "untold_history_i-stmt-445",
       "quote": "Tokens sealed inside clay *bullae* were marked on the outside with their own shapes — the first case of a physical record carrying its own verification.",
       "block_id": "untold_history_i-block-181",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-447",
+      "id": "untold_history_i-stmt-446",
       "quote": "Around 3300 BCE, in Uruk IV, the envelope was dropped for a flat tablet on which the token shapes were impressed directly; by 2600 BCE the picture-shapes had been replaced by the wedge-shaped marks we call **cuneiform**, from the Latin *cuneus*.",
       "block_id": "untold_history_i-block-181",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-448",
+      "id": "untold_history_i-stmt-447",
       "quote": "Cuneiform was the first of five independent inventions of writing: Egyptian **hieroglyphs** (c.",
       "block_id": "untold_history_i-block-182",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-449",
+      "id": "untold_history_i-stmt-448",
       "quote": "3200 BCE), undeciphered Indus script (c.",
       "block_id": "untold_history_i-block-182",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-450",
+      "id": "untold_history_i-stmt-449",
       "quote": "2600 BCE), Shang Chinese oracle-bone characters (c.",
       "block_id": "untold_history_i-block-182",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-451",
+      "id": "untold_history_i-stmt-450",
       "quote": "1250 BCE), and Mesoamerican **Maya** (c.",
       "block_id": "untold_history_i-block-182",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-452",
+      "id": "untold_history_i-stmt-451",
       "quote": "The next question after cities was how to make a king's word outlast the king.",
       "block_id": "untold_history_i-block-183",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-453",
+      "id": "untold_history_i-stmt-452",
       "quote": "The **Code of Hammurabi** (\\cite[Roth 1997]{roth1997lawcollections}; \\cite[Scheil 1902]{scheil1902code}) is the earliest preserved answer: a basalt stele ~2.25 m tall, inscribed in Old Babylonian Akkadian around 1753 BCE, rediscovered at Susa in 1901, edited by the Dominican priest **Jean-Vincent Scheil** in 1902, and now in the Louvre.",
       "block_id": "untold_history_i-block-183",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-454",
+      "id": "untold_history_i-stmt-453",
       "quote": "Its 282 case-form laws cover everything from a surgeon's fee to *lex talionis* — \"an eye for an eye.\" The principle most modern readers remember is the second; the more durable contribution is structural: a body of law, made public on a monument in every major city of the empire, that could be cited after the king's death.",
       "block_id": "untold_history_i-block-184",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-455",
+      "id": "untold_history_i-stmt-454",
       "quote": "Strip any one element out of this chain and the rest cannot stand.",
       "block_id": "untold_history_i-block-186",
       "section": "Why sedentarisation is a prerequisite of AI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-456",
+      "id": "untold_history_i-stmt-455",
       "quote": "No agriculture, no fixed residence; no fixed residence, no pottery, no granary, no city; no city, no specialised scribal class; no scribal class, no writing; no writing, no codified law, no coinage, no algebra, no astronomy accurate enough to predict eclipses, no geometry accurate enough to survey after a Nile flood, no library, no encyclopedia, no standard mathematical notation, no \"algorithm\" in the modern sense.",
       "block_id": "untold_history_i-block-186",
       "section": "Why sedentarisation is a prerequisite of AI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-457",
+      "id": "untold_history_i-stmt-456",
       "quote": "Each step was made for reasons that had nothing to do with computation.",
       "block_id": "untold_history_i-block-187",
       "section": "Why sedentarisation is a prerequisite of AI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-458",
+      "id": "untold_history_i-stmt-457",
       "quote": "Yet the chain they collectively built is the chain on which every calculator, database, operating system, and large language model rests.",
       "block_id": "untold_history_i-block-187",
       "section": "Why sedentarisation is a prerequisite of AI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-459",
+      "id": "untold_history_i-stmt-458",
       "quote": "A language model is a model of human *language*, and human language was *first made durable* by the scribes of Sumer.",
       "block_id": "untold_history_i-block-187",
       "section": "Why sedentarisation is a prerequisite of AI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-460",
+      "id": "untold_history_i-stmt-459",
       "quote": "The grammatical categories of Akkadian and Sumerian, the case system of Latin, the inflectional morphology of ancient Greek, the tonal layers of Middle Chinese, the analytic structure of Old English — all of these are inside the corpus on which an LLM is trained, because they were inside the libraries that writing built, that agriculture made possible, that the cities of the first urban revolution sustained.",
       "block_id": "untold_history_i-block-188",
       "section": "Why sedentarisation is a prerequisite of AI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-461",
+      "id": "untold_history_i-stmt-460",
       "quote": "Take the chain away and the corpus thins to oral memory; take the oral memory away and the model has nothing to model.",
       "block_id": "untold_history_i-block-188",
       "section": "Why sedentarisation is a prerequisite of AI",
@@ -27250,7 +27233,7 @@
     },
     {
       "id": "untold_history_i-block-172",
-      "quote": "The latest step is the one this book is about. A data center is a building whose main product is computation. Its history begins with the room-sized machines of the 1940s, such as ENIAC, and runs through the air-conditioned mainframe halls of the mid-20th century to the hyperscale campuses of the early 21st, which can hold thousands of servers and cover millions of square feet (\\cite[Data center, 2026]{data_center_wiki}). In an AI training cluster, the architecture is designed around power delivery, cooling, and the weight of racks, not around the people who work there. The building has become a machine for keeping other machines alive. The same chain that began with a windbreak and a hearth now ends in a hall of fans and cables.",
+      "quote": "The newest building type is the data center, a building whose main product is computation. Its history begins with the room-sized machines of the 1940s, such as ENIAC, and runs through the air-conditioned mainframe halls of the mid-20th century to the hyperscale campuses of the early 21st, which can hold thousands of servers and cover millions of square feet (\\cite[Data center, 2026]{data_center_wiki}). In an AI training cluster, the architecture is designed around power delivery, cooling, and the weight of racks, not around the people who work there. The building has become a machine for keeping other machines alive. The same chain that began with a windbreak and a hearth now ends in a hall of fans and cables.",
       "kind": "paragraph",
       "section": "Buildings: From Monument to Server Hall"
     },
