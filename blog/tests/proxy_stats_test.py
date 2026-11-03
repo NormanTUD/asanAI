@@ -202,7 +202,7 @@ def main() -> int:
 				)
 				check(backup.status_code == 200 and backup.content.startswith(b"SQLite format 3\x00"), "SQLite backup through proxy", f"{backup.status_code} {backup.headers.get('content-type')}")
 
-			course = session.get(f"{proxy_url}?tenminutes/intuition.html", timeout=20)
+			course = session.get(f"{proxy_url}?tenminutes/intuition.php", timeout=20)
 			check(course.status_code == 200 and "One Word" in course.text, "tenminutes page through proxy")
 			check('src="asanai_blog_proxy.php?tenminutes/assets/site.js' in course.text, "tenminutes script path is resolved")
 			check('src="asanai_blog_proxy.php?temml.min.js"' in course.text, "tenminutes parent script path is resolved")

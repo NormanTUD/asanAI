@@ -56,12 +56,12 @@
 								<div class="timeline-scroller">
 									<button class="tl-scroll-btn" type="button" data-timeline-prev data-arrow-prev aria-label="Scroll left">‹</button>
 									<div class="timeline-track" data-timeline-track role="group" aria-label="The six movements of the compact course">
-										<button class="tl-node is-active" type="button" data-meta="01 · The Idea" data-title="The Idea" data-body="Prediction, history, language, tokens, embeddings. The model turns text into a sequence of numbers and a distribution over the next token." data-href="intuition.html" data-href-label="Start with intuition"><span class="tl-dot"></span><span class="tl-date">01</span><span class="tl-name">The Idea</span></button>
-										<button class="tl-node" type="button" data-meta="02 · Failure and Learning" data-title="Failure and Learning" data-body="Where prediction goes wrong, the smallest learner, training, overfitting, depth, and nonlinearity. This is how the numbers get better." data-href="hallucinations.html" data-href-label="Start with failure"><span class="tl-dot"></span><span class="tl-date">02</span><span class="tl-name">Learning</span></button>
-										<button class="tl-node" type="button" data-meta="03 · Data, Senses, and Practice" data-title="Data, Senses, and Practice" data-body="Training data, vision, multimodal input, audio, local models, evaluation. The model is shaped by what it reads and measured by what it can do." data-href="training_data.html" data-href-label="Start with data"><span class="tl-dot"></span><span class="tl-date">03</span><span class="tl-name">Data &amp; Senses</span></button>
-										<button class="tl-node" type="button" data-meta="04 · Inside the Transformer" data-title="Inside the Transformer" data-body="Attention, context, position, facts, and the whole block. This is the architecture that makes the prediction scale." data-href="attentionlab.html" data-href-label="Start with attention"><span class="tl-dot"></span><span class="tl-date">04</span><span class="tl-name">Transformer</span></button>
-										<button class="tl-node" type="button" data-meta="05 · From Model to Assistant" data-title="From Model to Assistant" data-body="Sampling, fine-tuning, retrieval, prompting, reasoning. The base model becomes a usable assistant through a second stack of choices." data-href="samplinglab.html" data-href-label="Start with sampling"><span class="tl-dot"></span><span class="tl-date">05</span><span class="tl-name">Assistant</span></button>
-										<button class="tl-node" type="button" data-meta="06 · The Larger Questions" data-title="The Larger Questions" data-body="Society, philosophy, AI for science, and the people behind the machine. The technical stack is also a social artefact." data-href="ai_and_society.html" data-href-label="Start with society"><span class="tl-dot"></span><span class="tl-date">06</span><span class="tl-name">Big Questions</span></button>
+										<button class="tl-node is-active" type="button" data-meta="01 · The Idea" data-title="The Idea" data-body="Prediction, history, language, tokens, embeddings. The model turns text into a sequence of numbers and a distribution over the next token." data-href="intuition" data-href-label="Start with intuition"><span class="tl-dot"></span><span class="tl-date">01</span><span class="tl-name">The Idea</span></button>
+										<button class="tl-node" type="button" data-meta="02 · Failure and Learning" data-title="Failure and Learning" data-body="Where prediction goes wrong, the smallest learner, training, overfitting, depth, and nonlinearity. This is how the numbers get better." data-href="hallucinations" data-href-label="Start with failure"><span class="tl-dot"></span><span class="tl-date">02</span><span class="tl-name">Learning</span></button>
+										<button class="tl-node" type="button" data-meta="03 · Data, Senses, and Practice" data-title="Data, Senses, and Practice" data-body="Training data, vision, multimodal input, audio, local models, evaluation. The model is shaped by what it reads and measured by what it can do." data-href="training_data" data-href-label="Start with data"><span class="tl-dot"></span><span class="tl-date">03</span><span class="tl-name">Data &amp; Senses</span></button>
+										<button class="tl-node" type="button" data-meta="04 · Inside the Transformer" data-title="Inside the Transformer" data-body="Attention, context, position, facts, and the whole block. This is the architecture that makes the prediction scale." data-href="attentionlab" data-href-label="Start with attention"><span class="tl-dot"></span><span class="tl-date">04</span><span class="tl-name">Transformer</span></button>
+										<button class="tl-node" type="button" data-meta="05 · From Model to Assistant" data-title="From Model to Assistant" data-body="Sampling, fine-tuning, retrieval, prompting, reasoning. The base model becomes a usable assistant through a second stack of choices." data-href="samplinglab" data-href-label="Start with sampling"><span class="tl-dot"></span><span class="tl-date">05</span><span class="tl-name">Assistant</span></button>
+										<button class="tl-node" type="button" data-meta="06 · The Larger Questions" data-title="The Larger Questions" data-body="Society, philosophy, AI for science, and the people behind the machine. The technical stack is also a social artefact." data-href="ai_and_society" data-href-label="Start with society"><span class="tl-dot"></span><span class="tl-date">06</span><span class="tl-name">Big Questions</span></button>
 									</div>
 									<button class="tl-scroll-btn" type="button" data-timeline-next data-arrow-next aria-label="Scroll right">›</button>
 								</div>
@@ -86,67 +86,67 @@
 								<b>The Idea</b>
 								<p>What prediction is, where the idea came from, and how text becomes numbers.</p>
 								<div class="arc-links">
-									<a href="intuition.html">Intuition</a>
-									<a href="history.html">History</a>
-									<a href="language.html">Language</a>
-									<a href="tokenizerlab.html">Tokens</a>
-									<a href="embeddinglab.html">Embeddings</a>
+									<a href="intuition">Intuition</a>
+									<a href="history">History</a>
+									<a href="language">Language</a>
+									<a href="tokenizerlab">Tokens</a>
+									<a href="embeddinglab">Embeddings</a>
 								</div>
 							</div>
 							<div class="arc-card">
 								<b>Failure and Learning</b>
 								<p>Why prediction fails, and how error becomes a learning signal.</p>
 								<div class="arc-links">
-									<a href="hallucinations.html">Failure</a>
-									<a href="minimalneuron.html">Tiny network</a>
-									<a href="inceptionism.html">Dreams</a>
-									<a href="overandunderfittinglab.html">Overfitting</a>
-									<a href="deeplearninglab.html">Depth</a>
-									<a href="activationlab.html">Nonlinearity</a>
+									<a href="hallucinations">Failure</a>
+									<a href="minimalneuron">Tiny network</a>
+									<a href="inceptionism">Dreams</a>
+									<a href="overandunderfittinglab">Overfitting</a>
+									<a href="deeplearninglab">Depth</a>
+									<a href="activationlab">Nonlinearity</a>
 								</div>
 							</div>
 							<div class="arc-card">
 								<b>Data, Senses, and Practice</b>
 								<p>What the model reads, sees, and hears, and how we measure it.</p>
 								<div class="arc-links">
-									<a href="training_data.html">Training data</a>
-									<a href="computer_vision.html">Vision</a>
-									<a href="multimodal.html">Multimodal</a>
-									<a href="speech_audio.html">Audio</a>
-									<a href="running_locally.html">Local models</a>
-									<a href="evaluation.html">Evaluation</a>
+									<a href="training_data">Training data</a>
+									<a href="computer_vision">Vision</a>
+									<a href="multimodal">Multimodal</a>
+									<a href="speech_audio">Audio</a>
+									<a href="running_locally">Local models</a>
+									<a href="evaluation">Evaluation</a>
 								</div>
 							</div>
 							<div class="arc-card">
 								<b>Inside the Transformer</b>
 								<p>The architecture that turns a sequence into a context-aware prediction.</p>
 								<div class="arc-links">
-									<a href="attentionlab.html">Attention</a>
-									<a href="contextwindows.html">Context</a>
-									<a href="positionalembeddingslab.html">Position</a>
-									<a href="fact_lookup.html">Facts</a>
-									<a href="transformer.html">Whole block</a>
+									<a href="attentionlab">Attention</a>
+									<a href="contextwindows">Context</a>
+									<a href="positionalembeddingslab">Position</a>
+									<a href="fact_lookup">Facts</a>
+									<a href="transformer">Whole block</a>
 								</div>
 							</div>
 							<div class="arc-card">
 								<b>From Model to Assistant</b>
 								<p>How a raw predictor becomes a usable, grounded, reasoning assistant.</p>
 								<div class="arc-links">
-									<a href="samplinglab.html">Sampling</a>
-									<a href="finetuninglab.html">Fine-tuning</a>
-									<a href="rag.html">Retrieval</a>
-									<a href="promptengineering.html">Prompting</a>
-									<a href="reasoning.html">Reasoning</a>
+									<a href="samplinglab">Sampling</a>
+									<a href="finetuninglab">Fine-tuning</a>
+									<a href="rag">Retrieval</a>
+									<a href="promptengineering">Prompting</a>
+									<a href="reasoning">Reasoning</a>
 								</div>
 							</div>
 							<div class="arc-card">
 								<b>The Larger Questions</b>
 								<p>What the machine does to us, what it means, who is accountable, and what it can discover.</p>
 								<div class="arc-links">
-									<a href="ai_and_society.html">Society</a>
-									<a href="philosophy.html">Philosophy</a>
-									<a href="ai_for_science.html">AI for science</a>
-									<a href="people_of_ai.html">People</a>
+									<a href="ai_and_society">Society</a>
+									<a href="philosophy">Philosophy</a>
+									<a href="ai_for_science">AI for science</a>
+									<a href="people_of_ai">People</a>
 								</div>
 							</div>
 						</div>
@@ -200,12 +200,12 @@
 						</div>
 						<div class="prose">
 							<p>
-								<a class="btn btn--green" href="advent.html">Open the 31-door calendar</a>
-								<a class="btn btn--ghost" href="library.html">Browse the compact library</a>
+								<a class="btn btn--green" href="advent">Open the 31-door calendar</a>
+								<a class="btn btn--ghost" href="library">Browse the compact library</a>
 							</p>
 						</div>
 					</section>
-					<p class="lesson-footer">The whole arc · <a href="advent.html">Calendar</a> · <a href="library.html">Library</a> · <a href="index.php">Home</a></p>
+					<p class="lesson-footer">The whole arc · <a href="advent">Calendar</a> · <a href="library">Library</a> · <a href="./">Home</a></p>
 				</article>
 			</div>
 		</div>

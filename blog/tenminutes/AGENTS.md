@@ -1,10 +1,10 @@
 # Ten Minutes — local agent notes
 
 Scope: `blog/tenminutes/` is a standalone companion to *From Nothing to Large
-Language Models*. It is mostly plain HTML + shared CSS/JS, with one small
-`index.php` landing page that embeds the calendar; there is no build step and no
-package manager. The root `AGENTS.md` still applies; this file records choices
-that are specific to this directory.
+Language Models*. Every page is an HTML document served as `.php`; `index.php`
+embeds the calendar, and `bootstrap.php` adds the date-gated full-lesson links.
+There is no build step and no package manager. The root `AGENTS.md` still
+applies; this file records choices that are specific to this directory.
 
 ## Typography and scads.ai visual match
 
@@ -28,6 +28,9 @@ The Ten Minutes pages follow the public scads.ai theme, not the standalone
 ## Branding and page chrome
 
 - The brand name is **ScaDS.AI Dresden/Leipzig** (not just `ScaDS.AI`).
+- Internal links are extensionless (`intuition`, `advent`, `library`); Apache
+  rewrites them to the matching `.php`. Do not add `.php` or `.html` to
+  internal hrefs.
 - No Ten Minutes page uses the topbar. `index.php` uses
   `data-page="calendar"` and is full-width; subpages use `lesson`, `advent`, or
   `library`.
@@ -43,28 +46,32 @@ The Ten Minutes pages follow the public scads.ai theme, not the standalone
   navigation, solve it explicitly; the current design deliberately removes the
   chrome.
 
-## Full lessons are linked only after 31 December 2026
+## Full lessons are linked outside December 2026
 
-The original lesson pages (`../*.php`) are private source material until the
-calendar is over:
+The original lesson pages (`../*.php`) are private source material during the
+calendar month, but the compact pages link to the relevant full lessons outside
+it:
 
-- Before 1 January 2027, no Ten Minutes page may contain or inject an
-  `href="../…php"` link, and no “read the full lesson” or “full course” link.
-- From 1 January 2027 onward, `assets/site.js` appends one `.full-article` block
-  to the end of every `data-page="lesson"` page. It links to `../<slug>.php`
-  (the matching full article) and to `../` (the full blog). Pages without a full
-  article carry `data-no-full-article="1"` (`whole.html`).
-- The block is date-gated client-side; `?date=1.1.2027` or `?datum=1.1.2027`
-  on a lesson page can simulate the post-calendar state for testing.
+- From 1 December 2026 through 31 December 2026, no full-lesson link is shown.
+- Before 1 December 2026 or after 31 December 2026, `bootstrap.php` injects a
+  `.full-article` block at the end of every `data-page="lesson"` page.
+- `globals.php` is the single source of truth: `TM_BLOG_BASE` (currently
+  `https://asanai.scads.ai/blog`) and `TM_FULL_LESSON_MAP` map each compact slug
+  to one or more relevant full lessons. Add a new compact page to the map.
+- The block links to `TM_BLOG_BASE . '/' . full-slug . '.php'`. It does not link
+  the full blog home.
+- `whole.php` carries `data-no-full-article="1"` because it has no single full
+  article.
+- `bootstrap.php` is auto-prepended through `.htaccess` / `.user.ini`;
+  `bootstrap.php` and `globals.php` are denied to the web.
+- `?date=1.12.2026` or `?datum=1.12.2026` simulates the calendar month; use
+  `1.1.2027` for the post-calendar state.
 - Compact pages still do not link to the full lesson in their prose. The only
-  full-article link is the generated end-of-page block.
+  generated full-lesson links are in the end-of-page block.
 - Compact pages must be self-contained. The library’s non-compact cards are
   non-clickable reference entries, not links.
-- `index.php`, `advent.html`, and `library.html` only navigate to compact
-  `.html` pages and assets.
-
-If you need more detail from a full lesson before 2027, adapt the relevant
-paragraph into the compact page; do not expose the source URL early.
+- `index.php`, `advent.php`, and `library.php` only navigate to compact
+  extensionless pages and assets.
 
 ## Colour palette
 
@@ -136,17 +143,17 @@ Notes:
 - `assets/site.js`: `TM.colors()` reads the computed tokens. If you change a
   token, update the **fallback** in `TM.colors()` too.
 - Inline/canvas colours are palette hexes and must stay in the palette:
-  - `intuition.html`: meadow, token, embedding, and attention colours.
-  - `embeddinglab.html`: relation colours and the point cloud.
-  - `transformer.html`: attention-scene colours.
-  - `tokenizerlab.html`: token palette.
-  - `library.html`: `style="--part-color:#…"` dots.
-  - `attentionlab.html`: attention heatmap.
+  - `intuition.php`: meadow, token, embedding, and attention colours.
+  - `embeddinglab.php`: relation colours and the point cloud.
+  - `transformer.php`: attention-scene colours.
+  - `tokenizerlab.php`: token palette.
+  - `library.php`: `style="--part-color:#…"` dots.
+  - `attentionlab.php`: attention heatmap.
 - Chart palettes must keep enough distinct slots. If an array has eight
   entries, use eight different palette colours rather than repeating one.
   Current useful set: Green, Light Blue, Yellow, Lilac, Light Green, Blue,
   Teal, Grey.
-- `intuition.html` 3D scene: the floor grid is drawn once by the warped grid
+- `intuition.php` 3D scene: the floor grid is drawn once by the warped grid
   loop. Do not add a second flat grid or dashed back rectangles; they double
   the lines and clutter the view.
 - No CDN colours, no external font/colour services, no build step.
@@ -213,10 +220,10 @@ ties. Form fields are ignored. Use this mechanism instead of adding a local
 `keydown` handler. Timelines use it for their scroll buttons; the
 space-curvature demo uses it for its step buttons.
 
-## Calendar conventions (`advent.html`)
+## Calendar conventions (`advent.php`)
 
 - `index.php` embeds the calendar between `<!-- CALENDAR:START -->` and
-  `<!-- CALENDAR:END -->` in `advent.html`, so the doors have one source of
+  `<!-- CALENDAR:END -->` in `advent.php`, so the doors have one source of
   truth. Keep those markers.
 - Before 1 December 2026 every door is visible. From 1 December 2026, day N
   opens on 1 December + (N - 1) days; future doors become dashed `.is-locked`
@@ -229,12 +236,11 @@ space-curvature demo uses it for its step buttons.
   `data-day`, `.dc-num` (zero-padded), and the `id` must agree.
 - Compact doors use:
   ```html
-  <a class="day-card is-available" id="day-4" href="tokenizerlab.html"
+  <a class="day-card is-available" id="day-4" href="tokenizerlab"
      data-day="4" data-slug="tokenizerlab">
   ```
   They carry the green top bar, `Open lesson →`, and feed the local progress
   counter. The day cards do not show duration or math-level tags.
-- Original-lesson doors link to `../<lesson>.php` and have no `data-slug`.
 - Every card keeps a hidden `<span class="dc-today">`; the script reveals it in
   December.
 - Current arc, keep it coherent if you reorder:
@@ -250,27 +256,27 @@ space-curvature demo uses it for its step buttons.
   - `minimalneuron.php` represents the old “smallest network” and
     “watch it learn” pair. Do not re-add `traininglab.php` as a separate door
     unless the calendar gets a different structure.
-  - `people_of_ai.html` is the final “People and the Map” door. The Atlas is not
+  - `people_of_ai.php` is the final “People and the Map” door. The Atlas is not
     linked from this directory.
-  - `agents.html` exists but is intentionally not in the calendar.
+  - `agents.php` exists but is intentionally not in the calendar.
 - If the compact-door count changes, update the “x of 31 doors” and
   “compact lessons open” pills in `index.php`.
-- Every calendar door has a compact `.html` page. Compact pages are
-  self-contained and must not link to `../<slug>.php`.
+- Every calendar door has a compact `.php` page. Compact pages are
+  self-contained; the only full-lesson links are generated by `bootstrap.php`.
 - A compact page uses the shared lesson skeleton: `data-lesson="<slug>"`,
   `data-page="lesson"`, a `hero--lesson`, `section-block`s with
   `section-kicker`/`section-title`/`prose`, a `keypoints` grid, an `aha` box,
   and the CTA. No topbar.
-- `library.html` marks every compact page with `is-compact` and
-  `data-compact="1"`, and links to the `.html` version. Update the library
+- `library.php` marks every compact page with `is-compact` and
+  `data-compact="1"`, and links to the extensionless page. Update the library
   card when adding or removing a compact page.
 
 ## Whole-arc synthesis and cross-links
 
-`whole.html` is the compact course's synthesis page: a six-movement
+`whole.php` is the compact course's synthesis page: a six-movement
 timeline (Idea → Learning → Data & Senses → Transformer → Assistant → Big
 Questions), a map of every compact page, and a prose synthesis. It is linked
-from `index.php`, `advent.html`, and `library.html`.
+from `index.php`, `advent.php`, and `library.php`.
 
 Compact pages do not carry previous/next navigation or a day footer. Keep
 cross-chapter connections on the synthesis page and in the prose, not in
@@ -278,14 +284,14 @@ per-page navigation blocks. Prose links may point only to earlier compact
 pages; do not link ahead to a lesson the reader has not reached.
 
 Pages with mathematics load Temml (`../Temml-Local.min.css`, `../temml.min.js`).
-`transformer.html` renders the pipeline shape line with `temml.renderToString(...)`.
+`transformer.php` renders the pipeline shape line with `temml.renderToString(...)`.
 `assets/site.js` exposes `TM.typesetMath()`, which typesets every `[data-tex]`
 element on page init (inline math uses `data-tex-display="false"`) and falls back
 to the TeX source if Temml is unavailable. Keep the fallback.
 
 `assets/space-morph.js` is the seven-step space-curvature demo used by
-`intuition.html`; `assets/chinese-room.js` is the Inuktitut Chinese Room
-simulator used by `philosophy.html`. Both are plain-JS and self-initialising.
+`intuition.php`; `assets/chinese-room.js` is the Inuktitut Chinese Room
+simulator used by `philosophy.php`. Both are plain-JS and self-initialising.
 
 ## Example content preferences
 
@@ -331,7 +337,7 @@ they only re-label the topic (“This page is about alignment”).
 To list candidates for review, run:
 
 ```bash
-grep -rniE '\b(is|are|was|were) not\b|\bnot (just|only|merely)\b|this page (is|asks|gives|traces|turns|shows)' blog/tenminutes/*.html
+grep -rniE '\b(is|are|was|were) not\b|\bnot (just|only|merely)\b|this page (is|asks|gives|traces|turns|shows)' blog/tenminutes/*.php
 ```
 
 ## Prose style: dashes, paragraphs, flow
@@ -345,7 +351,7 @@ grep -rniE '\b(is|are|was|were) not\b|\bnot (just|only|merely)\b|this page (is|a
 - **Keep the argument in flow.** Each paragraph should connect to the one before
   it.
 
-## Image credits (`history.html`)
+## Image credits (`history.php`)
 
 `assets/image-credits.json` is the local source of truth for the history
 timeline images. The page does **not** load `literature.js`; the manifest copies

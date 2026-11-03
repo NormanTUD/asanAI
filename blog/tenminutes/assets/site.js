@@ -290,34 +290,6 @@
 		setTimeout(check, 400);
 	}
 
-	function initFullArticleLink() {
-		if (document.body.getAttribute("data-page") !== "lesson") return;
-		if (document.body.hasAttribute("data-no-full-article")) return;
-		var slug = document.body.getAttribute("data-lesson");
-		if (!slug) return;
-		if (TM.simDate() < new Date(2027, 0, 1)) return;
-		var host = document.querySelector(".lesson-main");
-		if (!host || host.querySelector(".full-article")) return;
-		var article = document.createElement("aside");
-		article.className = "full-article";
-		var kicker = document.createElement("span");
-		kicker.className = "full-article-kicker";
-		kicker.textContent = "The full course";
-		var link = document.createElement("a");
-		link.className = "full-article-main";
-		link.href = TM.asset("../" + slug + ".php");
-		var title = document.title.replace(/\s*\|\s*Ten Minutes\s*$/, "");
-		link.textContent = "Read the complete article" + (title ? ": " + title : "");
-		var home = document.createElement("a");
-		home.className = "full-article-home";
-		home.href = TM.asset("../");
-		home.textContent = "Open the full blog →";
-		article.appendChild(kicker);
-		article.appendChild(link);
-		article.appendChild(home);
-		host.appendChild(article);
-	}
-
 	/* ── arrow-key navigation ──────────────────────────────── */
 
 	function initArrowNav() {
@@ -397,7 +369,6 @@
 		initReveal();
 		initRail();
 		initCompletion();
-		initFullArticleLink();
 		TM.typesetMath();
 		initArrowNav();
 		initHeightBridge();

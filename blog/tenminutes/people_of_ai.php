@@ -188,7 +188,7 @@
 						</div>
 						<div class="prose">
 
-							<p>For the compact view of how the same cast fits together, open <a href="whole.html">the whole arc</a>: six movements, one machine, and the people behind each layer.</p>
+							<p>For the compact view of how the same cast fits together, open <a href="whole">the whole arc</a>: six movements, one machine, and the people behind each layer.</p>
 						</div>
 					</section>
 				</article>

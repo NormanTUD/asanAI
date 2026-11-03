@@ -41,7 +41,7 @@
 							</p>
 							<p>
 								The LLM at the centre is still the same reactive, stateless next-token
-								predictor from the <a href="intuition.html">next-token loop</a>. What changes is the <strong>scaffolding around it</strong>: a system
+								predictor from the <a href="intuition">next-token loop</a>. What changes is the <strong>scaffolding around it</strong>: a system
 								prompt, a tool registry, a memory, and a loop that keeps going until the task
 								is done or a budget runs out. The difference between “using an LLM” and
 								“deploying an agent” is the difference between asking someone a question and

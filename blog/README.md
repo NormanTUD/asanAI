@@ -522,7 +522,7 @@ JS receives the proxy base path.
 HTML links/forms stay on the proxy, while same-origin assets are proxied or
 rewritten. CSS `url(...)`/`@import` and font preloads are rewritten too, so
 fonts do not hit CORS. Relative URLs are resolved against the requested page,
-not the proxy script: a page at `tenminutes/history.html` resolves
+not the proxy script: a page at `tenminutes/history.php` resolves
 `assets/site.css` to `tenminutes/assets/site.css` and `../temml.min.js` to
 `temml.min.js`. Keep Ten Minutes pages on relative paths (`assets/…`, `../…`)
 so they work both standalone and through the proxy; do not hardcode

@@ -10,7 +10,7 @@ credits therefore live in assets/image-credits.json and in the page itself.
 This test keeps the two in sync, and cross-checks entries that name a
 literature.js key against the bibliography.
 
-It also requires every static <img> in history.html to have a figcaption with
+It also requires every static <img> in history.php to have a figcaption with
 a source link and a license keyword, so a new image cannot ship without credit.
 
 Usage: uv run blog/tests/tenminutes_image_credits_test.py
@@ -24,7 +24,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 TEN = ROOT / "blog" / "tenminutes"
-HISTORY = TEN / "history.html"
+HISTORY = TEN / "history.php"
 MANIFEST = TEN / "assets" / "image-credits.json"
 LITERATURE = ROOT / "blog" / "literature.js"
 
@@ -92,7 +92,7 @@ def main() -> int:
 
     timeline = ENTRY_RE.findall(page)
     if not timeline:
-        failures.append("could not parse timeline entries in history.html")
+        failures.append("could not parse timeline entries in history.php")
 
     checked = 0
     for date, body in timeline:

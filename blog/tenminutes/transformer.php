@@ -148,7 +148,7 @@
 						<div class="prose">
 							<p>
 								At the input, “bank” is already a vector. Then each block edits it. The
-								residual stream: the running vector from <a href="intuition.html#inside">the six-step demo</a>: carries the
+								residual stream: the running vector from <a href="intuition#inside">the six-step demo</a>: carries the
 								old representation forward and adds a new one on
 								top: <span data-tex="z = x + \operatorname{Attention}(\operatorname{Norm}(x))" data-tex-display="false"></span>, then
 								<span data-tex="y = z + \operatorname{FFN}(\operatorname{Norm}(z))" data-tex-display="false"></span>. Nothing is overwritten; everything

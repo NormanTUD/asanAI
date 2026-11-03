@@ -49,7 +49,7 @@
 					<p>The frame around the picture.</p>
 				</div>
 				<div class="shelf-grid">
-				<a class="shelf-card is-compact" href="intro.html" data-compact="1" data-search="from nothing to large language models: a peek inside the black box the big picture: what this course is about and how it connects human history to modern ai. history, philosophy, math-i, society interested-layman orientation" style="--part-color:#1275ac">
+				<a class="shelf-card is-compact" href="intro" data-compact="1" data-search="from nothing to large language models: a peek inside the black box the big picture: what this course is about and how it connects human history to modern ai. history, philosophy, math-i, society interested-layman orientation" style="--part-color:#1275ac">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#127758;</span><span class="sc-title">From Nothing to Large Language Models: A Peek inside the Black Box</span></span>
 					<span class="sc-desc">The big picture: what this course is about and how it connects human history to modern AI.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interested-layman</span></span>
@@ -62,17 +62,17 @@
 					<p>Where we came from, what language is, and the mathematical bedrock beneath AI.</p>
 				</div>
 				<div class="shelf-grid">
-				<a class="shelf-card is-compact" href="intuition.html" data-compact="1" data-search="an intuition of how large language models (llms) work large language models are next-word prediction machines. see the autoregressive loop in action. history, philosophy, society interested-layman foundations" style="--part-color:#1275ac">
+				<a class="shelf-card is-compact" href="intuition" data-compact="1" data-search="an intuition of how large language models (llms) work large language models are next-word prediction machines. see the autoregressive loop in action. history, philosophy, society interested-layman foundations" style="--part-color:#1275ac">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128161;</span><span class="sc-title">An Intuition of how Large Language Models (LLMs) work</span></span>
 					<span class="sc-desc">Large Language Models are next-word prediction machines. See the autoregressive loop in action.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interested-layman</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="history.html" data-compact="1" data-search="a very brief history of ai brief history of ai from stone tools to computation, the shifting currents that merged into modern ai. history, philosophy interested-layman foundations rosenblatt perceptron turing lovelace shannon wiener ashby aiken hinton lecun bengio deep blue alphago" style="--part-color:#1275ac">
+				<a class="shelf-card is-compact" href="history" data-compact="1" data-search="a very brief history of ai brief history of ai from stone tools to computation, the shifting currents that merged into modern ai. history, philosophy interested-layman foundations rosenblatt perceptron turing lovelace shannon wiener ashby aiken hinton lecun bengio deep blue alphago" style="--part-color:#1275ac">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128220;</span><span class="sc-title">A <em>very</em> Brief History of AI</span></span>
 					<span class="sc-desc">From stone tools to computation, the shifting currents that merged into modern AI.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interested-layman</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="language.html" data-compact="1" data-search="the history of language, from sanskrit to llms from sanskrit to llms, how millions of years of linguistic evolution led to digital minds. language, history, philosophy language-heavy, interested-layman foundations" style="--part-color:#1275ac">
+				<a class="shelf-card is-compact" href="language" data-compact="1" data-search="the history of language, from sanskrit to llms from sanskrit to llms, how millions of years of linguistic evolution led to digital minds. language, history, philosophy language-heavy, interested-layman foundations" style="--part-color:#1275ac">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128483;</span><span class="sc-title">The History of Language: From Sanskrit to LLMs</span></span>
 					<span class="sc-desc">From Sanskrit to LLMs, how millions of years of linguistic evolution led to digital minds.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">language-heavy</span></span>
@@ -85,12 +85,12 @@
 					<p>The learning algorithm step by step, from loss functions to live training.</p>
 				</div>
 				<div class="shelf-grid">
-				<a class="shelf-card is-compact" href="minimalneuron.html" data-compact="1" data-search="smallest possible neural network the simplest ai: y = ax + b. a single neuron, linear regression, and the birth of learning. math-i, math-ii, programming code-heavy how neural networks learn" style="--part-color:#9185be">
+				<a class="shelf-card is-compact" href="minimalneuron" data-compact="1" data-search="smallest possible neural network the simplest ai: y = ax + b. a single neuron, linear regression, and the birth of learning. math-i, math-ii, programming code-heavy how neural networks learn" style="--part-color:#9185be">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#10024;</span><span class="sc-title">A Tiny Example Network</span></span>
 					<span class="sc-desc">One input, one output, two numbers to adjust: the smallest learner and the loop behind every network.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="activationlab.html" data-compact="1" data-search="activation functions: the neural decision makers the neural decision makers, why without non-linearity, a network collapses to nothing. math-i, programming code-heavy how neural networks learn" style="--part-color:#9185be">
+				<a class="shelf-card is-compact" href="activationlab" data-compact="1" data-search="activation functions: the neural decision makers the neural decision makers, why without non-linearity, a network collapses to nothing. math-i, programming code-heavy how neural networks learn" style="--part-color:#9185be">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#9889;</span><span class="sc-title">Activation Functions: The Neural Decision Makers</span></span>
 					<span class="sc-desc">The neural decision makers, why without non-linearity, a network collapses to nothing.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
@@ -103,22 +103,22 @@
 					<p>Stacking layers, seeing images, and the engineering that makes depth possible.</p>
 				</div>
 				<div class="shelf-grid">
-				<a class="shelf-card is-compact" href="deeplearninglab.html" data-compact="1" data-search="deep learning from linear units to deep architectures, function composition and the universal approximation theorem. math-i, math-ii, architecture, training math-heavy, code-heavy deep learning &amp; vision" style="--part-color:#63a44b">
+				<a class="shelf-card is-compact" href="deeplearninglab" data-compact="1" data-search="deep learning from linear units to deep architectures, function composition and the universal approximation theorem. math-i, math-ii, architecture, training math-heavy, code-heavy deep learning &amp; vision" style="--part-color:#63a44b">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#127961;</span><span class="sc-title">Deep Learning</span></span>
 					<span class="sc-desc">From linear units to deep architectures, function composition and the Universal Approximation Theorem.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="overandunderfittinglab.html" data-compact="1" data-search="over- and underfitting the delicate balance, when a model learns the pattern vs. when it memorizes the noise. math-i, programming, training math-heavy, code-heavy deep learning &amp; vision" style="--part-color:#63a44b">
+				<a class="shelf-card is-compact" href="overandunderfittinglab" data-compact="1" data-search="over- and underfitting the delicate balance, when a model learns the pattern vs. when it memorizes the noise. math-i, programming, training math-heavy, code-heavy deep learning &amp; vision" style="--part-color:#63a44b">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#127922;</span><span class="sc-title">Over- and underfitting</span></span>
 					<span class="sc-desc">The delicate balance, when a model learns the pattern vs. when it memorizes the noise.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="computer_vision.html" data-compact="1" data-search="what machines see how a computer learns to see ,  the convolution, the feature hierarchy, the full cnn pipeline, then the task stack: detection, segmentation, sam, vision transformers and 3d. vision, architecture, programming, multimodal code-heavy deep learning &amp; vision" style="--part-color:#63a44b">
+				<a class="shelf-card is-compact" href="computer_vision" data-compact="1" data-search="what machines see how a computer learns to see ,  the convolution, the feature hierarchy, the full cnn pipeline, then the task stack: detection, segmentation, sam, vision transformers and 3d. vision, architecture, programming, multimodal code-heavy deep learning &amp; vision" style="--part-color:#63a44b">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128065;</span><span class="sc-title">What Machines See</span></span>
 					<span class="sc-desc">How a computer learns to see: the convolution, the feature hierarchy, the full CNN pipeline, then the task stack: detection, segmentation, SAM, Vision Transformers and 3D.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="inceptionism.html" data-compact="1" data-search="inceptionism: what the network sees turn the network around ,  tune the image instead of the weights, and watch neurons dream of bananas, dumbbells, and towers. diffusion noise denoising image generation. architecture, generative, interpretability, history  deep learning &amp; vision" style="--part-color:#1275ac">
+				<a class="shelf-card is-compact" href="inceptionism" data-compact="1" data-search="inceptionism: what the network sees turn the network around ,  tune the image instead of the weights, and watch neurons dream of bananas, dumbbells, and towers. diffusion noise denoising image generation. architecture, generative, interpretability, history  deep learning &amp; vision" style="--part-color:#1275ac">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128065;</span><span class="sc-title">Inceptionism: What the Network Sees</span></span>
 					<span class="sc-desc">Turn the network around, then see how diffusion models learn to build an image from noise.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interpretability</span></span>
@@ -131,47 +131,47 @@
 					<p>The architecture that changed everything: attention, embeddings, multimodal, diffusion, and the post-transformer alternatives.</p>
 				</div>
 				<div class="shelf-grid">
-				<a class="shelf-card is-compact" href="tokenizerlab.html" data-compact="1" data-search="tokenization: how words become numbers how words become numbers ,  word-level, n-gram, and subword methods compared ,  and the quiet failures that follow: token inflation, glitch tokens, numeric and unicode artifacts, the byte-level floor, and the road toward tokenizer-free models. language, programming, architecture code-heavy the transformer revolution" style="--part-color:#5c9baf">
+				<a class="shelf-card is-compact" href="tokenizerlab" data-compact="1" data-search="tokenization: how words become numbers how words become numbers ,  word-level, n-gram, and subword methods compared ,  and the quiet failures that follow: token inflation, glitch tokens, numeric and unicode artifacts, the byte-level floor, and the road toward tokenizer-free models. language, programming, architecture code-heavy the transformer revolution" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#9000;</span><span class="sc-title">Tokenization: How Words become Numbers</span></span>
 					<span class="sc-desc">How words become numbers (word-level, N-gram, and subword methods compared) and the quiet failures that follow: token inflation, glitch tokens, numeric and Unicode artifacts, the byte-level floor, and the road toward tokenizer-free models.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">math 30</span><span class="sc-tag">code-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="embeddinglab.html" data-compact="1" data-search="embeddings: the geometry of meaning words as vectors in space, from wittgenstein to riemannian manifolds. language, math-i, math-ii, architecture math-heavy the transformer revolution" style="--part-color:#5c9baf">
+				<a class="shelf-card is-compact" href="embeddinglab" data-compact="1" data-search="embeddings: the geometry of meaning words as vectors in space, from wittgenstein to riemannian manifolds. language, math-i, math-ii, architecture math-heavy the transformer revolution" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#127758;</span><span class="sc-title">Embeddings: The Geometry of Meaning</span></span>
 					<span class="sc-desc">Words as vectors in space, from Wittgenstein to Riemannian manifolds.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">math 55</span><span class="sc-tag">math-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="attentionlab.html" data-compact="1" data-search="the semantic tug-of-war: how transformers &#x27;think&#x27; how transformers overcome rnn signal decay, direct access across any distance. architecture, math-i, math-ii math-heavy the transformer revolution" style="--part-color:#5c9baf">
+				<a class="shelf-card is-compact" href="attentionlab" data-compact="1" data-search="the semantic tug-of-war: how transformers &#x27;think&#x27; how transformers overcome rnn signal decay, direct access across any distance. architecture, math-i, math-ii math-heavy the transformer revolution" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128269;</span><span class="sc-title">The Semantic Tug-of-War: How Transformers &#x27;Think&#x27;</span></span>
 					<span class="sc-desc">How Transformers overcome RNN signal decay, direct access across any distance.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">math 65</span><span class="sc-tag">math-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="positionalembeddingslab.html" data-compact="1" data-search="positional embeddings why order matters, sine, cosine, and how transformers know which token came first. architecture, math-i, math-ii math-heavy the transformer revolution" style="--part-color:#5c9baf">
+				<a class="shelf-card is-compact" href="positionalembeddingslab" data-compact="1" data-search="positional embeddings why order matters, sine, cosine, and how transformers know which token came first. architecture, math-i, math-ii math-heavy the transformer revolution" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128255;</span><span class="sc-title">Positional Embeddings</span></span>
 					<span class="sc-desc">Why order matters, sine, cosine, and how Transformers know which token came first.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">architecture</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="samplinglab.html" data-compact="1" data-search="temperature &amp; sampling top-k, top-p, min-p, top-n, repetition penalty ,  every decoding strategy. architecture, statistics-i, statistics-ii math-heavy the transformer revolution" style="--part-color:#5c9baf">
+				<a class="shelf-card is-compact" href="samplinglab" data-compact="1" data-search="temperature &amp; sampling top-k, top-p, min-p, top-n, repetition penalty ,  every decoding strategy. architecture, statistics-i, statistics-ii math-heavy the transformer revolution" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#127922;</span><span class="sc-title">Temperature &amp; Sampling</span></span>
 					<span class="sc-desc">Top-k, top-p, min-p, top-n, repetition penalty: every decoding strategy.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">architecture</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="transformer.html" data-compact="1" data-search="the architecture of meaning: a deep dive into transformers a deep interactive dive, configure heads, layers, and dimensions, then watch it compute. architecture, math-i, math-ii, programming math-heavy, code-heavy the transformer revolution" style="--part-color:#5c9baf">
+				<a class="shelf-card is-compact" href="transformer" data-compact="1" data-search="the architecture of meaning: a deep dive into transformers a deep interactive dive, configure heads, layers, and dimensions, then watch it compute. architecture, math-i, math-ii, programming math-heavy, code-heavy the transformer revolution" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#129516;</span><span class="sc-title">The Architecture of Meaning: A Deep Dive into Transformers</span></span>
 					<span class="sc-desc">A deep interactive dive, configure heads, layers, and dimensions, then watch it compute.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">math 65</span><span class="sc-tag">math-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="fact_lookup.html" data-compact="1" data-search="where &#x27;paris&#x27; lives ,  how an llm retrieves a fact a walk through the forward pass: residual streams, mlp key-value memory, attention, the linear representation hypothesis, and the limits of what we know. interpretability, architecture, language, math-ii math-heavy the transformer revolution" style="--part-color:#5c9baf">
+				<a class="shelf-card is-compact" href="fact_lookup" data-compact="1" data-search="where &#x27;paris&#x27; lives ,  how an llm retrieves a fact a walk through the forward pass: residual streams, mlp key-value memory, attention, the linear representation hypothesis, and the limits of what we know. interpretability, architecture, language, math-ii math-heavy the transformer revolution" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#127757;</span><span class="sc-title">Where &#x27;Paris&#x27; Lives: How an LLM Retrieves a Fact</span></span>
 					<span class="sc-desc">A walk through the forward pass: residual streams, MLP key-value memory, attention, the linear representation hypothesis, and the limits of what we know.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interpretability</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="multimodal.html" data-compact="1" data-search="multimodal &amp; vision-language models how clip, llava, and gpt-4v bridge pixels and text ,  visual tokens, projection, and cross-attention. multimodal, vision, architecture, programming  the transformer revolution" style="--part-color:#5c9baf">
+				<a class="shelf-card is-compact" href="multimodal" data-compact="1" data-search="multimodal &amp; vision-language models how clip, llava, and gpt-4v bridge pixels and text ,  visual tokens, projection, and cross-attention. multimodal, vision, architecture, programming  the transformer revolution" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128064;</span><span class="sc-title">Multimodal &amp; Vision-Language Models</span></span>
 					<span class="sc-desc">How CLIP, LLaVA, and GPT-4V bridge pixels and text: visual tokens, projection, and cross-attention.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">architecture</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="speech_audio.html" data-compact="1" data-search="speech &amp; audio models whisper, tts, music generation ,  how sound becomes tokens and back again. multimodal, audio, architecture, programming language-heavy the transformer revolution" style="--part-color:#5c9baf">
+				<a class="shelf-card is-compact" href="speech_audio" data-compact="1" data-search="speech &amp; audio models whisper, tts, music generation ,  how sound becomes tokens and back again. multimodal, audio, architecture, programming language-heavy the transformer revolution" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#127908;</span><span class="sc-title">Speech &amp; Audio Models</span></span>
 					<span class="sc-desc">Whisper, TTS, music generation: how sound becomes tokens and back again.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">language-heavy</span></span>
@@ -184,52 +184,52 @@
 					<p>Fine-tuning, retrieval, search, safety, and the practical craft of working with LLMs.</p>
 				</div>
 				<div class="shelf-grid">
-				<a class="shelf-card is-compact" href="finetuninglab.html" data-compact="1" data-search="fine-tuning &amp; post-training sft, rlhf, dpo, kto, grpo, and the modern alignment stack from internet to assistant. programming, architecture, training code-heavy making ai useful" style="--part-color:#009299">
+				<a class="shelf-card is-compact" href="finetuninglab" data-compact="1" data-search="fine-tuning &amp; post-training sft, rlhf, dpo, kto, grpo, and the modern alignment stack from internet to assistant. programming, architecture, training code-heavy making ai useful" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#127912;</span><span class="sc-title">Fine-Tuning &amp; Post-Training</span></span>
 					<span class="sc-desc">SFT, RLHF, DPO, KTO, GRPO, and the modern alignment stack from internet to assistant.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="hallucinations.html" data-compact="1" data-search="hallucinations and dangers of ai and how to use ai safely why ai lies, how pattern completion goes wrong, and using ai safely. safety, ethics, language, programming interested-layman making ai useful" style="--part-color:#009299">
+				<a class="shelf-card is-compact" href="hallucinations" data-compact="1" data-search="hallucinations and dangers of ai and how to use ai safely why ai lies, how pattern completion goes wrong, and using ai safely. safety, ethics, language, programming interested-layman making ai useful" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#9888;</span><span class="sc-title">Hallucinations and Dangers of AI and How to use AI Safely</span></span>
 					<span class="sc-desc">Why AI lies, how pattern completion goes wrong, and using AI safely.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interested-layman</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="rag.html" data-compact="1" data-search="retrieval-augmented generation: giving llms a search engine the rag pipeline ,  chunking, embedding, vector search, generation ,  plus the parts the happy path hides: chunking strategies, hybrid bm25 + dense search, cross-encoder reranking, contextual retrieval, and the reasons rag underperforms. inference, language, programming, architecture, data code-heavy making ai useful" style="--part-color:#009299">
+				<a class="shelf-card is-compact" href="rag" data-compact="1" data-search="retrieval-augmented generation: giving llms a search engine the rag pipeline ,  chunking, embedding, vector search, generation ,  plus the parts the happy path hides: chunking strategies, hybrid bm25 + dense search, cross-encoder reranking, contextual retrieval, and the reasons rag underperforms. inference, language, programming, architecture, data code-heavy making ai useful" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128270;</span><span class="sc-title">Retrieval-Augmented Generation: Giving LLMs a Search Engine</span></span>
 					<span class="sc-desc">The RAG pipeline (chunking, embedding, vector search, generation) plus the parts the happy path hides: chunking strategies, hybrid BM25 + dense search, cross-encoder reranking, contextual retrieval, and the reasons RAG underperforms.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="agents.html" data-compact="1" data-search="ai agents: autonomous reasoning and tool use history, architecture, and internals of llm-based agents, from early cognitive architectures to react and beyond. reasoning, agents, programming, language code-heavy making ai useful" style="--part-color:#009299">
+				<a class="shelf-card is-compact" href="agents" data-compact="1" data-search="ai agents: autonomous reasoning and tool use history, architecture, and internals of llm-based agents, from early cognitive architectures to react and beyond. reasoning, agents, programming, language code-heavy making ai useful" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#129302;</span><span class="sc-title">AI Agents: Autonomous Reasoning and Tool Use</span></span>
 					<span class="sc-desc">History, architecture, and internals of LLM-based agents, from early cognitive architectures to ReAct and beyond.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="contextwindows.html" data-compact="1" data-search="context windows &amp; memory: what llms can hold in mind what llms can hold in mind, from gpt-2&#x27;s 1k to gemini&#x27;s 1m+ tokens. language, architecture, programming language-heavy making ai useful" style="--part-color:#009299">
+				<a class="shelf-card is-compact" href="contextwindows" data-compact="1" data-search="context windows &amp; memory: what llms can hold in mind what llms can hold in mind, from gpt-2&#x27;s 1k to gemini&#x27;s 1m+ tokens. language, architecture, programming language-heavy making ai useful" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128196;</span><span class="sc-title">Context Windows &amp; Memory: What LLMs Can Hold in Mind</span></span>
 					<span class="sc-desc">What LLMs can hold in mind, from GPT-2&#x27;s 1K to Gemini&#x27;s 1M+ tokens.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">language-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="running_locally.html" data-compact="1" data-search="running models locally llama.cpp, ollama, lm studio, gguf, and how to run a frontier-class llm on your laptop. hardware, programming, inference code-heavy making ai useful" style="--part-color:#009299">
+				<a class="shelf-card is-compact" href="running_locally" data-compact="1" data-search="running models locally llama.cpp, ollama, lm studio, gguf, and how to run a frontier-class llm on your laptop. hardware, programming, inference code-heavy making ai useful" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128187;</span><span class="sc-title">Running Models Locally</span></span>
 					<span class="sc-desc">llama.cpp, Ollama, LM Studio, GGUF, and how to run a frontier-class LLM on your laptop.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="training_data.html" data-compact="1" data-search="training data curation common crawl, fineweb, deduplication, contamination, and why data is half the secret. training, data, programming, society  making ai useful" style="--part-color:#009299">
+				<a class="shelf-card is-compact" href="training_data" data-compact="1" data-search="training data curation common crawl, fineweb, deduplication, contamination, and why data is half the secret. training, data, programming, society  making ai useful" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128190;</span><span class="sc-title">Training Data Curation</span></span>
 					<span class="sc-desc">Common Crawl, FineWeb, deduplication, contamination, and why data is half the secret.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">data</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="reasoning.html" data-compact="1" data-search="reasoning &amp; test-time compute chain-of-thought, self-consistency, tot, and the o1/r1 paradigm of scaling compute at inference. reasoning, agents, architecture, philosophy logic-heavy making ai useful" style="--part-color:#009299">
+				<a class="shelf-card is-compact" href="reasoning" data-compact="1" data-search="reasoning &amp; test-time compute chain-of-thought, self-consistency, tot, and the o1/r1 paradigm of scaling compute at inference. reasoning, agents, architecture, philosophy logic-heavy making ai useful" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#129518;</span><span class="sc-title">Reasoning &amp; Test-Time Compute</span></span>
 					<span class="sc-desc">Chain-of-thought, self-consistency, ToT, and the o1/R1 paradigm of scaling compute at inference.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">logic-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="evaluation.html" data-compact="1" data-search="evaluation &amp; benchmarks how we measure llm capability ,  mmlu, humaneval, contamination, and the limits of benchmarks ,  plus how to build an evaluation for your own problem: rubric design, inter-annotator agreement, llm-judge calibration, and telling a real effect from noise. programming, philosophy, society, data, inference code-heavy making ai useful" style="--part-color:#009299">
+				<a class="shelf-card is-compact" href="evaluation" data-compact="1" data-search="evaluation &amp; benchmarks how we measure llm capability ,  mmlu, humaneval, contamination, and the limits of benchmarks ,  plus how to build an evaluation for your own problem: rubric design, inter-annotator agreement, llm-judge calibration, and telling a real effect from noise. programming, philosophy, society, data, inference code-heavy making ai useful" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#127942;</span><span class="sc-title">Evaluation &amp; Benchmarks</span></span>
 					<span class="sc-desc">How we measure LLM capability (MMLU, HumanEval, contamination, and the limits of benchmarks) plus how to build an evaluation for your own problem: rubric design, inter-annotator agreement, LLM-judge calibration, and telling a real effect from noise.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="promptengineering.html" data-compact="1" data-search="prompt engineering: how to talk to llms the practical craft of talking to llms, roles, delimiters, and canonicalization. language, programming code-heavy making ai useful" style="--part-color:#009299">
+				<a class="shelf-card is-compact" href="promptengineering" data-compact="1" data-search="prompt engineering: how to talk to llms the practical craft of talking to llms, roles, delimiters, and canonicalization. language, programming code-heavy making ai useful" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#9999;</span><span class="sc-title">Prompt Engineering: How to talk to LLMs</span></span>
 					<span class="sc-desc">The practical craft of talking to LLMs, roles, delimiters, and canonicalization.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
@@ -242,22 +242,22 @@
 					<p>The global AI ecosystem, the displaced prerequisites, and the open problems at the frontier of AI.</p>
 				</div>
 				<div class="shelf-grid">
-				<a class="shelf-card is-compact" href="philosophy.html" data-compact="1" data-search="philosophical and societal implications, ethical usage of ai the turing test, the vector grounding problem, mary&#x27;s room, sentience, and what it means to think. philosophy, ethics, language interested-layman bigger questions" style="--part-color:#92a19a">
+				<a class="shelf-card is-compact" href="philosophy" data-compact="1" data-search="philosophical and societal implications, ethical usage of ai the turing test, the vector grounding problem, mary&#x27;s room, sentience, and what it means to think. philosophy, ethics, language interested-layman bigger questions" style="--part-color:#92a19a">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128218;</span><span class="sc-title">Philosophical and societal implications, ethical usage of AI</span></span>
 					<span class="sc-desc">The Turing Test, the Vector Grounding Problem, Mary&#x27;s Room, sentience, and what it means to think.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interested-layman</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="ai_and_society.html" data-compact="1" data-search="ai and society: the cultural impact of machines that create a survey of how ai has reshaped art, science, labor, cognition, and truth ,  from the dartmouth conference to the flood of synthetic media. the good, the bad, the terrible, and the great. society, culture, ethics, history interested-layman bigger questions" style="--part-color:#5c9baf">
+				<a class="shelf-card is-compact" href="ai_and_society" data-compact="1" data-search="ai and society: the cultural impact of machines that create a survey of how ai has reshaped art, science, labor, cognition, and truth ,  from the dartmouth conference to the flood of synthetic media. the good, the bad, the terrible, and the great. society, culture, ethics, history interested-layman bigger questions" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#9883;</span><span class="sc-title">AI and Society: The Cultural Impact of Machines That Create</span></span>
 					<span class="sc-desc">A survey of how AI has reshaped art, science, labor, cognition, and truth, from the Dartmouth Conference to the flood of synthetic media. The good, the bad, the terrible, and the great.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interested-layman</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="ai_for_science.html" data-compact="1" data-search="ai for science alphafold protein folding materials weather theorem proving discovery verification plddt gnome fourcastnet funsearch alphageometry. society, data, vision, philosophy interested-layman bigger questions" style="--part-color:#009299">
+				<a class="shelf-card is-compact" href="ai_for_science" data-compact="1" data-search="ai for science alphafold protein folding materials weather theorem proving discovery verification plddt gnome fourcastnet funsearch alphageometry. society, data, vision, philosophy interested-layman bigger questions" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#129514;</span><span class="sc-title">AI for Science</span></span>
 					<span class="sc-desc">AlphaFold, materials, weather, and mathematics: how models trained to predict the world now help discover in it, and why verification is the bottleneck.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interested-layman</span></span>
 				</a>
-				<a class="shelf-card is-compact" href="people_of_ai.html" data-compact="1" data-search="people of ai the recurring cast behind the machine ,  from mcculloch and pitts to the builders of the modern llm stack, with their primary works. history, society, philosophy, frontier interested-layman bigger questions" style="--part-color:#5c9baf">
+				<a class="shelf-card is-compact" href="people_of_ai" data-compact="1" data-search="people of ai the recurring cast behind the machine ,  from mcculloch and pitts to the builders of the modern llm stack, with their primary works. history, society, philosophy, frontier interested-layman bigger questions" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128101;</span><span class="sc-title">People of AI</span></span>
 					<span class="sc-desc">The recurring cast behind the machine, from McCulloch and Pitts to the builders of the modern LLM stack, with their primary works.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interested-layman</span></span>
@@ -274,9 +274,9 @@
 				<p>A compact companion to the From Nothing to Large Language Models project. Every card here opens a hand-built ten-minute lesson.</p>
 			</div>
 			<nav aria-label="Footer">
-				<a href="index.php">Home</a>
-				<a href="advent.html">Calendar</a>
-				<a href="whole.html">The whole arc</a>
+				<a href="./">Home</a>
+				<a href="advent">Calendar</a>
+				<a href="whole">The whole arc</a>
 			</nav>
 		</div>
 	</footer>

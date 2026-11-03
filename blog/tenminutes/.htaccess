@@ -1,19 +1,29 @@
-# Ten Minutes is a standalone static companion with one small PHP landing page.
-# The blog-wide auto_prepend injects mobile.css/mobile.js with a path relative
-# to the blog root, which does not resolve from this subdirectory. Disable it
-# here for mod_php; .user.ini does the same for CGI/FPM.
+# Ten Minutes uses its own bootstrap for server-side date-gated full-lesson
+# links. The blog-wide auto_prepend has a path relative to the blog root and
+# does not resolve from this subdirectory, so point it at the local bootstrap
+# instead. .user.ini does the same for CGI/FPM.
 <IfModule mod_php8.c>
-    php_value auto_prepend_file none
+    php_value auto_prepend_file "bootstrap.php"
 </IfModule>
 <IfModule mod_php.c>
-    php_value auto_prepend_file none
+    php_value auto_prepend_file "bootstrap.php"
 </IfModule>
 <IfModule mod_php7.c>
-    php_value auto_prepend_file none
+    php_value auto_prepend_file "bootstrap.php"
 </IfModule>
 
 # Local PHP configuration must not be served.
 <FilesMatch "^\.user\.ini$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Support files are included by PHP, never served.
+<FilesMatch "^(bootstrap|globals)\.php$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>

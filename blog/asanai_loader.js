@@ -27,7 +27,7 @@
     container.appendChild(statusMsg);
 
     const proxyBase = window.location.protocol + '//' + window.location.host + '/asanai_blog_proxy.php?';
-    const proxyUrl = proxyBase + 'tenminutes/intuition.html';
+    const proxyUrl = proxyBase + 'tenminutes/intuition';
 
     try {
         const response = await fetch(proxyUrl);

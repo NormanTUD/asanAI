@@ -1324,7 +1324,7 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lizenz: CC BY-SA 2.0 (via Commons API extmetadata)
    Autor: Pablo A. Gimenez
    Lokal: cave_hands.jpg (4000x2248)
-   Genutzt in: intro.php; language.php § "Writing as technology"; tenminutes/language.html § "Cave Paintings and Symbolic Art" (image.php w=900)
+   Genutzt in: intro.php; language.php § "Writing as technology"; tenminutes/language.php § "Cave Paintings and Symbolic Art" (image.php w=900)
    Status: OK - CC BY-SA 2.0
 
 4. perceptronimagedetection
@@ -1340,7 +1340,7 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lizenz: CC BY 2.5
    Autor: Chris Henshilwood
    Lokal: blombosochre.jpg (1670x1058)
-   Genutzt in: language.php § "The Cognitive Ignition"; tenminutes/language.html § "Cave Paintings and Symbolic Art"; tenminutes/history.html § "External memory"
+   Genutzt in: language.php § "The Cognitive Ignition"; tenminutes/language.php § "Cave Paintings and Symbolic Art"; tenminutes/history.php § "External memory"
    Status: OK - CC BY 2.5
 
 6. cuneiform_image
@@ -1348,7 +1348,7 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
    Autor: Osama Shukir Muhammed Amin
    Lokal: cuneiform.jpg (1645x2649)
-   Genutzt in: language.php § "Cuneiform and Formal Grammar"; tenminutes/language.html § "Counting Stones and Tokens" (image.php w=700)
+   Genutzt in: language.php § "Cuneiform and Formal Grammar"; tenminutes/language.php § "Counting Stones and Tokens" (image.php w=700)
    Status: OK - CC BY-SA 4.0
 
 7. wadielhol_inscription_i_image
@@ -1356,7 +1356,7 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lizenz: Public domain (via Commons API extmetadata)
    Autor: Marilyn Lundberg, West Semitic Research
    Lokal: wadielhol_inscription_i.jpg (720x253)
-   Genutzt in: language.php § "Proto-Sinaitic Script"; tenminutes/language.html § "Counting Stones and Tokens"
+   Genutzt in: language.php § "Proto-Sinaitic Script"; tenminutes/language.php § "Counting Stones and Tokens"
    Status: OK - Public domain
 
 8. history_of_a_image
@@ -1364,10 +1364,10 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lizenz: CC BY-SA 4.0
    Autor: Wikipedia contributors
    Lokal: history_of_a.png (398x749)
-   Genutzt in: language.php § "The Phoenician Alphabet"; tenminutes/language.html § "From Pictogram to Alphabet"
+   Genutzt in: language.php § "The Phoenician Alphabet"; tenminutes/language.php § "From Pictogram to Alphabet"
    Status: OK - CC BY-SA 4.0
 
-=== TEN MINUTES: HISTORY / ROSENBLATT PHOTO ESSAY (tenminutes/history.html, Stand: Oktober 2026) ===
+=== TEN MINUTES: HISTORY / ROSENBLATT PHOTO ESSAY (tenminutes/history.php, Stand: Oktober 2026) ===
 Die Seite nutzt ausschließlich bereits im Blog vorhandene, oben geprüfte Dateien. Verwendungsnachweis:
 
 1. ishango.jpg — Ben2, CC BY-SA 3.0 — Timeline "Tally bones"
@@ -1405,68 +1405,68 @@ Autor, Lizenz und Quellenlink direkt in der Abbildung.
 1. noise_to_banana.png / inceptionism_classvis.png
    Autor: Alexander Mordvintsev, Christopher Olah, Mike Tyka (Google Research Blog)
    Lizenz: CC BY 4.0
-   Verwendet in: tenminutes/inceptionism.html
+   Verwendet in: tenminutes/inceptionism.php
    Quelle: https://research.google/blog/inceptionism-going-deeper-into-neural-networks/
 
 2. spectrogram_speech_open.png
    Autor: Kelly Fitz
    Lizenz: CC BY-SA 3.0
-   Verwendet in: tenminutes/speech_audio.html (image.php w=900)
+   Verwendet in: tenminutes/speech_audio.php (image.php w=900)
 
 3. canary_coal_mine.jpg
    Autor: U.S. Bureau of Mines (1928)
    Lizenz: Public domain
-   Verwendet in: tenminutes/evaluation.html
+   Verwendet in: tenminutes/evaluation.php
 
 4. library_card_catalog.jpg
    Autor: TBurmeister (WMF)
    Lizenz: CC BY-SA 4.0
-   Verwendet in: tenminutes/rag.html (image.php w=900)
+   Verwendet in: tenminutes/rag.php (image.php w=900)
 
 5. theseus_minotaur_mosaic.jpg
    Autor: ancient Roman mosaic, House of the Labyrinth, Pompeii
    Lizenz: Public domain
-   Verwendet in: tenminutes/reasoning.html (image.php w=900)
+   Verwendet in: tenminutes/reasoning.php (image.php w=900)
 
 6. alphago_leesedol.jpg
    Autor: Korea Baduk Association (2016)
    Lizenz: CC BY-SA 4.0
-   Verwendet in: tenminutes/ai_and_society.html
+   Verwendet in: tenminutes/ai_and_society.php
 
 7. sam_demo.png
    Autor: Alexander Kirillov et al. (Meta AI)
    Lizenz: Apache-2.0
-   Verwendet in: tenminutes/computer_vision.html (image.php w=900, fmt=jpg)
+   Verwendet in: tenminutes/computer_vision.php (image.php w=900, fmt=jpg)
 
 8. flammarion.jpg
    Autor: Camille Flammarion (1888)
    Lizenz: Public domain
-   Verwendet in: tenminutes/myths.html (image.php w=900)
+   Verwendet in: tenminutes/myths.php (image.php w=900)
 
 9. alan_turing_1951.jpg
    Autor: Elliott & Fry (1951)
    Lizenz: Public domain
-   Verwendet in: tenminutes/philosophy.html; tenminutes/people_of_ai.html
+   Verwendet in: tenminutes/philosophy.php; tenminutes/people_of_ai.php
 
 10. ada_lovelace_portrait.jpg
     Autor: Alfred Edward Chalon (1840)
     Lizenz: Public domain
-    Verwendet in: tenminutes/people_of_ai.html
+    Verwendet in: tenminutes/people_of_ai.php
 
 11. frank_rosenblatt_commons.jpg
     Autor: Anonymous / Heinz Nixdorf MuseumsForum
     Lizenz: CC BY-SA 4.0
-    Verwendet in: tenminutes/people_of_ai.html
+    Verwendet in: tenminutes/people_of_ai.php
 
 12. geoffrey_hinton_portrait.jpg
     Autor: Arthur Petron (2024)
     Lizenz: CC BY-SA 4.0
-    Verwendet in: tenminutes/people_of_ai.html
+    Verwendet in: tenminutes/people_of_ai.php
 
 13. stop_sign.jpg
     Autor: Matthew Paul Argall (2012)
     Lizenz: CC0
-    Verwendet in: tenminutes/computer_vision.html (Convolution-Demo)
+    Verwendet in: tenminutes/computer_vision.php (Convolution-Demo)
     Quelle: https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg
 
 === DEEP BLUE / SHRDLU (history.php, Stand: Oktober 2026) ===
@@ -1487,11 +1487,11 @@ Autor, Lizenz und Quellenlink direkt in der Abbildung.
    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
    Autor: ai.lect (Uploader: Ksloniewski)
    Lokal: shrdlu.gif (599x217)
-   Genutzt in: agents.php § "Classical AI: Symbolic Agents"; history.php § "The Triumph of Symbolic AI"; tenminutes/history.html § "Winters & narrow AI"
+   Genutzt in: agents.php § "Classical AI: Symbolic Agents"; history.php § "The Triumph of Symbolic AI"; tenminutes/history.php § "Winters & narrow AI"
    Status: OK - CC BY-SA 4.0
 
 
-=== TRINIL SHELL (geometry_i.php + tenminutes/history.html, Stand: Oktober 2026) ===
+=== TRINIL SHELL (geometry_i.php + tenminutes/history.php, Stand: Oktober 2026) ===
 ====================================================================
 
 1. trinilshell_image
@@ -1499,7 +1499,7 @@ Autor, Lizenz und Quellenlink direkt in der Abbildung.
    Lizenz: CC BY-SA 3.0 (via Commons API extmetadata)
    Autor: Naturalis Biodiversity Center, The Netherlands
    Lokal: trinil_shell.jpg (3083x878)
-   Genutzt in: geometry_i.php § "The Trinil shell"; tenminutes/history.html § "External memory" (image.php w=900)
+   Genutzt in: geometry_i.php § "The Trinil shell"; tenminutes/history.php § "External memory" (image.php w=900)
    Status: OK - CC BY-SA 3.0
 
 === CAMBRIAN BRAIN, EYE, AND CTENOPHORE (untold_history_i.php + philosophy.php, Stand: Oktober 2026) ===
@@ -1600,7 +1600,7 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand November 202
    Lizenz: CC BY-SA 4.0
    Autor: Fabian Brackhane
    Lokal: tenminutes/assets/img/kempelen-speaking-machine.jpg (900x1521, verkleinert aus PNG)
-   Genutzt in: tenminutes/language.html § "The machine learns to speak" und Timeline "Talking machine"
+   Genutzt in: tenminutes/language.php § "The machine learns to speak" und Timeline "Talking machine"
    Status: OK - CC BY-SA 4.0
 
 === CLOTHING AND SHELTER (untold_history_i.php, Stand: November 2026) ===

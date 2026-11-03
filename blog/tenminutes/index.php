@@ -37,7 +37,7 @@ $isDecember2026 = $today->format('Y') === '2026' && $today->format('n') === '12'
 $todayDay = $isDecember2026 ? (int) $today->format('j') : 0;
 
 $calendarHtml = '';
-$adventPath = __DIR__ . '/advent.html';
+$adventPath = __DIR__ . '/advent.php';
 if (is_file($adventPath)) {
 	$source = file_get_contents($adventPath);
 	$startMarker = '<!-- CALENDAR:START -->';

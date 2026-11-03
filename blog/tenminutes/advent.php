@@ -32,7 +32,7 @@
 					</p>
 					<div class="hero-actions">
 						<a class="btn btn--green" href="#day-1">Start with Day 1</a>
-						<a class="btn btn--ghost" href="library.html">Browse the shelf</a>
+						<a class="btn btn--ghost" href="library">Browse the shelf</a>
 					</div>
 					<div class="hero-meta">
 						<span class="pill pill--green"><b id="advent-done">0</b> of 31 completed</span>
@@ -71,35 +71,35 @@
 				<!-- CALENDAR:START -->
 				<p class="week-label">Section 1 · The Idea · Days 1-5</p>
 				<div class="advent-grid">
-					<a class="day-card is-available" id="day-1" href="intuition.html" data-day="1" data-slug="intuition">
+					<a class="day-card is-available" id="day-1" href="intuition" data-day="1" data-slug="intuition">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">01</span><span class="dc-part">The Idea</span></div>
 						<h3>One Word at a Time</h3>
 						<p>A language model does one thing: guess the next word. Chat, code, and translation are that trick at scale.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-2" href="history.html" data-day="2" data-slug="history">
+					<a class="day-card is-available" id="day-2" href="history" data-day="2" data-slug="history">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">02</span><span class="dc-part">The Idea</span></div>
 						<h3>Where AI Came From</h3>
 						<p>Tally bones, gears, logic, and the long convergence that made the transformer possible.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-3" href="language.html" data-day="3" data-slug="language">
+					<a class="day-card is-available" id="day-3" href="language" data-day="3" data-slug="language">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">03</span><span class="dc-part">The Idea</span></div>
 						<h3>How Language Became Data</h3>
 						<p>Spoken sound, writing, and the long history that made text the raw material of a model.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-4" href="tokenizerlab.html" data-day="4" data-slug="tokenizerlab">
+					<a class="day-card is-available" id="day-4" href="tokenizerlab" data-day="4" data-slug="tokenizerlab">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">04</span><span class="dc-part">The Idea</span></div>
 						<h3>Chopping Text into Tokens</h3>
 						<p>Text becomes pieces with IDs. Why “strawberry” is not one token, and why numbers look strange.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-5" href="embeddinglab.html" data-day="5" data-slug="embeddinglab">
+					<a class="day-card is-available" id="day-5" href="embeddinglab" data-day="5" data-slug="embeddinglab">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">05</span><span class="dc-part">The Idea</span></div>
 						<h3>Meaning as Geometry</h3>
@@ -110,42 +110,42 @@
 
 				<p class="week-label">Section 2 · Failure and Learning · Days 6-11</p>
 				<div class="advent-grid">
-					<a class="day-card is-available" id="day-6" href="hallucinations.html" data-day="6" data-slug="hallucinations">
+					<a class="day-card is-available" id="day-6" href="hallucinations" data-day="6" data-slug="hallucinations">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">06</span><span class="dc-part">Failure</span></div>
 						<h3>When the Model Does Not Know</h3>
 						<p>A pattern completer can produce confident nonsense. Why plausible is not true, and how to stay safe.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-7" href="minimalneuron.html" data-day="7" data-slug="minimalneuron">
+					<a class="day-card is-available" id="day-7" href="minimalneuron" data-day="7" data-slug="minimalneuron">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">07</span><span class="dc-part">Learning</span></div>
 						<h3>A Tiny Example Network</h3>
 						<p>One input, one output, two numbers to adjust: the smallest learner, and the loop behind every network.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-8" href="inceptionism.html" data-day="8" data-slug="inceptionism">
+					<a class="day-card is-available" id="day-8" href="inceptionism" data-day="8" data-slug="inceptionism">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">08</span><span class="dc-part">Learning</span></div>
 						<h3>What the Network Dreams</h3>
 						<p>Turn the network around, then see how diffusion models learn to build an image from noise.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-9" href="overandunderfittinglab.html" data-day="9" data-slug="overandunderfittinglab">
+					<a class="day-card is-available" id="day-9" href="overandunderfittinglab" data-day="9" data-slug="overandunderfittinglab">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">09</span><span class="dc-part">Learning</span></div>
 						<h3>Pattern or Memorization?</h3>
 						<p>A model can learn the rule or learn the noise. The difference decides whether it generalizes.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-10" href="deeplearninglab.html" data-day="10" data-slug="deeplearninglab">
+					<a class="day-card is-available" id="day-10" href="deeplearninglab" data-day="10" data-slug="deeplearninglab">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">10</span><span class="dc-part">Learning</span></div>
 						<h3>Why Depth Helps</h3>
 						<p>Stack layers and simple features become complex ones. Depth is what turns edges into faces.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-11" href="activationlab.html" data-day="11" data-slug="activationlab">
+					<a class="day-card is-available" id="day-11" href="activationlab" data-day="11" data-slug="activationlab">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">11</span><span class="dc-part">Learning</span></div>
 						<h3>Why Networks Can Bend</h3>
@@ -156,42 +156,42 @@
 
 				<p class="week-label">Section 3 · Data, Senses, and Practice · Days 12-17</p>
 				<div class="advent-grid">
-					<a class="day-card is-available" id="day-12" href="training_data.html" data-day="12" data-slug="training_data">
+					<a class="day-card is-available" id="day-12" href="training_data" data-day="12" data-slug="training_data">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">12</span><span class="dc-part">The World</span></div>
 						<h3>What a Model Reads</h3>
 						<p>Common Crawl, deduplication, contamination: the text diet behind every model, and why data is half the secret.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-13" href="computer_vision.html" data-day="13" data-slug="computer_vision">
+					<a class="day-card is-available" id="day-13" href="computer_vision" data-day="13" data-slug="computer_vision">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">13</span><span class="dc-part">The World</span></div>
 						<h3>How Machines See</h3>
 						<p>A picture is a grid of numbers. Convolution learns edges, then parts, then whole objects.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-14" href="multimodal.html" data-day="14" data-slug="multimodal">
+					<a class="day-card is-available" id="day-14" href="multimodal" data-day="14" data-slug="multimodal">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">14</span><span class="dc-part">The World</span></div>
 						<h3>Connecting Images and Words</h3>
 						<p>CLIP, LLaVA, GPT-4V: how pixels become tokens a language model can read.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-15" href="speech_audio.html" data-day="15" data-slug="speech_audio">
+					<a class="day-card is-available" id="day-15" href="speech_audio" data-day="15" data-slug="speech_audio">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">15</span><span class="dc-part">The World</span></div>
 						<h3>Sound, Music, and Video</h3>
 						<p>Waveforms become tokens and back again: speech recognition, speech synthesis, and generated sound.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-16" href="running_locally.html" data-day="16" data-slug="running_locally">
+					<a class="day-card is-available" id="day-16" href="running_locally" data-day="16" data-slug="running_locally">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">16</span><span class="dc-part">The World</span></div>
 						<h3>Running a Model Yourself</h3>
 						<p>Ollama, llama.cpp, GGUF: what it takes to run a capable model on an ordinary laptop.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-17" href="evaluation.html" data-day="17" data-slug="evaluation">
+					<a class="day-card is-available" id="day-17" href="evaluation" data-day="17" data-slug="evaluation">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">17</span><span class="dc-part">The World</span></div>
 						<h3>Measuring What It Can Do</h3>
@@ -202,35 +202,35 @@
 
 				<p class="week-label">Section 4 · Inside the Transformer · Days 18-22</p>
 				<div class="advent-grid">
-					<a class="day-card is-available" id="day-18" href="attentionlab.html" data-day="18" data-slug="attentionlab">
+					<a class="day-card is-available" id="day-18" href="attentionlab" data-day="18" data-slug="attentionlab">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">18</span><span class="dc-part">Transformer</span></div>
 						<h3>Attention: The Tug-of-War</h3>
 						<p>Older networks read one step at a time. Attention lets every token look at every other token at once.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-19" href="contextwindows.html" data-day="19" data-slug="contextwindows">
+					<a class="day-card is-available" id="day-19" href="contextwindows" data-day="19" data-slug="contextwindows">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">19</span><span class="dc-part">Transformer</span></div>
 						<h3>The Memory It Can Hold</h3>
 						<p>The context window is working memory: what fits, what falls out, and why long chats drift.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-20" href="positionalembeddingslab.html" data-day="20" data-slug="positionalembeddingslab">
+					<a class="day-card is-available" id="day-20" href="positionalembeddingslab" data-day="20" data-slug="positionalembeddingslab">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">20</span><span class="dc-part">Transformer</span></div>
 						<h3>How Order Survives</h3>
 						<p>Attention by itself has no sense of order. Position information tells it which token came first.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-21" href="fact_lookup.html" data-day="21" data-slug="fact_lookup">
+					<a class="day-card is-available" id="day-21" href="fact_lookup" data-day="21" data-slug="fact_lookup">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">21</span><span class="dc-part">Transformer</span></div>
 						<h3>Where a Fact Lives</h3>
 						<p>A walk through the forward pass: how “Paris” surfaces from the weights, and where the story is still uncertain.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-22" href="transformer.html" data-day="22" data-slug="transformer">
+					<a class="day-card is-available" id="day-22" href="transformer" data-day="22" data-slug="transformer">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">22</span><span class="dc-part">Transformer</span></div>
 						<h3>The Whole Machine</h3>
@@ -241,35 +241,35 @@
 
 				<p class="week-label">Section 5 · From Model to Assistant · Days 23-27</p>
 				<div class="advent-grid">
-					<a class="day-card is-available" id="day-23" href="samplinglab.html" data-day="23" data-slug="samplinglab">
+					<a class="day-card is-available" id="day-23" href="samplinglab" data-day="23" data-slug="samplinglab">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">23</span><span class="dc-part">Assistant</span></div>
 						<h3>Choosing the Next Token</h3>
 						<p>Temperature, top-p, sampling: the knobs that turn a probability distribution into a voice.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-24" href="finetuninglab.html" data-day="24" data-slug="finetuninglab">
+					<a class="day-card is-available" id="day-24" href="finetuninglab" data-day="24" data-slug="finetuninglab">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">24</span><span class="dc-part">Assistant</span></div>
 						<h3>Turning a Predictor into an Assistant</h3>
 						<p>Instruction tuning and feedback teach a raw next-word model to answer, refuse, and follow a format.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-25" href="rag.html" data-day="25" data-slug="rag">
+					<a class="day-card is-available" id="day-25" href="rag" data-day="25" data-slug="rag">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">25</span><span class="dc-part">Assistant</span></div>
 						<h3>Giving It a Search Engine</h3>
 						<p>Retrieval, embeddings, and citations: how a model can answer from documents instead of memory.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-26" href="promptengineering.html" data-day="26" data-slug="promptengineering">
+					<a class="day-card is-available" id="day-26" href="promptengineering" data-day="26" data-slug="promptengineering">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">26</span><span class="dc-part">Assistant</span></div>
 						<h3>The Craft of Asking</h3>
 						<p>Clear roles, examples, and constraints. Prompting is communication, not magic words.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-27" href="reasoning.html" data-day="27" data-slug="reasoning">
+					<a class="day-card is-available" id="day-27" href="reasoning" data-day="27" data-slug="reasoning">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">27</span><span class="dc-part">Assistant</span></div>
 						<h3>Thinking Longer</h3>
@@ -280,28 +280,28 @@
 
 				<p class="week-label">Section 6 · The Larger Questions · Days 28-31</p>
 				<div class="advent-grid">
-					<a class="day-card is-available" id="day-28" href="ai_and_society.html" data-day="28" data-slug="ai_and_society">
+					<a class="day-card is-available" id="day-28" href="ai_and_society" data-day="28" data-slug="ai_and_society">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">28</span><span class="dc-part">Big Questions</span></div>
 						<h3>What AI Is Doing to Us</h3>
 						<p>Art, work, science, and truth: the cultural changes already underway, without the hype.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-29" href="philosophy.html" data-day="29" data-slug="philosophy">
+					<a class="day-card is-available" id="day-29" href="philosophy" data-day="29" data-slug="philosophy">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">29</span><span class="dc-part">Big Questions</span></div>
 						<h3>Minds, Meaning, and Machines</h3>
 						<p>Turing, grounding, Mary's Room, sentience: what it would mean for a model to think.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-30" href="ai_for_science.html" data-day="30" data-slug="ai_for_science">
+					<a class="day-card is-available" id="day-30" href="ai_for_science" data-day="30" data-slug="ai_for_science">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">30</span><span class="dc-part">Big Questions</span></div>
 						<h3>What AI Can Discover</h3>
 						<p>AlphaFold, materials, weather, and mathematics: how prediction becomes discovery, and why verification is the bottleneck.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-31" href="people_of_ai.html" data-day="31" data-slug="people_of_ai">
+					<a class="day-card is-available" id="day-31" href="people_of_ai" data-day="31" data-slug="people_of_ai">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">31</span><span class="dc-part">Big Questions</span></div>
 						<h3>The People and the Map</h3>
@@ -321,7 +321,7 @@
 							If a side question grabs you, follow it. The compact library collects the doors,
 							and the calendar is one route through them.
 						</p>
-						<a class="btn" href="library.html">Browse the compact library
+						<a class="btn" href="library">Browse the compact library
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
 						</a>
 					</div>
@@ -330,7 +330,7 @@
 							<h3>The people and the map</h3>
 							<p>The People of AI page closes the year with the recurring cast and the institutions behind the machine.</p>
 						</div>
-						<a class="btn btn--ghost" href="people_of_ai.html">Open People of AI</a>
+						<a class="btn btn--ghost" href="people_of_ai">Open People of AI</a>
 					</div>
 				</div>
 			</section>
@@ -345,9 +345,9 @@
 			</div>
 			<div>
 				<nav aria-label="Footer">
-					<a href="index.php">Home</a>
-					<a href="library.html">Library</a>
-					<a href="whole.html">The whole arc</a>
+					<a href="./">Home</a>
+					<a href="library">Library</a>
+					<a href="whole">The whole arc</a>
 				</nav>
 				<p style="margin-top:10px">Progress stays in your browser. No account, no tracking.</p>
 			</div>
@@ -384,7 +384,7 @@
 
 		var last = TM.storage.get("tm_last", null);
 		if (last && last.slug) {
-			var path = last.slug + ".html";
+			var path = last.slug;
 			var heroActions = document.querySelector(".hero-actions");
 			if (heroActions && document.querySelector('a[href="' + path + '"]')) {
 				var cont = document.createElement("a");
