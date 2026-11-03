@@ -3674,7 +3674,7 @@ html[data-theme="dark"] .activation-card {
 .activation-copy b { color: var(--tm-ink); }
 .activation-plots {
 	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 8px;
 }
 .activation-plots .ap { margin: 0; }
@@ -3689,6 +3689,7 @@ html[data-theme="dark"] .activation-card {
 }
 .ap-relu .ap-curve { stroke: var(--tm-green); }
 .ap-sigmoid .ap-curve { stroke: var(--tm-sky); }
+.ap-tanh .ap-curve { stroke: var(--tm-blue); }
 .ap-gelu .ap-curve { stroke: var(--tm-gold); }
 .ap-label { fill: var(--tm-muted); font-family: var(--tm-ui); font-size: 8px; }
 .ap figcaption {
@@ -4108,6 +4109,17 @@ html[data-theme="light"] .step-pane-head .sp-title { color: var(--tm-ink); }
 	line-height: 1.55;
 	color: rgba(238, 247, 244, 0.72);
 }
+.step-note.step-lead { margin: 0 0 12px; }
+.layer-subhead {
+	margin: 18px 0 8px;
+	font-family: var(--tm-ui);
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.07em;
+	text-transform: uppercase;
+	color: var(--tm-lime);
+}
+html[data-theme="light"] .layer-subhead { color: var(--tm-green-deep); }
 .step-note b { color: #eef7f4; }
 html[data-theme="light"] .step-note { color: var(--tm-muted); }
 html[data-theme="light"] .step-note b { color: var(--tm-ink); }

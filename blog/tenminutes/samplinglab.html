@@ -27,8 +27,8 @@
 						<h2 class="section-title">Sharp or flat.</h2>
 						<div class="prose">
 							<p>The transformer ended with a distribution. Now choose from it. The model ends with a vector of logits, one score per vocabulary token. Softmax turns those scores into probabilities (the same <a href="activationlab.html">softmax</a> as at the end of a classifier). Temperature divides the logits before the softmax: below one the gaps between scores widen and the distribution sharpens; above one the gaps shrink and the distribution flattens.</p>
-							<p>At temperature near zero, the most likely token gets almost all of the mass, so decoding becomes greedy and deterministic. At temperature one, you sample from the model's native distribution. Above one, rare tokens become reachable and the output becomes more surprising, and more likely to be incoherent.</p>
-							<p>Greedy decoding is not 'the truth'; it is just the highest-probability continuation. It can be repetitive and can miss a better sentence that starts with a less likely token. Temperature changes the shape of the choice, not the model's knowledge.</p>
+							<p>At temperature near zero, the most likely token gets almost all of the mass, so decoding becomes greedy and deterministic. At exactly zero the formula would divide by zero, so implementations take the top token directly. At temperature one, you sample from the model's native distribution. Above one, rare tokens become reachable, the output becomes more surprising, and it is more likely to be incoherent.</p>
+							<p>Greedy decoding is not 'the truth'; it is just the highest-probability continuation. It can be repetitive and can miss a better sentence that starts with a less likely token. Temperature changes how widely the model explores the choice, and a different early token can send the text down a different path.</p>
 						</div>
 					</section>
 
@@ -37,7 +37,7 @@
 						<h2 class="section-title">The decoder cannot add knowledge.</h2>
 						<div class="prose">
 							<p>A high-probability token is not guaranteed to be correct. The model is a likelihood machine: it has learned which continuations are common in its training text, not which ones are true. A confident distribution can still put the wrong token on top.</p>
-							<p>Decoding changes how the model sounds, not what it knows. Greedy makes it focused and repetitive; sampling makes it varied; filters remove the tail. None of these choices adds a fact-checker or a memory the model did not have.</p>
+							<p>Decoding changes which path the text takes. Greedy makes it focused and repetitive; sampling makes it varied; filters remove the tail. None of these choices adds a fact-checker or a memory the model did not have, but a different early token can lead to a very different answer.</p>
 							<p>That is why a decoder setting is a policy decision. For a factual answer you want a tight distribution and a low temperature. For a poem you may want more freedom. The same model can behave like a careful clerk or a wild storyteller because the decoder is a separate layer of control.</p>
 						</div>
 						<div class="keypoints">
@@ -139,7 +139,7 @@
 						<div class="prose">
 							<p>Temperature and truncation are the first knobs, not the only ones. A <strong>repetition penalty</strong> lowers the score of tokens that already appeared; <strong>DRY</strong> (Don't Repeat Yourself) penalises repeated sequences rather than single tokens; <strong>XTC</strong> removes the most obvious choices to increase diversity. <strong>Contrastive search</strong> balances likelihood against novelty, and <strong>mirostat</strong> targets a fixed perplexity instead of a fixed candidate set. Each is a different answer to the same problem: the model's most likely continuation is often bland or repetitive.</p>
 							<p>Search changes the shape of the whole sequence. <strong>Beam search</strong> keeps several partial continuations alive and picks the best complete one; it is useful when there is one good answer and the score is reliable, as in some translation tasks, and a poor fit for open-ended conversation. <strong>Speculative sampling</strong> uses a small draft model to propose several tokens, then verifies them with the large model; it speeds up generation without changing the target distribution.</p>
-							<p>Practical starting points: code and factual answers at temperature 0 to 0.3 with top-p 0.9; chat at 0.7 to 1.0 with top-p 0.9; creative writing at 1.0 or higher with top-p 0.95 and a small min-p. These are starting points, not laws. Test on your own prompts and keep the setting that works.</p>
+							<p>Practical starting points: code and factual answers at low temperature (0.1 to 0.3, or greedy) with top-p 0.9; chat at 0.7 to 1.0 with top-p 0.9; creative writing at 1.0 or higher with top-p 0.95 and a small min-p. These are starting points, not laws. Test on your own prompts and keep the setting that works.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Repetition controls</b><span>Penalise tokens or sequences that already appeared.</span></div>

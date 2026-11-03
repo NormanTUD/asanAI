@@ -239,7 +239,6 @@
 											<h3 class="sp-title">Ids become points in meaning space</h3>
 										</div>
 										<div class="step-toolbar">
-											<input class="step-input" type="text" id="iemb-input" aria-label="Words to highlight" value="Man Woman Prince King">
 											<div class="step-chips">
 												<button class="chip" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
 												<button class="chip" type="button" data-emb="Man + Power">Man + Power</button>
@@ -250,9 +249,9 @@
 											</div>
 										</div>
 										<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
-										<div class="step-out" id="iemb-out">The space has two semantic axes in this toy: <b>power</b> and <b>gender</b>. Change the expression or the highlighted words.</div>
+										<div class="step-out" id="iemb-out">The space has two semantic axes in this demo: <b>power</b> and <b>gender</b>. Click an example equation to see where it lands.</div>
 									</div>
-									<p class="step-note">Meaning becomes geometry (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>). Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this toy uses two so you can see the idea.</p>
+									<p class="step-note">Meaning becomes geometry (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>). Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this demo uses two so you can see the idea.</p>
 								</div>
 
 								<div class="step-pane" id="step-position">
@@ -435,6 +434,7 @@
 								</div>
 
 								<div class="step-pane" id="step-residual">
+									<p class="step-note step-lead">Every layer reads the same running vector, computes an update, and adds it back. Think of the stream as a shared notebook that any layer can write to. Earlier notes stay in place; later layers read the original entry plus everything written since. The rule is <span data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)" data-tex-display="false"></span>: the new state is the old state plus a change.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 6 · Residual</span>
@@ -448,7 +448,7 @@
 											</div>
 										</div>
 									</div>
-									<p class="step-note">Every layer reads the same running vector, computes an update, and <b>adds</b> it back. Nothing is overwritten. The stream is a shared notebook that carries what the sentence means so far. Addition rather than replacement is not a detail: the original signal survives, and gradients have a short path back through the sum, which is a large part of why very deep networks train at all.</p>
+									<p class="step-note">The addition is the point. Nothing is overwritten, so the original signal survives, and gradients have a short path back through the sum. That is a large part of why very deep networks train at all. The demo lets you add the updates one at a time and watch the bars accumulate.</p>
 								</div>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Tokens become vectors, positions add order, attention mixes context, the feed-forward network computes, and the residual stream carries everything forward.</span></div>
@@ -465,12 +465,15 @@
 						<h2 class="section-title">Relationships are reusable directions.</h2>
 						<div class="prose">
 							<p>
-								Under the hood, meaning is geometry. The model places every token as a
-								point in a learned vector space. Directions in that space carry
-								relationships: the arrow from <strong>man</strong> to
-								<strong>woman</strong> is the same direction as
-								<strong>king</strong> to <strong>queen</strong>, and a different
-								direction takes <strong>man</strong> to <strong>prince</strong>.
+								The model arranges every token as a point in a learned vector space, and
+								relationships often show up as directions: the arrow from
+								<strong>man</strong> to <strong>woman</strong> is the same direction as
+								<strong>king</strong> to <strong>queen</strong>, and a different direction
+								takes <strong>man</strong> to <strong>prince</strong>. The idea that
+								concepts can be read as regions and directions in a geometric space goes
+								back to the conceptual spaces of
+								<a href="https://en.wikipedia.org/wiki/Conceptual_space" rel="noopener">Gärdenfors (2000)</a>.
+								In an LLM the space is learned from text rather than hand-built.
 							</p>
 							<p>
 								The plot below is a two-dimensional slice: <strong>Power</strong> on
@@ -514,10 +517,10 @@
 								<p class="demo-hint">The axes are a hand-built slice of a much larger space. The direction is the point, not the exact numbers.</p>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Relationships are reusable directions. “King − Man + Woman” lands near “Queen” because the gender direction is shared.</span></div>
-							<div class="demo-foot">The axes are a toy slice of a much larger space. Real embeddings are higher-dimensional and noisier.</div>
+							<div class="demo-foot">The axes are a small hand-built slice of a much larger space. Real embeddings are higher-dimensional and noisier.</div>
 						</div>
 						<div class="prose" style="margin-top:22px">
-							<p><strong>The meadow of words.</strong> The plot above shows directions. The meadow shows the other geometry: every word owns the region of the space closest to it. Move the pointer and the thought falls into a cell, or onto a seam where two words are almost equally near.</p>
+							<p><strong>The meadow of words.</strong> The plot above shows directions. The meadow shows the other geometry. After all the layers, the model has a vector for each token, and every token in the vocabulary owns the region of that space closest to it. The image is two-dimensional, while a real model works in thousands of dimensions, but the picture is the same: the vocabulary forms bubbles, and a new thought falls into the bubble whose centre is nearest. Move the pointer and the thought lands in a cell, or on a seam where two words are almost equally near.</p>
 						</div>
 
 						<div class="demo demo--paper" id="meadow-demo">
@@ -1104,8 +1107,7 @@
 			ctx.fillText("Gender →", 0, 0);
 			ctx.restore();
 
-			var input = document.getElementById("iemb-input");
-			var highlighted = input ? input.value.split(/[\s,]+/).filter(Boolean).map(function (w) { return w.toLowerCase(); }) : [];
+			var highlighted = ["man", "woman", "prince", "king"];
 			var palette = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#009299"];
 			Object.keys(embSpace).forEach(function (word) {
 				var v = embSpace[word];
@@ -1207,7 +1209,6 @@
 		}
 		function updateEmb(expr) {
 			var ev = evalEmb(expr);
-			var input = document.getElementById("iemb-input");
 			if (!ev || ev.kind !== "vec") {
 				embResult = null;
 				if (embOut) embOut.innerHTML = '<b>Invalid expression.</b> Try “King − Man + Woman”.';
@@ -1217,16 +1218,10 @@
 				embResult = { pos: ev.v, nearest: near.word, steps: steps.steps };
 				if (embOut) embOut.innerHTML = '→ <b>(' + ev.v[0].toFixed(1) + ', ' + ev.v[1].toFixed(1) + ')</b> · nearest word: <b>' + near.word + '</b> (distance ' + near.dist.toFixed(2) + ')';
 			}
-			if (input) embDirMode = null;
 			if (embApi) embApi.redraw();
 		}
 		if (embCanvas) {
 			embApi = TM.initCanvas(embCanvas, drawEmb);
-			var embInput = document.getElementById("iemb-input");
-			if (embInput) embInput.addEventListener("input", function () {
-				embDirMode = null;
-				if (embApi) embApi.redraw();
-			});
 			document.querySelectorAll("[data-emb]").forEach(function (btn) {
 				btn.addEventListener("click", function () {
 					var expr = btn.getAttribute("data-emb");
