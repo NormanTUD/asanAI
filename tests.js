@@ -113,7 +113,7 @@ function escape_html_for_test(name) {
 // starting estimate: _test_sync_expected_count() grows the total as tests are
 // discovered, and the run stores the observed count for the next run.
 // ?expected_tests=N overrides both.
-var DEFAULT_EXPECTED_TEST_COUNT = 2817;
+var DEFAULT_EXPECTED_TEST_COUNT = 2820;
 var DEFAULT_EXPECTED_QUICK_TEST_COUNT = 504;
 
 function _test_expected_count (storage_key, fallback) {
@@ -7148,6 +7148,21 @@ function _tiny_tests_debug_js() {
 	var table_html = create_html_table_from_json([{name: "a"}, {name: "a"}, {name: "b"}]);
 	test_equal("create_html_table_from_json emits a header", table_html.indexOf("<th>name</th>") !== -1, true);
 	test_equal("create_html_table_from_json removes duplicate rows", (table_html.match(/<tr>/g) || []).length, 3);
+
+	var disposed_tensor_like = {
+		isDisposedInternal: true,
+		dataSync: function () { throw new Error("Tensor is disposed."); },
+		toString: function () { throw new Error("Tensor is disposed."); }
+	};
+	var disposed_tensor_table = create_html_table_from_json([{ log: [disposed_tensor_like] }]);
+	test_equal("create_html_table_from_json survives a disposed tensor", disposed_tensor_table.indexOf("[Tensor (disposed)]") !== -1, true);
+
+	var errors_before_serialization = num_errs;
+	var hostile_value = { toString: function () { throw new Error("cannot stringify"); } };
+	hostile_value.self = hostile_value;
+	var hostile_table = create_html_table_from_json([{ log: [hostile_value] }]);
+	test_equal("create_html_table_from_json survives unserializable values", hostile_table.indexOf("<table") === 0, true);
+	test_equal("create_html_table_from_json does not count serialization errors", num_errs, errors_before_serialization);
 
 	window.__asanai_env_probe = 424242;
 	var env_html = _dump_env_to_html();

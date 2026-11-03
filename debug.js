@@ -93,10 +93,10 @@ function info (...args) {
 		function_name = `[${function_name}] `;
 	}
 
-	args.forEach(arg => console.info(`${arg}`));
+	args.forEach(arg => console.info(`${_debug_value_to_string(arg)}`));
 	args.forEach((arg) => {
 		if(arg) {
-			l("[INFO] " + arg);
+			l("[INFO] " + _debug_value_to_string(arg));
 		}
 	});
 
@@ -121,10 +121,10 @@ function err (...args) {
 		function_name = `[${function_name}] `;
 	}
 
-	args.forEach(arg => console.error(`${arg}`));
+	args.forEach(arg => console.error(`${_debug_value_to_string(arg)}`));
 	args.forEach((arg) => {
 		if(arg) {
-			l("[&#128721; ERROR] " + arg);
+			l("[&#128721; ERROR] " + _debug_value_to_string(arg));
 		}
 	});
 
@@ -157,10 +157,10 @@ function wrn (...args) {
 		function_name = `[${function_name}] `;
 	}
 
-	args.forEach(arg => console.warn(`${arg}`));
+	args.forEach(arg => console.warn(`${_debug_value_to_string(arg)}`));
 	args.forEach((arg) => {
 		if(arg) {
-			l("[&#9888; WARN] " + arg);
+			l("[&#9888; WARN] " + _debug_value_to_string(arg));
 		}
 	});
 
@@ -194,7 +194,7 @@ function dbg(...args) {
 	var function_name = get_latest_caller(get_stack_trace(1));
 	if (function_name) function_name = `[${function_name}] `; else function_name = "";
 
-	var msg = args.map(a => `${a}`).join(" ");
+	var msg = args.map(a => _debug_value_to_string(a)).join(" ");
 
 	var is_debug = checkCurrentUrlParams();
 
@@ -273,7 +273,7 @@ function _getTimestamp() {
 
 function _appendToLog(level, args) {
 	const timestamp = _getTimestamp();
-	const message = args.map(a => (typeof a === 'object' ? JSON.stringify(a) : `${a}`)).join(' ');
+	const message = args.map(a => _debug_value_to_string(a)).join(' ');
 	$('#log').val(function(i, text) {
 		return text + `[${timestamp}] [${level}] ${message}\n`;
 	});
@@ -790,6 +790,50 @@ function detect_and_color_stacktrace(input_string) {
 	}
 }
 
+function _debug_value_to_string (value) {
+	if (value === null) return "null";
+	if (value === undefined) return "undefined";
+
+	if (Array.isArray(value)) {
+		return value.map(_debug_value_to_string).join(" ");
+	}
+
+	// toString() on a disposed tensor throws "Tensor is disposed." and a live
+	// tensor would leak its data into the bug report. Never serialize tensors.
+	if (typeof value === "object") {
+		try {
+			if (typeof value.dataSync === "function" && typeof value.isDisposedInternal !== "undefined") {
+				return value.isDisposedInternal ? "[Tensor (disposed)]" : "[Tensor]";
+			}
+		} catch (e) {
+			return "[object]";
+		}
+
+		var text;
+		try {
+			text = "" + value;
+		} catch (e) {
+			text = "";
+		}
+
+		if (text && text !== "[object Object]") {
+			return text;
+		}
+
+		try {
+			return JSON.stringify(value);
+		} catch (e) {
+			return "[object]";
+		}
+	}
+
+	try {
+		return "" + value;
+	} catch (e) {
+		return "[unserializable]";
+	}
+}
+
 function create_html_table_from_json(data) {
 	try {
 		// Parse the input string into a JavaScript object
@@ -824,7 +868,7 @@ function create_html_table_from_json(data) {
 				// Iterate through the keys and create table cells
 				keys.forEach(function (key) {
 					var cell = document.createElement("td");
-					cell.innerHTML = "<pre>" + detect_and_color_stacktrace("" + item[key]) + "</pre>";
+					cell.innerHTML = "<pre>" + detect_and_color_stacktrace(_debug_value_to_string(item[key])) + "</pre>";
 					row.appendChild(cell);
 				});
 
@@ -842,8 +886,8 @@ function create_html_table_from_json(data) {
 			wrn("[create_html_table_from_json] Data is empty or not in the expected format.");
 		}
 	} catch (error) {
-		// Log and handle any errors
-		err("[create_html_table_from_json] An error occurred:", error);
+		// A diagnostic must never turn into a new counted error.
+		console.warn("[create_html_table_from_json] An error occurred:", error);
 	}
 }
 
@@ -923,7 +967,7 @@ async function send_bug_report () {
 	html += "<pre>" + JSON.stringify(global_model_data, null, 2) + "</pre>";
 
 	html += "<h1>Logs</h1>";
-	html += create_html_table_from_json(_full_debug_log);
+	html += create_html_table_from_json(_full_debug_log) || "";
 
 	try {
 		var pfj = JSON.stringify(performance.toJSON(), null, 2);

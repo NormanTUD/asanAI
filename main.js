@@ -957,7 +957,11 @@ function add_error_event_listener () {
 			e = e.message;
 		}
 
-		await send_bug_report();
+		try {
+			await send_bug_report();
+		} catch (error) {
+			console.warn("[add_error_event_listener] Could not send bug report:", error);
+		}
 	});
 }
 

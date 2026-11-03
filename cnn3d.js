@@ -884,6 +884,7 @@
             dataDirty: false,
             pendingRender: false,
             _heavyInit: false,
+            _webglFailed: false,
             sphericalTarget: null,
             _hasFramed: false,
             _lastLayerCount: 0,
@@ -1422,9 +1423,23 @@
     // visibility observer up front.
     // ------------------------------------------------------------------
     function ensureHeavyInit(inst) {
-        if (inst._heavyInit) return;
+        if (inst._heavyInit || inst._webglFailed) return;
+        try {
+            setupThree(inst);
+        } catch (e) {
+            // Headless browsers and machines without a usable GPU have no
+            // WebGL context. Show the reason instead of throwing from the
+            // IntersectionObserver callback, which would surface as an
+            // uncaught page error (and trigger a bug report).
+            inst._webglFailed = true;
+            console.warn("[cnn3d.js] WebGL is not available:", e);
+            if (inst.overlayEl) {
+                inst.overlayEl.textContent = c3d_tr("webgl_not_supported", "WebGL is not supported");
+                inst.overlayEl.style.display = "flex";
+            }
+            return;
+        }
         inst._heavyInit = true;
-        setupThree(inst);
         ensureGUI(inst);
     }
 
@@ -3412,6 +3427,7 @@
     // Assemble the full visualization
     // ------------------------------------------------------------------
     function doRebuild(inst) {
+        if (!inst.renderer) return;
 
         var state = readModelState();
         var theme = getTheme();
