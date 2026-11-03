@@ -192,7 +192,22 @@ function incl($headline, $base_name) {
 	include($php_file);
 }
 
+function print_pwa_head(): void {
+	static $printed = false;
+	if ($printed) {
+		return;
+	}
+	$printed = true;
+	print("<link rel='manifest' href='manifest.webmanifest'>\n");
+	print("<link rel='apple-touch-icon' sizes='180x180' href='pwa/apple-touch-icon-180.png'>\n");
+	print("<meta name='application-name' content='Nothing to LLMs'>\n");
+	print("<meta name='mobile-web-app-capable' content='yes'>\n");
+	print("<meta name='apple-mobile-web-app-capable' content='yes'>\n");
+	print("<meta name='apple-mobile-web-app-status-bar-style' content='black-translucent'>\n");
+}
+
 function load_base_js ($defer = false) {
+	print_pwa_head();
 	js("feedback_capture", null, $defer);
 	js("temml.min", null, $defer);
 	js("bpe", null, $defer);
@@ -247,6 +262,7 @@ function load_base_js ($defer = false) {
 			js("modules/$name", null, $defer);
 		}
 	}
+	js("pwa", null, $defer);
 ?>
 	<script>
 		const labelMap = <?php echo json_encode(get_ai_course_labels()); ?>;

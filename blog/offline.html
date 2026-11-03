@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#0f172a">
+	<meta name="robots" content="noindex">
+	<title>Offline — From Nothing to Large Language Models</title>
+	<style>
+		:root {
+			color-scheme: dark;
+			--paper: #0f172a;
+			--panel: #1e293b;
+			--border: #334155;
+			--text: #e2e8f0;
+			--muted: #94a3b8;
+			--warm: #e9aa60;
+		}
+		* { box-sizing: border-box; }
+		html, body { height: 100%; }
+		body {
+			margin: 0;
+			display: grid;
+			place-items: center;
+			padding: 1.5rem;
+			background: var(--paper);
+			color: var(--text);
+			font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+		}
+		main {
+			width: min(34rem, 100%);
+			padding: 2rem;
+			border: 1px solid var(--border);
+			border-radius: 1rem;
+			background: var(--panel);
+			box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+		}
+		.mark {
+			display: grid;
+			place-items: center;
+			width: 2.6rem;
+			height: 2.6rem;
+			margin-bottom: 1.2rem;
+			border: 2px solid var(--warm);
+			border-radius: 50%;
+			color: var(--warm);
+			font-size: 1.1rem;
+			font-weight: 700;
+		}
+		h1 {
+			margin: 0 0 0.55rem;
+			font-size: clamp(1.5rem, 4vw, 2rem);
+			line-height: 1.2;
+		}
+		p { margin: 0 0 1rem; color: var(--muted); }
+		.actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.6rem;
+			margin-top: 1.4rem;
+		}
+		a, button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 2.6rem;
+			padding: 0.55rem 1rem;
+			border: 1px solid var(--border);
+			border-radius: 999px;
+			background: transparent;
+			color: var(--text);
+			font: inherit;
+			text-decoration: none;
+			cursor: pointer;
+		}
+		a {
+			border-color: var(--warm);
+			background: var(--warm);
+			color: #1a1208;
+			font-weight: 600;
+		}
+		a:hover, a:focus-visible, button:hover, button:focus-visible {
+			outline: 2px solid var(--warm);
+			outline-offset: 2px;
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<div class="mark" aria-hidden="true">!</div>
+		<h1>This page is not saved on your device</h1>
+		<p>You are offline, and this lesson has not been stored for offline reading yet. Open a page you have already read, or return to the course overview and save a lesson while you are online.</p>
+		<div class="actions">
+			<a href="./">Course overview</a>
+			<button type="button" onclick="location.reload()">Try again</button>
+		</div>
+	</main>
+</body>
+</html>

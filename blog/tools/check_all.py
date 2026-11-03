@@ -134,6 +134,12 @@ STAGES: tuple[Stage, ...] = (
         needs=("uv",),
     ),
     Stage(
+        "pwa",
+        "static",
+        (uv("blog/tests/pwa_test.py", "blog/"),),
+        needs=("uv",),
+    ),
+    Stage(
         "fact-consistency",
         "static",
         (uv("blog/tests/fact_consistency_test.py"),),

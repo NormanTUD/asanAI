@@ -1,0 +1,56 @@
+{
+  "id": "./",
+  "name": "From Nothing to Large Language Models",
+  "short_name": "Nothing to LLMs",
+  "description": "A free digital textbook that follows the thread from Stone Age tools and the birth of mathematics to the training and inner workings of modern large language models.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "any",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "categories": ["education", "books"],
+  "icons": [
+    {
+      "src": "pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Course overview",
+      "short_name": "Overview",
+      "description": "All lessons, grouped by part",
+      "url": "./"
+    },
+    {
+      "name": "The Atlas",
+      "short_name": "Atlas",
+      "description": "The interactive 3D map of people, places and ideas",
+      "url": "atlas"
+    },
+    {
+      "name": "History of AI",
+      "short_name": "History",
+      "description": "From counting to the first neural networks",
+      "url": "history"
+    }
+  ]
+}

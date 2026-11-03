@@ -1,5 +1,9 @@
 RewriteEngine On
 
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+</IfModule>
+
 # RAG server code and its generated index are not web assets. Return 404
 # so install.sh and the service source are indistinguishable from a missing file.
 RewriteRule ^(?:rag|rag_data)/ - [R=404,L]
