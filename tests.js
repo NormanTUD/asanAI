@@ -917,6 +917,54 @@ async function test_maximally_activated_last_layer() {
 	return true;
 }
 
+async function test_maximally_activated_non_image_layer () {
+	log_test("Maximally activated non-image layer");
+
+	test_equal("_is_image_input_shape([2])", _is_image_input_shape([2]), false);
+	test_equal("_is_image_input_shape([2, 3])", _is_image_input_shape([2, 3]), false);
+	test_equal("_is_image_input_shape([8, 8, 3])", _is_image_input_shape([8, 8, 3]), true);
+
+	var init_tensor = _create_init_tensor([2]);
+
+	try {
+		test_equal("_create_init_tensor([2]) keeps the non-image input shape", JSON.stringify(init_tensor.shape), "[1,2]");
+	} finally {
+		await dispose(init_tensor);
+	}
+
+	var input_shape = get_input_shape();
+	var layer_types = get_layer_type_array();
+	var layer_idx = layer_types.length - 1;
+	var type = layer_types[layer_idx];
+
+	test_equal("Non-image feature map test uses a non-image input", input_shape.length < 3, true);
+	test_equal("Non-image feature map test targets a dense layer", type, "dense");
+
+	var config = _build_ascent_config(layer_idx, 3, 0, 0, input_shape, false);
+
+	test_equal("Non-image ascent config is not an image", config.isImage, false);
+	test_equal("Non-image ascent config disables spatial jitter", config.jitterMax, 0);
+	test_equal("Non-image ascent config disables TV regularization", config.tvWeight, 0);
+	test_equal("Non-image ascent config keeps color decorrelation off", config.useColorDecorrelation, false);
+
+	$("#maximally_activated_content").html("");
+
+	await draw_maximally_activated_layer(layer_idx, type);
+
+	var deadline = Date.now() + 10000;
+	while (Date.now() < deadline && !$("#maximally_activated_content .temml_me math").length) {
+		await delay(100);
+	}
+
+	var $latex = $("#maximally_activated_content .temml_me");
+
+	test_equal("Non-image layer visualization renders a result", $latex.length > 0, true);
+	test_equal("Non-image layer visualization renders MathML via Temml", $("#maximally_activated_content .temml_me math").length > 0, true);
+	test_equal("Non-image layer visualization leaves no raw LaTeX", $latex.length > 0 && $latex.last().text().indexOf("\\begin{matrix}") === -1, true);
+
+	return true;
+}
+
 function test_feature_map_intro_is_short () {
 	const en = language.en && language.en["maximally_activated_explanation_short"];
 	const de = language.de && language.de["maximally_activated_explanation_short"];
@@ -13430,6 +13478,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_layer_settings()", await test_layer_settings(), true);
 		test_equal("test_show_layer_data_flow()", await test_show_layer_data_flow(), true);
 		test_equal("test_model_xor()", await test_model_xor(), true);
+		test_equal("test_maximally_activated_non_image_layer()", await test_maximally_activated_non_image_layer(), true);
 		test_equal("test_training_live_metrics_panel()", await test_training_live_metrics_panel(), true);
 		test_equal("test_training_tab_content_order()", test_training_tab_content_order(), true);
 		test_equal("test_input_shape_guard()", test_input_shape_guard(), true);

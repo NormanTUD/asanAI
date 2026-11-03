@@ -488,6 +488,8 @@ async function _render_tensor_result(full_data, layer_idx, neuron, container) {
 	await dispose(_tensor);
 
 	if (container) container.appendChild(fragment);
+
+	_temml();
 }
 
 /**
@@ -1505,6 +1507,17 @@ function _create_init_image(shape, useColorDecorrelation) {
 	});
 }
 
+function _is_image_input_shape(shape) {
+	return Array.isArray(shape) && shape.length === 3;
+}
+
+function _create_init_tensor(shape) {
+	var batched_shape = [1].concat(shape);
+	return tidy(() => {
+		return clipByValue(tf.randomNormal(batched_shape, 0.0, 0.1), -1, 1);
+	});
+}
+
 // ============================================================================
 // Determine the current blur factor from the phase schedule
 // ============================================================================
@@ -1659,6 +1672,7 @@ async function _apply_l2_decay(data, iteration_idx, decayRate, decayInterval, us
 // Total Variation regularization step: suppress high-frequency noise
 // ============================================================================
 async function _apply_tv_regularization(data, iteration_idx, tvWeight, tvInterval, useColorDecorrelation) {
+	if (!tvWeight || tvInterval <= 0) return data;
 	if (iteration_idx % tvInterval !== 0 || iteration_idx === 0) return data;
 
 	var tvGrad = _compute_tv_gradients(data, tvWeight);
@@ -1700,6 +1714,10 @@ async function _ensure_correct_dimensions(data, fullH, fullW) {
 // Step 1–2: Apply all forward jitter (spatial + transform)
 // ============================================================================
 async function _apply_forward_jitter(data, config) {
+	if (!config.isImage) {
+		return { data: data, ox: 0, oy: 0, rotAngle: 0, scaleJitter: 1.0 };
+	}
+
 	var ox = Math.floor(Math.random() * (config.jitterMax * 2 + 1)) - config.jitterMax;
 	var oy = Math.floor(Math.random() * (config.jitterMax * 2 + 1)) - config.jitterMax;
 
@@ -1739,6 +1757,10 @@ async function _compute_gradients_for_iteration(data, config, grad_function, ite
 // Steps 8–10: Undo all jitter and ensure correct dimensions
 // ============================================================================
 async function _undo_jitter_and_stabilize(data, ox, oy, rotAngle, scaleJitter, config) {
+	if (!config.isImage) {
+		return data;
+	}
+
 	// Undo spatial jitter
 	var unJittered = _undo_spatial_jitter(data, ox, oy);
 	await dispose(data);
@@ -1803,14 +1825,19 @@ function _build_aux_model_and_grad(layer_idx, neuron, useColorDecorrelation) {
 // ============================================================================
 // Initialize or accept a starting image
 // ============================================================================
-function _initialize_image(start_image, new_input_shape, useColorDecorrelation) {
+function _initialize_image(start_image, new_input_shape, useColorDecorrelation, is_image) {
 	if (typeof start_image !== "undefined") {
 		// If a start image is provided in RGB, convert to decorrelated space
-		if (useColorDecorrelation && start_image.shape[start_image.shape.length - 1] === 3) {
+		if (is_image && useColorDecorrelation && start_image.shape[start_image.shape.length - 1] === 3) {
 			return _rgb_to_decorrelated(start_image);
 		}
 		return start_image;
 	}
+
+	if (!is_image) {
+		return _create_init_tensor(new_input_shape);
+	}
+
 	return _create_init_image(new_input_shape, useColorDecorrelation);
 }
 
@@ -1874,12 +1901,12 @@ async function _handle_ascent_error(e, recursion, layer_idx, neuron, iterations,
 // ============================================================================
 // Updated _build_ascent_config — now includes Adam hyperparameters
 // ============================================================================
-function _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape) {
-    var imageSize = Math.min(fullH, fullW);
+function _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape, is_image) {
+    var imageSize = is_image ? Math.min(fullH, fullW) : 0;
     var numChannels = new_input_shape[new_input_shape.length - 1];
 
-    var jitterMax = Math.max(1, Math.floor(imageSize / 16));
-    var useTransformJitter = _should_use_transform_jitter(fullH, fullW);
+    var jitterMax = is_image ? Math.max(1, Math.floor(imageSize / 16)) : 0;
+    var useTransformJitter = is_image && _should_use_transform_jitter(fullH, fullW);
 
     var decayRate = 0.995;
     var decayInterval = 4;
@@ -1888,11 +1915,12 @@ function _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_sha
     var defaultLR = isLastLayer ? 0.5 : 0.15;
     var learningRate = parse_float($("#max_activation_lr").val()) || defaultLR;
 
-    var tvWeight = 0.0003;
-    var tvInterval = 3;
+    var tvWeight = is_image ? 0.0003 : 0;
+    var tvInterval = is_image ? 3 : 0;
 
-    // Enable color decorrelation for 3-channel (RGB) image models
-    var useColorDecorrelation = (numChannels === 3);
+    // Enable color decorrelation for 3-channel (RGB) image models only. A
+    // non-image input such as [3] must not be mistaken for an RGB image.
+    var useColorDecorrelation = is_image && (numChannels === 3);
 
     // Adam optimizer hyperparameters
     var adam = {
@@ -1902,7 +1930,7 @@ function _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_sha
     };
 
     var blurPhases = [];
-    if (imageSize >= 16 && iterations >= 12) {
+    if (is_image && imageSize >= 16 && iterations >= 12) {
         var phase1End = Math.floor(iterations * 0.33);
         var phase2End = Math.floor(iterations * 0.66);
         blurPhases = [
@@ -1915,6 +1943,7 @@ function _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_sha
     }
 
     return {
+        isImage: is_image,
         imageSize, numChannels, jitterMax, useTransformJitter,
         decayRate, decayInterval, learningRate,
         tvWeight, tvInterval, blurPhases, fullH, fullW,
@@ -1934,18 +1963,19 @@ function _prepare_ascent(layer_idx, neuron, iterations, start_image) {
     new_input_shape.shift();
     // Sanitize: filter undefined/null/zero
     new_input_shape = new_input_shape.filter(function(n) { return typeof n === "number" && n > 0 && isFinite(n); });
-    if (new_input_shape.length < 3) {
-        console.warn("_prepare_ascent: invalid input shape, using fallback");
+    if (new_input_shape.length === 0) {
+        console.warn("_prepare_ascent: empty input shape, using fallback");
         new_input_shape = [8, 8, 3];
     }
 
-    var fullH = new_input_shape[0];
-    var fullW = new_input_shape[1];
-    var config = _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape);
+    var is_image = _is_image_input_shape(new_input_shape);
+    var fullH = is_image ? new_input_shape[0] : 0;
+    var fullW = is_image ? new_input_shape[1] : 0;
+    var config = _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape, is_image);
 
     var { aux_model, grad_function } = _build_aux_model_and_grad(layer_idx, neuron, config.useColorDecorrelation);
 
-    var data = _initialize_image(start_image, new_input_shape, config.useColorDecorrelation);
+    var data = _initialize_image(start_image, new_input_shape, config.useColorDecorrelation, is_image);
 
     // Initialize Adam optimizer state: first moment (m) and second moment (v)
     var adamState = {
