@@ -74,7 +74,10 @@
 		}
 	}
 
+	var rewriting = false;
 	function rewriteLinks() {
+		if (rewriting) return;
+		rewriting = true;
 		var dir = location.pathname.replace(/[^/]*$/, "");
 		document.querySelectorAll("a[href]").forEach(function (link) {
 			var href = link.getAttribute("href");
@@ -84,8 +87,10 @@
 			if (url.origin !== location.origin || url.pathname.indexOf(dir) !== 0) return;
 			if (lang === "de") url.searchParams.set("lang", "de");
 			else url.searchParams.delete("lang");
-			link.setAttribute("href", url.pathname + url.search + url.hash);
+			var next = url.pathname + url.search + url.hash;
+			if (href !== next) link.setAttribute("href", next);
 		});
+		rewriting = false;
 	}
 
 	function apply() {
@@ -115,17 +120,18 @@
 				} else if (mutation.type === "characterData") {
 					translateTextNode(mutation.target);
 				} else if (mutation.type === "attributes") {
-					translateElement(mutation.target);
+					if (mutation.attributeName !== "href") translateElement(mutation.target);
 				}
 			});
 			applying = false;
+			rewriteLinks();
 		});
 		observer.observe(document.body, {
 			childList: true,
 			subtree: true,
 			characterData: true,
 			attributes: true,
-			attributeFilter: ["aria-label", "alt", "title", "placeholder", "data-image-caption", "data-image-alt", "data-title", "data-body", "data-href-label", "data-meta"]
+			attributeFilter: ["aria-label", "alt", "title", "placeholder", "data-image-caption", "data-image-alt", "data-title", "data-body", "data-href-label", "data-meta", "href"]
 		});
 	}
 

@@ -110,7 +110,11 @@ function tm_full_article_html(string $compactSlug, string $lang): string
 		if ($entry['page'] === '') {
 			continue;
 		}
-		$url = htmlspecialchars($entry['page'], ENT_QUOTES, 'UTF-8');
+		$page = $entry['page'];
+		if ($lang === 'de') {
+			$page .= (strpos($page, '?') === false ? '?' : '&') . 'lang=de';
+		}
+		$url = htmlspecialchars($page, ENT_QUOTES, 'UTF-8');
 		$title = $entry['title_de'] ?? null;
 		if ($lang !== 'de' || $title === null) {
 			$title = $lang === 'de' && $entry['slug'] !== ''
