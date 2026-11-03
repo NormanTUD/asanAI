@@ -1602,3 +1602,23 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand November 202
    Lokal: tenminutes/assets/img/kempelen-speaking-machine.jpg (900x1521, verkleinert aus PNG)
    Genutzt in: tenminutes/language.html § "The machine learns to speak" und Timeline "Talking machine"
    Status: OK - CC BY-SA 4.0
+
+=== CLOTHING AND SHELTER (untold_history_i.php, Stand: November 2026) ===
+============================================================================
+Beide Bilder via Commons-API geprüft (Feld LicenseShortName), Stand November 2026.
+
+1. img_paleolithic_needle
+   URL: https://commons.wikimedia.org/wiki/File:Aiguille_Pal%C3%A9olithique_Mus%C3%A9e_Saint-Remi_21092016.jpg
+   Lizenz: CC0
+   Autor: Vassil
+   Lokal: paleolithic_needle.jpg (630x399)
+   Genutzt in: untold_history_i.php § "Clothing and Shelter: The First Portable Environments"
+   Status: OK - Lizenz klar (CC0)
+
+2. img_mezhirich_mammoth_hut
+   URL: https://commons.wikimedia.org/wiki/File:Dwelling_made_with_mammoth_bones.jpg
+   Lizenz: CC BY-SA 3.0
+   Autor: Momotarou2012
+   Lokal: mezhirich_mammoth_hut.jpg (3611x2618; ausgeliefert via image.php w=900)
+   Genutzt in: untold_history_i.php § "Clothing and Shelter: The First Portable Environments"
+   Status: OK - Lizenz klar (CC BY-SA 3.0)
