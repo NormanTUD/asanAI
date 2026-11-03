@@ -1,6 +1,6 @@
 (async function() {
     console.log("==========================================");
-    console.log("[AsanAI Debug] ===== START: asanai_loader.js geladen =====");
+    console.log("[AsanAI Debug] ===== START: asanai_loader.js (Isolation) =====");
     console.log("==========================================");
 
     const host = document.getElementById('asanai-shadow-host');
@@ -11,6 +11,12 @@
 
     const shadow = host.attachShadow({ mode: 'open' });
     const container = document.createElement('div');
+    
+    // Unterbricht jegliche CSS-Vererbung von außerhalb des Shadow DOMs (W3C CSS Spec)
+    container.style.all = 'initial';
+    container.style.display = 'block';
+    container.style.width = '100%';
+    
     shadow.appendChild(container);
 
     const statusMsg = document.createElement('div');
@@ -22,11 +28,9 @@
 
     const proxyBase = window.location.protocol + '//' + window.location.host + '/asanai_blog_proxy.php?';
     const proxyUrl = proxyBase + 'tenminutes/intuition.html';
-    console.log("[AsanAI Debug] Proxy-URL:", proxyUrl);
 
     try {
         const response = await fetch(proxyUrl);
-        console.log("[AsanAI Debug] fetch Status:", response.status);
         if (!response.ok) throw new Error('HTTP-Fehler: ' + response.status);
         
         const html = await response.text();
@@ -58,7 +62,7 @@
             oldScript.parentNode.replaceChild(newScript, oldScript);
         });
 
-        console.log("[AsanAI Debug] ===== ERFOLGREICH GELADEN =====");
+        console.log("[AsanAI Debug] ===== ERFOLGREICH ISOLIERT & GELADEN =====");
 
     } catch (err) {
         console.error("[AsanAI Debug ERROR]", err);
