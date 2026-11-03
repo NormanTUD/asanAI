@@ -33,8 +33,8 @@ const LossDemo = (() => {
 		rose: '#f43f5e', roseDark: '#be123c', roseSoft: '#fff1f3', roseLine: '#ffd4dc'
 	};
 
-	const PLOT = { x0: 118, x1: 960, yTop: 78, yBot: 326 };
-	const L_START = 0.9;
+	const PLOT = { x0: 92, x1: 600, yTop: 64, yBot: 330, lmax: 0.75 };
+	const START_LOSS = -Math.log(0.5);
 
 	const ASSESS = [
 		{
@@ -58,6 +58,7 @@ const LossDemo = (() => {
 	IMG.src = 'cat.jpg';
 
 	let reveal = 0;
+	let trainT = 0;
 	const anim = { cat: 0.5, dog: 0.5 };
 
 	const clamp01 = t => Math.max(0, Math.min(1, t));
@@ -117,31 +118,27 @@ const LossDemo = (() => {
 		ctx.restore();
 	}
 
-	function catBarColor(d) {
-		if (d.cat >= 0.8) return C.green;
-		if (d.cat >= 0.5) return C.amber;
-		return C.axis;
-	}
+	const catColorFor = p =>
+		p >= 0.8 ? C.green : p >= 0.5 ? C.amber : C.axis;
+	const dogColorFor = p => p >= 0.8 ? C.rose : C.axis;
 
-	function dogBarColor(d) {
-		return d.dog >= 0.8 ? C.rose : C.axis;
-	}
-
-	function drawProbRow(ctx, name, p, color, y, wrong, fade) {
+	function drawProbRow(ctx, name, p, color, y, wrong, fade, opts) {
+		const L = Object.assign({
+			xLabel: 285, xBar: 395, barW: 360, bh: 14, xPct: 785, size: 17
+		}, opts || {});
 		const neutral = color === C.axis;
-		const xLabel = 285, xBar = 395, barW = 360, bh = 14, xPct = 785;
 		const ta = easeOut(clamp01((fade - 0.15) / 0.5));
 
 		ctx.save();
 		ctx.globalAlpha = ta;
-		label(ctx, name, xLabel, y,
-			{ size: 17, color: wrong ? C.roseDark : C.ink, weight: 800 });
-		label(ctx, Math.round(p * 100) + ' %', xPct, y,
-			{ size: 20, color: neutral ? C.muted : color, weight: 800 });
+		label(ctx, name, L.xLabel, y,
+			{ size: L.size, color: wrong ? C.roseDark : C.ink, weight: 800 });
+		label(ctx, Math.round(p * 100) + ' %', L.xPct, y,
+			{ size: L.size + 3, color: neutral ? C.muted : color, weight: 800 });
 		ctx.restore();
 
-		bar(ctx, xBar, y - bh / 2, barW, bh, C.track, bh / 2);
-		bar(ctx, xBar, y - bh / 2, barW * p, bh, color, bh / 2);
+		bar(ctx, L.xBar, y - L.bh / 2, L.barW, L.bh, C.track, L.bh / 2);
+		bar(ctx, L.xBar, y - L.bh / 2, L.barW * p, L.bh, color, L.bh / 2);
 	}
 
 	function drawVerdict(ctx, d, lossText, a) {
@@ -186,23 +183,23 @@ const LossDemo = (() => {
 		ctx.stroke();
 		drawPhoto(ctx, IMG, ix, iy, iw, ih, 12);
 
-		drawProbRow(ctx, 'Katze', anim.cat, catBarColor(d), 290, false, fade);
-		drawProbRow(ctx, 'Hund', anim.dog, dogBarColor(d), 342, d.dog >= 0.8, fade);
+		drawProbRow(ctx, 'Katze', anim.cat, catColorFor(anim.cat), 290, false, fade);
+		drawProbRow(ctx, 'Hund', anim.dog, dogColorFor(anim.dog), 342, d.dog >= 0.8, fade);
 
 		drawVerdict(ctx, d, fmtLoss(loss),
 			easeOut(clamp01((reveal - 0.35) / 0.45)));
 	}
 
-	// ── Schritt 3: eine Loss-Kurve über das Training ───────────
+	// ── Schritt 3: 20-s-Training, Loss und Ausgabe live ────────
 	const cx = tau => PLOT.x0 + tau * (PLOT.x1 - PLOT.x0);
-	const ly = loss => PLOT.yBot - loss * (PLOT.yBot - PLOT.yTop);
-	const curveY = tau =>
-		0.14 + (L_START - 0.14) * Math.exp(-3.2 * tau);
-	const curvePoint = tau => ly(curveY(tau));
+	const plotY = loss => PLOT.yBot -
+		clamp01(loss / PLOT.lmax) * (PLOT.yBot - PLOT.yTop);
+	const pCatAt = tau => 0.5 + 0.49 * (1 - Math.pow(1 - tau, 3));
+	const lossAt = tau => -Math.log(Math.max(pCatAt(tau), 1e-9));
 
-	function drawFrame(ctx) {
+	function drawTrainFrame(ctx) {
 		const { x0, x1, yTop, yBot } = PLOT;
-		const yStart = ly(L_START);
+		const yStart = plotY(START_LOSS);
 
 		line(ctx, x0, yStart, x1, yStart, '#dbe3ec', 1.5, [7, 7]);
 		label(ctx, 'Start: 50 : 50', x0 + 14, yStart - 15,
@@ -231,25 +228,43 @@ const LossDemo = (() => {
 			{ size: 12, color: C.muted, weight: 800, align: 'center' });
 	}
 
-	function drawLossCurve(ctx, p) {
-		if (p <= 0.001) return;
-		const N = 120;
-
-		ctx.save();
-		ctx.lineJoin = 'round';
-		ctx.lineCap = 'round';
-		ctx.beginPath();
-		for (let i = 0; i <= N; i++) {
-			const tau = (i / N) * p;
-			const x = cx(tau), y = curvePoint(tau);
-			if (i === 0) ctx.moveTo(x, y);
-			else ctx.lineTo(x, y);
-		}
-		ctx.strokeStyle = C.green;
-		ctx.lineWidth = 4.5;
+	function drawDotLabel(ctx, x, y, text) {
+		ctx.font = '800 12px ' + FONT;
+		const tw = ctx.measureText(text).width + 20;
+		let lx = x + 14;
+		if (lx + tw > PLOT.x1 + 40) lx = x - tw - 14;
+		let ly = y - 22;
+		if (ly < PLOT.yTop + 10) ly = y + 22;
+		ctx.fillStyle = '#fff';
+		KatzeKit.roundRect(ctx, lx, ly - 11, tw, 22, 11);
+		ctx.fill();
+		ctx.strokeStyle = C.greenLine;
+		ctx.lineWidth = 1.2;
 		ctx.stroke();
+		label(ctx, text, lx + tw / 2, ly,
+			{ size: 12, color: C.greenDark, weight: 800, align: 'center' });
+	}
 
-		const ex = cx(p), ey = curvePoint(p);
+	function drawTrainCurve(ctx, t) {
+		if (t > 0.001) {
+			const N = Math.max(2, Math.ceil(160 * t));
+			ctx.save();
+			ctx.lineJoin = 'round';
+			ctx.lineCap = 'round';
+			ctx.beginPath();
+			for (let i = 0; i <= N; i++) {
+				const tau = (i / N) * t;
+				const x = cx(tau), y = plotY(lossAt(tau));
+				if (i === 0) ctx.moveTo(x, y);
+				else ctx.lineTo(x, y);
+			}
+			ctx.strokeStyle = C.green;
+			ctx.lineWidth = 4.5;
+			ctx.stroke();
+			ctx.restore();
+		}
+
+		const ex = cx(t), ey = plotY(lossAt(t));
 		ctx.fillStyle = C.green;
 		ctx.beginPath();
 		ctx.arc(ex, ey, 7, 0, Math.PI * 2);
@@ -257,15 +272,47 @@ const LossDemo = (() => {
 		ctx.strokeStyle = '#fff';
 		ctx.lineWidth = 2.5;
 		ctx.stroke();
-		ctx.restore();
+		drawDotLabel(ctx, ex, ey, 'Loss ≈ ' + fmtLoss(lossAt(t)));
+	}
 
-		const la = easeOut(clamp01((p - 0.72) / 0.28));
-		if (la < 0.01) return;
-		ctx.save();
-		ctx.globalAlpha = la;
-		label(ctx, 'trainiert: weniger falsch', PLOT.x1 - 10, curvePoint(1) - 28,
-			{ size: 12, color: C.greenDark, weight: 800, align: 'right' });
-		ctx.restore();
+	function trainStatus(p) {
+		if (p < 0.6) return 'richtig, aber unsicher';
+		if (p < 0.85) return 'wird sicherer';
+		return 'richtig und sicher';
+	}
+
+	function drawTrainPanel(ctx, p) {
+		const px = 636, py = 40, pw = 432, ph = 350;
+		ctx.fillStyle = '#fff';
+		KatzeKit.roundRect(ctx, px, py, pw, ph, 18);
+		ctx.fill();
+		ctx.strokeStyle = C.line;
+		ctx.lineWidth = 1.2;
+		ctx.stroke();
+
+		label(ctx, 'Das Netz sieht: Katze', px + pw / 2, py + 22,
+			{ size: 13, color: C.muted, weight: 800, align: 'center' });
+
+		const iw = 200, ih = 134;
+		const ix = px + (pw - iw) / 2, iy = py + 40;
+		drawPhoto(ctx, IMG, ix, iy, iw, ih, 12);
+
+		const rowOpts = {
+			xLabel: px + 24, xBar: px + 104, barW: 210,
+			bh: 12, xPct: px + pw - 62, size: 15
+		};
+		drawProbRow(ctx, 'Katze', p, catColorFor(p), py + 225, false, 1, rowOpts);
+		drawProbRow(ctx, 'Hund', 1 - p, dogColorFor(1 - p), py + 275, false, 1, rowOpts);
+
+		const safe = p >= 0.85;
+		label(ctx, trainStatus(p), px + pw / 2, py + 320,
+			{ size: 14, color: safe ? C.greenDark : C.amberDark, weight: 800, align: 'center' });
+	}
+
+	function drawTraining(ctx) {
+		drawTrainFrame(ctx);
+		drawTrainCurve(ctx, trainT);
+		drawTrainPanel(ctx, pCatAt(trainT));
 	}
 
 	return KatzeKit.create({
@@ -292,23 +339,27 @@ const LossDemo = (() => {
 				c: '<span class="kz-chip r">falsch erkannt</span>'
 			},
 			{
-				k: 'Schritt 4 · Über das Training',
-				t: 'Im Training sinkt der Loss:<br>das Netz liegt <em>weniger falsch</em>.',
-				p: 'Eine Linie · der Loss sinkt',
-				c: '<span class="kz-chip g">niedriger Loss = weniger falsch</span>',
-				i: 'Loss ist ein weiterer Baustein: Convolution, Flatten und Dense bauen das Netz, der Loss sagt beim Training, wie falsch es liegt.'
+				k: 'Schritt 4 · Training · 20 s',
+				t: 'Im Training sinkt der Loss:<br>das Netz liegt <em>immer weniger falsch</em>.',
+				p: 'Loss sinkt · Katze wird sicherer',
+				c: '<span class="kz-chip g">Loss ↔ Wahrscheinlichkeit</span>',
+				i: 'Je niedriger der Loss, desto sicherer die richtige Kategorie. Loss ist ein weiterer Baustein: Convolution, Flatten und Dense bauen das Netz, der Loss sagt beim Training, wie falsch es liegt.'
 			}
 		],
 
 		layoutFor() {},
 
-		onStep() {
+		onStep(n) {
 			reveal = 0;
+			if (n === 3) trainT = 0;
 		},
 
 		tick(dt, k, S) {
 			reveal = Math.min(1, reveal + dt / 55);
-			if (S.step > 2) return;
+			if (S.step === 3) {
+				trainT = Math.min(1, trainT + dt / 1200);
+				return;
+			}
 			const T = ASSESS[S.step];
 			const a = Math.min(1, k * 1.3);
 			anim.cat += (T.cat - anim.cat) * a;
@@ -324,8 +375,7 @@ const LossDemo = (() => {
 			ctx.scale(sc, sc);
 
 			if (S.step === 3) {
-				drawFrame(ctx);
-				drawLossCurve(ctx, easeOut(clamp01(reveal / 0.85)));
+				drawTraining(ctx);
 			} else {
 				drawAssess(ctx, S.step);
 			}
