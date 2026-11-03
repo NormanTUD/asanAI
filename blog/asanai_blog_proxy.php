@@ -28,6 +28,9 @@ function asanai_proxy_rewrite_url(string $url, string $remote_base, string $prox
 	if (str_starts_with($url, '//')) {
 		return $url;
 	}
+	if ($url === $proxy_name || str_starts_with($url, $proxy_name . '?')) {
+		return $url;
+	}
 
 	$base_path = rtrim((string)(parse_url($remote_base, PHP_URL_PATH) ?: '/'), '/') . '/';
 	$target = '';
@@ -52,7 +55,7 @@ function asanai_proxy_rewrite_url(string $url, string $remote_base, string $prox
 	} elseif (str_starts_with($url, '?')) {
 		$target = ($current_path === '' ? 'index.php' : $current_path) . $url;
 	} else {
-		$target = $url;
+		$target = asanai_proxy_resolve_relative($current_path, $url);
 	}
 
 	$fragment = '';
@@ -151,19 +154,34 @@ function asanai_proxy_rewrite_html(string $content, string $remote_base, string 
 	) ?? $content;
 
 	$content = preg_replace_callback(
-		'/\bsrc=(["\'])(?!(?:https?:\/\/|\/\/|data:))([^"\']+\.(?:js|jpg|jpeg|png|gif|json)(?:\?[^"\']*)?)\1/i',
-		static function (array $match) use ($proxy_name): string {
-			if (str_starts_with($match[2], $proxy_name)) {
+		'/\bsrc=(["\'])(?!(?:data:|blob:|#))([^"\']+\.(?:js|jpg|jpeg|png|gif|json)(?:\?[^"\']*)?)\1/i',
+		static function (array $match) use ($remote_base, $proxy_name, $current_path): string {
+			$new = asanai_proxy_rewrite_url($match[2], $remote_base, $proxy_name, $current_path);
+			if ($new === $match[2]) {
 				return $match[0];
 			}
-			return 'src=' . $match[1] . $proxy_name . '?' . $match[2] . $match[1];
+			return 'src=' . $match[1] . htmlspecialchars($new, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . $match[1];
 		},
 		$content
 	) ?? $content;
 
 	$exclude = '(?!(?:https?:\/\/|\/\/|data:|#|mailto:|tel:|javascript:|' . preg_quote($proxy_name, '/') . '))';
-	$content = preg_replace('/\bsrc=(["\'])' . $exclude . '([^"\']+)\1/i', 'src=$1' . $remote_base . '$2$1', $content) ?? $content;
-	$content = preg_replace('/\bhref=(["\'])' . $exclude . '([^"\']+)\1/i', 'href=$1' . $remote_base . '$2$1', $content) ?? $content;
+	$content = preg_replace_callback(
+		'/\bsrc=(["\'])' . $exclude . '([^"\']+)\1/i',
+		static function (array $match) use ($remote_base, $current_path): string {
+			$resolved = asanai_proxy_resolve_relative($current_path, $match[2]);
+			return 'src=' . $match[1] . htmlspecialchars($remote_base . $resolved, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . $match[1];
+		},
+		$content
+	) ?? $content;
+	$content = preg_replace_callback(
+		'/\bhref=(["\'])' . $exclude . '([^"\']+)\1/i',
+		static function (array $match) use ($remote_base, $current_path): string {
+			$resolved = asanai_proxy_resolve_relative($current_path, $match[2]);
+			return 'href=' . $match[1] . htmlspecialchars($remote_base . $resolved, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . $match[1];
+		},
+		$content
+	) ?? $content;
 
 	return $content;
 }
@@ -181,6 +199,33 @@ function asanai_proxy_normalize_path(string $path): string {
 		$parts[] = $part;
 	}
 	return implode('/', $parts);
+}
+
+function asanai_proxy_resolve_relative(string $current_path, string $url): string {
+	$fragment = '';
+	$hash_pos = strpos($url, '#');
+	if ($hash_pos !== false) {
+		$fragment = substr($url, $hash_pos);
+		$url = substr($url, 0, $hash_pos);
+	}
+	$query = '';
+	$query_pos = strpos($url, '?');
+	if ($query_pos !== false) {
+		$query = substr($url, $query_pos);
+		$url = substr($url, 0, $query_pos);
+	}
+	$current_path = ltrim((string)(parse_url($current_path, PHP_URL_PATH) ?: ''), '/');
+	if ($current_path === '' || str_ends_with($current_path, '/')) {
+		$dir = $current_path;
+	} else {
+		$dir = dirname($current_path);
+		$dir = ($dir === '.' || $dir === '/' ? '' : $dir . '/');
+	}
+	$resolved = asanai_proxy_normalize_path($dir . $url);
+	if ($resolved === '') {
+		$resolved = 'index.php';
+	}
+	return $resolved . $query . $fragment;
 }
 
 function asanai_proxy_rewrite_css_url(string $url, string $remote_base, string $proxy_name, string $css_path): string {

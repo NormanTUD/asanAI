@@ -582,3 +582,1396 @@
         </p>
       </div>
     </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="rechteck">
+      <div class="sec-head">
+        <div class="sec-num">06</div>
+        <div>
+          <div class="sec-kicker">Ein vollständiges Beispiel</div>
+          <h2>Die Rechteckwelle, Schritt für Schritt gerechnet</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Die Rechteckwelle ist das klassische Testsignal. Sie springt zwischen
+          <span class="tex">+1</span> und <span class="tex">-1</span> hin und
+          her. An den Sprüngen ist sie nicht differenzierbar, und genau deshalb
+          ist sie eine harte Probe für die Fourier-Reihe. Wir rechnen sie jetzt
+          vollständig durch, mit jeder Stammfunktion und jeder Grenze.
+        </p>
+        <p>
+          Damit die Zahlen sauber bleiben, wählen wir die Periode
+          <span class="tex">T=2\pi</span>. Dann ist
+          <span class="tex">\omega_0=2\pi/T=1</span>. Die Welle soll auf
+          <span class="tex">(0,\pi)</span> den Wert <span class="tex">+1</span>
+          haben und auf <span class="tex">(\pi,2\pi)</span> den Wert
+          <span class="tex">-1</span>.
+        </p>
+      </div>
+
+      <div class="math-block amber">
+        <div class="tex" data-display="1">
+          f(t)=
+          \begin{cases}
+          +1, &amp; 0 \lt t \lt \pi,\\[2pt]
+          -1, &amp; \pi \lt t \lt 2\pi,
+          \end{cases}
+          \qquad f(t+2\pi)=f(t).
+        </div>
+      </div>
+
+      <div class="steps" id="squareSteps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <p><strong>Periode und Grundfrequenz.</strong> Aus <span class="tex">T=2\pi</span> folgt</p>
+            <div class="math-block"><div class="tex" data-display="1">\omega_0=\frac{2\pi}{T}=\frac{2\pi}{2\pi}=1.</div></div>
+            <p>Die Harmonischen sind also einfach <span class="tex">\sin(nt)</span> und <span class="tex">\cos(nt)</span>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <p><strong>Gleichanteil.</strong> Der Mittelwert über eine Periode ist</p>
+            <div class="math-block"><div class="tex" data-display="1">a_0=\frac{1}{\pi}\int_0^{2\pi} f(t)\,dt=\frac{1}{\pi}\left(\int_0^\pi 1\,dt+\int_\pi^{2\pi}(-1)\,dt\right)=\frac{1}{\pi}(\pi-\pi)=0.</div></div>
+            <p>Das ist anschaulich klar: Die Fläche über der Nulllinie ist genauso groß wie die darunter.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <p><strong>Symmetrie prüfen.</strong> Verschiebe die Welle um eine halbe Periode: <span class="tex">f(t+\pi)=-f(t)</span>. Außerdem ist sie ungerade, also <span class="tex">f(-t)=-f(t)</span>. Eine ungerade Funktion hat keine Cosinusanteile. Wir könnten <span class="tex">a_n=0</span> also sofort hinschreiben. Wir rechnen es trotzdem einmal aus, damit du die Bestätigung siehst.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <p><strong>Cosinus-Koeffizienten.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">a_n=\frac{1}{\pi}\left(\int_0^\pi \cos(nt)\,dt-\int_\pi^{2\pi}\cos(nt)\,dt\right).</div></div>
+            <p>Die Stammfunktion von <span class="tex">\cos(nt)</span> ist <span class="tex">\frac{1}{n}\sin(nt)</span>. Also</p>
+            <div class="math-block"><div class="tex" data-display="1">\int_0^\pi \cos(nt)\,dt=\frac{\sin(n\pi)}{n}=0, \qquad \int_\pi^{2\pi}\cos(nt)\,dt=\frac{\sin(2n\pi)-\sin(n\pi)}{n}=0.</div></div>
+            <p>Beide Integrale verschwinden, weil <span class="tex">\sin(k\pi)=0</span> für jede ganze Zahl <span class="tex">k</span>. Damit ist <span class="tex">a_n=0</span> für alle <span class="tex">n\ge 1</span>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <p><strong>Sinus-Koeffizienten.</strong> Jetzt wird es interessant:</p>
+            <div class="math-block"><div class="tex" data-display="1">b_n=\frac{1}{\pi}\left(\int_0^\pi \sin(nt)\,dt-\int_\pi^{2\pi}\sin(nt)\,dt\right).</div></div>
+            <p>Die Stammfunktion von <span class="tex">\sin(nt)</span> ist <span class="tex">-\frac{1}{n}\cos(nt)</span>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <p><strong>Erstes Integral.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">\int_0^\pi \sin(nt)\,dt=\left[-\frac{\cos(nt)}{n}\right]_0^\pi=\frac{1-\cos(n\pi)}{n}=\frac{1-(-1)^n}{n}.</div></div>
+            <p>Hier haben wir <span class="tex">\cos(n\pi)=(-1)^n</span> benutzt. Für gerades <span class="tex">n</span> ist das null, für ungerades <span class="tex">n</span> ist es <span class="tex">2/n</span>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">7</div>
+          <div class="step-body">
+            <p><strong>Zweites Integral.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">\int_\pi^{2\pi}\sin(nt)\,dt=\left[-\frac{\cos(nt)}{n}\right]_\pi^{2\pi}=\frac{\cos(n\pi)-\cos(2n\pi)}{n}=\frac{(-1)^n-1}{n}.</div></div>
+            <p>Das ist genau das Negative des ersten Integrals. Beide Flächen heben sich also nicht auf, sondern verstärken sich mit umgekehrtem Vorzeichen.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">8</div>
+          <div class="step-body">
+            <p><strong>Zusammensetzen.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">b_n=\frac{1}{\pi}\left(\frac{1-(-1)^n}{n}-\frac{(-1)^n-1}{n}\right)=\frac{2}{\pi}\cdot\frac{1-(-1)^n}{n}.</div></div>
+            <p>Für gerades <span class="tex">n</span> ist <span class="tex">1-(-1)^n=0</span>. Für ungerades <span class="tex">n</span> ist <span class="tex">1-(-1)^n=2</span>. Also</p>
+            <div class="math-block"><div class="tex" data-display="1">b_n=
+            \begin{cases}
+            \dfrac{4}{n\pi}, &amp; n \text{ ungerade},\\[6pt]
+            0, &amp; n \text{ gerade}.
+            \end{cases}</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">9</div>
+          <div class="step-body">
+            <p><strong>Reihe hinschreiben.</strong> Setze <span class="tex">n=2k+1</span> für die ungeraden Terme:</p>
+            <div class="math-block"><div class="tex" data-display="1">f(t)\sim \frac{4}{\pi}\sum_{k=0}^{\infty}\frac{\sin\big((2k+1)t\big)}{2k+1}.</div></div>
+            <p>Ausgeschrieben:</p>
+            <div class="math-block"><div class="tex" data-display="1">f(t)\sim \frac{4}{\pi}\left(\sin t+\frac{\sin 3t}{3}+\frac{\sin 5t}{5}+\frac{\sin 7t}{7}+\cdots\right).</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">10</div>
+          <div class="step-body">
+            <p><strong>Probe.</strong> Setze <span class="tex">t=\pi/2</span>. Dort ist <span class="tex">f=+1</span>. Die Reihe wird</p>
+            <div class="math-block"><div class="tex" data-display="1">\frac{4}{\pi}\left(1-\frac{1}{3}+\frac{1}{5}-\frac{1}{7}+\cdots\right).</div></div>
+            <p>Die Klammer ist die Leibniz-Reihe für <span class="tex">\pi/4</span>. Also ergibt sich <span class="tex">\frac{4}{\pi}\cdot\frac{\pi}{4}=1</span>. Die Reihe stimmt an dieser Stelle.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 3: Partialsummen der Rechteckwelle</h3>
+            <div class="lab-sub">Mehr Harmonische heißt schärfere Flanken. Am Sprung bleibt ein Überschwingen.</div>
+          </div>
+          <span class="lab-tag amber">Rechnen &amp; sehen</span>
+        </div>
+        <div class="canvas-wrap h-md">
+          <canvas id="squareCanvas" aria-label="Rechteckwelle und ihre Fourier-Partialsummen"></canvas>
+        </div>
+        <div class="legend">
+          <span><i class="dash"></i> exakte Rechteckwelle</span>
+          <span><i></i> Partialsumme</span>
+          <span><i class="amber"></i> einzelne Sinusterme</span>
+        </div>
+        <div class="mini-label">Spektrum der verwendeten Harmonischen</div>
+        <div class="canvas-wrap h-xs">
+          <canvas id="squareSpectrum" aria-label="Amplitudenspektrum der Rechteckwelle"></canvas>
+        </div>
+        <div class="controls">
+          <label class="control">
+            <span class="row"><span>Anzahl Harmonischer</span><b id="squareNVal" class="amber">7</b></span>
+            <input type="range" class="amber" id="squareN" min="1" max="31" step="2" value="7">
+          </label>
+          <label class="control">
+            <span class="row"><span>Darstellung</span><b>&nbsp;</b></span>
+            <select id="squareMode">
+              <option value="sum">nur Partialsumme</option>
+              <option value="terms">Partialsumme + Einzelterme</option>
+            </select>
+          </label>
+        </div>
+        <div class="btnrow">
+          <button class="primary" id="squarePlay">Animation</button>
+          <button id="squareReset">Zurücksetzen</button>
+        </div>
+        <div class="readout">
+          <div class="ro-box amber"><div class="k">Höchster Ausschlag</div><div class="v" id="squarePeak">1.179</div></div>
+          <div class="ro-box"><div class="k">Grundamplitude</div><div class="v">4/π ≈ 1.273</div></div>
+          <div class="ro-box rose"><div class="k">Gibbs-Grenze</div><div class="v">≈ 8.95 %</div></div>
+        </div>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">Das Gibbs-Phänomen</div>
+        <p>
+          Egal wie groß du <span class="tex">N</span> machst: Am Sprung bleibt
+          ein Ausschlag von etwa <span class="tex">1.179</span> statt
+          <span class="tex">1</span>. Der Fehler wird schmaler, aber nicht
+          kleiner. Das ist das Gibbs-Phänomen. Es entsteht, weil die
+          Partialsummen an einer Unstetigkeit nicht gleichmäßig konvergieren.
+          Für die Praxis heißt das: Wenn du ein Signal mit harten Sprüngen
+          rekonstruierst, musst du mit Überschwingern leben oder glätten.
+        </p>
+      </div>
+
+      <div class="prose">
+        <p>
+          Für eine beliebige Periode <span class="tex">T</span> ersetzt du
+          <span class="tex">t</span> durch <span class="tex">\omega_0 t</span>
+          mit <span class="tex">\omega_0=2\pi/T</span>. Die Reihe wird dann
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">f(t)\sim \frac{4}{\pi}\sum_{k=0}^{\infty}\frac{\sin\big((2k+1)\omega_0 t\big)}{2k+1}.</div>
+        </div>
+        <p>
+          Die Koeffizienten hängen nicht von <span class="tex">T</span> ab, weil
+          wir die Welle auf Höhe <span class="tex">\pm 1</span> normiert haben.
+          Nur die Zeitachse wird gestaucht oder gestreckt.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="saegezahn">
+      <div class="sec-head">
+        <div class="sec-num">07</div>
+        <div>
+          <div class="sec-kicker">Zweites vollständiges Beispiel</div>
+          <h2>Sägezahn und Dreieck</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Die Rechteckwelle hatte nur Sinusanteile und nur ungerade
+          Harmonische. Der Sägezahn zeigt, was passiert, wenn alle Harmonischen
+          vorkommen und die Koeffizienten langsam abfallen. Wir nehmen wieder
+          <span class="tex">T=2\pi</span> und definieren
+        </p>
+        <div class="math-block amber">
+          <div class="tex" data-display="1">f(t)=\frac{t}{\pi}, \qquad -\pi \lt t \lt \pi, \qquad f(t+2\pi)=f(t).</div>
+        </div>
+        <p>
+          Das Signal steigt von <span class="tex">-1</span> bei
+          <span class="tex">t=-\pi</span> bis <span class="tex">+1</span> bei
+          <span class="tex">t=+\pi</span> und springt dann zurück. Der
+          Mittelwert ist null, weil die Flächen links und rechts von der
+          Nulllinie gleich groß sind.
+        </p>
+      </div>
+
+      <div class="steps" id="sawSteps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <p><strong>Gleichanteil.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">a_0=\frac{1}{\pi}\int_{-\pi}^{\pi}\frac{t}{\pi}\,dt=\frac{1}{\pi^2}\left[\frac{t^2}{2}\right]_{-\pi}^{\pi}=0.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <p><strong>Cosinus-Koeffizienten.</strong> Der Integrand <span class="tex">t\cos(nt)</span> ist ungerade, das Integrationsintervall symmetrisch. Also</p>
+            <div class="math-block"><div class="tex" data-display="1">a_n=\frac{1}{\pi}\int_{-\pi}^{\pi}\frac{t}{\pi}\cos(nt)\,dt=0.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <p><strong>Sinus-Koeffizienten.</strong> Jetzt ist <span class="tex">t\sin(nt)</span> gerade, deshalb dürfen wir das Integral verdoppeln:</p>
+            <div class="math-block"><div class="tex" data-display="1">b_n=\frac{1}{\pi}\int_{-\pi}^{\pi}\frac{t}{\pi}\sin(nt)\,dt=\frac{2}{\pi^2}\int_0^\pi t\sin(nt)\,dt.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <p><strong>Partielle Integration.</strong> Mit <span class="tex">u=t</span>, <span class="tex">dv=\sin(nt)dt</span> ist <span class="tex">du=dt</span> und <span class="tex">v=-\frac{\cos(nt)}{n}</span>:</p>
+            <div class="math-block"><div class="tex" data-display="1">\int t\sin(nt)\,dt=-\frac{t\cos(nt)}{n}+\frac{1}{n}\int\cos(nt)\,dt=-\frac{t\cos(nt)}{n}+\frac{\sin(nt)}{n^2}.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <p><strong>Grenzen einsetzen.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">\int_0^\pi t\sin(nt)\,dt=\left[-\frac{t\cos(nt)}{n}+\frac{\sin(nt)}{n^2}\right]_0^\pi=-\frac{\pi\cos(n\pi)}{n}+\frac{\sin(n\pi)}{n^2}.</div></div>
+            <p>Mit <span class="tex">\cos(n\pi)=(-1)^n</span> und <span class="tex">\sin(n\pi)=0</span> bleibt</p>
+            <div class="math-block"><div class="tex" data-display="1">\int_0^\pi t\sin(nt)\,dt=-\frac{\pi(-1)^n}{n}.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <p><strong>Koeffizient zusammensetzen.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">b_n=\frac{2}{\pi^2}\left(-\frac{\pi(-1)^n}{n}\right)=-\frac{2(-1)^n}{n\pi}=\frac{2(-1)^{n+1}}{n\pi}.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">7</div>
+          <div class="step-body">
+            <p><strong>Reihe.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">f(t)\sim \frac{2}{\pi}\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n}\sin(nt)=\frac{2}{\pi}\left(\sin t-\frac{\sin 2t}{2}+\frac{\sin 3t}{3}-\frac{\sin 4t}{4}+\cdots\right).</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">8</div>
+          <div class="step-body">
+            <p><strong>Probe an der Sprungstelle.</strong> Für <span class="tex">t=\pi/2</span> ist <span class="tex">f=1/2</span>. Die Reihe liefert</p>
+            <div class="math-block"><div class="tex" data-display="1">\frac{2}{\pi}\left(1-\frac{\sin\pi}{2}+\frac{\sin(3\pi/2)}{3}-\frac{\sin(2\pi)}{4}+\cdots\right)=\frac{2}{\pi}\left(1-\frac{1}{3}+\frac{1}{5}-\cdots\right)=\frac{2}{\pi}\cdot\frac{\pi}{4}=\frac{1}{2}.</div></div>
+            <p>Passt.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 4: Sägezahn und Dreieck vergleichen</h3>
+            <div class="lab-sub">Beide haben alle Harmonischen, aber mit unterschiedlich schnell abfallenden Amplituden.</div>
+          </div>
+          <span class="lab-tag amber">Vergleich</span>
+        </div>
+        <div class="chipbar" id="shapePresets">
+          <button class="chip on" data-shape="saw">Sägezahn</button>
+          <button class="chip" data-shape="triangle">Dreieck</button>
+          <button class="chip" data-shape="square">Rechteck</button>
+        </div>
+        <div class="canvas-wrap h-md">
+          <canvas id="shapeCanvas" aria-label="Sägezahn, Dreieck oder Rechteck und ihre Partialsummen"></canvas>
+        </div>
+        <div class="legend">
+          <span><i class="dash"></i> exakte Form</span>
+          <span><i></i> Partialsumme</span>
+        </div>
+        <div class="controls">
+          <label class="control">
+            <span class="row"><span>Anzahl Harmonischer</span><b id="shapeNVal" class="amber">9</b></span>
+            <input type="range" class="amber" id="shapeN" min="1" max="41" step="2" value="9">
+          </label>
+        </div>
+        <div class="readout">
+          <div class="ro-box amber"><div class="k">Abklingverhalten</div><div class="v" id="shapeDecay">1/n</div></div>
+          <div class="ro-box"><div class="k">Nötige Terme für 1 %</div><div class="v" id="shapeNeeded">≈ 100</div></div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>
+          Beim Sägezahn fallen die Amplituden wie <span class="tex">1/n</span>.
+          Beim Rechteck fallen nur die ungeraden Terme wie
+          <span class="tex">1/n</span>, die geraden fehlen ganz. Beim Dreieck
+          fallen sie wie <span class="tex">1/n^2</span>, deshalb ist die
+          Konvergenz viel schneller und die Kurve deutlich glatter.
+        </p>
+        <p>
+          Das Dreieck ist eine schöne Übung für dich. Nimm
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">f(t)=1-\frac{2}{\pi}|t|, \qquad -\pi\le t\le \pi, \qquad f(t+2\pi)=f(t).</div>
+        </div>
+        <p>
+          Es ist gerade, also verschwinden alle <span class="tex">b_n</span>.
+          Rechne <span class="tex">a_n</span> mit partieller Integration aus.
+          Das Ergebnis steht in der Übung am Ende. Wenn du es selbst versuchst,
+          wirst du merken, warum der Faktor <span class="tex">1/n^2</span>
+          entsteht: Du integrierst zweimal, und jedes Mal kommt ein
+          <span class="tex">1/n</span> dazu.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="epizyklen">
+      <div class="sec-head">
+        <div class="sec-num">08</div>
+        <div>
+          <div class="sec-kicker">Die schönste Sicht auf die Reihe</div>
+          <h2>Epizyklen: die Welle als Kette aus Kreisen</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Es gibt ein Bild, das die Fourier-Reihe körperlich macht. Statt
+          Sinuswellen über die Zeit zu addieren, stellst du dir jeden Term als
+          rotierenden Zeiger vor. Der erste Zeiger dreht sich mit
+          <span class="tex">\omega_0</span>, der zweite mit
+          <span class="tex">3\omega_0</span>, der dritte mit
+          <span class="tex">5\omega_0</span>, und so weiter. Du hängst die
+          Zeiger aneinander, wie eine Kette. Die Spitze der Kette zeichnet eine
+          Kurve. Ihre y-Koordinate ist genau die Fourier-Summe.
+        </p>
+        <p>
+          Dieses Bild stammt aus der Astronomie. Ptolemäus beschrieb die
+          Planetenbewegung mit Kreisen auf Kreisen, den Epizyklen. Fourier zeigt,
+          dass man mit genügend solchen Kreisen jede periodische Bewegung
+          nachbauen kann. Das Labor animiert genau das für die Rechteckwelle.
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 5: Die Rechteckwelle als Kreis-Kette</h3>
+            <div class="lab-sub">Links die rotierenden Zeiger, rechts die daraus entstehende Welle.</div>
+          </div>
+          <span class="lab-tag violet">Animation</span>
+        </div>
+        <div class="canvas-wrap h-lg">
+          <canvas id="epicycleCanvas" aria-label="Epizyklen-Darstellung einer Rechteckwelle"></canvas>
+        </div>
+        <div class="controls compact">
+          <label class="control">
+            <span class="row"><span>Anzahl Kreise</span><b id="epiNVal" class="violet">7</b></span>
+            <input type="range" class="violet" id="epiN" min="1" max="15" step="2" value="7">
+          </label>
+          <label class="control">
+            <span class="row"><span>Tempo</span><b id="epiSpeedVal">1.0×</b></span>
+            <input type="range" id="epiSpeed" min="0.2" max="2" step="0.1" value="1">
+          </label>
+        </div>
+        <div class="btnrow">
+          <button class="primary" id="epiPlay">Pause</button>
+          <button id="epiReset">Zurücksetzen</button>
+        </div>
+        <div class="readout">
+          <div class="ro-box violet"><div class="k">Kreise</div><div class="v" id="epiCircles">4</div></div>
+          <div class="ro-box"><div class="k">Aktuelle Summe</div><div class="v" id="epiValue">0.000</div></div>
+          <div class="ro-box amber"><div class="k">Phase</div><div class="v" id="epiPhase">0°</div></div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-title">Warum nur ungerade Kreise?</div>
+        <p>
+          Die Rechteckwelle hat nur ungerade Harmonische. Deshalb drehen sich
+          die Kreise mit <span class="tex">1\omega_0</span>,
+          <span class="tex">3\omega_0</span>, <span class="tex">5\omega_0</span>
+          und so weiter. Die geraden Frequenzen sind im Signal nicht enthalten.
+          Bei einem Sägezahn würdest du alle ganzzahligen Vielfachen sehen.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="integral">
+      <div class="sec-head">
+        <div class="sec-num">09</div>
+        <div>
+          <div class="sec-kicker">Der Grenzübergang</div>
+          <h2>Von der Reihe zum Integral</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Die Fourier-Reihe gilt für periodische Signale. Was aber, wenn ein
+          Signal nur einmal auftritt, ein kurzer Knall, ein Impuls, ein
+          Sprachfetzen? Dann gibt es keine Periode. Die Rettung ist ein
+          Grenzübergang: Wir tun so, als wäre das Signal periodisch mit einer
+          sehr großen Periode <span class="tex">T</span>, und lassen
+          <span class="tex">T\to\infty</span> gehen.
+        </p>
+        <p>
+          Dafür brauchen wir die komplexe Form der Reihe. Mit
+          <span class="tex">e^{i\theta}=\cos\theta+i\sin\theta</span> und
+          <span class="tex">e^{-i\theta}=\cos\theta-i\sin\theta</span> kannst du
+          Sinus und Cosinus durch komplexe Exponentialfunktionen ausdrücken:
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">\cos\theta=\frac{e^{i\theta}+e^{-i\theta}}{2}, \qquad \sin\theta=\frac{e^{i\theta}-e^{-i\theta}}{2i}.</div>
+        </div>
+        <p>
+          Setzt man das in die reelle Reihe ein, fasst man die Terme mit
+          <span class="tex">e^{in\omega_0 t}</span> und
+          <span class="tex">e^{-in\omega_0 t}</span> zusammen. Das Ergebnis ist
+          die komplexe Fourier-Reihe:
+        </p>
+        <div class="math-block violet">
+          <div class="tex" data-display="1">f(t)=\sum_{n=-\infty}^{\infty} c_n e^{in\omega_0 t}, \qquad c_n=\frac{1}{T}\int_{-T/2}^{T/2} f(t)e^{-in\omega_0 t}\,dt.</div>
+        </div>
+        <p>
+          Jetzt kommt der eigentliche Trick. Setze
+          <span class="tex">\omega_n=n\omega_0</span> und
+          <span class="tex">\Delta\omega=\omega_0=2\pi/T</span>. Dann ist
+          <span class="tex">1/T=\Delta\omega/(2\pi)</span>, und die Reihe wird
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">f(t)=\frac{1}{2\pi}\sum_{n=-\infty}^{\infty}\left[\int_{-T/2}^{T/2} f(\tau)e^{-i\omega_n\tau}\,d\tau\right]e^{i\omega_n t}\,\Delta\omega.</div>
+        </div>
+        <p>
+          Der Ausdruck in den eckigen Klammern hängt nur von
+          <span class="tex">\omega_n</span> ab. Nennen wir ihn
+          <span class="tex">F(\omega_n)</span>. Für
+          <span class="tex">T\to\infty</span> werden die Frequenzabstände
+          <span class="tex">\Delta\omega</span> immer kleiner. Aus der Summe
+          wird ein Integral:
+        </p>
+        <div class="math-block amber">
+          <div class="tex" data-display="1">F(\omega)=\int_{-\infty}^{\infty} f(t)e^{-i\omega t}\,dt, \qquad f(t)=\frac{1}{2\pi}\int_{-\infty}^{\infty} F(\omega)e^{i\omega t}\,d\omega.</div>
+        </div>
+        <p>
+          Das ist die Fourier-Transformation. Die erste Gleichung zerlegt das
+          Signal in Frequenzen, die zweite setzt es wieder zusammen. Die
+          <span class="tex">1/(2\pi)</span> ist reine Buchhaltung: Sie sorgt
+          dafür, dass beide Richtungen zusammen die Identität ergeben. Andere
+          Bücher verteilen die <span class="tex">2\pi</span> anders, zum
+          Beispiel als <span class="tex">1/\sqrt{2\pi}</span> auf beide
+          Richtungen. Die Mathematik bleibt dieselbe, nur die Zahlen vor dem
+          Integral ändern sich.
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 6: Wie aus Linien ein Kontinuum wird</h3>
+            <div class="lab-sub">Ein periodischer Pulszug. Je größer die Periode, desto dichter liegen die Spektrallinien.</div>
+          </div>
+          <span class="lab-tag violet">Grenzübergang</span>
+        </div>
+        <div class="canvas-wrap h-md">
+          <canvas id="densityCanvas" aria-label="Pulszug im Zeitbereich und diskrete Spektrallinien"></canvas>
+        </div>
+        <div class="legend">
+          <span><i class="amber"></i> Pulszug im Zeitbereich</span>
+          <span><i></i> Spektrallinien</span>
+          <span><i class="dash"></i> Einhüllende sinc</span>
+        </div>
+        <div class="controls compact">
+          <label class="control">
+            <span class="row"><span>Periode T</span><b id="densityTVal" class="violet">4.0</b></span>
+            <input type="range" class="violet" id="densityT" min="1.5" max="12" step="0.1" value="4">
+          </label>
+          <label class="control">
+            <span class="row"><span>Pulsbreite τ</span><b id="densityTauVal" class="amber">0.8</b></span>
+            <input type="range" class="amber" id="densityTau" min="0.2" max="1.6" step="0.05" value="0.8">
+          </label>
+        </div>
+        <div class="readout">
+          <div class="ro-box violet"><div class="k">Linienabstand Δω</div><div class="v" id="densityGap">1.571</div></div>
+          <div class="ro-box"><div class="k">Linien im Hauptbogen</div><div class="v" id="densityLines">3</div></div>
+          <div class="ro-box amber"><div class="k">Erste Nullstelle</div><div class="v" id="densityZero">7.854</div></div>
+        </div>
+      </div>
+
+      <div class="insight">
+        <div class="insight-title">Reihe und Transformation sind verwandt</div>
+        <p>
+          Für ein periodisches Signal besteht das Spektrum aus einzelnen Linien.
+          Die Fourier-Transformation eines einmaligen Pulses liefert eine
+          kontinuierliche Kurve, die sinc-Funktion. Die Linien des periodischen
+          Falls sind Stichproben dieser Kurve. Darum ist die sinc-Funktion im
+          nächsten Abschnitt so wichtig: Sie ist die Einhüllende, die du bei
+          jedem Pulszug wieder siehst.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="paare">
+      <div class="sec-head">
+        <div class="sec-num">10</div>
+        <div>
+          <div class="sec-kicker">Die Werkzeugkiste</div>
+          <h2>Die wichtigsten Paare und Rechenregeln</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          In der Praxis rechnest du selten jedes Integral neu. Du erkennst ein
+          Signal, schlägst das passende Paar nach und benutzt Regeln, um es zu
+          verschieben, zu strecken oder abzuleiten. Die folgenden Paare und
+          Regeln decken einen großen Teil der Anwendungen ab.
+        </p>
+      </div>
+
+      <div class="formula-grid">
+        <div class="formula-card">
+          <div class="fc-title">Rechteck ↔ sinc</div>
+          <div class="tex" data-display="0">\Pi_\tau(t) \;\longleftrightarrow\; \tau\,\operatorname{sinc}\!\left(\frac{\omega\tau}{2}\right)</div>
+          <div class="fc-note">Ein Rechteck der Breite <span class="tex">\tau</span> hat ein sinc-Spektrum. Schmaler Puls, breites Spektrum.</div>
+        </div>
+        <div class="formula-card">
+          <div class="fc-title">Gauß ↔ Gauß</div>
+          <div class="tex" data-display="0">e^{-t^2/(2\sigma^2)} \;\longleftrightarrow\; \sigma\sqrt{2\pi}\,e^{-\sigma^2\omega^2/2}</div>
+          <div class="fc-note">Die Gaußfunktion ist unter Fourier-Transformation formstabil. Nur die Breite kehrt sich um.</div>
+        </div>
+        <div class="formula-card">
+          <div class="fc-title">Delta ↔ 1</div>
+          <div class="tex" data-display="0">\delta(t) \;\longleftrightarrow\; 1</div>
+          <div class="fc-note">Ein unendlich kurzer Impuls enthält alle Frequenzen mit gleicher Stärke.</div>
+        </div>
+        <div class="formula-card">
+          <div class="fc-title">Konstante ↔ Delta</div>
+          <div class="tex" data-display="0">1 \;\longleftrightarrow\; 2\pi\delta(\omega)</div>
+          <div class="fc-note">Ein Gleichanteil ist eine einzige Spektrallinie bei <span class="tex">\omega=0</span>.</div>
+        </div>
+        <div class="formula-card">
+          <div class="fc-title">Komplexe Schwingung</div>
+          <div class="tex" data-display="0">e^{i\omega_0 t} \;\longleftrightarrow\; 2\pi\delta(\omega-\omega_0)</div>
+          <div class="fc-note">Eine reine Frequenz wird zu einem Punkt im Spektrum.</div>
+        </div>
+        <div class="formula-card">
+          <div class="fc-title">Cosinus</div>
+          <div class="tex" data-display="0">\cos(\omega_0 t) \;\longleftrightarrow\; \pi\left[\delta(\omega-\omega_0)+\delta(\omega+\omega_0)\right]</div>
+          <div class="fc-note">Zwei Linien, weil ein reeller Cosinus positive und negative Frequenz enthält.</div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>
+          Hier ist die vollständige Rechnung für das Rechteck. Sie ist kurz und
+          erklärt gleichzeitig, woher die sinc-Funktion kommt. Sei
+          <span class="tex">\Pi_\tau(t)=1</span> für
+          <span class="tex">|t|\lt \tau/2</span> und sonst null.
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">
+            \begin{aligned}
+            F(\omega)&amp;=\int_{-\infty}^{\infty}\Pi_\tau(t)e^{-i\omega t}\,dt
+            =\int_{-\tau/2}^{\tau/2}e^{-i\omega t}\,dt\\[4pt]
+            &amp;=\left[\frac{e^{-i\omega t}}{-i\omega}\right]_{-\tau/2}^{\tau/2}
+            =\frac{e^{i\omega\tau/2}-e^{-i\omega\tau/2}}{i\omega}\\[4pt]
+            &amp;=\frac{2\sin(\omega\tau/2)}{\omega}
+            =\tau\,\frac{\sin(\omega\tau/2)}{\omega\tau/2}
+            =\tau\,\operatorname{sinc}\!\left(\frac{\omega\tau}{2}\right).
+            \end{aligned}
+          </div>
+        </div>
+        <p>
+          Dabei ist <span class="tex">\operatorname{sinc}(x)=\sin(x)/x</span>
+          mit <span class="tex">\operatorname{sinc}(0)=1</span>. Die erste
+          Nullstelle liegt bei <span class="tex">\omega\tau/2=\pi</span>, also
+          <span class="tex">\omega=2\pi/\tau</span>. Wenn du den Puls schmaler
+          machst, wandert die erste Nullstelle nach außen: Das Spektrum wird
+          breiter. Das ist die einfachste Form der Unschärferelation.
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 7: Rechteck und sinc</h3>
+            <div class="lab-sub">Ändere die Pulsbreite und beobachte, wie das Spektrum in die entgegengesetzte Richtung wandert.</div>
+          </div>
+          <span class="lab-tag">Dualität</span>
+        </div>
+        <div class="canvas-wrap h-md">
+          <canvas id="rectCanvas" aria-label="Rechteck im Zeitbereich und sinc-Spektrum"></canvas>
+        </div>
+        <div class="legend">
+          <span><i class="amber"></i> Zeitbereich</span>
+          <span><i></i> Betragsspektrum</span>
+          <span><i class="dash"></i> erste Nullstelle</span>
+        </div>
+        <div class="controls compact">
+          <label class="control">
+            <span class="row"><span>Pulsbreite τ</span><b id="rectTauVal" class="amber">1.00</b></span>
+            <input type="range" class="amber" id="rectTau" min="0.2" max="2.5" step="0.05" value="1">
+          </label>
+          <label class="control">
+            <span class="row"><span>Frequenzausschnitt</span><b id="rectZoomVal">±12</b></span>
+            <input type="range" id="rectZoom" min="4" max="30" step="1" value="12">
+          </label>
+        </div>
+        <div class="readout">
+          <div class="ro-box amber"><div class="k">Pulsbreite</div><div class="v" id="rectTauOut">1.00</div></div>
+          <div class="ro-box"><div class="k">Erste Nullstelle</div><div class="v" id="rectZeroOut">6.283</div></div>
+          <div class="ro-box violet"><div class="k">Fläche</div><div class="v" id="rectAreaOut">1.000</div></div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>
+          Die Rechenregeln sind fast noch wichtiger als die Paare. Sie sagen
+          dir, wie sich eine Veränderung im Zeitbereich im Spektrum auswirkt.
+          Jede Regel kannst du in zwei Zeilen mit einer Substitution beweisen.
+        </p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Zeitbereich</th><th>Frequenzbereich</th><th>Anschauung</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="tex">a f(t)+b g(t)</span></td><td><span class="tex">a F(\omega)+b G(\omega)</span></td><td>Linearität: Summen bleiben Summen.</td></tr>
+            <tr><td><span class="tex">f(t-t_0)</span></td><td><span class="tex">e^{-i\omega t_0}F(\omega)</span></td><td>Verschieben ändert nur die Phase, nicht den Betrag.</td></tr>
+            <tr><td><span class="tex">e^{i\omega_0 t}f(t)</span></td><td><span class="tex">F(\omega-\omega_0)</span></td><td>Modulation verschiebt das Spektrum.</td></tr>
+            <tr><td><span class="tex">f(at)</span></td><td><span class="tex">\frac{1}{|a|}F\!\left(\frac{\omega}{a}\right)</span></td><td>Stauchen im Zeitbereich streckt das Spektrum.</td></tr>
+            <tr><td><span class="tex">f'(t)</span></td><td><span class="tex">i\omega F(\omega)</span></td><td>Ableiten verstärkt hohe Frequenzen.</td></tr>
+            <tr><td><span class="tex">(f*g)(t)</span></td><td><span class="tex">F(\omega)G(\omega)</span></td><td>Faltung wird Multiplikation.</td></tr>
+            <tr><td><span class="tex">\int |f(t)|^2 dt</span></td><td><span class="tex">\frac{1}{2\pi}\int |F(\omega)|^2 d\omega</span></td><td>Parseval: Energie bleibt erhalten.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="insight">
+        <div class="insight-title">Die zwei wichtigsten Sätze für die Praxis</div>
+        <p>
+          <strong>Faltung wird Multiplikation.</strong> Ein Filter im Zeitbereich
+          ist eine Faltung. Im Frequenzbereich ist er eine Multiplikation mit
+          der Übertragungsfunktion. Deshalb zeichnet man Filter als Kurven im
+          Spektrum.
+        </p>
+        <p>
+          <strong>Ableiten wird Multiplikation mit <span class="tex">i\omega</span>.</strong>
+          Deshalb werden Differentialgleichungen im Frequenzbereich zu
+          algebraischen Gleichungen. Genau das war Fouriers ursprünglicher Trick
+          bei der Wärmegleichung.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="dft">
+      <div class="sec-head">
+        <div class="sec-num">11</div>
+        <div>
+          <div class="sec-kicker">Der Computer rechnet diskret</div>
+          <h2>DFT und FFT: Fourier für endliche Daten</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Ein Computer kann kein Integral von minus unendlich bis plus
+          unendlich auswerten. Er hat endlich viele Messwerte. Aus dem Integral
+          wird eine Summe, aus der Fourier-Transformation die diskrete
+          Fourier-Transformation, kurz DFT. Das ist keine schlechte Näherung,
+          sondern die exakte Fourier-Darstellung eines endlichen, periodisch
+          fortgesetzten Datenblocks.
+        </p>
+        <p>
+          Wir tasten ein Signal mit der Abtastrate <span class="tex">f_s</span>
+          ab und nehmen <span class="tex">N</span> Werte
+          <span class="tex">x_0,x_1,\dots,x_{N-1}</span>. Der Abstand zwischen
+          zwei Werten ist <span class="tex">1/f_s</span>. Die DFT ist
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">X_k=\sum_{n=0}^{N-1}x_n\,e^{-2\pi i kn/N}, \qquad k=0,1,\dots,N-1.</div>
+        </div>
+        <p>
+          Die Rücktransformation ist bis auf den Faktor <span class="tex">1/N</span>
+          dieselbe Summe mit positivem Vorzeichen:
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">x_n=\frac{1}{N}\sum_{k=0}^{N-1}X_k\,e^{2\pi i kn/N}.</div>
+        </div>
+        <p>
+          Der Index <span class="tex">k</span> gehört zur Frequenz
+          <span class="tex">f_k=k f_s/N</span>. Der Abstand zweier Frequenzbins
+          ist also <span class="tex">\Delta f=f_s/N</span>. Je länger du
+          misst, desto feiner wird das Spektrum. Die höchste darstellbare
+          Frequenz ist die Nyquist-Frequenz <span class="tex">f_s/2</span>.
+          Alles darüber wird in den unteren Bereich gespiegelt, das nennt man
+          Aliasing.
+        </p>
+      </div>
+
+      <div class="steps" id="dftSteps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <p><strong>Ein winziges Beispiel von Hand.</strong> Nimm <span class="tex">N=4</span> und <span class="tex">x=[1,1,0,0]</span>. Die vierte Einheitswurzel ist</p>
+            <div class="math-block"><div class="tex" data-display="1">w=e^{-2\pi i/4}=e^{-i\pi/2}=-i.</div></div>
+            <p>Damit ist <span class="tex">e^{-2\pi i kn/4}=w^{kn}</span>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <p><strong>Berechne <span class="tex">X_0</span>.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">X_0=\sum_{n=0}^{3}x_n=1+1+0+0=2.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <p><strong>Berechne <span class="tex">X_1</span>.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">X_1=1\cdot w^0+1\cdot w^1+0+0=1+(-i)=1-i.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <p><strong>Berechne <span class="tex">X_2</span>.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">X_2=1+(-i)^2=1-1=0.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <p><strong>Berechne <span class="tex">X_3</span>.</strong></p>
+            <div class="math-block"><div class="tex" data-display="1">X_3=1+(-i)^3=1+i.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <p><strong>Ergebnis.</strong> Das Spektrum ist</p>
+            <div class="math-block"><div class="tex" data-display="1">X=[2,\;1-i,\;0,\;1+i].</div></div>
+            <p>Der Betrag ist <span class="tex">[2,\sqrt2,0,\sqrt2]</span>. Die Frequenz <span class="tex">k=2</span> fehlt, weil sich die beiden Einsen bei dieser Frequenz gegenseitig auslöschen.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>
+          Die naive DFT braucht <span class="tex">N^2</span> komplexe
+          Multiplikationen. Für <span class="tex">N=10^6</span> sind das
+          Billionen. Die FFT nutzt aus, dass die Einheitswurzeln periodisch
+          sind, und teilt die Summe in gerade und ungerade Indizes. Für
+          <span class="tex">N</span> als Zweierpotenz gilt
+        </p>
+        <div class="math-block amber">
+          <div class="tex" data-display="1">X_k=E_k+w^k O_k, \qquad X_{k+N/2}=E_k-w^k O_k, \qquad k=0,\dots,\frac{N}{2}-1,</div>
+        </div>
+        <p>
+          wobei <span class="tex">E</span> und <span class="tex">O</span> die
+          DFTs der geraden und ungeraden Teilfolgen sind. Jede wird rekursiv
+          halbiert. Aus <span class="tex">N^2</span> werden
+          <span class="tex">N\log_2 N</span>. Für eine Million Werte ist das
+          der Unterschied zwischen Stunden und Millisekunden.
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 8: Spektrumanalysator</h3>
+            <div class="lab-sub">Zwei Töne plus Rauschen. Ändere Frequenzen, Fenster und Auflösung.</div>
+          </div>
+          <span class="lab-tag">DFT / FFT</span>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="mini-label">Zeitbereich</div>
+            <div class="canvas-wrap h-sm"><canvas id="dftTime" aria-label="Abgetastetes Zeitsignal"></canvas></div>
+          </div>
+          <div>
+            <div class="mini-label">Betragsspektrum</div>
+            <div class="canvas-wrap h-sm"><canvas id="dftSpec" aria-label="Betragsspektrum des abgetasteten Signals"></canvas></div>
+          </div>
+        </div>
+        <div class="controls">
+          <label class="control">
+            <span class="row"><span>Ton 1</span><b id="dftF1Val">120 Hz</b></span>
+            <input type="range" id="dftF1" min="30" max="450" step="1" value="120">
+          </label>
+          <label class="control">
+            <span class="row"><span>Ton 2</span><b id="dftF2Val" class="amber">300 Hz</b></span>
+            <input type="range" class="amber" id="dftF2" min="30" max="450" step="1" value="300">
+          </label>
+          <label class="control">
+            <span class="row"><span>Rauschen</span><b id="dftNoiseVal" class="violet">0.15</b></span>
+            <input type="range" class="violet" id="dftNoise" min="0" max="0.6" step="0.01" value="0.15">
+          </label>
+          <label class="control">
+            <span class="row"><span>Abtastrate f<sub>s</sub></span><b>1000 Hz</b></span>
+            <select id="dftN">
+              <option value="128">N = 128</option>
+              <option value="256">N = 256</option>
+              <option value="512" selected>N = 512</option>
+              <option value="1024">N = 1024</option>
+            </select>
+          </label>
+          <label class="control">
+            <span class="row"><span>Fenster</span><b>&nbsp;</b></span>
+            <select id="dftWindow">
+              <option value="rect">Rechteck (scharf, leckt)</option>
+              <option value="hann" selected>Hann (weicher)</option>
+            </select>
+          </label>
+        </div>
+        <div class="btnrow">
+          <button id="dftReroll">Rauschen neu würfeln</button>
+        </div>
+        <div class="readout">
+          <div class="ro-box"><div class="k">Frequenzauflösung</div><div class="v" id="dftRes">1.95 Hz</div></div>
+          <div class="ro-box amber"><div class="k">Gefundene Spitze 1</div><div class="v" id="dftPeak1">120 Hz</div></div>
+          <div class="ro-box violet"><div class="k">Gefundene Spitze 2</div><div class="v" id="dftPeak2">300 Hz</div></div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-title">Fenster, Leckage, Auflösung</div>
+        <p>
+          Ein endlicher Ausschnitt ist selbst wie ein Rechteck, mit dem du das
+          Signal multiplizierst. Dieses Rechteck hat ein sinc-Spektrum. Deshalb
+          „leckt“ eine reine Frequenz in die Nachbarbins. Ein Hann-Fenster
+          blendet die Ränder weich aus und reduziert die Leckage, verbreitert
+          aber den Peak. Das ist ein echter Kompromiss, kein Bug. Für genaue
+          Frequenzen brauchst du viele Samples; für kurze Transienten brauchst
+          du ein kurzes Fenster.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="spektrogramm">
+      <div class="sec-head">
+        <div class="sec-num">12</div>
+        <div>
+          <div class="sec-kicker">Zeit und Frequenz gleichzeitig</div>
+          <h2>Das Spektrogramm: Musik sichtbar machen</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Ein einzelnes Spektrum sagt dir, welche Frequenzen in einem Signal
+          vorkommen, aber nicht, wann. Bei einem Musikstück ändert sich das
+          Spektrum ständig. Die Lösung ist die kurze Fourier-Transformation,
+          kurz STFT: Du nimmst ein kurzes Fenster, berechnest das Spektrum,
+          schiebst das Fenster weiter und wiederholst. Die Ergebnisse
+          hintereinander gezeichnet ergeben ein Spektrogramm.
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">S(t,\omega)=\int f(\tau)\,w(\tau-t)\,e^{-i\omega\tau}\,d\tau.</div>
+        </div>
+        <p>
+          <span class="tex">w</span> ist das Fenster. Es sorgt dafür, dass nur
+          die Umgebung von <span class="tex">t</span> in die Berechnung
+          eingeht. Ein schmales Fenster liefert gute Zeitauflösung und schlechte
+          Frequenzauflösung. Ein breites Fenster liefert das Gegenteil. Diese
+          Unschärfe ist keine technische Schwäche, sondern eine Eigenschaft der
+          Fourier-Transformation.
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 9: Spektrogramm eines Chirps</h3>
+            <div class="lab-sub">Ein Ton, der langsam höher wird, plus eine feste Frequenz. Ändere die Fensterlänge.</div>
+          </div>
+          <span class="lab-tag violet">Zeit-Frequenz</span>
+        </div>
+        <div class="plot-wrap" id="spectrogram"></div>
+        <div class="controls">
+          <label class="control">
+            <span class="row"><span>Signal</span><b>&nbsp;</b></span>
+            <select id="specSignal">
+              <option value="chirp" selected>Chirp + fester Ton</option>
+              <option value="tones">Zwei feste Töne</option>
+              <option value="pulses">Kurze Impulse</option>
+            </select>
+          </label>
+          <label class="control">
+            <span class="row"><span>Fensterlänge</span><b id="specWinVal">256</b></span>
+            <select id="specWin">
+              <option value="64">64 Samples</option>
+              <option value="128">128 Samples</option>
+              <option value="256" selected>256 Samples</option>
+              <option value="512">512 Samples</option>
+            </select>
+          </label>
+        </div>
+        <div class="readout">
+          <div class="ro-box"><div class="k">Zeitauflösung</div><div class="v" id="specTimeRes">16 ms</div></div>
+          <div class="ro-box violet"><div class="k">Frequenzauflösung</div><div class="v" id="specFreqRes">6.3 Hz</div></div>
+          <div class="ro-box amber"><div class="k">Fenster</div><div class="v" id="specWindowOut">256</div></div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>
+          In der Musik siehst du hier Akkorde als waagerechte Streifen, ein
+          Glissando als Diagonale, einen Schlagzeugschlag als kurzen senkrechten
+          Strich. In der Medizin zeigt ein Spektrogramm eines Herzgeräuschs, zu
+          welchem Zeitpunkt im Herzzyklus ein Geräusch entsteht. In der
+          Sprachverarbeitung werden Formanten sichtbar, die charakteristischen
+          Frequenzbänder der Vokale.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="wofuer">
+      <div class="sec-head">
+        <div class="sec-num">13</div>
+        <div>
+          <div class="sec-kicker">Warum das Spaß macht</div>
+          <h2>Wofür das Ganze</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Fourier-Analyse ist keine Museumsmathematik. Sie steckt in fast jedem
+          Gerät, das Schall, Licht, Bilder oder Funkwellen verarbeitet. Das
+          Muster ist immer dasselbe: Ein Problem ist im Zeitbereich unhandlich
+          und im Frequenzbereich einfach.
+        </p>
+      </div>
+
+      <div class="app-grid">
+        <div class="app-card">
+          <div class="app-icon">01</div>
+          <h3>Audio und Musik</h3>
+          <p>
+            Equalizer verstärken oder dämpfen Frequenzbänder. MP3 und AAC
+            entfernen Frequenzen, die das Ohr kaum hört. Shazam erkennt einen
+            Song an einem kurzen Ausschnitt, indem es markante Spektrogramm-
+            Punkte vergleicht.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">02</div>
+          <h3>Bilder und JPEG</h3>
+          <p>
+            Ein Bild ist ein zweidimensionales Signal. Die diskrete
+            Cosinus-Transformation, eine Verwandte der DFT, zerlegt es in
+            Frequenzmuster. JPEG speichert die starken Koeffizienten und wirft
+            die schwachen weg. Das ist der Kern der Kompression.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">03</div>
+          <h3>Medizin und MRI</h3>
+          <p>
+            Ein MRT misst Signale im sogenannten k-Raum, dem Frequenzraum des
+            Gewebes. Die Bildrekonstruktion ist eine inverse Fourier-
+            Transformation. Ohne FFT gäbe es keine schnelle MRT-Bildgebung.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">04</div>
+          <h3>Funk und WLAN</h3>
+          <p>
+            OFDM, die Technik hinter WLAN, DSL und 5G, verteilt Daten auf viele
+            orthogonal zueinander stehende Unterträger. Die Orthogonalität
+            sorgt dafür, dass sich die Träger nicht gegenseitig stören. Die
+            Umschaltung zwischen Zeit- und Frequenzbereich macht die FFT.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">05</div>
+          <h3>Physik und Technik</h3>
+          <p>
+            Wärmeleitung, Schwingungen, Akustik und Elektrodynamik werden durch
+            Differentialgleichungen beschrieben. Im Frequenzbereich werden
+            daraus algebraische Gleichungen. Fourier selbst löste damit die
+            Wärmegleichung.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">06</div>
+          <h3>Astronomie und Kosmologie</h3>
+          <p>
+            Periodische Helligkeitsschwankungen verraten Exoplaneten.
+            Radiobeobachtungen werden in Spektren zerlegt. Sogar die
+            Temperaturschwankungen der kosmischen Hintergrundstrahlung werden
+            mit sphärischen Harmonischen analysiert, einer Verwandten der
+            Fourier-Reihe auf der Kugel.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">07</div>
+          <h3>Maschinelles Lernen</h3>
+          <p>
+            Faltungsnetze sind im Grunde gelernte Filter. Die Faltungsschicht
+            ist eine Kreuzkorrelation, und die FFT kann sie beschleunigen.
+            Fourier-Merkmale helfen außerdem bei der Analyse von Zeitreihen und
+            bei der Konstruktion von Positionskodierungen in Transformer-
+            Modellen.
+          </p>
+        </div>
+        <div class="app-card">
+          <div class="app-icon">08</div>
+          <h3>Quantenmechanik</h3>
+          <p>
+            Ort und Impuls sind Fourier-Paare. Ein scharf lokalisierter Zustand
+            hat ein breites Impulsspektrum. Die Heisenbergsche Unschärfe ist
+            mathematisch dieselbe Aussage wie die Breite eines Pulses und die
+            Breite seines Spektrums.
+          </p>
+        </div>
+      </div>
+
+      <div class="insight">
+        <div class="insight-title">Das Muster</div>
+        <p>
+          Immer wenn ein Problem eine ausgezeichnete Basis hat, wird es in
+          dieser Basis einfach. Für periodische Signale ist diese Basis die
+          Menge der Sinus- und Cosinusfunktionen. Für Bilder sind es
+          zweidimensionale Wellenmuster. Für die Kugel sind es Kugelflächen-
+          funktionen. Fourier ist der Anfang einer ganzen Familie von
+          Zerlegungen.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="fallen">
+      <div class="sec-head">
+        <div class="sec-num">14</div>
+        <div>
+          <div class="sec-kicker">Was schiefgehen kann</div>
+          <h2>Fallen und Fehler</h2>
+        </div>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">1. Gibbs-Überschwingen</div>
+        <p>
+          An einem Sprung konvergiert die Fourier-Reihe nicht gleichmäßig.
+          Es bleibt ein Überschwingen von etwa 9 Prozent der Sprunghöhe. Mehr
+          Terme machen den Fehler schmaler, aber nicht kleiner. Für Bilder und
+          Audio bedeutet das: harte Kanten erzeugen Ringing.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">2. Aliasing</div>
+        <p>
+          Wenn du ein Signal mit mehr als <span class="tex">f_s/2</span>
+          abtastest, erscheinen hohe Frequenzen als tiefe. Das ist kein
+          Rechenfehler, sondern eine Spiegelung. Ein 900-Hz-Ton, mit 1000 Hz
+          abgetastet, erscheint als 100 Hz. Vor der Abtastung brauchst du einen
+          Tiefpass, den Anti-Aliasing-Filter.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">3. Spektrale Leckage</div>
+        <p>
+          Ein endliches Fenster ist ein Rechteck im Zeitbereich und damit ein
+          sinc im Frequenzbereich. Eine reine Frequenz verteilt sich auf
+          mehrere Bins. Fenster wie Hann oder Hamming reduzieren das, kosten
+          aber Frequenzschärfe.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">4. Normalisierung</div>
+        <p>
+          Es gibt drei verbreitete Konventionen für die Fourier-Transformation.
+          Manche legen <span class="tex">1/(2\pi)</span> vor das
+          Rücktransformationsintegral, manche <span class="tex">1/\sqrt{2\pi}</span>
+          vor beide, manche benutzen die Frequenz in Hertz statt der
+          Kreisfrequenz. Bevor du Ergebnisse vergleichst, prüfe die Konvention.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">5. Negative Frequenzen sind real</div>
+        <p>
+          In der komplexen Darstellung hat ein reelles Signal Anteile bei
+          <span class="tex">+\omega</span> und <span class="tex">-\omega</span>.
+          Die negativen Frequenzen sind keine physikalischen zusätzlichen Töne,
+          sondern die andere Hälfte der komplexen Drehung. Bei einem reellen
+          Signal ist <span class="tex">F(-\omega)=\overline{F(\omega)}</span>.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">6. Zero-Padding verlängert nicht die Information</div>
+        <p>
+          Wenn du Nullen anhängst, bekommst du ein feineres Frequenzraster,
+          aber keine bessere echte Auflösung. Die Unsicherheit bleibt. Du
+          interpolierst das vorhandene Spektrum, du erfindest keine neuen
+          Details.
+        </p>
+      </div>
+
+      <div class="warn">
+        <div class="warn-title">7. Konvergenz ist nicht automatisch</div>
+        <p>
+          Nicht jede Funktion hat eine Fourier-Reihe, die punktweise gegen sie
+          konvergiert. Dirichlet gibt hinreichende Bedingungen. Für praktische
+          Signale reichen Stückweise-Stetigkeit und endlich viele Extrema meist
+          aus. Für pathologische Funktionen brauchst du die Theorie der
+          Distributionen oder der <span class="tex">L^2</span>-Räume.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="uebungen">
+      <div class="sec-head">
+        <div class="sec-num">15</div>
+        <div>
+          <div class="sec-kicker">Jetzt du</div>
+          <h2>Selbst rechnen</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Die folgenden Aufgaben sind so gewählt, dass du die Rechentechnik
+          einmal selbst ausführst. Klappe die Lösung erst auf, wenn du es
+          versucht hast. Die Rechenschritte stehen vollständig darin.
+        </p>
+      </div>
+
+      <details class="exercise">
+        <summary>
+          <span class="ex-num">1</span>
+          <span>Pulszug: Rechteckpulse der Breite <span class="tex">\tau</span> mit Periode <span class="tex">T</span></span>
+          <span class="ex-chev">›</span>
+        </summary>
+        <div class="ex-body">
+          <p>
+            Sei <span class="tex">f(t)=1</span> für
+            <span class="tex">|t|\lt \tau/2</span> und sonst null, periodisch
+            mit <span class="tex">T</span>. Berechne
+            <span class="tex">a_0</span>, <span class="tex">a_n</span> und
+            <span class="tex">b_n</span>.
+          </p>
+          <div class="math-block">
+            <div class="tex" data-display="1">
+              \begin{aligned}
+              a_0&=\frac{2}{T}\int_{-\tau/2}^{\tau/2}1\,dt=\frac{2\tau}{T},\\[4pt]
+              a_n&=\frac{2}{T}\int_{-\tau/2}^{\tau/2}\cos(n\omega_0 t)\,dt
+              =\frac{2}{T}\cdot\frac{2\sin(n\omega_0\tau/2)}{n\omega_0}\\[4pt]
+              &=\frac{4}{T n\omega_0}\sin\!\left(\frac{n\pi\tau}{T}\right)
+              =\frac{2}{n\pi}\sin\!\left(\frac{n\pi\tau}{T}\right),\\[4pt]
+              b_n&=\frac{2}{T}\int_{-\tau/2}^{\tau/2}\sin(n\omega_0 t)\,dt=0.
+              \end{aligned}
+            </div>
+          </div>
+          <p>
+            Das Ergebnis ist ein diskret abgetastetes sinc: Die Einhüllende ist
+            <span class="tex">\operatorname{sinc}(n\pi\tau/T)</span>. Genau
+            dieses Muster hast du in Labor 6 gesehen.
+          </p>
+        </div>
+      </details>
+
+      <details class="exercise">
+        <summary>
+          <span class="ex-num">2</span>
+          <span>Dreieck: <span class="tex">f(t)=1-\frac{2}{\pi}|t|</span> auf <span class="tex">[-\pi,\pi]</span></span>
+          <span class="ex-chev">›</span>
+        </summary>
+        <div class="ex-body">
+          <p>
+            Zeige, dass
+            <span class="tex">f(t)=\frac{8}{\pi^2}\sum_{k=0}^{\infty}\frac{\cos((2k+1)t)}{(2k+1)^2}</span>.
+          </p>
+          <p>
+            <strong>Schritte.</strong> Die Funktion ist gerade, also
+            <span class="tex">b_n=0</span>. Für <span class="tex">a_n</span>
+            rechnest du
+          </p>
+          <div class="math-block">
+            <div class="tex" data-display="1">
+              a_n=\frac{2}{\pi}\int_0^\pi\left(1-\frac{2t}{\pi}\right)\cos(nt)\,dt.
+            </div>
+          </div>
+          <p>
+            Der erste Teil ist null für <span class="tex">n\ge 1</span>. Der
+            zweite Teil wird mit partieller Integration zu
+            <span class="tex">-\frac{4}{\pi^2}\cdot\frac{1-(-1)^n}{n^2}</span>.
+            Für gerade <span class="tex">n</span> verschwindet das, für ungerade
+            bleibt <span class="tex">-\frac{8}{\pi^2 n^2}</span>. Zusammen mit
+            dem Vorzeichen der Reihe ergibt sich die Behauptung.
+          </p>
+        </div>
+      </details>
+
+      <details class="exercise">
+        <summary>
+          <span class="ex-num">3</span>
+          <span>Parabel: <span class="tex">f(t)=t^2</span> auf <span class="tex">[-\pi,\pi]</span></span>
+          <span class="ex-chev">›</span>
+        </summary>
+        <div class="ex-body">
+          <p>
+            Berechne die Fourier-Reihe von
+            <span class="tex">f(t)=t^2</span> auf
+            <span class="tex">[-\pi,\pi]</span>.
+          </p>
+          <p>
+            Die Funktion ist gerade, also <span class="tex">b_n=0</span>. Der
+            Mittelwert ist
+          </p>
+          <div class="math-block">
+            <div class="tex" data-display="1">a_0=\frac{1}{\pi}\int_{-\pi}^{\pi}t^2\,dt=\frac{2\pi^2}{3}.</div>
+          </div>
+          <p>
+            Für <span class="tex">a_n</span> integrierst du zweimal partiell:
+          </p>
+          <div class="math-block">
+            <div class="tex" data-display="1">
+              \begin{aligned}
+              \int t^2\cos(nt)\,dt&=\frac{t^2\sin(nt)}{n}+\frac{2t\cos(nt)}{n^2}-\frac{2\sin(nt)}{n^3},\\
+              \int_{-\pi}^{\pi}t^2\cos(nt)\,dt&=\frac{4\pi\cos(n\pi)}{n^2}=\frac{4\pi(-1)^n}{n^2}.
+              \end{aligned}
+            </div>
+          </div>
+          <p>
+            Mit dem Faktor <span class="tex">1/\pi</span> folgt
+            <span class="tex">a_n=\frac{4(-1)^n}{n^2}</span>. Also
+          </p>
+          <div class="math-block">
+            <div class="tex" data-display="1">t^2\sim \frac{\pi^2}{3}+4\sum_{n=1}^{\infty}\frac{(-1)^n}{n^2}\cos(nt).</div>
+          </div>
+          <p>
+            Bei <span class="tex">t=\pi</span> ergibt sich
+            <span class="tex">\pi^2=\frac{\pi^2}{3}+4\sum 1/n^2</span>, also
+            <span class="tex">\sum 1/n^2=\pi^2/6</span>. Ein schöner
+            Nebenfund.
+          </p>
+        </div>
+      </details>
+
+      <details class="exercise">
+        <summary>
+          <span class="ex-num">4</span>
+          <span>DFT von Hand: <span class="tex">x=[2,0,0,0]</span> und <span class="tex">x=[1,-1,1,-1]</span></span>
+          <span class="ex-chev">›</span>
+        </summary>
+        <div class="ex-body">
+          <p>
+            Berechne die 4-Punkt-DFT für beide Folgen. Was bedeutet das
+            Ergebnis anschaulich?
+          </p>
+          <p>
+            <strong>Erste Folge.</strong> Nur <span class="tex">x_0=2</span> ist
+            ungleich null. Dann ist
+            <span class="tex">X_k=2</span> für alle
+            <span class="tex">k=0,1,2,3</span>. Ein einzelner Impuls enthält
+            alle Frequenzen mit gleicher Stärke.
+          </p>
+          <p>
+            <strong>Zweite Folge.</strong> Die Werte wechseln bei jedem Sample
+            das Vorzeichen. Das ist die höchste Frequenz, die bei
+            <span class="tex">N=4</span> darstellbar ist, also
+            <span class="tex">k=2</span>. Rechnerisch:
+          </p>
+          <div class="math-block">
+            <div class="tex" data-display="1">X_0=0,\quad X_1=0,\quad X_2=4,\quad X_3=0.</div>
+          </div>
+          <p>
+            Das Spektrum hat einen einzigen Peak bei der Nyquist-Frequenz. Beide
+            Beispiele sind zueinander dual: Impuls im Zeitbereich, flaches
+            Spektrum, und umgekehrt.
+          </p>
+        </div>
+      </details>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="quellen">
+      <div class="sec-head">
+        <div class="sec-num">16</div>
+        <div>
+          <div class="sec-kicker">Zum Weiterlesen</div>
+          <h2>Quellen</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Die historischen Angaben stützen sich auf die Originalarbeiten und
+          auf Standardlehrbücher. Die mathematischen Herleitungen auf dieser
+          Seite sind eigenständig ausgeschrieben, folgen aber den üblichen
+          Darstellungen.
+        </p>
+      </div>
+      <ul class="sources">
+        <li>
+          <span class="src-title">Joseph Fourier, <em>Théorie analytique de la chaleur</em>, 1822.</span>
+          <a href="https://archive.org/details/thorieanalytiq00four" target="_blank" rel="noopener">archive.org</a>.
+          Die Originalquelle für die Wärmegleichung und die trigonometrischen Reihen.
+        </li>
+        <li>
+          <span class="src-title">Peter Gustav Lejeune Dirichlet, „Sur la convergence des séries trigonométriques“, 1829.</span>
+          <a href="https://doi.org/10.1515/crll.1829.4.157" target="_blank" rel="noopener">doi:10.1515/crll.1829.4.157</a>.
+          Die Präzisierung der Konvergenzbedingungen.
+        </li>
+        <li>
+          <span class="src-title">Josiah Willard Gibbs, „Fourier's Series“, <em>Nature</em> 59, 1898.</span>
+          <a href="https://doi.org/10.1038/059200b0" target="_blank" rel="noopener">doi:10.1038/059200b0</a>.
+          Die Diskussion des Überschwingens an Sprungstellen.
+        </li>
+        <li>
+          <span class="src-title">James W. Cooley, John W. Tukey, „An algorithm for the machine calculation of complex Fourier series“, <em>Math. Comp.</em> 19, 1965.</span>
+          <a href="https://doi.org/10.1090/S0025-5718-1965-0178586-1" target="_blank" rel="noopener">doi:10.1090/S0025-5718-1965-0178586-1</a>.
+          Die Veröffentlichung, die die FFT populär machte.
+        </li>
+        <li>
+          <span class="src-title">Claude E. Shannon, „Communication in the Presence of Noise“, <em>Proc. IRE</em> 37, 1949.</span>
+          <a href="https://doi.org/10.1109/JRPROC.1949.232969" target="_blank" rel="noopener">doi:10.1109/JRPROC.1949.232969</a>.
+          Das Abtasttheorem und die Nyquist-Frequenz.
+        </li>
+        <li>
+          <span class="src-title">Ronald N. Bracewell, <em>The Fourier Transform and Its Applications</em>.</span>
+          Ein Klassiker für Paare, Rechenregeln und Anschauung.
+        </li>
+        <li>
+          <span class="src-title">Elias M. Stein, Rami Shakarchi, <em>Fourier Analysis: An Introduction</em>.</span>
+          Der saubere mathematische Zugang zu Konvergenz und Orthogonalität.
+        </li>
+        <li>
+          <span class="src-title">Alan V. Oppenheim, Ronald W. Schafer, <em>Discrete-Time Signal Processing</em>.</span>
+          DFT, FFT, Fenster und die Praxis der digitalen Signalverarbeitung.
+        </li>
+        <li>
+          <span class="src-title">Stéphane Mallat, <em>A Wavelet Tour of Signal Processing</em>.</span>
+          Zeit-Frequenz-Analyse, Spektrogramme und die Brücke zu Wavelets.
+        </li>
+      </ul>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">
+  <span>Fourier visuell · ein Lernexperiment im Blog-Verzeichnis</span>
+  <span><a href="taylor.html">Weiter zu den Taylorreihen →</a></span>
+</footer>
+
+<script src="../temml.min.js"></script>
+<script src="../plotly-2.24.1.min.js"></script>
+<script src="fourier.js"></script>
+</body>
+</html>

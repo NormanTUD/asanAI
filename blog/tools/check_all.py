@@ -164,6 +164,12 @@ STAGES: tuple[Stage, ...] = (
         needs=("php",),
     ),
     Stage(
+        "proxy-rewrite",
+        "static",
+        (uv("blog/tests/proxy_rewrite_test.py"),),
+        needs=("uv", "php"),
+    ),
+    Stage(
         "search-test",
         "static",
         (php("blog/tests/search_test.php"),),

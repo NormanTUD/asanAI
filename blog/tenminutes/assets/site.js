@@ -269,6 +269,45 @@
 		});
 	}
 
+	/* ── embedded page height ──────────────────────────────── */
+
+	function initHeightBridge() {
+		if (window.parent === window) return;
+		var last = -1;
+		var scheduled = false;
+		function send() {
+			scheduled = false;
+			var body = document.body;
+			var html = document.documentElement;
+			if (!body) return;
+			var height = Math.ceil(Math.max(
+				body.scrollHeight, body.offsetHeight,
+				html.clientHeight, html.scrollHeight, html.offsetHeight
+			));
+			if (Math.abs(height - last) < 1) return;
+			last = height;
+			try {
+				window.parent.postMessage({ type: "height", val: height }, "*");
+			} catch (e) {}
+		}
+		function schedule() {
+			if (scheduled) return;
+			scheduled = true;
+			requestAnimationFrame(send);
+		}
+		window.addEventListener("load", schedule);
+		window.addEventListener("resize", schedule);
+		if (window.ResizeObserver) {
+			new ResizeObserver(schedule).observe(document.body);
+		} else {
+			setInterval(schedule, 1000);
+		}
+		if (document.fonts && document.fonts.ready) {
+			document.fonts.ready.then(schedule);
+		}
+		schedule();
+	}
+
 	/* ── page chrome ───────────────────────────────────────── */
 
 	function initPage() {
@@ -279,6 +318,7 @@
 		initCompletion();
 		TM.typesetMath();
 		initArrowNav();
+		initHeightBridge();
 
 		var slug = document.body.getAttribute("data-lesson");
 		if (slug) TM.markSeen(slug);

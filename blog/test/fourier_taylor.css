@@ -1383,3 +1383,21 @@ td .bad { color: var(--rose); font-weight: 650; }
 }
 
 .formula-live math { font-size: 1.06em; }
+
+.plot-wrap {
+  height: 440px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  overflow: hidden;
+}
+
+.plot-wrap .js-plotly-plot,
+.plot-wrap .plot-container,
+.plot-wrap .svg-container {
+  border-radius: 14px;
+}
+
+@media (max-width: 680px) {
+  .plot-wrap { height: 340px; }
+}
