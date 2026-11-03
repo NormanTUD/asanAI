@@ -7819,6 +7819,138 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-intra-attention",
+      "from": "intra-attention",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In January 2016, \\citeauthor{cheng2016} used what they called **intra-attention**",
+      "citation_keys": [
+        "cheng2016"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-decomposable-attention",
+      "from": "decomposable-attention",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{parikh2016} built a model almost entirely out of attention",
+      "citation_keys": [
+        "parikh2016"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-self-attentive-sentence-embedding",
+      "from": "self-attentive-sentence-embedding",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In March 2017, \\citeauthor{lin2017selfattentive} ran multiple attention heads over an LSTM",
+      "citation_keys": [
+        "lin2017selfattentive"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-attention-weights-explanation",
+      "from": "attention-weights-explanation",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\citeauthor{jain2019attention} pushed the point further: attention weights often fail standard tests for explanation",
+      "citation_keys": [
+        "jain2019attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-gpt-3",
+      "from": "gpt-3",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "128$ in GPT-3 with its $96$ heads",
+      "citation_keys": [
+        "brown2020gpt3"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-llama-3-1-405b",
+      "from": "llama-3-1-405b",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Llama 3.1 405B runs $128$ query heads",
+      "citation_keys": [
+        "llama3herd2024"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-multi-head-attention",
+      "from": "multi-head-attention",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "The four projection groups of a full MHA layer hold $4\\,d_{\\text{model}}^2$ parameters between them.",
+      "citation_keys": [
+        "vaswani2017attention"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-grouped-query-attention",
+      "from": "grouped-query-attention",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "to $2\\,g\\,d_{\\text{model}}d_k$ for $g$ key-value groups",
+      "citation_keys": [
+        "ainslie2023gqa"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-head-pruning",
+      "from": "head-pruning",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a large fraction of heads in trained translation and BERT models can be pruned at test time with negligible loss",
+      "citation_keys": [
+        "michel2019sixteen"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-induction-heads",
+      "from": "induction-heads",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "a pair of cooperating heads that matches a pattern earlier in the sequence and copies what followed it",
+      "citation_keys": [
+        "olsson2022induction"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-attentionlab-talking-heads-attention",
+      "from": "talking-heads-attention",
+      "to": "attentionlab",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**talking-heads attention** inserts learned linear mixing across heads before and after the softmax",
+      "citation_keys": [
+        "shazeer2020talkingheads"
+      ],
+      "confidence": "provenance"
     }
   ],
   "statements": [

@@ -1460,6 +1460,18 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-alignment-rlhf",
+      "from": "rlhf",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "introduced by **Paul Christiano** and colleagues in 2017",
+      "citation_keys": [
+        "christiano2017rlhf"
+      ],
+      "confidence": "provenance"
     }
   ],
   "statements": [

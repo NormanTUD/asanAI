@@ -54756,6 +54756,105 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-behavior-purpose-teleology",
+      "from": "behavior-purpose-teleology",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Arturo Rosenblueth, Norbert Wiener and Julian Bigelow's** *Behavior, Purpose and Teleology*",
+      "citation_keys": [
+        "behaviorpurpose1943"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-dendral",
+      "from": "dendral",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "cut the search from more than eleven million candidates to about twenty-two thousand",
+      "citation_keys": [
+        "feigenbaum1965dendral",
+        "crevier1993ai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-mycin",
+      "from": "mycin",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "diagnosed blood infections from a few hundred IF-THEN rules",
+      "citation_keys": [
+        "shortliffe1976mycin"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-xcon",
+      "from": "xcon",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "growing from about three hundred rules in 1979 to more than three thousand by 1984",
+      "citation_keys": [
+        "crevier1993ai"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-ilya-sutskever",
+      "from": "ilya-sutskever",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Ilya Sutskever**, co-inventor of sequence-to-sequence learning, co-founded OpenAI and served as its chief scientist through the GPT and ChatGPT era",
+      "citation_keys": [
+        "sutskever2014seq2seq",
+        "sutskever_bio"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-dario-amodei",
+      "from": "dario-amodei",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**Dario Amodei**, co-author of the original RLHF study and of *Concrete Problems in AI Safety*, left OpenAI to co-found **Anthropic** in 2021",
+      "citation_keys": [
+        "amodei2016concrete",
+        "anthropic_bio"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-deepseek-v3",
+      "from": "deepseek-v3",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "V3 trained for 2.788 million H800 GPU-hours",
+      "citation_keys": [
+        "deepseek2024v3"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-history-deepseek-r1",
+      "from": "deepseek-r1",
+      "to": "history",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "R1 trained largely by reinforcement learning",
+      "citation_keys": [
+        "guo2025deepseekr1"
+      ],
+      "confidence": "provenance"
     }
   ],
   "deep_audit": true,

@@ -8830,6 +8830,42 @@
       "citation_keys": [
         "deepseek2024v2"
       ]
+    },
+    {
+      "id": "prov-transformer-grouped-query-attention",
+      "from": "grouped-query-attention",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "continuing pretraining for roughly 5 percent of the original compute",
+      "citation_keys": [
+        "ainslie2023gqa"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-multi-head-latent-attention",
+      "from": "multi-head-latent-attention",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it reported a KV cache over 90 percent smaller than an equivalent MHA configuration",
+      "citation_keys": [
+        "deepseek2024v2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-multi-query-attention",
+      "from": "multi-query-attention",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "incremental decoding is bound not by arithmetic but by **memory bandwidth**",
+      "citation_keys": [
+        "shazeer2019mqa"
+      ],
+      "confidence": "provenance"
     }
   ],
   "statements": [

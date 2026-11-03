@@ -9265,6 +9265,18 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-language-chomsky-hierarchy",
+      "from": "chomsky-hierarchy",
+      "to": "language",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In 1956, **Noam Chomsky**'s *Three Models for the Description of Language* arranged grammars into the classes that became the **Chomsky hierarchy**",
+      "citation_keys": [
+        "chomsky1956three"
+      ],
+      "confidence": "provenance"
     }
   ],
   "statements": [

@@ -11477,6 +11477,43 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-dario-amodei",
+      "from": "dario-amodei",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "He later left OpenAI to co-found **Anthropic** in 2021",
+      "citation_keys": [
+        "anthropic_bio",
+        "amodei2024machines"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-vladimir-vapnik",
+      "from": "vladimir-vapnik",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Vapnik, working at the Institute for Control Sciences in Moscow, and Alexey Chervonenkis built the **VC theory** of generalisation",
+      "citation_keys": [
+        "vapnik1964vc"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-people_of_ai-support-vector-machine",
+      "from": "support-vector-machine",
+      "to": "people-of-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "turned the theory into the **support vector machine** (1995)",
+      "citation_keys": [
+        "cortes1995svm"
+      ],
+      "confidence": "provenance"
     }
   ],
   "statements": [

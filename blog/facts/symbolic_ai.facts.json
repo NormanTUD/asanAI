@@ -4500,6 +4500,30 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-gottlob-frege",
+      "from": "gottlob-frege",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**first-order predicate logic**",
+      "citation_keys": [
+        "frege1879"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-symbolic_ai-japanese-fifth-generation",
+      "from": "japanese-fifth-generation",
+      "to": "symbolic-ai",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it was also the language Japan's Fifth Generation project chose for its logic-based bet in the 1980s",
+      "citation_keys": [
+        "hnffifthgen2023"
+      ],
+      "confidence": "provenance"
     }
   ],
   "statements": [

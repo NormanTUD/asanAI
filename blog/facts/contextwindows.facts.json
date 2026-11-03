@@ -6861,6 +6861,18 @@
       "citation_keys": [
         "llama3herd2024"
       ]
+    },
+    {
+      "id": "prov-contextwindows-llama-3-70b",
+      "from": "llama-3-70b",
+      "to": "contextwindows",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "Switch to grouped-query attention with 8 key/value heads — the configuration of Llama 3 70B",
+      "citation_keys": [
+        "llama3herd2024"
+      ],
+      "confidence": "provenance"
     }
   ],
   "statements": [

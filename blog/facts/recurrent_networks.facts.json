@@ -2268,6 +2268,18 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-recurrent_networks-ctc",
+      "from": "ctc",
+      "to": "recurrent-networks",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "**CTC** loss (2006)",
+      "citation_keys": [
+        "ctc2006"
+      ],
+      "confidence": "provenance"
     }
   ],
   "statements": [
