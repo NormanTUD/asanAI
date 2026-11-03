@@ -530,7 +530,31 @@ so they work both standalone and through the proxy; do not hardcode
 rewritten to `asanai_blog_proxy.php?track.php`, so page-time/scroll beacons are
 forwarded to the remote `track.php`. `X-Frame-Options` and CSP are not
 forwarded (the proxy is intentionally embeddable); cookies are filtered to the
-blog's own names so unrelated host cookies are never sent to the remote.
+blog's own names so unrelated host cookies are never sent to the remote. The
+proxy also clears a frame policy set earlier in PHP and sends
+`Content-Security-Policy: frame-ancestors *;`.
+
+A host-level header can still win: Apache applies `Header always set` after
+PHP, and CSP headers are combined, so a second, more permissive CSP cannot
+relax an existing one. On `scads.ai` every response carries
+`Content-Security-Policy: frame-ancestors https://launchpad.scads.ai;`, which
+blocks embedding from any other page. If the proxy lives at the document root,
+add an exception for just that file where the header is configured, for
+example:
+
+```apache
+<Files "asanai_blog_proxy.php">
+	<IfModule mod_headers.c>
+		Header always set Content-Security-Policy "frame-ancestors *;"
+		Header always unset X-Frame-Options
+	</IfModule>
+</Files>
+```
+
+Use a specific `frame-ancestors` origin instead of `*` if the embedding site is
+known. Without the exception the iframe shows Firefox's "does not allow this
+page to be displayed in a frame" error even though the proxy URL works in a
+top-level tab.
 
 The proxy rewrites HTML attributes (`src`, `href`, `link`, `iframe`, form
 actions) and CSS URLs. It cannot see URLs built inside JavaScript strings.
@@ -566,6 +590,7 @@ never production data):
 
 ```bash
 uv run blog/tests/stats_filters_test.py   # chips, reset, source/hour/day/humans
+uv run blog/tests/proxy_rewrite_test.py   # relative URLs, subdirectories, assets
 uv run blog/tests/proxy_stats_test.py     # proxy login/cookies/filters/CSV/backup/beacon
 uv run blog/tests/analytics_client_test.py # sections/events, no query/full URL
 uv run blog/tests/stats_ui_test.py        # briefing/explore, lazy charts, compare, present/light
