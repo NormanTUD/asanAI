@@ -484,6 +484,13 @@ if (str_contains(strtolower($content_type), 'text/html') && $status !== 204 && $
 	$content = asanai_proxy_rewrite_css((string)$content, $remote_base, $proxy_name, $current_remote_path);
 }
 
+// The proxy is meant to be embedded. Drop a frame policy set earlier in PHP
+// and advertise a permissive one. A host-level Apache header applied after
+// PHP still needs a server or .htaccess exception (see README).
+header_remove('X-Frame-Options');
+header_remove('Content-Security-Policy');
+header('Content-Security-Policy: frame-ancestors *;');
+
 http_response_code($status);
 if ($content_type !== '') {
 	header('Content-Type: ' . $content_type);
