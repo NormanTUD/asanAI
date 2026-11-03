@@ -5505,7 +5505,6 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	gap: 10px;
 	width: 100%;
 	aspect-ratio: 16 / 9;
-	max-height: 440px;
 	padding: 24px;
 	border: 0;
 	border-radius: 14px;
@@ -5544,7 +5543,6 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	display: block;
 	width: 100%;
 	aspect-ratio: 16 / 9;
-	max-height: 440px;
 	height: auto;
 	border: 0;
 	border-radius: 14px;
