@@ -1209,6 +1209,7 @@
 		}
 		function updateEmb(expr) {
 			var ev = evalEmb(expr);
+			embDirMode = null;
 			if (!ev || ev.kind !== "vec") {
 				embResult = null;
 				if (embOut) embOut.innerHTML = '<b>Invalid expression.</b> Try “King − Man + Woman”.';
