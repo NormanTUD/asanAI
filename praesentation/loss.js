@@ -54,8 +54,9 @@ const LossDemo = (() => {
 		}
 	];
 
-	const IMG = new Image();
-	IMG.src = 'cat.jpg';
+	const IMG = { cat: new Image(), dog: new Image() };
+	IMG.cat.src = 'cat.jpg';
+	IMG.dog.src = 'dog.jpg';
 
 	let reveal = 0;
 	let trainT = 0;
@@ -181,7 +182,7 @@ const LossDemo = (() => {
 		ctx.strokeStyle = C.line;
 		ctx.lineWidth = 1.2;
 		ctx.stroke();
-		drawPhoto(ctx, IMG, ix, iy, iw, ih, 12);
+		drawPhoto(ctx, IMG.cat, ix, iy, iw, ih, 12);
 
 		drawProbRow(ctx, 'Katze', anim.cat, catColorFor(anim.cat), 290, false, fade);
 		drawProbRow(ctx, 'Hund', anim.dog, dogColorFor(anim.dog), 342, d.dog >= 0.8, fade);
@@ -194,7 +195,7 @@ const LossDemo = (() => {
 	const cx = tau => PLOT.x0 + tau * (PLOT.x1 - PLOT.x0);
 	const plotY = loss => PLOT.yBot -
 		clamp01(loss / PLOT.lmax) * (PLOT.yBot - PLOT.yTop);
-	const pCatAt = tau => 0.5 + 0.49 * (1 - Math.pow(1 - tau, 3));
+	const pCatAt = tau => 0.5 + 0.45 * (1 - Math.pow(1 - tau, 3));
 	const lossAt = tau => -Math.log(Math.max(pCatAt(tau), 1e-9));
 
 	function drawTrainFrame(ctx) {
@@ -281,6 +282,27 @@ const LossDemo = (() => {
 		return 'richtig und sicher';
 	}
 
+	function drawTrainCard(ctx, img, x, y, w, name, p, color) {
+		const neutral = color === C.axis;
+		ctx.fillStyle = '#fff';
+		KatzeKit.roundRect(ctx, x, y, w, 214, 14);
+		ctx.fill();
+		ctx.strokeStyle = C.line;
+		ctx.lineWidth = 1.2;
+		ctx.stroke();
+
+		drawPhoto(ctx, img, x + 10, y + 10, w - 20, 100, 10);
+
+		label(ctx, name, x + 14, y + 136,
+			{ size: 15, color: C.ink, weight: 800 });
+		label(ctx, Math.round(p * 100) + ' %', x + w - 14, y + 136,
+			{ size: 18, color: neutral ? C.muted : color, weight: 800, align: 'right' });
+
+		const bh = 12;
+		bar(ctx, x + 14, y + 158, w - 28, bh, C.track, bh / 2);
+		bar(ctx, x + 14, y + 158, (w - 28) * p, bh, color, bh / 2);
+	}
+
 	function drawTrainPanel(ctx, p) {
 		const px = 636, py = 40, pw = 432, ph = 350;
 		ctx.fillStyle = '#fff';
@@ -293,19 +315,14 @@ const LossDemo = (() => {
 		label(ctx, 'Das Netz sieht: Katze', px + pw / 2, py + 22,
 			{ size: 13, color: C.muted, weight: 800, align: 'center' });
 
-		const iw = 200, ih = 134;
-		const ix = px + (pw - iw) / 2, iy = py + 40;
-		drawPhoto(ctx, IMG, ix, iy, iw, ih, 12);
-
-		const rowOpts = {
-			xLabel: px + 24, xBar: px + 104, barW: 210,
-			bh: 12, xPct: px + pw - 62, size: 15
-		};
-		drawProbRow(ctx, 'Katze', p, catColorFor(p), py + 225, false, 1, rowOpts);
-		drawProbRow(ctx, 'Hund', 1 - p, dogColorFor(1 - p), py + 275, false, 1, rowOpts);
+		const cw = 180, cy = py + 40;
+		drawTrainCard(ctx, IMG.cat, px + 24, cy, cw,
+			'Katze', p, catColorFor(p));
+		drawTrainCard(ctx, IMG.dog, px + pw - 24 - cw, cy, cw,
+			'Hund', 1 - p, dogColorFor(1 - p));
 
 		const safe = p >= 0.85;
-		label(ctx, trainStatus(p), px + pw / 2, py + 320,
+		label(ctx, trainStatus(p), px + pw / 2, py + 300,
 			{ size: 14, color: safe ? C.greenDark : C.amberDark, weight: 800, align: 'center' });
 	}
 
