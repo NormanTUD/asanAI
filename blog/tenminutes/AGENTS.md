@@ -60,7 +60,8 @@ it:
   `https://asanai.scads.ai/blog`) and `TM_FULL_LESSON_MAP` map each compact slug
   to one or more relevant full lessons. Add a new compact page to the map.
 - The block links to `TM_BLOG_BASE . '/' . full-slug . '.php'` with
-  `target="_blank" rel="noopener"`. It does not link the full blog home.
+  `target="_blank" rel="noopener"` and `?lang=de` on German pages. It does
+  not link the full blog home.
 - `whole.php` carries `data-no-full-article="1"` because it has no single full
   article.
 - `bootstrap.php` is auto-prepended through `.htaccess` / `.user.ini`;
@@ -73,6 +74,25 @@ it:
   non-clickable reference entries, not links.
 - `index.php`, `advent.php`, and `library.php` only navigate to compact
   extensionless pages and assets.
+
+## Bilingual pages (`?lang=de` / `?lang=en`)
+
+- English is the default. `?lang=de` or `?lang=en` switches the page; the choice
+  is stored in the `tm_lang` cookie and `localStorage`, and internal links keep
+  `?lang=de`.
+- One HTML tree per page, with German strings in `lang/de/<slug>.php`
+  (`texts`, `attrs`, `blocks`, `title`, `description`). Shared UI strings live
+  in `lang/de/shared.php`; calendar cards and section labels in
+  `lang/de/calendar.php`.
+- `bootstrap.php` injects the dictionary as `#tm-i18n` JSON and loads
+  `assets/i18n.js`. The script translates text nodes, selected attributes, and
+  dynamically generated demo DOM; it skips `script`, `style`, `code`, `pre`,
+  `math`, `[data-tex]`, and `.full-article`.
+- Keep technical terms in English: Token, Attention, Embedding, Transformer,
+  Prompt, Agent, Fine-Tuning.
+- The full-article block is translated server-side; its links carry
+  `?lang=de`. `TM_FULL_LESSON_TITLES_DE` must cover every full-lesson slug used
+  by `TM_FULL_LESSON_MAP`.
 
 ## Colour palette
 

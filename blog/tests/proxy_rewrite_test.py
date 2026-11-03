@@ -122,12 +122,12 @@ def main() -> int:
 			check("x-frame-options" not in headers, "proxy drops X-Frame-Options")
 			text = page_response.text
 			expected = [
-				'href="asanai_blog_proxy.php?tenminutes/assets/site.css"',
-				'href="asanai_blog_proxy.php?Temml-Local.min.css"',
-				'src="asanai_blog_proxy.php?tenminutes/assets/site.js?v=7"',
-				'src="asanai_blog_proxy.php?temml.min.js"',
-				'src="asanai_blog_proxy.php?tenminutes/assets/abs.js"',
-				'href="asanai_blog_proxy.php?index.html"',
+				'href="/asanai_blog_proxy.php?tenminutes/assets/site.css"',
+				'href="/asanai_blog_proxy.php?Temml-Local.min.css"',
+				'src="/asanai_blog_proxy.php?tenminutes/assets/site.js?v=7"',
+				'src="/asanai_blog_proxy.php?temml.min.js"',
+				'src="/asanai_blog_proxy.php?tenminutes/assets/abs.js"',
+				'href="/asanai_blog_proxy.php?index.html"',
 			]
 			for fragment in expected:
 				check(fragment in text, f"rewrote {fragment}", text)

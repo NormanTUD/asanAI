@@ -204,9 +204,9 @@ def main() -> int:
 
 			course = session.get(f"{proxy_url}?tenminutes/intuition.php", timeout=20)
 			check(course.status_code == 200 and "One Word" in course.text, "tenminutes page through proxy")
-			check('src="asanai_blog_proxy.php?tenminutes/assets/site.js' in course.text, "tenminutes script path is resolved")
-			check('src="asanai_blog_proxy.php?temml.min.js"' in course.text, "tenminutes parent script path is resolved")
-			check('href="asanai_blog_proxy.php?tenminutes/assets/site.css' in course.text, "tenminutes stylesheet path is resolved")
+			check('src="/asanai_blog_proxy.php?tenminutes/assets/site.js' in course.text, "tenminutes script path is resolved")
+			check('src="/asanai_blog_proxy.php?temml.min.js"' in course.text, "tenminutes parent script path is resolved")
+			check('href="/asanai_blog_proxy.php?tenminutes/assets/site.css' in course.text, "tenminutes stylesheet path is resolved")
 			for asset in ("tenminutes/assets/site.js", "tenminutes/assets/site.css", "temml.min.js", "Temml-Local.min.css"):
 				asset_response = session.get(f"{proxy_url}?{asset}", timeout=20)
 				asset_type = asset_response.headers.get("content-type", "").lower()

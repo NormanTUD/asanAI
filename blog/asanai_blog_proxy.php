@@ -14,6 +14,11 @@ function asanai_proxy_abort(int $code, string $message): void {
 	exit;
 }
 
+function asanai_proxy_self_path(string $proxy_name): string {
+	$path = (string)($_SERVER['SCRIPT_NAME'] ?? '');
+	return $path !== '' ? $path : $proxy_name;
+}
+
 function asanai_proxy_rewrite_url(string $url, string $remote_base, string $proxy_name, string $current_path): string {
 	$url = trim(html_entity_decode($url, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
 	if ($url === '' || str_starts_with($url, '#')) {
@@ -68,7 +73,7 @@ function asanai_proxy_rewrite_url(string $url, string $remote_base, string $prox
 	if ($target === '' || $target === '?') {
 		$target = 'index.php';
 	}
-	return $proxy_name . '?' . $target . $fragment;
+	return asanai_proxy_self_path($proxy_name) . '?' . $target . $fragment;
 }
 
 function asanai_proxy_rewrite_html(string $content, string $remote_base, string $proxy_name, string $current_path): string {
@@ -79,7 +84,7 @@ function asanai_proxy_rewrite_html(string $content, string $remote_base, string 
 
 	$is_stats = (bool)preg_match('~^/?stats(?:\.php)?$~', $current_path);
 	if ($is_stats) {
-		$proxy_base = $proxy_name . '?' . $current_path;
+		$proxy_base = asanai_proxy_self_path($proxy_name) . '?' . $current_path;
 		$content = str_replace('__MN_STATS_BASE__', $proxy_base, $content);
 		$content = str_replace('__MN_STATS_BASE_PATH__', $current_path, $content);
 	}
@@ -165,7 +170,7 @@ function asanai_proxy_rewrite_html(string $content, string $remote_base, string 
 		$content
 	) ?? $content;
 
-	$exclude = '(?!(?:https?:\/\/|\/\/|data:|#|mailto:|tel:|javascript:|' . preg_quote($proxy_name, '/') . '))';
+	$exclude = '(?!(?:https?:\/\/|\/\/|data:|#|mailto:|tel:|javascript:|' . preg_quote(asanai_proxy_self_path($proxy_name), '/') . '|' . preg_quote($proxy_name, '/') . '))';
 	$content = preg_replace_callback(
 		'/\bsrc=(["\'])' . $exclude . '([^"\']+)\1/i',
 		static function (array $match) use ($remote_base, $current_path): string {
@@ -253,7 +258,7 @@ function asanai_proxy_rewrite_css_url(string $url, string $remote_base, string $
 	if ($target === '') {
 		return $url;
 	}
-	return $proxy_name . '?' . $target;
+	return asanai_proxy_self_path($proxy_name) . '?' . $target;
 }
 
 function asanai_proxy_rewrite_css(string $content, string $remote_base, string $proxy_name, string $css_path): string {
