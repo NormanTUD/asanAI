@@ -79,6 +79,17 @@ foreach ($chunks as $chunk) {
 	if (strpos($chunk, 'class="day-card') === false) {
 		continue;
 	}
+	if (preg_match('/<p class="week-label">Section (\d+)[^<]*Days (\d+)-(\d+)<\/p>/u', $chunk, $label)) {
+		$firstDay = (int) $label[2];
+		if ($firstDay > $unlocked) {
+			$chunk = preg_replace(
+				'/<p class="week-label">.*?<\/p>/u',
+				'<p class="week-label">Section ' . $label[1] . ' · Locked</p>',
+				$chunk,
+				1
+			);
+		}
+	}
 	$calendarHtml .= $chunk;
 }
 
@@ -113,29 +124,11 @@ $simDateLabel = $today->format('j F Y');
 						The calendar is a reading route through the whole arc, from the first next-token
 						prediction to the larger questions. Read one door a day, or follow the thread.
 					</p>
-					<div class="hero-meta">
-						<span class="pill pill--green"><b id="doors-open"><?php echo $unlocked; ?></b> of 31 doors open</span>
-						<span class="pill"><b id="advent-done">0</b> completed</span>
-						<span class="pill pill--blue">Progress saved locally</span>
-						<?php if (isset($_GET['date']) || isset($_GET['datum'])): ?>
-						<span class="pill pill--blue">Simulated date: <?php echo htmlspecialchars($simDateLabel, ENT_QUOTES, 'UTF-8'); ?></span>
-						<?php endif; ?>
-					</div>
 				</div>
 			</section>
 
 			<section class="section section--tight" id="calendar">
-				<div class="section-head">
-					<div>
-						<p class="kicker">The 31-door calendar</p>
-						<h2>One idea each. Ten minutes at a time.</h2>
-					</div>
-					<p>
-						From 1 December 2026, one new door opens each day. Before then, every door is open.
-						The arc starts with prediction and reaches the transformer around Day 22, then
-						turns outward to the larger questions.
-					</p>
-				</div>
+				<p class="kicker">The 31-door calendar</p>
 				<div id="calendar-doors">
 <?php echo $calendarHtml; ?>
 				</div>
@@ -198,16 +191,12 @@ $simDateLabel = $today->format('j F Y');
 		}
 
 		var done = TM.done();
-		var doneCount = 0;
 		document.querySelectorAll(".day-card").forEach(function (card) {
 			var slug = card.getAttribute("data-slug");
 			if (slug && done.indexOf(slug) !== -1) {
 				card.classList.add("is-done");
-				doneCount++;
 			}
 		});
-		var counter = document.getElementById("advent-done");
-		if (counter) counter.textContent = doneCount;
 	})();
 	</script>
 </body>

@@ -210,6 +210,8 @@ space-curvature demo uses it for its step buttons.
   opens on 1 December + (N - 1) days; future doors become dashed `.is-locked`
   cards with a `?` placeholder and no link. `index.php?date=1.12.2026` or
   `index.php?datum=1.12.2026` simulates a date for testing.
+- A week label whose first day is still locked is reduced server-side to
+  “Section N · Locked”, so the section theme is not revealed early.
 - The calendar has exactly **31 doors**: `id="day-1"` … `id="day-31"`.
   `data-day`, `.dc-num` (zero-padded), and the `id` must agree.
 - Compact doors use:
