@@ -21,8 +21,8 @@ The Ten Minutes pages follow the public scads.ai theme, not the standalone
 - Primary buttons are square, green `#63a44b` or dark blue `#004B6F`, with
   white text.
 - The calendar landing page uses normal page text and headings, not a
-  title band. `calendar`, `advent`, and `library` pages sit on `#F9F9F9` in
-  light mode.
+  title band, and sits on `#ffffff` in light mode. `advent` and `library`
+  pages sit on `#F9F9F9`.
 - Do not switch back to Lingua Franca / system-ui / Source Serif 4 without
   checking against the live scads.ai theme.
 

@@ -436,7 +436,7 @@ body[data-page="calendar"] .hero {
 	margin: 0;
 }
 body[data-page="calendar"] .hero-deck { max-width: none; }
-html[data-theme="light"] body[data-page="calendar"],
+html[data-theme="light"] body[data-page="calendar"] { background: #ffffff; }
 html[data-theme="light"] body[data-page="advent"],
 html[data-theme="light"] body[data-page="library"] { background: #F9F9F9; }
 
