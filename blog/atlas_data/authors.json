@@ -73856,7 +73856,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 393,
+  "works": 404,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -74046,6 +74046,17 @@
    "superconductingqubit",
    "dolnivestonice",
    "lamarchecave",
+   "terra_amata_wiki",
+   "mezhyrich_wiki",
+   "tarkhan_dress_wiki",
+   "areni1_shoe_wiki",
+   "gobekli_tepe_wiki",
+   "stonehenge_wiki",
+   "great_pyramid_wiki",
+   "pantheon_wiki",
+   "gothic_architecture_wiki",
+   "home_insurance_building_wiki",
+   "data_center_wiki",
    "alchemy_wiki",
    "zosimos_panopolis",
    "hermes_trismegistus",
@@ -82293,6 +82304,278 @@
   ],
   "cited_in": [
    "ai_for_science"
+  ]
+ },
+ {
+  "name": "Melissa A. Toups",
+  "canon": "Melissa A. Toups",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "toups2011origin"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Andrew Kitchen",
+  "canon": "Andrew Kitchen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "toups2011origin"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Jessica E. Light",
+  "canon": "Jessica E. Light",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "toups2011origin"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "David L. Reed",
+  "canon": "David L. Reed",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "toups2011origin"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Ian Gilligan",
+  "canon": "Ian Gilligan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gilligan2024needles"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Francesco d’Errico",
+  "canon": "Francesco d’Errico",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gilligan2024needles"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Luc Doyon",
+  "canon": "Luc Doyon",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gilligan2024needles"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Wei Wang",
+  "canon": "Wei Wang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gilligan2024needles"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Yaroslav V. Kuzmin",
+  "canon": "Yaroslav V. Kuzmin",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2024,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gilligan2024needles"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Larry Barham et al.",
+  "canon": "Larry Barham",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "barham2023kalambo"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Vassil",
+  "canon": "Vassil",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_paleolithic_needle"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Momotarou2012",
+  "canon": "Momotarou2012",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2013,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_mezhirich_mammoth_hut"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Nic McPhee",
+  "canon": "Nic McPhee",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2008,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_tarkhan_dress"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "David Castor",
+  "canon": "David Castor",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2025,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_areni_shoe"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "Murat Özsoy 1958",
+  "canon": "Murat Özsoy 1958",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_catalhoyuk"
+  ],
+  "cited_in": [
+   "untold_history_i"
+  ]
+ },
+ {
+  "name": "BalticServers.com",
+  "canon": "BalticServers.com",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2013,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_server_room"
+  ],
+  "cited_in": [
+   "untold_history_i"
   ]
  },
  {
