@@ -2707,6 +2707,7 @@ html[data-theme="dark"] .day-card.is-locked .dc-locked { color: rgba(238, 247, 2
 	justify-content: space-between;
 	gap: 8px;
 }
+.day-card.is-today .dc-top { padding-right: 54px; }
 .day-card .dc-num {
 	font-family: var(--tm-display);
 	font-weight: 700;
