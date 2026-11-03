@@ -192,6 +192,16 @@ function incl($headline, $base_name) {
 	include($php_file);
 }
 
+function print_critical_boot_css(): void {
+	static $printed = false;
+	if ($printed) {
+		return;
+	}
+	$printed = true;
+	$bg = get_theme_class() === 'dark' ? '#0f172a' : '#FAF8F1';
+	print("<style id='mn-critical-boot'>#loader{position:fixed;inset:0;z-index:9999;background-color:$bg;}html:not(.is-ready) .site-footer{visibility:hidden;}</style>\n");
+}
+
 function print_pwa_head(): void {
 	static $printed = false;
 	if ($printed) {
@@ -207,8 +217,8 @@ function print_pwa_head(): void {
 }
 
 function load_base_js ($defer = false) {
+	print_critical_boot_css();
 	print_pwa_head();
-	js("view_transitions", null, false);
 	js("feedback_capture", null, $defer);
 	js("temml.min", null, $defer);
 	js("bpe", null, $defer);
@@ -218,6 +228,7 @@ function load_base_js ($defer = false) {
 	css("prism-tomorrow.min.css");
 	css("style");
 	print_font_override();
+	js("view_transitions", null, false);
 	js("echarts.min", null, $defer);
 	js("echarts-gl.min.js", null, $defer);
 	js("prism.min", null, $defer);
