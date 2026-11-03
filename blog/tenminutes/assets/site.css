@@ -429,29 +429,16 @@ main { position: relative; z-index: 1; }
 body[data-page="calendar"] .shell {
 	width: 100%;
 	max-width: none;
-	padding-inline: 0;
+	padding-inline: clamp(18px, 2.4vw, 44px);
 }
 body[data-page="calendar"] .hero {
 	max-width: none;
 	margin: 0;
-	padding: clamp(44px, 6vw, 82px) clamp(18px, 2.4vw, 44px);
-	background: var(--tm-petrol);
-	color: #ffffff;
 }
-body[data-page="calendar"] .hero .kicker { color: #ffffff; }
-body[data-page="calendar"] .hero .kicker::before { background: var(--tm-green); }
-body[data-page="calendar"] .hero h1 { color: #ffffff; font-weight: 700; }
-body[data-page="calendar"] .hero h1 em { color: var(--tm-green); }
-body[data-page="calendar"] .hero-deck {
-	max-width: none;
-	color: rgba(255, 255, 255, 0.9);
-}
-body[data-page="calendar"] .hero-deck strong { color: #ffffff; }
-body[data-page="calendar"] #calendar { padding-inline: clamp(18px, 2.4vw, 44px); }
+body[data-page="calendar"] .hero-deck { max-width: none; }
 html[data-theme="light"] body[data-page="calendar"],
 html[data-theme="light"] body[data-page="advent"],
 html[data-theme="light"] body[data-page="library"] { background: #F9F9F9; }
-html[data-theme="dark"] body[data-page="calendar"] .hero { background: var(--tm-paper-2); }
 
 .hero--lesson { padding-bottom: clamp(34px, 4vw, 54px); }
 

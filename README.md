@@ -99,6 +99,9 @@ In addition, the training data as well as the model structure and weights can be
 > Then, feel free to explore all options. If anything went wrong, simply reload the page (hit F5).
 > For a quick boost, the [video tutorials](#video-tutorials) are highly recommended.
 
+> [!TIP]
+> Both the Toolkit and the blog are progressive web apps. Every page you open is cached on the device together with its images and scripts; there is no save button. Open a page once while online, and it remains available after a reload without a connection.
+
 ## Self-/local hosting
 If you would like to host your own version, or if you would like to change the default values, add other examples, customize the theme, or do any other changes to the core of asanAI then follow the instructions below.
 > [!TIP]
