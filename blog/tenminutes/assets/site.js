@@ -64,7 +64,8 @@
 	}
 
 	TM.simDate = function () {
-		var raw = new URLSearchParams(window.location.search).get("date");
+		var params = new URLSearchParams(window.location.search);
+		var raw = params.get("date") || params.get("datum");
 		return parseDateParam(raw) || new Date();
 	};
 

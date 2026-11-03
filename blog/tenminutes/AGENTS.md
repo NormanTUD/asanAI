@@ -42,8 +42,8 @@ calendar is over:
   to the end of every `data-page="lesson"` page. It links to `../<slug>.php`
   (the matching full article) and to `../` (the full blog). Pages without a full
   article carry `data-no-full-article="1"` (`whole.html`).
-- The block is date-gated client-side; `?date=1.1.2027` on a lesson page can
-  simulate the post-calendar state for testing.
+- The block is date-gated client-side; `?date=1.1.2027` or `?datum=1.1.2027`
+  on a lesson page can simulate the post-calendar state for testing.
 - Compact pages still do not link to the full lesson in their prose. The only
   full-article link is the generated end-of-page block.
 - Compact pages must be self-contained. The library’s non-compact cards are
@@ -207,8 +207,9 @@ space-curvature demo uses it for its step buttons.
   `<!-- CALENDAR:END -->` in `advent.html`, so the doors have one source of
   truth. Keep those markers.
 - Before 1 December 2026 every door is visible. From 1 December 2026, day N
-  opens on 1 December + (N - 1) days; future doors are removed server-side.
-  `index.php?date=1.12.2026` simulates a date for testing.
+  opens on 1 December + (N - 1) days; future doors become dashed `.is-locked`
+  cards with a `?` placeholder and no link. `index.php?date=1.12.2026` or
+  `index.php?datum=1.12.2026` simulates a date for testing.
 - The calendar has exactly **31 doors**: `id="day-1"` … `id="day-31"`.
   `data-day`, `.dc-num` (zero-padded), and the `id` must agree.
 - Compact doors use:

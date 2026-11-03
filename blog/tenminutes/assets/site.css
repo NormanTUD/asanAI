@@ -364,6 +364,7 @@ body[data-page="calendar"] .shell {
 	padding-inline: clamp(18px, 2.4vw, 44px);
 }
 body[data-page="calendar"] .hero { max-width: none; }
+body[data-page="calendar"] .hero-deck { max-width: none; }
 
 .hero--lesson { padding-bottom: clamp(34px, 4vw, 54px); }
 
@@ -2673,6 +2674,33 @@ html[data-theme="dark"] .full-article-kicker { color: var(--tm-lime); }
 	transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 .day-card:hover { transform: translateY(-2px); box-shadow: var(--tm-shadow); border-color: var(--tm-line-strong); }
+.day-card.is-locked {
+	border-style: dashed;
+	background: color-mix(in srgb, var(--tm-card) 52%, transparent);
+	color: var(--tm-faint);
+	cursor: default;
+}
+.day-card.is-locked:hover { transform: none; box-shadow: none; border-color: var(--tm-line); }
+.day-card.is-locked .dc-locked {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	min-height: 64px;
+	font-family: var(--tm-display);
+	font-size: 2.6rem;
+	font-weight: 700;
+	line-height: 1;
+	color: color-mix(in srgb, var(--tm-petrol) 34%, transparent);
+}
+html[data-theme="dark"] .day-card.is-locked .dc-locked { color: rgba(238, 247, 244, 0.28); }
+.day-card.is-locked .dc-locked-note {
+	margin: 0;
+	font-family: var(--tm-ui);
+	font-size: 0.72rem;
+	line-height: 1.4;
+	color: var(--tm-faint);
+}
 .day-card .dc-top {
 	display: flex;
 	align-items: center;

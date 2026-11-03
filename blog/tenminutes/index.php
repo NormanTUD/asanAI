@@ -25,7 +25,8 @@ function tm_parse_sim_date(?string $raw): ?DateTimeImmutable {
 	return (new DateTimeImmutable('@' . $timestamp))->setTimezone(new DateTimeZone(date_default_timezone_get()));
 }
 
-$today = tm_parse_sim_date($_GET['date'] ?? null) ?? new DateTimeImmutable('today');
+$simRaw = $_GET['date'] ?? $_GET['datum'] ?? null;
+$today = tm_parse_sim_date($simRaw) ?? new DateTimeImmutable('today');
 $unlockStart = new DateTimeImmutable('2026-12-01');
 $unlocked = 31;
 if ($today >= $unlockStart) {
@@ -50,10 +51,17 @@ if (is_file($adventPath)) {
 
 $calendarHtml = preg_replace_callback(
 	'/<a class="day-card[^"]*"[^>]*data-day="(\d+)"[^>]*>.*?<\/a>/s',
-	function (array $match) use ($unlocked, $todayDay): string {
+	function (array $match) use ($unlocked, $todayDay, $unlockStart): string {
 		$day = (int) $match[1];
 		if ($day > $unlocked) {
-			return '';
+			$number = str_pad((string) $day, 2, '0', STR_PAD_LEFT);
+			$opens = $unlockStart->modify('+' . ($day - 1) . ' days')->format('j F Y');
+			return '<div class="day-card is-locked" id="day-' . $day . '" data-day="' . $day . '">'
+				. '<div class="dc-top"><span class="dc-num">' . $number . '</span><span class="dc-part">Locked</span></div>'
+				. '<div class="dc-locked" aria-hidden="true">?</div>'
+				. '<p class="dc-locked-note">Opens on ' . htmlspecialchars($opens, ENT_QUOTES, 'UTF-8') . '</p>'
+				. '<div class="dc-foot"><span class="dc-tag">Locked</span></div>'
+				. '</div>';
 		}
 		$card = $match[0];
 		if ($day === $todayDay) {
@@ -105,19 +113,11 @@ $simDateLabel = $today->format('j F Y');
 						The calendar is a reading route through the whole arc, from the first next-token
 						prediction to the larger questions. Read one door a day, or follow the thread.
 					</p>
-					<div class="hero-actions">
-						<a class="btn btn--green" href="#day-1">
-							Start with Day 1
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-						</a>
-						<a class="btn btn--ghost" href="library.html">Browse the library</a>
-						<a class="btn btn--ghost" href="whole.html">The whole arc</a>
-					</div>
 					<div class="hero-meta">
 						<span class="pill pill--green"><b id="doors-open"><?php echo $unlocked; ?></b> of 31 doors open</span>
 						<span class="pill"><b id="advent-done">0</b> completed</span>
 						<span class="pill pill--blue">Progress saved locally</span>
-						<?php if (isset($_GET['date'])): ?>
+						<?php if (isset($_GET['date']) || isset($_GET['datum'])): ?>
 						<span class="pill pill--blue">Simulated date: <?php echo htmlspecialchars($simDateLabel, ENT_QUOTES, 'UTF-8'); ?></span>
 						<?php endif; ?>
 					</div>
@@ -208,19 +208,6 @@ $simDateLabel = $today->format('j F Y');
 		});
 		var counter = document.getElementById("advent-done");
 		if (counter) counter.textContent = doneCount;
-
-		var last = TM.storage.get("tm_last", null);
-		if (last && last.slug) {
-			var path = last.slug + ".html";
-			var actions = document.querySelector(".hero-actions");
-			if (actions && document.querySelector('a[href="' + path + '"]')) {
-				var cont = document.createElement("a");
-				cont.className = "btn";
-				cont.href = path;
-				cont.textContent = "Continue: " + (last.title || path).replace(" | Ten Minutes", "");
-				actions.appendChild(cont);
-			}
-		}
 	})();
 	</script>
 </body>
