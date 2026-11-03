@@ -20,9 +20,9 @@ The Ten Minutes pages follow the public scads.ai theme, not the standalone
   borders and a subtle hover shadow.
 - Primary buttons are square, green `#63a44b` or dark blue `#004B6F`, with
   white text.
-- The calendar landing page uses normal page text and headings, not a
-  title band, and sits on `#ffffff` in light mode. `advent` and `library`
-  pages sit on `#F9F9F9`.
+- The calendar landing page starts with the intro text and the calendar, with
+  no hero title or title band, and sits on `#ffffff` in light mode. `advent`
+  and `library` pages sit on `#F9F9F9`.
 - Do not switch back to Lingua Franca / system-ui / Source Serif 4 without
   checking against the live scads.ai theme.
 
@@ -59,8 +59,8 @@ it:
 - `globals.php` is the single source of truth: `TM_BLOG_BASE` (currently
   `https://asanai.scads.ai/blog`) and `TM_FULL_LESSON_MAP` map each compact slug
   to one or more relevant full lessons. Add a new compact page to the map.
-- The block links to `TM_BLOG_BASE . '/' . full-slug . '.php'`. It does not link
-  the full blog home.
+- The block links to `TM_BLOG_BASE . '/' . full-slug . '.php'` with
+  `target="_blank" rel="noopener"`. It does not link the full blog home.
 - `whole.php` carries `data-no-full-article="1"` because it has no single full
   article.
 - `bootstrap.php` is auto-prepended through `.htaccess` / `.user.ini`;
@@ -226,9 +226,11 @@ space-curvature demo uses it for its step buttons.
 - `index.php` embeds the calendar between `<!-- CALENDAR:START -->` and
   `<!-- CALENDAR:END -->` in `advent.php`, so the doors have one source of
   truth. Keep those markers.
-- Before 1 December 2026 every door is visible. From 1 December 2026, day N
-  opens on 1 December + (N - 1) days; future doors become dashed `.is-locked`
-  cards with a `?` placeholder and no link. `index.php?date=1.12.2026` or
+- Before 29 November 2026 every door is visible. On 29 and 30 November 2026
+  the start page replaces the grid with a `.calendar-notice` saying that Day 1
+  opens on 1 December. From 1 December 2026, day N opens on 1 December +
+  (N - 1) days; future doors become dashed `.is-locked` cards with a `?`
+  placeholder and no link. `index.php?date=1.12.2026` or
   `index.php?datum=1.12.2026` simulates a date for testing.
 - A week label whose first day is still locked is reduced server-side to
   “Section N · Locked · Opens on <date>”, so the section theme is not revealed

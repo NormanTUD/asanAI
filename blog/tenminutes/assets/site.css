@@ -5867,3 +5867,27 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 .day-card .dc-today {
 	border-radius: 0;
 }
+
+/* ── pre-season notice ──────────────────────────────────── */
+
+.calendar-notice {
+	max-width: 720px;
+	padding: 24px;
+	border: 1px solid var(--tm-line);
+	border-top: 3px solid var(--tm-green);
+	background: var(--tm-card);
+	font-family: var(--tm-prose);
+	color: var(--tm-ink-soft);
+}
+.calendar-notice h3 {
+	margin: 0 0 8px;
+	font-family: var(--tm-display);
+	font-size: 1.5rem;
+	line-height: 1.15;
+	color: var(--tm-petrol);
+}
+.calendar-notice p {
+	margin: 0;
+	font-size: 1.125rem;
+	line-height: 1.875rem;
+}

@@ -57,7 +57,7 @@ function tm_full_article_html(string $compactSlug): string
 	foreach ($lessons as $lesson) {
 		$url = htmlspecialchars(tm_blog_lesson_url($lesson), ENT_QUOTES, 'UTF-8');
 		$title = htmlspecialchars(tm_full_lesson_title($lesson), ENT_QUOTES, 'UTF-8');
-		$html .= '<a class="full-article-main" href="' . $url . '">Read the full lesson: ' . $title . '</a>';
+		$html .= '<a class="full-article-main" href="' . $url . '" target="_blank" rel="noopener">Read the full lesson: ' . $title . '</a>';
 	}
 	$html .= '</aside>';
 	return $html;

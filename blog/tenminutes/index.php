@@ -94,6 +94,14 @@ foreach ($chunks as $chunk) {
 	$calendarHtml .= $chunk;
 }
 
+$preSeason = $today >= new DateTimeImmutable('2026-11-29') && $today < new DateTimeImmutable('2026-12-01');
+if ($preSeason) {
+	$calendarHtml = '<div class="calendar-notice">'
+		. '<h3>The first door opens on 1 December 2026.</h3>'
+		. '<p>Come back then for Day 1. From then on, one new door opens each day.</p>'
+		. '</div>';
+}
+
 $simDateLabel = $today->format('j F Y');
 ?>
 <!DOCTYPE html>
@@ -113,8 +121,6 @@ $simDateLabel = $today->format('j F Y');
 		<div class="shell">
 			<section class="hero">
 				<div>
-					<p class="kicker">ScaDS.AI Dresden/Leipzig · end-of-year AI calendar</p>
-					<h1>Learn something about AI <em>every day.</em></h1>
 					<p class="hero-deck">
 						A guided path for a curious person. Each day opens a short article, roughly ten
 						minutes, with an interactive demo or something to try: a small daily dose of AI,
