@@ -1622,3 +1622,39 @@ Beide Bilder via Commons-API geprüft (Feld LicenseShortName), Stand November 20
    Lokal: mezhirich_mammoth_hut.jpg (3611x2618; ausgeliefert via image.php w=900)
    Genutzt in: untold_history_i.php § "Clothing and Shelter: The First Portable Environments"
    Status: OK - Lizenz klar (CC BY-SA 3.0)
+
+=== OLDEST CLOTHING AND BUILDINGS (untold_history_i.php, Stand: November 2026) ===
+================================================================================
+Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand November 2026.
+
+3. img_tarkhan_dress
+   URL: https://commons.wikimedia.org/wiki/File:2008-04-05_(London,_Petrie_and_British_Library)_-_078.jpg
+   Lizenz: CC BY-SA 2.0
+   Autor: Nic McPhee
+   Lokal: tarkhan_dress.jpg (680x1024; ausgeliefert via image.php w=520)
+   Genutzt in: untold_history_i.php § "Clothing and Shelter: The First Portable Environments"
+   Status: OK - Lizenz klar (CC BY-SA 2.0)
+
+4. img_areni_shoe
+   URL: https://commons.wikimedia.org/wiki/File:Areni_Leather_Shoe.jpg
+   Lizenz: CC0
+   Autor: David Castor
+   Lokal: areni_shoe.jpg (1400x608; verkleinert aus 5175x2247, ausgeliefert via image.php w=700)
+   Genutzt in: untold_history_i.php § "Clothing and Shelter: The First Portable Environments"
+   Status: OK - Lizenz klar (CC0)
+
+5. img_catalhoyuk
+   URL: https://commons.wikimedia.org/wiki/File:%C3%87atalh%C3%B6y%C3%BCk,_7400_BC,_Konya,_Turkey_-_UNESCO_World_Heritage_Site,_08.jpg
+   Lizenz: CC BY-SA 4.0
+   Autor: Murat Özsoy 1958
+   Lokal: catalhoyuk.jpg (1800x829; verkleinert aus 3648x1680, ausgeliefert via image.php w=1000)
+   Genutzt in: untold_history_i.php § "The first towns" / "Buildings: From Monument to Server Hall"
+   Status: OK - Lizenz klar (CC BY-SA 4.0)
+
+6. img_server_room
+   URL: https://commons.wikimedia.org/wiki/File:BalticServers_data_center.jpg
+   Lizenz: CC BY-SA 3.0
+   Autor: BalticServers.com
+   Lokal: server_room.jpg (2048x1360; ausgeliefert via image.php w=1000)
+   Genutzt in: untold_history_i.php § "Buildings: From Monument to Server Hall"
+   Status: OK - Lizenz klar (CC BY-SA 3.0)

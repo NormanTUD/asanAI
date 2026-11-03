@@ -17821,6 +17821,108 @@ window.bibData = {
 		alternativetitle: "Mezhyrich mammoth-bone dwelling (reconstruction)"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
+	 *  Oldest surviving clothing and the long history of buildings
+	 *  (untold_history_i.php)
+	 *  The Tarkhan dress, Çatalhöyük, Göbekli Tepe, Stonehenge, the
+	 *  pyramids, the Pantheon, Gothic cathedrals, the first skyscraper,
+	 *  and the server room that ends the arc.
+	 *  ───────────────────────────────────────────────────────────────────── */
+	"tarkhan_dress_wiki": {
+		title: "Tarkhan dress",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Tarkhan_dress",
+		alternativetitle: "Tarkhan dress (Wikipedia)"
+	},
+	"areni1_shoe_wiki": {
+		title: "Areni-1 shoe",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Areni-1_shoe",
+		alternativetitle: "Areni-1 shoe (Wikipedia)"
+	},
+	"gobekli_tepe_wiki": {
+		title: "Göbekli Tepe",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/G%C3%B6bekli_Tepe",
+		alternativetitle: "Göbekli Tepe (Wikipedia)"
+	},
+	"stonehenge_wiki": {
+		title: "Stonehenge",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Stonehenge",
+		alternativetitle: "Stonehenge (Wikipedia)"
+	},
+	"great_pyramid_wiki": {
+		title: "Great Pyramid of Giza",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Great_Pyramid_of_Giza",
+		alternativetitle: "Great Pyramid of Giza (Wikipedia)"
+	},
+	"pantheon_wiki": {
+		title: "Pantheon, Rome",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Pantheon,_Rome",
+		alternativetitle: "Pantheon (Wikipedia)"
+	},
+	"gothic_architecture_wiki": {
+		title: "Gothic architecture",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Gothic_architecture",
+		alternativetitle: "Gothic architecture (Wikipedia)"
+	},
+	"home_insurance_building_wiki": {
+		title: "Home Insurance Building",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Home_Insurance_Building",
+		alternativetitle: "Home Insurance Building (Wikipedia)"
+	},
+	"data_center_wiki": {
+		title: "Data center",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Data_center",
+		alternativetitle: "Data center (Wikipedia)"
+	},
+	"img_tarkhan_dress": {
+		title: "The Tarkhan dress, the oldest surviving woven garment",
+		author: "Nic McPhee",
+		year: 2008,
+		url: "https://commons.wikimedia.org/wiki/File:2008-04-05_(London,_Petrie_and_British_Library)_-_078.jpg",
+		license: "CC BY-SA 2.0",
+		alternativetitle: "Tarkhan dress"
+	},
+	"img_areni_shoe": {
+		title: "The Areni-1 shoe, the oldest known leather shoe",
+		author: "David Castor",
+		year: 2025,
+		url: "https://commons.wikimedia.org/wiki/File:Areni_Leather_Shoe.jpg",
+		license: "CC0",
+		alternativetitle: "Areni-1 shoe"
+	},
+	"img_catalhoyuk": {
+		title: "Excavated mudbrick houses at Çatalhöyük",
+		author: "Murat Özsoy 1958",
+		year: 2019,
+		url: "https://commons.wikimedia.org/wiki/File:%C3%87atalh%C3%B6y%C3%BCk,_7400_BC,_Konya,_Turkey_-_UNESCO_World_Heritage_Site,_08.jpg",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Çatalhöyük houses"
+	},
+	"img_server_room": {
+		title: "Server room of BalticServers",
+		author: "BalticServers.com",
+		year: 2013,
+		url: "https://commons.wikimedia.org/wiki/File:BalticServers_data_center.jpg",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Server room"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
 	 *  Alchemy: the displaced root of chemistry  (untold_history_ii.php)
 	 *  Alchemy -> chemistry -> silicon purification. The laboratory, the
 	 *  glassware, the acids, the method, and the very word "chemistry" all

@@ -390,6 +390,21 @@ Fire gave hominins a hearth, but a hearth does not travel. Clothing and shelter 
 
 The earliest evidence for clothing is indirect, because hide, sinew, and plant fibre decay. The strongest genetic clue comes from the body louse, *Pediculus humanus corporis*, which lives in clothing and cannot survive long away from it. A 2011 Bayesian analysis of louse genes placed the divergence of clothing lice from head lice at least 83,000 and possibly as early as 170,000 years ago, which implies that humans were wearing clothes within that window (\cite[Toups et al., 2011]{toups2011origin}). Archaeology catches the same technology from another side. Hide-scraping stone tools appear in the Early and Middle Pleistocene; bone awls for piercing hides are found at Blombos Cave about 73,000 to 70,000 years ago; and the first eyed needles appear in Siberia at least 40,000 years ago (\cite[Gilligan et al., 2024]{gilligan2024needles}). The needle is a small object with a large consequence: fitted, layered clothing traps air and blocks wind far better than a draped skin, and the fine sewing that made underwear possible also made it possible to attach beads and ornaments to the surface of clothes. Clothing became dress, a social signal as well as a thermal one.
 
+Woven clothing survives even less often than hide, but a few pieces do. The oldest known woven garment is the **Tarkhan dress**, a linen dress from a tomb at Tarkhan in Egypt, radiocarbon-dated to between 3482 and 3102 BCE and now in the Petrie Museum in London (\cite[Tarkhan dress, 2026]{tarkhan_dress_wiki}). It is the oldest surviving woven garment, and it is one survivor among the countless garments that have vanished.
+
+The oldest known leather shoe is the **Areni-1 shoe**, found in 2008 in a cave in Armenia and dated to about 5,500 years ago. It is cut from a single piece of hide, and it survives because the cave's cool, dry conditions preserved it (\cite[Areni-1 shoe, 2026]{areni1_shoe_wiki}).
+
+<div class="image-row">
+    <figure>
+        <img src="image.php?f=tarkhan_dress.jpg&w=520" alt="The Tarkhan dress, a pleated linen garment from ancient Egypt, the oldest surviving woven piece of clothing" />
+        <figcaption class="md">The \citealternativetitle{img_tarkhan_dress} (CC BY-SA 2.0): the Tarkhan dress, a linen garment from Tarkhan, Egypt, dated to between 3482 and 3102 BCE and held by the Petrie Museum in London. It is the oldest surviving piece of woven clothing. Source: \citeauthor{img_tarkhan_dress}, \citeyear{img_tarkhan_dress}, \citealternativetitle{img_tarkhan_dress}, Wikimedia Commons.</figcaption>
+    </figure>
+    <figure>
+        <img src="image.php?f=areni_shoe.jpg&w=700" alt="The Areni-1 shoe, a one-piece leather shoe from Armenia, the oldest known leather footwear" />
+        <figcaption class="md">The \citealternativetitle{img_areni_shoe} (CC0): the Areni-1 shoe from a cave in Armenia, about 5,500 years old and cut from a single piece of hide. It is the oldest known leather shoe. Source: \citeauthor{img_areni_shoe}, \citeyear{img_areni_shoe}, \citealternativetitle{img_areni_shoe}, Wikimedia Commons.</figcaption>
+    </figure>
+</div>
+
 Shelter has an older and more ambiguous record. A cave is not a building, but it becomes one when fire, stone rings, and repeated occupation turn it into a fixed place. The earliest known deliberately shaped wooden structure is at Kalambo Falls in Zambia, dated to at least 476,000 years ago: two interlocking logs with cut marks, most likely a platform or walkway rather than a house (\cite[Barham et al., 2023]{barham2023kalambo}). At Terra Amata near Nice, about 400,000 years ago, excavators found what they interpreted as hut floors with hearths and stone windbreaks; the interpretation is disputed, and some archaeologists read the same patterns as natural disturbance, so the site is best treated as possible rather than certain evidence of a built shelter (\cite[Terra Amata, 2026]{terra_amata_wiki}).
 
 The first unmistakable dwellings come much later, with the Upper Paleolithic. At Mezhyrich in Ukraine, about 15,000 years ago, people built huts from mammoth bones, a clear case of a planned shelter in a treeless landscape (\cite[Mezhyrich, 2026]{mezhyrich_wiki}). Permanent buildings belong to the Neolithic: the stone tower at Jericho (about 8000 BCE) and the repeated houses of Çatalhöyük (7500 to 5600 BCE) are fixed, maintained, and inherited structures. The next section follows that shift from portable camps to fixed villages, the change that made granaries, scribes, and eventually libraries possible.
@@ -407,7 +422,11 @@ The first unmistakable dwellings come much later, with the Upper Paleolithic. At
 </div>
 
 <div class="md" data-depth="80">
-**The Earliest Figures: 40,000–35,000 Years Ago.** The oldest undisputed images of a person are small figurines of the Aurignacian: the **Venus of Hohle Fels**, a six-centimetre carving of mammoth ivory from a cave near Schelklingen, is the oldest known depiction of a human being (\cite[Conard, 2009]{conard2009hohlefels}); the **Venus of Galgenberg** ("Fanny"), a serpentine statuette from the Stratzing excavation in Austria, is among the oldest of its kind (\cite[Neugebauer-Maresch, 1989]{neugebauer1989galgenberg}). Abstract symbolic expression is older, but these are the earliest clear *figures* of a person.
+### The First Images of People
+
+#### The Earliest Figures: 40,000–35,000 Years Ago
+
+The oldest undisputed images of a person are small figurines of the Aurignacian: the **Venus of Hohle Fels**, a six-centimetre carving of mammoth ivory from a cave near Schelklingen, is the oldest known depiction of a human being (\cite[Conard, 2009]{conard2009hohlefels}); the **Venus of Galgenberg** ("Fanny"), a serpentine statuette from the Stratzing excavation in Austria, is among the oldest of its kind (\cite[Neugebauer-Maresch, 1989]{neugebauer1989galgenberg}). Abstract symbolic expression is older, but these are the earliest clear *figures* of a person.
 
 What they already contain is a move that would run for forty thousand more years: an idea in the head, **pulled out and made into a thing in the world**. The figurine is a model of a person held in the hand, external to the brain that made it, exactly as a network's weights are a physical, external model of a concept. And it takes two things to make one, a *creative* act that conjures a representation which did not exist, and the practical act of **working with the world** to pin the idea into matter, the ancestors of generation and of tool-use in machine learning.
 
@@ -415,7 +434,9 @@ What they already contain is a move that would run for forty thousand more years
 
 \marginfig{venus_galgenberg.jpg}{The Venus of Galgenberg, nicknamed "Fanny", in green serpentine (7.2 cm), from the Stratzing site in Lower Austria (about 32,000 to 36,000 years old). [Photo: Aiwok, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Venus_vom_Galgenberg.JPG)}
 
-**From a Body to a Face: 26,000–14,000 Years Ago.** The Venus figurines are schematic; the first *recognisable* faces came later. The carved-ivory **head from Dolní Věstonice** (Czech Republic, about 26,000 years old) is among the earliest realistic human faces, and it appears to model a specific elderly woman whose buried skull shows the same one-sided distortion as the carving \cite{dolnivestonice}. A little later, the engraved slabs of **La Marche** (France, Magdalenian, about 14,000–15,000 years ago) carry over a hundred human figures, each with a distinct face, robes and even boots \cite{lamarchecave}, so individualised that they were long disputed.
+#### From a Body to a Face: 26,000–14,000 Years Ago
+
+The Venus figurines are schematic; the first *recognisable* faces came later. The carved-ivory **head from Dolní Věstonice** (Czech Republic, about 26,000 years old) is among the earliest realistic human faces, and it appears to model a specific elderly woman whose buried skull shows the same one-sided distortion as the carving \cite{dolnivestonice}. A little later, the engraved slabs of **La Marche** (France, Magdalenian, about 14,000–15,000 years ago) carry over a hundred human figures, each with a distinct face, robes and even boots \cite{lamarchecave}, so individualised that they were long disputed.
 
 \marginfig{dolni_vestonice_head.jpg}{The ivory head from Dolní Věstonice, Czech Republic (about 26,000 years old), one of the oldest known realistic human faces; the carving matches the skull of a buried elderly woman found at the site. [Photo: Zde, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Female_face,_ivory_carving,_Doln%C3%AD_V%C4%9Bstonice,_Gravettian,_28_000_-_22_000_BP.jpg)}
 </div>
@@ -575,6 +596,32 @@ Sedentarisation preceded agriculture, not the other way around. The site of **Je
 <div class="md" data-depth="80">
 
 A few hundred kilometres north, in the Konya plain, **Çatalhöyük** (\cite[Mellaart 1967]{mellaart1967catal}) was occupied from roughly 7500 to 5600 BCE and at its peak housed somewhere between 600 and 8,000 people, the largest known Neolithic proto-city. The second, much longer campaign under **Ian Hodder** (1993–2018) overturned Mellaart's "Mother Goddess" reading: only one of ~2,000 figurines matched the Mother Goddess style, fewer than five percent depicted women, and the houses were remarkably uniform in size with no clear hierarchical elite (\cite[Hodder 2006]{hodder2006leopard}).
+
+<figure style="max-width: 900px; margin: 1.5em auto; text-align: center;">
+    <img src="image.php?f=catalhoyuk.jpg&w=1000" alt="Excavated mudbrick houses at Çatalhöyük, tightly clustered with roof access and no streets between them" style="width: 100%; height: auto; border-radius: 6px;" />
+    <figcaption class="md">The \citealternativetitle{img_catalhoyuk} (CC BY-SA 4.0): the excavated mudbrick houses of Çatalhöyük, packed together with no streets between them and entered through openings in the roof. At its peak the settlement held several thousand people in one continuous fabric of rooms. Source: \citeauthor{img_catalhoyuk}, \citeyear{img_catalhoyuk}, \citealternativetitle{img_catalhoyuk}, Wikimedia Commons.</figcaption>
+</figure>
+
+</div>
+
+<div class="md" data-depth="80">
+
+### Buildings: From Monument to Server Hall
+
+The first towns were already a new kind of building: a wall, a granary, a shared ditch. Architecture became a technology in its own right when people began to build for permanence and for an audience. Göbekli Tepe in southeastern Turkey, inhabited from about 9500 to 8000 BCE, is the clearest early case: large circular enclosures with T-shaped limestone pillars, some carved with animals, raised before pottery, writing, or the wheel. The pillars are among the world's oldest known megaliths, and the site shows that monumental construction came early in the Neolithic (\cite[Göbekli Tepe, 2026]{gobekli_tepe_wiki}).
+
+Stonehenge, built in phases from about 3100 to 1600 BCE, turned the same impulse into an astronomical instrument: the sarsen circle is aligned to the solstices, and the lintels are held by mortise-and-tenon joints (\cite[Stonehenge, 2026]{stonehenge_wiki}). The Great Pyramid of Giza, built around 2600 BCE, held the title of the world's tallest human-made structure for more than 3,700 years (\cite[Great Pyramid of Giza, 2026]{great_pyramid_wiki}). Each step required a new kind of organization: quarrying, transport, scaffolding, and a workforce fed by a surplus.
+
+The Romans added the arch, the vault, and a concrete that could set under water. The Pantheon, completed around 126 CE, is still the largest unreinforced concrete dome in the world, a 43-metre span with an open oculus (\cite[Pantheon, 2026]{pantheon_wiki}). Roman builders did not need steel; they needed geometry and a material that could be poured into a curved form. The Gothic builders of the 12th century pushed the same logic upward with pointed arches, rib vaults, and flying buttresses, turning walls into windows and stone into light (\cite[Gothic architecture, 2026]{gothic_architecture_wiki}).
+
+The industrial revolution changed the material and the scale. Cast iron, then steel, let a frame carry the load while the wall became a skin. The Home Insurance Building in Chicago, completed in 1885, is often called the first skyscraper because its steel frame carried both the floors and the exterior (\cite[Home Insurance Building, 2026]{home_insurance_building_wiki}). The elevator, the electric light, and the telephone made the tall building usable; the tall building made the city vertical.
+
+The latest step is the one this book is about. A data center is a building whose main product is computation. Its history begins with the room-sized machines of the 1940s, such as ENIAC, and runs through the air-conditioned mainframe halls of the mid-20th century to the hyperscale campuses of the early 21st, which can hold thousands of servers and cover millions of square feet (\cite[Data center, 2026]{data_center_wiki}). In an AI training cluster, the architecture is designed around power delivery, cooling, and the weight of racks, not around the people who work there. The building has become a machine for keeping other machines alive. The same chain that began with a windbreak and a hearth now ends in a hall of fans and cables.
+
+<figure style="max-width: 900px; margin: 1.5em auto; text-align: center;">
+    <img src="image.php?f=server_room.jpg&w=1000" alt="Rows of server racks in a data center, with cabling and cooling infrastructure" style="width: 100%; height: auto; border-radius: 6px;" />
+    <figcaption class="md">The \citealternativetitle{img_server_room} (CC BY-SA 3.0): a server room, the latest stage of the building. Racks of machines replace rooms of people, and the architecture is organized around power, cooling, and cable runs. Source: \citeauthor{img_server_room}, \citeyear{img_server_room}, \citealternativetitle{img_server_room}, Wikimedia Commons.</figcaption>
+</figure>
 
 </div>
 
