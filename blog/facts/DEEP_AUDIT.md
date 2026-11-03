@@ -2,13 +2,13 @@
 
 - lessons: 99
 - claims: 7297
-- statements: 16985
-- relations: 51507
+- statements: 17018
+- relations: 51705
 - uncovered years: 46
 - uncovered quantities: 6
 - uncited specific claims: 307
 - citation keys not found in lesson: 0
-- relation grounding issues: 93
+- relation grounding issues: 86
 - numeric range issues: 0
 - normalised year conflicts: 0
 
@@ -31,7 +31,7 @@
 | backproplab | 10 | 24 | 99 | 0 | 0 |
 | beyond_llms | 67 | 421 | 1218 | 0 | 0 |
 | coherent_difference | 24 | 480 | 1221 | 0 | 0 |
-| coherent_world_models | 58 | 437 | 1291 | 0 | 0 |
+| coherent_world_models | 58 | 452 | 1330 | 0 | 0 |
 | computer_vision | 31 | 76 | 273 | 0 | 0 |
 | contextwindows | 57 | 144 | 612 | 0 | 0 |
 | december | 19 | 17 | 90 | 0 | 0 |
@@ -39,19 +39,19 @@
 | deeplearninglab | 23 | 100 | 337 | 0 | 1 |
 | derivativelab | 22 | 58 | 214 | 0 | 0 |
 | differentiation | 21 | 82 | 300 | 0 | 0 |
-| diffusion | 33 | 195 | 522 | 0 | 1 |
+| diffusion | 33 | 171 | 417 | 0 | 1 |
 | embeddinglab | 25 | 539 | 1398 | 0 | 0 |
 | evaluation | 36 | 132 | 435 | 2 | 0 |
 | fact_lookup | 37 | 213 | 560 | 0 | 0 |
 | finetuninglab | 50 | 102 | 360 | 0 | 0 |
 | foam_of_meaning | 16 | 426 | 1163 | 0 | 0 |
 | frontier | 31 | 67 | 246 | 0 | 0 |
-| geometry_i | 120 | 329 | 916 | 0 | 0 |
+| geometry_i | 120 | 357 | 1025 | 0 | 0 |
 | geometry_ii | 44 | 102 | 327 | 0 | 0 |
 | geometry_iii | 51 | 129 | 345 | 0 | 0 |
 | global_ai_ecosystem | 30 | 41 | 184 | 0 | 0 |
 | hallucinations | 25 | 143 | 453 | 0 | 0 |
-| history | 1416 | 1175 | 3378 | 0 | 0 |
+| history | 1416 | 1188 | 3514 | 0 | 0 |
 | human_mind | 45 | 498 | 1085 | 5 | 0 |
 | hyperparameters | 25 | 55 | 175 | 0 | 0 |
 | inceptionism | 14 | 44 | 137 | 0 | 0 |
@@ -96,7 +96,7 @@
 | samplinglab | 30 | 61 | 256 | 0 | 0 |
 | search_lib | 21 | 0 | 12 | 0 | 0 |
 | security_inference | 10 | 37 | 123 | 0 | 0 |
-| software | 64 | 358 | 785 | 0 | 0 |
+| software | 64 | 359 | 804 | 0 | 0 |
 | speech_audio | 23 | 33 | 137 | 1 | 0 |
 | statistics_i | 51 | 207 | 701 | 1 | 0 |
 | statistics_ii | 27 | 109 | 432 | 11 | 0 |
@@ -230,19 +230,19 @@
 - history.php: rel-history-universals-pitts-author: endpoint not near quote: walter-pitts
 - history.php: rel-history-wiener-bridge-von-neumann: endpoint not near quote: norbert-wiener
 - history.php: rel-history-shannon-invent-theseus: quote not found
-- history.php: rel-history-mcp-before-hebb: quote not found
-- history.php: rel-history-hebb-before-perceptron: quote not found
-- history.php: rel-history-perceptron-before-hopfield: quote not found
 - history.php: rel-history-logicists-around-mccarthy: endpoint not near quote: john-mccarthy
 - history.php: rel-history-proceduralists-around-minsky: endpoint not near quote: marvin-minsky
-- history.php: rel-history-lernmatrix-related-mcculloch-pitts: quote not found
 - history.php: rel-history-hochreiter-vanishing: endpoint not near quote: sepp-hochreiter
 - history.php: rel-history-schmidhuber-lstm: endpoint not near quote: jurgen-schmidhuber
 - history.php: rel-history-weizenbaum-eliza: endpoint not near quote: joseph-weizenbaum
 - history.php: rel-history-schmidhuber-nplm: endpoint not near quote: jurgen-schmidhuber
-- history.php: rel-history-dartmouth-first-summer: quote not found
-- history.php: rel-history-rosenblatt-first-summer: quote not found
 - history.php: rel-history-mccarthy-lisp: endpoint not near quote: john-mccarthy
+- language.php: rel-language-chomsky-hierarchy-syntactic: no quote
+- people_of_ai.php: rel-people-amodei-instructgpt: no quote
+- people_of_ai.php: rel-people-vapnik-svm: endpoint not near quote: vladimir-vapnik
+- philosophy.php: rel-phil-hard-problem-mary: endpoint not near quote: phil-hard-problem
+- philosophy.php: rel-phil-hard-problem-mary: endpoint not near quote: phil-mary-room
+- philosophy.php: rel-phil-sheaf-gluing: endpoint not near quote: phil-sheaf-gluing
 
 ## Range issues
 

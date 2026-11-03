@@ -682,7 +682,7 @@
         "duration": "years",
         "dataset": "ERA5"
       },
-      "quote": "a 3D neural network trained on 40 years of ERA5 reanalysis data",
+      "quote": "a neural network trained on 40 years of ERA5 reanalysis data",
       "citation_keys": [
         "bi2023pangu"
       ],
@@ -10952,7 +10952,7 @@
     },
     {
       "id": "ai_and_society-stmt-108",
-      "quote": "In **July 2023**, Huawei's **Pangu-Weather** — a 3D neural network trained on 40 years of ERA5 reanalysis data — published results in *Nature* showing it **outperformed the ECMWF IFS** (the best operational numerical weather prediction model in the world) on deterministic medium-range forecasts, while running **>10,000× faster** (\\cite[Bi et al., 2023]{bi2023pangu}).",
+      "quote": "In **July 2023**, Huawei's **Pangu-Weather** — a neural network trained on 40 years of ERA5 reanalysis data — published results in *Nature* showing it **outperformed the ECMWF IFS** (the best operational numerical weather prediction model in the world) on deterministic medium-range forecasts, while running **>10,000× faster** (\\cite[Bi et al., 2023]{bi2023pangu}).",
       "block_id": "ai_and_society-block-63",
       "section": "Pangu-Weather: AI Beats the Weather Forecast",
       "kind": "statement"
@@ -12950,7 +12950,7 @@
     },
     {
       "id": "ai_and_society-block-63",
-      "quote": "In **July 2023**, Huawei's **Pangu-Weather** — a 3D neural network trained on 40 years of ERA5 reanalysis data — published results in *Nature* showing it **outperformed the ECMWF IFS** (the best operational numerical weather prediction model in the world) on deterministic medium-range forecasts, while running **>10,000× faster** (\\cite[Bi et al., 2023]{bi2023pangu}). Google's **GraphCast** (*Science*, 2023) achieved similar results. The implication: global weather forecasting, a 10-billion-dollar industry with direct impacts on agriculture, aviation, and disaster response, can be done in minutes rather than hours, at a fraction of the compute cost.",
+      "quote": "In **July 2023**, Huawei's **Pangu-Weather** — a neural network trained on 40 years of ERA5 reanalysis data — published results in *Nature* showing it **outperformed the ECMWF IFS** (the best operational numerical weather prediction model in the world) on deterministic medium-range forecasts, while running **>10,000× faster** (\\cite[Bi et al., 2023]{bi2023pangu}). Google's **GraphCast** (*Science*, 2023) achieved similar results. The implication: global weather forecasting, a 10-billion-dollar industry with direct impacts on agriculture, aviation, and disaster response, can be done in minutes rather than hours, at a fraction of the compute cost.",
       "kind": "paragraph",
       "section": "Pangu-Weather: AI Beats the Weather Forecast"
     },
