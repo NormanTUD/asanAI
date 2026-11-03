@@ -1078,10 +1078,7 @@
 		var next = $("[data-timeline-next]", root);
 		if (!track || !panel) return;
 		var nodes = $$(".tl-node", track);
-		function select(i) {
-			nodes.forEach(function (n, j) { n.classList.toggle("is-active", i === j); });
-			var n = nodes[i];
-			if (!n) return;
+		function panelHtml(n) {
 			var href = n.getAttribute("data-href");
 			var hrefLabel = n.getAttribute("data-href-label") || "Explore this section";
 			var link = href ? '<p class="tl-link"><a class="btn btn--green" href="' + href + '">' + escapeHtml(hrefLabel) + ' →</a></p>' : "";
@@ -1091,10 +1088,55 @@
 			var imgTag = img ? '<img src="' + escapeHtml(img) + '" alt="' + escapeHtml(n.getAttribute("data-image-alt") || "") + '" loading="lazy">' : "";
 			if (imgTag && imgLink) imgTag = '<a href="' + escapeHtml(imgLink) + '" rel="noopener">' + imgTag + '</a>';
 			var figure = img ? '<figure>' + imgTag + (caption ? '<figcaption>' + escapeHtml(caption) + '</figcaption>' : '') + '</figure>' : "";
-			panel.classList.toggle("no-figure", !img);
-			panel.innerHTML = '<div class="tl-copy"><div class="tl-era">' + escapeHtml(n.getAttribute("data-meta") || "") + '</div>' +
-				'<h3>' + escapeHtml(n.getAttribute("data-title") || "") + '</h3>' +
-				'<p>' + escapeHtml(n.getAttribute("data-body") || "") + '</p>' + link + '</div>' + figure;
+			return {
+				hasImage: !!img,
+				html: '<div class="tl-copy"><div class="tl-era">' + escapeHtml(n.getAttribute("data-meta") || "") + '</div>' +
+					'<h3>' + escapeHtml(n.getAttribute("data-title") || "") + '</h3>' +
+					'<p>' + escapeHtml(n.getAttribute("data-body") || "") + '</p>' + link + '</div>' + figure
+			};
+		}
+		function select(i) {
+			nodes.forEach(function (n, j) { n.classList.toggle("is-active", i === j); });
+			var n = nodes[i];
+			if (!n) return;
+			var p = panelHtml(n);
+			panel.classList.toggle("no-figure", !p.hasImage);
+			panel.innerHTML = p.html;
+		}
+		function waitForImage(img) {
+			return new Promise(function (resolve) {
+				var done = false;
+				function finish() { if (!done) { done = true; resolve(); } }
+				if (img.complete) { finish(); return; }
+				img.addEventListener("load", finish, { once: true });
+				img.addEventListener("error", finish, { once: true });
+				setTimeout(finish, 2500);
+			});
+		}
+		function measurePanelHeight() {
+			var width = panel.getBoundingClientRect().width;
+			if (!width) return;
+			var probe = document.createElement("div");
+			probe.className = "tl-panel";
+			probe.style.cssText = "position:absolute;left:-99999px;top:0;visibility:hidden;pointer-events:none;height:auto;min-height:0;overflow:visible;width:" + width + "px;";
+			document.body.appendChild(probe);
+			var heights = nodes.map(function (n) {
+				var p = panelHtml(n);
+				probe.classList.toggle("no-figure", !p.hasImage);
+				probe.innerHTML = p.html;
+				var images = Array.prototype.slice.call(probe.querySelectorAll("img"));
+				images.forEach(function (img) { img.loading = "eager"; });
+				return Promise.all(images.map(waitForImage)).then(function () { return probe.offsetHeight; });
+			});
+			Promise.all(heights).then(function (all) {
+				var max = all.reduce(function (a, b) { return Math.max(a, b); }, 0);
+				document.body.removeChild(probe);
+				if (max) {
+					panel.style.height = "auto";
+					panel.style.minHeight = Math.ceil(max) + "px";
+					panel.style.overflowY = "visible";
+				}
+			});
 		}
 		nodes.forEach(function (n, i) {
 			n.addEventListener("click", function () { select(i); n.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" }); });
@@ -1102,6 +1144,12 @@
 		if (prev) prev.addEventListener("click", function () { track.scrollBy({ left: -160, behavior: "smooth" }); });
 		if (next) next.addEventListener("click", function () { track.scrollBy({ left: 160, behavior: "smooth" }); });
 		select(0);
+		measurePanelHeight();
+		var measureTimer = null;
+		window.addEventListener("resize", function () {
+			clearTimeout(measureTimer);
+			measureTimer = setTimeout(measurePanelHeight, 150);
+		});
 	}
 
 	/* ── contamination ──────────────────────────────────────── */

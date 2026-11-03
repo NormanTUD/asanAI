@@ -165,7 +165,7 @@ Now the diffusion U-Net has two inputs at every denoising step:
 * the current noisy latent (as a grid of patches, e.g. $64 \times 64$ for a $512 \times 512$ image)
 * the text embedding (a sequence of vectors, one per token)
 
-The U-Net applies **cross-attention** in its attention blocks. The intuition: **at every step, the model paints the image by asking each word in your prompt, “which part of the picture is yours?”** The word *“astronaut”* claims the upper-center region. The word *“horse”* claims the lower region. The word *“riding”* claims the bit in between. Function words like *“a”*, *“of”* barely claim anything.
+The U-Net applies **cross-attention** in its attention blocks. The intuition: **at every step, the model paints the image by asking each word in your prompt, “which part of the picture is yours?”** The word *“astronaut”* claims the upper-center region. The word *“horse”* claims the lower region. The word *“riding”* claims the bit in between. The phrase *“on the moon”* claims the thin strip along the very bottom. Function words like *“a”*, *“of”*, *“the”* barely claim anything.
 
 In the demo below, click any *content* word in the prompt and watch a colored region light up over the part of the astronaut image that word would “claim” during generation. The regions are simplified; a real diffusion model has hundreds of tiny patches, but the principle is the same: each word in your prompt controls its own piece of the picture.
 </div>
@@ -225,38 +225,53 @@ summary(
 <div class="md">
 The same run gives this breakdown (shapes for the main path; inner ModuleLists by parameter count):
 
-| Module | Type | Input shape | Output shape | Params |
-|---|---|---:|---:|---:|
-| `conv_in` | Conv2d | `[1, 4, 64, 64]` | `[1, 32, 64, 64]` | 1,184 |
-| `time_proj` | Timesteps | `[1]` | `[1, 32]` | 0 |
-| `time_embedding` | TimestepEmbedding | `[1, 32]` | `[1, 128]` | 20,736 |
-| &nbsp;&nbsp;├ `linear_1` | Linear | `[1, 32]` | `[1, 128]` | 4,224 |
-| &nbsp;&nbsp;├ `act` | SiLU | `[1, 128]` | `[1, 128]` | 0 |
-| &nbsp;&nbsp;└ `linear_2` | Linear | `[1, 128]` | `[1, 128]` | 16,512 |
-| `down_blocks` | ModuleList | `[1, 32, 64, 64]` | `[1, 64, 32, 32]` | 377,824 |
-| &nbsp;&nbsp;├ `0` | DownBlock2D | `[1, 32, 64, 64]` | `[1, 32, 32, 32]` | 54,752 |
-| &nbsp;&nbsp;│&nbsp;&nbsp;├ `resnets` | ModuleList | | | 45,504 |
-| &nbsp;&nbsp;│&nbsp;&nbsp;└ `downsamplers` | ModuleList | | | 9,248 |
-| &nbsp;&nbsp;└ `1` | CrossAttnDownBlock2D | `[1, 32, 32, 32]` | `[1, 64, 32, 32]` | 323,072 |
-| &nbsp;&nbsp;&nbsp;&nbsp;├ `attentions` | ModuleList | | | 174,720 |
-| &nbsp;&nbsp;&nbsp;&nbsp;└ `resnets` | ModuleList | | | 148,352 |
-| `mid_block` | UNetMidBlock2DCrossAttn | `[1, 64, 32, 32]` | `[1, 64, 32, 32]` | 252,096 |
-| &nbsp;&nbsp;├ `attentions` | ModuleList | | | 87,360 |
-| &nbsp;&nbsp;│&nbsp;&nbsp;└ `0` | Transformer2DModel | | | 87,360 |
-| &nbsp;&nbsp;└ `resnets` | ModuleList | | | 164,736 |
-| &nbsp;&nbsp;&nbsp;&nbsp;├ `0` | ResnetBlock2D | | | 82,368 |
-| &nbsp;&nbsp;&nbsp;&nbsp;└ `1` | ResnetBlock2D | | | 82,368 |
-| `up_blocks` | ModuleList | `[1, 64, 32, 32]` | `[1, 32, 64, 64]` | 773,952 |
-| &nbsp;&nbsp;├ `0` | CrossAttnUpBlock2D | `[1, 64, 32, 32]` | `[1, 64, 64, 64]` | 661,312 |
-| &nbsp;&nbsp;│&nbsp;&nbsp;├ `attentions` | ModuleList | | | 262,080 |
-| &nbsp;&nbsp;│&nbsp;&nbsp;├ `resnets` | ModuleList | | | 362,304 |
-| &nbsp;&nbsp;│&nbsp;&nbsp;└ `upsamplers` | ModuleList | | | 36,928 |
-| &nbsp;&nbsp;└ `1` | UpBlock2D | `[1, 64, 64, 64]` | `[1, 32, 64, 64]` | 112,640 |
-| &nbsp;&nbsp;&nbsp;&nbsp;└ `resnets` | ModuleList | | | 112,640 |
-| `conv_norm_out` | GroupNorm | `[1, 32, 64, 64]` | `[1, 32, 64, 64]` | 64 |
-| `conv_act` | SiLU | `[1, 32, 64, 64]` | `[1, 32, 64, 64]` | 0 |
-| `conv_out` | Conv2d | `[1, 32, 64, 64]` | `[1, 4, 64, 64]` | 1,156 |
-| **Total** | | | | **1,427,012** |
+<style>
+.unet-summary .unet-sub-1 { padding-left: 2.1em; }
+.unet-summary .unet-sub-2 { padding-left: 3.7em; }
+.unet-summary th[scope="rowgroup"] { vertical-align: middle; }
+.unet-summary tfoot th,
+.unet-summary tfoot td { padding: .55em .9em; border-top: 1px solid var(--mn-border); }
+</style>
+
+<table class="unet-summary">
+<thead>
+<tr><th>Module</th><th>Submodule</th><th>Type</th><th>Input shape</th><th>Output shape</th><th>Params</th></tr>
+</thead>
+<tbody>
+<tr><th scope="row"><code>conv_in</code></th><td></td><td>Conv2d</td><td><code>[1, 4, 64, 64]</code></td><td><code>[1, 32, 64, 64]</code></td><td>1,184</td></tr>
+<tr><th scope="row"><code>time_proj</code></th><td></td><td>Timesteps</td><td><code>[1]</code></td><td><code>[1, 32]</code></td><td>0</td></tr>
+<tr><th scope="rowgroup" rowspan="4"><code>time_embedding</code></th><td></td><td>TimestepEmbedding</td><td><code>[1, 32]</code></td><td><code>[1, 128]</code></td><td>20,736</td></tr>
+<tr><td class="unet-sub-1"><code>linear_1</code></td><td>Linear</td><td><code>[1, 32]</code></td><td><code>[1, 128]</code></td><td>4,224</td></tr>
+<tr><td class="unet-sub-1"><code>act</code></td><td>SiLU</td><td><code>[1, 128]</code></td><td><code>[1, 128]</code></td><td>0</td></tr>
+<tr><td class="unet-sub-1"><code>linear_2</code></td><td>Linear</td><td><code>[1, 128]</code></td><td><code>[1, 128]</code></td><td>16,512</td></tr>
+<tr><th scope="rowgroup" rowspan="7"><code>down_blocks</code></th><td></td><td>ModuleList</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 64, 32, 32]</code></td><td>377,824</td></tr>
+<tr><td class="unet-sub-1"><code>0</code></td><td>DownBlock2D</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 32, 32, 32]</code></td><td>54,752</td></tr>
+<tr><td class="unet-sub-2"><code>resnets</code></td><td>ModuleList</td><td></td><td></td><td>45,504</td></tr>
+<tr><td class="unet-sub-2"><code>downsamplers</code></td><td>ModuleList</td><td></td><td></td><td>9,248</td></tr>
+<tr><td class="unet-sub-1"><code>1</code></td><td>CrossAttnDownBlock2D</td><td><code>[1, 32, 32, 32]</code></td><td><code>[1, 64, 32, 32]</code></td><td>323,072</td></tr>
+<tr><td class="unet-sub-2"><code>attentions</code></td><td>ModuleList</td><td></td><td></td><td>174,720</td></tr>
+<tr><td class="unet-sub-2"><code>resnets</code></td><td>ModuleList</td><td></td><td></td><td>148,352</td></tr>
+<tr><th scope="rowgroup" rowspan="6"><code>mid_block</code></th><td></td><td>UNetMidBlock2DCrossAttn</td><td><code>[1, 64, 32, 32]</code></td><td><code>[1, 64, 32, 32]</code></td><td>252,096</td></tr>
+<tr><td class="unet-sub-1"><code>attentions</code></td><td>ModuleList</td><td></td><td></td><td>87,360</td></tr>
+<tr><td class="unet-sub-2"><code>0</code></td><td>Transformer2DModel</td><td></td><td></td><td>87,360</td></tr>
+<tr><td class="unet-sub-1"><code>resnets</code></td><td>ModuleList</td><td></td><td></td><td>164,736</td></tr>
+<tr><td class="unet-sub-2"><code>0</code></td><td>ResnetBlock2D</td><td></td><td></td><td>82,368</td></tr>
+<tr><td class="unet-sub-2"><code>1</code></td><td>ResnetBlock2D</td><td></td><td></td><td>82,368</td></tr>
+<tr><th scope="rowgroup" rowspan="7"><code>up_blocks</code></th><td></td><td>ModuleList</td><td><code>[1, 64, 32, 32]</code></td><td><code>[1, 32, 64, 64]</code></td><td>773,952</td></tr>
+<tr><td class="unet-sub-1"><code>0</code></td><td>CrossAttnUpBlock2D</td><td><code>[1, 64, 32, 32]</code></td><td><code>[1, 64, 64, 64]</code></td><td>661,312</td></tr>
+<tr><td class="unet-sub-2"><code>attentions</code></td><td>ModuleList</td><td></td><td></td><td>262,080</td></tr>
+<tr><td class="unet-sub-2"><code>resnets</code></td><td>ModuleList</td><td></td><td></td><td>362,304</td></tr>
+<tr><td class="unet-sub-2"><code>upsamplers</code></td><td>ModuleList</td><td></td><td></td><td>36,928</td></tr>
+<tr><td class="unet-sub-1"><code>1</code></td><td>UpBlock2D</td><td><code>[1, 64, 64, 64]</code></td><td><code>[1, 32, 64, 64]</code></td><td>112,640</td></tr>
+<tr><td class="unet-sub-2"><code>resnets</code></td><td>ModuleList</td><td></td><td></td><td>112,640</td></tr>
+<tr><th scope="row"><code>conv_norm_out</code></th><td></td><td>GroupNorm</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 32, 64, 64]</code></td><td>64</td></tr>
+<tr><th scope="row"><code>conv_act</code></th><td></td><td>SiLU</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 32, 64, 64]</code></td><td>0</td></tr>
+<tr><th scope="row"><code>conv_out</code></th><td></td><td>Conv2d</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 4, 64, 64]</code></td><td>1,156</td></tr>
+</tbody>
+<tfoot>
+<tr><th colspan="5">Total</th><td><strong>1,427,012</strong></td></tr>
+</tfoot>
+</table>
 
 The test model has two down and two up blocks and only 1.4 M parameters. Stable Diffusion 1.5 uses four of each, but the module names and wiring are the same. Downsampling reduces the spatial grid; the cross-attention blocks read the text embedding; the skip connections carry detail across the bottleneck; and upsampling restores the original resolution.
 
@@ -551,7 +566,7 @@ function makeCrossAttentionViz(containerId) {
 	const container = document.getElementById(containerId);
 	if (!container) return;
 
-	const prompt = 'a photo of an astronaut riding a horse';
+	const prompt = 'a photo of an astronaut riding a horse on the moon';
 	const tokens = prompt.split(' ');
 
 	// Regions on the astronaut image (in % of width/height) where each token
@@ -561,6 +576,7 @@ function makeCrossAttentionViz(containerId) {
 		'astronaut': { left: 28, top: 6,  width: 44, height: 38, color: 'rgba(245, 158, 11, 0.45)', label: 'the figure of the astronaut (upper-center, sitting on the horse)' },
 		'riding':    { left: 22, top: 32, width: 56, height: 22, color: 'rgba(34, 197, 94, 0.45)',  label: 'the riding action (where astronaut meets horse)' },
 		'horse':     { left: 4,  top: 42, width: 92, height: 50, color: 'rgba(239, 68, 68, 0.40)',  label: 'the horse body and legs (most of the lower image)' },
+		'moon':      { left: 0,  top: 90, width: 100, height: 10, color: 'rgba(168, 162, 158, 0.55)', label: 'the lunar surface (a thin band along the very bottom, about the lower 10% of the image)' },
 		'photo':     { left: 0,  top: 0,  width: 100, height: 100, color: 'rgba(148, 163, 184, 0.18)', label: 'the whole image (the word "photo" is generic, low attention everywhere)' }
 	};
 

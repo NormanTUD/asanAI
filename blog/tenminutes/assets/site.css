@@ -4744,7 +4744,7 @@ html[data-theme="dark"] .curve-points {
 #ladder-detail { height: 250px; overflow-y: auto; }
 .pipe-tokens { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; padding-bottom: 3px; }
 .pipe-prediction { height: 3.2em; overflow-y: auto; }
-.tl-panel { height: 240px; overflow-y: auto; }
+.tl-panel { height: auto; min-height: 240px; overflow-y: visible; }
 body[data-lesson="history"] .tl-panel { height: auto; min-height: 480px; }
 .pref-card { min-height: 130px; }
 .myth[data-myth] { min-height: 210px; }
@@ -4752,7 +4752,7 @@ body[data-lesson="history"] .tl-panel { height: auto; min-height: 480px; }
 @media (max-width: 720px) {
 	#pipe-detail { height: 260px; }
 	#ladder-detail { height: 340px; }
-	.tl-panel { height: 300px; }
+	.tl-panel { min-height: 300px; }
 	body[data-lesson="history"] .tl-panel { height: auto; min-height: 520px; }
 	.pref-card { min-height: 150px; }
 }
@@ -4778,8 +4778,8 @@ body[data-lesson="history"] .tl-panel { height: auto; min-height: 480px; }
 }
 .arc-links a:hover { border-color: var(--tm-green); background: var(--tm-wash); }
 
-body[data-lesson="whole"] .tl-panel { height: 290px; }
-@media (max-width: 720px) { body[data-lesson="whole"] .tl-panel { height: 340px; } }
+body[data-lesson="whole"] .tl-panel { height: auto; min-height: 290px; overflow-y: visible; }
+@media (max-width: 720px) { body[data-lesson="whole"] .tl-panel { height: auto; min-height: 340px; } }
 
 .rag-steps { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
 .rag-steps span {

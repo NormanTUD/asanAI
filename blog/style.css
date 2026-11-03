@@ -8111,7 +8111,6 @@ span.cl-eq {
      • back-to-top (only after 60% scroll)
      • shortcut help (only on `?`)
      • skip-to-content (only on Tab focus)
-     • reading-time stamp (muted, near title)
    Plus default-element repairs: <hr>, <table>, <dl>, kbd+kbd.
    ════════════════════════════════════════════════════════ */
 
@@ -8273,20 +8272,7 @@ body:has(#rag-chat-toggle) #cl-top {
 	color: var(--mn-text-muted);
 }
 
-/* ── 5. Reading-time meta (muted, beside the H1) ──
-   The page title lives at #contents > h1 (functions.php), not inside .md. */
-#contents > h1[data-reading-time]::after,
-.md > h1[data-reading-time]::after {
-	content: '·  ' attr(data-reading-time) ' min read';
-	margin-left: .55em;
-	font-size: .42em;
-	font-weight: 500;
-	color: var(--mn-text-muted);
-	letter-spacing: .02em;
-	vertical-align: .5em;
-}
-
-/* ── 6. <hr> as a soft gradient rule ── */
+/* ── 5. <hr> as a soft gradient rule ── */
 .md hr {
 	border: none;
 	height: 1px;
@@ -8300,7 +8286,7 @@ body:has(#rag-chat-toggle) #cl-top {
 	max-width: 60%;
 }
 
-/* ── 7. <table> — quiet zebra striping + softer borders ── */
+/* ── 6. <table> — quiet zebra striping + softer borders ── */
 .md table {
 	width: 100%;
 	border-collapse: separate;
@@ -8330,7 +8316,7 @@ body:has(#rag-chat-toggle) #cl-top {
 .md table tbody tr:last-child td { border-bottom: none; }
 .md table tbody tr:hover td { background: rgba(99,102,241,.05); }
 
-/* ── 8. <dl> definition lists ── */
+/* ── 7. <dl> definition lists ── */
 .md dl {
 	margin: 1.6em 0;
 	display: grid;
@@ -8344,7 +8330,7 @@ body:has(#rag-chat-toggle) #cl-top {
 }
 .md dd { margin: 0; }
 
-/* ── 9. kbd + kbd chains (auto `+` between adjacent keys) ── */
+/* ── 8. kbd + kbd chains (auto `+` between adjacent keys) ── */
 .md kbd + kbd::before {
 	content: '+';
 	display: inline-block;
@@ -8355,7 +8341,7 @@ body:has(#rag-chat-toggle) #cl-top {
 	vertical-align: .05em;
 }
 
-/* ── 10. Footnote refinements ── */
+/* ── 9. Footnote refinements ── */
 /* Inline footnote refs: small superscript, accent colour on hover
    only — when idle they sit unobtrusively as part of the word.   */
 .md sup.footnote-ref {

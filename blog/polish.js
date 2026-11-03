@@ -8,7 +8,6 @@
      the TOC itself has scrolled away
    • Code blocks show their language as a quiet corner label
    • Keyboard shortcuts (1-8 jump by 10%, 9 end, / search, ? help, j/k nav)
-   • Quiet word-count + reading-time stamp at the top of each module
    • A back-to-top chevron that only appears after 60% scroll
    • Anything else that needs a pinch of JS lives here too.
 
@@ -378,28 +377,6 @@
 				if (this._last && typeof this._last.focus === 'function') this._last.focus();
 			}
 		};
-	}
-
-	/* ── 6. Word count + reading time, set on the H1 ──
-	   Reading speed ~ 220 wpm for technical prose. Result is a
-	   small `data-reading-meta` attribute the CSS can render as
-	   a muted caption if it wants to (or just leave it). */
-	function installReadingMeta() {
-		// The page title is rendered directly inside #contents by
-		// functions.php — NOT inside a .md block — so look there first.
-		const h1 = document.querySelector('#contents > h1') || document.querySelector('.md h1');
-		if (!h1) return;
-		if (h1.dataset.readingTime) return; // already set
-		let text = '';
-		document.querySelectorAll('.md').forEach(function (md) {
-			text += (md.textContent || '') + ' ';
-		});
-		text = text.trim();
-		const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
-		const minutes = Math.max(1, Math.round(words / 220));
-		h1.setAttribute('data-words', String(words));
-		h1.setAttribute('data-reading-time', String(minutes));
-		document.documentElement.setAttribute('data-reading-time', String(minutes));
 	}
 
 	/* ── 6b. Copy-code button on every <pre> ──
@@ -1384,7 +1361,6 @@
 		installMiniToc();
 		installTocScrollSpy();
 		installShortcuts();
-		installReadingMeta();
 		installBackToTop();
 		installImageLightbox();
 		// Keep any visible hover preview glued to its anchor while scrolling.
@@ -1413,22 +1389,12 @@
 					if (n.tagName === 'H1' || (n.querySelector && n.querySelector('.md h1'))) h1Appeared = true;
 				});
 			}
-			if (h1Appeared) installReadingMeta();
 			if (touched || h1Appeared) {
 				clearTimeout(window.__clPolishTO);
 				window.__clPolishTO = setTimeout(function () { run(document); }, 80);
 			}
 		});
 		mo.observe(document.body, { childList: true, subtree: true });
-		// also poll briefly for H1 if renderMarkdown is slow
-		let tries = 0;
-		const iv = setInterval(function () {
-			tries++;
-			installReadingMeta();
-			const h1 = document.querySelector('.md h1');
-			if (h1 && h1.dataset.readingTime) clearInterval(iv);
-			if (tries > 50) clearInterval(iv);
-		}, 100);
 	}
 
 	if (document.readyState === 'loading') {
