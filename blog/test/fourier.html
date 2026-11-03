@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fourier: Jede Welle in Kreise zerlegt</title>
+<meta name="description" content="Fourier-Reihen und Fourier-Transformation, von der Idee bis zur FFT. Mit Temml, interaktiven Plots, Canvas-Experimenten und jedem Rechenschritt.">
+<link rel="stylesheet" href="../Temml-Local.css">
+<link rel="stylesheet" href="fourier_taylor.css">
+</head>
+<body>
+
+<div id="read-progress"></div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="fourier.html">
+      <span class="brand-mark">F</span>
+      <span>Fourier visuell<small>Signale, Kreise, Spektren</small></span>
+    </a>
+    <nav class="topnav" aria-label="Seitennavigation">
+      <a class="active" href="fourier.html">Fourier</a>
+      <a href="taylor.html">Taylor</a>
+      <a href="#uebungen">Übungen</a>
+      <a href="#quellen">Quellen</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="badge"><span class="dot"></span> Vom Summen der Saiten zur FFT</div>
+      <h1>Jede Welle ist<br><em>eine Summe von Kreisen.</em></h1>
+      <p class="lede">
+        Fourier hat eine der folgenreichsten Ideen der Mathematik gefunden:
+        Man kann ein kompliziertes Signal in einfache Schwingungen zerlegen,
+        es dort untersuchen und wieder zusammensetzen. Diese Seite baut das
+        Bild Schritt für Schritt auf. Du siehst jeden Rechenschritt, kannst
+        jede Formel selbst nachrechnen und am Ende ein eigenes Signal
+        analysieren.
+      </p>
+      <div class="meta-chips">
+        <span>17 Abschnitte</span>
+        <span>8 interaktive Labore</span>
+        <span>Rechnen von Hand</span>
+        <span>Rechteck, Sägezahn, DFT, FFT</span>
+      </div>
+    </div>
+    <div class="hero-art">
+      <canvas id="heroCanvas" aria-label="Animierte Überlagerung mehrerer Sinuswellen"></canvas>
+      <div class="hero-caption">Zeitbereich &nbsp;·&nbsp; Frequenzbereich</div>
+    </div>
+  </div>
+</section>
+
+<div class="shell">
+  <aside class="toc" aria-label="Inhaltsverzeichnis">
+    <div class="toc-title">Inhalt</div>
+    <a href="#idee"><span class="n">01</span> Die Idee in einem Bild</a>
+    <a href="#herkunft"><span class="n">02</span> Herkunft</a>
+    <a href="#bausteine"><span class="n">03</span> Sinus, Cosinus, Drehung</a>
+    <a href="#orthogonalitaet"><span class="n">04</span> Orthogonalität</a>
+    <a href="#reihe"><span class="n">05</span> Die Fourier-Reihe</a>
+    <a href="#rechteck"><span class="n">06</span> Rechteckwelle gerechnet</a>
+    <a href="#saegezahn"><span class="n">07</span> Sägezahn und Dreieck</a>
+    <a href="#epizyklen"><span class="n">08</span> Epizyklen</a>
+    <a href="#integral"><span class="n">09</span> Von der Reihe zum Integral</a>
+    <a href="#paare"><span class="n">10</span> Paare und Rechenregeln</a>
+    <a href="#dft"><span class="n">11</span> DFT und FFT</a>
+    <a href="#spektrogramm"><span class="n">12</span> Zeit und Frequenz</a>
+    <a href="#wofuer"><span class="n">13</span> Wofür das Ganze</a>
+    <a href="#fallen"><span class="n">14</span> Fallen und Fehler</a>
+    <a href="#uebungen"><span class="n">15</span> Selbst rechnen</a>
+    <a href="#quellen"><span class="n">16</span> Quellen</a>
+  </aside>
+
+  <main class="article">
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="idee">
+      <div class="sec-head">
+        <div class="sec-num">01</div>
+        <div>
+          <div class="sec-kicker">Der eine Gedanke</div>
+          <h2>Die Idee in einem Bild</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Stelle dir einen Akkord vor. Du hörst einen einzigen Klang, aber dein
+          Ohr kann darin mehrere Töne unterscheiden. Genau das macht die
+          Fourier-Analyse mit beliebigen Signalen: Sie hört nicht den einen
+          komplizierten Verlauf, sondern die einfachen Schwingungen, aus denen
+          er besteht.
+        </p>
+        <p>
+          Das einfachste Signal ist eine reine Sinusschwingung. Zwei Sinuswellen
+          addiert ergeben eine neue Welle. Addiere immer mehr, und es entstehen
+          Ecken, Sprünge, kurze Impulse. Die Behauptung von Fourier ist
+          verblüffend einfach: <strong>Jedes vernünftige Signal lässt sich als
+          Summe von Sinus- und Cosinusschwingungen schreiben.</strong> Nicht
+          genähert, sondern exakt, wenn man unendlich viele Glieder zulässt.
+        </p>
+        <p>
+          Im Labor unten kannst du das selbst tun. Sechs Schieberegler geben die
+          Stärke der ersten sechs Harmonischen vor. Die dünnen Linien sind die
+          einzelnen Bausteine, die dicke Linie ist ihre Summe. Mit den
+          Voreinstellungen siehst du, wie aus wenigen Sinuswellen fast ein
+          Rechteck wird.
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 1: Baue eine Welle aus Harmonischen</h3>
+            <div class="lab-sub">Ändere die Amplituden und beobachte, wie die Summe ihre Gestalt ändert.</div>
+          </div>
+          <span class="lab-tag">Synthese</span>
+        </div>
+        <div class="chipbar" id="mixerPresets">
+          <button class="chip on" data-preset="square">Rechteck</button>
+          <button class="chip" data-preset="saw">Sägezahn</button>
+          <button class="chip" data-preset="soft">Weich</button>
+          <button class="chip" data-preset="chord">Akkord</button>
+          <button class="chip" data-preset="silence">Stille</button>
+        </div>
+        <div class="canvas-wrap h-md">
+          <canvas id="mixerCanvas" aria-label="Summe von sechs Sinuswellen"></canvas>
+        </div>
+        <div class="legend">
+          <span><i class="dim"></i> einzelne Harmonische</span>
+          <span><i></i> Summe</span>
+          <span><i class="amber"></i> Spektrum</span>
+        </div>
+        <div class="controls" id="mixerControls"></div>
+        <div class="readout">
+          <div class="ro-box"><div class="k">Grundfrequenz</div><div class="v">1.00 ω₀</div></div>
+          <div class="ro-box amber"><div class="k">Grundperiode</div><div class="v">T = 1</div></div>
+          <div class="ro-box violet"><div class="k">Aktive Töne</div><div class="v" id="mixerActive">3</div></div>
+        </div>
+      </div>
+
+      <div class="insight">
+        <div class="insight-title">Das mentale Bild</div>
+        <p>
+          Ein Signal im Zeitbereich ist wie ein Gegenstand, den du von vorne
+          betrachtest. Die Fourier-Darstellung ist dieselbe Sache von einer
+          anderen Seite. Du verlierst keine Information, du wechselst nur die
+          Koordinaten. Aus „so sieht es im Laufe der Zeit aus“ wird „so stark
+          schwingt jede Frequenz mit“.
+        </p>
+      </div>
+
+      <div class="prose">
+        <p>
+          Diese Umrechnung ist nützlich, weil viele Operationen in der einen
+          Darstellung schwer und in der anderen einfach sind. Falten im
+          Zeitbereich wird im Frequenzbereich zur Multiplikation. Ableiten wird
+          zur Multiplikation mit <span class="tex">i\omega</span>. Ein Filter,
+          der bestimmte Töne abschwächt, ist im Spektrum nur eine Kurve, die du
+          nach unten ziehst.
+        </p>
+        <p>
+          Der Preis: Du brauchst unendlich viele Koeffizienten, wenn das Signal
+          einen Sprung hat. Und du musst wissen, unter welchen Bedingungen die
+          Reihe wirklich gegen das Signal konvergiert. Beides klären wir, bevor
+          wir rechnen.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="herkunft">
+      <div class="sec-head">
+        <div class="sec-num">02</div>
+        <div>
+          <div class="sec-kicker">Woher die Idee kommt</div>
+          <h2>Herkunft: Wärme, Saiten und eine ketzerische Behauptung</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Die Fourier-Reihe entstand nicht aus der Musik, sondern aus der
+          Wärmeleitung. Im Jahr 1807 legte Joseph Fourier der Pariser Akademie
+          eine Arbeit vor, in der er die Wärmeverteilung in einem festen Körper
+          beschrieb. Seine Gleichung enthielt Ableitungen nach Ort und Zeit.
+          Um sie zu lösen, zerlegte er die Lösung in Sinus- und Cosinusfunktionen,
+          weil diese unter Ableitungen ihre Gestalt behalten.
+        </p>
+        <p>
+          Die Akademie war skeptisch. Die Behauptung, dass selbst eine Funktion
+          mit Ecken und Sprüngen durch glatte Sinuswellen exakt dargestellt
+          werden kann, klang falsch. Lagrange und andere widersprachen. Fourier
+          veröffentlichte seine Ideen 1822 in der
+          <em>Théorie analytique de la chaleur</em>. Erst später wurden die
+          Bedingungen sauber formuliert, unter denen die Reihe konvergiert.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <div class="tl-item amber">
+          <div class="tl-year">1750er</div>
+          <div class="tl-title">Die schwingende Saite</div>
+          <div class="tl-text">
+            Daniel Bernoulli beschreibt die Bewegung einer Saite als Überlagerung
+            ihrer Eigenschwingungen. Euler und d'Alembert diskutieren, ob jede
+            Anfangsform so darstellbar ist. Der Streit ist im Kern schon der
+            Streit um die Fourier-Reihe.
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">1807 / 1822</div>
+          <div class="tl-title">Fouriers Wärmeleitung</div>
+          <div class="tl-text">
+            Fourier entwickelt die nach ihm benannte Reihe und die Wärmegleichung.
+            Seine Methode ist pragmatisch und erstaunlich weitreichend, auch
+            wenn die Konvergenzfragen noch offen sind.
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">1829</div>
+          <div class="tl-title">Dirichlet präzisiert</div>
+          <div class="tl-text">
+            Peter Gustav Lejeune Dirichlet gibt hinreichende Bedingungen an:
+            Beschränktheit, endlich viele Extrema und endlich viele Sprünge
+            pro Periode. Damit wird aus einer kühnen Behauptung ein Satz.
+          </div>
+        </div>
+        <div class="tl-item amber">
+          <div class="tl-year">1898</div>
+          <div class="tl-title">Gibbs und das Überschwingen</div>
+          <div class="tl-text">
+            Josiah Willard Gibbs zeigt, dass die Partialsummen an einem Sprung
+            nicht gleichmäßig konvergieren. Es bleibt ein Überschwingen von
+            etwa 9 Prozent der Sprunghöhe, egal wie viele Glieder du nimmst.
+            Das ist kein Rechenfehler, sondern Struktur.
+          </div>
+        </div>
+        <div class="tl-item violet">
+          <div class="tl-year">1965</div>
+          <div class="tl-title">Cooley und Tukey, die FFT</div>
+          <div class="tl-text">
+            James Cooley und John Tukey veröffentlichen den schnellen
+            Algorithmus, der die diskrete Fourier-Transformation von
+            <span class="tex">N^2</span> auf <span class="tex">N\log N</span>
+            Schritte bringt. Gauss kannte die Idee bereits um 1805, aber erst
+            jetzt wird sie zur Grundlage der digitalen Welt.
+          </div>
+        </div>
+      </div>
+
+      <div class="history">
+        <div class="history-title">Warum die Geschichte zählt</div>
+        <p>
+          Fourier zeigt ein Muster, das sich in der Mathematik oft wiederholt:
+          Eine kühne Darstellungsidee wird zuerst benutzt, dann kritisiert,
+          dann präzisiert. Die Kritik ist kein Nebengeräusch. Sie liefert die
+          Bedingungen, unter denen du die Methode gefahrlos anwenden darfst.
+          Genau diese Bedingungen brauchst du, wenn du selbst rechnest.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="bausteine">
+      <div class="sec-head">
+        <div class="sec-num">03</div>
+        <div>
+          <div class="sec-kicker">Das Vokabular</div>
+          <h2>Sinus, Cosinus und die Drehung</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Bevor wir Reihen bauen, brauchen wir eine saubere Sprache für eine
+          einzelne Schwingung. Eine Sinuswelle hat drei Dinge, die du einstellen
+          kannst: wie hoch sie ausschlägt, wie schnell sie schwingt und wo sie
+          startet.
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">x(t) = A\cos(\omega t + \varphi)</div>
+        </div>
+        <p>
+          <span class="tex">A</span> ist die Amplitude, also die halbe Höhe von
+          Berg zu Tal. <span class="tex">\omega</span> ist die Kreisfrequenz in
+          Radiant pro Sekunde. Sie hängt mit der gewöhnlichen Frequenz
+          <span class="tex">f</span> in Hertz und der Periode
+          <span class="tex">T</span> zusammen:
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">\omega = 2\pi f = \frac{2\pi}{T}, \qquad f = \frac{1}{T}.</div>
+        </div>
+        <p>
+          <span class="tex">\varphi</span> ist die Phase. Sie verschiebt die
+          Welle nach links oder rechts. Für die Fourier-Reihe ist die Phase
+          wichtig, weil Sinus und Cosinus dieselbe Frequenz haben, aber um eine
+          Viertelperiode versetzt sind. Zusammen können sie jede Phasenlage
+          erzeugen.
+        </p>
+        <p>
+          Der tiefere Grund, warum Sinus und Cosinus so gut funktionieren, ist
+          die komplexe Drehung. Ein Punkt auf dem Einheitskreis hat die
+          Koordinaten <span class="tex">(\cos\theta,\sin\theta)</span>. Lässt
+          du <span class="tex">\theta</span> mit konstanter Geschwindigkeit
+          wachsen, dreht sich der Punkt. Seine Projektion auf die y-Achse ist
+          eine Sinuswelle, seine Projektion auf die x-Achse eine Cosinuswelle.
+        </p>
+        <div class="math-block violet">
+          <div class="tex" data-display="1">e^{i\theta} = \cos\theta + i\sin\theta.</div>
+        </div>
+        <p>
+          Diese Formel ist der Schlüssel zur gesamten Fourier-Analyse. Eine
+          Schwingung ist keine kurvige Linie mehr, sondern ein rotierender
+          Zeiger. Die Fourier-Reihe wird damit zu einer Summe von Zeigern, die
+          sich mit verschiedenen Geschwindigkeiten drehen. Im Labor kannst du
+          diesen Zeiger sehen und seine Projektion mit der Welle vergleichen.
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="lab-head">
+          <div>
+            <h3>Labor 2: Der rotierende Zeiger</h3>
+            <div class="lab-sub">Die y-Projektion des Zeigers ist die Sinuswelle. Ändere Frequenz und Phase.</div>
+          </div>
+          <span class="lab-tag violet">Geometrie</span>
+        </div>
+        <div class="canvas-wrap h-md">
+          <canvas id="phasorCanvas" aria-label="Rotierender Zeiger und seine Sinusprojektion"></canvas>
+        </div>
+        <div class="controls compact">
+          <label class="control">
+            <span class="row"><span>Frequenz f</span><b id="phasorFreqVal">1.00 Hz</b></span>
+            <input type="range" id="phasorFreq" min="0.25" max="3" step="0.05" value="1">
+          </label>
+          <label class="control">
+            <span class="row"><span>Phase φ</span><b id="phasorPhaseVal" class="violet">0°</b></span>
+            <input type="range" class="violet" id="phasorPhase" min="0" max="360" step="1" value="0">
+          </label>
+          <label class="control">
+            <span class="row"><span>Amplitude A</span><b id="phasorAmpVal">1.00</b></span>
+            <input type="range" id="phasorAmp" min="0.2" max="1.5" step="0.01" value="1">
+          </label>
+        </div>
+        <div class="btnrow">
+          <button class="primary" id="phasorPlay">Pause</button>
+          <button id="phasorReset">Zurücksetzen</button>
+        </div>
+        <div class="readout">
+          <div class="ro-box"><div class="k">Zeigerwinkel</div><div class="v" id="phasorAngle">0°</div></div>
+          <div class="ro-box violet"><div class="k">Projektion</div><div class="v" id="phasorProj">0.000</div></div>
+          <div class="ro-box amber"><div class="k">Periode T</div><div class="v" id="phasorPeriod">1.000 s</div></div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-title">Radiant statt Grad</div>
+        <p>
+          In allen Formeln rechnen wir im Bogenmaß. Ein voller Kreis sind
+          <span class="tex">2\pi</span> Radiant, nicht 360 Grad. Der Grund ist
+          praktisch: Nur im Bogenmaß gilt
+          <span class="tex">\frac{d}{dx}\sin x = \cos x</span> ohne zusätzlichen
+          Faktor. Die Umrechnung ist
+          <span class="tex">\theta_{\text{rad}} = \theta_{\text{deg}}\cdot\frac{\pi}{180}</span>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="orthogonalitaet">
+      <div class="sec-head">
+        <div class="sec-num">04</div>
+        <div>
+          <div class="sec-kicker">Der mathematische Motor</div>
+          <h2>Orthogonalität: Warum die Koeffizienten funktionieren</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Die Fourier-Reihe ist keine Zauberei. Sie funktioniert, weil Sinus und
+          Cosinus über eine Periode gemittelt fast immer null ergeben, außer
+          wenn man eine Funktion mit sich selbst multipliziert. Diese Eigenschaft
+          heißt Orthogonalität. Sie ist das kontinuierliche Gegenstück zu
+          senkrechten Vektoren.
+        </p>
+        <p>
+          Bei Vektoren berechnest du den Anteil eines Vektors
+          <span class="tex">v</span> in Richtung <span class="tex">u</span> mit
+          dem Skalarprodukt:
+          <span class="tex">c = \frac{u\cdot v}{u\cdot u}</span>. Bei Funktionen
+          ist das Skalarprodukt ein Integral:
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">\langle f,g\rangle = \int_0^T f(t)\,g(t)\,dt.</div>
+        </div>
+        <p>
+          Die Funktionen <span class="tex">1</span>,
+          <span class="tex">\cos(n\omega_0 t)</span> und
+          <span class="tex">\sin(n\omega_0 t)</span> stehen senkrecht
+          aufeinander. Das bedeutet: Wenn du ein Signal mit
+          <span class="tex">\cos(n\omega_0 t)</span> multiplizierst und über
+          eine Periode integrierst, bleibt nur der Anteil übrig, der zu dieser
+          Frequenz gehört. Alle anderen Frequenzen mitteln sich weg.
+        </p>
+      </div>
+
+      <div class="math-block amber">
+        <div class="tex" data-display="1">
+          \begin{aligned}
+          \int_0^T \sin(m\omega_0 t)\sin(n\omega_0 t)\,dt &amp;= \frac{T}{2}\,\delta_{mn},\\
+          \int_0^T \cos(m\omega_0 t)\cos(n\omega_0 t)\,dt &amp;= \frac{T}{2}\,\delta_{mn},\\
+          \int_0^T \sin(m\omega_0 t)\cos(n\omega_0 t)\,dt &amp;= 0.
+          \end{aligned}
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>
+          Hier ist <span class="tex">\delta_{mn}</span> das Kronecker-Delta:
+          Es ist 1, wenn <span class="tex">m=n</span>, und 0 sonst. Die erste
+          Zeile sagt also: Zwei verschiedene Sinusfrequenzen sind über eine
+          Periode gemittelt unkorreliert. Nur eine Frequenz mit sich selbst
+          liefert einen Beitrag, und der ist <span class="tex">T/2</span>.
+        </p>
+        <p>
+          Schauen wir uns die erste Identität einmal vollständig an. Der Beweis
+          benutzt nur ein Produkt-zu-Summe-Rezept aus der Trigonometrie:
+        </p>
+      </div>
+
+      <div class="steps" id="orthoSteps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <p>Schreibe das Produkt zweier Sinusfunktionen als Differenz zweier Cosinusfunktionen:</p>
+            <div class="math-block"><div class="tex" data-display="1">\sin \alpha \sin \beta = \frac{1}{2}\left[\cos(\alpha-\beta) - \cos(\alpha+\beta)\right].</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <p>Setze <span class="tex">\alpha = m\omega_0 t</span> und <span class="tex">\beta = n\omega_0 t</span>:</p>
+            <div class="math-block"><div class="tex" data-display="1">\sin(m\omega_0 t)\sin(n\omega_0 t) = \frac{1}{2}\left[\cos((m-n)\omega_0 t) - \cos((m+n)\omega_0 t)\right].</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <p>Integriere über eine Periode. Für jede ganze Zahl <span class="tex">k \neq 0</span> gilt</p>
+            <div class="math-block"><div class="tex" data-display="1">\int_0^T \cos(k\omega_0 t)\,dt = \frac{1}{k\omega_0}\left[\sin(k\omega_0 T)-\sin 0\right] = 0,</div></div>
+            <p>weil <span class="tex">\omega_0 T = 2\pi</span> und <span class="tex">\sin(2\pi k)=0</span>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <p>Falls <span class="tex">m\neq n</span>, sind beide Cosinusintegrale null. Das Integral verschwindet.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <p>Falls <span class="tex">m=n</span>, wird der erste Cosinus zu <span class="tex">\cos 0 = 1</span>. Dann bleibt</p>
+            <div class="math-block"><div class="tex" data-display="1">\int_0^T \frac{1}{2}\left[1-\cos(2n\omega_0 t)\right]dt = \frac{T}{2} - 0 = \frac{T}{2}.</div></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <p>Damit ist die erste Zeile bewiesen. Die anderen beiden folgen mit den analogen Identitäten</p>
+            <div class="math-block"><div class="tex" data-display="1">\cos\alpha\cos\beta = \frac{1}{2}\left[\cos(\alpha-\beta)+\cos(\alpha+\beta)\right], \qquad \sin\alpha\cos\beta = \frac{1}{2}\left[\sin(\alpha+\beta)+\sin(\alpha-\beta)\right].</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight">
+        <div class="insight-title">Die Projektion, in einem Satz</div>
+        <p>
+          Der Fourier-Koeffizient einer Frequenz ist das Skalarprodukt des
+          Signals mit der passenden Schwingung, geteilt durch die Länge dieser
+          Schwingung im Quadrat. Genau wie bei Vektoren. Deshalb nennt man die
+          Fourier-Reihe auch eine orthogonale Projektion.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="section reveal" id="reihe">
+      <div class="sec-head">
+        <div class="sec-num">05</div>
+        <div>
+          <div class="sec-kicker">Das Kochrezept</div>
+          <h2>Die Fourier-Reihe: Definition und Rechenweg</h2>
+        </div>
+      </div>
+      <div class="prose">
+        <p>
+          Jetzt können wir die Reihe hinschreiben. Für ein Signal
+          <span class="tex">f(t)</span> mit Periode <span class="tex">T</span>
+          und Grundkreisfrequenz <span class="tex">\omega_0 = 2\pi/T</span>
+          machen wir den Ansatz
+        </p>
+        <div class="math-block">
+          <div class="tex" data-display="1">f(t) = \frac{a_0}{2} + \sum_{n=1}^{\infty}\left[a_n\cos(n\omega_0 t) + b_n\sin(n\omega_0 t)\right].</div>
+        </div>
+        <p>
+          Das <span class="tex">a_0/2</span> ist der Gleichanteil, also der
+          Mittelwert des Signals. Die Summe beginnt bei
+          <span class="tex">n=1</span>, weil <span class="tex">n=0</span> schon
+          im Gleichanteil steckt. Die Koeffizienten bekommst du, indem du beide
+          Seiten mit der passenden Funktion multiplizierst und über eine Periode
+          integrierst.
+        </p>
+      </div>
+
+      <div class="formula-grid">
+        <div class="formula-card">
+          <div class="fc-title">Gleichanteil</div>
+          <div class="tex" data-display="0">a_0 = \frac{2}{T}\int_0^T f(t)\,dt</div>
+          <div class="fc-note">Der Mittelwert, den das Signal um seine Nulllinie hat.</div>
+        </div>
+        <div class="formula-card">
+          <div class="fc-title">Cosinus-Koeffizient</div>
+          <div class="tex" data-display="0">a_n = \frac{2}{T}\int_0^T f(t)\cos(n\omega_0 t)\,dt</div>
+          <div class="fc-note">Der gerade Anteil der Frequenz <span class="tex">n\omega_0</span>.</div>
+        </div>
+        <div class="formula-card">
+          <div class="fc-title">Sinus-Koeffizient</div>
+          <div class="tex" data-display="0">b_n = \frac{2}{T}\int_0^T f(t)\sin(n\omega_0 t)\,dt</div>
+          <div class="fc-note">Der ungerade Anteil der Frequenz <span class="tex">n\omega_0</span>.</div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>
+          Warum funktioniert das? Multipliziere die Reihenentwicklung mit
+          <span class="tex">\cos(n\omega_0 t)</span> und integriere. Nach der
+          Orthogonalität überlebt nur der Term mit demselben
+          <span class="tex">n</span>. Aus
+          <span class="tex">a_n\cos^2</span> wird
+          <span class="tex">a_n T/2</span>, und der Faktor
+          <span class="tex">2/T</span> macht daraus <span class="tex">a_n</span>.
+          Für <span class="tex">a_0</span> multiplizierst du mit
+          <span class="tex">1</span> und integrierst direkt.
+        </p>
+        <p>
+          Bevor du rechnest, lohnt sich ein Blick auf Symmetrien. Sie sparen
+          die Hälfte der Arbeit und geben dir eine Kontrolle über das Ergebnis.
+        </p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Symmetrie</th><th>Bedingung</th><th>Was verschwindet</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>gerade</strong></td><td><span class="tex">f(-t)=f(t)</span></td><td>alle <span class="tex">b_n</span>, nur Cosinus</td></tr>
+            <tr><td><strong>ungerade</strong></td><td><span class="tex">f(-t)=-f(t)</span></td><td>alle <span class="tex">a_n</span> und <span class="tex">a_0</span>, nur Sinus</td></tr>
+            <tr><td><strong>Halbsymmetrie</strong></td><td><span class="tex">f(t+T/2)=-f(t)</span></td><td>alle geraden Harmonischen</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <div class="note-title">Der Rechenweg für ein neues Signal</div>
+        <p>
+          <strong>1.</strong> Periode <span class="tex">T</span> bestimmen und
+          <span class="tex">\omega_0=2\pi/T</span> ausrechnen.
+          <strong>2.</strong> Symmetrie prüfen und unnötige Koeffizienten
+          streichen. <strong>3.</strong> <span class="tex">a_0</span> als
+          Mittelwert berechnen oder das Integral ausschreiben.
+          <strong>4.</strong> <span class="tex">a_n</span> und
+          <span class="tex">b_n</span> mit den Integralen berechnen, bei
+          Produkten aus <span class="tex">t</span> und Sinus/Cosinus mit
+          partieller Integration. <strong>5.</strong> Die Reihe zusammensetzen
+          und die ersten Glieder hinschreiben. <strong>6.</strong> Eine Probe an
+          einer geschickten Stelle machen, zum Beispiel in der Mitte einer
+          Flanke oder an einem Sprung.
+        </p>
+      </div>
+    </section>

@@ -306,8 +306,13 @@
 											<span class="sp-kicker">The whole layer</span>
 											<h3 class="sp-title">The nonlinearity bends the space</h3>
 										</div>
-										<p class="step-note curve-intro">The FFN above works on one token. A dense layer computes an affine projection, <span data-tex="Ax + b" data-tex-display="false"></span>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
-										<div class="layer-formula" data-tex="\operatorname{layer}(x) = \operatorname{activation}(Ax + b)" data-tex-display="false"></div>
+										<p class="step-note curve-intro">The FFN above works on one token. A dense layer computes an affine projection, <span data-tex="Wx + b" data-tex-display="false"></span>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
+										<div class="layer-formula" data-tex="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{weight}\\\text{matrix}}}\,x + \underbrace{b}_{\text{bias}}\right)"></div>
+										<div class="collapse-card">
+											<div class="cc-label">Worked example · 2 inputs, 3 outputs</div>
+											<div class="collapse-math" data-tex="\begin{aligned} W &amp;= \begin{bmatrix} 1 &amp; 2 \\ 0 &amp; -1 \\ 2 &amp; 1 \end{bmatrix}, \quad x = \begin{bmatrix} 3 \\ 1 \end{bmatrix}, \quad b = \begin{bmatrix} 0 \\ 0 \\ -2 \end{bmatrix} \\[6pt] Wx &amp;= \begin{bmatrix} 1\cdot 3 + 2\cdot 1 \\ 0\cdot 3 + (-1)\cdot 1 \\ 2\cdot 3 + 1\cdot 1 \end{bmatrix} = \begin{bmatrix} 5 \\ -1 \\ 7 \end{bmatrix} \\[6pt] z = Wx + b &amp;= \begin{bmatrix} 5 \\ -1 \\ 7 \end{bmatrix} + \begin{bmatrix} 0 \\ 0 \\ -2 \end{bmatrix} = \begin{bmatrix} 5 \\ -1 \\ 5 \end{bmatrix} \\[6pt] \operatorname{ReLU}(z) &amp;= \begin{bmatrix} 5 \\ 0 \\ 5 \end{bmatrix} \end{aligned}"></div>
+											<p>Read <span data-tex="W" data-tex-display="false"></span> row by row: the first output mixes the inputs as <span data-tex="1\cdot 3 + 2\cdot 1" data-tex-display="false"></span>, the second as <span data-tex="0\cdot 3 + (-1)\cdot 1" data-tex-display="false"></span>, the third as <span data-tex="2\cdot 3 + 1\cdot 1" data-tex-display="false"></span>. The bias adds <span data-tex="0" data-tex-display="false"></span>, <span data-tex="0" data-tex-display="false"></span>, and <span data-tex="-2" data-tex-display="false"></span>, so <span data-tex="z = (5, -1, 5)" data-tex-display="false"></span>. ReLU, the activation introduced below, sends the negative entry to zero and leaves the other two unchanged. A real layer runs the same dot products and the same bend with thousands of rows and columns.</p>
+										</div>
 										<div class="collapse-card">
 											<div class="cc-label">two dense layers</div>
 											<div class="collapse-math" id="collapse-math" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \\[4pt] W &amp;= W_2 W_1, \qquad b = W_2 b_1 + b_2 \end{aligned}"></div>
@@ -506,12 +511,18 @@
 						<div class="prose">
 							<p>
 								Compression-as-intelligence is a productive working hypothesis, not a proved
-								identity. Solomonoff’s theorem is about prediction, not understanding; it does
-								not settle whether a particular model grasps the world. The honest position is
-								that the evidence is still catching up to the philosophy, and that both the
-								awe and the scepticism are responses to the same remarkable fact: a loop this
-								simple gets this far. Put differently, a language model is a finite vocabulary
-								laid over a continuum of meaning, with a loop that keeps falling to the next word.
+								identity. Solomonoff’s universal prior gives each possible explanation a
+								probability that shrinks as the shortest program that generates it gets longer,
+								and his convergence theorem says that, in the limit, a predictor built from
+								that prior learns any pattern that a finite program can generate
+								(<a href="https://doi.org/10.1109/TIT.1978.1055913" rel="noopener">Solomonoff, 1978</a>).
+								The catch is that the prior cannot be computed, so the result is a limit
+								statement about prediction; it does not settle whether a particular model
+								grasps the world. The honest position is that the evidence is still catching up
+								to the philosophy, and that both the awe and the scepticism are responses to
+								the same remarkable fact: a loop this simple gets this far. Put differently, a
+								language model is a finite vocabulary laid over a continuum of meaning, with a
+								loop that keeps falling to the next word.
 							</p>
 						</div>
 					</section>
