@@ -17764,6 +17764,63 @@ window.bibData = {
 		alternativetitle: "La Marche engravings (Wikipedia)"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
+	 *  Clothing and shelter  (untold_history_i.php)
+	 *  The body louse dates clothing; bone awls and eyed needles trace
+	 *  sewing; Kalambo, Terra Amata, Mezhyrich and the Neolithic trace
+	 *  shelter from a wooden platform to a permanent house.
+	 *  ───────────────────────────────────────────────────────────────────── */
+	"toups2011origin": {
+		title: "Origin of Clothing Lice Indicates Early Clothing Use by Anatomically Modern Humans in Africa",
+		author: "Melissa A. Toups, Andrew Kitchen, Jessica E. Light, David L. Reed",
+		year: 2011,
+		url: "https://pubmed.ncbi.nlm.nih.gov/20823373/",
+		alternativetitle: "Toups et al., 2011"
+	},
+	"gilligan2024needles": {
+		title: "Paleolithic eyed needles and the evolution of dress",
+		author: "Ian Gilligan, Francesco d’Errico, Luc Doyon, Wei Wang, Yaroslav V. Kuzmin",
+		year: 2024,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC11212769/",
+		alternativetitle: "Gilligan et al., 2024"
+	},
+	"barham2023kalambo": {
+		title: "Evidence for the earliest structural use of wood at least 476,000 years ago",
+		author: "Larry Barham et al.",
+		year: 2023,
+		url: "https://www.nature.com/articles/s41586-023-06557-9",
+		alternativetitle: "Barham et al., 2023"
+	},
+	"terra_amata_wiki": {
+		title: "Terra Amata (archaeological site)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Terra_Amata_(archaeological_site)",
+		alternativetitle: "Terra Amata (Wikipedia)"
+	},
+	"mezhyrich_wiki": {
+		title: "Mezhyrich, Cherkasy Oblast",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Mezhyrich,_Cherkasy_Oblast",
+		alternativetitle: "Mezhyrich (Wikipedia)"
+	},
+	"img_paleolithic_needle": {
+		title: "Eyed bone needle, Upper Paleolithic, Musée Saint-Remi, Reims",
+		author: "Vassil",
+		year: 2016,
+		url: "https://commons.wikimedia.org/wiki/File:Aiguille_Pal%C3%A9olithique_Mus%C3%A9e_Saint-Remi_21092016.jpg",
+		license: "CC0",
+		alternativetitle: "Paleolithic eyed needle"
+	},
+	"img_mezhirich_mammoth_hut": {
+		title: "Reconstruction of a mammoth-bone dwelling at Mezhyrich",
+		author: "Momotarou2012",
+		year: 2013,
+		url: "https://commons.wikimedia.org/wiki/File:Dwelling_made_with_mammoth_bones.jpg",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Mezhyrich mammoth-bone dwelling (reconstruction)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
 	 *  Alchemy: the displaced root of chemistry  (untold_history_ii.php)
 	 *  Alchemy -> chemistry -> silicon purification. The laboratory, the
 	 *  glassware, the acids, the method, and the very word "chemistry" all
