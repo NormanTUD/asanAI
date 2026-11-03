@@ -9,6 +9,7 @@
 	var lastFocus = null;
 	var searchSeq = 0;
 	var semanticEnabled = true;
+	var OFFLINE_SEARCH_MESSAGE = 'You are offline, but lessons you have already opened remain readable. Try again when you are back online.';
 	try {
 		semanticEnabled = window.localStorage.getItem('mn_search_ai') !== '0';
 	} catch (e) {
@@ -179,6 +180,66 @@
 		}
 	}
 
+	function isOffline() {
+		return typeof navigator !== 'undefined' && navigator.onLine === false;
+	}
+
+	function renderOfflineNotice() {
+		resultsContainer.innerHTML =
+			'<div class="search-empty search-offline">' +
+				'<div class="search-empty-icon" aria-hidden="true">&#9729;</div>' +
+				'<p><strong>Search needs a connection.</strong></p>' +
+				'<p class="search-offline-hint">' + escHtml(OFFLINE_SEARCH_MESSAGE) + '</p>' +
+			'</div>';
+		window.dispatchEvent(new CustomEvent('mnsearch:results', { detail: { count: 0 } }));
+	}
+
+	function renderOfflineNoResults(query) {
+		resultsContainer.innerHTML =
+			'<div class="search-empty search-offline">' +
+				'<div class="search-empty-icon" aria-hidden="true">&#128269;</div>' +
+				'<p>No matches for <strong>' + escHtml(query) + '</strong> in the offline index.</p>' +
+				'<p class="search-offline-hint">' +
+					'Only pages stored in the local AI index can be searched while you are offline.' +
+				'</p>' +
+			'</div>';
+		window.dispatchEvent(new CustomEvent('mnsearch:results', { detail: { count: 0 } }));
+	}
+
+	function annotateOfflineResults() {
+		if (!resultsContainer) return;
+		var note = document.createElement('div');
+		note.className = 'search-offline-note';
+		note.textContent = 'Offline search: results come from the locally saved semantic index.';
+		resultsContainer.insertBefore(note, resultsContainer.firstChild);
+	}
+
+	function searchOffline(query, seq, mode) {
+		if (mode !== 'normal' || !semanticEnabled || !window.MNSemantic) {
+			renderOfflineNotice();
+			return;
+		}
+		resultsContainer.innerHTML =
+			'<div class="search-loading"><div class="search-spinner"></div>' +
+			'<p class="search-loading-label">Searching the offline index…</p></div>';
+		window.dispatchEvent(new CustomEvent('mnsearch:results', { detail: { count: 0 } }));
+
+		window.MNSemantic.load().then(function() {
+			if (seq !== searchSeq) return;
+			var meaning = window.MNSemantic.search(query, { limit: 60, maxPerPage: 5 });
+			if (!meaning || meaning.length === 0) {
+				renderOfflineNoResults(query);
+				return;
+			}
+			var fused = fuseResults([], meaning, isQuestionLike(query));
+			renderResults(fused, query, query, 'normal', fused.length);
+			annotateOfflineResults();
+		}).catch(function() {
+			if (seq !== searchSeq) return;
+			renderOfflineNotice();
+		});
+	}
+
 	function doSearch(rawQuery) {
 		var query = normalizeSmartQuotes(rawQuery);
 		var seq = ++searchSeq;
@@ -189,6 +250,11 @@
 
 		resultsContainer.innerHTML = '<div class="search-loading"><div class="search-spinner"></div></div>';
 		activeIndex = -1;
+
+		if (isOffline()) {
+			searchOffline(query, seq, detectMode(query));
+			return;
+		}
 
 		var semantic = null;
 		if (semanticEnabled && detectMode(query) === 'normal' && window.MNSemantic) {
@@ -231,6 +297,14 @@
 		.catch(function(err) {
 			if (err.name === 'AbortError') return;
 			if (seq !== searchSeq) return;
+			if (isOffline()) {
+				renderOfflineNotice();
+				return;
+			}
+			if (err && (err.name === 'TypeError' || err.name === 'NetworkError')) {
+				renderError('Search is unavailable. Check your connection and try again.', query);
+				return;
+			}
 			renderError('Search failed. Please try again.', query);
 		});
 	}
@@ -333,8 +407,8 @@
 	function renderError(message, query) {
 		resultsContainer.innerHTML =
 			'<div class="search-error">' +
-				escHtml(message) +
-				(query ? ' for <strong>' + escHtml(query) + '</strong>' : '') +
+				'<p class="search-error-title">' + escHtml(message) + '</p>' +
+				(query ? '<p class="search-error-query">Search term: <strong>' + escHtml(query) + '</strong></p>' : '') +
 			'</div>';
 	}
 
@@ -538,6 +612,7 @@
 			extractMatchFromSnippet: extractMatchFromSnippet,
 			isQuestionLike: isQuestionLike,
 			fuseResults: fuseResults,
+			offlineMessage: function() { return OFFLINE_SEARCH_MESSAGE; },
 			isSemanticEnabled: function() { return semanticEnabled; },
 			setSemanticEnabled: setSemanticEnabled
 		}

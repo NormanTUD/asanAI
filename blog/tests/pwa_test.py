@@ -186,6 +186,14 @@ def check_page_integration(root: Path) -> list[str]:
     else:
         errors.append(".htaccess is missing")
 
+    style = root / "style.css"
+    if style.is_file():
+        style_source = style.read_text(encoding="utf-8")
+        if "@view-transition" not in style_source or "navigation: auto" not in style_source:
+            errors.append("style.css: cross-document view transitions are not enabled")
+    else:
+        errors.append("style.css is missing")
+
     return errors
 
 

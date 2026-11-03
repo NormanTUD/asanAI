@@ -85,6 +85,11 @@ if (I) {
 	check(I.isQuestionLike('attention?'), 'trailing question mark is question-like');
 	check(!I.isQuestionLike('backpropagation'), 'single keyword is not question-like');
 
+	var offlineMessage = I.offlineMessage();
+	check(offlineMessage.indexOf('offline') !== -1, 'offline message names the offline state');
+	check(offlineMessage.indexOf('readable') !== -1, 'offline message points to saved lessons');
+	check(offlineMessage.indexOf('Search failed') === -1, 'offline message is not the generic failure text');
+
 	var semantic = [{ url: 'a#one', page: 'a', pageTitle: 'A', title: 'semantic', snippet: 's', semantic: true }];
 	var lexical = [
 		{ url: 'a#one', page: 'a', pageTitle: 'A', title: 'lexical duplicate', snippet: 'l' },

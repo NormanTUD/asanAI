@@ -16,11 +16,23 @@
 	var state = null;
 	var loading = null;
 	var failed = false;
+	var failedAt = 0;
+	var RETRY_AFTER_MS = 30000;
+
+	if (typeof window !== 'undefined' && window.addEventListener) {
+		window.addEventListener('online', function() {
+			failed = false;
+			failedAt = 0;
+		});
+	}
 
 	function load() {
 		if (state) return Promise.resolve(state);
-		if (failed) return Promise.reject(new Error('semantic search unavailable'));
+		if (failed && Date.now() - failedAt < RETRY_AFTER_MS) {
+			return Promise.reject(new Error('semantic search unavailable'));
+		}
 		if (loading) return loading;
+		failed = false;
 
 		loading = Promise.all([
 			import(MODULE_URL).then(function(mod) {
@@ -49,6 +61,7 @@
 			return state;
 		}).catch(function(error) {
 			failed = true;
+			failedAt = Date.now();
 			loading = null;
 			console.warn('Semantic search unavailable:', error);
 			throw error;

@@ -6513,6 +6513,27 @@ html.atlas-overlap #reader-toggle {
 	color: var(--mn-rose);
 	font-size: 0.9rem;
 }
+.search-error p {
+	margin: 0;
+}
+.search-error p + p {
+	margin-top: 0.4rem;
+}
+.search-error-query {
+	font-size: 0.82rem;
+	color: var(--mn-text-muted);
+}
+.search-empty .search-offline-hint {
+	max-width: 34rem;
+	margin-top: 0.55rem;
+	line-height: 1.55;
+}
+.search-offline-note {
+	padding: 8px 20px 4px;
+	font-size: 0.78rem;
+	color: var(--mn-text-muted);
+	border-bottom: 1px solid var(--mn-border-light);
+}
 
 /* ─── Page Group ─── */
 .search-page-group {
@@ -14661,4 +14682,11 @@ summary:focus-visible,
 	.rag-chat-input {
 		transition: none;
 	}
+}
+
+/* ════════════════════════════════════════════════════════════
+   CROSS-DOCUMENT VIEW TRANSITIONS
+   ════════════════════════════════════════════════════════ */
+@view-transition {
+	navigation: auto;
 }
