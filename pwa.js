@@ -44,6 +44,40 @@
 			}
 		}
 
+		// The resource timing buffer is bounded, so the earliest scripts and
+		// styles can fall out before pwa.js runs. The DOM still names them.
+		try {
+			var elements = document.querySelectorAll([
+				"script[src]",
+				"img[src]",
+				"img[srcset]",
+				"source[src]",
+				"source[srcset]",
+				"video[poster]",
+				"audio[src]",
+				"iframe[src]",
+				"object[data]",
+				"embed[src]",
+				"link[href]"
+			].join(","));
+
+			elements.forEach(function (element) {
+				add(element.getAttribute("src"));
+				add(element.getAttribute("href"));
+				add(element.getAttribute("poster"));
+				add(element.getAttribute("data"));
+
+				var srcset = element.getAttribute("srcset");
+				if (srcset) {
+					srcset.split(",").forEach(function (part) {
+						add(part.trim().split(/\s+/)[0]);
+					});
+				}
+			});
+		} catch (e) {
+			// The DOM sweep is best-effort.
+		}
+
 		try {
 			performance.getEntriesByType("resource").forEach(function (entry) {
 				add(entry.name);

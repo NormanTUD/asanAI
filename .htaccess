@@ -11,3 +11,12 @@ ErrorDocument 500 /error.php?code=500
 ErrorDocument 502 /error.php?code=502
 ErrorDocument 503 /error.php?code=503
 ErrorDocument 504 /error.php?code=504
+
+# The service worker and manifest must be revalidated so a deployment can
+# replace them; the browser bypasses the HTTP cache for the worker script, but
+# proxies and some browsers still honour this header.
+<IfModule mod_headers.c>
+	<FilesMatch "^(sw\.js|manifest\.json)$">
+		Header always set Cache-Control "no-cache, must-revalidate"
+	</FilesMatch>
+</IfModule>
