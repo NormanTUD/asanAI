@@ -16,19 +16,20 @@ body back to Source Serif 4 without checking against a live scads.ai lesson.
 ## Branding and page chrome
 
 - The brand name is **ScaDS.AI Dresden/Leipzig** (not just `ScaDS.AI`).
-- The topbar exists only on `index.php`. Every other page has no topbar.
-- `index.php` uses `data-page="home"`. All subpages use a non-home value
-  (`lesson`, `advent`, `library`).
-- `assets/site.css` enforces this:
+- No Ten Minutes page uses the topbar. `index.php` uses
+  `data-page="calendar"` and is full-width; subpages use `lesson`, `advent`, or
+  `library`.
+- `assets/site.css` keeps the old guard anyway:
   ```css
   body:not([data-page="home"]) { --tm-topbar: 0px; }
   body:not([data-page="home"]) .topbar { display: none; }
   ```
-- Consequence: subpages have no theme toggle. The saved theme from
-  `localStorage` still applies; do not add a second toggle just on subpages
-  unless the design decision is revisited.
-- Do not paste the topbar back into a subpage. If a new page needs navigation,
-  solve it explicitly; the current design deliberately removes the chrome.
+- Consequence: there is no theme toggle anywhere. The saved theme from
+  `localStorage` still applies; do not add a second toggle unless the design
+  decision is revisited.
+- Do not paste the topbar or the old home footer back in. If a new page needs
+  navigation, solve it explicitly; the current design deliberately removes the
+  chrome.
 
 ## Full lessons are linked only after 31 December 2026
 
