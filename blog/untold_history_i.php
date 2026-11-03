@@ -384,6 +384,29 @@ Archaic humans including Neanderthals and Denisovans diverged from the lineage l
 </div>
 
 <div class="md" data-depth="80">
+### Clothing and Shelter: The First Portable Environments
+
+Fire gave hominins a hearth, but a hearth does not travel. Clothing and shelter are the two technologies that made the environment portable: one worn on the body, one built around it. Both are older than agriculture, writing, or metal, and both widened the range of climates, materials, and problems a human group could occupy. A naked human can survive a cold night only with fire and a windbreak; a clothed human can carry part of that fire's work on their back.
+
+The earliest evidence for clothing is indirect, because hide, sinew, and plant fibre decay. The strongest genetic clue comes from the body louse, *Pediculus humanus corporis*, which lives in clothing and cannot survive long away from it. A 2011 Bayesian analysis of louse genes placed the divergence of clothing lice from head lice at least 83,000 and possibly as early as 170,000 years ago, which implies that humans were wearing clothes within that window (\cite[Toups et al., 2011]{toups2011origin}). Archaeology catches the same technology from another side. Hide-scraping stone tools appear in the Early and Middle Pleistocene; bone awls for piercing hides are found at Blombos Cave about 73,000 to 70,000 years ago; and the first eyed needles appear in Siberia at least 40,000 years ago (\cite[Gilligan et al., 2024]{gilligan2024needles}). The needle is a small object with a large consequence: fitted, layered clothing traps air and blocks wind far better than a draped skin, and the fine sewing that made underwear possible also made it possible to attach beads and ornaments to the surface of clothes. Clothing became dress, a social signal as well as a thermal one.
+
+Shelter has an older and more ambiguous record. A cave is not a building, but it becomes one when fire, stone rings, and repeated occupation turn it into a fixed place. The earliest known deliberately shaped wooden structure is at Kalambo Falls in Zambia, dated to at least 476,000 years ago: two interlocking logs with cut marks, most likely a platform or walkway rather than a house (\cite[Barham et al., 2023]{barham2023kalambo}). At Terra Amata near Nice, about 400,000 years ago, excavators found what they interpreted as hut floors with hearths and stone windbreaks; the interpretation is disputed, and some archaeologists read the same patterns as natural disturbance, so the site is best treated as possible rather than certain evidence of a built shelter (\cite[Terra Amata, 2026]{terra_amata_wiki}).
+
+The first unmistakable dwellings come much later, with the Upper Paleolithic. At Mezhyrich in Ukraine, about 15,000 years ago, people built huts from mammoth bones, a clear case of a planned shelter in a treeless landscape (\cite[Mezhyrich, 2026]{mezhyrich_wiki}). Permanent buildings belong to the Neolithic: the stone tower at Jericho (about 8000 BCE) and the repeated houses of Çatalhöyük (7500 to 5600 BCE) are fixed, maintained, and inherited structures. The next section follows that shift from portable camps to fixed villages, the change that made granaries, scribes, and eventually libraries possible.
+
+<div class="image-row">
+    <figure>
+        <img src="paleolithic_needle.jpg" alt="An eyed bone needle from the Upper Paleolithic, Dordogne, France" />
+        <figcaption class="md">The \citealternativetitle{img_paleolithic_needle} (CC0): an eyed needle of bone from the Upper Paleolithic, Dordogne, held by the Musée Saint-Remi in Reims. The eye turns a pointed awl into a tool that carries thread through hide, the small step that made fitted clothing practical. Source: \citeauthor{img_paleolithic_needle}, \citeyear{img_paleolithic_needle}, \citealternativetitle{img_paleolithic_needle}, Wikimedia Commons.</figcaption>
+    </figure>
+    <figure>
+        <img src="image.php?f=mezhirich_mammoth_hut.jpg&w=900" alt="Reconstruction of a dwelling built from mammoth bones at Mezhyrich, Ukraine" />
+        <figcaption class="md">The \citealternativetitle{img_mezhirich_mammoth_hut} (CC BY-SA 3.0): a reconstruction of a mammoth-bone dwelling of the kind found at Mezhyrich, Ukraine, and dated to about 15,000 years ago. The bones are the frame and the insulation at once, a building made from the animals the builders hunted. Source: \citeauthor{img_mezhirich_mammoth_hut}, \citeyear{img_mezhirich_mammoth_hut}, \citealternativetitle{img_mezhirich_mammoth_hut}, Wikimedia Commons.</figcaption>
+    </figure>
+</div>
+</div>
+
+<div class="md" data-depth="80">
 **The Earliest Figures: 40,000–35,000 Years Ago.** The oldest undisputed images of a person are small figurines of the Aurignacian: the **Venus of Hohle Fels**, a six-centimetre carving of mammoth ivory from a cave near Schelklingen, is the oldest known depiction of a human being (\cite[Conard, 2009]{conard2009hohlefels}); the **Venus of Galgenberg** ("Fanny"), a serpentine statuette from the Stratzing excavation in Austria, is among the oldest of its kind (\cite[Neugebauer-Maresch, 1989]{neugebauer1989galgenberg}). Abstract symbolic expression is older, but these are the earliest clear *figures* of a person.
 
 What they already contain is a move that would run for forty thousand more years: an idea in the head, **pulled out and made into a thing in the world**. The figurine is a model of a person held in the hand, external to the brain that made it, exactly as a network's weights are a physical, external model of a concept. And it takes two things to make one, a *creative* act that conjures a representation which did not exist, and the practical act of **working with the world** to pin the idea into matter, the ancestors of generation and of tool-use in machine learning.
