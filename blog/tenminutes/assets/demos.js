@@ -1113,30 +1113,29 @@
 				setTimeout(finish, 2500);
 			});
 		}
-		function measurePanelHeight() {
+		async function measurePanelHeight() {
 			var width = panel.getBoundingClientRect().width;
 			if (!width) return;
 			var probe = document.createElement("div");
 			probe.className = "tl-panel";
 			probe.style.cssText = "position:absolute;left:-99999px;top:0;visibility:hidden;pointer-events:none;height:auto;min-height:0;overflow:visible;width:" + width + "px;";
 			document.body.appendChild(probe);
-			var heights = nodes.map(function (n) {
-				var p = panelHtml(n);
+			var max = 0;
+			for (var i = 0; i < nodes.length; i++) {
+				var p = panelHtml(nodes[i]);
 				probe.classList.toggle("no-figure", !p.hasImage);
 				probe.innerHTML = p.html;
 				var images = Array.prototype.slice.call(probe.querySelectorAll("img"));
 				images.forEach(function (img) { img.loading = "eager"; });
-				return Promise.all(images.map(waitForImage)).then(function () { return probe.offsetHeight; });
-			});
-			Promise.all(heights).then(function (all) {
-				var max = all.reduce(function (a, b) { return Math.max(a, b); }, 0);
-				document.body.removeChild(probe);
-				if (max) {
-					panel.style.height = "auto";
-					panel.style.minHeight = Math.ceil(max) + "px";
-					panel.style.overflowY = "visible";
-				}
-			});
+				await Promise.all(images.map(waitForImage));
+				max = Math.max(max, probe.offsetHeight);
+			}
+			document.body.removeChild(probe);
+			if (max) {
+				panel.style.height = "auto";
+				panel.style.minHeight = Math.ceil(max) + "px";
+				panel.style.overflowY = "visible";
+			}
 		}
 		nodes.forEach(function (n, i) {
 			n.addEventListener("click", function () { select(i); n.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" }); });
