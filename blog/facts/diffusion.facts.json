@@ -5456,14 +5456,14 @@
     },
     {
       "id": "diffusion-stmt-120",
-      "quote": "Module Submodule Type Input shape Output shape Params",
+      "quote": "Module Type Input shape Output shape Params",
       "block_id": "diffusion-block-54",
       "section": "What's the network?",
       "kind": "statement"
     },
     {
       "id": "diffusion-stmt-121",
-      "quote": "Conv2d 1,184 Timesteps 0 TimestepEmbedding 20,736 Linear 4,224 SiLU 0 Linear 16,512 ModuleList 377,824 DownBlock2D 54,752 ModuleList 45,504 ModuleList 9,248 CrossAttnDownBlock2D 323,072 ModuleList 174,720 ModuleList 148,352 UNetMidBlock2DCrossAttn 252,096 ModuleList 87,360 Transformer2DModel 87,360 ModuleList 164,736 ResnetBlock2D 82,368 ResnetBlock2D 82,368 ModuleList 773,952 CrossAttnUpBlock2D 661,312 ModuleList 262,080 ModuleList 362,304 ModuleList 36,928 UpBlock2D 112,640 ModuleList 112,640 GroupNorm 64 SiLU 0 Conv2d 1,156",
+      "quote": "Conv2d 1,184 Timesteps 0 TimestepEmbedding 20,736 Linear ( ) 4,224 SiLU ( ) 0 Linear ( ) 16,512 ModuleList 377,824 DownBlock2D ( ) 54,752 ModuleList ( ) 45,504 ModuleList ( ) 9,248 CrossAttnDownBlock2D ( ) 323,072 ModuleList ( ) 174,720 ModuleList ( ) 148,352 UNetMidBlock2DCrossAttn 252,096 ModuleList ( ) 87,360 Transformer2DModel ( ) 87,360 ModuleList ( ) 164,736 ResnetBlock2D ( ) 82,368 ResnetBlock2D ( ) 82,368 ModuleList 773,952 CrossAttnUpBlock2D ( ) 661,312 ModuleList ( ) 262,080 ModuleList ( ) 362,304 ModuleList ( ) 36,928 UpBlock2D ( ) 112,640 ModuleList ( ) 112,640 GroupNorm 64 SiLU 0 Conv2d 1,156",
       "block_id": "diffusion-block-55",
       "section": "What's the network?",
       "kind": "statement"
@@ -6140,13 +6140,13 @@
     },
     {
       "id": "diffusion-block-54",
-      "quote": "Module Submodule Type Input shape Output shape Params",
+      "quote": "Module Type Input shape Output shape Params",
       "kind": "paragraph",
       "section": "What's the network?"
     },
     {
       "id": "diffusion-block-55",
-      "quote": "Conv2d 1,184 Timesteps 0 TimestepEmbedding 20,736 Linear 4,224 SiLU 0 Linear 16,512 ModuleList 377,824 DownBlock2D 54,752 ModuleList 45,504 ModuleList 9,248 CrossAttnDownBlock2D 323,072 ModuleList 174,720 ModuleList 148,352 UNetMidBlock2DCrossAttn 252,096 ModuleList 87,360 Transformer2DModel 87,360 ModuleList 164,736 ResnetBlock2D 82,368 ResnetBlock2D 82,368 ModuleList 773,952 CrossAttnUpBlock2D 661,312 ModuleList 262,080 ModuleList 362,304 ModuleList 36,928 UpBlock2D 112,640 ModuleList 112,640 GroupNorm 64 SiLU 0 Conv2d 1,156",
+      "quote": "Conv2d 1,184 Timesteps 0 TimestepEmbedding 20,736 Linear ( ) 4,224 SiLU ( ) 0 Linear ( ) 16,512 ModuleList 377,824 DownBlock2D ( ) 54,752 ModuleList ( ) 45,504 ModuleList ( ) 9,248 CrossAttnDownBlock2D ( ) 323,072 ModuleList ( ) 174,720 ModuleList ( ) 148,352 UNetMidBlock2DCrossAttn 252,096 ModuleList ( ) 87,360 Transformer2DModel ( ) 87,360 ModuleList ( ) 164,736 ResnetBlock2D ( ) 82,368 ResnetBlock2D ( ) 82,368 ModuleList 773,952 CrossAttnUpBlock2D ( ) 661,312 ModuleList ( ) 262,080 ModuleList ( ) 362,304 ModuleList ( ) 36,928 UpBlock2D ( ) 112,640 ModuleList ( ) 112,640 GroupNorm 64 SiLU 0 Conv2d 1,156",
       "kind": "paragraph",
       "section": "What's the network?"
     },

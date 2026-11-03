@@ -226,8 +226,6 @@ summary(
 The same run gives this breakdown (shapes for the main path; inner ModuleLists by parameter count):
 
 <style>
-.unet-summary .unet-sub-1 { padding-left: 2.1em; }
-.unet-summary .unet-sub-2 { padding-left: 3.7em; }
 .unet-summary th[scope="rowgroup"] { vertical-align: middle; }
 .unet-summary tfoot th,
 .unet-summary tfoot td { padding: .55em .9em; border-top: 1px solid var(--mn-border); }
@@ -235,41 +233,41 @@ The same run gives this breakdown (shapes for the main path; inner ModuleLists b
 
 <table class="unet-summary">
 <thead>
-<tr><th>Module</th><th>Submodule</th><th>Type</th><th>Input shape</th><th>Output shape</th><th>Params</th></tr>
+<tr><th>Module</th><th>Type</th><th>Input shape</th><th>Output shape</th><th>Params</th></tr>
 </thead>
 <tbody>
-<tr><th scope="row"><code>conv_in</code></th><td></td><td>Conv2d</td><td><code>[1, 4, 64, 64]</code></td><td><code>[1, 32, 64, 64]</code></td><td>1,184</td></tr>
-<tr><th scope="row"><code>time_proj</code></th><td></td><td>Timesteps</td><td><code>[1]</code></td><td><code>[1, 32]</code></td><td>0</td></tr>
-<tr><th scope="rowgroup" rowspan="4"><code>time_embedding</code></th><td></td><td>TimestepEmbedding</td><td><code>[1, 32]</code></td><td><code>[1, 128]</code></td><td>20,736</td></tr>
-<tr><td class="unet-sub-1"><code>linear_1</code></td><td>Linear</td><td><code>[1, 32]</code></td><td><code>[1, 128]</code></td><td>4,224</td></tr>
-<tr><td class="unet-sub-1"><code>act</code></td><td>SiLU</td><td><code>[1, 128]</code></td><td><code>[1, 128]</code></td><td>0</td></tr>
-<tr><td class="unet-sub-1"><code>linear_2</code></td><td>Linear</td><td><code>[1, 128]</code></td><td><code>[1, 128]</code></td><td>16,512</td></tr>
-<tr><th scope="rowgroup" rowspan="7"><code>down_blocks</code></th><td></td><td>ModuleList</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 64, 32, 32]</code></td><td>377,824</td></tr>
-<tr><td class="unet-sub-1"><code>0</code></td><td>DownBlock2D</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 32, 32, 32]</code></td><td>54,752</td></tr>
-<tr><td class="unet-sub-2"><code>resnets</code></td><td>ModuleList</td><td></td><td></td><td>45,504</td></tr>
-<tr><td class="unet-sub-2"><code>downsamplers</code></td><td>ModuleList</td><td></td><td></td><td>9,248</td></tr>
-<tr><td class="unet-sub-1"><code>1</code></td><td>CrossAttnDownBlock2D</td><td><code>[1, 32, 32, 32]</code></td><td><code>[1, 64, 32, 32]</code></td><td>323,072</td></tr>
-<tr><td class="unet-sub-2"><code>attentions</code></td><td>ModuleList</td><td></td><td></td><td>174,720</td></tr>
-<tr><td class="unet-sub-2"><code>resnets</code></td><td>ModuleList</td><td></td><td></td><td>148,352</td></tr>
-<tr><th scope="rowgroup" rowspan="6"><code>mid_block</code></th><td></td><td>UNetMidBlock2DCrossAttn</td><td><code>[1, 64, 32, 32]</code></td><td><code>[1, 64, 32, 32]</code></td><td>252,096</td></tr>
-<tr><td class="unet-sub-1"><code>attentions</code></td><td>ModuleList</td><td></td><td></td><td>87,360</td></tr>
-<tr><td class="unet-sub-2"><code>0</code></td><td>Transformer2DModel</td><td></td><td></td><td>87,360</td></tr>
-<tr><td class="unet-sub-1"><code>resnets</code></td><td>ModuleList</td><td></td><td></td><td>164,736</td></tr>
-<tr><td class="unet-sub-2"><code>0</code></td><td>ResnetBlock2D</td><td></td><td></td><td>82,368</td></tr>
-<tr><td class="unet-sub-2"><code>1</code></td><td>ResnetBlock2D</td><td></td><td></td><td>82,368</td></tr>
-<tr><th scope="rowgroup" rowspan="7"><code>up_blocks</code></th><td></td><td>ModuleList</td><td><code>[1, 64, 32, 32]</code></td><td><code>[1, 32, 64, 64]</code></td><td>773,952</td></tr>
-<tr><td class="unet-sub-1"><code>0</code></td><td>CrossAttnUpBlock2D</td><td><code>[1, 64, 32, 32]</code></td><td><code>[1, 64, 64, 64]</code></td><td>661,312</td></tr>
-<tr><td class="unet-sub-2"><code>attentions</code></td><td>ModuleList</td><td></td><td></td><td>262,080</td></tr>
-<tr><td class="unet-sub-2"><code>resnets</code></td><td>ModuleList</td><td></td><td></td><td>362,304</td></tr>
-<tr><td class="unet-sub-2"><code>upsamplers</code></td><td>ModuleList</td><td></td><td></td><td>36,928</td></tr>
-<tr><td class="unet-sub-1"><code>1</code></td><td>UpBlock2D</td><td><code>[1, 64, 64, 64]</code></td><td><code>[1, 32, 64, 64]</code></td><td>112,640</td></tr>
-<tr><td class="unet-sub-2"><code>resnets</code></td><td>ModuleList</td><td></td><td></td><td>112,640</td></tr>
-<tr><th scope="row"><code>conv_norm_out</code></th><td></td><td>GroupNorm</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 32, 64, 64]</code></td><td>64</td></tr>
-<tr><th scope="row"><code>conv_act</code></th><td></td><td>SiLU</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 32, 64, 64]</code></td><td>0</td></tr>
-<tr><th scope="row"><code>conv_out</code></th><td></td><td>Conv2d</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 4, 64, 64]</code></td><td>1,156</td></tr>
+<tr><th scope="row"><code>conv_in</code></th><td>Conv2d</td><td><code>[1, 4, 64, 64]</code></td><td><code>[1, 32, 64, 64]</code></td><td>1,184</td></tr>
+<tr><th scope="row"><code>time_proj</code></th><td>Timesteps</td><td><code>[1]</code></td><td><code>[1, 32]</code></td><td>0</td></tr>
+<tr><th scope="rowgroup" rowspan="4"><code>time_embedding</code></th><td>TimestepEmbedding</td><td><code>[1, 32]</code></td><td><code>[1, 128]</code></td><td>20,736</td></tr>
+<tr><td>Linear (<code>linear_1</code>)</td><td><code>[1, 32]</code></td><td><code>[1, 128]</code></td><td>4,224</td></tr>
+<tr><td>SiLU (<code>act</code>)</td><td><code>[1, 128]</code></td><td><code>[1, 128]</code></td><td>0</td></tr>
+<tr><td>Linear (<code>linear_2</code>)</td><td><code>[1, 128]</code></td><td><code>[1, 128]</code></td><td>16,512</td></tr>
+<tr><th scope="rowgroup" rowspan="7"><code>down_blocks</code></th><td>ModuleList</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 64, 32, 32]</code></td><td>377,824</td></tr>
+<tr><td>DownBlock2D (<code>0</code>)</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 32, 32, 32]</code></td><td>54,752</td></tr>
+<tr><td>ModuleList (<code>resnets</code>)</td><td></td><td></td><td>45,504</td></tr>
+<tr><td>ModuleList (<code>downsamplers</code>)</td><td></td><td></td><td>9,248</td></tr>
+<tr><td>CrossAttnDownBlock2D (<code>1</code>)</td><td><code>[1, 32, 32, 32]</code></td><td><code>[1, 64, 32, 32]</code></td><td>323,072</td></tr>
+<tr><td>ModuleList (<code>attentions</code>)</td><td></td><td></td><td>174,720</td></tr>
+<tr><td>ModuleList (<code>resnets</code>)</td><td></td><td></td><td>148,352</td></tr>
+<tr><th scope="rowgroup" rowspan="6"><code>mid_block</code></th><td>UNetMidBlock2DCrossAttn</td><td><code>[1, 64, 32, 32]</code></td><td><code>[1, 64, 32, 32]</code></td><td>252,096</td></tr>
+<tr><td>ModuleList (<code>attentions</code>)</td><td></td><td></td><td>87,360</td></tr>
+<tr><td>Transformer2DModel (<code>0</code>)</td><td></td><td></td><td>87,360</td></tr>
+<tr><td>ModuleList (<code>resnets</code>)</td><td></td><td></td><td>164,736</td></tr>
+<tr><td>ResnetBlock2D (<code>0</code>)</td><td></td><td></td><td>82,368</td></tr>
+<tr><td>ResnetBlock2D (<code>1</code>)</td><td></td><td></td><td>82,368</td></tr>
+<tr><th scope="rowgroup" rowspan="7"><code>up_blocks</code></th><td>ModuleList</td><td><code>[1, 64, 32, 32]</code></td><td><code>[1, 32, 64, 64]</code></td><td>773,952</td></tr>
+<tr><td>CrossAttnUpBlock2D (<code>0</code>)</td><td><code>[1, 64, 32, 32]</code></td><td><code>[1, 64, 64, 64]</code></td><td>661,312</td></tr>
+<tr><td>ModuleList (<code>attentions</code>)</td><td></td><td></td><td>262,080</td></tr>
+<tr><td>ModuleList (<code>resnets</code>)</td><td></td><td></td><td>362,304</td></tr>
+<tr><td>ModuleList (<code>upsamplers</code>)</td><td></td><td></td><td>36,928</td></tr>
+<tr><td>UpBlock2D (<code>1</code>)</td><td><code>[1, 64, 64, 64]</code></td><td><code>[1, 32, 64, 64]</code></td><td>112,640</td></tr>
+<tr><td>ModuleList (<code>resnets</code>)</td><td></td><td></td><td>112,640</td></tr>
+<tr><th scope="row"><code>conv_norm_out</code></th><td>GroupNorm</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 32, 64, 64]</code></td><td>64</td></tr>
+<tr><th scope="row"><code>conv_act</code></th><td>SiLU</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 32, 64, 64]</code></td><td>0</td></tr>
+<tr><th scope="row"><code>conv_out</code></th><td>Conv2d</td><td><code>[1, 32, 64, 64]</code></td><td><code>[1, 4, 64, 64]</code></td><td>1,156</td></tr>
 </tbody>
 <tfoot>
-<tr><th colspan="5">Total</th><td><strong>1,427,012</strong></td></tr>
+<tr><th colspan="4">Total</th><td><strong>1,427,012</strong></td></tr>
 </tfoot>
 </table>
 
