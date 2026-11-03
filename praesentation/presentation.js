@@ -69,8 +69,9 @@ const DemoRegistry = (() => {
                 // "Loss: Wie falsch liegt das Netz?" (loss.js), vor dem
                 // gesamten Prozess: ein Katzenbild, darunter die beiden
                 // Ausgaben (60 % → Loss ≈ 0,5, 95 % → Loss ≈ 0,05,
-                // 5 % → Loss ≈ 3,0) und danach eine einzige
-                // Loss-Kurve über das Training.
+                // 5 % → Loss ≈ 3,0). Danach eine 20-s-Animation:
+                // links sinkt die Loss-Kurve, rechts laufen Katze/Hund
+                // in Prozent live mit.
                 { id: 'loss', ref: () => typeof LossDemo !== 'undefined' ? LossDemo : null,
                         slideTest: s => s.id === 'slide-loss',
                         onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
