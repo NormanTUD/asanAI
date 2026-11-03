@@ -14,7 +14,8 @@ contract between them without a browser:
     declared sizes match the files;
   * the service worker handles install/activate/fetch/message, falls back to
     offline.html and never caches private or dynamic endpoints;
-  * pwa.js registers the worker and exposes the footer controls;
+  * pwa.js registers the worker for its own scope and automatically hands the
+    current page and its assets to the worker, without adding any page UI;
   * every shared page head loads the manifest and pwa.js through
     load_base_js();
   * .htaccess serves .webmanifest as application/manifest+json.
@@ -124,11 +125,29 @@ def check_service_worker(root: Path) -> list[str]:
         if not re.search(rf'addEventListener\(\s*"{event}"', source):
             errors.append(f"sw.js: no {event} listener")
 
-    for marker in ("offline.html", "CACHE_PAGE", "CACHE_PAGE_DONE", "isCacheable", "ignoreSearch"):
+    for marker in (
+        "CACHE_VERSION",
+        "offline.html",
+        "CACHE_PAGE",
+        "CACHE_PAGE_DONE",
+        "isCacheable",
+        "ignoreSearch",
+        "isImmutableAsset",
+        "enforceStorageBudget",
+    ):
         if marker not in source:
             errors.append(f"sw.js: missing {marker}")
 
-    for endpoint in ("track.php", "feedback_track.php", "ask.php", "search.php", "stats.php", "questions.php"):
+    for endpoint in (
+        "track.php",
+        "feedback_track.php",
+        "ask.php",
+        "search.php",
+        "stats.php",
+        "questions.php",
+        "asanai_blog_proxy.php",
+        ".search_cache.json",
+    ):
         if endpoint not in source:
             errors.append(f"sw.js: {endpoint} must be excluded from the cache")
 
@@ -150,6 +169,22 @@ def check_registration(root: Path) -> list[str]:
     ):
         if marker not in source:
             errors.append(f"pwa.js: missing {marker}")
+
+    return errors
+
+
+def check_no_gui(root: Path) -> list[str]:
+    errors: list[str] = []
+    pwa = root / "pwa.js"
+    if pwa.is_file():
+        source = pwa.read_text(encoding="utf-8")
+        for marker in ("Save page offline", "Install app", "pwa-footer", "beforeinstallprompt"):
+            if marker in source:
+                errors.append(f"pwa.js: unexpected UI marker {marker!r}")
+
+    style = root / "style.css"
+    if style.is_file() and ".pwa-footer" in style.read_text(encoding="utf-8"):
+        errors.append("style.css: unexpected PWA footer styles")
 
     return errors
 
@@ -231,6 +266,7 @@ def main() -> int:
     errors.extend(check_manifest(root))
     errors.extend(check_service_worker(root))
     errors.extend(check_registration(root))
+    errors.extend(check_no_gui(root))
     errors.extend(check_page_integration(root))
     errors.extend(check_syntax(root))
 

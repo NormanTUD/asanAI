@@ -2,10 +2,11 @@
 
 // Offline support for the Toolkit and the Blog. Visited pages and the assets
 // they loaded are cached, so the app opens without a network connection.
-const CACHE_VERSION = "asanai-pwa-v1";
+const CACHE_VERSION = "asanai-pwa-v2";
 const STATIC_CACHE = CACHE_VERSION + "-static";
 const RUNTIME_CACHE = CACHE_VERSION + "-runtime";
 const OFFLINE_URL = new URL("offline.html", self.location.href).href;
+const SCOPE_PATH = new URL(self.registration.scope).pathname;
 
 const PRECACHE_URLS = [
 	new URL("./", self.location.href).href,
@@ -19,11 +20,13 @@ const PRECACHE_URLS = [
 	new URL("_gui/orange.svg", self.location.href).href
 ];
 
+// Paths relative to the service worker scope, so a deployment below a
+// subdirectory (/asanai/) denies the same endpoints as a root deployment.
 const DENY_PREFIXES = [
-	"/api/", "/rag/", "/stats", "/feedback", "/questions",
+	"api/", "rag/", "stats", "feedback", "questions",
 	// The course is a separate project. The Toolkit service worker must not
 	// cache or offline it.
-	"/blog"
+	"blog"
 ];
 
 const STATIC_EXTENSIONS = [
@@ -36,10 +39,14 @@ function normalizedCacheUrl(raw_url) {
 	try {
 		const url = new URL(raw_url, self.location.href);
 
-		if (url.pathname.indexOf("/traindata/index.php") === -1) return url.href;
-
+		// get_cached_json() appends a random cache_id to every JSON request.
+		// Stripping it here keeps one cache entry per resource instead of one
+		// per call; the fetch handler sends those requests through networkFirst.
 		url.searchParams.delete("cache_id");
-		url.searchParams.sort();
+
+		if (url.pathname.indexOf("/traindata/index.php") !== -1) {
+			url.searchParams.sort();
+		}
 
 		return url.href;
 	} catch (e) {
@@ -47,13 +54,26 @@ function normalizedCacheUrl(raw_url) {
 	}
 }
 
+function hasCacheBuster(url) {
+	return url.searchParams.has("cache_id");
+}
+
+function scopeRelativePath(pathname) {
+	if (SCOPE_PATH !== "/" && pathname.indexOf(SCOPE_PATH) === 0) {
+		return pathname.slice(SCOPE_PATH.length);
+	}
+	return pathname.replace(/^\/+/, "");
+}
+
 function isDatasetListing(url) {
 	return url.pathname.indexOf("/traindata/index.php") !== -1;
 }
 
 function isDenied(url) {
+	const relative = scopeRelativePath(url.pathname).toLowerCase();
+
 	return DENY_PREFIXES.some(function (prefix) {
-		return url.pathname.indexOf(prefix) === 0;
+		return relative.indexOf(prefix) === 0;
 	});
 }
 
@@ -260,6 +280,11 @@ self.addEventListener("fetch", function (event) {
 
 	if (request.mode === "navigate") {
 		event.respondWith(networkFirst(request, true));
+		return;
+	}
+
+	if (hasCacheBuster(url)) {
+		event.respondWith(networkFirst(request, false));
 		return;
 	}
 
