@@ -3985,6 +3985,176 @@ function test_input_shape_guard () {
 	return has_usable_input_shape() || old_value === "";
 }
 
+async function test_invalid_output_shape_disables_training () {
+	var shape_cases = [
+		{name: "valid image shape", shape: [null, 4, 4, 3], invalid: false},
+		{name: "valid flat shape", shape: [null, 10], invalid: false},
+		{name: "shape without a batch dimension", shape: [4, 4, 3], invalid: false},
+		{name: "empty shape", shape: [], invalid: false},
+		{name: "zero dimension", shape: [null, 0, 4, 3], invalid: true},
+		{name: "negative dimension", shape: [null, -1, -1, 3], invalid: true},
+		{name: "mixed zero and negative dimensions", shape: [null, -1, 0, 3], invalid: true},
+		{name: "NaN dimension", shape: [null, NaN, 4, 3], invalid: true},
+		{name: "infinite dimension", shape: [null, Infinity, 4, 3], invalid: true}
+	];
+
+	for (var case_idx = 0; case_idx < shape_cases.length; case_idx++) {
+		test_equal("output shape helper: " + shape_cases[case_idx].name, _output_shape_has_invalid_dimension(shape_cases[case_idx].shape), shape_cases[case_idx].invalid);
+	}
+
+	test_equal("output shape helper ignores null", _output_shape_has_invalid_dimension(null), false);
+	test_equal("output shape helper ignores non-arrays", _output_shape_has_invalid_dimension("4,4,3"), false);
+	test_equal("output shape helper ignores string dimensions", _output_shape_has_invalid_dimension([null, "4", 4, 3]), false);
+
+	var valid_status = _layer_output_shape_status([null, 4, 4, 3]);
+	test_equal("valid output shape is not marked red", valid_status[0].indexOf("background-color: red"), -1);
+	test_equal("valid output shape is reported as valid", valid_status[1], false);
+	test_equal("valid output shape drops the batch dimension", valid_status[0], "Output:&nbsp;[4,4,3]");
+
+	var zero_status = _layer_output_shape_status([null, 0, 4, 3]);
+	test_equal("zero output shape is marked red", zero_status[0].indexOf("background-color: red") !== -1, true);
+	test_equal("zero output shape is reported as invalid", zero_status[1], true);
+	test_equal("zero output shape keeps the invalid value visible", zero_status[0].indexOf("[0,4,3]") !== -1, true);
+
+	var negative_status = _layer_output_shape_status([null, -1, -1, 3]);
+	test_equal("negative output shape is marked red", negative_status[0].indexOf("background-color: red") !== -1, true);
+	test_equal("negative output shape is reported as invalid", negative_status[1], true);
+	test_equal("negative output shape keeps the invalid values visible", negative_status[0].indexOf("[-1,-1,3]") !== -1, true);
+
+	var en_message = language["en"]["invalid_output_shape"];
+	var de_message = language["de"]["invalid_output_shape"];
+	test_equal("invalid output shape message exists in English", typeof en_message === "string" && en_message.length > 0, true);
+	test_equal("invalid output shape message exists in German", typeof de_message === "string" && de_message.length > 0, true);
+	test_equal("invalid output shape message has a shape placeholder in English", en_message.indexOf("%s") !== -1, true);
+	test_equal("invalid output shape message has a shape placeholder in German", de_message.indexOf("%s") !== -1, true);
+	test_equal("English invalid output shape message is actionable", en_message.indexOf("Reduce the number of layers") !== -1 && en_message.indexOf("Training is disabled") !== -1, true);
+	test_equal("German invalid output shape message is actionable", de_message.indexOf("Reduziere die Anzahl der Layer") !== -1 && de_message.indexOf("Training ist deaktiviert") !== -1, true);
+
+	var old_model = window.model;
+	var old_has_zero_output_shape = window.has_zero_output_shape;
+	var train_button = $(".train_neural_network_button");
+	var was_disabled = train_button.prop("disabled");
+	var failure_count = 0;
+	var invalid_scenarios = [
+		{name: "zero", shape: [null, 0, 0, 3]},
+		{name: "negative", shape: [null, -1, -1, 3]},
+		{name: "mixed", shape: [null, -1, 0, 3]}
+	];
+
+	try {
+		for (var scenario_idx = 0; scenario_idx < invalid_scenarios.length; scenario_idx++) {
+			var scenario = invalid_scenarios[scenario_idx];
+			var scenario_shape = scenario.shape;
+			var error_message = "";
+			var expected_message = sprintf(language[lang]["invalid_output_shape"], JSON.stringify(scenario_shape));
+
+			window.has_zero_output_shape = false;
+			window.model = {
+				layers: [{
+					input: { shape: [null, 4, 4, 3] },
+					getOutputAt: function () { return { shape: scenario_shape }; }
+				}]
+			};
+
+			try {
+				await fetchLayerShapeStatus(0, "", false);
+			} catch (e) {
+				error_message = (e && e.message) ? e.message : ("" + e);
+			}
+
+			test_equal(scenario.name + " output shape is reported with the localized message", error_message, expected_message);
+			test_equal(scenario.name + " output shape sets the invalid-shape flag", window.has_zero_output_shape, true);
+			test_equal(scenario.name + " output shape disables training", train_button.prop("disabled"), true);
+
+			if (error_message !== expected_message || !window.has_zero_output_shape || !train_button.prop("disabled")) {
+				failure_count++;
+			}
+		}
+
+		var valid_error = "";
+		window.has_zero_output_shape = false;
+		window.model = {
+			layers: [{
+				input: { shape: [null, 4, 4, 3] },
+				getOutputAt: function () { return { shape: [null, 2, 2, 3] }; }
+			}]
+		};
+
+		try {
+			await fetchLayerShapeStatus(0, "", false);
+		} catch (e) {
+			valid_error = (e && e.message) ? e.message : ("" + e);
+		}
+
+		test_equal("valid output shape does not throw", valid_error, "");
+		test_equal("valid output shape keeps the invalid-shape flag off", window.has_zero_output_shape, false);
+	} finally {
+		window.model = old_model;
+		window.has_zero_output_shape = old_has_zero_output_shape;
+		train_button.prop("disabled", was_disabled);
+	}
+
+	return failure_count === 0;
+}
+
+async function test_output_shape_error_handling_edge_cases () {
+	var old_model = window.model;
+	var old_has_zero_output_shape = window.has_zero_output_shape;
+	var old_has_missing_values = window.has_missing_values;
+	var old_data_origin = $("#data_origin").val();
+	var train_button = $(".train_neural_network_button");
+	var retrain_button = $(".retrain_neural_network_button");
+	var train_was_disabled = train_button.prop("disabled");
+	var retrain_was_disabled = retrain_button.prop("disabled");
+
+	try {
+		window.model = null;
+		window.has_zero_output_shape = false;
+		var missing_model_result = await fetchLayerShapeStatus(0, "untouched", false);
+		test_equal("missing model keeps the shape text unchanged", missing_model_result[0], "untouched");
+		test_equal("missing model does not report an invalid shape", missing_model_result[1], false);
+		test_equal("missing model leaves the invalid-shape flag off", window.has_zero_output_shape, false);
+
+		window.model = {
+			layers: [{
+				input: { shape: [null, 4, 4, 3] },
+				getOutputAt: function () { return { shape: [null, 2, 2, 3] }; }
+			}]
+		};
+		var out_of_range_result = await fetchLayerShapeStatus(5, "untouched", false);
+		test_equal("out-of-range layer index keeps the shape text unchanged", out_of_range_result[0], "untouched");
+		test_equal("out-of-range layer index does not report an invalid shape", out_of_range_result[1], false);
+		test_equal("out-of-range layer index leaves the invalid-shape flag off", window.has_zero_output_shape, false);
+
+		var dense_status = _layer_output_shape_status([null, 10]);
+		test_equal("valid dense output shape drops the batch dimension", dense_status[0], "Output:&nbsp;[10]");
+
+		var invalid_span = _layer_output_shape_status([null, -1, -1, 3])[0];
+		test_equal("invalid output shape markup starts with a red span", invalid_span.indexOf("<span style='background-color: red'>"), 0);
+		test_equal("invalid output shape markup closes the span", invalid_span.indexOf("</span>") !== -1, true);
+
+		window.has_missing_values = false;
+		$("#data_origin").val("default");
+		window.has_zero_output_shape = true;
+		allow_training();
+		test_equal("training stays disabled while the output shape is invalid", train_button.prop("disabled"), true);
+		test_equal("retraining stays disabled while the output shape is invalid", retrain_button.prop("disabled"), true);
+
+		window.has_zero_output_shape = false;
+		allow_training();
+		test_equal("training is enabled again when the output shape is valid", train_button.prop("disabled"), false);
+	} finally {
+		window.model = old_model;
+		window.has_zero_output_shape = old_has_zero_output_shape;
+		window.has_missing_values = old_has_missing_values;
+		$("#data_origin").val(old_data_origin);
+		train_button.prop("disabled", train_was_disabled);
+		retrain_button.prop("disabled", retrain_was_disabled);
+	}
+
+	return true;
+}
+
 function test_training_tab_content_order () {
 	var expected = ["training_live_metrics", "canvas_grid_visualization", "plotly_epoch_history_div", "confusion_matrix_training", "training_content"];
 	var actual = $("#training_tab").find("#training_live_metrics, #canvas_grid_visualization, #plotly_epoch_history_div, #confusion_matrix_training, #training_content").toArray().map(function (element) {
@@ -13483,6 +13653,8 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_training_tab_content_order()", test_training_tab_content_order(), true);
 		test_equal("test_input_shape_guard()", test_input_shape_guard(), true);
 		test_equal("test_input_shape_debug_context()", test_input_shape_debug_context(), true);
+		test_equal("test_invalid_output_shape_disables_training()", await test_invalid_output_shape_disables_training(), true);
+		test_equal("test_output_shape_error_handling_edge_cases()", await test_output_shape_error_handling_edge_cases(), true);
 		test_equal("test_add_layers_defers_on_empty_input_shape()", await test_add_layers_defers_on_empty_input_shape(), true);
 		test_equal("test_pwa_assets_and_registration()", await test_pwa_assets_and_registration(), true);
 		test_equal("test_dataset_switch_keeps_overlay_until_data_ready()", await test_dataset_switch_keeps_overlay_until_data_ready(), true);

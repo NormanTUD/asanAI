@@ -160,6 +160,8 @@ module.exports = {
 		"start_test_time": "writable",
 		"get_layer_initializer_config": "readonly",
 		"get_output_shape_at_layer": "readonly",
+		"_output_shape_has_invalid_dimension": "readonly",
+		"_layer_output_shape_status": "readonly",
 		"get_current_layer_container_status_hash": "writable",
 		"is_numeric": "readonly",
 		"log": "readonly",

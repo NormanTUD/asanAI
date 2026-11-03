@@ -573,7 +573,37 @@ function get_layer_identification (layer_idx) {
 	return "";
 }
 
-async function fetchLayerShapeStatus (layer_idx, output_shape_string, has_zero_output_shape) {
+function _output_shape_has_invalid_dimension (output_shape) {
+	if(!Array.isArray(output_shape)) {
+		return false;
+	}
+
+	for(var dimension_idx = 0; dimension_idx < output_shape.length; dimension_idx++) {
+		var dimension = output_shape[dimension_idx];
+		if(typeof dimension === "number" && (!Number.isFinite(dimension) || dimension <= 0)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function _layer_output_shape_status (output_shape) {
+	var shape = JSON.stringify(output_shape);
+	var has_invalid_dimension = _output_shape_has_invalid_dimension(output_shape);
+	var output_shape_string = "Output:&nbsp;" + shape;
+
+	if(has_invalid_dimension) {
+		output_shape_string = "<span style='background-color: red'>" + output_shape_string + "</span>";
+	}
+
+	output_shape_string = output_shape_string.replace("null,", "");
+
+	return [output_shape_string, has_invalid_dimension];
+}
+
+async function fetchLayerShapeStatus (layer_idx, output_shape_string, has_invalid_output_shape) {
+	var invalid_shape_json = "";
 	if(model && model?.layers && model?.layers?.length >= layer_idx) {
 		try {
 			model?.layers[layer_idx]?.input.shape;
@@ -585,14 +615,14 @@ async function fetchLayerShapeStatus (layer_idx, output_shape_string, has_zero_o
 			const this_layer = model?.layers[layer_idx];
 
 			if(this_layer) {
-				var shape = JSON.stringify(this_layer.getOutputAt(0).shape);
-				if(/((\[|,)\s*)\s*0\s*((\]|,)\s*)/.test(shape) || /\[\s*(0,?\s*?)+\s*\]/.test(shape)) {
-					output_shape_string = "<span style='background-color: red'>Output:&nbsp;" + shape + "</span>";
-					output_shape_string = output_shape_string.replace("null,", "");
-					has_zero_output_shape = true;
-				} else {
-					output_shape_string = "Output:&nbsp;" + shape;
-					output_shape_string = output_shape_string.replace("null,", "");
+				var output_shape = this_layer.getOutputAt(0).shape;
+				var shape_status = _layer_output_shape_status(output_shape);
+				output_shape_string = shape_status[0];
+
+				if(shape_status[1]) {
+					invalid_shape_json = JSON.stringify(output_shape);
+					has_invalid_output_shape = true;
+					window.has_zero_output_shape = true;
 				}
 			}
 		}
@@ -600,9 +630,8 @@ async function fetchLayerShapeStatus (layer_idx, output_shape_string, has_zero_o
 		void(0); dbg(`identify_layers: layer_idx = ${layer_idx} is not in model.layers. This may happen when the model is recompiled during this step and if so, is probably harmless.`);
 	}
 
-	if(has_zero_output_shape) {
-		var basemsg = "ERROR: There are zeroes in the output shape. ";
-		var msg = basemsg + "The input shape will be resetted the the last known working configuration.";
+	if(has_invalid_output_shape) {
+		var msg = sprintf(language[lang]["invalid_output_shape"], invalid_shape_json);
 
 		disable_train();
 
@@ -611,7 +640,7 @@ async function fetchLayerShapeStatus (layer_idx, output_shape_string, has_zero_o
 		enable_train();
 	}
 
-	return [output_shape_string, has_zero_output_shape];
+	return [output_shape_string, has_invalid_output_shape];
 }
 
 async function identify_layers () {
@@ -643,7 +672,7 @@ async function identify_layers () {
 		try {
 			[output_shape_string, has_zero_output_shape] = await fetchLayerShapeStatus(layer_idx, output_shape_string, has_zero_output_shape);
 		} catch (e) {
-			if(Object.keys(e).includes("message")) {
+			if(e && e.message) {
 				e = e.message;
 			}
 

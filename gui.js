@@ -516,7 +516,7 @@ async function identify_layers_or_error () {
 		await identify_layers();
 	} catch (e) {
 		var stack = e.stack;
-		if(Object.keys(e).includes("message")) {
+		if(e && e.message) {
 			e = e.message;
 		}
 
