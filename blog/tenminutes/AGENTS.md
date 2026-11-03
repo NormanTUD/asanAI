@@ -61,9 +61,10 @@ These are the only accent colours. Do not introduce new accent hues.
 | Light Green | `#869b55` | `134/155/85` |
 | Yellow | `#9f9700` | `159/151/0` |
 
-Paper, card, muted text, and near-black are neutrals, not brand accents. They
-stay because they carry the editorial reading surface and contrast. In
-particular, `--tm-muted` remains `#627476` so small text stays readable.
+Paper, card, muted text, and near-black are neutrals, not brand accents. In
+light mode the page and card surfaces are pure white (`#ffffff`); borders and
+shadows carry the separation. `--tm-muted` remains `#627476` so small text
+stays readable.
 
 ## Design tokens
 
@@ -71,9 +72,9 @@ particular, `--tm-muted` remains `#627476` so small text stays readable.
 
 | Token | Light | Dark | Role |
 |---|---|---|---|
-| `--tm-paper` | `#f7f3e8` | `#071a22` | page surface |
-| `--tm-paper-2` | `#fdfbf4` | `#0a222c` | raised surface |
-| `--tm-card` | `#fffdf7` | `#0d2a35` | cards |
+| `--tm-paper` | `#ffffff` | `#071a22` | page surface |
+| `--tm-paper-2` | `#ffffff` | `#0a222c` | raised surface |
+| `--tm-card` | `#ffffff` | `#0d2a35` | cards |
 | `--tm-ink` | `#000000` | `#e9f2ee` | body text |
 | `--tm-ink-soft` | `#2c464d` | `#c4d8d6` | secondary text |
 | `--tm-muted` | `#627476` | `#9db5b5` | muted prose |

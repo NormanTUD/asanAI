@@ -411,10 +411,12 @@ async function cachePage(pageUrl, assetUrls) {
 	let failed = 0;
 	let page = null;
 
-	try {
-		page = new URL(pageUrl, SCOPE_URL);
-	} catch (error) {
-		page = null;
+	if (pageUrl) {
+		try {
+			page = new URL(pageUrl, SCOPE_URL);
+		} catch (error) {
+			page = null;
+		}
 	}
 
 	if (page && isCacheable(page)) {

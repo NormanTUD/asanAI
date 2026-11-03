@@ -521,11 +521,28 @@ JS receives the proxy base path.
 
 HTML links/forms stay on the proxy, while same-origin assets are proxied or
 rewritten. CSS `url(...)`/`@import` and font preloads are rewritten too, so
-fonts do not hit CORS. The analytics endpoint in the inline tracker config is
+fonts do not hit CORS. Relative URLs are resolved against the requested page,
+not the proxy script: a page at `tenminutes/history.html` resolves
+`assets/site.css` to `tenminutes/assets/site.css` and `../temml.min.js` to
+`temml.min.js`. Keep Ten Minutes pages on relative paths (`assets/…`, `../…`)
+so they work both standalone and through the proxy; do not hardcode
+`/blog/…` asset paths. The analytics endpoint in the inline tracker config is
 rewritten to `asanai_blog_proxy.php?track.php`, so page-time/scroll beacons are
 forwarded to the remote `track.php`. `X-Frame-Options` and CSP are not
 forwarded (the proxy is intentionally embeddable); cookies are filtered to the
 blog's own names so unrelated host cookies are never sent to the remote.
+
+The proxy rewrites HTML attributes (`src`, `href`, `link`, `iframe`, form
+actions) and CSS URLs. It cannot see URLs built inside JavaScript strings.
+Ten Minutes therefore routes JavaScript-loaded assets through `TM.asset()`
+(`history.html` timeline images, the `data-image` demos and the convolution
+sample image); use that helper for new JS-built asset URLs so they resolve
+both standalone and through the proxy.
+
+Ten Minutes pages also report their document height to an embedding parent as
+`{type: "height", val: <pixels>}`. The host can apply it to the iframe, for
+example to `#asanai-final-iframe`. The post only happens inside an iframe, so
+standalone pages are unaffected; it works the same with and without the proxy.
 
 The remote analytics still records the pageview; the proxy does not create a
 second analytics database. Exact visitor paths remain unavailable for the same

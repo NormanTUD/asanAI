@@ -140,10 +140,7 @@ html {
 body {
 	margin: 0;
 	min-height: 100vh;
-	background:
-		radial-gradient(1100px 560px at 12% -8%, rgba(99, 164, 75, 0.11), transparent 65%),
-		radial-gradient(1300px 680px at 92% 2%, rgba(18, 117, 172, 0.12), transparent 62%),
-		linear-gradient(180deg, var(--tm-paper-2) 0%, var(--tm-paper) 42%, var(--tm-paper) 100%);
+	background: var(--tm-paper);
 	background-attachment: fixed;
 	color: var(--tm-ink);
 	font-family: var(--tm-ui);
@@ -171,6 +168,7 @@ body::before {
 	opacity: 0.035;
 	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+html[data-theme="light"] body::before { display: none; }
 
 ::selection { background: rgba(99, 164, 75, 0.32); color: var(--tm-ink); }
 
