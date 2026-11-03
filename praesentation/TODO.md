@@ -12,10 +12,12 @@
 > (falsch → Loss ≈ 3,0). Die Wahrscheinlichkeiten gleiten flüssig
 > zwischen den Schritten, der Loss folgt logarithmisch (CCE = −ln p).
 > Danach eine **20-s-Training-Animation**: links sinkt die Loss-Kurve
-> immer weiter, rechts stehen Katzenbild und Katze/Hund-Prozente live
-> daneben (Loss = −ln p; niedriger Loss = sicherer richtig). Niedriger
-> Loss = weniger falsch; nicht der Einzelwert, sondern der Verlauf zählt.
-> CCE/MSE-Tabellen entfallen.
+> immer weiter, rechts stehen **zwei Bilder** (Katze, Hund) mit je
+> **zwei Balken** (Katze/Hund). Beide starten bei 50 : 50, dann wird
+> das Katzenbild Katze und das Hundebild Hund (bis 95 : 5). Loss =
+> −ln p; niedriger Loss = sicherer richtig. Niedriger Loss = weniger
+> falsch; nicht der Einzelwert, sondern der Verlauf zählt. CCE/MSE-
+> Tabellen entfallen.
 > **T62** `[x]` Neue Folie **„Loss: Wie falsch liegt das Netz?"** nach
 > „Der gesamte Prozess" (Folie 12, `loss.js`, 4 Schritte). Loss ist
 > ein Wert für die Falschheit, keine Strafe. Zuerst **CCE

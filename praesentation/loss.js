@@ -9,10 +9,12 @@
 // 1 · Katze 95 % / Hund 5 %: richtige Kategorie mit hoher
 //     Wahrscheinlichkeit → Loss ≈ 0,05.
 // 2 · Katze 5 % / Hund 95 %: falsche Kategorie → Loss ≈ 3,0.
-// 3 · Die Loss-Kurve über das Training: eine einzige Linie, die
-//     sinkt. Nicht der einzelne Wert zählt, sondern der Verlauf.
+// 3 · 20-s-Training: links sinkt die Loss-Kurve; rechts zwei
+//     Bilder (Katze, Hund), jedes mit Katze- und Hund-Balken.
+//     Beide starten bei 50 : 50; die Katze wird Katze, der Hund
+//     wird Hund, der Loss sinkt bis ≈ 0,05.
 //
-// Der Loss ist CCE = −ln(p_katze). Die Wahrscheinlichkeiten
+// Der Loss ist CCE = −ln(p_richtig). Die Wahrscheinlichkeiten
 // gleiten zwischen den Schritten, der Loss folgt dabei
 // logarithmisch.
 //

@@ -70,8 +70,9 @@ const DemoRegistry = (() => {
                 // gesamten Prozess: ein Katzenbild, darunter die beiden
                 // Ausgaben (60 % → Loss ≈ 0,5, 95 % → Loss ≈ 0,05,
                 // 5 % → Loss ≈ 3,0). Danach eine 20-s-Animation:
-                // links sinkt die Loss-Kurve, rechts laufen Katze/Hund
-                // in Prozent live mit.
+                // links sinkt die Loss-Kurve, rechts stehen Katze und
+                // Hund mit je zwei Balken (Katze/Hund) live daneben,
+                // von 50 : 50 bis 95 : 5.
                 { id: 'loss', ref: () => typeof LossDemo !== 'undefined' ? LossDemo : null,
                         slideTest: s => s.id === 'slide-loss',
                         onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
