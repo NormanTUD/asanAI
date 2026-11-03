@@ -142,8 +142,8 @@
 <!-- ============================================================
      Folie 4: Was wir wollen (Ziel)
      ------------------------------------------------------------
-     (aus Folie 5 „Was wir wollen und drei Bausteine dafür"
-     herausgelöst und vor „Man arbeitet in Schichten" verschoben.)
+     (aus Folie 5 „Was wir wollen und Bausteine dafür"
+      herausgelöst und vor „Man arbeitet in Schichten" verschoben.)
      Zielzustand: Katze = 100 %, Hund = 100 % — live gerendert
      (PipelineGoalDemo, #goal-cv).
      ============================================================ -->
@@ -243,28 +243,33 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 7: Drei Bausteine dafür (Roadmap)
+     Folie 7: Vier Bausteine dafür (Roadmap)
      ------------------------------------------------------------
      (Zielzustand + #goal-cv jetzt auf Folie 4 „Was wir wollen".)
-     Die drei Bausteine Convolution → Flatten → Dense Layer und
-     die abstrakte Formel dense(flatten(conv2d(bild))).
+     Die vier Bausteine Convolution → Flatten → Dense Layer →
+     Loss und die abstrakte Formel dense(flatten(conv2d(bild))).
+     Der Loss bewertet beim Training, wie falsch die Ausgabe liegt.
      ============================================================ -->
-<div class="slide" id="slide-bausteine" data-title="Drei Bausteine dafür">
+<div class="slide" id="slide-bausteine" data-title="Vier Bausteine dafür">
     <div class="slide-content">
-        <h2>Drei Bausteine dafür</h2>
+        <h2>Vier Bausteine dafür</h2>
 
         <div class="fragment" style="text-align:center;">
-            Wir behandeln drei Bausteine:
+            Wir behandeln vier Bausteine:
         </div>
 
         <div style="display:flex; gap:14px; justify-content:center; align-items:center; margin-top:12px; flex-wrap:wrap;">
             <span class="kz-chip fragment">1 · Convolution</span>
             <span class="fragment" style="display:inline-flex;align-items:center;gap:14px;"><span class="kz-arrow">→</span><span class="kz-chip">2 · Flatten</span></span>
             <span class="fragment" style="display:inline-flex;align-items:center;gap:14px;"><span class="kz-arrow">→</span><span class="kz-chip">3 · Dense Layer</span></span>
+            <span class="fragment" style="display:inline-flex;align-items:center;gap:14px;"><span class="kz-arrow">→</span><span class="kz-chip">4 · Loss</span></span>
         </div>
 
         <div class="fragment formula-box">
             <div class="math-display">$$\text{Netz}(\text{Bild}) = \text{dense}\bigl(\text{flatten}(\text{conv2d}(\text{Bild}))\bigr)$$</div>
+            <div style="text-align:center; margin-top:8px; font-size:0.95em; color:#475569;">
+                Der <b>Loss</b> misst beim Training, wie falsch die Ausgabe liegt — je niedriger, desto besser.
+            </div>
         </div>
     </div>
 </div>
@@ -425,7 +430,42 @@
      mehr geladen.)
      ============================================================ -->
 <!-- ============================================================
-     Folie 11: Der gesamte Prozess
+     Folie 11: Loss — wie falsch liegt das Netz?
+     ------------------------------------------------------------
+     LossDemo (loss.js), 4 Schritte. Loss ist ein Baustein wie
+     Convolution, Flatten und Dense: er sagt dem Netz, wie falsch
+     es liegt (niedriger Loss = weniger falsch).
+       1. Katze 60 % / Hund 40 %: richtige Kategorie, aber
+          unsicher → Loss ≈ 0,5 (guter Loss).
+       2. Katze 95 % / Hund 5 %: richtige Kategorie mit hoher
+          Wahrscheinlichkeit → Loss ≈ 0,05 (noch besser).
+       3. Katze 5 % / Hund 95 %: falsche Kategorie → Loss ≈ 3,0
+          (hoher Loss).
+       4. Die Loss-Kurve über das Training: eine einzige Linie,
+          die sinkt. Nicht der einzelne Wert zählt, sondern der
+          Verlauf.
+     ============================================================ -->
+<div class="slide" id="slide-loss" data-title="Loss">
+    <div class="slide-content">
+        <div class="kz">
+            <div class="kz-head"><h2 class="kz-const">Loss: Wie falsch liegt das Netz?</h2><div class="kz-chip" style="position:absolute; right:0; top:16px; font-family:Inter,system-ui,sans-serif;">Baustein 4 · Loss</div><div class="kz-tswap" id="loss-tswap">
+                <div class="kz-kicker" id="loss-kicker">Schritt 1 · Richtig, aber unsicher</div>
+                <div class="kz-title" id="loss-title">Richtig erkannt:<br>der Loss ist <em>gut</em>.</div>
+            </div></div>
+
+            <div class="kz-stage"><canvas id="loss-cv"></canvas></div>
+
+            <div class="kz-foot"><div class="kz-fswap" id="loss-fswap">
+                <div class="kz-pill" id="loss-pill">Katze 60 % · Loss ≈ 0,5</div>
+                <div class="kz-chips" id="loss-chips"><span class="kz-chip g">richtig, aber unsicher</span></div>
+            </div></div>
+
+            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="loss-insight"></div></div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================
+     Folie 12: Der gesamte Prozess
      ------------------------------------------------------------
       Katze-Framework (katze.js, PipelineDemo): das ganze Netz in
       einem Blick, Bild → Layer 1 (Muster im Bild) → Layer 2
@@ -450,45 +490,6 @@
             </div></div>
 
             <div class="kz-insight-slot"><div class="key-insight kz-insight" id="pipe-insight"></div></div>
-        </div>
-    </div>
-</div>
-<!-- ============================================================
-     Folie 12: Loss — wie falsch liegt das Netz?
-     ------------------------------------------------------------
-     LossDemo (loss.js), 4 Schritte. Wichtig: Loss ist kein
-     „Strafmaß", sondern ein Wert dafür, wie falsch das Netz liegt.
-       1. CCE (Categorical Cross Entropy) für Klassen: drei
-          Antworten auf einer Loss-Achse. Sicher richtig
-          (95 % → 0,05), am Anfang (50:50 → 0,69) und komplett
-          falsch (Hund 95 % statt Katze → 3,00, rund 60× höher).
-          Trainingspfeil 0,69 → 0,05.
-       2. MSE (Mean Squared Error) für Zahlen: Tabelle mit
-          MSE = Fehler², sichtbar 0 · 1 · 9 · 25.
-       3. CCE noch einmal als Tabelle mit der mittleren 60-%-Zeile:
-          95 % = 0,05, 60 % = 0,51, 5 % = 3,00.
-       4. Die Wahl: Kategorien/CCE · Zahlen/MSE — und der Hinweis,
-          dass es für anderes noch viele weitere Loss-Funktionen gibt.
-     CCE und MSE sind also zwei von vielen Loss-Funktionen; die
-     Folie zeigt keine Formel-Details, sondern die unterschiedliche
-     Bewertung des Fehlers.
-     ============================================================ -->
-<div class="slide" id="slide-loss" data-title="Loss">
-    <div class="slide-content">
-        <div class="kz">
-            <div class="kz-head"><h2 class="kz-const">Loss: Wie falsch liegt das Netz?</h2><div class="kz-tswap" id="loss-tswap">
-                <div class="kz-kicker" id="loss-kicker">Schritt 1 · Die Idee · CCE</div>
-                <div class="kz-title" id="loss-title">Loss ist ein Wert dafür,<br>wie falsch das <em>Netz</em> liegt.</div>
-            </div></div>
-
-            <div class="kz-stage"><canvas id="loss-cv"></canvas></div>
-
-            <div class="kz-foot"><div class="kz-fswap" id="loss-fswap">
-                <div class="kz-pill" id="loss-pill">CCE · Richtig <b>0,05</b> · Anfang <b>0,69</b> · Hund statt Katze <b>3,00</b></div>
-                <div class="kz-chips" id="loss-chips"><span class="kz-chip">richtig 0,05</span><span class="kz-arrow">·</span><span class="kz-chip r">falsch 3,00</span></div>
-            </div></div>
-
-            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="loss-insight"></div></div>
         </div>
     </div>
 </div>

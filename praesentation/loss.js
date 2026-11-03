@@ -1,21 +1,16 @@
 // ============================================================
-// LossDemo, "Loss: Wie falsch liegt das Netz?" (Folie 12)
+// LossDemo, "Loss: Wie falsch liegt das Netz?" (Folie 11)
 //
-// Vier Schritte, gleiche Leserichtung (links → rechts):
-// 0 · Die Idee mit CCE: drei Antworten auf einer linearen Loss-Achse.
-//     Sicher richtig (Katze 95 % → 0,05), am Anfang (50:50 → 0,69),
-//     komplett falsch (Hund 95 % statt Katze → 3,00, rund 60× höher).
-//     Der blaue Trainingspfeil zeigt 0,69 → 0,05.
-// 1 · MSE: eine Tabelle. Links Ziel/Antwort auf der Zahlengerade,
-//     rechts MSE = Fehler². 0 · 1 · 9 · 25 zeigen sichtbar, dass
-//     ein großer Fehler überproportional stark wächst.
-// 2 · CCE: eine Tabelle. Links die Wahrscheinlichkeit für die
-//     richtige Klasse (Katze), rechts der Loss. 95 % → 0,05,
-//     60 % → 0,51, 5 % → 3,00: falsche Sicherheit wird riesig.
-// 3 · Die Wahl: zwei Karten — Kategorien/CCE, Zahlen/MSE —
-//     und der Hinweis, dass es noch viele weitere gibt.
-//
-// CCE und MSE sind also zwei von vielen Loss-Funktionen.
+// Vier Schritte. Loss ist ein Baustein wie Convolution, Flatten
+// und Dense: er sagt dem Netz, wie falsch es liegt. Niedriger
+// Loss = weniger falsch.
+// 0 · Ein Katzenbild, Ausgabe Katze 60 % / Hund 40 %: richtige
+//     Kategorie, aber unsicher → Loss ≈ 0,5.
+// 1 · Katze 95 % / Hund 5 %: richtige Kategorie mit hoher
+//     Wahrscheinlichkeit → Loss ≈ 0,05.
+// 2 · Katze 5 % / Hund 95 %: falsche Kategorie → Loss ≈ 3,0.
+// 3 · Die Loss-Kurve über das Training: eine einzige Linie, die
+//     sinkt. Nicht der einzelne Wert zählt, sondern der Verlauf.
 //
 // Die Szene zeichnet in einem festen 1100×420-Raster und wird auf
 // die Canvas-Größe skaliert; so bleibt das Layout auf jedem Beamer
@@ -28,18 +23,40 @@ const LossDemo = (() => {
 	const FONT = 'Inter, system-ui, -apple-system, sans-serif';
 	const C = {
 		ink: '#0f172a', body: '#334155', muted: '#64748b',
-		line: '#e2e8f0', rule: '#eef2f7', track: '#f1f5f9', group: '#f8fafc',
-		blue: '#2563eb', blueSoft: '#eff5ff', blueLine: '#cfe0ff',
+		line: '#e2e8f0', track: '#f1f5f9', axis: '#cbd5e1',
 		green: '#10b981', greenDark: '#15803d', greenSoft: '#ecfdf5', greenLine: '#a7f3d0',
 		amber: '#f59e0b', amberDark: '#b45309', amberSoft: '#fffbeb', amberLine: '#fde68a',
 		rose: '#f43f5e', roseDark: '#be123c', roseSoft: '#fff1f3', roseLine: '#ffd4dc'
 	};
 
+	const PLOT = { x0: 118, x1: 960, yTop: 78, yBot: 326 };
+	const L_START = 0.9;
+
+	const ASSESS = [
+		{
+			cat: 0.60, dog: 0.40, loss: '0,5',
+			verdict: 'richtig, aber unsicher',
+			col: C.amberDark, soft: C.amberSoft, line: C.amberLine
+		},
+		{
+			cat: 0.95, dog: 0.05, loss: '0,05',
+			verdict: 'richtig und sicher',
+			col: C.greenDark, soft: C.greenSoft, line: C.greenLine
+		},
+		{
+			cat: 0.05, dog: 0.95, loss: '3,0',
+			verdict: 'falsch erkannt',
+			col: C.roseDark, soft: C.roseSoft, line: C.roseLine
+		}
+	];
+
+	const IMG = new Image();
+	IMG.src = 'cat.jpg';
+
 	let reveal = 0;
 
 	const clamp01 = t => Math.max(0, Math.min(1, t));
 	const easeOut = t => 1 - Math.pow(1 - t, 3);
-	const de = n => String(n).replace('.', ',');
 
 	function label(ctx, s, x, y, o) {
 		o = o || {};
@@ -63,437 +80,194 @@ const LossDemo = (() => {
 		ctx.restore();
 	}
 
-	function panel(ctx, x, y, w, h, r) {
-		ctx.fillStyle = '#fff';
+	function bar(ctx, x, y, w, h, fill, r) {
+		if (w <= 0) return;
+		ctx.fillStyle = fill;
+		KatzeKit.roundRect(ctx, x, y, Math.max(w, 2), h, Math.min(r || h / 2, h / 2));
+		ctx.fill();
+	}
+
+	// Foto füllend in einen runden Rahmen legen (object-fit: cover).
+	function drawPhoto(ctx, img, x, y, w, h, r) {
+		ctx.save();
 		KatzeKit.roundRect(ctx, x, y, w, h, r);
+		ctx.clip();
+		if (img && img.complete && img.naturalWidth) {
+			const ar = img.naturalWidth / img.naturalHeight;
+			const tar = w / h;
+			let sw, sh, sx, sy;
+			if (ar > tar) {
+				sh = img.naturalHeight; sw = sh * tar;
+				sx = (img.naturalWidth - sw) / 2; sy = 0;
+			} else {
+				sw = img.naturalWidth; sh = sw / tar;
+				sx = 0; sy = (img.naturalHeight - sh) / 2;
+			}
+			ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+		} else {
+			ctx.fillStyle = C.track;
+			ctx.fillRect(x, y, w, h);
+		}
+		ctx.restore();
+	}
+
+	function truthBadge(ctx, x, y) {
+		ctx.save();
+		ctx.font = '800 11px ' + FONT;
+		const tw = ctx.measureText('Wahrheit').width + 22;
+		ctx.fillStyle = C.greenDark;
+		KatzeKit.roundRect(ctx, x, y, tw, 22, 11);
+		ctx.fill();
+		label(ctx, 'Wahrheit', x + tw / 2, y + 11.5,
+			{ size: 11, color: '#fff', weight: 800, align: 'center' });
+		ctx.restore();
+	}
+
+	function catBarColor(d) {
+		if (d.cat >= 0.8) return C.green;
+		if (d.cat >= 0.5) return C.amber;
+		return C.axis;
+	}
+
+	function dogBarColor(d) {
+		return d.dog >= 0.8 ? C.rose : C.axis;
+	}
+
+	function drawProbRow(ctx, name, p, color, y, wrong, t) {
+		const neutral = color === C.axis;
+		const xLabel = 285, xBar = 395, barW = 360, bh = 14, xPct = 785;
+		const ta = easeOut(clamp01((t - 0.15) / 0.5));
+
+		ctx.save();
+		ctx.globalAlpha = ta;
+		label(ctx, name, xLabel, y,
+			{ size: 17, color: wrong ? C.roseDark : C.ink, weight: 800 });
+		label(ctx, Math.round(p * 100) + ' %', xPct, y,
+			{ size: 20, color: neutral ? C.muted : color, weight: 800 });
+		ctx.restore();
+
+		bar(ctx, xBar, y - bh / 2, barW, bh, C.track, bh / 2);
+		bar(ctx, xBar, y - bh / 2, barW * p * t, bh, color, bh / 2);
+	}
+
+	function drawVerdict(ctx, d, a) {
+		if (a < 0.01) return;
+		ctx.save();
+		ctx.globalAlpha = a;
+		const text = 'Loss ≈ ' + d.loss + '  ·  ' + d.verdict;
+		ctx.font = '800 15px ' + FONT;
+		const pw = ctx.measureText(text).width + 44;
+		const ph = 36, x = VW / 2 - pw / 2, y = 392 - ph / 2;
+		ctx.fillStyle = d.soft;
+		KatzeKit.roundRect(ctx, x, y, pw, ph, ph / 2);
+		ctx.fill();
+		ctx.strokeStyle = d.line;
+		ctx.lineWidth = 1.2;
+		ctx.stroke();
+		label(ctx, text, VW / 2, 392.5,
+			{ size: 15, color: d.col, weight: 800, align: 'center' });
+		ctx.restore();
+	}
+
+	// ── Schritte 0–2: eine Katze, zwei Ausgaben ────────────────
+	function drawAssess(ctx, step) {
+		const d = ASSESS[step];
+		const t = easeOut(clamp01(reveal / 0.55));
+		const iw = 320, ih = 214;
+		const ix = (VW - iw) / 2, iy = 44;
+
+		label(ctx, 'Das Netz sieht: Katze', VW / 2, 24,
+			{ size: 13, color: C.muted, weight: 800, align: 'center' });
+
+		// Ein einziges Bild: die Katze. Darunter die beiden Ausgaben.
+		ctx.fillStyle = '#fff';
+		KatzeKit.roundRect(ctx, ix - 10, iy - 10, iw + 20, ih + 20, 16);
 		ctx.fill();
 		ctx.strokeStyle = C.line;
 		ctx.lineWidth = 1.2;
 		ctx.stroke();
+		drawPhoto(ctx, IMG, ix, iy, iw, ih, 12);
+		truthBadge(ctx, ix + 14, iy + 14);
+
+		drawProbRow(ctx, 'Katze', d.cat, catBarColor(d), 290, false, t);
+		drawProbRow(ctx, 'Hund', d.dog, dogBarColor(d), 342, d.dog >= 0.8, t);
+
+		drawVerdict(ctx, d, easeOut(clamp01((reveal - 0.35) / 0.45)));
 	}
 
-	function groupPanel(ctx, x, y, w, h) {
-		ctx.fillStyle = C.group;
-		KatzeKit.roundRect(ctx, x, y, w, h, 14);
-		ctx.fill();
-	}
+	// ── Schritt 3: eine Loss-Kurve über das Training ───────────
+	const cx = tau => PLOT.x0 + tau * (PLOT.x1 - PLOT.x0);
+	const ly = loss => PLOT.yBot - loss * (PLOT.yBot - PLOT.yTop);
+	const curveY = tau =>
+		0.14 + (L_START - 0.14) * Math.exp(-3.2 * tau);
+	const curvePoint = tau => ly(curveY(tau));
 
-	function bar(ctx, x, y, w, h, r, fill) {
-		if (w <= 0) return;
-		ctx.fillStyle = fill;
-		KatzeKit.roundRect(ctx, x, y, Math.max(w, 2), h, Math.min(r, h / 2, Math.max(w, 2) / 2));
-		ctx.fill();
-	}
+	function drawFrame(ctx) {
+		const { x0, x1, yTop, yBot } = PLOT;
+		const yStart = ly(L_START);
 
-	function pill(ctx, text, x, y, o) {
-		o = o || {};
-		const size = o.size || 13;
-		ctx.font = (o.weight || 700) + ' ' + size + 'px ' + FONT;
-		const pw = ctx.measureText(text).width + (o.padX || 24);
-		const ph = o.h || 28;
-		ctx.fillStyle = o.fill || C.blueSoft;
-		KatzeKit.roundRect(ctx, x, y - ph / 2, pw, ph, ph / 2);
-		ctx.fill();
-		if (o.stroke) {
-			ctx.strokeStyle = o.stroke;
-			ctx.lineWidth = 1;
-			ctx.stroke();
-		}
-		label(ctx, text, x + pw / 2, y + .5,
-			{ size, color: o.color || C.blue, weight: o.weight || 700, align: 'center' });
-		return pw;
-	}
+		line(ctx, x0, yStart, x1, yStart, '#dbe3ec', 1.5, [7, 7]);
+		label(ctx, 'Start: 50 : 50', x0 + 14, yStart - 15,
+			{ size: 11, color: C.muted, weight: 700 });
 
-	function columnHeader(ctx, text, x, y, align) {
-		label(ctx, text, x, y, { size: 11, color: C.muted, weight: 800, align: align || 'left' });
-	}
+		line(ctx, x0, yTop, x0, yBot, C.axis, 2);
+		line(ctx, x0, yBot, x1, yBot, C.axis, 2);
 
-	function legendItem(ctx, x, y, color, text) {
-		ctx.fillStyle = color;
-		KatzeKit.roundRect(ctx, x, y - 6, 12, 12, 3);
-		ctx.fill();
-		label(ctx, text, x + 19, y, { size: 11, color: C.muted, weight: 700 });
-	}
-
-	// Gemeinsamer Wahrscheinlichkeitsbalken: links die richtige
-	// Klasse (blau), rechts die andere (grau). Ist ein Segment zu
-	// schmal für eine Innenbeschriftung, rutscht sie darunter.
-	function drawProbBar(ctx, x, y, w, h, p, left, right, size) {
-		const sz = size || 12;
-		ctx.save();
-		KatzeKit.roundRect(ctx, x, y, w, h, h / 2);
-		ctx.clip();
-		ctx.fillStyle = '#e9eef5';
-		ctx.fillRect(x, y, w, h);
-		ctx.fillStyle = C.blue;
-		ctx.fillRect(x, y, w * p, h);
-		ctx.restore();
-		ctx.strokeStyle = '#cfd8e3';
-		ctx.lineWidth = 1;
-		KatzeKit.roundRect(ctx, x + .5, y + .5, w - 1, h - 1, h / 2);
-		ctx.stroke();
-
-		const paw = w * p;
-		const pctL = Math.round(p * 100);
-		const pctR = 100 - pctL;
-		if (paw > 60) {
-			label(ctx, left + ' ' + pctL + ' %', x + paw / 2, y + h / 2,
-				{ size: sz, color: '#fff', weight: 800, align: 'center' });
-		} else {
-			label(ctx, left + ' ' + pctL + ' %', x, y + h + 20,
-				{ size: sz, color: C.blue, weight: 800 });
-		}
-		if (w - paw > 60) {
-			label(ctx, right + ' ' + pctR + ' %', x + paw + (w - paw) / 2, y + h / 2,
-				{ size: sz, color: C.body, weight: 800, align: 'center' });
-		} else {
-			label(ctx, right + ' ' + pctR + ' %', x + w, y + h + 20,
-				{ size: sz, color: C.muted, weight: 800, align: 'right' });
-		}
-	}
-
-	// ── Schritt 0: hoch → runter, und falsch → sehr hoch ────────
-	function drawStepIdea(ctx) {
-		const a = easeOut(clamp01(reveal));
-		ctx.save();
-		ctx.globalAlpha = a;
-
-		const cards = [
-			{
-				x: 40, y: 50, w: 300, h: 150,
-				head: 'SICHER RICHTIG', headCol: C.greenDark,
-				answer: 'Katze 95 %', ansCol: C.blue,
-				loss: '0,05', lossCol: C.greenDark, mark: .05, markCol: C.green
-			},
-			{
-				x: 400, y: 50, w: 300, h: 150,
-				head: 'AM ANFANG', headCol: C.amberDark,
-				answer: '50 : 50', ansCol: C.ink,
-				loss: '0,69', lossCol: C.amberDark, mark: .69, markCol: C.amber
-			},
-			{
-				x: 760, y: 50, w: 300, h: 150,
-				head: 'KOMPLETT FALSCH', headCol: C.roseDark,
-				answer: 'Hund 95 %', ansCol: C.rose,
-				loss: '3,00', lossCol: C.roseDark, mark: 3.00, markCol: C.rose
-			}
-		];
-		const axisX = 80, axisW = 940, axisY = 300, maxLoss = 3.2;
-		const lx = loss => axisX + (loss / maxLoss) * axisW;
-
-		// Das erste Beispiel ist Categorical Cross Entropy (CCE)
-		// für Klassen.
-		pill(ctx, 'CCE', 40, 22,
-			{ fill: C.blueSoft, color: C.blue, stroke: C.blueLine, size: 12, padX: 14, h: 24 });
-		label(ctx, 'Categorical Cross Entropy · für Klassen',
-			106, 22, { size: 11, color: C.muted, weight: 700 });
-
-		cards.forEach(card => {
-			panel(ctx, card.x, card.y, card.w, card.h, 16);
-			label(ctx, card.head, card.x + 20, card.y + 20,
-				{ size: 11, color: card.headCol, weight: 800 });
-			label(ctx, 'Wahrheit: Katze', card.x + 20, card.y + 42,
-				{ size: 11, color: C.greenDark, weight: 700 });
-			label(ctx, card.answer, card.x + 20, card.y + 76,
-				{ size: 22, color: card.ansCol, weight: 800 });
-			label(ctx, 'CCE', card.x + 20, card.y + 104,
-				{ size: 10, color: C.muted, weight: 800 });
-			label(ctx, card.loss, card.x + 20, card.y + 128,
-				{ size: 26, color: card.lossCol, weight: 800 });
-			// Führungslinie vom Kartenboden zum Punkt auf der Loss-Achse.
-			ctx.save();
-			ctx.globalAlpha = .35;
-			line(ctx, card.x + card.w / 2, card.y + card.h, lx(card.mark), axisY,
-				card.markCol, 1.5, [4, 4]);
-			ctx.restore();
-		});
-
-		// Loss-Achse (linear 0 … 3,2): 0,05 und 0,69 liegen links,
-		// 3,00 ganz rechts — der Abstand ist der Punkt.
-		line(ctx, axisX, axisY, axisX + axisW, axisY, '#cbd5e1', 2);
-		[0, 1, 2, 3].forEach(v => {
-			const x = lx(v);
-			line(ctx, x, axisY - 6, x, axisY + 6, '#cbd5e1', 1.5);
-			label(ctx, String(v), x, axisY + 22,
-				{ size: 11, color: C.muted, weight: 700, align: 'center' });
-		});
-		label(ctx, 'Loss', axisX - 10, axisY,
-			{ size: 12, color: C.muted, weight: 800, align: 'right' });
-
-		// Training: 0,69 → 0,05 (Pfeil nach links).
-		const fromX = lx(.69), toX = lx(.05);
-		line(ctx, fromX, axisY, toX + 10, axisY, C.blue, 4);
-		ctx.fillStyle = C.blue;
+		ctx.fillStyle = C.axis;
 		ctx.beginPath();
-		ctx.moveTo(toX, axisY);
-		ctx.lineTo(toX + 12, axisY - 6);
-		ctx.lineTo(toX + 12, axisY + 6);
+		ctx.moveTo(x1 + 14, yBot);
+		ctx.lineTo(x1 + 2, yBot - 6);
+		ctx.lineTo(x1 + 2, yBot + 6);
 		ctx.closePath();
 		ctx.fill();
-		label(ctx, 'Training: Loss sinkt', (fromX + toX) / 2, axisY - 20,
-			{ size: 12, color: C.blue, weight: 800, align: 'center' });
+		ctx.beginPath();
+		ctx.moveTo(x0, yTop - 14);
+		ctx.lineTo(x0 - 6, yTop - 2);
+		ctx.lineTo(x0 + 6, yTop - 2);
+		ctx.closePath();
+		ctx.fill();
 
-		// Marker auf der Achse (über dem Trainingspfeil).
-		cards.forEach(card => {
-			ctx.fillStyle = card.markCol;
-			ctx.beginPath();
-			ctx.arc(lx(card.mark), axisY, 7, 0, Math.PI * 2);
-			ctx.fill();
-			ctx.strokeStyle = '#fff';
-			ctx.lineWidth = 2;
-			ctx.stroke();
-		});
-
-		// Der falsche Fall ist nicht nur etwas schlechter, sondern
-		// rund 60× so teuer wie der sichere Treffer.
-		label(ctx, 'rund 60× höher als 0,05', lx(3), axisY + 50,
-			{ size: 11, color: C.roseDark, weight: 800, align: 'center' });
-
-		ctx.restore();
+		label(ctx, 'Loss', x0 - 14, yTop + 4,
+			{ size: 12, color: C.muted, weight: 800, align: 'right' });
+		label(ctx, 'Training', (x0 + x1) / 2, yBot + 36,
+			{ size: 12, color: C.muted, weight: 800, align: 'center' });
 	}
 
-	// ── Schritt 1: MSE als Tabelle ──────────────────────────────
-	function drawStepMSE(ctx) {
-		const x0 = 40, x1 = 470, rangeMax = 12;
-		const X = v => x0 + (v / rangeMax) * (x1 - x0);
-		const target = 10, targetX = X(target);
-		const barX = 600, barMaxW = 420, maxBar = 25;
-		const rows = [
-			{ y: 105, pred: 10, err: 0, bar: 0, tag: 'getroffen',
-			  col: C.greenDark, barCol: C.green },
-			{ y: 185, pred: 9, err: 1, bar: 1, tag: '1 daneben',
-			  col: C.blue, barCol: C.blue },
-			{ y: 265, pred: 7, err: 3, bar: 9, tag: '3 daneben',
-			  col: C.amberDark, barCol: C.amber },
-			{ y: 345, pred: 5, err: 5, bar: 25, tag: '5 daneben',
-			  col: C.roseDark, barCol: C.rose }
-		];
+	function drawLossCurve(ctx, p) {
+		if (p <= 0.001) return;
+		const N = 120;
 
-		// MSE ist die zweite Loss-Funktion im Deck — auch nur eine
-		// von vielen, hier für Zahlen.
-		pill(ctx, 'MSE', 40, 22,
-			{ fill: C.blueSoft, color: C.blue, stroke: C.blueLine, size: 12, padX: 14, h: 24 });
-		label(ctx, 'Mean Squared Error · für Zahlen',
-			106, 22, { size: 11, color: C.muted, weight: 700 });
-
-		groupPanel(ctx, 580, 62, 480, 330);
-		columnHeader(ctx, 'ABSTAND ZUM ZIEL (10)', x0, 42);
-		columnHeader(ctx, 'MSE = FEHLER²', barX, 42);
-		[65, 145, 225, 305, 385].forEach(y =>
-			line(ctx, 40, y, 1060, y, C.rule, 1));
-
-		rows.forEach((row, i) => {
-			const a = easeOut(clamp01((reveal - i * .1) / .62));
-			if (a < .01) return;
-			ctx.save();
-			ctx.globalAlpha = a;
-
-			const y = row.y;
-			line(ctx, x0, y, x1, y, C.line, 2.5);
-			// Ziel
-			line(ctx, targetX, y - 18, targetX, y + 18, C.green, 3);
-			ctx.fillStyle = C.green;
-			ctx.beginPath();
-			ctx.arc(targetX, y, 6, 0, Math.PI * 2);
-			ctx.fill();
-			label(ctx, 'Ziel 10', targetX, y - 28,
-				{ size: 11, color: C.greenDark, weight: 800, align: 'center' });
-
-			// Antwort
-			const px = X(row.pred);
-			if (row.err > 0) {
-				line(ctx, px, y, targetX, y, C.rose, 5);
-				label(ctx, String(row.err), (px + targetX) / 2, y + 18,
-					{ size: 13, color: C.roseDark, weight: 800, align: 'center' });
-			}
-			ctx.fillStyle = row.err === 0 ? C.green : C.blue;
-			ctx.beginPath();
-			ctx.arc(px, y, 6.5, 0, Math.PI * 2);
-			ctx.fill();
-			ctx.strokeStyle = '#fff';
-			ctx.lineWidth = 2;
-			ctx.stroke();
-
-			label(ctx, row.err === 0 ? 'Ziel = Antwort' : 'Antwort ' + row.pred,
-				x0, y + 24, { size: 12, color: row.err === 0 ? C.greenDark : C.blue, weight: 800 });
-			label(ctx, row.tag, x1, y + 24,
-				{ size: 12, color: row.col, weight: 800, align: 'right' });
-
-			// Loss-Balken
-			bar(ctx, barX, y - 14, barMaxW, 28, 14, C.track);
-			const bw = row.bar / maxBar * barMaxW;
-			if (row.bar > 0) {
-				bar(ctx, barX, y - 14, Math.max(bw, 3), 28, 14, row.barCol);
-			} else {
-				ctx.strokeStyle = C.green;
-				ctx.lineWidth = 2;
-				KatzeKit.roundRect(ctx, barX + .5, y - 13.5, barMaxW - 1, 27, 13.5);
-				ctx.stroke();
-			}
-			label(ctx, 'MSE ' + row.bar, barX + barMaxW, y - 28,
-				{ size: 13, color: row.col, weight: 800, align: 'right' });
-
-			ctx.restore();
-		});
-
-		label(ctx, 'MSE = Mean Squared Error', 40, 407,
-			{ size: 12, color: C.muted, weight: 700 });
-	}
-
-	// ── Schritt 2: CCE als Tabelle ──────────────────────────────
-	function drawStepCCE(ctx) {
-		const x0 = 40, x1 = 470, probW = 430;
-		const barX = 600, barMaxW = 420, maxLoss = 3.2;
-		const rows = [
-			{ y: 125, p: .95, loss: .05, tag: 'sicher richtig',
-			  col: C.greenDark, barCol: C.green,
-			  fill: C.greenSoft, stroke: C.greenLine },
-			{ y: 225, p: .60, loss: .51, tag: 'unsicher',
-			  col: C.amberDark, barCol: C.amber,
-			  fill: C.amberSoft, stroke: C.amberLine },
-			{ y: 325, p: .05, loss: 3.00, tag: 'sicher falsch',
-			  col: C.roseDark, barCol: C.rose,
-			  fill: C.roseSoft, stroke: C.roseLine }
-		];
-
-		// CCE noch einmal als Tabelle: dieselbe Loss-Funktion,
-		// jetzt mit der mittleren 60-%-Zeile.
-		pill(ctx, 'CCE', 40, 22,
-			{ fill: C.blueSoft, color: C.blue, stroke: C.blueLine, size: 12, padX: 14, h: 24 });
-		label(ctx, 'Categorical Cross Entropy · für Klassen',
-			106, 22, { size: 11, color: C.muted, weight: 700 });
-
-		groupPanel(ctx, 580, 62, 480, 330);
-		columnHeader(ctx, 'WAS DAS NETZ SAGT', x0, 44);
-		columnHeader(ctx, 'CCE', barX, 44);
-		legendItem(ctx, x0, 68, C.blue, 'Katze (richtig)');
-		legendItem(ctx, x0 + 170, 68, '#cfd8e3', 'Hund');
-		[171, 271, 371].forEach(y =>
-			line(ctx, 40, y, 1060, y, C.rule, 1));
-
-		rows.forEach((row, i) => {
-			const a = easeOut(clamp01((reveal - i * .12) / .62));
-			if (a < .01) return;
-			ctx.save();
-			ctx.globalAlpha = a;
-
-			const y = row.y;
-			label(ctx, 'Wahrheit: Katze', x0, y - 38,
-				{ size: 12, color: C.greenDark, weight: 800 });
-			label(ctx, row.tag, x1, y - 38,
-				{ size: 12, color: row.col, weight: 800, align: 'right' });
-
-			drawProbBar(ctx, x0, y - 15, probW, 30, row.p, 'Katze', 'Hund', 13);
-
-			bar(ctx, barX, y - 14, barMaxW, 28, 14, C.track);
-			const bw = row.loss / maxLoss * barMaxW;
-			bar(ctx, barX, y - 14, Math.max(bw, 3), 28, 14, row.barCol);
-			const pillX = Math.min(barX + bw + 10, barX + barMaxW + 4);
-			pill(ctx, de(row.loss.toFixed(2)), pillX, y,
-				{ fill: row.fill, color: row.col, stroke: row.stroke, size: 15, padX: 16, h: 30 });
-
-			ctx.restore();
-		});
-
-		label(ctx, 'CCE = Categorical Cross Entropy', 40, 407,
-			{ size: 12, color: C.muted, weight: 700 });
-	}
-
-	// ── Schritt 3: Aufgabe → Loss ───────────────────────────────
-	function drawMiniMSE(ctx, x, y, a, w) {
 		ctx.save();
-		ctx.globalAlpha = a;
-		const width = w || 250;
-		line(ctx, x, y, x + width, y, C.line, 2.5);
-		const tx = x + width * .84, px = x + width * .58;
-		line(ctx, tx, y - 17, tx, y + 17, C.green, 3);
-		ctx.fillStyle = C.green;
-		ctx.beginPath(); ctx.arc(tx, y, 5, 0, Math.PI * 2); ctx.fill();
-		line(ctx, px, y, tx, y, C.rose, 4);
-		ctx.fillStyle = C.blue;
-		ctx.beginPath(); ctx.arc(px, y, 5, 0, Math.PI * 2); ctx.fill();
-		bar(ctx, x, y + 30, width, 12, 6, C.track);
-		bar(ctx, x, y + 30, width * (9 / 25), 12, 6, C.rose);
-		label(ctx, '10', tx, y + 48, { size: 11, color: C.greenDark, weight: 800, align: 'center' });
-		label(ctx, '7', px, y + 48, { size: 11, color: C.blue, weight: 800, align: 'center' });
-		ctx.restore();
-	}
-
-	function drawMiniCCE(ctx, x, y, a, w) {
-		ctx.save();
-		ctx.globalAlpha = a;
-		const width = w || 250;
-		ctx.save();
-		KatzeKit.roundRect(ctx, x, y - 12, width, 24, 12);
-		ctx.clip();
-		ctx.fillStyle = '#e9eef5';
-		ctx.fillRect(x, y - 12, width, 24);
-		ctx.fillStyle = C.blue;
-		ctx.fillRect(x, y - 12, width * .6, 24);
-		ctx.restore();
-		ctx.strokeStyle = '#cfd8e3';
-		ctx.lineWidth = 1;
-		KatzeKit.roundRect(ctx, x + .5, y - 11.5, width - 1, 23, 11.5);
+		ctx.lineJoin = 'round';
+		ctx.lineCap = 'round';
+		ctx.beginPath();
+		for (let i = 0; i <= N; i++) {
+			const tau = (i / N) * p;
+			const x = cx(tau), y = curvePoint(tau);
+			if (i === 0) ctx.moveTo(x, y);
+			else ctx.lineTo(x, y);
+		}
+		ctx.strokeStyle = C.green;
+		ctx.lineWidth = 4.5;
 		ctx.stroke();
-		label(ctx, 'Katze 60 %', x + width * .3, y,
-			{ size: 11, color: '#fff', weight: 800, align: 'center' });
-		label(ctx, 'Hund 40 %', x + width * .8, y,
-			{ size: 11, color: C.body, weight: 800, align: 'center' });
-		bar(ctx, x, y + 30, width, 12, 6, C.track);
-		bar(ctx, x, y + 30, width * (.51 / 3.2), 12, 6, C.amber);
-		label(ctx, '0,51', x + width * (.51 / 3.2) + 7, y + 36,
-			{ size: 11, color: C.amberDark, weight: 800 });
+
+		const ex = cx(p), ey = curvePoint(p);
+		ctx.fillStyle = C.green;
+		ctx.beginPath();
+		ctx.arc(ex, ey, 7, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.strokeStyle = '#fff';
+		ctx.lineWidth = 2.5;
+		ctx.stroke();
 		ctx.restore();
-	}
 
-	function drawStepChoice(ctx) {
-		const cards = [
-			{
-				x: 40, w: 490, accent: C.green, kicker: 'AUFGABE',
-				title: 'Kategorien', loss: 'CCE',
-				rule: 'bewertet falsche Sicherheit stark',
-				examples: 'z. B. Katze/Hund · Auto/Flugzeug',
-				mini: drawMiniCCE
-			},
-			{
-				x: 570, w: 490, accent: C.blue, kicker: 'AUFGABE',
-				title: 'Zahlen', loss: 'MSE',
-				rule: 'bewertet den Abstand',
-				examples: 'z. B. Preis · Temperatur · Alter',
-				mini: drawMiniMSE
-			}
-		];
-
-		cards.forEach((card, i) => {
-			const a = easeOut(clamp01((reveal - i * .14) / .62));
-			if (a < .01) return;
-			ctx.save();
-			ctx.globalAlpha = a;
-			ctx.translate(0, (1 - a) * 14);
-
-			const y = 52, h = 320;
-			panel(ctx, card.x, y, card.w, h, 18);
-			bar(ctx, card.x + 24, y + 18, 48, 6, 3, card.accent);
-
-			columnHeader(ctx, card.kicker, card.x + 24, y + 42);
-			label(ctx, card.title, card.x + 24, y + 68,
-				{ size: 20, color: C.ink, weight: 800 });
-
-			card.mini(ctx, card.x + 24, y + 120, a, card.w - 48);
-
-			line(ctx, card.x + 24, y + 190, card.x + 24, y + 205, C.line, 2);
-			pill(ctx, card.loss, card.x + 24, y + 222,
-				{ fill: C.blueSoft, color: C.blue, stroke: C.blueLine, size: 16, padX: 24, h: 34 });
-			label(ctx, card.rule, card.x + 24, y + 260,
-				{ size: 14, color: C.roseDark, weight: 800 });
-			label(ctx, card.examples, card.x + 24, y + 288,
-				{ size: 11, color: C.muted, weight: 600 });
-
-			ctx.restore();
-		});
-
-		label(ctx, '… für anderes gibt es viele weitere Loss-Funktionen.',
-			550, 400, { size: 11, color: C.muted, weight: 600, align: 'center' });
+		const la = easeOut(clamp01((p - 0.72) / 0.28));
+		if (la < 0.01) return;
+		ctx.save();
+		ctx.globalAlpha = la;
+		label(ctx, 'trainiert: weniger falsch', PLOT.x1 - 10, curvePoint(1) - 28,
+			{ size: 12, color: C.greenDark, weight: 800, align: 'right' });
+		ctx.restore();
 	}
 
 	return KatzeKit.create({
@@ -501,42 +275,41 @@ const LossDemo = (() => {
 		prefix: 'loss',
 		steps: [
 			{
-				k: 'Schritt 1 · Die Idee · CCE',
-				t: 'Loss ist ein Wert dafür,<br>wie falsch das <em>Netz</em> liegt.',
-				p: 'CCE · Richtig <b>0,05</b> · Anfang <b>0,69</b> · Hund statt Katze <b>3,00</b>',
-				c: '<span class="kz-chip">richtig 0,05</span><span class="kz-arrow">·</span><span class="kz-chip r">falsch 3,00</span>'
+				k: 'Schritt 1 · Richtig, aber unsicher',
+				t: 'Richtig erkannt:<br>der Loss ist <em>gut</em>.',
+				p: 'Katze 60 % · Loss ≈ 0,5',
+				c: '<span class="kz-chip g">richtig, aber unsicher</span>',
+				i: 'Der Loss sagt dem Netz, wie falsch es liegt: niedriger Loss = weniger falsch.'
 			},
 			{
-				k: 'Schritt 2 · MSE',
-				t: 'MSE: Bei Zahlen wird<br>der Abstand <em>quadriert</em>.',
-				p: 'MSE · klein daneben <b>1</b> · weit daneben <b>25</b>',
-				c: '<span class="kz-chip">MSE</span>'
+				k: 'Schritt 2 · Richtig und sicher',
+				t: 'Richtig und sicher:<br>der Loss ist <em>noch besser</em>.',
+				p: 'Katze 95 % · Loss ≈ 0,05',
+				c: '<span class="kz-chip g">richtig und sicher</span>'
 			},
 			{
-				k: 'Schritt 3 · CCE',
-				t: 'CCE: Bei Klassen wird <em>falsche<br>Sicherheit</em> stark gewichtet.',
-				p: 'CCE · richtig 95 %: <b>0,05</b> · falsch 5 %: <b>3,00</b>',
-				c: '<span class="kz-chip">CCE</span>'
+				k: 'Schritt 3 · Falsche Kategorie',
+				t: 'Falsch erkannt:<br>der Loss ist <em>hoch</em>.',
+				p: 'Hund 95 % statt Katze · Loss ≈ 3,0',
+				c: '<span class="kz-chip r">falsch erkannt</span>'
 			},
 			{
-				k: 'Schritt 4 · Die Wahl',
-				t: 'Du entscheidest,<br>welcher Loss <em>passt</em>.',
-				p: 'Kategorien → CCE · Zahlen → MSE',
-				c: '<span class="kz-chip g">Aufgabe → Loss</span>',
-				i: 'Du entscheidest nach dem Ziel: Kategorien → CCE, Zahlen → MSE. Für anderes gibt es viele weitere Loss-Funktionen.'
+				k: 'Schritt 4 · Über das Training',
+				t: 'Im Training sinkt der Loss:<br>das Netz liegt <em>weniger falsch</em>.',
+				p: 'Eine Linie · der Loss sinkt',
+				c: '<span class="kz-chip g">niedriger Loss = weniger falsch</span>',
+				i: 'Loss ist ein weiterer Baustein: Convolution, Flatten und Dense bauen das Netz, der Loss sagt beim Training, wie falsch es liegt.'
 			}
 		],
 
-		layoutFor(step, S) {
-			S.inst.forEach(o => { o.ta = 0; o.a = 0; });
-		},
+		layoutFor() {},
 
 		onStep() {
 			reveal = 0;
 		},
 
 		tick(dt) {
-			reveal = Math.min(1, reveal + dt / 42);
+			reveal = Math.min(1, reveal + dt / 55);
 		},
 
 		draw(ctx, S) {
@@ -546,10 +319,13 @@ const LossDemo = (() => {
 			const sc = Math.min(S.W / VW, S.H / VH);
 			ctx.translate((S.W - VW * sc) / 2, (S.H - VH * sc) / 2);
 			ctx.scale(sc, sc);
-			if (S.step === 0) drawStepIdea(ctx);
-			else if (S.step === 1) drawStepMSE(ctx);
-			else if (S.step === 2) drawStepCCE(ctx);
-			else drawStepChoice(ctx);
+
+			if (S.step === 3) {
+				drawFrame(ctx);
+				drawLossCurve(ctx, easeOut(clamp01(reveal / 0.85)));
+			} else {
+				drawAssess(ctx, S.step);
+			}
 			ctx.restore();
 		}
 	});

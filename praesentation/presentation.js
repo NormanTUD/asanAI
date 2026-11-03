@@ -66,6 +66,16 @@ const DemoRegistry = (() => {
                         onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
                         onLeave: d => d.reset() },
 
+                // "Loss: Wie falsch liegt das Netz?" (loss.js), vor dem
+                // gesamten Prozess: ein Katzenbild, darunter die beiden
+                // Ausgaben (60 % → Loss ≈ 0,5, 95 % → Loss ≈ 0,05,
+                // 5 % → Loss ≈ 3,0) und danach eine einzige
+                // Loss-Kurve über das Training.
+                { id: 'loss', ref: () => typeof LossDemo !== 'undefined' ? LossDemo : null,
+                        slideTest: s => s.id === 'slide-loss',
+                        onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
+                        onLeave: d => d.reset() },
+
                 // "Der gesamte Prozess" (katze.js), Bild → Layer 1
                 // (Verläufe) → Layer 2 (Augen/Nase/Mund) →
                 // Dense-Layer → zwei Ausgabe-Neuronen (Start 50:50,
@@ -73,16 +83,6 @@ const DemoRegistry = (() => {
                 // sich) → Katze 95 %.
                 { id: 'pipeline', ref: () => typeof PipelineDemo !== 'undefined' ? PipelineDemo : null,
                         slideTest: s => s.id === 'slide-pipeline',
-                        onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
-                        onLeave: d => d.reset() },
-
-                // "Loss: Wie falsch liegt das Netz?" (loss.js), direkt
-                // nach der Pipeline: CCE-Loss-Achse (0,05 richtig · 0,69
-                // Anfang · 3,00 komplett falsch, Trainingspfeil nach
-                // unten), dann MSE und CCE als Tabellen und Aufgabe →
-                // Loss als Karten plus Hinweis auf weitere Funktionen.
-                { id: 'loss', ref: () => typeof LossDemo !== 'undefined' ? LossDemo : null,
-                        slideTest: s => s.id === 'slide-loss',
                         onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
                         onLeave: d => d.reset() },
 
