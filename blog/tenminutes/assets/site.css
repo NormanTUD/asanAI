@@ -184,20 +184,6 @@ img { max-width: 100%; height: auto; }
 	border-radius: 4px;
 }
 
-.skip {
-	position: absolute;
-	left: 12px;
-	top: -100px;
-	z-index: 100;
-	padding: 10px 16px;
-	background: var(--tm-card);
-	color: var(--tm-ink);
-	border: 1px solid var(--tm-line-strong);
-	border-radius: 8px;
-	font-weight: 600;
-}
-.skip:focus { top: 10px; }
-
 /* ── top bar ─────────────────────────────────────────────── */
 
 .topbar {
@@ -5653,3 +5639,15 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 @media (max-width: 640px) {
 	.ism-wrap { height: 360px; }
 }
+
+/* give the embedding-plot equation its own vertical space */
+#emb-plot-equation {
+	height: auto;
+	min-height: 6rem;
+	margin: 12px 0 16px;
+	padding: 4px 0;
+	align-items: flex-start;
+	overflow-x: auto;
+	overflow-y: visible;
+}
+#emb-plot-equation math { display: block; margin: 0 auto; font-size: 1.05rem; }

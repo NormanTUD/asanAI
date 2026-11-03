@@ -10,7 +10,6 @@
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 </head>
 <body data-lesson="intuition" data-page="lesson">
-	<a class="skip" href="#main">Skip to content</a>
 	<div class="readbar" aria-hidden="true"><span></span></div>
 
 	<main id="main">
@@ -382,62 +381,90 @@
 
 					<section class="section-block" id="meadow">
 						<div class="section-kicker"><span class="sk-num">04</span> The geometry</div>
-						<h2 class="section-title">A finite vocabulary over an infinite space.</h2>
+						<h2 class="section-title">Relationships are reusable directions.</h2>
 						<div class="prose">
 							<p>
-								Under the hood, the model does not choose from a list. It arrives at a
-								<strong>point in a continuous space of possible next-thoughts</strong>. Every
-								word in the vocabulary owns the region of that space closest to it, like
-								pins in a meadow, each with its own territory. The thought falls into the
-								cell of the nearest word.
+								Under the hood, meaning is geometry. The model places every token as a
+								point in a learned vector space. Directions in that space carry
+								relationships: the arrow from <strong>man</strong> to
+								<strong>woman</strong> is the same direction as
+								<strong>king</strong> to <strong>queen</strong>, and a different
+								direction takes <strong>man</strong> to <strong>prince</strong>.
 							</p>
 							<p>
-								This is a visualization, not the literal algorithm. A real model produces one
-								score, called a <strong>logit</strong>, for each vocabulary item, and a
-								<strong>softmax</strong> turns those scores into probabilities. The meadow is a
-								way to see why nearby meanings compete; it is not a claim that the model stores
-								a map with pins. What is real is the consequence: the model can be deep inside
-								one region, or standing on a boundary where two continuations are almost
-								equally likely.
+								The plot below is a two-dimensional slice: <strong>Power</strong> on
+								the horizontal axis and <strong>Gender</strong> on the vertical one.
+								Nobody writes those axes down; they are a human-readable projection of
+								directions the model found useful. In a real embedding the space has
+								thousands of dimensions, most of them unnamed.
 							</p>
 							<p>
-								The boundaries between cells are <strong>seams</strong>: places where two
-								words are equally near and the choice could tip either way. Move the thought
-								around and watch the model become certain, then undecided, then certain again.
+								Use the chips to do the arithmetic. <em>King − Man + Woman</em>
+								lands near <em>Queen</em>, because the gender direction is shared.
+								The direction is the point, not the exact coordinates. Real
+								embeddings are noisier, and the geometry inherits the biases of the
+								text it was trained on.
 							</p>
 						</div>
 
-						<div class="demo" id="meadow-demo">
+						<div class="demo demo--paper" id="embedding-plot-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">The meadow of words <span>· demo 08</span></p>
-									<p class="demo-sub">Move the pointer across the field. Each pin owns the thoughts closest to it; the margin tells you how close you are to a seam.</p>
+									<p class="demo-title">Power and gender <span>· demo 08</span></p>
+									<p class="demo-sub">Words are points in a learned space. The same direction carries a relationship from one pair to another.</p>
+								</div>
+								<span class="demo-badge">2-D slice</span>
+							</div>
+							<div class="demo-body">
+								<div class="chip-row" id="emb-examples">
+									<button class="chip is-on" type="button" data-emb-ex="King - Man + Woman">King − Man + Woman</button>
+									<button class="chip" type="button" data-emb-ex="Man + Power">Man + Power</button>
+									<button class="chip" type="button" data-emb-ex="Woman + 2*Power">Woman + 2·Power</button>
+									<button class="chip" type="button" data-emb-ex="Prince + Power">Prince + Power</button>
+									<button class="chip" type="button" data-emb-ex="directions">↗ Directions</button>
+								</div>
+								<canvas class="demo-canvas" id="emb-plot-canvas" style="height:340px" aria-label="A two-dimensional embedding space with Power on the x-axis and Gender on the y-axis"></canvas>
+								<div class="emb-equation" id="emb-plot-equation" data-tex-display="false"></div>
+								<div class="demo-readout">
+									<div><b>Expression</b><span id="emb-plot-expr">King − Man + Woman</span></div>
+									<div><b>Lands near</b><span id="emb-plot-nearest">Queen</span></div>
+									<div><b>Distance</b><span id="emb-plot-dist">...</span></div>
+								</div>
+								<p class="demo-hint">The axes are a hand-built slice of a much larger space. The direction is the point, not the exact numbers.</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Relationships are reusable directions. “King − Man + Woman” lands near “Queen” because the gender direction is shared.</span></div>
+							<div class="demo-foot">The axes are a toy slice of a much larger space. Real embeddings are higher-dimensional and noisier.</div>
+						</div>
+						<div class="prose" style="margin-top:22px">
+							<p><strong>The meadow of words.</strong> The plot above shows directions. The meadow shows the other geometry: every word owns the region of the space closest to it. Move the pointer and the thought falls into a cell, or onto a seam where two words are almost equally near.</p>
+						</div>
+
+						<div class="demo demo--paper" id="meadow-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The meadow of words <span>· demo 09</span></p>
+									<p class="demo-sub">Every word owns a cell. Move the pointer; the thought falls into the nearest cell. The golden seams are where two words are equally near.</p>
 								</div>
 								<span class="demo-badge">move me</span>
 							</div>
 							<div class="demo-body">
-								<canvas class="demo-canvas" id="meadow-canvas" style="height:340px" aria-label="A Voronoi field of words. Move the pointer to place a thought."></canvas>
-								<div class="demo-readout">
-									<div><b>Thought falls into</b><span id="md-word">dragon</span></div>
-									<div><b>Winning chance</b><span id="md-chance">...</span></div>
-									<div><b>Margin to seam</b><span id="md-margin">...</span></div>
-								</div>
+								<canvas class="demo-canvas" id="meadow-canvas" style="aspect-ratio:560/392;height:auto" aria-label="A Voronoi field of words. Move the pointer to place a thought."></canvas>
 								<div class="demo-controls">
-									<label>Temperature
-										<input type="range" id="md-temp" min="0.2" max="1.8" step="0.05" value="0.8">
-										<output id="md-temp-out">0.80</output>
-									</label>
-									<button class="btn-demo" type="button" id="md-seam">Place on a seam</button>
-									<button class="btn-demo" type="button" id="md-reset">Reset thought</button>
+									<label>Words <input type="range" id="md-n" min="12" max="30" step="6" value="12"><output id="md-n-out">12</output></label>
+									<label>Temperature <input type="range" id="md-temp" min="0.2" max="2.6" step="0.05" value="0.8"><output id="md-temp-out">0.80</output></label>
 								</div>
-								<p class="meadow-caption" id="md-caption">The meadow is a finite vocabulary laid over an infinite space of meaning.</p>
+								<div class="demo-readout demo-readout--4">
+									<div><b>Nearest word</b><span id="md-word">Dog</span></div>
+									<div><b>Wins with</b><span id="md-chance">—</span></div>
+									<div><b>Margin to seam</b><span id="md-margin">—</span></div>
+									<div><b>Ambiguous share</b><span id="md-gap">—</span></div>
+								</div>
+								<p class="meadow-caption" id="md-caption">Move the pointer across the meadow.</p>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Words tile the space of thoughts. Certainty is being deep inside a cell; uncertainty is standing on a seam.</span></div>
-							<div class="demo-foot">
-								In a real model the space has thousands of dimensions and the vocabulary has
-								tens of thousands of tokens. The geometry is the same; only the scale changes.
-							</div>
+							<div class="demo-foot">More words make smaller cells and thinner seams, but the ambiguous share never reaches zero. In a real model the space has thousands of dimensions and the vocabulary has tens of thousands of tokens.</div>
 						</div>
+
 					</section>
 
 					<section class="section-block" id="whole">
@@ -458,7 +485,7 @@
 								No step has a tidy fact database, and no step “understands” in the human
 								sense. Knowledge is distributed across the weights; meaning lives in the
 								<strong>geometry</strong> (directions, distances, regions) and at each
-								step the model places the next thought somewhere in that space. The meadow
+								step the model places the next thought somewhere in that space. The embedding plot
 								is that last step, seen up close.
 							</p>
 							<p>
@@ -499,12 +526,19 @@
 	<script src="assets/site.js?v=20261103"></script>
 	<script src="assets/demos.js?v=20261103"></script>
 	<script src="assets/space-morph.js?v=20261103"></script>
+	<script src="assets/embedding-plot.js?v=20261103"></script>
+	<script src="assets/word-meadow.js?v=20261103"></script>
 	<script>
 	(function () {
 		"use strict";
 
 		/* ── demo 1: the autoregressive loop ─────────────────── */
 		var MAX_STEPS = 6;
+		function hexToRgb(hex) {
+			var h = String(hex || "").replace("#", "");
+			if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+			return [parseInt(h.slice(0, 2), 16) || 0, parseInt(h.slice(2, 4), 16) || 0, parseInt(h.slice(4, 6), 16) || 0];
+		}
 		var NOUNS = [
 			{ t: "dragon", l: 3.4 }, { t: "princess", l: 1.1 }, { t: "robot", l: 0.7 }, { t: "castle", l: 0.4 }, { t: "river", l: 0.2 }
 		];
@@ -758,181 +792,6 @@
 		setTempEnabled(true);
 		reset();
 
-		/* ── demo 2: the meadow ──────────────────────────────── */
-		var canvas = document.getElementById("meadow-canvas");
-		if (!canvas) return;
-		var words = [
-			{ name: "dragon", x: 0.52, y: 0.40, c: "#63a44b" },
-			{ name: "castle", x: 0.23, y: 0.28, c: "#5c9baf" },
-			{ name: "forest", x: 0.74, y: 0.63, c: "#9f9700" },
-			{ name: "princess", x: 0.39, y: 0.73, c: "#9185be" },
-			{ name: "knight", x: 0.63, y: 0.22, c: "#869b55" },
-			{ name: "river", x: 0.16, y: 0.64, c: "#009299" },
-			{ name: "wing", x: 0.83, y: 0.34, c: "#1275ac" },
-			{ name: "mountain", x: 0.33, y: 0.48, c: "#92a19a" }
-		];
-		var thought = { x: 0.46, y: 0.5 };
-		var meadowTemp = 0.8;
-		var off = document.createElement("canvas");
-		var api = null;
-		var mdWord = document.getElementById("md-word");
-		var mdChance = document.getElementById("md-chance");
-		var mdMargin = document.getElementById("md-margin");
-		var mdCaption = document.getElementById("md-caption");
-		var mdTemp = document.getElementById("md-temp");
-		var mdTempOut = document.getElementById("md-temp-out");
-		var mdSeam = document.getElementById("md-seam");
-		var mdReset = document.getElementById("md-reset");
-
-		function nearestPair(x, y) {
-			var d = words.map(function (w) { return Math.hypot((x - w.x), (y - w.y)); });
-			var order = d.map(function (v, i) { return { i: i, d: v }; }).sort(function (a, b) { return a.d - b.d; });
-			return { first: order[0], second: order[1] };
-		}
-		function drawMeadow(ctx, w, h) {
-			var c = TM.colors();
-			ctx.clearRect(0, 0, w, h);
-			var step = 3;
-			off.width = Math.max(1, Math.ceil(w / step));
-			off.height = Math.max(1, Math.ceil(h / step));
-			var octx = off.getContext("2d");
-			var img = octx.createImageData(off.width, off.height);
-			var data = img.data;
-			for (var py = 0; py < off.height; py++) {
-				for (var px = 0; px < off.width; px++) {
-					var u = (px * step + step / 2) / w;
-					var v = (py * step + step / 2) / h;
-					var pair = nearestPair(u, v);
-					var first = words[pair.first.i];
-					var second = words[pair.second.i];
-					var margin = pair.second.d - pair.first.d;
-					var rgb = hexToRgb(first.c);
-					var idx = (py * off.width + px) * 4;
-					var alpha = 0.055 + Math.max(0, 0.1 - margin) * 0.9;
-					data[idx] = rgb[0];
-					data[idx + 1] = rgb[1];
-					data[idx + 2] = rgb[2];
-					data[idx + 3] = Math.min(70, alpha * 255);
-					if (margin < 0.006) {
-						data[idx] = 220;
-						data[idx + 1] = 240;
-						data[idx + 2] = 220;
-						data[idx + 3] = 78;
-					}
-				}
-			}
-			octx.putImageData(img, 0, 0);
-			ctx.imageSmoothingEnabled = true;
-			ctx.drawImage(off, 0, 0, off.width, off.height, 0, 0, w, h);
-
-			var pairT = nearestPair(thought.x, thought.y);
-			var winner = words[pairT.first.i];
-			var marginT = pairT.second.d - pairT.first.d;
-			var T = Math.max(0.08, meadowTemp);
-			var probs = softmax(words.map(function (word) { return -Math.hypot(thought.x - word.x, thought.y - word.y) / T; }), 1);
-			var chance = probs[pairT.first.i];
-
-			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.08)" : "rgba(0,75,111,.09)";
-			ctx.lineWidth = 1;
-			for (var gx = 0; gx < w; gx += 40) {
-				ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
-			}
-			for (var gy = 0; gy < h; gy += 40) {
-				ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
-			}
-
-			words.forEach(function (word) {
-				var x = word.x * w;
-				var y = word.y * h;
-				ctx.beginPath();
-				ctx.arc(x, y, 4.5, 0, Math.PI * 2);
-				ctx.fillStyle = word.c;
-				ctx.fill();
-				ctx.strokeStyle = "rgba(4,30,40,.7)";
-				ctx.lineWidth = 2;
-				ctx.stroke();
-				ctx.font = "600 12px Barlow, system-ui, sans-serif";
-				ctx.fillStyle = c.dark ? "rgba(238,247,244,.82)" : "rgba(18,38,45,.82)";
-				ctx.textAlign = "center";
-				ctx.fillText(word.name, x, y - 12);
-				ctx.font = "500 10px ui-monospace, monospace";
-				ctx.fillStyle = c.dark ? "rgba(238,247,244,.38)" : "rgba(18,38,45,.45)";
-				ctx.fillText(Math.round(probs[words.indexOf(word)] * 100) + "%", x, y + 20);
-			});
-
-			var tx = thought.x * w;
-			var ty = thought.y * h;
-			var halo = 16 + 26 * meadowTemp;
-			var grad = ctx.createRadialGradient(tx, ty, 2, tx, ty, halo);
-			grad.addColorStop(0, c.dark ? "rgba(238,247,244,.9)" : "rgba(255,253,247,.95)");
-			grad.addColorStop(0.35, "rgba(134, 155, 85, .4)");
-			grad.addColorStop(1, "rgba(134, 155, 85, 0)");
-			ctx.beginPath();
-			ctx.arc(tx, ty, halo, 0, Math.PI * 2);
-			ctx.fillStyle = grad;
-			ctx.fill();
-			ctx.beginPath();
-			ctx.arc(tx, ty, 5.5, 0, Math.PI * 2);
-			ctx.fillStyle = c.dark ? "#f4fbf7" : "#fffdf7";
-			ctx.fill();
-			ctx.strokeStyle = winner.c;
-			ctx.lineWidth = 3;
-			ctx.stroke();
-
-			if (mdWord) mdWord.textContent = winner.name;
-			if (mdChance) mdChance.textContent = Math.round(chance * 100) + "%";
-			if (mdMargin) mdMargin.textContent = marginT < 0.008 ? "on the seam" : (marginT * 100).toFixed(1) + " units";
-			if (mdCaption) {
-				if (marginT < 0.012) {
-					mdCaption.textContent = "You are on a seam: “" + winner.name + "” and “" + words[pairT.second.i].name + "” are almost equally near. This is where the model is genuinely undecided.";
-				} else if (chance > 0.8) {
-					mdCaption.textContent = "Deep inside the cell of “" + winner.name + "”. The nearest seam is still far away, so the choice is stable.";
-				} else {
-					mdCaption.textContent = "Near the territory of “" + winner.name + "”, but “" + words[pairT.second.i].name + "” is close. The margin measures how close the thought is to tipping.";
-				}
-			}
-		}
-		function hexToRgb(hex) {
-			var v = hex.replace("#", "");
-			return [parseInt(v.slice(0, 2), 16), parseInt(v.slice(2, 4), 16), parseInt(v.slice(4, 6), 16)];
-		}
-		function setThoughtFromEvent(ev) {
-			var rect = canvas.getBoundingClientRect();
-			var clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
-			var clientY = ev.touches ? ev.touches[0].clientY : ev.clientY;
-			thought.x = TM.clamp((clientX - rect.left) / rect.width, 0.02, 0.98);
-			thought.y = TM.clamp((clientY - rect.top) / rect.height, 0.04, 0.96);
-			if (api) api.redraw();
-		}
-		if (canvas) {
-			api = TM.initCanvas(canvas, drawMeadow);
-			canvas.addEventListener("pointermove", setThoughtFromEvent);
-			canvas.addEventListener("pointerdown", setThoughtFromEvent);
-		}
-		if (mdTemp) {
-			mdTemp.addEventListener("input", function () {
-				meadowTemp = parseFloat(mdTemp.value);
-				if (mdTempOut) mdTempOut.textContent = meadowTemp.toFixed(2);
-				if (api) api.redraw();
-			});
-		}
-		if (mdSeam) {
-			mdSeam.addEventListener("click", function () {
-				var pair = nearestPair(thought.x, thought.y);
-				var a = words[pair.first.i];
-				var b = words[pair.second.i];
-				thought.x = TM.clamp((a.x + b.x) / 2, 0.02, 0.98);
-				thought.y = TM.clamp((a.y + b.y) / 2, 0.04, 0.96);
-				if (api) api.redraw();
-			});
-		}
-		if (mdReset) {
-			mdReset.addEventListener("click", function () {
-				thought.x = 0.46;
-				thought.y = 0.5;
-				if (api) api.redraw();
-			});
-		}
 		/* ── tokens ──────────────────────────────────────────── */
 		var tokVocab = {
 			once: 1024, upon: 2048, a: 64, time: 3072, the: 128, there: 2560,
