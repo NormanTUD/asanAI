@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="A ten-minute interactive introduction to next-token prediction, the loop behind large language models.">
-	<meta name="theme-color" content="#f7f3e8">
+	<meta name="theme-color" content="#ffffff">
 	<title>One Word at a Time | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css?v=20261103">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
@@ -1076,7 +1076,7 @@
 						var ly = (ay + by) / 2 + dx / len * 12;
 						ctx.font = "700 10px Barlow, system-ui, sans-serif";
 						var tw = ctx.measureText(label).width;
-						ctx.fillStyle = c.dark ? "rgba(4,34,46,.84)" : "rgba(255,253,247,.92)";
+						ctx.fillStyle = c.dark ? "rgba(4,34,46,.84)" : "rgba(255,255,255,.92)";
 						TM.roundRect(ctx, lx - tw / 2 - 5, ly - 9, tw + 10, 15, 7);
 						ctx.fill();
 						ctx.fillStyle = color;
@@ -1360,7 +1360,7 @@
 				var tx = ax(ex.shift[0]), ty = ay(ex.shift[1]) - 14;
 				tx = TM.clamp(tx, pad + tw / 2 + 6, w - pad - tw / 2 - 6);
 				TM.roundRect(ctx, tx - tw / 2 - 6, ty - 12, tw + 12, 16, 4);
-				ctx.fillStyle = c.dark ? "rgba(15,23,42,.86)" : "rgba(255,253,247,.92)";
+				ctx.fillStyle = c.dark ? "rgba(15,23,42,.86)" : "rgba(255,255,255,.92)";
 				ctx.fill();
 				ctx.strokeStyle = c.dark ? "rgba(148,163,184,.38)" : "rgba(0,75,111,.2)";
 				ctx.lineWidth = 1;

@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="description" content="A very brief history of AI: a ten-minute timeline from tally bones and logic to cybernetics, the perceptron, and the transformer.">
-	<meta name="theme-color" content="#f7f3e8">
+	<meta name="theme-color" content="#ffffff">
 	<title>A Very Brief History of AI | Ten Minutes</title>
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 	<link rel="stylesheet" href="assets/site.css?v=20261102">
@@ -1086,7 +1086,7 @@
 			function panelHtml(p) {
 				var html = '<div><span class="tl-era">' + p.era + '</span><h3>' + p.title + "</h3><p>" + p.text + "</p></div>";
 				if (p.img) {
-					html += '<figure><img src="' + p.img + '" alt="' + p.alt + '" loading="lazy"><figcaption>' + p.cap + "</figcaption></figure>";
+					html += '<figure><img src="' + TM.asset(p.img) + '" alt="' + p.alt + '" loading="lazy"><figcaption>' + p.cap + "</figcaption></figure>";
 				}
 				return html;
 			}
@@ -1323,7 +1323,7 @@
 			if (!matrix) return;
 			var maskOn = !!(causal && causal.checked);
 			var palette = (window.TM && TM.colors) ? TM.colors() : {};
-			var low = hexToRgb(palette.card || "#fffdf7");
+			var low = hexToRgb(palette.card || "#ffffff");
 			var mid = hexToRgb(palette.sky || "#5c9baf");
 			var high = hexToRgb(palette.green || "#63a44b");
 			var rows = [];
@@ -1352,7 +1352,7 @@
 					var t = pct / 100;
 					var rgb = t < 0.5 ? mixRgb(low, mid, t * 2) : mixRgb(mid, high, (t - 0.5) * 2);
 					var textColor = future ? "var(--tm-faint)" :
-						(relativeLum(rgb) > 0.2 ? "#071a22" : "#fdfbf4");
+						(relativeLum(rgb) > 0.2 ? "#071a22" : "#ffffff");
 					html += '<span class="llm-matrix-cell' + (future ? " is-future" : "") +
 						'" style="background:' + rgbCss(rgb) + ";color:" + textColor + '"' +
 						' title="' + WORDS[i] + " → " + WORDS[j] + ": " + v.toFixed(3) + '">' +

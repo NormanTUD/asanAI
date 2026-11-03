@@ -70,9 +70,9 @@
 }
 
 :root {
-	--tm-paper: #f7f3e8;
-	--tm-paper-2: #fdfbf4;
-	--tm-card: #fffdf7;
+	--tm-paper: #ffffff;
+	--tm-paper-2: #ffffff;
+	--tm-card: #ffffff;
 	--tm-ink: #000000;
 	--tm-ink-soft: #2c464d;
 	--tm-muted: #627476;
@@ -2854,10 +2854,7 @@ html[data-theme="dark"] .week-label { color: var(--tm-green); }
    Light is the default; the petrol panels are the dark variant.
    ============================================================ */
 html[data-theme="light"] .demo {
-	background:
-		radial-gradient(900px 340px at 88% -10%, rgba(99, 164, 75, 0.16), transparent 60%),
-		radial-gradient(720px 460px at -4% 112%, rgba(18, 117, 172, 0.12), transparent 64%),
-		linear-gradient(158deg, #fffdf7 0%, #f7f3e8 56%, #edf4e7 100%);
+	background: #ffffff;
 	color: var(--tm-ink);
 	border-color: var(--tm-line);
 	box-shadow: 0 1px 1px rgba(10, 40, 50, 0.04), 0 26px 64px -40px rgba(5, 43, 59, 0.45);

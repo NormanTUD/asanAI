@@ -824,7 +824,7 @@
 			imageLoaded = true;
 			api.redraw();
 		};
-		img.src = "../stop_sign.jpg";
+		img.src = TM.asset("../stop_sign.jpg");
 		chips.forEach(function (chip) {
 			chip.addEventListener("click", function () {
 				chips.forEach(function (x) { x.classList.remove("is-on"); });
@@ -1082,7 +1082,7 @@
 			var href = n.getAttribute("data-href");
 			var hrefLabel = n.getAttribute("data-href-label") || "Explore this section";
 			var link = href ? '<p class="tl-link"><a class="btn btn--green" href="' + href + '">' + escapeHtml(hrefLabel) + ' →</a></p>' : "";
-			var img = n.getAttribute("data-image");
+			var img = TM.asset(n.getAttribute("data-image"));
 			var caption = n.getAttribute("data-image-caption");
 			var imgLink = n.getAttribute("data-image-link");
 			var imgTag = img ? '<img src="' + escapeHtml(img) + '" alt="' + escapeHtml(n.getAttribute("data-image-alt") || "") + '" loading="lazy">' : "";
@@ -3470,7 +3470,7 @@
 
 		function buildBg(w, h) {
 			var c = colors();
-			var low = hexToRgb(c.card || "#fffdf7");
+			var low = hexToRgb(c.card || "#ffffff");
 			var mid = hexToRgb(c.dark ? (c.blue || "#009299") : (c.sky || "#5c9baf"));
 			var high = hexToRgb(c.petrol || "#004b6f");
 			var S = surfaces[current];
@@ -3570,7 +3570,7 @@
 					ctx.beginPath();
 					ctx.arc(head[0], head[1], 5.5, 0, Math.PI * 2);
 					ctx.fill();
-					ctx.strokeStyle = c.card || "#fffdf7";
+					ctx.strokeStyle = c.card || "#ffffff";
 					ctx.lineWidth = 1.5;
 					ctx.stroke();
 				}

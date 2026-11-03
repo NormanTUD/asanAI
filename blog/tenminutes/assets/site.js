@@ -76,13 +76,31 @@
 			lime: pick("--tm-lime", "#869b55"),
 			gold: pick("--tm-gold", "#9f9700"),
 			coral: pick("--tm-coral", "#9185be"),
-			paper: pick("--tm-paper", "#f7f3e8"),
-			paper2: pick("--tm-paper-2", "#fdfbf4"),
-			card: pick("--tm-card", "#fffdf7"),
+			paper: pick("--tm-paper", "#ffffff"),
+			paper2: pick("--tm-paper-2", "#ffffff"),
+			card: pick("--tm-card", "#ffffff"),
 			line: pick("--tm-line", "rgba(0,75,111,.15)"),
 			lineStrong: pick("--tm-line-strong", "rgba(0,75,111,.28)"),
 			dark: document.documentElement.getAttribute("data-theme") === "dark"
 		};
+	};
+
+	TM.asset = function (path) {
+		if (!path || /^[a-z][a-z0-9+.-]*:/i.test(path) || path.indexOf("//") === 0 || path.charAt(0) === "/" || path.charAt(0) === "#") {
+			return path;
+		}
+		var pathname = window.location.pathname;
+		var match = pathname.match(/^(.*\/)?asanai_blog_proxy(?:\.php)?$/);
+		if (!match) return path;
+		var logical = window.location.search.replace(/^\?/, "").split("?")[0];
+		if (!logical) return path;
+		try {
+			var resolved = new URL(path, "http://proxy.local/" + logical);
+			return (match[1] || "/") + "asanai_blog_proxy?" +
+				resolved.pathname.replace(/^\/+/, "") + resolved.search + resolved.hash;
+		} catch (e) {
+			return path;
+		}
 	};
 
 	TM.initCanvas = function (canvas, draw) {
@@ -132,7 +150,7 @@
 	function applyTheme(theme) {
 		document.documentElement.setAttribute("data-theme", theme);
 		var meta = document.querySelector('meta[name="theme-color"]');
-		if (meta) meta.setAttribute("content", theme === "dark" ? "#071a22" : "#f7f3e8");
+		if (meta) meta.setAttribute("content", theme === "dark" ? "#071a22" : "#ffffff");
 		document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
 			btn.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
 			btn.setAttribute("title", theme === "dark" ? "Light mode" : "Dark mode");
