@@ -185,6 +185,15 @@
                     <div class="math-display">$$\begin{pmatrix} \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \cdots \\ \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \begin{pmatrix} 74 \\ 51 \\ 42 \end{pmatrix} &amp; \cdots \\ \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \begin{pmatrix} 74 \\ 51 \\ 42 \end{pmatrix} &amp; \begin{pmatrix} 122 \\ 82 \\ 56 \end{pmatrix} &amp; \cdots \\ \vdots &amp; \vdots &amp; \vdots &amp; \ddots \end{pmatrix}$$</div>
                     <div class="conv-matrix-cap">(32, 32, 3) · je Pixel ein RGB-Triplett</div>
                 </div>
+                <!-- Graustufen-Matrix (Schritt 4): 10×10 echte Pixelwerte
+                     aus der linken oberen Ecke des Bildes (Grün-Kanal,
+                     0–255), danach erst die Punkte. Die Zahlen werden in
+                     katze.js aus KatzeKit.GREEN erzeugt und mit temml
+                     gesetzt — so stammen sie garantiert aus dem Bild. -->
+                <div class="conv-matrix conv-matrix--gray" id="conv-gray-matrix">
+                    <div class="math-display"></div>
+                    <div class="conv-matrix-cap">10 × 10 Pixel · je ein Grauwert (0–255)</div>
+                </div>
                 <div id="conv-f-annot">
                     <span class="f-paren">f(</span>
                     <span class="f-paren">)</span>

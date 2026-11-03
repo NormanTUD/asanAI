@@ -500,6 +500,7 @@ const KatzeKit = (() => {
 			reserveInsight();
 			if (typeof window.fitSlides === 'function') window.fitSlides();
 			resize();
+			if (cfg.onInit) cfg.onInit();
 			// Start-Animation: Pixel fahren aus der Mitte auf.
 			S.inst.forEach(o => { o.s = 1; o.x = W / 2; o.y = H / 2; o.a = 0; });
 			startLoop();
@@ -586,6 +587,33 @@ const ConvDemo = (() => {
 	// Einträge (je Pixel oben links) selbst ein kleines pmatrix mit R/G/B
 	// sind. Die Opazität wird in onStep gesetzt (CSS-Fade, robust).
 
+	// (Schritt 4) 10×10 Grauwerte aus der linken oberen Ecke des
+	// 32×32-Rasters, direkt aus KatzeKit.GREEN gelesen. Erst danach
+	// die Punkte. Die Zahlen kommen so garantiert aus dem Bild.
+	let grayBuilt = false;
+	function buildGrayMatrix() {
+		if (grayBuilt) return;
+		const el = document.querySelector('#conv-gray-matrix .math-display');
+		if (!el || typeof temml === 'undefined') return;
+		const N = KatzeKit.N, ROWS = 10, COLS = 10;
+		const pad = String.raw`\hspace{0.4em}`;
+		const rows = [];
+		for (let r = 0; r < ROWS; r++) {
+			const cells = [];
+			for (let c = 0; c < COLS; c++)
+				cells.push(pad + KatzeKit.GREEN[r * N + c] + pad);
+			cells.push(String.raw`\cdots`);
+			rows.push(cells.join(' & '));
+		}
+		const dots = [];
+		for (let c = 0; c < COLS; c++) dots.push(String.raw`\vdots`);
+		dots.push(String.raw`\ddots`);
+		rows.push(dots.join(' & '));
+		const tex = String.raw`\begin{pmatrix} ` + rows.join(String.raw` \\[4pt] `) + String.raw` \end{pmatrix}`;
+		el.innerHTML = temml.renderToString(tex, { displayMode: true });
+		grayBuilt = true;
+	}
+
 	// Rahmen der Graustufen-Katze. Die Katze selbst ist der Grün-Kanal
 	// (inst[PICK]), der ab Schritt 2 grau gemischt wird und in Schritt 3
 	// an diese Position fliegt, gezeichnet an seiner Geometrie.
@@ -627,6 +655,7 @@ const ConvDemo = (() => {
 	return KatzeKit.create({
 		slideId: 'slide-convolution',
 		prefix: 'conv',
+		onInit: buildGrayMatrix,
 		steps: [
 			{ k: 'Schritt 1', t: 'Nehmen wir ein<br><em>Farbbild</em> einer Katze.',
 			  p: 'Jedes Pixel besteht aus Werten für Rot, Grün und Blau',
@@ -696,12 +725,14 @@ const ConvDemo = (() => {
 				S.bwX = x0 + KatzeKit.N * cs + gapP;
 				S.bwY = (H - (72 + 60)) / 2;
 			} else if (step === 3) {
-				// Der Grün-Kanal (grau) in der Mitte. (Zoom-Panel raus,
-				// T8 — das Bild wird im nächsten Schritt zur Matrix.)
-				const cs = Math.min(H / KatzeKit.N * .8, W / KatzeKit.N * .55, 10);
-				const x0 = (W - KatzeKit.N * cs) / 2;
+				// Der Grün-Kanal (grau) links; rechts die Matrix aus
+				// echten Grauwerten (#conv-gray-matrix, HTML-Overlay).
+				const cs = Math.min(H / KatzeKit.N * .68, W / KatzeKit.N * .34, 10);
+				const catW = KatzeKit.N * cs;
+				const x0 = Math.max(12, (W * 0.42 - catW) / 2);
+				const y0 = (H - catW) / 2 + 6;
 				inst.forEach((o, i) => {
-					o.ts = cs; o.tx = x0; o.ty = (H - KatzeKit.N * cs) / 2 + 6;
+					o.ts = cs; o.tx = x0; o.ty = y0;
 					o.tmix = i === KatzeKit.PICK ? 1 : 0;
 					o.ta = i === KatzeKit.PICK ? 1 : 0;
 				});
@@ -730,6 +761,8 @@ const ConvDemo = (() => {
 			// (Filter-Schritte leben jetzt in FilterDemo.)
 			const mEl = document.getElementById('conv-matrix');
 			if (mEl) mEl.style.opacity = (step === 4 || step === 5) ? 1 : 0;
+			const gmEl = document.getElementById('conv-gray-matrix');
+			if (gmEl) gmEl.style.opacity = step === 3 ? 1 : 0;
 			const fEl = document.getElementById('conv-f-annot');
 			if (fEl) fEl.style.opacity = step === 5 ? 1 : 0;
 		},

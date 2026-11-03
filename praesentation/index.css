@@ -776,6 +776,11 @@ body.sel-mode .sel-check { display: inline-flex; }
 	font: 600 13px ui-monospace, SFMono-Regular, Menlo, monospace;
 	color: #64748b;
 }
+/* Schritt 4 ("Jeder Pixel ist nur eine Zahl"): dieselbe große Matrix,
+   aber nur ein Grauwert pro Pixel (echte Werte aus dem Bild). */
+.kz-stage .conv-matrix--gray .math-display {
+	font-size: clamp(12px, 1.35vw, 18px);
+}
 #conv-f-annot {
 	position: absolute;
 	left: 72%;
