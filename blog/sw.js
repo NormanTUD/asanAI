@@ -372,6 +372,7 @@ async function refreshAsset(cache, request) {
 		const response = await fetch(request);
 		if (response && response.status === 200 && response.type === "basic") {
 			await cache.put(request, response.clone());
+			scheduleStorageCheck();
 		}
 	} catch (error) {
 	}
@@ -381,7 +382,11 @@ async function handleAsset(event, request) {
 	const cache = await caches.open(ASSETS_CACHE);
 	const cached = await cache.match(request);
 	if (cached) {
-		event.waitUntil(refreshAsset(cache, request));
+		// Re-downloading versioned scripts, fonts and images on every request
+		// wastes bandwidth; only mutable text assets get a background refresh.
+		if (!isImmutableAsset(new URL(request.url))) {
+			event.waitUntil(refreshAsset(cache, request));
+		}
 		return cached;
 	}
 	try {
