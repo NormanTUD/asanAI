@@ -261,6 +261,17 @@
 			semantic = window.MNSemantic.load().catch(function() { return null; });
 		}
 
+		// search.php is a server endpoint and is intentionally excluded from
+		// the service worker. Offline, answer from the cached semantic index.
+		if (navigator.onLine === false) {
+			if (detectMode(query) !== 'normal') {
+				renderError('Only plain-language search is available offline.', query);
+				return;
+			}
+			renderSemanticOnly(seq, query, semantic);
+			return;
+		}
+
 		fetch('search.php?q=' + encodeURIComponent(query), {
 			signal: abortController.signal
 		})
