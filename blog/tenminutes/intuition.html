@@ -1291,7 +1291,7 @@
 					var x = padL + p * cw;
 					var y = padT + d * ch;
 					ctx.fillStyle = posColor(v, c);
-					ctx.fillRect(x + 1, y + 1, Math.max(1, cw - 2), Math.max(1, ch - 2));
+					ctx.fillRect(x + 0.5, y + 0.5, Math.max(1, cw - 1), Math.max(1, ch - 1));
 				}
 			}
 			ctx.fillStyle = c.muted;
@@ -1306,7 +1306,7 @@
 				ctx.fillText("d" + d2, padL - 6, padT + d2 * ch + ch * 0.7);
 			}
 			var stripTop = padT + heatH + 30;
-			var gap = 2;
+			var gap = 1;
 			var stripW = Math.max(4, Math.min(18, (heatW - 92 - (posDims - 1) * gap) / posDims));
 			var stripH = 12;
 			ctx.textAlign = "left";
