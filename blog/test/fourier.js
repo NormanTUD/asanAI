@@ -577,10 +577,7 @@
     }
 
     draw();
-    const redraw = scheduleDraw(draw);
     window.addEventListener("resize", debounce(draw, 120));
-    // Slider zeichnen bereits direkt; scheduleDraw bleibt für spätere Erweiterungen.
-    void redraw;
   }
 
   /* ---------- Labor 2: rotierender Zeiger ---------- */
@@ -601,6 +598,7 @@
     const periodOut = $("#phasorPeriod");
 
     let angle = 0;
+    let lastPhase = 0;
     let playing = !reduceMotion;
     let visible = true;
     let last = performance.now();
@@ -729,7 +727,9 @@
 
     freq.addEventListener("input", syncLabels);
     phase.addEventListener("input", function () {
-      if (!playing) angle = (parseFloat(phase.value) * Math.PI) / 180;
+      const ph = (parseFloat(phase.value) * Math.PI) / 180;
+      angle += ph - lastPhase;
+      lastPhase = ph;
       syncLabels();
     });
     amp.addEventListener("input", syncLabels);
@@ -743,6 +743,7 @@
       phase.value = "0";
       amp.value = "1";
       angle = 0;
+      lastPhase = 0;
       playing = true;
       play.textContent = "Pause";
       syncLabels();
@@ -866,7 +867,6 @@
           sx.fillText(String(n), x, SH - 6);
         }
       }
-      sm; // bleibt lesbar
       sx.fillStyle = C.faint;
       sx.font = "9px Inter, sans-serif";
       sx.textAlign = "left";
@@ -1381,7 +1381,7 @@
       let maxAbs = 0.001;
       for (let n = 0; n < N; n++) maxAbs = Math.max(maxAbs, Math.abs(x[n]));
       const tm = mapper(TW, TH, { l: 28, r: 12, t: 20, b: 24 }, 0, N / fs, -maxAbs * 1.1, maxAbs * 1.1);
-      frame(ctxNull(tctx), TW, TH, tm, { nx: 5, ny: 3 });
+      frame(tctx, TW, TH, tm, { nx: 5, ny: 3 });
       const tpts = [];
       for (let n = 0; n < N; n++) tpts.push([n / fs, x[n]]);
       line(tctx, tm, tpts, C.amber, 1.2, null);
@@ -1462,8 +1462,6 @@
       text(sctx, "Betrag |Xₖ|", 28, 14, { size: 9.5, color: C.faint });
       text(sctx, "Δf = " + (fs / N).toFixed(1) + " Hz", SW - 12, 14, { size: 9, color: C.faint, align: "right" });
     }
-
-    function ctxNull(ctx) { return ctx; }
 
     const schedule = scheduleDraw(draw);
     [f1, f2, noise].forEach(function (el) {

@@ -117,6 +117,9 @@ def main() -> int:
 			wait_for(f"{proxy_url}?tenminutes/page.html", session)
 			page_response = session.get(f"{proxy_url}?tenminutes/page.html", timeout=15)
 			check(page_response.status_code == 200, "subdirectory page through proxy", str(page_response.status_code))
+			headers = {name.lower(): value for name, value in page_response.headers.items()}
+			check("frame-ancestors *" in headers.get("content-security-policy", ""), "proxy allows embedding via CSP")
+			check("x-frame-options" not in headers, "proxy drops X-Frame-Options")
 			text = page_response.text
 			expected = [
 				'href="asanai_blog_proxy.php?tenminutes/assets/site.css"',

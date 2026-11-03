@@ -512,6 +512,7 @@ self.addEventListener("activate", function (event) {
 			return Promise.resolve(false);
 		}));
 		await self.clients.claim();
+		await enforceStorageBudget();
 	})());
 });
 

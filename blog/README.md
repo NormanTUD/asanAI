@@ -538,7 +538,8 @@ A host-level header can still win: Apache applies `Header always set` after
 PHP, and CSP headers are combined, so a second, more permissive CSP cannot
 relax an existing one. On `scads.ai` every response carries
 `Content-Security-Policy: frame-ancestors https://launchpad.scads.ai;`, which
-blocks embedding from any other page. If the proxy lives at the document root,
+blocks embedding from every other page, including pages on `scads.ai` itself
+(the list has no `'self'`). If the proxy lives at the document root,
 add an exception for just that file where the header is configured, for
 example:
 
