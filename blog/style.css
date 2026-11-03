@@ -4947,6 +4947,24 @@ html.dark #contents tbody tr:nth-child(even) {
 	margin-bottom: 4px;
 }
 
+#mn-vt-title {
+	position: absolute;
+	left: 50%;
+	top: 38%;
+	z-index: 4;
+	width: min(86vw, 34rem);
+	transform: translate(-50%, -50%);
+	font-family: var(--mn-font-heading);
+	font-size: clamp(1.65rem, 4.2vw, 2.9rem);
+	font-weight: 700;
+	line-height: 1.18;
+	letter-spacing: -0.015em;
+	color: var(--mn-heading);
+	text-align: center;
+	text-wrap: balance;
+	pointer-events: none;
+}
+
 #loader-checklist {
 	margin-top: 12px;
 	text-align: left;

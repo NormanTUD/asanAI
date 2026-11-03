@@ -45,7 +45,27 @@ const EXCLUDED_FILES = new Set([
 	"feedback.php",
 	"feedback",
 	"asanai_blog_proxy.php",
+	".search_cache.json",
+	".analytics_disabled",
+	".feedback_disabled",
+	".rag_queries_db",
 	"sw.js",
+]);
+
+const IMMUTABLE_EXTENSIONS = [
+	".woff", ".woff2", ".ttf", ".otf", ".wasm", ".bin",
+	".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".ico",
+	".mp3", ".mp4", ".webm", ".pdf", ".zip",
+];
+
+// These files are regenerated in place by the index builders. They are large
+// enough that revalidating them on every request would defeat offline caching;
+// bump CACHE_VERSION after a rebuild when the offline copy must refresh.
+const IMMUTABLE_BASENAMES = new Set([
+	"semantic_index.json",
+	"semantic_vectors.bin",
+	"semantic_index_small.json",
+	"semantic_vectors_small.bin",
 ]);
 
 const PRECACHE = [
@@ -107,6 +127,19 @@ function isCacheable(url) {
 	return true;
 }
 
+function isImmutableAsset(url) {
+	if (url.searchParams.has("v") || url.searchParams.has("t")) {
+		return true;
+	}
+	const pathname = url.pathname.toLowerCase();
+	if (IMMUTABLE_EXTENSIONS.some(function (extension) {
+		return pathname.endsWith(extension);
+	})) {
+		return true;
+	}
+	return IMMUTABLE_BASENAMES.has(pathname.split("/").pop());
+}
+
 function fetchWithTimeout(request, timeout) {
 	return new Promise(function (resolve, reject) {
 		const timer = setTimeout(function () {
@@ -133,6 +166,55 @@ async function trimCache(cache, maxEntries) {
 	}
 }
 
+async function storageEstimate() {
+	try {
+		if (!navigator.storage || !navigator.storage.estimate) {
+			return null;
+		}
+		return await navigator.storage.estimate();
+	} catch (error) {
+		return null;
+	}
+}
+
+async function enforceStorageBudget() {
+	const first = await storageEstimate();
+	if (!first || !first.quota || !first.usage) {
+		return;
+	}
+	if (first.usage < first.quota * STORAGE_TRIGGER_RATIO) {
+		return;
+	}
+
+	// Evict the oldest pages first, then the oldest assets. Cache keys are
+	// ordered by insertion, so this is a simple FIFO approximation of LRU.
+	for (const cacheName of [PAGES_CACHE, ASSETS_CACHE]) {
+		const cache = await caches.open(cacheName);
+		const keys = await cache.keys();
+		if (!keys.length) {
+			continue;
+		}
+		const removeCount = Math.max(1, Math.ceil(keys.length * 0.25));
+		for (let i = 0; i < removeCount; i += 1) {
+			await cache.delete(keys[i]);
+		}
+		const after = await storageEstimate();
+		if (after && after.quota && after.usage < after.quota * STORAGE_TARGET_RATIO) {
+			return;
+		}
+	}
+}
+
+function scheduleStorageCheck() {
+	if (storageCheckTimer) {
+		return;
+	}
+	storageCheckTimer = setTimeout(function () {
+		storageCheckTimer = null;
+		enforceStorageBudget();
+	}, STORAGE_CHECK_DELAY);
+}
+
 async function putIfCacheable(cache, key, response, maxEntries) {
 	if (!response || response.status !== 200 || response.type !== "basic") {
 		return false;
@@ -140,6 +222,7 @@ async function putIfCacheable(cache, key, response, maxEntries) {
 	try {
 		await cache.put(key, response);
 		await trimCache(cache, maxEntries);
+		scheduleStorageCheck();
 		return true;
 	} catch (error) {
 		return false;

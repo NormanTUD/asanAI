@@ -359,24 +359,31 @@ That is why the picture transfers. The same inner product that measures a neuron
 				paper_bgcolor: gc("#ffffff"),
 				plot_bgcolor: gc("#f8fafc"),
 				font: { color: gc("#334155"), size: 12 },
+				hoverlabel: { bgcolor: gc("#ffffff"), bordercolor: gc("#94a3b8"), font: { color: gc("#334155") } },
 				margin: { l: 48, r: 18, b: 42, t: 12 },
 				showlegend: true,
 				legend: { orientation: "h", y: 1.14, x: 0 },
-				xaxis: { gridcolor: gc("#eef2f7"), zeroline: true, zerolinecolor: gc("#cbd5e1"), tickfont: { color: gc("#64748b") } },
-				yaxis: { gridcolor: gc("#eef2f7"), zeroline: true, zerolinecolor: gc("#cbd5e1"), tickfont: { color: gc("#64748b") } }
+				xaxis: { gridcolor: gc("#e2e8f0"), zeroline: true, zerolinecolor: gc("#94a3b8"), tickfont: { color: gc("#64748b") } },
+				yaxis: { gridcolor: gc("#e2e8f0"), zeroline: true, zerolinecolor: gc("#94a3b8"), tickfont: { color: gc("#64748b") } }
 			};
 		}
 		function on(id, fn) { var e = el(id); if (e) e.addEventListener("input", fn); }
 		var inited = {};
+		var renderers = {};
 		function mount(id, fn) {
 			var box = el(id); if (!box) return;
-			var doInit = function () { if (inited[id]) return; inited[id] = true; fn(); };
+			var doInit = function () { if (inited[id]) return; inited[id] = true; renderers[id] = fn; fn(); };
 			if (typeof IntersectionObserver !== "undefined") {
 				var ob = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { doInit(); ob.disconnect(); } }); }, { rootMargin: "300px", threshold: 0 });
 				ob.observe(box);
 			}
 			var r = box.getBoundingClientRect();
 			if (r.top < (window.innerHeight + 300) && r.bottom > -300) doInit();
+		}
+		function redrawAll() {
+			Object.keys(renderers).forEach(function (id) {
+				try { renderers[id](); } catch (e) { /* plot not ready */ }
+			});
 		}
 
 		/* ── II. Projection ─────────────────────────────────────────────── */
@@ -396,10 +403,10 @@ That is why the picture transfers. The same inner product that measures a neuron
 				var Ax = pxp + m * ux, Ay = pyp + m * uy, Bx = pxp + m * dx, By = pyp + m * dy, Cx = pxp + m * (ux + dx), Cy = pyp + m * (uy + dy);
 				data.push({ x: [Ax, Cx, Bx], y: [Ay, Cy, By], type: "scatter", mode: "lines", line: { color: gc("#94a3b8"), width: 1.5 }, showlegend: false, hoverinfo: "skip" });
 			}
-			data.push({ x: [0, pxp], y: [0, pyp], type: "scatter", mode: "lines", line: { color: "#2563eb", width: 4 }, name: "projection (shadow)" });
-			data.push({ x: [pxp, px], y: [pyp, py], type: "scatter", mode: "lines", line: { color: "#ef4444", width: 4 }, name: "residual (⊥ S)" });
-			data.push({ x: [px], y: [py], type: "scatter", mode: "markers", marker: { size: 13, color: "#475569" }, name: "P" });
-			data.push({ x: [pxp], y: [pyp], type: "scatter", mode: "markers", marker: { size: 9, color: "#2563eb" }, showlegend: false });
+			data.push({ x: [0, pxp], y: [0, pyp], type: "scatter", mode: "lines", line: { color: gc("#2563eb"), width: 4 }, name: "projection (shadow)" });
+			data.push({ x: [pxp, px], y: [pyp, py], type: "scatter", mode: "lines", line: { color: gc("#ef4444"), width: 4 }, name: "residual (⊥ S)" });
+			data.push({ x: [px], y: [py], type: "scatter", mode: "markers", marker: { size: 13, color: gc("#475569") }, name: "P" });
+			data.push({ x: [pxp], y: [pyp], type: "scatter", mode: "markers", marker: { size: 9, color: gc("#2563eb") }, showlegend: false });
 			var lay = baseLayout(); lay.xaxis.range = [-5, 5]; lay.yaxis.range = [-5, 5];
 			Plotly.react("geo2-projection", data, lay, cfg);
 			var norm2 = px * px + py * py, expl = norm2 > 1e-12 ? (s * s) / norm2 : 0;
@@ -422,10 +429,10 @@ That is why the picture transfers. The same inner product that measures a neuron
 			}
 			var majx = Math.cos(th), majy = Math.sin(th), minx = -Math.sin(th), miny = Math.cos(th);
 			var data = [
-				{ x: cx, y: cy, type: "scatter", mode: "lines", line: { color: gc("#cbd5e1"), width: 1.5 }, name: "unit circle" },
-				{ x: ex, y: ey, type: "scatter", mode: "lines", line: { color: "#7c3aed", width: 2 }, name: "image (ellipse)" },
-				{ x: [0, s1 * majx], y: [0, s1 * majy], type: "scatter", mode: "lines+markers", line: { color: "#2563eb", width: 4 }, marker: { size: 10, color: "#2563eb" }, name: "σ₁ axis (len σ₁)" },
-				{ x: [0, s2 * minx], y: [0, s2 * miny], type: "scatter", mode: "lines+markers", line: { color: "#f59e0b", width: 4 }, marker: { size: 10, color: "#f59e0b" }, name: "σ₂ axis (len σ₂)" }
+				{ x: cx, y: cy, type: "scatter", mode: "lines", line: { color: gc("#94a3b8"), width: 1.5 }, name: "unit circle" },
+				{ x: ex, y: ey, type: "scatter", mode: "lines", line: { color: gc("#7c3aed"), width: 2 }, name: "image (ellipse)" },
+				{ x: [0, s1 * majx], y: [0, s1 * majy], type: "scatter", mode: "lines+markers", line: { color: gc("#2563eb"), width: 4 }, marker: { size: 10, color: gc("#2563eb") }, name: "σ₁ axis (len σ₁)" },
+				{ x: [0, s2 * minx], y: [0, s2 * miny], type: "scatter", mode: "lines+markers", line: { color: gc("#f59e0b"), width: 4 }, marker: { size: 10, color: gc("#f59e0b") }, name: "σ₂ axis (len σ₂)" }
 			];
 			var R = Math.max(s1, s2) + 0.6;
 			var lay = baseLayout(); lay.xaxis.range = [-R, R]; lay.yaxis.range = [-R, R];
@@ -445,12 +452,12 @@ That is why the picture transfers. The same inner product that measures a neuron
 			[0.5, 1.5, 3, 5].forEach(function (c) {
 				var semX = Math.sqrt(2 * c * w), semY = Math.sqrt(2 * c / w), xs = [], ys = [];
 				for (var i = 0; i <= 120; i++) { var a = 2 * Math.PI * i / 120; xs.push(semX * Math.cos(a)); ys.push(semY * Math.sin(a)); }
-				data.push({ x: xs, y: ys, type: "scatter", mode: "lines", line: { color: gc("#cbd5e1"), width: 1 }, showlegend: false, hoverinfo: "skip" });
+				data.push({ x: xs, y: ys, type: "scatter", mode: "lines", line: { color: gc("#94a3b8"), width: 1 }, showlegend: false, hoverinfo: "skip" });
 			});
 			var tipx = 0, tipy = 0;
 			if (gmag > 1e-6) { tipx = px - gx / gmag * 1.4; tipy = py - gy / gmag * 1.4; }
-			data.push({ x: [px, tipx], y: [py, tipy], type: "scatter", mode: "lines", line: { color: "#ef4444", width: 4 }, name: "−∇L (steepest descent)" });
-			data.push({ x: [px], y: [py], type: "scatter", mode: "markers", marker: { size: 13, color: "#475569" }, name: "position" });
+			data.push({ x: [px, tipx], y: [py, tipy], type: "scatter", mode: "lines", line: { color: gc("#ef4444"), width: 4 }, name: "−∇L (steepest descent)" });
+			data.push({ x: [px], y: [py], type: "scatter", mode: "markers", marker: { size: 13, color: gc("#475569") }, name: "position" });
 			var lay = baseLayout(); lay.xaxis.range = [-4.5, 4.5]; lay.yaxis.range = [-4.5, 4.5];
 			Plotly.react("geo2-descent", data, lay, cfg);
 			el("geo2-des-readout").textContent = "∇L = (" + gx.toFixed(2) + ", " + gy.toFixed(2) + ")   |∇L| = " + gmag.toFixed(2) + "   condition κ = " + (w * w).toFixed(1) + "   ·   −∇L ⊥ to the contour it crosses";
@@ -468,7 +475,7 @@ That is why the picture transfers. The same inner product that measures a neuron
 			for (var t = 0; t < NX; t++) { nx.push(t); y.push(cc * (xSeq[t] || 0) + cl * (xSeq[t + 1] || 0) + cr * (xSeq[t - 1] || 0)); }
 			var tdata = [
 				{ x: nx, y: xSeq.slice(0, NX), type: "scatter", mode: "lines", line: { color: gc("#94a3b8"), width: 2 }, name: "x (input)" },
-				{ x: nx, y: y, type: "scatter", mode: "lines", line: { color: "#2563eb", width: 3 }, name: "y = c*x (sliding dot product)" }
+				{ x: nx, y: y, type: "scatter", mode: "lines", line: { color: gc("#2563eb"), width: 3 }, name: "y = c*x (sliding dot product)" }
 			];
 			var layT = baseLayout(); layT.showlegend = true; layT.legend = { orientation: "h", y: -0.28, x: 0 }; layT.xaxis.range = [0, NX - 1]; layT.xaxis.title = { text: "time t", font: { color: gc("#64748b") } };
 			Plotly.react("geo2-conv-time", tdata, layT, cfg);
@@ -477,8 +484,8 @@ That is why the picture transfers. The same inner product that measures a neuron
 			for (var k = 0; k < 64; k++) { var X = Math.hypot(Xf.re[k], Xf.im[k]), C = Math.hypot(Cf.re[k], Cf.im[k]); fb.push(k); mx.push(X); mc.push(C); my.push(X * C); }
 			var fdata = [
 				{ x: fb, y: mx, type: "scatter", mode: "lines", line: { color: gc("#94a3b8"), width: 2 }, name: "|F(x)|" },
-				{ x: fb, y: mc, type: "scatter", mode: "lines", line: { color: "#f59e0b", width: 2 }, name: "|F(c)|" },
-				{ x: fb, y: my, type: "scatter", mode: "lines", line: { color: "#2563eb", width: 3 }, name: "|F(y)| = |F(c)|·|F(x)|" }
+				{ x: fb, y: mc, type: "scatter", mode: "lines", line: { color: gc("#f59e0b"), width: 2 }, name: "|F(c)|" },
+				{ x: fb, y: my, type: "scatter", mode: "lines", line: { color: gc("#2563eb"), width: 3 }, name: "|F(y)| = |F(c)|·|F(x)|" }
 			];
 			var layF = baseLayout(); layF.legend = { orientation: "h", y: -0.28, x: 0 }; layF.xaxis.range = [0, 63]; layF.xaxis.title = { text: "frequency bin (0…Nyquist)", font: { color: gc("#64748b") } };
 			Plotly.react("geo2-conv-freq", fdata, layF, cfg);
@@ -495,10 +502,10 @@ That is why the picture transfers. The same inner product that measures a neuron
 			for (var i = 0; i < n; i++) { pos.push(i); shifted.push(TOKENS[(i + k) % n]); out.push(psi(shifted[i])); }
 			var mean = TOKENS.reduce(function (a, b) { return a + b; }, 0) / n;
 			var data = [
-				{ x: pos, y: TOKENS, type: "scatter", mode: "lines+markers", line: { color: gc("#cbd5e1"), width: 1.5, dash: "dot" }, marker: { size: 8, color: gc("#94a3b8") }, name: "input (original)" },
-				{ x: pos, y: shifted, type: "scatter", mode: "lines+markers", line: { color: "#2563eb", width: 2.5 }, marker: { size: 9, color: "#2563eb" }, name: "input (shifted)" },
-				{ x: pos, y: out, type: "scatter", mode: "lines+markers", line: { color: "#f59e0b", width: 2.5 }, marker: { size: 9, color: "#f59e0b" }, name: "equivariant out ψ(input)" },
-				{ x: [-0.3, n - 1 + 0.3], y: [mean, mean], type: "scatter", mode: "lines", line: { color: "#16a34a", width: 3, dash: "dash" }, name: "invariant (mean)" }
+				{ x: pos, y: TOKENS, type: "scatter", mode: "lines+markers", line: { color: gc("#94a3b8"), width: 1.5, dash: "dot" }, marker: { size: 8, color: gc("#94a3b8") }, name: "input (original)" },
+				{ x: pos, y: shifted, type: "scatter", mode: "lines+markers", line: { color: gc("#2563eb"), width: 2.5 }, marker: { size: 9, color: gc("#2563eb") }, name: "input (shifted)" },
+				{ x: pos, y: out, type: "scatter", mode: "lines+markers", line: { color: gc("#f59e0b"), width: 2.5 }, marker: { size: 9, color: gc("#f59e0b") }, name: "equivariant out ψ(input)" },
+				{ x: [-0.3, n - 1 + 0.3], y: [mean, mean], type: "scatter", mode: "lines", line: { color: gc("#16a34a"), width: 3, dash: "dash" }, name: "invariant (mean)" }
 			];
 			var lay = baseLayout(); lay.xaxis.range = [-0.3, n - 1 + 0.3]; lay.xaxis.title = { text: "token position", font: { color: gc("#64748b") } };
 			Plotly.react("geo2-sym", data, lay, cfg);
@@ -516,6 +523,9 @@ That is why the picture transfers. The same inner product that measures a neuron
 		mount("geo2-descent", desRead);
 		mount("geo2-conv-time", convRead);
 		mount("geo2-sym", symRead);
+		if (window.__MN_DARK && typeof window.__MN_DARK.onChange === "function") {
+			window.__MN_DARK.onChange(redrawAll);
+		}
 	}
 
 	if (typeof Plotly !== "undefined") { boot(); }

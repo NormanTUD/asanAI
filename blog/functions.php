@@ -208,6 +208,7 @@ function print_pwa_head(): void {
 
 function load_base_js ($defer = false) {
 	print_pwa_head();
+	js("view_transitions", null, false);
 	js("feedback_capture", null, $defer);
 	js("temml.min", null, $defer);
 	js("bpe", null, $defer);

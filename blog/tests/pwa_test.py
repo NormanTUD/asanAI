@@ -144,8 +144,7 @@ def check_registration(root: Path) -> list[str]:
 
     for marker in (
         "serviceWorker.register",
-        "beforeinstallprompt",
-        "Save page offline",
+        "waitForActive",
         "CACHE_PAGE",
         "collectAssetUrls",
     ):
@@ -168,8 +167,19 @@ def check_page_integration(root: Path) -> list[str]:
         errors.append("functions.php: the manifest link is not emitted")
     if 'js("pwa", null, $defer)' not in source:
         errors.append("functions.php: pwa.js is not loaded by load_base_js()")
+    if 'js("view_transitions", null, false)' not in source:
+        errors.append("functions.php: view_transitions.js is not loaded early by load_base_js()")
     if "print_pwa_head();" not in source:
         errors.append("functions.php: load_base_js() does not call print_pwa_head()")
+
+    transitions = root / "view_transitions.js"
+    if not transitions.is_file():
+        errors.append("view_transitions.js is missing")
+    else:
+        transitions_source = transitions.read_text(encoding="utf-8")
+        for marker in ("pagereveal", "viewTransitionName", ".course-tile", "MNViewTransition"):
+            if marker not in transitions_source:
+                errors.append(f"view_transitions.js: missing {marker}")
 
     offline = root / "offline.html"
     if not offline.is_file():
@@ -191,6 +201,8 @@ def check_page_integration(root: Path) -> list[str]:
         style_source = style.read_text(encoding="utf-8")
         if "@view-transition" not in style_source or "navigation: auto" not in style_source:
             errors.append("style.css: cross-document view transitions are not enabled")
+        if "#mn-vt-title" not in style_source:
+            errors.append("style.css: the shared-element loader title is not styled")
     else:
         errors.append("style.css is missing")
 
