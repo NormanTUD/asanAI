@@ -34,6 +34,40 @@
 		storage.set("tm_last", { slug: slug, title: document.title, at: Date.now() });
 	};
 
+	function parseDateParam(raw) {
+		if (!raw) return null;
+		var date = null;
+		var match = raw.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
+		if (match) {
+			var year = parseInt(match[3], 10);
+			if (year < 100) year += 2000;
+			date = new Date(year, parseInt(match[2], 10) - 1, parseInt(match[1], 10));
+			if (date.getFullYear() !== year || date.getMonth() !== parseInt(match[2], 10) - 1 || date.getDate() !== parseInt(match[1], 10)) {
+				return null;
+			}
+		} else {
+			match = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+			if (match) {
+				date = new Date(parseInt(match[1], 10), parseInt(match[2], 10) - 1, parseInt(match[3], 10));
+				if (date.getFullYear() !== parseInt(match[1], 10) || date.getMonth() !== parseInt(match[2], 10) - 1 || date.getDate() !== parseInt(match[3], 10)) {
+					return null;
+				}
+			}
+		}
+		if (!date) {
+			var parsed = Date.parse(raw);
+			if (isNaN(parsed)) return null;
+			date = new Date(parsed);
+		}
+		date.setHours(0, 0, 0, 0);
+		return date;
+	}
+
+	TM.simDate = function () {
+		var raw = new URLSearchParams(window.location.search).get("date");
+		return parseDateParam(raw) || new Date();
+	};
+
 	TM.prefersReduced = function () {
 		return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	};
@@ -255,6 +289,34 @@
 		setTimeout(check, 400);
 	}
 
+	function initFullArticleLink() {
+		if (document.body.getAttribute("data-page") !== "lesson") return;
+		if (document.body.hasAttribute("data-no-full-article")) return;
+		var slug = document.body.getAttribute("data-lesson");
+		if (!slug) return;
+		if (TM.simDate() < new Date(2027, 0, 1)) return;
+		var host = document.querySelector(".lesson-main");
+		if (!host || host.querySelector(".full-article")) return;
+		var article = document.createElement("aside");
+		article.className = "full-article";
+		var kicker = document.createElement("span");
+		kicker.className = "full-article-kicker";
+		kicker.textContent = "The full course";
+		var link = document.createElement("a");
+		link.className = "full-article-main";
+		link.href = TM.asset("../" + slug + ".php");
+		var title = document.title.replace(/\s*\|\s*Ten Minutes\s*$/, "");
+		link.textContent = "Read the complete article" + (title ? ": " + title : "");
+		var home = document.createElement("a");
+		home.className = "full-article-home";
+		home.href = TM.asset("../");
+		home.textContent = "Open the full blog →";
+		article.appendChild(kicker);
+		article.appendChild(link);
+		article.appendChild(home);
+		host.appendChild(article);
+	}
+
 	/* ── arrow-key navigation ──────────────────────────────── */
 
 	function initArrowNav() {
@@ -334,6 +396,7 @@
 		initReveal();
 		initRail();
 		initCompletion();
+		initFullArticleLink();
 		TM.typesetMath();
 		initArrowNav();
 		initHeightBridge();

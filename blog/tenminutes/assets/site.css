@@ -68,6 +68,34 @@
 	font-style: italic;
 	font-display: swap;
 }
+@font-face {
+	font-family: 'Lingua Franca';
+	src: url('../../fonts/LinguaFranca-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'Lingua Franca';
+	src: url('../../fonts/LinguaFranca-Bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'Lingua Franca';
+	src: url('../../fonts/LinguaFranca-Italic.woff2') format('woff2');
+	font-weight: 400;
+	font-style: italic;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'Lingua Franca';
+	src: url('../../fonts/LinguaFranca-BoldItalic.woff2') format('woff2');
+	font-weight: 700;
+	font-style: italic;
+	font-display: swap;
+}
 
 :root {
 	--tm-paper: #ffffff;
@@ -94,9 +122,9 @@
 	--tm-shadow-lift: 0 2px 2px rgba(0, 0, 0, 0.05), 0 30px 80px -36px rgba(0, 0, 0, 0.6);
 	--tm-radius: 18px;
 	--tm-radius-sm: 10px;
-	--tm-display: 'Barlow Condensed', 'Arial Narrow', 'Helvetica Neue', sans-serif;
+	--tm-display: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 	--tm-ui: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
-	--tm-prose: 'Source Serif 4', Charter, Georgia, serif;
+	--tm-prose: 'Lingua Franca', 'Source Serif 4', Charter, Georgia, serif;
 	--tm-mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, monospace;
 	--tm-col: 68ch;
 	--tm-topbar: 66px;
@@ -2573,6 +2601,40 @@ html[data-theme="dark"] .tl-panel .tl-era { color: var(--tm-green); }
 	color: var(--tm-faint);
 }
 .lesson-footer a { color: var(--tm-muted); }
+
+.full-article {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 6px;
+	max-width: var(--tm-col);
+	margin: 34px 0 0;
+	padding: 14px 16px;
+	border-left: 3px solid var(--tm-green);
+	border-radius: 0 10px 10px 0;
+	background: var(--tm-wash);
+	font-family: var(--tm-ui);
+	font-size: 0.82rem;
+	line-height: 1.45;
+	color: var(--tm-muted);
+	text-align: left;
+}
+.full-article-kicker {
+	font-size: 0.58rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--tm-green-deep);
+}
+html[data-theme="dark"] .full-article-kicker { color: var(--tm-lime); }
+.full-article a {
+	color: var(--tm-petrol);
+	font-weight: 600;
+	text-decoration: none;
+	border-bottom: 1px solid var(--tm-line-strong);
+}
+.full-article a:hover { border-bottom-color: var(--tm-green); }
+.full-article-home { font-weight: 500 !important; font-size: 0.76rem; }
 
 /* ── advent ──────────────────────────────────────────────── */
 

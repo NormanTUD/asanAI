@@ -1,15 +1,23 @@
 # Ten Minutes — local agent notes
 
-Scope: `blog/tenminutes/` is a standalone static companion to *From Nothing to
-Large Language Models*. It is plain HTML + shared CSS/JS, with no PHP include,
-no build step, and no package manager. The root `AGENTS.md` still applies; this
-file records choices that are specific to this directory.
+Scope: `blog/tenminutes/` is a standalone companion to *From Nothing to Large
+Language Models*. It is mostly plain HTML + shared CSS/JS, with one small
+`index.php` landing page that embeds the calendar; there is no build step and no
+package manager. The root `AGENTS.md` still applies; this file records choices
+that are specific to this directory.
+
+## Typography
+
+Body and prose use **Lingua Franca** (the same webfont as the main blog's
+`utopia` setting), loaded from `../../fonts/`. Headings use the blog's
+`system-ui` stack. Barlow remains the compact-page UI font. Do not switch the
+body back to Source Serif 4 without checking against a live scads.ai lesson.
 
 ## Branding and page chrome
 
 - The brand name is **ScaDS.AI Dresden/Leipzig** (not just `ScaDS.AI`).
-- The topbar exists only on `index.html`. Every other page has no topbar.
-- `index.html` uses `data-page="home"`. All subpages use a non-home value
+- The topbar exists only on `index.php`. Every other page has no topbar.
+- `index.php` uses `data-page="home"`. All subpages use a non-home value
   (`lesson`, `advent`, `library`).
 - `assets/site.css` enforces this:
   ```css
@@ -22,20 +30,28 @@ file records choices that are specific to this directory.
 - Do not paste the topbar back into a subpage. If a new page needs navigation,
   solve it explicitly; the current design deliberately removes the chrome.
 
-## Full lessons are not linked
+## Full lessons are linked only after 31 December 2026
 
-The original lesson pages (`../*.php`) are **not linked from this directory**. Treat
-them as private source material:
+The original lesson pages (`../*.php`) are private source material until the
+calendar is over:
 
-- No `href="../…php"` in any Ten Minutes page.
-- No “read the full lesson”, “original lesson”, or “full course” links.
+- Before 1 January 2027, no Ten Minutes page may contain or inject an
+  `href="../…php"` link, and no “read the full lesson” or “full course” link.
+- From 1 January 2027 onward, `assets/site.js` appends one `.full-article` block
+  to the end of every `data-page="lesson"` page. It links to `../<slug>.php`
+  (the matching full article) and to `../` (the full blog). Pages without a full
+  article carry `data-no-full-article="1"` (`whole.html`).
+- The block is date-gated client-side; `?date=1.1.2027` on a lesson page can
+  simulate the post-calendar state for testing.
+- Compact pages still do not link to the full lesson in their prose. The only
+  full-article link is the generated end-of-page block.
 - Compact pages must be self-contained. The library’s non-compact cards are
   non-clickable reference entries, not links.
-- `index.html`, `advent.html`, and `library.html` only navigate to compact
+- `index.php`, `advent.html`, and `library.html` only navigate to compact
   `.html` pages and assets.
 
-If you need more detail from a full lesson, adapt the relevant paragraph into the
-compact page; do not expose the source URL.
+If you need more detail from a full lesson before 2027, adapt the relevant
+paragraph into the compact page; do not expose the source URL early.
 
 ## Colour palette
 
@@ -186,6 +202,12 @@ space-curvature demo uses it for its step buttons.
 
 ## Calendar conventions (`advent.html`)
 
+- `index.php` embeds the calendar between `<!-- CALENDAR:START -->` and
+  `<!-- CALENDAR:END -->` in `advent.html`, so the doors have one source of
+  truth. Keep those markers.
+- Before 1 December 2026 every door is visible. From 1 December 2026, day N
+  opens on 1 December + (N - 1) days; future doors are removed server-side.
+  `index.php?date=1.12.2026` simulates a date for testing.
 - The calendar has exactly **31 doors**: `id="day-1"` … `id="day-31"`.
   `data-day`, `.dc-num` (zero-padded), and the `id` must agree.
 - Compact doors use:
@@ -215,7 +237,7 @@ space-curvature demo uses it for its step buttons.
     linked from this directory.
   - `agents.html` exists but is intentionally not in the calendar.
 - If the compact-door count changes, update the “x of 31 doors” and
-  “compact lessons open” pills in `index.html`.
+  “compact lessons open” pills in `index.php`.
 - Every calendar door has a compact `.html` page. Compact pages are
   self-contained and must not link to `../<slug>.php`.
 - A compact page uses the shared lesson skeleton: `data-lesson="<slug>"`,
@@ -231,7 +253,7 @@ space-curvature demo uses it for its step buttons.
 `whole.html` is the compact course's synthesis page: a six-movement
 timeline (Idea → Learning → Data & Senses → Transformer → Assistant → Big
 Questions), a map of every compact page, and a prose synthesis. It is linked
-from `index.html`, `advent.html`, and `library.html`.
+from `index.php`, `advent.html`, and `library.html`.
 
 Compact pages do not carry previous/next navigation or a day footer. Keep
 cross-chapter connections on the synthesis page and in the prose, not in

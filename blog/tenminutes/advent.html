@@ -25,9 +25,10 @@
 						have supplied its parts) then zooms out to the larger questions.
 					</p>
 					<p class="hero-deck" style="margin-top:10px">
-						All doors are open. The calendar is a reading order, not a lock; in December, today’s
-						door is highlighted. A lesson counts as completed when you reach the bottom of its
-						page, and the count is stored in your browser, not on a server.
+						This page lists all doors as a reading route, so you can enter out of order.
+						The overview calendar opens one new door per day from 1 December 2026. A lesson
+						counts as completed when you reach the bottom of its page, and the count is
+						stored in your browser, not on a server.
 					</p>
 					<div class="hero-actions">
 						<a class="btn btn--green" href="#day-1">Start with Day 1</a>
@@ -67,6 +68,7 @@
 					<p>The six sections here are a reading route; the library groups the same lessons by course part, which is a different cut. The two extra compact lessons outside the calendar are the orientation and the agents page; the whole-arc synthesis is the map: 33 lessons in total, 31 doors.</p>
 				</div>
 
+				<!-- CALENDAR:START -->
 				<p class="week-label">Section 1 · The Idea · Days 1-5</p>
 				<div class="advent-grid">
 					<a class="day-card is-available" id="day-1" href="intuition.html" data-day="1" data-slug="intuition">
@@ -307,6 +309,7 @@
 						<div class="dc-foot"><span class="dc-tag">10 min</span><span class="dc-tag">No math</span><span class="dc-tag dc-open">Open compact →</span></div>
 					</a>
 				</div>
+				<!-- CALENDAR:END -->
 			</section>
 
 			<section class="section section--tight">
@@ -342,7 +345,7 @@
 			</div>
 			<div>
 				<nav aria-label="Footer">
-					<a href="index.html">Home</a>
+					<a href="index.php">Home</a>
 					<a href="library.html">Library</a>
 					<a href="whole.html">The whole arc</a>
 				</nav>
@@ -368,7 +371,7 @@
 		var counter = document.getElementById("advent-done");
 		if (counter) counter.textContent = doneCount;
 
-		var now = new Date();
+		var now = TM.simDate();
 		if (now.getMonth() === 11) {
 			var today = now.getDate();
 			var card = document.getElementById("day-" + today);
