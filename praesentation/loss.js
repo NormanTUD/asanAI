@@ -117,18 +117,6 @@ const LossDemo = (() => {
 		ctx.restore();
 	}
 
-	function truthBadge(ctx, x, y) {
-		ctx.save();
-		ctx.font = '800 11px ' + FONT;
-		const tw = ctx.measureText('Wahrheit').width + 22;
-		ctx.fillStyle = C.greenDark;
-		KatzeKit.roundRect(ctx, x, y, tw, 22, 11);
-		ctx.fill();
-		label(ctx, 'Wahrheit', x + tw / 2, y + 11.5,
-			{ size: 11, color: '#fff', weight: 800, align: 'center' });
-		ctx.restore();
-	}
-
 	function catBarColor(d) {
 		if (d.cat >= 0.8) return C.green;
 		if (d.cat >= 0.5) return C.amber;
@@ -197,7 +185,6 @@ const LossDemo = (() => {
 		ctx.lineWidth = 1.2;
 		ctx.stroke();
 		drawPhoto(ctx, IMG, ix, iy, iw, ih, 12);
-		truthBadge(ctx, ix + 14, iy + 14);
 
 		drawProbRow(ctx, 'Katze', anim.cat, catBarColor(d), 290, false, fade);
 		drawProbRow(ctx, 'Hund', anim.dog, dogBarColor(d), 342, d.dog >= 0.8, fade);
