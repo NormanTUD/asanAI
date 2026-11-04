@@ -66,4 +66,8 @@ mach allgemein ein paar mehr keywords fett
 
 "zwei Jahre nach der Kritik, die half, das Feld abzukühlen." die kritik hat das feld in den ersten ki winter geworfen ,es snicht nur "abgekühlt"
 
+"Der Dartmouth-Workshop von 1956 gibt dem Feld seinen Namen" schreibe da früher von, ordne das historisch ein. wer war da alles zB? mcculloch war doch vorsitzender oder so
+
+"Symbolische KI baut den Logic Theorist, GPS" GPS komtm erst später
+
 
