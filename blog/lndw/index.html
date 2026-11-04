@@ -939,7 +939,7 @@
 <div class="slide" id="slide-attention-ffn-stapel" data-title="Attention + FFN ×N">
     <div class="slide-content">
         <h2>Attention + FFN — viele Male hintereinander</h2>
-        <p>Jeder Durchgang tut <b>beides</b>: Kontext zusammenfassen <b>und</b> das nächste Wort vorhersagen — mit jedem Layer wird die erfasste Spanne <b>größer</b>.</p>
+        <p>Jeder Durchgang tut <b>beides</b>: Kontext zusammenfassen <b>und</b> das nächste Wort vorhersagen. Jeder Layer sieht dabei alle Tokens; mit jedem Layer werden die Zusammenhänge, die er daraus bilden kann, <b>komplexer</b>.</p>
 
         <div style="display:flex; gap:30px; align-items:center; justify-content:center; margin-top:20px; flex-wrap:wrap;">
             <!-- Loop-Diagramm -->
@@ -951,7 +951,7 @@
                 <div style="margin-top:8px; color:#64748b; font-size:0.95em;">Ergebnis → Residual Stream → nächstes Layer</div>
             </div>
 
-            <!-- Satz: Underbraces erscheinen nacheinander (1× → ~10× → ~100×) -->
+            <!-- Satz: Underbraces erscheinen nacheinander (Layer 1 → Layer 10 → Layer 20) -->
             <div style="min-width:500px;">
                 <div class="st-grid">
                     <span class="w">Ich</span>
@@ -972,21 +972,49 @@
                     <span class="w blankcell"><span class="q">?</span><span class="h">Haus</span></span>
 
                     <div class="bcell" style="grid-row:2; grid-column:4/6;">
-                        <div class="fragment b1" data-nofast><div class="st-ub"></div><div class="st-ub-label">1× → Stadt</div></div>
+                        <div class="fragment b1" data-nofast><div class="st-ub"></div><div class="st-ub-label">Layer 1 → Stadt</div></div>
                     </div>
-                    <div class="bcell" style="grid-row:3; grid-column:7/12;">
-                        <div class="fragment b2" data-nofast><div class="st-ub"></div><div class="st-ub-label">~10× → Reisegrund</div></div>
+                    <div class="bcell" style="grid-row:3; grid-column:4/11;">
+                        <div class="fragment b4" data-nofast><div class="st-ub"></div><div class="st-ub-label">Layer 4 → "dort" = New York</div></div>
                     </div>
-                    <div class="bcell" style="grid-row:4; grid-column:9/13;">
-                        <div class="fragment b3" data-nofast><div class="st-ub"></div><div class="st-ub-label">~100× → "Tante" und "Sie": dieselbe Person</div></div>
+                    <div class="bcell" style="grid-row:4; grid-column:7/12;">
+                        <div class="fragment b2" data-nofast><div class="st-ub"></div><div class="st-ub-label">Layer 10 → Reisegrund</div></div>
+                    </div>
+                    <div class="bcell" style="grid-row:5; grid-column:15/17;">
+                        <div class="fragment b5" data-nofast><div class="st-ub"></div><div class="st-ub-label">Layer 15 → "großes" passt zu "Haus"</div></div>
+                    </div>
+                    <div class="bcell" style="grid-row:6; grid-column:9/13;">
+                        <div class="fragment b3" data-nofast><div class="st-ub"></div><div class="st-ub-label">Layer 20 → "Tante" und "Sie": dieselbe Person</div></div>
                     </div>
                 </div>
-                <div class="fragment" data-fragment-action="fill-haus" style="display:none;"></div>
             </div>
         </div>
 
+        <div class="fragment st-next" data-nofast style="margin-top:18px;">
+            <div class="st-next-head"><span class="st-next-arrow">↓</span> Nach Attention + FFN: <b>Verteilung über den nächsten Token</b></div>
+            <div class="st-next-list">
+                <div class="st-word"><span class="st-word-name">ein</span><div class="st-word-track"><div class="st-word-fill" style="height:12%"></div></div><span class="st-word-p">1 %</span></div>
+                <div class="st-word"><span class="st-word-name">das</span><div class="st-word-track"><div class="st-word-fill" style="height:12%"></div></div><span class="st-word-p">1 %</span></div>
+                <div class="st-word"><span class="st-word-name">Zimmer</span><div class="st-word-track"><div class="st-word-fill" style="height:24%"></div></div><span class="st-word-p">4 %</span></div>
+                <div class="st-word"><span class="st-word-name">Auto</span><div class="st-word-track"><div class="st-word-fill" style="height:20%"></div></div><span class="st-word-p">3 %</span></div>
+                <div class="st-word"><span class="st-word-name">Bett</span><div class="st-word-track"><div class="st-word-fill" style="height:15%"></div></div><span class="st-word-p">2 %</span></div>
+                <div class="st-word"><span class="st-word-name">Dach</span><div class="st-word-track"><div class="st-word-fill" style="height:15%"></div></div><span class="st-word-p">2 %</span></div>
+                <div class="st-word"><span class="st-word-name">Garten</span><div class="st-word-track"><div class="st-word-fill" style="height:15%"></div></div><span class="st-word-p">2 %</span></div>
+                <div class="st-word"><span class="st-word-name">Buch</span><div class="st-word-track"><div class="st-word-fill" style="height:15%"></div></div><span class="st-word-p">2 %</span></div>
+                <div class="st-word"><span class="st-word-name">Hund</span><div class="st-word-track"><div class="st-word-fill" style="height:20%"></div></div><span class="st-word-p">3 %</span></div>
+                <div class="st-word"><span class="st-word-name">Lächeln</span><div class="st-word-track"><div class="st-word-fill" style="height:15%"></div></div><span class="st-word-p">2 %</span></div>
+                <div class="st-word"><span class="st-word-name">Problem</span><div class="st-word-track"><div class="st-word-fill" style="height:15%"></div></div><span class="st-word-p">2 %</span></div>
+                <div class="st-word"><span class="st-word-name">Wohnung</span><div class="st-word-track"><div class="st-word-fill" style="height:28%"></div></div><span class="st-word-p">5 %</span></div>
+                <div class="st-word is-top" data-word="Haus"><span class="st-word-name">Haus</span><div class="st-word-track"><div class="st-word-fill" style="height:92%"></div></div><span class="st-word-p">66 %</span></div>
+                <div class="st-word"><span class="st-word-name">Boot</span><div class="st-word-track"><div class="st-word-fill" style="height:15%"></div></div><span class="st-word-p">2 %</span></div>
+                <div class="st-word"><span class="st-word-name">Loch</span><div class="st-word-track"><div class="st-word-fill" style="height:15%"></div></div><span class="st-word-p">2 %</span></div>
+                <div class="st-word"><span class="st-word-name">Nest</span><div class="st-word-track"><div class="st-word-fill" style="height:12%"></div></div><span class="st-word-p">1 %</span></div>
+            </div>
+        </div>
+        <div class="fragment" data-fragment-action="fill-haus" style="display:none;"></div>
+
         <div class="key-insight fragment" style="margin-top:16px;">
-            Mit jedem Durchgang: <b>größerer Kontext</b> + <b>klarere Vorhersage</b> — am Ende steht das nächste Wort fest.
+            Mit jedem Durchgang: <b>reichere Zusammenhänge</b> + <b>klarere Vorhersage</b> — am Ende steht das nächste Wort fest.
         </div>
     </div>
 </div>
@@ -1045,7 +1073,7 @@
     <div class="slide-content">
         <h2>Der Simplex — der Raum aller Antworten</h2>
         <p style="margin-bottom:2px; max-width:1000px; margin-left:auto; margin-right:auto;">
-            Warum eigentlich Softmax? Ein Query hat <b>genau ein Quantum Aufmerksamkeit</b> zu vergeben. Es auf drei Schlüssel zu verteilen heißt: einen Punkt im Dreieck zu wählen — <span class="math-inline">p_1+p_2+p_3=1</span>.
+            Warum eigentlich Softmax? Ein Query hat <b>genau ein Quantum Aufmerksamkeit</b> zu vergeben. Es auf drei Schlüssel zu verteilen heißt: einen Punkt im Dreieck zu wählen, mit <span class="math-inline">a+b+c=1</span> und <span class="math-inline">a,b,c \ge 0</span>. Attention darf sich also stärker auf einen Schlüssel konzentrieren, ohne ihm die <b>gesamte</b> Aufmerksamkeit zu geben — der Rest geht dadurch nicht verloren.
         </p>
 
         <div class="demo-box" style="min-height:auto; padding:14px 18px; margin-top:10px;">

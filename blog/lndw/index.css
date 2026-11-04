@@ -116,6 +116,23 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 .st-grid .b1 { color: #b45309; }
 .st-grid .b2 { color: #c2410c; }
 .st-grid .b3 { color: #15803d; }
+.st-grid .b4 { color: #0369a1; }
+.st-grid .b5 { color: #7c3aed; }
+
+/* "Attention + FFN ×N": Verteilung über den nächsten Token (Balken) */
+.st-next-head { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.92em; color: #475569; margin-bottom: 8px; }
+.st-next-arrow { font-size: 1.8em; line-height: 1; color: #3b82f6; font-weight: bold; }
+.st-next-list { display: flex; align-items: flex-end; justify-content: center; gap: 6px; }
+.st-word { flex: 1 1 0; max-width: 72px; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.st-word-name { font-size: 0.62em; color: #475569; white-space: nowrap; }
+.st-word-track { position: relative; width: 100%; height: 78px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 5px; overflow: hidden; }
+.st-word-fill { position: absolute; left: 0; right: 0; bottom: 0; background: #93c5fd; border-radius: 4px 4px 0 0; transition: height 0.4s ease; }
+.st-word-p { font-size: 0.55em; color: #94a3b8; }
+.st-word.is-top .st-word-name { color: #047857; font-weight: bold; }
+.st-word.is-top .st-word-fill { background: #10b981; }
+.st-word.is-top .st-word-p { color: #059669; font-weight: bold; }
+.st-word.is-chosen .st-word-track { box-shadow: 0 0 0 3px #10b981; }
+.st-word.is-chosen .st-word-name::after { content: " ✓"; color: #059669; }
 
 /* Neuron-Intro-Animation (Slide "Was sind Neuronale Netzwerk?") */
 #nn-intro-anim {

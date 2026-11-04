@@ -339,10 +339,14 @@ const FragmentActions = {
 	    forward: () => {
 		const c = document.querySelector('#slide-attention-ffn-stapel .blankcell');
 		if (c) c.classList.add('filled');
+		const w = document.querySelector('#slide-attention-ffn-stapel .st-word[data-word="Haus"]');
+		if (w) w.classList.add('is-chosen');
 	    },
 	    backward: () => {
 		const c = document.querySelector('#slide-attention-ffn-stapel .blankcell');
 		if (c) c.classList.remove('filled');
+		const w = document.querySelector('#slide-attention-ffn-stapel .st-word[data-word="Haus"]');
+		if (w) w.classList.remove('is-chosen');
 	    },
 	},
 
