@@ -2320,6 +2320,12 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 .conv-cell.is-negative { color: var(--tm-coral); }
 .conv-cell.is-patch { outline: 2px solid var(--tm-blue); outline-offset: -2px; }
 .conv-cell.is-current { outline: 2px solid var(--tm-green); outline-offset: 1px; }
+.conv-formula {
+	margin-top: 12px;
+	overflow-x: auto;
+	color: var(--tm-ink);
+}
+.conv-formula math { font-size: 1.05em; }
 .conv-readout {
 	margin: 12px 0 0;
 	font-family: var(--tm-prose);

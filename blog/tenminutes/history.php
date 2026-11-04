@@ -681,6 +681,7 @@
 								<button class="chip" type="button" data-kernel="blur">Blur</button>
 							</div>
 							<p class="conv-readout" id="conv-readout"></p>
+							<div class="conv-formula" id="conv-formula"></div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>The same nine numbers are reused at every position. A learned network changes those numbers until the feature map highlights what the task needs.</span></div>
 					</div>
