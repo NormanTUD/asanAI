@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Emergence Mirage — Are Emergent Abilities of Large Language Models a Mirage?</title>
+<style>
+  :root{
+    --bg:#060a0d;
+    --text:#e8f2f4;
+    --muted:#96aab0;
+    --dim:#648087;
+    --line:rgba(255,255,255,.09);
+    --panel:rgba(255,255,255,.035);
+    --a:#14b8a6;
+    --b:#60a5fa;
+    --c:#fbbf24;
+    --good:#34d399;
+    --bad:#fb7185;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--bg); color:var(--text); font-family:var(--sans);
+    line-height:1.65; -webkit-font-smoothing:antialiased; overflow-x:hidden}
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-2; pointer-events:none;
+    background:
+      radial-gradient(950px 640px at 10% -8%, rgba(20,184,166,.20), transparent 62%),
+      radial-gradient(780px 560px at 94% 2%, rgba(96,165,250,.13), transparent 60%),
+      radial-gradient(680px 700px at 52% 108%, rgba(251,191,36,.06), transparent 62%);
+  }
+  body::after{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  #progress{position:fixed; top:0; left:0; height:2px; width:0%; z-index:50;
+    background:linear-gradient(90deg,var(--a),var(--b)); box-shadow:0 0 18px rgba(20,184,166,.7);
+    transition:width .1s linear}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 26px}
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+  .hero{min-height:92vh; display:flex; flex-direction:column; justify-content:center; padding:110px 0 70px}
+  .hero h1{font-family:var(--serif); font-weight:500; font-size:clamp(48px,8.4vw,100px);
+    line-height:.94; letter-spacing:-.03em; margin:22px 0 26px; max-width:13ch}
+  .hero h1 em{font-style:italic; background:linear-gradient(110deg,#99f6e4 0%,#14b8a6 45%,#60a5fa 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent}
+  .lede{font-size:clamp(17px,1.7vw,21px); color:var(--muted); max-width:66ch; margin:0 0 38px}
+  .hero-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; max-width:940px}
+  .stat{border:1px solid var(--line); background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+    border-radius:18px; padding:20px; position:relative; overflow:hidden}
+  .stat::after{content:""; position:absolute; inset:0; background:linear-gradient(120deg,transparent 30%,rgba(20,184,166,.09)); pointer-events:none}
+  .stat b{display:block; font-family:var(--mono); font-size:clamp(25px,3.4vw,38px); font-weight:600;
+    letter-spacing:-.04em; line-height:1.05; background:linear-gradient(100deg,#99f6e4,#14b8a6 55%,#60a5fa);
+    -webkit-background-clip:text; background-clip:text; color:transparent}
+  .stat span{display:block; margin-top:8px; font-size:12.5px; color:var(--muted); line-height:1.45}
+  .scroll-hint{margin-top:52px; font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--dim); text-transform:uppercase}
+  .scroll-hint::before{content:""; display:inline-block; width:28px; height:1px; background:var(--dim); vertical-align:middle; margin-right:10px}
+  section{padding:86px 0}
+  .section-head{max-width:800px; margin-bottom:34px}
+  .section-head h2{font-family:var(--serif); font-weight:500; letter-spacing:-.02em;
+    font-size:clamp(30px,4.4vw,50px); line-height:1.04; margin:12px 0 14px}
+  .section-head p{color:var(--muted); margin:0; font-size:16px; max-width:72ch}
+  .card{border:1px solid var(--line); border-radius:22px;
+    background:linear-gradient(165deg,rgba(255,255,255,.045),rgba(255,255,255,.014));
+    padding:24px; box-shadow:0 26px 70px -34px rgba(0,0,0,.9)}
+  .card h3{font-family:var(--sans); font-size:13px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 14px; font-weight:600}
+  .hint{font-size:12.5px; color:var(--dim); margin-top:14px}
+  .hint b{color:var(--muted); font-weight:500}
+  .reveal{opacity:0; transform:translateY(22px); transition:opacity .85s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none} html{scroll-behavior:auto}}
+
+  button.pill{appearance:none; border:1px solid var(--line); background:rgba(255,255,255,.04);
+    color:var(--text); border-radius:999px; padding:8px 14px; cursor:pointer;
+    font-family:var(--mono); font-size:11px; letter-spacing:.04em; transition:background .2s,border-color .2s,transform .15s}
+  button.pill:hover{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.2)}
+  button.pill:active{transform:scale(.97)}
+  button.pill[aria-pressed="true"]{background:rgba(20,184,166,.2); border-color:rgba(153,246,228,.5)}
+
+  .controls{display:grid; grid-template-columns:1.4fr .8fr .8fr; gap:18px; margin-bottom:18px}
+  .control-group{border:1px solid var(--line); border-radius:16px; padding:14px 16px; background:rgba(0,0,0,.18)}
+  .control-group > label{display:flex; justify-content:space-between; gap:10px; font-family:var(--mono);
+    font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin-bottom:10px}
+  .control-group > label b{color:var(--muted); font-weight:500; letter-spacing:0; text-transform:none}
+  .metric-grid{display:grid; grid-template-columns:1fr 1fr; gap:7px}
+  .metric{appearance:none; text-align:left; border:1px solid var(--line); border-radius:10px;
+    background:rgba(255,255,255,.03); color:var(--text); padding:8px 10px; cursor:pointer; transition:.2s}
+  .metric:hover{border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.06)}
+  .metric[aria-pressed="true"]{background:rgba(20,184,166,.16); border-color:rgba(153,246,228,.55)}
+  .metric .m-name{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.02em; line-height:1.3}
+  .metric .m-tag{display:block; margin-top:2px; font-family:var(--mono); font-size:8.5px;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--dim)}
+  .metric[aria-pressed="true"] .m-tag{color:var(--a)}
+  .test-btns{display:flex; flex-wrap:wrap; gap:6px}
+  .test-btns .pill{padding:6px 10px; font-size:10px}
+  input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:99px;
+    background:linear-gradient(90deg,rgba(20,184,166,.55),rgba(96,165,250,.65)); outline:none; margin:8px 0 2px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:19px; height:19px; border-radius:50%;
+    background:#ecfeff; border:3px solid #14b8a6; cursor:pointer; box-shadow:0 0 0 6px rgba(20,184,166,.15)}
+  input[type=range]::-moz-range-thumb{width:19px; height:19px; border-radius:50%; background:#ecfeff;
+    border:3px solid #14b8a6; cursor:pointer; box-shadow:0 0 0 6px rgba(20,184,166,.15)}
+
+  .readout-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px}
+  .ro{border:1px solid var(--line); border-radius:12px; padding:10px 14px; background:rgba(0,0,0,.2)}
+  .ro .k{font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim)}
+  .ro .v{font-family:var(--mono); font-size:20px; letter-spacing:-.03em; margin-top:2px}
+  .ro .s{font-size:11px; color:var(--dim); margin-top:2px}
+
+  svg.chart{width:100%; height:auto; display:block; overflow:visible}
+  .grid-line{stroke:rgba(255,255,255,.07); stroke-width:1}
+  .axis-line{stroke:rgba(255,255,255,.18); stroke-width:1}
+  .tick{fill:var(--dim); font-family:var(--mono); font-size:10px}
+  .axis-label{fill:var(--muted); font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase}
+  .legend{display:flex; flex-wrap:wrap; gap:18px; margin-top:10px; font-family:var(--mono); font-size:10px; color:var(--dim)}
+  .legend span{display:inline-flex; align-items:center; gap:7px}
+  .legend i{display:inline-block; width:22px; height:0; border-top:2px solid rgba(255,255,255,.4)}
+  .legend i.solid{border-top:2.5px solid var(--a); height:0}
+  .legend i.dash{border-top:2px dashed rgba(255,255,255,.4)}
+
+  .explain{margin-top:16px; border-left:2px solid rgba(20,184,166,.5); padding-left:16px; color:var(--muted); font-size:14.5px; min-height:64px}
+  .explain b{color:var(--text); font-weight:600}
+  .quick{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+
+  .vision{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  .vision .card{margin:0}
+  .spark{width:100%; height:130px; display:block; margin-top:10px}
+  .spark .d{fill:none; stroke:rgba(255,255,255,.35); stroke-width:1.6; stroke-dasharray:4 4}
+  .spark .s{fill:none; stroke:var(--a); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round}
+  .spark .sg{fill:url(#sparkFill)}
+  .vision p{margin:0; color:var(--muted); font-size:14px}
+  .vision .tagline{font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin-top:8px}
+
+  .nuance{border:1px solid rgba(251,191,36,.25); background:rgba(251,191,36,.055); border-radius:18px; padding:18px 20px; margin-top:18px}
+  .nuance p{margin:0; color:var(--muted); font-size:14.5px}
+  .take{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  .take .card{margin:0}
+  .take h3{color:var(--text); font-size:15px; letter-spacing:0; text-transform:none; font-family:var(--serif); font-weight:500}
+  .take p{margin:0; color:var(--muted); font-size:14.5px}
+  footer{padding:60px 0 80px; border-top:1px solid var(--line); margin-top:40px}
+  footer p{color:var(--dim); font-size:13px; max-width:84ch}
+  footer a{color:var(--muted); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.18)}
+  footer a:hover{color:var(--text)}
+  .cite{font-family:var(--mono); font-size:12px; color:var(--muted); line-height:1.7}
+  .next{margin-top:20px}
+  .next a{font-family:var(--mono); font-size:12px; letter-spacing:.04em; color:var(--text); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.3)}
+  .next a:hover{border-color:var(--b)}
+  @media (max-width:900px){
+    .controls{grid-template-columns:1fr}
+    .hero-stats,.readout-grid,.vision,.take{grid-template-columns:1fr}
+    .hero{min-height:auto; padding-top:90px}
+  }
+</style>
+</head>
+<body>
+<div id="progress" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">arXiv:2304.15004 · 2023</div>
+    <h1>The emergence <em>mirage.</em></h1>
+    <p class="lede">Large language models seem to “suddenly” learn arithmetic, or suddenly fail a benchmark. Often the jump is not in the model. It is in the metric we chose to look at.</p>
+    <div class="hero-stats">
+      <div class="stat"><b>&gt; 92%</b><span>of hand-annotated BIG-Bench “emergent” abilities appear under just two metrics: multiple-choice grade and exact string match</span></div>
+      <div class="stat"><b>4 / 39</b><span>BIG-Bench metrics that show any emergence in the hand-annotated analysis</span></div>
+      <div class="stat"><b>1</b><span>smooth power law is enough: apply a nonlinear metric and it looks like a cliff</span></div>
+    </div>
+    <div class="scroll-hint">Scroll to choose a yardstick</div>
+  </header>
+
+  <section id="machine" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">01 · The illusion machine</div>
+      <h2>Same model. Different metric. Different story.</h2>
+      <p>The model family improves smoothly: each token is a little more likely to be right as scale grows. The dashed line is that underlying per-token correctness. The solid line is what the researcher measures. Change the metric and the cliff appears or disappears.</p>
+    </div>
+    <div class="card">
+      <div class="controls">
+        <div class="control-group">
+          <label>Metric <b id="metricTag">nonlinear</b></label>
+          <div class="metric-grid" id="metricGrid"></div>
+        </div>
+        <div class="control-group">
+          <label>Target length <b id="lval">5 tokens</b></label>
+          <input id="lengthRange" type="range" min="1" max="8" step="1" value="5" aria-label="Target length in tokens">
+          <div class="hint" style="margin-top:4px">Used by accuracy; other metrics are length-normalized.</div>
+        </div>
+        <div class="control-group">
+          <label>Test set size <b id="nTestVal">100k</b></label>
+          <div class="test-btns" id="testBtns" role="group" aria-label="Test set size"></div>
+          <div class="hint" style="margin-top:6px">Resolution is 1 / test set size.</div>
+        </div>
+      </div>
+
+      <div class="readout-grid">
+        <div class="ro"><div class="k">per-token correctness</div><div class="v" id="roP">0.51</div><div class="s">the underlying smooth quantity</div></div>
+        <div class="ro"><div class="k">chosen metric</div><div class="v" id="roScore">0.03</div><div class="s" id="roScoreS">accuracy, L = 5</div></div>
+        <div class="ro"><div class="k">measurement</div><div class="v" id="roRes">100k</div><div class="s" id="roResS">test examples</div></div>
+      </div>
+
+      <svg class="chart" id="chart" viewBox="0 0 780 410" role="img" aria-label="Metric score versus model size"></svg>
+      <div class="legend">
+        <span><i class="dash"></i> per-token correctness p(N)</span>
+        <span><i class="solid"></i> chosen metric</span>
+        <span><i style="border-top:2px dashed rgba(251,191,36,.9)"></i> selected model size</span>
+      </div>
+      <div class="explain" id="explain"></div>
+      <div class="quick">
+        <button class="pill" id="showMirage">Show the mirage</button>
+        <button class="pill" id="showTruth">Show the smooth truth</button>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px; margin-top:16px">
+        <span style="font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); white-space:nowrap">model size</span>
+        <input id="sizeRange" type="range" min="8" max="11" step="0.01" value="9.5" aria-label="Model size (log10 parameters)">
+        <span style="font-family:var(--mono); font-size:11px; color:var(--muted); min-width:60px; text-align:right" id="sizeVal">3.2B</span>
+      </div>
+      <p class="hint"><b>Illustrative model.</b> The dashed line is p(N) = exp(−10⁹/N), the paper's power-law form with a convenient exponent. The point is not the exact numbers; it is that the metric, not the model, bends the curve.</p>
+    </div>
+  </section>
+
+  <section id="vision" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">02 · It is not just language</div>
+      <h2>The same trick manufactures emergence in vision</h2>
+      <p>The authors induced “never-before-seen” emergent abilities in vision models by choosing a thresholded or all-or-nothing metric. The networks improve smoothly; the metric adds the cliff.</p>
+    </div>
+    <div class="vision">
+      <div class="card">
+        <h3>Autoencoders on CIFAR-100</h3>
+        <p>Mean squared reconstruction error falls smoothly as the bottleneck grows. Define “reconstruction ability” as the fraction of images with error below a threshold, and a sharp jump appears.</p>
+        <svg class="spark" id="sparkA" viewBox="0 0 360 130" role="img" aria-label="Smooth reconstruction error versus thresholded reconstruction score"></svg>
+        <div class="tagline">smooth quality → thresholded fraction</div>
+      </div>
+      <div class="card">
+        <h3>Omniglot classifiers</h3>
+        <p>Per-image classification accuracy rises smoothly with scale. Require the model to classify all five images in a sequence correctly, and the fifth power turns the slope into an apparent cliff.</p>
+        <svg class="spark" id="sparkB" viewBox="0 0 360 130" role="img" aria-label="Smooth per-image accuracy versus all-five accuracy"></svg>
+        <div class="tagline">per-image accuracy → subset accuracy</div>
+      </div>
+    </div>
+    <p class="hint" style="max-width:80ch"><b>Why this matters:</b> language models were thought special partly because vision models did not show such abrupt transitions. The paper shows that the transition is a property of the chosen measurement, not of language.</p>
+  </section>
+
+  <section id="caveat" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">03 · The careful version</div>
+      <h2>What the paper does — and does not — claim</h2>
+    </div>
+    <div class="nuance">
+      <p><b style="color:var(--text); font-weight:600">It does not say:</b> “large models never acquire new abilities.” It says that the specific published evidence for sharp, unpredictable emergence is compatible with a much simpler explanation: a smooth underlying improvement measured with a nonlinear or discontinuous yardstick, often on too little test data to resolve small-model performance.</p>
+    </div>
+    <div class="nuance" style="border-color:rgba(20,184,166,.25); background:rgba(20,184,166,.055)">
+      <p><b style="color:var(--text); font-weight:600">The practical rule:</b> a task and a metric are separate choices. If you use accuracy or exact match, increase the test set until small models are measurable. Report a linear or continuous metric alongside. And remember that BIG-Bench alone offers roughly a million task–metric–model-family triplets, so some apparent cliffs can be selection effects.</p>
+    </div>
+  </section>
+
+  <section id="takeaway" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">04 · Takeaway</div>
+      <h2>Four sentences to remember</h2>
+    </div>
+    <div class="take">
+      <div class="card">
+        <h3>The model is smooth</h3>
+        <p>Per-token loss and per-token correctness improve gradually. That is what the scaling laws describe.</p>
+      </div>
+      <div class="card">
+        <h3>The metric can be sharp</h3>
+        <p>“All tokens correct” raises a smooth number to a high power. “Highest-probability option” is a step function. Both turn gradual progress into a cliff.</p>
+      </div>
+      <div class="card">
+        <h3>Resolution matters</h3>
+        <p>With a small test set, a model at 0.3% accuracy looks like a model at 0%. More data reveals the smooth improvement underneath.</p>
+      </div>
+      <div class="card">
+        <h3>Measure twice</h3>
+        <p>Report a continuous metric and a nonlinear one. If the “emergent” ability survives both, it is worth taking seriously.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="cite">
+      Schaeffer, Miranda &amp; Koyejo. “Are Emergent Abilities of Large Language Models a Mirage?” 2023.<br>
+      <a href="https://arxiv.org/abs/2304.15004" target="_blank" rel="noopener">arxiv.org/abs/2304.15004</a>
+    </p>
+    <p>Interactive explainer. The 92%, 4/39 and metric analyses are from the paper's BIG-Bench meta-analysis. The main chart is the paper's illustrative power-law model, with an exponent chosen to make the effect visible on a single screen; the vision sparklines are schematic.</p>
+    <p class="next"><a href="sixteen_heads.html">Back to the first explainer: Sixteen Heads, One Job →</a></p>
+  </footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const progress = document.getElementById("progress");
+  const onScroll = () => {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    progress.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) e.target.classList.add("in");
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+  const METRICS = {
+    accuracy: { label: "accuracy", tag: "nonlinear", desc: "all L tokens correct" },
+    edit: { label: "token edit distance", tag: "linear", desc: "≈ linear in per-token error" },
+    mc: { label: "multiple-choice grade", tag: "discontinuous", desc: "1 if correct option wins" },
+    brier: { label: "Brier score", tag: "continuous", desc: "proper, smooth scoring rule" }
+  };
+  const state = { metric: "accuracy", L: 5, Ntest: 100000, logN: 9.5 };
+
+  const metricGrid = document.getElementById("metricGrid");
+  const metricTag = document.getElementById("metricTag");
+  const lengthRange = document.getElementById("lengthRange");
+  const lval = document.getElementById("lval");
+  const testBtns = document.getElementById("testBtns");
+  const nTestVal = document.getElementById("nTestVal");
+  const sizeRange = document.getElementById("sizeRange");
+  const sizeVal = document.getElementById("sizeVal");
+  const chart = document.getElementById("chart");
+  const explain = document.getElementById("explain");
+  const roP = document.getElementById("roP");
+  const roScore = document.getElementById("roScore");
+  const roScoreS = document.getElementById("roScoreS");
+  const roRes = document.getElementById("roRes");
+  const roResS = document.getElementById("roResS");
+
+  for (const key of Object.keys(METRICS)) {
+    const b = document.createElement("button");
+    b.className = "metric";
+    b.dataset.metric = key;
+    b.innerHTML = `<span class="m-name">${METRICS[key].label}</span><span class="m-tag">${METRICS[key].tag}</span>`;
+    b.addEventListener("click", () => { state.metric = key; render(); });
+    metricGrid.appendChild(b);
+  }
+
+  const TESTS = [100, 1000, 10000, 100000];
+  for (const n of TESTS) {
+    const b = document.createElement("button");
+    b.className = "pill";
+    b.textContent = n >= 1000 ? n / 1000 + "k" : String(n);
+    b.dataset.n = n;
+    b.addEventListener("click", () => { state.Ntest = n; render(); });
+    testBtns.appendChild(b);
+  }
+
+  const pOf = (logN) => Math.exp(-1e9 / Math.pow(10, logN));
+
+  function rawScore(p) {
+    switch (state.metric) {
+      case "accuracy": return Math.pow(p, state.L);
+      case "edit": return p;
+      case "mc": return p >= 0.5 ? 1 : 0;
+      case "brier": return 1 - Math.pow(1 - p, 2);
+    }
+    return p;
+  }
+
+  function scoreOf(p) {
+    let v = rawScore(p);
+    if (state.metric === "accuracy" || state.metric === "mc") {
+      v = Math.round(v * state.Ntest) / state.Ntest;
+    }
+    return v;
+  }
+
+  const fmt = (v, d = 2) => v.toFixed(d);
+  const sizeLabel = (logN) => {
+    const n = Math.pow(10, logN);
+    if (n >= 1e9) return (n / 1e9).toFixed(n >= 1e10 ? 0 : 1) + "B";
+    return (n / 1e6).toFixed(0) + "M";
+  };
+
+  function render() {
+    metricGrid.querySelectorAll(".metric").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.metric === state.metric)));
+    testBtns.querySelectorAll(".pill").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.n) === state.Ntest)));
+    metricTag.textContent = METRICS[state.metric].tag;
+    lval.textContent = state.L + " token" + (state.L === 1 ? "" : "s");
+    nTestVal.textContent = state.Ntest >= 1000 ? state.Ntest / 1000 + "k" : String(state.Ntest);
+    sizeVal.textContent = sizeLabel(state.logN);
+
+    const W = 780, H = 410, ml = 64, mr = 26, mt = 28, mb = 56;
+    const iw = W - ml - mr, ih = H - mt - mb;
+    const x = (logN) => ml + ((logN - 8) / 3) * iw;
+    const y = (v) => mt + (1 - v) * ih;
+
+    const N = 240;
+    const pts = [];
+    const ppts = [];
+    for (let i = 0; i <= N; i++) {
+      const logN = 8 + (3 * i) / N;
+      const p = pOf(logN);
+      pts.push([logN, scoreOf(p)]);
+      ppts.push([logN, p]);
+    }
+    const maxScore = Math.max(...pts.map((d) => d[1]));
+    const midTarget = 0.5 * maxScore;
+    let mid = null;
+    for (let i = 1; i < pts.length; i++) {
+      if (pts[i][1] >= midTarget && pts[i - 1][1] < midTarget) {
+        const a = pts[i - 1], b = pts[i];
+        const t = (midTarget - a[1]) / (b[1] - a[1] || 1);
+        mid = a[0] + t * (b[0] - a[0]);
+        break;
+      }
+    }
+
+    let svg = "";
+    svg += `<defs>
+      <linearGradient id="sStroke" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#60a5fa"/>
+      </linearGradient>
+      <linearGradient id="sFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="rgba(20,184,166,.22)"/><stop offset="1" stop-color="rgba(20,184,166,0)"/>
+      </linearGradient>
+    </defs>`;
+
+    for (let i = 0; i <= 4; i++) {
+      const v = i / 4;
+      svg += `<line class="grid-line" x1="${ml}" y1="${y(v)}" x2="${W - mr}" y2="${y(v)}"/>`;
+      svg += `<text class="tick" x="${ml - 10}" y="${y(v) + 3}" text-anchor="end">${v.toFixed(2)}</text>`;
+    }
+    ["100M", "1B", "10B", "100B"].forEach((lab, i) => {
+      const logN = 8 + i;
+      svg += `<line class="grid-line" x1="${x(logN)}" y1="${mt}" x2="${x(logN)}" y2="${H - mb}"/>`;
+      svg += `<text class="tick" x="${x(logN)}" y="${H - mb + 18}" text-anchor="middle">${lab}</text>`;
+    });
+    svg += `<line class="axis-line" x1="${ml}" y1="${H - mb}" x2="${W - mr}" y2="${H - mb}"/>`;
+    svg += `<line class="axis-line" x1="${ml}" y1="${mt}" x2="${ml}" y2="${H - mb}"/>`;
+    svg += `<text class="axis-label" x="${ml}" y="${H - 14}" text-anchor="start">model parameters (log scale) →</text>`;
+    svg += `<text class="axis-label" x="${ml}" y="${mt - 12}" text-anchor="start">score  ·  higher is better</text>`;
+
+    const pPath = ppts.map((d, i) => (i === 0 ? "M" : "L") + x(d[0]) + " " + y(d[1])).join(" ");
+    svg += `<path d="${pPath}" fill="none" stroke="rgba(255,255,255,.38)" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round"/>`;
+
+    const sPath = pts.map((d, i) => (i === 0 ? "M" : "L") + x(d[0]) + " " + y(d[1])).join(" ");
+    const area = sPath + ` L ${x(11)} ${H - mb} L ${x(8)} ${H - mb} Z`;
+    svg += `<path d="${area}" fill="url(#sFill)"/>`;
+    svg += `<path d="${sPath}" fill="none" stroke="url(#sStroke)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+    const isSharp = (state.metric === "accuracy" && state.L >= 3) || state.metric === "mc";
+    if (mid !== null && isSharp) {
+      svg += `<line x1="${x(mid)}" y1="${mt}" x2="${x(mid)}" y2="${H - mb}" stroke="rgba(251,113,133,.45)" stroke-width="1.5" stroke-dasharray="4 5"/>`;
+      svg += `<text class="tick" style="fill:#fda4af" x="${x(mid) + 10}" y="${mt + 16}">sharp transition</text>`;
+    }
+
+    const px = x(state.logN);
+    const pNow = pOf(state.logN);
+    const sNow = scoreOf(pNow);
+    svg += `<line x1="${px}" y1="${mt}" x2="${px}" y2="${H - mb}" stroke="rgba(251,191,36,.8)" stroke-width="1.5" stroke-dasharray="3 4"/>`;
+    svg += `<circle cx="${px}" cy="${y(sNow)}" r="5.5" fill="#060a0d" stroke="#fbbf24" stroke-width="2.5"/>`;
+    svg += `<circle cx="${px}" cy="${y(pNow)}" r="3.5" fill="rgba(255,255,255,.75)"/>`;
+
+    chart.innerHTML = svg;
+
+    roP.textContent = fmt(pNow, 3);
+    roScore.textContent = fmt(sNow, state.metric === "mc" ? 0 : 3);
+    roScoreS.textContent = state.metric === "accuracy" ? `accuracy, L = ${state.L}` : METRICS[state.metric].desc;
+    roRes.textContent = state.Ntest >= 1000 ? state.Ntest / 1000 + "k" : String(state.Ntest);
+    roResS.textContent = (state.metric === "accuracy" || state.metric === "mc")
+      ? (state.Ntest <= 100 ? "too coarse to see small models" : "resolution = 1 / examples")
+      : "continuous metrics do not need this";
+
+    const labels = {
+      accuracy: `<b>Accuracy is nonlinear.</b> The underlying per-token correctness is smooth, but requiring all ${state.L} tokens to be right raises it to the ${state.L}th power. That bends a gentle rise into a cliff. The dashed line is the same model; only the yardstick changed.`,
+      edit: `<b>Token edit distance is approximately linear.</b> It tracks the per-token error rate almost one-for-one, so the solid line coincides with the dashed per-token curve. The “emergent” cliff is gone.`,
+      mc: `<b>Multiple-choice grade is discontinuous.</b> The score is 1 exactly when the correct option has the highest probability mass, and 0 otherwise. A smooth increase in confidence becomes a sudden flip at 50%.`,
+      brier: `<b>Brier score is continuous.</b> It is a proper scoring rule that rewards calibration smoothly. The same model outputs produce a smooth curve, with no cliff.`
+    };
+    explain.innerHTML = labels[state.metric];
+    if (state.metric === "accuracy" && state.Ntest <= 100) {
+      explain.innerHTML += ` <span style="color:var(--bad)">At ${state.Ntest} test examples, the smallest models round to exactly zero.</span>`;
+    }
+  }
+
+  lengthRange.addEventListener("input", () => { state.L = Number(lengthRange.value); render(); });
+  sizeRange.addEventListener("input", () => { state.logN = Number(sizeRange.value); render(); });
+
+  document.getElementById("showMirage").addEventListener("click", () => {
+    state.metric = "accuracy"; state.L = 5; state.Ntest = 100000;
+    lengthRange.value = "5"; render();
+  });
+  document.getElementById("showTruth").addEventListener("click", () => {
+    state.metric = "edit"; state.Ntest = 100000;
+    render();
+  });
+
+  render();
+
+  function spark(el, id, dashedFn, solidFn) {
+    const W = 360, H = 130, ml = 8, mr = 8, mt = 10, mb = 16;
+    const iw = W - ml - mr, ih = H - mt - mb;
+    const x = (t) => ml + t * iw;
+    const y = (v) => mt + (1 - v) * ih;
+    const dPath = [];
+    const sPath = [];
+    const N = 90;
+    for (let i = 0; i <= N; i++) {
+      const t = i / N;
+      dPath.push((i === 0 ? "M" : "L") + x(t).toFixed(1) + " " + y(dashedFn(t)).toFixed(1));
+      sPath.push((i === 0 ? "M" : "L") + x(t).toFixed(1) + " " + y(solidFn(t)).toFixed(1));
+    }
+    const sStr = sPath.join(" ");
+    let svg = `<path d="${sStr} L ${x(1)} ${y(0)} L ${x(0)} ${y(0)} Z" fill="url(#${id})"/>`;
+    svg += `<path class="d" d="${dPath.join(" ")}"/>`;
+    svg += `<path class="s" d="${sStr}"/>`;
+    svg += `<line x1="${ml}" y1="${H - mb}" x2="${W - mr}" y2="${H - mb}" stroke="rgba(255,255,255,.16)"/>`;
+    el.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(20,184,166,.3)"/><stop offset="1" stop-color="rgba(20,184,166,0)"/></linearGradient></defs>` + svg;
+  }
+
+  const sig = (z) => 1 / (1 + Math.exp(-z));
+  spark(document.getElementById("sparkA"), "sparkFillA",
+    (t) => 1 - Math.max(0.02, 0.10 - 0.075 * t) / 0.12,
+    (t) => sig((0.040 - (0.10 - 0.075 * t)) / 0.006)
+  );
+  spark(document.getElementById("sparkB"), "sparkFillB",
+    (t) => 0.12 + 0.84 * t,
+    (t) => Math.pow(0.12 + 0.84 * t, 5)
+  );
+})();
+</script>
+</body>
+</html>

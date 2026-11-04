@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Heatmap Is Not a Reason — Attention is not Explanation</title>
+<style>
+  :root{
+    --bg:#0a0708;
+    --text:#f5ece9;
+    --muted:#bba9a3;
+    --dim:#7f6d67;
+    --line:rgba(255,255,255,.09);
+    --panel:rgba(255,255,255,.035);
+    --a:#ef4444;
+    --b:#f97316;
+    --c:#facc15;
+    --good:#34d399;
+    --bad:#fb7185;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--text); font-family:var(--sans);
+    line-height:1.65; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-2; pointer-events:none;
+    background:
+      radial-gradient(900px 620px at 10% -8%, rgba(239,68,68,.19), transparent 62%),
+      radial-gradient(760px 560px at 94% 4%, rgba(249,115,22,.12), transparent 60%),
+      radial-gradient(700px 700px at 50% 108%, rgba(250,204,21,.07), transparent 62%);
+  }
+  body::after{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  #progress{position:fixed; top:0; left:0; height:2px; width:0%; z-index:50;
+    background:linear-gradient(90deg,var(--a),var(--c)); box-shadow:0 0 18px rgba(239,68,68,.75);
+    transition:width .1s linear}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 26px}
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+  .hero{min-height:92vh; display:flex; flex-direction:column; justify-content:center; padding:110px 0 70px}
+  .hero h1{font-family:var(--serif); font-weight:500; font-size:clamp(48px,8.5vw,102px);
+    line-height:.94; letter-spacing:-.03em; margin:22px 0 26px; max-width:13ch}
+  .hero h1 em{font-style:italic; background:linear-gradient(110deg,#fecaca 0%,#ef4444 45%,#f97316 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent}
+  .lede{font-size:clamp(17px,1.7vw,21px); color:var(--muted); max-width:65ch; margin:0 0 38px}
+  .hero-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; max-width:940px}
+  .stat{border:1px solid var(--line); background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+    border-radius:18px; padding:20px; position:relative; overflow:hidden}
+  .stat::after{content:""; position:absolute; inset:0; background:linear-gradient(120deg,transparent 30%,rgba(239,68,68,.09)); pointer-events:none}
+  .stat b{display:block; font-family:var(--mono); font-size:clamp(25px,3.4vw,38px); font-weight:600;
+    letter-spacing:-.04em; line-height:1.05; background:linear-gradient(100deg,#fecaca,#ef4444 55%,#f97316);
+    -webkit-background-clip:text; background-clip:text; color:transparent}
+  .stat span{display:block; margin-top:8px; font-size:12.5px; color:var(--muted); line-height:1.45}
+  .scroll-hint{margin-top:52px; font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--dim); text-transform:uppercase}
+  .scroll-hint::before{content:""; display:inline-block; width:28px; height:1px; background:var(--dim); vertical-align:middle; margin-right:10px}
+  section{padding:86px 0}
+  .section-head{max-width:800px; margin-bottom:34px}
+  .section-head h2{font-family:var(--serif); font-weight:500; letter-spacing:-.02em;
+    font-size:clamp(30px,4.4vw,50px); line-height:1.04; margin:12px 0 14px}
+  .section-head p{color:var(--muted); margin:0; font-size:16px; max-width:71ch}
+  .card{border:1px solid var(--line); border-radius:22px;
+    background:linear-gradient(165deg,rgba(255,255,255,.045),rgba(255,255,255,.014));
+    padding:24px; box-shadow:0 26px 70px -34px rgba(0,0,0,.9)}
+  .card h3{font-family:var(--sans); font-size:13px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 14px; font-weight:600}
+  .hint{font-size:12.5px; color:var(--dim); margin-top:14px}
+  .hint b{color:var(--muted); font-weight:500}
+  .reveal{opacity:0; transform:translateY(22px); transition:opacity .85s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none} html{scroll-behavior:auto}}
+
+  button.pill{appearance:none; border:1px solid var(--line); background:rgba(255,255,255,.04);
+    color:var(--text); border-radius:999px; padding:8px 14px; cursor:pointer;
+    font-family:var(--mono); font-size:11px; letter-spacing:.04em; transition:background .2s,border-color .2s,transform .15s}
+  button.pill:hover{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.2)}
+  button.pill:active{transform:scale(.97)}
+  button.pill[aria-pressed="true"]{background:rgba(239,68,68,.22); border-color:rgba(254,202,202,.5)}
+  button.pill.primary{background:linear-gradient(100deg,rgba(239,68,68,.3),rgba(249,115,22,.24)); border-color:rgba(254,202,202,.4)}
+  .mode-tabs{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px}
+
+  .sentence{display:grid; grid-template-columns:repeat(8,1fr); gap:8px; align-items:end; min-height:150px; margin:8px 0 4px}
+  .tok{display:flex; flex-direction:column; justify-content:flex-end; gap:8px; min-width:0; text-align:center}
+  .tok .w{font-family:var(--mono); font-size:12px; color:var(--muted); overflow-wrap:anywhere; line-height:1.25}
+  .tok .att{height:96px; display:flex; align-items:flex-end; border-radius:8px; background:rgba(255,255,255,.035); overflow:hidden}
+  .tok .att i{display:block; width:100%; border-radius:8px 8px 3px 3px; background:linear-gradient(180deg,#fca5a5,#b91c1c);
+    transition:height .4s cubic-bezier(.2,.7,.2,1),background .3s; box-shadow:0 0 22px rgba(239,68,68,.18)}
+  .tok.hot .att i{background:linear-gradient(180deg,#fde68a,#f97316)}
+  .tok .v{font-family:var(--mono); font-size:9px; color:var(--dim); height:12px}
+  .slide-row{display:flex; align-items:center; gap:16px; margin-top:18px}
+  .slide-row .lab{font-family:var(--mono); font-size:10px; color:var(--dim); white-space:nowrap; letter-spacing:.06em; text-transform:uppercase}
+  input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:99px;
+    background:linear-gradient(90deg,rgba(239,68,68,.75),rgba(249,115,22,.9),rgba(250,204,21,.8)); outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%;
+    background:#fff7ed; border:3px solid #ef4444; cursor:pointer; box-shadow:0 0 0 6px rgba(239,68,68,.16)}
+  input[type=range]::-moz-range-thumb{width:20px; height:20px; border-radius:50%; background:#fff7ed;
+    border:3px solid #ef4444; cursor:pointer; box-shadow:0 0 0 6px rgba(239,68,68,.16)}
+
+  .gauge-wrap{margin-top:20px; border-top:1px solid var(--line); padding-top:18px}
+  .gauge-top{display:flex; justify-content:space-between; align-items:baseline; gap:14px}
+  .gauge-top .p{font-family:var(--mono); font-size:34px; letter-spacing:-.04em}
+  .gauge-top .label{font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim)}
+  .gauge{position:relative; height:12px; border-radius:99px; margin:14px 0 6px;
+    background:linear-gradient(90deg,#ef4444,#facc15 52%,#22c55e); opacity:.9}
+  .gauge .needle{position:absolute; top:-7px; width:4px; height:26px; border-radius:99px; background:#fff7ed;
+    box-shadow:0 0 0 3px rgba(10,7,8,.9),0 0 20px rgba(255,255,255,.6); transition:left .4s cubic-bezier(.2,.7,.2,1)}
+  .gauge-labels{display:flex; justify-content:space-between; font-family:var(--mono); font-size:9px; color:var(--dim); letter-spacing:.08em; text-transform:uppercase}
+  .swap-actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:18px}
+  .swap-actions .read{font-family:var(--mono); font-size:11px; color:var(--muted); margin-left:auto}
+  .swap-actions .read b{color:var(--text); font-weight:500}
+
+  .results{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px}
+  .result{border:1px solid var(--line); border-radius:16px; padding:16px; background:rgba(0,0,0,.2)}
+  .result h4{font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:0 0 12px}
+  .result .big{font-family:var(--mono); font-size:24px; letter-spacing:-.03em}
+  .result .sub{font-size:12px; color:var(--dim); margin-top:4px}
+  .mini-sentence{display:grid; grid-template-columns:repeat(8,1fr); gap:3px; margin-top:12px}
+  .mini-sentence .m{height:35px; border-radius:4px; background:rgba(255,255,255,.04); display:flex; align-items:flex-end; overflow:hidden}
+  .mini-sentence .m i{width:100%; border-radius:4px 4px 1px 1px; background:linear-gradient(180deg,#fca5a5,#b91c1c); transition:height .4s}
+  canvas.hist{width:100%; height:130px; display:block; margin-top:8px}
+  .hist-note{display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; color:var(--dim); margin-top:6px}
+
+  .corr{display:flex; flex-direction:column; gap:16px}
+  .corr-row{display:grid; grid-template-columns:105px 1fr; gap:14px; align-items:center}
+  .corr-row .name{font-family:var(--mono); font-size:11px; color:var(--muted)}
+  .corr-bars{display:flex; flex-direction:column; gap:5px}
+  .corr-bar{display:grid; grid-template-columns:70px 1fr 44px; gap:8px; align-items:center}
+  .corr-bar .tag{font-family:var(--mono); font-size:9px; color:var(--dim); text-align:right}
+  .corr-bar .track{height:9px; border-radius:99px; background:rgba(255,255,255,.055); overflow:hidden; position:relative}
+  .corr-bar .track i{display:block; height:100%; border-radius:99px; transition:width .7s cubic-bezier(.2,.7,.2,1)}
+  .corr-bar.lstm .track i{background:linear-gradient(90deg,#7f1d1d,#ef4444)}
+  .corr-bar.avg .track i{background:linear-gradient(90deg,#134e4a,#2dd4bf)}
+  .corr-bar .num{font-family:var(--mono); font-size:10px; color:var(--muted); text-align:right}
+  .corr-legend{display:flex; gap:18px; flex-wrap:wrap; margin-top:4px; font-family:var(--mono); font-size:10px; color:var(--dim)}
+  .corr-legend i{display:inline-block; width:18px; height:6px; border-radius:99px; vertical-align:middle; margin-right:6px}
+  .corr-threshold{position:absolute; left:50%; top:-3px; bottom:-3px; width:0; border-left:1px dashed rgba(255,255,255,.3); z-index:2}
+
+  .verdict{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  .verdict .card{margin:0}
+  .verdict .mark{font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px}
+  .verdict .cross{color:var(--bad)} .verdict .check{color:var(--good)}
+  .verdict p{margin:0; color:var(--muted); font-size:14.5px}
+  .nuance{border:1px solid rgba(250,204,21,.25); background:rgba(250,204,21,.06); border-radius:18px; padding:18px 20px; margin-top:18px}
+  .nuance p{margin:0; color:var(--muted); font-size:14.5px}
+
+  .take{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  .take .card{margin:0}
+  .take h3{color:var(--text); font-size:15px; letter-spacing:0; text-transform:none; font-family:var(--serif); font-weight:500}
+  .take p{margin:0; color:var(--muted); font-size:14.5px}
+  footer{padding:60px 0 80px; border-top:1px solid var(--line); margin-top:40px}
+  footer p{color:var(--dim); font-size:13px; max-width:84ch}
+  footer a{color:var(--muted); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.18)}
+  footer a:hover{color:var(--text)}
+  .cite{font-family:var(--mono); font-size:12px; color:var(--muted); line-height:1.7}
+  .next{margin-top:20px}
+  .next a{font-family:var(--mono); font-size:12px; letter-spacing:.04em; color:var(--text); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.3)}
+  .next a:hover{border-color:var(--c)}
+  @media (max-width:820px){
+    .hero-stats,.results,.verdict,.take{grid-template-columns:1fr}
+    .hero{min-height:auto; padding-top:90px}
+    .sentence{grid-template-columns:repeat(4,1fr); gap:10px}
+    .mini-sentence{grid-template-columns:repeat(8,1fr)}
+    .swap-actions .read{margin-left:0; width:100%}
+  }
+</style>
+</head>
+<body>
+<div id="progress" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">arXiv:1902.10186 · NAACL 2019</div>
+    <h1>A heatmap is <em>not</em> a reason.</h1>
+    <p class="lede">Attention weights look like an explanation: the model “looks at” these words, so these words must be why. Two tests show that this story usually fails, even when the prediction is correct.</p>
+    <div class="hero-stats">
+      <div class="stat"><b>τ ≈ 0.08–0.45</b><span>attention vs gradient importance for a BiLSTM across tasks; a simple average encoder agrees far more</span></div>
+      <div class="stat"><b>0.69</b><span>the JSD ceiling: an adversarial attention map can be maximally different and still produce the same answer</span></div>
+      <div class="stat"><b>≈ 0.006</b><span>median change in output after randomly permuting attention weights (paper's example)</span></div>
+    </div>
+    <div class="scroll-hint">Scroll to interrogate the heatmap</div>
+  </header>
+
+  <section id="swap" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">01 · The swap</div>
+      <h2>Two completely different heatmaps, one prediction</h2>
+      <p>A movie review, a standard attentive model, and a question: if the attention map is the explanation, should a very different map not change the answer? Slide between two explanations and watch the prediction.</p>
+    </div>
+    <div class="card">
+      <div class="mode-tabs" id="modeTabs" role="group" aria-label="Evidence mode"></div>
+      <div class="sentence" id="sentence"></div>
+      <div class="slide-row">
+        <div class="lab">Explanation A</div>
+        <input id="morph" type="range" min="0" max="100" step="1" value="0" aria-label="Morph between two attention distributions">
+        <div class="lab">Explanation B</div>
+      </div>
+      <div class="gauge-wrap">
+        <div class="gauge-top">
+          <div>
+            <div class="label">model output · P(positive)</div>
+            <div class="p" id="predVal">0.009</div>
+          </div>
+          <div class="label" id="modeNote">the prediction is negative</div>
+        </div>
+        <div class="gauge"><div class="needle" id="needle" style="left:0.9%"></div></div>
+        <div class="gauge-labels"><span>negative 0</span><span>positive 1</span></div>
+      </div>
+      <div class="swap-actions">
+        <button class="pill primary" id="findAdv">Find a very different explanation</button>
+        <button class="pill" id="permute">Permute 500×</button>
+        <div class="read" id="swapRead">JSD between A and B: <b>—</b></div>
+      </div>
+      <p class="hint" id="modeHint"><b>Diffuse evidence.</b> Every token carries a little negative signal. Any weighted average is still negative, so drastically changing the attention barely changes the output. Attention is not identifying a cause; it is one of many distributions that give the same answer.</p>
+      <div class="results">
+        <div class="result">
+          <h4>Adversarial explanation</h4>
+          <div class="big" id="advJSD">—</div>
+          <div class="sub" id="advSub">Click “Find a very different explanation”.</div>
+          <div class="mini-sentence" id="advMap"></div>
+        </div>
+        <div class="result">
+          <h4>Permutation test</h4>
+          <div class="big" id="permMed">—</div>
+          <div class="sub" id="permSub">Click “Permute 500×” to shuffle the weights.</div>
+          <canvas class="hist" id="hist" width="600" height="260"></canvas>
+          <div class="hist-note"><span>0</span><span id="histMax">output change</span></div>
+        </div>
+      </div>
+      <p class="hint"><b>Toy decoder.</b> The prediction is a softmax over a weighted average of per-token sentiment scores. The point is structural, not numerical: the same non-identifiability appears in the paper's trained BiLSTM. The review text and heatmaps are illustrative.</p>
+    </div>
+  </section>
+
+  <section id="correlation" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">02 · Test one</div>
+      <h2>Does attention agree with feature importance?</h2>
+      <p>If attention explains a prediction, it should roughly agree with other measures of which tokens matter: input gradients and leave-one-out (erase a word and see how much the output moves). Kendall's τ is the agreement: 0 means none, 1 means perfect.</p>
+    </div>
+    <div class="card">
+      <div class="corr" id="corrChart"></div>
+      <div class="corr-legend">
+        <span><i style="background:linear-gradient(90deg,#7f1d1d,#ef4444)"></i>BiLSTM encoder</span>
+        <span><i style="background:linear-gradient(90deg,#134e4a,#2dd4bf)"></i>simple average encoder</span>
+        <span>dashed line = τ 0.5</span>
+      </div>
+      <p class="hint"><b>Read the gap.</b> For the BiLSTM, attention agrees only weakly with gradient importance. For a simple feed-forward embedding encoder, attention is much closer to a direct linear weighting, and the agreement jumps. The same pattern holds for leave-one-out importance. The paper's explanation: in a recurrent encoder the hidden state already mixes all words, so attention over hidden states is not attention over the input words.</p>
+    </div>
+  </section>
+
+  <section id="verdict" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">03 · The verdict</div>
+      <h2>What fails, and what that does not mean</h2>
+    </div>
+    <div class="verdict">
+      <div class="card">
+        <div class="mark cross">✕ &nbsp;not faithful</div>
+        <h3 style="margin-top:0">Attention does not track importance</h3>
+        <p>Across SST, IMDB, ADR tweets, 20 Newsgroups, AG News, QA and NLI, attention weights correlate only weakly and inconsistently with gradients and leave-one-out scores. The correlation is not reliable enough to read a reason off the heatmap.</p>
+      </div>
+      <div class="card">
+        <div class="mark cross">✕ &nbsp;not unique</div>
+        <h3 style="margin-top:0">Different attention, same output</h3>
+        <p>The authors find adversarial attention distributions that are very far from the original (high JSD) yet leave the prediction within ε. If several incompatible heatmaps “explain” the same output equally well, the heatmap does not single out a cause.</p>
+      </div>
+    </div>
+    <div class="nuance">
+      <p><b style="color:var(--text); font-weight:600">The careful version:</b> the paper argues that attention weights are not <em>faithful explanations</em>, not that attention is useless. The mechanism still computes a useful weighted summary, and later work has argued about how far the negative result generalizes. The practical lesson is narrower and sharper: do not present a heatmap as the reason for a prediction without an independent check.</p>
+    </div>
+  </section>
+
+  <section id="takeaway" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">04 · Takeaway</div>
+      <h2>The three sentences to remember</h2>
+    </div>
+    <div class="take">
+      <div class="card">
+        <h3>Correlation is weak</h3>
+        <p>Attention and gradient importance often disagree. The gap is largest exactly where the encoder is complex and recurrent.</p>
+      </div>
+      <div class="card">
+        <h3>Counterfactuals are cheap</h3>
+        <p>You can often find a very different attention distribution that leaves the prediction almost unchanged. A map that is not unique is not an explanation.</p>
+      </div>
+      <div class="card">
+        <h3>Structure matters</h3>
+        <p>Simple feed-forward encoders behave better than BiLSTMs. The interpretability of attention depends on the architecture around it.</p>
+      </div>
+      <div class="card">
+        <h3>Test before you trust</h3>
+        <p>Faithfulness is an empirical property. Check it with perturbations and independent importance measures; do not infer it from the shape of the heatmap.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="cite">
+      Jain &amp; Wallace. “Attention is not Explanation.” NAACL 2019.<br>
+      <a href="https://arxiv.org/abs/1902.10186" target="_blank" rel="noopener">arxiv.org/abs/1902.10186</a>
+    </p>
+    <p>Interactive explainer. The correlation bars use the BiLSTM and average-encoder gradient τ values from the paper's Table 2. The swap, adversarial search and permutation test run on a small illustrative decoder, not on the paper's trained model.</p>
+    <p class="next"><a href="emergent_mirage.html">Next explainer: The Emergence Mirage →</a></p>
+  </footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const progress = document.getElementById("progress");
+  const onScroll = () => {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    progress.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) e.target.classList.add("in");
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+  const TOKENS = ["the", "movie", "was", "a", "complete", "waste", "of", "time"];
+  const MODES = {
+    diffuse: {
+      label: "Diffuse evidence",
+      s: [-4.2, -4.6, -3.9, -4.4, -4.5, -5.2, -4.0, -4.3],
+      A: [0.03, 0.07, 0.04, 0.03, 0.06, 0.48, 0.10, 0.19],
+      B: [0.24, 0.28, 0.24, 0.08, 0.05, 0.03, 0.05, 0.03],
+      hint: "<b>Diffuse evidence.</b> Every token carries a little negative signal. Any weighted average is still negative, so drastically changing the attention barely changes the output. Attention is not identifying a cause; it is one of many distributions that give the same answer.",
+      note: "the prediction is negative either way"
+    },
+    gun: {
+      label: "One smoking gun",
+      s: [-0.1, -0.1, -0.1, -0.1, -0.1, -6.0, -0.1, -0.1],
+      A: [0.03, 0.07, 0.04, 0.03, 0.06, 0.48, 0.10, 0.19],
+      B: [0.24, 0.28, 0.24, 0.08, 0.05, 0.03, 0.05, 0.03],
+      hint: "<b>One smoking gun.</b> Only “waste” carries the signal. If the model attends to it, the prediction is strongly negative; if it does not, the evidence nearly vanishes. Here attention is informative for this toy, which is the exception the paper also finds on some tasks.",
+      note: "the prediction depends on where you look"
+    }
+  };
+  let mode = "diffuse";
+
+  const sigmoid = (z) => 1 / (1 + Math.exp(-z));
+  const predict = (a, s) => sigmoid(a.reduce((acc, v, i) => acc + v * s[i], 0));
+
+  function jsd(p, q) {
+    const n = p.length;
+    let out = 0;
+    for (let i = 0; i < n; i++) {
+      const m = (p[i] + q[i]) / 2;
+      if (p[i] > 1e-12) out += 0.5 * p[i] * Math.log(p[i] / m);
+      if (q[i] > 1e-12) out += 0.5 * q[i] * Math.log(q[i] / m);
+    }
+    return out;
+  }
+
+  const sentence = document.getElementById("sentence");
+  const modeTabs = document.getElementById("modeTabs");
+  const morph = document.getElementById("morph");
+  const predVal = document.getElementById("predVal");
+  const needle = document.getElementById("needle");
+  const swapRead = document.getElementById("swapRead");
+  const modeHint = document.getElementById("modeHint");
+  const modeNote = document.getElementById("modeNote");
+  const advJSD = document.getElementById("advJSD");
+  const advSub = document.getElementById("advSub");
+  const advMap = document.getElementById("advMap");
+  const permMed = document.getElementById("permMed");
+  const permSub = document.getElementById("permSub");
+  const hist = document.getElementById("hist");
+  const histMax = document.getElementById("histMax");
+
+  const tokEls = [];
+  TOKENS.forEach((w) => {
+    const el = document.createElement("div");
+    el.className = "tok";
+    el.innerHTML = `<div class="w">${w}</div><div class="att"><i></i></div><div class="v"></div>`;
+    sentence.appendChild(el);
+    tokEls.push(el);
+  });
+
+  const advMapEls = [];
+  TOKENS.forEach(() => {
+    const el = document.createElement("div");
+    el.className = "m";
+    el.innerHTML = "<i></i>";
+    advMap.appendChild(el);
+    advMapEls.push(el);
+  });
+
+  for (const key of Object.keys(MODES)) {
+    const b = document.createElement("button");
+    b.className = "pill";
+    b.textContent = MODES[key].label;
+    b.dataset.mode = key;
+    b.addEventListener("click", () => { mode = key; morph.value = "0"; render(); resetResults(); });
+    modeTabs.appendChild(b);
+  }
+
+  function renderTokens(alpha) {
+    const max = Math.max(...alpha);
+    tokEls.forEach((el, i) => {
+      const a = alpha[i];
+      el.querySelector(".att i").style.height = Math.max(2, (a / max) * 100) + "%";
+      el.querySelector(".v").textContent = (a * 100).toFixed(0) + "%";
+      el.classList.toggle("hot", a === max);
+      el.title = TOKENS[i] + ": " + (a * 100).toFixed(1) + "% attention";
+    });
+  }
+
+  function renderAdvMap(alpha) {
+    const max = Math.max(...alpha);
+    advMapEls.forEach((el, i) => {
+      el.querySelector("i").style.height = Math.max(3, (alpha[i] / max) * 100) + "%";
+      el.title = TOKENS[i] + ": " + (alpha[i] * 100).toFixed(1) + "%";
+    });
+  }
+
+  function render() {
+    const d = MODES[mode];
+    modeTabs.querySelectorAll(".pill").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
+    const t = Number(morph.value) / 100;
+    const alpha = d.A.map((v, i) => (1 - t) * v + t * d.B[i]);
+    const p = predict(alpha, d.s);
+    renderTokens(alpha);
+    predVal.textContent = p.toFixed(3);
+    predVal.style.color = p < 0.5 ? "var(--bad)" : "var(--good)";
+    needle.style.left = `calc(${Math.max(0.6, Math.min(99.4, p * 100))}% - 2px)`;
+    swapRead.innerHTML = `JSD between A and B: <b>${jsd(d.A, d.B).toFixed(2)}</b> · prediction change: <b>${Math.abs(predict(d.A, d.s) - predict(d.B, d.s)).toFixed(3)}</b>`;
+    modeHint.innerHTML = d.hint;
+    modeNote.textContent = d.note;
+  }
+
+  morph.addEventListener("input", render);
+  render();
+
+  function resetResults() {
+    advJSD.textContent = "—";
+    advSub.textContent = "Click “Find a very different explanation”.";
+    advMapEls.forEach((el) => (el.querySelector("i").style.height = "3%"));
+    permMed.textContent = "—";
+    permSub.textContent = "Click “Permute 500×” to shuffle the weights.";
+    clearHist();
+    histMax.textContent = "output change";
+  }
+
+  function findAdversarial() {
+    const d = MODES[mode];
+    const p0 = predict(d.A, d.s);
+    const eps = 0.01;
+    const N = 6000;
+    let best = null, bestJ = -1, fallback = null, fallbackScore = Infinity;
+    for (let k = 0; k < N; k++) {
+      let sum = 0;
+      const a = new Array(TOKENS.length);
+      for (let i = 0; i < TOKENS.length; i++) {
+        const e = -Math.log(1 - Math.random());
+        a[i] = e;
+        sum += e;
+      }
+      for (let i = 0; i < TOKENS.length; i++) a[i] /= sum;
+      const p = predict(a, d.s);
+      const delta = Math.abs(p - p0);
+      const j = jsd(a, d.A);
+      if (delta <= eps && j > bestJ) { bestJ = j; best = a; }
+      if (delta < fallbackScore) { fallbackScore = delta; fallback = a; }
+    }
+    const chosen = best || fallback;
+    const j = jsd(chosen, d.A);
+    const p = predict(chosen, d.s);
+    advJSD.textContent = "JSD " + j.toFixed(2);
+    advSub.textContent = best
+      ? `Prediction ${p.toFixed(3)} vs ${p0.toFixed(3)} · within ε = 0.01, but the attention map is very different.`
+      : `No distribution within ε = 0.01 was very different. Best found Δp = ${fallbackScore.toFixed(3)}.`;
+    renderAdvMap(chosen);
+    morph.value = "0";
+    render();
+  }
+
+  function clearHist() {
+    const ctx = hist.getContext("2d");
+    ctx.clearRect(0, 0, hist.width, hist.height);
+    ctx.strokeStyle = "rgba(255,255,255,.12)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, hist.height - 1);
+    ctx.lineTo(hist.width, hist.height - 1);
+    ctx.stroke();
+  }
+
+  function drawHist(values) {
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const cssW = Math.max(260, hist.clientWidth || 300);
+    const cssH = 130;
+    hist.width = Math.round(cssW * dpr);
+    hist.height = Math.round(cssH * dpr);
+    hist.style.height = cssH + "px";
+    const ctx = hist.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+
+    const max = Math.max(0.01, ...values);
+    const bins = 14;
+    const counts = new Array(bins).fill(0);
+    for (const v of values) {
+      const i = Math.min(bins - 1, Math.floor((v / max) * bins));
+      counts[i]++;
+    }
+    const cmax = Math.max(...counts);
+    const pad = 8;
+    const w = (cssW - pad * 2) / bins;
+    ctx.fillStyle = "rgba(255,255,255,.05)";
+    ctx.fillRect(pad, 6, cssW - pad * 2, cssH - 20);
+    for (let i = 0; i < bins; i++) {
+      const h = counts[i] / cmax * (cssH - 26);
+      const x = pad + i * w + 1;
+      const y = cssH - 14 - h;
+      const grad = ctx.createLinearGradient(0, y, 0, cssH - 14);
+      grad.addColorStop(0, "#fca5a5");
+      grad.addColorStop(1, "#991b1b");
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, y, Math.max(1, w - 2), h);
+    }
+    ctx.strokeStyle = "rgba(255,255,255,.2)";
+    ctx.beginPath();
+    ctx.moveTo(pad, cssH - 13.5);
+    ctx.lineTo(cssW - pad, cssH - 13.5);
+    ctx.stroke();
+    histMax.textContent = "output change (max " + max.toFixed(2) + ")";
+  }
+
+  function permuteTest() {
+    const d = MODES[mode];
+    const p0 = predict(d.A, d.s);
+    const values = [];
+    for (let k = 0; k < 500; k++) {
+      const a = d.A.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      values.push(Math.abs(predict(a, d.s) - p0));
+    }
+    values.sort((a, b) => a - b);
+    const med = values[Math.floor(values.length / 2)];
+    permMed.textContent = "median Δ " + med.toFixed(4);
+    permSub.textContent = `Across 500 random permutations, half the outputs move by less than ${med.toFixed(4)}.`;
+    drawHist(values);
+  }
+
+  document.getElementById("findAdv").addEventListener("click", findAdversarial);
+  document.getElementById("permute").addEventListener("click", permuteTest);
+  resetResults();
+
+  const CORR = [
+    { name: "SST", lstm: 0.395, avg: 0.692 },
+    { name: "IMDB", lstm: 0.371, avg: 0.655 },
+    { name: "ADR tweets", lstm: 0.448, avg: 0.714 },
+    { name: "20 Newsgroups", lstm: 0.081, avg: 0.654 },
+    { name: "AG News", lstm: 0.418, avg: 0.771 },
+    { name: "SNLI", lstm: 0.360, avg: 0.539 }
+  ];
+  const corrChart = document.getElementById("corrChart");
+  CORR.forEach((d) => {
+    const row = document.createElement("div");
+    row.className = "corr-row";
+    row.innerHTML =
+      `<div class="name">${d.name}</div>
+       <div class="corr-bars">
+         <div class="corr-bar lstm"><span class="tag">BiLSTM</span><div class="track"><i style="width:${d.lstm * 100}%"></i><span class="corr-threshold"></span></div><span class="num">${d.lstm.toFixed(2)}</span></div>
+         <div class="corr-bar avg"><span class="tag">average</span><div class="track"><i style="width:${d.avg * 100}%"></i><span class="corr-threshold"></span></div><span class="num">${d.avg.toFixed(2)}</span></div>
+       </div>`;
+    corrChart.appendChild(row);
+  });
+})();
+</script>
+</body>
+</html>

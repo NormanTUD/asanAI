@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Let the Heads Talk — Talking-Heads Attention</title>
+<style>
+  :root{
+    --bg:#0a0807;
+    --text:#f3eee9;
+    --muted:#b7a9a0;
+    --dim:#7d7068;
+    --line:rgba(255,255,255,.09);
+    --panel:rgba(255,255,255,.035);
+    --a:#f59e0b;
+    --b:#fb7185;
+    --c:#2dd4bf;
+    --good:#34d399;
+    --bad:#fb7185;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:var(--sans); line-height:1.65; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-2; pointer-events:none;
+    background:
+      radial-gradient(900px 620px at 8% -8%, rgba(245,158,11,.18), transparent 62%),
+      radial-gradient(820px 560px at 96% 2%, rgba(251,113,133,.12), transparent 60%),
+      radial-gradient(700px 700px at 48% 108%, rgba(45,212,191,.08), transparent 62%);
+  }
+  body::after{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  #progress{position:fixed; top:0; left:0; height:2px; width:0%; z-index:50;
+    background:linear-gradient(90deg,var(--a),var(--b)); box-shadow:0 0 18px rgba(245,158,11,.7);
+    transition:width .1s linear}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 26px}
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+  .hero{min-height:92vh; display:flex; flex-direction:column; justify-content:center; padding:110px 0 70px}
+  .hero h1{font-family:var(--serif); font-weight:500; font-size:clamp(48px,8.4vw,100px);
+    line-height:.94; letter-spacing:-.03em; margin:22px 0 26px; max-width:13ch}
+  .hero h1 em{font-style:italic;
+    background:linear-gradient(110deg,#fde68a 0%,#f59e0b 42%,#fb7185 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent}
+  .lede{font-size:clamp(17px,1.7vw,21px); color:var(--muted); max-width:64ch; margin:0 0 38px}
+  .hero-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; max-width:920px}
+  .stat{border:1px solid var(--line); background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+    border-radius:18px; padding:20px; position:relative; overflow:hidden}
+  .stat::after{content:""; position:absolute; inset:0; background:linear-gradient(120deg,transparent 30%,rgba(245,158,11,.09)); pointer-events:none}
+  .stat b{display:block; font-family:var(--mono); font-size:clamp(25px,3.4vw,38px); font-weight:600;
+    letter-spacing:-.04em; line-height:1.05;
+    background:linear-gradient(100deg,#fde68a,#f59e0b 55%,#fb7185);
+    -webkit-background-clip:text; background-clip:text; color:transparent}
+  .stat span{display:block; margin-top:8px; font-size:12.5px; color:var(--muted); line-height:1.45}
+  .scroll-hint{margin-top:52px; font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--dim); text-transform:uppercase}
+  .scroll-hint::before{content:""; display:inline-block; width:28px; height:1px; background:var(--dim); vertical-align:middle; margin-right:10px}
+  section{padding:86px 0}
+  .section-head{max-width:780px; margin-bottom:34px}
+  .section-head h2{font-family:var(--serif); font-weight:500; letter-spacing:-.02em;
+    font-size:clamp(30px,4.4vw,50px); line-height:1.04; margin:12px 0 14px}
+  .section-head p{color:var(--muted); margin:0; font-size:16px; max-width:70ch}
+  .card{border:1px solid var(--line); border-radius:22px;
+    background:linear-gradient(165deg,rgba(255,255,255,.045),rgba(255,255,255,.014));
+    padding:24px; box-shadow:0 26px 70px -34px rgba(0,0,0,.9)}
+  .card h3{font-family:var(--sans); font-size:13px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 14px; font-weight:600}
+  .hint{font-size:12.5px; color:var(--dim); margin-top:14px}
+  .hint b{color:var(--muted); font-weight:500}
+  .reveal{opacity:0; transform:translateY(22px); transition:opacity .85s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none} html{scroll-behavior:auto}}
+
+  button.pill{appearance:none; border:1px solid var(--line); background:rgba(255,255,255,.04);
+    color:var(--text); border-radius:999px; padding:8px 14px; cursor:pointer;
+    font-family:var(--mono); font-size:11px; letter-spacing:.04em; transition:background .2s,border-color .2s,transform .15s}
+  button.pill:hover{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.2)}
+  button.pill:active{transform:scale(.97)}
+  button.pill[aria-pressed="true"]{background:rgba(245,158,11,.2); border-color:rgba(253,230,138,.55)}
+
+  .chart-tabs{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+  .chart-shell{position:relative}
+  .chart-readout{display:flex; justify-content:space-between; gap:16px; align-items:baseline;
+    border:1px solid var(--line); border-radius:14px; padding:12px 16px; margin-bottom:12px;
+    background:rgba(0,0,0,.22); min-height:56px}
+  .chart-readout .where{font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:.06em}
+  .chart-readout .val{font-family:var(--mono); font-size:19px; letter-spacing:-.02em}
+  .chart-readout .note{font-size:12px; color:var(--dim); text-align:right; max-width:60%}
+  svg.chart{width:100%; height:auto; display:block; overflow:visible}
+  .grid-line{stroke:rgba(255,255,255,.075); stroke-width:1}
+  .axis-line{stroke:rgba(255,255,255,.18); stroke-width:1}
+  .tick{fill:var(--dim); font-family:var(--mono); font-size:10px}
+  .axis-label{fill:var(--muted); font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase}
+  .pt{cursor:pointer; transition:r .15s,filter .15s}
+  .pt:hover,.pt:focus{filter:drop-shadow(0 0 8px rgba(253,230,138,.8)); outline:none}
+
+  .mix-grid{display:grid; grid-template-columns:1.35fr .65fr; gap:18px}
+  .heads-ui{display:flex; flex-direction:column; gap:12px; margin-top:6px}
+  .head-row{display:grid; grid-template-columns:54px 1fr; gap:12px; align-items:center}
+  .head-label{font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--muted)}
+  .bars{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; align-items:end; height:58px}
+  .bars .b{height:100%; border-radius:6px 6px 2px 2px; background:rgba(255,255,255,.06); position:relative; overflow:hidden}
+  .bars .b i{position:absolute; left:0; right:0; bottom:0; border-radius:6px 6px 2px 2px;
+    background:linear-gradient(180deg,#fbbf24,#b45309); transition:height .45s cubic-bezier(.2,.7,.2,1),background .3s}
+  .head-row:nth-child(2) .bars .b i{background:linear-gradient(180deg,#fb7185,#9f1239)}
+  .head-row:nth-child(3) .bars .b i{background:linear-gradient(180deg,#2dd4bf,#0f766e)}
+  .head-row:nth-child(4) .bars .b i{background:linear-gradient(180deg,#c4b5fd,#6d28d9)}
+  .tokens{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-left:66px; margin-top:2px}
+  .tokens span{font-family:var(--mono); font-size:10px; color:var(--dim); text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .mix-controls{display:flex; align-items:center; gap:14px; margin-top:20px}
+  input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:99px;
+    background:linear-gradient(90deg,rgba(255,255,255,.10),rgba(245,158,11,.7)); outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%;
+    background:#fff7ed; border:3px solid #f59e0b; cursor:pointer; box-shadow:0 0 0 6px rgba(245,158,11,.16)}
+  input[type=range]::-moz-range-thumb{width:20px; height:20px; border-radius:50%; background:#fff7ed;
+    border:3px solid #f59e0b; cursor:pointer; box-shadow:0 0 0 6px rgba(245,158,11,.16)}
+  .mix-status{display:flex; justify-content:space-between; align-items:baseline; margin-top:12px; gap:12px}
+  .mix-status .big{font-family:var(--mono); font-size:28px; letter-spacing:-.04em}
+  .mix-status .tag{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--a)}
+  .matrix-wrap{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  .matrix{display:flex; flex-direction:column; gap:6px}
+  .matrix .m-title{font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--dim); text-transform:uppercase; margin-bottom:2px}
+  .matrix .m-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:4px}
+  .matrix .m-cell{aspect-ratio:1; border-radius:6px; display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:9px; color:rgba(255,255,255,.82); border:1px solid rgba(255,255,255,.05)}
+  .matrix .m-foot{display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-top:2px}
+  .matrix .m-foot span{font-family:var(--mono); font-size:9px; color:var(--dim); text-align:center}
+
+  .price{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  .price .card{margin:0}
+  .param-vis{margin:18px 0 10px}
+  .param-row{display:grid; grid-template-columns:120px 1fr 120px; gap:12px; align-items:center; margin:10px 0}
+  .param-row span{font-family:var(--mono); font-size:11px; color:var(--dim)}
+  .param-row .track{height:12px; border-radius:99px; background:rgba(255,255,255,.06); overflow:hidden}
+  .param-row .track i{display:block; height:100%; border-radius:99px}
+  .param-row .track i.big{background:linear-gradient(90deg,#f59e0b,#fb7185); width:100%}
+  .param-row .track i.tiny{background:#fde68a; width:2px; min-width:2px}
+  .param-row .num{font-family:var(--mono); font-size:11px; color:var(--muted); text-align:right}
+  .both-bars{display:flex; flex-direction:column; gap:10px; margin-top:8px}
+  .both-row{display:grid; grid-template-columns:130px 1fr 58px; gap:10px; align-items:center;
+    border:0; background:none; color:inherit; font:inherit; text-align:left; width:100%;
+    padding:0; cursor:pointer; border-radius:8px}
+  .both-row:focus-visible{outline:2px solid rgba(253,230,138,.7); outline-offset:4px}
+  .both-row span{font-family:var(--mono); font-size:11px; color:var(--muted)}
+  .both-row .track{height:10px; border-radius:99px; background:rgba(255,255,255,.06); overflow:hidden}
+  .both-row .track i{display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#f59e0b,#fb7185); opacity:.6; transition:opacity .2s}
+  .both-row.active .track i{opacity:1; box-shadow:0 0 18px rgba(245,158,11,.3)}
+  .both-row .num{font-family:var(--mono); font-size:11px; color:var(--muted); text-align:right}
+
+  .take{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  .take .card{margin:0}
+  .take h3{color:var(--text); font-size:15px; letter-spacing:0; text-transform:none; font-family:var(--serif); font-weight:500}
+  .take p{margin:0; color:var(--muted); font-size:14.5px}
+  footer{padding:60px 0 80px; border-top:1px solid var(--line); margin-top:40px}
+  footer p{color:var(--dim); font-size:13px; max-width:82ch}
+  footer a{color:var(--muted); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.18)}
+  footer a:hover{color:var(--text)}
+  .cite{font-family:var(--mono); font-size:12px; color:var(--muted); line-height:1.7}
+  .next{margin-top:20px}
+  .next a{font-family:var(--mono); font-size:12px; letter-spacing:.04em; color:var(--text); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.3)}
+  .next a:hover{border-color:var(--b)}
+  @media (max-width:820px){
+    .hero-stats,.price,.take,.mix-grid{grid-template-columns:1fr}
+    .hero{min-height:auto; padding-top:90px}
+    .chart-readout{flex-direction:column; align-items:flex-start}
+    .chart-readout .note{text-align:left; max-width:100%}
+  }
+</style>
+</head>
+<body>
+<div id="progress" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">arXiv:2003.02436 · 2020</div>
+    <h1>Let the heads <em>talk.</em></h1>
+    <p class="lede">Independent attention heads hit a wall: keep adding heads and shrink each key, and the matching signal turns to noise. Two tiny matrices let the heads share what they know.</p>
+    <div class="hero-stats">
+      <div class="stat"><b>2 × h×h</b><span>extra parameters: one linear mixing matrix before the softmax, one after</span></div>
+      <div class="stat"><b>1.603</b><span>ln PPL for talking-heads at 48 heads on T5, vs 1.682 for standard multi-head</span></div>
+      <div class="stat"><b>+288</b><span>parameters added to a 12-head attention layer: about 0.012% of that layer</span></div>
+    </div>
+    <div class="scroll-hint">Scroll to break the silence</div>
+  </header>
+
+  <section id="ceiling" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">01 · The ceiling</div>
+      <h2>More heads, shorter keys, worse matching</h2>
+      <p>At a fixed parameter budget, every extra head makes each key and value vector shorter. Past a point, the query–key dot product is too low-dimensional to say anything useful. The plot shows what happens.</p>
+    </div>
+    <div class="card">
+      <div class="chart-tabs" id="chartTabs" role="group" aria-label="Dataset"></div>
+      <div class="chart-readout" id="chartReadout">
+        <div class="where">Hover a point</div>
+        <div class="val" style="color:var(--muted)">—</div>
+        <div class="note">Solid line: talking-heads. Dashed line: standard multi-head. Lower perplexity is better; higher accuracy is better.</div>
+      </div>
+      <div class="chart-shell">
+        <svg class="chart" id="chart" viewBox="0 0 760 390" role="img" aria-label="Performance versus number of attention heads"></svg>
+      </div>
+      <p class="hint"><b>The tell:</b> standard multi-head attention gets <em>worse</em> when you go from 24 to 48 heads and shrink d<sub>k</sub> from 32 to 16. Talking-heads keeps improving. The fix is not more heads; it is letting the heads exchange information.</p>
+    </div>
+  </section>
+
+  <section id="conversation" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">02 · The mechanism</div>
+      <h2>Two projections across the head dimension</h2>
+      <p>Standard heads are parallel and silent. Talking-heads inserts a learned linear map over the head axis immediately before the softmax, and a second one immediately after. Each head's attention can now depend on all the other heads' logits and weights.</p>
+    </div>
+    <div class="mix-grid">
+      <div class="card">
+        <h3>Four heads, five tokens</h3>
+        <div class="heads-ui" id="headsUI"></div>
+        <div class="tokens" id="tokensUI"></div>
+        <div class="mix-controls">
+          <button class="pill" id="playMix">Let them talk</button>
+          <input id="mixRange" type="range" min="0" max="100" step="1" value="0" aria-label="Head mixing strength">
+        </div>
+        <div class="mix-status">
+          <div class="big" id="mixPct">0%</div>
+          <div class="tag" id="mixTag">independent heads</div>
+        </div>
+        <p class="hint"><b>Schematic.</b> The four heads start with distinct attention patterns. Slide right and each head's distribution is pulled toward a learned mixture of the others. The matrices on the right are illustrative, not the paper's trained weights.</p>
+      </div>
+      <div class="card">
+        <h3>The two mixing matrices</h3>
+        <div class="matrix-wrap">
+          <div class="matrix">
+            <div class="m-title">P<sub>l</sub> · before softmax</div>
+            <div class="m-grid" id="matL"></div>
+            <div class="m-foot" id="matLFoot"></div>
+          </div>
+          <div class="matrix">
+            <div class="m-title">P<sub>w</sub> · after softmax</div>
+            <div class="m-grid" id="matW"></div>
+            <div class="m-foot" id="matWFoot"></div>
+          </div>
+        </div>
+        <p class="hint" style="margin-top:18px">Each row says how one head's logits (or weights) are built from all heads. The off-diagonal cells are the conversation.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="price" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">03 · The price</div>
+      <h2>Almost free, if your hardware likes small matrices</h2>
+      <p>The extra parameters are two h×h matrices. The extra compute is a small matmul over the head axis. At 12 heads that is 288 parameters and roughly 5% more multiplies per attention layer.</p>
+    </div>
+    <div class="price">
+      <div class="card">
+        <h3>Parameters per attention layer</h3>
+        <div class="param-vis">
+          <div class="param-row"><span>attention layer</span><div class="track"><i class="big"></i></div><div class="num">2,359,296</div></div>
+          <div class="param-row"><span>talking-heads</span><div class="track"><i class="tiny"></i></div><div class="num">+288</div></div>
+        </div>
+        <p class="hint"><b>12 heads.</b> Two 12×12 matrices add 288 parameters to a layer with 2.36 million. That is about 0.012%. The layer's key/value dimensions are unchanged.</p>
+      </div>
+      <div class="card">
+        <h3>The catch</h3>
+        <p style="color:var(--muted); font-size:14.5px; margin:0">The paper is candid about the cost: modern accelerators are tuned for large matrix multiplies, and these head-sized matmuls can be inefficient in practice. The authors flag better small-matmul hardware, or reducing the number of memory positions, as future work.</p>
+        <p class="hint" style="margin-top:18px"><b>So why do it?</b> The quality gain is real and the parameter cost is tiny. The compute grows with h: roughly +5% at 12 heads, but about +75% at 48 heads on T5, because both mixing matrices are h×h.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="both" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">04 · The ablation</div>
+      <h2>You need both ends</h2>
+      <p>Applying only the logits projection, or only the weights projection, recovers part of the gain. Doing both is clearly better. T5 at 24 heads, lower ln PPL is better.</p>
+    </div>
+    <div class="card">
+      <div class="both-bars" id="bothBars"></div>
+      <p class="hint" id="bothNote" style="min-height:38px"><b>Click a bar.</b> The logits projection lets heads share their raw matching scores; the weights projection lets them share the normalized attention. They are complementary.</p>
+    </div>
+  </section>
+
+  <section id="takeaway" class="reveal">
+    <div class="section-head">
+      <div class="eyebrow">05 · Takeaway</div>
+      <h2>What talking-heads changes</h2>
+    </div>
+    <div class="take">
+      <div class="card">
+        <h3>The problem</h3>
+        <p>Multi-head attention scales by splitting the same budget into more, smaller heads. Beyond a point, each head's keys are too short for a sharp query–key match, and quality degrades.</p>
+      </div>
+      <div class="card">
+        <h3>The move</h3>
+        <p>Insert one learned linear map over the head dimension before the softmax and one after. Heads stop being independent ensembles and start sharing a representation.</p>
+      </div>
+      <div class="card">
+        <h3>The evidence</h3>
+        <p>On T5, ALBERT and BERT, talking-heads beats multi-head at every head count tested, and keeps improving where multi-head turns down. Both projections matter.</p>
+      </div>
+      <div class="card">
+        <h3>The caveat</h3>
+        <p>The extra computation is small but shaped awkwardly for accelerators. The paper treats efficient small-dimension matmul as open work, not as a solved problem.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="cite">
+      Shazeer, Lan, Cheng, Ding &amp; Hou. “Talking-Heads Attention.” 2020.<br>
+      <a href="https://arxiv.org/abs/2003.02436" target="_blank" rel="noopener">arxiv.org/abs/2003.02436</a>
+    </p>
+    <p>Interactive explainer. Chart values are from the paper's T5 (Table 1), ALBERT (Table 5), and BERT (Table 7) results. The four-head mixing demo and its matrices are illustrative.</p>
+    <p class="next"><a href="attention_is_not_explanation.html">Next explainer: A Heatmap Is Not a Reason →</a></p>
+  </footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const progress = document.getElementById("progress");
+  const onScroll = () => {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    progress.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) e.target.classList.add("in");
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+  const CHARTS = {
+    t5: {
+      label: "T5 · ln PPL",
+      heads: [6, 12, 24, 48],
+      dk: [128, 64, 32, 16],
+      mha: [1.695, 1.678, 1.669, 1.682],
+      tha: [1.659, 1.641, 1.624, 1.603],
+      ylabel: "ln(PPL)  ·  lower is better",
+      better: "lower",
+      ypad: 0.018,
+      note: "At 48 heads, 1.603 vs 1.682."
+    },
+    albert: {
+      label: "ALBERT · average score",
+      heads: [6, 12, 24, 48],
+      dk: [128, 64, 32, 16],
+      mha: [79.70, 80.32, 79.52, 79.30],
+      tha: [79.44, 80.78, 80.70, 81.44],
+      ylabel: "benchmark average  ·  higher is better",
+      better: "higher",
+      ypad: 0.55,
+      note: "At 48 heads, 81.44 vs 79.30."
+    },
+    bert: {
+      label: "BERT · SQuAD 1.1 F1",
+      heads: [6, 12, 24, 48, 64, 96, 192, 384, 768],
+      dk: [128, 64, 32, 16, 12, 8, 4, 2, 1],
+      mha: [null, 88.51, null, null, null, null, null, null, null],
+      tha: [88.8, 89.2, 89.4, 89.5, 89.9, 89.3, 89.8, 90.5, 90.5],
+      ylabel: "SQuAD 1.1 dev F1  ·  higher is better",
+      better: "higher",
+      ypad: 0.55,
+      note: "At 768 heads with d_k = 1, 90.5 vs 88.51."
+    }
+  };
+
+  const chartEl = document.getElementById("chart");
+  const chartTabs = document.getElementById("chartTabs");
+  const chartReadout = document.getElementById("chartReadout");
+  let chartKey = "t5";
+
+  for (const key of Object.keys(CHARTS)) {
+    const b = document.createElement("button");
+    b.className = "pill";
+    b.textContent = CHARTS[key].label;
+    b.dataset.key = key;
+    b.addEventListener("click", () => { chartKey = key; renderChart(); });
+    chartTabs.appendChild(b);
+  }
+
+  const fmt = (v) => v.toFixed(3);
+
+  function renderChart() {
+    chartTabs.querySelectorAll(".pill").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.key === chartKey)));
+    const d = CHARTS[chartKey];
+    const W = 760, H = 390, ml = 66, mr = 26, mt = 30, mb = 58;
+    const iw = W - ml - mr, ih = H - mt - mb;
+    const n = d.heads.length;
+
+    const all = [...d.tha, ...d.mha.filter((v) => v !== null)];
+    let lo = Math.min(...all), hi = Math.max(...all);
+    const pad = (hi - lo) * 0.16;
+    lo -= pad; hi += pad;
+
+    const x = (i) => ml + (n === 1 ? iw / 2 : (i / (n - 1)) * iw);
+    const y = (v) => mt + (1 - (v - lo) / (hi - lo)) * ih;
+
+    let svg = "";
+    svg += `<defs>
+      <linearGradient id="thaStroke" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#fbbf24"/><stop offset=".55" stop-color="#f59e0b"/><stop offset="1" stop-color="#fb7185"/>
+      </linearGradient>
+      <linearGradient id="thaFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="rgba(245,158,11,.22)"/><stop offset="1" stop-color="rgba(245,158,11,0)"/>
+      </linearGradient>
+    </defs>`;
+
+    const ticks = 4;
+    for (let i = 0; i <= ticks; i++) {
+      const v = lo + (hi - lo) * i / ticks;
+      const yy = y(v);
+      svg += `<line class="grid-line" x1="${ml}" y1="${yy}" x2="${W - mr}" y2="${yy}"/>`;
+      svg += `<text class="tick" x="${ml - 10}" y="${yy + 3}" text-anchor="end">${d.ypad < 0.1 ? v.toFixed(3) : v.toFixed(1)}</text>`;
+    }
+    svg += `<line class="axis-line" x1="${ml}" y1="${H - mb}" x2="${W - mr}" y2="${H - mb}"/>`;
+    svg += `<line class="axis-line" x1="${ml}" y1="${mt}" x2="${ml}" y2="${H - mb}"/>`;
+    svg += `<text class="axis-label" x="${ml}" y="${H - 16}" text-anchor="start">number of attention heads →</text>`;
+    svg += `<text class="axis-label" x="${ml}" y="${mt - 12}" text-anchor="start">${d.ylabel}</text>`;
+
+    d.heads.forEach((h, i) => {
+      svg += `<text class="tick" x="${x(i)}" y="${H - mb + 18}" text-anchor="middle">${h}</text>`;
+      svg += `<text class="tick" style="fill:rgba(255,255,255,.24)" x="${x(i)}" y="${H - mb + 32}" text-anchor="middle">d${"ₖ"} ${d.dk[i]}</text>`;
+    });
+
+    const pts = d.tha.map((v, i) => [x(i), y(v)]);
+    const area = `M ${pts[0][0]} ${H - mb} L ` + pts.map((p) => `${p[0]} ${p[1]}`).join(" L ") + ` L ${pts[pts.length - 1][0]} ${H - mb} Z`;
+    svg += `<path d="${area}" fill="url(#thaFill)"/>`;
+    svg += `<polyline points="${pts.map((p) => p.join(",")).join(" ")}" fill="none" stroke="url(#thaStroke)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+    const mpts = [];
+    d.mha.forEach((v, i) => { if (v !== null) mpts.push([x(i), y(v)]); });
+    if (mpts.length > 1) {
+      svg += `<polyline points="${mpts.map((p) => p.join(",")).join(" ")}" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" stroke-dasharray="6 6" stroke-linecap="round"/>`;
+    }
+
+    d.tha.forEach((v, i) => {
+      svg += `<circle class="pt" tabindex="0" data-kind="tha" data-i="${i}" cx="${x(i)}" cy="${y(v)}" r="5.5" fill="#0a0807" stroke="#fbbf24" stroke-width="2.5"/>`;
+    });
+    d.mha.forEach((v, i) => {
+      if (v === null) return;
+      svg += `<circle class="pt" tabindex="0" data-kind="mha" data-i="${i}" cx="${x(i)}" cy="${y(v)}" r="4.5" fill="#0a0807" stroke="rgba(255,255,255,.6)" stroke-width="2"/>`;
+    });
+
+    const bestI = d.tha.indexOf(d.better === "lower" ? Math.min(...d.tha) : Math.max(...d.tha));
+    svg += `<text class="tick" style="fill:#fde68a" x="${x(bestI)}" y="${y(d.tha[bestI]) - 14}" text-anchor="middle">best</text>`;
+
+    chartEl.innerHTML = svg;
+
+    chartEl.querySelectorAll(".pt").forEach((p) => {
+      const show = () => {
+        const i = Number(p.dataset.i);
+        const kind = p.dataset.kind;
+        const m = d.mha[i], t = d.tha[i];
+        chartReadout.innerHTML =
+          `<div class="where">${d.heads[i]} heads · d<sub>k</sub> = ${d.dk[i]}</div>` +
+          `<div class="val">${m === null ? "—" : fmt(m)} <span style="color:var(--dim);font-size:11px">multi-head</span> &nbsp;·&nbsp; ${fmt(t)} <span style="color:var(--dim);font-size:11px">talking-heads</span></div>` +
+          `<div class="note">${kind === "tha" ? "Solid line: talking-heads." : "Dashed line: standard multi-head."} ${d.note}</div>`;
+      };
+      p.addEventListener("mouseenter", show);
+      p.addEventListener("focus", show);
+    });
+
+    if (chartKey === "t5") {
+      chartReadout.innerHTML = `<div class="where">T5 · 48 heads</div><div class="val">1.603 <span style="color:var(--dim);font-size:11px">talking</span> · 1.682 <span style="color:var(--dim);font-size:11px">multi-head</span></div><div class="note">Lower ln PPL is better. ${d.note}</div>`;
+    } else if (chartKey === "albert") {
+      chartReadout.innerHTML = `<div class="where">ALBERT · 48 heads</div><div class="val">81.44 <span style="color:var(--dim);font-size:11px">talking</span> · 79.30 <span style="color:var(--dim);font-size:11px">multi-head</span></div><div class="note">Higher average is better. ${d.note}</div>`;
+    } else {
+      chartReadout.innerHTML = `<div class="where">BERT · 768 heads</div><div class="val">90.5 <span style="color:var(--dim);font-size:11px">talking</span> · 88.51 <span style="color:var(--dim);font-size:11px">multi-head</span></div><div class="note">Higher SQuAD F1 is better. ${d.note}</div>`;
+    }
+  }
+  renderChart();
+
+  const TOKENS = ["the", "cat", "sat", "on", "mat"];
+  const HEAD_COLORS = ["#fbbf24", "#fb7185", "#2dd4bf", "#c4b5fd"];
+  const BASE = [
+    [2.2, 0.4, -0.6, -0.2, 0.1],
+    [-0.3, 2.4, 0.2, -0.4, -0.1],
+    [0.1, -0.4, 2.0, 0.3, 0.0],
+    [-0.2, 0.1, 0.2, 0.4, 2.3]
+  ];
+  const PL = [
+    [0.9, 0.3, 0.1, -0.1],
+    [0.2, 0.8, -0.2, 0.2],
+    [-0.1, 0.3, 0.9, 0.2],
+    [0.1, -0.2, 0.4, 0.8]
+  ];
+  const PW = [
+    [0.8, 0.2, 0.1, 0.1],
+    [0.1, 0.9, 0.2, -0.1],
+    [0.2, 0.1, 0.8, 0.3],
+    [-0.1, 0.2, 0.1, 0.9]
+  ];
+
+  const headsUI = document.getElementById("headsUI");
+  const tokensUI = document.getElementById("tokensUI");
+  const mixRange = document.getElementById("mixRange");
+  const mixPct = document.getElementById("mixPct");
+  const mixTag = document.getElementById("mixTag");
+
+  TOKENS.forEach((t) => {
+    const s = document.createElement("span");
+    s.textContent = t;
+    tokensUI.appendChild(s);
+  });
+
+  const rows = [];
+  for (let h = 0; h < 4; h++) {
+    const row = document.createElement("div");
+    row.className = "head-row";
+    row.innerHTML = `<div class="head-label">head ${h + 1}</div>`;
+    const bars = document.createElement("div");
+    bars.className = "bars";
+    const items = [];
+    for (let t = 0; t < TOKENS.length; t++) {
+      const b = document.createElement("div");
+      b.className = "b";
+      const i = document.createElement("i");
+      i.style.background = `linear-gradient(180deg, ${HEAD_COLORS[h]}, rgba(0,0,0,.25))`;
+      b.appendChild(i);
+      bars.appendChild(b);
+      items.push(i);
+    }
+    row.appendChild(bars);
+    headsUI.appendChild(row);
+    rows.push(items);
+  }
+
+  function softmax(arr) {
+    const m = Math.max(...arr);
+    const ex = arr.map((v) => Math.exp(v - m));
+    const s = ex.reduce((a, b) => a + b, 0);
+    return ex.map((v) => v / s);
+  }
+
+  function mixLogits(L, s) {
+    if (s === 0) return L.map((r) => r.slice());
+    return L.map((_, target) => {
+      return TOKENS.map((__, t) => {
+        let v = (1 - s) * L[target][t];
+        for (let src = 0; src < 4; src++) v += s * PL[src][target] * L[src][t];
+        return v;
+      });
+    });
+  }
+
+  function mixWeights(W, s) {
+    if (s === 0) return W.map((r) => r.slice());
+    return W.map((_, target) => {
+      return TOKENS.map((__, t) => {
+        let v = (1 - s) * W[target][t];
+        for (let src = 0; src < 4; src++) v += s * W[src][t] * PW[src][target];
+        return v;
+      });
+    });
+  }
+
+  function renderMix() {
+    const s = Number(mixRange.value) / 100;
+    const logits = mixLogits(BASE, s);
+    const weights = logits.map((r) => softmax(r));
+    const mixed = mixWeights(weights, s);
+    const shown = mixed.map((r) => {
+      const sum = r.reduce((a, b) => a + b, 0);
+      return r.map((v) => Math.max(0.001, v / sum));
+    });
+    const rowMax = shown.map((r) => Math.max(...r));
+
+    shown.forEach((r, h) => {
+      r.forEach((v, t) => {
+        rows[h][t].style.height = Math.max(4, (v / rowMax[h]) * 100) + "%";
+      });
+    });
+
+    mixPct.textContent = Math.round(s * 100) + "%";
+    if (s < 0.05) mixTag.textContent = "independent heads";
+    else if (s < 0.55) mixTag.textContent = "heads are comparing notes";
+    else if (s < 0.95) mixTag.textContent = "strong cross-head mixing";
+    else mixTag.textContent = "fully talking";
+  }
+
+  function buildMatrix(el, footEl, M, color) {
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        const v = M[i][j];
+        const a = Math.min(0.85, Math.abs(v) * 0.9);
+        const cell = document.createElement("div");
+        cell.className = "m-cell";
+        cell.style.background = v >= 0 ? `rgba(245,158,11,${a})` : `rgba(251,113,133,${a})`;
+        cell.textContent = v.toFixed(1);
+        el.appendChild(cell);
+      }
+    }
+    for (let i = 0; i < 4; i++) {
+      const s = document.createElement("span");
+      s.textContent = "h" + (i + 1);
+      footEl.appendChild(s);
+    }
+  }
+  buildMatrix(document.getElementById("matL"), document.getElementById("matLFoot"), PL, "amber");
+  buildMatrix(document.getElementById("matW"), document.getElementById("matWFoot"), PW, "rose");
+
+  mixRange.addEventListener("input", renderMix);
+  let anim = null;
+  document.getElementById("playMix").addEventListener("click", () => {
+    if (anim) cancelAnimationFrame(anim);
+    const target = Number(mixRange.value) > 50 ? 0 : 100;
+    const start = Number(mixRange.value);
+    const t0 = performance.now();
+    const dur = 900;
+    const step = (t) => {
+      const k = Math.min(1, (t - t0) / dur);
+      const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      mixRange.value = String(start + (target - start) * e);
+      renderMix();
+      if (k < 1) anim = requestAnimationFrame(step);
+    };
+    anim = requestAnimationFrame(step);
+  });
+  renderMix();
+
+  const BOTH = [
+    { label: "multi-head", v: 1.669, note: "The baseline: independent heads at 24 heads on T5." },
+    { label: "logits only", v: 1.652, note: "Mix the raw matching scores before the softmax. Recovers part of the gain." },
+    { label: "weights only", v: 1.636, note: "Mix the normalized attention after the softmax. Recovers a bit more on its own." },
+    { label: "both", v: 1.624, note: "Mix on both sides. The full talking-heads layer is clearly the best of the four." }
+  ];
+  const bothBars = document.getElementById("bothBars");
+  const bothNote = document.getElementById("bothNote");
+  const minV = 1.62, maxV = 1.68;
+  BOTH.forEach((d, i) => {
+    const row = document.createElement("button");
+    row.className = "both-row";
+    const width = 15 + ((maxV - d.v) / (maxV - minV)) * 85;
+    row.innerHTML = `<span>${d.label}</span><div class="track"><i style="width:${width}%"></i></div><div class="num">${d.v.toFixed(3)}</div>`;
+    row.addEventListener("click", () => {
+      bothBars.querySelectorAll(".both-row").forEach((r) => r.classList.remove("active"));
+      row.classList.add("active");
+      bothNote.innerHTML = `<b>${d.label}.</b> ${d.note}`;
+    });
+    bothBars.appendChild(row);
+  });
+  bothBars.querySelector(".both-row:last-child").classList.add("active");
+})();
+</script>
+</body>
+</html>
