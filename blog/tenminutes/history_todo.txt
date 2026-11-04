@@ -48,4 +48,18 @@ mach allgemein ein paar mehr keywords fett
 
 "Derselbe Impuls" nicht impuls aber idee
 
+" Null als Zahl mit Rechenregeln (Brahmagupta, 628 n. Chr.)," aber auch fibonacci als einführer in europa oder?
+
+"der übliche float Wert für 0,1 ist nicht genau ein Zehntel." mehr details da aber webe das in den text ein
+
+"Die Engine kann Symboleverarbeiten" nach dem symbole fehlt ein leerzeichen
+
+" Das 20. Jahrhundert verwandelt den Plan in Hardware. Konrad Zuses Z3 (1941) ist der erste funktionsfähige, programmierbare, vollautomatische Digitalcomputer, gebaut aus 2.000 Telefonrelais; er entwirft auch Plankalkül, eine frühe höhere Programmiersprache. „Erster“ hängt von der Definition ab: Die Z3 war elektromechanisch, nicht elektronisch, und andere Maschinen waren in schwächeren Sinnen programmierbar. " da kannste das bild von zuse nehmen aus ../history.php
+
+"Von Neumanns Speicherprogramm-Design (1945) macht „Umprogrammieren“ zu einer Frage der Software statt der Neuverdrahtung." da kannste noch dazu sagen dass seine idee auch war dass man programme selbst wieder als daten sieht und sie damit mit allen methoden mit denen man daten bearbeiten kann bearbeiten kann, so dass andere programme programme bearbeiten können, was die grundlage zB für betriebssysteme gebildet hat
+
+"Was ist eine Zahl, dass ein Mensch sie kennen kann, und ein Mensch, dass er eine Zahl kennen kann" ist komisch übersetzt, suche das original, übersetze sinngemäß
+
+"McCulloch und Pitts hatten keine gelernten Gewichte" ... sondern festgelegt thresholds.
+
 
