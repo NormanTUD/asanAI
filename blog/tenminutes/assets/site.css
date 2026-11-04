@@ -1933,6 +1933,7 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	overflow: hidden;
 }
 .llm-bar .llm-bar-fill {
+	display: block;
 	height: 100%;
 	border-radius: 999px;
 	background: linear-gradient(90deg, var(--tm-green), var(--tm-sky));
@@ -2074,6 +2075,23 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 .llm-qkv .is-s { border-color: color-mix(in srgb, var(--tm-gold) 65%, var(--tm-line)); color: var(--tm-gold); }
 .llm-qkv .is-v { border-color: color-mix(in srgb, var(--tm-coral) 65%, var(--tm-line)); color: var(--tm-coral); }
 .llm-arrow { color: var(--tm-faint); font-size: 0.8rem; }
+.llm-attn-math {
+	margin-top: 14px;
+	padding: 12px 14px;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-paper-2);
+}
+.llm-math-label {
+	font-family: var(--tm-ui);
+	font-size: .62rem;
+	font-weight: 700;
+	letter-spacing: .1em;
+	text-transform: uppercase;
+	color: var(--tm-muted);
+}
+.llm-math-eq { margin-top: 8px; overflow-x: auto; color: var(--tm-ink); }
+.llm-math-eq math { font-size: 1.05em; }
+.llm-attn-math .llm-note { margin-bottom: 0; }
 .llm-obj-switch { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
 .llm-predict {
 	display: grid;
@@ -2099,6 +2117,7 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	overflow: hidden;
 }
 .llm-predict-row .llm-predict-fill {
+	display: block;
 	height: 100%;
 	border-radius: 999px;
 	background: linear-gradient(90deg, var(--tm-sky), var(--tm-green));
@@ -2256,6 +2275,96 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	line-height: 1.45;
 	color: var(--tm-muted);
 }
+.conv-layout {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 22px;
+	align-items: flex-start;
+}
+.conv-panel { display: flex; flex-direction: column; gap: 7px; }
+.conv-label {
+	font-family: var(--tm-ui);
+	font-size: .62rem;
+	font-weight: 700;
+	letter-spacing: .1em;
+	text-transform: uppercase;
+	color: var(--tm-muted);
+}
+.conv-grid { display: grid; gap: 4px; }
+.conv-grid--image { grid-template-columns: repeat(5, 38px); }
+.conv-grid--kernel { grid-template-columns: repeat(3, 40px); }
+.conv-grid--output { grid-template-columns: repeat(3, 44px); }
+.conv-cell {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-paper-2);
+	color: var(--tm-muted);
+	font-family: var(--tm-mono);
+	font-size: .68rem;
+	font-variant-numeric: tabular-nums;
+}
+.conv-grid--kernel .conv-cell { width: 40px; height: 40px; }
+.conv-grid--output .conv-cell { width: 44px; height: 44px; }
+.conv-cell.is-one { background: var(--tm-petrol); color: var(--tm-paper); }
+.conv-cell.is-negative { color: var(--tm-coral); }
+.conv-cell.is-patch { outline: 2px solid var(--tm-blue); outline-offset: -2px; }
+.conv-cell.is-current { outline: 2px solid var(--tm-green); outline-offset: 1px; }
+.conv-readout {
+	margin: 12px 0 0;
+	font-family: var(--tm-prose);
+	font-size: .84rem;
+	line-height: 1.5;
+	color: var(--tm-ink-soft);
+}
+.gate-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 190px;
+	gap: 14px;
+	align-items: start;
+	margin-top: 12px;
+}
+@media (max-width: 640px) {
+	.gate-layout { grid-template-columns: 1fr; }
+}
+.gate-plot {
+	display: block;
+	width: 100%;
+	height: auto;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-paper-2);
+}
+.gate-side {
+	padding: 14px;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-paper-2);
+}
+.gate-readout {
+	margin: 0;
+	font-family: var(--tm-prose);
+	font-size: 0.86rem;
+	line-height: 1.5;
+	color: var(--tm-ink-soft);
+}
+.gate-legend {
+	margin: 12px 0 0;
+	font-family: var(--tm-ui);
+	font-size: 0.72rem;
+	color: var(--tm-muted);
+}
+.gate-dot {
+	display: inline-block;
+	width: 9px;
+	height: 9px;
+	margin-right: 4px;
+	border: 1px solid var(--tm-card);
+	border-radius: 50%;
+}
+.gate-dot--true { background: var(--tm-green); }
+.gate-dot--false { background: var(--tm-coral); }
 .iso-grid {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) 190px;

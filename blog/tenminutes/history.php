@@ -29,19 +29,20 @@
 			<div class="lesson-layout">
 				<article class="lesson-main">
 					<section class="section-block" id="fuse">
-						<div class="section-kicker"><span class="sk-num">01</span> The long fuse</div>
+						<div class="section-kicker"><span class="sk-num">01</span> The long background</div>
 						<h2 class="section-title">Many currents met here.</h2>
 						<div class="prose">
 							<p>
-								Next-token prediction reduced the machine to a loop. Where did that loop come from?
-								The history of AI has no single line to the large language model. It is a
-								convergence of ideas from unrelated fields that were never intended to meet.
-								Statistical methods developed by astronomers to map the stars (least squares
-								was a way to fit noisy celestial observations) now weigh the next word in a
-								sequence. GPU architectures designed for video games provide the parallel
-								computation neural networks need: the matrix operations that draw polygons are
-								the same ones that multiply activations. The convergence is not a plan; it is a
-								series of borrowings that turned out to fit.
+								Modern AI has no single line to the large language model. It is a sum of
+								developments that were never meant to meet: <strong>least squares</strong>,
+								invented by astronomers to fit noisy observations of the sky, now helps decide
+								which word comes next; <strong>formal logic</strong>, built to settle arguments,
+								became a notation a machine can execute; <strong>feedback control</strong>,
+								developed for guns and thermostats, became the loop that adapts;
+								<strong>statistical learning</strong>, biology, linguistics, and the parallel
+								matrix hardware of video games each added a piece. None of these fields was
+								working toward a chatbot. They <strong>converged</strong>, and the same
+								convergence also produced things that are not language models.
 							</p>
 							<p>
 								The deeper history is a history of <strong>abstraction</strong>: human effort
@@ -49,37 +50,38 @@
 								3.3 million years ago with the first stone tools, continues through the wheel
 								and Heron of Alexandria’s programmable cart, and crosses from the physical to
 								the cognitive when thought itself becomes a formal calculus a machine can run.
-								The claim is not that AI was inevitable; it is that the same move (hand a task
-								to a mechanism, then treat the mechanism as the new primitive) recurs at every
-								scale.
+								The claim is not that AI was inevitable. It is that the same move repeats at
+								every scale: hand a task to a mechanism, then treat the mechanism as the new
+								primitive.
 							</p>
 						</div>
 						<div class="pullquote">
-							We can solve any problem by introducing an extra level of indirection.
+							We can solve any problem by introducing an extra level of indirection
+							[abstraction].
 							<cite>David Wheeler</cite>
 						</div>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">The machine is the ultimate indirection.</p>
-							<p class="aha-sub">The wheel abstracts movement; the computer abstracts thought. Both remove the human from the raw labour while keeping the human in charge of the mechanism.</p>
+							<p class="aha-big">Each abstraction moves the task further from the person.</p>
+							<p class="aha-sub">The wheel abstracts movement; the computer abstracts thought. Every layer removes another implementation detail, so the person has less of the direct task to handle by hand.</p>
 						</div>
 					</section>
 
 					<section class="section-block" id="timeline">
-						<div class="section-kicker"><span class="sk-num">02</span> Fifteen turning points</div>
-						<h2 class="section-title">Follow the fuse.</h2>
+						<div class="section-kicker"><span class="sk-num">02</span> Sixteen turning points</div>
+						<h2 class="section-title">Follow the thread.</h2>
 						<div class="prose">
 							<p>
-								Pick a point on the line and pull that thread. Dates are approximate where
-								the evidence is.
+								Pick a point on the line and pull that thread. The dates are approximations
+								where the evidence allows.
 							</p>
 						</div>
 
 						<div class="demo demo--paper timeline-shell" id="timeline-demo" data-arrow-nav>
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">Fifteen turning points <span>· demo 01</span></p>
-									<p class="demo-sub">Drag the line, scroll sideways, or use the arrow buttons. Select a node to read its story.</p>
+									<p class="demo-title">Sixteen turning points <span>· demo 01</span></p>
+									<p class="demo-sub">Drag the line or scroll sideways. Select a node to read its story.</p>
 								</div>
 								<span class="demo-badge">43,000 BCE → today</span>
 							</div>
@@ -92,7 +94,7 @@
 								</div>
 								<div class="tl-panel" id="timeline-panel" aria-live="polite"></div>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Many causes met along one line. Pull a thread and you can follow it backwards.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>No single cause produced the LLM. Many independent developments became useful together.</span></div>
 							<div class="demo-foot">
 								A compressed route through a much longer history. The captions and notes carry
 								the primary sources, contested dates, and the contributors the standard story
@@ -111,7 +113,7 @@
 								in West Turkana, Kenya, hominins were knapping stone by about
 								<strong>3.3 million years ago</strong>, before the genus <em>Homo</em>. The
 								tools are coarse and simple, yet deliberate: someone chose a stone and
-								struck flakes from it. They are the oldest known stone assemblage. The date
+								struck flakes from it. They are the oldest known <strong>stone tools</strong>. The date
 								comes from the stratigraphy and radiometric dating of the surrounding layers;
 								the interpretation of the flakes as deliberately made, rather than naturally
 								broken, is argued from the pattern of strikes.
@@ -119,7 +121,7 @@
 						</div>
 						<div class="prose">
 							<p>
-								Marks come later. A <strong>zig-zag incised into a river shell at
+								Geometric marks come later. A <strong>zig-zag incised into a river shell at
 								<a href="https://www.nature.com/articles/nature13962" rel="noopener">Trinil</a></strong>,
 								Java, is about <strong>500,000 years old</strong>: the oldest known
 								deliberate geometric incision. It is a pattern; it does not yet record a
@@ -138,7 +140,7 @@
 								<strong>75,000 years ago</strong>
 								(<a href="https://pubmed.ncbi.nlm.nih.gov/11786608/" rel="noopener">Henshilwood
 								et al.</a>). The surface is divided into a regular network of cells: order
-								made visible, though we cannot read its meaning.
+								made visible. If it has a meaning at all, no one can read it.
 							</p>
 						</div>
 						<figure>
@@ -147,14 +149,15 @@
 						</figure>
 						<div class="prose">
 							<p>
-								Counting appears in bone. The <strong><a href="https://cacm.acm.org/blogcacm/technical-marvels-part-2-lebombo-and-ishango-bones/" rel="noopener">Lebombo bone</a></strong>
+								The oldest counting tool is a bone. The <strong><a href="https://cacm.acm.org/blogcacm/technical-marvels-part-2-lebombo-and-ishango-bones/" rel="noopener">Lebombo bone</a></strong>
 								(c. 43,000-42,000 years ago) carries 29 notches. The
 								<strong>Dolní Věstonice wolf bone</strong> (c. 27,000) carries 55 notches
 								in two groups of 30 and 25. The <strong><a href="https://arxiv.org/abs/1204.1019" rel="noopener">Ishango bone</a></strong>
-								(c. 18,000 BCE) carries grouped notches that may encode a tally, a
-								lunar calendar, or something else; its prime-number column is
-								suggestive, not settled. The calendar readings are interpretations, not
-								decoded messages. The same impulse (outsource counting to a physical object) appears independently in Africa and Europe.
+								(c. 18,000 BCE) carries grouped notches. One column groups 11, 13, 17, and
+								19, the primes between 10 and 20; some read that as a prime-number list,
+								while others read the marks as a tally, a lunar record, or something else.
+								The grouping is suggestive, not a decoded message. The same idea (outsource
+								counting to a physical object) appears independently in Africa and Europe.
 							</p>
 						</div>
 						<figure style="max-width: 420px; margin: 24px auto;">
@@ -190,7 +193,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Memory can sit on a shelf.</p>
-							<p class="aha-sub">A notch in a bone keeps a count beyond the moment of counting. Ledgers, catalogues and databases repeat the same move: they put the number somewhere you can come back to.</p>
+							<p class="aha-sub">A notch in a bone keeps a count beyond the moment of counting. <strong>Ledgers</strong>, <strong>catalogues</strong> and <strong>databases</strong> repeat the same move: they put the number somewhere you can come back to.</p>
 						</div>
 					</section>
 
@@ -208,22 +211,25 @@
 								hour still has sixty minutes and a circle 360 degrees. Pingala’s Sanskrit
 								prosody (c. 3rd-1st century BCE) uses a binary-like scheme for metres (the
 								mapping to 0 and 1 is a later reading) and Leibniz later formalised binary
-								notation.
+								notation. Zero reached Europe through Fibonacci’s Liber Abaci
+								(1202), which popularised the Indian-Arabic numerals.
 							</p>
 							<p>
 								Modern hardware inherits the positional idea, then makes its own
 								engineering choices. A binary integer has a fixed width and a finite range. A
 								floating-point number stores a sign, an exponent, and a significand, so it
-								approximates real numbers with limited precision; the usual <code>float</code>
-								value for 0.1 is not exactly one tenth. Most processors follow the IEEE 754
-								conventions for these formats.
+								approximates real numbers with limited precision. The usual <code>float</code>
+								value for 0.1 is not exactly one tenth: in binary, 0.1 is a repeating
+								fraction, so the nearest 64-bit value is 0.10000000000000000555…, and the tiny
+								error can accumulate over many operations. Most processors follow the
+								<strong>IEEE 754</strong> conventions for these formats.
 							</p>
 							<p>
 								In the same long arc, reasoning becomes a formal system. Aristotle’s
 								<strong>syllogism</strong> separates the structure of an argument from its
 								content. Pāṇini’s <em>Aṣṭādhyāyī</em> gives Sanskrit a fully generative grammar
 								of metarules, transformations, and recursion: a compiler-like contract
-								centuries before the computer. Ramon Llull’s <strong>Ars Magna</strong> (1305)
+								centuries before the computer. Ramon Llull’s <em>Ars Magna</em> (1305)
 								turns concentric wheels of concepts to generate every logically possible
 								combination: the first documented attempt to mechanise thought. George Boole’s
 								algebra (1854) then makes logic calculable, and Frege and Russell spend the
@@ -316,13 +322,20 @@
 								electromechanical, not electronic, and other machines were programmable in
 								weaker senses.
 							</p>
+							<figure style="max-width: 560px; margin: 20px auto;">
+								<img src="../zuse.jpg" alt="Konrad Zuse with a replica of his Z1" loading="lazy">
+								<figcaption>Konrad Zuse with a replica of his Z1. Image: Horst Zuse, <a href="https://www.math.berlin/mathematiker/konrad-zuse.html" rel="noopener">math.berlin</a>.</figcaption>
+							</figure>
 							<p>
 								Howard Aiken’s <strong>Harvard Mark I</strong> (1944) is a
 								50-foot decimal relay machine. Turing’s 1936 universal machine supplies the
 								theory (<a href="https://www.cs.virginia.edu/~robins/Turing_Paper_1936.pdf" rel="noopener">Turing, 1936</a>); his ACE and Bletchley work supply the practice. Shannon’s 1937 master’s
 								thesis (<a href="https://dspace.mit.edu/handle/1721.1/11173" rel="noopener">Shannon, 1937</a>) shows that Boolean algebra can be realised in relay circuits: the
 								bridge from logic to electronics. Von Neumann’s stored-program design (1945)
-								makes “reprogramming” a matter of software rather than rewiring.
+								makes “reprogramming” a matter of software rather than rewiring. It also
+								treats the program itself as data, so one program can read or change another.
+								That is the seed of operating systems, compilers, and the rest of the software
+								stack.
 							</p>
 						</div>
 						<div class="image-trio">
@@ -386,8 +399,8 @@
 								absolutely prevents firing; and the structure of the net does not change with
 								time. The neuron fires when the excitatory input reaches its threshold and no
 								inhibition is present. The model counts synapses. The familiar
-								<span data-tex="y = \sigma\left(\sum_i w_i x_i - \theta\right)" data-tex-display="false"></span> belongs to the later perceptron; McCulloch and
-								Pitts had no learned weights.
+								<span data-tex="y = \sigma\left(\sum_i w_i x_i - \theta\right)" data-tex-display="false"></span> belongs to the later perceptron. McCulloch and
+								Pitts used fixed thresholds; they had no learned weights.
 							</p>
 							<p>
 								The paper works in both directions. Given a network, you can read off the
@@ -447,6 +460,30 @@
 								margins.
 							</p>
 						</div>
+						<div class="demo demo--paper" id="gate-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Why XOR broke the single layer <span>· demo 03</span></p>
+									<p class="demo-sub">A single layer draws one straight line. OR and AND can be separated; XOR cannot.</p>
+								</div>
+								<span class="demo-badge">logic gates</span>
+							</div>
+							<div class="demo-body">
+								<div class="chip-row" id="gate-modes">
+									<button class="chip is-on" type="button" data-gate="or">OR</button>
+									<button class="chip" type="button" data-gate="and">AND</button>
+									<button class="chip" type="button" data-gate="xor">XOR</button>
+								</div>
+								<div class="gate-layout">
+									<svg class="gate-plot" id="gate-plot" viewBox="0 0 360 330" role="img" aria-label="A two-dimensional plot of the four input combinations for a logic gate"></svg>
+									<div class="gate-side">
+										<p class="gate-readout" id="gate-readout"></p>
+										<p class="gate-legend"><span class="gate-dot gate-dot--true"></span> true · <span class="gate-dot gate-dot--false"></span> false</p>
+									</div>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>A single layer is one straight cut. XOR needs two cuts, and that is why a hidden layer helps.</span></div>
+						</div>
 						<div class="fieldnotes">
 							<h4>The bibliography was a giveaway</h4>
 							<p>The 1943 paper cites Carnap’s <em>Logical Syntax of Language</em>, Hilbert and Ackermann’s <em>Grundzüge der theoretischen Logik</em>, and Russell and Whitehead’s <em>Principia Mathematica</em>. It cites no neurophysiologist. The physiology sits in the assumptions; the argument is in the logic.</p>
@@ -464,7 +501,7 @@
 									to photocells, nudged after every mistake. Rosenblatt’s work is the hinge
 									between “a program does what it is told” and “a model learns from what it
 									sees.” He died in a sailing accident in 1971, two years after the critique
-									that helped cool the field.
+									that helped push the field into the first AI winter.
 								</p>
 								<p>
 									The descendants of that machine are in every transformer today. The
@@ -556,15 +593,18 @@
 						<h2 class="section-title">Promise, winter, quiet accumulation.</h2>
 						<div class="prose">
 							<p>
-								The Dartmouth workshop of 1956 names the field. Symbolic AI builds the Logic
-								Theorist, GPS, expert systems, planners, and microworlds such as SHRDLU. Then
-								it hits the frame problem and the limits of hand-coded rules. The frame problem
-								is the difficulty of representing what does <em>not</em> change when an action is
-								taken: a hand-coded system has to be told that moving a cup does not move the
-								table, the room, or the weather, and the list of things that stay the same is
-								endless. Funding freezes in the first AI winter; connectionism returns in the
-								1980s; a second winter follows. Deep Blue beats Garry Kasparov in 1997, a triumph
-								of search and evaluation in a narrow, hand-tuned domain.
+								The <strong>Dartmouth</strong> proposal of 1955, by McCarthy, Minsky, Rochester,
+								and Shannon, named the field for a 1956 summer project. About ten people came,
+								including Newell, Simon, Samuel, and Solomonoff; no consensus emerged, but
+								the name stuck. Symbolic AI built the <strong>Logic Theorist</strong> (1956),
+								then <strong>GPS</strong> (1957-59), expert systems, planners, and microworlds
+								such as SHRDLU. Its <strong>frame problem</strong> is the difficulty of
+								representing what does <em>not</em> change when an action is taken: a
+								hand-coded system has to be told that moving a cup does not move the table,
+								the room, or the weather, and the list of things that stay the same is endless.
+								Funding froze in the first AI winter; connectionism returned in the 1980s; a
+								second winter followed. Deep Blue beat Garry Kasparov in 1997, a triumph of
+								search and evaluation in a narrow, hand-tuned domain.
 							</p>
 							<p>
 								The winters were not one event. The first was driven by the 1969 <em>Perceptrons</em>
@@ -578,12 +618,18 @@
 						</div>
 						<div class="prose">
 							<p>
-								The return of neural networks came as a stack of changes: backpropagation,
-								larger datasets, GPUs, better regularization. AlexNet wins ImageNet in 2012
-								(<a href="https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" rel="noopener">Krizhevsky et al., 2012</a>).
-								AlphaGo defeats Lee Sedol in 2016. In 2017, “<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Attention Is All You Need</a>”
-								replaces recurrence with self-attention, making the path between distant
-								tokens one step and the computation parallel. ChatGPT (2022) turns the
+								The return of neural networks came as a stack of changes. <strong>Backpropagation</strong>
+								was discovered several times, by Linnainmaa (1970), Werbos (1974), and the
+								Rumelhart-Hinton-Williams paper (1986) that made it the standard way to train
+								deep networks. Larger labelled datasets gave the models more to learn from;
+								<strong>GPUs</strong> supplied the parallel matrix arithmetic that graphics had
+								already paid for. In 2012 <strong>AlexNet</strong>, a deep convolutional network
+								with ReLU and dropout, trained on two consumer GPUs on 1.2 million ImageNet
+								images, cut the top-5 error to 15.3% and beat the runner-up by more than ten
+								points (<a href="https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" rel="noopener">Krizhevsky et al., 2012</a>).
+								AlphaGo defeated Lee Sedol in 2016. In 2017, “<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Attention Is All You Need</a>”
+								replaced recurrence with <strong>self-attention</strong>, making the path between
+								distant tokens one step and the computation parallel. ChatGPT (2022) turned the
 								next-token loop into a public interface. The ideas are old; the scale, the
 								data, and the engineering are new.
 							</p>
@@ -606,6 +652,38 @@
 								read handwritten digits, first on ZIP codes for the U.S. Postal Service
 								and later on bank checks.
 							</p>
+						<div class="demo demo--paper" id="conv-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">A convolution is a sliding weighted sum <span>· demo 04</span></p>
+									<p class="demo-sub">A small kernel slides over an image. At each position it multiplies its nine numbers by the nine pixels underneath, then adds them up.</p>
+								</div>
+								<span class="demo-badge">3×3 kernel</span>
+							</div>
+						<div class="demo-body">
+							<div class="conv-layout">
+								<div class="conv-panel">
+									<div class="conv-label">Image</div>
+									<div class="conv-grid conv-grid--image" id="conv-image"></div>
+								</div>
+								<div class="conv-panel">
+									<div class="conv-label">Kernel</div>
+									<div class="conv-grid conv-grid--kernel" id="conv-kernel"></div>
+								</div>
+								<div class="conv-panel">
+									<div class="conv-label">Feature map</div>
+									<div class="conv-grid conv-grid--output" id="conv-output"></div>
+								</div>
+							</div>
+							<div class="demo-controls">
+								<button class="btn-demo btn-demo--green" type="button" id="conv-step">Next position →</button>
+								<button class="chip is-on" type="button" data-kernel="edges">Vertical edges</button>
+								<button class="chip" type="button" data-kernel="blur">Blur</button>
+							</div>
+							<p class="conv-readout" id="conv-readout"></p>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>The same nine numbers are reused at every position. A learned network changes those numbers until the feature map highlights what the task needs.</span></div>
+					</div>
 							<p>
 								<strong>Yoshua Bengio</strong> brought neural networks back to language
 								with a 2003 neural probabilistic language model, replacing sparse
@@ -698,6 +776,12 @@
 								detecting replaced tokens, which gives a training signal at every position.
 								<strong>T5</strong> turned every task into text-to-text.
 							</p>
+							<p class="step-note">Primary papers:
+								<a href="https://arxiv.org/abs/1801.06146" rel="noopener">ULMFiT</a>,
+								<a href="https://arxiv.org/abs/1907.11692" rel="noopener">RoBERTa</a>,
+								<a href="https://arxiv.org/abs/2003.10555" rel="noopener">ELECTRA</a>,
+								<a href="https://arxiv.org/abs/1910.10683" rel="noopener">T5</a>.
+							</p>
 							<p>
 								<strong>Chinchilla</strong> (Hoffmann et al., 2022) showed that, for a fixed
 								compute budget, many models were too large for the amount of data they saw; a
@@ -720,7 +804,7 @@
 							<p>
 								Three different kinds of contribution: <strong>attention</strong> is a
 								mechanism inside the block; <strong>pretraining</strong> is a training
-								objective; <strong>scale</strong> is a strategy for spending compute.
+								objective; <strong>scale</strong> is how much compute and data the run uses.
 							</p>
 						</div>
 
@@ -728,7 +812,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Three different levers <span>· demo 02</span></p>
-									<p class="demo-sub">Attention is a mechanism, pretraining is an objective, scale is a strategy.</p>
+									<p class="demo-sub">Attention is a mechanism, pretraining is an objective, scale is how much compute and data the run uses.</p>
 								</div>
 								<span class="demo-badge">three levers</span>
 							</div>
@@ -771,6 +855,11 @@
 									<div class="llm-qkv">
 										<span class="is-q">query</span><span class="llm-arrow">×</span><span class="is-k">keys</span><span class="llm-arrow">→</span><span class="is-s">softmax</span><span class="llm-arrow">→</span><span class="is-v">mix values</span>
 									</div>
+									<div class="llm-attn-math">
+										<div class="llm-math-label">One head, one token</div>
+										<div class="llm-math-eq" id="llm-attn-eq"></div>
+										<p class="llm-note" id="llm-attn-math-note"></p>
+									</div>
 								</div>
 
 								<div class="llm-pane is-on" data-llm-pane="pretraining">
@@ -793,7 +882,7 @@
 
 								<div class="llm-pane is-on" data-llm-pane="scale">
 									<h4 class="llm-pane-title">Strategy · Scale</h4>
-									<p class="llm-note">Scale is a strategy for spending a compute budget, not a part of the block. For a fixed budget, the best model size changes: a large model with too few tokens loses to a smaller, better-trained one. The curves use a Chinchilla-style scaling law; the numbers are illustrative.</p>
+									<p class="llm-note">For a fixed compute budget, the best model size changes: a large model with too few tokens loses to a smaller, better-trained one. The curves use a Chinchilla-style scaling law; the numbers are illustrative.</p>
 									<div class="llm-scale-legend">
 										<span><i style="background:var(--tm-sky)"></i>1B params</span>
 										<span><i style="background:var(--tm-green)"></i>7B params</span>
@@ -808,16 +897,12 @@
 									<div class="llm-scale-readout" id="llm-scale-readout"></div>
 								</div>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Attention is the mechanism, pretraining is the objective, scale is the strategy.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>Attention is the mechanism, pretraining is the objective, scale is how much compute and data the run uses.</span></div>
 							<div class="demo-foot">
 								Toy sentence, toy attention weights, and a Chinchilla-style scaling law. The point is the mechanism, not the exact numbers.
 							</div>
 						</div>
 
-						<div class="fieldnotes">
-							<h4>Why the same block can be an encoder or a decoder</h4>
-							<p>The mask and the training objective decide the contract. BERT’s encoder reads the whole sentence and fills masked gaps. GPT’s decoder reads only the past and predicts the next token. An encoder-decoder model such as the original transformer reads the source and generates the target. The block is shared; the information flow is different.</p>
-						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Self-attention</b><span>Every position can gather information from every other position in one layer.</span></div>
 							<div class="keypoint"><b>Pretraining</b><span>A general model learns language from a large corpus before it is adapted to a task.</span></div>
@@ -905,13 +990,75 @@
 	(function () {
 		"use strict";
 
+		var gateRoot = document.getElementById("gate-plot");
+		if (gateRoot) {
+			var GATE_DE = TM.lang() === "de";
+			var GATE_DATA = {
+				or: [[0, 0, false], [0, 1, true], [1, 0, true], [1, 1, true]],
+				and: [[0, 0, false], [0, 1, false], [1, 0, false], [1, 1, true]],
+				xor: [[0, 0, false], [0, 1, true], [1, 0, true], [1, 1, false]]
+			};
+			var gateMode = "or";
+			var gateReadout = document.getElementById("gate-readout");
+			function drawGate() {
+				var padL = 58, padR = 24, padT = 24, padB = 48;
+				var W = 360, H = 330;
+				var plotW = W - padL - padR, plotH = H - padT - padB;
+				function gx(v) { return padL + v * plotW; }
+				function gy(v) { return padT + (1 - v) * plotH; }
+				var out = "";
+				for (var g = 0; g <= 1; g += 1) {
+					out += '<line x1="' + gx(g) + '" y1="' + padT + '" x2="' + gx(g) + '" y2="' + (padT + plotH) + '" stroke="var(--tm-line)" stroke-width="1"></line>';
+					out += '<line x1="' + padL + '" y1="' + gy(g) + '" x2="' + (padL + plotW) + '" y2="' + gy(g) + '" stroke="var(--tm-line)" stroke-width="1"></line>';
+				}
+				out += '<line x1="' + padL + '" y1="' + (padT + plotH) + '" x2="' + (padL + plotW) + '" y2="' + (padT + plotH) + '" stroke="var(--tm-ink-soft)" stroke-width="1.5"></line>';
+				out += '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (padT + plotH) + '" stroke="var(--tm-ink-soft)" stroke-width="1.5"></line>';
+				out += '<text x="' + (padL + plotW / 2) + '" y="' + (H - 12) + '" text-anchor="middle" fill="var(--tm-muted)" font-size="11">' + (GATE_DE ? "Eingang A" : "Input A") + '</text>';
+				out += '<text x="14" y="' + (padT + plotH / 2) + '" text-anchor="middle" fill="var(--tm-muted)" font-size="11" transform="rotate(-90 14 ' + (padT + plotH / 2) + ')">' + (GATE_DE ? "Eingang B" : "Input B") + '</text>';
+				[0, 1].forEach(function (v) {
+					out += '<text x="' + gx(v) + '" y="' + (padT + plotH + 18) + '" text-anchor="middle" fill="var(--tm-muted)" font-size="10">' + v + '</text>';
+					out += '<text x="' + (padL - 12) + '" y="' + (gy(v) + 3) + '" text-anchor="end" fill="var(--tm-muted)" font-size="10">' + v + '</text>';
+				});
+				if (gateMode !== "xor") {
+					var a, b;
+					if (gateMode === "or") { a = [0.58, -0.08]; b = [-0.08, 0.58]; }
+					else { a = [0.42, 1.08]; b = [1.08, 0.42]; }
+					out += '<line x1="' + gx(a[0]) + '" y1="' + gy(a[1]) + '" x2="' + gx(b[0]) + '" y2="' + gy(b[1]) + '" stroke="var(--tm-blue)" stroke-width="2.4" stroke-dasharray="6 5"></line>';
+				}
+				GATE_DATA[gateMode].forEach(function (p) {
+					out += '<circle cx="' + gx(p[0]) + '" cy="' + gy(p[1]) + '" r="10" fill="' + (p[2] ? "var(--tm-green)" : "var(--tm-coral)") + '" stroke="var(--tm-card)" stroke-width="2"></circle>';
+					out += '<text x="' + (gx(p[0]) + 16) + '" y="' + (gy(p[1]) + 4) + '" fill="var(--tm-ink)" font-size="11">' + p[0] + "," + p[1] + '</text>';
+				});
+				gateRoot.innerHTML = out;
+				if (gateReadout) {
+					if (gateMode === "xor") {
+						gateReadout.textContent = GATE_DE
+							? "XOR: Keine einzelne gerade Linie trennt die Klassen. Eine versteckte Schicht kann den Raum verbiegen, bis zwei Schnitte reichen."
+							: "XOR: no single straight line separates the classes. A hidden layer can bend the space until two cuts are enough.";
+					} else {
+						gateReadout.textContent = GATE_DE
+							? (gateMode === "or" ? "OR: Eine gerade Linie trennt die Klassen." : "AND: Eine gerade Linie trennt die Klassen.")
+							: (gateMode === "or" ? "OR: a straight line separates the classes." : "AND: a straight line separates the classes.");
+					}
+				}
+			}
+			document.querySelectorAll("[data-gate]").forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					gateMode = btn.getAttribute("data-gate");
+					document.querySelectorAll("[data-gate]").forEach(function (b) { b.classList.toggle("is-on", b === btn); });
+					drawGate();
+				});
+			});
+			drawGate();
+		}
+
 		var points = [
 			{
 				date: "c. 43,000 BCE",
 				name: "Tally bones",
 				era: "Prehistory · external memory",
 				title: "Counting becomes an object",
-				text: "The Lebombo bone (c. 43,000-42,000 years ago) carries 29 notches; the Dolní Věstonice wolf bone (c. 27,000) carries 55 in two groups; the Ishango bone (c. 18,000 BCE) carries grouped notches with disputed mathematical structure. The same impulse (outsource counting to a physical object) appears independently in Africa and Europe. It is the earliest surviving external mathematical memory.",
+				text: "The Lebombo bone (c. 43,000-42,000 years ago) carries 29 notches; the Dolní Věstonice wolf bone (c. 27,000) carries 55 in two groups; the Ishango bone (c. 18,000 BCE) carries grouped notches. One column groups 11, 13, 17, and 19, the primes between 10 and 20; some read that as a prime-number list, while others read the marks as a tally or a lunar record. The grouping is suggestive, not a decoded message. The same idea (outsource counting to a physical object) appears independently in Africa and Europe. It is the earliest surviving external mathematical memory.",
 				img: "../ishango.jpg",
 				alt: "The Ishango bone, a baboon fibula with grouped notches",
 				cap: "The Ishango bone. Image: Ben2, <a href='https://commons.wikimedia.org/wiki/File:Os_d%27Ishango_IRSNB.JPG' rel='noopener'>CC BY-SA 3.0</a>."
@@ -957,11 +1104,21 @@
 				cap: "A Llull volvelle from the Ars Magna tradition. Image: Ramon Llull, <a href='https://blog.hnf.de/das-universum-des-ramon-llull/' rel='noopener'>public domain</a>."
 			},
 			{
-				date: "1642-1843",
-				name: "Engines & Ada",
+				date: "1673-1694",
+				name: "Leibniz’s reckoner",
+				era: "Enlightenment · calculation",
+				title: "Reason becomes arithmetic",
+				text: "Leibniz’s stepped reckoner was the first calculator able to perform all four arithmetic operations; the carry mechanism was unreliable, but the design and his programme for a mathesis universalis outlived the brass. He also formalised binary notation, reducing logic to 0 and 1.",
+				img: "../Leibnizrechenmaschine.jpg",
+				alt: "Leibniz's stepped reckoner (reconstruction)",
+				cap: "Leibniz’s stepped reckoner (reconstruction). Image: Eremeev, <a href='https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg' rel='noopener'>CC BY-SA 4.0</a>."
+			},
+			{
+				date: "1833-1843",
+				name: "Babbage & Ada",
 				era: "Industrial · programmability",
 				title: "From calculation to a program",
-				text: "Leibniz built a calculating machine and formalised binary notation. Babbage designed the Analytical Engine, with a store, a mill, and punched-card input. Ada Lovelace saw further than the machine’s builder: the Engine could manipulate symbols, not only numbers, and she wrote the first published algorithm intended for it. The separation of hardware from a stored program is the hinge on which the rest turns.",
+				text: "Babbage designed the Analytical Engine, with a store, a mill, and punched-card input. Ada Lovelace saw further than the machine’s builder: the Engine could manipulate symbols, not only numbers, and she wrote the first published algorithm intended for it. The separation of hardware from a stored program is the hinge on which the rest turns.",
 				img: "../babbage.jpg",
 				alt: "Babbage's Analytical Engine",
 				cap: "Babbage’s Analytical Engine. Image: John Cummings, <a href='https://commons.wikimedia.org/wiki/File:Babbages_Analytical_Engine,_1834-1871._(9660574685).jpg' rel='noopener'>CC BY-SA 2.0</a>."
@@ -1011,7 +1168,7 @@
 				name: "Winters & narrow AI",
 				era: "Cold War · promises and detours",
 				title: "The name, the winters, the slow climb",
-				text: "The Dartmouth workshop of 1956 had named the field. Symbolic AI builds expert systems, planners, and microworlds such as SHRDLU, then hits the frame problem and the limits of hand-coded rules. Minsky and Papert’s 1969 <em>Perceptrons</em> critique exposes the limits of a single layer; funding freezes in the first AI winter. Connectionism returns in the 1980s; a second winter follows. Deep Blue beats Kasparov in 1997, but it is still a narrow, hand-tuned system.",
+				text: "At the 1956 Dartmouth summer project, McCarthy, Minsky, Rochester, and Shannon named the field; about ten people came, and no consensus emerged. Symbolic AI built the Logic Theorist, then GPS (1957-59), expert systems, planners, and microworlds such as SHRDLU. It hit the frame problem, representing what does not change, and the limits of hand-coded rules. Minsky and Papert’s 1969 Perceptrons exposed the limits of a single layer; funding froze in the first AI winter. Connectionism returned in the 1980s; a second winter followed. Deep Blue beat Kasparov in 1997, but it remained a narrow, hand-tuned system.",
 				img: "../shrdlu.gif",
 				alt: "Screenshot of the SHRDLU blocks-world natural-language interface",
 				cap: "SHRDLU (1972), Terry Winograd's blocks-world program. Image: ai.lect, <a href='https://commons.wikimedia.org/wiki/File:Ailect15shrdlu1.gif' rel='noopener'>CC BY-SA 4.0</a>."
@@ -1202,11 +1359,91 @@
 	(function () {
 		"use strict";
 
+		var convImage = document.getElementById("conv-image");
+		if (convImage) {
+			var CONV_DE = TM.lang() === "de";
+			var CONV_IMG = [
+				[0, 0, 0, 1, 1],
+				[0, 0, 0, 1, 1],
+				[0, 0, 0, 1, 1],
+				[0, 0, 0, 1, 1],
+				[0, 0, 0, 1, 1]
+			];
+			var CONV_KERNELS = {
+				edges: [[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]],
+				blur: [[1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9]]
+			};
+			var convKernel = document.getElementById("conv-kernel");
+			var convOutput = document.getElementById("conv-output");
+			var convReadout = document.getElementById("conv-readout");
+			var convMode = "edges";
+			var convPos = 0;
+			function convCell(value, cls) {
+				var el = document.createElement("div");
+				el.className = "conv-cell" + (cls ? " " + cls : "");
+				el.textContent = value;
+				return el;
+			}
+			function convRender() {
+				var k = CONV_KERNELS[convMode];
+				var row = Math.floor(convPos / 3), col = convPos % 3;
+				convImage.innerHTML = "";
+				for (var r = 0; r < 5; r++) {
+					for (var c = 0; c < 5; c++) {
+						var inPatch = r >= row && r < row + 3 && c >= col && c < col + 3;
+						var cell = convCell(CONV_IMG[r][c], (CONV_IMG[r][c] ? "is-one" : "") + (inPatch ? " is-patch" : ""));
+						convImage.appendChild(cell);
+					}
+				}
+				convKernel.innerHTML = "";
+				k.forEach(function (kr) {
+					kr.forEach(function (v) {
+						convKernel.appendChild(convCell(Math.abs(v - Math.round(v)) < 0.001 ? String(v) : v.toFixed(2), v < 0 ? "is-negative" : ""));
+					});
+				});
+				convOutput.innerHTML = "";
+				var values = [];
+				for (var orow = 0; orow < 3; orow++) {
+					for (var ocol = 0; ocol < 3; ocol++) {
+						var sum = 0;
+						for (var i = 0; i < 3; i++) for (var j = 0; j < 3; j++) sum += CONV_IMG[orow + i][ocol + j] * k[i][j];
+						values.push(sum);
+						var out = convCell(sum.toFixed(2), orow === row && ocol === col ? "is-current" : "");
+						var heat = Math.min(1, Math.abs(sum) / 3);
+						out.style.background = "color-mix(in srgb, var(--tm-green) " + (heat * 72) + "%, var(--tm-paper-2))";
+						convOutput.appendChild(out);
+					}
+				}
+				if (convReadout) {
+					var total = values[convPos];
+					convReadout.textContent = CONV_DE
+						? "Position (" + row + ", " + col + "): Die neun Produkte aus Bildausschnitt und Kernel ergeben " + total.toFixed(2) + ". Die übrigen Zellen der Feature Map entstehen genauso, nur mit dem Fenster an einer anderen Stelle."
+						: "Position (" + row + ", " + col + "): the nine products of patch and kernel add up to " + total.toFixed(2) + ". The other feature-map cells are made the same way, with the window at another position.";
+				}
+			}
+			document.querySelectorAll("[data-kernel]").forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					convMode = btn.getAttribute("data-kernel");
+					document.querySelectorAll("[data-kernel]").forEach(function (b) { b.classList.toggle("is-on", b === btn); });
+					convRender();
+				});
+			});
+			var convStep = document.getElementById("conv-step");
+			if (convStep) convStep.addEventListener("click", function () {
+				convPos = (convPos + 1) % 9;
+				convRender();
+			});
+			convRender();
+		}
+
 		var root = document.getElementById("llm-demo");
 		if (!root) return;
+		var LLM_DE = TM.lang() === "de";
 
 		/* ── attention ────────────────────────────────────────── */
 		var WORDS = ["the", "cat", "sat", "on", "the", "mat"];
+		var WORD_LABELS = LLM_DE ? ["die", "Katze", "saß", "auf", "der", "Matte"] : WORDS.slice();
+		function wordLabel(i) { return WORD_LABELS[i] || WORDS[i]; }
 		var WEIGHTS = [
 			[0.30, 0.22, 0.18, 0.10, 0.10, 0.10],
 			[0.14, 0.30, 0.26, 0.10, 0.10, 0.10],
@@ -1255,7 +1492,7 @@
 			var b = document.createElement("button");
 			b.type = "button";
 			b.className = "llm-token";
-			b.textContent = word;
+			b.textContent = wordLabel(i);
 			b.setAttribute("data-i", i);
 			b.addEventListener("click", function () { selected = i; renderAttention(); });
 			attnSentence.appendChild(b);
@@ -1264,7 +1501,7 @@
 			var row = document.createElement("div");
 			row.className = "llm-bar";
 			var label = document.createElement("span");
-			label.textContent = word;
+			label.textContent = wordLabel(i);
 			var track = document.createElement("span");
 			track.className = "llm-bar-track";
 			var fill = document.createElement("span");
@@ -1296,27 +1533,27 @@
 			if (!maskStatus) return;
 			var visible = WORDS.slice(0, selected + 1);
 			var blocked = WORDS.slice(selected + 1);
-			var seen = visible.map(function (word) {
-				return '<span class="llm-ms-chip is-seen">' + word + "</span>";
+			var seen = visible.map(function (word, i) {
+				return '<span class="llm-ms-chip is-seen">' + wordLabel(i) + "</span>";
 			}).join("");
-			var hidden = blocked.map(function (word) {
-				return '<span class="llm-ms-chip is-blocked">' + word + "</span>";
+			var hidden = blocked.map(function (word, i) {
+				return '<span class="llm-ms-chip is-blocked">' + wordLabel(i + visible.length) + "</span>";
 			}).join("");
 			if (!maskOn) {
-				maskStatus.innerHTML = '<span class="llm-ms-lead"><b>' + WORDS[selected] +
-					"</b> can see the whole sentence</span>" +
-					'<span class="llm-ms-chips">' + WORDS.map(function (word) {
-						return '<span class="llm-ms-chip is-seen">' + word + "</span>";
+				maskStatus.innerHTML = '<span class="llm-ms-lead"><b>' + wordLabel(selected) +
+					"</b> " + (LLM_DE ? "kann den ganzen Satz sehen" : "can see the whole sentence") + "</span>" +
+					'<span class="llm-ms-chips">' + WORDS.map(function (word, i) {
+						return '<span class="llm-ms-chip is-seen">' + wordLabel(i) + "</span>";
 					}).join("") + "</span>";
 				return;
 			}
-			maskStatus.innerHTML = '<span class="llm-ms-lead"><b>' + WORDS[selected] +
-				"</b> can see</span>" +
+			maskStatus.innerHTML = '<span class="llm-ms-lead"><b>' + wordLabel(selected) +
+				"</b> " + (LLM_DE ? "kann sehen" : "can see") + "</span>" +
 				'<span class="llm-ms-chips">' + seen +
-				(blocked.length ? '<span class="llm-ms-arrow">but not</span>' + hidden : "") +
+				(blocked.length ? '<span class="llm-ms-arrow">' + (LLM_DE ? "aber nicht" : "but not") + "</span>" + hidden : "") +
 				"</span>" +
-				'<span class="llm-ms-count">' + visible.length + " of " + WORDS.length +
-				" words visible</span>";
+				'<span class="llm-ms-count">' + visible.length + (LLM_DE ? " von " : " of ") + WORDS.length +
+				(LLM_DE ? " Wörtern sichtbar" : " words visible") + "</span>";
 		}
 
 		function renderMatrix() {
@@ -1340,11 +1577,11 @@
 			}
 			var span = max - min;
 			var html = '<div class="llm-matrix-row llm-matrix-row--head"><span></span>' +
-				WORDS.map(function (word) { return "<span>" + word + "</span>"; }).join("") +
+				WORDS.map(function (word, i) { return "<span>" + wordLabel(i) + "</span>"; }).join("") +
 				"<span>Σ</span></div>";
 			for (i = 0; i < WORDS.length; i++) {
 				html += '<div class="llm-matrix-row' + (i === selected ? " is-selected" : "") + '">';
-				html += '<span class="llm-matrix-label">' + WORDS[i] + "</span>";
+				html += '<span class="llm-matrix-label">' + wordLabel(i) + "</span>";
 				for (j = 0; j < WORDS.length; j++) {
 					var future = maskOn && j > i;
 					var v = rows[i][j];
@@ -1355,13 +1592,13 @@
 						(relativeLum(rgb) > 0.2 ? "#071a22" : "#ffffff");
 					html += '<span class="llm-matrix-cell' + (future ? " is-future" : "") +
 						'" style="background:' + rgbCss(rgb) + ";color:" + textColor + '"' +
-						' title="' + WORDS[i] + " → " + WORDS[j] + ": " + v.toFixed(3) + '">' +
+						' title="' + wordLabel(i) + " → " + wordLabel(j) + ": " + v.toFixed(3) + '">' +
 						(future ? "·" : v.toFixed(2)) + "</span>";
 				}
 				html += '<span class="llm-matrix-sum">1.00</span></div>';
 			}
 			matrix.innerHTML = html;
-			if (matrixSelected) matrixSelected.textContent = WORDS[selected];
+			if (matrixSelected) matrixSelected.textContent = wordLabel(selected);
 		}
 
 		function renderAttention() {
@@ -1408,6 +1645,19 @@
 
 		if (causal) causal.addEventListener("change", renderAttention);
 		renderAttention();
+		var attnEq = document.getElementById("llm-attn-eq");
+		var attnMathNote = document.getElementById("llm-attn-math-note");
+		if (attnEq) {
+			attnEq.setAttribute("data-tex", LLM_DE
+				? "\\operatorname{out}_i = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\text{Gewicht}}\\,\\underbrace{v_j}_{\\text{Value}}}_{\\text{neuer Vektor für Token } i}"
+				: "\\operatorname{out}_i = \\underbrace{\\sum_j \\underbrace{\\alpha_{ij}}_{\\text{weight}}\\,\\underbrace{v_j}_{\\text{value}}}_{\\text{new vector for token } i}");
+			if (TM.typesetMath) TM.typesetMath(attnEq);
+		}
+		if (attnMathNote) {
+			attnMathNote.textContent = LLM_DE
+				? "Die Zeile der Attention-Gewichte ist nicht die Ausgabe. Mit ihr werden die Value-Vektoren gemischt: Wenn „saß“ 0,42 auf „Katze“ und 0,20 auf sich selbst legt, ist sein neuer Vektor 0,42·v_Katze + 0,20·v_saß + … . Das Ergebnis ist ein neuer Vektor für diese Position."
+				: "The row of attention weights is not the output. It is used to mix the value vectors: if “sat” puts 0.42 on “cat” and 0.20 on itself, its new vector is 0.42·v_cat + 0.20·v_sat + … . The result is a new vector for that position.";
+		}
 		var attnTimer = null;
 		window.addEventListener("resize", function () {
 			clearTimeout(attnTimer);
@@ -1418,8 +1668,24 @@
 		}
 
 		/* ── pretraining ──────────────────────────────────────── */
-		var PRE = ["the", "cat", "sat", "on", "the", "mat"];
-		var PRED = {
+		var PRE = LLM_DE ? ["die", "Katze", "saß", "auf", "der", "Matte"] : ["the", "cat", "sat", "on", "the", "mat"];
+		var PRED = LLM_DE ? {
+			bert: {
+				0: [["die", 0.36], ["eine", 0.28], ["diese", 0.15]],
+				1: [["Katze", 0.41], ["Hund", 0.22], ["Junge", 0.13]],
+				2: [["saß", 0.38], ["lag", 0.24], ["lief", 0.17]],
+				3: [["auf", 0.52], ["unter", 0.19], ["neben", 0.12]],
+				4: [["der", 0.33], ["einer", 0.27], ["dieser", 0.16]],
+				5: [["Matte", 0.44], ["Boden", 0.23], ["Bett", 0.14]]
+			},
+			gpt: {
+				1: [["Katze", 0.58], ["Hund", 0.16], ["Vogel", 0.09]],
+				2: [["saß", 0.47], ["schlief", 0.21], ["lief", 0.14]],
+				3: [["auf", 0.55], ["unter", 0.16], ["neben", 0.11]],
+				4: [["der", 0.61], ["einer", 0.17], ["ihrer", 0.09]],
+				5: [["Matte", 0.49], ["Boden", 0.22], ["Bett", 0.13]]
+			}
+		} : {
 			bert: {
 				0: [["the", 0.36], ["a", 0.28], ["this", 0.15]],
 				1: [["cat", 0.41], ["dog", 0.22], ["boy", 0.13]],
@@ -1457,7 +1723,9 @@
 					b.textContent = word;
 				}
 				if (hidden) b.classList.add("is-hidden");
-				b.title = "Click to move the " + (objective === "bert" ? "mask" : "prediction") + " here";
+				b.title = LLM_DE
+					? "Klicke, um die " + (objective === "bert" ? "Maske" : "Vorhersage") + " hierhin zu verschieben"
+					: "Click to move the " + (objective === "bert" ? "mask" : "prediction") + " here";
 				b.addEventListener("click", function () {
 					maskIndex = (objective === "gpt" && i === 0) ? 1 : i;
 					renderPretrain();
@@ -1528,10 +1796,11 @@
 			return "10^" + (Math.round(Math.log10(C) * 10) / 10) + " FLOPs";
 		}
 		function fmtTokens(D) {
-			if (D >= 1e12) return (D / 1e12).toFixed(1) + "T tokens";
-			if (D >= 1e9) return (D / 1e9).toFixed(0) + "B tokens";
-			if (D >= 1e6) return (D / 1e6).toFixed(0) + "M tokens";
-			return Math.round(D) + " tokens";
+			var unit = LLM_DE ? " Tokens" : " tokens";
+			if (D >= 1e12) return (D / 1e12).toFixed(1) + "T" + unit;
+			if (D >= 1e9) return (D / 1e9).toFixed(0) + "B" + unit;
+			if (D >= 1e6) return (D / 1e6).toFixed(0) + "M" + unit;
+			return Math.round(D) + unit;
 		}
 		function drawScale() {
 			if (!chart || !slider) return;
@@ -1554,8 +1823,8 @@
 			}
 			out.push('<line class="llm-axis" x1="' + L + '" y1="' + (T + ph) + '" x2="' + (L + pw) + '" y2="' + (T + ph) + '"></line>');
 			out.push('<line class="llm-axis" x1="' + L + '" y1="' + T + '" x2="' + L + '" y2="' + (T + ph) + '"></line>');
-			out.push('<text x="' + (L + pw / 2) + '" y="' + (H - 6) + '" text-anchor="middle">training compute →</text>');
-			out.push('<text x="14" y="' + (T + ph / 2) + '" text-anchor="middle" transform="rotate(-90 14 ' + (T + ph / 2) + ')">loss</text>');
+			out.push('<text x="' + (L + pw / 2) + '" y="' + (H - 6) + '" text-anchor="middle">' + (LLM_DE ? "Trainings-Compute →" : "training compute →") + '</text>');
+			out.push('<text x="14" y="' + (T + ph / 2) + '" text-anchor="middle" transform="rotate(-90 14 ' + (T + ph / 2) + ')">' + (LLM_DE ? "Loss" : "loss") + '</text>');
 			var current = MODELS.map(function (m) {
 				var D = C / (6 * m.N);
 				return { m: m, loss: lossAt(m.N, C), tokens: D };
@@ -1581,8 +1850,8 @@
 			if (scaleVal) scaleVal.textContent = fmtCompute(C);
 			if (scaleReadout) {
 				scaleReadout.innerHTML = current.map(function (item) {
-					return '<span class="llm-scale-pill' + (item === best ? ' is-best' : '') + '"><b>' + item.m.label + '</b> · loss ' + item.loss.toFixed(2) + '</span>';
-				}).join("") + '<span class="llm-scale-pill">best: <b>' + best.m.label + '</b>, ' + fmtTokens(best.tokens) + '</span>';
+					return '<span class="llm-scale-pill' + (item === best ? ' is-best' : '') + '"><b>' + item.m.label + '</b> · ' + (LLM_DE ? "Loss " : "loss ") + item.loss.toFixed(2) + '</span>';
+				}).join("") + '<span class="llm-scale-pill">' + (LLM_DE ? "am besten: " : "best: ") + '<b>' + best.m.label + '</b>, ' + fmtTokens(best.tokens) + '</span>';
 			}
 		}
 		if (slider) {
