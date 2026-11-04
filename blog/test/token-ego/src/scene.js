@@ -403,6 +403,93 @@
     return t;
   };
 
+  /* ── Q/K/V projection chamber ──────────────────────────────────────── */
+
+  SceneRig.prototype.buildProjectionChamber = function () {
+    this.projGroup = new THREE.Group();
+    this.projGroup.visible = false;
+    this.tower.add(this.projGroup);
+    var R = this.R, Dm = CFG.dModel;
+    this.projInputPos = [];
+    for (var d = 0; d < Dm; d++) {
+      var a = (d / Dm) * Math.PI * 2;
+      this.projInputPos.push(new THREE.Vector3(R, 0.45 + Math.cos(a) * 0.55, Math.sin(a) * 0.55));
+    }
+    function ring(cx, cy, cz, rad, n) {
+      var out = [];
+      for (var i = 0; i < n; i++) {
+        var t = (i / n) * Math.PI * 2;
+        out.push(new THREE.Vector3(cx, cy + Math.cos(t) * rad, cz + Math.sin(t) * rad));
+      }
+      return out;
+    }
+    var qPos = ring(R, 1.75, 1.55, 0.62, Dm);
+    var kPos = ring(R, 1.75, -1.55, 0.62, Dm);
+    var vPos = ring(R, -1.15, 0.0, 0.62, Dm);
+    this.proj = {
+      q: {
+        points: this.buildWebPoints(this.projGroup, this.projInputPos, qPos, Dm, Dm, 1, 0.030, 0.55),
+        top: this.buildWebTop(this.projGroup, this.projInputPos, qPos, Dm, Dm, 512, 0.80),
+        ring: this.makeNodeRing(this.projGroup, qPos, 0x5ff3ff, 0.055),
+        pos: qPos,
+      },
+      k: {
+        points: this.buildWebPoints(this.projGroup, this.projInputPos, kPos, Dm, Dm, 1, 0.030, 0.55),
+        top: this.buildWebTop(this.projGroup, this.projInputPos, kPos, Dm, Dm, 512, 0.80),
+        ring: this.makeNodeRing(this.projGroup, kPos, 0xff4fd8, 0.055),
+        pos: kPos,
+      },
+      v: {
+        points: this.buildWebPoints(this.projGroup, this.projInputPos, vPos, Dm, Dm, 1, 0.030, 0.55),
+        top: this.buildWebTop(this.projGroup, this.projInputPos, vPos, Dm, Dm, 512, 0.80),
+        ring: this.makeNodeRing(this.projGroup, vPos, 0xffc857, 0.055),
+        pos: vPos,
+      },
+    };
+    this.projInputRing = this.makeNodeRing(this.projGroup, this.projInputPos, 0x9fe9ff, 0.045);
+    this.projQLabel = this.makeAnnotation("W_Q · 16,384 weights", "#5ff3ff", 0.32);
+    this.projQLabel.position.set(R, 3.05, 1.55);
+    this.projGroup.add(this.projQLabel);
+    this.projKLabel = this.makeAnnotation("W_K · 16,384 weights", "#ff4fd8", 0.32);
+    this.projKLabel.position.set(R, 3.05, -1.55);
+    this.projGroup.add(this.projKLabel);
+    this.projVLabel = this.makeAnnotation("W_V · 16,384 weights", "#ffc857", 0.32);
+    this.projVLabel.position.set(R, -2.20, 0.0);
+    this.projGroup.add(this.projVLabel);
+    this.projInLabel = this.makeAnnotation("LN(x) · 128", "#9fe9ff", 0.30);
+    this.projInLabel.position.set(R, 1.20, 0.0);
+    this.projGroup.add(this.projInLabel);
+  };
+
+  SceneRig.prototype.updateProjectionWebs = function () {
+    if (!this.trace || !this.model || !this.proj) return;
+    var l = this.currentLayer, p = this.player;
+    var wl = this.model.W.layers[l];
+    var layer = this.trace.layers[l];
+    var Dm = CFG.dModel;
+    var maxQ = 1e-6, maxK = 1e-6, maxV = 1e-6;
+    for (var i = 0; i < wl.wq.length; i++) maxQ = Math.max(maxQ, Math.abs(wl.wq[i]));
+    for (var j = 0; j < wl.wk.length; j++) maxK = Math.max(maxK, Math.abs(wl.wk[j]));
+    for (var k = 0; k < wl.wv.length; k++) maxV = Math.max(maxV, Math.abs(wl.wv[k]));
+    this.updateWebPoints(this.proj.q.points, wl.wq, maxQ);
+    this.updateWebPoints(this.proj.k.points, wl.wk, maxK);
+    this.updateWebPoints(this.proj.v.points, wl.wv, maxV);
+    this.updateWebTop(this.proj.q.top, wl.wq, maxQ);
+    this.updateWebTop(this.proj.k.top, wl.wk, maxK);
+    this.updateWebTop(this.proj.v.top, wl.wv, maxV);
+    var inVals = [], qVals = [], kVals = [], vVals = [];
+    for (var d = 0; d < Dm; d++) {
+      inVals.push(layer.ln1[p * Dm + d]);
+      qVals.push(layer.q[p * Dm + d]);
+      kVals.push(layer.k[p * Dm + d]);
+      vVals.push(layer.v[p * Dm + d]);
+    }
+    this.updateNodeRing(this.projInputRing, inVals, [0.37, 0.95, 1.0], [1.0, 0.31, 0.85], undefined);
+    this.updateNodeRing(this.proj.q.ring, qVals, [0.37, 0.95, 1.0], [0.8, 0.5, 1.0], this.activeHead);
+    this.updateNodeRing(this.proj.k.ring, kVals, [1.0, 0.31, 0.85], [0.8, 0.5, 1.0], this.activeHead);
+    this.updateNodeRing(this.proj.v.ring, vVals, [1.0, 0.85, 0.35], [0.55, 0.43, 1.0], this.activeHead);
+  };
+
   /* ── token line (tokenization) ─────────────────────────────────────── */
 
   SceneRig.prototype.buildTokenLine = function () {
@@ -979,9 +1066,9 @@
       this.ffnOutputPos.push(new THREE.Vector3(Math.cos(ia) * 2.2, 4.4, Math.sin(ia) * 2.2));
     }
     this.ffnW1Points = this.buildFFNWebPoints(this.ffnInputPos, this.neuronPositions, CFG.dFf, CFG.dModel);
-    this.ffnW1Top = this.buildFFNWebTop(this.ffnInputPos, this.neuronPositions, CFG.dFf, CFG.dModel, 1024);
+    this.ffnW1Top = this.buildFFNWebTop(this.ffnInputPos, this.neuronPositions, CFG.dFf, CFG.dModel, 512);
     this.ffnW2Points = this.buildFFNWebPoints(this.neuronPositions, this.ffnOutputPos, CFG.dModel, CFG.dFf);
-    this.ffnW2Top = this.buildFFNWebTop(this.neuronPositions, this.ffnOutputPos, CFG.dModel, CFG.dFf, 1024);
+    this.ffnW2Top = this.buildFFNWebTop(this.neuronPositions, this.ffnOutputPos, CFG.dModel, CFG.dFf, 512);
 
     // The wide door and the exit.
     this.ffnEntry = new THREE.Mesh(
@@ -1002,13 +1089,13 @@
     this.ffnInputLabel = this.makeAnnotation("LN(x_mid) · 128", "#9fe9ff", 0.40);
     this.ffnInputLabel.position.set(0, -5.35, 0);
     this.ffn.add(this.ffnInputLabel);
-    this.ffnW1Label = this.makeAnnotation("W₁ · 65,536 weights in the matrix · 16,384 light points · 1,024 strongest filaments", "#5ff3ff", 0.32);
+    this.ffnW1Label = this.makeAnnotation("W₁ · 65,536 weights in the matrix · 4,096 light points · 512 strongest filaments", "#5ff3ff", 0.32);
     this.ffnW1Label.position.set(0, -2.35, 2.7);
     this.ffn.add(this.ffnW1Label);
     this.ffnHiddenLabel = this.makeAnnotation("512 hidden · GELU", "#ffc857", 0.40);
     this.ffnHiddenLabel.position.set(0, 4.75, 0);
     this.ffn.add(this.ffnHiddenLabel);
-    this.ffnW2Label = this.makeAnnotation("W₂ · 65,536 weights in the matrix · 16,384 light points · 1,024 strongest filaments", "#ff4fd8", 0.32);
+    this.ffnW2Label = this.makeAnnotation("W₂ · 65,536 weights in the matrix · 4,096 light points · 512 strongest filaments", "#ff4fd8", 0.32);
     this.ffnW2Label.position.set(0, 2.35, 2.7);
     this.ffn.add(this.ffnW2Label);
     this.ffnOutputLabel = this.makeAnnotation("y · 128 · x_out = x_mid + y", "#ffe7b0", 0.38);
@@ -1092,8 +1179,137 @@
     return mesh;
   };
 
+  /* ── generic weight webs (projection, unembedding) ─────────────────── */
+
+  SceneRig.prototype.buildWebPoints = function (parent, starts, ends, rows, cols, stride, size, opacity) {
+    stride = stride || 1;
+    var ids = [];
+    var total = rows * cols;
+    for (var id = 0; id < total; id += stride) ids.push(id);
+    var n = ids.length;
+    var pos = new Float32Array(n * 3);
+    var col = new Float32Array(n * 3);
+    for (var k = 0; k < n; k++) {
+      var r = Math.floor(ids[k] / cols), c = ids[k] % cols;
+      var a = starts[c], b = ends[r];
+      pos[k * 3] = (a.x + b.x) * 0.5;
+      pos[k * 3 + 1] = (a.y + b.y) * 0.5;
+      pos[k * 3 + 2] = (a.z + b.z) * 0.5;
+    }
+    var g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.BufferAttribute(col, 3));
+    var m = new THREE.PointsMaterial({
+      size: size || 0.026, vertexColors: true, transparent: true, opacity: opacity === undefined ? 0.55 : opacity,
+      blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+    });
+    var p = new THREE.Points(g, m);
+    p.renderOrder = 2;
+    parent.add(p);
+    p.userData = { rows: rows, cols: cols, ids: ids };
+    return p;
+  };
+
+  SceneRig.prototype.updateWebPoints = function (points, W, maxW) {
+    if (!points || !W) return;
+    var col = points.geometry.attributes.color.array;
+    var ids = points.userData.ids;
+    for (var k = 0; k < ids.length; k++) {
+      var w = W[ids[k]];
+      var a = Math.pow(Math.min(1, Math.abs(w) / (maxW || 1)), 1.1);
+      var cc = w >= 0 ? [0.37, 0.95, 1.0] : [1.0, 0.31, 0.85];
+      col[k * 3] = cc[0] * a;
+      col[k * 3 + 1] = cc[1] * a;
+      col[k * 3 + 2] = cc[2] * a;
+    }
+    points.geometry.attributes.color.needsUpdate = true;
+  };
+
+  SceneRig.prototype.buildWebTop = function (parent, starts, ends, rows, cols, N, opacity) {
+    var pos = new Float32Array(N * 2 * 3);
+    var col = new Float32Array(N * 2 * 3);
+    var wgt = new Float32Array(N * 2);
+    var g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("aColor", new THREE.BufferAttribute(col, 3));
+    g.setAttribute("aWeight", new THREE.BufferAttribute(wgt, 1));
+    var m = this.track(S.makeFFNWebMaterial());
+    m.uniforms.uOpacity.value = opacity === undefined ? 0.75 : opacity;
+    var mesh = new THREE.LineSegments(g, m);
+    mesh.renderOrder = 3;
+    parent.add(mesh);
+    mesh.userData = { starts: starts, ends: ends, rows: rows, cols: cols, N: N };
+    return mesh;
+  };
+
+  SceneRig.prototype.updateWebTop = function (mesh, W, maxW) {
+    if (!mesh || !W) return;
+    var starts = mesh.userData.starts, ends = mesh.userData.ends, N = mesh.userData.N;
+    var rows = mesh.userData.rows, cols = mesh.userData.cols;
+    var count = rows * cols;
+    var idx = new Array(count);
+    for (var i = 0; i < count; i++) idx[i] = i;
+    idx.sort(function (a, b) { return Math.abs(W[b]) - Math.abs(W[a]); });
+    var pos = mesh.geometry.attributes.position.array;
+    var col = mesh.geometry.attributes.aColor.array;
+    var wgt = mesh.geometry.attributes.aWeight.array;
+    for (var k = 0; k < N; k++) {
+      var id = idx[k];
+      var r = Math.floor(id / cols), c = id % cols;
+      var a = starts[c], b = ends[r];
+      pos[k * 6] = a.x; pos[k * 6 + 1] = a.y; pos[k * 6 + 2] = a.z;
+      pos[k * 6 + 3] = b.x; pos[k * 6 + 4] = b.y; pos[k * 6 + 5] = b.z;
+      var w = W[id];
+      var inten = Math.min(1, Math.abs(w) / (maxW || 1));
+      var cc = w >= 0 ? [0.37, 0.95, 1.0] : [1.0, 0.31, 0.85];
+      col[k * 6] = cc[0]; col[k * 6 + 1] = cc[1]; col[k * 6 + 2] = cc[2];
+      col[k * 6 + 3] = cc[0]; col[k * 6 + 4] = cc[1]; col[k * 6 + 5] = cc[2];
+      wgt[k * 2] = inten; wgt[k * 2 + 1] = inten;
+    }
+    mesh.geometry.attributes.position.needsUpdate = true;
+    mesh.geometry.attributes.aColor.needsUpdate = true;
+    mesh.geometry.attributes.aWeight.needsUpdate = true;
+  };
+
+  SceneRig.prototype.makeNodeRing = function (parent, positions, color, size) {
+    var n = positions.length;
+    var pos = new Float32Array(n * 3);
+    var col = new Float32Array(n * 3);
+    for (var i = 0; i < n; i++) {
+      pos[i * 3] = positions[i].x; pos[i * 3 + 1] = positions[i].y; pos[i * 3 + 2] = positions[i].z;
+      var c = new THREE.Color(color);
+      col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+    }
+    var g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.BufferAttribute(col, 3));
+    var p = new THREE.Points(g, new THREE.PointsMaterial({
+      size: size || 0.05, vertexColors: true, transparent: true, opacity: 0.9,
+      blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+    }));
+    parent.add(p);
+    return p;
+  };
+
+  SceneRig.prototype.updateNodeRing = function (points, values, posColor, negColor, activeHead) {
+    if (!points || !values) return;
+    var col = points.geometry.attributes.color.array;
+    var max = 1e-6, n = values.length;
+    for (var i = 0; i < n; i++) max = Math.max(max, Math.abs(values[i]));
+    for (var j = 0; j < n; j++) {
+      var v = values[j] / max;
+      var inHead = activeHead === undefined ? true : (j >= activeHead * CFG.dHead && j < (activeHead + 1) * CFG.dHead);
+      var c = v >= 0 ? posColor : negColor;
+      var k = inHead ? 1 : 0.22;
+      col[j * 3] = c[0] * (0.2 + Math.abs(v) * 0.8) * k;
+      col[j * 3 + 1] = c[1] * (0.2 + Math.abs(v) * 0.8) * k;
+      col[j * 3 + 2] = c[2] * (0.2 + Math.abs(v) * 0.8) * k;
+    }
+    points.geometry.attributes.color.needsUpdate = true;
+  };
+
   SceneRig.prototype.buildFFNWebPoints = function (starts, ends, rows, cols) {
-    var stride = 4;
+    var stride = 16;
     var ids = [];
     var total = rows * cols;
     for (var id = 0; id < total; id += stride) ids.push(id);
@@ -1270,6 +1486,19 @@
     this.skyStarPositions = [];
     for (var j = 0; j < n; j++) this.skyStarPositions.push(new THREE.Vector3(pos[j * 3], pos[j * 3 + 1], pos[j * 3 + 2]));
 
+    // The tied unembedding: 128 final dimensions -> 258 vocabulary logits.
+    this.unembedSourcePos = [];
+    for (var ud = 0; ud < D; ud++) {
+      var ua = (ud / D) * Math.PI * 2;
+      this.unembedSourcePos.push(new THREE.Vector3(Math.cos(ua) * 2.6, 0, Math.sin(ua) * 2.6));
+    }
+    this.unembedPoints = this.buildWebPoints(this.skyGroup, this.unembedSourcePos, this.skyStarPositions, n, D, 1, 0.028, 0.40);
+    this.unembedTop = this.buildWebTop(this.skyGroup, this.unembedSourcePos, this.skyStarPositions, n, D, 1024, 0.65);
+    this.unembedRing = this.makeNodeRing(this.skyGroup, this.unembedSourcePos, 0xffffff, 0.065);
+    this.unembedLabel = this.makeAnnotation("UNEMBEDDING · 258 × 128 = 33,024 weights · brightness ∝ |E[v,d]·LN(x)_d|", "#ffffff", 0.34);
+    this.unembedLabel.position.set(0, 3.1, 0);
+    this.skyGroup.add(this.unembedLabel);
+
     // Final vector beam.
     var bg = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, -9, 0), new THREE.Vector3(0, 5, 0)]);
     this.finalBeam = new THREE.Line(bg, new THREE.LineBasicMaterial({
@@ -1426,6 +1655,7 @@
     this.rebuildCurtain();
     this.setLayer(this.currentLayer);
     this.updateSky(trace.final.probs);
+    this.updateUnembeddingWeb(trace);
   };
 
   function nameOf(x) { return x; }
@@ -1501,6 +1731,7 @@
       this.causalLabel.position.set(Math.cos(midA) * (this.R + 0.35), this.currentLayer * this.GAP + 1.25, Math.sin(midA) * (this.R + 0.35));
     }
     this.applyPlayerTint();
+    if (this.projGroup) this.projGroup.position.y = this.currentLayer * this.GAP;
     if (this.splitGroup) {
       var sy = this.currentLayer * this.GAP;
       var baseX = this.R, baseZ = 0;
@@ -1760,6 +1991,7 @@
     this.drawVectorPanel(this.qkvPanels.k, "key · K", k, this.activeHead);
     this.drawVectorPanel(this.qkvPanels.v, "value · V", v, this.activeHead);
     if (this.model) this.drawWeightHeatmap(this.qkvWeightCanvas, null, this.model.W.layers[l], "W_Q · W_K · W_V");
+    this.updateProjectionWebs();
   };
 
   SceneRig.prototype.drawVectorPanel = function (panel, title, vec, head) {
@@ -1982,6 +2214,26 @@
 
   /* ── sky update ────────────────────────────────────────────────────── */
 
+  SceneRig.prototype.updateUnembeddingWeb = function (trace) {
+    if (!trace || !this.model || !this.unembedPoints) return;
+    var E = this.model.W.E;
+    var V = TEGO.DATA.vocab.length, Dm = this.model.dModel;
+    var ln = trace.final.ln;
+    var scale = trace.final.logitScale || 0.9;
+    var contrib = new Float32Array(V * Dm);
+    var maxAbs = 1e-6;
+    for (var v = 0; v < V; v++) {
+      for (var d = 0; d < Dm; d++) {
+        var c = E[v * Dm + d] * ln[d] * scale;
+        contrib[v * Dm + d] = c;
+        if (Math.abs(c) > maxAbs) maxAbs = Math.abs(c);
+      }
+    }
+    this.updateWebPoints(this.unembedPoints, contrib, maxAbs);
+    this.updateWebTop(this.unembedTop, contrib, maxAbs);
+    this.updateNodeRing(this.unembedRing, ln, [1, 1, 1], [0.45, 0.8, 1.0], undefined);
+  };
+
   SceneRig.prototype.updateSky = function (probs) {
     if (!probs || !this.skyStars) return;
     if (probs.final) probs = probs.final.probs;
@@ -2053,6 +2305,7 @@
     this.ffn.visible = stage === "layer" && (phase === "ffn" || phase === "ffn_w1" || phase === "ffn_gelu" || phase === "ffn_w2");
     if (this.ffnShell) this.ffnShell.visible = !this.overview;
     this.qkvGroup.visible = stage === "layer" && (phase === "qkv");
+    this.projGroup.visible = stage === "layer" && (phase === "qkv");
     this.qGlyph.visible = stage === "layer" && (phase === "qkv" || phase === "attn" || phase === "mix");
     this.lensGroup.visible = stage === "layer" && (phase === "ln1" || phase === "qkv");
     this.curtain.visible = stage === "layer" && (phase === "attn" || phase === "mix" || phase === "scores" || phase === "mask" || phase === "softmax");
@@ -2096,6 +2349,7 @@
     this.tower.visible = true;
     this.trail.visible = true;
     this.qkvGroup.visible = false;
+    this.projGroup.visible = false;
     this.lensGroup.visible = false;
     this.qGlyph.visible = false;
     this.skyGroup.visible = false;
@@ -2147,7 +2401,7 @@
     if (phase === "ln1") {
       this.cueCamera(playerPos.clone().add(radial.clone().multiplyScalar(2.0)).add(new THREE.Vector3(0, 0.85, 0)), center, 62);
     } else if (phase === "qkv") {
-      this.cueCamera(playerPos.clone().add(radial.clone().multiplyScalar(3.0)).add(new THREE.Vector3(0, 1.25, 0)), playerPos.clone().add(new THREE.Vector3(0, 0.55, 0)), 56);
+      this.cueCamera(playerPos.clone().add(radial.clone().multiplyScalar(3.9)).add(new THREE.Vector3(0, 1.55, 0)), playerPos.clone().add(new THREE.Vector3(0, 0.55, 0)), 60);
     } else if (phase === "attn") {
       var mid = new THREE.Vector3(0, y + 0.25, 0);
       var pastCount = this.player;

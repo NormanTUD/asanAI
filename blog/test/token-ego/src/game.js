@@ -103,6 +103,11 @@
       await sleep(20);
       this.scene = new TEGO.SceneRig(document.getElementById("gl"));
       this.scene.setModel(this.model);
+      if (q.has("cleanffn")) {
+        ["ffnW1Points","ffnW1Top","ffnW2Points","ffnW2Top","ffnEntry","ffnExit","ffnInputLabel","ffnW1Label","ffnHiddenLabel","ffnW2Label","ffnOutputLabel"].forEach(function (k) {
+          if (self.scene[k]) self.scene[k].visible = false;
+        });
+      }
       this.ui.setLoading("lighting the residual stream…", 0.9);
       await sleep(20);
       this.scene.setTrace(this.state.trace);
