@@ -2580,7 +2580,41 @@
 		var readingsEl = $("[data-ambiguity-readings]", root);
 		var noteEl = $("[data-ambiguity-note]", root);
 		if (!chips || !sentenceEl || !readingsEl) return;
-		var examples = [
+		var examples = DEMO_DE ? [
+			{
+				label: "Teleskop",
+				before: "Ich sah den Mann ",
+				amb: "mit dem Teleskop",
+				after: ".",
+				readings: [
+					["Lesart A · der Mann hat es", "Ich benutzte das Teleskop, um den Mann zu sehen."],
+					["Lesart B · ich habe es", "Ich sah einen Mann, der ein Teleskop trug."]
+				],
+				note: "Die Oberflächensyntax ist identisch. Weltwissen und Kontext entscheiden, welche Lesart überlebt."
+			},
+			{
+				label: "Alte Männer und Frauen",
+				before: "",
+				amb: "Alte Männer und Frauen",
+				after: " können anstrengend sein.",
+				readings: [
+					["Lesart A · beide alt", "Alte Männer und alte Frauen können anstrengend sein."],
+					["Lesart B · nur die Männer alt", "Alte Männer und Frauen jeden Alters können anstrengend sein."]
+				],
+				note: "Eine Phrase, zwei Reichweiten. Das Modell muss eine plausible Struktur wählen, nicht nur die Wörter parsen."
+			},
+			{
+				label: "Sie habe Hunger",
+				before: "Die Mutter sagte, ",
+				amb: "sie habe Hunger",
+				after: ".",
+				readings: [
+					["Lesart A · die Mutter", "Die Mutter sagte, dass sie selbst Hunger habe."],
+					["Lesart B · eine andere Frau", "Die Mutter sagte, dass eine andere Frau Hunger habe."]
+				],
+				note: "Ein Pronomen, zwei mögliche Bezüge. Der Kontext entscheidet, wer hungrig ist."
+			}
+		] : [
 			{
 				label: "Telescope",
 				before: "I saw the man ",

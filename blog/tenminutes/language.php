@@ -16,7 +16,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>Language is a <em>very old technology.</em></h1>
-					<p class="hero-deck">Before text could become training data, humans had to build the machinery for it: a vocal tract, symbols, writing, and a way to measure information. This is the long fuse behind every token.</p>
+					<p class="hero-deck">Before text could become training data, humans had to build the machinery for it: a vocal tract, symbols, writing, and a way to measure information. This is the long prehistory behind every token.</p>
 				</div>
 			</section>
 
@@ -26,20 +26,20 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
 						<h2 class="section-title">Speech came first.</h2>
 						<div class="prose">
-							<p>History traced the ideas that made computation possible. The medium those ideas needed is language. Every language model is downstream of a biological accident: genomic evidence suggests the human capacity for language was present at least 135,000 years ago, and in widespread social use by 100,000 years ago.</p>
-							<p>The date comes from genetic and archaeological inference, not from a preserved organ of language; it is a range, not a timestamp. The human vocal tract can make a much wider range of sounds than those of other primates: the descended larynx, the vocal folds that sit in it, and fine motor control are part of the story, though the exact biological package is still debated. That made spoken language possible, and spoken language made culture cumulative.</p>
-							<p>Listening came first. The ear is built from an ancient hair cell, a cochlea, and a middle ear assembled from jaw bones; it is far older than speech. A fetus begins to hear before birth, and newborns prefer the voice and the stories they heard in the womb (<a href="https://pubmed.ncbi.nlm.nih.gov/7979483/" rel="noopener">Hepper and Shahidullah, 1994</a>; <a href="https://pubmed.ncbi.nlm.nih.gov/7375928/" rel="noopener">DeCasper and Fifer, 1980</a>). The channel that lets a child learn language was in place long before the first word was spoken.</p>
-							<p>But speech is evanescent. Writing, from c. 3200 BCE in Mesopotamia, turned it into something that could survive the speaker, travel across distance, and be re-read. It did not begin as literature. It grew out of accounting: clay tokens for goods, then marks pressed into tablets, then signs for the sounds of names. Oral tradition already used rhythm and story as memory technology; writing made memory external and inspectable.</p>
+							<p>The history of computing traces the ideas that made computation possible. The medium those ideas needed is language. Every language model is downstream of a biological development: genomic evidence suggests the human capacity for language was present at least 135,000 years ago, and in widespread social use by 100,000 years ago.</p>
+							<p>That date comes from genetic and archaeological inference, not from a preserved organ of language; it is a range, not a timestamp. The human vocal tract can make a much wider range of sounds than those of other primates can: the descended larynx, the vocal folds that sit in it, and fine motor control are part of the story, though the exact biological package is still debated. That made spoken language possible, and spoken language made culture cumulative.</p>
+							<p>Listening came first. The ear is built from ancient hair cells, a cochlea, and a middle ear assembled from jaw bones; it is far older than speech. A fetus begins to hear before birth, and newborns prefer the voice and the stories they heard in the womb (<a href="https://pubmed.ncbi.nlm.nih.gov/7979483/" rel="noopener">Hepper and Shahidullah, 1994</a>; <a href="https://pubmed.ncbi.nlm.nih.gov/7375928/" rel="noopener">DeCasper and Fifer, 1980</a>). The channel that lets a child learn language was in place long before the first word was spoken.</p>
+							<p>But speech is fleeting. Writing, which appeared in Mesopotamia around 3200 BCE, turned it into something that could survive the speaker, travel across distance, and be re-read. It did not begin as literature. It grew out of accounting: clay tokens for goods, then marks pressed into tablets, then signs for the sounds of names. Oral tradition already used rhythm and story as memory technology; writing made memory external and inspectable.</p>
 						</div>
 					</section>
 
 					<section class="section-block" id="detail">
-						<div class="section-kicker"><span class="sk-num">02</span> The long fuse</div>
+						<div class="section-kicker"><span class="sk-num">02</span> The long background</div>
 						<h2 class="section-title">From grammar to information.</h2>
 						<div class="prose">
-							<p>Grammar was studied long before machines. Pāṇini's <a href="https://ia801807.us.archive.org/1/items/AshtadhyayiBhashyaCollection/019%20Ashtadhyayi%20Bhashyam-1-Dayananda_text.pdf" rel="noopener"><em>Aṣṭādhyāyī</em></a> (c. 4th century BCE) is the most complete surviving formal grammar, but it was not the first. Vedic phonetic and grammatical analysis, the Prātiśākhyas, and Yāška's <em>Nirukta</em> precede it. Pāṇini matters here because he described a language as a finite rule system that generates an unbounded set of sentences: the same ambition a formal grammar has. Printing in Europe around 1440, dictionaries, and standardised spelling made text abundant and comparable.</p>
-							<p>In 1948, Shannon separated the message from its meaning and measured information in bits (<a href="https://archive.org/details/bstj27-3-379" rel="noopener">Shannon, 1948</a>). A bit is one yes/no answer; a message carries as much information as the uncertainty it removes. That move made language computable. A model does not need to understand a sentence to predict the next token; it needs a representation and a lot of text. That is the deflationary reading: whether prediction forces some internal model of the world is the contested part, not whether the training objective is prediction.</p>
-							<p>The last step is geometric, from word2vec (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>) and subword tokenizers to modern embeddings, tokens become vectors, and meaning becomes a pattern of distances and directions. Word2vec's contribution was to make the old distributional intuition computable at scale: learn a vector by making it good at predicting a word's neighbours, or the neighbours from the word. The model inherits the whole stack (body, symbol, writing, information) and compresses it into weights.</p>
+							<p>Grammar was studied long before machines. Pāṇini's <a href="https://ia801807.us.archive.org/1/items/AshtadhyayiBhashyaCollection/019%20Ashtadhyayi%20Bhashyam-1-Dayananda_text.pdf" rel="noopener"><em>Aṣṭādhyāyī</em></a> (c. 4th century BCE) is the most complete surviving formal grammar, but it was not the first. Vedic phonetic and grammatical analysis, the Prātiśākhyas, and Yāška's <em>Nirukta</em> precede it. Pāṇini matters here because he described a language as a finite rule system that generates an unbounded set of sentences: the ambition that later formal grammars inherit. Centuries later, printing in Europe around 1440, together with dictionaries and standardised spelling, made text abundant and comparable.</p>
+							<p>In 1948, Shannon separated the message from its meaning and measured information in bits (<a href="https://archive.org/details/bstj27-3-379" rel="noopener">Shannon, 1948</a>). A bit is one yes/no answer; a message carries as much information as the uncertainty it removes. That move made language measurable, and measurement made it computable. A model does not need to understand a sentence to predict the next token; it needs a representation and a lot of text. The deflationary reading is that prediction needs no understanding. The contested question is whether training on prediction nevertheless produces an internal model of the world.</p>
+							<p>The last step is geometric. From word2vec (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>) and subword tokenizers to modern embeddings, tokens become vectors, and meaning becomes a pattern of distances and directions. Word2vec's contribution was to make the old distributional intuition computable at scale: learn a vector by making it good at predicting a word's neighbours, or at predicting a word from its neighbours. The model inherits the whole stack (body, symbol, writing, information) and compresses it into weights.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Vocal tract</b><span>Genomic evidence points to at least 135,000 years ago; the descended larynx and pharynx made a wide range of sounds possible.</span></div>
@@ -53,8 +53,8 @@
 						<div class="section-kicker"><span class="sk-num">03</span> The machine learns to speak</div>
 						<h2 class="section-title">From bellows to text-to-speech.</h2>
 						<div class="prose">
-							<p>Wolfgang von Kempelen's speaking machine (1791) was the first serious attempt to build human speech from parts: a bellows for lungs, reeds for the larynx, and a leather mouth shaped by the operator's hand. It could say words and short phrases, and it made the point that speech is a physical process that can be engineered.</p>
-							<p>Kempelen's machine was mechanical, not digital, but it belongs to the same lineage as modern text-to-speech. The problem he posed, how to turn a stream of symbols into audible language, is still the problem a speech synthesizer solves.</p>
+							<p>Wolfgang von Kempelen's speaking machine (1791) was the first serious attempt to build human speech from parts: a bellows for the lungs, reeds for the larynx, and a leather mouth shaped by the operator's hand. It could say words and short phrases, and it made the point that speech is a physical process that can be engineered.</p>
+							<p>Kempelen's machine was mechanical, not digital, but it belongs to the same lineage as modern text-to-speech. The problem he posed, namely how to turn a stream of symbols into audible language, is still the problem a speech synthesizer solves.</p>
 						</div>
 						<figure>
 							<img src="assets/img/kempelen-speaking-machine.jpg" alt="A replica of Wolfgang von Kempelen's speaking machine" loading="lazy">
@@ -71,7 +71,7 @@
 						<h2 class="section-title">From text to vectors.</h2>
 						<div class="prose">
 							<p>Before a model can learn anything, text has to become a sequence of tokens. A tokenizer cuts the string into pieces from a fixed vocabulary: whole words, word fragments, punctuation, and bytes. The token ID is the only thing the model sees; the original characters are gone. That is why a model can be bad at spelling: it may never see the letters that make up a word, only the pieces the tokenizer chose.</p>
-							<p>Each token ID is looked up in an embedding table and becomes a vector. The table has one row per vocabulary item; a 100,000-token vocabulary with 4,000 dimensions is already 400 million numbers, before any transformer layer. The distributional idea is old: words that appear in similar contexts tend to have similar meanings (<a href="https://archive.org/details/papersinlinguist0000firt" rel="noopener">Firth, 1957</a>), so their vectors end up close together. A direction in that space can carry a relationship, such as the direction from “man” to “woman”, but the famous analogy is an illustration, not a law. It works on some embeddings and some pairs, and fails on others.</p>
+							<p>Each token ID is looked up in an embedding table and becomes a vector. The table has one row per vocabulary item; a 100,000-token vocabulary with 4,000 dimensions is already 400 million numbers, before any transformer layer. The distributional idea is old: words that appear in similar contexts tend to have similar meanings (<a href="https://archive.org/details/papersinlinguist0000firt" rel="noopener">Firth, 1957</a>), so their vectors end up close together. A direction in that space can carry a relationship, such as the direction from “man” to “woman”, but the famous king − man + woman ≈ queen analogy is an illustration, not a law. It works on some embeddings and some pairs, and fails on others.</p>
 							<p>That is the inheritance. Writing made text durable, Shannon made it measurable, and embeddings made it geometric. The model does not need a theory of language to learn the geometry; it needs enough text for the geometry to become useful. What it does need is a training signal, and that signal is prediction: the geometry is shaped by what makes the next token more likely, not by definitions.</p>
 						</div>
 					</section>
@@ -79,23 +79,23 @@
 					<div class="demo demo--paper timeline-shell" data-demo="timeline" data-arrow-nav>
 						<div class="demo-head">
 							<div>
-								<p class="demo-title">The long fuse of language technology <span>· demo</span></p>
-								<p class="demo-sub">Follow the fuse from listening and speech to writing, grammar, printing, information, and tokens. Each step made text more durable, more comparable, or more computable.</p>
+								<p class="demo-title">The long prehistory of language technology <span>· demo</span></p>
+								<p class="demo-sub">Follow the path from listening and speech to writing, grammar, printing, information, and tokens. Each step made text more durable, more comparable, or more computable.</p>
 							</div>
-							<span class="demo-badge">step through</span>
+							<span class="demo-badge">step by step</span>
 						</div>
 						<div class="demo-body">
 							<div class="timeline-scroller">
 								<button class="tl-scroll-btn" type="button" data-timeline-prev data-arrow-prev aria-label="Scroll left">‹</button>
 								<div class="timeline-track" data-timeline-track role="group" aria-label="Steps in the history of language technology">
-									<button class="tl-node is-active" type="button" data-meta="Before speech · Listening" data-title="Listening" data-body="Hearing is far older than speech. Hair cells, the cochlea, and the middle ear evolved long before humans, and a fetus hears the melody of its mother's voice before birth. The ear is the channel through which the structure of language enters the brain."><span class="tl-dot"></span><span class="tl-date">Before speech</span><span class="tl-name">Listening</span></button>
+									<button class="tl-node is-active" type="button" data-meta="Before speech · Listening" data-title="Listening" data-body="Hearing is far older than speech. Hair cells, the cochlea, and the middle ear evolved long before humans existed, and a fetus hears the melody of its mother's voice before birth. The ear is the channel through which the structure of language enters the brain."><span class="tl-dot"></span><span class="tl-date">Before speech</span><span class="tl-name">Listening</span></button>
 									<button class="tl-node" type="button" data-meta="c. 135,000 BCE · Speech" data-title="Speech" data-body="Genomic evidence suggests the capacity for language was present at least 135,000 years ago. A descended larynx and a longer pharynx gave the tongue room to shape a wide range of sounds; spoken language made culture cumulative." data-image="../blombosochre.jpg" data-image-link="https://www.donsmaps.com/blombos.html" data-image-alt="Engraved ochre from Blombos Cave with a cross-hatched pattern" data-image-caption="Blombos Cave ochre, c. 73,000 BCE: symbolic marking, not speech itself. Image: Chris Henshilwood, CC BY 2.5."><span class="tl-dot"></span><span class="tl-date">c. 135,000 BCE</span><span class="tl-name">Speech</span></button>
 									<button class="tl-node" type="button" data-meta="c. 3200 BCE · Writing" data-title="Writing" data-body="Clay tokens appear around 8000 BCE; by c. 3200 BCE cuneiform tablets in Mesopotamia carried full writing systems. Writing stored language outside the speaker: it could travel, survive, and be inspected long after the conversation ended." data-image="../cuneiform.jpg" data-image-link="https://commons.wikimedia.org/wiki/File:Clay_tablet_mentioning_the_name_of_Eannatum,_prince_of_Lagash._From_Iraq,_c._2470_BCE._Iraq_Museum.jpg" data-image-alt="An early cuneiform clay tablet" data-image-caption="Early cuneiform tablet, c. 2470 BCE. Image: Osama Shukir Muhammed Amin, CC BY-SA 4.0, via Wikimedia Commons."><span class="tl-dot"></span><span class="tl-date">c. 3200 BCE</span><span class="tl-name">Writing</span></button>
 									<button class="tl-node" type="button" data-meta="c. 1850–1050 BCE · Alphabet" data-title="Alphabet" data-body="Proto-Sinaitic writers repurposed Egyptian signs acrophonically; by c. 1050 BCE the Phoenician abjad had 22 letters. The Greek addition of vowels around 800 BCE made the first true alphabet." data-image="../history_of_a.png" data-image-link="https://en.wikipedia.org/wiki/A" data-image-alt="The history of the letter A, from an ox pictogram to the modern letter" data-image-caption="History of the letter A, from ox pictogram to alphabet. Image: Wikipedia contributors, CC BY-SA 4.0."><span class="tl-dot"></span><span class="tl-date">c. 1850–1050 BCE</span><span class="tl-name">Alphabet</span></button>
 									<button class="tl-node" type="button" data-meta="Before Pāṇini · Grammar" data-title="Grammar" data-body="Vedic phonetic and grammatical analysis, the Prātiśākhyas, and Yāska's Nirukta precede Pāṇini. His Aṣṭādhyāyī, around the 4th century BCE, is the most complete surviving formal grammar: a finite rule system that generates an unbounded set of sentences." data-image="../chomsky_hierarchy.svg" data-image-link="https://commons.wikimedia.org/wiki/File:Chomsky-hierarchy.svg" data-image-alt="Venn diagram of the Chomsky hierarchy of formal grammars" data-image-caption="The Chomsky hierarchy (1956) is a modern descendant of the rule-based view. Diagram: J. Finkelstein, CC BY-SA 3.0, via Wikimedia Commons."><span class="tl-dot"></span><span class="tl-date">Before Pāṇini</span><span class="tl-name">Grammar</span></button>
-									<button class="tl-node" type="button" data-meta="c. 1440 · Printing" data-title="Printing" data-body="Movable type in Europe around 1440, followed by dictionaries and standard spelling, made text abundant and comparable. A model needs scale before it can learn patterns."><span class="tl-dot"></span><span class="tl-date">c. 1440</span><span class="tl-name">Printing</span></button>
+									<button class="tl-node" type="button" data-meta="c. 1440 · Printing" data-title="Printing" data-body="Movable type in Europe around 1440, followed by dictionaries and standard spelling, made text abundant and comparable. That abundance is what lets a model learn patterns."><span class="tl-dot"></span><span class="tl-date">c. 1440</span><span class="tl-name">Printing</span></button>
 									<button class="tl-node" type="button" data-meta="1791 · Talking machine" data-title="Talking machine" data-body="Wolfgang von Kempelen built a speaking machine from bellows, reeds, and a hand-shaped mouth. It could say words and short phrases: the first mechanical speech synthesizer, and an ancestor of text-to-speech." data-image="assets/img/kempelen-speaking-machine.jpg" data-image-link="https://commons.wikimedia.org/wiki/File:KEMPELEN_Speaking_Machine_Replica_2017.png" data-image-alt="A replica of Wolfgang von Kempelen's speaking machine" data-image-caption="Replica of Kempelen's speaking machine. Image: Fabian Brackhane, CC BY-SA 4.0, via Wikimedia Commons."><span class="tl-dot"></span><span class="tl-date">1791</span><span class="tl-name">Talking machine</span></button>
-									<button class="tl-node" type="button" data-meta="1948 · Information" data-title="Information" data-body="Shannon separated the message from its meaning and measured information in bits in 1948. That made language computable."><span class="tl-dot"></span><span class="tl-date">1948</span><span class="tl-name">Information</span></button>
+									<button class="tl-node" type="button" data-meta="1948 · Information" data-title="Information" data-body="Shannon separated the message from its meaning and measured information in bits in 1948. That made language measurable and, in principle, computable."><span class="tl-dot"></span><span class="tl-date">1948</span><span class="tl-name">Information</span></button>
 									<button class="tl-node" type="button" data-meta="2013–present · Tokens" data-title="Tokens" data-body="Word2vec (2013) made word vectors popular; subword tokenizers and transformers followed. Text became tokens, tokens became vectors, and meaning became geometry."><span class="tl-dot"></span><span class="tl-date">2013–present</span><span class="tl-name">Tokens</span></button>
 								</div>
 								<button class="tl-scroll-btn" type="button" data-timeline-next data-arrow-next aria-label="Scroll right">›</button>
@@ -109,7 +109,7 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">One sentence, two worlds <span>· demo</span></p>
-								<p class="demo-sub">The syntax is fixed; the meaning is not. Click the highlighted phrase to switch readings. Context is the disambiguator.</p>
+								<p class="demo-sub">The syntax is fixed; the meaning is not. Click the highlighted phrase to switch readings. Context resolves the ambiguity.</p>
 							</div>
 							<span class="demo-badge">interactive</span>
 						</div>
@@ -132,7 +132,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">An LLM is the newest layer in a very old stack.</p>
-							<p class="aha-sub">Body, symbol, writing, grammar, and information theory all had to exist before text could become training data.</p>
+							<p class="aha-sub">Body, symbol, writing, grammar, and information theory all had to be in place before text could become training data.</p>
 						</div>
 					</section>
 				</article>
@@ -153,6 +153,6 @@
 	})();
 	</script>
 	<script src="assets/site.js"></script>
-	<script src="assets/demos.js?v=20261104b"></script>
+	<script src="assets/demos.js?v=20261104c"></script>
 </body>
 </html>

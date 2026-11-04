@@ -639,7 +639,7 @@
 
 	<script src="../temml.min.js"></script>
 	<script src="assets/site.js?v=20261104"></script>
-	<script src="assets/demos.js?v=20261104b"></script>
+	<script src="assets/demos.js?v=20261104c"></script>
 	<script src="assets/space-morph.js?v=20261104"></script>
 	<script src="assets/embedding-plot.js?v=20261104"></script>
 	<script src="assets/word-meadow.js?v=20261104"></script>
