@@ -6,7 +6,7 @@
 	<meta name="description" content="A ten-minute interactive introduction to next-token prediction, the loop behind large language models.">
 	<meta name="theme-color" content="#ffffff">
 	<title>One Word at a Time | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css?v=20261104">
+	<link rel="stylesheet" href="assets/site.css?v=20261104b">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 </head>
 <body data-lesson="intuition" data-page="lesson">

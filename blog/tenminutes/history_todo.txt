@@ -70,4 +70,12 @@ mach allgemein ein paar mehr keywords fett
 
 "Symbolische KI baut den Logic Theorist, GPS" GPS komtm erst später
 
+"Das Frame-Problem ist die Schwierigkeit, darzustellen, was sich nicht ändert, wenn eine Aktion ausgeführt wird" erkläre das vorher iwo besser
+
+" das Muster war ein Zyklus, kein einzelnes Urteil. Die Rückkehr der neuronalen Netze kam als Stapel von Veränderungen: Backpropagation, größere Datensätze, GPUs, bessere Regularisierung. AlexNet gewinnt 2012 ImageNet (Krizhevsky et al., 2012). AlphaGo besiegt 2016 Lee Sedol. 2017 ersetzt „Attention Is All You Need“ die Rekurrenz durch Self-Attention, macht den Weg zwischen entfernten Tokens zu einem Schritt und die Berechnung parallel. ChatGPT (2022) verwandelt die Nächste-Token-Schleife in eine öffentliche Schnittstelle. Die Ideen sind alt; der Maßstab, die Daten und die Technik sind neu. " gehe mehr auf die details hier ein mit zwei drei sätzen, was ist alexnet, warum gpus, warum größere datensätze? und wer hat backprop erfunden? es wurde mehrfach erfunden aber erst spät erkannt adss das bei NNs helfen kann
+
+"Yann LeCun machte Faltungen praktisch" zeige wie sone convolution geht. nehme die demo aus ../computer_vision.php oder wie dasheißt, zeige das wirklich so dass man es versteht. du schmeißt das hier einfach rein aber mach es so dass mans versteht auch wenn man nur interessiuerter laie ist
+
+"Eine kausale Maske im Decoder verbirgt zukünftige Tokens" zeige das, man kann das zeigen was die causal mask ist
+
 

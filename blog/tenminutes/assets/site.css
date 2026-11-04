@@ -975,6 +975,71 @@ html[data-theme="dark"] .rail-nav a.is-active { color: var(--tm-sky); }
 html[data-theme="dark"] .prose code { color: var(--tm-sky); }
 .prose a { text-decoration-color: color-mix(in srgb, var(--tm-petrol) 40%, transparent); }
 
+.prose,
+.prose p,
+.prose li,
+.md,
+figcaption,
+blockquote,
+.step-note,
+.step-out,
+.demo-sub,
+.demo-foot,
+.demo-insight,
+.demo-hint,
+.bars-note,
+.meadow-caption,
+.aha-big,
+.aha-sub,
+.hero-deck,
+.keypoint,
+.lesson-card p,
+.shelf-card .sc-desc,
+.path-card p,
+.day-card p,
+.calendar-notice p,
+.footer p,
+.section-head p,
+.feature-main p,
+.feature-second p,
+.profile-spotlight p,
+.flow-detail p,
+.retrieval-item p,
+.causal-mask p,
+.fieldnotes p,
+.explain-back p,
+.collapse-card p,
+.activation-copy p,
+.tl-panel p,
+.attn-sentence,
+.ism-body,
+.iso-meta,
+.full-article-main,
+.vec-note,
+.llm-note,
+.pipe-note,
+.mix-note,
+.myth-more,
+.myth,
+.trythis,
+.pref-card,
+.rf-panel,
+.pullquote,
+.big-quote,
+.llm-sentence,
+.llm-ms-lead,
+.wg-why,
+.wg-answer,
+.section-block p:not(.aha-big),
+.section-block li,
+body[data-page="lesson"] .lesson-main p:not(.aha-big):not(.demo-title),
+body[data-page="lesson"] .lesson-main li {
+	text-align: justify;
+	text-justify: inter-word;
+	hyphens: auto;
+	-webkit-hyphens: auto;
+}
+
 .section-block { margin-bottom: clamp(34px, 4.6vw, 58px); scroll-margin-top: calc(var(--tm-topbar) + 34px); }
 .section-block > .prose { margin-top: 0; }
 

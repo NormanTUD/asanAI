@@ -7,7 +7,7 @@
 	<meta name="theme-color" content="#ffffff">
 	<title>A Very Brief History of AI | Ten Minutes</title>
 	<link rel="stylesheet" href="../Temml-Local.min.css">
-	<link rel="stylesheet" href="assets/site.css?v=20261102">
+	<link rel="stylesheet" href="assets/site.css?v=20261104b">
 </head>
 <body data-lesson="history" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
