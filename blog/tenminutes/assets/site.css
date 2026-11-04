@@ -2392,6 +2392,13 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	word-break: break-word;
 }
 .iso-next.is-end { font-size: 1.15rem; color: var(--tm-muted); }
+.iso-alt {
+	margin-top: .35em;
+	font-family: var(--tm-prose);
+	font-size: .78rem;
+	line-height: 1.45;
+	color: var(--tm-muted);
+}
 .iso-meta {
 	margin-top: .6em;
 	font-size: .78rem;

@@ -170,6 +170,7 @@
 										<aside class="iso-side">
 											<div class="iso-kicker">Next word</div>
 											<div class="iso-next" id="tt-next">capital</div>
+											<div class="iso-alt" id="tt-alt"></div>
 											<div class="iso-meta" id="tt-meta"></div>
 										</aside>
 									</div>
@@ -664,7 +665,7 @@
 			Drache: [{ t: "fliegen", l: 3.5 }, { t: "brüllen", l: 1.5 }, { t: "schlafen", l: 0.8 }, { t: "schwimmen", l: 0.5 }, { t: "singen", l: 0.3 }],
 			Prinzessin: [{ t: "singen", l: 3.4 }, { t: "tanzen", l: 1.5 }, { t: "träumen", l: 0.9 }, { t: "schlafen", l: 0.5 }, { t: "schwimmen", l: 0.3 }],
 			Roboter: [{ t: "fliegen", l: 3.3 }, { t: "piepen", l: 1.5 }, { t: "singen", l: 0.9 }, { t: "schlafen", l: 0.5 }, { t: "schwimmen", l: 0.3 }],
-			Schloss: [{ t: "stehen", l: 3.2 }, { t: "leuchten", l: 1.5 }, { t: "schlafen", l: 0.8 }, { t: "singen", l: 0.4 }],
+			Schloss: [{ t: "glänzen", l: 3.2 }, { t: "leuchten", l: 1.5 }, { t: "schlafen", l: 0.8 }, { t: "singen", l: 0.4 }],
 			Fluss: [{ t: "fließen", l: 3.5 }, { t: "singen", l: 1.2 }, { t: "brüllen", l: 0.8 }, { t: "gefrieren", l: 0.5 }, { t: "glänzen", l: 0.3 }]
 		} : {
 			dragon: [{ t: "fly", l: 3.5 }, { t: "roar", l: 1.5 }, { t: "sleep", l: 0.8 }, { t: "swim", l: 0.5 }, { t: "sing", l: 0.3 }],
@@ -713,6 +714,9 @@
 			];
 			return [];
 		}
+		function nounArticle() {
+			return DE && generated[0] === "Prinzessin" ? "eine" : "ein";
+		}
 		var base = DE ? ["Es", "war", "einmal", "ein"] : ["Once", "upon", "a", "time", "there", "was", "a"];
 		var generated = [];
 		var stage = 0;
@@ -738,7 +742,9 @@
 		}
 		function renderTree() {
 			if (!treeEl) return;
-			var path = ['<span class="nt-tree-base">' + escapeHtml(base.join(" ")) + '</span>'];
+			var baseWords = base.slice();
+			if (DE && generated.length) baseWords[baseWords.length - 1] = nounArticle();
+			var path = ['<span class="nt-tree-base">' + escapeHtml(baseWords.join(" ")) + '</span>'];
 			generated.forEach(function (tok, i) {
 				path.push('<span class="nt-tree-arrow">→</span>');
 				path.push('<span class="nt-tree-node">' + escapeHtml(tok) + (DE && i === 0 ? "," : "") + '</span>');
@@ -757,8 +763,10 @@
 		function renderSentence() {
 			if (!sentenceEl) return;
 			var html = "";
-			var all = base.map(function (tok) { return { tok: tok, cls: "given" }; })
-				.concat(generated.map(function (tok) { return { tok: tok, cls: "pred" }; }));
+			var all = base.map(function (tok, i) {
+				if (DE && i === base.length - 1 && generated.length) tok = nounArticle();
+				return { tok: tok, cls: "given" };
+			}).concat(generated.map(function (tok) { return { tok: tok, cls: "pred" }; }));
 			all.forEach(function (item, i) {
 				var noSpace = /^[.,!?;:)\]]|^…/.test(item.tok);
 				if (DE && i === base.length + 1) html += ",";
@@ -943,6 +951,7 @@
 		/* ── truth tunnel ────────────────────────────────────── */
 		var isoCanvas = document.getElementById("tt-canvas");
 		var isoNextEl = document.getElementById("tt-next");
+		var isoAltEl = document.getElementById("tt-alt");
 		var isoMetaEl = document.getElementById("tt-meta");
 		var isoAdvance = document.getElementById("tt-advance");
 		var isoTempEl = document.getElementById("tt-temp");
@@ -962,22 +971,61 @@
 			{ x: 0.45, y: 0.35 }, { x: 0.58, y: 0.32 }, { x: 0.74, y: 0.30 }, { x: 0.88, y: 0.32 }
 		];
 		var isoBranches = DE ? [
+			{ atStep: 0, alternatives: [
+				{ token: "Stadt", path: { x: 0.20, y: 0.22 }, entropy: 0.60 },
+				{ token: "Regierung", path: { x: 0.20, y: 0.62 }, entropy: 0.55 }
+			] },
+			{ atStep: 1, alternatives: [
+				{ token: "Frankreichs", path: { x: 0.32, y: 0.20 }, entropy: 0.50 },
+				{ token: "war", path: { x: 0.32, y: 0.58 }, entropy: 0.45 }
+			] },
+			{ atStep: 2, alternatives: [
+				{ token: "Deutschland", path: { x: 0.45, y: 0.16 }, entropy: 0.55 },
+				{ token: "Italien", path: { x: 0.45, y: 0.54 }, entropy: 0.50 }
+			] },
 			{ atStep: 3, alternatives: [
-				{ token: "Deutschland", path: { x: 0.45, y: 0.55 }, entropy: 0.55 },
-				{ token: "Japan", path: { x: 0.45, y: 0.22 }, entropy: 0.50 }
+				{ token: "war", path: { x: 0.58, y: 0.14 }, entropy: 0.45 },
+				{ token: "bleibt", path: { x: 0.58, y: 0.50 }, entropy: 0.40 }
+			] },
+			{ atStep: 4, alternatives: [
+				{ token: "Lyon", path: { x: 0.74, y: 0.13 }, entropy: 0.50 },
+				{ token: "Marseille", path: { x: 0.74, y: 0.48 }, entropy: 0.45 }
 			] },
 			{ atStep: 5, alternatives: [
-				{ token: "die", path: { x: 0.74, y: 0.40 }, entropy: 0.25 }
+				{ token: ",", path: { x: 0.88, y: 0.15 }, entropy: 0.30 },
+				{ token: "und", path: { x: 0.88, y: 0.49 }, entropy: 0.25 }
 			] }
 		] : [
+			{ atStep: 0, alternatives: [
+				{ token: "city", path: { x: 0.20, y: 0.22 }, entropy: 0.60 },
+				{ token: "government", path: { x: 0.20, y: 0.62 }, entropy: 0.55 }
+			] },
+			{ atStep: 1, alternatives: [
+				{ token: "city", path: { x: 0.32, y: 0.20 }, entropy: 0.50 },
+				{ token: "was", path: { x: 0.32, y: 0.58 }, entropy: 0.45 }
+			] },
+			{ atStep: 2, alternatives: [
+				{ token: "Germany", path: { x: 0.45, y: 0.16 }, entropy: 0.55 },
+				{ token: "Italy", path: { x: 0.45, y: 0.54 }, entropy: 0.50 }
+			] },
 			{ atStep: 3, alternatives: [
-				{ token: "Germany", path: { x: 0.45, y: 0.55 }, entropy: 0.55 },
-				{ token: "Japan", path: { x: 0.45, y: 0.22 }, entropy: 0.50 }
+				{ token: "was", path: { x: 0.58, y: 0.14 }, entropy: 0.45 },
+				{ token: "remains", path: { x: 0.58, y: 0.50 }, entropy: 0.40 }
+			] },
+			{ atStep: 4, alternatives: [
+				{ token: "Lyon", path: { x: 0.74, y: 0.13 }, entropy: 0.50 },
+				{ token: "Marseille", path: { x: 0.74, y: 0.48 }, entropy: 0.45 }
 			] },
 			{ atStep: 5, alternatives: [
-				{ token: "the", path: { x: 0.74, y: 0.40 }, entropy: 0.25 }
+				{ token: ",", path: { x: 0.88, y: 0.15 }, entropy: 0.30 },
+				{ token: "and", path: { x: 0.88, y: 0.49 }, entropy: 0.25 }
 			] }
 		];
+		function isoAltLabel(token) {
+			if (token === ",") return DE ? "Komma" : "comma";
+			if (token === ".") return DE ? "Punkt" : "full stop";
+			return token;
+		}
 		function drawIso(ctx, w, h) {
 			var c = TM.colors();
 			var pad = 30;
@@ -1087,7 +1135,7 @@
 					ctx.font = "11px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
 					ctx.textAlign = "center";
 					ctx.fillStyle = c.gold;
-					ctx.fillText(alt.token, target.x, target.y - env - 6);
+					ctx.fillText(isoAltLabel(alt.token), target.x, target.y - env - 6);
 				});
 			});
 			if (step >= 1) {
@@ -1176,6 +1224,17 @@
 			if (isoNextEl) {
 				isoNextEl.textContent = nextWord;
 				isoNextEl.classList.toggle("is-end", isEnd);
+			}
+			if (isoAltEl) {
+				var branch = null;
+				for (var bi = 0; bi < isoBranches.length; bi++) {
+					if (isoBranches[bi].atStep === step) { branch = isoBranches[bi]; break; }
+				}
+				if (!isEnd && branch) {
+					isoAltEl.textContent = (DE ? "Auch möglich: " : "Also possible: ") + branch.alternatives.map(function (a) { return isoAltLabel(a.token); }).join(", ");
+				} else {
+					isoAltEl.textContent = "";
+				}
 			}
 			if (isoTempOut) isoTempOut.textContent = isoTemp.toFixed(2);
 			if (!isoMetaEl) return;

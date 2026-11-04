@@ -438,7 +438,7 @@
 							<p>
 								The slogan is <strong>“neurons that fire together, wire together.”</strong>
 								The <strong>SNARC</strong> (1951) was the first physical neural network. Then,
-								in 1958, Frank Rosenblatt introduced the <strong>perceptron</strong> (<a href="https://psycnet.apa.org/record/1959-09865-001" rel="noopener">Rosenblatt, 1958</a>): a system
+								in 1958, Frank Rosenblatt introduced the <em>perceptron</em> (<a href="https://psycnet.apa.org/record/1959-09865-001" rel="noopener">Rosenblatt, 1958</a>): a system
 								that adjusted its weights in response to errors. The Mark I Perceptron was
 								constructed between 1958 and 1960 and publicly demonstrated in 1960: a 20×20
 								grid of 400 photocells formed its retina, and electric motors turned the
@@ -942,7 +942,7 @@
 								There were winters: periods when the promises outran the results and the money
 								left. There were also quiet accumulations (the stored-program idea, the
 								transistor, the GPU, the dataset, the optimizer) without which the same
-								algorithm would be a curiosity. The transformer condensed a very long fuse.
+								algorithm would be a curiosity. The transformer bundled a very long prehistory.
 							</p>
 						</div>
 						<div class="keypoints">
@@ -954,11 +954,11 @@
 						<div class="myth-grid">
 							<div class="myth">
 								<b>Common misreading</b>
-								<span>“AI was invented in 2022.” The interface was new; the lineage is at least forty thousand years old.</span>
+								<span>“AI was invented in 2022.” The interface was new; the lineage begins with deliberately made stone tools about 3.3 million years ago.</span>
 							</div>
 							<div class="myth myth--ok">
 								<b>Better frame</b>
-								<span>“The transformer condensed a long fuse.” Counting, logic, feedback, learning, and hardware all had to be in place.</span>
+								<span>“The transformer bundled a long prehistory.” Counting, logic, feedback, learning, and hardware all had to be in place.</span>
 							</div>
 							<div class="myth">
 								<b>Common misreading</b>
@@ -968,13 +968,6 @@
 								<b>Better frame</b>
 								<span>“The winters were part of the learning curve.” Promise, disappointment, and quiet accumulation are how the field actually moves.</span>
 							</div>
-						</div>
-						<div class="prose">
-							<p>
-								For the material and human history the standard parade leaves out (the
-								labour, the mines, the women who wrote the first programs, the technicians who
-								wired the machines) the wider history continues beyond this page. That is the other half of this story.
-							</p>
 						</div>
 					</section>
 
@@ -1088,7 +1081,7 @@
 				name: "Antikythera",
 				era: "Antiquity · analog computation",
 				title: "Gears that model the sky",
-				text: "Recovered in 1901 from a shipwreck, the Antikythera mechanism is a hand-powered orrery with at least 30 meshing bronze gears. It predicted astronomical positions and eclipses decades in advance, and tracked the four-year cycle of the games. For over a millennium, no equally complex geared technology is known in the West. Computation also has roots in mechanical simulation.",
+				text: "Recovered in 1901 from a shipwreck, the Antikythera mechanism is a hand-powered model of the sky with at least 30 meshing bronze gears. It predicted astronomical positions and eclipses decades in advance, and tracked the four-year cycle of the Olympic Games. For over a millennium, no equally complex geared technology is known in the West. Computation also has roots in mechanical simulation.",
 				img: "../antikythera.jpg",
 				alt: "Fragments of the Antikythera mechanism",
 				cap: "Fragments of the Antikythera mechanism. Image: Therese Clutario, <a href='https://commons.wikimedia.org/wiki/File:Fragments_of_the_Antikythera_Mechanism.jpg' rel='noopener'>CC BY 2.0</a>."
