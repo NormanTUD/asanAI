@@ -54,10 +54,10 @@ const DemoRegistry = (() => {
                         onEnter: d => d.enter(),
                         onLeave: d => d.leave() },
 
-                { ref: () => typeof AttentionBandit !== 'undefined' ? AttentionBandit : null,
-                        slideTest: s => s && s.id === 'slide-attn-rl',
-                        onEnter: d => d.enter(),
-                        onLeave: d => d.leave() },
+                { ref: () => typeof Layer1Vector !== 'undefined' ? Layer1Vector : null,
+                        slideTest: s => s && s.id === 'slide-layer1-vector',
+                        onEnter: d => d.reset(),
+                        onLeave: d => d.reset() },
 
                 { ref: () => typeof JSpaceViz !== 'undefined' ? JSpaceViz : null,
                         slideTest: s => s.getAttribute('data-title') === 'J-Space',
@@ -348,6 +348,12 @@ const FragmentActions = {
 		const w = document.querySelector('#slide-attention-ffn-stapel .st-word[data-word="Haus"]');
 		if (w) w.classList.remove('is-chosen');
 	    },
+	},
+
+	// "Ein Vektor durch einen Layer": ein Schritt pro Pfeiltaste, weich getweened.
+	'layer1-vector': {
+	    forward: () => { if (window.Layer1Vector) window.Layer1Vector.next(); },
+	    backward: () => { if (window.Layer1Vector) window.Layer1Vector.prev(); },
 	},
 
 	// "Was sind Neuronale Netzwerk?" – 3-Szene manuell (Pfeiltaste weiter/rückwärts)

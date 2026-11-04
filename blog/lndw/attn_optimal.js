@@ -13,8 +13,6 @@
 	var GRID = '#e2e8f0';
 	var KEY_COLORS = [BLUE, GREEN, AMBER];
 
-	function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
-
 	function softmax(scores, tau) {
 		tau = tau || 1;
 		var mx = Math.max.apply(null, scores);
@@ -106,12 +104,13 @@
 		var TAU = 1.0;
 		var PSTAR = softmax(SCORES, TAU);
 		var N_WALKERS = 18;
-		var CHUNK = 6;
-		var MAX_CHUNKS = 18;
 		var walkers = [];
 		var mainIdx = 0;
-		var chunkCount = 0;
 		var finished = false;
+		var animating = false;
+		var animId = 0;
+		var fadeId = 0;
+		var walkerAlpha = 1;
 		var history = [];
 		var field = null;
 		var fieldKey = '';
@@ -123,19 +122,6 @@
 				if (p[i] > 1e-12) v += TAU * p[i] * Math.log(p[i]);
 			}
 			return v;
-		}
-
-		function descend(p) {
-			var g = [];
-			for (var i = 0; i < 3; i++) {
-				g.push(-SCORES[i] + TAU * (Math.log(Math.max(p[i], 1e-12)) + 1));
-			}
-			var np = [];
-			for (var j = 0; j < 3; j++) {
-				np.push(p[j] * Math.exp(-0.10 * g[j] / Math.max(TAU, 0.05)));
-			}
-			var z = np.reduce(function (a, b) { return a + b; }, 0) || 1;
-			return np.map(function (x) { return clamp(x / z, 1e-9, 1); });
 		}
 
 		function gapToStar(p) {
@@ -277,6 +263,8 @@
 				drawStar(ctx, starP[0], starP[1], 9, 3.8, 'rgba(245,158,11,0.18)', 'rgba(245,158,11,0.7)');
 			}
 
+			ctx.save();
+			ctx.globalAlpha = walkerAlpha;
 			for (var i = 0; i < walkers.length; i++) {
 				if (i === mainIdx) continue;
 				var wk = walkers[i];
@@ -316,6 +304,7 @@
 			ctx.strokeStyle = '#ffffff';
 			ctx.lineWidth = 2;
 			ctx.stroke();
+			ctx.restore();
 
 			var mainP = main.p;
 			setText('attn-simplex-J', energy(mainP).toFixed(3));
@@ -336,37 +325,84 @@
 						trail: w.trail.map(function (t) { return t.slice(); })
 					};
 				}),
-				chunkCount: chunkCount,
 				finished: finished
 			};
 		}
 
-		function advanceChunk() {
-			var maxGap = 0;
-			for (var k = 0; k < CHUNK; k++) {
-				maxGap = 0;
+		function cancelAnimations() {
+			if (animId) { cancelAnimationFrame(animId); animId = 0; }
+			if (fadeId) { cancelAnimationFrame(fadeId); fadeId = 0; }
+		}
+
+		// Nach der Ankunft am selben Punkt: die Wege/Marker weich ausblenden,
+		// damit am Ende nur p* stehen bleibt.
+		function fadeWalkers() {
+			var start = performance.now();
+			var DUR = 500;
+			walkerAlpha = 1;
+			function frame(now) {
+				var t = Math.min(1, (now - start) / DUR);
+				walkerAlpha = 1 - t;
+				draw();
+				if (t < 1) fadeId = requestAnimationFrame(frame); else fadeId = 0;
+			}
+			fadeId = requestAnimationFrame(frame);
+		}
+
+		function settle() {
+			walkers.forEach(function (wk) {
+				wk.p = PSTAR.slice();
+				wk.trail.push(PSTAR.slice());
+				if (wk.trail.length > 18) wk.trail.shift();
+			});
+			finished = true;
+			animating = false;
+			draw();
+			setTimeout(function () {
+				if (finished && !animating) fadeWalkers();
+			}, 150);
+		}
+
+		// Ein Klick: alle Punkte laufen weich zum selben Optimum.
+		function animateToStar() {
+			if (animating) return;
+			history.push(snapshot());
+			animating = true;
+			var from = walkers.map(function (w) { return w.p.slice(); });
+			var start = performance.now();
+			var DUR = 1100;
+			function frame(now) {
+				var t = Math.min(1, (now - start) / DUR);
+				var e = 1 - Math.pow(1 - t, 3);
 				for (var i = 0; i < walkers.length; i++) {
+					var a = from[i];
 					var wk = walkers[i];
-					wk.p = descend(wk.p);
+					wk.p = [
+						a[0] + (PSTAR[0] - a[0]) * e,
+						a[1] + (PSTAR[1] - a[1]) * e,
+						a[2] + (PSTAR[2] - a[2]) * e
+					];
 					wk.trail.push(wk.p.slice());
 					if (wk.trail.length > 18) wk.trail.shift();
-					var g = gapToStar(wk.p);
-					if (g > maxGap) maxGap = g;
+				}
+				draw();
+				if (t < 1) {
+					animId = requestAnimationFrame(frame);
+				} else {
+					animId = 0;
+					settle();
 				}
 			}
-			chunkCount++;
-			finished = maxGap < 0.0035 || chunkCount >= MAX_CHUNKS;
+			animId = requestAnimationFrame(frame);
 		}
 
 		function canGoNext() {
-			return isActive() && !finished && chunkCount < MAX_CHUNKS;
+			return isActive() && !finished;
 		}
 
 		function next() {
-			if (!canGoNext()) return;
-			history.push(snapshot());
-			advanceChunk();
-			draw();
+			if (!isActive() || finished || animating) return;
+			animateToStar();
 		}
 
 		function canGoPrev() {
@@ -378,28 +414,34 @@
 
 		function prev() {
 			if (!canGoPrev()) return;
+			cancelAnimations();
+			animating = false;
+			walkerAlpha = 1;
 			var snap = history.pop();
 			walkers = snap.walkers;
-			chunkCount = snap.chunkCount;
 			finished = snap.finished;
 			draw();
 		}
 
 		function reset() {
+			cancelAnimations();
 			history = [];
+			animating = false;
+			walkerAlpha = 1;
 			walkers = makeWalkers();
-			chunkCount = 0;
 			finished = false;
 			draw();
 		}
 
 		function finish() {
+			cancelAnimations();
 			walkers.forEach(function (wk) {
 				wk.p = PSTAR.slice();
 				wk.trail.push(PSTAR.slice());
 				if (wk.trail.length > 18) wk.trail.shift();
 			});
-			chunkCount = MAX_CHUNKS;
+			animating = false;
+			walkerAlpha = 0;
 			finished = true;
 			draw();
 		}

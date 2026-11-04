@@ -133,6 +133,18 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 .st-word.is-chosen .st-word-track { box-shadow: 0 0 0 3px #10b981; }
 .st-word.is-chosen .st-word-name::after { content: " ✓"; color: #059669; }
 
+/* "Ein Vektor durch Layer 1": Vektorbalken, die zwischen den Schritten tween */
+.l1v-wrap { margin: 12px auto 0; width: min(1050px, 100%); background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 10px 22px 8px; }
+.l1v-embed { display: flex; align-items: center; justify-content: center; min-height: 122px; font-size: 1.02em; overflow-x: auto; }
+.l1v-stagehead { display: flex; align-items: baseline; justify-content: center; gap: 14px; min-height: 2.1em; }
+.l1v-title { font-weight: 800; color: #1e293b; font-size: 1.05em; }
+.l1v-step { font-size: 0.8em; color: #94a3b8; }
+.l1v-formula-stage { position: relative; height: 205px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.l1v-formula-layer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0 12px; opacity: 0; transform: translateY(10px); transition: opacity 0.35s ease, transform 0.35s ease; }
+.l1v-formula-layer.in { opacity: 1; transform: none; }
+.l1v-formula-layer > .temml { max-width: 100%; overflow-x: auto; }
+.l1v-foot { display: flex; justify-content: center; gap: 8px; margin-top: 2px; font-size: 0.78em; color: #64748b; }
+
 /* Neuron-Intro-Animation (Slide "Was sind Neuronale Netzwerk?") */
 #nn-intro-anim {
 	position: relative;
