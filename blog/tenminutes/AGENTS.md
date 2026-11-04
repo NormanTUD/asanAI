@@ -92,6 +92,80 @@ it:
   `?lang=de`. `TM_FULL_LESSON_TITLES_DE` must cover every full-lesson slug used
   by `TM_FULL_LESSON_MAP`.
 
+## Bilingual demo content
+
+The static prose is only half of the translation. Every demo must be checked in
+both languages, including the strings its JavaScript builds at runtime.
+
+- **Static text** lives in `lang/de/<slug>.php` (`texts`, `attrs`, `blocks`).
+  **Runtime text** must be localised in the code that creates it.
+  - `assets/demos.js` has `DEMO_DE`; use it for demo data and messages.
+  - Page-local demos use `DE = TM.lang() === "de"` and a `DE ? ... : ...`
+    branch. Do not use `document.documentElement.lang` while the page script is
+    starting: `i18n.js` sets that attribute later.
+- **Localise demo data, not just labels.** Examples, candidate words, sentences,
+  captions, statuses, readouts, tooltips, aria-labels, canvas labels, axis text,
+  and branch alternatives all need an English and a German version. Keep proper
+  paper titles, code identifiers, and technical terms in English.
+- **Keep the dictionary key and the English source string in sync.** When you
+  edit an English string in HTML or JS, update its German key in the same edit.
+  A tag inside a text node splits it; either use a `blocks` entry for the whole
+  element (`innerHTML`) or keep tags out of the node. A silently unmatched key
+  falls back to English.
+- **Generated language must be grammatical.** For German, store the article,
+  gender, and relative pronoun with each noun (for example
+  `ein Drache, der`, `eine Prinzessin, die`, `ein Schloss, das`). Test every
+  reachable combination of noun, relative pronoun, modal, negator, action, and
+  punctuation, not one random path.
+- **Branching demos need real alternatives at every position.** An alternative
+  must be semantically or grammatically possible at that slot and must open a
+  different plausible path. Do not use placeholders, `?`, or branches that
+  cannot continue.
+- **Dynamic formulas** use Temml: set `data-tex`, remove
+  `data-tex-rendered`, then call `TM.typesetMath(el.parentNode)`.
+  `TM.typesetMath(root)` queries descendants, so the root element itself is
+  skipped. Every new display equation carries two levels of `\underbrace`.
+- **Canvas and SVG demos** must read colours from `TM.colors()` or palette
+  tokens, redraw on `tm:theme`, and cap oversized diagrams. A 3×3 logic or
+  convolution plot should not grow to the width of a full column.
+- **Bars and fills** must be block-level (`display: block`); an inline `<span>`
+  ignores the width assignment and the bar looks empty.
+
+## Paragraph layout
+
+`assets/site.css` is the single source of truth for text layout.
+
+- Long-form prose is justified with `hyphens: auto`; the last line stays left
+  (`text-align-last: left`). Do not justify headings, buttons, chips, or short
+  UI labels.
+- `.prose > p` has a clear `1.5em` bottom margin. Consecutive paragraphs in
+  other long-form containers get extra top spacing. Keep the visual break
+  obvious; do not collapse it back to browser defaults.
+- When adding a new text container, include it in the justification selector
+  group in `assets/site.css` instead of adding a one-off rule.
+
+## History content and imagery
+
+The compact history page is a summary of `../history.php`; read the parent and
+the primary source before rewriting it.
+
+- Do not assert a simplification the sources do not support. Name the
+  uncertainty (for example disputed dates, interpretations, or `not settled`)
+  and explain jargon before using it (`prior`, `frame problem`, `backprop`).
+- Keep wording in flow: each paragraph should follow from the previous one, not
+  read as a list of facts. Replace metaphors that imply inevitability or a
+  single cause (for example “fuse”) with a neutral description of the
+  accumulated developments.
+- A timeline node has `date`, `name`, `era`, `title`, `text`, `img`, `alt`, and
+  `cap`. Adding or removing a node requires updating the “turning points”
+  count in the section kicker and the demo title.
+- Every timeline image needs an `assets/image-credits.json` entry and a caption
+  with the same author, licence, and source link. Every static figure needs a
+  visible `<figcaption>` with a source link and a licence keyword.
+- Prefer Wikimedia Commons images with a verified licence. If the parent page
+  has an unlicensed image, do not copy the problem: find a licensed equivalent
+  or omit the image. Never invent a licence, author, or source.
+
 ## Colour palette
 
 These are the only accent colours. Do not introduce new accent hues.
@@ -370,6 +444,39 @@ needs a manifest entry and a caption with the same author, license, and source
 link. Static figures need a visible `<figcaption>` with a source link and a
 license keyword. Original diagrams are credited as `Ten Minutes` with a local
 source link and a CC BY-SA 4.0 licence.
+
+## Demo audit (run for every page)
+
+A page is not finished when it renders. For every page with `data-demo` or an
+inline demo:
+
+1. Run `python3 blog/tools/check_all.py --fast` and
+   `python3 blog/tests/tenminutes_image_credits_test.py`.
+2. Open the page with `?lang=de` and `?lang=en` at desktop width and at a narrow
+   mobile width (about 390 px). Check:
+   - no `pageerror` or console error;
+   - `document.querySelectorAll('[data-tex]:not([data-tex-rendered="1"])').length === 0`;
+   - `document.documentElement.scrollWidth - document.documentElement.clientWidth <= 1`;
+   - every visible `[data-demo]` has initialised (required canvases/lists are non-empty);
+   - computed prose style is `text-align: justify` and `text-align-last: left`.
+3. Exercise every control once, not just the initial state: chips, sliders,
+   presets, sample/step buttons, timeline nodes, and kernel/objective switches.
+   Check that labels, readouts, captions, status text, `aria-label`s, and canvas
+   text switch language with the page.
+4. For demos that generate text from slots, enumerate all reachable combinations
+   and assert grammar and article/relative-pronoun agreement for German.
+5. For branch/tunnel demos, assert that every non-final position offers at
+   least one meaningful alternative and that no branch is dead or nonsensical.
+6. For bar/fill demos, assert that at least one fill has a computed width above
+   zero. For formula demos, assert that changing a control changes `data-tex`
+   and that a rendered `<math>` exists afterwards.
+7. Search the German page for untranslated English prose. Technical terms,
+   code identifiers, and proper paper titles are allowed; English sentences in
+   demo data, statuses, captions, or notes are not.
+
+Possible automated browser helper: use Playwright, wait for `load`, run the
+checks above, then click the demo controls and repeat. The same audit must run
+for both languages; a page that only looks right in English is not finished.
 
 ## Validation
 
