@@ -58585,11 +58585,15 @@
   "city": "Pittsburgh, USA",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "khattab2020colbert"
+   "khattab2020colbert",
+   "takehi2026weightspace"
   ],
   "cited_in": [
+   "alignment",
+   "mechanistic_interpretability",
+   "unexpected_capabilities",
    "vectorsearch"
   ]
  },
@@ -81840,6 +81844,114 @@
   ],
   "cited_in": [
    "history"
+  ]
+ },
+ {
+  "name": "Rikiya Takehi",
+  "canon": "Rikiya Takehi",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "takehi2026weightspace"
+  ],
+  "cited_in": [
+   "alignment",
+   "mechanistic_interpretability",
+   "unexpected_capabilities"
+  ]
+ },
+ {
+  "name": "Jayden Teoh",
+  "canon": "Jayden Teoh",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "takehi2026weightspace"
+  ],
+  "cited_in": [
+   "alignment",
+   "mechanistic_interpretability",
+   "unexpected_capabilities"
+  ]
+ },
+ {
+  "name": "Alex Zhang",
+  "canon": "Alex Zhang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "takehi2026weightspace"
+  ],
+  "cited_in": [
+   "alignment",
+   "mechanistic_interpretability",
+   "unexpected_capabilities"
+  ]
+ },
+ {
+  "name": "Sean Goedecke",
+  "canon": "Sean Goedecke",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "goedecke2026weightspace"
+  ],
+  "cited_in": [
+   "unexpected_capabilities"
+  ]
+ },
+ {
+  "name": "Matthew Honnibal",
+  "canon": "Matthew Honnibal",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "honnibal2026weightspace"
+  ],
+  "cited_in": [
+   "unexpected_capabilities"
+  ]
+ },
+ {
+  "name": "Chandan Singh",
+  "canon": "Chandan Singh",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "singh2026weightspace"
+  ],
+  "cited_in": [
+   "unexpected_capabilities"
   ]
  },
  {

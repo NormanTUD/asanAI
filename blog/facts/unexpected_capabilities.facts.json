@@ -455,6 +455,22 @@
       "confidence": "stated"
     },
     {
+      "id": "uc-weightspace-qwen-params",
+      "subject": "qwen3.5-0.8b",
+      "predicate": "parameters",
+      "value": 800000000,
+      "unit": "count",
+      "qualifiers": {
+        "variant": "thinking on"
+      },
+      "quote": "The headline experiment edited Qwen3.5-0.8B.",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
       "id": "uc-weightspace-qwen-edit",
       "subject": "qwen3.5-0.8b-weightspace-edit",
       "predicate": "edited_fraction",

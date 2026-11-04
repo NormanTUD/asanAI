@@ -9144,6 +9144,30 @@
    "year": "2023",
    "url": "https://arxiv.org/abs/2303.12712"
   },
+  "takehi2026weightspace": {
+   "title": "Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights",
+   "author": "Rikiya Takehi, Jayden Teoh, Alex Zhang, Omar Khattab",
+   "year": "2026",
+   "url": "https://rikiyat.github.io/blog/weight-space-programming/"
+  },
+  "goedecke2026weightspace": {
+   "title": "LLMs are not superhuman at reading and writing neural network weights",
+   "author": "Sean Goedecke",
+   "year": "2026",
+   "url": "https://www.seangoedecke.com/llms-are-not-superhuman-at-reading-and-writing-neural-network-weights/"
+  },
+  "honnibal2026weightspace": {
+   "title": "The 'Astra can read and write weights to improve Qwen' post is misleading",
+   "author": "Matthew Honnibal",
+   "year": "2026",
+   "url": "https://honnibal.dev/blog/astra-read-write-misleading"
+  },
+  "singh2026weightspace": {
+   "title": "Weight-Space Programming from scratch on simple tasks",
+   "author": "Chandan Singh",
+   "year": "2026",
+   "url": "https://csinva.io/weight-space-programming-autoresearch/analyze/toy_examples/report.html"
+  },
   "nye2021scratchpad": {
    "title": "Show Your Work: Scratchpads for Intermediate Computation with Language Models",
    "author": "Maxwell Nye, Anders Johan Andreassen, Guy Gur-Ari, Henryk Michalewski, Jacob Austin, David Bieber, David Dohan, Aitor Lewkowycz, Maarten Bosma, David Luan, Charles Sutton, Augustus Odena",
@@ -24763,6 +24787,11 @@
   "mech_interp_alignment": [
    "alignment"
   ],
+  "takehi2026weightspace": [
+   "alignment",
+   "mechanistic_interpretability",
+   "unexpected_capabilities"
+  ],
   "cosmic_web_image": [
    "atlas",
    "foam_of_meaning"
@@ -27865,6 +27894,15 @@
    "unexpected_capabilities"
   ],
   "huang2022selfimprove": [
+   "unexpected_capabilities"
+  ],
+  "goedecke2026weightspace": [
+   "unexpected_capabilities"
+  ],
+  "honnibal2026weightspace": [
+   "unexpected_capabilities"
+  ],
+  "singh2026weightspace": [
    "unexpected_capabilities"
   ],
   "lin2021truthful": [
@@ -35293,11 +35331,12 @@
    ]
   },
   "Omar Khattab": {
-   "count": 1,
+   "count": 2,
    "minyear": 2020,
-   "maxyear": 2020,
+   "maxyear": 2026,
    "keys": [
-    "khattab2020colbert"
+    "khattab2020colbert",
+    "takehi2026weightspace"
    ]
   },
   "Matei Zaharia": {
@@ -53383,6 +53422,54 @@
    "maxyear": 2023,
    "keys": [
     "bubeck2023sparks"
+   ]
+  },
+  "Rikiya Takehi": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "takehi2026weightspace"
+   ]
+  },
+  "Jayden Teoh": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "takehi2026weightspace"
+   ]
+  },
+  "Alex Zhang": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "takehi2026weightspace"
+   ]
+  },
+  "Sean Goedecke": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "goedecke2026weightspace"
+   ]
+  },
+  "Matthew Honnibal": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "honnibal2026weightspace"
+   ]
+  },
+  "Chandan Singh": {
+   "count": 1,
+   "minyear": 2026,
+   "maxyear": 2026,
+   "keys": [
+    "singh2026weightspace"
    ]
   },
   "Anders Johan Andreassen": {

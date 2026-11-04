@@ -1,10 +1,10 @@
 # Deep fact audit
 
 - lessons: 99
-- claims: 7316
-- statements: 17083
-- relations: 51882
-- uncovered years: 49
+- claims: 7328
+- statements: 17111
+- relations: 51944
+- uncovered years: 48
 - uncovered quantities: 6
 - uncited specific claims: 307
 - citation keys not found in lesson: 0
@@ -23,7 +23,7 @@
 | ai_existential_risk | 31 | 61 | 200 | 0 | 0 |
 | ai_for_science | 31 | 22 | 83 | 0 | 0 |
 | algorithms | 42 | 244 | 718 | 0 | 0 |
-| alignment | 31 | 26 | 98 | 0 | 0 |
+| alignment | 31 | 28 | 103 | 0 | 0 |
 | alternative_architectures | 28 | 35 | 151 | 0 | 1 |
 | atlas | 17 | 6 | 44 | 0 | 0 |
 | attentionlab | 48 | 265 | 721 | 3 | 0 |
@@ -69,7 +69,7 @@
 | math_ii | 41 | 138 | 514 | 0 | 0 |
 | math_iii | 53 | 242 | 799 | 0 | 0 |
 | math_iv | 34 | 113 | 426 | 0 | 0 |
-| mechanistic_interpretability | 32 | 457 | 1263 | 0 | 0 |
+| mechanistic_interpretability | 33 | 460 | 1270 | 0 | 0 |
 | metaphysics_of_ai | 18 | 65 | 143 | 0 | 0 |
 | minimalneuron | 25 | 82 | 245 | 0 | 0 |
 | mirror_in_machine | 27 | 54 | 183 | 0 | 0 |
@@ -108,7 +108,7 @@
 | trainingdynamics | 23 | 29 | 140 | 0 | 0 |
 | traininglab | 15 | 7 | 67 | 0 | 0 |
 | transformer | 32 | 260 | 837 | 0 | 0 |
-| unexpected_capabilities | 29 | 251 | 528 | 5 | 1 |
+| unexpected_capabilities | 40 | 274 | 578 | 4 | 1 |
 | untold_history_i | 520 | 458 | 1503 | 3 | 0 |
 | untold_history_ii | 648 | 562 | 1853 | 0 | 0 |
 | untold_history_iii | 1639 | 922 | 3559 | 1 | 0 |
@@ -153,7 +153,7 @@
 - tokenizerlab.php: 1235
 - tokenizerlab.php: 2024
 - tokenizerlab.php: 2025
-- … and 14 more
+- … and 13 more
 
 ## Uncovered quantities
 
