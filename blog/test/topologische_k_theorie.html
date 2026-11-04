@@ -689,27 +689,25 @@
   (() => {
     const c = document.getElementById("chernCanvas");
     if (!c) return;
-    const rIn = document.getElementById("rankIn2") || null;
-    const rankIn = document.getElementById("chRank") ? document.getElementById("rankIn") : null;
-    const c1In = document.getElementById("chC1") ? document.getElementById("chC1") : null;
-    // dedicated controls live in the section? use the rank slider from section 02 and a local c1 slider
-    // create a small control programmatically if absent
     const side = c.closest(".stage").querySelector(".stage-side");
     let c1Range = document.getElementById("chernC1");
     if (!c1Range) {
       const panel = document.createElement("div");
       panel.className = "panel controls";
-      panel.innerHTML = '<div class="control"><label for="chernC1">Chern-Zahl c₁ <output id="chernC1Out">0</output></label><input type="range" id="chernC1" min="-3" max="3" value="0" step="1"></div><p class="faint" style="font-size:.8rem;margin:0">Höhere Chern-Klassen verschwinden auf S². Deshalb ist ch(E) = r + c₁.</p>';
+      panel.innerHTML = '<div class="control"><label for="chernRank">Rang <output id="chernRankOut">1</output></label><input type="range" id="chernRank" min="1" max="3" value="1" step="1"></div><div class="control"><label for="chernC1">Chern-Zahl c₁ <output id="chernC1Out">0</output></label><input type="range" id="chernC1" min="-3" max="3" value="0" step="1"></div><p class="faint" style="font-size:.8rem;margin:0">Höhere Chern-Klassen verschwinden auf S². Deshalb ist ch(E) = r + c₁.</p>';
       side.appendChild(panel);
       c1Range = document.getElementById("chernC1");
     }
+    const rankRange = document.getElementById("chernRank");
+    const rankOut = document.getElementById("chernRankOut");
     const c1Out = document.getElementById("chernC1Out");
     const ch0 = document.getElementById("ch0"), ch1 = document.getElementById("ch1");
     const chRank = document.getElementById("chRank"), chC1 = document.getElementById("chC1");
     const plotEl = document.getElementById("chPlot");
     function update() {
-      const rank = +document.getElementById("rankIn").value;
+      const rank = +rankRange.value;
       const c1 = +c1Range.value;
+      rankOut.textContent = rank;
       c1Out.textContent = c1;
       ch0.textContent = rank; ch1.textContent = c1;
       chRank.textContent = rank; chC1.textContent = c1;
@@ -727,7 +725,7 @@
       });
     }
     c1Range.addEventListener("input", update);
-    document.getElementById("rankIn").addEventListener("input", update);
+    rankRange.addEventListener("input", update);
     update();
 
     VM.loop(c, () => {
@@ -736,7 +734,7 @@
       if (!w || !h) return;
       const cx = w * 0.5, cy = h * 0.52;
       const R = Math.min(w, h) * 0.28;
-      const rank = +document.getElementById("rankIn").value;
+      const rank = +rankRange.value;
       const c1 = +c1Range.value;
       const rot = 0.4;
       // equator circle in perspective
@@ -826,7 +824,7 @@
       ctx.lineWidth = 2.2;
       ctx.shadowColor = "rgba(110,168,255,.8)"; ctx.shadowBlur = 16; ctx.stroke(); ctx.shadowBlur = 0;
       // moving point
-      const idx = Math.floor((t * 0.8) % 1 * 399);
+      const idx = Math.floor((t * 80) % pts.length);
       const p = pts[idx];
       ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, TAU); ctx.fillStyle = "#fff"; ctx.shadowColor = "#fff"; ctx.shadowBlur = 16; ctx.fill(); ctx.shadowBlur = 0;
       // ker / coker boxes

@@ -37,7 +37,7 @@ const VM = (() => {
     function frame(now) {
       raf = requestAnimationFrame(frame);
       if (!visible) return;
-      const dt = Math.min(0.05, (now - last) / 1000);
+      const dt = Math.max(0, Math.min(0.05, (now - last) / 1000));
       last = now;
       t += reduce ? 0 : dt;
       draw(t, dt);

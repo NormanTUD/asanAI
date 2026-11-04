@@ -945,117 +945,226 @@
     });
   })();
 
-  /* ---------- Hopf fibration (three.js) ---------- */
+  /* ---------- Hopf fibration: WebGL with a 2D fallback ---------- */
   (() => {
     const stage = document.getElementById("hopfStage");
     const fallback = document.getElementById("hopfFallback");
-    if (!stage || !window.THREE) { if (fallback) fallback.style.display = "grid"; return; }
-    let renderer;
-    try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-    } catch (e) {
-      if (fallback) fallback.style.display = "grid";
-      return;
-    }
-    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
-    renderer.setClearColor(0x000000, 0);
-    stage.appendChild(renderer.domElement);
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.set(0, 0, 4.6);
-    const group = new THREE.Group();
-    scene.add(group);
+    if (!stage) return;
     const nIn = document.getElementById("hopfN"), nOut = document.getElementById("hopfNOut"), countEl = document.getElementById("hopfCount");
     const spinB = document.getElementById("hopfSpin"), resetB = document.getElementById("hopfReset");
     let spin = true, targetRotX = 0.25, targetRotY = 0.3, curRotX = 0.25, curRotY = 0.3;
     let dragging = false, lastX = 0, lastY = 0;
+    let onBuild = null;
 
-    function clearGroup() {
-      while (group.children.length) {
-        const obj = group.children.pop();
-        if (obj.geometry) obj.geometry.dispose();
-        if (obj.material) obj.material.dispose();
-      }
+    function webglOK() {
+      try {
+        const probe = document.createElement("canvas");
+        return !!(window.WebGLRenderingContext && (probe.getContext("webgl") || probe.getContext("experimental-webgl")));
+      } catch (e) { return false; }
     }
 
-    function build(n) {
-      clearGroup();
-      let maxR = 0;
-      const fibers = [];
-      for (let k = 0; k < n; k++) {
-        const alpha = Math.PI * (0.06 + 0.88 * (k + 0.5) / n);
-        const phi = k * 2.399963229728653;
-        const pts = [];
-        for (let i = 0; i <= 160; i++) {
-          const theta = i / 160 * TAU;
-          const aa = alpha / 2;
-          const x0 = Math.cos(aa) * Math.cos(theta);
-          const x1 = Math.cos(aa) * Math.sin(theta);
-          const x2 = Math.sin(aa) * Math.cos(theta + phi);
-          const x3 = Math.sin(aa) * Math.sin(theta + phi);
-          const s = 1 / (1.55 - x0);
-          const v = new THREE.Vector3(x1 * s, x2 * s, x3 * s);
-          maxR = Math.max(maxR, v.length());
-          pts.push(v);
+    function attachPointer(el) {
+      VM.pointer(el, {
+        down: (p) => { dragging = true; lastX = p.x; lastY = p.y; },
+        move: (p) => {
+          if (!dragging) return;
+          targetRotY += (p.x - lastX) * 0.008;
+          targetRotX += (p.y - lastY) * 0.006;
+          targetRotX = VM.clamp(targetRotX, -1.2, 1.2);
+          lastX = p.x; lastY = p.y;
+        },
+        up: () => { dragging = false; }
+      });
+    }
+
+    function wireControls(build) {
+      nIn.addEventListener("input", () => {
+        nOut.textContent = nIn.value;
+        countEl.textContent = nIn.value;
+        build(+nIn.value);
+      });
+      spinB.addEventListener("click", () => { spin = !spin; spinB.classList.toggle("active", spin); });
+      resetB.addEventListener("click", () => { targetRotX = 0.25; targetRotY = 0.3; });
+      nOut.textContent = nIn.value;
+      countEl.textContent = nIn.value;
+      build(+nIn.value);
+    }
+
+    function hopfPoint(alpha, phi, theta) {
+      const aa = alpha / 2;
+      const x0 = Math.cos(aa) * Math.cos(theta);
+      const x1 = Math.cos(aa) * Math.sin(theta);
+      const x2 = Math.sin(aa) * Math.cos(theta + phi);
+      const x3 = Math.sin(aa) * Math.sin(theta + phi);
+      const s = 1 / (1.55 - x0);
+      return { x: x1 * s, y: x2 * s, z: x3 * s };
+    }
+
+    function start2D() {
+      if (fallback) fallback.style.display = "none";
+      const canvas = document.createElement("canvas");
+      canvas.setAttribute("aria-label", "Hopf-Faserung als 2D-Projektion");
+      canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;touch-action:none;";
+      stage.appendChild(canvas);
+      const note = document.createElement("div");
+      note.className = "hopf-badge";
+      note.style.left = "auto";
+      note.style.right = "1rem";
+      note.textContent = "2D-Projektion";
+      stage.appendChild(note);
+
+      let fibers = [], scale = 1;
+      function build(n) {
+        fibers = [];
+        let maxR = 0;
+        for (let k = 0; k < n; k++) {
+          const alpha = Math.PI * (0.06 + 0.88 * (k + 0.5) / n);
+          const phi = k * 2.399963229728653;
+          const pts = [];
+          for (let i = 0; i <= 150; i++) {
+            const p = hopfPoint(alpha, phi, i / 150 * TAU);
+            maxR = Math.max(maxR, Math.hypot(p.x, p.y, p.z));
+            pts.push(p);
+          }
+          fibers.push({ pts, k });
         }
-        fibers.push({ pts, k });
+        scale = maxR > 0 ? 1.55 / maxR : 1;
       }
-      const scale = maxR > 0 ? 1.55 / maxR : 1;
-      for (const f of fibers) {
-        const geo = new THREE.BufferGeometry().setFromPoints(f.pts);
-        const hue = 0.48 + 0.38 * (f.k / Math.max(1, n - 1));
-        const col = new THREE.Color().setHSL(hue, 0.78, 0.62);
-        const mat = new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: 0.62, blending: THREE.AdditiveBlending });
-        const line = new THREE.Line(geo, mat);
-        line.scale.setScalar(scale);
-        group.add(line);
-      }
-      // faint core circle
-      const corePts = [];
-      const coreR = 1.12 * scale;
-      for (let i = 0; i <= 120; i++) {
-        const a = i / 120 * TAU;
-        corePts.push(new THREE.Vector3(Math.cos(a) * coreR, Math.sin(a) * coreR, 0));
-      }
-      const coreGeo = new THREE.BufferGeometry().setFromPoints(corePts);
-      const coreMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.14 });
-      group.add(new THREE.Line(coreGeo, coreMat));
-      countEl.textContent = n;
+      build(+nIn.value);
+      wireControls(build);
+      attachPointer(canvas);
+
+      VM.loop(canvas, (t, dt) => {
+        const { ctx, w, h } = VM.fit(canvas);
+        ctx.clearRect(0, 0, w, h);
+        if (!w || !h) return;
+        curRotX += (targetRotX - curRotX) * Math.min(1, dt * 6);
+        curRotY += (targetRotY - curRotY) * Math.min(1, dt * 6);
+        const ry = curRotY + (spin ? t * 0.18 : 0);
+        const cx = w * 0.5, cy = h * 0.5;
+        const R = Math.min(w, h) * 0.29;
+        const cyaw = Math.cos(ry), syaw = Math.sin(ry);
+        const cp = Math.cos(curRotX), sp = Math.sin(curRotX);
+        const project = (p) => {
+          let x1 = p.x * cyaw - p.z * syaw;
+          let z1 = p.x * syaw + p.z * cyaw;
+          let y1 = p.y * cp - z1 * sp;
+          let z2 = p.y * sp + z1 * cp;
+          const persp = 4.2 / (4.2 + z2 * 0.9);
+          return { x: cx + x1 * scale * R * persp, y: cy + y1 * scale * R * persp, z: z2 };
+        };
+        ctx.globalCompositeOperation = "lighter";
+        for (const f of fibers) {
+          const hue = 0.48 + 0.38 * (f.k / Math.max(1, fibers.length - 1));
+          ctx.beginPath();
+          for (let i = 0; i < f.pts.length; i++) {
+            const p = project(f.pts[i]);
+            i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+          }
+          ctx.strokeStyle = `hsla(${hue * 360}, 78%, 64%, .55)`;
+          ctx.lineWidth = 1.15;
+          ctx.stroke();
+        }
+        // core circle
+        ctx.beginPath();
+        for (let i = 0; i <= 120; i++) {
+          const a = i / 120 * TAU;
+          const p = project({ x: Math.cos(a) * 1.05, y: Math.sin(a) * 1.05, z: 0 });
+          i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+        }
+        ctx.strokeStyle = "rgba(255,255,255,.16)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.globalCompositeOperation = "source-over";
+        // caption
+        ctx.fillStyle = "rgba(255,255,255,.45)";
+        ctx.font = "10px " + getComputedStyle(document.body).fontFamily;
+        ctx.textAlign = "center";
+        ctx.fillText("S³ → S²  ·  jede Linie ist eine Faser S¹", cx, h - 18);
+        ctx.textAlign = "left";
+      });
     }
 
-    function resize() {
-      const r = stage.getBoundingClientRect();
-      const w = Math.max(1, r.width), h = Math.max(1, r.height);
-      renderer.setSize(w, h, false);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-    }
-    if ("ResizeObserver" in window) new ResizeObserver(resize).observe(stage);
-    addEventListener("resize", resize);
-    resize();
-    build(+nIn.value);
-    nIn.addEventListener("input", () => { nOut.textContent = nIn.value; build(+nIn.value); });
-    spinB.addEventListener("click", () => { spin = !spin; spinB.classList.toggle("active", spin); });
-    resetB.addEventListener("click", () => { targetRotX = 0.25; targetRotY = 0.3; });
-    VM.pointer(renderer.domElement, {
-      down: (p) => { dragging = true; lastX = p.x; lastY = p.y; },
-      move: (p) => {
-        if (!dragging) return;
-        targetRotY += (p.x - lastX) * 0.008;
-        targetRotX += (p.y - lastY) * 0.006;
-        targetRotX = VM.clamp(targetRotX, -1.2, 1.2);
-        lastX = p.x; lastY = p.y;
-      },
-      up: () => { dragging = false; }
-    });
+    function start3D() {
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+      if (!renderer || !renderer.getContext()) throw new Error("no webgl context");
+      renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+      renderer.setClearColor(0x000000, 0);
+      stage.appendChild(renderer.domElement);
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+      camera.position.set(0, 0, 4.6);
+      const group = new THREE.Group();
+      scene.add(group);
+      if (fallback) fallback.style.display = "none";
 
-    VM.loop(renderer.domElement, (t, dt) => {
-      curRotX += (targetRotX - curRotX) * Math.min(1, dt * 6);
-      curRotY += (targetRotY - curRotY) * Math.min(1, dt * 6);
-      group.rotation.x = curRotX;
-      group.rotation.y = curRotY + (spin ? t * 0.18 : 0);
-      renderer.render(scene, camera);
-    });
+      function clearGroup() {
+        while (group.children.length) {
+          const obj = group.children.pop();
+          if (obj.geometry) obj.geometry.dispose();
+          if (obj.material) obj.material.dispose();
+        }
+      }
+      function build(n) {
+        clearGroup();
+        let maxR = 0;
+        const fibers = [];
+        for (let k = 0; k < n; k++) {
+          const alpha = Math.PI * (0.06 + 0.88 * (k + 0.5) / n);
+          const phi = k * 2.399963229728653;
+          const pts = [];
+          for (let i = 0; i <= 160; i++) {
+            const p = hopfPoint(alpha, phi, i / 160 * TAU);
+            const v = new THREE.Vector3(p.x, p.y, p.z);
+            maxR = Math.max(maxR, v.length());
+            pts.push(v);
+          }
+          fibers.push({ pts, k });
+        }
+        const scale = maxR > 0 ? 1.55 / maxR : 1;
+        for (const f of fibers) {
+          const geo = new THREE.BufferGeometry().setFromPoints(f.pts);
+          const hue = 0.48 + 0.38 * (f.k / Math.max(1, n - 1));
+          const col = new THREE.Color().setHSL(hue, 0.78, 0.62);
+          const mat = new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: 0.62, blending: THREE.AdditiveBlending });
+          const line = new THREE.Line(geo, mat);
+          line.scale.setScalar(scale);
+          group.add(line);
+        }
+        const corePts = [];
+        const coreR = 1.12 * scale;
+        for (let i = 0; i <= 120; i++) {
+          const a = i / 120 * TAU;
+          corePts.push(new THREE.Vector3(Math.cos(a) * coreR, Math.sin(a) * coreR, 0));
+        }
+        const coreGeo = new THREE.BufferGeometry().setFromPoints(corePts);
+        const coreMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.14 });
+        group.add(new THREE.Line(coreGeo, coreMat));
+      }
+      function resize() {
+        const r = stage.getBoundingClientRect();
+        const w = Math.max(1, r.width), h = Math.max(1, r.height);
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      }
+      if ("ResizeObserver" in window) new ResizeObserver(resize).observe(stage);
+      addEventListener("resize", resize);
+      resize();
+      wireControls(build);
+      attachPointer(renderer.domElement);
+      VM.loop(renderer.domElement, (t, dt) => {
+        curRotX += (targetRotX - curRotX) * Math.min(1, dt * 6);
+        curRotY += (targetRotY - curRotY) * Math.min(1, dt * 6);
+        group.rotation.x = curRotX;
+        group.rotation.y = curRotY + (spin ? t * 0.18 : 0);
+        renderer.render(scene, camera);
+      });
+    }
+
+    if (!window.THREE || !webglOK()) { start2D(); return; }
+    try { start3D(); }
+    catch (e) { start2D(); }
   })();
 
   /* ---------- cup product ---------- */

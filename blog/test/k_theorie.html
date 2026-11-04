@@ -617,14 +617,16 @@
     }
     gA.addEventListener("input", update);
     gB.addEventListener("input", update);
-    bGroup.addEventListener("click", () => {
-      group = true; bGroup.classList.add("primary"); bMonoid.classList.remove("active");
-      bMonoid.classList.remove("primary"); update();
-    });
-    bMonoid.addEventListener("click", () => {
-      group = false; bMonoid.classList.add("active"); bGroup.classList.remove("primary");
-      bGroup.classList.add("active"); update();
-    });
+    function setGroupMode(g) {
+      group = g;
+      bGroup.classList.toggle("primary", g);
+      bGroup.classList.toggle("active", g);
+      bMonoid.classList.toggle("primary", !g);
+      bMonoid.classList.toggle("active", !g);
+      update();
+    }
+    bGroup.addEventListener("click", () => setGroupMode(true));
+    bMonoid.addEventListener("click", () => setGroupMode(false));
     update();
     addEventListener("resize", draw);
   })();
@@ -643,9 +645,19 @@
       move: (p) => { if (dragging) { rot += (p.x - dragX) * 0.008; dragX = p.x; } },
       up: () => { dragging = false; }
     });
-    twistIn.addEventListener("input", () => { targetTwist = (+twistIn.value) * Math.PI / 180; });
+    function updateBundleText() {
+      const deg = Math.round(targetTwist * 180 / Math.PI);
+      twistOut.textContent = deg + "°";
+      const m = deg > 90;
+      triv.textContent = m ? "nein" : "ja";
+      triv.className = "val " + (m ? "warn" : "good");
+      orient.textContent = m ? "nein" : "ja";
+      orient.className = "val " + (m ? "warn" : "good");
+    }
+    twistIn.addEventListener("input", () => { targetTwist = (+twistIn.value) * Math.PI / 180; updateBundleText(); });
     fiberBtn.addEventListener("click", () => { fibers = !fibers; fiberBtn.classList.toggle("active", fibers); });
     spinBtn.addEventListener("click", () => { spin = !spin; spinBtn.classList.toggle("active", spin); });
+    updateBundleText();
 
     VM.loop(c, (t, dt) => {
       const { ctx, w, h } = VM.fit(c);
@@ -726,16 +738,6 @@
       ctx.textAlign = "left";
     });
 
-    setInterval(() => {
-      const deg = Math.round(targetTwist * 180 / Math.PI);
-      twistOut.textContent = deg + "°";
-      const m = deg > 90;
-      triv.textContent = m ? "nein" : "ja";
-      triv.className = "val " + (m ? "warn" : "good");
-      orient.textContent = m ? "nein" : "ja";
-      orient.className = "val " + (m ? "warn" : "good");
-      orient.style.fontSize = "1.3rem";
-    }, 80);
   })();
 
   /* ---------- K0(S^2) ---------- */
