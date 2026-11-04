@@ -76,7 +76,6 @@ return [
 		'The model can point. The world has to confirm.' => 'Das Modell kann zeigen. Die Welt muss bestätigen.',
 		'Prediction becomes discovery only when the proposal survives a check: an experiment, a synthesis, a proof, or a measurement.' => 'Vorhersage wird nur dann Entdeckung, wenn der Vorschlag eine Prüfung überlebt: ein Experiment, eine Synthese, einen Beweis oder eine Messung.',
 		'Step back to' => 'Zurück zu',
-		'the whole arc' => 'dem ganzen Bogen',
 	],
 	'attrs' => [
 		'A toy protein contact map and per-residue confidence' => 'Eine Spielzeug-Proteinkontaktkarte und Konfidenz pro Rest',

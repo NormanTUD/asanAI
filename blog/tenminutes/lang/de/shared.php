@@ -11,7 +11,6 @@ return [
 		'Progress saved locally' => 'Fortschritt lokal gespeichert',
 		'Home' => 'Startseite',
 		'Library' => 'Bibliothek',
-		'The whole arc' => 'Der ganze Bogen',
 		'Minutes' => 'Minuten',
 		'Footer' => 'Fußzeile',
 		'Start with Day 1' => 'Mit Tag 1 beginnen',

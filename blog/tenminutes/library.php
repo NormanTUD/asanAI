@@ -22,8 +22,8 @@
 						A green card opens a ten-minute lesson.
 						Filter by title, topic, or tag, or browse part by part. The shelf is ordered by part,
 						not alphabetically, and “10′” is a target, not a timer: nothing here counts the minutes.
-						The orientation and agents pages sit outside the 31-door calendar but are included here;
-						the whole-arc synthesis is the map, linked in the footer. The shelf spans the whole arc, from
+						The orientation and agents pages sit outside the 31-door calendar but are included here.
+						The shelf spans the course, from
 						<a href="https://archive.org/details/bstj27-3-379" rel="noopener">Shannon’s information theory</a> (1948)
 						to the <a href="https://arxiv.org/abs/1706.03762" rel="noopener">transformer</a> (Vaswani et al., 2017) and beyond;
 						the compact lessons link their primary sources inline.
@@ -276,7 +276,6 @@
 			<nav aria-label="Footer">
 				<a href="./">Home</a>
 				<a href="advent">Calendar</a>
-				<a href="whole">The whole arc</a>
 			</nav>
 		</div>
 	</footer>

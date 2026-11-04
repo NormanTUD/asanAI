@@ -6,7 +6,7 @@ return [
 		'The shelf · 33 compact lessons' => 'Das Regal · 33 Kompaktlektionen',
 		'Everything' => 'Alles',
 		'in one place.' => 'an einem Ort.',
-		'The 33 compact Ten Minutes lessons, one card per page. A green card opens a ten-minute lesson. Filter by title, topic, or tag, or browse part by part. The shelf is ordered by part, not alphabetically, and “10′” is a target, not a timer: nothing here counts the minutes. The orientation and agents pages sit outside the 31-door calendar but are included here; the whole-arc synthesis is the map, linked in the footer. The shelf spans the whole arc, from' => 'Die 33 kompakten Ten-Minutes-Lektionen, eine Karte pro Seite. Eine grüne Karte öffnet eine Zehn-Minuten-Lektion. Filtere nach Titel, Thema oder Tag oder blättere Teil für Teil. Das Regal ist nach Teil geordnet, nicht alphabetisch, und „10′“ ist ein Ziel, kein Timer: Hier zählt nichts die Minuten. Die Orientierungs- und Agenten-Seiten liegen außerhalb des 31-Türen-Kalenders, sind aber hier enthalten; die Synthese des gesamten Bogens ist die Karte, die im Footer verlinkt ist. Das Regal spannt den ganzen Bogen, von',
+		'The 33 compact Ten Minutes lessons, one card per page. A green card opens a ten-minute lesson. Filter by title, topic, or tag, or browse part by part. The shelf is ordered by part, not alphabetically, and “10′” is a target, not a timer: nothing here counts the minutes. The orientation and agents pages sit outside the 31-door calendar but are included here. The shelf spans the course, from' => 'Die 33 kompakten Ten-Minutes-Lektionen, eine Karte pro Seite. Eine grüne Karte öffnet eine Zehn-Minuten-Lektion. Filtere nach Titel, Thema oder Tag oder blättere Teil für Teil. Das Regal ist nach Teil geordnet, nicht alphabetisch, und „10′“ ist ein Ziel, kein Timer: Hier zählt nichts die Minuten. Die Orientierungs- und Agenten-Seiten liegen außerhalb des 31-Türen-Kalenders, sind aber hier enthalten. Das Regal spannt den Kurs, von',
 		'Shannon’s information theory' => 'Shannons Informationstheorie',
 		'(1948) to the' => '(1948) bis zum',
 		'(Vaswani et al., 2017) and beyond; the compact lessons link their primary sources inline.' => '(Vaswani et al., 2017) und darüber hinaus; die Kompaktlektionen verlinken ihre Primärquellen direkt.',
@@ -128,7 +128,6 @@ return [
 		'A compact companion to the From Nothing to Large Language Models project. Every card here opens a hand-built ten-minute lesson.' => 'Ein kompakter Begleiter zum Projekt „From Nothing to Large Language Models“. Jede Karte hier öffnet eine handgebaute Zehn-Minuten-Lektion.',
 		'Home' => 'Startseite',
 		'Calendar' => 'Kalender',
-		'The whole arc' => 'Der ganze Bogen',
 	],
 	'attrs' => [
 		'Jump to a part' => 'Zu einem Teil springen',

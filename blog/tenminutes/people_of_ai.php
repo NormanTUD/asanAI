@@ -153,10 +153,6 @@
 							<p class="aha-big">The history is collective, contested, and often late in giving credit.</p>
 							<p class="aha-sub">A model is a social artefact as much as a technical one.</p>
 						</div>
-						<div class="prose">
-
-							<p>For the compact view of how the same cast fits together, open <a href="whole">the whole arc</a>: six movements, one machine, and the people behind each layer.</p>
-						</div>
 					</section>
 				</article>
 			</div>

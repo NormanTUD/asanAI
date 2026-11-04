@@ -130,9 +130,6 @@ return [
 		'The short version.' => 'Die Kurzfassung.',
 		'The aha' => 'Der Aha-Moment',
 		'The history is collective, contested, and often late in giving credit.' => 'Die Geschichte ist kollektiv, umstritten und oft spät im Geben von Credit.',
-		'For the compact view of how the same cast fits together, open' => 'Für die kompakte Sicht, wie dieselbe Besetzung zusammenpasst, öffne',
-		'the whole arc' => 'den ganzen Bogen',
-		': six movements, one machine, and the people behind each layer.' => ': sechs Bewegungen, eine Maschine und die Menschen hinter jeder Schicht.',
 	],
 	'attrs' => [
 		'Scroll left' => 'Nach links scrollen',

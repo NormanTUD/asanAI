@@ -121,9 +121,6 @@
 							<p class="aha-big">The model can point. The world has to confirm.</p>
 							<p class="aha-sub">Prediction becomes discovery only when the proposal survives a check: an experiment, a synthesis, a proof, or a measurement.</p>
 						</div>
-						<div class="prose">
-							<p>Step back to <a href="whole">the whole arc</a>.</p>
-						</div>
 					</section>
 
 				</article>

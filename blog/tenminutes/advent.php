@@ -65,7 +65,7 @@
 						<h2>Read one door a day, or follow the thread.</h2>
 					</div>
 					<p>The arc is deliberate: text becomes tokens (<a href="https://arxiv.org/abs/1508.07909" rel="noopener">Sennrich et al., 2016</a>) and vectors (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>), networks learn (<a href="https://doi.org/10.1038/323533a0" rel="noopener">Rumelhart et al., 1986</a>), and the transformer arrives around Day 22 (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>). Then the calendar turns outward: assistants (<a href="https://arxiv.org/abs/2203.02155" rel="noopener">Ouyang et al., 2022</a>), society, philosophy, people. Every door opens a self-contained ten-minute version, so you can enter out of order; the page restates what it needs instead of assuming you read yesterday’s door.</p>
-					<p>The six sections here are a reading route; the library groups the same lessons by course part, which is a different cut. The two extra compact lessons outside the calendar are the orientation and the agents page; the whole-arc synthesis is the map: 33 lessons in total, 31 doors.</p>
+					<p>The six sections here are a reading route; the library groups the same lessons by course part, which is a different cut. The two extra compact lessons outside the calendar are the orientation and the agents page: 33 lessons in total, 31 doors.</p>
 				</div>
 
 				<!-- CALENDAR:START -->
@@ -347,7 +347,6 @@
 				<nav aria-label="Footer">
 					<a href="./">Home</a>
 					<a href="library">Library</a>
-					<a href="whole">The whole arc</a>
 				</nav>
 				<p style="margin-top:10px">Progress stays in your browser. No account, no tracking.</p>
 			</div>

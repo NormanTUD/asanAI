@@ -62,8 +62,6 @@ it:
 - The block links to `TM_BLOG_BASE . '/' . full-slug . '.php'` with
   `target="_blank" rel="noopener"` and `?lang=de` on German pages. It does
   not link the full blog home.
-- `whole.php` carries `data-no-full-article="1"` because it has no single full
-  article.
 - `bootstrap.php` is auto-prepended through `.htaccess` / `.user.ini`;
   `bootstrap.php` and `globals.php` are denied to the web.
 - `?date=1.12.2026` or `?datum=1.12.2026` simulates the calendar month; use
@@ -293,18 +291,6 @@ space-curvature demo uses it for its step buttons.
 - `library.php` marks every compact page with `is-compact` and
   `data-compact="1"`, and links to the extensionless page. Update the library
   card when adding or removing a compact page.
-
-## Whole-arc synthesis and cross-links
-
-`whole.php` is the compact course's synthesis page: a six-movement
-timeline (Idea → Learning → Data & Senses → Transformer → Assistant → Big
-Questions), a map of every compact page, and a prose synthesis. It is linked
-from `index.php`, `advent.php`, and `library.php`.
-
-Compact pages do not carry previous/next navigation or a day footer. Keep
-cross-chapter connections on the synthesis page and in the prose, not in
-per-page navigation blocks. Prose links may point only to earlier compact
-pages; do not link ahead to a lesson the reader has not reached.
 
 Pages with mathematics load Temml (`../Temml-Local.min.css`, `../temml.min.js`).
 `transformer.php` renders the pipeline shape line with `temml.renderToString(...)`.
