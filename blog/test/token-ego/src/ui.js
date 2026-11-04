@@ -1126,6 +1126,9 @@
         '<h4>residual vector · 128 dimensions</h4>' +
         '<div class="dim-grid" id="math-dims"></div>' +
         '<div class="legend"><span><i class="swatch" style="background:#ff4fd8"></i>negative</span><span><i class="swatch" style="background:#0a1020"></i>zero</span><span><i class="swatch" style="background:#5ff3ff"></i>positive</span></div>' +
+        '<h4>LayerNorm, dimension by dimension</h4>' +
+        '<canvas id="ln-before-after" class="big-canvas" width="560" height="150"></canvas>' +
+        '<p class="muted">Top: the raw residual x_in. Bottom: LN(x_in) = γ ⊙ (x−μ)/√(σ²+ε) + β. The lens and the residual-stream bars show the same transform; the residual stream itself is not changed.</p>' +
         '<h4>head subspaces</h4>' +
         '<table><tr><th>head</th><th>dims</th><th>‖q‖</th><th>‖k‖</th><th>‖v‖</th></tr>';
       for (var h = 0; h < H; h++) {
@@ -1139,6 +1142,7 @@
       }
       body.innerHTML += '</table>';
       this.fillDimGrid("math-dims", x);
+      this.drawLNBars("ln-before-after", x, ln);
     } else if (tab === "attention") {
       var scores = layer.scores;
       body.innerHTML = '<h3>Attention · head ' + (this.activeHead + 1) + ' · ' + CFG.HEAD_NAMES[this.activeHead] + '</h3>' +
@@ -1291,6 +1295,34 @@
     ctx.strokeRect(pad, pad + p * cell, cell * T, cell);
     ctx.strokeStyle = "rgba(95,243,255,0.25)";
     ctx.beginPath(); ctx.moveTo(pad, pad + T * cell); ctx.lineTo(pad + T * cell, pad); ctx.stroke();
+  };
+
+  UI.prototype.drawLNBars = function (id, x, ln) {
+    var c = document.getElementById(id);
+    if (!c) return;
+    var ctx = c.getContext("2d");
+    var w = c.width, h = c.height;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#02040a";
+    ctx.fillRect(0, 0, w, h);
+    function maxAbs(a) { var m = 1e-6; for (var i = 0; i < a.length; i++) m = Math.max(m, Math.abs(a[i])); return m; }
+    var m1 = maxAbs(x), m2 = maxAbs(ln);
+    function row(arr, m, y0, label) {
+      var bw = w / arr.length;
+      ctx.strokeStyle = "rgba(255,255,255,0.12)";
+      ctx.beginPath(); ctx.moveTo(0, y0 + 30); ctx.lineTo(w, y0 + 30); ctx.stroke();
+      for (var i = 0; i < arr.length; i++) {
+        var v = arr[i] / m;
+        var bh = Math.abs(v) * 26;
+        ctx.fillStyle = v >= 0 ? "rgba(95,243,255,0.82)" : "rgba(255,79,216,0.82)";
+        ctx.fillRect(i * bw, v >= 0 ? y0 + 30 - bh : y0 + 30, Math.max(1, bw - 0.5), Math.max(1, bh));
+      }
+      ctx.fillStyle = "rgba(233,243,255,0.65)";
+      ctx.font = "8px 'SF Mono', monospace";
+      ctx.fillText(label, 4, y0 + 10);
+    }
+    row(x, m1, 8, "x_in · raw residual");
+    row(ln, m2, 82, "LN(x_in) · mean 0, variance 1");
   };
 
   UI.prototype.drawAllHeads = function (id, layer, p, T) {

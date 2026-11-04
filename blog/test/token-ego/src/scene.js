@@ -101,6 +101,7 @@
 
     console.log("SCENE bg"); this.buildBackground();
     console.log("SCENE tower"); this.buildTower();
+    console.log("SCENE projections"); this.buildProjectionChamber();
     console.log("SCENE line"); this.buildTokenLine();
     console.log("SCENE embed"); this.buildEmbedCloud();
     console.log("SCENE wall"); this.buildEmbeddingWall();
@@ -459,6 +460,26 @@
     this.projInLabel = this.makeAnnotation("LN(x) · 128", "#9fe9ff", 0.30);
     this.projInLabel.position.set(R, 1.20, 0.0);
     this.projGroup.add(this.projInLabel);
+
+    // W_O: the attention write.  z (128) -> W_O z (128).
+    this.outGroup = new THREE.Group();
+    this.outGroup.visible = false;
+    this.tower.add(this.outGroup);
+    var zPos = [], attnPos = [];
+    for (var zd = 0; zd < Dm; zd++) {
+      var za = (zd / Dm) * Math.PI * 2;
+      zPos.push(new THREE.Vector3(R, 0.35 + Math.cos(za) * 0.55, Math.sin(za) * 0.55));
+      attnPos.push(new THREE.Vector3(R - 1.30, 0.35 + Math.cos(za) * 0.55, Math.sin(za) * 0.55));
+    }
+    this.outWeb = {
+      points: this.buildWebPoints(this.outGroup, zPos, attnPos, Dm, Dm, 1, 0.030, 0.55),
+      top: this.buildWebTop(this.outGroup, zPos, attnPos, Dm, Dm, 512, 0.80),
+      ringIn: this.makeNodeRing(this.outGroup, zPos, 0x9fe9ff, 0.055),
+      ringOut: this.makeNodeRing(this.outGroup, attnPos, 0x6bffb0, 0.055),
+    };
+    this.outLabel = this.makeAnnotation("W_O · 16,384 weights · z → attention write", "#6bffb0", 0.32);
+    this.outLabel.position.set(R - 0.65, 1.25, 0.0);
+    this.outGroup.add(this.outLabel);
   };
 
   SceneRig.prototype.updateProjectionWebs = function () {
@@ -488,6 +509,18 @@
     this.updateNodeRing(this.proj.q.ring, qVals, [0.37, 0.95, 1.0], [0.8, 0.5, 1.0], this.activeHead);
     this.updateNodeRing(this.proj.k.ring, kVals, [1.0, 0.31, 0.85], [0.8, 0.5, 1.0], this.activeHead);
     this.updateNodeRing(this.proj.v.ring, vVals, [1.0, 0.85, 0.35], [0.55, 0.43, 1.0], this.activeHead);
+
+    var maxO = 1e-6;
+    for (var oi = 0; oi < wl.wo.length; oi++) maxO = Math.max(maxO, Math.abs(wl.wo[oi]));
+    this.updateWebPoints(this.outWeb.points, wl.wo, maxO);
+    this.updateWebTop(this.outWeb.top, wl.wo, maxO);
+    var zVals = [], attnVals = [];
+    for (var od = 0; od < Dm; od++) {
+      zVals.push(layer.z[p * Dm + od]);
+      attnVals.push(layer.attnOut[p * Dm + od]);
+    }
+    this.updateNodeRing(this.outWeb.ringIn, zVals, [0.62, 0.43, 1.0], [1.0, 0.31, 0.85], undefined);
+    this.updateNodeRing(this.outWeb.ringOut, attnVals, [0.42, 1.0, 0.69], [0.55, 0.43, 1.0], undefined);
   };
 
   /* ── token line (tokenization) ─────────────────────────────────────── */
@@ -1732,6 +1765,7 @@
     }
     this.applyPlayerTint();
     if (this.projGroup) this.projGroup.position.y = this.currentLayer * this.GAP;
+    if (this.outGroup) this.outGroup.position.y = this.currentLayer * this.GAP;
     if (this.splitGroup) {
       var sy = this.currentLayer * this.GAP;
       var baseX = this.R, baseZ = 0;
@@ -2306,6 +2340,7 @@
     if (this.ffnShell) this.ffnShell.visible = !this.overview;
     this.qkvGroup.visible = stage === "layer" && (phase === "qkv");
     this.projGroup.visible = stage === "layer" && (phase === "qkv");
+    this.outGroup.visible = stage === "layer" && (phase === "write");
     this.qGlyph.visible = stage === "layer" && (phase === "qkv" || phase === "attn" || phase === "mix");
     this.lensGroup.visible = stage === "layer" && (phase === "ln1" || phase === "qkv");
     this.curtain.visible = stage === "layer" && (phase === "attn" || phase === "mix" || phase === "scores" || phase === "mask" || phase === "softmax");
@@ -2350,6 +2385,8 @@
     this.trail.visible = true;
     this.qkvGroup.visible = false;
     this.projGroup.visible = false;
+    this.outGroup.visible = true;
+    this.outGroup.visible = false;
     this.lensGroup.visible = false;
     this.qGlyph.visible = false;
     this.skyGroup.visible = false;

@@ -22,7 +22,8 @@
     "huang2026insecure",
     "burns2022ccs",
     "saraipour2025syllogisms",
-    "belrose2023tunedlens"
+    "belrose2023tunedlens",
+    "takehi2026weightspace"
   ],
   "claims": [
     {
@@ -448,6 +449,20 @@
       },
       "quote": "~30M features",
       "citation_keys": [],
+      "confidence": "stated"
+    },
+    {
+      "id": "mech-weightspace-year",
+      "subject": "weight-space-programming",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "\\cite[Takehi et al. (2026)]{takehi2026weightspace}",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "source_url": "",
       "confidence": "stated"
     }
   ],
@@ -13171,6 +13186,18 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-mechanistic_interpretability-weight-space-programming",
+      "from": "weight-space-programming",
+      "to": "mechanistic-interpretability",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "\\cite[Takehi et al. (2026)]{takehi2026weightspace}",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
     }
   ],
   "statements": [
@@ -13673,7 +13700,7 @@
     },
     {
       "id": "mechanistic_interpretability-stmt-72",
-      "quote": "A recent report shows a general-purpose model tracing a smaller model's reasoning loop to a direction in its MLP weights and removing that direction without gradients (\\cite[Takehi et al., 2026]{takehi2026weightspace}).",
+      "quote": "\\cite[Takehi et al. (2026)]{takehi2026weightspace} showed a general-purpose model tracing a smaller model's reasoning loop to a direction in its MLP weights and removing that direction without gradients.",
       "block_id": "mechanistic_interpretability-block-73",
       "section": "The Bigger Picture: From Circuits to Alignment",
       "kind": "statement"
@@ -16830,7 +16857,7 @@
     },
     {
       "id": "mechanistic_interpretability-block-73",
-      "quote": "5. **LLM-driven weight editing:** The line between a human-designed edit and an LLM-designed one is thinning. A recent report shows a general-purpose model tracing a smaller model's reasoning loop to a direction in its MLP weights and removing that direction without gradients (\\cite[Takehi et al., 2026]{takehi2026weightspace}). The same access can remove a safety direction as easily as a failure direction, so the technique belongs in the alignment toolkit and in its threat model.",
+      "quote": "5. **LLM-driven weight editing:** The line between a human-designed edit and an LLM-designed one is thinning. \\cite[Takehi et al. (2026)]{takehi2026weightspace} showed a general-purpose model tracing a smaller model's reasoning loop to a direction in its MLP weights and removing that direction without gradients. The same access can remove a safety direction as easily as a failure direction, so the technique belongs in the alignment toolkit and in its threat model.",
       "kind": "list-item",
       "section": "The Bigger Picture: From Circuits to Alignment"
     },

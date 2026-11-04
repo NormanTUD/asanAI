@@ -5875,6 +5875,78 @@
         "gpt2"
       ],
       "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-weight-space-programming",
+      "from": "weight-space-programming",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In November 2026, a team at MIT CSAIL reported a set of experiments",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-minatar-ppo",
+      "from": "minatar-ppo",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "beat a PPO baseline trained for 100 million steps",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-weight-space-programming-car-policy",
+      "from": "weight-space-programming-car-policy",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "repaired a stuck car-driving policy by changing 3.5% of its weights",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-qwen3.5-0.8b-weightspace-edit",
+      "from": "qwen3.5-0.8b-weightspace-edit",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "changed 0.016% of the model's weights",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-qwen3.5-0.8b",
+      "from": "qwen3.5-0.8b",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "MATH-500 rose from 7.9% to 48.1%",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-gemma-3-270m",
+      "from": "gemma-3-270m",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "When the same procedure ran on Gemma 3 270M",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
     }
   ],
   "statements": [

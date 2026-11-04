@@ -1448,6 +1448,10 @@ grep -rniE '\b(is|are|was|were) not\b|\bnot (just|only|merely)\b|this page (is|a
 
 ## Prose style: dashes, paragraphs, flow
 
+- **Never call a source “recent” or “new”.** State its year or date. Relative
+  labels age the text: “a recent report” is stale within months, while
+  “Takehi et al. (2026)” stays true. Use the dated form everywhere, including
+  lesson prose, captions, and commit messages.
 - **No em dash or en dash in lesson prose.** They read as machine-written. Use
   a comma, a colon, parentheses, or two sentences. Keep the hyphen only in
   compounds.
