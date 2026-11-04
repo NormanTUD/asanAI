@@ -80,6 +80,8 @@ The models also acquire **self-knowledge**: they track their own accuracy surpri
 ### Interpretability as a safety tool
 
 You cannot supervise what you cannot see. **Mechanistic interpretability** — sparse autoencoders, circuit discovery, activation steering — is increasingly applied as a *safety* instrument: to find the "safety circuit" (detection heads $\to$ safety neurons $\to$ refusal heads), to spot a backdoor's signature in later layers, and to build **abstention** — letting the model say *I don't know* rather than bluff. (\cite[Naseem, 2026]{mech_interp_alignment})
+
+The line now runs both ways. A model that can locate a behaviour's direction in the weights can remove it as well as repair it, so an LLM that edits weights is both an auditing instrument and a way to strip a safety behaviour without data (\cite[Takehi et al., 2026]{takehi2026weightspace}).
 </div>
 
 <div class="md">
