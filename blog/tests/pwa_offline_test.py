@@ -179,12 +179,15 @@ def main() -> int:
             page.reload(wait_until="domcontentloaded", timeout=30000)
             page.wait_for_function("() => document.body.innerText.length > 100", timeout=30000)
 
-            if not page.evaluate(
-                """() => {
-                    const image = document.querySelector('img[src="euler.jpg"]');
-                    return !!(image && image.complete && image.naturalWidth > 0);
-                }"""
-            ):
+            try:
+                page.wait_for_function(
+                    """() => {
+                        const image = document.querySelector('img[src="euler.jpg"]');
+                        return !!(image && image.complete && image.naturalWidth > 0);
+                    }""",
+                    timeout=30000,
+                )
+            except PlaywrightTimeout:
                 failures.append("cached lesson image did not render offline")
 
             try:

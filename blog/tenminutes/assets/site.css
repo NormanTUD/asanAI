@@ -436,6 +436,14 @@ body[data-page="calendar"] .hero {
 	margin: 0;
 }
 body[data-page="calendar"] .hero-deck { max-width: none; }
+/* Kalender-Startseite: der Einstiegstext ist der erste Inhalt, also
+   deutlich weniger Luft oben und unten als bei einer Hero-Folie. */
+body[data-page="calendar"] .hero {
+	padding-block: clamp(20px, 3vw, 40px) clamp(10px, 1.6vw, 20px);
+}
+body[data-page="calendar"] .hero-deck { margin-top: 0; }
+body[data-page="calendar"] .hero-deck + .hero-deck { margin-top: 10px; }
+body[data-page="calendar"] .section--tight { padding-top: clamp(14px, 2vw, 26px); }
 html[data-theme="light"] body[data-page="calendar"] { background: #ffffff; }
 html[data-theme="light"] body[data-page="advent"],
 html[data-theme="light"] body[data-page="library"] { background: #F9F9F9; }

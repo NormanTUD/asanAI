@@ -36,6 +36,19 @@ if ($today >= $unlockStart) {
 $isDecember2026 = $today->format('Y') === '2026' && $today->format('n') === '12';
 $todayDay = $isDecember2026 ? (int) $today->format('j') : 0;
 
+// Date-gated labels are generated per day, so they cannot live as fixed
+// keys in lang/de/index.php; format them server-side instead.
+$isDe = (function_exists('tm_lang') ? tm_lang() : strtolower((string) ($_GET['lang'] ?? ($_COOKIE['tm_lang'] ?? '')))) === 'de';
+$lockedLabel = $isDe ? 'Gesperrt' : 'Locked';
+$sectionPrefix = $isDe ? 'Abschnitt ' : 'Section ';
+$monthNames = ['', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+$opensOn = static function (DateTimeImmutable $date) use ($isDe, $monthNames): string {
+	if (!$isDe) {
+		return 'Opens on ' . $date->format('j F Y');
+	}
+	return 'Öffnet am ' . $date->format('j') . '. ' . $monthNames[(int) $date->format('n')] . ' ' . $date->format('Y');
+};
+
 $calendarHtml = '';
 $adventPath = __DIR__ . '/advent.php';
 if (is_file($adventPath)) {
@@ -51,16 +64,16 @@ if (is_file($adventPath)) {
 
 $calendarHtml = preg_replace_callback(
 	'/<a class="day-card[^"]*"[^>]*data-day="(\d+)"[^>]*>.*?<\/a>/s',
-	function (array $match) use ($unlocked, $todayDay, $unlockStart): string {
+	function (array $match) use ($unlocked, $todayDay, $unlockStart, $lockedLabel, $opensOn): string {
 		$day = (int) $match[1];
 		if ($day > $unlocked) {
 			$number = str_pad((string) $day, 2, '0', STR_PAD_LEFT);
-			$opens = $unlockStart->modify('+' . ($day - 1) . ' days')->format('j F Y');
+			$opens = $opensOn($unlockStart->modify('+' . ($day - 1) . ' days'));
 			return '<div class="day-card is-locked" id="day-' . $day . '" data-day="' . $day . '">'
-				. '<div class="dc-top"><span class="dc-num">' . $number . '</span><span class="dc-part">Locked</span></div>'
+				. '<div class="dc-top"><span class="dc-num">' . $number . '</span><span class="dc-part">' . $lockedLabel . '</span></div>'
 				. '<div class="dc-locked" aria-hidden="true">?</div>'
-				. '<p class="dc-locked-note">Opens on ' . htmlspecialchars($opens, ENT_QUOTES, 'UTF-8') . '</p>'
-				. '<div class="dc-foot"><span class="dc-tag">Locked</span></div>'
+				. '<p class="dc-locked-note">' . htmlspecialchars($opens, ENT_QUOTES, 'UTF-8') . '</p>'
+				. '<div class="dc-foot"><span class="dc-tag">' . $lockedLabel . '</span></div>'
 				. '</div>';
 		}
 		$card = $match[0];
@@ -82,10 +95,10 @@ foreach ($chunks as $chunk) {
 	if (preg_match('/<p class="week-label">Section (\d+)[^<]*Days (\d+)-(\d+)<\/p>/u', $chunk, $label)) {
 		$firstDay = (int) $label[2];
 		if ($firstDay > $unlocked) {
-			$sectionOpens = $unlockStart->modify('+' . ($firstDay - 1) . ' days')->format('j F Y');
+			$sectionOpens = $opensOn($unlockStart->modify('+' . ($firstDay - 1) . ' days'));
 			$chunk = preg_replace(
 				'/<p class="week-label">.*?<\/p>/u',
-				'<p class="week-label">Section ' . $label[1] . ' · Locked · Opens on ' . htmlspecialchars($sectionOpens, ENT_QUOTES, 'UTF-8') . '</p>',
+				'<p class="week-label">' . $sectionPrefix . $label[1] . ' · ' . $lockedLabel . ' · ' . htmlspecialchars($sectionOpens, ENT_QUOTES, 'UTF-8') . '</p>',
 				$chunk,
 				1
 			);
