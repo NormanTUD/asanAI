@@ -2,8 +2,8 @@
 
 - lessons: 99
 - claims: 7316
-- statements: 17085
-- relations: 51884
+- statements: 17083
+- relations: 51882
 - uncovered years: 49
 - uncovered quantities: 6
 - uncited specific claims: 307
@@ -109,7 +109,7 @@
 | traininglab | 15 | 7 | 67 | 0 | 0 |
 | transformer | 32 | 260 | 837 | 0 | 0 |
 | unexpected_capabilities | 29 | 251 | 528 | 5 | 1 |
-| untold_history_i | 520 | 460 | 1505 | 3 | 0 |
+| untold_history_i | 520 | 458 | 1503 | 3 | 0 |
 | untold_history_ii | 648 | 562 | 1853 | 0 | 0 |
 | untold_history_iii | 1639 | 922 | 3559 | 1 | 0 |
 | vectorsearch | 31 | 149 | 588 | 0 | 0 |

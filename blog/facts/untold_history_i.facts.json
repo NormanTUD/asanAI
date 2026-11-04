@@ -21111,9 +21111,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-274-part_of-untold_history_i-block-106",
+      "id": "struct-untold_history_i-stmt-274-part_of-untold_history_i-block-107",
       "from": "untold_history_i-stmt-274",
-      "to": "untold_history_i-block-106",
+      "to": "untold_history_i-block-107",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21121,9 +21121,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-275-part_of-untold_history_i-block-106",
+      "id": "struct-untold_history_i-stmt-275-part_of-untold_history_i-block-107",
       "from": "untold_history_i-stmt-275",
-      "to": "untold_history_i-block-106",
+      "to": "untold_history_i-block-107",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21181,9 +21181,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-281-part_of-untold_history_i-block-107",
+      "id": "struct-untold_history_i-stmt-281-part_of-untold_history_i-block-108",
       "from": "untold_history_i-stmt-281",
-      "to": "untold_history_i-block-107",
+      "to": "untold_history_i-block-108",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21191,9 +21191,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-282-part_of-untold_history_i-block-107",
+      "id": "struct-untold_history_i-stmt-282-part_of-untold_history_i-block-108",
       "from": "untold_history_i-stmt-282",
-      "to": "untold_history_i-block-107",
+      "to": "untold_history_i-block-108",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21211,9 +21211,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-284-part_of-untold_history_i-block-108",
+      "id": "struct-untold_history_i-stmt-284-part_of-untold_history_i-block-109",
       "from": "untold_history_i-stmt-284",
-      "to": "untold_history_i-block-108",
+      "to": "untold_history_i-block-109",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21221,9 +21221,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-285-part_of-untold_history_i-block-108",
+      "id": "struct-untold_history_i-stmt-285-part_of-untold_history_i-block-109",
       "from": "untold_history_i-stmt-285",
-      "to": "untold_history_i-block-108",
+      "to": "untold_history_i-block-109",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21231,9 +21231,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-286-part_of-untold_history_i-block-109",
+      "id": "struct-untold_history_i-stmt-286-part_of-untold_history_i-block-110",
       "from": "untold_history_i-stmt-286",
-      "to": "untold_history_i-block-109",
+      "to": "untold_history_i-block-110",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21241,9 +21241,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-287-part_of-untold_history_i-block-109",
+      "id": "struct-untold_history_i-stmt-287-part_of-untold_history_i-block-110",
       "from": "untold_history_i-stmt-287",
-      "to": "untold_history_i-block-109",
+      "to": "untold_history_i-block-110",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21261,9 +21261,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-289-part_of-untold_history_i-block-110",
+      "id": "struct-untold_history_i-stmt-289-part_of-untold_history_i-block-111",
       "from": "untold_history_i-stmt-289",
-      "to": "untold_history_i-block-110",
+      "to": "untold_history_i-block-111",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21271,9 +21271,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-290-part_of-untold_history_i-block-110",
+      "id": "struct-untold_history_i-stmt-290-part_of-untold_history_i-block-111",
       "from": "untold_history_i-stmt-290",
-      "to": "untold_history_i-block-110",
+      "to": "untold_history_i-block-111",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21291,9 +21291,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-292-part_of-untold_history_i-block-111",
+      "id": "struct-untold_history_i-stmt-292-part_of-untold_history_i-block-112",
       "from": "untold_history_i-stmt-292",
-      "to": "untold_history_i-block-111",
+      "to": "untold_history_i-block-112",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21301,9 +21301,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-293-part_of-untold_history_i-block-111",
+      "id": "struct-untold_history_i-stmt-293-part_of-untold_history_i-block-112",
       "from": "untold_history_i-stmt-293",
-      "to": "untold_history_i-block-111",
+      "to": "untold_history_i-block-112",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21331,9 +21331,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-296-part_of-untold_history_i-block-112",
+      "id": "struct-untold_history_i-stmt-296-part_of-untold_history_i-block-113",
       "from": "untold_history_i-stmt-296",
-      "to": "untold_history_i-block-112",
+      "to": "untold_history_i-block-113",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21341,9 +21341,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-297-part_of-untold_history_i-block-112",
+      "id": "struct-untold_history_i-stmt-297-part_of-untold_history_i-block-113",
       "from": "untold_history_i-stmt-297",
-      "to": "untold_history_i-block-112",
+      "to": "untold_history_i-block-113",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21371,9 +21371,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-300-part_of-untold_history_i-block-113",
+      "id": "struct-untold_history_i-stmt-300-part_of-untold_history_i-block-114",
       "from": "untold_history_i-stmt-300",
-      "to": "untold_history_i-block-113",
+      "to": "untold_history_i-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21381,9 +21381,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-301-part_of-untold_history_i-block-113",
+      "id": "struct-untold_history_i-stmt-301-part_of-untold_history_i-block-114",
       "from": "untold_history_i-stmt-301",
-      "to": "untold_history_i-block-113",
+      "to": "untold_history_i-block-114",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21401,9 +21401,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-303-part_of-untold_history_i-block-114",
+      "id": "struct-untold_history_i-stmt-303-part_of-untold_history_i-block-115",
       "from": "untold_history_i-stmt-303",
-      "to": "untold_history_i-block-114",
+      "to": "untold_history_i-block-115",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21411,9 +21411,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-304-part_of-untold_history_i-block-114",
+      "id": "struct-untold_history_i-stmt-304-part_of-untold_history_i-block-115",
       "from": "untold_history_i-stmt-304",
-      "to": "untold_history_i-block-114",
+      "to": "untold_history_i-block-115",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21431,9 +21431,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-306-part_of-untold_history_i-block-115",
+      "id": "struct-untold_history_i-stmt-306-part_of-untold_history_i-block-118",
       "from": "untold_history_i-stmt-306",
-      "to": "untold_history_i-block-115",
+      "to": "untold_history_i-block-118",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21441,9 +21441,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-307-part_of-untold_history_i-block-115",
+      "id": "struct-untold_history_i-stmt-307-part_of-untold_history_i-block-118",
       "from": "untold_history_i-stmt-307",
-      "to": "untold_history_i-block-115",
+      "to": "untold_history_i-block-118",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21451,9 +21451,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-308-part_of-untold_history_i-block-118",
+      "id": "struct-untold_history_i-stmt-308-part_of-untold_history_i-block-119",
       "from": "untold_history_i-stmt-308",
-      "to": "untold_history_i-block-118",
+      "to": "untold_history_i-block-119",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21461,9 +21461,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-309-part_of-untold_history_i-block-118",
+      "id": "struct-untold_history_i-stmt-309-part_of-untold_history_i-block-119",
       "from": "untold_history_i-stmt-309",
-      "to": "untold_history_i-block-118",
+      "to": "untold_history_i-block-119",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21481,9 +21481,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-311-part_of-untold_history_i-block-119",
+      "id": "struct-untold_history_i-stmt-311-part_of-untold_history_i-block-120",
       "from": "untold_history_i-stmt-311",
-      "to": "untold_history_i-block-119",
+      "to": "untold_history_i-block-120",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21491,9 +21491,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-312-part_of-untold_history_i-block-119",
+      "id": "struct-untold_history_i-stmt-312-part_of-untold_history_i-block-120",
       "from": "untold_history_i-stmt-312",
-      "to": "untold_history_i-block-119",
+      "to": "untold_history_i-block-120",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21501,9 +21501,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-313-part_of-untold_history_i-block-120",
+      "id": "struct-untold_history_i-stmt-313-part_of-untold_history_i-block-121",
       "from": "untold_history_i-stmt-313",
-      "to": "untold_history_i-block-120",
+      "to": "untold_history_i-block-121",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21511,9 +21511,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-314-part_of-untold_history_i-block-120",
+      "id": "struct-untold_history_i-stmt-314-part_of-untold_history_i-block-121",
       "from": "untold_history_i-stmt-314",
-      "to": "untold_history_i-block-120",
+      "to": "untold_history_i-block-121",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21521,9 +21521,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-315-part_of-untold_history_i-block-121",
+      "id": "struct-untold_history_i-stmt-315-part_of-untold_history_i-block-123",
       "from": "untold_history_i-stmt-315",
-      "to": "untold_history_i-block-121",
+      "to": "untold_history_i-block-123",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21531,9 +21531,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-316-part_of-untold_history_i-block-121",
+      "id": "struct-untold_history_i-stmt-316-part_of-untold_history_i-block-123",
       "from": "untold_history_i-stmt-316",
-      "to": "untold_history_i-block-121",
+      "to": "untold_history_i-block-123",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21551,9 +21551,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-318-part_of-untold_history_i-block-123",
+      "id": "struct-untold_history_i-stmt-318-part_of-untold_history_i-block-124",
       "from": "untold_history_i-stmt-318",
-      "to": "untold_history_i-block-123",
+      "to": "untold_history_i-block-124",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21561,9 +21561,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-319-part_of-untold_history_i-block-123",
+      "id": "struct-untold_history_i-stmt-319-part_of-untold_history_i-block-124",
       "from": "untold_history_i-stmt-319",
-      "to": "untold_history_i-block-123",
+      "to": "untold_history_i-block-124",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21571,9 +21571,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-320-part_of-untold_history_i-block-124",
+      "id": "struct-untold_history_i-stmt-320-part_of-untold_history_i-block-126",
       "from": "untold_history_i-stmt-320",
-      "to": "untold_history_i-block-124",
+      "to": "untold_history_i-block-126",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21581,9 +21581,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-321-part_of-untold_history_i-block-124",
+      "id": "struct-untold_history_i-stmt-321-part_of-untold_history_i-block-126",
       "from": "untold_history_i-stmt-321",
-      "to": "untold_history_i-block-124",
+      "to": "untold_history_i-block-126",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21621,9 +21621,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-325-part_of-untold_history_i-block-126",
+      "id": "struct-untold_history_i-stmt-325-part_of-untold_history_i-block-128",
       "from": "untold_history_i-stmt-325",
-      "to": "untold_history_i-block-126",
+      "to": "untold_history_i-block-128",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21631,9 +21631,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-326-part_of-untold_history_i-block-126",
+      "id": "struct-untold_history_i-stmt-326-part_of-untold_history_i-block-128",
       "from": "untold_history_i-stmt-326",
-      "to": "untold_history_i-block-126",
+      "to": "untold_history_i-block-128",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21661,9 +21661,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-329-part_of-untold_history_i-block-128",
+      "id": "struct-untold_history_i-stmt-329-part_of-untold_history_i-block-129",
       "from": "untold_history_i-stmt-329",
-      "to": "untold_history_i-block-128",
+      "to": "untold_history_i-block-129",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21671,9 +21671,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-330-part_of-untold_history_i-block-128",
+      "id": "struct-untold_history_i-stmt-330-part_of-untold_history_i-block-129",
       "from": "untold_history_i-stmt-330",
-      "to": "untold_history_i-block-128",
+      "to": "untold_history_i-block-129",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21681,9 +21681,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-331-part_of-untold_history_i-block-129",
+      "id": "struct-untold_history_i-stmt-331-part_of-untold_history_i-block-130",
       "from": "untold_history_i-stmt-331",
-      "to": "untold_history_i-block-129",
+      "to": "untold_history_i-block-130",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21691,9 +21691,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-332-part_of-untold_history_i-block-129",
+      "id": "struct-untold_history_i-stmt-332-part_of-untold_history_i-block-130",
       "from": "untold_history_i-stmt-332",
-      "to": "untold_history_i-block-129",
+      "to": "untold_history_i-block-130",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21711,9 +21711,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-334-part_of-untold_history_i-block-130",
+      "id": "struct-untold_history_i-stmt-334-part_of-untold_history_i-block-132",
       "from": "untold_history_i-stmt-334",
-      "to": "untold_history_i-block-130",
+      "to": "untold_history_i-block-132",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21721,9 +21721,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-335-part_of-untold_history_i-block-130",
+      "id": "struct-untold_history_i-stmt-335-part_of-untold_history_i-block-132",
       "from": "untold_history_i-stmt-335",
-      "to": "untold_history_i-block-130",
+      "to": "untold_history_i-block-132",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21791,9 +21791,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-342-part_of-untold_history_i-block-132",
+      "id": "struct-untold_history_i-stmt-342-part_of-untold_history_i-block-134",
       "from": "untold_history_i-stmt-342",
-      "to": "untold_history_i-block-132",
+      "to": "untold_history_i-block-134",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21801,9 +21801,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-343-part_of-untold_history_i-block-132",
+      "id": "struct-untold_history_i-stmt-343-part_of-untold_history_i-block-134",
       "from": "untold_history_i-stmt-343",
-      "to": "untold_history_i-block-132",
+      "to": "untold_history_i-block-134",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21811,28 +21811,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-344-part_of-untold_history_i-block-134",
+      "id": "struct-untold_history_i-stmt-344-part_of-untold_history_i-block-136",
       "from": "untold_history_i-stmt-344",
-      "to": "untold_history_i-block-134",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-345-part_of-untold_history_i-block-134",
-      "from": "untold_history_i-stmt-345",
-      "to": "untold_history_i-block-134",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-346-part_of-untold_history_i-block-136",
-      "from": "untold_history_i-stmt-346",
       "to": "untold_history_i-block-136",
       "kind": "part_of",
       "qualifiers": {},
@@ -21841,8 +21821,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-347-part_of-untold_history_i-block-137",
-      "from": "untold_history_i-stmt-347",
+      "id": "struct-untold_history_i-stmt-345-part_of-untold_history_i-block-137",
+      "from": "untold_history_i-stmt-345",
       "to": "untold_history_i-block-137",
       "kind": "part_of",
       "qualifiers": {},
@@ -21851,9 +21831,29 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-348-part_of-untold_history_i-block-137",
-      "from": "untold_history_i-stmt-348",
+      "id": "struct-untold_history_i-stmt-346-part_of-untold_history_i-block-137",
+      "from": "untold_history_i-stmt-346",
       "to": "untold_history_i-block-137",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-untold_history_i-stmt-347-part_of-untold_history_i-block-138",
+      "from": "untold_history_i-stmt-347",
+      "to": "untold_history_i-block-138",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-untold_history_i-stmt-348-part_of-untold_history_i-block-138",
+      "from": "untold_history_i-stmt-348",
+      "to": "untold_history_i-block-138",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21911,9 +21911,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-354-part_of-untold_history_i-block-138",
+      "id": "struct-untold_history_i-stmt-354-part_of-untold_history_i-block-139",
       "from": "untold_history_i-stmt-354",
-      "to": "untold_history_i-block-138",
+      "to": "untold_history_i-block-139",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21921,9 +21921,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-355-part_of-untold_history_i-block-138",
+      "id": "struct-untold_history_i-stmt-355-part_of-untold_history_i-block-139",
       "from": "untold_history_i-stmt-355",
-      "to": "untold_history_i-block-138",
+      "to": "untold_history_i-block-139",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21931,9 +21931,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-356-part_of-untold_history_i-block-139",
+      "id": "struct-untold_history_i-stmt-356-part_of-untold_history_i-block-140",
       "from": "untold_history_i-stmt-356",
-      "to": "untold_history_i-block-139",
+      "to": "untold_history_i-block-140",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21941,9 +21941,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-357-part_of-untold_history_i-block-139",
+      "id": "struct-untold_history_i-stmt-357-part_of-untold_history_i-block-140",
       "from": "untold_history_i-stmt-357",
-      "to": "untold_history_i-block-139",
+      "to": "untold_history_i-block-140",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21951,9 +21951,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-358-part_of-untold_history_i-block-140",
+      "id": "struct-untold_history_i-stmt-358-part_of-untold_history_i-block-142",
       "from": "untold_history_i-stmt-358",
-      "to": "untold_history_i-block-140",
+      "to": "untold_history_i-block-142",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21961,9 +21961,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-359-part_of-untold_history_i-block-140",
+      "id": "struct-untold_history_i-stmt-359-part_of-untold_history_i-block-142",
       "from": "untold_history_i-stmt-359",
-      "to": "untold_history_i-block-140",
+      "to": "untold_history_i-block-142",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21971,9 +21971,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-360-part_of-untold_history_i-block-142",
+      "id": "struct-untold_history_i-stmt-360-part_of-untold_history_i-block-143",
       "from": "untold_history_i-stmt-360",
-      "to": "untold_history_i-block-142",
+      "to": "untold_history_i-block-143",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -21981,9 +21981,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-361-part_of-untold_history_i-block-142",
+      "id": "struct-untold_history_i-stmt-361-part_of-untold_history_i-block-143",
       "from": "untold_history_i-stmt-361",
-      "to": "untold_history_i-block-142",
+      "to": "untold_history_i-block-143",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22001,9 +22001,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-363-part_of-untold_history_i-block-143",
+      "id": "struct-untold_history_i-stmt-363-part_of-untold_history_i-block-144",
       "from": "untold_history_i-stmt-363",
-      "to": "untold_history_i-block-143",
+      "to": "untold_history_i-block-144",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22011,9 +22011,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-364-part_of-untold_history_i-block-143",
+      "id": "struct-untold_history_i-stmt-364-part_of-untold_history_i-block-144",
       "from": "untold_history_i-stmt-364",
-      "to": "untold_history_i-block-143",
+      "to": "untold_history_i-block-144",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22031,9 +22031,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-366-part_of-untold_history_i-block-144",
+      "id": "struct-untold_history_i-stmt-366-part_of-untold_history_i-block-145",
       "from": "untold_history_i-stmt-366",
-      "to": "untold_history_i-block-144",
+      "to": "untold_history_i-block-145",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22041,9 +22041,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-367-part_of-untold_history_i-block-144",
+      "id": "struct-untold_history_i-stmt-367-part_of-untold_history_i-block-145",
       "from": "untold_history_i-stmt-367",
-      "to": "untold_history_i-block-144",
+      "to": "untold_history_i-block-145",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22081,28 +22081,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-371-part_of-untold_history_i-block-145",
+      "id": "struct-untold_history_i-stmt-371-part_of-untold_history_i-block-147",
       "from": "untold_history_i-stmt-371",
-      "to": "untold_history_i-block-145",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-372-part_of-untold_history_i-block-145",
-      "from": "untold_history_i-stmt-372",
-      "to": "untold_history_i-block-145",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-373-part_of-untold_history_i-block-147",
-      "from": "untold_history_i-stmt-373",
       "to": "untold_history_i-block-147",
       "kind": "part_of",
       "qualifiers": {},
@@ -22111,8 +22091,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-374-part_of-untold_history_i-block-148",
-      "from": "untold_history_i-stmt-374",
+      "id": "struct-untold_history_i-stmt-372-part_of-untold_history_i-block-148",
+      "from": "untold_history_i-stmt-372",
       "to": "untold_history_i-block-148",
       "kind": "part_of",
       "qualifiers": {},
@@ -22121,8 +22101,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-375-part_of-untold_history_i-block-149",
-      "from": "untold_history_i-stmt-375",
+      "id": "struct-untold_history_i-stmt-373-part_of-untold_history_i-block-149",
+      "from": "untold_history_i-stmt-373",
       "to": "untold_history_i-block-149",
       "kind": "part_of",
       "qualifiers": {},
@@ -22131,28 +22111,28 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-376-part_of-untold_history_i-block-150",
+      "id": "struct-untold_history_i-stmt-374-part_of-untold_history_i-block-150",
+      "from": "untold_history_i-stmt-374",
+      "to": "untold_history_i-block-150",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-untold_history_i-stmt-375-part_of-untold_history_i-block-150",
+      "from": "untold_history_i-stmt-375",
+      "to": "untold_history_i-block-150",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-untold_history_i-stmt-376-part_of-untold_history_i-block-151",
       "from": "untold_history_i-stmt-376",
-      "to": "untold_history_i-block-150",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-377-part_of-untold_history_i-block-150",
-      "from": "untold_history_i-stmt-377",
-      "to": "untold_history_i-block-150",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-378-part_of-untold_history_i-block-151",
-      "from": "untold_history_i-stmt-378",
       "to": "untold_history_i-block-151",
       "kind": "part_of",
       "qualifiers": {},
@@ -22161,8 +22141,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-379-part_of-untold_history_i-block-152",
-      "from": "untold_history_i-stmt-379",
+      "id": "struct-untold_history_i-stmt-377-part_of-untold_history_i-block-152",
+      "from": "untold_history_i-stmt-377",
       "to": "untold_history_i-block-152",
       "kind": "part_of",
       "qualifiers": {},
@@ -22171,9 +22151,29 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-380-part_of-untold_history_i-block-153",
-      "from": "untold_history_i-stmt-380",
+      "id": "struct-untold_history_i-stmt-378-part_of-untold_history_i-block-153",
+      "from": "untold_history_i-stmt-378",
       "to": "untold_history_i-block-153",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-untold_history_i-stmt-379-part_of-untold_history_i-block-154",
+      "from": "untold_history_i-stmt-379",
+      "to": "untold_history_i-block-154",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-untold_history_i-stmt-380-part_of-untold_history_i-block-154",
+      "from": "untold_history_i-stmt-380",
+      "to": "untold_history_i-block-154",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22191,9 +22191,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-382-part_of-untold_history_i-block-154",
+      "id": "struct-untold_history_i-stmt-382-part_of-untold_history_i-block-155",
       "from": "untold_history_i-stmt-382",
-      "to": "untold_history_i-block-154",
+      "to": "untold_history_i-block-155",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22201,9 +22201,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-383-part_of-untold_history_i-block-154",
+      "id": "struct-untold_history_i-stmt-383-part_of-untold_history_i-block-155",
       "from": "untold_history_i-stmt-383",
-      "to": "untold_history_i-block-154",
+      "to": "untold_history_i-block-155",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22211,9 +22211,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-384-part_of-untold_history_i-block-155",
+      "id": "struct-untold_history_i-stmt-384-part_of-untold_history_i-block-157",
       "from": "untold_history_i-stmt-384",
-      "to": "untold_history_i-block-155",
+      "to": "untold_history_i-block-157",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22221,9 +22221,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-385-part_of-untold_history_i-block-155",
+      "id": "struct-untold_history_i-stmt-385-part_of-untold_history_i-block-157",
       "from": "untold_history_i-stmt-385",
-      "to": "untold_history_i-block-155",
+      "to": "untold_history_i-block-157",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22261,9 +22261,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-389-part_of-untold_history_i-block-157",
+      "id": "struct-untold_history_i-stmt-389-part_of-untold_history_i-block-159",
       "from": "untold_history_i-stmt-389",
-      "to": "untold_history_i-block-157",
+      "to": "untold_history_i-block-159",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22271,9 +22271,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-390-part_of-untold_history_i-block-157",
+      "id": "struct-untold_history_i-stmt-390-part_of-untold_history_i-block-159",
       "from": "untold_history_i-stmt-390",
-      "to": "untold_history_i-block-157",
+      "to": "untold_history_i-block-159",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22281,29 +22281,29 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-391-part_of-untold_history_i-block-159",
+      "id": "struct-untold_history_i-stmt-391-part_of-untold_history_i-block-160",
       "from": "untold_history_i-stmt-391",
-      "to": "untold_history_i-block-159",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-392-part_of-untold_history_i-block-159",
-      "from": "untold_history_i-stmt-392",
-      "to": "untold_history_i-block-159",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-393-part_of-untold_history_i-block-160",
-      "from": "untold_history_i-stmt-393",
       "to": "untold_history_i-block-160",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-untold_history_i-stmt-392-part_of-untold_history_i-block-161",
+      "from": "untold_history_i-stmt-392",
+      "to": "untold_history_i-block-161",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-untold_history_i-stmt-393-part_of-untold_history_i-block-161",
+      "from": "untold_history_i-stmt-393",
+      "to": "untold_history_i-block-161",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22321,9 +22321,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-395-part_of-untold_history_i-block-161",
+      "id": "struct-untold_history_i-stmt-395-part_of-untold_history_i-block-162",
       "from": "untold_history_i-stmt-395",
-      "to": "untold_history_i-block-161",
+      "to": "untold_history_i-block-162",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22331,9 +22331,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-396-part_of-untold_history_i-block-161",
+      "id": "struct-untold_history_i-stmt-396-part_of-untold_history_i-block-162",
       "from": "untold_history_i-stmt-396",
-      "to": "untold_history_i-block-161",
+      "to": "untold_history_i-block-162",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22341,9 +22341,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-397-part_of-untold_history_i-block-162",
+      "id": "struct-untold_history_i-stmt-397-part_of-untold_history_i-block-164",
       "from": "untold_history_i-stmt-397",
-      "to": "untold_history_i-block-162",
+      "to": "untold_history_i-block-164",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22351,9 +22351,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-398-part_of-untold_history_i-block-162",
+      "id": "struct-untold_history_i-stmt-398-part_of-untold_history_i-block-164",
       "from": "untold_history_i-stmt-398",
-      "to": "untold_history_i-block-162",
+      "to": "untold_history_i-block-164",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22371,9 +22371,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-400-part_of-untold_history_i-block-164",
+      "id": "struct-untold_history_i-stmt-400-part_of-untold_history_i-block-165",
       "from": "untold_history_i-stmt-400",
-      "to": "untold_history_i-block-164",
+      "to": "untold_history_i-block-165",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22381,9 +22381,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-401-part_of-untold_history_i-block-164",
+      "id": "struct-untold_history_i-stmt-401-part_of-untold_history_i-block-165",
       "from": "untold_history_i-stmt-401",
-      "to": "untold_history_i-block-164",
+      "to": "untold_history_i-block-165",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22391,9 +22391,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-402-part_of-untold_history_i-block-165",
+      "id": "struct-untold_history_i-stmt-402-part_of-untold_history_i-block-166",
       "from": "untold_history_i-stmt-402",
-      "to": "untold_history_i-block-165",
+      "to": "untold_history_i-block-166",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22401,9 +22401,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-403-part_of-untold_history_i-block-165",
+      "id": "struct-untold_history_i-stmt-403-part_of-untold_history_i-block-166",
       "from": "untold_history_i-stmt-403",
-      "to": "untold_history_i-block-165",
+      "to": "untold_history_i-block-166",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22421,9 +22421,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-405-part_of-untold_history_i-block-166",
+      "id": "struct-untold_history_i-stmt-405-part_of-untold_history_i-block-168",
       "from": "untold_history_i-stmt-405",
-      "to": "untold_history_i-block-166",
+      "to": "untold_history_i-block-168",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22431,9 +22431,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-406-part_of-untold_history_i-block-166",
+      "id": "struct-untold_history_i-stmt-406-part_of-untold_history_i-block-168",
       "from": "untold_history_i-stmt-406",
-      "to": "untold_history_i-block-166",
+      "to": "untold_history_i-block-168",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22461,9 +22461,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-409-part_of-untold_history_i-block-168",
+      "id": "struct-untold_history_i-stmt-409-part_of-untold_history_i-block-169",
       "from": "untold_history_i-stmt-409",
-      "to": "untold_history_i-block-168",
+      "to": "untold_history_i-block-169",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22471,9 +22471,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-410-part_of-untold_history_i-block-168",
+      "id": "struct-untold_history_i-stmt-410-part_of-untold_history_i-block-169",
       "from": "untold_history_i-stmt-410",
-      "to": "untold_history_i-block-168",
+      "to": "untold_history_i-block-169",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22491,9 +22491,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-412-part_of-untold_history_i-block-169",
+      "id": "struct-untold_history_i-stmt-412-part_of-untold_history_i-block-170",
       "from": "untold_history_i-stmt-412",
-      "to": "untold_history_i-block-169",
+      "to": "untold_history_i-block-170",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22501,9 +22501,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-413-part_of-untold_history_i-block-169",
+      "id": "struct-untold_history_i-stmt-413-part_of-untold_history_i-block-170",
       "from": "untold_history_i-stmt-413",
-      "to": "untold_history_i-block-169",
+      "to": "untold_history_i-block-170",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22531,9 +22531,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-416-part_of-untold_history_i-block-170",
+      "id": "struct-untold_history_i-stmt-416-part_of-untold_history_i-block-171",
       "from": "untold_history_i-stmt-416",
-      "to": "untold_history_i-block-170",
+      "to": "untold_history_i-block-171",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22541,9 +22541,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-417-part_of-untold_history_i-block-170",
+      "id": "struct-untold_history_i-stmt-417-part_of-untold_history_i-block-171",
       "from": "untold_history_i-stmt-417",
-      "to": "untold_history_i-block-170",
+      "to": "untold_history_i-block-171",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22571,9 +22571,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-420-part_of-untold_history_i-block-171",
+      "id": "struct-untold_history_i-stmt-420-part_of-untold_history_i-block-172",
       "from": "untold_history_i-stmt-420",
-      "to": "untold_history_i-block-171",
+      "to": "untold_history_i-block-172",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22581,9 +22581,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-421-part_of-untold_history_i-block-171",
+      "id": "struct-untold_history_i-stmt-421-part_of-untold_history_i-block-172",
       "from": "untold_history_i-stmt-421",
-      "to": "untold_history_i-block-171",
+      "to": "untold_history_i-block-172",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22621,9 +22621,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-425-part_of-untold_history_i-block-172",
+      "id": "struct-untold_history_i-stmt-425-part_of-untold_history_i-block-173",
       "from": "untold_history_i-stmt-425",
-      "to": "untold_history_i-block-172",
+      "to": "untold_history_i-block-173",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22631,9 +22631,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-426-part_of-untold_history_i-block-172",
+      "id": "struct-untold_history_i-stmt-426-part_of-untold_history_i-block-173",
       "from": "untold_history_i-stmt-426",
-      "to": "untold_history_i-block-172",
+      "to": "untold_history_i-block-173",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22651,9 +22651,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-428-part_of-untold_history_i-block-173",
+      "id": "struct-untold_history_i-stmt-428-part_of-untold_history_i-block-175",
       "from": "untold_history_i-stmt-428",
-      "to": "untold_history_i-block-173",
+      "to": "untold_history_i-block-175",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22661,9 +22661,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-429-part_of-untold_history_i-block-173",
+      "id": "struct-untold_history_i-stmt-429-part_of-untold_history_i-block-175",
       "from": "untold_history_i-stmt-429",
-      "to": "untold_history_i-block-173",
+      "to": "untold_history_i-block-175",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22671,29 +22671,29 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-430-part_of-untold_history_i-block-175",
+      "id": "struct-untold_history_i-stmt-430-part_of-untold_history_i-block-176",
       "from": "untold_history_i-stmt-430",
-      "to": "untold_history_i-block-175",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-431-part_of-untold_history_i-block-175",
-      "from": "untold_history_i-stmt-431",
-      "to": "untold_history_i-block-175",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-432-part_of-untold_history_i-block-176",
-      "from": "untold_history_i-stmt-432",
       "to": "untold_history_i-block-176",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-untold_history_i-stmt-431-part_of-untold_history_i-block-177",
+      "from": "untold_history_i-stmt-431",
+      "to": "untold_history_i-block-177",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-untold_history_i-stmt-432-part_of-untold_history_i-block-177",
+      "from": "untold_history_i-stmt-432",
+      "to": "untold_history_i-block-177",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22751,9 +22751,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-438-part_of-untold_history_i-block-177",
+      "id": "struct-untold_history_i-stmt-438-part_of-untold_history_i-block-179",
       "from": "untold_history_i-stmt-438",
-      "to": "untold_history_i-block-177",
+      "to": "untold_history_i-block-179",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22761,9 +22761,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-439-part_of-untold_history_i-block-177",
+      "id": "struct-untold_history_i-stmt-439-part_of-untold_history_i-block-179",
       "from": "untold_history_i-stmt-439",
-      "to": "untold_history_i-block-177",
+      "to": "untold_history_i-block-179",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22771,9 +22771,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-440-part_of-untold_history_i-block-179",
+      "id": "struct-untold_history_i-stmt-440-part_of-untold_history_i-block-180",
       "from": "untold_history_i-stmt-440",
-      "to": "untold_history_i-block-179",
+      "to": "untold_history_i-block-180",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22781,9 +22781,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-441-part_of-untold_history_i-block-179",
+      "id": "struct-untold_history_i-stmt-441-part_of-untold_history_i-block-180",
       "from": "untold_history_i-stmt-441",
-      "to": "untold_history_i-block-179",
+      "to": "untold_history_i-block-180",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22801,9 +22801,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-443-part_of-untold_history_i-block-180",
+      "id": "struct-untold_history_i-stmt-443-part_of-untold_history_i-block-181",
       "from": "untold_history_i-stmt-443",
-      "to": "untold_history_i-block-180",
+      "to": "untold_history_i-block-181",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22811,9 +22811,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-444-part_of-untold_history_i-block-180",
+      "id": "struct-untold_history_i-stmt-444-part_of-untold_history_i-block-181",
       "from": "untold_history_i-stmt-444",
-      "to": "untold_history_i-block-180",
+      "to": "untold_history_i-block-181",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22821,9 +22821,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-445-part_of-untold_history_i-block-181",
+      "id": "struct-untold_history_i-stmt-445-part_of-untold_history_i-block-182",
       "from": "untold_history_i-stmt-445",
-      "to": "untold_history_i-block-181",
+      "to": "untold_history_i-block-182",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22831,9 +22831,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-446-part_of-untold_history_i-block-181",
+      "id": "struct-untold_history_i-stmt-446-part_of-untold_history_i-block-182",
       "from": "untold_history_i-stmt-446",
-      "to": "untold_history_i-block-181",
+      "to": "untold_history_i-block-182",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22861,9 +22861,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-449-part_of-untold_history_i-block-182",
+      "id": "struct-untold_history_i-stmt-449-part_of-untold_history_i-block-183",
       "from": "untold_history_i-stmt-449",
-      "to": "untold_history_i-block-182",
+      "to": "untold_history_i-block-183",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22871,9 +22871,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-450-part_of-untold_history_i-block-182",
+      "id": "struct-untold_history_i-stmt-450-part_of-untold_history_i-block-183",
       "from": "untold_history_i-stmt-450",
-      "to": "untold_history_i-block-182",
+      "to": "untold_history_i-block-183",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22881,28 +22881,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-451-part_of-untold_history_i-block-183",
+      "id": "struct-untold_history_i-stmt-451-part_of-untold_history_i-block-184",
       "from": "untold_history_i-stmt-451",
-      "to": "untold_history_i-block-183",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-452-part_of-untold_history_i-block-183",
-      "from": "untold_history_i-stmt-452",
-      "to": "untold_history_i-block-183",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-453-part_of-untold_history_i-block-184",
-      "from": "untold_history_i-stmt-453",
       "to": "untold_history_i-block-184",
       "kind": "part_of",
       "qualifiers": {},
@@ -22911,8 +22891,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-454-part_of-untold_history_i-block-186",
-      "from": "untold_history_i-stmt-454",
+      "id": "struct-untold_history_i-stmt-452-part_of-untold_history_i-block-186",
+      "from": "untold_history_i-stmt-452",
       "to": "untold_history_i-block-186",
       "kind": "part_of",
       "qualifiers": {},
@@ -22921,9 +22901,29 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-455-part_of-untold_history_i-block-186",
-      "from": "untold_history_i-stmt-455",
+      "id": "struct-untold_history_i-stmt-453-part_of-untold_history_i-block-186",
+      "from": "untold_history_i-stmt-453",
       "to": "untold_history_i-block-186",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-untold_history_i-stmt-454-part_of-untold_history_i-block-187",
+      "from": "untold_history_i-stmt-454",
+      "to": "untold_history_i-block-187",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-untold_history_i-stmt-455-part_of-untold_history_i-block-187",
+      "from": "untold_history_i-stmt-455",
+      "to": "untold_history_i-block-187",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -22941,28 +22941,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-457-part_of-untold_history_i-block-187",
+      "id": "struct-untold_history_i-stmt-457-part_of-untold_history_i-block-188",
       "from": "untold_history_i-stmt-457",
-      "to": "untold_history_i-block-187",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-458-part_of-untold_history_i-block-187",
-      "from": "untold_history_i-stmt-458",
-      "to": "untold_history_i-block-187",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-untold_history_i-stmt-459-part_of-untold_history_i-block-188",
-      "from": "untold_history_i-stmt-459",
       "to": "untold_history_i-block-188",
       "kind": "part_of",
       "qualifiers": {},
@@ -22971,8 +22951,8 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-untold_history_i-stmt-460-part_of-untold_history_i-block-188",
-      "from": "untold_history_i-stmt-460",
+      "id": "struct-untold_history_i-stmt-458-part_of-untold_history_i-block-188",
+      "from": "untold_history_i-stmt-458",
       "to": "untold_history_i-block-188",
       "kind": "part_of",
       "qualifiers": {},
@@ -24882,1322 +24862,1308 @@
     },
     {
       "id": "untold_history_i-stmt-272",
-      "quote": "Fire gave hominins a hearth, but a hearth does not travel.",
+      "quote": "Clothing and shelter are two technologies older than agriculture, writing, or the usage of metal, and both widened the range of climates, materials, and problems a human group could occupy.",
       "block_id": "untold_history_i-block-106",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
       "id": "untold_history_i-stmt-273",
-      "quote": "Clothing and shelter are the two technologies that made the environment portable: one worn on the body, one built around it.",
-      "block_id": "untold_history_i-block-106",
-      "section": "Clothing and Shelter: The First Portable Environments",
-      "kind": "statement"
-    },
-    {
-      "id": "untold_history_i-stmt-274",
-      "quote": "Both are older than agriculture, writing, or metal, and both widened the range of climates, materials, and problems a human group could occupy.",
-      "block_id": "untold_history_i-block-106",
-      "section": "Clothing and Shelter: The First Portable Environments",
-      "kind": "statement"
-    },
-    {
-      "id": "untold_history_i-stmt-275",
       "quote": "A naked human can survive a cold night only with fire and a windbreak; a clothed human can carry part of that fire's work on their back.",
       "block_id": "untold_history_i-block-106",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-276",
+      "id": "untold_history_i-stmt-274",
       "quote": "The earliest evidence for clothing is indirect, because hide, sinew, and plant fibre decay.",
       "block_id": "untold_history_i-block-107",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-277",
+      "id": "untold_history_i-stmt-275",
       "quote": "The strongest genetic clue comes from the body louse, *Pediculus humanus corporis*, which lives in clothing and cannot survive long away from it.",
       "block_id": "untold_history_i-block-107",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-278",
+      "id": "untold_history_i-stmt-276",
       "quote": "A 2011 Bayesian analysis of louse genes placed the divergence of clothing lice from head lice at least 83,000 and possibly as early as 170,000 years ago, which implies that humans were wearing clothes within that window (\\cite[Toups et al., 2011]{toups2011origin}).",
       "block_id": "untold_history_i-block-107",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-279",
+      "id": "untold_history_i-stmt-277",
       "quote": "Archaeology catches the same technology from another side.",
       "block_id": "untold_history_i-block-107",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-280",
+      "id": "untold_history_i-stmt-278",
       "quote": "Hide-scraping stone tools appear in the Early and Middle Pleistocene; bone awls for piercing hides are found at Blombos Cave about 73,000 to 70,000 years ago; and the first eyed needles appear in Siberia at least 40,000 years ago (\\cite[Gilligan et al., 2024]{gilligan2024needles}).",
       "block_id": "untold_history_i-block-107",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-281",
+      "id": "untold_history_i-stmt-279",
       "quote": "The needle is a small object with a large consequence: fitted, layered clothing traps air and blocks wind far better than a draped skin, and the fine sewing that made underwear possible also made it possible to attach beads and ornaments to the surface of clothes.",
       "block_id": "untold_history_i-block-107",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-282",
+      "id": "untold_history_i-stmt-280",
       "quote": "Clothing became dress, a social signal as well as a thermal one.",
       "block_id": "untold_history_i-block-107",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-283",
+      "id": "untold_history_i-stmt-281",
       "quote": "Woven clothing survives even less often than hide, but a few pieces do.",
       "block_id": "untold_history_i-block-108",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-284",
+      "id": "untold_history_i-stmt-282",
       "quote": "The oldest known woven garment is the **Tarkhan dress**, a linen dress from a tomb at Tarkhan in Egypt, radiocarbon-dated to between 3482 and 3102 BCE and now in the Petrie Museum in London (\\cite[Tarkhan dress, 2026]{tarkhan_dress_wiki}).",
       "block_id": "untold_history_i-block-108",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-285",
+      "id": "untold_history_i-stmt-283",
       "quote": "It is the oldest surviving woven garment, and it is one survivor among the countless garments that have vanished.",
       "block_id": "untold_history_i-block-108",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-286",
+      "id": "untold_history_i-stmt-284",
       "quote": "The oldest known leather shoe is the **Areni-1 shoe**, found in 2008 in a cave in Armenia and dated to about 5,500 years ago.",
       "block_id": "untold_history_i-block-109",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-287",
+      "id": "untold_history_i-stmt-285",
       "quote": "It is cut from a single piece of hide, and it survives because the cave's cool, dry conditions preserved it (\\cite[Areni-1 shoe, 2026]{areni1_shoe_wiki}).",
       "block_id": "untold_history_i-block-109",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-288",
+      "id": "untold_history_i-stmt-286",
       "quote": "The \\citealternativetitle{img_tarkhan_dress} (CC BY-SA 2.0): the Tarkhan dress, a linen garment from Tarkhan, Egypt, dated to between 3482 and 3102 BCE and held by the Petrie Museum in London.",
       "block_id": "untold_history_i-block-110",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-289",
+      "id": "untold_history_i-stmt-287",
       "quote": "It is the oldest surviving piece of woven clothing.",
       "block_id": "untold_history_i-block-110",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-290",
+      "id": "untold_history_i-stmt-288",
       "quote": "Source: \\citeauthor{img_tarkhan_dress}, \\citeyear{img_tarkhan_dress}, \\citealternativetitle{img_tarkhan_dress}, Wikimedia Commons.",
       "block_id": "untold_history_i-block-110",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-291",
+      "id": "untold_history_i-stmt-289",
       "quote": "The \\citealternativetitle{img_areni_shoe} (CC0): the Areni-1 shoe from a cave in Armenia, about 5,500 years old and cut from a single piece of hide.",
       "block_id": "untold_history_i-block-111",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-292",
+      "id": "untold_history_i-stmt-290",
       "quote": "It is the oldest known leather shoe.",
       "block_id": "untold_history_i-block-111",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-293",
+      "id": "untold_history_i-stmt-291",
       "quote": "Source: \\citeauthor{img_areni_shoe}, \\citeyear{img_areni_shoe}, \\citealternativetitle{img_areni_shoe}, Wikimedia Commons.",
       "block_id": "untold_history_i-block-111",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-294",
+      "id": "untold_history_i-stmt-292",
       "quote": "Shelter has an older and more ambiguous record.",
       "block_id": "untold_history_i-block-112",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-295",
+      "id": "untold_history_i-stmt-293",
       "quote": "A cave is not a building, but it becomes one when fire, stone rings, and repeated occupation turn it into a fixed place.",
       "block_id": "untold_history_i-block-112",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-296",
+      "id": "untold_history_i-stmt-294",
       "quote": "The earliest known deliberately shaped wooden structure is at Kalambo Falls in Zambia, dated to at least 476,000 years ago: two interlocking logs with cut marks, most likely a platform or walkway rather than a house (\\cite[Barham et al., 2023]{barham2023kalambo}).",
       "block_id": "untold_history_i-block-112",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-297",
+      "id": "untold_history_i-stmt-295",
       "quote": "At Terra Amata near Nice, about 400,000 years ago, excavators found what they interpreted as hut floors with hearths and stone windbreaks; the interpretation is disputed, and some archaeologists read the same patterns as natural disturbance, so the site is best treated as possible rather than certain evidence of a built shelter (\\cite[Terra Amata, 2026]{terra_amata_wiki}).",
       "block_id": "untold_history_i-block-112",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-298",
+      "id": "untold_history_i-stmt-296",
       "quote": "The first unmistakable dwellings come much later, with the Upper Paleolithic.",
       "block_id": "untold_history_i-block-113",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-299",
+      "id": "untold_history_i-stmt-297",
       "quote": "At Mezhyrich in Ukraine, about 15,000 years ago, people built huts from mammoth bones, a clear case of a planned shelter in a treeless landscape (\\cite[Mezhyrich, 2026]{mezhyrich_wiki}).",
       "block_id": "untold_history_i-block-113",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-300",
+      "id": "untold_history_i-stmt-298",
       "quote": "Permanent buildings belong to the Neolithic: the stone tower at Jericho (about 8000 BCE) and the repeated houses of Çatalhöyük (7500 to 5600 BCE) are fixed, maintained, and inherited structures.",
       "block_id": "untold_history_i-block-113",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-301",
+      "id": "untold_history_i-stmt-299",
       "quote": "The next section follows that shift from portable camps to fixed villages, the change that made granaries, scribes, and eventually libraries possible.",
       "block_id": "untold_history_i-block-113",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-302",
+      "id": "untold_history_i-stmt-300",
       "quote": "The \\citealternativetitle{img_paleolithic_needle} (CC0): an eyed needle of bone from the Upper Paleolithic, Dordogne, held by the Musée Saint-Remi in Reims.",
       "block_id": "untold_history_i-block-114",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-303",
+      "id": "untold_history_i-stmt-301",
       "quote": "The eye turns a pointed awl into a tool that carries thread through hide, the small step that made fitted clothing practical.",
       "block_id": "untold_history_i-block-114",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-304",
+      "id": "untold_history_i-stmt-302",
       "quote": "Source: \\citeauthor{img_paleolithic_needle}, \\citeyear{img_paleolithic_needle}, \\citealternativetitle{img_paleolithic_needle}, Wikimedia Commons.",
       "block_id": "untold_history_i-block-114",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-305",
+      "id": "untold_history_i-stmt-303",
       "quote": "The \\citealternativetitle{img_mezhirich_mammoth_hut} (CC BY-SA 3.0): a reconstruction of a mammoth-bone dwelling of the kind found at Mezhyrich, Ukraine, and dated to about 15,000 years ago.",
       "block_id": "untold_history_i-block-115",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-306",
+      "id": "untold_history_i-stmt-304",
       "quote": "The bones are the frame and the insulation at once, a building made from the animals the builders hunted.",
       "block_id": "untold_history_i-block-115",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-307",
+      "id": "untold_history_i-stmt-305",
       "quote": "Source: \\citeauthor{img_mezhirich_mammoth_hut}, \\citeyear{img_mezhirich_mammoth_hut}, \\citealternativetitle{img_mezhirich_mammoth_hut}, Wikimedia Commons.",
       "block_id": "untold_history_i-block-115",
       "section": "Clothing and Shelter: The First Portable Environments",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-308",
+      "id": "untold_history_i-stmt-306",
       "quote": "The oldest undisputed images of a person are small figurines of the Aurignacian: the **Venus of Hohle Fels**, a six-centimetre carving of mammoth ivory from a cave near Schelklingen, is the oldest known depiction of a human being (\\cite[Conard, 2009]{conard2009hohlefels}); the **Venus of Galgenberg** (\"Fanny\"), a serpentine statuette from the Stratzing excavation in Austria, is among the oldest of its kind (\\cite[Neugebauer-Maresch, 1989]{neugebauer1989galgenberg}).",
       "block_id": "untold_history_i-block-118",
       "section": "The Earliest Figures: 40,000–35,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-309",
+      "id": "untold_history_i-stmt-307",
       "quote": "Abstract symbolic expression is older, but these are the earliest clear *figures* of a person.",
       "block_id": "untold_history_i-block-118",
       "section": "The Earliest Figures: 40,000–35,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-310",
+      "id": "untold_history_i-stmt-308",
       "quote": "What they already contain is a move that would run for forty thousand more years: an idea in the head, **pulled out and made into a thing in the world**.",
       "block_id": "untold_history_i-block-119",
       "section": "The Earliest Figures: 40,000–35,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-311",
+      "id": "untold_history_i-stmt-309",
       "quote": "The figurine is a model of a person held in the hand, external to the brain that made it, exactly as a network's weights are a physical, external model of a concept.",
       "block_id": "untold_history_i-block-119",
       "section": "The Earliest Figures: 40,000–35,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-312",
+      "id": "untold_history_i-stmt-310",
       "quote": "And it takes two things to make one, a *creative* act that conjures a representation which did not exist, and the practical act of **working with the world** to pin the idea into matter, the ancestors of generation and of tool-use in machine learning.",
       "block_id": "untold_history_i-block-119",
       "section": "The Earliest Figures: 40,000–35,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-313",
+      "id": "untold_history_i-stmt-311",
       "quote": "\\marginfig{venus_hohle_fels.jpg}{The Venus of Hohle Fels, a mammoth-ivory figurine about 6 cm tall, from the Hohle Fels cave near Schelklingen, Germany (40,000 to 35,000 years old).",
       "block_id": "untold_history_i-block-120",
       "section": "The Earliest Figures: 40,000–35,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-314",
+      "id": "untold_history_i-stmt-312",
       "quote": "[Photo: Ramessos, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:VenusHohlefels2.jpg)}",
       "block_id": "untold_history_i-block-120",
       "section": "The Earliest Figures: 40,000–35,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-315",
+      "id": "untold_history_i-stmt-313",
       "quote": "\\marginfig{venus_galgenberg.jpg}{The Venus of Galgenberg, nicknamed \"Fanny\", in green serpentine (7.2 cm), from the Stratzing site in Lower Austria (about 32,000 to 36,000 years old).",
       "block_id": "untold_history_i-block-121",
       "section": "The Earliest Figures: 40,000–35,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-316",
+      "id": "untold_history_i-stmt-314",
       "quote": "[Photo: Aiwok, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Venus_vom_Galgenberg.JPG)}",
       "block_id": "untold_history_i-block-121",
       "section": "The Earliest Figures: 40,000–35,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-317",
+      "id": "untold_history_i-stmt-315",
       "quote": "The Venus figurines are schematic; the first *recognisable* faces came later.",
       "block_id": "untold_history_i-block-123",
       "section": "From a Body to a Face: 26,000–14,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-318",
+      "id": "untold_history_i-stmt-316",
       "quote": "The carved-ivory **head from Dolní Věstonice** (Czech Republic, about 26,000 years old) is among the earliest realistic human faces, and it appears to model a specific elderly woman whose buried skull shows the same one-sided distortion as the carving \\cite{dolnivestonice}.",
       "block_id": "untold_history_i-block-123",
       "section": "From a Body to a Face: 26,000–14,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-319",
+      "id": "untold_history_i-stmt-317",
       "quote": "A little later, the engraved slabs of **La Marche** (France, Magdalenian, about 14,000–15,000 years ago) carry over a hundred human figures, each with a distinct face, robes and even boots \\cite{lamarchecave}, so individualised that they were long disputed.",
       "block_id": "untold_history_i-block-123",
       "section": "From a Body to a Face: 26,000–14,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-320",
+      "id": "untold_history_i-stmt-318",
       "quote": "\\marginfig{dolni_vestonice_head.jpg}{The ivory head from Dolní Věstonice, Czech Republic (about 26,000 years old), one of the oldest known realistic human faces; the carving matches the skull of a buried elderly woman found at the site.",
       "block_id": "untold_history_i-block-124",
       "section": "From a Body to a Face: 26,000–14,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-321",
+      "id": "untold_history_i-stmt-319",
       "quote": "[Photo: Zde, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Female_face,_ivory_carving,_Doln%C3%AD_V%C4%9Bstonice,_Gravettian,_28_000_-_22_000_BP.jpg)}",
       "block_id": "untold_history_i-block-124",
       "section": "From a Body to a Face: 26,000–14,000 Years Ago",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-322",
+      "id": "untold_history_i-stmt-320",
       "quote": "The physical prerequisites are the silicon, the cables, the cooling.",
       "block_id": "untold_history_i-block-126",
       "section": "From Mythos to Logos: The Mental Landscape That Made Computation Thinkable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-323",
+      "id": "untold_history_i-stmt-321",
       "quote": "Beneath them lies a *mental* layer: the habits of thought that made a reasoning machine conceivable.",
       "block_id": "untold_history_i-block-126",
       "section": "From Mythos to Logos: The Mental Landscape That Made Computation Thinkable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-324",
+      "id": "untold_history_i-stmt-322",
       "quote": "They were not invented for computation.",
       "block_id": "untold_history_i-block-126",
       "section": "From Mythos to Logos: The Mental Landscape That Made Computation Thinkable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-325",
+      "id": "untold_history_i-stmt-323",
       "quote": "They were invented to explain the sky, to justify the rule of kings, to calculate the tides, and to win at dice.",
       "block_id": "untold_history_i-block-126",
       "section": "From Mythos to Logos: The Mental Landscape That Made Computation Thinkable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-326",
+      "id": "untold_history_i-stmt-324",
       "quote": "The same logic that classified Greek gods now classifies the layers of a neural network; the same probability that priced a 17th-century gamble now trains a language model.",
       "block_id": "untold_history_i-block-126",
       "section": "From Mythos to Logos: The Mental Landscape That Made Computation Thinkable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-327",
+      "id": "untold_history_i-stmt-325",
       "quote": "Before science, there was story.",
       "block_id": "untold_history_i-block-128",
       "section": "The Mythos: How Story Shaped the Mind",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-328",
+      "id": "untold_history_i-stmt-326",
       "quote": "Every pre-scientific civilisation explained the natural world through **mythos**: narratives in which gods, spirits, and cosmic beings directly caused natural phenomena.",
       "block_id": "untold_history_i-block-128",
       "section": "The Mythos: How Story Shaped the Mind",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-329",
+      "id": "untold_history_i-stmt-327",
       "quote": "The sun was a chariot driven across the sky; the seasons were the result of a god's moods; earthquakes were the anger of a deity beneath the earth.",
       "block_id": "untold_history_i-block-128",
       "section": "The Mythos: How Story Shaped the Mind",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-330",
+      "id": "untold_history_i-stmt-328",
       "quote": "This was not \"wrong\" in the modern sense; it was a *different kind of model*, one in which agency was located in personal beings rather than in impersonal laws.",
       "block_id": "untold_history_i-block-128",
       "section": "The Mythos: How Story Shaped the Mind",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-331",
+      "id": "untold_history_i-stmt-329",
       "quote": "Yet mythos was not merely an obstacle to science.",
       "block_id": "untold_history_i-block-129",
       "section": "The Mythos: How Story Shaped the Mind",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-332",
+      "id": "untold_history_i-stmt-330",
       "quote": "It created specific mental prerequisites without which the scientific revolution would have been unthinkable:",
       "block_id": "untold_history_i-block-129",
       "section": "The Mythos: How Story Shaped the Mind",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-333",
+      "id": "untold_history_i-stmt-331",
       "quote": "The \\citealternativetitle{img_great_chain_of_being_1579} (Public Domain): the hierarchy of creation as \\citeauthor{img_great_chain_of_being_1579} drew it in Rhetorica Christiana — from inert matter at the base, through plants, animals, and humans, up through the angels to God at the apex.",
       "block_id": "untold_history_i-block-130",
       "section": "The Mythos: How Story Shaped the Mind",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-334",
+      "id": "untold_history_i-stmt-332",
       "quote": "The fixed, ranked ladder that dominated Western thought for a millennium, the last great echo of which is Linnaeus's Systema Naturae .",
       "block_id": "untold_history_i-block-130",
       "section": "The Mythos: How Story Shaped the Mind",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-335",
+      "id": "untold_history_i-stmt-333",
       "quote": "Source: \\citeauthor{img_great_chain_of_being_1579}, \\citeyear{img_great_chain_of_being_1579}, \\citealternativetitle{img_great_chain_of_being_1579}, Wikimedia Commons.",
       "block_id": "untold_history_i-block-130",
       "section": "The Mythos: How Story Shaped the Mind",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-336",
+      "id": "untold_history_i-stmt-334",
       "quote": "The transition from mythos to **logos** (λόγος), from story to reasoned argument, began in the Greek city-states of Ionia in the 6th century BCE.",
       "block_id": "untold_history_i-block-132",
       "section": "The Birth of Natural Philosophy: From Thales to Archimedes",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-337",
+      "id": "untold_history_i-stmt-335",
       "quote": "The Milesian natural philosophers, **Thales of Miletus** (c.",
       "block_id": "untold_history_i-block-132",
       "section": "The Birth of Natural Philosophy: From Thales to Archimedes",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-338",
+      "id": "untold_history_i-stmt-336",
       "quote": "624–546 BCE), **Anaximander** (c.",
       "block_id": "untold_history_i-block-132",
       "section": "The Birth of Natural Philosophy: From Thales to Archimedes",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-339",
+      "id": "untold_history_i-stmt-337",
       "quote": "610–546 BCE), and **Anaximenes** (c.",
       "block_id": "untold_history_i-block-132",
       "section": "The Birth of Natural Philosophy: From Thales to Archimedes",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-340",
+      "id": "untold_history_i-stmt-338",
       "quote": "586–526 BCE), made a move that had no precedent in any prior tradition: they proposed that natural phenomena could be explained without reference to the will of gods.",
       "block_id": "untold_history_i-block-132",
       "section": "The Birth of Natural Philosophy: From Thales to Archimedes",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-341",
+      "id": "untold_history_i-stmt-339",
       "quote": "Thales argued that water was the fundamental substance (*arche*) of all things; Anaximander proposed the boundless (*apeiron*); Anaximenes proposed air.",
       "block_id": "untold_history_i-block-132",
       "section": "The Birth of Natural Philosophy: From Thales to Archimedes",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-342",
+      "id": "untold_history_i-stmt-340",
       "quote": "These explanations were, by modern standards, wrong.",
       "block_id": "untold_history_i-block-132",
       "section": "The Birth of Natural Philosophy: From Thales to Archimedes",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-343",
+      "id": "untold_history_i-stmt-341",
       "quote": "But the *form* of the explanation, a natural cause operating according to a natural principle, was a revolution.",
       "block_id": "untold_history_i-block-132",
       "section": "The Birth of Natural Philosophy: From Thales to Archimedes",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-344",
+      "id": "untold_history_i-stmt-342",
       "quote": "Between the fall of the Western Roman Empire and the European Renaissance, the centre of gravity of scientific thought shifted to the Islamic world.",
       "block_id": "untold_history_i-block-134",
       "section": "The Islamic Golden Age: The Bridge",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-345",
+      "id": "untold_history_i-stmt-343",
       "quote": "The scholars of the **Abbasid Caliphate** (750–1258 CE) did not merely preserve Greek texts; they extended them, corrected them, and applied them in ways the Greeks had not imagined.",
       "block_id": "untold_history_i-block-134",
       "section": "The Islamic Golden Age: The Bridge",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-346",
+      "id": "untold_history_i-stmt-344",
       "quote": "The Scientific Revolution was not a single event but a cascade of mutually reinforcing breakthroughs, each one displacing the last:",
       "block_id": "untold_history_i-block-136",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-347",
+      "id": "untold_history_i-stmt-345",
       "quote": "The \\citealternativetitle{img_copernicus_portrait} (CC BY 4.0): Nicolaus Copernicus (1473–1543), whose De revolutionibus orbium coelestium (\\citeyear{copernicus1543revolutionibus}) displaced the Earth from the centre of the cosmos — the first and most consequential displacement in the Scientific Revolution.",
       "block_id": "untold_history_i-block-137",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-348",
+      "id": "untold_history_i-stmt-346",
       "quote": "Source: \\citeauthor{img_copernicus_portrait}, \\citeyear{img_copernicus_portrait}, \\citealternativetitle{img_copernicus_portrait}, Wikimedia Commons.",
       "block_id": "untold_history_i-block-137",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-349",
+      "id": "untold_history_i-stmt-347",
       "quote": "But it was the suppressed \\citetitle{descartes1664lemonde} (\\citeyear{descartes1664lemonde}), published posthumously, that contained the deeper displacement.",
       "block_id": "untold_history_i-block-138",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-350",
+      "id": "untold_history_i-stmt-348",
       "quote": "Descartes proposed that the physical world, including the human body, is a **machine** (*horologium*): a self-operating mechanism governed by the same mechanical laws as a clock.",
       "block_id": "untold_history_i-block-138",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-351",
+      "id": "untold_history_i-stmt-349",
       "quote": "Animals are automata; the body, after death, is a machine that has stopped.",
       "block_id": "untold_history_i-block-138",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-352",
+      "id": "untold_history_i-stmt-350",
       "quote": "The *soul* (or mind, *res cogitans*) is non-physical and cannot be a machine.",
       "block_id": "untold_history_i-block-138",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-353",
+      "id": "untold_history_i-stmt-351",
       "quote": "This is the seed of the \"brain as computer\" idea: if the body is clockwork, then the question \"can the thinking part also be a mechanism?\" becomes coherent.",
       "block_id": "untold_history_i-block-138",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-354",
+      "id": "untold_history_i-stmt-352",
       "quote": "Descartes kept the soul off the machine, but he put the organism on it.",
       "block_id": "untold_history_i-block-138",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-355",
+      "id": "untold_history_i-stmt-353",
       "quote": "The step from \"the body is a machine\" to \"the brain is a computer\" was taken, in mathematics, by \\citeauthorlastnameand{mccullochpitts1943} in \\citeyear{mccullochpitts1943}; in engineering, by the designers of the first neural networks.",
       "block_id": "untold_history_i-block-138",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-356",
+      "id": "untold_history_i-stmt-354",
       "quote": "The *Principia* also contained the first rigorous formulation of **calculus** (independent of Leibniz's), the mathematical machinery for describing change.",
       "block_id": "untold_history_i-block-139",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-357",
+      "id": "untold_history_i-stmt-355",
       "quote": "Without calculus, there is no differential equation; without differential equations, there is no differential geometry, no action principle, no variational method, and no of the optimization algorithms that train a neural network.",
       "block_id": "untold_history_i-block-139",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-358",
+      "id": "untold_history_i-stmt-356",
       "quote": "Leibniz also independently invented the **calculus** (derivatives and integrals) in the 1670s, publishing his notation ($\\frac{dy}{dx}$, $\\int$) in 1684, three years before Newton's *Principia*.",
       "block_id": "untold_history_i-block-140",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-359",
+      "id": "untold_history_i-stmt-357",
       "quote": "The priority dispute that followed was bitter and prolonged, but the substance of the contribution is clear: Leibniz's notation, still in use today, was the one that proved more general and more suitable for computation.",
       "block_id": "untold_history_i-block-140",
       "section": "The Scientific Revolution: 1543–1687",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-360",
+      "id": "untold_history_i-stmt-358",
       "quote": "The Scientific Revolution provided the *physical* model of the world.",
       "block_id": "untold_history_i-block-142",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-361",
+      "id": "untold_history_i-stmt-359",
       "quote": "The *mathematical* infrastructure for modern computation was built in parallel, by people working on problems that had nothing to do with machines:",
       "block_id": "untold_history_i-block-142",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-362",
+      "id": "untold_history_i-stmt-360",
       "quote": "\\citeauthorlastnameand{bayes1763essay} died in 1761, leaving behind a manuscript, \"An Essay towards Solving a Problem in the Doctrine of Chances,\" which his friend Richard Price discovered and published in the *Philosophical Transactions of the Royal Society* in \\citeyear{bayes1763essay}.",
       "block_id": "untold_history_i-block-143",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-363",
+      "id": "untold_history_i-stmt-361",
       "quote": "The essay solves a problem of **inverse probability**: given the data, what is the probability of the hypothesis that generated it?",
       "block_id": "untold_history_i-block-143",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-364",
+      "id": "untold_history_i-stmt-362",
       "quote": "This is **Bayesian inference**, and it is the mathematical engine of every probabilistic machine learning model, from the Perceptron's update rule to the variational autoencoder.",
       "block_id": "untold_history_i-block-143",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-365",
+      "id": "untold_history_i-stmt-363",
       "quote": "\\citeauthorlastnameand{laplace1812analytic}'s \\citetitle{laplace1812analytic} (\\citeyear{laplace1812analytic}) independently derived and generalized Bayes's result, unified probability with the theory of errors, and applied it to astronomical prediction.",
       "block_id": "untold_history_i-block-144",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-366",
+      "id": "untold_history_i-stmt-364",
       "quote": "His \\citetitle{laplace1814essai} (\\citeyear{laplace1814essai}) added the **Laplace demon** and the **central limit theorem**, the result that the sum of a large number of independent random variables tends toward a Gaussian distribution.",
       "block_id": "untold_history_i-block-144",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-367",
+      "id": "untold_history_i-stmt-365",
       "quote": "The central limit theorem is the reason that **backpropagation** works: the gradient of a loss function over millions of parameters is a sum of many small, roughly independent contributions, and its distribution is approximately Gaussian, which is why the stochastic gradient estimator is so effective.",
       "block_id": "untold_history_i-block-144",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-368",
+      "id": "untold_history_i-stmt-366",
       "quote": "The bridge from Boolean algebra to physical circuits was built by \\citeauthorlastnameand{shannon1938relay} in his MIT master's thesis, \"A Symbolic Analysis of Relay and Switching Circuits,\" published in the *Transactions of the AIEE* in \\citeyear{shannon1938relay}.",
       "block_id": "untold_history_i-block-145",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-369",
+      "id": "untold_history_i-stmt-367",
       "quote": "Shannon showed that Boole's algebra is **isomorphic** to the algebra of two-state electrical circuits: AND is switches in series; OR is switches in parallel; NOT is an inverter.",
       "block_id": "untold_history_i-block-145",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-370",
+      "id": "untold_history_i-stmt-368",
       "quote": "A logical formula can be *wired into a physical circuit*, and the circuit can *compute* the truth value of the formula.",
       "block_id": "untold_history_i-block-145",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-371",
+      "id": "untold_history_i-stmt-369",
       "quote": "This is the moment at which logic became hardware.",
       "block_id": "untold_history_i-block-145",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-372",
+      "id": "untold_history_i-stmt-370",
       "quote": "Without Shannon's 1938 thesis, the digital computer is a philosophical curiosity; with it, it is an engineering discipline.",
       "block_id": "untold_history_i-block-145",
       "section": "The Mathematical Infrastructure of Computation",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-373",
+      "id": "untold_history_i-stmt-371",
       "quote": "The transition from mythos to computation is not one invention but the **convergence of five independent intellectual revolutions**:",
       "block_id": "untold_history_i-block-147",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-374",
+      "id": "untold_history_i-stmt-372",
       "quote": "| Revolution | Key Figures | Concept Contributed | Where It Lives in an LLM |",
       "block_id": "untold_history_i-block-148",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-375",
+      "id": "untold_history_i-stmt-373",
       "quote": "| **Classification** (Aristotle → Linnaeus → Darwin) | Aristotle, Linnaeus, Darwin | Discrete, nested, ranked categories; then the **tree** | Type systems; hierarchical organization of information |",
       "block_id": "untold_history_i-block-149",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-376",
+      "id": "untold_history_i-stmt-374",
       "quote": "| **Mechanism** (Descartes → Newton → Laplace) | Descartes, Newton, Laplace | The world (incl.",
       "block_id": "untold_history_i-block-150",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-377",
+      "id": "untold_history_i-stmt-375",
       "quote": "the brain) as a **deterministic, rule-governed mechanism** | The computer as a mechanism; the \"brain as computer\" idea |",
       "block_id": "untold_history_i-block-150",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-378",
+      "id": "untold_history_i-stmt-376",
       "quote": "| **Probability** (Pascal/Fermat → Bayes → Laplace) | Pascal, Fermat, Bayes, Laplace | A calculus of **uncertainty** | Statistical learning; inference under noise; all of probabilistic ML |",
       "block_id": "untold_history_i-block-151",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-379",
+      "id": "untold_history_i-stmt-377",
       "quote": "| **Logic as Algebra** (Boole → Shannon) | Boole, De Morgan, Peirce, Shannon | Logic as **symbolic algebra** → realizable in **switches** | The logic gate; the digital circuit; computation as wired logic |",
       "block_id": "untold_history_i-block-152",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-380",
+      "id": "untold_history_i-stmt-378",
       "quote": "| **Information** (Telegraph → Shannon 1948) | Morse, Shannon | **Information** as a quantifiable, transmissible quantity | The bit; coding; error correction; the \"content\" of data |",
       "block_id": "untold_history_i-block-153",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-381",
+      "id": "untold_history_i-stmt-379",
       "quote": "Each of these revolutions was driven by problems that had nothing to do with computation: how to classify the animals of the known world, how to justify the divine order, how to divide the stakes in an interrupted game, how to wire a telegraph switch, how to measure the capacity of a communication channel.",
       "block_id": "untold_history_i-block-154",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-382",
+      "id": "untold_history_i-stmt-380",
       "quote": "Yet together, they produced the *mental landscape* in which the idea of a machine that reasons became not only possible but inevitable.",
       "block_id": "untold_history_i-block-154",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-383",
+      "id": "untold_history_i-stmt-381",
       "quote": "The LLM is the endpoint of a convergence that began when a Greek philosopher in Miletus looked at the sea and decided that it did not need a god to explain it.",
       "block_id": "untold_history_i-block-154",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-384",
+      "id": "untold_history_i-stmt-382",
       "quote": "Ideas alone do not compute.",
       "block_id": "untold_history_i-block-155",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-385",
+      "id": "untold_history_i-stmt-383",
       "quote": "Every inference rests on a scaffold of discoveries made by people who never imagined a machine writing poetry — the displaced prerequisites that fill the rest of this history.",
       "block_id": "untold_history_i-block-155",
       "section": "The Convergence",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-386",
+      "id": "untold_history_i-stmt-384",
       "quote": "The **Neolithic Revolution**, the wide-scale shift from nomadic foraging to settled agriculture beginning around 11,700 years ago, is the largest single change in the human niche since the spread of *Homo erectus*.",
       "block_id": "untold_history_i-block-157",
       "section": "From Foragers to Civilisations: The Sedentarisation That Made Computation Thinkable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-387",
+      "id": "untold_history_i-stmt-385",
       "quote": "The very idea that such a prehistoric shift could be called a *revolution* comes from **V.",
       "block_id": "untold_history_i-block-157",
       "section": "From Foragers to Civilisations: The Sedentarisation That Made Computation Thinkable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-388",
+      "id": "untold_history_i-stmt-386",
       "quote": "Gordon Childe** (\\citeauthor{childe1936man}), who argued in his 1936 *Man Makes Himself* that the British population curve between 1750 and 1800 turns \"through an angle of about 30°,\" and that comparable kinks far enough back in prehistory deserve the same name (\\cite[Childe 1936, ch.",
       "block_id": "untold_history_i-block-157",
       "section": "From Foragers to Civilisations: The Sedentarisation That Made Computation Thinkable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-389",
+      "id": "untold_history_i-stmt-387",
       "quote": "He later labelled two of those kinks the **Neolithic Revolution** and the **Urban Revolution** (\\cite[Childe 1950]{childe1950urban}).",
       "block_id": "untold_history_i-block-157",
       "section": "From Foragers to Civilisations: The Sedentarisation That Made Computation Thinkable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-390",
+      "id": "untold_history_i-stmt-388",
       "quote": "Without **sedentarisation** (*Sesshaftwerdung*), none of the intellectual and material prerequisites of modern computation could have emerged.",
       "block_id": "untold_history_i-block-157",
       "section": "From Foragers to Civilisations: The Sedentarisation That Made Computation Thinkable",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-391",
+      "id": "untold_history_i-stmt-389",
       "quote": "For the vast majority of their existence, humans were foragers: small, mobile bands that owned few possessions and consumed food within days of gathering it.",
       "block_id": "untold_history_i-block-159",
       "section": "From foraging to farming",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-392",
+      "id": "untold_history_i-stmt-390",
       "quote": "Australian Aboriginal foragers of the Western Desert, ethnographically studied in the twentieth century, sustained extraordinarily detailed oral traditions for at least 65,000 years — but the lifestyle imposed a hard ceiling on every other dimension of accumulation.",
       "block_id": "untold_history_i-block-159",
       "section": "From foraging to farming",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-393",
+      "id": "untold_history_i-stmt-391",
       "quote": "Without stored food, there could be no fixed residence, no pottery, no granaries, no dense craft specialisation, no civic buildings, no writing, no standing armies, no taxation — and no libraries, no schools, and no project that outlasted the working life of a single forager.",
       "block_id": "untold_history_i-block-160",
       "section": "From foraging to farming",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-394",
+      "id": "untold_history_i-stmt-392",
       "quote": "The change began with the climate.",
       "block_id": "untold_history_i-block-161",
       "section": "From foraging to farming",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-395",
+      "id": "untold_history_i-stmt-393",
       "quote": "As the Pleistocene ice sheets melted, the climate wobbled through a final cold snap (the **Younger Dryas**, ~10,900–9,700 BCE) and then settled into the long, warm, stable interval we still inhabit, the **Holocene**.",
       "block_id": "untold_history_i-block-161",
       "section": "From foraging to farming",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-396",
+      "id": "untold_history_i-stmt-394",
       "quote": "What made the **Fertile Crescent** special was not a single miracle crop but a *package* of eight wild species — the **Neolithic founder crops** identified by **Daniel Zohary** with Maria Hopf and later Ehud Weiss (\\cite[Zohary, Hopf & Weiss 2012]{zoharyhopf2000domestication}): the cereals emmer, einkorn, and barley; the pulses lentil, pea, chickpea, and bitter vetch; and the fibre plant flax.",
       "block_id": "untold_history_i-block-161",
       "section": "From foraging to farming",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-397",
+      "id": "untold_history_i-stmt-395",
       "quote": "The earliest secure evidence for cultivated, morphologically domesticated emmer and einkorn comes from sites in the Fertile Crescent at roughly 9500 BCE, before pottery, before towns, and before writing.",
       "block_id": "untold_history_i-block-162",
       "section": "From foraging to farming",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-398",
+      "id": "untold_history_i-stmt-396",
       "quote": "Sheep, goats, cattle, and pigs followed; stored grain and managed herds made a year-round sedentary diet possible for the first time.",
       "block_id": "untold_history_i-block-162",
       "section": "From foraging to farming",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-399",
+      "id": "untold_history_i-stmt-397",
       "quote": "Sedentarisation preceded agriculture, not the other way around.",
       "block_id": "untold_history_i-block-164",
       "section": "The first towns",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-400",
+      "id": "untold_history_i-stmt-398",
       "quote": "The site of **Jericho** (\\cite[Kenyon 1957]{kenyon1957digging}), in the West Bank near a perennial spring, has stone-walled occupation layers beginning in the **Pre-Pottery Neolithic A** around 9500 BCE — earlier than full cereal domestication.",
       "block_id": "untold_history_i-block-164",
       "section": "The first towns",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-401",
+      "id": "untold_history_i-stmt-399",
       "quote": "8000 BCE, ~8.5 m tall) is one of the oldest stone monuments on Earth, and its surrounding wall and ditch are the earliest known example of **fortification**, a built structure whose purpose is to defend a *fixed place*.",
       "block_id": "untold_history_i-block-164",
       "section": "The first towns",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-402",
+      "id": "untold_history_i-stmt-400",
       "quote": "A few hundred kilometres north, in the Konya plain, **Çatalhöyük** (\\cite[Mellaart 1967]{mellaart1967catal}) was occupied from roughly 7500 to 5600 BCE and at its peak housed somewhere between 600 and 8,000 people, the largest known Neolithic proto-city.",
       "block_id": "untold_history_i-block-165",
       "section": "The first towns",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-403",
+      "id": "untold_history_i-stmt-401",
       "quote": "The second, much longer campaign under **Ian Hodder** (1993–2018) overturned Mellaart's \"Mother Goddess\" reading: only one of ~2,000 figurines matched the Mother Goddess style, fewer than five percent depicted women, and the houses were remarkably uniform in size with no clear hierarchical elite (\\cite[Hodder 2006]{hodder2006leopard}).",
       "block_id": "untold_history_i-block-165",
       "section": "The first towns",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-404",
+      "id": "untold_history_i-stmt-402",
       "quote": "The \\citealternativetitle{img_catalhoyuk} (CC BY-SA 4.0): the excavated mudbrick houses of Çatalhöyük, packed together with no streets between them and entered through openings in the roof.",
       "block_id": "untold_history_i-block-166",
       "section": "The first towns",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-405",
+      "id": "untold_history_i-stmt-403",
       "quote": "At its peak the settlement held several thousand people in one continuous fabric of rooms.",
       "block_id": "untold_history_i-block-166",
       "section": "The first towns",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-406",
+      "id": "untold_history_i-stmt-404",
       "quote": "Source: \\citeauthor{img_catalhoyuk}, \\citeyear{img_catalhoyuk}, \\citealternativetitle{img_catalhoyuk}, Wikimedia Commons.",
       "block_id": "untold_history_i-block-166",
       "section": "The first towns",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-407",
+      "id": "untold_history_i-stmt-405",
       "quote": "The first towns were already a new kind of building: a wall, a granary, a shared ditch.",
       "block_id": "untold_history_i-block-168",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-408",
+      "id": "untold_history_i-stmt-406",
       "quote": "Architecture became a technology in its own right when people began to build for permanence and for an audience.",
       "block_id": "untold_history_i-block-168",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-409",
+      "id": "untold_history_i-stmt-407",
       "quote": "Göbekli Tepe in southeastern Turkey, inhabited from about 9500 to 8000 BCE, is the clearest early case: large circular enclosures with T-shaped limestone pillars, some carved with animals, raised before pottery, writing, or the wheel.",
       "block_id": "untold_history_i-block-168",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-410",
+      "id": "untold_history_i-stmt-408",
       "quote": "The pillars are among the world's oldest known megaliths, and the site shows that monumental construction came early in the Neolithic (\\cite[Göbekli Tepe, 2026]{gobekli_tepe_wiki}).",
       "block_id": "untold_history_i-block-168",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-411",
+      "id": "untold_history_i-stmt-409",
       "quote": "Stonehenge, built in phases from about 3100 to 1600 BCE, turned the same impulse into an astronomical instrument: the sarsen circle is aligned to the solstices, and the lintels are held by mortise-and-tenon joints (\\cite[Stonehenge, 2026]{stonehenge_wiki}).",
       "block_id": "untold_history_i-block-169",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-412",
+      "id": "untold_history_i-stmt-410",
       "quote": "The Great Pyramid of Giza, built around 2600 BCE, held the title of the world's tallest human-made structure for more than 3,700 years (\\cite[Great Pyramid of Giza, 2026]{great_pyramid_wiki}).",
       "block_id": "untold_history_i-block-169",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-413",
+      "id": "untold_history_i-stmt-411",
       "quote": "Each step required a new kind of organization: quarrying, transport, scaffolding, and a workforce fed by a surplus.",
       "block_id": "untold_history_i-block-169",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-414",
+      "id": "untold_history_i-stmt-412",
       "quote": "The Romans added the arch, the vault, and a concrete that could set under water.",
       "block_id": "untold_history_i-block-170",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-415",
+      "id": "untold_history_i-stmt-413",
       "quote": "The Pantheon, completed around 126 CE, is still the largest unreinforced concrete dome in the world, a 43-metre span with an open oculus (\\cite[Pantheon, 2026]{pantheon_wiki}).",
       "block_id": "untold_history_i-block-170",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-416",
+      "id": "untold_history_i-stmt-414",
       "quote": "Roman builders did not need steel; they needed geometry and a material that could be poured into a curved form.",
       "block_id": "untold_history_i-block-170",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-417",
+      "id": "untold_history_i-stmt-415",
       "quote": "The Gothic builders of the 12th century pushed the same logic upward with pointed arches, rib vaults, and flying buttresses, turning walls into windows and stone into light (\\cite[Gothic architecture, 2026]{gothic_architecture_wiki}).",
       "block_id": "untold_history_i-block-170",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-418",
+      "id": "untold_history_i-stmt-416",
       "quote": "The industrial revolution changed the material and the scale.",
       "block_id": "untold_history_i-block-171",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-419",
+      "id": "untold_history_i-stmt-417",
       "quote": "Cast iron, then steel, let a frame carry the load while the wall became a skin.",
       "block_id": "untold_history_i-block-171",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-420",
+      "id": "untold_history_i-stmt-418",
       "quote": "The Home Insurance Building in Chicago, completed in 1885, is often called the first skyscraper because its steel frame carried both the floors and the exterior (\\cite[Home Insurance Building, 2026]{home_insurance_building_wiki}).",
       "block_id": "untold_history_i-block-171",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-421",
+      "id": "untold_history_i-stmt-419",
       "quote": "The elevator, the electric light, and the telephone made the tall building usable; the tall building made the city vertical.",
       "block_id": "untold_history_i-block-171",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-422",
+      "id": "untold_history_i-stmt-420",
       "quote": "The newest building type is the data center, a building whose main product is computation.",
       "block_id": "untold_history_i-block-172",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-423",
+      "id": "untold_history_i-stmt-421",
       "quote": "Its history begins with the room-sized machines of the 1940s, such as ENIAC, and runs through the air-conditioned mainframe halls of the mid-20th century to the hyperscale campuses of the early 21st, which can hold thousands of servers and cover millions of square feet (\\cite[Data center, 2026]{data_center_wiki}).",
       "block_id": "untold_history_i-block-172",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-424",
+      "id": "untold_history_i-stmt-422",
       "quote": "In an AI training cluster, the architecture is designed around power delivery, cooling, and the weight of racks, not around the people who work there.",
       "block_id": "untold_history_i-block-172",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-425",
+      "id": "untold_history_i-stmt-423",
       "quote": "The building has become a machine for keeping other machines alive.",
       "block_id": "untold_history_i-block-172",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-426",
+      "id": "untold_history_i-stmt-424",
       "quote": "The same chain that began with a windbreak and a hearth now ends in a hall of fans and cables.",
       "block_id": "untold_history_i-block-172",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-427",
+      "id": "untold_history_i-stmt-425",
       "quote": "The \\citealternativetitle{img_server_room} (CC BY-SA 3.0): a server room, the latest stage of the building.",
       "block_id": "untold_history_i-block-173",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-428",
+      "id": "untold_history_i-stmt-426",
       "quote": "Racks of machines replace rooms of people, and the architecture is organized around power, cooling, and cable runs.",
       "block_id": "untold_history_i-block-173",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-429",
+      "id": "untold_history_i-stmt-427",
       "quote": "Source: \\citeauthor{img_server_room}, \\citeyear{img_server_room}, \\citealternativetitle{img_server_room}, Wikimedia Commons.",
       "block_id": "untold_history_i-block-173",
       "section": "Buildings: From Monument to Server Hall",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-430",
+      "id": "untold_history_i-stmt-428",
       "quote": "Childe's second coinage, the **Urban Revolution** (\\cite[Childe 1950]{childe1950urban}), names what happened around 4000 BCE in southern Mesopotamia: the small farming villages of the Uruk period coalesced into cities.",
       "block_id": "untold_history_i-block-175",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-431",
+      "id": "untold_history_i-stmt-429",
       "quote": "**Uruk** itself grew to perhaps 50,000 inhabitants by 3100 BCE; comparable trajectories played out in Egypt, the Indus valley, the Yellow River basin, and later Mesoamerica.",
       "block_id": "untold_history_i-block-175",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-432",
+      "id": "untold_history_i-stmt-430",
       "quote": "In a 1950 *Town Planning Review* paper, Childe listed ten diagnostic features of the first cities — large population, full-time specialists, concentration of surplus, monumental architecture, a ruling class freed from manual labour, systems of recording and writing, exact and predictive sciences, representational art, long-distance trade, and a state organisation based on residence rather than kinship (\\cite[Childe 1950]{childe1950urban}) — almost every one of which is a step in the chain that ends at a printed circuit.",
       "block_id": "untold_history_i-block-176",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-433",
+      "id": "untold_history_i-stmt-431",
       "quote": "The **Bronze Age** — Near East c.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-434",
+      "id": "untold_history_i-stmt-432",
       "quote": "3300–1200 BCE — ran on long-distance trade in tin and copper; Childe, in *Man Makes Himself*, makes the deeper argument about why: \"The bronze axe which replaces it is not only a superior implement, it also presupposes a more complex economic and social structure.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-435",
+      "id": "untold_history_i-stmt-433",
       "quote": "The casting of bronze is too difficult a process to be carried out by anyone in the intervals of growing or catching his food or minding her babies.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-436",
+      "id": "untold_history_i-stmt-434",
       "quote": "It is a specialist's job, and these specialists must rely for such primary necessities as food upon a surplus produced by other specialists.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-437",
+      "id": "untold_history_i-stmt-435",
       "quote": "Again, the copper and tin of which the bronze axe is composed are comparatively rare, and very seldom occur together.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-438",
+      "id": "untold_history_i-stmt-436",
       "quote": "One or both of the constituents will almost certainly have to be imported.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-439",
+      "id": "untold_history_i-stmt-437",
       "quote": "Such importation is possible only if some sort of communications and trade have been established and if there is a surplus of some local product to barter for the metals\" (\\cite[Childe 1936, ch.",
       "block_id": "untold_history_i-block-177",
       "section": "The Urban Revolution and the metals",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-440",
+      "id": "untold_history_i-stmt-438",
       "quote": "The single most consequential innovation of the Urban Revolution for this lesson is **writing**.",
       "block_id": "untold_history_i-block-179",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-441",
+      "id": "untold_history_i-stmt-439",
       "quote": "It emerged not from literary ambition but from bookkeeping.",
       "block_id": "untold_history_i-block-179",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-442",
+      "id": "untold_history_i-stmt-440",
       "quote": "In **Denise Schmandt-Besserat**'s reconstruction, the first system was a set of small shaped clay **tokens** — cones, spheres, disks, cylinders — in use across the Near East from the eighth millennium BCE.",
       "block_id": "untold_history_i-block-180",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-443",
+      "id": "untold_history_i-stmt-441",
       "quote": "Her original 1978 paper in *Scientific American* put the thesis crisply: \"Long before the Sumerians invented writing, accounts in western Asia were kept with clay tokens of various distinctive shapes.",
       "block_id": "untold_history_i-block-180",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-444",
+      "id": "untold_history_i-stmt-442",
       "quote": "It appears that the tokens gave rise to the Sumerian ideographs\" (\\cite[Schmandt-Besserat 1978]{schmandtbesserat1978}; \\cite[Schmandt-Besserat 1992]{schmandtbesserat1992}; \\cite[Schmandt-Besserat 1996]{schmandtbesserat1996}).",
       "block_id": "untold_history_i-block-180",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-445",
+      "id": "untold_history_i-stmt-443",
       "quote": "Tokens sealed inside clay *bullae* were marked on the outside with their own shapes — the first case of a physical record carrying its own verification.",
       "block_id": "untold_history_i-block-181",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-446",
+      "id": "untold_history_i-stmt-444",
       "quote": "Around 3300 BCE, in Uruk IV, the envelope was dropped for a flat tablet on which the token shapes were impressed directly; by 2600 BCE the picture-shapes had been replaced by the wedge-shaped marks we call **cuneiform**, from the Latin *cuneus*.",
       "block_id": "untold_history_i-block-181",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-447",
+      "id": "untold_history_i-stmt-445",
       "quote": "Cuneiform was the first of five independent inventions of writing: Egyptian **hieroglyphs** (c.",
       "block_id": "untold_history_i-block-182",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-448",
+      "id": "untold_history_i-stmt-446",
       "quote": "3200 BCE), undeciphered Indus script (c.",
       "block_id": "untold_history_i-block-182",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-449",
+      "id": "untold_history_i-stmt-447",
       "quote": "2600 BCE), Shang Chinese oracle-bone characters (c.",
       "block_id": "untold_history_i-block-182",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-450",
+      "id": "untold_history_i-stmt-448",
       "quote": "1250 BCE), and Mesoamerican **Maya** (c.",
       "block_id": "untold_history_i-block-182",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-451",
+      "id": "untold_history_i-stmt-449",
       "quote": "The next question after cities was how to make a king's word outlast the king.",
       "block_id": "untold_history_i-block-183",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-452",
+      "id": "untold_history_i-stmt-450",
       "quote": "The **Code of Hammurabi** (\\cite[Roth 1997]{roth1997lawcollections}; \\cite[Scheil 1902]{scheil1902code}) is the earliest preserved answer: a basalt stele ~2.25 m tall, inscribed in Old Babylonian Akkadian around 1753 BCE, rediscovered at Susa in 1901, edited by the Dominican priest **Jean-Vincent Scheil** in 1902, and now in the Louvre.",
       "block_id": "untold_history_i-block-183",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-453",
+      "id": "untold_history_i-stmt-451",
       "quote": "Its 282 case-form laws cover everything from a surgeon's fee to *lex talionis* — \"an eye for an eye.\" The principle most modern readers remember is the second; the more durable contribution is structural: a body of law, made public on a monument in every major city of the empire, that could be cited after the king's death.",
       "block_id": "untold_history_i-block-184",
       "section": "Writing, law, libraries",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-454",
+      "id": "untold_history_i-stmt-452",
       "quote": "Strip any one element out of this chain and the rest cannot stand.",
       "block_id": "untold_history_i-block-186",
       "section": "Why sedentarisation is a prerequisite of AI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-455",
+      "id": "untold_history_i-stmt-453",
       "quote": "No agriculture, no fixed residence; no fixed residence, no pottery, no granary, no city; no city, no specialised scribal class; no scribal class, no writing; no writing, no codified law, no coinage, no algebra, no astronomy accurate enough to predict eclipses, no geometry accurate enough to survey after a Nile flood, no library, no encyclopedia, no standard mathematical notation, no \"algorithm\" in the modern sense.",
       "block_id": "untold_history_i-block-186",
       "section": "Why sedentarisation is a prerequisite of AI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-456",
+      "id": "untold_history_i-stmt-454",
       "quote": "Each step was made for reasons that had nothing to do with computation.",
       "block_id": "untold_history_i-block-187",
       "section": "Why sedentarisation is a prerequisite of AI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-457",
+      "id": "untold_history_i-stmt-455",
       "quote": "Yet the chain they collectively built is the chain on which every calculator, database, operating system, and large language model rests.",
       "block_id": "untold_history_i-block-187",
       "section": "Why sedentarisation is a prerequisite of AI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-458",
+      "id": "untold_history_i-stmt-456",
       "quote": "A language model is a model of human *language*, and human language was *first made durable* by the scribes of Sumer.",
       "block_id": "untold_history_i-block-187",
       "section": "Why sedentarisation is a prerequisite of AI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-459",
+      "id": "untold_history_i-stmt-457",
       "quote": "The grammatical categories of Akkadian and Sumerian, the case system of Latin, the inflectional morphology of ancient Greek, the tonal layers of Middle Chinese, the analytic structure of Old English — all of these are inside the corpus on which an LLM is trained, because they were inside the libraries that writing built, that agriculture made possible, that the cities of the first urban revolution sustained.",
       "block_id": "untold_history_i-block-188",
       "section": "Why sedentarisation is a prerequisite of AI",
       "kind": "statement"
     },
     {
-      "id": "untold_history_i-stmt-460",
+      "id": "untold_history_i-stmt-458",
       "quote": "Take the chain away and the corpus thins to oral memory; take the oral memory away and the model has nothing to model.",
       "block_id": "untold_history_i-block-188",
       "section": "Why sedentarisation is a prerequisite of AI",
@@ -26837,7 +26803,7 @@
     },
     {
       "id": "untold_history_i-block-106",
-      "quote": "Fire gave hominins a hearth, but a hearth does not travel. Clothing and shelter are the two technologies that made the environment portable: one worn on the body, one built around it. Both are older than agriculture, writing, or metal, and both widened the range of climates, materials, and problems a human group could occupy. A naked human can survive a cold night only with fire and a windbreak; a clothed human can carry part of that fire's work on their back.",
+      "quote": "Clothing and shelter are two technologies older than agriculture, writing, or the usage of metal, and both widened the range of climates, materials, and problems a human group could occupy. A naked human can survive a cold night only with fire and a windbreak; a clothed human can carry part of that fire's work on their back.",
       "kind": "paragraph",
       "section": "Clothing and Shelter: The First Portable Environments"
     },
