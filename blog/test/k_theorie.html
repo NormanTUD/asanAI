@@ -135,7 +135,7 @@
       <canvas id="bundleCanvas" aria-label="Möbiusband und Zylinder über einem Kreis"></canvas>
     </div>
   </div>
-  <p class="caption"><b>K-Theorie misst den Klebstoff:</b> Der Zylinder ist das triviale Bündel, das Möbiusband ein nichttriviales Element. Über einem Punkt gibt es keinen Unterschied, über einem Kreis schon.</p>
+  <p class="caption"><b>K-Theorie misst den Klebstoff:</b> Der Zylinder ist das triviale Bündel, das Möbiusband ein nichttriviales reelles Linienbündel. In der komplexen K-Theorie ist jedes Linienbündel über S¹ trivial; die erste nichttriviale Windung erscheint über S².</p>
 </section>
 
 <section class="chapter reveal" id="k0" data-nav="K⁰(S²)">
@@ -311,7 +311,7 @@
     <div class="card">
       <div class="k">Adams, 1962</div>
       <h3>Vektorfelder auf Sphären</h3>
-      <p>Wie viele unabhängige Vektorfelder trägt <span class="math">S<sup>n−1</sup></span>? Adams löste das mit K-Theorie und Adams-Operationen, nicht mit klassischer Homotopie.</p>
+      <p>Wie viele unabhängige Vektorfelder trägt <span class="math">S<sup>n−1</sup></span>? Adams löste das mit K-Theorie und Adams-Operationen.</p>
     </div>
     <div class="card">
       <div class="k">Grothendieck–Riemann–Roch</div>
@@ -321,7 +321,7 @@
     <div class="card">
       <div class="k">Klassifikation</div>
       <h3>Welche Bündel gibt es?</h3>
-      <p>Stabile Bündel über einem Raum bilden eine Gruppe. K-Theorie ist die beste erste Approximation an ihre Klassifikation.</p>
+      <p>Stabile Bündel über einem Raum bilden eine Gruppe. K-Theorie ist eine erste, stabile Approximation an ihre Klassifikation.</p>
     </div>
     <div class="card">
       <div class="k">Operatoralgebren</div>
@@ -798,7 +798,7 @@
       if (!w || !h) return;
       if (!dragging) rot += 0.0035;
       const cx = w * 0.5, cy = h * 0.5;
-      const R = Math.min(w, h) * 0.29;
+      const R = Math.min(w, h) * 0.34;
       // sphere silhouette
       const g = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.35, R * 0.1, cx, cy, R * 1.05);
       g.addColorStop(0, "rgba(255,255,255,.09)");
@@ -884,8 +884,8 @@
       nIn.max = 23; update();
     });
     bStep.addEventListener("click", () => {
-      nIn.value = (n + 1) % (period() * 2);
-      if (+nIn.value < n) nIn.value = 0;
+      const max = +nIn.max + 1;
+      nIn.value = (n + 1) % max;
       update();
     });
     update();

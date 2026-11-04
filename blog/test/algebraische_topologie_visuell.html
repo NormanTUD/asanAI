@@ -77,7 +77,7 @@
       <div class="panel">
         <h3>Was du siehst</h3>
         <p>Der Regler verbiegt einen Kreis zu einem Quadrat. Beide haben kein Loch und sind
-        homöomorph. Der Torus darunter hat ein Loch und ist etwas anderes.</p>
+        homöomorph. Der Torus daneben hat ein Loch und ist etwas anderes.</p>
         <div class="readout" style="margin-top:.8rem">
           <div><span class="key">Euler-Charakteristik</span><span class="val" id="morphChi">2</span></div>
           <div><span class="key">Löcher</span><span class="val" id="morphHoles">0</span></div>
@@ -386,7 +386,7 @@
     <div class="tl-item">
       <div class="tl-year">1895</div>
       <h3>Poincaré: Analysis Situs</h3>
-      <p><b>Henri Poincaré</b> begründet die algebraische Topologie mit Homologie, Fundamentalgruppe und Betti-Zahlen. Seine Vermutung von 1904 wird ein Jahrhundert lang das berühmteste Problem der Topologie.</p>
+      <p><b>Henri Poincaré</b> begründet die algebraische Topologie: Er führt die Fundamentalgruppe ein und entwickelt Homologie und Betti-Zahlen systematisch. Seine Vermutung von 1904 wird ein Jahrhundert lang das berühmteste Problem der Topologie.</p>
     </div>
     <div class="tl-item">
       <div class="tl-year">um 1925</div>
@@ -644,7 +644,7 @@
     holeIn.addEventListener("input", () => { holesN = +holeIn.value; preset("one"); update(); });
     bOne.addEventListener("click", () => { preset("one"); update(); });
     bBoth.addEventListener("click", () => { holesN = 2; holeIn.value = 2; preset("both"); update(); });
-    bCont.addEventListener("click", () => { preset("one"); pts = pts.map(p => ({ x: 0.5 + (p.x - 0.5) * 0.12, y: 0.5 + (p.y - 0.5) * 0.12 })); update(); });
+    bCont.addEventListener("click", () => { pts = pts.map((p, i) => { const a = i / N * TAU; return { x: 0.16 + Math.cos(a) * 0.05, y: 0.16 + Math.sin(a) * 0.05 }; }); update(); });
     update();
 
     let drag = false;
@@ -740,7 +740,7 @@
       if (spin) theta += dt * 0.9;
       const cx = w * 0.36, baseY = h * 0.74;
       const r = Math.min(w, h) * 0.2;
-      const rise = Math.min(h * 0.5, 150) * turns;
+      const rise = Math.min(h * 0.58, 220);
       // base ellipse
       ctx.beginPath();
       ctx.ellipse(cx, baseY, r, r * 0.34, 0, 0, TAU);
