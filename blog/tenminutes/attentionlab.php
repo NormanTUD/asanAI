@@ -315,9 +315,11 @@
 	(function () {
 		"use strict";
 
-		var tokens = ["Maria", "told", "the", "bank", "that", "she", "would", "repay", "the", "loan", "tomorrow"];
 		var ATT_DE = TM.lang() === "de";
-		var LABELS = ATT_DE ? ["Maria", "sagte", "der", "Bank", "dass", "sie", "würde", "zurückzahlen", "den", "Kredit", "morgen"] : tokens.slice();
+		var TOKENS_EN = ["Maria", "told", "the", "bank", "that", "she", "would", "repay", "the", "loan", "tomorrow"];
+		var TOKENS_DE = ["Maria", "told", "the", "bank", "that", "she", "the", "loan", "tomorrow", "repay", "would"];
+		var tokens = ATT_DE ? TOKENS_DE : TOKENS_EN;
+		var LABELS = ATT_DE ? ["Maria", "sagte", "der", "Bank", "dass", "sie", "den", "Kredit", "morgen", "zurückzahlen", "würde"] : TOKENS_EN.slice();
 		function label(i) { return LABELS[i] || tokens[i]; }
 		var rules = {
 			coref: [

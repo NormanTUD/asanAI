@@ -56,6 +56,8 @@ return [
 		'3 · Score' => '3 · Score',
 		'4 · Select top-k' => '4 · Top-k auswählen',
 		'5 · Insert into prompt' => '5 · In den Prompt einfügen',
+		'Eiffel Tower height' => 'Höhe des Eiffelturms',
+		'Eiffel opening hours' => 'Öffnungszeiten des Eiffelturms',
 		'RAG pipeline' => 'RAG-Pipeline',
 		'vector database' => 'Vektordatenbank',
 		'Retrieve' => 'Abrufen',

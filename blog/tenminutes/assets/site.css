@@ -2340,7 +2340,9 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 .gate-plot {
 	display: block;
 	width: 100%;
+	max-width: 420px;
 	height: auto;
+	margin: 0 auto;
 	border: 1px solid var(--tm-line);
 	background: var(--tm-paper-2);
 }

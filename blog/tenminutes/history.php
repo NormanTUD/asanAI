@@ -7,7 +7,7 @@
 	<meta name="theme-color" content="#ffffff">
 	<title>A Very Brief History of AI | Ten Minutes</title>
 	<link rel="stylesheet" href="../Temml-Local.min.css">
-	<link rel="stylesheet" href="assets/site.css?v=20261104c">
+	<link rel="stylesheet" href="assets/site.css?v=20261104e">
 </head>
 <body data-lesson="history" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -193,7 +193,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Memory can sit on a shelf.</p>
-							<p class="aha-sub">A notch in a bone keeps a count beyond the moment of counting. <strong>Ledgers</strong>, <strong>catalogues</strong> and <strong>databases</strong> repeat the same move: they put the number somewhere you can come back to.</p>
+							<p class="aha-sub">A notch in a bone keeps a count beyond the moment of counting. Ledgers, catalogues and databases repeat the same move: they put the number somewhere you can come back to.</p>
 						</div>
 					</section>
 
@@ -323,8 +323,8 @@
 								weaker senses.
 							</p>
 							<figure style="max-width: 560px; margin: 20px auto;">
-								<img src="../zuse.jpg" alt="Konrad Zuse with a replica of his Z1" loading="lazy">
-								<figcaption>Konrad Zuse with a replica of his Z1. Image: Horst Zuse, <a href="https://www.math.berlin/mathematiker/konrad-zuse.html" rel="noopener">math.berlin</a>.</figcaption>
+								<img src="assets/img/konrad-zuse-1992.jpg" alt="Portrait of Konrad Zuse, 1992" loading="lazy">
+								<figcaption>Konrad Zuse, 1992. Image: Wolfgang Hunscher, <a href="https://commons.wikimedia.org/wiki/File:Konrad_Zuse_(1992).jpg" rel="noopener">CC BY-SA 3.0</a>.</figcaption>
 							</figure>
 							<p>
 								Howard Aiken’s <strong>Harvard Mark I</strong> (1944) is a

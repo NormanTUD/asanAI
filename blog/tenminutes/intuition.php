@@ -6,7 +6,7 @@
 	<meta name="description" content="A ten-minute interactive introduction to next-token prediction, the loop behind large language models.">
 	<meta name="theme-color" content="#ffffff">
 	<title>One Word at a Time | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css?v=20261104c">
+	<link rel="stylesheet" href="assets/site.css?v=20261104e">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 </head>
 <body data-lesson="intuition" data-page="lesson">
@@ -639,7 +639,7 @@
 
 	<script src="../temml.min.js"></script>
 	<script src="assets/site.js?v=20261104"></script>
-	<script src="assets/demos.js?v=20261103"></script>
+	<script src="assets/demos.js?v=20261104b"></script>
 	<script src="assets/space-morph.js?v=20261104"></script>
 	<script src="assets/embedding-plot.js?v=20261104"></script>
 	<script src="assets/word-meadow.js?v=20261104"></script>

@@ -60,7 +60,7 @@ return [
 		'The coreference head links “she” back to “Maria”. The pronoun needs a referent; the head retrieves it.' => 'Der Koreferenz-Head verknüpft „sie“ mit „Maria“. Das Pronomen braucht einen Bezug; der Head holt ihn.',
 		'Takeaway' => 'Fazit',
 		'Attention routes information; it does not explain the answer. The weights show where a head looked, not what the rest of the network did with it.' => 'Attention routet Information; es erklärt nicht die Antwort. Die Gewichte zeigen, wohin ein Head geschaut hat, nicht, was der Rest des Netzes damit gemacht hat.',
-		'The sentence: “Maria told the bank that she would repay the loan tomorrow.” The toy is designed to show three different kinds of relation, not to reproduce a specific trained head.' => 'Der Satz: „Maria sagte der Bank, dass sie morgen den Kredit zurückzahlen würde.“ Das Spielzeug soll drei verschiedene Arten von Beziehung zeigen, nicht einen bestimmten trainierten Head reproduzieren.',
+		'The sentence: “Maria told the bank that she would repay the loan tomorrow.” The toy is designed to show three different kinds of relation, not to reproduce a specific trained head.' => 'Der Satz: „Maria sagte der Bank, dass sie den Kredit morgen zurückzahlen würde.“ Das Spielzeug soll drei verschiedene Arten von Beziehung zeigen, nicht einen bestimmten trainierten Head reproduzieren.',
 		'Try this' => 'Probier das',
 		'Select' => 'Wähle',
 		'“she”' => '„she“',

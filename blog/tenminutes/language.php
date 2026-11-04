@@ -6,7 +6,7 @@
 	<meta name="description" content="From the human vocal tract to writing, grammar, and Shannon's information theory: the long prehistory of text that a language model learns from.">
 	<meta name="theme-color" content="#ffffff">
 	<title>Language as a Very Old Technology | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css?v=20261104c">
+	<link rel="stylesheet" href="assets/site.css?v=20261104e">
 </head>
 <body data-lesson="language" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -153,6 +153,6 @@
 	})();
 	</script>
 	<script src="assets/site.js"></script>
-	<script src="assets/demos.js?v=20261103"></script>
+	<script src="assets/demos.js?v=20261104b"></script>
 </body>
 </html>

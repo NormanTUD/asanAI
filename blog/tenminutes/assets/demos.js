@@ -2,6 +2,9 @@
 (function () {
 	"use strict";
 
+	var DEMO_LANG = window.TM && TM.lang ? TM.lang() : "en";
+	var DEMO_DE = DEMO_LANG === "de";
+
 	function $(sel, root) { return (root || document).querySelector(sel); }
 	function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
 	function colors() { return window.TM && TM.colors ? TM.colors() : {}; }
@@ -955,7 +958,13 @@
 		var query = "Eiffel Tower height";
 		var noteEl = $("[data-retrieval-note]", root);
 		if (!list) return;
-		var chunks = [
+		var chunks = DEMO_DE ? [
+			{ title: "Eiffelturm", text: "Der Eiffelturm in Paris ist 330 Meter hoch und wurde 1889 zur Weltausstellung fertiggestellt.", vec: [ 0.95, 0.05, 0.05, 0.05 ] },
+			{ title: "Paris-Tourismus", text: "Paris zieht Millionen Besucher an; der Turm ist eines der meistbesuchten Monumente der Welt.", vec: [ 0.8, 0.1, 0.0, 0.1 ] },
+			{ title: "RAG-Pipeline", text: "Retrieval-Augmented Generation zerlegt Dokumente in Stücke, bettet sie ein, ruft Passagen ab und legt sie in den Prompt.", vec: [ 0.0, 0.95, 0.2, 0.1 ] },
+			{ title: "Vektordatenbanken", text: "Vektordatenbanken speichern Embeddings und unterstützen ungefähre Nächste-Nachbarn-Suche über sie.", vec: [ 0.0, 0.3, 0.95, 0.0 ] },
+			{ title: "Prompt-Engineering", text: "Eine klare Rolle, konkrete Einschränkungen und Beispiele reduzieren Mehrdeutigkeit in einem Sprachmodell-Prompt.", vec: [ 0.0, 0.1, 0.0, 0.95 ] }
+		] : [
 			{ title: "Eiffel Tower", text: "The Eiffel Tower in Paris is 330 metres tall and was completed in 1889 for the World's Fair.", vec: [ 0.95, 0.05, 0.05, 0.05 ] },
 			{ title: "Paris tourism", text: "Paris attracts millions of visitors; the tower is one of the most visited monuments in the world.", vec: [ 0.8, 0.1, 0.0, 0.1 ] },
 			{ title: "RAG pipeline", text: "Retrieval-augmented generation chunks documents, embeds them, retrieves passages, and puts them in the prompt.", vec: [ 0.0, 0.95, 0.2, 0.1 ] },
@@ -968,6 +977,12 @@
 			"RAG pipeline": [ 0.0, 0.95, 0.2, 0.1 ],
 			"vector database": [ 0.0, 0.2, 0.95, 0.0 ]
 		};
+		var queryLabels = DEMO_DE ? {
+			"Eiffel Tower height": "Höhe des Eiffelturms",
+			"Eiffel opening hours": "Öffnungszeiten des Eiffelturms",
+			"RAG pipeline": "RAG-Pipeline",
+			"vector database": "Vektordatenbank"
+		} : {};
 		var TOP_K = 2;
 		function cosine(a, b) {
 			var dot = 0, na = 0, nb = 0;
@@ -990,20 +1005,24 @@
 				var ins = inPrompt[r.c.title];
 				return '<div class="retrieval-item' + (ins ? " is-hit" : "") + '">' +
 					'<div><b>' + escapeHtml(r.c.title) + '</b><p>' + escapeHtml(r.c.text) + '</p></div>' +
-					'<span class="retrieval-score">cos ' + r.s.toFixed(2) + (ins ? ' · in prompt' : '') + '</span></div>';
+					'<span class="retrieval-score">cos ' + r.s.toFixed(2) + (ins ? (DEMO_DE ? ' · im Prompt' : ' · in prompt') : '') + '</span></div>';
 			}).join("");
 			if (top) top.textContent = ranked[0].c.title;
-			if (countEl) countEl.textContent = selected.length + " of " + chunks.length;
+			if (countEl) countEl.textContent = selected.length + (DEMO_DE ? " von " : " of ") + chunks.length;
 			if (scoreEl) scoreEl.textContent = ranked[0].s.toFixed(2);
 			if (promptEl) {
-				promptEl.textContent = "Context:\n" + selected.map(function (r, i) {
+				promptEl.textContent = (DEMO_DE ? "Kontext:\n" : "Context:\n") + selected.map(function (r, i) {
 					return "[" + (i + 1) + "] " + r.c.title + " — " + r.c.text;
-				}).join("\n\n") + "\n\nQuestion: " + query + "\nAnswer:";
+				}).join("\n\n") + (DEMO_DE ? "\n\nFrage: " : "\n\nQuestion: ") + (DEMO_DE ? (queryLabels[query] || query) : query) + (DEMO_DE ? "\nAntwort:" : "\nAnswer:");
 			}
 			if (noteEl) {
 				noteEl.innerHTML = query === "Eiffel opening hours"
-					? "<b>Retrieval found the right topic, not the right fact.</b> The top passage is about height; it contains no opening hours. Nearest ≠ answer."
-					: "The score measures alignment in the embedding space, not whether the passage answers the question.";
+					? (DEMO_DE
+						? "<b>Retrieval fand das richtige Thema, nicht den richtigen Fakt.</b> Die Top-Passage handelt von der Höhe; Öffnungszeiten enthält sie nicht. Nähe ≠ Antwort."
+						: "<b>Retrieval found the right topic, not the right fact.</b> The top passage is about height; it contains no opening hours. Nearest ≠ answer.")
+					: (DEMO_DE
+						? "Der Score misst die Ausrichtung im Embedding-Raum, nicht ob die Passage die Frage beantwortet."
+						: "The score measures alignment in the embedding space, not whether the passage answers the question.");
 			}
 		}
 		queryChips.forEach(function (chip) {
@@ -1026,13 +1045,13 @@
 		var value = $("[data-entropy-value]", root);
 		var preview = $("[data-entropy-prompt]", root);
 		if (!chips.length || !bar) return;
-		var labels = { role: "You are a patient tutor.", format: "Answer in three bullet points.", examples: "Example: ...", constraints: "Do not invent sources." };
+		var labels = DEMO_DE ? { role: "Du bist ein geduldiger Tutor.", format: "Antworte in drei Stichpunkten.", examples: "Beispiel: ...", constraints: "Erfinde keine Quellen." } : { role: "You are a patient tutor.", format: "Answer in three bullet points.", examples: "Example: ...", constraints: "Do not invent sources." };
 		function render() {
 			var on = chips.filter(function (c) { return c.classList.contains("is-on"); }).map(function (c) { return c.getAttribute("data-entropy"); });
 			var left = Math.max(8, 100 - on.length * 22);
 			bar.style.width = left + "%";
 			if (value) value.textContent = left + "%";
-			if (preview) preview.textContent = on.length ? on.map(function (k) { return labels[k]; }).join(" ") : "Tell me about AI.";
+			if (preview) preview.textContent = on.length ? on.map(function (k) { return labels[k]; }).join(" ") : (DEMO_DE ? "Erzähl mir etwas über KI." : "Tell me about AI.");
 		}
 		chips.forEach(function (chip) {
 			chip.addEventListener("click", function () {
@@ -2784,12 +2803,12 @@
 		var resetBtn = $("[data-citecheck-reset]", root);
 		if (!list) return;
 		var pool = [
-			{ title: "Attention Is All You Need", meta: "Vaswani et al. · NeurIPS 2017", real: true, why: "Real. The transformer paper." },
-			{ title: "Deep Residual Learning for Image Recognition", meta: "He et al. · CVPR 2016", real: true, why: "Real. The ResNet paper." },
-			{ title: "Language Models are Few-Shot Learners", meta: "Brown et al. · NeurIPS 2020", real: true, why: "Real. The GPT-3 paper." },
-			{ title: "Recursive Semantic Anchoring in Transformer Pretraining", meta: "Keller & Voss · ICML 2021", real: false, why: "Fabricated. Plausible title, plausible venue, no such paper." },
-			{ title: "The 2019 Zurich Study on Latent Memory Consolidation", meta: "M. Roth · Nature Neuroscience 2019", real: false, why: "Fabricated. A generic study-shaped sentence, not a citation." },
-			{ title: "Denoising Diffusion Probabilistic Models", meta: "Ho et al. · NeurIPS 2020", real: true, why: "Real. The DDPM paper." }
+			{ title: "Attention Is All You Need", meta: "Vaswani et al. · NeurIPS 2017", real: true, why: "Real. The transformer paper.", whyDe: "Echt. Die Transformer-Arbeit." },
+			{ title: "Deep Residual Learning for Image Recognition", meta: "He et al. · CVPR 2016", real: true, why: "Real. The ResNet paper.", whyDe: "Echt. Die ResNet-Arbeit." },
+			{ title: "Language Models are Few-Shot Learners", meta: "Brown et al. · NeurIPS 2020", real: true, why: "Real. The GPT-3 paper.", whyDe: "Echt. Die GPT-3-Arbeit." },
+			{ title: "Recursive Semantic Anchoring in Transformer Pretraining", meta: "Keller & Voss · ICML 2021", real: false, why: "Fabricated. Plausible title, plausible venue, no such paper.", whyDe: "Fabriziert. Plausibler Titel, plausible Konferenz, keine solche Arbeit." },
+			{ title: "The 2019 Zurich Study on Latent Memory Consolidation", meta: "M. Roth · Nature Neuroscience 2019", real: false, why: "Fabricated. A generic study-shaped sentence, not a citation.", whyDe: "Fabriziert. Ein generisch klingender Studientitel, keine echte Zitation." },
+			{ title: "Denoising Diffusion Probabilistic Models", meta: "Ho et al. · NeurIPS 2020", real: true, why: "Real. The DDPM paper.", whyDe: "Echt. Die DDPM-Arbeit." }
 		];
 		var round = [], answered = 0, correct = 0, seed = 3;
 		function rnd() { seed += 1; return (Math.sin(seed * 7.31) * 43758.5453) % 1; }
@@ -2807,8 +2826,8 @@
 					'<h4>' + escapeHtml(r.title) + '</h4>' +
 					'<p>' + escapeHtml(r.meta) + '</p>' +
 					'<div class="cc-actions">' +
-					'<button class="btn-demo" type="button" data-cc-guess="real">Real</button>' +
-					'<button class="btn-demo" type="button" data-cc-guess="fake">Fabricated</button>' +
+					'<button class="btn-demo" type="button" data-cc-guess="real">' + (DEMO_DE ? "Echt" : "Real") + '</button>' +
+					'<button class="btn-demo" type="button" data-cc-guess="fake">' + (DEMO_DE ? "Fabriziert" : "Fabricated") + '</button>' +
 					'</div><div class="cc-verdict" style="min-height:0" data-cc-feedback></div></div>';
 			}).join("");
 			answered = 0; correct = 0;
@@ -2825,13 +2844,17 @@
 						answered++;
 						card.classList.add(round[i].real ? "is-real" : "is-fake");
 						var fb = $("[data-cc-feedback]", card);
-						if (fb) fb.innerHTML = "<b>" + (ok ? "Correct." : "Missed.") + "</b> " + escapeHtml(round[i].why);
+						if (fb) fb.innerHTML = "<b>" + (ok ? (DEMO_DE ? "Richtig." : "Correct.") : (DEMO_DE ? "Daneben." : "Missed.")) + "</b> " + escapeHtml(DEMO_DE ? round[i].whyDe : round[i].why);
 						$$("[data-cc-guess]", card).forEach(function (b) { b.disabled = true; });
 						if (scoreEl) scoreEl.textContent = correct + " / " + round.length;
 						if (verdictEl && answered === round.length) {
 							verdictEl.innerHTML = correct === round.length
-								? "<b>Clean sweep.</b> Plausibility is not provenance. The skill is checking, not guessing."
-								: "<b>" + correct + " of " + round.length + ".</b> Fabricated references are built to look exactly like real ones. Verify the DOI, the venue, and the author before you cite.";
+								? (DEMO_DE
+									? "<b>Alles richtig.</b> Plausibilität ist kein Nachweis. Die Fähigkeit ist Prüfen, nicht Raten."
+									: "<b>Clean sweep.</b> Plausibility is not provenance. The skill is checking, not guessing.")
+								: (DEMO_DE
+									? "<b>" + correct + " von " + round.length + ".</b> Fabrizierte Literatur sieht echten Quellen zum Verwechseln ähnlich. Prüfe DOI, Verlag und Autor, bevor du zitierst."
+									: "<b>" + correct + " of " + round.length + ".</b> Fabricated references are built to look exactly like real ones. Verify the DOI, the venue, and the author before you cite.");
 						}
 					});
 				});
@@ -2856,7 +2879,48 @@
 		var sampleBtn = $("[data-reasoning-sample]", root);
 		var resetBtn = $("[data-reasoning-reset]", root);
 		if (!questionEl || !stepsEl) return;
-		var problems = [
+		var problems = DEMO_DE ? [
+			{
+				label: "Schläger & Ball",
+				q: "Ein Schläger und ein Ball kosten zusammen 1,10 $. Der Schläger kostet 1,00 $ mehr als der Ball. Wie viel kostet der Ball?",
+				quick: "0,10 $",
+				correct: "0,05 $",
+				quickWhy: "Die naheliegende Antwort. Sie behält die 1,00-$-Differenz, vergisst aber, dass der Schläger dann 1,10 $ kostet.",
+				steps: [
+					"Der Ball kostet x. Dann kostet der Schläger x + 1,00 $.",
+					"x + (x + 1,00 $) = 1,10 $.",
+					"2x = 0,10 $, also x = 0,05 $.",
+					"Der Ball kostet 0,05 $; der Schläger 1,05 $."
+				],
+				tokens: [9, 84]
+			},
+			{
+				label: "Seerosen",
+				q: "Ein Seerosenfeld verdoppelt seine Fläche jeden Tag. Am 48. Tag bedeckt es den ganzen See. An welchem Tag bedeckt es die Hälfte?",
+				quick: "24",
+				correct: "47",
+				quickWhy: "Die Hälfte von 48 wirkt naheliegend, aber wegen der Verdopplung war das Feld genau einen Tag vorher halb so groß.",
+				steps: [
+					"Rückwärts denken. Ist der See am 48. Tag voll, war das Feld am 47. Tag halb so groß.",
+					"Am 47. Tag bedeckte es die Hälfte des Sees.",
+					"Eine weitere Verdopplung füllt ihn am 48. Tag."
+				],
+				tokens: [7, 58]
+			},
+			{
+				label: "Maschinen",
+				q: "Fünf Maschinen produzieren in fünf Minuten fünf Widgets. Wie lange brauchen 100 Maschinen für 100 Widgets?",
+				quick: "100 Minuten",
+				correct: "5 Minuten",
+				quickWhy: "Maschinen und Widgets im gleichen Verhältnis zu skalieren ändert die Rate nicht.",
+				steps: [
+					"Fünf Maschinen produzieren in fünf Minuten fünf Widgets, also produziert eine Maschine ein Widget in fünf Minuten.",
+					"100 Maschinen produzieren jeweils ein Widget in denselben fünf Minuten.",
+					"Sie sind gleichzeitig fertig: fünf Minuten."
+				],
+				tokens: [10, 63]
+			}
+		] : [
 			{
 				label: "Bat & ball",
 				q: "A bat and a ball cost $1.10. The bat costs $1.00 more than the ball. How much does the ball cost?",
@@ -2910,28 +2974,28 @@
 				stepsEl.innerHTML = p.steps.map(function (s, i) {
 					return '<div class="cot-step is-on" style="transition-delay:' + (i * 55) + 'ms">' + escapeHtml(s) + "</div>";
 				}).join("");
-				if (answerEl) answerEl.innerHTML = 'Answer: <b>' + p.correct + "</b>";
-				if (tokensEl) tokensEl.textContent = p.tokens[1] + " tokens";
-				if (confidenceEl) confidenceEl.textContent = "checked";
+				if (answerEl) answerEl.innerHTML = (DEMO_DE ? "Antwort: <b>" : "Answer: <b>") + p.correct + "</b>";
+				if (tokensEl) tokensEl.textContent = p.tokens[1] + (DEMO_DE ? " Tokens" : " tokens");
+				if (confidenceEl) confidenceEl.textContent = DEMO_DE ? "geprüft" : "checked";
 			} else {
-				stepsEl.innerHTML = '<div class="cot-step is-on">The answer feels obvious: ' + escapeHtml(p.quick) + ".</div>";
-				if (answerEl) answerEl.innerHTML = 'Answer: <b>' + p.quick + "</b> <span style=\"color:var(--tm-coral)\">· likely wrong</span>";
-				if (tokensEl) tokensEl.textContent = p.tokens[0] + " tokens";
-				if (confidenceEl) confidenceEl.textContent = "fast, unchecked";
+				stepsEl.innerHTML = '<div class="cot-step is-on">' + (DEMO_DE ? "Die Antwort wirkt offensichtlich: " : "The answer feels obvious: ") + escapeHtml(p.quick) + ".</div>";
+				if (answerEl) answerEl.innerHTML = (DEMO_DE ? "Antwort: <b>" : "Answer: <b>") + p.quick + "</b> <span style=\"color:var(--tm-coral)\">" + (DEMO_DE ? "· wahrscheinlich falsch" : "· likely wrong") + "</span>";
+				if (tokensEl) tokensEl.textContent = p.tokens[0] + (DEMO_DE ? " Tokens" : " tokens");
+				if (confidenceEl) confidenceEl.textContent = DEMO_DE ? "schnell, ungeprüft" : "fast, unchecked";
 			}
 			if (mode === "steps" && answerEl) answerEl.title = "";
-			if (mode !== "steps" && answerEl) answerEl.title = p.quickWhy;
+			if (mode !== "steps" && answerEl) answerEl.title = DEMO_DE ? p.quickWhy : p.quickWhy;
 			if (votesEl && sampled.length) renderVotes();
-			else if (votesEl) votesEl.innerHTML = "Sampling is disabled until you press <b>Sample 5 paths</b>.";
+			else if (votesEl) votesEl.innerHTML = DEMO_DE ? "Sampling ist aus, bis du <b>5 Pfade ziehen</b> drückst." : "Sampling is disabled until you press <b>Sample 5 paths</b>.";
 		}
 		function renderVotes() {
 			var p = problems[current];
 			var correctCount = mode === "steps" ? 4 : 1;
 			var votes = [];
 			for (var i = 0; i < 5; i++) votes.push(i < correctCount ? p.correct : p.quick);
-			votesEl.innerHTML = "Five sampled paths → " + votes.map(function (v, i) {
+			votesEl.innerHTML = (DEMO_DE ? "Fünf gezogene Pfade → " : "Five sampled paths → ") + votes.map(function (v, i) {
 				return '<span style="display:inline-block;margin-right:5px;padding:2px 7px;border:1px solid var(--tm-line);border-radius:999px;font-family:var(--tm-mono);font-size:.62rem;color:' + (v === p.correct ? "var(--tm-green-deep)" : "var(--tm-coral)") + ';animation:pop .3s ease both;animation-delay:' + (i * 80) + 'ms">' + escapeHtml(v) + "</span>";
-			}).join("") + "<br><b>" + correctCount + " / 5</b> agree on " + escapeHtml(p.correct) + ". Majority voting helps only when the errors are not all the same.";
+			}).join("") + (DEMO_DE ? "<br><b>" + correctCount + " / 5</b> " + (correctCount === 1 ? "stimmt" : "stimmen") + " für " + escapeHtml(p.correct) + ". Mehrheitsentscheidung hilft nur, wenn die Fehler nicht alle gleich sind." : "<br><b>" + correctCount + " / 5</b> agree on " + escapeHtml(p.correct) + ". Majority voting helps only when the errors are not all the same.");
 		}
 		modeBtns.forEach(function (b) {
 			b.addEventListener("click", function () {
@@ -2966,7 +3030,13 @@
 		var tokenEl = $("[data-prompt-tokens]", root);
 		var sampledEl = $("[data-prompt-sampled]", root);
 		if (!chips.length || !candsEl) return;
-		var candidates = [
+		var candidates = DEMO_DE ? [
+			{ name: "Knapper Fakt", text: "Sonnenlicht streut an Luftmolekülen. Kürzere blaue Wellenlängen streuen stärker, deshalb erreicht Blau deine Augen aus jeder Richtung.", base: 0.7, role: 0.2, format: 0.8, examples: 0.2, constraints: 0.5 },
+			{ name: "Tutor-Geschichte", text: "Stell dir Sonnenlicht als Mischung aus Farben vor. Luftmoleküle stoßen das blaue Licht viel stärker herum als das rote, deshalb kommt Blau aus jedem Stück Himmel.", base: 0.8, role: 1.5, format: 0.3, examples: 0.9, constraints: 0.6 },
+			{ name: "Drei Punkte", text: "• Sonnenlicht enthält alle Farben.\n• Luft streut kurze (blaue) Wellen stärker.\n• Deshalb erreicht Blau deine Augen von überall.", base: 0.4, role: 0.5, format: 1.9, examples: 0.4, constraints: 0.4 },
+			{ name: "Knapp", text: "Der Himmel ist blau.", base: 0.6, role: -0.2, format: -0.3, examples: -0.2, constraints: -0.6 },
+			{ name: "Ozean-Mythos", text: "Der Himmel ist blau, weil er den Ozean spiegelt.", base: 0.5, role: -0.8, format: -0.6, examples: -0.7, constraints: -2.0 }
+		] : [
 			{ name: "Concise fact", text: "Sunlight scatters off air molecules. Shorter blue wavelengths scatter more, so blue reaches your eyes from every direction.", base: 0.7, role: 0.2, format: 0.8, examples: 0.2, constraints: 0.5 },
 			{ name: "Tutor story", text: "Imagine sunlight as a mix of colours. Air molecules bump the blue light around much more than the red, so blue arrives from every patch of sky.", base: 0.8, role: 1.5, format: 0.3, examples: 0.9, constraints: 0.6 },
 			{ name: "Three bullets", text: "• Sunlight contains all colours.\n• Air scatters short (blue) waves more.\n• So blue reaches your eyes from everywhere.", base: 0.4, role: 0.5, format: 1.9, examples: 0.4, constraints: 0.4 },
@@ -2974,7 +3044,12 @@
 			{ name: "Ocean myth", text: "The sky is blue because it reflects the ocean.", base: 0.5, role: -0.8, format: -0.6, examples: -0.7, constraints: -2.0 }
 		];
 		var on = { role: true, format: false, examples: false, constraints: false };
-		var phrase = {
+		var phrase = DEMO_DE ? {
+			role: "Du bist ein geduldiger Wissenschaftstutor.",
+			format: "Antworte in drei Stichpunkten.",
+			examples: "Beispiel: „Sonnenlicht ist eine Mischung aus Farben.“",
+			constraints: "Erfinde keine Fakten und verwende keinen unerklärten Fachjargon."
+		} : {
 			role: "You are a patient science tutor.",
 			format: "Answer in three bullet points.",
 			examples: "Example: \"Sunlight is a mix of colours.\"",
@@ -2997,7 +3072,7 @@
 			if (value) value.textContent = Math.round(top * 100) + "%";
 			var active = Object.keys(on).filter(function (k) { return on[k]; });
 			if (preview) {
-				preview.innerHTML = (active.length ? active.map(function (k) { return escapeHtml(phrase[k]); }).join(" ") + "<br><br>" : "") + "Question: Why is the sky blue?";
+				preview.innerHTML = (active.length ? active.map(function (k) { return escapeHtml(phrase[k]); }).join(" ") + "<br><br>" : "") + (DEMO_DE ? "Frage: Warum ist der Himmel blau?" : "Question: Why is the sky blue?");
 			}
 			candsEl.innerHTML = order.map(function (i) {
 				var c = candidates[i];
@@ -3005,8 +3080,8 @@
 					'<div><b>' + escapeHtml(c.name) + '</b><p>' + escapeHtml(c.text).replace(/\n/g, "<br>") + '</p></div>' +
 					'<span class="retrieval-score">' + Math.round(probs[i] * 100) + '%</span></div>';
 			}).join("");
-			if (tokenEl) tokenEl.textContent = (8 + active.length * 11) + " tokens";
-			if (sampledEl && !sampledEl.getAttribute("data-has")) sampledEl.textContent = "Press sample to draw an answer from the current distribution.";
+			if (tokenEl) tokenEl.textContent = (8 + active.length * 11) + (DEMO_DE ? " Tokens" : " tokens");
+			if (sampledEl && !sampledEl.getAttribute("data-has")) sampledEl.textContent = DEMO_DE ? "Drücke auf Ziehen, um eine Antwort aus der aktuellen Verteilung zu ziehen." : "Press sample to draw an answer from the current distribution.";
 		}
 		chips.forEach(function (chip) {
 			chip.addEventListener("click", function () {
@@ -3027,7 +3102,7 @@
 			}
 			if (sampledEl) {
 				sampledEl.setAttribute("data-has", "1");
-				sampledEl.innerHTML = "<b>Sampled:</b> " + escapeHtml(candidates[pick].text).replace(/\n/g, "<br>");
+				sampledEl.innerHTML = "<b>" + (DEMO_DE ? "Gezogen:" : "Sampled:") + "</b> " + escapeHtml(candidates[pick].text).replace(/\n/g, "<br>");
 			}
 		});
 		render();
