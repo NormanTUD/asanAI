@@ -1,0 +1,15 @@
+schaue ob die änderungen in beiden sprachen relevant sind. ich nenne sie hier nur für deutsch.
+
+language: alle Sätze geprüft und überarbeitet.
+
+Erledigt:
+- Hero und Abschnitt 01: „lange Zündschnur“ → „lange Vorgeschichte“; Einstieg von „History traced“ zu „Die Geschichte des Rechnens verfolgt …“; „biologischer Zufall“ → „biologische Entwicklung“; Datums-/Vokaltrakt-/Hör-Absätze grammatisch geglättet (Plural Haarzellen, „bevor es Menschen gab“).
+- Schriftabsatz: „Die Schrift, die um 3200 v. Chr. … entstand“; „Rhythmus und Erzählung“ statt „Geschichte“; Übergang von mündlicher Tradition zu externem Gedächtnis klarer.
+- Grammatik/Information: Pāṇini-Satz entzirkelt („dieselbe Ambition, die spätere formale Grammatiken antreibt“); Buchdruck als „Jahrhunderte später“ angeschlossen; Shannon-Satz zu „messbar und damit berechenbar“; deflationäre Lesart in zwei klare Sätze geteilt.
+- Embeddings: letzter Schritt als eigener Satz; word2vec-Beitrag neu formuliert (Nachbarn aus dem Wort / Wort aus den Nachbarn); „König − Mann + Frau ≈ Königin“ als benannte Analogie; 400-Millionen-Zahlen-Satz mit „umfasst“ statt „bedeutet“.
+- Kempelen: Sprechmaschine neu eingeleitet; „aussprechen“ statt „sagen“; Problem-appositiv mit „nämlich“ sauber angeschlossen.
+- Timeline: Titel/Untertitel von „Zündschnur“ zu „Vorgeschichte“/„Weg“; Badge „Schritt für Schritt“; Druck- und Informationsknoten neu formuliert; alle neun Knoten auf Deutsch geprüft.
+- Mehrdeutigkeitsdemo: deutsche Beispiele, die im Deutschen wirklich mehrdeutig sind: Teleskop, „Alte Männer und Frauen“, „Sie habe Hunger“ (statt der nicht tragfähigen wörtlichen „Flying planes“-Übersetzung). Lesarten und Notizen neu geschrieben.
+- Schluss: „Sprache lässt Bedeutung unterbestimmt“; „mussten alle vorhanden sein“.
+- Englische Fassung an denselben Stellen mitgezogen, wo die Korrektur auch inhaltlich gilt.
+- Selbstkritik: Die Timeline bleibt eine Auswahl; „Sprache kam zuerst“ ist bewusst die Kurzfassung der längeren Vorgeschichte. Die Mehrdeutigkeitsdemo zeigt drei klar unterscheidbare Fälle, nicht die ganze Bandbreite syntaktischer Ambiguität. Die Wortstellung im Teleskop-Beispiel ist im Deutschen natürlich; die anderen beiden Beispiele sind absichtlich andere Typen von Ambiguität.
