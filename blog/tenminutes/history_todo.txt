@@ -1,103 +1,14 @@
 schaue ob die änderungen in beiden sprachen relevant sind. ich nenne sie hier nur für deutsch.
 
-"Die Nächste-Token-Vorhersage reduzierte die Maschine auf eine Schleife" das stimmt nicht, es ist nicht darauf reduziert. behuapte solche vereinfachungen nicht, entferne "Die Nächste-Token-Vorhersage reduzierte die Maschine auf eine Schleife. Woher kam diese Schleife? " komplett
+history: alle Punkte bearbeitet.
 
-"Die Geschichte der KI hat keine einzelne Linie zum großen Sprachmodell. Sie ist eine Konvergenz von Ideen aus unverbundenen Feldern, die nie füreinander gedacht waren" das ist shceiße übersetzt. mach sowas wie "viele verschiedene entwicklugnen die nie dafür gedacht waren sich zu treffen haben in summe zu llm geführt, aber auch zu anderen sachen" oder sowas. das wäre besser
-
-"wiegen heute das nächste Wort in einer Sequenz" wiegen ist schlecht übersetzt
-
-"GPU-Architekturen für Videospiele liefern die parallele Berechnung, die neuronale Netze brauchen: Die Matrixoperationen, die Polygone zeichnen, sind dieselben, die Aktivierungen multiplizieren. Die Konvergenz ist kein Plan; sie ist eine Reihe von Anleihen, die zufällig passten. " mach das besser, das ist iwie hier random, zeige mehr wie verschiedene sachen aus ganz anderen richtugnen hier zu geführt haben
-
-mach allgemein ein paar mehr keywords fett
-
-"Die Behauptung ist nicht, dass KI unvermeidlich war; sie ist, dass dieselbe Bewegung (eine Aufgabe an einen Mechanismus übergeben und den Mechanismus dann als neues Primitiv behandeln) auf jeder Ebene wiederkehrt. " ist schlecht übersetzt
-
-" Wir können jedes Problem lösen, indem wir eine zusätzliche Ebene der Indirektion einführen. " (schreib da hinter indirektion in eckigen klammern abstraktion)
-
-"Die Maschine ist die ultimative Indirektion. Das Rad abstrahiert Bewegung; der Computer abstrahiert Denken. Beide nehmen den Menschen aus der rohen Arbeit, lassen ihn aber die Kontrolle über den Mechanismus behalten."  ist schlecht übersetzt. nciht die maschine und nicht ultimative indirektion (eher abstraktion) . außeredm nicht rohe arbeit. es ist eher so dass die maschinen die eigentliche aufgabe immer weiter vom menschen weg abstrahieren so dass man sich immer weniger um implementierungsdetails kümmern muss
-
-"Folge der Zündschnur." ist wirklich hschlechtes zangendeutsch. finde iwas ganz neues 
-
-" Wähle einen Punkt auf der Linie und ziehe an diesem Faden. Daten sind ungefähr, wo die Evidenz es ist. " ist scheiße übersetzt. übersetze immer die idee, nciht diebloßen worte
-
-"oder nutze die Pfeiltasten" entferne das
-
-"trägt gruppierte Kerben mit umstrittener mathematischer Struktur": es sind evtl primzahlen, erwähne das. aber auch dass das unklar ist
-
-"handbetriebenes Orrery" deutsches wort hier und "vierjährigen Zyklus der Spiele" der OLYMPISCHEN fehlt da spiele
-
-"Ramon Llulls Ars Magna" ars magna kursiv
-
-"Von der Berechnung zum Programm Leibniz baute eine Rechenmaschine und formalisierte die Binärnotation. Babbage entwarf die Analytical Engine mit Speicher, Mühle und Lochkarteneingabe. Ada Lovelace sah weiter als der Erbauer der Maschine: Die Engine konnte Symbole verarbeiten, nicht nur Zahlen, und sie schrieb den ersten veröffentlichten Algorithmus für sie. Die Trennung von Hardware und gespeichertem Programm ist das Scharnier, um das sich der Rest dreht." du erwähnst hier leibniz ohne seine maschine zu zeigne, die sollte ein eigener tab sein in demo 01 hier
-
-"Frank Rosenblatts Perceptron" Perceptron kursiv
-
-"The Dartmouth workshop of 1956 had named the field. Symbolic AI builds expert systems, planners, and microworlds such as SHRDLU, then hits the frame problem and the limits of hand-coded rules. Minsky and Papert’s 1969 Perceptrons critique exposes the limits of a single layer; funding freezes in the first AI winter. Connectionism returns in the 1980s; a second winter follows. Deep Blue beats Kasparov in 1997, but it is still a narrow, hand-tuned system." ist NIChT übresetzt das sollte auf deutsch sein auf der deutschen seite und natürlich auf englisch auf der englischen
-
-"FazitViele Ursachen trafen sich auf einer Linie. Zieh an einem Faden, und du kannst rückwärts folgen." das kein fazit. 
-
-"Sie sind die älteste bekannte Steinansammlung" nicht steinansammlung sondern steinwerkzeuge
-
-"Spuren kommen später" nicht spuren sondern geometrische muster
-
-"obwohl wir ihre Bedeutung nicht lesen können" wenn es überhaupt eine hat, das weiß keiner
-
-"Zählen erscheint im Knochen" ist falsch formuliert, es is eher so dass das älteste zählwerkzeug ein knochen ist
-
-"seine Primzahlspalte ist suggestiv, nicht gesichert" suche details, erwähne es kurz mit den details aber sage auch dass es nicht sicher ist. formulier das besser
-
-"Derselbe Impuls" nicht impuls aber idee
-
-" Null als Zahl mit Rechenregeln (Brahmagupta, 628 n. Chr.)," aber auch fibonacci als einführer in europa oder?
-
-"der übliche float Wert für 0,1 ist nicht genau ein Zehntel." mehr details da aber webe das in den text ein
-
-"Die Engine kann Symboleverarbeiten" nach dem symbole fehlt ein leerzeichen
-
-" Das 20. Jahrhundert verwandelt den Plan in Hardware. Konrad Zuses Z3 (1941) ist der erste funktionsfähige, programmierbare, vollautomatische Digitalcomputer, gebaut aus 2.000 Telefonrelais; er entwirft auch Plankalkül, eine frühe höhere Programmiersprache. „Erster“ hängt von der Definition ab: Die Z3 war elektromechanisch, nicht elektronisch, und andere Maschinen waren in schwächeren Sinnen programmierbar. " da kannste das bild von zuse nehmen aus ../history.php
-
-"Von Neumanns Speicherprogramm-Design (1945) macht „Umprogrammieren“ zu einer Frage der Software statt der Neuverdrahtung." da kannste noch dazu sagen dass seine idee auch war dass man programme selbst wieder als daten sieht und sie damit mit allen methoden mit denen man daten bearbeiten kann bearbeiten kann, so dass andere programme programme bearbeiten können, was die grundlage zB für betriebssysteme gebildet hat
-
-"Was ist eine Zahl, dass ein Mensch sie kennen kann, und ein Mensch, dass er eine Zahl kennen kann" ist komisch übersetzt, suche das original, übersetze sinngemäß
-
-"McCulloch und Pitts hatten keine gelernten Gewichte" ... sondern festgelegt thresholds.
-
-"Minsky und Paperts Perceptrons (1969) zeigten dann die Grenzen eines einschichtigen Netzes (berühmt: XOR), und der erste Winter begann" zeige das wie das ../history.php zeigt mit dem plot über xor und and usw
-
-"zwei Jahre nach der Kritik, die half, das Feld abzukühlen." die kritik hat das feld in den ersten ki winter geworfen ,es snicht nur "abgekühlt"
-
-"Der Dartmouth-Workshop von 1956 gibt dem Feld seinen Namen" schreibe da früher von, ordne das historisch ein. wer war da alles zB? mcculloch war doch vorsitzender oder so
-
-"Symbolische KI baut den Logic Theorist, GPS" GPS komtm erst später
-
-"Das Frame-Problem ist die Schwierigkeit, darzustellen, was sich nicht ändert, wenn eine Aktion ausgeführt wird" erkläre das vorher iwo besser
-
-" das Muster war ein Zyklus, kein einzelnes Urteil. Die Rückkehr der neuronalen Netze kam als Stapel von Veränderungen: Backpropagation, größere Datensätze, GPUs, bessere Regularisierung. AlexNet gewinnt 2012 ImageNet (Krizhevsky et al., 2012). AlphaGo besiegt 2016 Lee Sedol. 2017 ersetzt „Attention Is All You Need“ die Rekurrenz durch Self-Attention, macht den Weg zwischen entfernten Tokens zu einem Schritt und die Berechnung parallel. ChatGPT (2022) verwandelt die Nächste-Token-Schleife in eine öffentliche Schnittstelle. Die Ideen sind alt; der Maßstab, die Daten und die Technik sind neu. " gehe mehr auf die details hier ein mit zwei drei sätzen, was ist alexnet, warum gpus, warum größere datensätze? und wer hat backprop erfunden? es wurde mehrfach erfunden aber erst spät erkannt adss das bei NNs helfen kann
-
-"Yann LeCun machte Faltungen praktisch" zeige wie sone convolution geht. nehme die demo aus ../computer_vision.php oder wie dasheißt, zeige das wirklich so dass man es versteht. du schmeißt das hier einfach rein aber mach es so dass mans versteht auch wenn man nur interessiuerter laie ist
-
-"Eine kausale Maske im Decoder verbirgt zukünftige Tokens" zeige das, man kann das zeigen was die causal mask ist. es geht adrum dass das netzwerk nicht in die zukunft sieht und dass man daher auch sätze vervollständigen kann weil es genau das lernt
-
-" Das Rezept wurde dann zu einem Engineering-Programm. ULMFiT lieferte die Dreischritt-Vorlage: auf allgemeinem Text pretrainen, auf der Zieldomäne fine-tunen, auf der Aufgabe fine-tunen. RoBERTa zeigte, dass BERT untertrainiert war und mehr Daten mit dynamischer Maskierung es verbesserten. ELECTRA änderte das Ziel vom Füllen von Lücken zum Erkennen ersetzter Tokens, was ein Trainingssignal an jeder Position liefert. T5 verwandelte jede Aufgabe in Text-zu-Text. " verlinke da die originalarbeiten wenn du sie findest
-
-"Drei verschiedene Hebel "  die dt übersetzung ist hier falsch. es ist "die katze saß auf DER matte", nicht DIE matte
-
-schaue für die "Mechanismus · Attention" demo in ../lndw/index.html wie die rechnugnen gehen und dass man die ergebnisse nutzt um die neuen vektoren zu generieren. zeige genau das. es geht darum dass man das was aus dem attn raus kommt nimmt und damit die vektoren gewichtet addiert, zeige das mit latex/temml
-
-bei "Ziel · Pretraining" sind die bars alle leer
-
-"Skalierung ist eine Strategie, ein Compute-Budget auszugeben, kein Teil des Blocks." ist bullshit. entferne das
-
-entferne "Warum derselbe Block Encoder oder Decoder sein kann Warum derselbe Block Encoder oder Decoder sein kann Die Maske und das Trainingsziel entscheiden den Vertrag. BERTs Encoder liest den ganzen Satz und füllt maskierte Lücken. GPTs Decoder liest nur die Vergangenheit und sagt das nächste Token voraus. Ein Encoder-Decoder-Modell wie der ursprüngliche Transformer liest die Quelle und erzeugt das Ziel. Der Block ist geteilt; der Informationsfluss ist anders."
-
-"Die Standardgeschichte ist eine Parade berühmter Namen und plötzlicher Durchbrüche" richtig aber schlecht formuliert
-
-"und das Geld ging" und das geld gestrichen wurde
-
-"Der Transformer verdichtete eine sehr lange Zündschnur." pass das an an den neuen kram ganz oben wo Zündschnur auch falsch war
-
-" „KI wurde 2022 erfunden.“ Die Schnittstelle war neu; die Abstammungslinie ist mindestens vierzigtausend Jahre alt. " und eigentlich noch viel älter
-
-" „Der Transformer verdichtete eine lange Zündschnur.“ Zählen, Logik, Feedback, Lernen und Hardware mussten alle vorhanden sein. " same mit dem Zündschnur
-
-" Für die materielle und menschliche Geschichte, die die Standardparade auslässt (die Arbeit, die Minen, die Frauen, die die ersten Programme schrieben, die Techniker, die die Maschinen verdrahteten), geht die breitere Geschichte hinter dieser Seite weiter. Das ist die andere Hälfte dieser Geschichte. " entferne diesen satz komplett
+Erledigt:
+- Auftakt: „Nächste-Token-Vorhersage reduzierte die Maschine“ entfernt; Konvergenzabsatz neu geschrieben, mit mehreren unabhängigen Entwicklungen und ohne GPU-Sonderweg; „wiegen“ ersetzt; Abstraktions-/Indirektionsabsatz neu formuliert; Wheeler-Zitat mit [Abstraktion]; „Zündschnur“ überall durch Vorgeschichte/Faden ersetzt; Timeline-Einstieg neu.
+- Externes Gedächtnis: Steinwerkzeuge statt Steinansammlung, geometrische Muster statt Spuren, Bedeutung ausdrücklich unklar, ältestes Zählwerkzeug statt „Zählen erscheint im Knochen“, Ishango mit 11/13/17/19 und ausdrücklicher Unsicherheit, „Idee“ statt „Impuls“.
+- Logik/Zahlen: Fibonacci und Liber Abaci für die Null in Europa ergänzt; IEEE-754/0,1 mit konkreten Details; Ars Magna kursiv; mehr Keywords fett.
+- Maschinen: Leibniz als eigener Timeline-Knoten (Demo 01, jetzt 16 Wendepunkte) mit Rechenmaschinenbild; Babbage/Ada davon getrennt; Zuse-Bild aus ../history.php; Von-Neumann-Speicherprogramm mit Programm-als-Daten und Betriebssystem-Folge.
+- Neuron/Perceptron: McCulloch-Zitat sinngemäß übersetzt; feste Schwellen statt gelernter Gewichte; Perceptron kursiv; erster KI-Winter statt „abgekühlt“; XOR/AND/OR-Demo mit trennbar/nicht trennbar und Feature-Map-Erklärung.
+- Winter/Rückkehr: Dartmouth historisch eingeordnet (McCarthy, Minsky, Rochester, Shannon; etwa zehn Teilnehmende; kein Konsens), Logic Theorist vor GPS, Frame-Problem vor der Nennung erklärt; Backpropagation mehrfach erfunden (Linnainmaa, Werbos, Rumelhart/Hinton/Williams); AlexNet/ImageNet/GPUs mit Details; Faltungsdemo mit Bild, Kernel und Merkmalskarte.
+- LLM: kausale Maske im Text und Demo erklärt; Attention-Ausgabe als gewichtete Summe der Value-Vektoren mit Temml-Formel und Zahlenbeispiel; Pretraining-Balken repariert (display:block); Pretraining-Daten deutsch; Skalierungs-Bullshit entfernt; Encoder/Decoder-Kasten entfernt; ULMFiT/RoBERTa/ELECTRA/T5 verlinkt; „die Katze saß auf der Matte“ mit korrektem „der“.
+- Schluss: Standardgeschichte neu formuliert; „Geld ging“ → „Geld gestrichen“; 2022-Mythos auf 3,3 Mio. Jahre korrigiert; Zündschnur-Mythos ersetzt; letzten Material/Humanität-Absatz entfernt.
+- Selbstkritik: Die Dartmouth-Liste nennt nur belegte Teilnehmende und behauptet nicht, McCulloch sei Vorsitzender gewesen; das Zuse-Bild übernimmt die Attribution aus ../history.php, dort ist keine Lizenz angegeben. Die Faltungsdemo zeigt einen einzigen Kanten-Kernel plus Weichzeichner, nicht die ganze Computer-Vision-Studio-Demo; das reicht für die Idee, ist aber bewusst kleiner. Die Attention-Gleichung nutzt deutsche Labels nur auf der deutschen Seite; die englische Fassung bleibt englisch.

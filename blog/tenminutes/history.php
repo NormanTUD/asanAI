@@ -931,8 +931,8 @@
 						<h2 class="section-title">A collective, uneven climb.</h2>
 						<div class="prose">
 							<p>
-								The standard story is a parade of famous names and sudden breakthroughs. The
-								actual history is slower and more collective. Counting devices appear
+								The usual story strings famous names and sudden breakthroughs together.
+								The actual history is slower and more collective. Counting devices appear
 								independently in southern Africa, central Europe, and central Africa. The first
 								neural network paper lands in a biophysics journal. The perceptron is announced
 								by the U.S. Navy, criticised, and survives in the margins until the hardware
