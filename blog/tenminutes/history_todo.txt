@@ -76,6 +76,8 @@ mach allgemein ein paar mehr keywords fett
 
 "Yann LeCun machte Faltungen praktisch" zeige wie sone convolution geht. nehme die demo aus ../computer_vision.php oder wie dasheißt, zeige das wirklich so dass man es versteht. du schmeißt das hier einfach rein aber mach es so dass mans versteht auch wenn man nur interessiuerter laie ist
 
-"Eine kausale Maske im Decoder verbirgt zukünftige Tokens" zeige das, man kann das zeigen was die causal mask ist
+"Eine kausale Maske im Decoder verbirgt zukünftige Tokens" zeige das, man kann das zeigen was die causal mask ist. es geht adrum dass das netzwerk nicht in die zukunft sieht und dass man daher auch sätze vervollständigen kann weil es genau das lernt
+
+" Das Rezept wurde dann zu einem Engineering-Programm. ULMFiT lieferte die Dreischritt-Vorlage: auf allgemeinem Text pretrainen, auf der Zieldomäne fine-tunen, auf der Aufgabe fine-tunen. RoBERTa zeigte, dass BERT untertrainiert war und mehr Daten mit dynamischer Maskierung es verbesserten. ELECTRA änderte das Ziel vom Füllen von Lücken zum Erkennen ersetzter Tokens, was ein Trainingssignal an jeder Position liefert. T5 verwandelte jede Aufgabe in Text-zu-Text. " verlinke da die originalarbeiten wenn du sie findest
 
 
