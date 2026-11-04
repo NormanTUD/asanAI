@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algebraische K-Theorie visuell: K₀, K₁, K₂ und Quillens Raum</title>
+<link rel="stylesheet" href="visual_math_base.css">
+<style>
+  :root { --accent: #ffcc66; --accent-2: #7ee7b0; --accent-3: #b388ff; }
+  .canvas-card { min-height: 460px; }
+  .canvas-card canvas { position: absolute; inset: 0; }
+  #kgroupsPlot { height: 330px; min-height: 330px; }
+  .matrix {
+    font-family: var(--mono);
+    font-size: .82rem;
+    color: var(--ink);
+    line-height: 1.5;
+    white-space: pre;
+  }
+  .matrix b { color: var(--accent-2); font-weight: 600; }
+  .seg { display: flex; gap: .4rem; }
+  .seg button { flex: 1; }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <canvas id="hero"></canvas>
+  <div class="hero-inner">
+    <div class="eyebrow">Algebraische K-Theorie · Ringe als Räume</div>
+    <h1>Matrizen, Moduln,<br><em>unsichtbare Räume</em></h1>
+    <p class="lede">
+      Algebraische K-Theorie ordnet einem Ring eine Folge von Gruppen zu. Sie misst, wie
+      projektive Moduln zerfallen, wie Matrizen sich verkleben und welche Relationen zwischen
+      ihnen wirklich neu sind. Quillen hat daraus einen Raum gemacht.
+    </p>
+    <div class="hero-chips">
+      <span class="chip"><b>K₀</b> Projektive Moduln</span>
+      <span class="chip"><b>K₁</b> Determinante</span>
+      <span class="chip"><b>K₂</b> Kommutatoren</span>
+      <span class="chip"><b>1972</b> Quillen</span>
+    </div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</header>
+
+<nav class="dotnav" id="dotnav" aria-label="Abschnitte"></nav>
+
+<main>
+
+<section class="chapter reveal" id="k0" data-nav="K₀">
+  <div class="chapter-head">
+    <div class="chapter-num">01 / K₀</div>
+    <div>
+      <h2>Projektive Moduln sind zerlegbare Vektorräume</h2>
+      <p class="dek">
+        Über einem Körper ist jeder Modul frei. Über einem Ring gibt es feinere Objekte:
+        <strong>projektive Moduln</strong>. Sie sind genau die direkten Summanden freier Moduln,
+        also Bilder von Projektoren <span class="math">P² = P</span>.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-card">
+      <canvas id="k0Canvas" aria-label="Projektor und sein Bild"></canvas>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Der Projektor <span class="math">P</span> wirft jeden Vektor auf eine Gerade. Sein Bild
+        ist ein projektiver Modul. Über einem Körper ist das nur ein eindimensionaler Vektorraum,
+        über einem Ring kann es ein nichttrivialer Summand sein.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">Rang</span><span class="val" id="k0rank">1</span></div>
+          <div><span class="key">P² = P</span><span class="val good" id="k0idem">ja</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <div class="control">
+          <label for="k0angle">Projektor-Winkel <output id="k0angleOut">35°</output></label>
+          <input type="range" id="k0angle" min="0" max="180" value="35" step="1">
+        </div>
+        <div class="matrix" id="k0matrix">P = [ 0.67  0.47 ; 0.47  0.33 ]</div>
+        <p class="faint" style="font-size:.8rem;margin:0"><span class="mono">P² = P</span> und <span class="mono">Pᵀ = P</span>. Das Bild ist der Eigenraum zum Eigenwert 1.</p>
+      </div>
+    </aside>
+  </div>
+  <p class="caption"><b>K₀(R)</b> ist die Grothendieck-Gruppe der endlich erzeugten projektiven <span class="math">R</span>-Moduln. Für einen Körper ist <span class="math">K₀ = ℤ</span>, für einen Zahlring kommt die Klassengruppe hinzu.</p>
+</section>
+
+<section class="chapter reveal" id="k1" data-nav="K₁">
+  <div class="chapter-head">
+    <div class="chapter-num">02 / K₁</div>
+    <div>
+      <h2>Elementare Operationen sind unsichtbar</h2>
+      <p class="dek">
+        Addiert man ein Vielfaches einer Zeile zu einer anderen, ändert sich die Determinante
+        nicht. Solche <strong>elementaren Matrizen</strong> erzeugen eine Untergruppe
+        <span class="math">E(R)</span>. <span class="math">K₁(R) = GL(R)/E(R)</span> misst,
+        was übrig bleibt.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage flip">
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Die beiden Vektoren spannen ein Parallelogramm. Eine elementare Scherung ändert die
+        Form, aber nicht die Fläche. Eine Spiegelung dreht die Orientierung um. Genau das ist
+        die Determinante.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">Determinante</span><span class="val" id="k1det">1</span></div>
+          <div><span class="key">K₁-Klasse</span><span class="val" id="k1class" style="font-size:1.2rem">+1</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <div class="control">
+          <label for="k1shear">Scherung <output id="k1shearOut">0.4</output></label>
+          <input type="range" id="k1shear" min="-1" max="1" value="0.4" step="0.05">
+        </div>
+        <div class="btn-row">
+          <button id="k1elem">Elementar</button>
+          <button id="k1flip">Spiegeln</button>
+        </div>
+        <p class="faint" style="font-size:.8rem;margin:0">Für kommutative Ringe ist <span class="mono">K₁(R) ≅ R<sup>×</sup></span> über die Determinante. Für <span class="mono">ℤ</span> bleibt nur <span class="mono">±1</span>.</p>
+      </div>
+    </aside>
+    <div class="canvas-card">
+      <canvas id="k1Canvas" aria-label="Parallelogramm unter Scherung und Spiegelung"></canvas>
+    </div>
+  </div>
+  <p class="caption"><b>Bass, 1962:</b> K₁ ist die erste höhere K-Gruppe. Sie entsteht aus der Frage, welche Verklebungen von Bündeln wirklich verschieden sind. Elementare Verklebungen zählen nicht.</p>
+</section>
+
+<section class="chapter reveal" id="k2" data-nav="K₂">
+  <div class="chapter-head">
+    <div class="chapter-num">03 / K₂</div>
+    <div>
+      <h2>Wenn zwei Operationen nicht kommutieren</h2>
+      <p class="dek">
+        <span class="math">K₂</span> misst die feineren Relationen zwischen elementaren
+        Matrizen. Für einen Körper hat <strong>Matsumoto</strong> eine einfache Beschreibung
+        gefunden: <span class="math">K₂(F) = F<sup>×</sup> ⊗ F<sup>×</sup> / ⟨a ⊗ (1−a)⟩</span>.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-card">
+      <canvas id="k2Canvas" aria-label="Kommutator zweier Scherungen"></canvas>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Zwei Scherungen <span class="math">A</span> und <span class="math">B</span> führen in
+        verschiedener Reihenfolge zu verschiedenen Formen. Der Unterschied ist der Kommutator
+        <span class="math">ABA<sup>−1</sup>B<sup>−1</sup></span>.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">Kommutator</span><span class="val" id="k2comm" style="font-size:1.15rem">≠ I</span></div>
+        </div>
+        <div class="matrix" id="k2matrix" style="margin-top:.6rem">[ 1.31  -0.13 ; 0.13  0.75 ]</div>
+      </div>
+      <div class="panel controls">
+        <div class="control">
+          <label for="k2a">Scherung a <output id="k2aOut">0.5</output></label>
+          <input type="range" id="k2a" min="-1" max="1" value="0.5" step="0.05">
+        </div>
+        <div class="control">
+          <label for="k2b">Scherung b <output id="k2bOut">0.5</output></label>
+          <input type="range" id="k2b" min="-1" max="1" value="0.5" step="0.05">
+        </div>
+        <p class="faint" style="font-size:.8rem;margin:0"><span class="mono">K₂(ℤ) = ℤ/2</span>. Für <span class="mono">ℚ</span> ist <span class="mono">K₂</span> riesig und trägt quadratische Reziprozität.</p>
+      </div>
+    </aside>
+  </div>
+  <p class="caption"><b>Milnor, 1967:</b> K₂ wurde zuerst als Kern der zentralen Erweiterung der Steinberg-Gruppe definiert. Matsumotos Satz machte daraus ein Symbolspiel mit Körperelementen.</p>
+</section>
+
+<section class="chapter reveal" id="plus" data-nav="Plus-Konstruktion">
+  <div class="chapter-head">
+    <div class="chapter-num">04 / HÖHERE K-THEORIE</div>
+    <div>
+      <h2>Quillen klebt Zellen an, bis ein Raum entsteht</h2>
+      <p class="dek">
+        Die Plus-Konstruktion verändert <span class="math">BGL(R)</span> so, dass die elementare
+        Untergruppe verschwindet, ohne die Homologie zu zerstören. Danach gilt
+        <span class="math">K₁ = π₁</span> und <span class="math">Kₙ = πₙ</span>. Aus Algebra wird
+        Homotopie.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-card">
+      <canvas id="plusCanvas" aria-label="Plus-Konstruktion: elementare Schleife wird gefüllt"></canvas>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Die grüne Schleife gehört zur elementaren Untergruppe. Sie wird durch eine Fläche
+        gefüllt und verschwindet aus <span class="math">π₁</span>. Die pinke Schleife bleibt:
+        Sie trägt die Determinante.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">π₁(BGL⁺)</span><span class="val" id="plusPi" style="font-size:1.3rem">K₁</span></div>
+          <div><span class="key">πₙ(BGL⁺)</span><span class="val" id="plusPin" style="font-size:1.3rem">Kₙ</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <button class="primary" id="plusFill">Elementare Schleife füllen</button>
+        <button id="plusReset">Zurücksetzen</button>
+        <p class="faint" style="font-size:.8rem;margin:0">Die Plus-Konstruktion tötet eine perfekte normale Untergruppe. Bei <span class="mono">GL(R)</span> ist das <span class="mono">E(R)</span>.</p>
+      </div>
+    </aside>
+  </div>
+  <p class="caption"><b>Quillen, 1972:</b> Die Plus-Konstruktion und die Q-Konstruktion liefern dieselben Gruppen. Der Satz „+ = Q“ machte höhere algebraische K-Theorie zu einem einheitlichen Werkzeug.</p>
+</section>
+
+<section class="chapter reveal" id="rechnen" data-nav="Berechnungen">
+  <div class="chapter-head">
+    <div class="chapter-num">05 / BERECHNUNGEN</div>
+    <div>
+      <h2>Was man tatsächlich ausrechnet</h2>
+      <p class="dek">
+        Algebraische K-Gruppen sind notorisch schwer. Für endliche Körper hat Quillen sie
+        vollständig bestimmt; für die ganzen Zahlen kennt man die ersten Grade. Der Kontrast
+        zwischen dem Muster über <span class="math">𝔽<sub>q</sub></span> und über
+        <span class="math">ℤ</span> ist selbst ein Ergebnis.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-card" style="min-height:420px">
+      <div id="kgroupsPlot" class="plotly-host"></div>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Jeder Balken ist eine K-Gruppe. Die Höhe ist nur eine schematische Größe, der Text
+        nennt die Gruppe. Wechsle zwischen <span class="math">ℤ</span> und
+        <span class="math">𝔽<sub>q</sub></span>.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">Ring</span><span class="val" id="kgRing" style="font-size:1.15rem">ℤ</span></div>
+          <div><span class="key">Muster</span><span class="val" id="kgPattern" style="font-size:1rem">kompliziert</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <div class="seg">
+          <button class="primary" id="kgZ">ℤ</button>
+          <button id="kgF">𝔽<sub>q</sub></button>
+        </div>
+        <div class="control" id="kgQWrap" style="display:none">
+          <label for="kgQ">q <output id="kgQOut">3</output></label>
+          <input type="range" id="kgQ" min="2" max="7" value="3" step="1">
+        </div>
+        <p class="faint" style="font-size:.8rem;margin:0">
+          <span data-tip="K0 = ℤ; K2i = 0 für i ≥ 1; K2i−1 = ℤ/(q^i − 1).">Quillens Formel</span>
+          für endliche Körper ist vollständig. Für <span class="mono">ℤ</span> sind die ersten Werte klassisch, höhere Grade sind offen.
+        </p>
+      </div>
+    </aside>
+  </div>
+  <p class="caption"><b>K₃(ℤ) = ℤ/48</b> und <b>K₇(ℤ) = ℤ/240</b> sind klassische Berechnungen von Lee und Szczarba. Dass K₄(ℤ) verschwindet, ist Teil desselben Bildes, aber kein allgemeines Muster.</p>
+</section>
+
+<section class="chapter reveal" id="wozu" data-nav="Wozu">
+  <div class="chapter-head">
+    <div class="chapter-num">06 / WOZU</div>
+    <div>
+      <h2>Wo K-Gruppen echte Fragen beantworten</h2>
+      <p class="dek">Die Theorie ist abstrakt, aber ihre Anwendungen sind konkret: Klassengruppen, Schnittzahlen, L-Funktionen, Hindernisse in der Topologie.</p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="k">Zahlentheorie</div>
+      <h3>Klassengruppen</h3>
+      <p>Für den Ganzheitsring eines Zahlkörpers ist <span class="math">K₀(O<sub>K</sub>) ≅ ℤ ⊕ Cl(K)</span>. K-Theorie verallgemeinert die klassische Klassengruppe.</p>
+    </div>
+    <div class="card">
+      <div class="k">Algebraische Geometrie</div>
+      <h3>Grothendieck–Riemann–Roch</h3>
+      <p>Der Chern-Charakter verbindet <span class="math">K₀</span> mit Chow-Gruppen. Schnittzahlen werden zu Algebra in einem Ring.</p>
+    </div>
+    <div class="card">
+      <div class="k">Topologie</div>
+      <h3>Whitehead-Torsion</h3>
+      <p>Ob ein Homotopieäquivalenz ein einfacher Typ ist, entscheidet ein Element in <span class="math">K₁(ℤπ)</span>. Das ist der Kern der h-Kobordismus-Theorie.</p>
+    </div>
+    <div class="card">
+      <div class="k">L-Funktionen</div>
+      <h3>Spezielle Werte</h3>
+      <p>Die Quillen–Lichtenbaum-Vermutung verbindet K-Gruppen von Zahlringen mit Werten der Dedekind-Zeta-Funktion.</p>
+    </div>
+    <div class="card">
+      <div class="k">Motivische Cohomologie</div>
+      <h3>Voevodsky</h3>
+      <p>Höhere K-Theorie und motivische Cohomologie sind über eine Spektralsequenz verbunden. Das ist eines der tiefsten Bilder der modernen algebraischen Geometrie.</p>
+    </div>
+    <div class="card">
+      <div class="k">Stabile Homotopie</div>
+      <h3>Algebraische K-Theorie von Räumen</h3>
+      <p>Waldhausens A-Theorie überträgt die Konstruktion auf Räume und verbindet K-Theorie mit Pseudo-Isotopien und Surgery.</p>
+    </div>
+  </div>
+
+  <div class="big-idea">
+    <div class="formula">Kₙ(R) = πₙ(BGL(R)<sup>+</sup>) &nbsp; für n ≥ 1</div>
+    <p>Die Algebra eines Rings wird zu einem Raum. Seine Homotopiegruppen sind die K-Gruppen. Deshalb sprechen Algebraiker und Topologen über dasselbe Objekt.</p>
+  </div>
+</section>
+
+<section class="chapter reveal" id="geschichte" data-nav="Geschichte">
+  <div class="chapter-head">
+    <div class="chapter-num">07 / IDEENGESCHICHTE</div>
+    <div>
+      <h2>Von K₀ bis zu einem eigenen Spektrum</h2>
+      <p class="dek">Jede K-Gruppe entstand aus einem Problem, für das die vorherige Stufe zu grob war.</p>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year">1957</div>
+      <h3>Grothendieck: K₀</h3>
+      <p>Für den Beweis des Grothendieck–Riemann–Roch-Satzes definiert <b>Alexander Grothendieck</b> die Gruppe der Vektorbündel modulo exakter Sequenzen. Das K kommt von <i>Klasse</i>.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1962 / 1964</div>
+      <h3>Bass: K₁</h3>
+      <p><b>Hyman Bass</b> und <b>Stephen Schanuel</b> definieren <span class="math">K₁(R) = GL(R)/E(R)</span>. Bass' Buch macht die Theorie zu einem eigenen Gebiet.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1967 / 1968</div>
+      <h3>Milnor: K₂</h3>
+      <p><b>John Milnor</b> definiert K₂ als Kern der Steinberg-Erweiterung. <b>Hideya Matsumoto</b> beschreibt K₂ von Körpern durch das Symbol <span class="math">a ⊗ (1−a)</span>.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1972 / 1973</div>
+      <h3>Quillen: höhere K-Theorie</h3>
+      <p><b>Daniel Quillen</b> gibt mit der Plus-Konstruktion und der Q-Konstruktion eine Definition für alle Grade. Für endliche Körper berechnet er alle K-Gruppen.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1976</div>
+      <h3>Quillen–Suslin</h3>
+      <p>Serres Vermutung wird bewiesen: Jeder endlich erzeugte projektive Modul über einem Polynomring ist frei. Ein Meilenstein der K-Theorie.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1980er / 1990er</div>
+      <h3>Waldhausen, Thomason, Voevodsky</h3>
+      <p>Die Theorie bekommt eine stabile homotopische Grundlage. <b>Waldhausen</b> entwickelt die K-Theorie von Räumen, <b>Voevodsky</b> verbindet K-Theorie mit motivischer Cohomologie.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<section class="sources">
+  <h2>Quellen und weiterlesen</h2>
+  <ol>
+    <li>A. Grothendieck, <i>Classes de faisceaux et théorème de Riemann–Roch</i> (1957), SGA 6.</li>
+    <li>H. Bass, <i>K-theory and stable algebra</i>, Publ. Math. IHÉS 22 (1964), 5–60.</li>
+    <li>J. Milnor, <i>Introduction to Algebraic K-theory</i>, Annals of Mathematics Studies 72, Princeton, 1971.</li>
+    <li>D. Quillen, <i>Higher algebraic K-theory I</i>, Lecture Notes in Math. 341 (1973), 85–147.</li>
+    <li>D. Quillen, <i>Projective modules over polynomial rings</i>, Invent. Math. 36 (1976), 167–171.</li>
+    <li>H. Matsumoto, <i>Sur les sous-groupes arithmétiques des groupes semi-simples déployés</i>, Ann. Sci. ENS 2 (1969), 1–62.</li>
+    <li>C. Weibel, <i>The K-book</i>, Graduate Studies in Mathematics 145, AMS, 2013. <a href="https://sites.math.rutgers.edu/~weibel/Kbook.html">Online</a></li>
+    <li>V. Srinivas, <i>Algebraic K-Theory</i>, Birkhäuser, 1991.</li>
+    <li>nLab, <i>algebraic K-theory</i>, <i>plus construction</i>, <i>Q-construction</i>. <a href="https://ncatlab.org/nlab/show/algebraic+K-theory">ncatlab.org</a></li>
+    <li>Ch. Weibel, <i>The K-theory of rings of integers in local and global fields</i>, in: Handbook of K-Theory, Springer, 2005.</li>
+  </ol>
+  <p class="note">Die Balkenhöhen im Rechenabschnitt sind schematisch, nicht logarithmisch exakt. Die Gruppenlabels sind die eigentliche Aussage. Für K₀ bis K₇ von ℤ sind die klassischen Werte angegeben.</p>
+</section>
+
+<footer class="site-foot">Algebraische K-Theorie · visuelle Einführung · <a href="k_theorie.html">K-Theorie</a> · <a href="topologische_k_theorie.html">topologische K-Theorie</a> · <a href="algebraische_topologie_visuell.html">algebraische Topologie</a></footer>
+
+<script src="../plotly-2.24.1.min.js"></script>
+<script src="visual_math_base.js"></script>
+<script>
+(() => {
+  "use strict";
+  const TAU = Math.PI * 2;
+
+  /* ---------- hero: matrices becoming a space ---------- */
+  (() => {
+    const c = document.getElementById("hero");
+    if (!c) return;
+    VM.loop(c, (t) => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const cx = w * 0.5, cy = h * 0.52;
+      const R = Math.min(w, h) * 0.24;
+      const rnd = VM.seeded(23);
+      // floating matrix entries and loops
+      ctx.globalCompositeOperation = "lighter";
+      for (let i = 0; i < 18; i++) {
+        const a = i / 18 * TAU + t * 0.08;
+        const rr = R * (1.2 + 0.5 * Math.sin(i * 1.7 + t * 0.3));
+        const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr * 0.62;
+        ctx.beginPath(); ctx.arc(x, y, 1.8 + rnd() * 2, 0, TAU);
+        ctx.fillStyle = `hsla(${45 + i * 9}, 85%, 65%, ${0.25 + 0.3 * rnd()})`;
+        ctx.fill();
+      }
+      // figure-eight / plus construction hint
+      for (const off of [-R * 0.42, R * 0.42]) {
+        ctx.beginPath();
+        for (let i = 0; i <= 120; i++) {
+          const a = i / 120 * TAU;
+          const x = cx + off + Math.cos(a) * R * 0.34;
+          const y = cy + Math.sin(a) * R * 0.34;
+          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.strokeStyle = off < 0 ? "rgba(126,231,176,.7)" : "rgba(179,136,255,.7)";
+        ctx.lineWidth = 1.6;
+        ctx.shadowColor = off < 0 ? "rgba(126,231,176,.8)" : "rgba(179,136,255,.8)";
+        ctx.shadowBlur = 16;
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+      // connecting arcs
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.78, 0.2 + Math.sin(t * 0.4) * 0.1, 2.6 + Math.sin(t * 0.4) * 0.1);
+      ctx.strokeStyle = "rgba(255,255,255,.16)"; ctx.lineWidth = 1; ctx.stroke();
+      ctx.globalCompositeOperation = "source-over";
+      // tiny matrix text
+      ctx.fillStyle = "rgba(255,255,255,.28)";
+      ctx.font = "10px " + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = "center";
+      ctx.fillText("GL(R)  →  BGL(R)⁺", cx, cy + R * 1.15);
+      ctx.textAlign = "left";
+    });
+  })();
+
+  /* ---------- K0 projector ---------- */
+  (() => {
+    const c = document.getElementById("k0Canvas");
+    if (!c) return;
+    const aIn = document.getElementById("k0angle"), aOut = document.getElementById("k0angleOut");
+    const matrix = document.getElementById("k0matrix"), rankEl = document.getElementById("k0rank");
+    const idem = document.getElementById("k0idem");
+    function update() {
+      const deg = +aIn.value;
+      aOut.textContent = deg + "°";
+      const a = deg * Math.PI / 180;
+      const ux = Math.cos(a), uy = Math.sin(a);
+      const P = [[ux * ux, ux * uy], [ux * uy, uy * uy]];
+      matrix.innerHTML = "P = [ <b>" + P[0][0].toFixed(2) + "</b>  " + P[0][1].toFixed(2) + " ; " + P[1][0].toFixed(2) + "  <b>" + P[1][1].toFixed(2) + "</b> ]";
+      rankEl.textContent = "1";
+      idem.textContent = "ja";
+    }
+    aIn.addEventListener("input", update);
+    update();
+    VM.loop(c, () => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const cx = w * 0.5, cy = h * 0.52;
+      const R = Math.min(w, h) * 0.3;
+      const a = (+aIn.value) * Math.PI / 180;
+      const ux = Math.cos(a), uy = Math.sin(a);
+      // grid
+      ctx.strokeStyle = "rgba(255,255,255,.07)"; ctx.lineWidth = 1;
+      for (let i = -4; i <= 4; i++) {
+        const x = cx + i / 4 * R * 1.35;
+        ctx.beginPath(); ctx.moveTo(x, cy - R * 1.3); ctx.lineTo(x, cy + R * 1.3); ctx.stroke();
+        const y = cy + i / 4 * R * 1.3;
+        ctx.beginPath(); ctx.moveTo(cx - R * 1.35, y); ctx.lineTo(cx + R * 1.35, y); ctx.stroke();
+      }
+      // image line
+      ctx.beginPath();
+      ctx.moveTo(cx - ux * R * 1.25, cy + uy * R * 1.25);
+      ctx.lineTo(cx + ux * R * 1.25, cy - uy * R * 1.25);
+      ctx.strokeStyle = "rgba(255,204,102,.55)"; ctx.lineWidth = 2.4; ctx.stroke();
+      // test vector
+      const vx = 0.82, vy = -0.52;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + vx * R, cy - vy * R);
+      ctx.strokeStyle = "rgba(255,255,255,.45)"; ctx.lineWidth = 1.4; ctx.stroke();
+      // projection
+      const dot = vx * ux + vy * uy;
+      const px = dot * ux, py = dot * uy;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + px * R, cy - py * R);
+      ctx.strokeStyle = "rgba(126,231,176,.95)"; ctx.lineWidth = 3;
+      ctx.shadowColor = "rgba(126,231,176,.8)"; ctx.shadowBlur = 16; ctx.stroke(); ctx.shadowBlur = 0;
+      // right angle marker
+      const mx = cx + px * R, my = cy - py * R;
+      ctx.beginPath(); ctx.arc(mx, my, 4, 0, TAU); ctx.fillStyle = "#fff"; ctx.fill();
+      // labels
+      ctx.fillStyle = "rgba(255,255,255,.5)";
+      ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+      ctx.fillText("Bild P(ℝ²)", cx + ux * R * 0.35 + 8, cy - uy * R * 0.35 - 8);
+      ctx.fillText("v", cx + vx * R + 8, cy - vy * R);
+      ctx.fillText("Pv", cx + px * R + 8, cy - py * R + 16);
+    });
+  })();
+
+  /* ---------- K1 determinant ---------- */
+  (() => {
+    const c = document.getElementById("k1Canvas");
+    if (!c) return;
+    const sIn = document.getElementById("k1shear"), sOut = document.getElementById("k1shearOut");
+    const detEl = document.getElementById("k1det"), classEl = document.getElementById("k1class");
+    const bElem = document.getElementById("k1elem"), bFlip = document.getElementById("k1flip");
+    let flip = false;
+    function update() {
+      sOut.textContent = (+sIn.value).toFixed(2);
+      const det = flip ? -1 : 1;
+      detEl.textContent = det > 0 ? "1" : "−1";
+      detEl.className = "val " + (det > 0 ? "good" : "warn");
+      classEl.textContent = det > 0 ? "+1" : "−1";
+      classEl.className = "val " + (det > 0 ? "good" : "warn");
+    }
+    sIn.addEventListener("input", update);
+    bElem.addEventListener("click", () => { sIn.value = 0.8; flip = false; update(); });
+    bFlip.addEventListener("click", () => { flip = !flip; update(); });
+    update();
+    VM.loop(c, () => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const cx = w * 0.42, cy = h * 0.54;
+      const R = Math.min(w, h) * 0.25;
+      const s = +sIn.value;
+      // elementary matrix E = [[1,s],[0,1]]
+      let u = { x: 2 * R, y: 1 * R };
+      let v = { x: 1 * R, y: 1.7 * R };
+      // apply E to both vectors
+      u = { x: u.x + s * u.y, y: u.y };
+      v = { x: v.x + s * v.y, y: v.y };
+      if (flip) { u.y = -u.y; v.y = -v.y; }
+      // axes
+      ctx.strokeStyle = "rgba(255,255,255,.1)"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(cx - R * 1.8, cy); ctx.lineTo(cx + R * 2.2, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy - R * 1.7); ctx.lineTo(cx, cy + R * 1.7); ctx.stroke();
+      // parallelogram
+      ctx.beginPath();
+      ctx.moveTo(cx, cy); ctx.lineTo(cx + u.x, cy - u.y); ctx.lineTo(cx + u.x + v.x, cy - u.y - v.y); ctx.lineTo(cx + v.x, cy - v.y); ctx.closePath();
+      ctx.fillStyle = flip ? "rgba(255,143,171,.12)" : "rgba(126,231,176,.10)";
+      ctx.fill();
+      ctx.strokeStyle = flip ? "rgba(255,143,171,.6)" : "rgba(126,231,176,.55)";
+      ctx.lineWidth = 1.4; ctx.stroke();
+      // vectors
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + u.x, cy - u.y);
+      ctx.strokeStyle = "rgba(255,204,102,.95)"; ctx.lineWidth = 2.4; ctx.shadowColor = "rgba(255,204,102,.7)"; ctx.shadowBlur = 12; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + v.x, cy - v.y);
+      ctx.strokeStyle = "rgba(179,136,255,.95)"; ctx.stroke(); ctx.shadowBlur = 0;
+      // labels
+      ctx.fillStyle = "rgba(255,255,255,.55)";
+      ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+      ctx.fillText("u", cx + u.x + 6, cy - u.y - 6);
+      ctx.fillText("v", cx + v.x + 6, cy - v.y - 6);
+      ctx.fillText("Fläche = |det|", cx - R * 1.1, cy + R * 1.55);
+      ctx.fillStyle = "rgba(255,255,255,.35)";
+      ctx.fillText("E = [ 1  " + s.toFixed(2) + " ; 0  1 ]", cx - R * 1.1, cy + R * 1.78);
+    });
+  })();
+
+  /* ---------- K2 commutator ---------- */
+  (() => {
+    const c = document.getElementById("k2Canvas");
+    if (!c) return;
+    const aIn = document.getElementById("k2a"), bIn = document.getElementById("k2b");
+    const aOut = document.getElementById("k2aOut"), bOut = document.getElementById("k2bOut");
+    const comm = document.getElementById("k2comm"), matrix = document.getElementById("k2matrix");
+    function update() {
+      aOut.textContent = (+aIn.value).toFixed(2);
+      bOut.textContent = (+bIn.value).toFixed(2);
+      const a = +aIn.value, b = +bIn.value;
+      const C = [[1 + a * b + a * a * b * b, -a * a * b], [a * b * b, 1 - a * b]];
+      const near = Math.abs(C[0][0] - 1) + Math.abs(C[1][1] - 1) + Math.abs(C[0][1]) + Math.abs(C[1][0]);
+      comm.textContent = near < 0.02 ? "≈ I" : "≠ I";
+      comm.className = "val " + (near < 0.02 ? "good" : "warn");
+      matrix.innerHTML = "[ " + C[0][0].toFixed(2) + "  " + C[0][1].toFixed(2) + " ; " + C[1][0].toFixed(2) + "  " + C[1][1].toFixed(2) + " ]";
+    }
+    aIn.addEventListener("input", update); bIn.addEventListener("input", update);
+    update();
+    VM.loop(c, () => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const cx = w * 0.36, cy = h * 0.55;
+      const R = Math.min(w, h) * 0.21;
+      const a = +aIn.value, b = +bIn.value;
+      function matmul(M, v) { return { x: M[0][0] * v.x + M[0][1] * v.y, y: M[1][0] * v.x + M[1][1] * v.y }; }
+      const A = [[1, a], [0, 1]];
+      const B = [[1, 0], [b, 1]];
+      const sq = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+      function transformed(mats) {
+        return sq.map(p => {
+          let v = { x: p.x, y: p.y };
+          for (const M of mats) v = matmul(M, v);
+          return { x: cx + v.x * R, y: cy - v.y * R };
+        });
+      }
+      const ab = transformed([A, B]);
+      const ba = transformed([B, A]);
+      function drawPoly(poly, color) {
+        ctx.beginPath();
+        poly.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+        ctx.closePath();
+        ctx.fillStyle = color.replace("1)", ".08)");
+        ctx.fill();
+        ctx.strokeStyle = color; ctx.lineWidth = 1.8; ctx.stroke();
+      }
+      drawPoly(ab, "rgba(126,231,176,.85)");
+      drawPoly(ba, "rgba(179,136,255,.85)");
+      ctx.fillStyle = "rgba(255,255,255,.55)";
+      ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+      ctx.fillText("A dann B", cx + R * 0.1, cy - R * 1.3);
+      ctx.fillStyle = "rgba(179,136,255,.8)";
+      ctx.fillText("B dann A", cx + R * 1.35, cy - R * 0.9);
+      // difference arrow
+      const d = { x: ab[2].x - ba[2].x, y: ab[2].y - ba[2].y };
+      ctx.beginPath(); ctx.moveTo(ba[2].x, ba[2].y); ctx.lineTo(ab[2].x, ab[2].y);
+      ctx.strokeStyle = "rgba(255,204,102,.8)"; ctx.lineWidth = 1.4; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = "rgba(255,255,255,.35)";
+      ctx.fillText("Differenz", (ab[2].x + ba[2].x) / 2 + 8, (ab[2].y + ba[2].y) / 2 - 8);
+    });
+  })();
+
+  /* ---------- plus construction ---------- */
+  (() => {
+    const c = document.getElementById("plusCanvas");
+    if (!c) return;
+    const bFill = document.getElementById("plusFill"), bReset = document.getElementById("plusReset");
+    let filled = false, fill = 0;
+    bFill.addEventListener("click", () => { filled = !filled; bFill.classList.toggle("primary", !filled); bFill.textContent = filled ? "Fläche entfernen" : "Elementare Schleife füllen"; });
+    bReset.addEventListener("click", () => { filled = false; fill = 0; bFill.classList.add("primary"); bFill.textContent = "Elementare Schleife füllen"; });
+    VM.loop(c, (t, dt) => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      fill += ((filled ? 1 : 0) - fill) * Math.min(1, dt * 5);
+      const cx = w * 0.5, cy = h * 0.5;
+      const R = Math.min(w, h) * 0.24;
+      // two circles (figure eight)
+      const left = { x: cx - R * 0.55, y: cy };
+      const right = { x: cx + R * 0.55, y: cy };
+      const rr = R * 0.52;
+      // elementary loop (left, green)
+      ctx.beginPath(); ctx.arc(left.x, left.y, rr, 0, TAU);
+      ctx.strokeStyle = "rgba(126,231,176,.9)"; ctx.lineWidth = 2.6;
+      ctx.shadowColor = "rgba(126,231,176,.8)"; ctx.shadowBlur = 16; ctx.stroke(); ctx.shadowBlur = 0;
+      // determinant loop (right, pink)
+      ctx.beginPath(); ctx.arc(right.x, right.y, rr, 0, TAU);
+      ctx.strokeStyle = "rgba(255,143,171,.9)"; ctx.lineWidth = 2.6; ctx.stroke();
+      // fill animation
+      if (fill > 0.01) {
+        ctx.beginPath(); ctx.arc(left.x, left.y, rr * fill, 0, TAU);
+        ctx.fillStyle = "rgba(126,231,176,.16)"; ctx.fill();
+        ctx.strokeStyle = "rgba(126,231,176,.35)"; ctx.lineWidth = 1; ctx.stroke();
+      }
+      // basepoint
+      ctx.beginPath(); ctx.arc(cx, cy, 5, 0, TAU); ctx.fillStyle = "#fff"; ctx.fill();
+      // labels
+      ctx.fillStyle = "rgba(255,255,255,.55)";
+      ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = "center";
+      ctx.fillText("E(R)", left.x, left.y - rr - 16);
+      ctx.fillText("K₁", right.x, right.y - rr - 16);
+      ctx.fillText("BGL(R)⁺", cx, cy + rr + 30);
+      ctx.fillStyle = "rgba(255,255,255,.32)";
+      ctx.font = "10px " + getComputedStyle(document.body).fontFamily;
+      ctx.fillText(filled ? "elementare Schleife ist ein Rand" : "elementare Schleife ist nicht null", cx, cy + rr + 50);
+      ctx.textAlign = "left";
+    });
+  })();
+
+  /* ---------- K groups chart ---------- */
+  (() => {
+    const plotEl = document.getElementById("kgroupsPlot");
+    const bZ = document.getElementById("kgZ"), bF = document.getElementById("kgF");
+    const qWrap = document.getElementById("kgQWrap"), qIn = document.getElementById("kgQ"), qOut = document.getElementById("kgQOut");
+    const ringEl = document.getElementById("kgRing"), patternEl = document.getElementById("kgPattern");
+    let mode = "Z", q = 3;
+
+    function data() {
+      if (mode === "Z") {
+        return {
+          labels: ["K₀", "K₁", "K₂", "K₃", "K₄", "K₅", "K₆", "K₇"],
+          groups: ["ℤ", "ℤ/2", "ℤ/2", "ℤ/48", "0", "ℤ", "0", "ℤ/240"],
+          heights: [4.4, 2.2, 2.2, 3.0, 0, 4.4, 0, 3.4],
+          note: "K₀ bis K₇ von ℤ"
+        };
+      }
+      const labels = ["K₀", "K₁", "K₂", "K₃", "K₄", "K₅", "K₆", "K₇"];
+      const groups = ["ℤ"];
+      const heights = [4.4];
+      for (let n = 1; n <= 7; n++) {
+        if (n % 2 === 0) { groups.push("0"); heights.push(0); }
+        else {
+          const i = (n + 1) / 2;
+          const order = Math.pow(q, i) - 1;
+          groups.push(order === 1 ? "0" : "ℤ/" + order);
+          heights.push(order === 1 ? 0 : 1.8 + Math.log2(order + 1) * 0.55);
+        }
+      }
+      return { labels, groups, heights, note: "K₀ bis K₇ von 𝔽" + q };
+    }
+
+    function render() {
+      const d = data();
+      ringEl.textContent = mode === "Z" ? "ℤ" : "𝔽" + q;
+      patternEl.textContent = mode === "Z" ? "kompliziert" : "periodisch";
+      qWrap.style.display = mode === "F" ? "flex" : "none";
+      qOut.textContent = q;
+      VM.plot(plotEl.id, [{
+        x: d.labels, y: d.heights, type: "bar",
+        text: d.groups, textposition: "outside",
+        textfont: { size: 12, color: "#f3f1ea", family: "ui-monospace, monospace" },
+        marker: {
+          color: d.heights.map((h, i) => h === 0 ? "rgba(255,255,255,.10)" : (mode === "Z" ? ["#ffcc66", "#7ee7b0", "#7ee7b0", "#b388ff", "#fff", "#ffcc66", "#fff", "#b388ff"][i] : "#7ee7b0")),
+          line: { color: "rgba(255,255,255,.18)", width: 1 }
+        },
+        hovertemplate: "%{x}: %{text}<extra></extra>"
+      }], {
+        margin: { l: 24, r: 24, t: 30, b: 42 },
+        yaxis: { range: [0, 5.6], showticklabels: false, showgrid: false, zeroline: false, title: "" },
+        xaxis: { title: "", tickfont: { size: 12, color: "#aaa7bb" } },
+        bargap: 0.42,
+        annotations: [{ text: d.note, x: 0, y: 1.08, xref: "paper", yref: "paper", showarrow: false, font: { size: 11, color: "#75728a" } }]
+      });
+    }
+    bZ.addEventListener("click", () => { mode = "Z"; bZ.classList.add("primary"); bF.classList.remove("primary"); render(); });
+    bF.addEventListener("click", () => { mode = "F"; bF.classList.add("primary"); bZ.classList.remove("primary"); render(); });
+    qIn.addEventListener("input", () => { q = +qIn.value; render(); });
+    render();
+  })();
+})();
+</script>
+</body>
+</html>

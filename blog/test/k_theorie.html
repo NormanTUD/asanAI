@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K-Theorie visuell: Bündel, Unterschiede, drei Gesichter</title>
+<link rel="stylesheet" href="visual_math_base.css">
+<style>
+  :root { --accent: #b388ff; --accent-2: #4dd0e1; --accent-3: #ff7ab6; }
+  .canvas-card { min-height: 460px; }
+  .canvas-card canvas { position: absolute; inset: 0; }
+  #k0-grid { height: 190px; min-height: 190px; }
+  .flavor-tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+  .flavor-tabs button { flex: 1 1 120px; }
+  .flavor-controls { display: none; }
+  .flavor-controls.on { display: flex; flex-direction: column; gap: .9rem; }
+  .mini-formula { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); }
+  .mini-formula i { color: var(--accent-2); }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <canvas id="hero"></canvas>
+  <div class="hero-inner">
+    <div class="eyebrow">K-Theorie · eine Idee, drei Gesichter</div>
+    <h1>Formen zählen,<br><em>die sich winden</em></h1>
+    <p class="lede">
+      K-Theorie macht aus Bündeln und Moduln eine Gruppe. Sie misst nicht die Form selbst,
+      sondern die Art, wie sie sich lokal zusammenklebt. Das klingt abstrakt, ist aber
+      erstaunlich greifbar: ein Streifen Papier mit einer halben Drehung genügt.
+    </p>
+    <div class="hero-chips">
+      <span class="chip"><b>1957</b> Grothendieck</span>
+      <span class="chip"><b>1959</b> Atiyah–Hirzebruch</span>
+      <span class="chip"><b>Periodizität</b> 2 oder 8</span>
+      <span class="chip"><b>Drei Varianten</b> topologisch · algebraisch · Operator</span>
+    </div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</header>
+
+<nav class="dotnav" id="dotnav" aria-label="Abschnitte"></nav>
+
+<main>
+
+<section class="chapter reveal" id="idee" data-nav="Die Idee">
+  <div class="chapter-head">
+    <div class="chapter-num">01 / GRUNDIDEE</div>
+    <div>
+      <h2>Unterschiede erlauben, wo es keine gibt</h2>
+      <p class="dek">
+        Natürliche Zahlen kann man addieren, aber nicht immer subtrahieren. Die
+        <strong>Grothendieck-Vervollständigung</strong> erfindet formale Differenzen. Genau das
+        macht K-Theorie mit Bündeln: Sie vergleicht sie, indem sie Differenzen bildet.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-card">
+      <canvas id="grothCanvas" aria-label="Zwei Stapel von Bündeln und ihre formale Differenz"></canvas>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Links liegen <b>A</b> Bündel, rechts <b>B</b>. Im Halbgruppen-Modus existiert
+        <span class="math">A − B</span> nur, wenn <span class="math">A ≥ B</span>. Im Gruppen-Modus
+        wird die Lücke zu einem negativen Element.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">Formale Differenz</span><span class="val" id="grothVal">0</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <div class="control">
+          <label for="gA">Bündel A <output id="gAout">3</output></label>
+          <input type="range" id="gA" min="0" max="6" value="3" step="1">
+        </div>
+        <div class="control">
+          <label for="gB">Bündel B <output id="gBout">2</output></label>
+          <input type="range" id="gB" min="0" max="6" value="2" step="1">
+        </div>
+        <div class="btn-row">
+          <button class="primary" id="gGroup">Gruppe</button>
+          <button id="gMonoid">Halbgruppe</button>
+        </div>
+        <p class="faint" style="font-size:.8rem;margin:0">
+          <span data-tip="[A]−[B] = [A⊕C]−[B⊕C]: Beide Seiten um dasselbe Bündel zu erweitern ändert die Klasse nicht.">Stabilisieren</span>
+          ist der Kern: <span class="mono">[A] − [B] = [A⊕C] − [B⊕C]</span>.
+        </p>
+      </div>
+    </aside>
+  </div>
+  <p class="caption"><b>Idee:</b> K<sup>0</sup>(X) ist die Gruppe der formalen Differenzen von Vektorbündeln über X. Für einen Punkt ist das nur <span class="math">ℤ</span>: Rang minus Rang.</p>
+</section>
+
+<section class="chapter reveal" id="buendel" data-nav="Bündel">
+  <div class="chapter-head">
+    <div class="chapter-num">02 / VEKTORBÜNDEL</div>
+    <div>
+      <h2>Lokal ein Produkt, global verdreht</h2>
+      <p class="dek">
+        Ein Vektorbündel sieht in jeder kleinen Umgebung aus wie <span class="math">U × ℝ<sup>n</sup></span>.
+        Der interessante Teil ist der Klebstoff zwischen den Umgebungen. Ein Möbiusband ist das
+        kleinste Beispiel, das sich nicht global entdrehen lässt.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage flip">
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Der Streifen ist über einem Kreis gebaut. Bei <b>0°</b> ist er ein Zylinder, bei
+        <b>180°</b> ein Möbiusband. Die feinen Linien sind die Fasern.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">Global trivial?</span><span class="val" id="bTriv" style="font-size:1.3rem">ja</span></div>
+          <div><span class="key">Orientierbar?</span><span class="val" id="bOrient" style="font-size:1.3rem">ja</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <div class="control">
+          <label for="bTwist">Verdrehung <output id="bTwistOut">0°</output></label>
+          <input type="range" id="bTwist" min="0" max="180" value="0" step="1">
+        </div>
+        <div class="btn-row">
+          <button id="bFiber" class="active">Fasern</button>
+          <button id="bSpin" class="active">Drehen</button>
+        </div>
+        <p class="faint" style="font-size:.8rem;margin:0">Ziehen dreht das Objekt. Der Regler ändert die globale Windung.</p>
+      </div>
+    </aside>
+    <div class="canvas-card">
+      <canvas id="bundleCanvas" aria-label="Möbiusband und Zylinder über einem Kreis"></canvas>
+    </div>
+  </div>
+  <p class="caption"><b>K-Theorie misst den Klebstoff:</b> Der Zylinder ist das triviale Bündel, das Möbiusband ein nichttriviales Element. Über einem Punkt gibt es keinen Unterschied, über einem Kreis schon.</p>
+</section>
+
+<section class="chapter reveal" id="k0" data-nav="K⁰(S²)">
+  <div class="chapter-head">
+    <div class="chapter-num">03 / EIN RECHENBEISPIEL</div>
+    <div>
+      <h2>K(S²) ist ein Gitter aus zwei Zahlen</h2>
+      <p class="dek">
+        Über der Sphäre <span class="math">S²</span> ist ein komplexes Bündel durch zwei
+        Invarianten klassifiziert: den <b>Rang</b> und die erste <b>Chern-Zahl</b>. Zusammen
+        bilden sie <span class="math">K(S²) ≅ ℤ ⊕ ℤ</span>.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-card">
+      <canvas id="k0Canvas" aria-label="Sphäre mit Rang und Chern-Zahl"></canvas>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Der Rang zählt die parallelen Fasern. Die Chern-Zahl zählt, wie oft sich das Bündel
+        um die Sphäre windet. Beides zusammen ist die vollständige Invariante.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">Rang r</span><span class="val" id="k0rank">1</span></div>
+          <div><span class="key">Chern c₁</span><span class="val" id="k0c1">0</span></div>
+          <div><span class="key">Element</span><span class="val" id="k0elem" style="font-size:1.25rem">(1, 0)</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Gitter der Klassen</h3>
+        <div id="k0-grid" class="plotly-host"></div>
+      </div>
+      <div class="panel controls">
+        <div class="control">
+          <label for="k0r">Rang <output id="k0rOut">1</output></label>
+          <input type="range" id="k0r" min="0" max="3" value="1" step="1">
+        </div>
+        <div class="control">
+          <label for="k0c">Chern-Zahl <output id="k0cOut">0</output></label>
+          <input type="range" id="k0c" min="-2" max="2" value="0" step="1">
+        </div>
+        <div class="btn-row">
+          <button id="k0hopf">Hopf-Bündel</button>
+          <button id="k0triv">Trivial</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+  <p class="caption"><b>Warum zwei Zahlen?</b> Der Rang ist die Dimension der Faser. Die Chern-Zahl misst die Windung der Übergangsfunktionen. Über <span class="math">S¹</span> bleibt nur der Rang, über <span class="math">S²</span> kommt die Windung hinzu.</p>
+</section>
+
+<section class="chapter reveal" id="bott" data-nav="Bott-Uhr">
+  <div class="chapter-head">
+    <div class="chapter-num">04 / BOTT-PERIODIZITÄT</div>
+    <div>
+      <h2>Die Uhr, die nach zwei oder acht Schlägen zurückspringt</h2>
+      <p class="dek">
+        Räume werden unter Suspension komplizierter, K-Gruppen aber periodisch. Komplex ist die
+        Periode <b>2</b>, reell <b>8</b>. Das ist der technische Motor, der K-Theorie zu einer
+        verallgemeinerten Kohomologietheorie macht.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-card">
+      <canvas id="bottCanvas" aria-label="Bott-Periodizitätsuhr"></canvas>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Die Uhr zeigt den Grad <span class="math">n</span>. Nach einer vollen Umdrehung ist
+        man wieder bei derselben Gruppe. Für einen Punkt sind die Gruppen besonders einfach.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">K<sup>n</sup>(pt)</span><span class="val" id="bottNow" style="font-size:1.6rem">ℤ</span></div>
+          <div><span class="key">Periode</span><span class="val" id="bottP" style="font-size:1.6rem">2</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <div class="btn-row">
+          <button class="primary" id="bottComplex">Komplex</button>
+          <button id="bottReal">Reell</button>
+        </div>
+        <div class="control">
+          <label for="bottN">Grad n <output id="bottNOut">0</output></label>
+          <input type="range" id="bottN" min="0" max="15" value="0" step="1">
+        </div>
+        <button id="bottStep">Suspendiere +1</button>
+        <p class="faint" style="font-size:.8rem;margin:0">
+          <span data-tip="Die reduzierte K-Gruppe des Doppel-Suspensionsraums ist kanonisch isomorph zur ursprünglichen.">K(X) ≅ K(Σ²X)</span>
+          ist die komplexe Form.
+        </p>
+      </div>
+    </aside>
+  </div>
+  <p class="caption"><b>Bott, 1959:</b> Die stabile Homotopie der klassischen Gruppen wiederholt sich. Atiyah und Hirzebruch machten daraus eine Cohomologietheorie mit einer überraschend kurzen Periode.</p>
+</section>
+
+<section class="chapter reveal" id="drei" data-nav="Drei Gesichter">
+  <div class="chapter-head">
+    <div class="chapter-num">05 / DREI GESICHTER</div>
+    <div>
+      <h2>Dieselbe Idee in drei Sprachen</h2>
+      <p class="dek">
+        Topologisch zählt man Bündel, algebraisch projektive Moduln, operatorisch Fredholm-Operatoren.
+        Der Übergang ist kein Zufall: Der Satz von Swan identifiziert Bündel über X mit projektiven
+        Moduln über <span class="math">C(X)</span>.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-card">
+      <canvas id="flavorCanvas" aria-label="Interaktive Darstellung der drei K-Theorien"></canvas>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Wähle eine Sprache</h3>
+        <div class="flavor-tabs">
+          <button class="primary" data-flavor="topo">Topologisch</button>
+          <button data-flavor="alg">Algebraisch</button>
+          <button data-flavor="op">Operator</button>
+        </div>
+        <p id="flavorText">Bündel über einem Raum. K<sup>0</sup> ist die Grothendieck-Gruppe der Isomorphieklassen.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">Invariante</span><span class="val" id="flavorVal" style="font-size:1.25rem">Windung</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="flavor-controls on" data-panel="topo">
+          <div class="control">
+            <label for="fTwist">Windung <output id="fTwistOut">1</output></label>
+            <input type="range" id="fTwist" min="0" max="3" value="1" step="1">
+          </div>
+        </div>
+        <div class="flavor-controls" data-panel="alg">
+          <div class="control">
+            <label for="fAngle">Projektor-Winkel <output id="fAngleOut">35°</output></label>
+            <input type="range" id="fAngle" min="0" max="90" value="35" step="1">
+          </div>
+          <p class="faint" style="font-size:.8rem;margin:0"><span class="mono">P² = P</span>: Der Projektor wählt eine Gerade im ℝ². Sein Bild ist ein projektiver Modul.</p>
+        </div>
+        <div class="flavor-controls" data-panel="op">
+          <div class="control">
+            <label for="fWind">Umläufe <output id="fWindOut">1</output></label>
+            <input type="range" id="fWind" min="-2" max="2" value="1" step="1">
+          </div>
+          <p class="faint" style="font-size:.8rem;margin:0">Der Index eines Fredholm-Operators ist <span class="mono">dim ker − dim coker</span>. Beim Toeplitz-Operator ist er die negative Windungszahl.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+  <p class="caption"><b>Swan, 1962:</b> Vektorbündel über einem kompakten Raum entsprechen endlich erzeugten projektiven Moduln über seinem Ring stetiger Funktionen. Deshalb ist K-Theorie an so vielen Orten dieselbe Geschichte.</p>
+</section>
+
+<section class="chapter reveal" id="warum" data-nav="Wozu">
+  <div class="chapter-head">
+    <div class="chapter-num">06 / WOZU</div>
+    <div>
+      <h2>Probleme, für die K-Theorie erfunden wurde</h2>
+      <p class="dek">K-Theorie ist kein Selbstzweck. Sie übersetzt analytische, geometrische und arithmetische Fragen in eine Gruppe, die man oft einfacher berechnen kann.</p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="k">Indexsatz</div>
+      <h3>Analysis wird Topologie</h3>
+      <p>Atiyah und Singer zeigten: Der analytische Index eines elliptischen Operators hängt nur von topologischen Daten ab. K-Theorie ist die natürliche Sprache dafür.</p>
+    </div>
+    <div class="card">
+      <div class="k">Adams, 1962</div>
+      <h3>Vektorfelder auf Sphären</h3>
+      <p>Wie viele unabhängige Vektorfelder trägt <span class="math">S<sup>n−1</sup></span>? Adams löste das mit K-Theorie und Adams-Operationen, nicht mit klassischer Homotopie.</p>
+    </div>
+    <div class="card">
+      <div class="k">Grothendieck–Riemann–Roch</div>
+      <h3>Bündel und Schnitttheorie</h3>
+      <p>Der Chern-Charakter verbindet K-Theorie mit Chow-Gruppen. Damit werden Schnittzahlen zu Rechnungen in einem Ring.</p>
+    </div>
+    <div class="card">
+      <div class="k">Klassifikation</div>
+      <h3>Welche Bündel gibt es?</h3>
+      <p>Stabile Bündel über einem Raum bilden eine Gruppe. K-Theorie ist die beste erste Approximation an ihre Klassifikation.</p>
+    </div>
+    <div class="card">
+      <div class="k">Operatoralgebren</div>
+      <h3>Fredholm-Index</h3>
+      <p>Für C*-Algebren ist K-Theorie ein Homotopie-Invariant. Sie klassifiziert unter anderem AF-Algebren und taucht in der Indexrechnung auf.</p>
+    </div>
+    <div class="card">
+      <div class="k">Zahlentheorie</div>
+      <h3>Klassengruppen und L-Funktionen</h3>
+      <p>Algebraische K-Gruppen von Zahlringen tragen Informationen über Klassengruppen, Einheiten und spezielle Werte von L-Funktionen.</p>
+    </div>
+  </div>
+
+  <div class="big-idea">
+    <div class="formula">K<sup>0</sup>(X) = Grothendieck-Gruppe der Vektorbündel über X</div>
+    <p>Alles Weitere ist eine Verfeinerung dieser einen Zeile: höhere Grade, andere Koeffizienten, andere Kategorien.</p>
+  </div>
+</section>
+
+<section class="chapter reveal" id="geschichte" data-nav="Geschichte">
+  <div class="chapter-head">
+    <div class="chapter-num">07 / IDEENGESCHICHTE</div>
+    <div>
+      <h2>Von Riemann–Roch zu einer eigenen Theorie</h2>
+      <p class="dek">Die Namen sind keine Dekoration. Jede Stufe entstand aus einem konkreten Problem, das mit den vorhandenen Werkzeugen nicht sauber lösbar war.</p>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year">1857 / 1957</div>
+      <h3>Riemann–Roch und Grothendiecks K<sub>0</sub></h3>
+      <p>Riemann und Roch vergleichen Funktionen und Differentialformen auf einer Fläche. Hundert Jahre später macht <b>Grothendieck</b> daraus eine Gruppenkonstruktion für Vektorbündel. Das <b>K</b> kommt von <i>Klasse</i>.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1959</div>
+      <h3>Atiyah und Hirzebruch: Topologische K-Theorie</h3>
+      <p>Die algebraische Konstruktion wird auf topologische Räume übertragen. Mit der Bott-Periodizität entsteht eine <b>verallgemeinerte Cohomologietheorie</b>.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1959</div>
+      <h3>Bott: Die Periode 2 und 8</h3>
+      <p><b>Raoul Bott</b> zeigt, dass sich die stabile Homotopie der klassischen Gruppen wiederholt. Das ist der Grund, warum K-Theorie so rechenfreundlich ist.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1962</div>
+      <h3>Adams: Vektorfelder auf Sphären</h3>
+      <p><b>J. F. Adams</b> benutzt K-Theorie und Adams-Operationen, um ein klassisches Problem der Differentialtopologie vollständig zu lösen.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1963</div>
+      <h3>Atiyah–Singer: Der Indexsatz</h3>
+      <p>Der analytische Index eines elliptischen Operators wird zu einer topologischen Invariante. K-Theorie liefert den Rahmen für den zweiten Beweis.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1972 / 1973</div>
+      <h3>Quillen: höhere algebraische K-Theorie</h3>
+      <p>Mit der <b>Plus-Konstruktion</b> und der <b>Q-Konstruktion</b> bekommen alle Grade eine einheitliche Definition. Algebraische K-Theorie wird zu einem eigenen Forschungsgebiet.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<section class="sources">
+  <h2>Quellen und weiterlesen</h2>
+  <ol>
+    <li>A. Grothendieck, <i>Classes de faisceaux et théorème de Riemann–Roch</i> (1957), in: <i>Fondements de la géométrie algébrique</i>, SGA 6.</li>
+    <li>M. Atiyah, F. Hirzebruch, <i>Vector bundles and homogeneous spaces</i>, Proc. Sympos. Pure Math. 3 (1961), 7–38. <a href="https://www.maths.ed.ac.uk/~v1ranick/papers/atiyahhirz.pdf">PDF</a></li>
+    <li>R. Bott, <i>The stable homotopy of the classical groups</i>, Ann. of Math. 70 (1959), 313–337.</li>
+    <li>J. F. Adams, <i>Vector fields on spheres</i>, Ann. of Math. 75 (1962), 603–632.</li>
+    <li>M. Atiyah, I. Singer, <i>The index of elliptic operators on compact manifolds</i>, Bull. Amer. Math. Soc. 69 (1963), 422–433. <a href="https://www.ams.org/journals/bull/1963-69-03/S0002-9904-1963-10957-7/">DOI</a></li>
+    <li>D. Quillen, <i>Higher algebraic K-theory I</i>, in: Algebraic K-theory I, Lecture Notes in Math. 341 (1973), 85–147.</li>
+    <li>R. G. Swan, <i>Vector bundles and projective modules</i>, Trans. Amer. Math. Soc. 105 (1962), 264–277.</li>
+    <li>M. Atiyah, <i>K-theory</i>, Benjamin, 1967. Klassische Einführung.</li>
+    <li>C. Weibel, <i>The K-book</i>, Graduate Studies in Mathematics 145, AMS, 2013. <a href="https://sites.math.rutgers.edu/~weibel/Kbook.html">Online</a></li>
+    <li>nLab, <i>K-theory</i> und <i>algebraic K-theory</i>. <a href="https://ncatlab.org/nlab/show/K-theory">ncatlab.org</a></li>
+  </ol>
+  <p class="note">Die Seiten sind als visuelle Einführung gebaut, nicht als Lehrbuch. Beweise fehlen bewusst. Für die exakten Definitionen und historischen Details sind die Quellen oben der richtige nächste Schritt.</p>
+</section>
+
+<footer class="site-foot">K-Theorie · visuelle Einführung · <a href="algebraische_k_theorie.html">algebraische K-Theorie</a> · <a href="topologische_k_theorie.html">topologische K-Theorie</a> · <a href="algebraische_topologie_visuell.html">algebraische Topologie</a></footer>
+
+<script src="../plotly-2.24.1.min.js"></script>
+<script src="visual_math_base.js"></script>
+<script>
+(() => {
+  "use strict";
+  const TAU = Math.PI * 2;
+
+  /* ---------- shared 3D helpers ---------- */
+  function project(x, y, z, rotX, rotY, cx, cy, scale, cam) {
+    const cyaw = Math.cos(rotY), syaw = Math.sin(rotY);
+    let x1 = x * cyaw - z * syaw;
+    let z1 = x * syaw + z * cyaw;
+    const cp = Math.cos(rotX), sp = Math.sin(rotX);
+    let y1 = y * cp - z1 * sp;
+    let z2 = y * sp + z1 * cp;
+    const p = cam / (cam + z2);
+    return { x: cx + x1 * scale * p, y: cy + y1 * scale * p, z: z2 };
+  }
+
+  /* ---------- hero: twisting band ---------- */
+  (() => {
+    const c = document.getElementById("hero");
+    if (!c) return;
+    VM.loop(c, (t) => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const cx = w * 0.5, cy = h * 0.52;
+      const R = Math.min(w, h) * 0.24;
+      const rotY = t * 0.22 + 0.4;
+      const rotX = 0.52 + Math.sin(t * 0.3) * 0.08;
+      const us = 64, vs = 7, quads = [];
+      const grid = [];
+      for (let i = 0; i <= us; i++) {
+        const u = i / us * TAU;
+        const row = [];
+        for (let j = 0; j <= vs; j++) {
+          const v = j / vs * 2 - 1;
+          const tw = Math.PI;
+          const rr = R + v * R * 0.23 * Math.cos(tw * u / 2);
+          const x = rr * Math.cos(u);
+          const y = rr * Math.sin(u) * 0.92;
+          const z = v * R * 0.23 * Math.sin(tw * u / 2);
+          row.push(project(x, y, z, rotX, rotY, cx, cy, R, R * 4.2));
+        }
+        grid.push(row);
+      }
+      for (let i = 0; i < us; i++) {
+        for (let j = 0; j < vs; j++) {
+          const a = grid[i][j], b = grid[i + 1][j], d = grid[i][j + 1], e = grid[i + 1][j + 1];
+          quads.push({ a, b, d, e, z: (a.z + b.z + d.z + e.z) / 4, u: i / us });
+        }
+      }
+      quads.sort((a, b) => b.z - a.z);
+      for (const q of quads) {
+        const hue = 255 + 55 * Math.sin(q.u * TAU + t * 0.4);
+        ctx.beginPath();
+        ctx.moveTo(q.a.x, q.a.y); ctx.lineTo(q.b.x, q.b.y);
+        ctx.lineTo(q.e.x, q.e.y); ctx.lineTo(q.d.x, q.d.y); ctx.closePath();
+        ctx.fillStyle = `hsla(${hue}, 78%, 62%, 0.10)`;
+        ctx.fill();
+        ctx.strokeStyle = `hsla(${hue}, 88%, 70%, 0.16)`;
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      }
+      // glowing edges
+      ctx.globalCompositeOperation = "lighter";
+      for (const j of [0, vs]) {
+        ctx.beginPath();
+        for (let i = 0; i <= us; i++) {
+          const p = grid[i][j];
+          if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        }
+        ctx.strokeStyle = "rgba(179,136,255,.55)";
+        ctx.lineWidth = 1.4;
+        ctx.shadowColor = "rgba(179,136,255,.8)";
+        ctx.shadowBlur = 16;
+        ctx.stroke();
+      }
+      // fibers
+      ctx.shadowBlur = 8;
+      for (let i = 0; i <= us; i += 4) {
+        const a = grid[i][0], b = grid[i][vs];
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = "rgba(77,208,225,.42)";
+        ctx.lineWidth = 0.9;
+        ctx.shadowColor = "rgba(77,208,225,.7)";
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+      ctx.globalCompositeOperation = "source-over";
+      // dust
+      const rnd = VM.seeded(7);
+      for (let i = 0; i < 70; i++) {
+        const x = rnd() * w, y = rnd() * h;
+        const a = 0.12 + 0.18 * (0.5 + 0.5 * Math.sin(t * 0.8 + i));
+        ctx.fillStyle = `rgba(255,255,255,${a})`;
+        ctx.fillRect(x, y, 1.2, 1.2);
+      }
+    });
+  })();
+
+  /* ---------- Grothendieck completion ---------- */
+  (() => {
+    const c = document.getElementById("grothCanvas");
+    if (!c) return;
+    const gA = document.getElementById("gA"), gB = document.getElementById("gB");
+    const outA = document.getElementById("gAout"), outB = document.getElementById("gBout");
+    const val = document.getElementById("grothVal");
+    const bGroup = document.getElementById("gGroup"), bMonoid = document.getElementById("gMonoid");
+    let group = true, A = 3, B = 2, anim = 1;
+
+    function draw() {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const pad = Math.min(42, w * 0.08);
+      const top = h * 0.22, gap = Math.min(52, h * 0.11);
+      ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+      ctx.textBaseline = "middle";
+
+      const rows = [
+        { n: A, y: top, label: "A", color: "179,136,255" },
+        { n: B, y: top + gap, label: "B", color: "255,122,182" }
+      ];
+      const size = Math.min(30, (w - pad * 2 - 120) / 7);
+      for (const row of rows) {
+        ctx.fillStyle = "rgba(255,255,255,.55)";
+        ctx.font = "600 11px " + getComputedStyle(document.body).fontFamily;
+        ctx.fillText(row.label, pad, row.y + size / 2);
+        for (let i = 0; i < 7; i++) {
+          const x = pad + 28 + i * (size + 5);
+          ctx.beginPath();
+          ctx.roundRect ? ctx.roundRect(x, row.y, size, size, 7) : ctx.rect(x, row.y, size, size);
+          if (i < row.n) {
+            ctx.fillStyle = `rgba(${row.color},.26)`;
+            ctx.fill();
+            ctx.strokeStyle = `rgba(${row.color},.8)`;
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+          } else {
+            ctx.strokeStyle = "rgba(255,255,255,.09)";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+
+      const diff = A - B;
+      const resultY = top + gap + Math.min(62, h * 0.14);
+      const rw = Math.min(280, w - pad * 2 - 20);
+      const rx = pad;
+      const ok = group || diff >= 0;
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(rx, resultY, rw, 58, 14) : ctx.rect(rx, resultY, rw, 58);
+      ctx.fillStyle = ok ? "rgba(126,231,176,.10)" : "rgba(255,255,255,.035)";
+      ctx.fill();
+      ctx.strokeStyle = ok ? "rgba(126,231,176,.45)" : "rgba(255,255,255,.12)";
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(255,255,255,.5)";
+      ctx.font = "10px " + getComputedStyle(document.body).fontFamily;
+      ctx.fillText("FORMALE DIFFERENZ", rx + 14, resultY + 15);
+      if (!ok) {
+        ctx.fillStyle = "rgba(255,255,255,.55)";
+        ctx.font = "500 18px " + getComputedStyle(document.body).fontFamily;
+        ctx.fillText("nicht definiert", rx + 14, resultY + 36);
+      } else {
+        const sign = diff < 0 ? "−" : "";
+        ctx.fillStyle = diff === 0 ? "rgba(255,255,255,.8)" : diff > 0 ? "rgba(126,231,176,.95)" : "rgba(255,150,150,.95)";
+        ctx.font = "600 26px " + getComputedStyle(document.body).fontFamily;
+        ctx.fillText("[" + A + "] − [" + B + "] = " + sign + Math.abs(diff), rx + 14, resultY + 36);
+      }
+
+      // number line
+      const ny = h - 44;
+      const x0 = pad + 30, x1 = w - pad - 30;
+      const map = (v) => x0 + (v + 6) / 12 * (x1 - x0);
+      ctx.strokeStyle = "rgba(255,255,255,.14)";
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x0, ny); ctx.lineTo(x1, ny); ctx.stroke();
+      for (let v = -6; v <= 6; v++) {
+        const x = map(v);
+        ctx.beginPath(); ctx.moveTo(x, ny - 4); ctx.lineTo(x, ny + 4); ctx.stroke();
+        if (v % 2 === 0) {
+          ctx.fillStyle = "rgba(255,255,255,.32)";
+          ctx.font = "9px " + getComputedStyle(document.body).fontFamily;
+          ctx.textAlign = "center";
+          ctx.fillText(String(v), x, ny + 16);
+        }
+      }
+      if (group || diff >= 0) {
+        const px = map(VM.clamp(diff, -6, 6));
+        ctx.beginPath(); ctx.arc(px, ny, 6, 0, TAU);
+        ctx.fillStyle = diff > 0 ? "rgba(126,231,176,.95)" : diff < 0 ? "rgba(255,150,150,.95)" : "rgba(255,255,255,.9)";
+        ctx.shadowColor = "rgba(126,231,176,.8)"; ctx.shadowBlur = 14;
+        ctx.fill(); ctx.shadowBlur = 0;
+      }
+      ctx.textAlign = "left";
+    }
+
+    function update() {
+      A = +gA.value; B = +gB.value;
+      outA.textContent = A; outB.textContent = B;
+      const d = A - B;
+      val.textContent = (group || d >= 0) ? (d > 0 ? "+" + d : String(d)) : "—";
+      val.className = "val " + ((group || d >= 0) ? (d > 0 ? "good" : d < 0 ? "warn" : "") : "faint");
+      draw();
+    }
+    gA.addEventListener("input", update);
+    gB.addEventListener("input", update);
+    bGroup.addEventListener("click", () => {
+      group = true; bGroup.classList.add("primary"); bMonoid.classList.remove("active");
+      bMonoid.classList.remove("primary"); update();
+    });
+    bMonoid.addEventListener("click", () => {
+      group = false; bMonoid.classList.add("active"); bGroup.classList.remove("primary");
+      bGroup.classList.add("active"); update();
+    });
+    update();
+    addEventListener("resize", draw);
+  })();
+
+  /* ---------- bundle: cylinder vs Möbius ---------- */
+  (() => {
+    const c = document.getElementById("bundleCanvas");
+    if (!c) return;
+    const twistIn = document.getElementById("bTwist"), twistOut = document.getElementById("bTwistOut");
+    const triv = document.getElementById("bTriv"), orient = document.getElementById("bOrient");
+    const fiberBtn = document.getElementById("bFiber"), spinBtn = document.getElementById("bSpin");
+    let twist = 0, targetTwist = 0, rot = 0.5, spin = true, fibers = true, dragging = false;
+    let dragX = 0;
+    VM.pointer(c, {
+      down: (p) => { dragging = true; dragX = p.x; },
+      move: (p) => { if (dragging) { rot += (p.x - dragX) * 0.008; dragX = p.x; } },
+      up: () => { dragging = false; }
+    });
+    twistIn.addEventListener("input", () => { targetTwist = (+twistIn.value) * Math.PI / 180; });
+    fiberBtn.addEventListener("click", () => { fibers = !fibers; fiberBtn.classList.toggle("active", fibers); });
+    spinBtn.addEventListener("click", () => { spin = !spin; spinBtn.classList.toggle("active", spin); });
+
+    VM.loop(c, (t, dt) => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      twist += (targetTwist - twist) * Math.min(1, dt * 7);
+      if (spin && !dragging) rot += dt * 0.24;
+      const cx = w * 0.5, cy = h * 0.52;
+      const R = Math.min(w, h) * 0.25;
+      const us = 80, vs = 6, quads = [], grid = [];
+      for (let i = 0; i <= us; i++) {
+        const u = i / us * TAU;
+        const row = [];
+        for (let j = 0; j <= vs; j++) {
+          const v = j / vs * 2 - 1;
+          const rr = R + v * R * 0.26 * Math.cos(twist * u / 2);
+          const x = rr * Math.cos(u);
+          const y = rr * Math.sin(u) * 0.9;
+          const z = v * R * 0.26 * Math.sin(twist * u / 2);
+          row.push(project(x, y, z, 0.5, rot, cx, cy, R, R * 4.4));
+        }
+        grid.push(row);
+      }
+      for (let i = 0; i < us; i++) {
+        for (let j = 0; j < vs; j++) {
+          const a = grid[i][j], b = grid[i + 1][j], d = grid[i][j + 1], e = grid[i + 1][j + 1];
+          quads.push({ a, b, d, e, z: (a.z + b.z + d.z + e.z) / 4, u: i / us });
+        }
+      }
+      quads.sort((a, b) => b.z - a.z);
+      for (const q of quads) {
+        const hue = 205 + 80 * (0.5 + 0.5 * Math.sin(q.u * TAU * 0.5 + twist));
+        ctx.beginPath();
+        ctx.moveTo(q.a.x, q.a.y); ctx.lineTo(q.b.x, q.b.y);
+        ctx.lineTo(q.e.x, q.e.y); ctx.lineTo(q.d.x, q.d.y); ctx.closePath();
+        ctx.fillStyle = `hsla(${hue}, 70%, 58%, .13)`;
+        ctx.fill();
+        ctx.strokeStyle = `hsla(${hue}, 80%, 66%, .12)`;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+      ctx.globalCompositeOperation = "lighter";
+      for (const j of [0, vs]) {
+        ctx.beginPath();
+        for (let i = 0; i <= us; i++) {
+          const p = grid[i][j];
+          if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        }
+        ctx.strokeStyle = "rgba(77,208,225,.62)";
+        ctx.lineWidth = 1.5;
+        ctx.shadowColor = "rgba(77,208,225,.8)";
+        ctx.shadowBlur = 16;
+        ctx.stroke();
+      }
+      if (fibers) {
+        ctx.shadowBlur = 8;
+        for (let i = 0; i <= us; i += 3) {
+          const a = grid[i][0], b = grid[i][vs];
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = "rgba(255,255,255,.24)";
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+      ctx.shadowBlur = 0;
+      ctx.globalCompositeOperation = "source-over";
+      // base circle hint
+      ctx.beginPath();
+      ctx.arc(cx, cy + R * 1.38, R * 0.78, 0, TAU);
+      ctx.strokeStyle = "rgba(255,255,255,.10)";
+      ctx.setLineDash([4, 7]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "rgba(255,255,255,.28)";
+      ctx.font = "10px " + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = "center";
+      ctx.fillText("Basiskreis", cx, cy + R * 1.38 + 4);
+      ctx.textAlign = "left";
+    });
+
+    setInterval(() => {
+      const deg = Math.round(targetTwist * 180 / Math.PI);
+      twistOut.textContent = deg + "°";
+      const m = deg > 90;
+      triv.textContent = m ? "nein" : "ja";
+      triv.className = "val " + (m ? "warn" : "good");
+      orient.textContent = m ? "nein" : "ja";
+      orient.className = "val " + (m ? "warn" : "good");
+      orient.style.fontSize = "1.3rem";
+    }, 80);
+  })();
+
+  /* ---------- K0(S^2) ---------- */
+  (() => {
+    const c = document.getElementById("k0Canvas");
+    if (!c) return;
+    const rIn = document.getElementById("k0r"), cIn = document.getElementById("k0c");
+    const rOut = document.getElementById("k0rOut"), cOut = document.getElementById("k0cOut");
+    const rankEl = document.getElementById("k0rank"), c1El = document.getElementById("k0c1"), elemEl = document.getElementById("k0elem");
+    const bHopf = document.getElementById("k0hopf"), bTriv = document.getElementById("k0triv");
+    let rank = 1, c1 = 0, rot = 0.3, dragging = false, dragX = 0;
+    VM.pointer(c, {
+      down: (p) => { dragging = true; dragX = p.x; },
+      move: (p) => { if (dragging) { rot += (p.x - dragX) * 0.008; dragX = p.x; } },
+      up: () => { dragging = false; }
+    });
+
+    function grid() {
+      const xs = [], ys = [], texts = [], sizes = [], colors = [];
+      for (let r = 0; r <= 3; r++) {
+        for (let d = -2; d <= 2; d++) {
+          xs.push(d); ys.push(r); texts.push("(" + r + "," + d + ")");
+          const cur = r === rank && d === c1;
+          sizes.push(cur ? 18 : 9);
+          colors.push(cur ? "#4dd0e1" : "rgba(179,136,255,.55)");
+        }
+      }
+      VM.plot("k0-grid", [{
+        x: xs, y: ys, mode: "markers+text", type: "scatter",
+        text: texts, textposition: "top center",
+        textfont: { size: 8, color: "#8f8ca6" },
+        marker: { size: sizes, color: colors, line: { color: "rgba(255,255,255,.35)", width: 1 } },
+        hovertemplate: "Rang %{y}, c₁ %{x}<extra></extra>"
+      }], {
+        margin: { l: 42, r: 12, t: 12, b: 36 },
+        xaxis: { title: "c₁", dtick: 1, zeroline: false, range: [-2.6, 2.6] },
+        yaxis: { title: "Rang", dtick: 1, zeroline: false, range: [-0.6, 3.6] },
+        showlegend: false
+      });
+    }
+
+    function update() {
+      rank = +rIn.value; c1 = +cIn.value;
+      rOut.textContent = rank; cOut.textContent = c1;
+      rankEl.textContent = rank; c1El.textContent = c1;
+      elemEl.textContent = "(" + rank + ", " + c1 + ")";
+      grid();
+    }
+    rIn.addEventListener("input", update);
+    cIn.addEventListener("input", update);
+    bHopf.addEventListener("click", () => { rIn.value = 1; cIn.value = -1; update(); });
+    bTriv.addEventListener("click", () => { rIn.value = 1; cIn.value = 0; update(); });
+    update();
+
+    VM.loop(c, (t) => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      if (!dragging) rot += 0.0035;
+      const cx = w * 0.5, cy = h * 0.5;
+      const R = Math.min(w, h) * 0.29;
+      // sphere silhouette
+      const g = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.35, R * 0.1, cx, cy, R * 1.05);
+      g.addColorStop(0, "rgba(255,255,255,.09)");
+      g.addColorStop(0.55, "rgba(179,136,255,.05)");
+      g.addColorStop(1, "rgba(0,0,0,.22)");
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.fillStyle = g; ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.18)"; ctx.lineWidth = 1; ctx.stroke();
+
+      // latitude rings
+      for (let k = -2; k <= 2; k++) {
+        const phi = k * Math.PI / 6;
+        const rr = R * Math.cos(phi);
+        ctx.beginPath();
+        ctx.ellipse(cx, cy + R * Math.sin(phi), rr, rr * 0.16, 0, 0, TAU);
+        ctx.strokeStyle = "rgba(255,255,255,.07)";
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+
+      // stripes with c1 twist
+      if (rank > 0) {
+        const stripes = 6 + rank * 4;
+        for (let s = 0; s < stripes; s++) {
+          const base = s / stripes * TAU;
+          ctx.beginPath();
+          let started = false;
+          for (let i = 0; i <= 48; i++) {
+            const phi = -Math.PI / 2 + i / 48 * Math.PI;
+            const lon = base + c1 * phi + rot;
+            const x = Math.cos(phi) * Math.sin(lon);
+            const y = Math.sin(phi);
+            const z = Math.cos(phi) * Math.cos(lon);
+            const p = project(x, y, z, 0, 0, cx, cy, R, R * 4.5);
+            if (!started) { ctx.moveTo(p.x, p.y); started = true; } else ctx.lineTo(p.x, p.y);
+          }
+          const hue = 190 + (s / stripes) * 130;
+          ctx.strokeStyle = `hsla(${hue}, 80%, 66%, ${0.24 + 0.35 / rank})`;
+          ctx.lineWidth = 1.1;
+          ctx.stroke();
+        }
+      } else {
+        ctx.fillStyle = "rgba(255,255,255,.35)";
+        ctx.font = "600 13px " + getComputedStyle(document.body).fontFamily;
+        ctx.textAlign = "center";
+        ctx.fillText("Rang 0: das leere Bündel", cx, cy + R + 26);
+        ctx.textAlign = "left";
+      }
+      // c1 label near south pole
+      ctx.fillStyle = "rgba(255,255,255,.42)";
+      ctx.font = "10px " + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = "center";
+      ctx.fillText("c₁ = " + c1 + "   ·   Rang = " + rank, cx, cy + R + 24);
+      ctx.textAlign = "left";
+    });
+  })();
+
+  /* ---------- Bott clock ---------- */
+  (() => {
+    const c = document.getElementById("bottCanvas");
+    if (!c) return;
+    const nIn = document.getElementById("bottN"), nOut = document.getElementById("bottNOut");
+    const nowEl = document.getElementById("bottNow"), pEl = document.getElementById("bottP");
+    const bC = document.getElementById("bottComplex"), bR = document.getElementById("bottReal"), bStep = document.getElementById("bottStep");
+    let real = false, n = 0, needle = 0, target = 0, pulse = 0;
+    const complexGroups = ["ℤ", "0"];
+    const realGroups = ["ℤ", "ℤ/2", "ℤ/2", "0", "ℤ", "0", "0", "0"];
+
+    function period() { return real ? 8 : 2; }
+    function groups() { return real ? realGroups : complexGroups; }
+    function update() {
+      n = +nIn.value; target = n % period();
+      nOut.textContent = n; pEl.textContent = period();
+      nowEl.textContent = groups()[target];
+      pulse = 1;
+    }
+    nIn.addEventListener("input", update);
+    bC.addEventListener("click", () => {
+      real = false; bC.classList.add("primary"); bR.classList.remove("primary"); bR.classList.remove("active");
+      nIn.max = 15; update();
+    });
+    bR.addEventListener("click", () => {
+      real = true; bR.classList.add("primary"); bC.classList.remove("primary"); bC.classList.remove("active");
+      nIn.max = 23; update();
+    });
+    bStep.addEventListener("click", () => {
+      nIn.value = (n + 1) % (period() * 2);
+      if (+nIn.value < n) nIn.value = 0;
+      update();
+    });
+    update();
+
+    VM.loop(c, (t, dt) => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      needle += (target - needle) * Math.min(1, dt * 6);
+      pulse *= Math.pow(0.94, dt * 60);
+      const cx = w * 0.5, cy = h * 0.52;
+      const R = Math.min(w, h) * 0.29;
+      const p = period();
+      const gs = groups();
+      // rings
+      ctx.beginPath(); ctx.arc(cx, cy, R * 1.16, 0, TAU);
+      ctx.strokeStyle = "rgba(255,255,255,.08)"; ctx.lineWidth = 1; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, R * 0.62, 0, TAU);
+      ctx.strokeStyle = "rgba(255,255,255,.08)"; ctx.lineWidth = 1; ctx.stroke();
+      // segments
+      for (let i = 0; i < p; i++) {
+        const a0 = -Math.PI / 2 + i / p * TAU;
+        const a1 = -Math.PI / 2 + (i + 1) / p * TAU;
+        const active = i === Math.round(needle);
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, a0 + 0.018, a1 - 0.018);
+        ctx.strokeStyle = active ? "rgba(77,208,225,.95)" : "rgba(179,136,255,.22)";
+        ctx.lineWidth = active ? 12 + pulse * 8 : 9;
+        ctx.shadowColor = active ? "rgba(77,208,225,.8)" : "transparent";
+        ctx.shadowBlur = active ? 22 : 0;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        // label
+        const mid = (a0 + a1) / 2;
+        const lr = R * (p === 2 ? 0.76 : 0.73);
+        const lx = cx + Math.cos(mid) * lr, ly = cy + Math.sin(mid) * lr;
+        ctx.fillStyle = active ? "rgba(255,255,255,.96)" : "rgba(255,255,255,.48)";
+        ctx.font = (p === 2 ? "600 24px " : "600 15px ") + getComputedStyle(document.body).fontFamily;
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText(gs[i], lx, ly);
+        // tick number
+        const tr = R * 1.06;
+        const tx = cx + Math.cos(mid) * tr, ty = cy + Math.sin(mid) * tr;
+        ctx.fillStyle = "rgba(255,255,255,.24)";
+        ctx.font = "9px " + getComputedStyle(document.body).fontFamily;
+        ctx.fillText(String(i), tx, ty);
+      }
+      // needle
+      const angle = -Math.PI / 2 + needle / p * TAU;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(angle) * R * 0.86, cy + Math.sin(angle) * R * 0.86);
+      ctx.strokeStyle = "rgba(255,255,255,.9)";
+      ctx.lineWidth = 2;
+      ctx.shadowColor = "rgba(77,208,225,.9)";
+      ctx.shadowBlur = 14;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.beginPath(); ctx.arc(cx, cy, 5, 0, TAU); ctx.fillStyle = "#fff"; ctx.fill();
+      // center label
+      ctx.fillStyle = "rgba(255,255,255,.38)";
+      ctx.font = "10px " + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = "center";
+      ctx.fillText(real ? "KO-Periodizität" : "K-Periodizität", cx, cy + R * 0.42);
+      ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+    });
+  })();
+
+  /* ---------- three flavors ---------- */
+  (() => {
+    const c = document.getElementById("flavorCanvas");
+    if (!c) return;
+    const tabs = VM.$$(".flavor-tabs button");
+    const panels = VM.$$(".flavor-controls");
+    const text = document.getElementById("flavorText");
+    const val = document.getElementById("flavorVal");
+    const tIn = document.getElementById("fTwist"), tOut = document.getElementById("fTwistOut");
+    const aIn = document.getElementById("fAngle"), aOut = document.getElementById("fAngleOut");
+    const wIn = document.getElementById("fWind"), wOut = document.getElementById("fWindOut");
+    let mode = "topo";
+    const copy = {
+      topo: ["Bündel über einem Raum. K<sup>0</sup> ist die Grothendieck-Gruppe der Isomorphieklassen.", "Windung"],
+      alg: ["Projektive Moduln über einem Ring. Der Projektor P wählt einen direkten Summanden.", "Projektor"],
+      op: ["Fredholm-Operatoren. Der Index ist ein Element von K<sup>0</sup>(pt) ≅ ℤ.", "Index"]
+    };
+    function setMode(m) {
+      mode = m;
+      tabs.forEach((b) => { b.classList.toggle("primary", b.dataset.flavor === m); b.classList.toggle("active", b.dataset.flavor === m); });
+      panels.forEach((p) => p.classList.toggle("on", p.dataset.panel === m));
+      text.innerHTML = copy[m][0];
+      val.textContent = copy[m][1];
+    }
+    tabs.forEach((b) => b.addEventListener("click", () => setMode(b.dataset.flavor)));
+    tIn.addEventListener("input", () => { tOut.textContent = tIn.value; });
+    aIn.addEventListener("input", () => { aOut.textContent = aIn.value + "°"; });
+    wIn.addEventListener("input", () => { wOut.textContent = wIn.value; });
+    setMode("topo");
+
+    VM.loop(c, (t) => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const cx = w * 0.5, cy = h * 0.5;
+      const R = Math.min(w, h) * 0.27;
+      ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+
+      if (mode === "topo") {
+        const tw = (+tIn.value) * Math.PI / 4;
+        const us = 70, vs = 5, quads = [], grid = [];
+        for (let i = 0; i <= us; i++) {
+          const u = i / us * TAU;
+          const row = [];
+          for (let j = 0; j <= vs; j++) {
+            const v = j / vs * 2 - 1;
+            const rr = R + v * R * 0.25 * Math.cos(tw * u / 2);
+            const x = rr * Math.cos(u), y = rr * Math.sin(u) * 0.9;
+            const z = v * R * 0.25 * Math.sin(tw * u / 2);
+            row.push(project(x, y, z, 0.48, t * 0.25 + 0.4, cx, cy, R, R * 4.3));
+          }
+          grid.push(row);
+        }
+        for (let i = 0; i < us; i++) for (let j = 0; j < vs; j++) {
+          const a = grid[i][j], b = grid[i + 1][j], d = grid[i][j + 1], e = grid[i + 1][j + 1];
+          quads.push({ a, b, d, e, z: (a.z + b.z + d.z + e.z) / 4, u: i / us });
+        }
+        quads.sort((a, b) => b.z - a.z);
+        for (const q of quads) {
+          ctx.beginPath();
+          ctx.moveTo(q.a.x, q.a.y); ctx.lineTo(q.b.x, q.b.y);
+          ctx.lineTo(q.e.x, q.e.y); ctx.lineTo(q.d.x, q.d.y); ctx.closePath();
+          ctx.fillStyle = `hsla(${200 + 90 * q.u}, 75%, 60%, .12)`;
+          ctx.fill();
+          ctx.strokeStyle = "rgba(255,255,255,.08)";
+          ctx.stroke();
+        }
+        ctx.strokeStyle = "rgba(77,208,225,.65)";
+        ctx.lineWidth = 1.4;
+        for (const j of [0, vs]) {
+          ctx.beginPath();
+          for (let i = 0; i <= us; i++) { const p = grid[i][j]; i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }
+          ctx.stroke();
+        }
+      } else if (mode === "alg") {
+        const ang = (+aIn.value) * Math.PI / 180;
+        const gs = 46;
+        ctx.strokeStyle = "rgba(255,255,255,.08)"; ctx.lineWidth = 1;
+        for (let i = -4; i <= 4; i++) {
+          const x = cx + i / 4 * R * 1.3;
+          ctx.beginPath(); ctx.moveTo(x, cy - R * 1.3); ctx.lineTo(x, cy + R * 1.3); ctx.stroke();
+          const y = cy + i / 4 * R * 1.3;
+          ctx.beginPath(); ctx.moveTo(cx - R * 1.3, y); ctx.lineTo(cx + R * 1.3, y); ctx.stroke();
+        }
+        const ux = Math.cos(ang), uy = Math.sin(ang);
+        const vx = 0.72, vy = -0.45;
+        // image line
+        ctx.beginPath(); ctx.moveTo(cx - ux * R * 1.2, cy + uy * R * 1.2); ctx.lineTo(cx + ux * R * 1.2, cy - uy * R * 1.2);
+        ctx.strokeStyle = "rgba(179,136,255,.45)"; ctx.lineWidth = 2; ctx.stroke();
+        // vector and projection
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + vx * R, cy - vy * R);
+        ctx.strokeStyle = "rgba(255,255,255,.65)"; ctx.lineWidth = 1.5; ctx.stroke();
+        const dot = vx * ux + vy * uy;
+        const px = dot * ux, py = dot * uy;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + px * R, cy - py * R);
+        ctx.strokeStyle = "rgba(77,208,225,.95)"; ctx.lineWidth = 2.4;
+        ctx.shadowColor = "rgba(77,208,225,.8)"; ctx.shadowBlur = 14; ctx.stroke(); ctx.shadowBlur = 0;
+        // matrix readout
+        const P = [[ux * ux, ux * uy], [ux * uy, uy * uy]];
+        ctx.fillStyle = "rgba(255,255,255,.55)";
+        ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+        ctx.fillText("P = [ " + P[0][0].toFixed(2) + "  " + P[0][1].toFixed(2) + " ; " + P[1][0].toFixed(2) + "  " + P[1][1].toFixed(2) + " ]", cx - R * 1.3, cy + R * 1.55);
+        ctx.fillStyle = "rgba(77,208,225,.9)";
+        ctx.fillText("P² = P", cx - R * 1.3, cy + R * 1.75);
+      } else {
+        const wind = +wIn.value;
+        const r = R * 0.72;
+        // loop with winding
+        const turns = Math.abs(wind) || 1;
+        ctx.beginPath();
+        for (let i = 0; i <= 400; i++) {
+          const a = i / 400 * TAU;
+          const rr = r * (1 + 0.16 * Math.cos(turns * a)) * (wind === 0 ? 1 : 1);
+          const x = cx + Math.cos(a) * rr;
+          const y = cy + Math.sin(a) * rr * 0.72;
+          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.strokeStyle = wind === 0 ? "rgba(255,255,255,.35)" : "rgba(255,122,182,.8)";
+        ctx.lineWidth = 2;
+        ctx.shadowColor = "rgba(255,122,182,.5)"; ctx.shadowBlur = 12; ctx.stroke(); ctx.shadowBlur = 0;
+        // arrow
+        const a = t * 1.2;
+        const ar = r * (1 + 0.16 * Math.cos(turns * a));
+        const ax = cx + Math.cos(a) * ar, ay = cy + Math.sin(a) * ar * 0.72;
+        ctx.beginPath(); ctx.arc(ax, ay, 5, 0, TAU); ctx.fillStyle = "#fff"; ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,.55)";
+        ctx.font = "12px " + getComputedStyle(document.body).fontFamily;
+        ctx.fillText("Index = " + (-wind), cx - 42, cy + R * 1.45);
+        ctx.fillStyle = "rgba(255,255,255,.32)";
+        ctx.font = "10px " + getComputedStyle(document.body).fontFamily;
+        ctx.fillText("Winding der Übergangsfunktion", cx - 78, cy + R * 1.65);
+      }
+      ctx.textAlign = "left";
+    });
+  })();
+})();
+</script>
+</body>
+</html>

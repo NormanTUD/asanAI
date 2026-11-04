@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algebraische Topologie visuell: Löcher, Schleifen, Homologie</title>
+<link rel="stylesheet" href="visual_math_base.css">
+<style>
+  :root { --accent: #57e3c2; --accent-2: #ffd166; --accent-3: #ff8fab; }
+  .canvas-card { min-height: 480px; }
+  .canvas-card canvas { position: absolute; inset: 0; }
+  #hopfStage { position: absolute; inset: 0; }
+  #hopfStage canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+  #bettiPlot { height: 220px; min-height: 220px; }
+  .shape-btns { display: flex; flex-wrap: wrap; gap: .45rem; }
+  .shape-btns button { flex: 1 1 90px; }
+  .hopf-badge {
+    position: absolute; left: 1rem; bottom: 1rem; z-index: 3;
+    font-family: var(--mono); font-size: .62rem; letter-spacing: .14em;
+    text-transform: uppercase; color: rgba(255,255,255,.55);
+    background: rgba(0,0,0,.28); border: 1px solid var(--line);
+    padding: .4rem .6rem; border-radius: 999px; backdrop-filter: blur(8px);
+  }
+  .fallback {
+    position: absolute; inset: 0; display: none; place-items: center; text-align: center;
+    color: var(--muted); padding: 2rem; font-size: .95rem;
+  }
+  .two-col { display: grid; grid-template-columns: 1.2fr .8fr; gap: 1rem; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <canvas id="hero"></canvas>
+  <div class="hero-inner">
+    <div class="eyebrow">Algebraische Topologie · Formen als Daten</div>
+    <h1>Löcher, Schleifen,<br><em>unsichtbare Regeln</em></h1>
+    <p class="lede">
+      Ein Donut und eine Kaffeetasse sind für einen Topologen dasselbe. Algebraische Topologie
+      macht diese Beobachtung rechenbar: Sie übersetzt Formen in Gruppen, Ringe und Zahlen, die
+      sich nicht mehr verformen lassen.
+    </p>
+    <div class="hero-chips">
+      <span class="chip"><b>1895</b> Poincaré</span>
+      <span class="chip"><b>π₁</b> Schleifen</span>
+      <span class="chip"><b>Hₙ</b> Homologie</span>
+      <span class="chip"><b>1959</b> Bott</span>
+    </div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</header>
+
+<nav class="dotnav" id="dotnav" aria-label="Abschnitte"></nav>
+
+<main>
+
+<section class="chapter reveal" id="formen" data-nav="Formen">
+  <div class="chapter-head">
+    <div class="chapter-num">01 / FORMEN</div>
+    <div>
+      <h2>Was heißt „gleich“ für einen Topologen?</h2>
+      <p class="dek">
+        Zwei Formen sind <strong>homöomorph</strong>, wenn man die eine stetig in die andere
+        verbiegen kann, ohne zu reißen oder zu kleben. Krümmung und Winkel dürfen sich ändern,
+        die Zahl der Löcher nicht.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-card">
+      <canvas id="morphCanvas" aria-label="Kreis, Quadrat und Torus"></canvas>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Der Regler verbiegt einen Kreis zu einem Quadrat. Beide haben kein Loch und sind
+        homöomorph. Der Torus darunter hat ein Loch und ist etwas anderes.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">Euler-Charakteristik</span><span class="val" id="morphChi">2</span></div>
+          <div><span class="key">Löcher</span><span class="val" id="morphHoles">0</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <div class="control">
+          <label for="morphP">Verformung <output id="morphPOut">Kreis</output></label>
+          <input type="range" id="morphP" min="2" max="10" value="2" step="0.1">
+        </div>
+        <p class="faint" style="font-size:.8rem;margin:0">
+          <span data-tip="χ = V − E + F. Für eine geschlossene Fläche gilt χ = 2 − 2g, wobei g die Anzahl der Henkel ist.">Euler-Charakteristik</span>
+          zählt nicht die Löcher direkt, sondern eine Kombination aus Ecken, Kanten und Flächen.
+        </p>
+      </div>
+    </aside>
+  </div>
+  <p class="caption"><b>Die Grundfrage:</b> Welche Eigenschaften überleben jede stetige Verformung? Genau diese Eigenschaften heißen topologische Invarianten.</p>
+</section>
+
+<section class="chapter reveal" id="pi1" data-nav="π₁">
+  <div class="chapter-head">
+    <div class="chapter-num">02 / FUNDAMENTALGRUPPE</div>
+    <div>
+      <h2>Schleifen, die sich nicht zusammenziehen lassen</h2>
+      <p class="dek">
+        Fixiere einen Punkt. Alle geschlossenen Wege ab diesem Punkt heißen Schleifen.
+        Zwei Schleifen sind gleich, wenn man sie ineinander verformen kann. Die Klassen bilden
+        die <strong>Fundamentalgruppe</strong> <span class="math">π₁(X)</span>.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage flip">
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Ziehe an den Punkten der Schleife. Die Zahl daneben zählt, wie oft die Schleife um
+        jedes Loch läuft. Einmal herum ist nicht null, zweimal auch nicht: Die Gruppe ist
+        <span class="math">ℤ</span>.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">Windung Loch 1</span><span class="val" id="w1">1</span></div>
+          <div><span class="key">Windung Loch 2</span><span class="val" id="w2">0</span></div>
+          <div><span class="key">Gruppe</span><span class="val" id="piGroup" style="font-size:1.2rem">ℤ</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <div class="btn-row">
+          <button class="primary" id="loopOne">Um Loch 1</button>
+          <button id="loopBoth">Um beide</button>
+          <button id="loopContract">Zusammenziehen</button>
+        </div>
+        <div class="control">
+          <label for="holeCount">Löcher <output id="holeCountOut">1</output></label>
+          <input type="range" id="holeCount" min="1" max="2" value="1" step="1">
+        </div>
+        <p class="faint" style="font-size:.8rem;margin:0">Die Schleife ist ein geschlossener Polygonzug. Ziehen verändert ihre Windungszahlen.</p>
+      </div>
+    </aside>
+    <div class="canvas-card">
+      <canvas id="loopCanvas" aria-label="Schleife um Löcher mit Windungszahlen"></canvas>
+    </div>
+  </div>
+  <p class="caption"><b>Poincaré, 1895:</b> Die Fundamentalgruppe ist die erste homotopische Invariante. Für die punktierte Ebene ist sie <span class="math">ℤ</span>, für zwei Löcher die freie Gruppe <span class="math">ℤ * ℤ</span>.</p>
+</section>
+
+<section class="chapter reveal" id="cover" data-nav="Überlagerung">
+  <div class="chapter-head">
+    <div class="chapter-num">03 / ÜBERLAGERUNGEN</div>
+    <div>
+      <h2>Der Kreis, der eigentlich eine Gerade ist</h2>
+      <p class="dek">
+        Die reelle Gerade <span class="math">ℝ</span> legt sich wie eine Wendeltreppe über den
+        Kreis <span class="math">S¹</span>. Lokal sieht die Projektion aus wie eine Identität,
+        global wickelt sie sich unendlich oft. Das ist die <strong>universelle Überlagerung</strong>.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-card">
+      <canvas id="coverCanvas" aria-label="Helix als Überlagerung des Kreises"></canvas>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Der Punkt auf der Helix projiziert senkrecht auf den Kreis. Eine Runde auf dem Kreis
+        entspricht einer Etage der Helix. Zwei Etagen sind zwei Umläufe.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">Umläufe</span><span class="val" id="coverTurns">1</span></div>
+          <div><span class="key">Deckgruppe</span><span class="val" id="coverDeck" style="font-size:1.2rem">ℤ</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <div class="control">
+          <label for="coverN">Etagen <output id="coverNOut">1</output></label>
+          <input type="range" id="coverN" min="1" max="3" value="1" step="1">
+        </div>
+        <div class="btn-row">
+          <button id="coverSpin" class="active">Bewegen</button>
+          <button id="coverLines" class="active">Projektion</button>
+        </div>
+        <p class="faint" style="font-size:.8rem;margin:0">
+          <span data-tip="Die Decktransformationen sind die Symmetrien der Überlagerung, die die Projektion fest lassen.">Decktransformationen</span>
+          verschieben um ganze Umläufe.
+        </p>
+      </div>
+    </aside>
+  </div>
+  <p class="caption"><b>Galois-Korrespondenz:</b> Überlagerungen eines Raums entsprechen Untergruppen seiner Fundamentalgruppe. Die universelle Überlagerung gehört zur trivialen Untergruppe.</p>
+</section>
+
+<section class="chapter reveal" id="homologie" data-nav="Homologie">
+  <div class="chapter-head">
+    <div class="chapter-num">04 / HOMOLOGIE</div>
+    <div>
+      <h2>Löcher in allen Dimensionen zählen</h2>
+      <p class="dek">
+        Homologie zählt nicht nur eindimensionale Schleifen, sondern auch zweidimensionale
+        Hohlräume. Die <strong>Betti-Zahlen</strong> <span class="math">b₀, b₁, b₂</span>
+        sagen, wie viele Zusammenhangskomponenten, Henkel und Hohlräume es gibt.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-card">
+      <canvas id="bettiCanvas" aria-label="Formen mit ihren Betti-Zahlen"></canvas>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Betti-Zahlen</h3>
+        <div id="bettiPlot" class="plotly-host"></div>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">χ</span><span class="val" id="bettiChi">0</span></div>
+          <div><span class="key">Fläche</span><span class="val" id="bettiName" style="font-size:1rem">Torus</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <div class="shape-btns">
+          <button data-shape="circle">Kreis</button>
+          <button data-shape="sphere">Sphäre</button>
+          <button class="primary" data-shape="torus">Torus</button>
+          <button data-shape="genus2">Genus 2</button>
+        </div>
+        <p class="faint" style="font-size:.8rem;margin:0">Die Balken zeigen <span class="mono">b₀, b₁, b₂</span>. Für eine geschlossene orientierbare Fläche gilt <span class="mono">χ = 2 − 2g</span>.</p>
+      </div>
+    </aside>
+  </div>
+
+  <div class="stage" style="margin-top:1rem">
+    <div class="canvas-card" style="min-height:300px">
+      <canvas id="chainCanvas" aria-label="Dreieck mit Kette und Rand"></canvas>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Kette, Zyklus, Rand</h3>
+        <p>Die drei Kanten des Dreiecks bilden einen Zyklus. Füllst du die Fläche, wird derselbe
+        Zyklus zum Rand. Genau dieser Unterschied ist <span class="math">H₁</span>.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">b₁</span><span class="val" id="chainB1">1</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <button class="primary" id="fillFace">Fläche füllen</button>
+        <p class="faint" style="font-size:.8rem;margin:0"><span class="mono">∂² = 0</span>: Der Rand eines Randes ist leer. Deshalb ist Homologie wohldefiniert.</p>
+      </div>
+    </aside>
+  </div>
+  <p class="caption"><b>Noethers Blick, um 1925:</b> Homologie ist keine Liste von Betti-Zahlen, sondern eine Gruppe. Der Randoperator macht daraus einen Kettenkomplex, und die Quotienten sind die Homologiegruppen.</p>
+</section>
+
+<section class="chapter reveal" id="hopf" data-nav="Hopf-Faserung">
+  <div class="chapter-head">
+    <div class="chapter-num">05 / HÖHERE HOMOTOPIE</div>
+    <div>
+      <h2>Die Sphäre, die aus Kreisen besteht</h2>
+      <p class="dek">
+        Die Hopf-Faserung bildet die 3-Sphäre auf die gewöhnliche 2-Sphäre ab. Jeder Punkt hat
+        als Faser einen Kreis. Sie ist der klassische Zeuge dafür, dass
+        <span class="math">π₃(S²) ≅ ℤ</span> nicht verschwindet.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="canvas-card" style="min-height:560px">
+      <div id="hopfStage" aria-label="Hopf-Faserung in drei Dimensionen"></div>
+      <div class="fallback" id="hopfFallback">WebGL ist in diesem Browser nicht verfügbar. Die Hopf-Faserung wäre hier als 3D-Bild zu sehen.</div>
+      <div class="hopf-badge">S³ → S² · Faser S¹</div>
+    </div>
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Jede Linie ist eine Faser, also ein Kreis auf der 3-Sphäre. Die Fasern liegen auf
+        verschachtelten Tori. Ziehen dreht die Szene.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">π₃(S²)</span><span class="val" id="hopfPi">ℤ</span></div>
+          <div><span class="key">Fasern</span><span class="val" id="hopfCount">28</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <div class="control">
+          <label for="hopfN">Fasern <output id="hopfNOut">28</output></label>
+          <input type="range" id="hopfN" min="8" max="48" value="28" step="2">
+        </div>
+        <div class="btn-row">
+          <button id="hopfSpin" class="active">Drehen</button>
+          <button id="hopfReset">Zurücksetzen</button>
+        </div>
+        <p class="faint" style="font-size:.8rem;margin:0">Die Projektion von S³ nach ℝ³ ist schematisch. Die Verschachtelung der Fasern ist echt.</p>
+      </div>
+    </aside>
+  </div>
+  <p class="caption"><b>Hopf, 1931:</b> Die Faserung zeigt, dass höhere Homotopiegruppen echte Information tragen. Die lange exakte Sequenz einer Faserung verbindet <span class="math">π₃(S²)</span> mit <span class="math">π₃(S³)</span>.</p>
+</section>
+
+<section class="chapter reveal" id="cup" data-nav="Cup-Produkt">
+  <div class="chapter-head">
+    <div class="chapter-num">06 / KOHOMOLOGIE</div>
+    <div>
+      <h2>Zwei Schleifen, ein Schnittpunkt</h2>
+      <p class="dek">
+        Kohomologie hat mehr Struktur als Homologie: Man kann Klassen multiplizieren. Auf dem
+        Torus schneiden sich die beiden Grundschleifen einmal, und genau dieser Schnitt ist das
+        <strong>Cup-Produkt</strong> <span class="math">H¹ × H¹ → H²</span>.
+      </p>
+    </div>
+  </div>
+
+  <div class="stage flip">
+    <aside class="stage-side">
+      <div class="panel">
+        <h3>Was du siehst</h3>
+        <p>Das Quadrat ist ein Torus: Gegenüberliegende Kanten sind verklebt. Die waagerechte
+        und die senkrechte Schleife können sich nicht ausweichen. Ihr Schnittpunkt zählt.</p>
+        <div class="readout" style="margin-top:.8rem">
+          <div><span class="key">Schnittzahl</span><span class="val" id="cupInt">1</span></div>
+          <div><span class="key">H¹(T²)</span><span class="val" id="cupH" style="font-size:1.2rem">ℤ ⊕ ℤ</span></div>
+        </div>
+      </div>
+      <div class="panel controls">
+        <div class="control">
+          <label for="cupY">Waagerechte Schleife <output id="cupYOut">50%</output></label>
+          <input type="range" id="cupY" min="10" max="90" value="50" step="1">
+        </div>
+        <div class="control">
+          <label for="cupX">Senkrechte Schleife <output id="cupXOut">50%</output></label>
+          <input type="range" id="cupX" min="10" max="90" value="50" step="1">
+        </div>
+        <div class="btn-row">
+          <button id="cupSmall">Kleine Schleife</button>
+          <button id="cupReset" class="primary">Grundschleifen</button>
+        </div>
+      </div>
+    </aside>
+    <div class="canvas-card">
+      <canvas id="cupCanvas" aria-label="Torus als Quadrat mit zwei sich schneidenden Schleifen"></canvas>
+    </div>
+  </div>
+  <p class="caption"><b>Poincaré-Dualität:</b> Auf einer geschlossenen orientierten <span class="math">n</span>-Mannigfaltigkeit ist <span class="math">H<sup>k</sup> ≅ H<sub>n−k</sub></span>. Der Schnitt zweier Klassen ist die geometrische Realisierung des Cup-Produkts.</p>
+</section>
+
+<section class="chapter reveal" id="bruecke" data-nav="Brücke">
+  <div class="chapter-head">
+    <div class="chapter-num">07 / BRÜCKE</div>
+    <div>
+      <h2>Von Schleifen zu Bündeln</h2>
+      <p class="dek">
+        Die Fundamentalgruppe klassifiziert Überlagerungen. Vektorbündel sind eine nichtabelsche
+        Verwandte: Statt Schleifenklebstoff gibt es Übergangsfunktionen mit Werten in
+        <span class="math">GLₙ</span>. Die K-Theorie macht daraus wieder eine Gruppe.
+      </p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <a class="card" href="k_theorie.html" style="text-decoration:none;color:inherit">
+      <div class="k">Weiter</div>
+      <h3>K-Theorie: die Übersicht</h3>
+      <p>Bündel, Grothendieck-Gruppe, Bott-Periodizität und die drei Varianten in einer Tour.</p>
+    </a>
+    <a class="card" href="topologische_k_theorie.html" style="text-decoration:none;color:inherit">
+      <div class="k">Vertiefung</div>
+      <h3>Topologische K-Theorie</h3>
+      <p>Klassifikation von Bündeln, Chern-Zahlen, Indexsatz und die Periode 2.</p>
+    </a>
+    <a class="card" href="algebraische_k_theorie.html" style="text-decoration:none;color:inherit">
+      <div class="k">Vertiefung</div>
+      <h3>Algebraische K-Theorie</h3>
+      <p>Projektive Moduln, K₀, K₁, K₂ und Quillens Plus-Konstruktion.</p>
+    </a>
+  </div>
+</section>
+
+<section class="chapter reveal" id="geschichte" data-nav="Geschichte">
+  <div class="chapter-head">
+    <div class="chapter-num">08 / IDEENGESCHICHTE</div>
+    <div>
+      <h2>Von Analysis Situs zu einer Maschine</h2>
+      <p class="dek">Jede Invariante entstand aus einer konkreten Unzufriedenheit mit dem, was man vorher hatte.</p>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year">1895</div>
+      <h3>Poincaré: Analysis Situs</h3>
+      <p><b>Henri Poincaré</b> begründet die algebraische Topologie mit Homologie, Fundamentalgruppe und Betti-Zahlen. Seine Vermutung von 1904 wird ein Jahrhundert lang das berühmteste Problem der Topologie.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">um 1925</div>
+      <h3>Noether: Homologie als Gruppe</h3>
+      <p><b>Emmy Noether</b> prägt die Sicht, dass Homologie nicht nur Zahlen, sondern eine Gruppe mit Struktur ist. Das macht die Theorie algebraisch anschlussfähig.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1935</div>
+      <h3>Hurewicz: höhere Homotopie</h3>
+      <p><b>Witold Hurewicz</b> definiert die höheren Homotopiegruppen <span class="math">πₙ</span> und beweist den nach ihm benannten Satz über den Zusammenhang mit Homologie.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1945</div>
+      <h3>Eilenberg–Steenrod: Axiome</h3>
+      <p><b>Samuel Eilenberg</b> und <b>Norman Steenrod</b> geben der Homologietheorie ein Axiomensystem. Damit wird klar, was eine Cohomologietheorie überhaupt ist.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1951</div>
+      <h3>Serre: Spektralsequenzen</h3>
+      <p><b>Jean-Pierre Serre</b> revolutioniert die Berechnung von Homotopiegruppen mit Spektralsequenzen. Faserungen werden zum zentralen Werkzeug.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1956 / 1959</div>
+      <h3>Milnor und Bott</h3>
+      <p><b>John Milnor</b> findet exotische Sphären, <b>Raoul Bott</b> die Periodizität der klassischen Gruppen. Beides zeigt, wie viel Struktur noch verborgen war.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1962 / 1963</div>
+      <h3>Adams und Atiyah–Singer</h3>
+      <p>K-Theorie löst das Vektorfeldproblem auf Sphären, und der Indexsatz verbindet elliptische Operatoren mit topologischen Invarianten.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<section class="sources">
+  <h2>Quellen und weiterlesen</h2>
+  <ol>
+    <li>H. Poincaré, <i>Analysis Situs</i>, J. École Polytechnique 1 (1895), 1–121. <a href="https://www.maths.ed.ac.uk/~v1ranick/papers/poincare.pdf">PDF</a></li>
+    <li>S. Eilenberg, N. Steenrod, <i>Axiomatic approach to homology theory</i>, Proc. Natl. Acad. Sci. USA 31 (1945), 117–120. <a href="https://www.pnas.org/doi/10.1073/pnas.31.4.117">DOI</a></li>
+    <li>W. Hurewicz, <i>Beiträge zur Topologie der Deformationen I–IV</i>, Proc. K. Akad. Wetensch. Amsterdam 38–39 (1935–1936).</li>
+    <li>J.-P. Serre, <i>Homologie singulière des espaces fibrés</i>, Ann. of Math. 54 (1951), 425–505.</li>
+    <li>J. Milnor, <i>On manifolds homeomorphic to the 7-sphere</i>, Ann. of Math. 64 (1956), 399–405.</li>
+    <li>R. Bott, <i>The stable homotopy of the classical groups</i>, Ann. of Math. 70 (1959), 313–337.</li>
+    <li>J. F. Adams, <i>Vector fields on spheres</i>, Ann. of Math. 75 (1962), 603–632.</li>
+    <li>M. Atiyah, I. Singer, <i>The index of elliptic operators on compact manifolds</i>, Bull. Amer. Math. Soc. 69 (1963), 422–433.</li>
+    <li>A. Hatcher, <i>Algebraic Topology</i>, Cambridge University Press, 2002. <a href="https://pi.math.cornell.edu/~hatcher/AT/AT.pdf">PDF</a></li>
+    <li>nLab, <i>algebraic topology</i>, <i>Hopf fibration</i>, <i>covering space</i>. <a href="https://ncatlab.org/nlab/show/algebraic+topology">ncatlab.org</a></li>
+  </ol>
+  <p class="note">Die Visualisierungen sind schematisch. Die Hopf-Faserung wird stereographisch projiziert und beschnitten, damit sie auf den Bildschirm passt; die topologischen Aussagen bleiben unverändert.</p>
+</section>
+
+<footer class="site-foot">Algebraische Topologie · visuelle Einführung · <a href="k_theorie.html">K-Theorie</a> · <a href="topologische_k_theorie.html">topologische K-Theorie</a> · <a href="algebraische_k_theorie.html">algebraische K-Theorie</a></footer>
+
+<script src="../plotly-2.24.1.min.js"></script>
+<script src="../three.min.js"></script>
+<script src="visual_math_base.js"></script>
+<script>
+(() => {
+  "use strict";
+  const TAU = Math.PI * 2;
+
+  function project(x, y, z, rotX, rotY, cx, cy, scale, cam) {
+    const cyaw = Math.cos(rotY), syaw = Math.sin(rotY);
+    let x1 = x * cyaw - z * syaw;
+    let z1 = x * syaw + z * cyaw;
+    const cp = Math.cos(rotX), sp = Math.sin(rotX);
+    let y1 = y * cp - z1 * sp;
+    let z2 = y * sp + z1 * cp;
+    const p = cam / (cam + z2);
+    return { x: cx + x1 * scale * p, y: cy + y1 * scale * p, z: z2 };
+  }
+
+  /* ---------- hero torus ---------- */
+  (() => {
+    const c = document.getElementById("hero");
+    if (!c) return;
+    VM.loop(c, (t) => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const cx = w * 0.5, cy = h * 0.52;
+      const R = Math.min(w, h) * 0.24;
+      const rotY = t * 0.24, rotX = 0.62;
+      const us = 54, vs = 22;
+      const grid = [];
+      for (let i = 0; i <= us; i++) {
+        const u = i / us * TAU;
+        const row = [];
+        for (let j = 0; j <= vs; j++) {
+          const v = j / vs * TAU;
+          const rr = R + R * 0.34 * Math.cos(v);
+          const x = rr * Math.cos(u);
+          const y = rr * Math.sin(u) * 0.9;
+          const z = R * 0.34 * Math.sin(v);
+          row.push(project(x, y, z, rotX, rotY, cx, cy, R, R * 4.6));
+        }
+        grid.push(row);
+      }
+      ctx.globalCompositeOperation = "lighter";
+      for (let j = 0; j < vs; j += 1) {
+        ctx.beginPath();
+        for (let i = 0; i <= us; i++) {
+          const p = grid[i][j];
+          i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+        }
+        ctx.strokeStyle = "rgba(87,227,194,.18)";
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+      for (let i = 0; i < us; i += 2) {
+        ctx.beginPath();
+        for (let j = 0; j <= vs; j++) {
+          const p = grid[i][j];
+          j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+        }
+        ctx.strokeStyle = "rgba(255,209,102,.16)";
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      }
+      // two highlighted loops
+      for (const j of [0, Math.round(vs * 0.5)]) {
+        ctx.beginPath();
+        for (let i = 0; i <= us; i++) {
+          const p = grid[i][j];
+          i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+        }
+        ctx.strokeStyle = j === 0 ? "rgba(255,143,171,.85)" : "rgba(87,227,194,.9)";
+        ctx.lineWidth = 1.8;
+        ctx.shadowColor = j === 0 ? "rgba(255,143,171,.8)" : "rgba(87,227,194,.8)";
+        ctx.shadowBlur = 16;
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+      ctx.globalCompositeOperation = "source-over";
+      const rnd = VM.seeded(11);
+      for (let i = 0; i < 80; i++) {
+        ctx.fillStyle = `rgba(255,255,255,${0.1 + 0.2 * rnd()})`;
+        ctx.fillRect(rnd() * w, rnd() * h, 1.2, 1.2);
+      }
+    });
+  })();
+
+  /* ---------- deformation ---------- */
+  (() => {
+    const c = document.getElementById("morphCanvas");
+    if (!c) return;
+    const pIn = document.getElementById("morphP"), pOut = document.getElementById("morphPOut");
+    const chi = document.getElementById("morphChi"), holes = document.getElementById("morphHoles");
+    let p = 2;
+    pIn.addEventListener("input", () => {
+      p = +pIn.value;
+      pOut.textContent = p < 3 ? "Kreis" : p > 7 ? "Quadrat" : "dazwischen";
+    });
+    VM.loop(c, () => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const cx = w * 0.36, cy = h * 0.5;
+      const R = Math.min(w, h) * 0.26;
+      // morphing superellipse
+      ctx.beginPath();
+      for (let i = 0; i <= 240; i++) {
+        const a = i / 240 * TAU;
+        const rr = R / Math.pow(Math.pow(Math.abs(Math.cos(a)), p) + Math.pow(Math.abs(Math.sin(a)), p), 1 / p);
+        const x = cx + Math.cos(a) * rr;
+        const y = cy + Math.sin(a) * rr;
+        i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      }
+      ctx.closePath();
+      const g = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.3, R * 0.1, cx, cy, R);
+      g.addColorStop(0, "rgba(87,227,194,.28)");
+      g.addColorStop(1, "rgba(87,227,194,.04)");
+      ctx.fillStyle = g; ctx.fill();
+      ctx.strokeStyle = "rgba(87,227,194,.85)"; ctx.lineWidth = 2;
+      ctx.shadowColor = "rgba(87,227,194,.7)"; ctx.shadowBlur = 18; ctx.stroke(); ctx.shadowBlur = 0;
+      // torus, genus 1
+      const tx = w * 0.74, ty = h * 0.52, TR = Math.min(w, h) * 0.17;
+      ctx.beginPath();
+      for (let i = 0; i <= 120; i++) {
+        const a = i / 120 * TAU;
+        const rr = TR * 0.42;
+        ctx.lineTo(tx + Math.cos(a) * rr, ty + Math.sin(a) * rr * 0.38);
+      }
+      ctx.strokeStyle = "rgba(255,209,102,.9)"; ctx.lineWidth = 1.8; ctx.stroke();
+      for (let k = 0; k < 16; k++) {
+        const a = k / 16 * TAU;
+        const x = tx + Math.cos(a) * TR, y = ty + Math.sin(a) * TR * 0.38;
+        ctx.beginPath();
+        ctx.ellipse(x, y, TR * 0.18, TR * 0.1, a, 0, TAU);
+        ctx.strokeStyle = "rgba(255,209,102,.35)"; ctx.lineWidth = 0.8; ctx.stroke();
+      }
+      ctx.fillStyle = "rgba(255,255,255,.55)";
+      ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = "center";
+      ctx.fillText("homöomorph", cx, cy + R * 1.35);
+      ctx.fillText("ein Loch", tx, ty + TR * 0.8 + 22);
+      ctx.textAlign = "left";
+    });
+    pOut.textContent = "Kreis";
+    chi.textContent = "2"; holes.textContent = "0";
+  })();
+
+  /* ---------- fundamental group ---------- */
+  (() => {
+    const c = document.getElementById("loopCanvas");
+    if (!c) return;
+    const w1 = document.getElementById("w1"), w2 = document.getElementById("w2");
+    const piGroup = document.getElementById("piGroup");
+    const holeIn = document.getElementById("holeCount"), holeOut = document.getElementById("holeCountOut");
+    const bOne = document.getElementById("loopOne"), bBoth = document.getElementById("loopBoth"), bCont = document.getElementById("loopContract");
+    let holesN = 1, dragIdx = -1;
+    const N = 14;
+    let pts = [];
+    let base = { x: 0.5, y: 0.5 };
+
+    function preset(kind) {
+      const cx = 0.5, cy = 0.5;
+      const r = kind === "both" ? 0.31 : 0.24;
+      pts = [];
+      for (let i = 0; i < N; i++) {
+        const a = i / N * TAU;
+        const wob = kind === "both" ? 0.06 * Math.sin(3 * a) : 0.02 * Math.sin(2 * a);
+        pts.push({ x: cx + Math.cos(a) * (r + wob), y: cy + Math.sin(a) * (r + wob) });
+      }
+    }
+    preset("one");
+
+    function holePositions() {
+      return holesN === 1 ? [{ x: 0.5, y: 0.5 }] : [{ x: 0.34, y: 0.5 }, { x: 0.66, y: 0.5 }];
+    }
+
+    function winding(poly, hx, hy) {
+      let sum = 0;
+      for (let i = 0; i < poly.length; i++) {
+        const a = poly[i], b = poly[(i + 1) % poly.length];
+        const ax = a.x - hx, ay = a.y - hy;
+        const bx = b.x - hx, by = b.y - hy;
+        let d = Math.atan2(ax * by - ay * bx, ax * bx + ay * by);
+        sum += d;
+      }
+      return Math.round(sum / TAU);
+    }
+
+    function update() {
+      const hs = holePositions();
+      const ws = hs.map((h) => winding(pts, h.x, h.y));
+      w1.textContent = ws[0] || 0;
+      w2.textContent = ws[1] || 0;
+      piGroup.textContent = holesN === 1 ? "ℤ" : "ℤ * ℤ";
+      holeOut.textContent = holesN;
+    }
+
+    holeIn.addEventListener("input", () => { holesN = +holeIn.value; preset("one"); update(); });
+    bOne.addEventListener("click", () => { preset("one"); update(); });
+    bBoth.addEventListener("click", () => { holesN = 2; holeIn.value = 2; preset("both"); update(); });
+    bCont.addEventListener("click", () => { preset("one"); pts = pts.map(p => ({ x: 0.5 + (p.x - 0.5) * 0.12, y: 0.5 + (p.y - 0.5) * 0.12 })); update(); });
+    update();
+
+    let drag = false;
+    VM.pointer(c, {
+      down: (p) => {
+        const r = c.getBoundingClientRect();
+        const x = p.x / r.width, y = p.y / r.height;
+        let best = 1e9;
+        pts.forEach((q, i) => {
+          const d = Math.hypot((q.x - x) * r.width, (q.y - y) * r.height);
+          if (d < best) { best = d; dragIdx = i; }
+        });
+        drag = best < 38;
+      },
+      move: (p) => {
+        if (!drag) return;
+        const r = c.getBoundingClientRect();
+        pts[dragIdx] = { x: VM.clamp(p.x / r.width, 0.05, 0.95), y: VM.clamp(p.y / r.height, 0.05, 0.95) };
+        update();
+      },
+      up: () => { drag = false; dragIdx = -1; }
+    });
+
+    VM.loop(c, (t) => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const hs = holePositions();
+      // grid
+      ctx.strokeStyle = "rgba(255,255,255,.05)"; ctx.lineWidth = 1;
+      for (let i = 1; i < 8; i++) {
+        ctx.beginPath(); ctx.moveTo(w * i / 8, 0); ctx.lineTo(w * i / 8, h); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, h * i / 8); ctx.lineTo(w, h * i / 8); ctx.stroke();
+      }
+      // holes
+      for (const hpos of hs) {
+        const x = hpos.x * w, y = hpos.y * h;
+        const rr = Math.min(w, h) * 0.075;
+        const g = ctx.createRadialGradient(x - rr * 0.3, y - rr * 0.3, 1, x, y, rr * 1.1);
+        g.addColorStop(0, "rgba(0,0,0,.9)");
+        g.addColorStop(0.75, "rgba(8,8,14,.95)");
+        g.addColorStop(1, "rgba(255,143,171,.18)");
+        ctx.beginPath(); ctx.arc(x, y, rr, 0, TAU); ctx.fillStyle = g; ctx.fill();
+        ctx.strokeStyle = "rgba(255,143,171,.55)"; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+      // loop path
+      const poly = pts.map(p => ({ x: p.x * w, y: p.y * h }));
+      ctx.beginPath();
+      for (let i = 0; i < poly.length; i++) {
+        const a = poly[i], b = poly[(i + 1) % poly.length];
+        const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        i === 0 ? ctx.moveTo(a.x, a.y) : ctx.quadraticCurveTo(a.x, a.y, mx, my);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = "rgba(87,227,194,.9)";
+      ctx.lineWidth = 2.4;
+      ctx.shadowColor = "rgba(87,227,194,.8)";
+      ctx.shadowBlur = 18;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      // direction dot
+      const p0 = poly[0], p1 = poly[1];
+      const ang = Math.atan2(p1.y - p0.y, p1.x - p0.x);
+      ctx.beginPath(); ctx.arc(p0.x, p0.y, 5, 0, TAU); ctx.fillStyle = "#fff"; ctx.fill();
+      ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p0.x + Math.cos(ang) * 18, p0.y + Math.sin(ang) * 18);
+      ctx.strokeStyle = "rgba(255,255,255,.7)"; ctx.lineWidth = 1.5; ctx.stroke();
+      // control points
+      for (const p of poly) {
+        ctx.beginPath(); ctx.arc(p.x, p.y, 3.2, 0, TAU);
+        ctx.fillStyle = "rgba(255,255,255,.55)"; ctx.fill();
+      }
+      // basepoint
+      ctx.beginPath(); ctx.arc(w * 0.5, h * 0.5, 2.5, 0, TAU); ctx.fillStyle = "rgba(255,255,255,.8)"; ctx.fill();
+    });
+  })();
+
+  /* ---------- covering ---------- */
+  (() => {
+    const c = document.getElementById("coverCanvas");
+    if (!c) return;
+    const nIn = document.getElementById("coverN"), nOut = document.getElementById("coverNOut");
+    const turnsEl = document.getElementById("coverTurns");
+    const spinB = document.getElementById("coverSpin"), linesB = document.getElementById("coverLines");
+    let turns = 1, spin = true, lines = true, theta = 0;
+    nIn.addEventListener("input", () => { turns = +nIn.value; nOut.textContent = turns; turnsEl.textContent = turns; });
+    spinB.addEventListener("click", () => { spin = !spin; spinB.classList.toggle("active", spin); });
+    linesB.addEventListener("click", () => { lines = !lines; linesB.classList.toggle("active", lines); });
+
+    VM.loop(c, (t, dt) => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      if (spin) theta += dt * 0.9;
+      const cx = w * 0.36, baseY = h * 0.74;
+      const r = Math.min(w, h) * 0.2;
+      const rise = Math.min(h * 0.5, 150) * turns;
+      // base ellipse
+      ctx.beginPath();
+      ctx.ellipse(cx, baseY, r, r * 0.34, 0, 0, TAU);
+      ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = "rgba(255,255,255,.04)"; ctx.fill();
+      // helix
+      const pts = [];
+      for (let i = 0; i <= 600; i++) {
+        const a = i / 600 * TAU * turns;
+        const x = cx + Math.cos(a) * r;
+        const y = baseY - (i / 600) * rise;
+        pts.push({ x, y, a });
+      }
+      ctx.beginPath();
+      for (let i = 0; i < pts.length; i++) {
+        const p = pts[i];
+        i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+      }
+      ctx.strokeStyle = "rgba(255,209,102,.72)";
+      ctx.lineWidth = 2;
+      ctx.shadowColor = "rgba(255,209,102,.6)"; ctx.shadowBlur = 14; ctx.stroke(); ctx.shadowBlur = 0;
+      // projection lines
+      if (lines) {
+        for (let i = 0; i <= 9; i++) {
+          const idx = Math.round(i / 9 * (pts.length - 1));
+          const p = pts[idx];
+          const bx = cx + Math.cos(p.a) * r;
+          const by = baseY + Math.sin(p.a) * r * 0.34;
+          ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(bx, by);
+          ctx.strokeStyle = "rgba(255,255,255,.12)"; ctx.lineWidth = 0.8;
+          ctx.setLineDash([2, 6]); ctx.stroke(); ctx.setLineDash([]);
+        }
+      }
+      // moving points
+      const idx = Math.floor((theta / (TAU * turns)) % 1 * (pts.length - 1));
+      const p = pts[idx];
+      const bx = cx + Math.cos(p.a) * r;
+      const by = baseY + Math.sin(p.a) * r * 0.34;
+      ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(bx, by);
+      ctx.strokeStyle = "rgba(87,227,194,.7)"; ctx.lineWidth = 1.2; ctx.setLineDash([3, 5]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, TAU); ctx.fillStyle = "#fff"; ctx.shadowColor = "#fff"; ctx.shadowBlur = 16; ctx.fill(); ctx.shadowBlur = 0;
+      ctx.beginPath(); ctx.arc(bx, by, 4, 0, TAU); ctx.fillStyle = "rgba(87,227,194,.95)"; ctx.fill();
+      // labels
+      ctx.fillStyle = "rgba(255,255,255,.4)";
+      ctx.font = "10px " + getComputedStyle(document.body).fontFamily;
+      ctx.fillText("ℝ", cx - r - 26, baseY - rise - 6);
+      ctx.fillText("S¹", cx + r + 10, baseY + 4);
+      ctx.fillText("Projektion", cx - 30, baseY + 44);
+    });
+  })();
+
+  /* ---------- homology ---------- */
+  (() => {
+    const c = document.getElementById("bettiCanvas");
+    if (!c) return;
+    const plotEl = document.getElementById("bettiPlot");
+    const chiEl = document.getElementById("bettiChi"), nameEl = document.getElementById("bettiName");
+    const btns = VM.$$("[data-shape]");
+    const shapes = {
+      circle: { name: "Kreis S¹", betti: [1, 1, 0], chi: 0 },
+      sphere: { name: "Sphäre S²", betti: [1, 0, 1], chi: 2 },
+      torus: { name: "Torus T²", betti: [1, 2, 1], chi: 0 },
+      genus2: { name: "Genus 2", betti: [1, 4, 1], chi: -2 }
+    };
+    let current = "torus";
+    let morph = 0;
+
+    function update() {
+      const s = shapes[current];
+      nameEl.textContent = s.name;
+      chiEl.textContent = s.chi;
+      VM.plot(plotEl.id, [
+        { x: ["b₀", "b₁", "b₂"], y: s.betti, type: "bar", marker: { color: ["#57e3c2", "#ffd166", "#ff8fab"], line: { color: "rgba(255,255,255,.2)", width: 1 } }, hovertemplate: "%{x}: %{y}<extra></extra>" }
+      ], {
+        margin: { l: 36, r: 12, t: 10, b: 32 },
+        yaxis: { range: [0, Math.max(2, Math.max(...s.betti) + 0.8)], dtick: 1, title: "" },
+        xaxis: { title: "" },
+        bargap: 0.35
+      });
+    }
+    btns.forEach((b) => b.addEventListener("click", () => {
+      current = b.dataset.shape;
+      btns.forEach((x) => { x.classList.toggle("primary", x === b); });
+      update();
+    }));
+    update();
+
+    VM.loop(c, () => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const cx = w * 0.5, cy = h * 0.5;
+      const R = Math.min(w, h) * 0.28;
+      ctx.strokeStyle = "rgba(255,255,255,.16)";
+      ctx.lineWidth = 1;
+      if (current === "circle") {
+        for (let k = 0; k < 2; k++) {
+          const rr = R * (1 - k * 0.22);
+          ctx.beginPath(); ctx.arc(cx, cy, rr, 0, TAU); ctx.stroke();
+        }
+        ctx.fillStyle = "rgba(87,227,194,.08)"; ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.fill();
+      } else if (current === "sphere") {
+        ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.stroke();
+        for (let k = -2; k <= 2; k++) {
+          const phi = k * Math.PI / 7;
+          const rr = R * Math.cos(phi);
+          ctx.beginPath(); ctx.ellipse(cx, cy + R * Math.sin(phi), rr, rr * 0.15, 0, 0, TAU); ctx.stroke();
+        }
+        for (let k = 0; k < 8; k++) {
+          const a = k / 8 * Math.PI;
+          ctx.beginPath(); ctx.ellipse(cx, cy, R * Math.abs(Math.cos(a)), R, 0, 0, TAU); ctx.stroke();
+        }
+      } else {
+        const tori = current === "torus" ? [[cx, cy, R]] : [[cx - R * 0.55, cy, R * 0.72], [cx + R * 0.55, cy, R * 0.72]];
+        for (const [tx, ty, TR] of tori) {
+          const us = 40, vs = 14, grid = [], rot = Math.sin(0.6) * 0.2;
+          for (let i = 0; i <= us; i++) {
+            const u = i / us * TAU;
+            const row = [];
+            for (let j = 0; j <= vs; j++) {
+              const v = j / vs * TAU;
+              const rr = TR + TR * 0.38 * Math.cos(v);
+              const x = rr * Math.cos(u), y = rr * Math.sin(u) * 0.9, z = TR * 0.38 * Math.sin(v);
+              row.push(project(x, y, z, 0.55, rot, tx, ty, TR, TR * 4.4));
+            }
+            grid.push(row);
+          }
+          ctx.globalCompositeOperation = "lighter";
+          for (let j = 0; j < vs; j++) {
+            ctx.beginPath();
+            for (let i = 0; i <= us; i++) { const p = grid[i][j]; i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }
+            ctx.strokeStyle = "rgba(87,227,194,.22)"; ctx.lineWidth = 0.8; ctx.stroke();
+          }
+          for (let i = 0; i < us; i += 2) {
+            ctx.beginPath();
+            for (let j = 0; j <= vs; j++) { const p = grid[i][j]; j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }
+            ctx.strokeStyle = "rgba(255,209,102,.18)"; ctx.lineWidth = 0.7; ctx.stroke();
+          }
+          ctx.globalCompositeOperation = "source-over";
+        }
+      }
+      // title
+      ctx.fillStyle = "rgba(255,255,255,.55)";
+      ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = "center";
+      ctx.fillText(shapes[current].name, cx, h - 24);
+      ctx.textAlign = "left";
+    });
+  })();
+
+  /* ---------- chain complex ---------- */
+  (() => {
+    const c = document.getElementById("chainCanvas");
+    if (!c) return;
+    const b = document.getElementById("fillFace");
+    const b1El = document.getElementById("chainB1");
+    let filled = false;
+    b.addEventListener("click", () => {
+      filled = !filled;
+      b.classList.toggle("primary", !filled);
+      b.textContent = filled ? "Fläche entfernen" : "Fläche füllen";
+      b1El.textContent = filled ? "0" : "1";
+      b1El.className = "val " + (filled ? "good" : "warn");
+    });
+    VM.loop(c, (t) => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const cx = w * 0.5, cy = h * 0.48;
+      const R = Math.min(w, h) * 0.3;
+      const pts = [0, 1, 2].map(i => {
+        const a = -Math.PI / 2 + i / 3 * TAU;
+        return { x: cx + Math.cos(a) * R, y: cy + Math.sin(a) * R };
+      });
+      if (filled) {
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y); ctx.lineTo(pts[1].x, pts[1].y); ctx.lineTo(pts[2].x, pts[2].y); ctx.closePath();
+        ctx.fillStyle = "rgba(87,227,194,.16)"; ctx.fill();
+        ctx.strokeStyle = "rgba(87,227,194,.35)"; ctx.stroke();
+      }
+      // edges with arrows
+      for (let i = 0; i < 3; i++) {
+        const a = pts[i], b2 = pts[(i + 1) % 3];
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b2.x, b2.y);
+        ctx.strokeStyle = "rgba(255,209,102,.9)"; ctx.lineWidth = 2; ctx.stroke();
+        const mx = (a.x + b2.x) / 2, my = (a.y + b2.y) / 2;
+        const ang = Math.atan2(b2.y - a.y, b2.x - a.x);
+        ctx.beginPath();
+        ctx.moveTo(mx + Math.cos(ang) * 7, my + Math.sin(ang) * 7);
+        ctx.lineTo(mx + Math.cos(ang + 2.5) * 7, my + Math.sin(ang + 2.5) * 7);
+        ctx.lineTo(mx + Math.cos(ang - 2.5) * 7, my + Math.sin(ang - 2.5) * 7);
+        ctx.closePath(); ctx.fillStyle = "rgba(255,209,102,.9)"; ctx.fill();
+      }
+      for (const p of pts) {
+        ctx.beginPath(); ctx.arc(p.x, p.y, 4.5, 0, TAU); ctx.fillStyle = "#fff"; ctx.fill();
+      }
+      ctx.fillStyle = "rgba(255,255,255,.55)";
+      ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+      ctx.textAlign = "center";
+      ctx.fillText(filled ? "der Zyklus ist ein Rand" : "der Zyklus umschließt ein Loch", cx, h - 26);
+      ctx.textAlign = "left";
+    });
+  })();
+
+  /* ---------- Hopf fibration (three.js) ---------- */
+  (() => {
+    const stage = document.getElementById("hopfStage");
+    const fallback = document.getElementById("hopfFallback");
+    if (!stage || !window.THREE) { if (fallback) fallback.style.display = "grid"; return; }
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    } catch (e) {
+      if (fallback) fallback.style.display = "grid";
+      return;
+    }
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    renderer.setClearColor(0x000000, 0);
+    stage.appendChild(renderer.domElement);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(0, 0, 4.6);
+    const group = new THREE.Group();
+    scene.add(group);
+    const nIn = document.getElementById("hopfN"), nOut = document.getElementById("hopfNOut"), countEl = document.getElementById("hopfCount");
+    const spinB = document.getElementById("hopfSpin"), resetB = document.getElementById("hopfReset");
+    let spin = true, targetRotX = 0.25, targetRotY = 0.3, curRotX = 0.25, curRotY = 0.3;
+    let dragging = false, lastX = 0, lastY = 0;
+
+    function clearGroup() {
+      while (group.children.length) {
+        const obj = group.children.pop();
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) obj.material.dispose();
+      }
+    }
+
+    function build(n) {
+      clearGroup();
+      let maxR = 0;
+      const fibers = [];
+      for (let k = 0; k < n; k++) {
+        const alpha = Math.PI * (0.06 + 0.88 * (k + 0.5) / n);
+        const phi = k * 2.399963229728653;
+        const pts = [];
+        for (let i = 0; i <= 160; i++) {
+          const theta = i / 160 * TAU;
+          const aa = alpha / 2;
+          const x0 = Math.cos(aa) * Math.cos(theta);
+          const x1 = Math.cos(aa) * Math.sin(theta);
+          const x2 = Math.sin(aa) * Math.cos(theta + phi);
+          const x3 = Math.sin(aa) * Math.sin(theta + phi);
+          const s = 1 / (1.55 - x0);
+          const v = new THREE.Vector3(x1 * s, x2 * s, x3 * s);
+          maxR = Math.max(maxR, v.length());
+          pts.push(v);
+        }
+        fibers.push({ pts, k });
+      }
+      const scale = maxR > 0 ? 1.55 / maxR : 1;
+      for (const f of fibers) {
+        const geo = new THREE.BufferGeometry().setFromPoints(f.pts);
+        const hue = 0.48 + 0.38 * (f.k / Math.max(1, n - 1));
+        const col = new THREE.Color().setHSL(hue, 0.78, 0.62);
+        const mat = new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: 0.62, blending: THREE.AdditiveBlending });
+        const line = new THREE.Line(geo, mat);
+        line.scale.setScalar(scale);
+        group.add(line);
+      }
+      // faint core circle
+      const corePts = [];
+      const coreR = 1.12 * scale;
+      for (let i = 0; i <= 120; i++) {
+        const a = i / 120 * TAU;
+        corePts.push(new THREE.Vector3(Math.cos(a) * coreR, Math.sin(a) * coreR, 0));
+      }
+      const coreGeo = new THREE.BufferGeometry().setFromPoints(corePts);
+      const coreMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.14 });
+      group.add(new THREE.Line(coreGeo, coreMat));
+      countEl.textContent = n;
+    }
+
+    function resize() {
+      const r = stage.getBoundingClientRect();
+      const w = Math.max(1, r.width), h = Math.max(1, r.height);
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    if ("ResizeObserver" in window) new ResizeObserver(resize).observe(stage);
+    addEventListener("resize", resize);
+    resize();
+    build(+nIn.value);
+    nIn.addEventListener("input", () => { nOut.textContent = nIn.value; build(+nIn.value); });
+    spinB.addEventListener("click", () => { spin = !spin; spinB.classList.toggle("active", spin); });
+    resetB.addEventListener("click", () => { targetRotX = 0.25; targetRotY = 0.3; });
+    VM.pointer(renderer.domElement, {
+      down: (p) => { dragging = true; lastX = p.x; lastY = p.y; },
+      move: (p) => {
+        if (!dragging) return;
+        targetRotY += (p.x - lastX) * 0.008;
+        targetRotX += (p.y - lastY) * 0.006;
+        targetRotX = VM.clamp(targetRotX, -1.2, 1.2);
+        lastX = p.x; lastY = p.y;
+      },
+      up: () => { dragging = false; }
+    });
+
+    VM.loop(renderer.domElement, (t, dt) => {
+      curRotX += (targetRotX - curRotX) * Math.min(1, dt * 6);
+      curRotY += (targetRotY - curRotY) * Math.min(1, dt * 6);
+      group.rotation.x = curRotX;
+      group.rotation.y = curRotY + (spin ? t * 0.18 : 0);
+      renderer.render(scene, camera);
+    });
+  })();
+
+  /* ---------- cup product ---------- */
+  (() => {
+    const c = document.getElementById("cupCanvas");
+    if (!c) return;
+    const yIn = document.getElementById("cupY"), xIn = document.getElementById("cupX");
+    const yOut = document.getElementById("cupYOut"), xOut = document.getElementById("cupXOut");
+    const intEl = document.getElementById("cupInt"), hEl = document.getElementById("cupH");
+    const bSmall = document.getElementById("cupSmall"), bReset = document.getElementById("cupReset");
+    let small = false;
+    function update() {
+      yOut.textContent = yIn.value + "%"; xOut.textContent = xIn.value + "%";
+      intEl.textContent = small ? "0" : "1";
+      intEl.className = "val " + (small ? "faint" : "good");
+      hEl.textContent = small ? "ℤ ⊕ ℤ" : "ℤ ⊕ ℤ";
+    }
+    yIn.addEventListener("input", update); xIn.addEventListener("input", update);
+    bSmall.addEventListener("click", () => { small = true; bSmall.classList.add("active"); update(); });
+    bReset.addEventListener("click", () => { small = false; bSmall.classList.remove("active"); yIn.value = 50; xIn.value = 50; update(); });
+    update();
+
+    VM.loop(c, (t) => {
+      const { ctx, w, h } = VM.fit(c);
+      ctx.clearRect(0, 0, w, h);
+      if (!w || !h) return;
+      const pad = Math.min(w, h) * 0.12;
+      const x0 = pad, y0 = pad, x1 = w - pad, y1 = h - pad;
+      const sq = Math.min(x1 - x0, y1 - y0);
+      const sx = x0 + (x1 - x0 - sq) / 2, sy = y0 + (y1 - y0 - sq) / 2;
+      // square
+      ctx.fillStyle = "rgba(255,255,255,.025)";
+      ctx.fillRect(sx, sy, sq, sq);
+      ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.lineWidth = 1.4;
+      ctx.strokeRect(sx, sy, sq, sq);
+      // identified edges arrows
+      ctx.fillStyle = "rgba(255,255,255,.45)";
+      ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+      ctx.fillText("a", sx + sq / 2 - 4, sy - 8);
+      ctx.fillText("a", sx + sq / 2 - 4, sy + sq + 16);
+      ctx.fillText("b", sx - 16, sy + sq / 2 + 4);
+      ctx.fillText("b", sx + sq + 10, sy + sq / 2 + 4);
+      // loops
+      const yy = sy + (+yIn.value / 100) * sq;
+      const xx = sx + (+xIn.value / 100) * sq;
+      if (!small) {
+        ctx.beginPath(); ctx.moveTo(sx, yy); ctx.lineTo(sx + sq, yy);
+        ctx.strokeStyle = "rgba(87,227,194,.95)"; ctx.lineWidth = 3; ctx.shadowColor = "rgba(87,227,194,.8)"; ctx.shadowBlur = 14; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(xx, sy); ctx.lineTo(xx, sy + sq);
+        ctx.strokeStyle = "rgba(255,209,102,.95)"; ctx.lineWidth = 3; ctx.shadowColor = "rgba(255,209,102,.8)"; ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.beginPath(); ctx.arc(xx, yy, 7, 0, TAU); ctx.fillStyle = "#fff"; ctx.fill();
+        ctx.beginPath(); ctx.arc(xx, yy, 14, 0, TAU); ctx.strokeStyle = "rgba(255,255,255,.45)"; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = "rgba(255,255,255,.7)";
+        ctx.fillText("a ∩ b = 1", sx + sq - 74, sy + sq - 12);
+      } else {
+        ctx.beginPath(); ctx.arc(sx + sq * 0.5, sy + sq * 0.5, sq * 0.12, 0, TAU);
+        ctx.strokeStyle = "rgba(255,255,255,.5)"; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = "rgba(255,255,255,.5)";
+        ctx.fillText("nullhomotop: a ∩ b = 0", sx + sq * 0.22, sy + sq * 0.5 + sq * 0.2);
+      }
+      // identification hints
+      ctx.setLineDash([4, 6]);
+      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx + sq, sy + sq); ctx.stroke();
+      ctx.setLineDash([]);
+    });
+  })();
+})();
+</script>
+</body>
+</html>
