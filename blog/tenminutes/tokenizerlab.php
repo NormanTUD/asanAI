@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	<meta name="description" content="Type anything and watch a toy tokenizer split it. See why spelling, numbers, and languages pay different token costs.">
+	<meta name="description" content="Pick a word, a number, or a script and watch a toy tokenizer split it. See why spelling, numbers, and languages pay different token costs.">
 	<meta name="theme-color" content="#ffffff">
 	<title>Chopping Text into Tokens | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
@@ -271,6 +271,14 @@
 	(function () {
 		"use strict";
 
+		var TOK_DE = TM.lang() === "de";
+		var REASON_DE = {
+			"whitespace run": "Leerraum",
+			"digit group": "Zifferngruppe",
+			"matched a known piece": "bekanntes Stück",
+			"no known piece: character fallback": "kein bekanntes Stück: Zeichen-Fallback",
+			"punctuation": "Satzzeichen"
+		};
 		var PIECES = [
 			"language", "capital", "once", "upon", "time", "token",
 			"model", "number", "machine", "learning", "network", "vector", "meaning", "space",
@@ -378,7 +386,9 @@
 			var text = currentText;
 			var tokens = tokenize(text);
 			var inspectorEl = document.getElementById("tok-inspector");
-			if (inspectorEl) inspectorEl.textContent = "Click any token to see why it split: a known piece, a character fallback, a digit group, whitespace, or punctuation.";
+			if (inspectorEl) inspectorEl.textContent = TOK_DE
+				? "Klicke auf ein Token, um zu sehen, warum es zerlegt wurde: ein bekanntes Stück, ein Zeichen-Fallback, eine Zifferngruppe, Leerraum oder ein Satzzeichen."
+				: "Click any token to see why it split: a known piece, a character fallback, a digit group, whitespace, or punctuation.";
 			fillStream(stream, tokens);
 			var piecesEl = document.getElementById("tok-pieces");
 			if (piecesEl) piecesEl.textContent = tokens.filter(function (t) { return t.sub; }).length;
@@ -391,9 +401,13 @@
 		function captionFor(text, tokens) {
 			var spaces = tokens.filter(function (t) { return t.type === "space"; }).length;
 			var sub = tokens.filter(function (t) { return t.sub; }).length;
-			if (!text) return "Type something to see the model's first cut.";
-			if (spaces > 0 && sub > 0) return tokens.length + " tokens, including " + spaces + " whitespace and " + sub + " subword/character pieces. The model sees all of them.";
-			return tokens.length + " tokens. Every space and punctuation mark is a slot the model has to pay for.";
+			if (!text) return TOK_DE ? "Wähle ein Beispiel, um den ersten Schnitt des Modells zu sehen." : "Choose an example to see the model's first cut.";
+			if (spaces > 0 && sub > 0) return TOK_DE
+				? tokens.length + " Tokens, darunter " + spaces + " Leerraum- und " + sub + " Teilwort-/Zeichenstücke. Das Modell sieht sie alle."
+				: tokens.length + " tokens, including " + spaces + " whitespace and " + sub + " subword/character pieces. The model sees all of them.";
+			return TOK_DE
+				? tokens.length + " Tokens. Jedes Leerzeichen und Satzzeichen ist ein Slot, den das Modell bezahlt."
+				: tokens.length + " tokens. Every space and punctuation mark is a slot the model has to pay for.";
 		}
 		function escapeHtml(s) {
 			return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
@@ -443,10 +457,15 @@
 		var inspector = document.getElementById("tok-inspector");
 		function inspectToken(tok) {
 			if (!inspector || !tok) return;
-			var label = tok.type === "space" ? "whitespace" : tok.text;
-			var text = "“" + label + "”: " + tok.reason + ".";
-			if (tok.group) text += " Piece " + tok.group.index + " of " + tok.group.size + " in “" + tok.group.label + "”.";
-			if (tok.type === "char") text += " This is where token inflation starts: an unseen word becomes several slots.";
+			var label = tok.type === "space" ? (TOK_DE ? "Leerraum" : "whitespace") : tok.text;
+			var reason = TOK_DE ? (REASON_DE[tok.reason] || tok.reason) : tok.reason;
+			var text = "“" + label + "”: " + reason + ".";
+			if (tok.group) text += TOK_DE
+				? " Stück " + tok.group.index + " von " + tok.group.size + " in „" + tok.group.label + "“."
+				: " Piece " + tok.group.index + " of " + tok.group.size + " in “" + tok.group.label + "”.";
+			if (tok.type === "char") text += TOK_DE
+				? " Hier beginnt die Token-Inflation: Ein unbekanntes Wort wird zu mehreren Slots."
+				: " This is where token inflation starts: an unseen word becomes several slots.";
 			inspector.textContent = text;
 		}
 		if (stream) {
@@ -491,9 +510,10 @@
 			samples.forEach(function (s, i) {
 				var row = document.createElement("div");
 				row.className = "lang-row" + (counts[i] > max * 0.6 ? " is-big" : "");
-				row.innerHTML = '<span class="lang-name">' + s.name + '</span>'
+				var sampleName = TOK_DE ? ({ English: "Englisch", German: "Deutsch", Hindi: "Hindi" }[s.name] || s.name) : s.name;
+				row.innerHTML = '<span class="lang-name">' + sampleName + '</span>'
 					+ '<span class="lang-track"><span class="lang-fill" style="width:' + (counts[i] / max * 100).toFixed(1) + '%"></span></span>'
-					+ '<span class="lang-count">' + counts[i] + " tok</span>";
+					+ '<span class="lang-count">' + counts[i] + (TOK_DE ? " Tok." : " tok") + "</span>";
 				row.title = s.text;
 				compare.appendChild(row);
 			});
