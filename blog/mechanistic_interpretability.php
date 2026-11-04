@@ -245,7 +245,7 @@ Understanding circuits is not merely an academic exercise. It has direct implica
 
 4. **Scalable oversight:** As models grow larger, we need automated tools to verify their behavior. Circuit-level analysis provides a path toward formal verification of neural network properties, while \cite[top-down approaches]{zou2023representation} like Representation Engineering offer complementary methods for controlling model behavior at the representation level without requiring circuit-level granularity.
 
-5. **LLM-driven weight editing:** The line between a human-designed edit and an LLM-designed one is thinning. In 2026, \cite[Takehi et al.]{takehi2026weightspace} showed a general-purpose model tracing a smaller model's reasoning loop to a direction in its MLP weights and removing that direction without gradients. The same access can remove a safety direction as easily as a failure direction, so the technique belongs in the alignment toolkit and in its threat model.
+5. **LLM-driven weight editing:** The line between a human-designed edit and an LLM-designed one is thinning. \cite[Takehi et al. (2026)]{takehi2026weightspace} showed a general-purpose model tracing a smaller model's reasoning loop to a direction in its MLP weights and removing that direction without gradients. The same access can remove a safety direction as easily as a failure direction, so the technique belongs in the alignment toolkit and in its threat model.
 
 The field of mechanistic interpretability is still young, but it represents our best current hope for moving beyond “black box” AI toward systems we can genuinely understand and trust.
 
