@@ -1651,19 +1651,18 @@ input[type="range"] {
 
 .tour-dock {
   position: fixed;
-  left: 50%;
-  bottom: 16px;
-  transform: translateX(-50%);
+  right: 18px;
+  bottom: 18px;
   z-index: 250;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 14px;
-  width: min(1100px, calc(100% - 32px));
-  padding: 14px 16px 13px;
-  border: 1px solid rgba(34, 211, 238, 0.28);
-  border-radius: 20px;
-  background: rgba(7, 11, 22, 0.93);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.66), 0 0 60px rgba(34, 211, 238, 0.08);
+  grid-template-columns: 1fr;
+  gap: 9px;
+  width: min(380px, calc(100% - 36px));
+  padding: 12px 14px 11px;
+  border: 1px solid rgba(34, 211, 238, 0.24);
+  border-radius: 16px;
+  background: rgba(7, 11, 22, 0.94);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 34px rgba(34, 211, 238, 0.06);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
 }
@@ -1698,10 +1697,13 @@ input[type="range"] {
   line-height: 1.3;
 }
 .tour-step-text {
-  max-width: 78ch;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   color: var(--muted);
-  font-size: 0.8rem;
-  line-height: 1.5;
+  font-size: 0.76rem;
+  line-height: 1.45;
 }
 .tour-step-meta {
   display: flex;
@@ -1712,11 +1714,7 @@ input[type="range"] {
 }
 .tour-step-meta .shape-chip { white-space: normal; }
 .tour-step-meta .tex-display {
-  margin: 0;
-  padding: 5px 9px;
-  border-radius: 8px;
-  font-size: 0.88rem;
-  text-align: left;
+  display: none;
 }
 .tour-actions {
   display: flex;
@@ -1727,10 +1725,7 @@ input[type="range"] {
 }
 .tour-actions .btn { padding: 7px 12px; font-size: 0.72rem; }
 .tour-dots {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 7px;
+  display: none;
 }
 .tour-dot {
   width: 7px;
@@ -1745,8 +1740,17 @@ input[type="range"] {
 .tour-dot:hover { background: var(--muted); }
 .tour-dot.is-active { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
 .tour-dot.is-done { background: rgba(167, 139, 250, 0.65); }
-body.tour-active main { padding-bottom: 360px; }
-body.tour-active footer { padding-bottom: 360px; }
+body.tour-active main { padding-bottom: 170px; }
+body.tour-active footer { padding-bottom: 170px; }
+.tour-actions #tour-close {
+  border-color: rgba(251, 113, 133, 0.32);
+  color: var(--red);
+}
+.tour-actions #tour-close:hover {
+  border-color: rgba(251, 113, 133, 0.65);
+  background: rgba(251, 113, 133, 0.08);
+  box-shadow: 0 0 20px rgba(251, 113, 133, 0.1);
+}
 .tour-target {
   outline: 2px solid rgba(34, 211, 238, 0.55);
   outline-offset: 6px;
@@ -1783,6 +1787,10 @@ section.tour-target { outline-offset: 10px; }
 }
 .reveal.in-view { opacity: 1; transform: none; }
 
+body.focus-mode .card p:not(:first-of-type) { display: none; }
+body.focus-mode .card .note { display: none; }
+body.focus-mode .card .two-col-text p:not(:first-of-type) { display: none; }
+
 @media (max-width: 980px) {
   .hero-grid { grid-template-columns: 1fr; gap: 34px; }
   .hero { min-height: 0; padding-top: 20px; }
@@ -1808,9 +1816,9 @@ section.tour-target { outline-offset: 10px; }
   .vector-row { grid-template-columns: 72px repeat(4, minmax(0, 1fr)); gap: 6px; }
   .slider-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .affine-row { grid-template-columns: 1fr; }
-  .tour-dock { grid-template-columns: 1fr; bottom: 8px; padding: 12px; border-radius: 16px; max-height: 72vh; overflow-y: auto; }
-  .tour-actions { justify-content: flex-start; }
-  body.tour-active main, body.tour-active footer { padding-bottom: 430px; }
+  .tour-dock { right: 12px; bottom: 12px; width: calc(100% - 24px); padding: 11px 12px; border-radius: 14px; max-height: 46vh; overflow-y: auto; }
+  .tour-actions { justify-content: flex-end; }
+  body.tour-active main, body.tour-active footer { padding-bottom: 250px; }
   .stats-grid { grid-template-columns: 1fr; }
   h1 { font-size: clamp(2.4rem, 13vw, 3.6rem); }
   section + section { margin-top: 70px; }
@@ -1862,7 +1870,8 @@ section.tour-target { outline-offset: 10px; }
     <a class="nav-link" href="#module-6">FFN</a>
     <a class="nav-link" href="#module-7">Playground</a>
   </nav>
-  <button class="btn btn-small btn-tour" id="nav-tour" type="button">Geführte Tour</button>
+  <button class="btn btn-small btn-ghost" id="focus-toggle" type="button" aria-pressed="true" title="Lange Erklärungen ausblenden">Mehr Text</button>
+  <button class="btn btn-small btn-ghost btn-tour" id="nav-tour" type="button" title="Optionaler Schritt-für-Schritt-Modus">Tour</button>
 </header>
 
 <main id="top">
@@ -1878,8 +1887,8 @@ section.tour-target { outline-offset: 10px; }
           Jeder Tensor mit Shape, jede Operation mit Formel.
         </p>
         <div class="hero-actions">
-          <button class="btn btn-primary" id="hero-tour" type="button">Geführte Tour starten</button>
-          <a class="btn btn-ghost" href="#module-7">Zum Playground</a>
+          <a class="btn btn-primary" href="#module-7">Zum Playground</a>
+          <button class="btn btn-ghost" id="hero-tour" type="button">Tour starten</button>
         </div>
         <div class="hero-chips" aria-label="Basiskonfiguration">
           <span class="chip"><b>d<sub>model</sub></b> 512</span>
@@ -4462,6 +4471,19 @@ function renderTourStep(index, scroll) {
 }
 
 /* ---------- Initialize everything ---------- */
+function initFocusToggle() {
+  const button = $('#focus-toggle');
+  if (!button) return;
+  const apply = (on) => {
+    document.body.classList.toggle('focus-mode', on);
+    button.textContent = on ? 'Mehr Text' : 'Fokus';
+    button.setAttribute('aria-pressed', String(on));
+    button.title = on ? 'Lange Erklärungen einblenden' : 'Lange Erklärungen ausblenden';
+  };
+  apply(true);
+  button.addEventListener('click', () => apply(!document.body.classList.contains('focus-mode')));
+}
+
 function initConcatLab() {
   buildConcatLab();
   const play = $('#concat-play');
@@ -4471,6 +4493,7 @@ function initConcatLab() {
 }
 
 function init() {
+  initFocusToggle();
   renderStaticMath();
   initBackground();
   initScrollUI();
