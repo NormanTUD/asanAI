@@ -139,14 +139,17 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 .l1v-stagehead { display: flex; align-items: baseline; justify-content: center; gap: 14px; min-height: 2.1em; }
 .l1v-title { font-weight: 800; color: #1e293b; font-size: 1.05em; }
 .l1v-step { font-size: 0.8em; color: #94a3b8; }
-.l1v-formula-stage { position: relative; height: 270px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.l1v-formula-stage { position: relative; height: 230px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .l1v-formula-layer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0 12px; opacity: 0; transform: translateY(10px); transition: opacity 0.35s ease, transform 0.35s ease; }
 .l1v-formula-layer.in { opacity: 1; transform: none; }
-.l1v-formula-layer > .temml { max-width: 100%; overflow-x: auto; }
-.l1v-formula-layer .temml { font-size: 0.94em; }
+.l1v-formula-layer math.tml-display { max-width: 100%; overflow-x: auto; font-size: 0.94em; }
 .l1v-attn-row { display: flex; align-items: center; justify-content: center; gap: 22px; width: 100%; }
 .l1v-attn-tex { min-width: 0; }
-.l1v-attn-tex .temml { max-width: 100%; overflow-x: auto; }
+.l1v-attn-tex math.tml-display { max-width: 100%; overflow-x: auto; }
+.l1v-detail { min-height: 104px; padding: 8px 14px; border-top: 1px dashed #e2e8f0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; color: #475569; font-size: 0.82em; line-height: 1.45; }
+.l1v-detail .l1v-detail-tex math.tml-display { font-size: 0.82em; }
+.l1v-gelu-wrap { display: flex; align-items: center; justify-content: center; gap: 16px; text-align: left; }
+.l1v-gelu-wrap canvas { width: 280px; height: 88px; flex: 0 0 auto; }
 
 /* Neuron-Intro-Animation (Slide "Was sind Neuronale Netzwerk?") */
 #nn-intro-anim {
