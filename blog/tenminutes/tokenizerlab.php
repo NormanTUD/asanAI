@@ -90,20 +90,23 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Tokenize this <span>· demo 01</span></p>
-									<p class="demo-sub">Type a word, a sentence, a number, or a script the vocabulary has never seen.</p>
+									<p class="demo-sub">Pick a word, a number, or a script the vocabulary has never seen.</p>
 								</div>
 								<span class="demo-badge">toy vocab</span>
 							</div>
 							<div class="demo-body">
-								<label for="tok-input" style="position:absolute;left:-9999px">Text to tokenize</label>
-								<input class="demo-input" id="tok-input" type="text" value="The transformer is playing greatly." autocomplete="off" spellcheck="false">
 								<div class="chip-row" style="margin-top:10px">
+									<button class="chip is-on" type="button" data-preset="The transformer is playing greatly.">a sentence</button>
 									<button class="chip" type="button" data-preset="strawberry">strawberry</button>
 									<button class="chip" type="button" data-preset="understanding">understanding</button>
 									<button class="chip" type="button" data-preset="transformer">transformer</button>
 									<button class="chip" type="button" data-preset="1234.56">1234.56</button>
-									<button class="chip" type="button" data-preset="Once upon a time, there was a tokenizer.">a sentence</button>
+									<button class="chip" type="button" data-preset="Once upon a time, there was a tokenizer.">a story</button>
 									<button class="chip" type="button" data-preset="Bonjour le monde">Bonjour</button>
+									<button class="chip" type="button" data-preset="Zürich">Zürich</button>
+									<button class="chip" type="button" data-preset="नमस्ते दुनिया">नमस्ते</button>
+									<button class="chip" type="button" data-preset="👩‍💻🚀">emoji</button>
+									<button class="chip" type="button" data-preset="supercalifragilisticexpialidocious">long word</button>
 								</div>
 								<div class="token-stream" id="tok-stream" style="margin-top:12px" aria-live="polite"></div>
 								<div class="demo-readout demo-readout--4">
@@ -348,8 +351,8 @@
 			return out;
 		}
 
-		var input = document.getElementById("tok-input");
 		var stream = document.getElementById("tok-stream");
+		var currentText = "The transformer is playing greatly.";
 		var countEl = document.getElementById("tok-count");
 		var charsEl = document.getElementById("tok-chars");
 		var ratioEl = document.getElementById("tok-ratio");
@@ -371,8 +374,8 @@
 			});
 		}
 		function render() {
-			if (!input || !stream) return;
-			var text = input.value;
+			if (!stream) return;
+			var text = currentText;
 			var tokens = tokenize(text);
 			var inspectorEl = document.getElementById("tok-inspector");
 			if (inspectorEl) inspectorEl.textContent = "Click any token to see why it split: a known piece, a character fallback, a digit group, whitespace, or punctuation.";
@@ -451,24 +454,21 @@
 				var el = ev.target.closest(".token");
 				if (!el) return;
 				var i = parseInt(el.getAttribute("data-token-index"), 10);
-				var current = tokenize(input ? input.value : "");
+				var current = tokenize(currentText);
 				stream.querySelectorAll(".token").forEach(function (x) { x.classList.remove("is-selected"); });
 				el.classList.add("is-selected");
 				inspectToken(current[i]);
 			});
 		}
-		if (input) {
-			input.addEventListener("input", render);
-			document.querySelectorAll("[data-preset]").forEach(function (btn) {
-				btn.addEventListener("click", function () {
-					input.value = btn.getAttribute("data-preset");
-					input.focus();
-					render();
-				});
+		document.querySelectorAll("[data-preset]").forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				currentText = btn.getAttribute("data-preset") || "";
+				document.querySelectorAll("[data-preset]").forEach(function (b) { b.classList.toggle("is-on", b === btn); });
+				render();
 			});
-			render();
-			measureStreamHeight();
-		}
+		});
+		render();
+		measureStreamHeight();
 		var measureTimer = null;
 		window.addEventListener("resize", function () {
 			clearTimeout(measureTimer);
