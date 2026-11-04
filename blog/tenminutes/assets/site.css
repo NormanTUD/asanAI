@@ -960,7 +960,7 @@ html[data-theme="dark"] .rail-nav a.is-active { color: var(--tm-sky); }
 	font-weight: 300;
 	color: var(--tm-ink-soft);
 }
-.prose > p { margin: 0 0 1.15em; }
+.prose > p { margin: 0 0 1.5em; }
 .prose > p:last-child { margin-bottom: 0; }
 .prose strong { color: var(--tm-ink); font-weight: 700; }
 .prose em { color: var(--tm-ink); }
@@ -1035,10 +1035,17 @@ blockquote,
 body[data-page="lesson"] .lesson-main p:not(.aha-big):not(.demo-title),
 body[data-page="lesson"] .lesson-main li {
 	text-align: justify;
+	text-align-last: left;
 	text-justify: inter-word;
 	hyphens: auto;
 	-webkit-hyphens: auto;
 }
+
+.md p + p,
+.explain-back p + p,
+.collapse-card p + p,
+.activation-copy p + p,
+.profile-spotlight p + p { margin-top: 1.1em; }
 
 .section-block { margin-bottom: clamp(34px, 4.6vw, 58px); scroll-margin-top: calc(var(--tm-topbar) + 34px); }
 .section-block > .prose { margin-top: 0; }

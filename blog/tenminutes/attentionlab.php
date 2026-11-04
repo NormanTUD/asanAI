@@ -316,6 +316,9 @@
 		"use strict";
 
 		var tokens = ["Maria", "told", "the", "bank", "that", "she", "would", "repay", "the", "loan", "tomorrow"];
+		var ATT_DE = TM.lang() === "de";
+		var LABELS = ATT_DE ? ["Maria", "sagte", "der", "Bank", "dass", "sie", "würde", "zurückzahlen", "den", "Kredit", "morgen"] : tokens.slice();
+		function label(i) { return LABELS[i] || tokens[i]; }
 		var rules = {
 			coref: [
 				["she", "Maria", 0.50], ["Maria", "she", 0.18], ["she", "bank", 0.08],
@@ -375,8 +378,8 @@
 				var b = document.createElement("button");
 				b.type = "button";
 				b.className = "att-word" + (i === query ? " is-query" : "") + (i !== query && w[i] > 0.12 ? " attended" : "");
-				b.setAttribute("aria-label", tok + ", attention " + (w[i] * 100).toFixed(0) + " percent");
-				b.textContent = tok;
+				b.setAttribute("aria-label", label(i) + (ATT_DE ? ", Aufmerksamkeit " : ", attention ") + (w[i] * 100).toFixed(0) + (ATT_DE ? " Prozent" : " percent"));
+				b.textContent = label(i);
 				var bar = document.createElement("span");
 				bar.className = "att-bar";
 				bar.style.height = (3 + w[i] * 22).toFixed(1) + "px";
@@ -389,28 +392,36 @@
 				});
 				sentenceEl.appendChild(b);
 			});
-			if (queryEl) queryEl.textContent = tokens[query];
-			if (topEl) topEl.textContent = tokens[top];
+			if (queryEl) queryEl.textContent = label(query);
+			if (topEl) topEl.textContent = label(top);
 			if (weightEl) weightEl.textContent = (w[top] * 100).toFixed(0) + "%";
 			var top3El = document.getElementById("att-top3");
 			if (top3El) {
 				var ranked = w.map(function (p, i) { return { i: i, p: p }; }).sort(function (a, b) { return b.p - a.p; }).slice(0, 3);
-				top3El.textContent = "Top 3: " + ranked.map(function (x) { return tokens[x.i] + " " + Math.round(x.p * 100) + "%"; }).join(" · ") + ". Every row sums to 1: attention is a finite budget.";
+				top3El.textContent = (ATT_DE ? "Top 3: " : "Top 3: ") + ranked.map(function (x) { return label(x.i) + " " + Math.round(x.p * 100) + (ATT_DE ? " %" : "%"); }).join(" · ") + (ATT_DE ? ". Jede Zeile summiert zu 1: Attention ist ein endliches Budget." : ". Every row sums to 1: attention is a finite budget.");
 			}
 			var budgetEl = document.getElementById("att-budget");
 			if (budgetEl) {
 				var c = TM.colors();
 				var palette = [c.green, c.sky, c.gold, c.coral, c.blue, c.lime, c.petrol, c.muted];
 				budgetEl.innerHTML = w.map(function (p, i) {
-					return '<span title="' + tokens[i] + ": " + Math.round(p * 100) + '%" style="width:' + (p * 100).toFixed(2) + '%;background:' + palette[i % palette.length] + '"></span>';
+					return '<span title="' + label(i) + ": " + Math.round(p * 100) + '%" style="width:' + (p * 100).toFixed(2) + '%;background:' + palette[i % palette.length] + '"></span>';
 				}).join("");
 			}
 			if (captionEl) {
-				var headName = { coref: "Coreference", syntax: "Syntax", meaning: "Meaning" }[head];
-				if (head === "coref" && tokens[query] === "she") captionEl.textContent = "The coreference head links “she” back to “Maria”. The pronoun needs a referent; the head retrieves it.";
-				else if (head === "syntax" && tokens[query] === "repay") captionEl.textContent = "The syntax head favours “would” and “loan”: the auxiliary and the object frame the verb.";
-				else if (head === "meaning" && tokens[query] === "bank") captionEl.textContent = "The meaning head pulls “bank” toward “loan” and “repay”: in this sentence, the financial sense wins.";
-				else captionEl.textContent = "Head: " + headName + ". Query “" + tokens[query] + "” attends most to “" + tokens[top] + "” (" + Math.round(w[top] * 100) + "%). Every row sums to 1.";
+				var headName = ATT_DE ? { coref: "Koreferenz", syntax: "Syntax", meaning: "Bedeutung" }[head] : { coref: "Coreference", syntax: "Syntax", meaning: "Meaning" }[head];
+				if (head === "coref" && tokens[query] === "she") captionEl.textContent = ATT_DE
+					? "Der Koreferenz-Head verknüpft „sie“ mit „Maria“. Das Pronomen braucht einen Bezug; der Head holt ihn."
+					: "The coreference head links “she” back to “Maria”. The pronoun needs a referent; the head retrieves it.";
+				else if (head === "syntax" && tokens[query] === "repay") captionEl.textContent = ATT_DE
+					? "Der Syntax-Head bevorzugt „würde“ und „Kredit“: Hilfsverb und Objekt rahmen das Verb."
+					: "The syntax head favours “would” and “loan”: the auxiliary and the object frame the verb.";
+				else if (head === "meaning" && tokens[query] === "bank") captionEl.textContent = ATT_DE
+					? "Der Bedeutungs-Head zieht „Bank“ zu „Kredit“ und „zurückzahlen“: In diesem Satz gewinnt die finanzielle Bedeutung."
+					: "The meaning head pulls “bank” toward “loan” and “repay”: in this sentence, the financial sense wins.";
+				else captionEl.textContent = ATT_DE
+					? "Head: " + headName + ". Query „" + label(query) + "“ achtet am stärksten auf „" + label(top) + "“ (" + Math.round(w[top] * 100) + " %). Jede Zeile summiert zu 1."
+					: "Head: " + headName + ". Query “" + label(query) + "” attends most to “" + label(top) + "” (" + Math.round(w[top] * 100) + "%). Every row sums to 1.";
 			}
 		}
 		function drawMatrix(ctx, w, h) {
@@ -440,9 +451,9 @@
 			ctx.textAlign = "center";
 			ctx.fillStyle = c.muted;
 			for (var k = 0; k < n; k++) {
-				ctx.fillText(tokens[k].slice(0, 4), ox + k * size + size / 2, oy - 3);
+				ctx.fillText(label(k).slice(0, 4), ox + k * size + size / 2, oy - 3);
 				ctx.textAlign = "right";
-				ctx.fillText(tokens[k].slice(0, 4), ox - 3, oy + k * size + size / 2 + 3);
+				ctx.fillText(label(k).slice(0, 4), ox - 3, oy + k * size + size / 2 + 3);
 				ctx.textAlign = "center";
 			}
 		}

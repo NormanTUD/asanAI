@@ -7,7 +7,7 @@
 	<meta name="theme-color" content="#ffffff">
 	<title>A Very Brief History of AI | Ten Minutes</title>
 	<link rel="stylesheet" href="../Temml-Local.min.css">
-	<link rel="stylesheet" href="assets/site.css?v=20261104b">
+	<link rel="stylesheet" href="assets/site.css?v=20261104c">
 </head>
 <body data-lesson="history" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -737,8 +737,10 @@
 								The query of one token is compared with the keys of the others; the scores
 								are scaled, passed through a softmax, and used as weights to mix the values.
 								A causal mask in a decoder hides future tokens, so the model cannot see the
-								answer it is supposed to predict. Several heads run in parallel, each in its
-								own subspace, and their outputs are combined.
+								answer it is supposed to predict. With the mask on, each token may attend only
+								to itself and the past, which is exactly the signal used to train a model to
+								complete a sentence. Several heads run in parallel, each in its own subspace,
+								and their outputs are combined.
 							</p>
 							<p>
 								Attention is one half of the block. Each sublayer is wrapped in a
@@ -939,8 +941,8 @@
 								and the data catch up.
 							</p>
 							<p>
-								There were winters: periods when the promises outran the results and the money
-								left. There were also quiet accumulations (the stored-program idea, the
+								There were winters: periods when the promises outran the results and funding was
+								cut. There were also quiet accumulations (the stored-program idea, the
 								transistor, the GPU, the dataset, the optimizer) without which the same
 								algorithm would be a curiosity. The transformer bundled a very long prehistory.
 							</p>
