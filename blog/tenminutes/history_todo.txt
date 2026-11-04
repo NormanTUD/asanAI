@@ -1,0 +1,51 @@
+schaue ob die änderungen in beiden sprachen relevant sind. ich nenne sie hier nur für deutsch.
+
+"Die Nächste-Token-Vorhersage reduzierte die Maschine auf eine Schleife" das stimmt nicht, es ist nicht darauf reduziert. behuapte solche vereinfachungen nicht, entferne "Die Nächste-Token-Vorhersage reduzierte die Maschine auf eine Schleife. Woher kam diese Schleife? " komplett
+
+"Die Geschichte der KI hat keine einzelne Linie zum großen Sprachmodell. Sie ist eine Konvergenz von Ideen aus unverbundenen Feldern, die nie füreinander gedacht waren" das ist shceiße übersetzt. mach sowas wie "viele verschiedene entwicklugnen die nie dafür gedacht waren sich zu treffen haben in summe zu llm geführt, aber auch zu anderen sachen" oder sowas. das wäre besser
+
+"wiegen heute das nächste Wort in einer Sequenz" wiegen ist schlecht übersetzt
+
+"GPU-Architekturen für Videospiele liefern die parallele Berechnung, die neuronale Netze brauchen: Die Matrixoperationen, die Polygone zeichnen, sind dieselben, die Aktivierungen multiplizieren. Die Konvergenz ist kein Plan; sie ist eine Reihe von Anleihen, die zufällig passten. " mach das besser, das ist iwie hier random, zeige mehr wie verschiedene sachen aus ganz anderen richtugnen hier zu geführt haben
+
+mach allgemein ein paar mehr keywords fett
+
+"Die Behauptung ist nicht, dass KI unvermeidlich war; sie ist, dass dieselbe Bewegung (eine Aufgabe an einen Mechanismus übergeben und den Mechanismus dann als neues Primitiv behandeln) auf jeder Ebene wiederkehrt. " ist schlecht übersetzt
+
+" Wir können jedes Problem lösen, indem wir eine zusätzliche Ebene der Indirektion einführen. " (schreib da hinter indirektion in eckigen klammern abstraktion)
+
+"Die Maschine ist die ultimative Indirektion. Das Rad abstrahiert Bewegung; der Computer abstrahiert Denken. Beide nehmen den Menschen aus der rohen Arbeit, lassen ihn aber die Kontrolle über den Mechanismus behalten."  ist schlecht übersetzt. nciht die maschine und nicht ultimative indirektion (eher abstraktion) . außeredm nicht rohe arbeit. es ist eher so dass die maschinen die eigentliche aufgabe immer weiter vom menschen weg abstrahieren so dass man sich immer weniger um implementierungsdetails kümmern muss
+
+"Folge der Zündschnur." ist wirklich hschlechtes zangendeutsch. finde iwas ganz neues 
+
+" Wähle einen Punkt auf der Linie und ziehe an diesem Faden. Daten sind ungefähr, wo die Evidenz es ist. " ist scheiße übersetzt. übersetze immer die idee, nciht diebloßen worte
+
+"oder nutze die Pfeiltasten" entferne das
+
+"trägt gruppierte Kerben mit umstrittener mathematischer Struktur": es sind evtl primzahlen, erwähne das. aber auch dass das unklar ist
+
+"handbetriebenes Orrery" deutsches wort hier und "vierjährigen Zyklus der Spiele" der OLYMPISCHEN fehlt da spiele
+
+"Ramon Llulls Ars Magna" ars magna kursiv
+
+"Von der Berechnung zum Programm Leibniz baute eine Rechenmaschine und formalisierte die Binärnotation. Babbage entwarf die Analytical Engine mit Speicher, Mühle und Lochkarteneingabe. Ada Lovelace sah weiter als der Erbauer der Maschine: Die Engine konnte Symbole verarbeiten, nicht nur Zahlen, und sie schrieb den ersten veröffentlichten Algorithmus für sie. Die Trennung von Hardware und gespeichertem Programm ist das Scharnier, um das sich der Rest dreht." du erwähnst hier leibniz ohne seine maschine zu zeigne, die sollte ein eigener tab sein in demo 01 hier
+
+"Frank Rosenblatts Perceptron" Perceptron kursiv
+
+"The Dartmouth workshop of 1956 had named the field. Symbolic AI builds expert systems, planners, and microworlds such as SHRDLU, then hits the frame problem and the limits of hand-coded rules. Minsky and Papert’s 1969 Perceptrons critique exposes the limits of a single layer; funding freezes in the first AI winter. Connectionism returns in the 1980s; a second winter follows. Deep Blue beats Kasparov in 1997, but it is still a narrow, hand-tuned system." ist NIChT übresetzt das sollte auf deutsch sein auf der deutschen seite und natürlich auf englisch auf der englischen
+
+"FazitViele Ursachen trafen sich auf einer Linie. Zieh an einem Faden, und du kannst rückwärts folgen." das kein fazit. 
+
+"Sie sind die älteste bekannte Steinansammlung" nicht steinansammlung sondern steinwerkzeuge
+
+"Spuren kommen später" nicht spuren sondern geometrische muster
+
+"obwohl wir ihre Bedeutung nicht lesen können" wenn es überhaupt eine hat, das weiß keiner
+
+"Zählen erscheint im Knochen" ist falsch formuliert, es is eher so dass das älteste zählwerkzeug ein knochen ist
+
+"seine Primzahlspalte ist suggestiv, nicht gesichert" suche details, erwähne es kurz mit den details aber sage auch dass es nicht sicher ist. formulier das besser
+
+"Derselbe Impuls" nicht impuls aber idee
+
+

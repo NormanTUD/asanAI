@@ -19,6 +19,13 @@
 	};
 
 	TM.storage = storage;
+	TM.lang = function () {
+		var params = new URLSearchParams(window.location.search);
+		var requested = (params.get("lang") || "").toLowerCase();
+		if (requested === "de" || requested === "en") return requested;
+		var match = document.cookie.match(/(?:^|;\s*)tm_lang=(de|en)\b/);
+		return match ? match[1] : "en";
+	};
 	TM.done = function () { return storage.get("tm_done", []); };
 	TM.isDone = function (slug) { return TM.done().indexOf(slug) !== -1; };
 	TM.markDone = function (slug) {

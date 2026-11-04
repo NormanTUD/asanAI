@@ -1,130 +1,21 @@
 schaue ob die änderungen in beiden sprachen relevant sind. ich nenne sie hier nur für deutsch.
 
-intuition: 
-
-"es kennt die Antwort nicht und vergibt dann eine Punktzahl" das ließt sich iwie schlecht. formulier das neu.
-
-"Die Schleife kümmert sich nicht darum, was die Stücke sind; sie sagt das nächste voraus." sie sagt ->nur<- das Nächste (mit großem N) voraus
-
-"Die Schleife kommt zuerst, weil alles andere Maschinerie ist, um diese eine Vorhersage besser zu machen" das ließt sich falsch
-
-"Jeder Teil existiert, um ein Problem zu lösen, das der vorherige Teil geschaffen hat" das stimmt nicht
-
-"Ein Gespräch, ein Gedicht, eine Python-Funktion: Alles ist diese Schleife", ads stimmt nicht so. alles wird durch diese schleife generiert in einem LLM. ist impliziert äquivalenz aber ein gedicht ist nicht äquivalent mit dieser schleife
-
-"Das klingt reduktiv, bis man bemerkt, was der Kontext enthalten kann" klingt komisch, reduktiv? 
-
-"die Ausgabe eines Werkzeugs" die ausgabe eines programms
-
-"Jedes neue Token konditioniert auf all das" konditioniert? das ist falsch. jedes neue token bezieht sich irgendwie auf alles vorherige
-
-"Warum nicht die ganze Antwort auf einmal vorhersagen? Weil das Modell eine Verteilung über den nächsten Slot ausgibt" das ist ein non sequitur. das modell geht durch die autoregressive schleife halt so dass es nur tokenweise geht. 
-
-"Unten ist eine absichtlich kleine Demo" "absichtlich kleine" ist falsch
-
-"Sie hat keine gelernten Gewichte und kein Training; sie speichert nur eine Handvoll handgeschriebener Fortsetzungen für eine kleine Geschichte" das gehörtweiter nach unten
-
-"Was sie reproduziert" -> zeigt statt reproduziert
-
-"Beobachte die Schleife, nicht die Größe der Demo. " entferne das komplett
-
-die demo "Die autoregressive Schleife "  die beispiele solltena uch auf deutsch sein. aktuell ist die demo auf englisch. alle demos sollten auf deutsch übersetzt werden, das ist wichtig. komplett bis auf fachbegriffe.
-
-die demo "Die autoregressive Schleife" verändert ihre höhe, wodurch der ganze rest rauf und runter rutscht, weil da verschieden viele worte sind. mach dass das von anfang an die maximel höhe hat und behält
-
-entferne referenzen auf "Decoder".
-
-entferne beam search referenz
-
-"Top-p behält die kleinste Menge von Tokens": das stimmt nciht, top p nimmt nicht die kleinste wahl, sondern nimmt die top p anzahl von tokens (mit p zahl > 0) aus denen dann gewählt wird.
-
-"sodass die Temperatur ändert, welchen Pfad der Text nimmt, nicht nur seinen Ton." baue hier aus der intuition.php in .. die "The truth tunnel"  demo ein, und übrsetze sie für dt.
-
-"Höhere Temperaturen weiten das Feld plausibler Fortsetzungen, was in einer Geschichte kreativ und überraschend und in einer Bilanz nachlässig sein kann" sage da lieber dass kreativität bei geschichten gut aber bei buchführung schlecht ist. es kommt auf den kontext an
-
-"Keine Decoder-Einstellung kann das Modell dazu bringen, einen Fakt zu berichten, den es nie gelernt hat, aber die Einstellung ändert, welche seiner plausiblen Fortsetzungen du siehst. " entferne das. 
-
-"Jeder Schritt verändert die Repräsentation anders" entferne das "anders". "und jeder ist eine kleine Idee zum Ausprobieren" und das komplett
-
-"Position fügt Ordnung hinzu" ist falsch, positional embedding fügt die position im kontext hinzu
-
-"und der Residual Stream trägt das Ergebnis weiter" an den nächsten layer, wo wieder attn udn ffn und so weiter arbeiten, und am ende wird ausgewählt. 
-
-"jede angewendet auf die Ausgabe der vorherigen: layer3⁡(layer2⁡(layer1⁡(x)))" mit mehr layern andeuten.
-
-"und zeigt eine kleine, handgebaute Version davon" ist nicht handgebaut.
-
-"Ein Leerzeichen ist auch ein Byte und kann ein eigenes Token sein." IST ein eigenes token.
-
-entferne itok-input bei "Schritt 1 · Tokenisieren": es reicht wenn man die paar beispiele auswählen kann. und mach es so dass "the transformer is playing greatly" auch ein button wird
-
-bei "Schritt 2 · Embedding": ich will die aktivierten buttons auch wieder deaktivieren können. übersetze auch die demo inhalte, also queen -> königin usw. es muss in beiden sprachen gehen. benenne auch die pfeile besser, es ist nicht "male -> female" sondern "geschlecht". 
-
-" Schritt 3 · Position Jeder Slot bekommt seinen eigenen Fingerabdruck Kontextlänge 128 positions " positions muss übersetzt werden
-
-"während jede Position eigen bleibt" nicht eigen sondern eindeutig
-
-"Die Demo folgt einem handabgestimmten Head" das stimmt so nicht, der ist nicht handabgestimmt und es ist kein raeler head. es ist nur ne intuition.
-
-"Ich gehe zur Bank." ist nicht "kein kontext". es ist kein *eindeutiger* kontext. das ist wichtig.
-
-"I sit by the river on the Bank." ist hier nicht übersetzt. genauso "After the walk by the river I go to the Bank to deposit my money." und "I bring my money to the Bank." im dt muss das alles deutsch sein
-
-"keine wörtliche Simulation" ist inhaltlich richtig aber schlecht übersetzt. es ist kein realer head.
-
-"Er nimmt nicht wörtlich das eigene Embedding des Tokens und schiebt es über die Seite. Der bewegte Punkt ist ein Lehrbild des Ergebnisses (Kontext verändert die Repräsentation) mit einem handabgestimmten Head statt der vielen Heads und Schichten eines echten Modells." ist falsch, und lass das mit dem handabgestimmt, ich hasse das wort.
-
-"Dasselbe Wort kann je nach Gesellschaft an einem anderen Ort landen, weil die Values, die es sammelt, andere sind." je nach KONTEXT nicht Gesellschaft
-
-"Stapel zwei Dense-Schichten und lass die erste die zweite speisen" formulier das neu ohne speisen
-
-"Eine Schicht biegt den Raum" der punkt in der mitte ist nicht rot sondern lila mach ihn aber rot.
-
-"Die Schicht ändert das Koordinatensystem. Ein Schnitt, der unmöglich war, wird zu einer Schwelle: Das kauft Tiefe." ist scheiße übersetzt. mach das neu. die schicht projiziert punkte in einen höherdimensionalen raum wo man durch eine gerade linie trennen kann was man vorher nicht trennen konnte. das ist was dense layer am ende machen sowas in der art.
-
-"das einer einfachen Schwelle näher kommt." ist falsch. es kommt dem nicht näher sondern ist durch sie trennbar
-
-"Die Animation ist eine Illustration, kein Beweis." entferne ads
-
-"Schritt 5 · Feed-Forward" suche fürs deutsche ein anderes beispiel. apple vs apfel geht hier nicht mehr weil die worte anders sind. lass das im englischen aber so
-
-"Der Pfeil von man zu woman ist dieselbe Richtung wie king zu queen" nicht der pfeil sondern die richtung (und der vektor), und mach es deutsch hier, nicht von queen sondern von königin usw.
-
-"geht auf die konzeptuellen Räume von Gärdenfors (2000)." geht auf die ZURÜCK, das zurück fehlt hier
-
-"Nutze die Chips, um die Arithmetik zu machen" chips -> buttons. 
-
-"Macht und Geschlecht · Demo 08": übersetze das hier auf deutsch komplett
-
-"Die Achsen sind ein handgebauter Schnitt eines viel größeren Raums. Die Richtung ist der Punkt, nicht die exakten Zahlen." entferne das "handgebaut", ich hasse das
-
-"Die Wiese zeigt die andere Geometrie" "die andere geometrie" klingt weird. entferne das.
-
-"und ein neuer Gedanke fällt in die Blase, deren Zentrum am nächsten ist. Bewegt man den Zeiger, landet der Gedanke in einer Zelle oder auf einer Naht, wo zwei Wörter fast gleich nah sind." und es ist so dass die nähe zum zentrum bestimmt wie wahrscheinlich es ist. an den rändern wird es ungenauer. die temperatur und top k ändert die größe der auswahl. übersetze auch die worte in der demo.
-
-"Wörter kacheln den Raum der Gedanken" kacheln ist hier falsch.
-
-in der demo steht auch sowas wie "Deep inside the cell of “Lamp”. The nearest seam is far away." was auch übersetzt werden muss
-
-"Ein Position Signal wird hinzugefügt" ein positionssignal so im deutsch mit fugen-s
-
-"Schicht um Schicht, Attention lässt jeden Vektor auf seine Nachbarn schauen" formulierung ist 1:1 englisch von word orer her, es mussa nders rum sein
-
-"ein Token wird gezogen und angehängt." dann wird das angehangen und wieder von vorn begonnen bis das netz das spezialtoken "<|endoftext|>" gibt, dann hört die schleif auf
-
-"Die Faktensuche verfolgt einen einzelnen Fakt durch den Vorwärtspass." ist falsch, entferne das
-
-"Nächste-Token-Prädiktor" schreib hier next-token-predictor auf englisch
-
-"eine Verteilung, ein Zug, ein Anhängen, wiederholt." ist scheiße übersetzt. mach das wirklich gut
-
-"Solomonoffs universeller Prior gibt jeder möglichen Erklärung eine Wahrscheinlichkeit, die schrumpft" das schreibst du einfach ohne dass das vorher je eigneführt worden ist was ads ist
-
-"Solomonoffs universeller Prior gibt jeder möglichen Erklärung eine Wahrscheinlichkeit, die schrumpft, je länger das kürzeste Programm ist, das sie erzeugt; sein Konvergenzsatz sagt, dass ein aus diesem Prior gebauter Prädiktor im Grenzfall" den satz versteht keine sau, was ist ein prior? was ist das alles? was soll das heißen? allgemeinverstädnlich bleiben!
-
-"Die ehrliche Position ist, dass die Evidenz der Philosophie noch hinterherläuft und dass sowohl die Ehrfurcht als auch die Skepsis Reaktionen auf dieselbe bemerkenswerte Tatsache sind:" das ist grauenahft übersetzt
-
-"Anders gesagt: Ein Sprachmodell ist ein endliches Vokabular, das über ein Kontinuum von Bedeutung gelegt ist, mit einer Schleife, die immer wieder auf das nächste Wort fällt. " auch das. 
-
-
-schreib das alles und kritisier dich selbst dafür wo es noch unklar oder schlecht übersetzt ist.
+intuition: alle Punkte bearbeitet.
+
+Erledigt:
+- Abschnitt 01: „Punktzahl“-Satz, „nur das Nächste“, Schleifenbegründung ohne „Maschinerie“, falsche Kausalkette, „Alles ist diese Schleife“, „reduktiv“, „Werkzeug“ → „Programm“, „konditioniert“ und das Non sequitur zur Gesamtantwort korrigiert. Die Gewichts-/Trainingserklärung steht jetzt in der Demo-Fußzeile; „Beobachte die Schleife …“ ist gestrichen.
+- Demo 01: deutsche Geschichte mit korrekter Grammatik (Komma vor dem Relativsatz), deutsche Kandidaten und Statusmeldungen, konstante Höhe ab dem ersten Frame (Desktop 373,44 px, Tablet 500 px, Telefon 570 px; bei 320/360/390/414/768 px gemessen). Die englische Fassung bleibt englisch und wurde gegengeprüft.
+- Decoding: „Decoder“ aus Label, Readout, Fazit und Prosa entfernt; Readout heißt „Auswahl“. Beam Search gestrichen. Top-p als „kürzester Anfang, dessen kumulierte Wahrscheinlichkeit p erreicht“ erklärt. Temperaturprosa nennt Geschichte und Bilanz als Kontextbeispiele. Die „No decoder setting …“-Sätze sind weg.
+- Wahrheitstunnel als Demo 01b eingebaut, mit deutschem Satz, deutschen Alternativen, Statuslabels und Canvas-Beschriftungen; englische Fassung separat. Nummer 01b, weil „Inside the model“ bereits 02–07 belegt.
+- Abschnitt 03: „anders“ und „jede ist eine kleine Idee“ gestrichen; Position erklärt die Position im Kontext; Residual Stream führt zum nächsten Layer, wo Attention und FFN wieder arbeiten; Formel mit layer_N und Auslassungspunkten; „handgebaut“ → „vereinfacht“; Leerzeichen „ist ein eigenes Token“.
+- Tokenizer-Demo: Eingabefeld entfernt, drei Beispiel-Buttons (Verständnis, unzerbrechlich, Der Transformer spielt großartig) mit deutschen Subword-Zerlegungen; englische Fassung behält ihre Beispiele.
+- Embedding-Schritt: Buttons lassen sich wieder deaktivieren, deutsche Wörter (König/Königin usw.), Pfeil heißt „Geschlecht“ statt „male → female“. Demo 08 ebenso, inklusive deutscher Gleichungen, Achsen und Readouts.
+- Positionen: „Positionen“ und Canvas-Labels lokalisiert; „eigen“ → „eindeutig“; das Hund-beißt-Mann-Beispiel ist im Deutschen deutsch.
+- Attention: „kein Kontext“ → „kein eindeutiger Kontext“; deutsche Sätze mit Park/Geld; „handabgestimmt“ gestrichen; Query/Key/Value sagt „je nach Kontext“; „keine wörtliche Simulation“ → „kein realer Attention-Head“.
+- Layer: „speisen“ ersetzt; Takeaway projiziert in einen höherdimensionalen Raum; „näher an eine Schwelle“ → „durch eine gerade Schwelle trennbar“; Animations-Beweissatz entfernt; Innenkern rot.
+- FFN: deutsches Schloss-Beispiel (Gebäude vs. Mechanik), Englisch bleibt Apple.
+- Geometrie: Richtung statt Pfeil, deutsche Wörter (Mann/Frau/König/Königin/Prinz), „zurück“ ergänzt, „Chips“ → „Buttons“, „handgebaut“ entfernt, Demo 08 komplett deutsch, „andere Geometrie“ entfernt, „kacheln“ ersetzt.
+- Wiese: Nähe zum Zentrum als Wahrscheinlichkeit erklärt, Ränder ungenauer, Temperatur und Top-k als Größe der Auswahl; Top-k ist jetzt ein Regler. Wörter und Captions der Demo sind deutsch.
+- Ganze Schleife: „Positionssignal“ mit Fugen-s, „Schicht für Schicht lässt Attention …“, Token wird angehängt und die Schleife endet bei `<|endoftext|>`; „Faktensuche“-Satz entfernt; „next-token-predictor“; Keypoint neu formuliert.
+- Solomonoff-Absatz allgemeinverständlich neu geschrieben (Prior wird erklärt, keine unvermittelte Fachsprache); „ehrliche Position“ und Schlusssatz neu formuliert.
+- Selbstkritik: Die Telefonhöhe ist mit 570 px großzügig; das erzeugt am Anfang Leerraum, ist aber der einzige Weg, den Sprung bei sehr schmalen Viewports sicher zu vermeiden, ohne den Inhalt abzuschneiden. „Ein next-token-predictor“ ist absichtlich kleingeschrieben, weil du den englischen Begriff wolltest; grammatisch runder wäre „Ein Next-Token-Predictor“. Die deutsche Attention-Demo nutzt Park/Sitzbank statt Fluss/Ufer, damit „Bank“ mehrdeutig bleibt; die Metapher ist dadurch eine andere als im Englischen. Der rote Innenkern ist eine bewusste Ausnahme von der lilafarbenen Palette, weil der Text von roten Punkten spricht und die Anweisung explizit war. „Origami in N dimensions“ und „stochastic parroting“ bleiben als Werk-/Fachbegriffe englisch. Die englische Fassung wurde überall dort mitgezogen, wo die Korrektur auch inhaltlich für sie gilt.

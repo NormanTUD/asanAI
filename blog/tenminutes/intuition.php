@@ -6,7 +6,7 @@
 	<meta name="description" content="A ten-minute interactive introduction to next-token prediction, the loop behind large language models.">
 	<meta name="theme-color" content="#ffffff">
 	<title>One Word at a Time | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css?v=20261103">
+	<link rel="stylesheet" href="assets/site.css?v=20261104">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 </head>
 <body data-lesson="intuition" data-page="lesson">
@@ -40,28 +40,31 @@
 							</p>
 							<p>
 								Two words in that description are doing quiet work. “Probability” means the
-								model ranks all candidates at once; it does not know the answer and then
-								assign a score. The other word is “token”. The demo below calls its tokens
-								words because that is easiest to follow, but a token can be a whole word, a
-								word fragment, a single character, a group of characters, a space, or a
-								punctuation mark. “Unbelievable” may arrive as several pieces such as
-								“un”, “believ”, and “able”. A leading space can be its own token. The loop
-								does not care what the pieces are; it predicts the next one.
+								model scores all candidates at once; it does not first know the answer and
+								then assign a score. The other word is “token”. The demo below calls its
+								tokens words because that is easiest to follow, but a token can be a whole
+								word, a word fragment, a single character, a group of characters, a space,
+								or a punctuation mark. “Unbelievable” may arrive as several pieces such as
+								“un”, “believ”, and “able”. A leading space is a byte of its own and can be
+								a token. The loop does not care what the pieces are; it predicts the next
+								one.
 							</p>
 							<p>
 								This page is the start of a technical intuition, not the complete picture.
 								A real model adds a tokenizer, layers of attention, a feed-forward network,
 								position information, training data, and post-training. The loop comes first
-								because everything else is machinery for making this one prediction better:
-								each part exists to solve a problem the previous part created.
+								because everything else serves to make this one prediction better. Each
+								part adds a capability that improves the prediction.
 							</p>
 							<p>
-								A conversation, a poem, a Python function: all of it is this loop. That sounds
-								reductive until you notice what the context can contain: the question, a worked
-								example, a tool's output, or the model's own earlier reasoning. Each new token
-								conditions on all of it. Why not predict the whole answer at once? Because the
-								model outputs a distribution over the <em>next</em> slot; the loop lets every
-								word respond to the words already written.
+								A conversation, a poem, a Python function: in an LLM, all of it is generated
+								by this loop. That sounds like a small mechanism until you see what the
+								context can contain: the question, a worked example, a program's output, or
+								the model's own earlier reasoning. Each new token refers to everything before
+								it. Why not predict the whole answer at once? The loop works token by token:
+								the model outputs a distribution over the <em>next</em> slot, chooses a
+								token, appends it, and repeats. That lets every word respond to the words
+								already written.
 							</p>
 						</div>
 						<div class="aha">
@@ -76,13 +79,10 @@
 						<h2 class="section-title">Write a sentence, one word at a time.</h2>
 						<div class="prose">
 							<p>
-								Below is a deliberately small demo, not a real model. It has no learned
-								weights and no training; it just stores a handful of hand-written
-								continuations for a small story. What it reproduces is the autoregressive
-								idea: the next token is chosen from a distribution, appended to the
-								context, and the whole thing runs again. A real model computes that
-								distribution from learned weights. Watch the loop, not the size of the
-								demo.
+								Below is a small demo, not a real model. What it shows is the autoregressive
+								idea: the next token is chosen from a distribution, appended to the context,
+								and the whole thing runs again. A real model computes that distribution from
+								learned weights.
 							</p>
 						</div>
 
@@ -102,7 +102,6 @@
 									<p class="meadow-caption" id="nt-why" style="color:var(--tm-muted)">Sampling draws from the whole distribution; temperature controls how concentrated it is.</p>
 								</div>
 								<div class="demo-controls">
-									<span style="font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tm-muted)">Decoder</span>
 									<div class="chip-row" id="nt-modes">
 										<button class="chip is-on" type="button" data-decode="sample">Sample</button>
 										<button class="chip" type="button" data-decode="greedy">Greedy</button>
@@ -129,42 +128,67 @@
 									<div><b>Step</b><span id="nt-step-count">0 / 6</span></div>
 									<div><b>Context length</b><span id="nt-len">7 words</span></div>
 									<div><b>Top choice</b><span id="nt-top">dragon</span></div>
-									<div><b>Decoder</b><span id="nt-mode">sample</span></div>
+									<div><b>Choice</b><span id="nt-mode">sample</span></div>
 								</div>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>The distribution is the model; the decoder is the choice. Greedy, sampling, and top-p all read the same probabilities differently.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>The distribution is the model; the choice is how you draw from it. Greedy, sampling, and top-p all read the same probabilities differently.</span></div>
 							<div class="demo-foot">
-								Switch between greedy, sampling, and top-p; production systems may also use
-								beam search. Try temperature 0.2, then 1.8.
+								This story is a handful of handwritten continuations, not a trained model.
+								Switch between greedy, sampling, and top-p. Try temperature 0.2, then 1.8.
 							</div>
 						</div>
 
 						<div class="prose">
 							<p>
-								Sampling is one decoding choice. Greedy takes the most likely token every
-								time, which makes the text deterministic and often repetitive. Top-p keeps
-								the smallest set of tokens whose probabilities reach a threshold and samples
-								among them. Beam search keeps several candidate continuations alive and
-								picks the best-scoring one. Temperature shapes the distribution before any
-								of these choices: low values concentrate it, high values flatten it.
+								Sampling is one way to choose. Greedy takes the most likely token every
+								time, which makes the text deterministic and often repetitive. Top-p sorts
+								the tokens and keeps the shortest prefix whose cumulative probability
+								reaches the threshold p, then samples from that prefix. Temperature shapes
+								the distribution before any of these choices: low values concentrate it,
+								high values flatten it.
 							</p>
 							<p>
 								Temperature is used because exact repetition is not how people write. Human
 								answers vary from one telling to the next, and a little randomness makes
 								generated text feel less mechanical. Higher temperatures widen the field of
-								plausible continuations, which can be creative and surprising in a story and
-								careless in a balance sheet. Different sampled tokens also lead to different
-								follow-on contexts, so temperature changes which path the text takes, not
-								just its tone.
+								plausible continuations. In a story that can be creative and surprising; in
+								a balance sheet it is careless. The right setting depends on the context.
+								Different sampled tokens also lead to different follow-on contexts, so
+								temperature changes which path the text takes, not just its tone.
 							</p>
+							<div class="demo demo--paper" id="truth-tunnel-demo">
+								<div class="demo-head">
+									<div>
+										<p class="demo-title">The truth tunnel <span>· demo 01b</span></p>
+										<p class="demo-sub">A single prediction is one slice through a tube of plausible continuations. Step through the sentence and watch the tube narrow as the context closes the options, then turn up the temperature and watch it inflate again.</p>
+									</div>
+									<span class="demo-badge">live</span>
+								</div>
+								<div class="demo-body">
+									<div class="iso-grid">
+										<canvas class="demo-canvas" id="tt-canvas" style="height:340px" aria-label="A path through embedding space wrapped in a glowing probability isosurface"></canvas>
+										<aside class="iso-side">
+											<div class="iso-kicker">Next word</div>
+											<div class="iso-next" id="tt-next">capital</div>
+											<div class="iso-meta" id="tt-meta"></div>
+										</aside>
+									</div>
+									<div class="demo-controls">
+										<button class="btn-demo btn-demo--green" type="button" id="tt-advance">Next word →</button>
+										<label>Temperature
+											<input type="range" id="tt-temp" min="0.05" max="2.0" step="0.05" value="0.8">
+											<output id="tt-temp-out">0.80</output>
+										</label>
+									</div>
+								</div>
+								<div class="demo-insight"><b>Takeaway</b><span>The model never decides that something is right. It builds a distribution and draws from it; the tunnel shows how context narrows that distribution.</span></div>
+							</div>
 							<p>
 								The formula puts <span data-tex="T" data-tex-display="false"></span> in the
 								denominator, so an exact temperature of zero would mean dividing by zero. In
 								practice greedy decoding is treated as the limit
 								<span data-tex="T \to 0" data-tex-display="false"></span>, and
-								implementations special-case zero by taking the top token directly. No
-								decoder setting can make the model report a fact it never learned, but the
-								setting does change which of its plausible continuations you see.
+								implementations special-case zero by taking the top token directly.
 							</p>
 						</div>
 						<div class="aha">
@@ -180,22 +204,22 @@
 						<div class="prose">
 							<p>
 								The loop is the outside view. Inside, one token passes through a fixed
-								pipeline. Each step changes the representation in a different way, and each
-								is a small idea you can play with. The steps follow the order of a real
-								transformer pass (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>): text becomes ids, ids become vectors, position adds order,
-								attention adds context, the feed-forward network computes, and the residual
-								stream carries the result forward.
+								pipeline. Each step changes the representation. The steps follow the order of
+								a real transformer pass (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>): text becomes ids, ids become vectors, position adds where each
+								token sits, attention adds context, the feed-forward network computes, and the
+								residual stream carries the result to the next layer, where attention and the
+								feed-forward network work again; at the end, a token is chosen.
 							</p>
 							<p>
 								A transformer is a stack of layers, each applied to the output of the one
 								before it:
-								<span data-tex="\operatorname{layer}_3(\operatorname{layer}_2(\operatorname{layer}_1(x)))" data-tex-display="false"></span>.
+								<span data-tex="\operatorname{layer}_N(\cdots\operatorname{layer}_2(\operatorname{layer}_1(x))\cdots)" data-tex-display="false"></span>.
 								Early layers work on the token vectors directly. Later layers work on the
 								original signal plus everything the earlier layers have written into it.
 							</p>
 							<p>
 								The six steps below are a technical intuition, not a complete circuit
-								diagram. Each step isolates one job and shows a small, hand-built version of
+								diagram. Each step isolates one job and shows a small, simplified version of
 								it. The notes mark what is simplified, so the picture does not pretend to be
 								the whole machine.
 							</p>
@@ -205,24 +229,23 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Inside the model <span>· demos 02-07</span></p>
-									<p class="demo-sub">Follow one token through six steps. Each step is a small hand-built demo, but the order and the division of labour are the real architecture.</p>
+									<p class="demo-sub">Follow one token through six steps. Each step is a small simplified demo, but the order and the division of labour are the real architecture.</p>
 								</div>
 								<span class="demo-badge">six steps</span>
 							</div>
 							<div class="demo-body">
 								<div class="step-pane" id="step-tokenize">
-									<p class="step-note step-lead">A token is not a word. Before the model can read anything, text is encoded as numbers. Every character has a number called a Unicode code point, and an encoding turns that number into bytes. A byte-level tokenizer starts from all 256 possible bytes, so every piece of text is representable, including characters it never saw in training. Rare words split into smaller pieces the vocabulary already knows. New emoji still work because related emoji share their first bytes: most characters in the main emoji block begin with <code>F0 9F</code>. A space is a byte too, and it can be a token of its own.</p>
+									<p class="step-note step-lead">A token is not a word. Before the model can read anything, text is encoded as numbers. Every character has a number called a Unicode code point, and an encoding turns that number into bytes. A byte-level tokenizer starts from all 256 possible bytes, so every piece of text is representable, including characters it never saw in training. Rare words split into smaller pieces the vocabulary already knows. New emoji still work because related emoji share their first bytes: most characters in the main emoji block begin with <code>F0 9F</code>. A space is a byte too, and it is a token of its own.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 1 · Tokenize</span>
 											<h3 class="sp-title">Text becomes a sequence of ids</h3>
 										</div>
 										<div class="step-toolbar">
-											<input class="step-input" type="text" id="itok-input" aria-label="Text to tokenize" value="The transformer is playing greatly">
 											<div class="step-chips">
 												<button class="chip" type="button" data-tok="understanding">understanding</button>
 												<button class="chip" type="button" data-tok="unbreakable">unbreakable</button>
-												<button class="chip" type="button" data-tok="The transformer is playing greatly">a full sentence</button>
+												<button class="chip is-on" type="button" data-tok="sentence">The transformer is playing greatly</button>
 											</div>
 										</div>
 										<div class="token-chips" id="itok-out" aria-live="polite"></div>
@@ -240,7 +263,7 @@
 										</div>
 										<div class="step-toolbar">
 											<div class="step-chips">
-												<button class="chip" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
+												<button class="chip is-on" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
 												<button class="chip" type="button" data-emb="Man + Power">Man + Power</button>
 												<button class="chip" type="button" data-emb="Prince + Power">Prince + Power</button>
 												<button class="chip" type="button" data-emb="gender">male ↔ female</button>
@@ -249,7 +272,7 @@
 											</div>
 										</div>
 										<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
-										<div class="step-out" id="iemb-out">The space has two semantic axes in this demo: <b>power</b> and <b>gender</b>. Click an example equation to see where it lands.</div>
+										<div class="step-out" id="iemb-out">The space has two semantic axes in this demo: <b>power</b> and <b>gender</b>. Choose an example to see where it lands.</div>
 									</div>
 									<p class="step-note">Meaning becomes geometry (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>). Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this demo uses two so you can see the idea.</p>
 								</div>
@@ -283,7 +306,7 @@
 								</div>
 
 								<div class="step-pane" id="step-attention">
-									<p class="step-note step-lead">Attention lets each token look at the other tokens in the context, decide which ones matter for it, and pull their information into its own vector. That is how “bank” moves toward the river reading or the money reading. The demo follows one hand-tuned head; a real layer runs many heads in parallel.</p>
+									<p class="step-note step-lead">Attention lets each token look at the other tokens in the context, decide which ones matter for it, and pull their information into its own vector. That is how “bank” moves toward the river reading or the money reading. The demo shows one simplified attention head; a real layer runs many heads in parallel.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 4 · Attend</span>
@@ -291,7 +314,7 @@
 										</div>
 										<div class="step-toolbar">
 											<div class="step-chips" id="iatt-examples">
-												<button class="chip is-on" type="button" data-att="0">no context</button>
+												<button class="chip is-on" type="button" data-att="0">no unambiguous context</button>
 												<button class="chip" type="button" data-att="1">river nearby</button>
 												<button class="chip" type="button" data-att="2">money nearby</button>
 												<button class="chip" type="button" data-att="3">both nearby</button>
@@ -299,10 +322,10 @@
 										</div>
 										<div class="attn-sentence" id="iatt-sentence">I walk to the <span class="aw-bank">bank</span>.</div>
 										<canvas class="step-canvas" id="iatt-canvas" aria-label="Attention moving the embedding of bank toward the context"></canvas>
-										<div class="step-out" id="iatt-out">No context: bank stays in the middle, ambiguous.</div>
+										<div class="step-out" id="iatt-out">No unambiguous context: bank stays in the middle, ambiguous.</div>
 									</div>
-									<p class="step-note"><b>This step is an intuition, not a literal simulation.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result (context changes the representation) with one hand-tuned head instead of the many heads and layers of a real model.</p>
-									<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the company it keeps, because the values it collects are different.</p>
+									<p class="step-note"><b>This step is an intuition, not a real attention head.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result: context changes the representation. It shows one simplified attention head, not the many heads and layers of a real model.</p>
+									<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the context, because the values it collects are different.</p>
 								</div>
 
 								<div class="step-pane layer-pane" id="layer-detail">
@@ -321,7 +344,7 @@
 									<div class="collapse-card">
 										<div class="cc-label">two dense layers without a nonlinearity</div>
 										<div class="collapse-math" id="collapse-math" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \\[4pt] W &amp;= W_2 W_1, \qquad b = W_2 b_1 + b_2 \end{aligned}"></div>
-										<p>Stack two dense layers and let the first feed the second. The product <span data-tex="W_2 W_1" data-tex-display="false"></span> is itself a new single weight matrix: every row of <span data-tex="W_1" data-tex-display="false"></span> is mixed through the columns of <span data-tex="W_2" data-tex-display="false"></span>. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <span data-tex="W" data-tex-display="false"></span> maps d inputs directly to k outputs: the hidden layer has disappeared. The biases also merge into <span data-tex="W_2 b_1 + b_2" data-tex-display="false"></span>. Without a nonlinearity, two dense layers are exactly one dense layer with a combined <span data-tex="W" data-tex-display="false"></span>; depth adds no expressive power. That is why an activation function is needed.</p>
+										<p>Stack two dense layers, one after the other. The product <span data-tex="W_2 W_1" data-tex-display="false"></span> is itself a new single weight matrix: every row of <span data-tex="W_1" data-tex-display="false"></span> is mixed through the columns of <span data-tex="W_2" data-tex-display="false"></span>. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <span data-tex="W" data-tex-display="false"></span> maps d inputs directly to k outputs: the hidden layer has disappeared. The biases also merge into <span data-tex="W_2 b_1 + b_2" data-tex-display="false"></span>. Without a nonlinearity, two dense layers are exactly one dense layer with a combined <span data-tex="W" data-tex-display="false"></span>; depth adds no expressive power. That is why an activation function is needed.</p>
 									</div>
 									<h4 class="layer-subhead">Activation functions</h4>
 									<div class="activation-card">
@@ -390,11 +413,11 @@
 												<span id="ism-counter" class="ism-counter">1 / 7</span>
 											</div>
 										</div>
-										<div class="demo-insight"><b>Takeaway</b><span>The layer changes the coordinate system. A cut that was impossible becomes a threshold: that is what depth buys.</span></div>
+										<div class="demo-insight"><b>Takeaway</b><span>The layer projects the points into a higher-dimensional space where a straight line can separate what was inseparable before. That is what a dense layer does: it changes the space in which the cut is made.</span></div>
 									</div>
 									<div class="step-out">The cut still happens. The layer changes the space so that a straight cut in the new space separates the classes in the old one. ReLU is the sharp version: a fold along a crease.</div>
-									<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into something closer to a simple threshold.</p>
-									<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>). The animation is an illustration, not a proof.</p>
+									<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into one that a straight threshold can separate.</p>
+									<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>).</p>
 								</div>
 
 								<div class="step-pane" id="step-ffn">
@@ -451,9 +474,9 @@
 									<p class="step-note">The addition is the point. Nothing is overwritten, so the original signal survives, and gradients have a short path back through the sum. That is a large part of why very deep networks train at all. The demo lets you add the updates one at a time and watch the bars accumulate.</p>
 								</div>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Tokens become vectors, positions add order, attention mixes context, the feed-forward network computes, and the residual stream carries everything forward.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>Tokens become vectors, positions add where each token sits, attention mixes context, the feed-forward network computes, and the residual stream carries the result to the next layer.</span></div>
 							<div class="demo-foot">
-								The steps are deliberately small models. The real pipeline uses thousands of
+								The steps are small models. The real pipeline uses thousands of
 								dimensions, many heads, and dozens of layers. The order and the division of
 								labour stay the same.
 							</div>
@@ -466,14 +489,14 @@
 						<div class="prose">
 							<p>
 								The model arranges every token as a point in a learned vector space, and
-								relationships often show up as directions: the arrow from
-								<strong>man</strong> to <strong>woman</strong> is the same direction as
+								relationships often show up as directions: the direction from
+								<strong>man</strong> to <strong>woman</strong> is the same as
 								<strong>king</strong> to <strong>queen</strong>, and a different direction
 								takes <strong>man</strong> to <strong>prince</strong>. The idea that
 								concepts can be read as regions and directions in a geometric space goes
 								back to the conceptual spaces of
 								<a href="https://en.wikipedia.org/wiki/Conceptual_space" rel="noopener">Gärdenfors (2000)</a>.
-								In an LLM the space is learned from text rather than hand-built.
+								In an LLM the space is learned from text rather than designed by hand.
 							</p>
 							<p>
 								The plot below is a two-dimensional slice: <strong>Power</strong> on
@@ -483,7 +506,7 @@
 								thousands of dimensions, most of them unnamed.
 							</p>
 							<p>
-								Use the chips to do the arithmetic. <em>King − Man + Woman</em>
+								Use the buttons to do the arithmetic. <em>King − Man + Woman</em>
 								lands near <em>Queen</em>, because the gender direction is shared.
 								The direction is the point, not the exact coordinates. Real
 								embeddings are noisier, and the geometry inherits the biases of the
@@ -514,13 +537,13 @@
 									<div><b>Lands near</b><span id="emb-plot-nearest">Queen</span></div>
 									<div><b>Distance</b><span id="emb-plot-dist">...</span></div>
 								</div>
-								<p class="demo-hint">The axes are a hand-built slice of a much larger space. The direction is the point, not the exact numbers.</p>
+								<p class="demo-hint">The axes are a slice through a much larger space. The direction is the point, not the exact numbers.</p>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Relationships are reusable directions. “King − Man + Woman” lands near “Queen” because the gender direction is shared.</span></div>
-							<div class="demo-foot">The axes are a small hand-built slice of a much larger space. Real embeddings are higher-dimensional and noisier.</div>
+							<div class="demo-foot">The axes are a small slice of a much larger space. Real embeddings are higher-dimensional and noisier.</div>
 						</div>
 						<div class="prose" style="margin-top:22px">
-							<p><strong>The meadow of words.</strong> The plot above shows directions. The meadow shows the other geometry. After all the layers, the model has a vector for each token, and every token in the vocabulary owns the region of that space closest to it. The image is two-dimensional, while a real model works in thousands of dimensions, but the picture is the same: the vocabulary forms bubbles, and a new thought falls into the bubble whose centre is nearest. Move the pointer and the thought lands in a cell, or on a seam where two words are almost equally near.</p>
+							<p><strong>The meadow of words.</strong> The plot above shows directions. The meadow shows how the model divides the space into cells. After all the layers, the model has a vector for each token, and every token in the vocabulary owns the region of that space closest to it. The image is two-dimensional, while a real model works in thousands of dimensions, but the picture is the same: the vocabulary forms bubbles, and a new thought falls into the bubble whose centre is nearest. The closer the thought is to a word's centre, the more likely that word is; near the edges the estimate becomes less precise. Temperature and top-k change how large the candidate set is. Move the pointer and the thought lands in a cell, or on a seam where two words are almost equally near.</p>
 						</div>
 
 						<div class="demo demo--paper" id="meadow-demo">
@@ -536,6 +559,7 @@
 								<div class="demo-controls">
 									<label>Words <input type="range" id="md-n" min="12" max="30" step="6" value="12"><output id="md-n-out">12</output></label>
 									<label>Temperature <input type="range" id="md-temp" min="0.2" max="2.6" step="0.05" value="0.8"><output id="md-temp-out">0.80</output></label>
+									<label>Top-k <input type="range" id="md-k" min="1" max="10" step="1" value="5"><output id="md-k-out">5</output></label>
 								</div>
 								<div class="demo-readout demo-readout--4">
 									<div><b>Nearest word</b><span id="md-word">Dog</span></div>
@@ -545,7 +569,7 @@
 								</div>
 								<p class="meadow-caption" id="md-caption">Move the pointer across the meadow.</p>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Words tile the space of thoughts. Certainty is being deep inside a cell; uncertainty is standing on a seam.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>Words divide the space of thoughts into cells. Certainty is being deep inside a cell; uncertainty is standing on a seam.</span></div>
 							<div class="demo-foot">More words make smaller cells and thinner seams, but the ambiguous share never reaches zero. In a real model the space has thousands of dimensions and the vocabulary has tens of thousands of tokens.</div>
 						</div>
 
@@ -559,11 +583,12 @@
 								Put the pieces in order and the outline is simple. The real model is much
 								larger, and the remaining pages fill in the details. Text is cut into
 								<strong>tokens</strong>. Each token becomes a <strong>vector</strong>. A
-								<strong>position</strong> signal is added. Layer after layer,
+								<strong>position signal</strong> is added. Layer after layer,
 								<strong>attention</strong> lets every vector look at its neighbours while a
 								<strong>residual stream</strong> carries earlier findings forward. The
 								final vector is scored against the vocabulary and turned into a
-								distribution; one token is drawn and appended.
+								distribution; one token is drawn. It is appended, and the next pass begins;
+								the loop ends when the model emits the special token &lt;|endoftext|&gt;.
 							</p>
 							<p>
 								No step has a tidy fact database, and no step “understands” in the human
@@ -577,8 +602,7 @@
 								and often <strong>superposed</strong> (<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>): many features share the same
 								directions rather than each owning a private neuron. That is why a fact can
 								be partly present, why a model can know something without being able to say
-								it reliably, and why editing one fact can disturb another. Fact lookup follows a
-								single fact through the forward pass.
+								it reliably, and why editing one fact can disturb another.
 							</p>
 						</div>
 						<div class="keypoints">
@@ -589,17 +613,17 @@
 						</div>
 						<div class="prose">
 							<p>
-								Compression-as-intelligence is a productive working hypothesis, not a proved
-								identity. Solomonoff’s universal prior gives each possible explanation a
-								probability that shrinks as the shortest program that generates it gets longer,
-								and his convergence theorem says that, in the limit, a predictor built from
-								that prior learns any pattern that a finite program can generate
+								Compression-as-intelligence is a working hypothesis, not a proved identity.
+								Solomonoff’s universal prior scores each possible explanation by how short a
+								program can produce it: simpler explanations get more weight. His convergence
+								theorem says that, in the limit, a predictor built this way learns any pattern
+								that a finite program can generate
 								(<a href="https://doi.org/10.1109/TIT.1978.1055913" rel="noopener">Solomonoff, 1978</a>).
-								The catch is that the prior cannot be computed, so the result is a limit
-								statement about prediction; it does not settle whether a particular model
-								grasps the world. The honest position is that the evidence is still catching up
-								to the philosophy, and that both the awe and the scepticism are responses to
-								the same remarkable fact: a loop this simple gets this far. Put differently, a
+								The catch is that this score cannot be computed in practice, so the result
+								describes an ideal predictor, not a particular model. It does not settle whether
+								a model grasps the world. The honest position is that the evidence is still
+								catching up to the philosophy, and that both awe and scepticism respond to the
+								same remarkable fact: a loop this simple gets this far. Put differently, a
 								language model is a finite vocabulary laid over a continuum of meaning, with a
 								loop that keeps falling to the next word.
 							</p>
@@ -613,58 +637,83 @@
 	</main>
 
 	<script src="../temml.min.js"></script>
-	<script src="assets/site.js?v=20261103"></script>
+	<script src="assets/site.js?v=20261104"></script>
 	<script src="assets/demos.js?v=20261103"></script>
-	<script src="assets/space-morph.js?v=20261103"></script>
-	<script src="assets/embedding-plot.js?v=20261103"></script>
-	<script src="assets/word-meadow.js?v=20261103"></script>
+	<script src="assets/space-morph.js?v=20261104"></script>
+	<script src="assets/embedding-plot.js?v=20261104"></script>
+	<script src="assets/word-meadow.js?v=20261104"></script>
 	<script>
 	(function () {
 		"use strict";
 
 		/* ── demo 1: the autoregressive loop ─────────────────── */
 		var MAX_STEPS = 6;
+		var LANG = TM.lang();
+		var DE = LANG === "de";
 		function hexToRgb(hex) {
 			var h = String(hex || "").replace("#", "");
 			if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
 			return [parseInt(h.slice(0, 2), 16) || 0, parseInt(h.slice(2, 4), 16) || 0, parseInt(h.slice(4, 6), 16) || 0];
 		}
-		var NOUNS = [
+		var NOUNS = DE ? [
+			{ t: "Drache", l: 3.4 }, { t: "Prinzessin", l: 1.1 }, { t: "Roboter", l: 0.7 }, { t: "Schloss", l: 0.4 }, { t: "Fluss", l: 0.2 }
+		] : [
 			{ t: "dragon", l: 3.4 }, { t: "princess", l: 1.1 }, { t: "robot", l: 0.7 }, { t: "castle", l: 0.4 }, { t: "river", l: 0.2 }
 		];
-		var ACTIONS = {
+		var ACTIONS = DE ? {
+			Drache: [{ t: "fliegen", l: 3.5 }, { t: "brüllen", l: 1.5 }, { t: "schlafen", l: 0.8 }, { t: "schwimmen", l: 0.5 }, { t: "singen", l: 0.3 }],
+			Prinzessin: [{ t: "singen", l: 3.4 }, { t: "tanzen", l: 1.5 }, { t: "träumen", l: 0.9 }, { t: "schlafen", l: 0.5 }, { t: "schwimmen", l: 0.3 }],
+			Roboter: [{ t: "fliegen", l: 3.3 }, { t: "piepen", l: 1.5 }, { t: "singen", l: 0.9 }, { t: "schlafen", l: 0.5 }, { t: "schwimmen", l: 0.3 }],
+			Schloss: [{ t: "stehen", l: 3.2 }, { t: "leuchten", l: 1.5 }, { t: "schlafen", l: 0.8 }, { t: "singen", l: 0.4 }],
+			Fluss: [{ t: "fließen", l: 3.5 }, { t: "singen", l: 1.2 }, { t: "brüllen", l: 0.8 }, { t: "gefrieren", l: 0.5 }, { t: "glänzen", l: 0.3 }]
+		} : {
 			dragon: [{ t: "fly", l: 3.5 }, { t: "roar", l: 1.5 }, { t: "sleep", l: 0.8 }, { t: "swim", l: 0.5 }, { t: "sing", l: 0.3 }],
 			princess: [{ t: "sing", l: 3.4 }, { t: "dance", l: 1.5 }, { t: "dream", l: 0.9 }, { t: "sleep", l: 0.5 }, { t: "swim", l: 0.3 }],
 			robot: [{ t: "fly", l: 3.3 }, { t: "beep", l: 1.5 }, { t: "sing", l: 0.9 }, { t: "sleep", l: 0.5 }, { t: "swim", l: 0.3 }],
 			castle: [{ t: "stand", l: 3.2 }, { t: "glow", l: 1.5 }, { t: "sleep", l: 0.8 }, { t: "sing", l: 0.4 }],
 			river: [{ t: "flow", l: 3.5 }, { t: "sing", l: 1.2 }, { t: "roar", l: 0.8 }, { t: "freeze", l: 0.5 }, { t: "shine", l: 0.3 }]
 		};
+		var RELATIVE = DE ? {
+			Drache: [{ t: "der", l: 3.6 }],
+			Prinzessin: [{ t: "die", l: 3.6 }],
+			Roboter: [{ t: "der", l: 3.6 }],
+			Schloss: [{ t: "das", l: 3.6 }],
+			Fluss: [{ t: "der", l: 3.6 }]
+		} : null;
+		var MODALS = DE ? [
+			{ t: "konnte", l: 3.0 }, { t: "wollte", l: 1.3 }, { t: "sollte", l: 0.9 }, { t: "durfte", l: 0.6 }, { t: "musste", l: 0.3 }
+		] : [
+			{ t: "could", l: 3.0 }, { t: "would", l: 1.3 }, { t: "loved", l: 0.9 }, { t: "tried", l: 0.6 }, { t: "wanted", l: 0.3 }
+		];
+		var NEGATORS = DE ? [
+			{ t: "nicht", l: 3.3 }, { t: "nie", l: 1.2 }, { t: "nur", l: 0.8 }, { t: "noch", l: 0.5 }, { t: "immer", l: 0.3 }
+		] : [
+			{ t: "not", l: 3.3 }, { t: "never", l: 1.2 }, { t: "only", l: 0.8 }, { t: "still", l: 0.5 }, { t: "always", l: 0.3 }
+		];
 		function choicesFor() {
 			var n = generated.length;
 			if (n === 0) return NOUNS;
 			if (n === 1) {
+				if (DE) return RELATIVE[generated[0]] || [{ t: "der", l: 3.6 }];
 				var noun = generated[0];
 				if (noun === "princess") return [{ t: "that", l: 3.1 }, { t: "who", l: 1.4 }];
 				if (noun === "castle" || noun === "river") return [{ t: "that", l: 3.1 }, { t: "which", l: 1.4 }];
 				return [{ t: "that", l: 3.1 }, { t: "who", l: 1.4 }, { t: "which", l: 0.8 }];
 			}
-			if (n === 2) return [
-				{ t: "could", l: 3.0 }, { t: "would", l: 1.3 }, { t: "loved", l: 0.9 }, { t: "tried", l: 0.6 }, { t: "wanted", l: 0.3 }
-			];
+			if (n === 2) return MODALS;
 			if (n === 3) {
+				if (DE) return NEGATORS;
 				var verb = generated[2];
-				if (verb === "could" || verb === "would") return [
-					{ t: "not", l: 3.3 }, { t: "never", l: 1.2 }, { t: "only", l: 0.8 }, { t: "still", l: 0.5 }, { t: "always", l: 0.3 }
-				];
+				if (verb === "could" || verb === "would") return NEGATORS;
 				return [{ t: "to", l: 4.0 }];
 			}
-			if (n === 4) return ACTIONS[generated[0]] || ACTIONS.dragon;
+			if (n === 4) return ACTIONS[generated[0]] || (DE ? ACTIONS.Drache : ACTIONS.dragon);
 			if (n === 5) return [
 				{ t: ".", l: 3.2 }, { t: "!", l: 1.1 }, { t: "…", l: 0.7 }
 			];
 			return [];
 		}
-		var base = ["Once", "upon", "a", "time", "there", "was", "a"];
+		var base = DE ? ["Es", "war", "einmal", "ein"] : ["Once", "upon", "a", "time", "there", "was", "a"];
 		var generated = [];
 		var stage = 0;
 		var temp = 0.8;
@@ -690,17 +739,17 @@
 		function renderTree() {
 			if (!treeEl) return;
 			var path = ['<span class="nt-tree-base">' + escapeHtml(base.join(" ")) + '</span>'];
-			generated.forEach(function (tok) {
+			generated.forEach(function (tok, i) {
 				path.push('<span class="nt-tree-arrow">→</span>');
-				path.push('<span class="nt-tree-node">' + escapeHtml(tok) + '</span>');
+				path.push('<span class="nt-tree-node">' + escapeHtml(tok) + (DE && i === 0 ? "," : "") + '</span>');
 			});
 			var opts = choicesFor();
 			var next;
 			if (opts.length) {
-				next = '<span class="nt-tree-next">' + (opts.length === 1 ? "next (only one):" : "next:") + '</span> '
+				next = '<span class="nt-tree-next">' + (opts.length === 1 ? (DE ? "nächstes (nur eine Möglichkeit):" : "next (only one):") : (DE ? "nächstes:" : "next:")) + '</span> '
 					+ opts.map(function (o) { return '<span class="nt-tree-branch">' + escapeHtml(o.t) + '</span>'; }).join('<span class="nt-tree-sep">·</span>');
 			} else {
-				next = '<span class="nt-tree-end">end of sentence</span>';
+				next = '<span class="nt-tree-end">' + (DE ? "Satzende" : "end of sentence") + '</span>';
 			}
 			treeEl.innerHTML = '<div class="nt-tree-line">' + path.join(' ') + '</div>'
 				+ '<div class="nt-tree-line nt-tree-line--next">' + next + '</div>';
@@ -712,11 +761,12 @@
 				.concat(generated.map(function (tok) { return { tok: tok, cls: "pred" }; }));
 			all.forEach(function (item, i) {
 				var noSpace = /^[.,!?;:)\]]|^…/.test(item.tok);
+				if (DE && i === base.length + 1) html += ",";
 				if (i && !noSpace) html += " ";
 				html += '<span class="' + item.cls + '">' + escapeHtml(item.tok) + "</span>";
 			});
 			if (stage >= MAX_STEPS) {
-				html += ' <span class="given" style="opacity:.55">sequence complete</span>';
+				html += ' <span class="given" style="opacity:.55">' + (DE ? "Sequenz vollständig" : "sequence complete") + '</span>';
 			} else {
 				html += '<span class="cursor" aria-hidden="true"></span>';
 			}
@@ -732,7 +782,7 @@
 			if (stage >= MAX_STEPS) {
 				var done = document.createElement("p");
 				done.style.cssText = "margin:0;color:var(--tm-muted);font-family:var(--tm-prose);font-size:.9rem";
-				done.textContent = "The model would now emit an end-of-sequence signal, or keep going if the context invited it.";
+				done.textContent = DE ? "Das Modell würde jetzt ein End-of-Sequence-Signal ausgeben oder weiterlaufen, wenn der Kontext es zulässt." : "The model would now emit an end-of-sequence signal, or keep going if the context invited it.";
 				barsEl.appendChild(done);
 				if (stepBtn) { stepBtn.disabled = true; stepBtn.style.opacity = ".45"; }
 				return;
@@ -757,7 +807,7 @@
 				var row = document.createElement("button");
 				row.type = "button";
 				row.className = "bar-row" + (i === top ? " is-top" : "") + (kept && kept.indexOf(i) === -1 ? " is-cut" : "");
-				row.setAttribute("aria-label", "Choose " + opt.t + ", probability " + Math.round(probs[i] * 100) + " percent");
+				row.setAttribute("aria-label", (DE ? "Wähle " : "Choose ") + opt.t + (DE ? ", Wahrscheinlichkeit " : ", probability ") + Math.round(probs[i] * 100) + (DE ? " Prozent" : " percent"));
 				row.innerHTML = '<span class="bar-name">' + escapeHtml(opt.t === " " ? "␣" : opt.t) + '</span>'
 					+ '<span class="bar-track"><span class="bar-fill" style="width:' + (probs[i] * 100).toFixed(2) + '%"></span></span>'
 					+ '<span class="bar-pct">' + Math.round(probs[i] * 100) + '%</span>';
@@ -768,11 +818,11 @@
 				var note = document.createElement("p");
 				note.className = "bars-note";
 				note.textContent = options.length === 1
-					? "Only one branch makes sense from this point."
-					: "Branches that would be ungrammatical here are omitted.";
+					? (DE ? "Von hier aus ergibt nur ein Zweig Sinn." : "Only one branch makes sense from this point.")
+					: (DE ? "Zweige, die hier ungrammatisch wären, werden weggelassen." : "Branches that would be ungrammatical here are omitted.");
 				barsEl.appendChild(note);
 			}
-			if (topEl) topEl.textContent = options[top].t === " " ? "␣ (space)" : options[top].t;
+			if (topEl) topEl.textContent = options[top].t === " " ? (DE ? "␣ (Leerzeichen)" : "␣ (space)") : options[top].t;
 			updateWhy();
 		}
 		function choose(token) {
@@ -817,12 +867,20 @@
 			if (!why) return;
 			var opts = choicesFor();
 			if (opts.length === 1) {
-				why.textContent = "Only one continuation makes sense here: “" + opts[0].t + "”. The tree has narrowed to a single branch.";
+				why.textContent = DE
+					? "Hier ergibt nur eine Fortsetzung Sinn: „" + opts[0].t + "“. Der Baum hat sich auf einen Zweig verengt."
+					: "Only one continuation makes sense here: “" + opts[0].t + "”. The tree has narrowed to a single branch.";
 				return;
 			}
-			if (decodeMode === "greedy") why.textContent = "Greedy is the limit T → 0: it always takes the highest-probability word, so the temperature slider is pinned at 0.05. The text is deterministic and often repetitive.";
-			else if (decodeMode === "topp") why.textContent = "Temperature reshapes the distribution first; top-p then keeps the smallest set of words whose probabilities reach 90% and samples among them. The faded bars are outside the nucleus.";
-			else why.textContent = "Sampling draws from the whole temperature-shaped distribution. Low T behaves almost greedily; high T flattens the distribution and trades coherence for surprise.";
+			if (decodeMode === "greedy") why.textContent = DE
+				? "Greedy ist der Grenzfall T → 0: Es nimmt immer das wahrscheinlichste Wort, deshalb ist der Temperaturregler bei 0,05 fixiert. Der Text ist deterministisch und oft repetitiv."
+				: "Greedy is the limit T → 0: it always takes the highest-probability word, so the temperature slider is pinned at 0.05. The text is deterministic and often repetitive.";
+			else if (decodeMode === "topp") why.textContent = DE
+				? "Die Temperatur formt zuerst die Verteilung; Top-p behält dann den kürzesten Anfang der sortierten Wörter, deren kumulierte Wahrscheinlichkeit 90 % erreicht, und zieht daraus. Die blassen Balken liegen außerhalb dieses Anfangs."
+				: "Temperature reshapes the distribution first; top-p then keeps the shortest prefix of sorted words whose cumulative probability reaches 90%, and samples among them. The faded bars are outside that prefix.";
+			else why.textContent = DE
+				? "Sampling zieht aus der ganzen temperaturgeformten Verteilung. Niedriges T verhält sich fast gierig; hohes T flacht die Verteilung ab und tauscht Kohärenz gegen Überraschung."
+				: "Sampling draws from the whole temperature-shaped distribution. Low T behaves almost greedily; high T flattens the distribution and trades coherence for surprise.";
 		}
 		function setTemp(value) {
 			temp = Math.max(0.05, Math.min(1.8, value));
@@ -849,7 +907,7 @@
 				setTempEnabled(true);
 			}
 			var modeEl = document.getElementById("nt-mode");
-			if (modeEl) modeEl.textContent = mode === "topp" ? "top-p 0.9" : mode;
+			if (modeEl) modeEl.textContent = mode === "topp" ? "Top-p 0.9" : (DE ? (mode === "sample" ? "Sampling" : "Greedy") : mode);
 			document.querySelectorAll("[data-decode]").forEach(function (b) {
 				b.classList.toggle("is-on", b.getAttribute("data-decode") === mode);
 			});
@@ -858,7 +916,7 @@
 		}
 		function updateReadout() {
 			if (stepCount) stepCount.textContent = Math.min(stage, MAX_STEPS) + " / " + MAX_STEPS;
-			if (lenEl) lenEl.textContent = (base.length + generated.length) + " words";
+			if (lenEl) lenEl.textContent = (base.length + generated.length) + (DE ? " Wörter" : " words");
 		}
 		function reset() {
 			generated = [];
@@ -882,6 +940,272 @@
 		setTempEnabled(true);
 		reset();
 
+		/* ── truth tunnel ────────────────────────────────────── */
+		var isoCanvas = document.getElementById("tt-canvas");
+		var isoNextEl = document.getElementById("tt-next");
+		var isoMetaEl = document.getElementById("tt-meta");
+		var isoAdvance = document.getElementById("tt-advance");
+		var isoTempEl = document.getElementById("tt-temp");
+		var isoTempOut = document.getElementById("tt-temp-out");
+		var isoStep = 0;
+		var isoTemp = 0.8;
+		var isoApi = null;
+		var isoLabels = DE ? {
+			certain: "fast sicher", likely: "wahrscheinlich", open: "offen", wide: "sehr offen", width: "Tunnelbreite", certainAxis: "sicher", openAxis: "offen"
+		} : {
+			certain: "near-certain", likely: "likely", open: "open", wide: "wide open", width: "tunnel width", certainAxis: "certain", openAxis: "open"
+		};
+		var isoTokens = DE ? ["Die", "Hauptstadt", "von", "Frankreich", "ist", "Paris", "."] : ["The", "capital", "of", "France", "is", "Paris", "."];
+		var isoEntropy = [0.95, 0.55, 0.20, 0.60, 0.15, 0.05, 0.10];
+		var isoPath = [
+			{ x: 0.08, y: 0.50 }, { x: 0.20, y: 0.42 }, { x: 0.32, y: 0.38 },
+			{ x: 0.45, y: 0.35 }, { x: 0.58, y: 0.32 }, { x: 0.74, y: 0.30 }, { x: 0.88, y: 0.32 }
+		];
+		var isoBranches = DE ? [
+			{ atStep: 3, alternatives: [
+				{ token: "Deutschland", path: { x: 0.45, y: 0.55 }, entropy: 0.55 },
+				{ token: "Japan", path: { x: 0.45, y: 0.22 }, entropy: 0.50 }
+			] },
+			{ atStep: 5, alternatives: [
+				{ token: "die", path: { x: 0.74, y: 0.40 }, entropy: 0.25 }
+			] }
+		] : [
+			{ atStep: 3, alternatives: [
+				{ token: "Germany", path: { x: 0.45, y: 0.55 }, entropy: 0.55 },
+				{ token: "Japan", path: { x: 0.45, y: 0.22 }, entropy: 0.50 }
+			] },
+			{ atStep: 5, alternatives: [
+				{ token: "the", path: { x: 0.74, y: 0.40 }, entropy: 0.25 }
+			] }
+		];
+		function drawIso(ctx, w, h) {
+			var c = TM.colors();
+			var pad = 30;
+			var plotW = Math.max(40, w - pad * 2 - 24);
+			var plotH = Math.max(40, h - pad * 2);
+			function at(p) {
+				return { x: pad + p.x * plotW, y: pad + p.y * plotH };
+			}
+			ctx.clearRect(0, 0, w, h);
+			ctx.fillStyle = c.paper2;
+			ctx.fillRect(0, 0, w, h);
+			ctx.strokeStyle = c.line;
+			ctx.lineWidth = 1;
+			for (var gx = pad; gx < pad + plotW; gx += 40) {
+				ctx.beginPath(); ctx.moveTo(gx, pad); ctx.lineTo(gx, pad + plotH); ctx.stroke();
+			}
+			for (var gy = pad; gy < pad + plotH; gy += 40) {
+				ctx.beginPath(); ctx.moveTo(pad, gy); ctx.lineTo(pad + plotW, gy); ctx.stroke();
+			}
+			ctx.beginPath();
+			isoPath.forEach(function (p, i) {
+				var q = at(p);
+				if (i === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
+			});
+			ctx.strokeStyle = c.lineStrong;
+			ctx.lineWidth = 1;
+			ctx.setLineDash([4, 8]);
+			ctx.stroke();
+			ctx.setLineDash([]);
+			var step = Math.min(isoStep, isoTokens.length - 1);
+			var baseWidth = Math.min(w, h) * 0.10;
+			if (step >= 1) {
+				var upper = [], lower = [];
+				for (var i = 0; i <= step; i++) {
+					var q = at(isoPath[i]);
+					var env = isoEntropy[i] * isoTemp * baseWidth;
+					var dx = 0, dy = -1;
+					if (i < isoPath.length - 1) {
+						var n = at(isoPath[i + 1]);
+						var tx = n.x - q.x, ty = n.y - q.y, len = Math.hypot(tx, ty);
+						if (len > 0) { dx = -ty / len; dy = tx / len; }
+					} else if (i > 0) {
+						var p = at(isoPath[i - 1]);
+						var tx2 = q.x - p.x, ty2 = q.y - p.y, len2 = Math.hypot(tx2, ty2);
+						if (len2 > 0) { dx = -ty2 / len2; dy = tx2 / len2; }
+					}
+					upper.push({ x: q.x + dx * env, y: q.y + dy * env });
+					lower.push({ x: q.x - dx * env, y: q.y - dy * env });
+				}
+				for (var layer = 3; layer >= 0; layer--) {
+					var scale = 1 + layer * 0.3;
+					ctx.beginPath();
+					upper.forEach(function (p, i2) {
+						var q2 = at(isoPath[i2]);
+						var x = q2.x + (p.x - q2.x) * scale, y = q2.y + (p.y - q2.y) * scale;
+						if (i2 === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+					});
+					for (var i3 = lower.length - 1; i3 >= 0; i3--) {
+						var q3 = at(isoPath[i3]);
+						var p3 = lower[i3];
+						ctx.lineTo(q3.x + (p3.x - q3.x) * scale, q3.y + (p3.y - q3.y) * scale);
+					}
+					ctx.closePath();
+					ctx.globalAlpha = 0.03 + (3 - layer) * 0.03;
+					ctx.fillStyle = c.coral;
+					ctx.fill();
+					ctx.globalAlpha = 1;
+				}
+				ctx.beginPath();
+				upper.forEach(function (p, i4) { if (i4 === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+				for (var i5 = lower.length - 1; i5 >= 0; i5--) ctx.lineTo(lower[i5].x, lower[i5].y);
+				ctx.closePath();
+				ctx.fillStyle = c.coral;
+				ctx.globalAlpha = 0.08;
+				ctx.fill();
+				ctx.globalAlpha = 0.35;
+				ctx.strokeStyle = c.coral;
+				ctx.lineWidth = 1.5;
+				ctx.stroke();
+				ctx.globalAlpha = 1;
+			}
+			isoBranches.forEach(function (branch) {
+				if (step < branch.atStep) return;
+				var origin = at(isoPath[branch.atStep]);
+				branch.alternatives.forEach(function (alt) {
+					var target = at(alt.path);
+					var env = Math.max(6, alt.entropy * isoTemp * baseWidth * 0.6);
+					ctx.beginPath();
+					ctx.moveTo(origin.x, origin.y);
+					ctx.lineTo(target.x, target.y);
+					ctx.strokeStyle = c.gold;
+					ctx.globalAlpha = 0.35;
+					ctx.lineWidth = 1.5;
+					ctx.setLineDash([3, 5]);
+					ctx.stroke();
+					ctx.setLineDash([]);
+					ctx.globalAlpha = 1;
+					ctx.beginPath();
+					ctx.arc(target.x, target.y, env, 0, Math.PI * 2);
+					ctx.fillStyle = c.gold;
+					ctx.globalAlpha = 0.06;
+					ctx.fill();
+					ctx.globalAlpha = 0.3;
+					ctx.strokeStyle = c.gold;
+					ctx.stroke();
+					ctx.globalAlpha = 1;
+					ctx.font = "11px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
+					ctx.textAlign = "center";
+					ctx.fillStyle = c.gold;
+					ctx.fillText(alt.token, target.x, target.y - env - 6);
+				});
+			});
+			if (step >= 1) {
+				ctx.beginPath();
+				for (var s = 0; s <= step; s++) { var qs = at(isoPath[s]); if (s === 0) ctx.moveTo(qs.x, qs.y); else ctx.lineTo(qs.x, qs.y); }
+				ctx.strokeStyle = c.blue;
+				ctx.lineWidth = 2.5;
+				ctx.stroke();
+			}
+			for (var n2 = 0; n2 <= step; n2++) {
+				var q4 = at(isoPath[n2]);
+				var ent = isoEntropy[n2];
+				var radius = 5 + ent * isoTemp * 4;
+				var fill = ent < 0.3 ? c.green : ent < 0.6 ? c.gold : c.coral;
+				ctx.beginPath();
+				ctx.arc(q4.x, q4.y, radius, 0, Math.PI * 2);
+				ctx.fillStyle = fill;
+				ctx.fill();
+				ctx.strokeStyle = c.card;
+				ctx.lineWidth = 2;
+				ctx.stroke();
+				ctx.font = "700 12px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
+				ctx.textAlign = "center";
+				ctx.fillStyle = c.ink;
+				ctx.fillText(isoTokens[n2], q4.x, q4.y - radius - 8);
+			}
+			for (var f = step + 1; f < isoTokens.length; f++) {
+				var q5 = at(isoPath[f]);
+				ctx.beginPath();
+				ctx.arc(q5.x, q5.y, 3, 0, Math.PI * 2);
+				ctx.fillStyle = c.muted;
+				ctx.globalAlpha = 0.25;
+				ctx.fill();
+				ctx.globalAlpha = 0.35;
+				ctx.font = "10px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
+				ctx.textAlign = "center";
+				ctx.fillStyle = c.muted;
+				ctx.fillText(isoTokens[f], q5.x, q5.y - 10);
+				ctx.globalAlpha = 1;
+			}
+			var barX = w - 36, barY = 40, barW = 12, barH = h - 86;
+			if (barH > 40) {
+				var grad = ctx.createLinearGradient(0, barY, 0, barY + barH);
+				grad.addColorStop(0, c.blue);
+				grad.addColorStop(0.5, c.coral);
+				grad.addColorStop(1, c.gold);
+				ctx.fillStyle = grad;
+				ctx.fillRect(barX, barY, barW, barH);
+				var eff = Math.min(1, isoEntropy[step] * isoTemp);
+				var markerY = barY + (1 - eff) * barH;
+				ctx.beginPath();
+				ctx.moveTo(barX - 7, markerY);
+				ctx.lineTo(barX, markerY - 4);
+				ctx.lineTo(barX, markerY + 4);
+				ctx.closePath();
+				ctx.fillStyle = c.ink;
+				ctx.fill();
+				ctx.beginPath();
+				ctx.moveTo(barX, markerY);
+				ctx.lineTo(barX + barW, markerY);
+				ctx.strokeStyle = c.ink;
+				ctx.lineWidth = 2;
+				ctx.stroke();
+				ctx.font = "9px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
+				ctx.textAlign = "center";
+				ctx.fillStyle = c.muted;
+				ctx.fillText(isoLabels.certainAxis, barX + barW / 2, barY - 8);
+				ctx.fillText(isoLabels.openAxis, barX + barW / 2, barY + barH + 14);
+				ctx.font = "700 10px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
+				ctx.textAlign = "left";
+				ctx.fillStyle = c.ink;
+				ctx.fillText("H=" + eff.toFixed(2), barX + barW + 6, markerY + 4);
+			}
+			ctx.font = "11px " + (getComputedStyle(document.documentElement).getPropertyValue("--tm-ui") || "system-ui");
+			ctx.textAlign = "left";
+			ctx.fillStyle = c.muted;
+			ctx.fillText("T = " + isoTemp.toFixed(2), 12, 20);
+			updateIsoSide();
+		}
+		function updateIsoSide() {
+			var step = Math.min(isoStep, isoTokens.length - 1);
+			var isEnd = step >= isoTokens.length - 1;
+			var nextWord = isEnd ? "|endoftext|" : isoTokens[step + 1];
+			var entropy = isEnd ? 0.02 : isoEntropy[step + 1];
+			var eff = Math.min(1, entropy * isoTemp);
+			if (isoNextEl) {
+				isoNextEl.textContent = nextWord;
+				isoNextEl.classList.toggle("is-end", isEnd);
+			}
+			if (isoTempOut) isoTempOut.textContent = isoTemp.toFixed(2);
+			if (!isoMetaEl) return;
+			var label = isoLabels.certain, cls = "is-certain";
+			if (!isEnd) {
+				if (eff >= 0.6) { label = isoLabels.wide; cls = "is-wide"; }
+				else if (eff >= 0.35) { label = isoLabels.open; cls = "is-open"; }
+				else if (eff >= 0.12) { label = isoLabels.likely; cls = "is-likely"; }
+			}
+			isoMetaEl.innerHTML = '<span class="iso-badge ' + cls + '">' + label + '</span>'
+				+ '<div style="margin-top:.55em">' + isoLabels.width + ' <b>' + eff.toFixed(2) + '</b></div>';
+		}
+		if (isoCanvas) {
+			isoApi = TM.initCanvas(isoCanvas, drawIso);
+			if (isoTempEl) {
+				isoTempEl.addEventListener("input", function () {
+					isoTemp = parseFloat(isoTempEl.value) || 0.8;
+					if (isoApi) isoApi.redraw();
+				});
+			}
+			if (isoAdvance) {
+				isoAdvance.addEventListener("click", function () {
+					isoStep = (isoStep + 1) % isoTokens.length;
+					if (isoApi) isoApi.redraw();
+				});
+			}
+			window.addEventListener("tm:theme", function () { if (isoApi) isoApi.redraw(); });
+			updateIsoSide();
+		}
+
 		/* ── tokens ──────────────────────────────────────────── */
 		var tokVocab = {
 			once: 1024, upon: 2048, a: 64, time: 3072, the: 128, there: 2560,
@@ -894,7 +1218,9 @@
 			he: 42, she: 43, it: 44, we: 45, they: 46, my: 47, your: 48,
 			his: 49, her: 50, this: 51, that: 52, with: 53, for: 54, not: 55,
 			but: 56, and: 57, or: 58, in: 59, to: 60, of: 61, at: 62,
-			by: 63, from: 65, up: 66, about: 67, into: 68, over: 69, after: 70
+			by: 63, from: 65, up: 66, about: 67, into: 68, over: 69, after: 70,
+			ver: 7040, ständ: 7041, nis: 7042, zerbrech: 7043, lich: 7044,
+			spiel: 7045, t: 7046, groß: 7047, artig: 7048, der: 7049
 		};
 		var tokSplit = {
 			understanding: ["under", "standing"],
@@ -904,9 +1230,23 @@
 			playing: ["play", "ing"],
 			played: ["play", "ed"],
 			player: ["play", "er"],
-			greatly: ["great", "ly"]
+			greatly: ["great", "ly"],
+			verständnis: ["ver", "ständ", "nis"],
+			unzerbrechlich: ["un", "zerbrech", "lich"],
+			spielt: ["spiel", "t"],
+			großartig: ["groß", "artig"]
 		};
 		var tokColors = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
+		var tokExamples = DE ? {
+			understanding: { label: "Verständnis", value: "Verständnis" },
+			unbreakable: { label: "unzerbrechlich", value: "unzerbrechlich" },
+			sentence: { label: "Der Transformer spielt großartig", value: "Der Transformer spielt großartig" }
+		} : {
+			understanding: { label: "understanding", value: "understanding" },
+			unbreakable: { label: "unbreakable", value: "unbreakable" },
+			sentence: { label: "The transformer is playing greatly", value: "The transformer is playing greatly" }
+		};
+		var tokValue = tokExamples.sentence.value;
 		function idFor(word) {
 			var h = 0;
 			for (var i = 0; i < word.length; i++) h = (h * 31 + word.charCodeAt(i)) % 50000;
@@ -952,11 +1292,10 @@
 			return tokens;
 		}
 		function renderTokens() {
-			var input = document.getElementById("itok-input");
 			var out = document.getElementById("itok-out");
 			var stats = document.getElementById("itok-stats");
-			if (!input || !out) return;
-			var tokens = tokenize(input.value || "");
+			if (!out) return;
+			var tokens = tokenize(tokValue);
 			out.innerHTML = tokens.map(function (tok, i) {
 				return '<div class="token-chip' + (tok.sub ? " is-sub" : "") + (tok.space ? " is-space" : "") +
 					'" style="border-left-color:' + tokColors[i % tokColors.length] + '">' +
@@ -974,17 +1313,21 @@
 					'<div><b>Whitespace</b><span>' + spaces + '</span></div>';
 			}
 		}
-		var tokInput = document.getElementById("itok-input");
-		if (tokInput) {
-			tokInput.addEventListener("input", renderTokens);
-			document.querySelectorAll("[data-tok]").forEach(function (btn) {
-				btn.addEventListener("click", function () {
-					tokInput.value = btn.getAttribute("data-tok");
-					renderTokens();
-				});
+		var tokButtons = document.querySelectorAll("[data-tok]");
+		tokButtons.forEach(function (btn) {
+			var key = btn.getAttribute("data-tok");
+			var example = tokExamples[key];
+			if (!example) return;
+			btn.textContent = example.label;
+			btn.classList.toggle("is-on", key === "sentence");
+			btn.addEventListener("click", function () {
+				tokValue = example.value;
+				tokButtons.forEach(function (b) { b.classList.remove("is-on"); });
+				btn.classList.add("is-on");
+				renderTokens();
 			});
-			renderTokens();
-		}
+		});
+		renderTokens();
 
 		/* ── embedding ───────────────────────────────────────── */
 		var embSpace = {
@@ -1078,10 +1421,28 @@
 			});
 			return { word: best, dist: bd };
 		}
+		function embLabel(word) {
+			if (!DE) return word;
+			return ({
+				Man: "Mann", Woman: "Frau", Male: "männlich", Female: "weiblich",
+				Prince: "Prinz", Princess: "Prinzessin", King: "König", Queen: "Königin", Power: "Macht"
+			})[word] || word;
+		}
+		function embDefault() {
+			return DE
+				? 'Der Raum hat in dieser Demo zwei semantische Achsen: <b>Macht</b> und <b>Geschlecht</b>. Wähle ein Beispiel, um zu sehen, wo es landet.'
+				: 'The space has two semantic axes in this demo: <b>power</b> and <b>gender</b>. Choose an example to see where it lands.';
+		}
 		function embDirText(mode) {
-			if (mode === "gender") return 'The <b>gender</b> direction (green) is the same from man to woman and from king to queen. It is a learned direction, not a named axis.';
-			if (mode === "power") return 'The <b>power</b> direction (gold) is the same along man → prince → king and woman → princess → queen. The model learns it from the data.';
-			return 'The <b>gender</b> arrow (green) is the same from man to woman and from king to queen. The <b>power</b> arrow (gold) is the same along man → prince → king. Meaning lives in positions and in directions.';
+			if (mode === "gender") return DE
+				? 'Die <b>Geschlechtsrichtung</b> (grün) ist dieselbe von Mann zu Frau und von König zu Königin. Sie ist eine gelernte Richtung, keine benannte Achse.'
+				: 'The <b>gender</b> direction (green) is the same from man to woman and from king to queen. It is a learned direction, not a named axis.';
+			if (mode === "power") return DE
+				? 'Die <b>Machtrichtung</b> (gold) ist dieselbe entlang Mann → Prinz → König und Frau → Prinzessin → Königin. Das Modell lernt sie aus den Daten.'
+				: 'The <b>power</b> direction (gold) is the same along man → prince → king and woman → princess → queen. The model learns it from the data.';
+			return DE
+				? 'Die <b>Geschlechtsrichtung</b> (grün) ist dieselbe von Mann zu Frau und von König zu Königin. Die <b>Machtrichtung</b> (gold) ist dieselbe entlang Mann → Prinz → König. Bedeutung lebt in Positionen und Richtungen.'
+				: 'The <b>gender</b> arrow (green) is the same from man to woman and from king to queen. The <b>power</b> arrow (gold) is the same along man → prince → king. Meaning lives in positions and in directions.';
 		}
 		function drawEmb(ctx, w, h) {
 			var c = TM.colors();
@@ -1100,11 +1461,11 @@
 			ctx.fillStyle = c.muted;
 			ctx.font = "600 10px Barlow, system-ui, sans-serif";
 			ctx.textAlign = "left";
-			ctx.fillText("Power →", mx(embRange.x1) - 52, my(0) - 8);
+			ctx.fillText((DE ? "Macht" : "Power") + " →", mx(embRange.x1) - 52, my(0) - 8);
 			ctx.save();
 			ctx.translate(mx(0) - 8, my(embRange.y0) + 40);
 			ctx.rotate(-Math.PI / 2);
-			ctx.fillText("Gender →", 0, 0);
+			ctx.fillText((DE ? "Geschlecht" : "Gender") + " →", 0, 0);
 			ctx.restore();
 
 			var highlighted = ["man", "woman", "prince", "king"];
@@ -1127,7 +1488,7 @@
 				ctx.font = (hi ? "700 12px" : "500 10px") + " Barlow, system-ui, sans-serif";
 				ctx.fillStyle = hi ? color : (c.dark ? "rgba(238,247,244,.42)" : "rgba(18,38,45,.45)");
 				ctx.textAlign = "center";
-				ctx.fillText(word, x, y - 11);
+				ctx.fillText(embLabel(word), x, y - 11);
 			});
 
 			if (embDirMode) {
@@ -1165,11 +1526,11 @@
 				var green = c.dark ? "#869b55" : "#63a44b";
 				var gold = "#9f9700";
 				if (embDirMode === "gender" || embDirMode === "all") {
-					arrow(embSpace.Man, embSpace.Woman, green, "male → female");
+					arrow(embSpace.Man, embSpace.Woman, green, DE ? "Geschlecht" : "gender");
 					arrow(embSpace.King, embSpace.Queen, green, "");
 				}
 				if (embDirMode === "power" || embDirMode === "all") {
-					arrow(embSpace.Man, embSpace.Prince, gold, "more power");
+					arrow(embSpace.Man, embSpace.Prince, gold, DE ? "mehr Macht" : "more power");
 					arrow(embSpace.Prince, embSpace.King, gold, "");
 					arrow(embSpace.Woman, embSpace.Princess, gold, "");
 					arrow(embSpace.Princess, embSpace.Queen, gold, "");
@@ -1204,7 +1565,7 @@
 				ctx.font = "700 11px Barlow, system-ui, sans-serif";
 				ctx.fillStyle = c.dark ? "#9f9700" : "#004b6f";
 				ctx.textAlign = "center";
-				ctx.fillText("≈ " + embResult.nearest, mx(p[0]), my(p[1]) + 20);
+				ctx.fillText("≈ " + embLabel(embResult.nearest), mx(p[0]), my(p[1]) + 20);
 			}
 		}
 		function updateEmb(expr) {
@@ -1217,7 +1578,7 @@
 				var near = embNearest(ev.v);
 				var steps = embSteps(expr);
 				embResult = { pos: ev.v, nearest: near.word, steps: steps.steps };
-				if (embOut) embOut.innerHTML = '→ <b>(' + ev.v[0].toFixed(1) + ', ' + ev.v[1].toFixed(1) + ')</b> · nearest word: <b>' + near.word + '</b> (distance ' + near.dist.toFixed(2) + ')';
+				if (embOut) embOut.innerHTML = '→ <b>(' + ev.v[0].toFixed(1) + ', ' + ev.v[1].toFixed(1) + ')</b> · ' + (DE ? 'nächstes Wort' : 'nearest word') + ': <b>' + embLabel(near.word) + '</b> (' + (DE ? 'Abstand ' : 'distance ') + near.dist.toFixed(2) + ')';
 			}
 			if (embApi) embApi.redraw();
 		}
@@ -1226,6 +1587,14 @@
 			document.querySelectorAll("[data-emb]").forEach(function (btn) {
 				btn.addEventListener("click", function () {
 					var expr = btn.getAttribute("data-emb");
+					if (btn.classList.contains("is-on")) {
+						btn.classList.remove("is-on");
+						embDirMode = null;
+						embResult = null;
+						if (embOut) embOut.innerHTML = embDefault();
+						if (embApi) embApi.redraw();
+						return;
+					}
 					document.querySelectorAll("[data-emb]").forEach(function (b) { b.classList.remove("is-on"); });
 					btn.classList.add("is-on");
 					if (expr === "directions" || expr === "gender" || expr === "power") {
@@ -1312,12 +1681,12 @@
 			ctx.textAlign = "left";
 			ctx.fillStyle = c.muted;
 			ctx.font = "500 9px Barlow, system-ui, sans-serif";
-			ctx.fillText("fingerprints", padL, stripTop - 6);
+			ctx.fillText(DE ? "Fingerabdrücke" : "fingerprints", padL, stripTop - 6);
 			[0, positions - 1].forEach(function (pos, row) {
 				var y = stripTop + row * (stripH + 6);
 				ctx.textAlign = "right";
 				ctx.fillStyle = pos === 0 ? c.coral : c.green;
-				ctx.fillText("pos " + pos, padL - 6, y + stripH - 2);
+				ctx.fillText((DE ? "Pos. " : "pos ") + pos, padL - 6, y + stripH - 2);
 				ctx.textAlign = "left";
 				for (var d3 = 0; d3 < posDims; d3++) {
 					var v3 = cellT(pos, d3);
@@ -1351,7 +1720,7 @@
 			if (posCountSlider) {
 				posCountSlider.addEventListener("input", function () {
 					posCount = parseInt(posCountSlider.value, 10);
-					if (posCountOut) posCountOut.textContent = posCount + " positions";
+					if (posCountOut) posCountOut.textContent = posCount + (DE ? " Positionen" : " positions");
 					if (posApi) posApi.redraw();
 				});
 			}
@@ -1363,14 +1732,23 @@
 		var attOut = document.getElementById("iatt-out");
 		var attApi = null;
 		var attIndex = 0;
-		var attExamples = [
-			{ sentence: 'I walk to the <span class="aw-bank">bank</span>.', contexts: [], shift: [5, 5], caption: 'No context: <b>bank</b> stays in the middle, ambiguous.' },
+		var attExamples = DE ? [
+			{ sentence: 'Ich gehe zur <span class="aw-bank">Bank</span>.', contexts: [], shift: [5, 5], caption: 'Ohne eindeutigen Kontext: <b>Bank</b> bleibt in der Mitte, mehrdeutig.' },
+			{ sentence: 'Ich sitze im <span class="aw-river">Park</span> auf der <span class="aw-bank">Bank</span>.', contexts: ['river'], shift: [3.2, 6.8], caption: '<b>Park</b> ist der Nachbar → Bank bewegt sich zur Sitzbank-Bedeutung.' },
+			{ sentence: 'Ich bringe mein <span class="aw-money">Geld</span> zur <span class="aw-bank">Bank</span>.', contexts: ['money'], shift: [7.2, 3.2], caption: '<b>Geld</b> ist der Nachbar → Bank bewegt sich zur Finanzbedeutung.' },
+			{ sentence: 'Nach dem Spaziergang im <span class="aw-river">Park</span> gehe ich zur <span class="aw-bank">Bank</span>, um mein <span class="aw-money">Geld</span> einzuzahlen.', contexts: ['river', 'money'], shift: [6.6, 3.9], caption: 'Beide Nachbarn konkurrieren; <b>Geld</b> gewinnt knapp, also kippt Bank zur Finanzbedeutung.' }
+		] : [
+			{ sentence: 'I walk to the <span class="aw-bank">bank</span>.', contexts: [], shift: [5, 5], caption: 'No unambiguous context: <b>bank</b> stays in the middle, ambiguous.' },
 			{ sentence: 'I sit by the <span class="aw-river">river</span> on the <span class="aw-bank">bank</span>.', contexts: ['river'], shift: [3.2, 6.8], caption: '<b>River</b> is the neighbour → bank moves toward the water sense.' },
 			{ sentence: 'I bring my <span class="aw-money">money</span> to the <span class="aw-bank">bank</span>.', contexts: ['money'], shift: [7.2, 3.2], caption: '<b>Money</b> is the neighbour → bank moves toward finance.' },
 			{ sentence: 'After the walk by the <span class="aw-river">river</span> I go to the <span class="aw-bank">bank</span> to deposit my <span class="aw-money">money</span>.', contexts: ['river', 'money'], shift: [6.6, 3.9], caption: 'Both neighbours compete; <b>money</b> wins by a hair, so bank tilts toward finance.' }
 		];
 		var attPos = { bank: [5, 5], river: [0.5, 9.5], money: [10.5, 0.5] };
 		var attColors = { bank: "#63a44b", river: "#5c9baf", money: "#9f9700" };
+		function attLabel(word) {
+			if (!DE) return word;
+			return ({ bank: "Bank", river: "Park", money: "Geld" })[word] || word;
+		}
 		function drawAtt(ctx, w, h) {
 			var c = TM.colors();
 			var pad = 36;
@@ -1392,7 +1770,7 @@
 				ctx.font = "600 11px Barlow, system-ui, sans-serif";
 				ctx.fillStyle = c.dark ? "rgba(238,247,244,.72)" : "rgba(18,38,45,.7)";
 				ctx.textAlign = "center";
-				ctx.fillText(word, ax(p[0]), ay(p[1]) - 11);
+				ctx.fillText(attLabel(word), ax(p[0]), ay(p[1]) - 11);
 			});
 			var bank = attPos.bank;
 			ex.contexts.forEach(function (word) {
@@ -1426,7 +1804,7 @@
 			ctx.stroke();
 			var moved = Math.hypot(ex.shift[0] - bank[0], ex.shift[1] - bank[1]) > 0.15;
 			if (moved) {
-				var label = "bank (with context)";
+				var label = DE ? "Bank (mit Kontext)" : "bank (with context)";
 				ctx.font = "700 10px Barlow, system-ui, sans-serif";
 				var tw = ctx.measureText(label).width;
 				var tx = ax(ex.shift[0]), ty = ay(ex.shift[1]) - 14;
@@ -1491,13 +1869,41 @@
 				desc: 'The context is <b>I bought an Apple laptop</b>. Now the technology pattern matches and the food and orchard patterns stay silent. The value pushes the next-token distribution toward “Mac”, “iPhone”, and “stock”.'
 			}
 		};
+		var ffnScenariosDe = {
+			fruit: {
+				keys: [
+					{ label: "Merkmal: Mechanik / Schlüssel", on: false },
+					{ label: "Merkmal: Gebäude / Adel", on: true },
+					{ label: "Merkmal: Turm / Burg", on: true }
+				],
+				values: [
+					{ label: "Nächste-Token-Zug: Schlüssel, Tür, öffnen", on: false },
+					{ label: "Nächste-Token-Zug: König, Turm, Burg", on: true },
+					{ label: "Nächste-Token-Zug: alt, prächtig, Garten", on: true }
+				],
+				desc: 'Der Kontext ist <b>Ich besichtige das Schloss</b>. Attention hat diesen Kontext bereits in den Token-Vektor gelegt. Die Gebäude- und Burgmuster passen; das Mechanik-Muster bleibt still. Jeder Treffer schreibt einen Nächste-Token-Zug in den Stream.'
+			},
+			tech: {
+				keys: [
+					{ label: "Merkmal: Mechanik / Schlüssel", on: true },
+					{ label: "Merkmal: Gebäude / Adel", on: false },
+					{ label: "Merkmal: Turm / Burg", on: false }
+				],
+				values: [
+					{ label: "Nächste-Token-Zug: Schlüssel, Tür, öffnen", on: true },
+					{ label: "Nächste-Token-Zug: König, Turm, Burg", on: false },
+					{ label: "Nächste-Token-Zug: alt, prächtig, Garten", on: false }
+				],
+				desc: 'Der Kontext ist <b>Ich öffne das Schloss</b>. Jetzt passt das Mechanik-Muster, und die Gebäude- und Burgmuster bleiben still. Der Value verschiebt die Nächste-Token-Verteilung in Richtung „Schlüssel“, „Tür“ und „öffnen“.'
+			}
+		};
 		function renderFFN(mode) {
-			var data = ffnScenarios[mode];
+			var data = (DE ? ffnScenariosDe : ffnScenarios)[mode];
 			var keysEl = document.getElementById("iffn-keys");
 			var valuesEl = document.getElementById("iffn-values");
 			var out = document.getElementById("iffn-out");
 			if (keysEl) keysEl.innerHTML = data.keys.map(function (k) {
-				return '<div class="ffn-pill ' + (k.on ? "is-fire" : "is-idle") + '">' + k.label + '<small>' + (k.on ? "matches" : "silent") + '</small></div>';
+				return '<div class="ffn-pill ' + (k.on ? "is-fire" : "is-idle") + '">' + k.label + '<small>' + (k.on ? (DE ? "passt" : "matches") : (DE ? "still" : "silent")) + '</small></div>';
 			}).join("");
 			if (valuesEl) valuesEl.innerHTML = data.values.map(function (v) {
 				return '<div class="ffn-pill ' + (v.on ? (mode === "tech" ? "is-fire-tech" : "is-fire") : "is-idle") + '">' + v.label + '</div>';
@@ -1515,12 +1921,12 @@
 		/* ── residual stream ─────────────────────────────────── */
 		var resBase = [0.35, 0.5, 0.28, 0.62, 0.44, 0.3, 0.55, 0.4, 0.33, 0.48];
 		var resUpdates = [
-			{ label: "Embedding", note: "The token becomes a vector.", add: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-			{ label: "+ Attention 1", note: "The token reads its neighbours and adds what it found.", add: [0.24, 0.32, 0.14, 0.28, 0.2, 0.36, 0.12, 0.2, 0.26, 0.22] },
-			{ label: "+ FFN 1", note: "A pattern match writes a next-token hint into the stream.", add: [0.18, 0.12, 0.3, 0.16, 0.24, 0.1, 0.28, 0.22, 0.14, 0.18] },
-			{ label: "+ Attention 2", note: "A second head connects a longer-range clue.", add: [0.16, 0.22, 0.18, 0.26, 0.14, 0.2, 0.24, 0.12, 0.2, 0.16] },
-			{ label: "+ FFN 2", note: "More features combine; the representation sharpens.", add: [0.12, 0.18, 0.22, 0.12, 0.2, 0.16, 0.14, 0.24, 0.18, 0.1] },
-			{ label: "+ Attention 3", note: "The last layer routes the remaining context before the output.", add: [0.1, 0.14, 0.12, 0.18, 0.16, 0.12, 0.2, 0.14, 0.12, 0.2] }
+			{ label: "Embedding", note: "The token becomes a vector.", noteDe: "Das Token wird zu einem Vektor.", add: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+			{ label: "+ Attention 1", note: "The token reads its neighbours and adds what it found.", noteDe: "Das Token liest seine Nachbarn und addiert, was es gefunden hat.", add: [0.24, 0.32, 0.14, 0.28, 0.2, 0.36, 0.12, 0.2, 0.26, 0.22] },
+			{ label: "+ FFN 1", note: "A pattern match writes a next-token hint into the stream.", noteDe: "Ein Mustertreffer schreibt einen Nächste-Token-Hinweis in den Stream.", add: [0.18, 0.12, 0.3, 0.16, 0.24, 0.1, 0.28, 0.22, 0.14, 0.18] },
+			{ label: "+ Attention 2", note: "A second head connects a longer-range clue.", noteDe: "Ein zweiter Head verbindet einen weiter entfernten Hinweis.", add: [0.16, 0.22, 0.18, 0.26, 0.14, 0.2, 0.24, 0.12, 0.2, 0.16] },
+			{ label: "+ FFN 2", note: "More features combine; the representation sharpens.", noteDe: "Mehr Merkmale kombinieren sich; die Repräsentation wird schärfer.", add: [0.12, 0.18, 0.22, 0.12, 0.2, 0.16, 0.14, 0.24, 0.18, 0.1] },
+			{ label: "+ Attention 3", note: "The last layer routes the remaining context before the output.", noteDe: "Die letzte Schicht leitet den restlichen Kontext vor die Ausgabe.", add: [0.1, 0.14, 0.12, 0.18, 0.16, 0.12, 0.2, 0.14, 0.12, 0.2] }
 		];
 		var resStep = 0;
 		var resBars = document.getElementById("ires-bars");
@@ -1548,7 +1954,7 @@
 					return '<span class="res-bar" style="height:' + Math.max(6, v / max * 100) + '%"></span>';
 				}).join("");
 			}
-			if (resOut) resOut.innerHTML = resUpdates[resStep].note;
+			if (resOut) resOut.innerHTML = DE ? resUpdates[resStep].noteDe : resUpdates[resStep].note;
 		}
 		renderRes();
 

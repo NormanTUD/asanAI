@@ -2,6 +2,21 @@
 (function () {
 	"use strict";
 
+	var LANG = TM.lang();
+	var DE = LANG === "de";
+	var LABELS = {
+		Man: "Mann", Woman: "Frau", Male: "männlich", Female: "weiblich",
+		Prince: "Prinz", Princess: "Prinzessin", King: "König", Queen: "Königin", Power: "Macht"
+	};
+	function labelFor(word) {
+		return DE ? (LABELS[word] || word) : word;
+	}
+	function displayExpr(expr) {
+		var out = DE ? expr.replace(/[A-Za-z]+/g, function (word) {
+			return labelFor(word);
+		}).replace(/ - /g, " − ") : expr;
+		return out.replace(/\*/g, "·");
+	}
 	var canvas = document.getElementById("emb-plot-canvas");
 	if (!canvas) return;
 
@@ -72,7 +87,7 @@
 		return "\\begin{pmatrix}" + v[0] + "\\\\" + v[1] + "\\end{pmatrix}";
 	}
 	function vtext(w) {
-		return "\\vec{\\text{" + w + "}}";
+		return "\\vec{\\text{" + labelFor(w) + "}}";
 	}
 	function termVector(term, first) {
 		var sign = first ? (term.sign < 0 ? "-" : "") : (term.sign < 0 ? " - " : " + ");
@@ -88,8 +103,8 @@
 		return "\\begin{aligned}" + lhs + " &= " + pmat(info.pos) + " \\\\ &= " + vtext(target) + "\\end{aligned}";
 	}
 	function directionsLatex() {
-		return "\\begin{gathered}\\text{Gender: } " + vtext("Woman") + " - " + vtext("Man") + " = " + pmat([0, 20]) +
-			"\\\\ \\text{Power: } " + vtext("Prince") + " - " + vtext("Man") + " = " + pmat([10, 0]) + "\\end{gathered}";
+		return "\\begin{gathered}\\text{" + (DE ? "Geschlecht" : "Gender") + ": } " + vtext("Woman") + " - " + vtext("Man") + " = " + pmat([0, 20]) +
+			"\\\\ \\text{" + (DE ? "Macht" : "Power") + ": } " + vtext("Prince") + " - " + vtext("Man") + " = " + pmat([10, 0]) + "\\end{gathered}";
 	}
 	function setEquation(tex) {
 		var el = document.getElementById("emb-plot-equation");
@@ -103,7 +118,7 @@
 		var nearEl = document.getElementById("emb-plot-nearest");
 		var distEl = document.getElementById("emb-plot-dist");
 		if (exprEl) exprEl.textContent = expr;
-		if (nearEl) nearEl.textContent = directions ? "multiple" : (info ? info.nearest : "...");
+		if (nearEl) nearEl.textContent = directions ? (DE ? "mehrere" : "multiple") : (info ? labelFor(info.nearest) : "...");
 		if (distEl) distEl.textContent = directions ? "—" : (info ? info.dist.toFixed(1) : "...");
 	}
 
@@ -172,8 +187,8 @@
 		ctx.fillStyle = c.muted;
 		ctx.font = "600 10px Barlow, system-ui, sans-serif";
 		ctx.textAlign = "left";
-		ctx.fillText("Power →", x1 - 58, y0 + 18);
-		ctx.fillText("Gender ↑", x0 - 34, y1 + 2);
+		ctx.fillText((DE ? "Macht" : "Power") + " →", x1 - 58, y0 + 18);
+		ctx.fillText((DE ? "Geschlecht" : "Gender") + " ↑", x0 - 34, y1 + 2);
 
 		var info = current.mode === "expr" ? analyze(current.expr) : null;
 		var highlight = info ? new Set(info.terms.map(function (t) { return t.word; }).concat([info.nearest])) : new Set();
@@ -193,13 +208,13 @@
 			ctx.fillStyle = isHi ? color : c.muted;
 			ctx.font = (isHi ? "700 " : "600 ") + (isHi ? "12px" : "10px") + " Barlow, system-ui, sans-serif";
 			ctx.textAlign = "center";
-			ctx.fillText(w, px, py - (isHi ? 12 : 9));
+			ctx.fillText(labelFor(w), px, py - (isHi ? 12 : 9));
 		});
 
 		if (current.mode === "directions") {
-			drawArrow(ctx, mx(5), my(-10), mx(5), my(10), c.green, "gender");
+			drawArrow(ctx, mx(5), my(-10), mx(5), my(10), c.green, DE ? "Geschlecht" : "gender");
 			drawArrow(ctx, mx(25), my(-10), mx(25), my(10), c.green, null);
-			drawArrow(ctx, mx(5), my(-10), mx(15), my(-10), c.gold, "power");
+			drawArrow(ctx, mx(5), my(-10), mx(15), my(-10), c.gold, DE ? "Macht" : "power");
 			drawArrow(ctx, mx(15), my(-10), mx(25), my(-10), c.gold, null);
 			drawArrow(ctx, mx(5), my(10), mx(15), my(10), c.gold, null);
 			drawArrow(ctx, mx(15), my(10), mx(25), my(10), c.gold, null);
@@ -218,7 +233,7 @@
 			ctx.fillStyle = c.ink;
 			ctx.font = "700 11px Barlow, system-ui, sans-serif";
 			ctx.textAlign = "left";
-			ctx.fillText("result", rx + 12, ry + 3);
+			ctx.fillText(DE ? "Ergebnis" : "result", rx + 12, ry + 3);
 		}
 	}
 
@@ -228,12 +243,16 @@
 	function update() {
 		if (current.mode === "directions") {
 			result = null;
-			setReadout("Directions", null, true);
+			setReadout(DE ? "Richtungen" : "Directions", null, true);
 			setEquation(directionsLatex());
+		} else if (current.mode === "none") {
+			result = null;
+			setReadout(DE ? "Wähle ein Beispiel" : "Choose an example", null, false);
+			setEquation("");
 		} else {
 			var info = analyze(current.expr);
 			result = info;
-			setReadout(current.expr, info, false);
+			setReadout(displayExpr(current.expr), info, false);
 			setEquation(equationLatex(current.expr, info ? info.nearest : ""));
 		}
 		api.redraw();
@@ -241,6 +260,12 @@
 
 	document.querySelectorAll("[data-emb-ex]").forEach(function (btn) {
 		btn.addEventListener("click", function () {
+			if (btn.classList.contains("is-on")) {
+				btn.classList.remove("is-on");
+				current = { mode: "none" };
+				update();
+				return;
+			}
 			document.querySelectorAll("[data-emb-ex]").forEach(function (b) { b.classList.remove("is-on"); });
 			btn.classList.add("is-on");
 			var ex = btn.getAttribute("data-emb-ex");

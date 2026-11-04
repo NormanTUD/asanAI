@@ -5,11 +5,14 @@
 	var cv = document.getElementById("meadow-canvas");
 	if (!cv) return;
 
-	var WORDS = ["Dog", "Cat", "Tree", "House", "Car", "Book", "Mouse", "Lamp", "Flower", "Stone", "Table", "Chair", "Water", "Fire", "Night", "Sun", "Rain", "Moon", "Coffee", "Star", "River", "Mountain", "Bird", "Fish", "Milk", "Sugar", "Door", "Window", "Bridge", "Field", "Kitchen", "Garden", "Ship", "Clock", "Road", "City", "Bread", "Apple", "Tea", "Hat", "Bell"];
+	var LANG = TM.lang();
+	var DE = LANG === "de";
+	var WORDS = DE ? ["Hund", "Katze", "Baum", "Haus", "Auto", "Buch", "Maus", "Lampe", "Blume", "Stein", "Tisch", "Stuhl", "Wasser", "Feuer", "Nacht", "Sonne", "Regen", "Mond", "Kaffee", "Stern", "Fluss", "Berg", "Vogel", "Fisch", "Milch", "Zucker", "Tür", "Fenster", "Brücke", "Feld", "Küche", "Garten", "Schiff", "Uhr", "Straße", "Stadt", "Brot", "Apfel", "Tee", "Hut", "Glocke"] : ["Dog", "Cat", "Tree", "House", "Car", "Book", "Mouse", "Lamp", "Flower", "Stone", "Table", "Chair", "Water", "Fire", "Night", "Sun", "Rain", "Moon", "Coffee", "Star", "River", "Mountain", "Bird", "Fish", "Milk", "Sugar", "Door", "Window", "Bridge", "Field", "Kitchen", "Garden", "Ship", "Clock", "Road", "City", "Bread", "Apple", "Tea", "Hat", "Bell"];
 	var HUES = [188, 220, 260, 290, 320, 350, 15, 40, 60, 90, 140, 170, 200, 240, 280, 310, 340, 25, 50, 75, 120, 155, 195, 230, 270, 300, 330, 10, 45, 100, 160, 210, 250, 295, 335, 20, 65, 130, 185, 245, 305];
 	var CW = 560, CH = 196;
 	var currentN = 12;
 	var T = 0.8;
+	var K = 5;
 	var anchors = [];
 	var fieldCache = {};
 	var gapFrac = 0;
@@ -17,8 +20,10 @@
 
 	var sN = document.getElementById("md-n");
 	var sT = document.getElementById("md-temp");
+	var sK = document.getElementById("md-k");
 	var rN = document.getElementById("md-n-out");
 	var rT = document.getElementById("md-temp-out");
+	var rK = document.getElementById("md-k-out");
 	var rWord = document.getElementById("md-word");
 	var rProb = document.getElementById("md-chance");
 	var rEdge = document.getElementById("md-margin");
@@ -190,7 +195,7 @@
 		var allD = [];
 		for (var i = 0; i < anchors.length; i++) allD.push({ i: i, d: distTo(anchors[i], px, py) });
 		allD.sort(function (a, b) { return a.d - b.d; });
-		var near = allD.slice(0, Math.min(5, allD.length));
+		var near = allD.slice(0, Math.min(K, allD.length));
 		var sigma = Math.max(1e-6, T * scale * 0.5);
 		var scores = near.map(function (cd) { return { i: cd.i, d: cd.d, s: Math.exp(-cd.d / sigma) }; });
 		var sum = 0;
@@ -212,7 +217,7 @@
 		ctx.font = "700 10px system-ui";
 		ctx.fillStyle = pal.muted;
 		ctx.textAlign = "left"; ctx.textBaseline = "middle";
-		ctx.fillText("CHANCES", panelX + 10, panelY + 11);
+		ctx.fillText(DE ? "CHANCEN" : "CHANCES", panelX + 10, panelY + 11);
 		var barX = panelX + 68;
 		var barMax = panelW - 68 - 44;
 		for (var k = 0; k < scores.length; k++) {
@@ -250,9 +255,15 @@
 			if (rEdge) rEdge.textContent = (seamGap / scale).toFixed(2);
 			if (rGap) rGap.textContent = Math.round(gapFrac * 100) + "%";
 			if (captionEl) {
-				if (seamGap / scale < 0.01) captionEl.textContent = "You are on a golden seam: “" + anchors[winner.i].w + "” and “" + (runner ? anchors[runner.i].w : "?") + "” are almost equally near.";
-				else if (winner.s / sum > 0.8) captionEl.textContent = "Deep inside the cell of “" + anchors[winner.i].w + "”. The nearest seam is far away.";
-				else captionEl.textContent = "Near the territory of “" + anchors[winner.i].w + "”, but “" + (runner ? anchors[runner.i].w : "?") + "” is close.";
+				if (seamGap / scale < 0.01) captionEl.textContent = DE
+					? "Du stehst auf einer goldenen Naht: „" + anchors[winner.i].w + "“ und „" + (runner ? anchors[runner.i].w : "?") + "“ sind fast gleich nah."
+					: "You are on a golden seam: “" + anchors[winner.i].w + "” and “" + (runner ? anchors[runner.i].w : "?") + "” are almost equally near.";
+				else if (winner.s / sum > 0.8) captionEl.textContent = DE
+					? "Tief in der Zelle von „" + anchors[winner.i].w + "“. Die nächste Naht ist weit weg."
+					: "Deep inside the cell of “" + anchors[winner.i].w + "”. The nearest seam is far away.";
+				else captionEl.textContent = DE
+					? "In der Nähe des Territoriums von „" + anchors[winner.i].w + "“, aber „" + (runner ? anchors[runner.i].w : "?") + "“ ist nah."
+					: "Near the territory of “" + anchors[winner.i].w + "”, but “" + (runner ? anchors[runner.i].w : "?") + "” is close.";
 			}
 		}
 	}
@@ -269,12 +280,14 @@
 		drawThought(ctx, w, h, pal);
 		if (rN) rN.textContent = currentN;
 		if (rT) rT.textContent = T.toFixed(2);
+		if (rK) rK.textContent = K;
 	}
 
 	var api = TM.initCanvas(cv, draw);
 	if (!api) return;
 	if (sN) sN.addEventListener("input", function () { setN(parseInt(sN.value, 10) || 12); if (rN) rN.textContent = currentN; api.redraw(); });
 	if (sT) sT.addEventListener("input", function () { T = clamp(parseFloat(sT.value) || 0.8, 0.2, 2.6); if (rT) rT.textContent = T.toFixed(2); api.redraw(); });
+	if (sK) sK.addEventListener("input", function () { K = clamp(parseInt(sK.value, 10) || 5, 1, 10); if (rK) rK.textContent = K; api.redraw(); });
 	function setPointer(ev) {
 		var rect = cv.getBoundingClientRect();
 		var cx = ev.touches ? ev.touches[0].clientX : ev.clientX;

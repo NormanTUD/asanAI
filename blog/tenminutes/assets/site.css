@@ -2148,8 +2148,9 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 @keyframes blink { 50% { opacity: 0; } }
 
 #nt-sentence { min-height: 56px; }
-#nt-bars { min-height: 102px; }
+#nt-bars { min-height: 132px; }
 #nt-why { min-height: 38px; }
+#next-token-demo .prediction { min-height: 350px; }
 .nt-tree {
 	margin-top: 10px;
 	min-height: 62px;
@@ -2190,11 +2191,61 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	line-height: 1.45;
 	color: var(--tm-muted);
 }
+.iso-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 190px;
+	gap: 14px;
+	align-items: start;
+}
+@media (max-width: 640px) {
+	.iso-grid { grid-template-columns: 1fr; }
+}
+.iso-side {
+	padding: 14px;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-paper-2);
+}
+.iso-kicker {
+	font: 700 .62rem/1 var(--tm-mono);
+	letter-spacing: .14em;
+	text-transform: uppercase;
+	color: var(--tm-muted);
+}
+.iso-next {
+	margin: .5em 0 .15em;
+	font: 700 clamp(1.35rem, 1rem + 1.2vw, 1.9rem)/1.1 var(--tm-display);
+	color: var(--tm-ink);
+	word-break: break-word;
+}
+.iso-next.is-end { font-size: 1.15rem; color: var(--tm-muted); }
+.iso-meta {
+	margin-top: .6em;
+	font-size: .78rem;
+	line-height: 1.5;
+	color: var(--tm-ink-soft);
+}
+.iso-meta b { color: var(--tm-ink); font-family: var(--tm-mono); }
+.iso-badge {
+	display: inline-block;
+	padding: .22em .6em;
+	border: 1px solid var(--tm-line-strong);
+	font: 700 .66rem/1 var(--tm-mono);
+	letter-spacing: .06em;
+	text-transform: uppercase;
+}
+.iso-badge.is-certain { color: var(--tm-green-deep); border-color: color-mix(in srgb, var(--tm-green) 45%, transparent); }
+.iso-badge.is-likely { color: var(--tm-blue); border-color: color-mix(in srgb, var(--tm-blue) 45%, transparent); }
+.iso-badge.is-open { color: var(--tm-gold); border-color: color-mix(in srgb, var(--tm-gold) 45%, transparent); }
+.iso-badge.is-wide { color: var(--tm-coral); border-color: color-mix(in srgb, var(--tm-coral) 45%, transparent); }
 .demo-controls label.is-disabled { opacity: 0.55; }
 .demo input[type="range"]:disabled { opacity: 0.5; cursor: not-allowed; }
 @media (max-width: 900px) {
 	.nt-tree { min-height: 88px; }
 	#nt-why { min-height: 60px; }
+	#next-token-demo .prediction { min-height: 500px; }
+}
+@media (max-width: 520px) {
+	#next-token-demo .prediction { min-height: 570px; }
 }
 html[data-theme="light"] .nt-tree {
 	background: var(--tm-paper-2);

@@ -1,6 +1,7 @@
 (function () {
 	"use strict";
 
+	const DE = TM.lang && TM.lang() === "de";
 	const DUR = 1000;
 	const TAU = Math.PI * 2;
 
@@ -91,7 +92,7 @@
 			muted: c.muted,
 			border: c.lineStrong,
 			grid: c.muted,
-			inner: c.coral,
+			inner: c.dark ? "#d58a8a" : "#b23a48",
 			outer: c.blue,
 			plane: c.gold,
 			planeStrong: c.petrol,
@@ -317,9 +318,9 @@
 		ctx.fillText("s = 0", TX, AX_Y + 58);
 		ctx.font = "600 13px system-ui, sans-serif";
 		ctx.fillStyle = C.inner;
-		ctx.fillText("s < 0   inner core", lerp(AX_L, TX, 0.40), AX_Y + 58);
+		ctx.fillText(DE ? "s < 0   innerer Kern" : "s < 0   inner core", lerp(AX_L, TX, 0.40), AX_Y + 58);
 		ctx.fillStyle = C.outer;
-		ctx.fillText("s > 0   outer ring", lerp(TX, AX_R, 0.55), AX_Y + 58);
+		ctx.fillText(DE ? "s > 0   äußerer Ring" : "s > 0   outer ring", lerp(TX, AX_R, 0.55), AX_Y + 58);
 		ctx.textAlign = "left";
 		ctx.globalAlpha = 1;
 	}
@@ -434,12 +435,12 @@
 		ctx.textAlign = "right";
 		ctx.font = "600 14px system-ui, sans-serif";
 		ctx.fillStyle = C.outer;
-		ctx.fillText("Class B — outer ring", LX, c0.Y - 58);
+		ctx.fillText(DE ? "Klasse B — äußerer Ring" : "Class B — outer ring", LX, c0.Y - 58);
 		ctx.fillStyle = C.inner;
-		ctx.fillText("Class A — inner core", LX, c0.Y + 66);
+		ctx.fillText(DE ? "Klasse A — innerer Kern" : "Class A — inner core", LX, c0.Y + 66);
 		ctx.fillStyle = C.planeStrong;
 		ctx.font = "13px Georgia, serif";
-		ctx.fillText("separating plane", LX, c0.Y + 4);
+		ctx.fillText(DE ? "Trennebene" : "separating plane", LX, c0.Y + 4);
 		ctx.textAlign = "left";
 		ctx.globalAlpha = 1;
 	}
