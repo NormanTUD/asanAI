@@ -86,8 +86,14 @@ it:
   `assets/i18n.js`. The script translates text nodes, selected attributes, and
   dynamically generated demo DOM; it skips `script`, `style`, `code`, `pre`,
   `math`, `[data-tex]`, and `.full-article`.
-- Keep technical terms in English: Token, Attention, Embedding, Transformer,
-  Prompt, Agent, Fine-Tuning.
+- Use informal **du** consistently in German: “Klicke”, “Nutze”, “du siehst”.
+  Do not switch to “Sie” or impersonal “man” inside a page.
+- Keep established ML jargon in English: Token, Attention, Embedding,
+  Transformer, Prompt, Agent, Fine-Tuning, Feature Map, Residual Stream, Head,
+  Logits, Sampling, Top-p, Context Window, Query/Key/Value, Softmax, Loss,
+  Batch, Gradient, Epoch, Overfitting, Underfitting, Pretraining,
+  Post-Training, Self-Attention. Translate the surrounding sentence, not the
+  technical noun.
 - The full-article block is translated server-side; its links carry
   `?lang=de`. `TM_FULL_LESSON_TITLES_DE` must cover every full-lesson slug used
   by `TM_FULL_LESSON_MAP`.
@@ -382,6 +388,40 @@ simulator used by `philosophy.php`. Both are plain-JS and self-initialising.
   vegetarian; use the non-food ambiguity examples (telescope, flying planes,
   visiting relatives) instead.
 
+## Sentence review (use this for every prose edit)
+
+German uses informal **du**; imperatives are the default (“Klicke”, “Nutze”).
+Read every sentence on its own, then in its paragraph, and fix it in this order:
+
+1. **Fact.** Is the claim true and supported by the parent lesson or primary
+   source? If not, rewrite or remove it; never keep a nice sentence that makes
+   an unsupported simplification, causal claim, or equivalence.
+2. **Grammar and clarity.** Check subject–verb agreement, article/gender/case,
+   relative pronouns, tense, and unambiguous references. A sentence that needs
+   a second read is not finished.
+3. **Flow.** Does it follow from the previous sentence? Does the paragraph make
+   one argument? Split, merge, or reorder if it reads as a list of facts.
+4. **Translation.** Translate the idea, not the English syntax. Rebuild German
+   word order, split long sentences, and avoid calques such as “wiegen” for
+   *weigh*, “Adresse” for *address*, or “konditioniert auf” for *conditioned on*.
+5. **Metaphor and tone.** Keep a metaphor only when it explains something that
+   would otherwise be harder to see. Remove metaphors that imply inevitability,
+   a single cause, or a hidden agent (“Zündschnur”, “handgebaut”, “Maschinerie”,
+   “ultimative Indirektion”, “reduktiv”). “Not X but Y” is allowed only when the
+   surrounding text gave the reader a reason to believe X.
+6. **Uncertainty.** Name disputed dates, interpretations, and causal claims:
+   “umstritten”, “nicht gesichert”, “eine Lesart”, “die Quellen entscheiden das
+   nicht”. Never present a contested simplification as settled fact.
+7. **Technical terms.** Established ML jargon stays English (see the list in
+   “Bilingual pages”). Translate the rest of the sentence fully; do not produce
+   halfway-German syntax.
+8. **Demo data.** Localise examples, candidate words, sentences, captions,
+   statuses, readouts, tooltips, aria-labels, and canvas text. Code, paper
+   titles, proper names, and technical terms may stay English.
+9. **Record the review.** In the page’s `*_todo.txt`, remove the fixed item and
+   write one line saying what was wrong and what it is now. Add a self-critique
+   when the new sentence is still a simplification or a judgement call.
+
 ## Prose style: no filler contrasts
 
 State the claim positively. Most “X is not Y” sentences do real work: they name
@@ -482,17 +522,30 @@ for both languages; a page that only looks right in English is not finished.
 
 The blog validators are built around lesson `.php` files and the main blog's
 shared JS; they do not render or validate these standalone HTML pages. Before
-finishing, run these light checks:
+finishing, run:
 
-1. `node --check assets/site.js`
-2. Check inline scripts, for example by extracting each inline `<script>` to a
-   temporary `.js` file and running `node --check` on it.
-3. Check HTML tag balance and that every `href` target exists.
-4. `python3 blog/tests/tenminutes_image_credits_test.py` — checks the history
+1. `python3 blog/tools/check_all.py --fast` (from the repository root). When a
+   top-level lesson, fact file, statement ledger, `literature.js`, or the search
+   chunker changed, run the full `python3 blog/tools/check_all.py` instead and
+   commit the regenerated `blog/.search_cache.json`, `blog/semantic_index.json`,
+   `blog/semantic_vectors.bin`, and `blog/rag_data/*` files.
+2. `python3 blog/tests/tenminutes_image_credits_test.py` — checks the history
    image credits against `assets/image-credits.json` and cross-checks entries
-   with a `literatureKey` against `literature.js`. The page never loads
-   `literature.js`; the JSON is the local source of truth.
-5. `git diff --check` to catch whitespace errors.
+   with a `literatureKey` against `literature.js`. Every static figure also
+   needs a source link and a licence keyword in its caption.
+3. `php -l` every changed `.php`; `node --check` every changed JS file and every
+   extracted inline `<script>`; `git diff --check` for whitespace.
+4. Run the demo audit above in both languages, including the control clicks and
+   generated-text/branch checks.
+
+If `check_all.py` reports a stale statement ledger or index, regenerate only
+the affected part, then commit it:
+
+```bash
+uv run blog/tools/factcheck/extract_statements.py blog/ --only <slug>
+uv run blog/tools/build_semantic_index.py
+uv run blog/tools/build_rag_index.py
+```
 
 The pages are static; there is no compile, test, or deploy step in this
 directory.
