@@ -1,0 +1,89 @@
+schaue ob die änderungen in beiden sprachen relevant sind. ich nenne sie hier nur für deutsch.
+
+intuition: 
+
+"es kennt die Antwort nicht und vergibt dann eine Punktzahl" das ließt sich iwie schlecht. formulier das neu.
+
+"Die Schleife kümmert sich nicht darum, was die Stücke sind; sie sagt das nächste voraus." sie sagt ->nur<- das Nächste (mit großem N) voraus
+
+"Die Schleife kommt zuerst, weil alles andere Maschinerie ist, um diese eine Vorhersage besser zu machen" das ließt sich falsch
+
+"Jeder Teil existiert, um ein Problem zu lösen, das der vorherige Teil geschaffen hat" das stimmt nicht
+
+"Ein Gespräch, ein Gedicht, eine Python-Funktion: Alles ist diese Schleife", ads stimmt nicht so. alles wird durch diese schleife generiert in einem LLM. ist impliziert äquivalenz aber ein gedicht ist nicht äquivalent mit dieser schleife
+
+"Das klingt reduktiv, bis man bemerkt, was der Kontext enthalten kann" klingt komisch, reduktiv? 
+
+"die Ausgabe eines Werkzeugs" die ausgabe eines programms
+
+"Jedes neue Token konditioniert auf all das" konditioniert? das ist falsch. jedes neue token bezieht sich irgendwie auf alles vorherige
+
+"Warum nicht die ganze Antwort auf einmal vorhersagen? Weil das Modell eine Verteilung über den nächsten Slot ausgibt" das ist ein non sequitur. das modell geht durch die autoregressive schleife halt so dass es nur tokenweise geht. 
+
+"Unten ist eine absichtlich kleine Demo" "absichtlich kleine" ist falsch
+
+"Sie hat keine gelernten Gewichte und kein Training; sie speichert nur eine Handvoll handgeschriebener Fortsetzungen für eine kleine Geschichte" das gehörtweiter nach unten
+
+"Was sie reproduziert" -> zeigt statt reproduziert
+
+"Beobachte die Schleife, nicht die Größe der Demo. " entferne das komplett
+
+die demo "Die autoregressive Schleife "  die beispiele solltena uch auf deutsch sein. aktuell ist die demo auf englisch. alle demos sollten auf deutsch übersetzt werden, das ist wichtig. komplett bis auf fachbegriffe.
+
+die demo "Die autoregressive Schleife" verändert ihre höhe, wodurch der ganze rest rauf und runter rutscht, weil da verschieden viele worte sind. mach dass das von anfang an die maximel höhe hat und behält
+
+entferne referenzen auf "Decoder".
+
+entferne beam search referenz
+
+"Top-p behält die kleinste Menge von Tokens": das stimmt nciht, top p nimmt nicht die kleinste wahl, sondern nimmt die top p anzahl von tokens (mit p zahl > 0) aus denen dann gewählt wird.
+
+"sodass die Temperatur ändert, welchen Pfad der Text nimmt, nicht nur seinen Ton." baue hier aus der intuition.php in .. die "The truth tunnel"  demo ein, und übrsetze sie für dt.
+
+"Höhere Temperaturen weiten das Feld plausibler Fortsetzungen, was in einer Geschichte kreativ und überraschend und in einer Bilanz nachlässig sein kann" sage da lieber dass kreativität bei geschichten gut aber bei buchführung schlecht ist. es kommt auf den kontext an
+
+"Keine Decoder-Einstellung kann das Modell dazu bringen, einen Fakt zu berichten, den es nie gelernt hat, aber die Einstellung ändert, welche seiner plausiblen Fortsetzungen du siehst. " entferne das. 
+
+"Jeder Schritt verändert die Repräsentation anders" entferne das "anders". "und jeder ist eine kleine Idee zum Ausprobieren" und das komplett
+
+"Position fügt Ordnung hinzu" ist falsch, positional embedding fügt die position im kontext hinzu
+
+"und der Residual Stream trägt das Ergebnis weiter" an den nächsten layer, wo wieder attn udn ffn und so weiter arbeiten, und am ende wird ausgewählt. 
+
+"jede angewendet auf die Ausgabe der vorherigen: layer3⁡(layer2⁡(layer1⁡(x)))" mit mehr layern andeuten.
+
+"und zeigt eine kleine, handgebaute Version davon" ist nicht handgebaut.
+
+"Ein Leerzeichen ist auch ein Byte und kann ein eigenes Token sein." IST ein eigenes token.
+
+entferne itok-input bei "Schritt 1 · Tokenisieren": es reicht wenn man die paar beispiele auswählen kann. und mach es so dass "the transformer is playing greatly" auch ein button wird
+
+bei "Schritt 2 · Embedding": ich will die aktivierten buttons auch wieder deaktivieren können. übersetze auch die demo inhalte, also queen -> königin usw. es muss in beiden sprachen gehen. benenne auch die pfeile besser, es ist nicht "male -> female" sondern "geschlecht". 
+
+" Schritt 3 · Position Jeder Slot bekommt seinen eigenen Fingerabdruck Kontextlänge 128 positions " positions muss übersetzt werden
+
+"während jede Position eigen bleibt" nicht eigen sondern eindeutig
+
+"Die Demo folgt einem handabgestimmten Head" das stimmt so nicht, der ist nicht handabgestimmt und es ist kein raeler head. es ist nur ne intuition.
+
+"Ich gehe zur Bank." ist nicht "kein kontext". es ist kein *eindeutiger* kontext. das ist wichtig.
+
+"I sit by the river on the Bank." ist hier nicht übersetzt. genauso "After the walk by the river I go to the Bank to deposit my money." und "I bring my money to the Bank." im dt muss das alles deutsch sein
+
+"keine wörtliche Simulation" ist inhaltlich richtig aber schlecht übersetzt. es ist kein realer head.
+
+"Er nimmt nicht wörtlich das eigene Embedding des Tokens und schiebt es über die Seite. Der bewegte Punkt ist ein Lehrbild des Ergebnisses (Kontext verändert die Repräsentation) mit einem handabgestimmten Head statt der vielen Heads und Schichten eines echten Modells." ist falsch, und lass das mit dem handabgestimmt, ich hasse das wort.
+
+"Dasselbe Wort kann je nach Gesellschaft an einem anderen Ort landen, weil die Values, die es sammelt, andere sind." je nach KONTEXT nicht Gesellschaft
+
+"Stapel zwei Dense-Schichten und lass die erste die zweite speisen" formulier das neu ohne speisen
+
+"Eine Schicht biegt den Raum" der punkt in der mitte ist nicht rot sondern lila mach ihn aber rot.
+
+"Die Schicht ändert das Koordinatensystem. Ein Schnitt, der unmöglich war, wird zu einer Schwelle: Das kauft Tiefe." ist scheiße übersetzt. mach das neu. die schicht projiziert punkte in einen höherdimensionalen raum wo man durch eine gerade linie trennen kann was man vorher nicht trennen konnte. das ist was dense layer am ende machen sowas in der art.
+
+"das einer einfachen Schwelle näher kommt." ist falsch. es kommt dem nicht näher sondern ist durch sie trennbar
+
+"Die Animation ist eine Illustration, kein Beweis." entferne ads
+
+
