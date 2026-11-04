@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#03040a">
+<title>TOKEN / EGO — a journey through a transformer</title>
+<meta name="description" content="You are a token inside a transformer. See the residual stream, attention, the FFN, the weights, and the probability sky. A real forward pass, rendered in 3D.">
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+<div id="app">
+  <div id="error-debug" style="display:none"></div>
+  <canvas id="gl" aria-label="3D visualization of a transformer"></canvas>
+
+  <div id="hud" class="hud-hidden">
+    <header id="hud-top">
+      <div id="hud-brand">TOKEN<span>/</span>EGO</div>
+      <div id="hud-stage">
+        <span id="hud-stage-name">BOOT</span>
+        <span id="hud-phase-name">initializing</span>
+      </div>
+      <div id="hud-model">TEGO-1.2M <span>1.23M weights · 6L · 4H · d=128</span></div>
+      <button id="mode-btn" class="top-btn" title="Toggle guided / auto pacing">GUIDED</button>
+    </header>
+
+    <aside id="hud-left">
+      <div id="layer-stack" aria-label="Transformer layers"></div>
+      <div id="hud-metrics">
+        <div class="metric"><span class="metric-label">residual ‖x‖</span><span id="metric-norm" class="metric-value">—</span></div>
+        <div class="metric"><span class="metric-label">LN σ</span><span id="metric-var" class="metric-value">—</span></div>
+        <div class="metric"><span class="metric-label">attention entropy</span><span id="metric-entropy" class="metric-value">—</span></div>
+        <div class="metric"><span class="metric-label">resonance</span><span id="metric-resonance" class="metric-value">0</span></div>
+      </div>
+      <div id="vector-strip-wrap">
+        <div class="micro-label">residual vector · 128 dims</div>
+        <canvas id="vector-strip" width="256" height="40"></canvas>
+      </div>
+      <div id="norm-spark-wrap">
+        <div class="micro-label">residual norm · layers</div>
+        <canvas id="norm-spark" width="220" height="54"></canvas>
+      </div>
+      <div id="color-legend" class="micro-legend">
+        <span><i class="swatch past"></i>past</span><span><i class="swatch future"></i>future</span><span><i class="swatch player"></i>you</span>
+      </div>
+      <div id="challenge" class="mini-hud hidden">
+        <div class="micro-label">predict · top attention · <span id="challenge-head">H1</span></div>
+        <div id="challenge-q">Which token will you attend to most?</div>
+        <div id="challenge-options"></div>
+        <div id="challenge-result" class="mini-note"></div>
+      </div>
+      <div id="qkv-hud" class="mini-hud hidden">
+        <div class="micro-label">Q · K · V · head <span id="qkv-head-label">1</span> · 32 dims each</div>
+        <div id="qkv-bars">
+          <div class="qkv-row"><span>Q</span><canvas id="qkv-q" width="160" height="34"></canvas><b id="qkv-q-norm">—</b></div>
+          <div class="qkv-row"><span>K</span><canvas id="qkv-k" width="160" height="34"></canvas><b id="qkv-k-norm">—</b></div>
+          <div class="qkv-row"><span>V</span><canvas id="qkv-v" width="160" height="34"></canvas><b id="qkv-v-norm">—</b></div>
+        </div>
+        <div class="mini-note">same LN(x) → three different learned views</div>
+      </div>
+      <div id="ffn-hud" class="mini-hud hidden">
+        <div class="micro-label">FFN · 128 → 512 → 128</div>
+        <div id="ffn-top"></div>
+        <div class="mini-note">glowing neurons = GELU activations</div>
+      </div>
+    </aside>
+
+    <aside id="hud-right">
+      <div id="head-block">
+        <div class="micro-label">attention head</div>
+        <div id="head-selector"></div>
+      </div>
+      <div id="attention-mini-wrap">
+        <div class="micro-label">attention · player row</div>
+        <canvas id="attention-mini" width="220" height="220"></canvas>
+        <div id="attention-legend"><span>← past</span><span>future masked</span></div>
+        <div id="attn-view-tabs">
+          <button data-view="alpha" class="attn-view active">softmax α</button>
+          <button data-view="scores" class="attn-view">QKᵀ/√d</button>
+          <button data-view="mask" class="attn-view">mask</button>
+        </div>
+      </div>
+      <div id="embed-neighbors-wrap" class="hidden">
+        <div class="micro-label">embedding neighbourhood · cosine</div>
+        <div id="embed-norms" class="mini-note"></div>
+        <div id="embed-neighbors"></div>
+        <div class="mini-note">3D = PCA projection · small angle = similar · cosine is exact in 128-d</div>
+      </div>
+      <div id="attn-budget-wrap">
+        <div class="micro-label">attention budget · α · contribution</div>
+        <div id="attn-budget"></div>
+      </div>
+      <div id="final-hud" class="hidden">
+        <div class="micro-label">softmax temperature · <span id="temp-value">1.00</span></div>
+        <input id="temperature" type="range" min="0.2" max="2" step="0.05" value="1" aria-label="Softmax temperature">
+        <div class="mini-note">click a star · Enter = top token</div>
+        <button id="final-deep" class="ghost small" style="margin-top:8px;width:100%;">Open logits deep dive</button>
+      </div>
+      <div id="right-hint">1–4 heads · drag to look · V orbit</div>
+    </aside>
+
+    <div id="hud-player">
+      <div class="micro-label">you are</div>
+      <div id="player-token">—</div>
+      <div id="player-sub">—</div>
+    </div>
+
+    <div id="hud-bottom">
+      <div id="caption-wrap">
+        <div id="caption">—</div>
+        <div id="caption-tech">—</div>
+        <div id="caption-explain">
+          <div class="explain-col">
+            <div class="micro-label">what you see</div>
+            <div id="explain-see">—</div>
+          </div>
+          <div class="explain-col">
+            <div class="micro-label">what it means</div>
+            <div id="explain-meaning">—</div>
+          </div>
+        </div>
+      </div>
+      <div id="progress"><div id="progress-bar"></div></div>
+      <div id="continue-bar">
+        <button id="continue-btn" class="primary small" title="Continue to the next step (Space)">Continue</button>
+        <button id="auto-btn" class="ghost small" title="Toggle guided / auto pacing">Auto: off</button>
+        <button id="skip-layer-btn" class="ghost small" title="Jump to the next transformer layer">Skip layer</button>
+        <button id="deep-dive-btn" class="ghost small" title="Open the exact numbers and matrices (M)">Deep dive</button>
+        <button id="overview-btn" class="ghost small" title="See all four heads and the FFN chamber at once (O)">All at once</button>
+      </div>
+      <div id="controls-hint">
+        <span><b>SPACE</b> continue</span><span><b>P</b> pause</span><span><b>N</b> next</span><span><b>A</b> auto</span><span><b>M</b> math</span><span><b>W</b> weights</span><span><b>D</b> dims</span><span><b>O</b> all at once</span><span><b>C</b> codex</span><span><b>H</b> help</span>
+      </div>
+    </div>
+
+    <div id="phase-bar">
+      <div id="phase-bar-fill"></div>
+      <div id="phase-bar-dots"></div>
+    </div>
+
+    <div id="toast"></div>
+  </div>
+
+  <div id="title-screen">
+    <div id="title-veil"></div>
+    <div class="title-inner">
+      <div class="kicker">A REAL FORWARD PASS · SYNTHETIC WEIGHTS · EXACT ARITHMETIC</div>
+      <h1>TOKEN<span>/</span>EGO</h1>
+      <p class="lede">You are one token in a transformer: a direction in a 128-dimensional space. For one forward pass, see the residual stream, the attention, the wide feed-forward layer, and the weight of every possible next word. You set the pace: press <b>Space</b> or <b>Continue</b> at each step.</p>
+
+      <div class="prompt-grid" id="prompt-grid"></div>
+
+      <div class="prompt-detail">
+        <div class="prompt-detail-head">
+          <span class="micro-label">the sequence</span>
+          <span id="prompt-blurb" class="prompt-blurb"></span>
+        </div>
+        <div id="prompt-tokens" class="token-row"></div>
+        <div class="token-help">click a token to become it. the past is gold; the future is violet.</div>
+      </div>
+
+      <div class="title-actions">
+        <button id="begin-btn" class="primary">Begin the guided descent</button>
+        <button id="title-mode" class="ghost" aria-pressed="false">Pace: guided</button>
+        <button id="title-help" class="ghost">How it works</button>
+        <button id="sound-btn" class="ghost" aria-pressed="true">Sound: on</button>
+      </div>
+
+      <div class="title-foot">
+        <span>1.23M weights</span><span>6 layers</span><span>4 heads</span><span>d_model 128</span><span>d_ff 512</span><span>258-token vocabulary</span><span id="title-quality">quality: high</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel" class="panel hidden" role="dialog" aria-modal="false">
+    <div class="panel-head">
+      <div id="panel-title">MATH</div>
+      <div id="panel-tabs"></div>
+      <button id="panel-close" class="icon-btn" aria-label="Close panel">×</button>
+    </div>
+    <div id="panel-body"></div>
+  </div>
+
+  <div id="epilogue" class="hidden">
+    <div class="epilogue-card">
+      <div class="kicker">ONE FORWARD PASS COMPLETE</div>
+      <h2 id="epilogue-title">You were the wave.</h2>
+      <p id="epilogue-text">No memory was written. No gradient flowed. The weights stayed still. For a moment, you were a direction in a high-dimensional space, and the whole model leaned toward the next token.</p>
+      <div id="epilogue-token" class="epilogue-token">—</div>
+      <div class="epilogue-actions">
+        <button id="continue-btn" class="primary">Continue as the next token</button>
+        <button id="replay-btn" class="ghost">Replay</button>
+        <button id="epilogue-codex" class="ghost">Read the codex</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="loading">
+    <div class="loading-inner">
+      <div class="loading-brand">TOKEN<span>/</span>EGO</div>
+      <div class="loading-line"><div id="loading-bar"></div></div>
+      <div id="loading-text">constructing the residual stream…</div>
+      <div class="loading-note">a real 6-layer transformer · 128 dimensions · 4 heads</div>
+    </div>
+  </div>
+
+  <div id="fader"></div>
+  <div id="error-box" class="hidden"></div>
+</div>
+
+<script>
+window.__ERRORS__ = [];
+window.addEventListener("error", function (e) { window.__ERRORS__.push(String(e.message) + " @ " + (e.filename || "") + ":" + (e.lineno || 0)); var d = document.getElementById("error-debug"); if (d) d.textContent = window.__ERRORS__.join("\n---\n"); });
+window.addEventListener("unhandledrejection", function (e) { window.__ERRORS__.push("rejection: " + String(e.reason && e.reason.stack || e.reason)); var d = document.getElementById("error-debug"); if (d) d.textContent = window.__ERRORS__.join("\n---\n"); });
+</script>
+<script src="vendor/three.min.js"></script>
+<script src="vendor/CopyShader.js"></script>
+<script src="vendor/LuminosityHighPassShader.js"></script>
+<script src="vendor/EffectComposer.js"></script>
+<script src="vendor/RenderPass.js"></script>
+<script src="vendor/ShaderPass.js"></script>
+<script src="vendor/UnrealBloomPass.js"></script>
+<script src="src/config.js"></script>
+<script src="src/embeddings.js"></script>
+<script src="src/util.js"></script>
+<script src="src/model.js"></script>
+<script src="src/shaders.js"></script>
+<script src="src/audio.js"></script>
+<script src="src/scene.js"></script>
+<script src="src/ui.js"></script>
+<script src="src/game.js"></script>
+</body>
+</html>
