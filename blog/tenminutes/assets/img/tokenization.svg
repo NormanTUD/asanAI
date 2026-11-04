@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 260" role="img" aria-labelledby="title desc">
+  <title id="title">One word becomes three tokens</title>
+  <desc id="desc">The word unbelievable is split into un, believ and able.</desc>
+  <rect width="620" height="260" fill="#ffffff"/>
+  <text x="310" y="38" text-anchor="middle" font-family="Barlow, system-ui, sans-serif" font-size="18" font-weight="700" fill="#004b6f">one word, three tokens</text>
+  <text x="310" y="74" text-anchor="middle" font-family="ui-monospace, monospace" font-size="22" fill="#000000">unbelievable</text>
+  <path d="M310 88 V112" stroke="#5c9baf" stroke-width="2"/>
+  <path d="M310 112 l-7 -9 h14 z" fill="#5c9baf"/>
+  <g font-family="ui-monospace, monospace" font-size="20" text-anchor="middle">
+    <rect x="92" y="138" width="132" height="58" fill="#e9f3e4" stroke="#63a44b" stroke-width="2"/>
+    <text x="158" y="174" fill="#004b6f">un</text>
+    <rect x="244" y="138" width="132" height="58" fill="#e8f2f6" stroke="#5c9baf" stroke-width="2"/>
+    <text x="310" y="174" fill="#004b6f">believ</text>
+    <rect x="396" y="138" width="132" height="58" fill="#f5f3e0" stroke="#9f9700" stroke-width="2"/>
+    <text x="462" y="174" fill="#004b6f">able</text>
+  </g>
+  <text x="158" y="222" text-anchor="middle" font-family="Open Sans, system-ui, sans-serif" font-size="12" fill="#627476">token 1</text>
+  <text x="310" y="222" text-anchor="middle" font-family="Open Sans, system-ui, sans-serif" font-size="12" fill="#627476">token 2</text>
+  <text x="462" y="222" text-anchor="middle" font-family="Open Sans, system-ui, sans-serif" font-size="12" fill="#627476">token 3</text>
+  <text x="310" y="248" text-anchor="middle" font-family="Open Sans, system-ui, sans-serif" font-size="12" fill="#627476">the model sees ids, not letters</text>
+</svg>

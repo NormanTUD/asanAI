@@ -124,6 +124,20 @@
 			"author": "Eremeev",
 			"license": "CC BY-SA 4.0",
 			"source": "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg"
+		},
+		{
+			"src": "assets/img/gray928-cochlea.png",
+			"title": "Diagrammatic section of the cochlea",
+			"author": "Henry Vandyke Carter",
+			"license": "Public domain",
+			"source": "https://commons.wikimedia.org/wiki/File:Gray928.png"
+		},
+		{
+			"src": "assets/img/tokenization.svg",
+			"title": "One word, three tokens",
+			"author": "Ten Minutes",
+			"license": "CC0 1.0",
+			"source": "assets/img/tokenization.svg"
 		}
 	]
 }
