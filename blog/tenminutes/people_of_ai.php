@@ -47,35 +47,10 @@
 					</section>
 
 
-					<div class="split-figure">
-						<figure>
-							<img src="../ada_lovelace_portrait.jpg" alt="Ada Lovelace" loading="lazy">
-							<figcaption>Ada Lovelace. Painting: Alfred Edward Chalon, <a href="https://commons.wikimedia.org/wiki/File:Ada_Lovelace_Chalon_portrait.jpg" rel="noopener">public domain</a>.</figcaption>
-						</figure>
-						<figure>
-							<img src="../alan_turing_1951.jpg" alt="Alan Turing" loading="lazy">
-							<figcaption>Alan Turing, 1951. Photo: Elliott &amp; Fry, <a href="https://commons.wikimedia.org/wiki/File:Alan_Turing_(1951).jpg" rel="noopener">public domain</a>.</figcaption>
-						</figure>
-					</div>
-					<div class="split-figure">
-						<figure>
-							<img src="../frank_rosenblatt_commons.jpg" alt="Frank Rosenblatt" loading="lazy">
-							<figcaption>Frank Rosenblatt. Photo: Anonymous / Heinz Nixdorf MuseumsForum, <a href="https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" rel="noopener">CC BY-SA 4.0</a>.</figcaption>
-						</figure>
-						<figure>
-							<img src="../geoffrey_hinton_portrait.jpg" alt="Geoffrey Hinton" loading="lazy">
-							<figcaption>Geoffrey Hinton, 2024. Photo: Arthur Petron, <a href="https://commons.wikimedia.org/wiki/File:Geoffrey_E._Hinton,_2024_Nobel_Prize_Laureate_in_Physics_(cropped1).jpg" rel="noopener">CC BY-SA 4.0</a>.</figcaption>
-						</figure>
-					</div>
-
 					<div class="portrait-grid">
 						<figure>
 							<img src="../john_mccarthy_portrait.jpg" alt="John McCarthy" loading="lazy">
 							<figcaption>John McCarthy, co-author of the Dartmouth proposal. Photo: null0, <a href="https://commons.wikimedia.org/wiki/File:John_McCarthy_Stanford.jpg" rel="noopener">CC BY-SA 2.0</a>.</figcaption>
-						</figure>
-						<figure>
-							<img src="../claude_shannon_portrait.jpg" alt="Claude Shannon" loading="lazy">
-							<figcaption>Claude Shannon. Photo: Tekniska Museet, <a href="https://commons.wikimedia.org/wiki/File:C.E._Shannon._Tekniska_museet_43069_(cropped).jpg" rel="noopener">CC BY 2.0</a>.</figcaption>
 						</figure>
 						<figure>
 							<img src="../yann_lecun_portrait.jpg" alt="Yann LeCun" loading="lazy">
@@ -88,14 +63,6 @@
 						<figure>
 							<img src="../fei_fei_li_portrait.jpg" alt="Fei-Fei Li" loading="lazy">
 							<figcaption>Fei-Fei Li. Photo: ITU Pictures, <a href="https://commons.wikimedia.org/wiki/File:Fei-Fei_Li_at_AI_for_Good_2017.jpg" rel="noopener">CC BY 2.0</a>.</figcaption>
-						</figure>
-						<figure>
-							<img src="../demis_hassabis_portrait.jpg" alt="Demis Hassabis" loading="lazy">
-							<figcaption>Demis Hassabis. Photo: Alain Herzog, <a href="https://commons.wikimedia.org/wiki/File:Demis_Hassabis.jpg" rel="noopener">CC BY-SA 4.0</a>.</figcaption>
-						</figure>
-						<figure>
-							<img src="../ian_goodfellow_portrait.jpg" alt="Ian Goodfellow" loading="lazy">
-							<figcaption>Ian Goodfellow. Photo: Ian Goodfellow, <a href="https://commons.wikimedia.org/wiki/File:Ian_Goodfellow_(cropped).jpg" rel="noopener">CC BY-SA 4.0</a>.</figcaption>
 						</figure>
 						<figure>
 							<img src="../andrej_karpathy_portrait.png" alt="Andrej Karpathy" loading="lazy">
@@ -115,12 +82,12 @@
 							<div class="timeline-scroller">
 								<button class="tl-scroll-btn" type="button" data-timeline-prev data-arrow-prev aria-label="Scroll left">‹</button>
 								<div class="timeline-track" data-timeline-track role="group" aria-label="The recurring cast">
-									<button class="tl-node is-active" type="button" data-meta="1843 · Lovelace &amp; Babbage" data-title="Lovelace &amp; Babbage" data-body="A programmable machine before electronics. Lovelace saw that a machine could manipulate symbols, not only numbers."><span class="tl-dot"></span><span class="tl-date">1843</span><span class="tl-name">Lovelace &amp; Babbage</span></button>
-									<button class="tl-node" type="button" data-meta="1936 · Turing" data-title="Alan Turing" data-body="Turing asked what computation is and proposed a behavioural test for intelligence. The question is still open."><span class="tl-dot"></span><span class="tl-date">1936</span><span class="tl-name">Alan Turing</span></button>
-									<button class="tl-node" type="button" data-meta="1943 · McCulloch &amp; Pitts" data-title="McCulloch &amp; Pitts" data-body="McCulloch and Pitts turned neurons into logic. The first neural network was an idea before it was a machine."><span class="tl-dot"></span><span class="tl-date">1943</span><span class="tl-name">McCulloch &amp; Pitts</span></button>
-									<button class="tl-node" type="button" data-meta="1948 · Shannon" data-title="Claude Shannon" data-body="Shannon separated information from meaning. His framework made communication and, later, language modelling measurable."><span class="tl-dot"></span><span class="tl-date">1948</span><span class="tl-name">Claude Shannon</span></button>
-									<button class="tl-node" type="button" data-meta="1958 · Perceptron" data-title="Frank Rosenblatt" data-body="Rosenblatt built the perceptron and promised a machine that could learn. The promise outran the hardware."><span class="tl-dot"></span><span class="tl-date">1958</span><span class="tl-name">Frank Rosenblatt</span></button>
-									<button class="tl-node" type="button" data-meta="1986 · Backpropagation" data-title="Rumelhart, Hinton &amp; Williams" data-body="Backpropagation made deep networks trainable. Paul Werbos had described the idea earlier; the 1986 paper made it work and made it visible."><span class="tl-dot"></span><span class="tl-date">1986</span><span class="tl-name">Backpropagation</span></button>
+									<button class="tl-node is-active" type="button" data-meta="1843 · Lovelace &amp; Babbage" data-title="Lovelace &amp; Babbage" data-body="A programmable machine before electronics. Lovelace saw that a machine could manipulate symbols, not only numbers." data-image="../ada_lovelace_portrait.jpg" data-image-alt="Ada Lovelace" data-image-link="https://commons.wikimedia.org/wiki/File:Ada_Lovelace_Chalon_portrait.jpg" data-image-caption="Ada Lovelace. Painting: Alfred Edward Chalon, public domain."><span class="tl-dot"></span><span class="tl-date">1843</span><span class="tl-name">Lovelace &amp; Babbage</span></button>
+									<button class="tl-node" type="button" data-meta="1936 · Turing" data-title="Alan Turing" data-body="Turing asked what computation is and proposed a behavioural test for intelligence. The question is still open." data-image="../alan_turing_1951.jpg" data-image-alt="Alan Turing" data-image-link="https://commons.wikimedia.org/wiki/File:Alan_Turing_(1951).jpg" data-image-caption="Alan Turing, 1951. Photo: Elliott &amp; Fry, public domain."><span class="tl-dot"></span><span class="tl-date">1936</span><span class="tl-name">Alan Turing</span></button>
+									<button class="tl-node" type="button" data-meta="1943 · McCulloch &amp; Pitts" data-title="McCulloch &amp; Pitts" data-body="McCulloch and Pitts turned neurons into logic. The first neural network was an idea before it was a machine." data-image="../walter_pitts_1954.jpg" data-image-alt="Walter Pitts in 1954" data-image-link="https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" data-image-caption="Walter Pitts in 1954. Image: Francis Bello, public domain."><span class="tl-dot"></span><span class="tl-date">1943</span><span class="tl-name">McCulloch &amp; Pitts</span></button>
+									<button class="tl-node" type="button" data-meta="1948 · Shannon" data-title="Claude Shannon" data-body="Shannon separated information from meaning. His framework made communication and, later, language modelling measurable." data-image="../claude_shannon_portrait.jpg" data-image-alt="Claude Shannon" data-image-link="https://commons.wikimedia.org/wiki/File:C.E._Shannon._Tekniska_museet_43069_(cropped).jpg" data-image-caption="Claude Shannon. Photo: Tekniska Museet, CC BY 2.0."><span class="tl-dot"></span><span class="tl-date">1948</span><span class="tl-name">Claude Shannon</span></button>
+									<button class="tl-node" type="button" data-meta="1958 · Perceptron" data-title="Frank Rosenblatt" data-body="Rosenblatt built the perceptron and promised a machine that could learn. The promise outran the hardware." data-image="../frank_rosenblatt_commons.jpg" data-image-alt="Frank Rosenblatt" data-image-link="https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" data-image-caption="Frank Rosenblatt. Photo: Anonymous / Heinz Nixdorf MuseumsForum, CC BY-SA 4.0."><span class="tl-dot"></span><span class="tl-date">1958</span><span class="tl-name">Frank Rosenblatt</span></button>
+									<button class="tl-node" type="button" data-meta="1986 · Backpropagation" data-title="Rumelhart, Hinton &amp; Williams" data-body="Backpropagation made deep networks trainable. Paul Werbos had described the idea earlier; the 1986 paper made it work and made it visible." data-image="../geoffrey_hinton_portrait.jpg" data-image-alt="Geoffrey Hinton" data-image-link="https://commons.wikimedia.org/wiki/File:Geoffrey_E._Hinton,_2024_Nobel_Prize_Laureate_in_Physics_(cropped1).jpg" data-image-caption="Geoffrey Hinton, 2024. Photo: Arthur Petron, CC BY-SA 4.0."><span class="tl-dot"></span><span class="tl-date">1986</span><span class="tl-name">Backpropagation</span></button>
 									<button class="tl-node" type="button" data-meta="2012 · AlexNet" data-title="Krizhevsky, Sutskever &amp; Hinton" data-body="AlexNet won ImageNet with GPUs and deep convolutional layers. The result restarted the deep-learning spring." data-image="../alexnet_architecture.png" data-image-alt="The AlexNet architecture" data-image-link="https://commons.wikimedia.org/wiki/File:AlexNet_architecture.png" data-image-caption="AlexNet, 2012. Image: Daniel Voigt Godoy, CC BY 4.0."><span class="tl-dot"></span><span class="tl-date">2012</span><span class="tl-name">AlexNet</span></button>
 									<button class="tl-node" type="button" data-meta="2014 · GANs" data-title="Ian Goodfellow" data-body="Generative adversarial networks paired a generator with a discriminator. The adversarial game produced sharp images and a new set of training problems." data-image="../ian_goodfellow_portrait.jpg" data-image-alt="Ian Goodfellow" data-image-link="https://commons.wikimedia.org/wiki/File:Ian_Goodfellow_(cropped).jpg" data-image-caption="Ian Goodfellow. Photo: Ian Goodfellow, CC BY-SA 4.0."><span class="tl-dot"></span><span class="tl-date">2014</span><span class="tl-name">GANs</span></button>
 									<button class="tl-node" type="button" data-meta="2016 · AlphaGo" data-title="Silver &amp; Hassabis" data-body="AlphaGo beat Lee Sedol at Go, a game long thought to resist brute-force search. Learning, search, and hardware worked together." data-image="../demis_hassabis_portrait.jpg" data-image-alt="Demis Hassabis" data-image-link="https://commons.wikimedia.org/wiki/File:Demis_Hassabis.jpg" data-image-caption="Demis Hassabis. Photo: Alain Herzog, CC BY-SA 4.0."><span class="tl-dot"></span><span class="tl-date">2016</span><span class="tl-name">AlphaGo</span></button>
