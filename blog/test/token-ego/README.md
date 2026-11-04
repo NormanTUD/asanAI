@@ -67,8 +67,9 @@ Every layer is a ring in the tower around a central residual-stream pillar.
 2. **Q · K · V** — your token splits into Q, K, V ghost crystals. Three holographic panels show the actual 32-dimensional head slice. Q is what you are looking for; K is what you offer; V is what you hand over.
 3. **Attention** — the beams are the four heads at once. Thickness and brightness are `α`. The future is behind a luminous causal curtain: its score is `−∞`. The right HUD shows the player row; the **α / QKᵀ / mask** tabs let you switch between the raw scores, the causal mask, and the softmax. The math monitor has all four head matrices, the full score/mask/α matrices, and the exact numbers.
 4. **Mix** — value particles flow from the attended tokens into you; the crystal tint warms. The attention budget list shows each `α` and the weighted value contribution `‖α·v‖`. The deep-dive panel draws the head-to-tail vector addition `z = Σ α v`. This is where you become a weighted mixture.
-5. **Write** — the mixed head output is projected by `W_O` and added to the residual stream. Nothing is overwritten. The 128-bar collar around the pillar morphs to the new vector.
-6. **FFN** — the camera becomes the vector and travels through the chamber: `LN(x)` → W₁ → 512 neurons → GELU → W₂ → `y`. All 512 neurons glow; the top connections are drawn; the weight walls show the actual W₁/W₂. The math monitor opens one neuron and shows its 128 W₁ weights and 128 W₂ weights.
+   - **Q · K · V projection webs** — during QKV, three full 16,384-weight webs surround you: `LN(x)` input ring → Q/K/V output rings. Every weight is a point; the strongest 1,024 are filaments. The active head's 32 dimensions are highlighted.
+5. **Write** — the mixed head output is projected by `W_O` and added to the residual stream. Nothing is overwritten. The 128-bar collar around the pillar morphs to the new vector. The `W_O` web shows all 16,384 output-projection weights from `z` to the attention write.
+6. **FFN** — the camera becomes the vector and travels through the chamber: `LN(x_mid)` → W₁ → 512 neurons → GELU → W₂ → `y`. All 512 neurons glow; all 65,536 W₁ and 65,536 W₂ weights appear as light points, with the strongest 1,024 as filaments; the two weight walls show every matrix cell. The math monitor opens one neuron and shows its 128 W₁ weights and 128 W₂ weights. The output is added back: `x_out = x_mid + y`.
 7. **Residual add** — `x ← x + y`. The collar morphs again, the norm sparkline rises, and the layer lifts to the next ring.
 
 The **braid** of six coloured helices around the pillar is the residual stream as a sum of writes. The **ledger** panel decomposes your final vector into the embedding, every attention head write, every attention bias, and every FFN write, and reports the reconstruction error.
@@ -77,7 +78,24 @@ The **braid** of six coloured helices around the pillar is the residual stream a
 The final vector is multiplied by the tied embedding matrix. 258 token stars form the probability sky. Size and brightness are softmax probability. The temperature slider rescales the logits: low T sharpens the sky, high T flattens it. You choose a star. The chosen token is appended to the sequence, you become it, and the next forward pass begins.
 
 ### All at once
-Press **O**. The FFN chamber opens inside the attention ring, all four head beams remain visible, and the residual braid keeps flowing. This is the layer as one simultaneous object instead of a sequence of steps.
+Press **O**. The FFN chamber opens inside the attention ring, all four head beams remain visible, the Q/K/V and W_O projection webs are on, and the residual braid keeps flowing. This is the layer as one simultaneous object instead of a sequence of steps: the token states, all four heads, every projection web, the 512-neuron FFN, the residual braid, and the token's 128-dimensional state at once.
+
+### Every step is a full-weight web
+The game does not hide the machinery behind a cartoon. The exact matrices are visible at every step:
+
+| step | weights | 3D view |
+|---|---:|---|
+| embedding | 258 × 128 = 33,024 | matrix wall, selected row, 128-value vector |
+| Q projection | 128 × 128 = 16,384 | full web, input ring → Q ring |
+| K projection | 128 × 128 = 16,384 | full web, input ring → K ring |
+| V projection | 128 × 128 = 16,384 | full web, input ring → V ring |
+| attention scores | T × T per head | score / mask / α matrices, all four heads |
+| output projection W_O | 128 × 128 = 16,384 | full web, z ring → attention-write ring |
+| FFN W₁ | 512 × 128 = 65,536 | 65,536 light points + top 1,024 filaments + full heatmap |
+| FFN W₂ | 128 × 512 = 65,536 | 65,536 light points + top 1,024 filaments + full heatmap |
+| unembedding | 258 × 128 = 33,024 | final-dim ring → 258 token stars |
+
+The 3D positions are a layout. The colour is the sign and the brightness/point size is |weight|. The full matrices/heatmaps and the numeric checks are the exact source of truth.
 
 ## Guided, not a movie
 
@@ -101,6 +119,7 @@ The **attention challenge** asks you to predict which past token gets the larges
 - **Residual ledger:** the additive decomposition is checked numerically; the reconstruction error is shown in the panel.
 - **Embedding similarity:** cosine, not Euclidean distance. The 3D projection is explicitly labelled as a projection.
 - **Synthetic checkpoint:** the attention/MLP weights are generated once from a seed. The token directions are real model2vec embeddings projected by PCA. This is stated in the title, the codex, the math panel, and the README.
+- **Numeric checks in the UI:** the vector tab recomputes Q/K/V, W_O, LayerNorm and the embedding/position lookup from the weights and reports the max error; the FFN tab recomputes `W₁m+b₁`, GELU, `W₂h+b₂` and `x_out = x_mid+y`; the logits tab recomputes the tied unembedding and checks `Σ p = 1`; the attention tab checks `Σ α = 1` and `max future α = 0`.
 - **No network, no telemetry.** All graphics and audio are generated locally; three.js is vendored and the final file inlines it.
 
 ## Sources

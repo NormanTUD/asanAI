@@ -755,6 +755,90 @@
       "confidence": "provenance"
     },
     {
+      "id": "prov-unexpected_capabilities-gpt-2",
+      "from": "gpt-2",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "trained a 1.5-billion-parameter decoder-only Transformer",
+      "citation_keys": [
+        "gpt2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-weight-space-programming",
+      "from": "weight-space-programming",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "In November 2026, a team at MIT CSAIL reported a set of experiments",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-minatar-ppo",
+      "from": "minatar-ppo",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "beat a PPO baseline trained for 100 million steps",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-weight-space-programming-car-policy",
+      "from": "weight-space-programming-car-policy",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "repaired a stuck car-driving policy by changing 3.5% of its weights",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-qwen3.5-0.8b-weightspace-edit",
+      "from": "qwen3.5-0.8b-weightspace-edit",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "changed 0.016% of the model's weights",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-qwen3.5-0.8b",
+      "from": "qwen3.5-0.8b",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "MATH-500 rose from 7.9% to 48.1%",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-unexpected_capabilities-gemma-3-270m",
+      "from": "gemma-3-270m",
+      "to": "unexpected-capabilities",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "When the same procedure ran on Gemma 3 270M",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-unexpected_capabilities-block-1-part_of-unexpected-capabilities",
       "from": "unexpected_capabilities-block-1",
       "to": "unexpected-capabilities",
@@ -2935,6 +3019,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-unexpected_capabilities-block-89-related_to-unexpected_capabilities-block-87",
+      "from": "unexpected_capabilities-block-89",
+      "to": "unexpected_capabilities-block-87",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-unexpected_capabilities-block-90-part_of-unexpected-capabilities",
       "from": "unexpected_capabilities-block-90",
       "to": "unexpected-capabilities",
@@ -2949,16 +3043,6 @@
       "from": "unexpected_capabilities-block-89",
       "to": "unexpected_capabilities-block-90",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-block-90-related_to-unexpected_capabilities-block-89",
-      "from": "unexpected_capabilities-block-90",
-      "to": "unexpected_capabilities-block-89",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -2985,6 +3069,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-unexpected_capabilities-block-91-related_to-unexpected_capabilities-block-90",
+      "from": "unexpected_capabilities-block-91",
+      "to": "unexpected_capabilities-block-90",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-unexpected_capabilities-block-92-part_of-unexpected-capabilities",
       "from": "unexpected_capabilities-block-92",
       "to": "unexpected-capabilities",
@@ -3005,9 +3099,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-block-92-related_to-unexpected_capabilities-block-91",
+      "id": "struct-unexpected_capabilities-block-92-related_to-unexpected_capabilities-block-90",
       "from": "unexpected_capabilities-block-92",
-      "to": "unexpected_capabilities-block-91",
+      "to": "unexpected_capabilities-block-90",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3035,6 +3129,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-unexpected_capabilities-block-93-related_to-unexpected_capabilities-block-90",
+      "from": "unexpected_capabilities-block-93",
+      "to": "unexpected_capabilities-block-90",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-unexpected_capabilities-block-94-part_of-unexpected-capabilities",
       "from": "unexpected_capabilities-block-94",
       "to": "unexpected-capabilities",
@@ -3049,16 +3153,6 @@
       "from": "unexpected_capabilities-block-93",
       "to": "unexpected_capabilities-block-94",
       "kind": "before",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-block-94-related_to-unexpected_capabilities-block-93",
-      "from": "unexpected_capabilities-block-94",
-      "to": "unexpected_capabilities-block-93",
-      "kind": "related_to",
       "qualifiers": {},
       "quote": "",
       "citation_keys": [],
@@ -3135,16 +3229,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-block-97-related_to-unexpected_capabilities-block-95",
-      "from": "unexpected_capabilities-block-97",
-      "to": "unexpected_capabilities-block-95",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-unexpected_capabilities-block-98-part_of-unexpected-capabilities",
       "from": "unexpected_capabilities-block-98",
       "to": "unexpected-capabilities",
@@ -3165,9 +3249,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-block-98-related_to-unexpected_capabilities-block-95",
+      "id": "struct-unexpected_capabilities-block-98-related_to-unexpected_capabilities-block-97",
       "from": "unexpected_capabilities-block-98",
-      "to": "unexpected_capabilities-block-95",
+      "to": "unexpected_capabilities-block-97",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3195,16 +3279,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-block-99-related_to-unexpected_capabilities-block-95",
-      "from": "unexpected_capabilities-block-99",
-      "to": "unexpected_capabilities-block-95",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-unexpected_capabilities-block-100-part_of-unexpected-capabilities",
       "from": "unexpected_capabilities-block-100",
       "to": "unexpected-capabilities",
@@ -3225,9 +3299,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-block-100-related_to-unexpected_capabilities-block-95",
+      "id": "struct-unexpected_capabilities-block-100-related_to-unexpected_capabilities-block-99",
       "from": "unexpected_capabilities-block-100",
-      "to": "unexpected_capabilities-block-95",
+      "to": "unexpected_capabilities-block-99",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3255,16 +3329,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-block-101-related_to-unexpected_capabilities-block-95",
-      "from": "unexpected_capabilities-block-101",
-      "to": "unexpected_capabilities-block-95",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-unexpected_capabilities-block-102-part_of-unexpected-capabilities",
       "from": "unexpected_capabilities-block-102",
       "to": "unexpected-capabilities",
@@ -3285,9 +3349,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-block-102-related_to-unexpected_capabilities-block-95",
+      "id": "struct-unexpected_capabilities-block-102-related_to-unexpected_capabilities-block-101",
       "from": "unexpected_capabilities-block-102",
-      "to": "unexpected_capabilities-block-95",
+      "to": "unexpected_capabilities-block-101",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -3315,16 +3379,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-block-103-related_to-unexpected_capabilities-block-95",
-      "from": "unexpected_capabilities-block-103",
-      "to": "unexpected_capabilities-block-95",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-unexpected_capabilities-block-104-part_of-unexpected-capabilities",
       "from": "unexpected_capabilities-block-104",
       "to": "unexpected-capabilities",
@@ -3345,9 +3399,249 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-block-104-related_to-unexpected_capabilities-block-95",
+      "id": "struct-unexpected_capabilities-block-104-related_to-unexpected_capabilities-block-103",
       "from": "unexpected_capabilities-block-104",
-      "to": "unexpected_capabilities-block-95",
+      "to": "unexpected_capabilities-block-103",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-105-part_of-unexpected-capabilities",
+      "from": "unexpected_capabilities-block-105",
+      "to": "unexpected-capabilities",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-104-before-unexpected_capabilities-block-105",
+      "from": "unexpected_capabilities-block-104",
+      "to": "unexpected_capabilities-block-105",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-105-related_to-unexpected_capabilities-block-103",
+      "from": "unexpected_capabilities-block-105",
+      "to": "unexpected_capabilities-block-103",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-106-part_of-unexpected-capabilities",
+      "from": "unexpected_capabilities-block-106",
+      "to": "unexpected-capabilities",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-105-before-unexpected_capabilities-block-106",
+      "from": "unexpected_capabilities-block-105",
+      "to": "unexpected_capabilities-block-106",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-106-related_to-unexpected_capabilities-block-103",
+      "from": "unexpected_capabilities-block-106",
+      "to": "unexpected_capabilities-block-103",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-107-part_of-unexpected-capabilities",
+      "from": "unexpected_capabilities-block-107",
+      "to": "unexpected-capabilities",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-106-before-unexpected_capabilities-block-107",
+      "from": "unexpected_capabilities-block-106",
+      "to": "unexpected_capabilities-block-107",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-107-related_to-unexpected_capabilities-block-103",
+      "from": "unexpected_capabilities-block-107",
+      "to": "unexpected_capabilities-block-103",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-108-part_of-unexpected-capabilities",
+      "from": "unexpected_capabilities-block-108",
+      "to": "unexpected-capabilities",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-107-before-unexpected_capabilities-block-108",
+      "from": "unexpected_capabilities-block-107",
+      "to": "unexpected_capabilities-block-108",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-108-related_to-unexpected_capabilities-block-103",
+      "from": "unexpected_capabilities-block-108",
+      "to": "unexpected_capabilities-block-103",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-109-part_of-unexpected-capabilities",
+      "from": "unexpected_capabilities-block-109",
+      "to": "unexpected-capabilities",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-108-before-unexpected_capabilities-block-109",
+      "from": "unexpected_capabilities-block-108",
+      "to": "unexpected_capabilities-block-109",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-109-related_to-unexpected_capabilities-block-103",
+      "from": "unexpected_capabilities-block-109",
+      "to": "unexpected_capabilities-block-103",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-110-part_of-unexpected-capabilities",
+      "from": "unexpected_capabilities-block-110",
+      "to": "unexpected-capabilities",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-109-before-unexpected_capabilities-block-110",
+      "from": "unexpected_capabilities-block-109",
+      "to": "unexpected_capabilities-block-110",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-110-related_to-unexpected_capabilities-block-103",
+      "from": "unexpected_capabilities-block-110",
+      "to": "unexpected_capabilities-block-103",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-111-part_of-unexpected-capabilities",
+      "from": "unexpected_capabilities-block-111",
+      "to": "unexpected-capabilities",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-110-before-unexpected_capabilities-block-111",
+      "from": "unexpected_capabilities-block-110",
+      "to": "unexpected_capabilities-block-111",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-111-related_to-unexpected_capabilities-block-103",
+      "from": "unexpected_capabilities-block-111",
+      "to": "unexpected_capabilities-block-103",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-112-part_of-unexpected-capabilities",
+      "from": "unexpected_capabilities-block-112",
+      "to": "unexpected-capabilities",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-111-before-unexpected_capabilities-block-112",
+      "from": "unexpected_capabilities-block-111",
+      "to": "unexpected_capabilities-block-112",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-block-112-related_to-unexpected_capabilities-block-103",
+      "from": "unexpected_capabilities-block-112",
+      "to": "unexpected_capabilities-block-103",
       "kind": "related_to",
       "qualifiers": {},
       "quote": "",
@@ -5495,9 +5789,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-215-part_of-unexpected_capabilities-block-88",
+      "id": "struct-unexpected_capabilities-stmt-215-part_of-unexpected_capabilities-block-89",
       "from": "unexpected_capabilities-stmt-215",
-      "to": "unexpected_capabilities-block-88",
+      "to": "unexpected_capabilities-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5505,9 +5799,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-216-part_of-unexpected_capabilities-block-88",
+      "id": "struct-unexpected_capabilities-stmt-216-part_of-unexpected_capabilities-block-89",
       "from": "unexpected_capabilities-stmt-216",
-      "to": "unexpected_capabilities-block-88",
+      "to": "unexpected_capabilities-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5515,9 +5809,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-217-part_of-unexpected_capabilities-block-90",
+      "id": "struct-unexpected_capabilities-stmt-217-part_of-unexpected_capabilities-block-89",
       "from": "unexpected_capabilities-stmt-217",
-      "to": "unexpected_capabilities-block-90",
+      "to": "unexpected_capabilities-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5525,9 +5819,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-218-part_of-unexpected_capabilities-block-90",
+      "id": "struct-unexpected_capabilities-stmt-218-part_of-unexpected_capabilities-block-89",
       "from": "unexpected_capabilities-stmt-218",
-      "to": "unexpected_capabilities-block-90",
+      "to": "unexpected_capabilities-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5535,9 +5829,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-219-part_of-unexpected_capabilities-block-90",
+      "id": "struct-unexpected_capabilities-stmt-219-part_of-unexpected_capabilities-block-89",
       "from": "unexpected_capabilities-stmt-219",
-      "to": "unexpected_capabilities-block-90",
+      "to": "unexpected_capabilities-block-89",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5545,9 +5839,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-220-part_of-unexpected_capabilities-block-90",
+      "id": "struct-unexpected_capabilities-stmt-220-part_of-unexpected_capabilities-block-91",
       "from": "unexpected_capabilities-stmt-220",
-      "to": "unexpected_capabilities-block-90",
+      "to": "unexpected_capabilities-block-91",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5555,9 +5849,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-221-part_of-unexpected_capabilities-block-90",
+      "id": "struct-unexpected_capabilities-stmt-221-part_of-unexpected_capabilities-block-91",
       "from": "unexpected_capabilities-stmt-221",
-      "to": "unexpected_capabilities-block-90",
+      "to": "unexpected_capabilities-block-91",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5565,9 +5859,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-222-part_of-unexpected_capabilities-block-90",
+      "id": "struct-unexpected_capabilities-stmt-222-part_of-unexpected_capabilities-block-91",
       "from": "unexpected_capabilities-stmt-222",
-      "to": "unexpected_capabilities-block-90",
+      "to": "unexpected_capabilities-block-91",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5575,9 +5869,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-223-part_of-unexpected_capabilities-block-92",
+      "id": "struct-unexpected_capabilities-stmt-223-part_of-unexpected_capabilities-block-91",
       "from": "unexpected_capabilities-stmt-223",
-      "to": "unexpected_capabilities-block-92",
+      "to": "unexpected_capabilities-block-91",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5625,9 +5919,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-228-part_of-unexpected_capabilities-block-94",
+      "id": "struct-unexpected_capabilities-stmt-228-part_of-unexpected_capabilities-block-93",
       "from": "unexpected_capabilities-stmt-228",
-      "to": "unexpected_capabilities-block-94",
+      "to": "unexpected_capabilities-block-93",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5635,9 +5929,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-229-part_of-unexpected_capabilities-block-94",
+      "id": "struct-unexpected_capabilities-stmt-229-part_of-unexpected_capabilities-block-93",
       "from": "unexpected_capabilities-stmt-229",
-      "to": "unexpected_capabilities-block-94",
+      "to": "unexpected_capabilities-block-93",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5645,9 +5939,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-230-part_of-unexpected_capabilities-block-94",
+      "id": "struct-unexpected_capabilities-stmt-230-part_of-unexpected_capabilities-block-93",
       "from": "unexpected_capabilities-stmt-230",
-      "to": "unexpected_capabilities-block-94",
+      "to": "unexpected_capabilities-block-93",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5655,9 +5949,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-231-part_of-unexpected_capabilities-block-94",
+      "id": "struct-unexpected_capabilities-stmt-231-part_of-unexpected_capabilities-block-93",
       "from": "unexpected_capabilities-stmt-231",
-      "to": "unexpected_capabilities-block-94",
+      "to": "unexpected_capabilities-block-93",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5665,8 +5959,28 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-232-part_of-unexpected_capabilities-block-96",
+      "id": "struct-unexpected_capabilities-stmt-232-part_of-unexpected_capabilities-block-93",
       "from": "unexpected_capabilities-stmt-232",
+      "to": "unexpected_capabilities-block-93",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-233-part_of-unexpected_capabilities-block-93",
+      "from": "unexpected_capabilities-stmt-233",
+      "to": "unexpected_capabilities-block-93",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-234-part_of-unexpected_capabilities-block-96",
+      "from": "unexpected_capabilities-stmt-234",
       "to": "unexpected_capabilities-block-96",
       "kind": "part_of",
       "qualifiers": {},
@@ -5675,28 +5989,58 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-233-part_of-unexpected_capabilities-block-97",
-      "from": "unexpected_capabilities-stmt-233",
-      "to": "unexpected_capabilities-block-97",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-stmt-234-part_of-unexpected_capabilities-block-98",
-      "from": "unexpected_capabilities-stmt-234",
-      "to": "unexpected_capabilities-block-98",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-stmt-235-part_of-unexpected_capabilities-block-98",
+      "id": "struct-unexpected_capabilities-stmt-235-part_of-unexpected_capabilities-block-96",
       "from": "unexpected_capabilities-stmt-235",
+      "to": "unexpected_capabilities-block-96",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-236-part_of-unexpected_capabilities-block-96",
+      "from": "unexpected_capabilities-stmt-236",
+      "to": "unexpected_capabilities-block-96",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-237-part_of-unexpected_capabilities-block-96",
+      "from": "unexpected_capabilities-stmt-237",
+      "to": "unexpected_capabilities-block-96",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-238-part_of-unexpected_capabilities-block-96",
+      "from": "unexpected_capabilities-stmt-238",
+      "to": "unexpected_capabilities-block-96",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-239-part_of-unexpected_capabilities-block-96",
+      "from": "unexpected_capabilities-stmt-239",
+      "to": "unexpected_capabilities-block-96",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-240-part_of-unexpected_capabilities-block-98",
+      "from": "unexpected_capabilities-stmt-240",
       "to": "unexpected_capabilities-block-98",
       "kind": "part_of",
       "qualifiers": {},
@@ -5705,58 +6049,58 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-236-part_of-unexpected_capabilities-block-99",
-      "from": "unexpected_capabilities-stmt-236",
-      "to": "unexpected_capabilities-block-99",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-stmt-237-part_of-unexpected_capabilities-block-99",
-      "from": "unexpected_capabilities-stmt-237",
-      "to": "unexpected_capabilities-block-99",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-stmt-238-part_of-unexpected_capabilities-block-99",
-      "from": "unexpected_capabilities-stmt-238",
-      "to": "unexpected_capabilities-block-99",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-stmt-239-part_of-unexpected_capabilities-block-99",
-      "from": "unexpected_capabilities-stmt-239",
-      "to": "unexpected_capabilities-block-99",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-stmt-240-part_of-unexpected_capabilities-block-100",
-      "from": "unexpected_capabilities-stmt-240",
-      "to": "unexpected_capabilities-block-100",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-stmt-241-part_of-unexpected_capabilities-block-100",
+      "id": "struct-unexpected_capabilities-stmt-241-part_of-unexpected_capabilities-block-98",
       "from": "unexpected_capabilities-stmt-241",
+      "to": "unexpected_capabilities-block-98",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-242-part_of-unexpected_capabilities-block-98",
+      "from": "unexpected_capabilities-stmt-242",
+      "to": "unexpected_capabilities-block-98",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-243-part_of-unexpected_capabilities-block-98",
+      "from": "unexpected_capabilities-stmt-243",
+      "to": "unexpected_capabilities-block-98",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-244-part_of-unexpected_capabilities-block-98",
+      "from": "unexpected_capabilities-stmt-244",
+      "to": "unexpected_capabilities-block-98",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-245-part_of-unexpected_capabilities-block-98",
+      "from": "unexpected_capabilities-stmt-245",
+      "to": "unexpected_capabilities-block-98",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-246-part_of-unexpected_capabilities-block-100",
+      "from": "unexpected_capabilities-stmt-246",
       "to": "unexpected_capabilities-block-100",
       "kind": "part_of",
       "qualifiers": {},
@@ -5765,59 +6109,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-242-part_of-unexpected_capabilities-block-101",
-      "from": "unexpected_capabilities-stmt-242",
-      "to": "unexpected_capabilities-block-101",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-stmt-243-part_of-unexpected_capabilities-block-101",
-      "from": "unexpected_capabilities-stmt-243",
-      "to": "unexpected_capabilities-block-101",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-stmt-244-part_of-unexpected_capabilities-block-102",
-      "from": "unexpected_capabilities-stmt-244",
-      "to": "unexpected_capabilities-block-102",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-stmt-245-part_of-unexpected_capabilities-block-102",
-      "from": "unexpected_capabilities-stmt-245",
-      "to": "unexpected_capabilities-block-102",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-stmt-246-part_of-unexpected_capabilities-block-103",
-      "from": "unexpected_capabilities-stmt-246",
-      "to": "unexpected_capabilities-block-103",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
-      "id": "struct-unexpected_capabilities-stmt-247-part_of-unexpected_capabilities-block-103",
+      "id": "struct-unexpected_capabilities-stmt-247-part_of-unexpected_capabilities-block-100",
       "from": "unexpected_capabilities-stmt-247",
-      "to": "unexpected_capabilities-block-103",
+      "to": "unexpected_capabilities-block-100",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5825,9 +6119,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-248-part_of-unexpected_capabilities-block-103",
+      "id": "struct-unexpected_capabilities-stmt-248-part_of-unexpected_capabilities-block-100",
       "from": "unexpected_capabilities-stmt-248",
-      "to": "unexpected_capabilities-block-103",
+      "to": "unexpected_capabilities-block-100",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5835,9 +6129,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-249-part_of-unexpected_capabilities-block-104",
+      "id": "struct-unexpected_capabilities-stmt-249-part_of-unexpected_capabilities-block-100",
       "from": "unexpected_capabilities-stmt-249",
-      "to": "unexpected_capabilities-block-104",
+      "to": "unexpected_capabilities-block-100",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5845,9 +6139,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-250-part_of-unexpected_capabilities-block-104",
+      "id": "struct-unexpected_capabilities-stmt-250-part_of-unexpected_capabilities-block-100",
       "from": "unexpected_capabilities-stmt-250",
-      "to": "unexpected_capabilities-block-104",
+      "to": "unexpected_capabilities-block-100",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -5855,8 +6149,48 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-unexpected_capabilities-stmt-251-part_of-unexpected_capabilities-block-104",
+      "id": "struct-unexpected_capabilities-stmt-251-part_of-unexpected_capabilities-block-102",
       "from": "unexpected_capabilities-stmt-251",
+      "to": "unexpected_capabilities-block-102",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-252-part_of-unexpected_capabilities-block-102",
+      "from": "unexpected_capabilities-stmt-252",
+      "to": "unexpected_capabilities-block-102",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-253-part_of-unexpected_capabilities-block-102",
+      "from": "unexpected_capabilities-stmt-253",
+      "to": "unexpected_capabilities-block-102",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-254-part_of-unexpected_capabilities-block-102",
+      "from": "unexpected_capabilities-stmt-254",
+      "to": "unexpected_capabilities-block-102",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-255-part_of-unexpected_capabilities-block-104",
+      "from": "unexpected_capabilities-stmt-255",
       "to": "unexpected_capabilities-block-104",
       "kind": "part_of",
       "qualifiers": {},
@@ -5865,87 +6199,193 @@
       "confidence": "provenance"
     },
     {
-      "id": "prov-unexpected_capabilities-gpt-2",
-      "from": "gpt-2",
-      "to": "unexpected-capabilities",
-      "kind": "mentioned_in",
+      "id": "struct-unexpected_capabilities-stmt-256-part_of-unexpected_capabilities-block-105",
+      "from": "unexpected_capabilities-stmt-256",
+      "to": "unexpected_capabilities-block-105",
+      "kind": "part_of",
       "qualifiers": {},
-      "quote": "trained a 1.5-billion-parameter decoder-only Transformer",
-      "citation_keys": [
-        "gpt2"
-      ],
+      "quote": "",
+      "citation_keys": [],
       "confidence": "provenance"
     },
     {
-      "id": "prov-unexpected_capabilities-weight-space-programming",
-      "from": "weight-space-programming",
-      "to": "unexpected-capabilities",
-      "kind": "mentioned_in",
+      "id": "struct-unexpected_capabilities-stmt-257-part_of-unexpected_capabilities-block-106",
+      "from": "unexpected_capabilities-stmt-257",
+      "to": "unexpected_capabilities-block-106",
+      "kind": "part_of",
       "qualifiers": {},
-      "quote": "In November 2026, a team at MIT CSAIL reported a set of experiments",
-      "citation_keys": [
-        "takehi2026weightspace"
-      ],
+      "quote": "",
+      "citation_keys": [],
       "confidence": "provenance"
     },
     {
-      "id": "prov-unexpected_capabilities-minatar-ppo",
-      "from": "minatar-ppo",
-      "to": "unexpected-capabilities",
-      "kind": "mentioned_in",
+      "id": "struct-unexpected_capabilities-stmt-258-part_of-unexpected_capabilities-block-106",
+      "from": "unexpected_capabilities-stmt-258",
+      "to": "unexpected_capabilities-block-106",
+      "kind": "part_of",
       "qualifiers": {},
-      "quote": "beat a PPO baseline trained for 100 million steps",
-      "citation_keys": [
-        "takehi2026weightspace"
-      ],
+      "quote": "",
+      "citation_keys": [],
       "confidence": "provenance"
     },
     {
-      "id": "prov-unexpected_capabilities-weight-space-programming-car-policy",
-      "from": "weight-space-programming-car-policy",
-      "to": "unexpected-capabilities",
-      "kind": "mentioned_in",
+      "id": "struct-unexpected_capabilities-stmt-259-part_of-unexpected_capabilities-block-107",
+      "from": "unexpected_capabilities-stmt-259",
+      "to": "unexpected_capabilities-block-107",
+      "kind": "part_of",
       "qualifiers": {},
-      "quote": "repaired a stuck car-driving policy by changing 3.5% of its weights",
-      "citation_keys": [
-        "takehi2026weightspace"
-      ],
+      "quote": "",
+      "citation_keys": [],
       "confidence": "provenance"
     },
     {
-      "id": "prov-unexpected_capabilities-qwen3.5-0.8b-weightspace-edit",
-      "from": "qwen3.5-0.8b-weightspace-edit",
-      "to": "unexpected-capabilities",
-      "kind": "mentioned_in",
+      "id": "struct-unexpected_capabilities-stmt-260-part_of-unexpected_capabilities-block-107",
+      "from": "unexpected_capabilities-stmt-260",
+      "to": "unexpected_capabilities-block-107",
+      "kind": "part_of",
       "qualifiers": {},
-      "quote": "changed 0.016% of the model's weights",
-      "citation_keys": [
-        "takehi2026weightspace"
-      ],
+      "quote": "",
+      "citation_keys": [],
       "confidence": "provenance"
     },
     {
-      "id": "prov-unexpected_capabilities-qwen3.5-0.8b",
-      "from": "qwen3.5-0.8b",
-      "to": "unexpected-capabilities",
-      "kind": "mentioned_in",
+      "id": "struct-unexpected_capabilities-stmt-261-part_of-unexpected_capabilities-block-107",
+      "from": "unexpected_capabilities-stmt-261",
+      "to": "unexpected_capabilities-block-107",
+      "kind": "part_of",
       "qualifiers": {},
-      "quote": "MATH-500 rose from 7.9% to 48.1%",
-      "citation_keys": [
-        "takehi2026weightspace"
-      ],
+      "quote": "",
+      "citation_keys": [],
       "confidence": "provenance"
     },
     {
-      "id": "prov-unexpected_capabilities-gemma-3-270m",
-      "from": "gemma-3-270m",
-      "to": "unexpected-capabilities",
-      "kind": "mentioned_in",
+      "id": "struct-unexpected_capabilities-stmt-262-part_of-unexpected_capabilities-block-107",
+      "from": "unexpected_capabilities-stmt-262",
+      "to": "unexpected_capabilities-block-107",
+      "kind": "part_of",
       "qualifiers": {},
-      "quote": "When the same procedure ran on Gemma 3 270M",
-      "citation_keys": [
-        "takehi2026weightspace"
-      ],
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-263-part_of-unexpected_capabilities-block-108",
+      "from": "unexpected_capabilities-stmt-263",
+      "to": "unexpected_capabilities-block-108",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-264-part_of-unexpected_capabilities-block-108",
+      "from": "unexpected_capabilities-stmt-264",
+      "to": "unexpected_capabilities-block-108",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-265-part_of-unexpected_capabilities-block-109",
+      "from": "unexpected_capabilities-stmt-265",
+      "to": "unexpected_capabilities-block-109",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-266-part_of-unexpected_capabilities-block-109",
+      "from": "unexpected_capabilities-stmt-266",
+      "to": "unexpected_capabilities-block-109",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-267-part_of-unexpected_capabilities-block-110",
+      "from": "unexpected_capabilities-stmt-267",
+      "to": "unexpected_capabilities-block-110",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-268-part_of-unexpected_capabilities-block-110",
+      "from": "unexpected_capabilities-stmt-268",
+      "to": "unexpected_capabilities-block-110",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-269-part_of-unexpected_capabilities-block-111",
+      "from": "unexpected_capabilities-stmt-269",
+      "to": "unexpected_capabilities-block-111",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-270-part_of-unexpected_capabilities-block-111",
+      "from": "unexpected_capabilities-stmt-270",
+      "to": "unexpected_capabilities-block-111",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-271-part_of-unexpected_capabilities-block-111",
+      "from": "unexpected_capabilities-stmt-271",
+      "to": "unexpected_capabilities-block-111",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-272-part_of-unexpected_capabilities-block-112",
+      "from": "unexpected_capabilities-stmt-272",
+      "to": "unexpected_capabilities-block-112",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-273-part_of-unexpected_capabilities-block-112",
+      "from": "unexpected_capabilities-stmt-273",
+      "to": "unexpected_capabilities-block-112",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-unexpected_capabilities-stmt-274-part_of-unexpected_capabilities-block-112",
+      "from": "unexpected_capabilities-stmt-274",
+      "to": "unexpected_capabilities-block-112",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],
@@ -7422,288 +7862,449 @@
     },
     {
       "id": "unexpected_capabilities-stmt-211",
-      "quote": "Honest self-assessment was long thought to be the hardest capability to elicit from a model trained only to imitate text.",
+      "quote": "In November 2026, a team at MIT CSAIL reported a set of experiments in which GPT-6 Astra treated a network's weights as a text artifact it could read and rewrite (\\cite[Takehi et al., 2026]{takehi2026weightspace}).",
       "block_id": "unexpected_capabilities-block-88",
-      "section": "The Inverse of “Knowing What It Doesn't Know”",
+      "section": "Reading and Writing the Weights",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-212",
-      "quote": "(\\cite[Lin, Hilton & Evans, 2022]{lin2021truthful}) constructed the TruthfulQA benchmark to test it.",
+      "quote": "Given only the raw weights of small grid-game policies, with no game names in the prompt, Astra named the correct game each time.",
       "block_id": "unexpected_capabilities-block-88",
-      "section": "The Inverse of “Knowing What It Doesn't Know”",
+      "section": "Reading and Writing the Weights",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-213",
-      "quote": "The results: GPT-3 base models were right and wrong in roughly equal measure, *but they were not random*, they were systematically biased toward *imitative falsehoods*: false statements that occur frequently in the training data (“If you crack your knuckles a lot, what happens?”, expected wrong answer: “you get arthritis”).",
+      "quote": "Given the weights of diffusion models, it identified the generated shape without running a forward pass.",
       "block_id": "unexpected_capabilities-block-88",
-      "section": "The Inverse of “Knowing What It Doesn't Know”",
+      "section": "Reading and Writing the Weights",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-214",
-      "quote": "Larger and instruction-tuned models actually did *worse* on TruthfulQA in early iterations, because they had become more *confident* in imitating common misconceptions.",
+      "quote": "Given only the middle transformer blocks of a small character model, with the input and output layers removed, it named the training language and the copying heads, matching the induction heads that were measured by running the model.",
       "block_id": "unexpected_capabilities-block-88",
-      "section": "The Inverse of “Knowing What It Doesn't Know”",
+      "section": "Reading and Writing the Weights",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-215",
-      "quote": "This is one of the cleanest demonstrations that fluency and truth are not the same thing, and that scaling can amplify the wrong signal as easily as the right one.",
-      "block_id": "unexpected_capabilities-block-88",
-      "section": "The Inverse of “Knowing What It Doesn't Know”",
+      "quote": "The report also shows writing.",
+      "block_id": "unexpected_capabilities-block-89",
+      "section": "Reading and Writing the Weights",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-216",
-      "quote": "The finding motivated the development of RLHF and later DPO as direct corrections for this failure mode.",
-      "block_id": "unexpected_capabilities-block-88",
-      "section": "The Inverse of “Knowing What It Doesn't Know”",
+      "quote": "Astra repaired a stuck car-driving policy by changing 3.5% of its weights, wrote MinAtar policies from scratch that beat a PPO baseline trained for 100 million steps, and wrote a Go network inside a Python sandbox without training.",
+      "block_id": "unexpected_capabilities-block-89",
+      "section": "Reading and Writing the Weights",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-217",
-      "quote": "A more troubling surprise.",
-      "block_id": "unexpected_capabilities-block-90",
-      "section": "Verbatim Memorisation of Training Data",
+      "quote": "The headline experiment edited Qwen3.5-0.8B.",
+      "block_id": "unexpected_capabilities-block-89",
+      "section": "Reading and Writing the Weights",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-218",
-      "quote": "(\\cite[Carlini et al., 2021]{carlini2021extracting}) showed that large LLMs, when prompted with the right prefixes, will emit *long verbatim passages* of their training data, including copyrighted text, personally identifying information, and content that was never intended to be reproduced.",
-      "block_id": "unexpected_capabilities-block-90",
-      "section": "Verbatim Memorisation of Training Data",
+      "quote": "Astra traced its repetitive reasoning loops to a direction written by the middle MLP layers, subtracted that direction from a small set of output columns, and changed 0.016% of the model's weights.",
+      "block_id": "unexpected_capabilities-block-89",
+      "section": "Reading and Writing the Weights",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-219",
-      "quote": "The New York Times sued OpenAI in 2023 partly on the basis of this memorisation.",
-      "block_id": "unexpected_capabilities-block-90",
-      "section": "Verbatim Memorisation of Training Data",
+      "quote": "MATH-500 rose from 7.9% to 48.1% and IFEval from 21.0% to 62.3% (\\cite[Takehi et al., 2026]{takehi2026weightspace}).",
+      "block_id": "unexpected_capabilities-block-89",
+      "section": "Reading and Writing the Weights",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-220",
-      "quote": "The phenomenon is not a bug in the usual sense: it falls out of the maximum-likelihood objective, which rewards models for perfectly predicting tokens they have seen many times.",
-      "block_id": "unexpected_capabilities-block-90",
-      "section": "Verbatim Memorisation of Training Data",
+      "quote": "In the raw-weight-only setting, where no tools are available and the network is never run, the experiments covered networks of roughly 17,000 to 172,000 weights.",
+      "block_id": "unexpected_capabilities-block-91",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-221",
-      "quote": "The surprise was quantitative: with the right prompt, hundreds of pages of copyrighted material can be extracted.",
-      "block_id": "unexpected_capabilities-block-90",
-      "section": "Verbatim Memorisation of Training Data",
+      "quote": "Every experiment on a real language model gave Astra Python, and the Qwen edit also allowed practice batches.",
+      "block_id": "unexpected_capabilities-block-91",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-222",
-      "quote": "It is the cleanest demonstration that an LLM is not “a database with fuzzy retrieval”, it is, in part, an actual database, sitting in the weights.",
-      "block_id": "unexpected_capabilities-block-90",
-      "section": "Verbatim Memorisation of Training Data",
+      "quote": "The Qwen failure was specific, a reasoning loop, and the repair removed the loop rather than teaching new mathematics.",
+      "block_id": "unexpected_capabilities-block-91",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-223",
-      "quote": "The Inverse Scaling Prize set out to find tasks on which *bigger models do worse*; the follow-up work (\\cite[Wei et al., 2023]{mckenzie2023inverse}) examined those tasks at even larger scale and found that performance on 6 of the 11 tasks is **U-shaped**: it drops up to a point, then rises again.",
-      "block_id": "unexpected_capabilities-block-92",
-      "section": "Inverse Scaling and U-Shaped Curves",
+      "quote": "When the same procedure ran on Gemma 3 270M, which rarely loops, it produced no reliable gain; the authors conclude that editing could remove an obstacle that hid an ability, but could not add an ability the model lacked (\\cite[Takehi et al., 2026]{takehi2026weightspace}).",
+      "block_id": "unexpected_capabilities-block-91",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-224",
-      "quote": "The U-shape is driven by a phenomenon the authors call “distractor tasks”, patterns in the data that small models follow and that large models eventually learn to ignore.",
+      "quote": "That is why this is best read as a composition of capabilities the course has already met: mechanistic interpretability (finding a direction in the weights), model editing (changing it surgically), and code-writing agents (writing the analysis and the patch).",
       "block_id": "unexpected_capabilities-block-92",
-      "section": "Inverse Scaling and U-Shaped Curves",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-225",
-      "quote": "The lesson: scaling is not monotone.",
+      "quote": "\\cite[Goedecke (2026)]{goedecke2026weightspace} and \\cite[Honnibal (2026)]{honnibal2026weightspace} both argue that a competent human ML engineer could carry out the same steps, and that the headline conflates reading raw weights with tool-assisted editing.",
       "block_id": "unexpected_capabilities-block-92",
-      "section": "Inverse Scaling and U-Shaped Curves",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-226",
-      "quote": "There are real failure modes of scale, often driven by the model learning surface patterns from human text that are not aligned with what we want.",
+      "quote": "A same-day independent reproduction on toy algorithmic tasks reported success on ten tasks but found that its three language-task results were affected by evaluation leakage (\\cite[Singh, 2026]{singh2026weightspace}).",
       "block_id": "unexpected_capabilities-block-92",
-      "section": "Inverse Scaling and U-Shaped Curves",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-227",
-      "quote": "Whether a given task is U-shaped, monotonically improving, or genuinely inverse-scaling is an empirical question that cannot be answered by extrapolation from smaller models.",
+      "quote": "What is new is that a general-purpose model can plan and execute the whole loop, not that it has a direct channel into weight space that bypasses the tools.",
       "block_id": "unexpected_capabilities-block-92",
-      "section": "Inverse Scaling and U-Shaped Curves",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-228",
-      "quote": "In March 2023, a team at Microsoft Research published a 154-page investigation of an early GPT-4 checkpoint titled \\textit{Sparks of Artificial General Intelligence} (\\cite[Bubeck et al., 2023]{bubeck2023sparks}).",
-      "block_id": "unexpected_capabilities-block-94",
-      "section": "Sparks of AGI (GPT-4)",
+      "quote": "The safety implication matters more than the benchmark gain.",
+      "block_id": "unexpected_capabilities-block-93",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-229",
-      "quote": "Their central claim was that GPT-4, beyond its mastery of language, could solve novel and difficult tasks spanning mathematics, coding, vision, medicine, law, and psychology, *without needing any special prompting*, and that its performance was “strikingly close to human-level performance” in many of these domains.",
-      "block_id": "unexpected_capabilities-block-94",
-      "section": "Sparks of AGI (GPT-4)",
+      "quote": "If a model can locate a behaviour's direction in the weights and remove it without data, the same access can remove a safety behaviour.",
+      "block_id": "unexpected_capabilities-block-93",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-230",
-      "quote": "The paper documented abilities the authors had not anticipated: synthesising novel proofs, writing functioning code from a one-line description, explaining jokes, drawing ASCII art on request, and passing professional exams such as the bar exam at roughly the 90th percentile.",
-      "block_id": "unexpected_capabilities-block-94",
-      "section": "Sparks of AGI (GPT-4)",
+      "quote": "The refusal direction in the [Mechanistic Interpretability](mechanistic_interpretability.php) chapter is the clean existing example: a rank-one weight edit removes refusal while benchmark accuracy barely moves.",
+      "block_id": "unexpected_capabilities-block-93",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-231",
-      "quote": "Whether or not one accepts the “AGI” framing, the paper is a careful catalogue of capabilities that nobody, including OpenAI, predicted when scaling GPT-3.",
-      "block_id": "unexpected_capabilities-block-94",
-      "section": "Sparks of AGI (GPT-4)",
+      "quote": "Weight-space programming automates the search for that direction, which makes the old interpretability result both more useful for auditing and more dangerous as an attack surface.",
+      "block_id": "unexpected_capabilities-block-93",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-232",
-      "quote": "Taken together, these findings share a common structure that distinguishes them from ordinary engineering progress:",
-      "block_id": "unexpected_capabilities-block-96",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "The authors list auditing without evaluation, zero-data unlearning, and recursive self-improvement among the applications (\\cite[Takehi et al., 2026]{takehi2026weightspace}).",
+      "block_id": "unexpected_capabilities-block-93",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-233",
-      "quote": "**None of them were in the training objective.** Few-shot learning, reasoning chains, world models, theory of mind, tool use, none were directly supervised.",
-      "block_id": "unexpected_capabilities-block-97",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "Whether the loop becomes a reliable engineering discipline or stays a collection of narrow demonstrations is the open question.",
+      "block_id": "unexpected_capabilities-block-93",
+      "section": "A Composition, Not a Superpower",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-234",
-      "quote": "**All of them appeared *late* during scaling.** Below some threshold of parameters, data, or compute, the ability is essentially absent.",
-      "block_id": "unexpected_capabilities-block-98",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "Honest self-assessment was long thought to be the hardest capability to elicit from a model trained only to imitate text.",
+      "block_id": "unexpected_capabilities-block-96",
+      "section": "The Inverse of “Knowing What It Doesn't Know”",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-235",
-      "quote": "Above the threshold, it is present.",
-      "block_id": "unexpected_capabilities-block-98",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "(\\cite[Lin, Hilton & Evans, 2022]{lin2021truthful}) constructed the TruthfulQA benchmark to test it.",
+      "block_id": "unexpected_capabilities-block-96",
+      "section": "The Inverse of “Knowing What It Doesn't Know”",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-236",
-      "quote": "**Most are *non-smooth*, they appear as phase transitions.** The induction-heads loss curve has a sharp discontinuity.",
-      "block_id": "unexpected_capabilities-block-99",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "The results: GPT-3 base models were right and wrong in roughly equal measure, *but they were not random*, they were systematically biased toward *imitative falsehoods*: false statements that occur frequently in the training data (“If you crack your knuckles a lot, what happens?”, expected wrong answer: “you get arthritis”).",
+      "block_id": "unexpected_capabilities-block-96",
+      "section": "The Inverse of “Knowing What It Doesn't Know”",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-237",
-      "quote": "Chain-of-thought jumps from near-zero to substantial accuracy at a scale threshold.",
-      "block_id": "unexpected_capabilities-block-99",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "Larger and instruction-tuned models actually did *worse* on TruthfulQA in early iterations, because they had become more *confident* in imitating common misconceptions.",
+      "block_id": "unexpected_capabilities-block-96",
+      "section": "The Inverse of “Knowing What It Doesn't Know”",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-238",
-      "quote": "Theory-of-Mind goes from 0% to 20% to 75% across three GPT versions in eighteen months.",
-      "block_id": "unexpected_capabilities-block-99",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "This is one of the cleanest demonstrations that fluency and truth are not the same thing, and that scaling can amplify the wrong signal as easily as the right one.",
+      "block_id": "unexpected_capabilities-block-96",
+      "section": "The Inverse of “Knowing What It Doesn't Know”",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-239",
-      "quote": "The smooth scaling laws that describe loss do *not* describe capability.",
-      "block_id": "unexpected_capabilities-block-99",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "The finding motivated the development of RLHF and later DPO as direct corrections for this failure mode.",
+      "block_id": "unexpected_capabilities-block-96",
+      "section": "The Inverse of “Knowing What It Doesn't Know”",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-240",
-      "quote": "**Some scale the *opposite* way.** Truthfulness, compositional reasoning, and resistance to imitative falsehood can all degrade with scale before being rescued by alignment.",
-      "block_id": "unexpected_capabilities-block-100",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "A more troubling surprise.",
+      "block_id": "unexpected_capabilities-block-98",
+      "section": "Verbatim Memorisation of Training Data",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-241",
-      "quote": "There is no guarantee that a bigger model is a better model on any specific dimension.",
-      "block_id": "unexpected_capabilities-block-100",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "(\\cite[Carlini et al., 2021]{carlini2021extracting}) showed that large LLMs, when prompted with the right prefixes, will emit *long verbatim passages* of their training data, including copyrighted text, personally identifying information, and content that was never intended to be reproduced.",
+      "block_id": "unexpected_capabilities-block-98",
+      "section": "Verbatim Memorisation of Training Data",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-242",
-      "quote": "**The capabilities are *compositional* once present.** Chain-of-thought combines with self-consistency combines with tree-search combines with tool-use combines with self-refinement combines with constitutional self-critique.",
-      "block_id": "unexpected_capabilities-block-101",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "The New York Times sued OpenAI in 2023 partly on the basis of this memorisation.",
+      "block_id": "unexpected_capabilities-block-98",
+      "section": "Verbatim Memorisation of Training Data",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-243",
-      "quote": "Each new layer of structure can be stacked on the others.",
-      "block_id": "unexpected_capabilities-block-101",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "The phenomenon is not a bug in the usual sense: it falls out of the maximum-likelihood objective, which rewards models for perfectly predicting tokens they have seen many times.",
+      "block_id": "unexpected_capabilities-block-98",
+      "section": "Verbatim Memorisation of Training Data",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-244",
-      "quote": "**Capabilities often co-emerge and correlate.** The same model that gains strong chain-of-thought reasoning tends, at the same scale, to gain better theory of mind, better instruction following, and better cross-lingual transfer.",
-      "block_id": "unexpected_capabilities-block-102",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "The surprise was quantitative: with the right prompt, hundreds of pages of copyrighted material can be extracted.",
+      "block_id": "unexpected_capabilities-block-98",
+      "section": "Verbatim Memorisation of Training Data",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-245",
-      "quote": "The factors that drive emergence are not yet fully understood, but the cross-capability correlations are robust.",
-      "block_id": "unexpected_capabilities-block-102",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "It is the cleanest demonstration that an LLM is not “a database with fuzzy retrieval”, it is, in part, an actual database, sitting in the weights.",
+      "block_id": "unexpected_capabilities-block-98",
+      "section": "Verbatim Memorisation of Training Data",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-246",
-      "quote": "The practical consequence: we cannot, in 2026, predict the full capability profile of a model 10× larger than today's frontier.",
-      "block_id": "unexpected_capabilities-block-103",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "The Inverse Scaling Prize set out to find tasks on which *bigger models do worse*; the follow-up work (\\cite[Wei et al., 2023]{mckenzie2023inverse}) examined those tasks at even larger scale and found that performance on 6 of the 11 tasks is **U-shaped**: it drops up to a point, then rises again.",
+      "block_id": "unexpected_capabilities-block-100",
+      "section": "Inverse Scaling and U-Shaped Curves",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-247",
-      "quote": "Each past prediction underestimates what emerges.",
-      "block_id": "unexpected_capabilities-block-103",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "The U-shape is driven by a phenomenon the authors call “distractor tasks”, patterns in the data that small models follow and that large models eventually learn to ignore.",
+      "block_id": "unexpected_capabilities-block-100",
+      "section": "Inverse Scaling and U-Shaped Curves",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-248",
-      "quote": "The next genuinely surprising capability is, by definition, the one nobody is currently working on.",
-      "block_id": "unexpected_capabilities-block-103",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "The lesson: scaling is not monotone.",
+      "block_id": "unexpected_capabilities-block-100",
+      "section": "Inverse Scaling and U-Shaped Curves",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-249",
-      "quote": "The conceptual consequence is harder.",
-      "block_id": "unexpected_capabilities-block-104",
-      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "quote": "There are real failure modes of scale, often driven by the model learning surface patterns from human text that are not aligned with what we want.",
+      "block_id": "unexpected_capabilities-block-100",
+      "section": "Inverse Scaling and U-Shaped Curves",
       "kind": "statement"
     },
     {
       "id": "unexpected_capabilities-stmt-250",
-      "quote": "A language model trained on text is, in some deep sense, *forced* to build models of the world (because accurate next-token prediction requires modelling whatever process generated the text), models of agents (because human text describes mental states), models of algorithms (because text encodes procedures), models of its own reasoning (because text is full of corrections and second drafts), and an internal grading mechanism (because some training text compares and critiques other text).",
+      "quote": "Whether a given task is U-shaped, monotonically improving, or genuinely inverse-scaling is an empirical question that cannot be answered by extrapolation from smaller models.",
+      "block_id": "unexpected_capabilities-block-100",
+      "section": "Inverse Scaling and U-Shaped Curves",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-251",
+      "quote": "In March 2023, a team at Microsoft Research published a 154-page investigation of an early GPT-4 checkpoint titled \\textit{Sparks of Artificial General Intelligence} (\\cite[Bubeck et al., 2023]{bubeck2023sparks}).",
+      "block_id": "unexpected_capabilities-block-102",
+      "section": "Sparks of AGI (GPT-4)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-252",
+      "quote": "Their central claim was that GPT-4, beyond its mastery of language, could solve novel and difficult tasks spanning mathematics, coding, vision, medicine, law, and psychology, *without needing any special prompting*, and that its performance was “strikingly close to human-level performance” in many of these domains.",
+      "block_id": "unexpected_capabilities-block-102",
+      "section": "Sparks of AGI (GPT-4)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-253",
+      "quote": "The paper documented abilities the authors had not anticipated: synthesising novel proofs, writing functioning code from a one-line description, explaining jokes, drawing ASCII art on request, and passing professional exams such as the bar exam at roughly the 90th percentile.",
+      "block_id": "unexpected_capabilities-block-102",
+      "section": "Sparks of AGI (GPT-4)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-254",
+      "quote": "Whether or not one accepts the “AGI” framing, the paper is a careful catalogue of capabilities that nobody, including OpenAI, predicted when scaling GPT-3.",
+      "block_id": "unexpected_capabilities-block-102",
+      "section": "Sparks of AGI (GPT-4)",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-255",
+      "quote": "Taken together, these findings share a common structure that distinguishes them from ordinary engineering progress:",
       "block_id": "unexpected_capabilities-block-104",
       "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
       "kind": "statement"
     },
     {
-      "id": "unexpected_capabilities-stmt-251",
+      "id": "unexpected_capabilities-stmt-256",
+      "quote": "**None of them were in the training objective.** Few-shot learning, reasoning chains, world models, theory of mind, tool use, none were directly supervised.",
+      "block_id": "unexpected_capabilities-block-105",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-257",
+      "quote": "**All of them appeared *late* during scaling.** Below some threshold of parameters, data, or compute, the ability is essentially absent.",
+      "block_id": "unexpected_capabilities-block-106",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-258",
+      "quote": "Above the threshold, it is present.",
+      "block_id": "unexpected_capabilities-block-106",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-259",
+      "quote": "**Most are *non-smooth*, they appear as phase transitions.** The induction-heads loss curve has a sharp discontinuity.",
+      "block_id": "unexpected_capabilities-block-107",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-260",
+      "quote": "Chain-of-thought jumps from near-zero to substantial accuracy at a scale threshold.",
+      "block_id": "unexpected_capabilities-block-107",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-261",
+      "quote": "Theory-of-Mind goes from 0% to 20% to 75% across three GPT versions in eighteen months.",
+      "block_id": "unexpected_capabilities-block-107",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-262",
+      "quote": "The smooth scaling laws that describe loss do *not* describe capability.",
+      "block_id": "unexpected_capabilities-block-107",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-263",
+      "quote": "**Some scale the *opposite* way.** Truthfulness, compositional reasoning, and resistance to imitative falsehood can all degrade with scale before being rescued by alignment.",
+      "block_id": "unexpected_capabilities-block-108",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-264",
+      "quote": "There is no guarantee that a bigger model is a better model on any specific dimension.",
+      "block_id": "unexpected_capabilities-block-108",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-265",
+      "quote": "**The capabilities are *compositional* once present.** Chain-of-thought combines with self-consistency combines with tree-search combines with tool-use combines with self-refinement combines with constitutional self-critique.",
+      "block_id": "unexpected_capabilities-block-109",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-266",
+      "quote": "Each new layer of structure can be stacked on the others.",
+      "block_id": "unexpected_capabilities-block-109",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-267",
+      "quote": "**Capabilities often co-emerge and correlate.** The same model that gains strong chain-of-thought reasoning tends, at the same scale, to gain better theory of mind, better instruction following, and better cross-lingual transfer.",
+      "block_id": "unexpected_capabilities-block-110",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-268",
+      "quote": "The factors that drive emergence are not yet fully understood, but the cross-capability correlations are robust.",
+      "block_id": "unexpected_capabilities-block-110",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-269",
+      "quote": "The practical consequence: we cannot, in 2026, predict the full capability profile of a model 10× larger than today's frontier.",
+      "block_id": "unexpected_capabilities-block-111",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-270",
+      "quote": "Each past prediction underestimates what emerges.",
+      "block_id": "unexpected_capabilities-block-111",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-271",
+      "quote": "The next genuinely surprising capability is, by definition, the one nobody is currently working on.",
+      "block_id": "unexpected_capabilities-block-111",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-272",
+      "quote": "The conceptual consequence is harder.",
+      "block_id": "unexpected_capabilities-block-112",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-273",
+      "quote": "A language model trained on text is, in some deep sense, *forced* to build models of the world (because accurate next-token prediction requires modelling whatever process generated the text), models of agents (because human text describes mental states), models of algorithms (because text encodes procedures), models of its own reasoning (because text is full of corrections and second drafts), and an internal grading mechanism (because some training text compares and critiques other text).",
+      "block_id": "unexpected_capabilities-block-112",
+      "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
+      "kind": "statement"
+    },
+    {
+      "id": "unexpected_capabilities-stmt-274",
       "quote": "The next-token objective is much richer than it appears, and so are the failure modes that fall out of it.",
-      "block_id": "unexpected_capabilities-block-104",
+      "block_id": "unexpected_capabilities-block-112",
       "section": "The Pattern: Phase Transitions, Not Smooth Scaling",
       "kind": "statement"
     }
@@ -8221,114 +8822,162 @@
     },
     {
       "id": "unexpected_capabilities-block-86",
+      "quote": "Weight-Space Programming",
+      "kind": "heading",
+      "section": "Weight-Space Programming"
+    },
+    {
+      "id": "unexpected_capabilities-block-87",
+      "quote": "Reading and Writing the Weights",
+      "kind": "heading",
+      "section": "Reading and Writing the Weights"
+    },
+    {
+      "id": "unexpected_capabilities-block-88",
+      "quote": "In November 2026, a team at MIT CSAIL reported a set of experiments in which GPT-6 Astra treated a network's weights as a text artifact it could read and rewrite (\\cite[Takehi et al., 2026]{takehi2026weightspace}). Given only the raw weights of small grid-game policies, with no game names in the prompt, Astra named the correct game each time. Given the weights of diffusion models, it identified the generated shape without running a forward pass. Given only the middle transformer blocks of a small character model, with the input and output layers removed, it named the training language and the copying heads, matching the induction heads that were measured by running the model.",
+      "kind": "paragraph",
+      "section": "Reading and Writing the Weights"
+    },
+    {
+      "id": "unexpected_capabilities-block-89",
+      "quote": "The report also shows writing. Astra repaired a stuck car-driving policy by changing 3.5% of its weights, wrote MinAtar policies from scratch that beat a PPO baseline trained for 100 million steps, and wrote a Go network inside a Python sandbox without training. The headline experiment edited Qwen3.5-0.8B. Astra traced its repetitive reasoning loops to a direction written by the middle MLP layers, subtracted that direction from a small set of output columns, and changed 0.016% of the model's weights. MATH-500 rose from 7.9% to 48.1% and IFEval from 21.0% to 62.3% (\\cite[Takehi et al., 2026]{takehi2026weightspace}).",
+      "kind": "paragraph",
+      "section": "Reading and Writing the Weights"
+    },
+    {
+      "id": "unexpected_capabilities-block-90",
+      "quote": "A Composition, Not a Superpower",
+      "kind": "heading",
+      "section": "A Composition, Not a Superpower"
+    },
+    {
+      "id": "unexpected_capabilities-block-91",
+      "quote": "The framing needs care. In the raw-weight-only setting, where no tools are available and the network is never run, the experiments covered networks of roughly 17,000 to 172,000 weights. Every experiment on a real language model gave Astra Python, and the Qwen edit also allowed practice batches. The Qwen failure was specific, a reasoning loop, and the repair removed the loop rather than teaching new mathematics. When the same procedure ran on Gemma 3 270M, which rarely loops, it produced no reliable gain; the authors conclude that editing could remove an obstacle that hid an ability, but could not add an ability the model lacked (\\cite[Takehi et al., 2026]{takehi2026weightspace}).",
+      "kind": "paragraph",
+      "section": "A Composition, Not a Superpower"
+    },
+    {
+      "id": "unexpected_capabilities-block-92",
+      "quote": "That is why this is best read as a composition of capabilities the course has already met: mechanistic interpretability (finding a direction in the weights), model editing (changing it surgically), and code-writing agents (writing the analysis and the patch). \\cite[Goedecke (2026)]{goedecke2026weightspace} and \\cite[Honnibal (2026)]{honnibal2026weightspace} both argue that a competent human ML engineer could carry out the same steps, and that the headline conflates reading raw weights with tool-assisted editing. A same-day independent reproduction on toy algorithmic tasks reported success on ten tasks but found that its three language-task results were affected by evaluation leakage (\\cite[Singh, 2026]{singh2026weightspace}). What is new is that a general-purpose model can plan and execute the whole loop, not that it has a direct channel into weight space that bypasses the tools.",
+      "kind": "paragraph",
+      "section": "A Composition, Not a Superpower"
+    },
+    {
+      "id": "unexpected_capabilities-block-93",
+      "quote": "The safety implication matters more than the benchmark gain. If a model can locate a behaviour's direction in the weights and remove it without data, the same access can remove a safety behaviour. The refusal direction in the [Mechanistic Interpretability](mechanistic_interpretability.php) chapter is the clean existing example: a rank-one weight edit removes refusal while benchmark accuracy barely moves. Weight-space programming automates the search for that direction, which makes the old interpretability result both more useful for auditing and more dangerous as an attack surface. The authors list auditing without evaluation, zero-data unlearning, and recursive self-improvement among the applications (\\cite[Takehi et al., 2026]{takehi2026weightspace}). Whether the loop becomes a reliable engineering discipline or stays a collection of narrow demonstrations is the open question.",
+      "kind": "paragraph",
+      "section": "A Composition, Not a Superpower"
+    },
+    {
+      "id": "unexpected_capabilities-block-94",
       "quote": "Limits and Failure Modes",
       "kind": "heading",
       "section": "Limits and Failure Modes"
     },
     {
-      "id": "unexpected_capabilities-block-87",
+      "id": "unexpected_capabilities-block-95",
       "quote": "The Inverse of “Knowing What It Doesn't Know”",
       "kind": "heading",
       "section": "The Inverse of “Knowing What It Doesn't Know”"
     },
     {
-      "id": "unexpected_capabilities-block-88",
+      "id": "unexpected_capabilities-block-96",
       "quote": "Honest self-assessment was long thought to be the hardest capability to elicit from a model trained only to imitate text. (\\cite[Lin, Hilton & Evans, 2022]{lin2021truthful}) constructed the TruthfulQA benchmark to test it. The results: GPT-3 base models were right and wrong in roughly equal measure, *but they were not random*, they were systematically biased toward *imitative falsehoods*: false statements that occur frequently in the training data (“If you crack your knuckles a lot, what happens?”, expected wrong answer: “you get arthritis”). Larger and instruction-tuned models actually did *worse* on TruthfulQA in early iterations, because they had become more *confident* in imitating common misconceptions. This is one of the cleanest demonstrations that fluency and truth are not the same thing, and that scaling can amplify the wrong signal as easily as the right one. The finding motivated the development of RLHF and later DPO as direct corrections for this failure mode.",
       "kind": "paragraph",
       "section": "The Inverse of “Knowing What It Doesn't Know”"
     },
     {
-      "id": "unexpected_capabilities-block-89",
+      "id": "unexpected_capabilities-block-97",
       "quote": "Verbatim Memorisation of Training Data",
       "kind": "heading",
       "section": "Verbatim Memorisation of Training Data"
     },
     {
-      "id": "unexpected_capabilities-block-90",
+      "id": "unexpected_capabilities-block-98",
       "quote": "A more troubling surprise. (\\cite[Carlini et al., 2021]{carlini2021extracting}) showed that large LLMs, when prompted with the right prefixes, will emit *long verbatim passages* of their training data, including copyrighted text, personally identifying information, and content that was never intended to be reproduced. The New York Times sued OpenAI in 2023 partly on the basis of this memorisation. The phenomenon is not a bug in the usual sense: it falls out of the maximum-likelihood objective, which rewards models for perfectly predicting tokens they have seen many times. The surprise was quantitative: with the right prompt, hundreds of pages of copyrighted material can be extracted. It is the cleanest demonstration that an LLM is not “a database with fuzzy retrieval”, it is, in part, an actual database, sitting in the weights.",
       "kind": "paragraph",
       "section": "Verbatim Memorisation of Training Data"
     },
     {
-      "id": "unexpected_capabilities-block-91",
+      "id": "unexpected_capabilities-block-99",
       "quote": "Inverse Scaling and U-Shaped Curves",
       "kind": "heading",
       "section": "Inverse Scaling and U-Shaped Curves"
     },
     {
-      "id": "unexpected_capabilities-block-92",
+      "id": "unexpected_capabilities-block-100",
       "quote": "The converse surprise. The Inverse Scaling Prize set out to find tasks on which *bigger models do worse*; the follow-up work (\\cite[Wei et al., 2023]{mckenzie2023inverse}) examined those tasks at even larger scale and found that performance on 6 of the 11 tasks is **U-shaped**: it drops up to a point, then rises again. The U-shape is driven by a phenomenon the authors call “distractor tasks”, patterns in the data that small models follow and that large models eventually learn to ignore. The lesson: scaling is not monotone. There are real failure modes of scale, often driven by the model learning surface patterns from human text that are not aligned with what we want. Whether a given task is U-shaped, monotonically improving, or genuinely inverse-scaling is an empirical question that cannot be answered by extrapolation from smaller models.",
       "kind": "paragraph",
       "section": "Inverse Scaling and U-Shaped Curves"
     },
     {
-      "id": "unexpected_capabilities-block-93",
+      "id": "unexpected_capabilities-block-101",
       "quote": "Sparks of AGI (GPT-4)",
       "kind": "heading",
       "section": "Sparks of AGI (GPT-4)"
     },
     {
-      "id": "unexpected_capabilities-block-94",
+      "id": "unexpected_capabilities-block-102",
       "quote": "In March 2023, a team at Microsoft Research published a 154-page investigation of an early GPT-4 checkpoint titled \\textit{Sparks of Artificial General Intelligence} (\\cite[Bubeck et al., 2023]{bubeck2023sparks}). Their central claim was that GPT-4, beyond its mastery of language, could solve novel and difficult tasks spanning mathematics, coding, vision, medicine, law, and psychology, *without needing any special prompting*, and that its performance was “strikingly close to human-level performance” in many of these domains. The paper documented abilities the authors had not anticipated: synthesising novel proofs, writing functioning code from a one-line description, explaining jokes, drawing ASCII art on request, and passing professional exams such as the bar exam at roughly the 90th percentile. Whether or not one accepts the “AGI” framing, the paper is a careful catalogue of capabilities that nobody, including OpenAI, predicted when scaling GPT-3.",
       "kind": "paragraph",
       "section": "Sparks of AGI (GPT-4)"
     },
     {
-      "id": "unexpected_capabilities-block-95",
+      "id": "unexpected_capabilities-block-103",
       "quote": "The Pattern: Phase Transitions, Not Smooth Scaling",
       "kind": "heading",
       "section": "The Pattern: Phase Transitions, Not Smooth Scaling"
     },
     {
-      "id": "unexpected_capabilities-block-96",
+      "id": "unexpected_capabilities-block-104",
       "quote": "Taken together, these findings share a common structure that distinguishes them from ordinary engineering progress:",
       "kind": "paragraph",
       "section": "The Pattern: Phase Transitions, Not Smooth Scaling"
     },
     {
-      "id": "unexpected_capabilities-block-97",
+      "id": "unexpected_capabilities-block-105",
       "quote": "1. **None of them were in the training objective.** Few-shot learning, reasoning chains, world models, theory of mind, tool use, none were directly supervised.",
       "kind": "list-item",
       "section": "The Pattern: Phase Transitions, Not Smooth Scaling"
     },
     {
-      "id": "unexpected_capabilities-block-98",
+      "id": "unexpected_capabilities-block-106",
       "quote": "2. **All of them appeared *late* during scaling.** Below some threshold of parameters, data, or compute, the ability is essentially absent. Above the threshold, it is present.",
       "kind": "list-item",
       "section": "The Pattern: Phase Transitions, Not Smooth Scaling"
     },
     {
-      "id": "unexpected_capabilities-block-99",
+      "id": "unexpected_capabilities-block-107",
       "quote": "3. **Most are *non-smooth*, they appear as phase transitions.** The induction-heads loss curve has a sharp discontinuity. Chain-of-thought jumps from near-zero to substantial accuracy at a scale threshold. Theory-of-Mind goes from 0% to 20% to 75% across three GPT versions in eighteen months. The smooth scaling laws that describe loss do *not* describe capability.",
       "kind": "list-item",
       "section": "The Pattern: Phase Transitions, Not Smooth Scaling"
     },
     {
-      "id": "unexpected_capabilities-block-100",
+      "id": "unexpected_capabilities-block-108",
       "quote": "4. **Some scale the *opposite* way.** Truthfulness, compositional reasoning, and resistance to imitative falsehood can all degrade with scale before being rescued by alignment. There is no guarantee that a bigger model is a better model on any specific dimension.",
       "kind": "list-item",
       "section": "The Pattern: Phase Transitions, Not Smooth Scaling"
     },
     {
-      "id": "unexpected_capabilities-block-101",
+      "id": "unexpected_capabilities-block-109",
       "quote": "5. **The capabilities are *compositional* once present.** Chain-of-thought combines with self-consistency combines with tree-search combines with tool-use combines with self-refinement combines with constitutional self-critique. Each new layer of structure can be stacked on the others.",
       "kind": "list-item",
       "section": "The Pattern: Phase Transitions, Not Smooth Scaling"
     },
     {
-      "id": "unexpected_capabilities-block-102",
+      "id": "unexpected_capabilities-block-110",
       "quote": "6. **Capabilities often co-emerge and correlate.** The same model that gains strong chain-of-thought reasoning tends, at the same scale, to gain better theory of mind, better instruction following, and better cross-lingual transfer. The factors that drive emergence are not yet fully understood, but the cross-capability correlations are robust.",
       "kind": "list-item",
       "section": "The Pattern: Phase Transitions, Not Smooth Scaling"
     },
     {
-      "id": "unexpected_capabilities-block-103",
+      "id": "unexpected_capabilities-block-111",
       "quote": "The practical consequence: we cannot, in 2026, predict the full capability profile of a model 10× larger than today's frontier. Each past prediction underestimates what emerges. The next genuinely surprising capability is, by definition, the one nobody is currently working on.",
       "kind": "paragraph",
       "section": "The Pattern: Phase Transitions, Not Smooth Scaling"
     },
     {
-      "id": "unexpected_capabilities-block-104",
+      "id": "unexpected_capabilities-block-112",
       "quote": "The conceptual consequence is harder. A language model trained on text is, in some deep sense, *forced* to build models of the world (because accurate next-token prediction requires modelling whatever process generated the text), models of agents (because human text describes mental states), models of algorithms (because text encodes procedures), models of its own reasoning (because text is full of corrections and second drafts), and an internal grading mechanism (because some training text compares and critiques other text). The next-token objective is much richer than it appears, and so are the failure modes that fall out of it.",
       "kind": "paragraph",
       "section": "The Pattern: Phase Transitions, Not Smooth Scaling"

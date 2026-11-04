@@ -416,7 +416,7 @@
         qkv: {
           caption: "Three learned projections split you. Query: what you are looking for. Key: what you offer. Value: what you will hand over if chosen.",
           tech: "Q = W_Q·LN(x) · K = W_K·LN(x) · V = W_V·LN(x)",
-          see: "Your token splits into Q, K and V ghost crystals around you, with three holographic panels. Each bar is one of the 32 dimensions of the active head.",
+          see: "Your token splits into Q, K and V ghost crystals. Three full 16,384-weight webs surround you: the LN(x) input ring feeds the Q, K and V output rings. The holographic panels show the active head's 32 bars.",
           meaning: "The same normalized vector is multiplied by three different matrices. Q is what you are looking for, K is what you offer to others, V is what you hand over. The head owns a fixed 32-dimensional slice; the other 96 dimensions belong to the other heads.",
         },
         attn: {
@@ -434,7 +434,7 @@
         write: {
           caption: "The head writes its mix back into your residual stream. Nothing is overwritten. Every layer adds.",
           tech: "x ← x + W_O·z + b_O",
-          see: "A bright pulse travels from your crystal into the pillar; the 128 bars around the pillar change.",
+          see: "A bright pulse travels from your crystal into the pillar; the 128 bars around the pillar change. The W_O web shows all 16,384 output-projection weights from z to the attention write.",
           meaning: "The mixed vector is projected by the output matrix W_O and added to the residual stream. The new vector is the old vector plus this write. The residual stream is additive: attention reads from it and writes into it, but never replaces it.",
         },
         ffn: {
@@ -1140,7 +1140,7 @@
         }
         body.innerHTML += '<tr><td>H' + (h + 1) + ' · ' + CFG.HEAD_NAMES[h] + '</td><td>' + (h * CFG.dHead) + '–' + ((h + 1) * CFG.dHead - 1) + '</td><td>' + U.fmt(U.norm(q)) + '</td><td>' + U.fmt(U.norm(k)) + '</td><td>' + U.fmt(U.norm(v)) + '</td></tr>';
       }
-      body.innerHTML += '</table>';
+      body.innerHTML += '</table>' + this.projectionChecks(layer, l, p);
       this.fillDimGrid("math-dims", x);
       this.drawLNBars("ln-before-after", x, ln);
     } else if (tab === "attention") {
@@ -1248,7 +1248,7 @@
         for (var b3 = 0; b3 < bars2; b3++) bar3 += "█";
         body.innerHTML += '<tr><td>' + (ti + 1) + '</td><td>' + esc(tr.vocab[t.index]) + '</td><td>' + U.fmt(tr.final.logits[t.index], 3) + '</td><td>' + U.pct(t.value, 2) + '</td><td class="good">' + bar3 + '</td></tr>';
       }
-      body.innerHTML += '</table><p class="muted">This is a hand-built model: the attention and FFN weights are seeded, structured synthetic matrices, not a pretrained checkpoint. The arithmetic is exact; the text is not a trained continuation.</p>';
+      body.innerHTML += '</table>' + this.logitChecks(tr) + '<p class="muted">This is a hand-built model: the attention and FFN weights are seeded, structured synthetic matrices, not a pretrained checkpoint. The arithmetic is exact; the text is not a trained continuation.</p>';
     }
   };
 
@@ -1295,6 +1295,55 @@
     ctx.strokeRect(pad, pad + p * cell, cell * T, cell);
     ctx.strokeStyle = "rgba(95,243,255,0.25)";
     ctx.beginPath(); ctx.moveTo(pad, pad + T * cell); ctx.lineTo(pad + T * cell, pad); ctx.stroke();
+  };
+
+  UI.prototype.projectionChecks = function (layer, l, p) {
+    if (!this.model) return "";
+    var wl = this.model.W.layers[l], D = CFG.dModel;
+    var m = [], z = [], xin = [], xmid = [];
+    for (var d = 0; d < D; d++) {
+      m.push(layer.ln1[p * D + d]);
+      z.push(layer.z[p * D + d]);
+      xin.push(layer.xIn[p * D + d]);
+      xmid.push(layer.xMid[p * D + d]);
+    }
+    function mv(W, b, v, rows, cols) {
+      var out = new Float64Array(rows);
+      for (var r = 0; r < rows; r++) {
+        var s = b ? b[r] : 0;
+        for (var c = 0; c < cols; c++) s += W[r * cols + c] * v[c];
+        out[r] = s;
+      }
+      return out;
+    }
+    var qR = mv(wl.wq, wl.bq, m, D, D), kR = mv(wl.wk, wl.bk, m, D, D), vR = mv(wl.wv, wl.bv, m, D, D), oR = mv(wl.wo, wl.bo, z, D, D);
+    var eQ = 0, eK = 0, eV = 0, eO = 0, eLN = 0, eRes = 0;
+    var mean = 0, varr = 0;
+    for (var i = 0; i < D; i++) mean += xin[i];
+    mean /= D;
+    for (var i2 = 0; i2 < D; i2++) { var dv = xin[i2] - mean; varr += dv * dv; }
+    varr /= D;
+    var inv = 1 / Math.sqrt(varr + CFG.lnEps);
+    for (var j = 0; j < D; j++) {
+      eQ = Math.max(eQ, Math.abs(qR[j] - layer.q[p * D + j]));
+      eK = Math.max(eK, Math.abs(kR[j] - layer.k[p * D + j]));
+      eV = Math.max(eV, Math.abs(vR[j] - layer.v[p * D + j]));
+      eO = Math.max(eO, Math.abs(oR[j] - layer.attnOut[p * D + j]));
+      var lnR = ((xin[j] - mean) * inv) * wl.ln1Gamma[j] + wl.ln1Beta[j];
+      eLN = Math.max(eLN, Math.abs(lnR - layer.ln1[p * D + j]));
+      eRes = Math.max(eRes, Math.abs((xmid[j] + layer.ffnOut[p * D + j]) - layer.xOut[p * D + j]));
+    }
+    var tokE = 0, posE = 0;
+    var id = this.trace.ids[this.trace.player], off = this.trace.player * D;
+    for (var k = 0; k < D; k++) {
+      tokE = Math.max(tokE, Math.abs(this.model.W.E[id * D + k] - this.trace.embed.tok[off + k]));
+      posE = Math.max(posE, Math.abs(this.model.W.P[this.trace.player * D + k] - this.trace.embed.pos[off + k]));
+    }
+    return '<div class="eq">NUMERIC CHECKS · max|W_Q·LN(x)+b_Q − q| = ' + U.fmt(eQ, 8) +
+      ' · W_K ' + U.fmt(eK, 8) + ' · W_V ' + U.fmt(eV, 8) +
+      ' · W_O ' + U.fmt(eO, 8) + '\n' +
+      'LN(x) recompute ' + U.fmt(eLN, 8) + ' · x_out = x_mid + y ' + U.fmt(eRes, 8) +
+      ' · E[id] ' + U.fmt(tokE, 8) + ' · P[pos] ' + U.fmt(posE, 8) + '</div>';
   };
 
   UI.prototype.drawLNBars = function (id, x, ln) {
@@ -1668,6 +1717,33 @@
     ctx.fillText("pre " + U.fmt(layer.hidden[foff + best], 3) + "   ·   GELU " + U.fmt(layer.gelu[foff + best], 3) + "   ·   GELU(w₁·LN(x)+b₁) × W₂[:,n] is this neuron's write", w / 2, h - 6);
   };
 
+  UI.prototype.logitChecks = function (tr) {
+    if (!this.model) return "";
+    var E = this.model.W.E, D = CFG.dModel, V = tr.vocab.length;
+    var scale = tr.final.logitScale, ln = tr.final.ln;
+    var maxErr = 0, maxLn = 0;
+    var wl = this.model.W;
+    var mean = 0, varr = 0;
+    for (var d = 0; d < D; d++) mean += tr.final.x[d];
+    mean /= D;
+    for (var d2 = 0; d2 < D; d2++) { var dv = tr.final.x[d2] - mean; varr += dv * dv; }
+    varr /= D;
+    var inv = 1 / Math.sqrt(varr + CFG.lnEps);
+    for (var d3 = 0; d3 < D; d3++) {
+      var lnR = ((tr.final.x[d3] - mean) * inv) * wl.lnfGamma[d3] + wl.lnfBeta[d3];
+      maxLn = Math.max(maxLn, Math.abs(lnR - ln[d3]));
+    }
+    for (var v = 0; v < V; v++) {
+      var s = 0;
+      for (var d4 = 0; d4 < D; d4++) s += E[v * D + d4] * ln[d4];
+      maxErr = Math.max(maxErr, Math.abs(s * scale - tr.final.logits[v]));
+    }
+    var ps = 0;
+    for (var i = 0; i < V; i++) ps += tr.final.probs[i];
+    return '<div class="eq">NUMERIC CHECKS · max|E·LN(x)·scale − logits| = ' + U.fmt(maxErr, 8) +
+      ' · final LN recompute = ' + U.fmt(maxLn, 8) + ' · Σ p = ' + ps.toFixed(9) + '</div>';
+  };
+
   UI.prototype.renderWeightsPanel = function (tab) {
     if (!this.model) { this.el.panelBody.innerHTML = '<p class="muted">Model not ready.</p>'; return; }
     var l = Math.min(this.currentLayer, CFG.nLayers - 1);
@@ -1856,6 +1932,8 @@
       '<h4>4 · The feed-forward layer</h4>' +
       '<div class="eq">h = GELU(W₁ · LN(x) + b₁),   h ∈ ℝ^512\ny = W₂ · h + b₂,               y ∈ ℝ^128\nx ← x + y</div>' +
       '<p>GELU is a smooth gate. The tanh approximation used here is the one in GPT-2: 0.5x(1 + tanh(√(2/π)(x + 0.044715x³))). The hidden layer is four times wider than the residual stream. In a trained model, these neurons often respond to features rather than single dimensions; this model shows the exact activation pattern it computes.</p>' +
+      '<h4>4.5 · Every weight is drawn</h4>' +
+      '<p>Q, K, V and O are 128 × 128 = 16,384 weights each. The FFN has 65,536 W₁ and 65,536 W₂ weights. The tied unembedding has 258 × 128 = 33,024 weights. The game draws every one of them: the projection webs and the unembedding web use all weights as light points plus the strongest 1,024 as filaments; the FFN shows all 65,536 weights as light points plus the strongest 1,024 filaments, and the two weight walls show every cell of the full matrices. The 3D positions are a layout; the colour is the sign, the brightness is |weight|. The full heatmaps and the numeric checks are the exact source of truth.</p>' +
       '<h4>5 · Unembedding and sampling</h4>' +
       '<div class="eq">logits = E · LN(x_L) · s\np = softmax(logits / T)</div>' +
       '<p>The token-embedding matrix is reused as the unembedding (weight tying). Temperature T scales the logits: low T sharpens the sky, high T flattens it. The game offers the top-k tokens; choosing one appends it to the sequence and runs a new forward pass.</p>' +

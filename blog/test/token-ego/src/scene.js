@@ -99,17 +99,17 @@
 
     this.fade = { tokenLine: 1, embed: 1, sky: 1, ffn: 1 };
 
-    console.log("SCENE bg"); this.buildBackground();
-    console.log("SCENE tower"); this.buildTower();
-    console.log("SCENE projections"); this.buildProjectionChamber();
-    console.log("SCENE line"); this.buildTokenLine();
-    console.log("SCENE embed"); this.buildEmbedCloud();
-    console.log("SCENE wall"); this.buildEmbeddingWall();
-    console.log("SCENE core"); this.buildPlayerCore();
-    console.log("SCENE ffn"); this.buildFFN();
-    console.log("SCENE sky"); this.buildSky();
-    console.log("SCENE resize"); this.resize();
-    console.log("SCENE done");
+    this.buildBackground();
+    this.buildTower();
+    this.buildProjectionChamber();
+    this.buildTokenLine();
+    this.buildEmbedCloud();
+    this.buildEmbeddingWall();
+    this.buildPlayerCore();
+    this.buildFFN();
+    this.buildSky();
+    this.resize();
+    
   }
 
   SceneRig.prototype.setModel = function (model) {
@@ -1099,9 +1099,9 @@
       this.ffnOutputPos.push(new THREE.Vector3(Math.cos(ia) * 2.2, 4.4, Math.sin(ia) * 2.2));
     }
     this.ffnW1Points = this.buildFFNWebPoints(this.ffnInputPos, this.neuronPositions, CFG.dFf, CFG.dModel);
-    this.ffnW1Top = this.buildFFNWebTop(this.ffnInputPos, this.neuronPositions, CFG.dFf, CFG.dModel, 512);
+    this.ffnW1Top = this.buildFFNWebTop(this.ffnInputPos, this.neuronPositions, CFG.dFf, CFG.dModel, 1024);
     this.ffnW2Points = this.buildFFNWebPoints(this.neuronPositions, this.ffnOutputPos, CFG.dModel, CFG.dFf);
-    this.ffnW2Top = this.buildFFNWebTop(this.neuronPositions, this.ffnOutputPos, CFG.dModel, CFG.dFf, 512);
+    this.ffnW2Top = this.buildFFNWebTop(this.neuronPositions, this.ffnOutputPos, CFG.dModel, CFG.dFf, 1024);
 
     // The wide door and the exit.
     this.ffnEntry = new THREE.Mesh(
@@ -1122,13 +1122,13 @@
     this.ffnInputLabel = this.makeAnnotation("LN(x_mid) · 128", "#9fe9ff", 0.40);
     this.ffnInputLabel.position.set(0, -5.35, 0);
     this.ffn.add(this.ffnInputLabel);
-    this.ffnW1Label = this.makeAnnotation("W₁ · 65,536 weights in the matrix · 4,096 light points · 512 strongest filaments", "#5ff3ff", 0.32);
+    this.ffnW1Label = this.makeAnnotation("W₁ · 65,536 weights in the matrix · all 65,536 weights as light points · 1,024 strongest filaments", "#5ff3ff", 0.32);
     this.ffnW1Label.position.set(0, -2.35, 2.7);
     this.ffn.add(this.ffnW1Label);
     this.ffnHiddenLabel = this.makeAnnotation("512 hidden · GELU", "#ffc857", 0.40);
     this.ffnHiddenLabel.position.set(0, 4.75, 0);
     this.ffn.add(this.ffnHiddenLabel);
-    this.ffnW2Label = this.makeAnnotation("W₂ · 65,536 weights in the matrix · 4,096 light points · 512 strongest filaments", "#ff4fd8", 0.32);
+    this.ffnW2Label = this.makeAnnotation("W₂ · 65,536 weights in the matrix · all 65,536 weights as light points · 1,024 strongest filaments", "#ff4fd8", 0.32);
     this.ffnW2Label.position.set(0, 2.35, 2.7);
     this.ffn.add(this.ffnW2Label);
     this.ffnOutputLabel = this.makeAnnotation("y · 128 · x_out = x_mid + y", "#ffe7b0", 0.38);
@@ -1183,36 +1183,6 @@
     }));
     this.ffn.add(this.ffnLines);
   };
-
-  SceneRig.prototype.buildFFNWeb = function (starts, ends, rows, cols, isW1) {
-    var segs = rows * cols;
-    var pos = new Float32Array(segs * 2 * 3);
-    var col = new Float32Array(segs * 2 * 3);
-    var wgt = new Float32Array(segs * 2);
-    var k = 0;
-    for (var r = 0; r < rows; r++) {
-      var end = ends[r];
-      for (var c = 0; c < cols; c++) {
-        var st = starts[c];
-        pos[k * 6] = st.x; pos[k * 6 + 1] = st.y; pos[k * 6 + 2] = st.z;
-        pos[k * 6 + 3] = end.x; pos[k * 6 + 4] = end.y; pos[k * 6 + 5] = end.z;
-        wgt[k * 2] = 0; wgt[k * 2 + 1] = 0;
-        k++;
-      }
-    }
-    var geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    geo.setAttribute("aColor", new THREE.BufferAttribute(col, 3));
-    geo.setAttribute("aWeight", new THREE.BufferAttribute(wgt, 1));
-    var mat = this.track(S.makeFFNWebMaterial());
-    var mesh = new THREE.LineSegments(geo, mat);
-    mesh.renderOrder = 2;
-    this.ffn.add(mesh);
-    mesh.userData = { rows: rows, cols: cols, isW1: isW1 };
-    return mesh;
-  };
-
-  /* ── generic weight webs (projection, unembedding) ─────────────────── */
 
   SceneRig.prototype.buildWebPoints = function (parent, starts, ends, rows, cols, stride, size, opacity) {
     stride = stride || 1;
@@ -1342,7 +1312,7 @@
   };
 
   SceneRig.prototype.buildFFNWebPoints = function (starts, ends, rows, cols) {
-    var stride = 16;
+    var stride = 1;
     var ids = [];
     var total = rows * cols;
     for (var id = 0; id < total; id += stride) ids.push(id);
@@ -1426,27 +1396,6 @@
       wgt[k * 2] = inten; wgt[k * 2 + 1] = inten;
     }
     mesh.geometry.attributes.position.needsUpdate = true;
-    mesh.geometry.attributes.aColor.needsUpdate = true;
-    mesh.geometry.attributes.aWeight.needsUpdate = true;
-  };
-
-  SceneRig.prototype.updateFFNWeb = function (mesh, W, rows, cols, maxW) {
-    if (!mesh || !W) return;
-    var col = mesh.geometry.attributes.aColor.array;
-    var wgt = mesh.geometry.attributes.aWeight.array;
-    var cp = [0.37, 0.95, 1.0];
-    var cn = [1.0, 0.31, 0.85];
-    for (var r = 0; r < rows; r++) {
-      for (var c = 0; c < cols; c++) {
-        var s = (r * cols + c) * 2;
-        var w = W[r * cols + c];
-        var a = Math.min(1, Math.abs(w) / (maxW || 1));
-        var cc = w >= 0 ? cp : cn;
-        col[s * 3] = cc[0]; col[s * 3 + 1] = cc[1]; col[s * 3 + 2] = cc[2];
-        col[s * 3 + 3] = cc[0]; col[s * 3 + 4] = cc[1]; col[s * 3 + 5] = cc[2];
-        wgt[s] = a; wgt[s + 1] = a;
-      }
-    }
     mesh.geometry.attributes.aColor.needsUpdate = true;
     mesh.geometry.attributes.aWeight.needsUpdate = true;
   };
@@ -2408,25 +2357,6 @@
 
   SceneRig.prototype.positionEmbedCamera = function () {
     this.tokenLine.visible = false;
-  };
-
-  SceneRig.prototype.updateEmbedCloudColors = function () {
-    if (!this.embedPoints || !this.trace) return;
-    var data = TEGO.DATA;
-    var promptSet = {};
-    for (var t = 0; t < this.T; t++) promptSet[this.trace.tokens[t]] = this.trace.tokens[t];
-    var col = this.embedPoints.geometry.attributes.aColor.array;
-    var size = this.embedPoints.geometry.attributes.aSize.array;
-    var palette = [0x5ff3ff, 0xff4fd8, 0xffc857, 0x6bffb0, 0x8d7bff];
-    for (var i = 0; i < data.vocab.length; i++) {
-      var isPrompt = !!promptSet[data.vocab[i]];
-      var isPlayer = data.vocab[i] === this.trace.playerToken;
-      var c = new THREE.Color(isPlayer ? 0xffffff : isPrompt ? 0xffe0a0 : palette[i % palette.length]);
-      col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
-      size[i] = isPlayer ? 9 : isPrompt ? 7 : 2.2;
-    }
-    this.embedPoints.geometry.attributes.aColor.needsUpdate = true;
-    this.embedPoints.geometry.attributes.aSize.needsUpdate = true;
   };
 
   SceneRig.prototype.cueCameraForLayerPhase = function (l, phase) {

@@ -117,14 +117,17 @@ x     ← x + y
 
 The chamber shows:
 
-- the 128 input values on the input ring,
-- the 512 neurons in a Fibonacci sphere, coloured by GELU activation,
-- the strongest W₁/W₂ connections of the top 12 neurons,
-- the actual W₁ and W₂ matrices as holographic heatmaps,
+- the 128 input values on the input ring (`m = LN(x_mid)`),
+- the 512 neurons in a Fibonacci sphere, coloured by the exact GELU activation,
+- all 65,536 W₁ and 65,536 W₂ weights as light points, plus the strongest 1,024 connections as filaments,
+- the actual W₁ and W₂ matrices as holographic heatmaps (every cell),
 - the GELU curve with all 512 (pre, post) points,
 - a first-person camera path through the chamber: input → hidden sphere → output,
 - the top active neurons and their share in the HUD,
-- the flow canvas and the single-neuron detail in the math monitor.
+- the flow canvas and the single-neuron detail in the math monitor,
+- the check line: `max|W₁m+b₁−trace|`, `max|GELU−trace|`, `max|W₂h+b₂−trace|`, `max|(x_mid+y)−x_out|`.
+
+The same full-weight treatment applies to the other linear maps: Q/K/V each show all 16,384 weights, W_O shows all 16,384, and the tied unembedding shows all 258×128 = 33,024 weights from the final 128 dimensions to the vocabulary stars. The 3D positions are a layout; the colour is the sign and the brightness is |weight|.
 
 The single-neuron panel shows the actual W₁ row and W₂ column. That is the concrete computation `GELU(w₁ · x + b) × W₂[:,n]`.
 
@@ -154,6 +157,9 @@ The position stage adds `P_pos` dimension by dimension: `x_0[d] = E[d] + P[d]`. 
 | FFN neuron glow | exact GELU activation |
 | FFN connection lines | strongest W₁/W₂ entries |
 | embedding point layout | PCA projection; exact similarity is the cosine list |
+| Q/K/V/W_O webs | every weight is a point; the strongest 1,024 are filaments |
+| FFN W₁/W₂ webs | every 65,536 weight is a light point; top 1,024 filaments; full heatmaps |
+| unembedding web | every 258×128 weight is a point; top 1,024 filaments |
 | token 3D positions on the ring | layout, not a metric |
 | player crystal tint | a metaphor for the mixture |
 
