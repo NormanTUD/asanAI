@@ -160,6 +160,9 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	padding: 20px 24px; margin: 20px 0; font-size: 1.1em;
 }
 .key-insight::before { content: "💡 "; font-size: 1.3em; }
+/* Beide Attention-Matrix-Folien: gleiche Höhe der Einleitung, damit beim
+   Morph nur der Tabelleninhalt wechselt und nichts springt. */
+.key-insight.attn-lead { min-height: 5.5em; display: flex; align-items: center; }
 .demo-box {
 	background: #f8fafc; padding: 24px; border-radius: 12px;
 	border: 1px solid #e2e8f0; margin: 20px 0; width: 100%;

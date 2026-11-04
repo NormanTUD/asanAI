@@ -688,9 +688,9 @@
 	var AttentionRowSums = (function () {
 		var token = 0;
 
-		function dataRows() {
+		function dataRows(root) {
 			var out = [];
-			document.querySelectorAll('#attn-h1-wrap .attn-matrix, #attn-h2-wrap .attn-matrix').forEach(function (tbl) {
+			(root || document).querySelectorAll('#attn-h1-wrap .attn-matrix, #attn-h2-wrap .attn-matrix').forEach(function (tbl) {
 				tbl.querySelectorAll('tr').forEach(function (tr) {
 					if (tr.querySelector('.attn-rowhead')) out.push(tr);
 				});
@@ -718,10 +718,12 @@
 		function show() {
 			reset();
 			var run = token;
-			document.querySelectorAll('.attn-matrix').forEach(function (tbl) {
+			var frag = document.querySelector('[data-fragment-action="attn-rowsums"]');
+			var root = (frag && frag.closest('.slide')) || document;
+			root.querySelectorAll('.attn-matrix').forEach(function (tbl) {
 				tbl.classList.add('sums-visible');
 			});
-			dataRows().forEach(function (tr, ri) {
+			dataRows(root).forEach(function (tr, ri) {
 				setTimeout(function () {
 					if (run !== token) return;
 					tr.classList.add('attn-sum-active');

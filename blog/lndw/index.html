@@ -1016,20 +1016,34 @@
     </div>
 </div>
 
-<!-- ==================== SLIDE: Attention-Matrix ==================== -->
-<div class="slide" data-title="Attention-Matrix" id="slide-attention-matrix">
+<!-- ==================== SLIDE: Attention-Matrix (1/2) ==================== -->
+<div class="slide" data-title="Attention-Matrix (1/2)" id="slide-attention-matrix" data-morph="attention-matrix">
     <div class="slide-content">
         <h2>Ein Blick hinein: Attention-Matrix</h2>
         <p style="margin-bottom:2px;">Mini-Modell (4 Dim., 2 Köpfe), Satz <b>"the cat sat on the mat"</b>. Zeile <b>schaut</b> auf Spalte. Autoregression: Token <i>i</i> sieht nur 0…<i>i</i> → <b>oberes Dreieck = 0</b>.</p>
 
-        <div id="attn-h1-wrap" style="margin-top:12px;"></div>
-        <div id="attn-h2-wrap" style="margin-top:10px;"></div>
-
-        <div class="key-insight fragment" style="margin-top:12px;">
-            Kopf 1 fragt <b>„Ist da ein Artikel?"</b> → <span class="math-inline">\underbrace{\text{cat} \to \text{the}}_{0.71}</span>: Nomen blicken auf ihren Artikel.
+        <div class="key-insight attn-lead" style="margin-top:12px;">
+            <b>Artikel → Nomen:</b> Nomen blicken auf ihren Artikel — <span class="math-inline">\underbrace{\text{cat} \to \text{the}}_{0.71}</span>.
         </div>
-        <div class="key-insight fragment">
+
+        <div id="attn-h1-wrap" class="fragment" style="margin-top:12px;"></div>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: Attention-Matrix (2/2) ==================== -->
+<div class="slide" data-title="Attention-Matrix (2/2)" id="slide-attention-matrix-2" data-morph="attention-matrix">
+    <div class="slide-content">
+        <h2>Ein Blick hinein: Attention-Matrix</h2>
+        <p style="margin-bottom:2px;">Mini-Modell (4 Dim., 2 Köpfe), Satz <b>"the cat sat on the mat"</b>. Zeile <b>schaut</b> auf Spalte. Autoregression: Token <i>i</i> sieht nur 0…<i>i</i> → <b>oberes Dreieck = 0</b>.</p>
+
+        <div class="key-insight attn-lead" style="margin-top:12px;">
             Kopf 2 fragt <b>„Wer ist das Subjekt?"</b> → <span class="math-inline">\underbrace{\text{sat} \to \text{cat}}_{0.55}</span>.
+        </div>
+
+        <div id="attn-h2-wrap" style="margin-top:12px;"></div>
+
+        <div class="fragment" style="margin-top:12px; padding:14px 18px; background:#fffbeb; border-radius:10px; border:1px solid #fde68a; color:#92400e; line-height:1.6;">
+            <strong>⚠️ Vorsicht, Deutung:</strong> Die „Artikel"- und „Subjekt"-Köpfe sind nachträgliche menschliche Deutungen. Manche Köpfe achten auf Dinge, die man benennen kann, andere auf Muster, für die es keinen Namen gibt. Kein Kopf ist darauf aus, menschlich Beschreibbares zu finden — alle zusammen minimieren am Ende nur den <b>Loss über alle Daten</b>.
         </div>
         <div class="fragment" data-fragment-action="attn-rowsums" style="margin-top:12px; padding:12px 16px; background:#ecfdf5; border-left:4px solid #10b981; border-radius:6px; color:#065f46; line-height:1.55;">
             Jede Zeile ist <b>eine Entscheidung</b>: Die Zahlen sind Anteile an <b>genau 1 Quantum Aufmerksamkeit</b>. Erst die Summe macht daraus eine Wahrscheinlichkeitsverteilung — und sie ist in jeder Zeile <b>1.00 = 100 %</b>.
@@ -1993,20 +2007,37 @@
 	function fitSlides() {
 		const slides = document.querySelectorAll('.slide');
 		const viewportHeight = window.innerHeight;
+		const available = viewportHeight - 52;
+		const entries = [];
 
+		// Natürliche Höhen messen und dabei eventuelle Gruppenhöhen zurücksetzen.
 		slides.forEach(slide => {
 			const content = slide.querySelector('.slide-content');
 			if (!content) return;
-
+			content.style.minHeight = '';
 			content.style.transform = 'scale(1)';
+			content.style.transformOrigin = 'center center';
+			entries.push({ slide, content, group: slide.getAttribute('data-morph') });
+		});
 
-			const naturalHeight = content.scrollHeight;
-			const available = viewportHeight - 52;
+		// Folien mit gleichem data-morph (z.B. die zwei Attention-Matrix-Folien)
+		// bekommen dieselbe Höhe und denselben Maßstab. So bleibt die Überschrift
+		// an derselben Stelle, wenn zwischen ihnen gewechselt wird.
+		const groupMax = {};
+		entries.forEach(e => {
+			if (!e.group) return;
+			const h = e.content.scrollHeight;
+			if (!groupMax[e.group] || h > groupMax[e.group]) groupMax[e.group] = h;
+		});
+		entries.forEach(e => {
+			if (e.group && groupMax[e.group]) e.content.style.minHeight = groupMax[e.group] + 'px';
+		});
 
+		entries.forEach(e => {
+			const naturalHeight = e.content.scrollHeight;
 			const scale = Math.min(available / naturalHeight, 1);
-
-			content.style.transform = `scale(${scale})`;
-			content.style.transformOrigin = 'center center';  // ← geändert
+			e.content.style.transform = `scale(${scale})`;
+			e.content.style.transformOrigin = 'center center';
 		});
 	}
 

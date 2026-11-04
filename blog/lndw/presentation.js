@@ -45,7 +45,7 @@ const DemoRegistry = (() => {
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof AttentionRowSums !== 'undefined' ? AttentionRowSums : null,
-                        slideTest: s => s && s.id === 'slide-attention-matrix',
+                        slideTest: s => s && s.id.indexOf('slide-attention-matrix') === 0,
                         onEnter: d => d.enter(),
                         onLeave: d => d.reset() },
 
@@ -735,6 +735,38 @@ function prev() {
         }, SLIDE_DUR + 80);
     }
 
+    // Folien mit derselben data-morph-Gruppe bleiben an Ort und Stelle
+    // (kein seitlicher Push): Die neue Folie blendet über der alten ein.
+    // Weil beide denselben Maßstab und dieselbe Höhe haben, bleiben
+    // Überschrift und Tabelle exakt stehen; nur der Inhalt wechselt weich.
+    function activateMorph(newSlide, oldSlide, forward) {
+        newSlide.classList.remove('entering', 'leaving', 'leaving-back', 'hold');
+        oldSlide.classList.remove('active', 'entering', 'leaving', 'leaving-back');
+        newSlide.classList.add('active');
+        oldSlide.classList.add('hold');
+
+        if (forward) {
+            _playSlide(
+                newSlide,
+                { opacity: 0, transform: 'translate(0px, 0px) scale(1)' },
+                { opacity: 1, transform: 'translate(0px, 0px) scale(1)' });
+        } else {
+            oldSlide.style.zIndex = '3';
+            _playSlide(
+                oldSlide,
+                { opacity: 1, transform: 'translate(0px, 0px) scale(1)' },
+                { opacity: 0, transform: 'translate(0px, 0px) scale(1)' });
+        }
+
+        setTimeout(() => {
+            if (!oldSlide.classList.contains('active')) {
+                oldSlide.classList.remove('hold');
+                oldSlide.style.zIndex = '';
+            }
+            newSlide.style.zIndex = '';
+        }, SLIDE_DUR + 80);
+    }
+
     function goTo(idx, showAllFragments = false) {
         if (idx < 0 || idx >= slides.length) return;
         // Focus aus Inputs/Textareas rausnehmen, damit Pfeiltasten wieder
@@ -758,7 +790,12 @@ function prev() {
         const newSlide = slides[currentSlide];
         const forward = idx > oldIdx;
 
-        activateSlide(newSlide, oldSlide, forward);
+        const morphGroup = oldSlide.getAttribute('data-morph');
+        if (morphGroup && morphGroup === newSlide.getAttribute('data-morph')) {
+            activateMorph(newSlide, oldSlide, forward);
+        } else {
+            activateSlide(newSlide, oldSlide, forward);
+        }
 
         // Lifecycle NACH .active setzen — Demos prüfen oft
         // `document.querySelector('.slide.active')` und würden sonst
