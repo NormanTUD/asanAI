@@ -18,7 +18,11 @@
     "yao2023react",
     "huang2022selfimprove",
     "mckenzie2023inverse",
-    "bubeck2023sparks"
+    "bubeck2023sparks",
+    "takehi2026weightspace",
+    "goedecke2026weightspace",
+    "honnibal2026weightspace",
+    "singh2026weightspace"
   ],
   "claims": [
     {
@@ -400,6 +404,168 @@
       "quote": "translation reached only **5 BLEU** English-to-French",
       "citation_keys": [
         "gpt2"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "uc-weightspace-year",
+      "subject": "weight-space-programming",
+      "predicate": "year",
+      "value": 2026,
+      "unit": "year",
+      "qualifiers": {},
+      "quote": "In November 2026, a team at MIT CSAIL reported a set of experiments",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "uc-weightspace-ppo-steps",
+      "subject": "minatar-ppo",
+      "predicate": "training_steps",
+      "value": 100000000,
+      "unit": "count",
+      "qualifiers": {
+        "variant": "100M-step baseline"
+      },
+      "quote": "beat a PPO baseline trained for 100 million steps",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "uc-weightspace-car-edit",
+      "subject": "weight-space-programming-car-policy",
+      "predicate": "edited_fraction",
+      "value": 3.5,
+      "unit": "%",
+      "qualifiers": {
+        "variant": "car policy"
+      },
+      "quote": "repaired a stuck car-driving policy by changing 3.5% of its weights",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "uc-weightspace-qwen-edit",
+      "subject": "qwen3.5-0.8b-weightspace-edit",
+      "predicate": "edited_fraction",
+      "value": 0.016,
+      "unit": "%",
+      "qualifiers": {
+        "variant": "weight-space edit"
+      },
+      "quote": "changed 0.016% of the model's weights",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "uc-weightspace-qwen-math-base",
+      "subject": "qwen3.5-0.8b",
+      "predicate": "accuracy",
+      "value": 7.9,
+      "unit": "%",
+      "qualifiers": {
+        "benchmark": "MATH-500",
+        "setting": "base"
+      },
+      "quote": "MATH-500 rose from 7.9% to 48.1%",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "uc-weightspace-qwen-math-edited",
+      "subject": "qwen3.5-0.8b",
+      "predicate": "accuracy",
+      "value": 48.1,
+      "unit": "%",
+      "qualifiers": {
+        "benchmark": "MATH-500",
+        "setting": "weight-space edit"
+      },
+      "quote": "MATH-500 rose from 7.9% to 48.1%",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "uc-weightspace-qwen-ifeval-base",
+      "subject": "qwen3.5-0.8b",
+      "predicate": "accuracy",
+      "value": 21.0,
+      "unit": "%",
+      "qualifiers": {
+        "benchmark": "IFEval",
+        "setting": "base"
+      },
+      "quote": "IFEval from 21.0% to 62.3%",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "uc-weightspace-qwen-ifeval-edited",
+      "subject": "qwen3.5-0.8b",
+      "predicate": "accuracy",
+      "value": 62.3,
+      "unit": "%",
+      "qualifiers": {
+        "benchmark": "IFEval",
+        "setting": "weight-space edit"
+      },
+      "quote": "IFEval from 21.0% to 62.3%",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "uc-weightspace-raw-range",
+      "subject": "weight-space-programming",
+      "predicate": "range",
+      "value": "17000-172000",
+      "unit": "count",
+      "qualifiers": {
+        "variant": "raw-weight-only networks"
+      },
+      "quote": "networks of roughly 17,000 to 172,000 weights",
+      "citation_keys": [
+        "takehi2026weightspace"
+      ],
+      "source_url": "",
+      "confidence": "stated"
+    },
+    {
+      "id": "uc-weightspace-gemma-params",
+      "subject": "gemma-3-270m",
+      "predicate": "parameters",
+      "value": 270000000,
+      "unit": "count",
+      "qualifiers": {
+        "variant": "instruction-tuned"
+      },
+      "quote": "When the same procedure ran on Gemma 3 270M",
+      "citation_keys": [
+        "takehi2026weightspace"
       ],
       "source_url": "",
       "confidence": "stated"

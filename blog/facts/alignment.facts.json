@@ -722,6 +722,18 @@
       "confidence": "provenance"
     },
     {
+      "id": "prov-alignment-rlhf",
+      "from": "rlhf",
+      "to": "alignment",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "introduced by **Paul Christiano** and colleagues in 2017",
+      "citation_keys": [
+        "christiano2017rlhf"
+      ],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-alignment-block-1-part_of-alignment",
       "from": "alignment-block-1",
       "to": "alignment",
@@ -1132,6 +1144,16 @@
       "confidence": "provenance"
     },
     {
+      "id": "struct-alignment-block-17-related_to-alignment-block-15",
+      "from": "alignment-block-17",
+      "to": "alignment-block-15",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-alignment-block-18-part_of-alignment",
       "from": "alignment-block-18",
       "to": "alignment",
@@ -1172,16 +1194,6 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-alignment-block-19-related_to-alignment-block-18",
-      "from": "alignment-block-19",
-      "to": "alignment-block-18",
-      "kind": "related_to",
-      "qualifiers": {},
-      "quote": "",
-      "citation_keys": [],
-      "confidence": "provenance"
-    },
-    {
       "id": "struct-alignment-block-20-part_of-alignment",
       "from": "alignment-block-20",
       "to": "alignment",
@@ -1195,6 +1207,36 @@
       "id": "struct-alignment-block-19-before-alignment-block-20",
       "from": "alignment-block-19",
       "to": "alignment-block-20",
+      "kind": "before",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-alignment-block-20-related_to-alignment-block-19",
+      "from": "alignment-block-20",
+      "to": "alignment-block-19",
+      "kind": "related_to",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-alignment-block-21-part_of-alignment",
+      "from": "alignment-block-21",
+      "to": "alignment",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-alignment-block-20-before-alignment-block-21",
+      "from": "alignment-block-20",
+      "to": "alignment-block-21",
       "kind": "before",
       "qualifiers": {},
       "quote": "",
@@ -1442,9 +1484,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-alignment-stmt-25-part_of-alignment-block-19",
+      "id": "struct-alignment-stmt-25-part_of-alignment-block-17",
       "from": "alignment-stmt-25",
-      "to": "alignment-block-19",
+      "to": "alignment-block-17",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1452,9 +1494,9 @@
       "confidence": "provenance"
     },
     {
-      "id": "struct-alignment-stmt-26-part_of-alignment-block-19",
+      "id": "struct-alignment-stmt-26-part_of-alignment-block-17",
       "from": "alignment-stmt-26",
-      "to": "alignment-block-19",
+      "to": "alignment-block-17",
       "kind": "part_of",
       "qualifiers": {},
       "quote": "",
@@ -1462,15 +1504,23 @@
       "confidence": "provenance"
     },
     {
-      "id": "prov-alignment-rlhf",
-      "from": "rlhf",
-      "to": "alignment",
-      "kind": "mentioned_in",
+      "id": "struct-alignment-stmt-27-part_of-alignment-block-20",
+      "from": "alignment-stmt-27",
+      "to": "alignment-block-20",
+      "kind": "part_of",
       "qualifiers": {},
-      "quote": "introduced by **Paul Christiano** and colleagues in 2017",
-      "citation_keys": [
-        "christiano2017rlhf"
-      ],
+      "quote": "",
+      "citation_keys": [],
+      "confidence": "provenance"
+    },
+    {
+      "id": "struct-alignment-stmt-28-part_of-alignment-block-20",
+      "from": "alignment-stmt-28",
+      "to": "alignment-block-20",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "",
+      "citation_keys": [],
       "confidence": "provenance"
     }
   ],
@@ -1645,15 +1695,29 @@
     },
     {
       "id": "alignment-stmt-25",
-      "quote": "Alignment is the **objective-function thread** running through several chapters: the existential framing (instrumental convergence, the paperclip) in Philosophy ; the adversarial attacks (jailbreaks, prompt injection, data poisoning) in Security ; interpretability-as-safety in Frontier ; \"fitness beats truth\" in Hallucinations .",
-      "block_id": "alignment-block-19",
-      "section": "Where alignment lives in this book",
+      "quote": "The line now runs both ways.",
+      "block_id": "alignment-block-17",
+      "section": "Interpretability as a safety tool",
       "kind": "statement"
     },
     {
       "id": "alignment-stmt-26",
+      "quote": "A model that can locate a behaviour's direction in the weights can remove it as well as repair it, so an LLM that edits weights is both an auditing instrument and a way to strip a safety behaviour without data (\\cite[Takehi et al., 2026]{takehi2026weightspace}).",
+      "block_id": "alignment-block-17",
+      "section": "Interpretability as a safety tool",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-27",
+      "quote": "Alignment is the **objective-function thread** running through several chapters: the existential framing (instrumental convergence, the paperclip) in Philosophy ; the adversarial attacks (jailbreaks, prompt injection, data poisoning) in Security ; interpretability-as-safety in Frontier ; \"fitness beats truth\" in Hallucinations .",
+      "block_id": "alignment-block-20",
+      "section": "Where alignment lives in this book",
+      "kind": "statement"
+    },
+    {
+      "id": "alignment-stmt-28",
       "quote": "This chapter gathers them under one question: *is the optimizer aiming at the target we meant — and can we keep it that way?*",
-      "block_id": "alignment-block-19",
+      "block_id": "alignment-block-20",
       "section": "Where alignment lives in this book",
       "kind": "statement"
     }
@@ -1757,24 +1821,30 @@
     },
     {
       "id": "alignment-block-17",
+      "quote": "The line now runs both ways. A model that can locate a behaviour's direction in the weights can remove it as well as repair it, so an LLM that edits weights is both an auditing instrument and a way to strip a safety behaviour without data (\\cite[Takehi et al., 2026]{takehi2026weightspace}).",
+      "kind": "paragraph",
+      "section": "Interpretability as a safety tool"
+    },
+    {
+      "id": "alignment-block-18",
       "quote": "Context",
       "kind": "heading",
       "section": "Context"
     },
     {
-      "id": "alignment-block-18",
+      "id": "alignment-block-19",
       "quote": "Where alignment lives in this book",
       "kind": "heading",
       "section": "Where alignment lives in this book"
     },
     {
-      "id": "alignment-block-19",
+      "id": "alignment-block-20",
       "quote": "Alignment is the **objective-function thread** running through several chapters: the existential framing (instrumental convergence, the paperclip) in Philosophy ; the adversarial attacks (jailbreaks, prompt injection, data poisoning) in Security ; interpretability-as-safety in Frontier ; \"fitness beats truth\" in Hallucinations . This chapter gathers them under one question: *is the optimizer aiming at the target we meant — and can we keep it that way?*",
       "kind": "paragraph",
       "section": "Where alignment lives in this book"
     },
     {
-      "id": "alignment-block-20",
+      "id": "alignment-block-21",
       "quote": "Open questions",
       "kind": "heading",
       "section": "Open questions"
