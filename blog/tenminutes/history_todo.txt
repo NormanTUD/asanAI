@@ -62,4 +62,8 @@ mach allgemein ein paar mehr keywords fett
 
 "McCulloch und Pitts hatten keine gelernten Gewichte" ... sondern festgelegt thresholds.
 
+"Minsky und Paperts Perceptrons (1969) zeigten dann die Grenzen eines einschichtigen Netzes (berühmt: XOR), und der erste Winter begann" zeige das wie das ../history.php zeigt mit dem plot über xor und and usw
+
+"zwei Jahre nach der Kritik, die half, das Feld abzukühlen." die kritik hat das feld in den ersten ki winter geworfen ,es snicht nur "abgekühlt"
+
 
