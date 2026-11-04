@@ -69,7 +69,7 @@ return [
 		'. What changes?' => '. Was ändert sich?',
 		'under' => 'unter',
 		'. Which words pull it toward finance?' => '. Welche Wörter ziehen es zu Finanzen?',
-		'Open the matrix and turn on the causal mask. Why does the upper-right triangle disappear? What would that mean during generation?' => 'Öffne die Matrix und schalte die kausale Maske ein. Warum verschwindet das obere rechte Dreieck? Was würde das während der Generierung bedeuten?',
+		'Open the matrix. Why is the upper-right triangle empty? What would that mean during generation?' => 'Öffne die Matrix. Warum ist das obere rechte Dreieck leer? Was würde das während der Generierung bedeuten?',
 		'The causal mask is the answer to the third question. A model that writes left to right must not attend to tokens that do not exist yet, or it would be reading its own answer during training. Masking sets the score for every future position to negative infinity before the softmax, so those weights become zero and the row is renormalized over the past only. Nothing about the mechanism changes; the future is simply not in the budget.' => 'Die kausale Maske ist die Antwort auf die dritte Frage. Ein Modell, das von links nach rechts schreibt, darf nicht auf Tokens achten, die noch nicht existieren, sonst würde es während des Trainings seine eigene Antwort lesen. Die Maskierung setzt den Score für jede zukünftige Position vor dem Softmax auf negative Unendlichkeit, sodass diese Gewichte null werden und die Zeile nur über die Vergangenheit renormalisiert wird. Am Mechanismus ändert sich nichts; die Zukunft ist einfach nicht im Budget.',
 		'Many heads' => 'Viele Heads',
 		'One sentence, many lenses.' => 'Ein Satz, viele Linsen.',

@@ -3,7 +3,7 @@ return [
 	'title' => 'Muster oder Auswendiglernen? | Ten Minutes',
 	'description' => 'Warum ein Modell die Trainingsdaten perfekt fitten und am nächsten Beispiel scheitern kann.',
 	'texts' => [
-		'Fit the pattern,' => 'Fit das Muster,',
+		'Fit the pattern,' => 'Passe das Muster an,',
 		'not the noise.' => 'nicht das Rauschen.',
 		'A model can be too simple to see the rule or so flexible that it memorizes every accident. Generalization lives between those two failures.' => 'Ein Modell kann zu einfach sein, um die Regel zu sehen, oder so flexibel, dass es jeden Zufall auswendig lernt. Generalisierung lebt zwischen diesen beiden Fehlern.',
 		'The two failures' => 'Die beiden Fehler',
@@ -25,7 +25,7 @@ return [
 		'Only held-out data tells you whether the model generalizes.' => 'Nur zurückgehaltene Daten sagen, ob das Modell generalisiert.',
 		'Extrapolation' => 'Extrapolation',
 		'A model can look excellent inside its data and fail outside it.' => 'Ein Modell kann innerhalb seiner Daten exzellent aussehen und außerhalb scheitern.',
-		'Fit the pattern, not the noise' => 'Fit das Muster, nicht das Rauschen',
+		'Fit the pattern, not the noise' => 'Passe das Muster an, nicht das Rauschen',
 		'· demo' => '· Demo',
 		'Raise the polynomial degree. Green points are training data, blue points are held-out data. Watch the curve fit the training set while the test error tells a different story.' => 'Erhöhe den Polynomgrad. Grüne Punkte sind Trainingsdaten, blaue Punkte sind zurückgehaltene Daten. Sieh, wie die Kurve den Trainingssatz fittet, während der Testfehler eine andere Geschichte erzählt.',
 		'live' => 'live',

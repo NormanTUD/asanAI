@@ -90,7 +90,7 @@ ollama ps
 ollama list</code></pre>
 						</div>
 						<div class="prose">
-							<p>If you prefer llama.cpp directly, the CLI is one file plus a model. On Linux or macOS: <code>./llama-cli -m model.gguf -p "Hello" -n 200</code>. On Windows the binary is <code>llama-cli.exe</code>. The <code>-n</code> flag is the number of tokens to generate; <code>-c</code> sets the context window.</p>
+							<p>If you prefer llama.cpp directly, the CLI is one binary plus a model file. On Linux or macOS: <code>./llama-cli -m model.gguf -p "Hello" -n 200</code>. On Windows the binary is <code>llama-cli.exe</code>. The <code>-n</code> flag is the number of tokens to generate; <code>-c</code> sets the context window.</p>
 							<p>Start small. A 7B or 8B model at 4-bit is the easiest first run; it fits on a laptop and downloads quickly. Move up only when a task actually fails. The <strong>quantization level</strong> is the next knob: Q4_K_M is a common balance, Q5 or Q6 preserve more quality, Q2 or Q3 are smaller but noticeably rougher. The <strong>context length</strong> is the memory multiplier: a long conversation needs a larger KV cache, so a model that fits at 4K may not fit at 32K.</p>
 						</div>
 						<div class="keypoints">

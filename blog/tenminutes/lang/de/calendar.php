@@ -25,7 +25,7 @@ return [
 		'Pattern or Memorization?' => 'Muster oder Auswendiglernen?',
 		'A model can learn the rule or learn the noise. The difference decides whether it generalizes.' => 'Ein Modell kann die Regel lernen oder das Rauschen. Der Unterschied entscheidet, ob es generalisiert.',
 		'Why Depth Helps' => 'Warum Tiefe hilft',
-		'Stack layers and simple features become complex ones. Depth is what turns edges into faces.' => 'Schichte Lagen, und einfache Merkmale werden komplex. Tiefe verwandelt Kanten in Gesichter.',
+		'Stack layers and simple features become complex ones. Depth is what turns edges into faces.' => 'Stapel Schichten, und einfache Merkmale werden komplex. Tiefe verwandelt Kanten in Gesichter.',
 		'Why Networks Can Bend' => 'Warum Netze sich biegen können',
 		'Stack only straight lines and you still have a straight line. Nonlinear gates let a network learn curves.' => 'Stapel nur gerade Linien, und du hast weiter eine gerade Linie. Nichtlineare Gates lassen ein Netz Kurven lernen.',
 		'Section 3 · Data, Senses, and Practice · Days 12-17' => 'Abschnitt 3 · Daten, Sinne und Praxis · Tage 12-17',

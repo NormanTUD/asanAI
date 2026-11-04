@@ -152,7 +152,7 @@
 							<ol>
 								<li>Select <strong>“she”</strong> under the <strong>Coreference</strong> head. Where does it look? Now switch to <strong>Syntax</strong>. What changes?</li>
 								<li>Select <strong>“bank”</strong> under <strong>Meaning</strong>. Which words pull it toward finance?</li>
-								<li>Open the matrix and turn on the causal mask. Why does the upper-right triangle disappear? What would that mean during generation?</li>
+								<li>Open the matrix. Why is the upper-right triangle empty? What would that mean during generation?</li>
 							</ol>
 						</div>
 						<div class="prose">

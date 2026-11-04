@@ -74,7 +74,7 @@
 				</a>
 				<a class="shelf-card is-compact" href="language" data-compact="1" data-search="the history of language, from sanskrit to llms from sanskrit to llms, how millions of years of linguistic evolution led to digital minds. language, history, philosophy language-heavy, interested-layman foundations" style="--part-color:#1275ac">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128483;</span><span class="sc-title">The History of Language: From Sanskrit to LLMs</span></span>
-					<span class="sc-desc">From Sanskrit to LLMs, how millions of years of linguistic evolution led to digital minds.</span>
+					<span class="sc-desc">From Sanskrit to LLMs: how hundreds of thousands of years of linguistic evolution led to digital text.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">language-heavy</span></span>
 				</a>
 				</div>
@@ -92,7 +92,7 @@
 				</a>
 				<a class="shelf-card is-compact" href="activationlab" data-compact="1" data-search="activation functions: the neural decision makers the neural decision makers, why without non-linearity, a network collapses to nothing. math-i, programming code-heavy how neural networks learn" style="--part-color:#9185be">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#9889;</span><span class="sc-title">Activation Functions: The Neural Decision Makers</span></span>
-					<span class="sc-desc">The neural decision makers, why without non-linearity, a network collapses to nothing.</span>
+					<span class="sc-desc">The neural decision makers, why without non-linearity, a network collapses to one linear map.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
 				</a>
 				</div>
@@ -138,7 +138,7 @@
 				</a>
 				<a class="shelf-card is-compact" href="embeddinglab" data-compact="1" data-search="embeddings: the geometry of meaning words as vectors in space, from wittgenstein to riemannian manifolds. language, math-i, math-ii, architecture math-heavy the transformer revolution" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#127758;</span><span class="sc-title">Embeddings: The Geometry of Meaning</span></span>
-					<span class="sc-desc">Words as vectors in space, from Wittgenstein to Riemannian manifolds.</span>
+					<span class="sc-desc">Words as vectors in space, from conceptual spaces to manifold geometry.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">math 55</span><span class="sc-tag">math-heavy</span></span>
 				</a>
 				<a class="shelf-card is-compact" href="attentionlab" data-compact="1" data-search="the semantic tug-of-war: how transformers &#x27;think&#x27; how transformers overcome rnn signal decay, direct access across any distance. architecture, math-i, math-ii math-heavy the transformer revolution" style="--part-color:#5c9baf">
@@ -153,7 +153,7 @@
 				</a>
 				<a class="shelf-card is-compact" href="samplinglab" data-compact="1" data-search="temperature &amp; sampling top-k, top-p, min-p, top-n, repetition penalty ,  every decoding strategy. architecture, statistics-i, statistics-ii math-heavy the transformer revolution" style="--part-color:#5c9baf">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#127922;</span><span class="sc-title">Temperature &amp; Sampling</span></span>
-					<span class="sc-desc">Top-k, top-p, min-p, top-n, repetition penalty: every decoding strategy.</span>
+					<span class="sc-desc">Top-k, top-p, min-p, top-n, repetition penalty: the main decoding strategies.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">architecture</span></span>
 				</a>
 				<a class="shelf-card is-compact" href="transformer" data-compact="1" data-search="the architecture of meaning: a deep dive into transformers a deep interactive dive, configure heads, layers, and dimensions, then watch it compute. architecture, math-i, math-ii, programming math-heavy, code-heavy the transformer revolution" style="--part-color:#5c9baf">
@@ -191,7 +191,7 @@
 				</a>
 				<a class="shelf-card is-compact" href="hallucinations" data-compact="1" data-search="hallucinations and dangers of ai and how to use ai safely why ai lies, how pattern completion goes wrong, and using ai safely. safety, ethics, language, programming interested-layman making ai useful" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#9888;</span><span class="sc-title">Hallucinations and Dangers of AI and How to use AI Safely</span></span>
-					<span class="sc-desc">Why AI lies, how pattern completion goes wrong, and using AI safely.</span>
+					<span class="sc-desc">Why AI makes things up, how pattern completion goes wrong, and using AI safely.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">interested-layman</span></span>
 				</a>
 				<a class="shelf-card is-compact" href="rag" data-compact="1" data-search="retrieval-augmented generation: giving llms a search engine the rag pipeline ,  chunking, embedding, vector search, generation ,  plus the parts the happy path hides: chunking strategies, hybrid bm25 + dense search, cross-encoder reranking, contextual retrieval, and the reasons rag underperforms. inference, language, programming, architecture, data code-heavy making ai useful" style="--part-color:#009299">
@@ -211,7 +211,7 @@
 				</a>
 				<a class="shelf-card is-compact" href="running_locally" data-compact="1" data-search="running models locally llama.cpp, ollama, lm studio, gguf, and how to run a frontier-class llm on your laptop. hardware, programming, inference code-heavy making ai useful" style="--part-color:#009299">
 					<span class="sc-top"><span class="sc-dot" aria-hidden="true"></span><span class="sc-icon" aria-hidden="true">&#128187;</span><span class="sc-title">Running Models Locally</span></span>
-					<span class="sc-desc">llama.cpp, Ollama, LM Studio, GGUF, and how to run a frontier-class LLM on your laptop.</span>
+					<span class="sc-desc">llama.cpp, Ollama, LM Studio, GGUF, and how to run a capable LLM on your laptop.</span>
 					<span class="sc-meta"><span class="sc-tag sc-tag--compact">10′ compact</span><span class="sc-tag">no math</span><span class="sc-tag">code-heavy</span></span>
 				</a>
 				<a class="shelf-card is-compact" href="training_data" data-compact="1" data-search="training data curation common crawl, fineweb, deduplication, contamination, and why data is half the secret. training, data, programming, society  making ai useful" style="--part-color:#009299">
@@ -271,7 +271,7 @@
 		<div class="shell footer-grid">
 			<div>
 				<div class="footer-brand">10<sup>′</sup> Minutes</div>
-				<p>A compact companion to the From Nothing to Large Language Models project. Every card here opens a hand-built ten-minute lesson.</p>
+				<p>A compact companion to the From Nothing to Large Language Models project. Every card here opens a self-contained ten-minute lesson.</p>
 			</div>
 			<nav aria-label="Footer">
 				<a href="./">Home</a>

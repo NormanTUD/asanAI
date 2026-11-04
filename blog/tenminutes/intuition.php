@@ -301,7 +301,7 @@
 											<span><i class="pl-zero"></i>0</span>
 											<span><i class="pl-pos"></i>+1</span>
 										</div>
-										<div class="step-out" id="ipe-out">Each row is one position; each column is one dimension. Drag the context length to 128 and watch the low-frequency waves repeat while the high-frequency ones keep moving.</div>
+										<div class="step-out" id="ipe-out">Each row is one position; each column is one dimension. Drag the context length to 128 and watch the high-frequency waves repeat while the low-frequency ones keep moving.</div>
 									</div>
 									<p class="step-note">The heatmap shows one common scheme. Each position gets a mix of slow and fast waves, so nearby positions share some structure while every position stays distinct. A raw index would grow without bound and say nothing about relative distance; a wave pattern does not.</p>
 								</div>

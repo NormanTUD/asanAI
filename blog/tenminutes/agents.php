@@ -328,6 +328,8 @@ opencode
 	(function () {
 		"use strict";
 
+		var AGENT_DE = TM.lang() === "de";
+
 		/* ── agent simulation ───────────────────────────────── */
 		var script = [
 			{ kind: "thought", text: "The user wants a flexible ticket Dresden → Berlin tomorrow. I need the date, the current fares, and the flexibility conditions." },
@@ -377,12 +379,17 @@ opencode
 			if (!feed) return;
 			var div = document.createElement("div");
 			div.className = "agent-msg agent-msg--" + kind;
-			var kicker = { thought: "thought", action: "action", obs: "observation", answer: "final answer" }[kind] || kind;
+			var kicker = {
+				thought: AGENT_DE ? "Gedanke" : "thought",
+				action: AGENT_DE ? "Aktion" : "action",
+				obs: AGENT_DE ? "Beobachtung" : "observation",
+				answer: AGENT_DE ? "Endantwort" : "final answer"
+			}[kind] || kind;
 			div.innerHTML = '<span class="am-kicker">' + kicker + '</span><p class="am-text">' + escapeHtml(text) + "</p>";
 			feed.appendChild(div);
 			feed.scrollTop = feed.scrollHeight;
 			tokenCount += Math.max(4, Math.ceil(text.split(/\s+/).length * 1.35));
-			if (tokensEl) tokensEl.textContent = tokenCount + " tokens";
+			if (tokensEl) tokensEl.textContent = tokenCount + (AGENT_DE ? " Tokens" : " tokens");
 			if (meterEl) meterEl.style.width = Math.min(100, tokenCount / 1200 * 100).toFixed(1) + "%";
 		}
 		function escapeHtml(s) {
@@ -390,7 +397,9 @@ opencode
 		}
 		function note(text) {
 			notes.push(text);
-			if (memoryEl) memoryEl.textContent = notes.length + " note" + (notes.length === 1 ? "" : "s");
+			if (memoryEl) memoryEl.textContent = AGENT_DE
+				? notes.length + (notes.length === 1 ? " Notiz" : " Notizen")
+				: notes.length + " note" + (notes.length === 1 ? "" : "s");
 			if (scratchEl) {
 				var li = document.createElement("li");
 				li.textContent = text;
@@ -425,17 +434,17 @@ opencode
 						waiting = false;
 						choices.innerHTML = "";
 						if (nextBtn) nextBtn.disabled = false;
-						if (safetyEl) { safetyEl.textContent = "watching"; safetyEl.className = ""; }
+						if (safetyEl) { safetyEl.textContent = AGENT_DE ? "beobachtet" : "watching"; safetyEl.className = ""; }
 						markTool(opt.tool);
 						note(opt.label);
-						addMsg("thought", "Decision: " + opt.label + ". " + opt.feedback);
+						addMsg("thought", opt.feedback);
 						cursor++;
 						stepOnce();
 					} else {
 						addMsg("warning", opt.feedback);
 						b.disabled = true;
 						b.style.opacity = ".5";
-						if (safetyEl) { safetyEl.textContent = "blocked"; safetyEl.className = "is-warn"; }
+						if (safetyEl) { safetyEl.textContent = AGENT_DE ? "blockiert" : "blocked"; safetyEl.className = "is-warn"; }
 					}
 				});
 				choices.appendChild(b);
@@ -451,7 +460,7 @@ opencode
 			if (step.kind === "obs") { addMsg("obs", step.text); note(step.text); }
 			if (step.kind === "answer") {
 				addMsg("answer", step.text);
-				if (safetyEl) { safetyEl.textContent = "task complete"; safetyEl.className = "is-done"; }
+				if (safetyEl) { safetyEl.textContent = AGENT_DE ? "Aufgabe erledigt" : "task complete"; safetyEl.className = "is-done"; }
 			}
 			cursor++;
 			if (nextBtn) nextBtn.disabled = false;
@@ -468,7 +477,7 @@ opencode
 			if (tokensEl) tokensEl.textContent = "0 tokens";
 			if (meterEl) meterEl.style.width = "0%";
 			if (stepEl) stepEl.textContent = "0";
-			if (safetyEl) { safetyEl.textContent = "watching"; safetyEl.className = ""; }
+			if (safetyEl) { safetyEl.textContent = AGENT_DE ? "beobachtet" : "watching"; safetyEl.className = ""; }
 			document.querySelectorAll("[data-tool]").forEach(function (li) { li.classList.remove("is-on"); });
 			if (nextBtn) nextBtn.disabled = false;
 			addMsg("thought", "Goal received. I will plan the next step.");
@@ -505,11 +514,15 @@ opencode
 			injectRun.addEventListener("click", function () {
 				if (hierarchy && hierarchy.checked) {
 					outcome.className = "injection-outcome good";
-					outcome.textContent = "Mitigated in this toy: the instruction hierarchy treats the page as untrusted data, so the agent quotes the injected sentence as suspicious content and does not execute it. A hierarchy reduces risk; it is not a guarantee. The system still needs least privilege, sandboxing, and confirmation gates.";
+					outcome.textContent = AGENT_DE
+						? "In diesem Spielzeug abgeschwächt: Die Instruction Hierarchy behandelt die Seite als nicht vertrauenswürdige Daten, sodass der Agent den eingeschleusten Satz als verdächtigen Inhalt zitiert und nicht ausführt. Eine Hierarchy senkt das Risiko; sie ist keine Garantie. Das System braucht weiterhin geringste Berechtigung, Sandboxing und Bestätigungsgates."
+						: "Mitigated in this toy: the instruction hierarchy treats the page as untrusted data, so the agent quotes the injected sentence as suspicious content and does not execute it. A hierarchy reduces risk; it is not a guarantee. The system still needs least privilege, sandboxing, and confirmation gates.";
 					if (card) card.querySelector(".inject").className = "safe";
 				} else {
 					outcome.className = "injection-outcome bad";
-					outcome.textContent = "Injected, without a boundary, the model cannot reliably distinguish page text from instructions. The agent follows the injected command and tries to exfiltrate files. This is why prompt injection is a security problem, not a prompting problem.";
+					outcome.textContent = AGENT_DE
+						? "Ohne Grenze kann das Modell Seitentext nicht zuverlässig von Anweisungen unterscheiden. Der Agent folgt dem eingeschleusten Befehl und versucht, Dateien zu exfiltrieren. Deshalb ist Prompt Injection ein Sicherheitsproblem, kein Prompting-Problem."
+						: "Injected, without a boundary, the model cannot reliably distinguish page text from instructions. The agent follows the injected command and tries to exfiltrate files. This is why prompt injection is a security problem, not a prompting problem.";
 					if (card) card.querySelector(".inject").className = "inject";
 				}
 			});

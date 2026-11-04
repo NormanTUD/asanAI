@@ -48,7 +48,7 @@ return [
 		'Matched pairs' => 'Passende Paare',
 		'Similarity' => 'Ähnlichkeit',
 		'low' => 'niedrig',
-		'Alignment is a learned geometry. It makes a picture and its caption comparable without making them the same thing.' => 'Ausrichtung ist eine gelernte Geometrie. Sie macht ein Bild und seine Caption vergleichbar, ohne sie zu dasselbe zu machen.',
+		'Alignment is a learned geometry. It makes a picture and its caption comparable without making them the same thing.' => 'Ausrichtung ist eine gelernte Geometrie. Sie macht ein Bild und seine Caption vergleichbar, ohne sie gleichzusetzen.',
 		'The short version.' => 'Die Kurzfassung.',
 		'The aha' => 'Der Aha-Moment',
 		'The bridge between seeing and speaking is a shared embedding space.' => 'Die Brücke zwischen Sehen und Sprechen ist ein gemeinsamer Embedding-Raum.',

@@ -3312,8 +3312,10 @@
 			if (countOut) countOut.textContent = n;
 			if (dimOut) dimOut.textContent = d + " / " + (d + 1);
 			if (dimNote) {
-				var speed = d < 16 ? "slow" : d < 40 ? "medium" : "fast";
-				dimNote.textContent = "Pair " + d + " / " + (d + 1) + ": " + speed + " waves. Higher pairs turn faster, so the circle tightens.";
+				var speed = d < 16 ? "fast" : d < 40 ? "medium" : "slow";
+				dimNote.textContent = DEMO_DE
+					? "Paar " + d + " / " + (d + 1) + ": " + (d < 16 ? "schnelle" : d < 40 ? "mittlere" : "langsame") + " Wellen. Höhere Paare drehen langsamer, sodass der Kreis enger wird."
+					: "Pair " + d + " / " + (d + 1) + ": " + speed + " waves. Higher pairs turn slower, so the circle tightens.";
 			}
 			if (viewOut) viewOut.textContent = view === "2d" ? "circle" : "helix";
 			var pts = [];
