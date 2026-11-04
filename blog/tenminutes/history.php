@@ -7,7 +7,7 @@
 	<meta name="theme-color" content="#ffffff">
 	<title>A Very Brief History of AI | Ten Minutes</title>
 	<link rel="stylesheet" href="../Temml-Local.min.css">
-	<link rel="stylesheet" href="assets/site.css?v=20261104e">
+	<link rel="stylesheet" href="assets/site.css?v=20261104f">
 </head>
 <body data-lesson="history" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -1372,6 +1372,7 @@
 			var convKernel = document.getElementById("conv-kernel");
 			var convOutput = document.getElementById("conv-output");
 			var convReadout = document.getElementById("conv-readout");
+			var convFormula = document.getElementById("conv-formula");
 			var convMode = "edges";
 			var convPos = 0;
 			function convCell(value, cls) {
@@ -1379,6 +1380,22 @@
 				el.className = "conv-cell" + (cls ? " " + cls : "");
 				el.textContent = value;
 				return el;
+			}
+			function convTexProduct(p, k) {
+				var ks = Math.abs(k - Math.round(k)) < 0.001 ? String(k) : "\\tfrac{1}{9}";
+				if (k < 0) ks = "(" + ks + ")";
+				return String(p) + "\\cdot " + ks;
+			}
+			function convFormulaTex(k, row, col, total) {
+				var rows = [];
+				for (var i = 0; i < 3; i++) {
+					var terms = [];
+					for (var j = 0; j < 3; j++) terms.push(convTexProduct(CONV_IMG[row + i][col + j], k[i][j]));
+					rows.push("\\underbrace{" + terms.join("+") + "}_{\\text{" + (CONV_DE ? "Zeile " : "row ") + (i + 1) + "}}");
+				}
+				var sum = total.toFixed(2);
+				if (CONV_DE) sum = sum.replace(".", "{,}");
+				return "\\underbrace{" + rows.join("+") + "=" + sum + "}_{\\text{" + (CONV_DE ? "Summe der neun Produkte für Position " : "sum of the nine products for position ") + "(" + row + "," + col + ")}}";
 			}
 			function convRender() {
 				var k = CONV_KERNELS[convMode];
@@ -1415,6 +1432,11 @@
 					convReadout.textContent = CONV_DE
 						? "Position (" + row + ", " + col + "): Die neun Produkte aus Bildausschnitt und Kernel ergeben " + total.toFixed(2) + ". Die übrigen Zellen der Feature Map entstehen genauso, nur mit dem Fenster an einer anderen Stelle."
 						: "Position (" + row + ", " + col + "): the nine products of patch and kernel add up to " + total.toFixed(2) + ". The other feature-map cells are made the same way, with the window at another position.";
+				}
+				if (convFormula) {
+					convFormula.setAttribute("data-tex", convFormulaTex(k, row, col, values[convPos]));
+					convFormula.removeAttribute("data-tex-rendered");
+					if (TM.typesetMath) TM.typesetMath(convFormula.parentNode);
 				}
 			}
 			document.querySelectorAll("[data-kernel]").forEach(function (btn) {
