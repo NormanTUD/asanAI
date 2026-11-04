@@ -1,0 +1,4505 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer Layer: Der komplette Datenfluss, interaktiv</title>
+<meta name="description" content="Interaktives Deep-Learning-Labor: Q/K/V, Multi-Head Attention, Skalierung, Concatenation, W^O, Residuals, LayerNorm und FFN Schritt für Schritt.">
+
+<script>
+  window.__loadLocalTemml = function () {
+    if (window.__temmlFallbackLoading) return;
+    window.__temmlFallbackLoading = true;
+    var s = document.createElement('script');
+    s.src = '../temml.min.js';
+    s.onload = function () {
+      if (typeof window.__rerenderAllMath === 'function') window.__rerenderAllMath();
+    };
+    s.onerror = function () {
+      console.warn('Temml konnte weder vom CDN noch lokal geladen werden.');
+    };
+    document.head.appendChild(s);
+  };
+</script>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/temml@0.13.1/dist/Temml-Local.css"
+      onerror="this.onerror=null;this.href='../Temml-Local.min.css';">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.13.1/dist/temml.min.js"
+        onerror="window.__loadLocalTemml()"></script>
+
+<style>
+:root {
+  --bg: #05070f;
+  --bg-2: #070b16;
+  --panel: rgba(13, 20, 35, 0.78);
+  --panel-2: rgba(9, 14, 26, 0.92);
+  --line: rgba(120, 160, 255, 0.14);
+  --line-strong: rgba(120, 160, 255, 0.28);
+  --text: #dbe7f3;
+  --muted: #8ba0b8;
+  --dim: #586b82;
+  --cyan: #22d3ee;
+  --cyan-2: #67e8f9;
+  --purple: #a78bfa;
+  --pink: #f472b6;
+  --green: #34d399;
+  --amber: #fbbf24;
+  --red: #fb7185;
+  --radius: 20px;
+  --radius-sm: 12px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  --glow-cyan: 0 0 34px rgba(34, 211, 238, 0.16);
+  --glow-purple: 0 0 34px rgba(167, 139, 250, 0.16);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(120, 160, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 160, 255, 0.035) 1px, transparent 1px);
+  background-size: 62px 62px;
+  mask-image: radial-gradient(circle at 50% 20%, black 0%, transparent 78%);
+  -webkit-mask-image: radial-gradient(circle at 50% 20%, black 0%, transparent 78%);
+}
+::selection { background: rgba(34, 211, 238, 0.28); color: #fff; }
+a { color: var(--cyan-2); }
+button, input { font: inherit; }
+button { color: inherit; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+.bg-aurora {
+  position: fixed;
+  inset: -20%;
+  z-index: -3;
+  pointer-events: none;
+  overflow: hidden;
+  filter: blur(40px);
+  opacity: 0.55;
+}
+.bg-aurora span {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  animation: drift 24s ease-in-out infinite alternate;
+}
+.bg-aurora span:nth-child(1) {
+  width: 46vw; height: 46vw; left: 4%; top: 2%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.18), transparent 68%);
+}
+.bg-aurora span:nth-child(2) {
+  width: 40vw; height: 40vw; right: 0%; top: 20%;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.18), transparent 68%);
+  animation-delay: -8s;
+}
+.bg-aurora span:nth-child(3) {
+  width: 34vw; height: 34vw; left: 28%; bottom: -8%;
+  background: radial-gradient(circle, rgba(244, 114, 182, 0.12), transparent 68%);
+  animation-delay: -15s;
+}
+@keyframes drift {
+  from { transform: translate3d(-2%, -1%, 0) scale(1); }
+  to { transform: translate3d(3%, 2%, 0) scale(1.08); }
+}
+
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+#scroll-progress {
+  position: fixed;
+  left: 0; top: 0;
+  z-index: 400;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple), var(--pink));
+  box-shadow: 0 0 14px rgba(34, 211, 238, 0.6);
+  transition: width 0.08s linear;
+}
+
+.topbar {
+  position: fixed;
+  left: 0; right: 0; top: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  height: 68px;
+  padding: 0 26px;
+  background: rgba(5, 7, 15, 0.74);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  color: var(--text);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+}
+.brand-mark {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 16px var(--cyan);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.72); opacity: 0.65; }
+}
+.brand-dim { color: var(--dim); }
+.topnav {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.topnav::-webkit-scrollbar { display: none; }
+.nav-link {
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  transition: color 0.2s, background 0.2s;
+}
+.nav-link:hover, .nav-link.is-active {
+  color: var(--text);
+  background: rgba(34, 211, 238, 0.075);
+}
+.nav-link.is-active { color: var(--cyan-2); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(34, 211, 238, 0.5);
+  background: rgba(34, 211, 238, 0.08);
+  box-shadow: var(--glow-cyan);
+}
+.btn:active { transform: translateY(0); }
+.btn-primary {
+  border-color: rgba(34, 211, 238, 0.5);
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.18), rgba(167, 139, 250, 0.18));
+  box-shadow: 0 0 32px rgba(34, 211, 238, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.btn-small { padding: 7px 13px; font-size: 0.76rem; }
+.btn-ghost { background: transparent; }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+main {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 108px 0 150px;
+}
+footer {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 0 0 80px;
+  color: var(--dim);
+  font-size: 0.78rem;
+  border-top: 1px solid var(--line);
+}
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--cyan-2); }
+
+.hero {
+  min-height: calc(100vh - 108px);
+  display: grid;
+  align-items: center;
+  padding: 34px 0 86px;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.12fr 0.88fr;
+  gap: 52px;
+  align-items: center;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--cyan-2);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.eyebrow::before {
+  content: "";
+  width: 28px; height: 1px;
+  background: linear-gradient(90deg, var(--cyan), transparent);
+}
+h1 {
+  margin: 18px 0 22px;
+  font-size: clamp(2.8rem, 6vw, 5.15rem);
+  line-height: 1.01;
+  letter-spacing: -0.05em;
+  font-weight: 800;
+}
+.gradient-text {
+  background: linear-gradient(100deg, var(--cyan), var(--purple) 55%, var(--pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 34px rgba(34, 211, 238, 0.18));
+}
+.hero-lead {
+  max-width: 60ch;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.07rem;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+.hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 26px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+}
+.chip b { color: var(--cyan-2); font-weight: 600; }
+.hero-panel {
+  position: relative;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(7, 11, 22, 0.94));
+  box-shadow: var(--shadow), 0 0 80px rgba(34, 211, 238, 0.06);
+  overflow: hidden;
+}
+.hero-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.75), rgba(167, 139, 250, 0.75), transparent);
+}
+.panel-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.panel-head .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 10px var(--green);
+}
+.token-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 16px 0;
+}
+.token {
+  padding: 6px 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: rgba(34, 211, 238, 0.055);
+  color: var(--cyan-2);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+}
+.token:nth-child(2) {
+  border-color: rgba(167, 139, 250, 0.45);
+  background: rgba(167, 139, 250, 0.075);
+  color: #c4b5fd;
+}
+.hero-heat {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  max-width: 300px;
+  margin: 0 auto 14px;
+}
+.hero-heat .heat-cell {
+  aspect-ratio: 1;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.hero-heat .heat-cell:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.35);
+}
+.hero-shape {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  text-align: center;
+}
+
+.section-head { margin-bottom: 34px; }
+.section-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--cyan-2);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+.section-kicker::after {
+  content: "";
+  width: 140px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line-strong), transparent);
+}
+h2 {
+  margin: 10px 0 12px;
+  font-size: clamp(1.8rem, 3.4vw, 2.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+}
+.section-lead {
+  max-width: 76ch;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.01rem;
+}
+section + section { margin-top: 96px; }
+
+.card {
+  position: relative;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.82), rgba(8, 13, 25, 0.92));
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.45), rgba(167, 139, 250, 0.45), transparent);
+  opacity: 0.8;
+}
+.card + .card { margin-top: 22px; }
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+  letter-spacing: -0.015em;
+}
+.card h3 + p { margin-top: 0; }
+.card p { color: var(--muted); }
+.card p strong { color: var(--text); }
+.card-kicker {
+  margin-bottom: 7px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+.grid-2 > .card + .card { margin-top: 0; }
+.grid-2 > .card { height: 100%; }
+.two-col-text {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  align-items: start;
+}
+.note {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(2, 6, 14, 0.35);
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+.callout {
+  margin: 20px 0;
+  padding: 16px 18px;
+  border-left: 2px solid var(--cyan);
+  border-radius: 0 12px 12px 0;
+  background: rgba(34, 211, 238, 0.06);
+  color: var(--text);
+  font-size: 0.92rem;
+}
+.callout.warn {
+  border-left-color: var(--amber);
+  background: rgba(251, 191, 36, 0.06);
+}
+.callout.purple {
+  border-left-color: var(--purple);
+  background: rgba(167, 139, 250, 0.07);
+}
+.callout strong { color: var(--cyan-2); }
+.callout.purple strong { color: #c4b5fd; }
+
+.tex { color: var(--text); }
+.tex math { font-size: 1.03em; }
+.tex-display {
+  display: block;
+  margin: 18px 0;
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(2, 6, 14, 0.45);
+  overflow-x: auto;
+  text-align: center;
+  font-size: 1.05rem;
+}
+.tex-display math { font-size: 1.08rem; }
+.tex-error {
+  color: var(--red);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  white-space: pre-wrap;
+  text-align: left;
+}
+.math-box {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(2, 6, 14, 0.35);
+}
+.math-box .tex-display { margin: 8px 0; border: 0; background: transparent; padding: 4px; }
+
+code, .mono, pre {
+  font-family: var(--mono);
+}
+code.inline {
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--cyan-2);
+  font-size: 0.86em;
+}
+pre.code {
+  margin: 18px 0 0;
+  padding: 18px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(2, 6, 14, 0.6);
+  color: #c9d8ea;
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+pre.code .cmt { color: #64748b; }
+pre.code .kw { color: #c4b5fd; }
+pre.code .fn { color: #67e8f9; }
+pre.code .str { color: #86efac; }
+
+.shape-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.06);
+  color: var(--cyan-2);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+.shape-chip.purple {
+  border-color: rgba(167, 139, 250, 0.3);
+  background: rgba(167, 139, 250, 0.07);
+  color: #c4b5fd;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+th, td {
+  padding: 9px 11px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+th {
+  background: rgba(2, 6, 14, 0.35);
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+tr:last-child td { border-bottom: 0; }
+tr:hover td { background: rgba(34, 211, 238, 0.035); }
+td.mono { color: var(--cyan-2); }
+td.num { font-family: var(--mono); color: var(--text); }
+
+.shape-ladder {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 10px;
+  scrollbar-width: thin;
+}
+.ladder-item {
+  flex: 0 0 auto;
+  min-width: 122px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(2, 6, 14, 0.32);
+}
+.ladder-item .name {
+  display: block;
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.ladder-item .shape {
+  display: block;
+  margin-top: 2px;
+  color: var(--cyan-2);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+}
+.ladder-arrow {
+  flex: 0 0 auto;
+  align-self: center;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+
+.tensor-wrap {
+  position: relative;
+  height: 250px;
+  margin: 18px auto 4px;
+  max-width: 430px;
+}
+.tensor-plane {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 3px;
+  width: 240px;
+  height: 120px;
+  padding: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: rgba(8, 13, 25, 0.86);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  transform: translate(calc(-50% + var(--p) * 18px), calc(-50% - var(--p) * 18px));
+}
+.tensor-cell {
+  border-radius: 2px;
+  background: rgba(34, 211, 238, calc(0.06 + var(--d) * 0.42));
+  border: 1px solid rgba(34, 211, 238, 0.08);
+}
+.tensor-plane:nth-child(2) .tensor-cell { background: rgba(167, 139, 250, calc(0.06 + var(--d) * 0.42)); border-color: rgba(167, 139, 250, 0.08); }
+.tensor-plane:nth-child(3) .tensor-cell { background: rgba(244, 114, 182, calc(0.06 + var(--d) * 0.42)); border-color: rgba(244, 114, 182, 0.08); }
+.tensor-axis {
+  position: absolute;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+}
+.tensor-axis.b { left: 6%; bottom: 12%; }
+.tensor-axis.t { left: 42%; bottom: 2%; }
+.tensor-axis.d { right: 4%; top: 18%; color: var(--cyan-2); }
+
+.arch-wrap {
+  position: relative;
+  padding: 54px 26px 34px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.06), transparent 62%),
+    rgba(6, 10, 20, 0.5);
+  overflow: hidden;
+}
+.arch-links {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.arch-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+  align-items: center;
+}
+.arch-node {
+  position: relative;
+  min-height: 108px;
+  padding: 15px 14px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(8, 13, 25, 0.94));
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s, background 0.22s;
+}
+.arch-node:hover {
+  transform: translateY(-3px);
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32), var(--glow-cyan);
+}
+.arch-node.is-active {
+  border-color: var(--cyan);
+  background: linear-gradient(180deg, rgba(34, 211, 238, 0.1), rgba(8, 13, 25, 0.94));
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.28), 0 0 34px rgba(34, 211, 238, 0.18);
+}
+.arch-node.is-visited { border-color: rgba(167, 139, 250, 0.42); }
+.node-kicker {
+  display: block;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.node-title {
+  display: block;
+  margin: 6px 0 4px;
+  color: var(--text);
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.node-sub {
+  display: block;
+  color: var(--cyan-2);
+  font-family: var(--mono);
+  font-size: 0.61rem;
+  line-height: 1.35;
+}
+.arch-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 16px;
+  color: var(--dim);
+  font-size: 0.74rem;
+}
+.arch-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend-line {
+  display: inline-block;
+  width: 22px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--cyan);
+}
+.legend-line.residual {
+  height: 0;
+  border-top: 2px dashed var(--purple);
+  background: transparent;
+}
+
+.proj-lab {
+  display: grid;
+  grid-template-columns: 1.05fr auto 0.65fr auto 1.25fr;
+  gap: 12px;
+  align-items: center;
+  margin-top: 20px;
+}
+.proj-side { min-width: 0; }
+.proj-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.proj-label b { color: var(--cyan-2); font-weight: 500; }
+.op-arrow {
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  text-align: center;
+}
+.matrix-scroll {
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+.cell-grid {
+  display: grid;
+  grid-template-columns: 36px repeat(var(--cols), minmax(5px, 1fr));
+  gap: 2px;
+  min-width: var(--minw, 220px);
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(2, 6, 14, 0.42);
+}
+.row-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 4px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  white-space: nowrap;
+}
+.cell {
+  aspect-ratio: 1;
+  min-height: 5px;
+  border-radius: 2px;
+  background: rgba(34, 211, 238, 0.12);
+  transition: opacity 0.25s, transform 0.2s, box-shadow 0.2s;
+}
+.cell:hover { transform: scale(1.18); z-index: 2; box-shadow: 0 0 8px currentColor; }
+.cell.head-focus { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.48); }
+.cell.head-dim { opacity: 0.14; }
+.cell.group-sep { box-shadow: inset 2px 0 0 rgba(255, 255, 255, 0.18); }
+.weight-stack { display: grid; gap: 7px; }
+.weight-slab {
+  position: relative;
+  padding: 8px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background:
+    linear-gradient(135deg, rgba(34, 211, 238, 0.12), rgba(167, 139, 250, 0.1)),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.045) 0 1px, transparent 1px 6px);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+}
+.weight-slab b { display: block; color: var(--cyan-2); font-size: 0.72rem; }
+.weight-slab span { color: var(--dim); }
+.head-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+}
+.head-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.head-dot { width: 7px; height: 7px; border-radius: 2px; background: var(--hc); }
+.heads-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+.head-card {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(2, 6, 14, 0.34);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s, background 0.25s;
+}
+.head-card:hover { transform: translateY(-2px); border-color: var(--hc); }
+.head-card.is-selected {
+  border-color: var(--hc);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(2, 6, 14, 0.34));
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.13);
+}
+.head-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.head-title small { color: var(--dim); font-family: var(--mono); font-size: 0.58rem; font-weight: 400; }
+.head-vec { display: flex; gap: 3px; margin-top: 7px; }
+.head-vec span {
+  flex: 1;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--hc);
+  opacity: 0.68;
+}
+.head-vec.q span { opacity: 0.42; }
+.head-vec.v span { opacity: 0.92; }
+.head-focus-label {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(2, 6, 14, 0.32);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+}
+.head-focus-label b { color: var(--cyan-2); }
+
+.heat-layout {
+  display: grid;
+  grid-template-columns: 1.12fr 0.88fr;
+  gap: 24px;
+  align-items: start;
+  margin-top: 18px;
+}
+.heat-wrap { overflow-x: auto; padding-bottom: 3px; }
+.heat-grid {
+  display: grid;
+  grid-template-columns: 72px repeat(4, minmax(50px, 1fr));
+  gap: 4px;
+  min-width: 340px;
+}
+.heat-corner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+}
+.heat-axis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 2px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+.heat-axis:hover, .heat-axis.is-hl { color: var(--cyan-2); background: rgba(34, 211, 238, 0.08); }
+.heat-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  cursor: crosshair;
+  transition: background-color 0.35s, transform 0.18s, box-shadow 0.18s;
+}
+.heat-cell:hover { transform: scale(1.045); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.34); }
+.heat-cell.is-row-hl { box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.55); }
+.heat-cell.is-col-hl { box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.55); }
+.heat-cell.is-masked {
+  background: rgba(251, 113, 133, 0.08) !important;
+  color: rgba(251, 113, 133, 0.65);
+  border-style: dashed;
+}
+.heat-cell.is-selected-row { outline: 1px solid rgba(34, 211, 238, 0.7); outline-offset: -1px; }
+.heat-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+}
+.heat-gradient {
+  flex: 1;
+  max-width: 160px;
+  height: 7px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, hsl(200 90% 16%), hsl(190 95% 38%), hsl(270 90% 48%), hsl(330 92% 52%));
+}
+.heat-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 14px 0 4px;
+}
+.head-tabs { display: flex; flex-wrap: wrap; gap: 5px; }
+.head-tab {
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.head-tab:hover { color: var(--text); border-color: var(--line-strong); }
+.head-tab.is-active {
+  border-color: rgba(34, 211, 238, 0.55);
+  background: rgba(34, 211, 238, 0.1);
+  color: var(--cyan-2);
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.1);
+}
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  cursor: pointer;
+  user-select: none;
+}
+.switch input { position: absolute; opacity: 0; pointer-events: none; }
+.switch-track {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  transition: 0.2s;
+}
+.switch-track::after {
+  content: "";
+  position: absolute;
+  left: 2px; top: 2px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: 0.2s;
+}
+.switch input:checked + .switch-track {
+  border-color: rgba(34, 211, 238, 0.6);
+  background: rgba(34, 211, 238, 0.16);
+}
+.switch input:checked + .switch-track::after {
+  transform: translateX(16px);
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+}
+.attn-detail {
+  min-height: 42px;
+  margin-top: 12px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: rgba(2, 6, 14, 0.32);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+}
+.attn-detail b { color: var(--cyan-2); }
+.attn-detail .arrow { color: var(--purple); }
+.attn-bars { display: grid; gap: 6px; margin-top: 14px; }
+.bar-row {
+  display: grid;
+  grid-template-columns: 46px 1fr 46px;
+  gap: 8px;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  color: var(--muted);
+}
+.bar-track {
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  transition: width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.bar-value { text-align: right; color: var(--text); }
+.value-mix { display: grid; gap: 7px; margin-top: 14px; }
+.vm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.vm-row {
+  display: grid;
+  grid-template-columns: 42px 1fr 1.15fr;
+  gap: 8px;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  color: var(--muted);
+}
+.vm-vec { display: flex; gap: 2px; }
+.vm-vec span {
+  flex: 1;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--cyan);
+  opacity: var(--op, 0.2);
+}
+.vm-out {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+}
+.vm-out .vm-vec span { background: var(--green); }
+.sharpness-bars { display: grid; gap: 8px; margin-top: 16px; }
+.sharp-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 54px;
+  gap: 9px;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--muted);
+}
+.sharp-row .bar-track { height: 10px; }
+.sharp-row .bar-fill { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+.sharp-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+}
+.sharp-readout b { color: var(--cyan-2); }
+.mask-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  max-width: 260px;
+  margin-top: 12px;
+}
+.mask-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(52, 211, 153, 0.1);
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+}
+.mask-cell.blocked {
+  background: rgba(251, 113, 133, 0.07);
+  border-color: rgba(251, 113, 133, 0.18);
+  color: rgba(251, 113, 133, 0.55);
+  text-decoration: line-through;
+}
+
+.concat-stage {
+  position: relative;
+  margin-top: 20px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(2, 6, 14, 0.32);
+  overflow: hidden;
+}
+.concat-heads {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  transition: gap 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.head-block {
+  padding: 9px;
+  border: 1px solid var(--hc);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.025);
+  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s;
+}
+.head-block .hb-title {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--hc);
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  text-align: center;
+}
+.hb-cells { display: flex; gap: 3px; }
+.hb-cell {
+  width: 14px;
+  height: 34px;
+  border-radius: 3px;
+  background: var(--hc);
+  opacity: 0.72;
+}
+.concat-strip {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  margin: 22px auto 0;
+  opacity: 0;
+  transform: translateY(-10px) scaleX(0.92);
+  transition: opacity 0.5s, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.cs-cell {
+  width: 14px;
+  height: 34px;
+  border-radius: 3px;
+  background: var(--hc);
+  opacity: 0.8;
+}
+.concat-arrow {
+  margin: 18px 0 0;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.concat-output-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 12px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.wo-matrix {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 2px;
+  width: 150px;
+  height: 150px;
+  padding: 6px;
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  border-radius: 10px;
+  background: rgba(2, 6, 14, 0.42);
+  box-shadow: 0 0 0 0 rgba(167, 139, 250, 0);
+  transition: box-shadow 0.35s, border-color 0.35s;
+}
+.wo-matrix span { border-radius: 1px; background: rgba(167, 139, 250, var(--a, 0.2)); }
+.output-strip { display: flex; gap: 3px; }
+.output-strip span {
+  width: 14px;
+  height: 34px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--green), var(--cyan));
+  opacity: 0.82;
+}
+.concat-stage.is-joined .concat-heads { gap: 2px; }
+.concat-stage.is-joined .head-block { transform: translateY(-3px); }
+.concat-stage.is-joined .concat-strip { opacity: 1; transform: translateY(0) scaleX(1); }
+.concat-stage.is-joined .concat-arrow { opacity: 1; }
+.concat-stage.is-projected .concat-output-row { opacity: 1; transform: translateY(0); }
+.concat-stage.is-projected .wo-matrix {
+  border-color: rgba(167, 139, 250, 0.8);
+  box-shadow: 0 0 34px rgba(167, 139, 250, 0.24);
+}
+.concat-status {
+  margin-top: 14px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  text-align: center;
+}
+.concat-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+.dim-label {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+  margin-top: 12px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+}
+
+.norm-lab { display: grid; gap: 16px; margin-top: 20px; }
+.vector-row {
+  display: grid;
+  grid-template-columns: 102px repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  align-items: end;
+}
+.vector-label {
+  align-self: center;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  line-height: 1.35;
+}
+.vector-label b { display: block; color: var(--text); font-size: 0.74rem; font-weight: 600; }
+.bar-col { min-width: 0; }
+.bar-cell {
+  position: relative;
+  height: 84px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+  overflow: hidden;
+}
+.bar-cell::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+.bar-cell .fill {
+  position: absolute;
+  left: 25%;
+  width: 50%;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--cyan), var(--purple));
+  transition: height 0.25s, top 0.25s, bottom 0.25s;
+}
+.row-s .bar-cell .fill { background: linear-gradient(180deg, var(--purple), var(--pink)); }
+.row-sum .bar-cell .fill { background: linear-gradient(180deg, var(--pink), var(--amber)); }
+.row-ln .bar-cell .fill { background: linear-gradient(180deg, var(--green), var(--cyan)); }
+.bar-num {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  text-align: center;
+}
+.norm-readouts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.readout {
+  padding: 6px 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(2, 6, 14, 0.3);
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+}
+.readout b { color: var(--cyan-2); font-weight: 500; }
+.slider-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 6px;
+}
+.slider-item {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: rgba(2, 6, 14, 0.28);
+}
+.slider-item label {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.6rem;
+}
+.slider-item output { color: var(--cyan-2); }
+input[type="range"] {
+  width: 100%;
+  margin: 7px 0 0;
+  accent-color: var(--cyan);
+  cursor: pointer;
+}
+.affine-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+.affine-row .slider-item { margin: 0; }
+
+.ffn-scroll { overflow-x: auto; padding-bottom: 5px; }
+.ffn-board {
+  display: grid;
+  grid-template-columns: 62px minmax(120px, 1.1fr) 66px minmax(180px, 1.5fr) 66px minmax(120px, 1.1fr);
+  grid-template-rows: auto repeat(4, auto);
+  gap: 9px;
+  min-width: 720px;
+  margin-top: 18px;
+  align-items: center;
+}
+.ffn-head {
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  text-align: center;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.ffn-token {
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  text-align: right;
+  padding-right: 4px;
+}
+.ffn-vec {
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(2, 6, 14, 0.36);
+}
+.ffn-vec span {
+  flex: 1;
+  height: 17px;
+  border-radius: 2px;
+  background: rgba(34, 211, 238, var(--a, 0.4));
+  transition: transform 0.3s, opacity 0.3s;
+}
+.ffn-vec.hidden span { background: rgba(167, 139, 250, var(--a, 0.4)); }
+.ffn-vec.hidden span.off { background: rgba(167, 139, 250, 0.07); }
+.ffn-vec.output span { background: rgba(52, 211, 153, var(--a, 0.45)); }
+.weight-slab.ffn-w1,
+.weight-slab.ffn-w2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+  min-height: 158px;
+  text-align: center;
+  border-color: rgba(167, 139, 250, 0.34);
+  background:
+    linear-gradient(135deg, rgba(167, 139, 250, 0.14), rgba(34, 211, 238, 0.08)),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 5px);
+}
+.weight-slab.ffn-w1 b,
+.weight-slab.ffn-w2 b { color: #c4b5fd; font-size: 0.8rem; }
+.weight-slab.ffn-w1 span,
+.weight-slab.ffn-w2 span { color: var(--dim); font-size: 0.58rem; line-height: 1.45; }
+.ffn-board.is-running .ffn-vec.hidden span {
+  animation: ffnFlash 0.75s ease-in-out both;
+  animation-delay: calc(var(--i) * 36ms);
+}
+.ffn-board.is-running .weight-slab { animation: slabPulse 0.9s ease-in-out; }
+@keyframes ffnFlash {
+  0% { transform: scaleY(0.55); opacity: 0.35; }
+  55% { transform: scaleY(1.25); opacity: 1; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+@keyframes slabPulse {
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: 0 0 28px rgba(167, 139, 250, 0.34); border-color: rgba(167, 139, 250, 0.75); }
+}
+.ffn-board.show-one .ffn-lane:not(.is-focus) { opacity: 0.2; }
+.ffn-lane { display: contents; }
+.ffn-lane > * { transition: opacity 0.3s; }
+.ffn-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+.ffn-param {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+}
+.ffn-param b { color: var(--cyan-2); font-weight: 500; }
+
+.playground-grid {
+  display: grid;
+  grid-template-columns: 0.92fr 1.08fr;
+  gap: 26px;
+  align-items: start;
+}
+.control-list { display: grid; gap: 14px; }
+.control {
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(2, 6, 14, 0.28);
+}
+.control-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+.control-head output {
+  color: var(--cyan-2);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+}
+.control small { color: var(--dim); font-size: 0.62rem; }
+.pg-note {
+  min-height: 18px;
+  margin-top: 8px;
+  color: var(--amber);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.stat {
+  padding: 12px 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(2, 6, 14, 0.3);
+}
+.stat .label {
+  display: block;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.stat .value {
+  display: block;
+  margin-top: 4px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+.stat .value small { color: var(--dim); font-size: 0.62rem; }
+.mini-score-wrap {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(2, 6, 14, 0.3);
+}
+.mini-score-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.6rem;
+}
+.mini-score {
+  display: grid;
+  grid-auto-rows: 1fr;
+  gap: 2px;
+  width: min(100%, 310px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+.mini-score .cell {
+  aspect-ratio: auto;
+  min-height: 0;
+  border-radius: 1px;
+  background: rgba(34, 211, 238, var(--a, 0.2));
+}
+.flow-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 11px;
+  margin-top: 16px;
+}
+.flow-card {
+  position: relative;
+  padding: 12px 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(2, 6, 14, 0.3);
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.flow-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(34, 211, 238, 0.4);
+  box-shadow: var(--glow-cyan);
+}
+.flow-card .flow-name {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--text);
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+.flow-card .flow-name span {
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  font-weight: 400;
+}
+.flow-card code {
+  display: block;
+  margin-top: 5px;
+  color: var(--cyan-2);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  word-break: break-word;
+}
+.flow-card.purple code { color: #c4b5fd; }
+.flow-card.green code { color: var(--green); }
+
+.tour-dock {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 250;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  width: min(1100px, calc(100% - 32px));
+  padding: 14px 16px 13px;
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  border-radius: 20px;
+  background: rgba(7, 11, 22, 0.93);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.66), 0 0 60px rgba(34, 211, 238, 0.08);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+.tour-dock[hidden] { display: none; }
+.tour-progress {
+  grid-column: 1 / -1;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+.tour-progress-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple), var(--pink));
+  transition: width 0.3s ease;
+}
+.tour-main { min-width: 0; }
+.tour-step-label {
+  color: var(--cyan-2);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.tour-step-title {
+  margin: 2px 0 2px;
+  color: var(--text);
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.tour-step-text {
+  max-width: 78ch;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.tour-step-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  align-items: center;
+  margin-top: 7px;
+}
+.tour-step-meta .shape-chip { white-space: normal; }
+.tour-step-meta .tex-display {
+  margin: 0;
+  padding: 5px 9px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  text-align: left;
+}
+.tour-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+.tour-actions .btn { padding: 7px 12px; font-size: 0.72rem; }
+.tour-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+.tour-dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  cursor: pointer;
+  transition: 0.2s;
+}
+.tour-dot:hover { background: var(--muted); }
+.tour-dot.is-active { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+.tour-dot.is-done { background: rgba(167, 139, 250, 0.65); }
+body.tour-active main { padding-bottom: 360px; }
+body.tour-active footer { padding-bottom: 360px; }
+.tour-target {
+  outline: 2px solid rgba(34, 211, 238, 0.55);
+  outline-offset: 6px;
+  border-radius: 22px;
+  box-shadow: 0 0 0 8px rgba(34, 211, 238, 0.035), 0 0 60px rgba(34, 211, 238, 0.07);
+  scroll-margin-top: 100px;
+  transition: outline-color 0.3s, box-shadow 0.3s;
+}
+section.tour-target { outline-offset: 10px; }
+
+.debug-banner {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 500;
+  max-width: 560px;
+  max-height: 42vh;
+  overflow: auto;
+  padding: 10px 12px;
+  border: 1px solid var(--red);
+  border-radius: 10px;
+  background: rgba(60, 10, 20, 0.96);
+  color: #fecdd3;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  white-space: pre-wrap;
+}
+.debug-banner[hidden] { display: none; }
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.reveal.in-view { opacity: 1; transform: none; }
+
+@media (max-width: 980px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 34px; }
+  .hero { min-height: 0; padding-top: 20px; }
+  .hero-panel { max-width: 540px; }
+  .grid-2, .two-col-text, .heat-layout, .playground-grid { grid-template-columns: 1fr; }
+  .proj-lab { grid-template-columns: 1fr; gap: 10px; }
+  .op-arrow { transform: rotate(90deg); }
+  .arch-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .heads-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .arch-wrap { padding-top: 24px; }
+}
+@media (max-width: 720px) {
+  .topbar { padding: 0 14px; gap: 10px; }
+  .brand { font-size: 0.62rem; }
+  .topnav { display: none; }
+  .topbar .btn-tour { margin-left: auto; }
+  main, footer { width: min(100% - 28px, 1180px); }
+  main { padding-top: 92px; }
+  .card { padding: 20px; }
+  .arch-grid { grid-template-columns: 1fr 1fr; }
+  .arch-node { min-height: 96px; }
+  .concept-strip { grid-template-columns: 1fr; }
+  .vector-row { grid-template-columns: 72px repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .slider-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .affine-row { grid-template-columns: 1fr; }
+  .tour-dock { grid-template-columns: 1fr; bottom: 8px; padding: 12px; border-radius: 16px; max-height: 72vh; overflow-y: auto; }
+  .tour-actions { justify-content: flex-start; }
+  body.tour-active main, body.tour-active footer { padding-bottom: 430px; }
+  .stats-grid { grid-template-columns: 1fr; }
+  h1 { font-size: clamp(2.4rem, 13vw, 3.6rem); }
+  section + section { margin-top: 70px; }
+  .concat-stage { padding: 14px; }
+  .concat-heads { gap: 6px; }
+  .head-block { padding: 6px; }
+  .hb-cell, .cs-cell { width: 9px; height: 26px; }
+  .concat-strip { gap: 2px; }
+  .concat-output-row { flex-wrap: wrap; gap: 8px; }
+  .output-strip { flex-wrap: wrap; justify-content: center; gap: 2px; }
+  .wo-matrix { width: 112px; height: 112px; }
+}
+@media (max-width: 460px) {
+  .arch-grid { grid-template-columns: 1fr; }
+  .heads-row { grid-template-columns: 1fr; }
+  .heat-grid { grid-template-columns: 58px repeat(4, minmax(42px, 1fr)); min-width: 280px; }
+  .tour-step-text { font-size: 0.74rem; }
+  .tour-step-meta { gap: 5px; }
+  .hb-cell, .cs-cell { width: 8px; height: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+<div class="bg-aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+<div id="scroll-progress" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="brand" href="#top" aria-label="Zum Anfang">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span>TRANSFORMER<span class="brand-dim">//</span>LAYER</span>
+  </a>
+  <nav class="topnav" aria-label="Module">
+    <a class="nav-link" href="#architecture">Architektur</a>
+    <a class="nav-link" href="#module-1">Shapes</a>
+    <a class="nav-link" href="#module-2">QKV</a>
+    <a class="nav-link" href="#module-3">Attention</a>
+    <a class="nav-link" href="#module-4">Concat</a>
+    <a class="nav-link" href="#module-5">Add &amp; Norm</a>
+    <a class="nav-link" href="#module-6">FFN</a>
+    <a class="nav-link" href="#module-7">Playground</a>
+  </nav>
+  <button class="btn btn-small btn-tour" id="nav-tour" type="button">Geführte Tour</button>
+</header>
+
+<main id="top">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <div class="eyebrow">Interaktives Deep-Learning-Labor</div>
+        <h1 id="hero-title">Der Transformer-Layer,<br><span class="gradient-text">von innen.</span></h1>
+        <p class="hero-lead">
+          Vom Token-Embedding bis zum Output: Query-, Key- und Value-Projektionen,
+          Multi-Head Attention, Skalierung, Head-Konkatenation, <span class="tex" data-tex="W^O">W^O</span>,
+          Residualpfade, LayerNorm und das position-wise Feed-Forward Network.
+          Jeder Tensor mit Shape, jede Operation mit Formel.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="hero-tour" type="button">Geführte Tour starten</button>
+          <a class="btn btn-ghost" href="#module-7">Zum Playground</a>
+        </div>
+        <div class="hero-chips" aria-label="Basiskonfiguration">
+          <span class="chip"><b>d<sub>model</sub></b> 512</span>
+          <span class="chip"><b>h</b> 8</span>
+          <span class="chip"><b>d<sub>k</sub></b> 64</span>
+          <span class="chip"><b>d<sub>ff</sub></b> 2048</span>
+          <span class="chip"><b>N</b> 6</span>
+        </div>
+      </div>
+
+      <aside class="hero-panel" aria-label="Miniaturansicht der Attention-Matrix">
+        <div class="panel-head"><span class="dot" aria-hidden="true"></span> live tensor flow</div>
+        <div class="token-strip" aria-hidden="true">
+          <span class="token">The</span>
+          <span class="token">cat</span>
+          <span class="token">sat</span>
+          <span class="token">on</span>
+        </div>
+        <div class="hero-heat" id="hero-heat" aria-hidden="true"></div>
+        <div class="hero-shape">
+          <span>B × T × d<sub>model</sub></span>
+          <span>→</span>
+          <span>h × (T × T)</span>
+          <span>→</span>
+          <span>B × T × d<sub>model</sub></span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="architecture" aria-labelledby="arch-title">
+    <div class="section-head">
+      <div class="section-kicker">00 · Übersicht</div>
+      <h2 id="arch-title">Der Layer als Flussdiagramm</h2>
+      <p class="section-lead">
+        Klicke auf einen Block, um zum passenden Detailabschnitt zu springen.
+        Die durchgezogenen Linien sind der Hauptpfad, die gestrichelten Linien
+        sind Residualverbindungen. Die Form <span class="shape-chip">B × T × d<sub>model</sub></span>
+        bleibt über den gesamten Layer erhalten.
+      </p>
+    </div>
+
+    <div class="arch-wrap reveal" id="arch-wrap">
+      <svg class="arch-links" id="arch-links" aria-hidden="true"></svg>
+      <div class="arch-grid">
+        <button class="arch-node" id="arch-input" data-target="mod-input" type="button">
+          <span class="node-kicker">Input</span>
+          <span class="node-title">X + Positional Encoding</span>
+          <span class="node-sub">B × T × d_model</span>
+        </button>
+        <button class="arch-node" id="arch-attn" data-target="module-2" type="button">
+          <span class="node-kicker">Sub-Layer 1</span>
+          <span class="node-title">Multi-Head Attention</span>
+          <span class="node-sub">h × scaled dot-product</span>
+        </button>
+        <button class="arch-node" id="arch-addnorm1" data-target="addnorm1" type="button">
+          <span class="node-kicker">Add &amp; Norm</span>
+          <span class="node-title">Residual + LayerNorm</span>
+          <span class="node-sub">B × T × d_model</span>
+        </button>
+        <button class="arch-node" id="arch-ffn" data-target="module-6" type="button">
+          <span class="node-kicker">Sub-Layer 2</span>
+          <span class="node-title">Position-wise FFN</span>
+          <span class="node-sub">d_model → d_ff → d_model</span>
+        </button>
+        <button class="arch-node" id="arch-addnorm2" data-target="addnorm2" type="button">
+          <span class="node-kicker">Add &amp; Norm</span>
+          <span class="node-title">Residual + LayerNorm</span>
+          <span class="node-sub">B × T × d_model</span>
+        </button>
+        <button class="arch-node" id="arch-output" data-target="output" type="button">
+          <span class="node-kicker">Output</span>
+          <span class="node-title">X⁽ˡ⁺¹⁾</span>
+          <span class="node-sub">B × T × d_model</span>
+        </button>
+      </div>
+    </div>
+    <div class="arch-legend">
+      <span><i class="legend-line" aria-hidden="true"></i> Hauptpfad</span>
+      <span><i class="legend-line residual" aria-hidden="true"></i> Residualpfad</span>
+      <span>Klick auf einen Block springt zum Detail</span>
+    </div>
+  </section>
+
+  <section id="module-1" aria-labelledby="module-1-title">
+    <div class="section-head">
+      <div class="section-kicker">01 · Grundlagen</div>
+      <h2 id="module-1-title">Tensor-Shape-Tracking</h2>
+      <p class="section-lead">
+        Der Layer rechnet nie mit einzelnen Wörtern, sondern mit einem dreidimensionalen
+        Tensor. Die Batch-Achse <span class="tex" data-tex="B">B</span> und die Zeitachse
+        <span class="tex" data-tex="T">T</span> sind Containerachsen. Die eigentliche
+        Repräsentation jedes Tokens liegt in der letzten Achse,
+        <span class="tex" data-tex="d_{\mathrm{model}}">d_model</span>.
+      </p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card reveal" id="mod-input">
+        <div class="card-kicker">Der Container</div>
+        <h3>Ein Token ist eine Zeile, der Layer ist eine Funktion auf allen Zeilen</h3>
+        <p>
+          Nach dem Embedding und dem Addition der Positionsinformation liegt der Input als
+          <span class="tex" data-tex="X \in \mathbb{R}^{B \times T \times d_{\mathrm{model}}}">X ∈ R^(B×T×d_model)</span>
+          vor. Für jedes Batch-Element und jede Position gibt es einen Vektor der Länge
+          <span class="tex" data-tex="d_{\mathrm{model}}">d_model</span>.
+        </p>
+        <div class="tex-display" data-tex="X \in \mathbb{R}^{B \times T \times d_{\mathrm{model}}}">X ∈ R^(B × T × d_model)</div>
+        <p>
+          Wir folgen in der Tour dem Token <strong>„cat“</strong> an Position 2. Seine Zeile
+          <span class="tex" data-tex="x_{\mathrm{cat}} \in \mathbb{R}^{d_{\mathrm{model}}}">x_cat ∈ R^d_model</span>
+          wird durch jede Operation geschickt. Die anderen Tokens liefern die Keys und Values,
+          mit denen diese Zeile interagiert.
+        </p>
+        <div class="tensor-wrap" aria-hidden="true">
+          <div class="tensor-plane" style="--p:0">
+            <span class="tensor-cell" style="--d:0.2"></span><span class="tensor-cell" style="--d:0.8"></span><span class="tensor-cell" style="--d:0.3"></span><span class="tensor-cell" style="--d:0.6"></span><span class="tensor-cell" style="--d:0.4"></span><span class="tensor-cell" style="--d:0.9"></span><span class="tensor-cell" style="--d:0.2"></span><span class="tensor-cell" style="--d:0.5"></span>
+            <span class="tensor-cell" style="--d:0.6"></span><span class="tensor-cell" style="--d:0.1"></span><span class="tensor-cell" style="--d:0.7"></span><span class="tensor-cell" style="--d:0.4"></span><span class="tensor-cell" style="--d:0.9"></span><span class="tensor-cell" style="--d:0.2"></span><span class="tensor-cell" style="--d:0.5"></span><span class="tensor-cell" style="--d:0.8"></span>
+            <span class="tensor-cell" style="--d:0.3"></span><span class="tensor-cell" style="--d:0.7"></span><span class="tensor-cell" style="--d:0.2"></span><span class="tensor-cell" style="--d:0.8"></span><span class="tensor-cell" style="--d:0.1"></span><span class="tensor-cell" style="--d:0.6"></span><span class="tensor-cell" style="--d:0.4"></span><span class="tensor-cell" style="--d:0.9"></span>
+            <span class="tensor-cell" style="--d:0.8"></span><span class="tensor-cell" style="--d:0.3"></span><span class="tensor-cell" style="--d:0.6"></span><span class="tensor-cell" style="--d:0.1"></span><span class="tensor-cell" style="--d:0.7"></span><span class="tensor-cell" style="--d:0.4"></span><span class="tensor-cell" style="--d:0.9"></span><span class="tensor-cell" style="--d:0.2"></span>
+          </div>
+          <div class="tensor-plane" style="--p:1">
+            <span class="tensor-cell" style="--d:0.5"></span><span class="tensor-cell" style="--d:0.2"></span><span class="tensor-cell" style="--d:0.8"></span><span class="tensor-cell" style="--d:0.4"></span><span class="tensor-cell" style="--d:0.7"></span><span class="tensor-cell" style="--d:0.1"></span><span class="tensor-cell" style="--d:0.6"></span><span class="tensor-cell" style="--d:0.3"></span>
+            <span class="tensor-cell" style="--d:0.9"></span><span class="tensor-cell" style="--d:0.4"></span><span class="tensor-cell" style="--d:0.2"></span><span class="tensor-cell" style="--d:0.7"></span><span class="tensor-cell" style="--d:0.5"></span><span class="tensor-cell" style="--d:0.8"></span><span class="tensor-cell" style="--d:0.1"></span><span class="tensor-cell" style="--d:0.6"></span>
+            <span class="tensor-cell" style="--d:0.3"></span><span class="tensor-cell" style="--d:0.8"></span><span class="tensor-cell" style="--d:0.5"></span><span class="tensor-cell" style="--d:0.1"></span><span class="tensor-cell" style="--d:0.9"></span><span class="tensor-cell" style="--d:0.4"></span><span class="tensor-cell" style="--d:0.7"></span><span class="tensor-cell" style="--d:0.2"></span>
+            <span class="tensor-cell" style="--d:0.6"></span><span class="tensor-cell" style="--d:0.1"></span><span class="tensor-cell" style="--d:0.9"></span><span class="tensor-cell" style="--d:0.3"></span><span class="tensor-cell" style="--d:0.5"></span><span class="tensor-cell" style="--d:0.8"></span><span class="tensor-cell" style="--d:0.2"></span><span class="tensor-cell" style="--d:0.7"></span>
+          </div>
+          <div class="tensor-plane" style="--p:2">
+            <span class="tensor-cell" style="--d:0.7"></span><span class="tensor-cell" style="--d:0.3"></span><span class="tensor-cell" style="--d:0.6"></span><span class="tensor-cell" style="--d:0.9"></span><span class="tensor-cell" style="--d:0.2"></span><span class="tensor-cell" style="--d:0.5"></span><span class="tensor-cell" style="--d:0.8"></span><span class="tensor-cell" style="--d:0.1"></span>
+            <span class="tensor-cell" style="--d:0.4"></span><span class="tensor-cell" style="--d:0.8"></span><span class="tensor-cell" style="--d:0.2"></span><span class="tensor-cell" style="--d:0.5"></span><span class="tensor-cell" style="--d:0.9"></span><span class="tensor-cell" style="--d:0.3"></span><span class="tensor-cell" style="--d:0.6"></span><span class="tensor-cell" style="--d:0.1"></span>
+            <span class="tensor-cell" style="--d:0.9"></span><span class="tensor-cell" style="--d:0.5"></span><span class="tensor-cell" style="--d:0.1"></span><span class="tensor-cell" style="--d:0.7"></span><span class="tensor-cell" style="--d:0.3"></span><span class="tensor-cell" style="--d:0.8"></span><span class="tensor-cell" style="--d:0.4"></span><span class="tensor-cell" style="--d:0.6"></span>
+            <span class="tensor-cell" style="--d:0.2"></span><span class="tensor-cell" style="--d:0.6"></span><span class="tensor-cell" style="--d:0.9"></span><span class="tensor-cell" style="--d:0.4"></span><span class="tensor-cell" style="--d:0.7"></span><span class="tensor-cell" style="--d:0.1"></span><span class="tensor-cell" style="--d:0.5"></span><span class="tensor-cell" style="--d:0.8"></span>
+          </div>
+          <span class="tensor-axis b">B (Batch)</span>
+          <span class="tensor-axis t">T (Tokens)</span>
+          <span class="tensor-axis d">d_model</span>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-kicker">Variablen</div>
+        <h3>Alle Formen auf einen Blick</h3>
+        <p>
+          Die rechte Spalte ist live: Sie folgt den Reglern im Playground.
+          Die Papierwerte stammen aus dem Base-Modell von
+          <em>Attention Is All You Need</em>.
+        </p>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Variable</th>
+                <th>Form / Wert</th>
+                <th>Bedeutung</th>
+                <th>Paper</th>
+                <th>Live</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><b>Batch</b></td><td class="mono">B</td><td>unabhängige Sequenzen</td><td class="num">frei</td><td class="num" data-live="B">2</td></tr>
+              <tr><td><b>Sequence</b></td><td class="mono">T</td><td>Tokens pro Sequenz</td><td class="num">frei</td><td class="num" data-live="T">4</td></tr>
+              <tr><td><b>Model width</b></td><td class="mono">d<sub>model</sub></td><td>Kanäle pro Token</td><td class="num">512</td><td class="num" data-live="dModel">512</td></tr>
+              <tr><td><b>Heads</b></td><td class="mono">h</td><td>parallele Aufmerksamkeitsköpfe</td><td class="num">8</td><td class="num" data-live="heads">8</td></tr>
+              <tr><td><b>Head dim</b></td><td class="mono">d<sub>k</sub> = d<sub>model</sub>/h</td><td>Query- und Key-Breite</td><td class="num">64</td><td class="num" data-live="dK">64</td></tr>
+              <tr><td><b>Value dim</b></td><td class="mono">d<sub>v</sub> = d<sub>model</sub>/h</td><td>Value-Breite</td><td class="num">64</td><td class="num" data-live="dV">64</td></tr>
+              <tr><td><b>FFN width</b></td><td class="mono">d<sub>ff</sub></td><td>innere Breite des FFN</td><td class="num">2048</td><td class="num" data-live="dFf">2048</td></tr>
+              <tr><td><b>Layers</b></td><td class="mono">N</td><td>gestapelte Blöcke</td><td class="num">6</td><td class="num" data-live="layers">6</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          <span class="tex" data-tex="d_k = d_v = d_{\mathrm{model}} / h">d_k = d_v = d_model / h</span>
+          gilt im Originalmodell. Moderne Varianten erlauben andere Verhältnisse,
+          aber die Grundidee bleibt: Die Gesamtbreite wird auf <em>h</em> Köpfe verteilt.
+        </div>
+      </div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-kicker">Lesereihenfolge</div>
+      <h3>Die Shape-Ladder</h3>
+      <p>
+        Diese Kette begegnet dir in jedem Detailmodul wieder. Nur die Achsenreihenfolge
+        ändert sich: Beim Splitting tritt <span class="tex" data-tex="h">h</span> als
+        eigene Achse hinzu, beim Concatenation verschwindet sie wieder.
+      </p>
+      <div class="shape-ladder" aria-label="Shape-Verlauf durch den Transformer-Layer">
+        <div class="ladder-item"><span class="name">X</span><span class="shape">B × T × d_model</span></div>
+        <span class="ladder-arrow" aria-hidden="true">→</span>
+        <div class="ladder-item"><span class="name">QKV</span><span class="shape">B × T × 3·d_model</span></div>
+        <span class="ladder-arrow" aria-hidden="true">→</span>
+        <div class="ladder-item"><span class="name">Heads</span><span class="shape">B × h × T × d_k</span></div>
+        <span class="ladder-arrow" aria-hidden="true">→</span>
+        <div class="ladder-item"><span class="name">Scores</span><span class="shape">B × h × T × T</span></div>
+        <span class="ladder-arrow" aria-hidden="true">→</span>
+        <div class="ladder-item"><span class="name">Head-Out</span><span class="shape">B × h × T × d_v</span></div>
+        <span class="ladder-arrow" aria-hidden="true">→</span>
+        <div class="ladder-item"><span class="name">Concat</span><span class="shape">B × T × h·d_v</span></div>
+        <span class="ladder-arrow" aria-hidden="true">→</span>
+        <div class="ladder-item"><span class="name">FFN hidden</span><span class="shape">B × T × d_ff</span></div>
+        <span class="ladder-arrow" aria-hidden="true">→</span>
+        <div class="ladder-item"><span class="name">Output</span><span class="shape">B × T × d_model</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="module-2" aria-labelledby="module-2-title">
+    <div class="section-head">
+      <div class="section-kicker">02 · Projektion &amp; Splitting</div>
+      <h2 id="module-2-title">Q, K, V: drei Rollen, drei lineare Abbildungen</h2>
+      <p class="section-lead">
+        Jedes Token erzeugt aus derselben Repräsentation drei verschiedene Vektoren:
+        eine Query („wonach suche ich?“), einen Key („was biete ich an?“) und einen
+        Value („was gebe ich weiter, wenn ich relevant bin?“). Die Projektionen sind
+        gelernt und für jeden Head verschieden.
+      </p>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-kicker">Die Mathematik</div>
+      <h3>Pro Head: eine eigene Projektion</h3>
+      <div class="two-col-text">
+        <div>
+          <p>
+            Für Head <span class="tex" data-tex="i">i</span> wird dieselbe Input-Matrix
+            <span class="tex" data-tex="X">X</span> mit drei Gewichtsmatrizen multipliziert.
+            Die Projektion ist eine lineare Abbildung pro Token; die Batch- und Zeitachsen
+            werden nur mitgeschleift.
+          </p>
+          <div class="tex-display" data-tex="Q_i = X W_i^Q,\qquad K_i = X W_i^K,\qquad V_i = X W_i^V">Q_i = X W_i^Q, K_i = X W_i^K, V_i = X W_i^V</div>
+          <p>
+            Die Dimensionen sind dabei:
+          </p>
+          <div class="tex-display" data-tex="W_i^Q, W_i^K \in \mathbb{R}^{d_{\mathrm{model}} \times d_k},\qquad W_i^V \in \mathbb{R}^{d_{\mathrm{model}} \times d_v}">W_i^Q, W_i^K ∈ R^(d_model × d_k), W_i^V ∈ R^(d_model × d_v)</div>
+        </div>
+        <div class="math-box">
+          <div class="proj-label"><span>Ergebnis pro Head</span><b>B × T × d<sub>k</sub></b></div>
+          <div class="tex-display" data-tex="Q_i, K_i, V_i \in \mathbb{R}^{B \times T \times d_k}">Q_i, K_i, V_i ∈ R^(B × T × d_k)</div>
+          <p class="note" style="margin-top:0">
+            <span class="tex" data-tex="d_k = d_v = d_{\mathrm{model}}/h">d_k = d_v = d_model/h</span>.
+            Im Paper: <span class="tex" data-tex="h=8">h=8</span> und
+            <span class="tex" data-tex="d_k=64">d_k=64</span>.
+          </p>
+          <p class="note" style="margin-top:10px">
+            Wichtig: Die drei Matrizen sind <strong>pro Head</strong> verschieden.
+            Head 0 und Head 1 lernen also unterschiedliche Query-, Key- und
+            Value-Räume.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card reveal" id="qkv-proj">
+      <div class="card-kicker">Interaktiv · Projektion</div>
+      <h3>Vom Token-Feature-Grid zum QKV-Block</h3>
+      <p>
+        Das Bild benutzt ein Miniaturbeispiel: <strong>4 Tokens</strong>,
+        <strong>d<sub>model</sub> = 16</strong>, <strong>h = 4</strong> und
+        <strong>d<sub>k</sub> = 4</strong>. Die Farben markieren die vier Heads.
+        Klicke auf einen Head, um seine Spalten im QKV-Block hervorzuheben.
+      </p>
+      <div class="proj-lab">
+        <div class="proj-side">
+          <div class="proj-label"><span>Input</span><b>X · B×T×d_model</b></div>
+          <div class="matrix-scroll">
+            <div class="cell-grid" id="x-grid" style="--cols:16;--minw:280px" aria-label="Input-Matrix X mit vier Tokens und sechzehn Features"></div>
+          </div>
+        </div>
+        <div class="op-arrow" aria-hidden="true">×</div>
+        <div class="proj-side">
+          <div class="proj-label"><span>Gewichte</span><b>pro Head</b></div>
+          <div class="weight-stack">
+            <div class="weight-slab"><b>W<sup>Q</sup></b><span>d_model × d_k</span></div>
+            <div class="weight-slab"><b>W<sup>K</sup></b><span>d_model × d_k</span></div>
+            <div class="weight-slab"><b>W<sup>V</sup></b><span>d_model × d_v</span></div>
+          </div>
+        </div>
+        <div class="op-arrow" aria-hidden="true">→</div>
+        <div class="proj-side">
+          <div class="proj-label"><span>QKV · fused</span><b>B×T×3·d_model</b></div>
+          <div class="matrix-scroll">
+            <div class="cell-grid" id="qkv-grid" style="--cols:48;--minw:600px" aria-label="QKV-Matrix mit Query-, Key- und Value-Blöcken"></div>
+          </div>
+          <div class="head-legend" id="head-legend"></div>
+        </div>
+      </div>
+      <div class="head-focus-label" id="head-focus-label">
+        Klicke auf einen Head, um seine Q-, K- und V-Slices zu sehen.
+      </div>
+      <div class="note">
+        In der Praxis werden die drei Projektionen oft zu einer einzigen großen
+        Matrix <span class="tex" data-tex="W^{QKV}">W^QKV</span> zusammengefasst.
+        Ein GEMM erzeugt dann direkt
+        <span class="tex" data-tex="(B,T,3d_{\mathrm{model}})">(B,T,3d_model)</span>.
+        Das ist schneller, mathematisch aber dieselbe Operation.
+      </div>
+    </div>
+
+    <div class="card reveal" id="head-split">
+      <div class="card-kicker">Interaktiv · Splitting</div>
+      <h3>Der QKV-Block wird in h Köpfe zerlegt</h3>
+      <p>
+        Nach der fused Projektion liegen Query, Key und Value noch nebeneinander.
+        Für die Attention wird die Feature-Achse in <em>h</em> Gruppen der Breite
+        <span class="tex" data-tex="d_k">d_k</span> zerlegt. Jeder Head bekommt
+        seinen eigenen Q-, K- und V-Slice und rechnet unabhängig weiter.
+      </p>
+      <div class="tex-display" data-tex="(B,T,d_{\mathrm{model}})\;\longrightarrow\;(B,h,T,d_k)">(B,T,d_model) → (B,h,T,d_k)</div>
+      <div class="heads-row" id="heads-row" aria-label="Vier Attention-Heads mit ihren QKV-Slices"></div>
+      <div class="note">
+        Die Animation der Aufteilung ist bewusst nur eine Visualisierung:
+        Im Speicher wird nicht wirklich kopiert, sondern nur die Achsenreihenfolge
+        interpretiert. Ein <code class="inline">view</code> plus
+        <code class="inline">transpose</code> genügt.
+      </div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-kicker">Code-Skizze</div>
+      <h3>Wie das in PyTorch aussieht</h3>
+      <p>
+        Die entscheidende Zeile ist das <code class="inline">view</code> plus
+        <code class="inline">transpose</code>: Aus
+        <span class="tex" data-tex="(B,T,3d_{\mathrm{model}})">(B,T,3d_model)</span>
+        wird pro Head ein Tensor der Form
+        <span class="tex" data-tex="(B,h,T,d_k)">(B,h,T,d_k)</span>.
+      </p>
+<pre class="code"><span class="cmt"># x: (B, T, d_model)</span>
+qkv = x @ W_qkv                       <span class="cmt"># (B, T, 3*d_model)</span>
+q, k, v = qkv.chunk(3, dim=-1)        <span class="cmt"># drei (B, T, d_model)</span>
+
+<span class="cmt"># (B, T, d_model) -&gt; (B, h, T, d_k)</span>
+q = q.view(B, T, h, d_k).transpose(1, 2)
+k = k.view(B, T, h, d_k).transpose(1, 2)
+v = v.view(B, T, h, d_v).transpose(1, 2)</pre>
+      <div class="note">
+        Die Batch-Achse bleibt unangetastet. Die Zeitachse wandert beim
+        <code class="inline">transpose</code> hinter die Head-Achse, weil die
+        Attention später für jeden Head eine eigene
+        <span class="tex" data-tex="T \times T">T×T</span>-Matrix braucht.
+      </div>
+    </div>
+  </section>
+
+  <section id="module-3" aria-labelledby="module-3-title">
+    <div class="section-head">
+      <div class="section-kicker">03 · Scaled Dot-Product Attention</div>
+      <h2 id="module-3-title">Wer passt zu wem?</h2>
+      <p class="section-lead">
+        Für jeden Head entsteht eine Matrix aus Kompatibilitätswerten. Die Query
+        eines Tokens wird mit allen Keys verglichen, die Scores werden skaliert,
+        optional maskiert und über eine Softmax in Gewichte umgewandelt. Mit diesen
+        Gewichten werden anschließend die Values gemischt.
+      </p>
+    </div>
+
+    <div class="card reveal" id="scores">
+      <div class="card-kicker">Scores</div>
+      <h3>Das Skalarprodukt misst Kompatibilität</h3>
+      <p>
+        Für einen Head sind <span class="tex" data-tex="Q">Q</span> und
+        <span class="tex" data-tex="K">K</span> Matrizen der Form
+        <span class="tex" data-tex="(B,h,T,d_k)">(B,h,T,d_k)</span>. Bildet man
+        <span class="tex" data-tex="QK^\top">QK^T</span>, entsteht für jedes
+        Batch-Element und jeden Head eine
+        <span class="tex" data-tex="T \times T">T×T</span>-Matrix: Zeile
+        <span class="tex" data-tex="i">i</span> enthält die Scores der Query
+        <span class="tex" data-tex="i">i</span> gegen alle Keys
+        <span class="tex" data-tex="j">j</span>.
+      </p>
+      <div class="tex-display" data-tex="S = QK^\top \in \mathbb{R}^{B \times h \times T \times T}">S = QK^T ∈ R^(B × h × T × T)</div>
+      <p>
+        Ein hoher Score bedeutet: Query und Key zeigen in eine ähnliche Richtung.
+        Das Modell lernt die Projektionen so, dass diese Ähnlichkeit eine nützliche
+        Rolle spielt, etwa „Verb sucht Subjekt“ oder „Pronomen sucht Bezugswort“.
+      </p>
+      <div class="note">
+        Die Aufmerksamkeit ist <strong>nicht</strong> auf die Wortreihenfolge
+        beschränkt. Deshalb kommt die Positionsinformation bereits vor dem Layer
+        dazu: Ohne sie wäre die Attention permutationsinvariant.
+      </div>
+    </div>
+
+    <div class="card reveal" id="scaling">
+      <div class="card-kicker">Skalierung</div>
+      <h3>Warum durch √d<sub>k</sub> teilen?</h3>
+      <p>
+        Angenommen, die Komponenten von <span class="tex" data-tex="q">q</span> und
+        <span class="tex" data-tex="k">k</span> sind unabhängig, mit Mittelwert 0
+        und Varianz 1. Dann ist das Skalarprodukt
+        <span class="tex" data-tex="q \cdot k = \sum_{i=1}^{d_k} q_i k_i">q·k = Σ q_i k_i</span>
+        eine Summe von <span class="tex" data-tex="d_k">d_k</span> unabhängigen
+        Termen. Sein Mittelwert ist 0, seine Varianz ist
+        <span class="tex" data-tex="d_k">d_k</span>. Die Streuung wächst also mit
+        der Head-Breite.
+      </p>
+      <div class="tex-display" data-tex="\mathrm{Var}(q \cdot k) = d_k,\qquad \mathrm{Var}\!\left(\frac{q \cdot k}{\sqrt{d_k}}\right) = 1">Var(q·k) = d_k, Var((q·k)/√d_k) = 1</div>
+      <p>
+        Große Logits treiben die Softmax in eine nahezu One-Hot-Verteilung. Dort ist
+        die Ableitung fast null, und der Gradient fließt kaum noch. Die Division
+        durch <span class="tex" data-tex="\sqrt{d_k}">√d_k</span> hält die
+        Logits in einem Bereich, in dem die Softmax weich bleibt und trainierbar ist.
+      </p>
+      <div class="two-col-text" style="margin-top:18px">
+        <div>
+          <div class="proj-label"><span>Softmax-Schärfe</span><b>interaktiv</b></div>
+          <p style="margin-top:0;font-size:0.88rem">
+            Der Regler multipliziert die Logits. Bei kleinen Werten bleibt die
+            Verteilung breit, bei großen Werten kollabiert sie auf einen Key.
+          </p>
+          <div class="control" style="margin-top:10px">
+            <div class="control-head"><label for="sharp-scale">Logit-Skalierung</label><output id="sharp-scale-out">× 1.0</output></div>
+            <input id="sharp-scale" type="range" min="0.25" max="5" step="0.05" value="1">
+          </div>
+          <div class="sharp-readout">
+            <span>max. Gewicht <b id="sharp-max">–</b></span>
+            <span>Entropie <b id="sharp-entropy">–</b></span>
+          </div>
+        </div>
+        <div>
+          <div class="sharpness-bars" id="sharp-bars" aria-label="Softmax-Gewichte bei unterschiedlicher Logit-Skalierung"></div>
+          <div class="note" style="margin-top:10px">
+            Die vier Logits sind fest; nur ihre Skalierung ändert sich. Das ist
+            genau der Effekt, den <span class="tex" data-tex="1/\sqrt{d_k}">1/√d_k</span>
+            bei wachsendem <span class="tex" data-tex="d_k">d_k</span> verhindert.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card reveal" id="masking">
+      <div class="card-kicker">Optional · Decoder</div>
+      <h3>Causal Mask: nicht in die Zukunft schauen</h3>
+      <p>
+        Im Encoder darf jedes Token alle Tokens sehen. Im Decoder ist das anders:
+        Position <span class="tex" data-tex="i">i</span> darf nur Positionen
+        <span class="tex" data-tex="j \le i">j ≤ i</span> sehen. Vor der Softmax
+        werden alle zukünftigen Scores auf
+        <span class="tex" data-tex="-\infty">−∞</span> gesetzt. Dann ist ihr
+        Softmax-Gewicht exakt 0.
+      </p>
+      <div class="tex-display" data-tex="S_{ij}^{\mathrm{masked}} = \begin{cases} S_{ij}, & j \le i \\ -\infty, & j > i \end{cases}">S_ij^masked = S_ij für j ≤ i, −∞ für j > i</div>
+      <div class="mask-grid" aria-label="Causal-Mask für vier Tokens">
+        <span class="mask-cell">✓</span><span class="mask-cell blocked">×</span><span class="mask-cell blocked">×</span><span class="mask-cell blocked">×</span>
+        <span class="mask-cell">✓</span><span class="mask-cell">✓</span><span class="mask-cell blocked">×</span><span class="mask-cell blocked">×</span>
+        <span class="mask-cell">✓</span><span class="mask-cell">✓</span><span class="mask-cell">✓</span><span class="mask-cell blocked">×</span>
+        <span class="mask-cell">✓</span><span class="mask-cell">✓</span><span class="mask-cell">✓</span><span class="mask-cell">✓</span>
+      </div>
+      <p class="note" style="margin-top:10px">
+        Die Maskierung passiert <strong>vor</strong> der Softmax.
+        <span class="tex" data-tex="e^{-\infty}=0">e^(−∞)=0</span>, also tragen
+        maskierte Positionen nichts bei und die Zeilensumme bleibt 1.
+      </p>
+    </div>
+
+    <div class="card reveal" id="softmax">
+      <div class="card-kicker">Interaktiv · Attention-Heatmap</div>
+      <h3>Softmax: aus Scores werden Gewichte</h3>
+      <p>
+        Jede Zeile der Score-Matrix wird unabhängig über die Keys normalisiert.
+        Die folgende Heatmap ist ein illustratives Beispiel mit vier Tokens,
+        vier Heads und <span class="tex" data-tex="d_k=8">d_k=8</span>. Fahre über
+        eine Zelle, um Query und Key zu sehen; klicke, um eine Query-Zeile zu fixieren.
+      </p>
+      <div class="tex-display" data-tex="A = \mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right),\qquad \sum_{j=1}^{T} A_{ij}=1">A = softmax(QK^T / √d_k), Σ_j A_ij = 1</div>
+      <div class="heat-controls">
+        <div class="head-tabs" id="head-tabs" role="tablist" aria-label="Attention-Head wählen"></div>
+        <label class="switch">
+          <input type="checkbox" id="scale-toggle" checked>
+          <span class="switch-track" aria-hidden="true"></span>
+          <span>1/√d<sub>k</sub> anwenden</span>
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="causal-toggle">
+          <span class="switch-track" aria-hidden="true"></span>
+          <span>Causal Mask</span>
+        </label>
+      </div>
+      <div class="head-focus-label" id="head-desc" style="margin-top:0"></div>
+      <div class="heat-layout">
+        <div>
+          <div class="heat-wrap">
+            <div class="heat-grid" id="heat-grid" role="grid" aria-label="Attention-Gewichte für vier Tokens"></div>
+          </div>
+          <div class="heat-legend">
+            <span>0</span>
+            <span class="heat-gradient" aria-hidden="true"></span>
+            <span>1</span>
+          </div>
+          <div class="attn-detail" id="attn-detail">Fahre über eine Zelle, um die Gewichte zu sehen.</div>
+        </div>
+        <div>
+          <div class="vm-head">
+            <span id="attn-query-label">Query: cat</span>
+            <span>Gewicht pro Key</span>
+          </div>
+          <div class="attn-bars" id="attn-bars" aria-label="Attention-Gewichte der ausgewählten Query"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card reveal" id="weighted">
+      <div class="card-kicker">Weighted Sum</div>
+      <h3>Die Values werden mit den Gewichten gemischt</h3>
+      <p>
+        Die Attention-Matrix <span class="tex" data-tex="A">A</span> sagt, wie stark
+        jede Query auf jeden Key achtet. Multipliziert man sie mit den Values,
+        erhält jeder Token eine neue Repräsentation: eine gewichtete Summe der
+        Value-Vektoren aller Tokens.
+      </p>
+      <div class="tex-display" data-tex="\mathrm{head}_i = \mathrm{softmax}\!\left(\frac{Q_iK_i^\top}{\sqrt{d_k}}\right)V_i \in \mathbb{R}^{B \times T \times d_v}">head_i = softmax(Q_i K_i^T / √d_k) V_i ∈ R^(B × T × d_v)</div>
+      <div class="two-col-text" style="margin-top:16px">
+        <div>
+          <p style="margin-top:0">
+            Die folgende Miniatur zeigt die Rechnung für die ausgewählte Query.
+            Jede Zeile ist ein Key mit seinem Gewicht und seinem Value-Vektor.
+            Die Summe der gewichteten Values ist der neue Vektor dieser Query.
+          </p>
+          <div class="note">
+            Die Values werden nicht mit den Keys verwechselt: Der Key entscheidet,
+            <em>ob</em> ein Token relevant ist. Der Value entscheidet, <em>was</em>
+            bei Relevanz weitergereicht wird.
+          </div>
+        </div>
+        <div>
+          <div class="value-mix" id="value-mix" aria-label="Gewichtete Value-Summe für die ausgewählte Query"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="module-4" aria-labelledby="module-4-title">
+    <div class="section-head">
+      <div class="section-kicker">04 · Concatenation &amp; W<sup>O</sup></div>
+      <h2 id="module-4-title">Aus h Köpfen wird wieder ein Vektor</h2>
+      <p class="section-lead">
+        Jeder Head liefert eine eigene Ausgabe der Breite d<sub>v</sub>. Die
+        Ausgaben werden entlang der Feature-Achse aneinandergehängt und mit
+        W<sup>O</sup> zurück auf d<sub>model</sub> projiziert. Erst diese Projektion
+        mischt Informationen zwischen den Heads.
+      </p>
+    </div>
+
+    <div class="card reveal" id="concat">
+      <div class="card-kicker">Interaktiv · Concatenation</div>
+      <h3>Die Head-Ausgaben liegen nebeneinander</h3>
+      <p>
+        Vier Heads, jeder mit <span class="tex" data-tex="d_v=4">d_v=4</span> Kanälen:
+        Aus <span class="tex" data-tex="4 \times 4 = 16">4×4=16</span> Werten wird
+        ein Vektor der Länge 16. Das ist genau
+        <span class="tex" data-tex="h \cdot d_v = d_{\mathrm{model}}">h·d_v = d_model</span>.
+      </p>
+      <div class="tex-display" data-tex="\mathrm{Concat}(H_1,\dots,H_h) \in \mathbb{R}^{B \times T \times h d_v}">Concat(H_1,…,H_h) ∈ R^(B × T × h d_v)</div>
+      <div class="concat-stage" id="concat-stage">
+        <div class="concat-heads" id="concat-heads" aria-label="Vier Head-Ausgaben"></div>
+        <div class="concat-strip" id="concat-strip" aria-label="Konkatenierter Vektor"></div>
+        <div class="concat-arrow" aria-hidden="true">↓ Konkatenation entlang der Feature-Achse ↓</div>
+        <div class="concat-output-row">
+          <div class="wo-matrix" id="wo-matrix" aria-label="Projektionsmatrix W O"></div>
+          <span class="op-arrow" aria-hidden="true">→</span>
+          <div class="output-strip" id="output-strip" aria-label="Ausgabe nach W O"></div>
+        </div>
+        <div class="concat-status" id="concat-status">Bereit. Starte die Animation.</div>
+      </div>
+      <div class="concat-actions">
+        <button class="btn btn-primary btn-small" id="concat-play" type="button">Animation abspielen</button>
+        <button class="btn btn-small" id="concat-reset" type="button">Zurücksetzen</button>
+      </div>
+      <div class="dim-label">
+        <span class="shape-chip">H<sub>i</sub> ∈ B × T × d<sub>v</sub></span>
+        <span>→</span>
+        <span class="shape-chip purple">Concat ∈ B × T × h·d<sub>v</sub></span>
+        <span>→</span>
+        <span class="shape-chip">W<sup>O</sup> ∈ (h·d<sub>v</sub>) × d<sub>model</sub></span>
+      </div>
+    </div>
+
+    <div class="card reveal" id="projection">
+      <div class="card-kicker">Projektion</div>
+      <h3>W<sup>O</sup> mischt die Head-Subräume</h3>
+      <p>
+        Die Konkatenation allein addiert keine Information zwischen den Heads:
+        Head 0 bleibt in den ersten vier Kanälen, Head 1 in den nächsten vier.
+        Erst die lineare Projektion mit
+        <span class="tex" data-tex="W^O \in \mathbb{R}^{h d_v \times d_{\mathrm{model}}}">W^O ∈ R^(h d_v × d_model)</span>
+        erlaubt jeder Ausgabedimension, aus allen Heads zu lesen.
+      </p>
+      <div class="tex-display" data-tex="\mathrm{MultiHead}(Q,K,V) = \mathrm{Concat}(\mathrm{head}_1,\dots,\mathrm{head}_h)\,W^O">MultiHead(Q,K,V) = Concat(head_1,…,head_h) W^O</div>
+      <div class="callout purple">
+        <strong>Bekommt jeder Head sein eigenes FFN?</strong>
+        Nein. Jeder Head besitzt eigene <span class="tex" data-tex="W_i^Q, W_i^K, W_i^V">W_i^Q, W_i^K, W_i^V</span>
+        und erzeugt eine eigene Ausgabe. Danach werden alle Heads konkateniert und
+        mit einem gemeinsamen <span class="tex" data-tex="W^O">W^O</span> gemischt.
+        Das Feed-Forward Network kommt erst <em>nach</em> dieser Mischung, ist
+        eines pro Layer und wird auf alle Positionen und alle Heads gemeinsam
+        angewendet. Jeder Layer hat sein eigenes FFN, aber nicht jeder Head.
+      </div>
+      <div class="two-col-text">
+        <div>
+          <p>
+            Diese Arbeitsteilung ist der Grund, warum Multi-Head Attention
+            mehrere Beziehungen gleichzeitig modellieren kann: Die Heads
+            spezialisieren sich auf verschiedene Subräume, <span class="tex" data-tex="W^O">W^O</span>
+            führt ihre Ergebnisse wieder zusammen.
+          </p>
+          <div class="note">
+            Ein Mixture-of-Experts-Modell ist die Ausnahme: Dort gibt es mehrere
+            FFN-Experten, aber die werden pro Token ausgewählt, nicht pro
+            Attention-Head. Das ist eine andere Architekturentscheidung.
+          </div>
+        </div>
+        <div class="math-box">
+          <div class="proj-label"><span>Parametrisierung</span><b>pro Layer</b></div>
+          <div class="tex-display" data-tex="W^O \in \mathbb{R}^{(h d_v) \times d_{\mathrm{model}}}">W^O ∈ R^(h d_v × d_model)</div>
+          <p class="note" style="margin-top:0">
+            Bei <span class="tex" data-tex="h=8">h=8</span> und
+            <span class="tex" data-tex="d_v=64">d_v=64</span> ist
+            <span class="tex" data-tex="h d_v = 512 = d_{\mathrm{model}}">h·d_v = 512 = d_model</span>.
+            Die Matrix ist also quadratisch, aber das ist keine Voraussetzung.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="module-5" aria-labelledby="module-5-title">
+    <div class="section-head">
+      <div class="section-kicker">05 · Add &amp; Norm</div>
+      <h2 id="module-5-title">Residualpfad und LayerNorm</h2>
+      <p class="section-lead">
+        Jeder Sub-Layer ist in einen Residualpfad eingebettet: Der Input wird zum
+        Output des Sub-Layers addiert. Danach normalisiert LayerNorm jeden
+        Token-Vektor über seine Feature-Achse. Das hält die Signale stabil und
+        öffnet einen kurzen Gradientenpfad durch den gesamten Layer.
+      </p>
+    </div>
+
+    <div class="card reveal" id="addnorm1">
+      <div class="card-kicker">Add &amp; Norm 1</div>
+      <h3>LayerNorm(X + Attention(X))</h3>
+      <p>
+        Die Attention verändert die Repräsentation jedes Tokens. Der Residualpfad
+        addiert die ursprüngliche Repräsentation wieder dazu. Das Modell muss also
+        nur die <em>Änderung</em> lernen, nicht die gesamte neue Repräsentation.
+        Die LayerNorm bringt anschließend jeden Token-Vektor auf eine kontrollierte
+        Skala.
+      </p>
+      <div class="tex-display" data-tex="\mathrm{LayerNorm}(X + \mathrm{MultiHeadAttention}(X))">LayerNorm(X + MultiHeadAttention(X))</div>
+      <div class="callout">
+        <strong>Warum Residuals helfen.</strong> Der Gradient kann über die
+        Identitätsverbindung direkt an frühere Schichten zurückfließen, ohne den
+        Sub-Layer zu durchqueren. Bei sehr tiefen Stacks verhindert das, dass die
+        Gradienten verschwinden oder explodieren.
+      </div>
+      <p>
+        LayerNorm normalisiert <strong>pro Token</strong> über die
+        <span class="tex" data-tex="d_{\mathrm{model}}">d_model</span> Kanäle.
+        Batch- und Zeitachse werden nicht miteinander vermischt. Deshalb funktioniert
+        sie unabhängig von der Batch-Größe und passt zu variabler Sequenzlänge.
+      </p>
+      <div class="tex-display" data-tex="\begin{aligned} \mu &= \frac{1}{d}\sum_{i=1}^{d} x_i \\ \sigma^2 &= \frac{1}{d}\sum_{i=1}^{d}(x_i-\mu)^2 \\ y_i &= \gamma_i\,\frac{x_i-\mu}{\sqrt{\sigma^2+\varepsilon}}+\beta_i \end{aligned}">μ = 1/d Σ x_i, σ² = 1/d Σ (x_i−μ)², y_i = γ_i (x_i−μ)/√(σ²+ε) + β_i</div>
+      <p>
+        <span class="tex" data-tex="\gamma">γ</span> und
+        <span class="tex" data-tex="\beta">β</span> sind gelernte Vektoren der
+        Länge <span class="tex" data-tex="d_{\mathrm{model}}">d_model</span>.
+        Sie geben dem Modell die Freiheit, die Normalisierung pro Feature wieder
+        zu skalieren und zu verschieben.
+      </p>
+
+      <div class="norm-lab">
+        <div id="norm-rows" aria-label="Vektoren vor und nach Residual und LayerNorm"></div>
+        <div class="norm-readouts" id="norm-readouts"></div>
+        <div>
+          <div class="proj-label"><span>Eingaben</span><b>x und SubLayer(x)</b></div>
+          <div class="slider-grid" id="norm-sliders"></div>
+        </div>
+        <div>
+          <div class="proj-label"><span>Gelernte Affine-Parameter</span><b>γ, β</b></div>
+          <div class="affine-row" id="norm-affine"></div>
+        </div>
+        <div class="concat-actions" style="margin-top:0">
+          <button class="btn btn-small" id="norm-random" type="button">Zufällige Werte</button>
+          <button class="btn btn-small" id="norm-reset" type="button">Zurücksetzen</button>
+        </div>
+      </div>
+      <div class="note">
+        Der kleine Wert <span class="tex" data-tex="\varepsilon">ε</span> verhindert
+        eine Division durch null, wenn alle Werte eines Tokens gleich sind.
+        In der Praxis liegt er typischerweise bei
+        <span class="tex" data-tex="10^{-5}">10^-5</span> oder
+        <span class="tex" data-tex="10^{-6}">10^-6</span>.
+      </div>
+    </div>
+
+    <div class="card reveal" id="addnorm2">
+      <div class="card-kicker">Add &amp; Norm 2</div>
+      <h3>Dieselbe Struktur nach dem FFN</h3>
+      <p>
+        Nach dem Feed-Forward Network folgt der zweite Residualpfad mit einer
+        weiteren LayerNorm. Damit hat jeder der beiden Sub-Layer seinen eigenen
+        Add-und-Norm-Schritt. Der Layer-Output hat wieder exakt die Form des
+        Layer-Inputs.
+      </p>
+      <div class="tex-display" data-tex="Z = \mathrm{LayerNorm}(X + \mathrm{MHA}(X)),\qquad X^{(l+1)} = \mathrm{LayerNorm}(Z + \mathrm{FFN}(Z))">Z = LayerNorm(X + MHA(X)), X^(l+1) = LayerNorm(Z + FFN(Z))</div>
+      <div class="two-col-text">
+        <div>
+          <h3 style="font-size:1rem;margin-top:0">Post-LN und Pre-LN</h3>
+          <p>
+            Das Originalpaper benutzt <strong>Post-LN</strong>: Die LayerNorm
+            steht nach der Addition, also
+            <span class="tex" data-tex="\mathrm{LayerNorm}(x+\mathrm{Sublayer}(x))">LayerNorm(x+Sublayer(x))</span>.
+            Viele moderne Modelle benutzen <strong>Pre-LN</strong>:
+            <span class="tex" data-tex="x+\mathrm{Sublayer}(\mathrm{LayerNorm}(x))">x+Sublayer(LayerNorm(x))</span>.
+            Pre-LN trainiert sich in der Praxis oft stabiler, weil der Residualpfad
+            komplett unnormalisiert bleibt.
+          </p>
+        </div>
+        <div>
+          <h3 style="font-size:1rem;margin-top:0">Warum die Form erhalten bleibt</h3>
+          <p>
+            Sowohl Attention als auch FFN liefern einen Tensor der Form
+            <span class="tex" data-tex="B \times T \times d_{\mathrm{model}}">B × T × d_model</span>.
+            Die Addition ist deshalb elementweise möglich, und die LayerNorm ändert
+            nur die Werte, nicht die Form. Genau das macht den Layer stapelbar.
+          </p>
+          <div class="note">
+            Der Output eines Layers ist der Input des nächsten Layers. Die
+            Schnittstelle ist über alle <span class="tex" data-tex="N">N</span>
+            Blöcke hinweg identisch.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="module-6" aria-labelledby="module-6-title">
+    <div class="section-head">
+      <div class="section-kicker">06 · Feed-Forward Network</div>
+      <h2 id="module-6-title">Das position-wise FFN</h2>
+      <p class="section-lead">
+        Nach der Attention folgt ein kleines voll verbundenes Netz: erst breiter,
+        dann wieder schmal. Es wird auf jede Position separat und mit denselben
+        Gewichten angewendet. Deshalb heißt es <em>position-wise</em>.
+      </p>
+    </div>
+
+    <div class="card reveal" id="ffn">
+      <div class="card-kicker">Interaktiv · FFN</div>
+      <h3>Erst expandieren, dann aktivieren, dann projizieren</h3>
+      <p>
+        Jeder Token-Vektor durchläuft dieselbe Kette. Die mittlere Schicht ist
+        typischerweise viermal breiter als <span class="tex" data-tex="d_{\mathrm{model}}">d_model</span>.
+        Die beiden großen Platten in der Mitte sind für <strong>alle vier Tokens
+        dieselben</strong>: Das ist der visuelle Beweis für die geteilten Gewichte.
+      </p>
+      <div class="tex-display" data-tex="\mathrm{FFN}(x) = \max(0,\,xW_1+b_1)\,W_2+b_2">FFN(x) = max(0, xW_1+b_1) W_2+b_2</div>
+      <div class="ffn-scroll">
+        <div class="ffn-board" id="ffn-board" aria-label="Position-wise FFN für vier Tokens"></div>
+      </div>
+      <div class="concat-actions">
+        <button class="btn btn-primary btn-small" id="ffn-run" type="button">FFN ausführen</button>
+        <button class="btn btn-small" id="ffn-focus" type="button">Nur „cat“ zeigen</button>
+        <button class="btn btn-small" id="ffn-reset" type="button">Zurücksetzen</button>
+        <span class="ffn-param">Parameter pro Layer <b id="ffn-param">–</b></span>
+      </div>
+      <div class="note">
+        Die Aktivierung ist im Originalpaper ReLU. Viele moderne Modelle benutzen
+        GELU oder SwiGLU. Die Grundform bleibt dieselbe: lineare Expansion,
+        nichtlineare Aktivierung, lineare Rückprojektion.
+      </div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-kicker">Warum so breit?</div>
+      <h3>d<sub>ff</sub> ≈ 4 · d<sub>model</sub></h3>
+      <p>
+        Die breite versteckte Schicht gibt dem Modell einen größeren Raum, um
+        Features zu kombinieren und Fakten zu speichern. Für das Base-Modell
+        bedeutet das <span class="tex" data-tex="d_{\mathrm{model}}=512">d_model=512</span>
+        und <span class="tex" data-tex="d_{ff}=2048">d_ff=2048</span>. Das FFN
+        enthält damit deutlich mehr Parameter als die Attention-Projektionen.
+      </p>
+      <div class="two-col-text">
+        <div class="math-box">
+          <div class="proj-label"><span>Parameter</span><b>gewichtsbasiert</b></div>
+          <div class="tex-display" data-tex="\underbrace{2\,d_{\mathrm{model}}\,d_{ff}}_{\text{FFN}} \quad+\quad \underbrace{4\,d_{\mathrm{model}}^2}_{\text{QKV + }W^O}">2 d_model d_ff + 4 d_model²</div>
+          <p class="note" style="margin-top:0">
+            Bei 512 und 2048 sind das etwa
+            <strong>2,1 M</strong> FFN-Parameter und
+            <strong>1,05 M</strong> Attention-Parameter pro Layer, jeweils ohne
+            Bias-Terme.
+          </p>
+        </div>
+        <div>
+          <p style="margin-top:0">
+            Das FFN ist <strong>position-wise</strong>: Dieselbe Funktion wird auf
+            jeden der <span class="tex" data-tex="B \cdot T">B·T</span> Vektoren
+            angewendet. Man kann es sich als zwei 1×1-Faltungen vorstellen.
+            Zwischen den Positionen findet hier kein Austausch statt; den macht
+            die Attention.
+          </p>
+          <p>
+            <strong>Wichtig:</strong> Die Gewichte sind über Positionen hinweg
+            geteilt, aber nicht über Layer hinweg. Jeder der
+            <span class="tex" data-tex="N">N</span> Blöcke hat sein eigenes FFN.
+          </p>
+        </div>
+      </div>
+<pre class="code"><span class="cmt"># x: (B, T, d_model), W1: (d_model, d_ff), W2: (d_ff, d_model)</span>
+h = gelu(x @ W1 + b1)   <span class="cmt"># (B, T, d_ff)</span>
+y = h @ W2 + b2         <span class="cmt"># (B, T, d_model)</span>
+<span class="cmt"># Dieselben W1, W2 für alle B*T Positionen.</span></pre>
+    </div>
+
+    <div class="card reveal" id="output">
+      <div class="card-kicker">Layer-Ausgabe</div>
+      <h3>Gleiche Form, nächster Block</h3>
+      <p>
+        Der Ausgang des Layers ist wieder ein Tensor der Form
+        <span class="tex" data-tex="B \times T \times d_{\mathrm{model}}">B × T × d_model</span>.
+        Deshalb kann derselbe Block <span class="tex" data-tex="N">N</span>-mal
+        hintereinander geschaltet werden. Die Attention mischt Information
+        zwischen den Positionen, das FFN verarbeitet jede Position danach
+        individuell. Zusammen mit den Residualpfaden und LayerNorms ist das der
+        vollständige Transformer-Layer.
+      </p>
+      <div class="tex-display" data-tex="X^{(l+1)} = \mathrm{LayerNorm}\!\left(Z + \mathrm{FFN}(Z)\right) \in \mathbb{R}^{B \times T \times d_{\mathrm{model}}}">X^(l+1) = LayerNorm(Z + FFN(Z)) ∈ R^(B × T × d_model)</div>
+      <div class="callout">
+        <strong>Die Kurzfassung in einem Satz:</strong> Attention entscheidet,
+        <em>woher</em> ein Token Information nimmt; das FFN entscheidet,
+        <em>was</em> es mit dieser Information macht. Residuals halten den
+        Informationsfluss offen, LayerNorm hält die Skala stabil.
+      </div>
+    </div>
+  </section>
+
+  <section id="module-7" aria-labelledby="module-7-title">
+    <div class="section-head">
+      <div class="section-kicker">07 · Playground</div>
+      <h2 id="module-7-title">Ändere die Architektur, sieh alle Shapes</h2>
+      <p class="section-lead">
+        Hier hängen alle Dimensionen zusammen. Verschiebe <span class="tex" data-tex="d_{\mathrm{model}}">d_model</span>,
+        die Head-Zahl <span class="tex" data-tex="h">h</span> oder die Sequenzlänge
+        <span class="tex" data-tex="T">T</span> und beobachte, wie die Matrixformen,
+        die Attention-Kosten und die Parameterzahlen mitwandern.
+      </p>
+    </div>
+
+    <div class="card reveal">
+      <div class="playground-grid">
+        <div>
+          <div class="card-kicker">Regler</div>
+          <h3>Konfiguration</h3>
+          <div class="control-list">
+            <div class="control">
+              <div class="control-head"><label for="pg-B">Batch-Größe B</label><output id="out-B">2</output></div>
+              <input id="pg-B" type="range" min="1" max="8" step="1" value="2">
+            </div>
+            <div class="control">
+              <div class="control-head"><label for="pg-T">Sequenzlänge T</label><output id="out-T">4</output></div>
+              <input id="pg-T" type="range" min="1" max="16" step="1" value="4">
+            </div>
+            <div class="control">
+              <div class="control-head"><label for="pg-dModel">Modellbreite d<sub>model</sub></label><output id="out-dModel">512</output></div>
+              <input id="pg-dModel" type="range" min="64" max="1024" step="64" value="512">
+            </div>
+            <div class="control">
+              <div class="control-head"><label for="pg-heads">Heads h</label><output id="out-heads">8</output></div>
+              <input id="pg-heads" type="range" min="1" max="16" step="1" value="8">
+            </div>
+            <div class="control">
+              <div class="control-head"><label for="pg-dFf">FFN-Breite d<sub>ff</sub></label><output id="out-dFf">2048</output></div>
+              <input id="pg-dFf" type="range" min="64" max="8192" step="64" value="2048">
+            </div>
+            <div class="control">
+              <div class="control-head"><label for="pg-layers">Layer N</label><output id="out-layers">6</output></div>
+              <input id="pg-layers" type="range" min="1" max="12" step="1" value="6">
+            </div>
+          </div>
+          <div class="pg-note" id="pg-note"></div>
+          <div class="concat-actions">
+            <button class="btn btn-small" id="pg-reset" type="button">Paper-Base zurücksetzen</button>
+            <button class="btn btn-small" id="pg-copy" type="button">Config kopieren</button>
+          </div>
+          <div class="note" id="pg-copy-note" style="display:none"></div>
+        </div>
+        <div>
+          <div class="card-kicker">Live-Kennzahlen</div>
+          <h3>Was die Konfiguration kostet</h3>
+          <div class="stats-grid">
+            <div class="stat"><span class="label">d<sub>k</sub> = d<sub>v</sub></span><span class="value" id="stat-dk">64</span></div>
+            <div class="stat"><span class="label">d<sub>ff</sub> / d<sub>model</sub></span><span class="value" id="stat-ratio">4.0×</span></div>
+            <div class="stat"><span class="label">Attention-Scores / Layer</span><span class="value" id="stat-score-elems">–</span></div>
+            <div class="stat"><span class="label">Score-Speicher fp16</span><span class="value" id="stat-score-mem">–</span></div>
+            <div class="stat"><span class="label">Attention-Parameter</span><span class="value" id="stat-attn-params">–</span></div>
+            <div class="stat"><span class="label">FFN-Parameter</span><span class="value" id="stat-ffn-params">–</span></div>
+            <div class="stat"><span class="label">Parameter / Layer</span><span class="value" id="stat-per-layer">–</span></div>
+            <div class="stat"><span class="label">Layer-Parameter gesamt</span><span class="value" id="stat-total">–</span></div>
+          </div>
+          <div class="mini-score-wrap">
+            <div class="mini-score-head">
+              <span id="mini-score-head">Score-Matrix · B=1, ein Head</span>
+              <span id="mini-score-dims">T × T</span>
+            </div>
+            <div class="mini-score" id="mini-score" aria-label="Miniatur der T mal T Score-Matrix"></div>
+          </div>
+          <div class="note" style="margin-top:12px">
+            Die Score-Matrix wächst quadratisch mit <span class="tex" data-tex="T">T</span>.
+            Verdoppelst du die Sequenzlänge, vervierfacht sich die Anzahl der
+            Attention-Werte pro Head und Batch. Die Parameterzahlen zählen die
+            Gewichte der Projektionen, des FFN und die γ/β der beiden LayerNorms;
+            Bias- und Embedding-Parameter sind nicht enthalten.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-kicker">Live-Shapes</div>
+      <h3>Der vollständige Datenfluss</h3>
+      <p>
+        Jede Karte zeigt die Form nach dem jeweiligen Schritt. Die Werte folgen
+        den Reglern oben in Echtzeit.
+      </p>
+      <div class="flow-cards">
+        <div class="flow-card"><div class="flow-name">Input <span>X</span></div><code id="shape-input">(2, 4, 512)</code></div>
+        <div class="flow-card"><div class="flow-name">QKV <span>fused</span></div><code id="shape-qkv">(2, 4, 1536)</code></div>
+        <div class="flow-card"><div class="flow-name">Q, K, V <span>pro Head</span></div><code id="shape-heads">(2, 8, 4, 64)</code></div>
+        <div class="flow-card purple"><div class="flow-name">Scores <span>QKᵀ</span></div><code id="shape-scores">(2, 8, 4, 4)</code></div>
+        <div class="flow-card purple"><div class="flow-name">Head-Output <span>AV</span></div><code id="shape-headout">(2, 8, 4, 64)</code></div>
+        <div class="flow-card"><div class="flow-name">Concat <span>h · d_v</span></div><code id="shape-concat">(2, 4, 512)</code></div>
+        <div class="flow-card"><div class="flow-name">W<sup>O</sup> Output <span>MHA</span></div><code id="shape-wo">(2, 4, 512)</code></div>
+        <div class="flow-card"><div class="flow-name">FFN hidden <span>d_ff</span></div><code id="shape-ffn1">(2, 4, 2048)</code></div>
+        <div class="flow-card green"><div class="flow-name">FFN Output <span>d_model</span></div><code id="shape-ffn2">(2, 4, 512)</code></div>
+        <div class="flow-card green"><div class="flow-name">Layer Output <span>X⁽ˡ⁺¹⁾</span></div><code id="shape-out">(2, 4, 512)</code></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p style="margin:0 0 8px">
+    Gebaut als interaktives Labor. Die mathematischen Grundlagen folgen
+    <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Vaswani et al., Attention Is All You Need, NeurIPS 2017</a>
+    (Scaled Dot-Product Attention, Multi-Head Attention, Position-wise FFN, Add &amp; Norm).
+    LayerNorm folgt
+    <a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Ba, Kiros und Hinton, Layer Normalization, 2016</a>.
+  </p>
+  <p style="margin:0">
+    Die Heatmaps und Matrixgitter sind illustrative Miniaturbeispiele. Die Formeln
+    und Shapes gelten allgemein. Temml rendert die Gleichungen; die Seite funktioniert
+    auch offline über die lokal mitgelieferte Temml-Version.
+  </p>
+</footer>
+
+<div class="tour-dock" id="tour-dock" hidden aria-live="polite">
+  <div class="tour-progress"><div class="tour-progress-fill" id="tour-progress-fill"></div></div>
+  <div class="tour-main">
+    <div class="tour-step-label" id="tour-step-label">Schritt 1 / 14</div>
+    <div class="tour-step-title" id="tour-step-title">Der Input</div>
+    <div class="tour-step-text" id="tour-step-text"></div>
+    <div class="tour-step-meta">
+      <span class="shape-chip" id="tour-shape">B × T × d_model</span>
+      <div class="tex tex-display" id="tour-math"></div>
+    </div>
+    <div class="tour-dots" id="tour-dots" aria-label="Tour-Schritte"></div>
+  </div>
+  <div class="tour-actions">
+    <button class="btn btn-small" id="tour-prev" type="button">← Zurück</button>
+    <button class="btn btn-primary btn-small" id="tour-next" type="button">Weiter →</button>
+    <button class="btn btn-small btn-ghost" id="tour-close" type="button" aria-label="Tour beenden">×</button>
+  </div>
+</div>
+
+<div class="debug-banner" id="debug-banner" hidden></div>
+
+<script>
+"use strict";
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = /(?:\?|&)debug=1(?:&|$)/.test(location.search);
+
+function debugLog(message) {
+  if (!DEBUG) return;
+  const banner = $('#debug-banner');
+  if (!banner) return;
+  banner.hidden = false;
+  banner.textContent += message + '\n';
+}
+window.addEventListener('error', (event) => {
+  debugLog('ERROR: ' + event.message + ' @ ' + event.filename + ':' + event.lineno);
+});
+window.addEventListener('unhandledrejection', (event) => {
+  debugLog('PROMISE: ' + event.reason);
+});
+
+function fmt(n) {
+  return new Intl.NumberFormat('de-DE').format(n);
+}
+function fmtParams(n) {
+  if (n >= 1e9) return (n / 1e9).toFixed(2) + ' B';
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + ' M';
+  if (n >= 1e3) return (n / 1e3).toFixed(1) + ' K';
+  return fmt(n);
+}
+function fmtMemory(bytes) {
+  const mb = bytes / (1024 * 1024);
+  if (mb >= 1) return mb.toFixed(2) + ' MB';
+  return (bytes / 1024).toFixed(1) + ' KB';
+}
+function hash01(a, b, c) {
+  const value = Math.sin(a * 127.1 + b * 311.7 + c * 74.7) * 43758.5453;
+  return value - Math.floor(value);
+}
+function softmax(logits) {
+  const finite = logits.filter((v) => Number.isFinite(v));
+  if (!finite.length) return logits.map(() => 0);
+  const max = Math.max.apply(null, finite);
+  const exps = logits.map((v) => (Number.isFinite(v) ? Math.exp(v - max) : 0));
+  const sum = exps.reduce((a, b) => a + b, 0);
+  if (sum === 0) return logits.map(() => 0);
+  return exps.map((v) => v / sum);
+}
+function heatColor(weight) {
+  const w = clamp(weight, 0, 1);
+  const hue = 200 + 130 * w;
+  const light = 15 + 46 * w;
+  return 'hsl(' + hue.toFixed(0) + ' 92% ' + light.toFixed(0) + '%)';
+}
+function headHue(index) {
+  const hues = [190, 215, 280, 325];
+  return hues[index % hues.length];
+}
+function headColor(index, alpha) {
+  return 'hsla(' + headHue(index) + ', 92%, 62%, ' + (alpha === undefined ? 1 : alpha) + ')';
+}
+
+/* ---------- Math rendering ---------- */
+function setTex(el, src, display) {
+  if (!el) return;
+  el.dataset.tex = src;
+  const isDisplay = display === undefined ? el.classList.contains('tex-display') : display;
+  if (!window.temml) {
+    el.textContent = src;
+    el.classList.add('tex-pending');
+    return;
+  }
+  try {
+    el.innerHTML = window.temml.renderToString(src, { displayMode: isDisplay });
+    el.classList.remove('tex-pending', 'tex-error');
+    el.classList.add('math-rendered');
+  } catch (error) {
+    el.textContent = src;
+    el.classList.add('tex-error');
+    debugLog('TEMML: ' + error.message + ' | ' + src);
+  }
+}
+function renderStaticMath() {
+  $$('.tex').forEach((el) => {
+    const src = el.dataset.tex || el.textContent.trim();
+    if (!src) return;
+    setTex(el, src);
+  });
+}
+window.__rerenderAllMath = function () {
+  $$('.tex').forEach((el) => {
+    if (el.dataset.tex) setTex(el, el.dataset.tex);
+  });
+};
+
+/* ---------- Background canvas ---------- */
+function initBackground() {
+  const canvas = $('#bg-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  let width = 0;
+  let height = 0;
+  let dpr = 1;
+  let particles = [];
+  let raf = 0;
+
+  function build() {
+    const count = Math.min(90, Math.max(24, Math.floor((width * height) / 24000)));
+    particles = Array.from({ length: count }, (_, i) => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 0.09,
+      vy: (Math.random() - 0.5) * 0.09,
+      r: 0.5 + Math.random() * 1.4,
+      phase: Math.random() * Math.PI * 2,
+      hue: i % 3
+    }));
+  }
+
+  function resize() {
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    build();
+    if (reduceMotion) drawFrame(0);
+  }
+
+  function drawFrame(time) {
+    ctx.clearRect(0, 0, width, height);
+    for (let i = 0; i < particles.length; i += 1) {
+      const p = particles[i];
+      if (!reduceMotion) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < -20) p.x = width + 20;
+        if (p.x > width + 20) p.x = -20;
+        if (p.y < -20) p.y = height + 20;
+        if (p.y > height + 20) p.y = -20;
+      }
+      const color = p.hue === 0 ? '34,211,238' : p.hue === 1 ? '167,139,250' : '244,114,182';
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(' + color + ',0.38)';
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      for (let j = i + 1; j < particles.length; j += 1) {
+        const q = particles[j];
+        const dx = p.x - q.x;
+        const dy = p.y - q.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 118) {
+          ctx.beginPath();
+          ctx.strokeStyle = 'rgba(' + color + ',' + (0.075 * (1 - dist / 118)).toFixed(3) + ')';
+          ctx.lineWidth = 0.6;
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+    }
+    if (!reduceMotion) raf = requestAnimationFrame(drawFrame);
+  }
+
+  function start() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    if (reduceMotion) {
+      drawFrame(0);
+    } else {
+      raf = requestAnimationFrame(drawFrame);
+    }
+  }
+
+  resize();
+  start();
+  window.addEventListener('resize', resize, { passive: true });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+    } else {
+      start();
+    }
+  });
+}
+
+/* ---------- Scroll UI ---------- */
+function initScrollUI() {
+  const bar = $('#scroll-progress');
+  const navLinks = $$('.nav-link');
+  const sections = navLinks
+    .map((link) => document.querySelector(link.getAttribute('href')))
+    .filter(Boolean);
+
+  function onScroll() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = max > 0 ? (window.scrollY / max) * 100 : 0;
+    if (bar) bar.style.width = progress.toFixed(2) + '%';
+    let active = sections[0];
+    for (const section of sections) {
+      if (section.getBoundingClientRect().top <= 145) active = section;
+    }
+    navLinks.forEach((link) => {
+      link.classList.toggle('is-active', active && link.getAttribute('href') === '#' + active.id);
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+}
+
+function initReveal() {
+  const elements = $$('.reveal');
+  if (!('IntersectionObserver' in window) || reduceMotion) {
+    elements.forEach((el) => el.classList.add('in-view'));
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  elements.forEach((el) => observer.observe(el));
+}
+
+/* ---------- Architecture flow diagram ---------- */
+const ARCH_EDGES = [
+  ['arch-input', 'arch-attn', 'main'],
+  ['arch-attn', 'arch-addnorm1', 'main'],
+  ['arch-addnorm1', 'arch-ffn', 'main'],
+  ['arch-ffn', 'arch-addnorm2', 'main'],
+  ['arch-addnorm2', 'arch-output', 'main'],
+  ['arch-input', 'arch-addnorm1', 'residual'],
+  ['arch-addnorm1', 'arch-addnorm2', 'residual']
+];
+
+function drawArchLinks() {
+  const wrap = $('#arch-wrap');
+  const svg = $('#arch-links');
+  if (!wrap || !svg) return;
+  const wrapRect = wrap.getBoundingClientRect();
+  if (!wrapRect.width || !wrapRect.height) return;
+  svg.setAttribute('viewBox', '0 0 ' + wrapRect.width + ' ' + wrapRect.height);
+  svg.style.width = wrapRect.width + 'px';
+  svg.style.height = wrapRect.height + 'px';
+  svg.innerHTML = '<defs>' +
+    '<marker id="arrow-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">' +
+    '<path d="M0,0 L10,5 L0,10 z" fill="#22d3ee"></path></marker>' +
+    '<marker id="arrow-res" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">' +
+    '<path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"></path></marker>' +
+    '</defs>';
+
+  function rectOf(id) {
+    const el = document.getElementById(id);
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return { x: r.left - wrapRect.left, y: r.top - wrapRect.top, w: r.width, h: r.height };
+  }
+
+  ARCH_EDGES.forEach((edge) => {
+    const source = rectOf(edge[0]);
+    const target = rectOf(edge[1]);
+    if (!source || !target) return;
+    const kind = edge[2];
+    const horizontal = target.x > source.x + source.w * 0.5;
+    let d = '';
+    if (kind === 'residual') {
+      if (horizontal) {
+        const x1 = source.x + source.w * 0.5;
+        const y1 = source.y + 6;
+        const x2 = target.x + target.w * 0.5;
+        const y2 = target.y + 6;
+        const lift = Math.max(18, Math.min(42, Math.abs(x2 - x1) * 0.12));
+        d = 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + (y1 - lift) + ', ' + x2 + ' ' + (y2 - lift) + ', ' + x2 + ' ' + y2;
+      } else {
+        const x1 = source.x + source.w - 6;
+        const y1 = source.y + source.h * 0.5;
+        const x2 = target.x + target.w - 6;
+        const y2 = target.y + target.h * 0.5;
+        const shift = Math.max(12, Math.min(28, Math.abs(y2 - y1) * 0.16));
+        d = 'M ' + x1 + ' ' + y1 + ' C ' + (x1 + shift) + ' ' + y1 + ', ' + (x2 + shift) + ' ' + y2 + ', ' + x2 + ' ' + y2;
+      }
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', 'rgba(167,139,250,0.5)');
+      path.setAttribute('stroke-width', '1.6');
+      path.setAttribute('stroke-dasharray', '7 7');
+      path.setAttribute('marker-end', 'url(#arrow-res)');
+      svg.appendChild(path);
+    } else {
+      if (horizontal) {
+        const x1 = source.x + source.w - 2;
+        const y1 = source.y + source.h * 0.5;
+        const x2 = target.x - 3;
+        const y2 = target.y + target.h * 0.5;
+        const mid = (x1 + x2) / 2;
+        d = 'M ' + x1 + ' ' + y1 + ' C ' + mid + ' ' + y1 + ', ' + mid + ' ' + y2 + ', ' + x2 + ' ' + y2;
+      } else {
+        const x1 = source.x + source.w * 0.5;
+        const y1 = source.y + source.h - 2;
+        const x2 = target.x + target.w * 0.5;
+        const y2 = target.y - 3;
+        const mid = (y1 + y2) / 2;
+        d = 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + mid + ', ' + x2 + ' ' + mid + ', ' + x2 + ' ' + y2;
+      }
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', 'rgba(34,211,238,0.45)');
+      path.setAttribute('stroke-width', '1.8');
+      path.setAttribute('marker-end', 'url(#arrow-main)');
+      svg.appendChild(path);
+    }
+  });
+}
+
+function initArchitecture() {
+  $$('.arch-node').forEach((node) => {
+    node.addEventListener('click', () => {
+      const target = document.getElementById(node.dataset.target);
+      if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    });
+  });
+  drawArchLinks();
+  if ('ResizeObserver' in window) {
+    const wrap = $('#arch-wrap');
+    if (wrap) new ResizeObserver(() => drawArchLinks()).observe(wrap);
+  }
+  window.addEventListener('resize', drawArchLinks);
+  window.addEventListener('load', () => {
+    drawArchLinks();
+    setTimeout(drawArchLinks, 400);
+    setTimeout(drawArchLinks, 1100);
+  });
+}
+
+/* ---------- Shared example data ---------- */
+const ATTN_TOKENS = ['The', 'cat', 'sat', 'on'];
+const ATTN_DK = 8;
+const ATTN_HEADS = [
+  {
+    name: 'Head 0 · lokal',
+    desc: 'Dieser Head bevorzugt die Nachbarschaft: Jede Query schaut stark auf sich selbst und auf die direkt benachbarten Tokens.',
+    raw: [
+      [6.2, 4.8, 0.4, 0.1],
+      [4.1, 6.8, 4.4, 0.2],
+      [0.3, 4.6, 6.9, 4.3],
+      [0.1, 0.4, 4.2, 6.5]
+    ]
+  },
+  {
+    name: 'Head 1 · Syntax',
+    desc: 'Dieser Head verbindet das Verb mit seinem Subjekt und das Pronomen mit dem Bezugswort. Die Aufmerksamkeit ist deutlich gerichteter.',
+    raw: [
+      [5.8, 1.4, 0.2, 0.1],
+      [7.2, 5.1, 0.5, 0.2],
+      [1.1, 8.4, 3.2, 0.3],
+      [0.2, 4.6, 7.5, 1.3]
+    ]
+  },
+  {
+    name: 'Head 2 · global',
+    desc: 'Dieser Head sammelt Information am Satzanfang. Fast jede Query legt einen großen Teil ihres Gewichts auf „The“.',
+    raw: [
+      [9.1, 2.3, 0.1, 0.2],
+      [8.7, 2.8, 0.4, 0.1],
+      [8.2, 1.5, 1.4, 0.3],
+      [8.5, 0.4, 1.2, 1.1]
+    ]
+  },
+  {
+    name: 'Head 3 · Inhalt',
+    desc: 'Dieser Head folgt den inhaltstragenden Wörtern. Die Verteilung ist breiter und weniger an eine feste Position gebunden.',
+    raw: [
+      [2.3, 4.4, 1.2, 1.0],
+      [1.4, 8.1, 2.7, 1.2],
+      [0.5, 2.6, 7.4, 2.5],
+      [0.3, 1.4, 3.6, 7.1]
+    ]
+  }
+];
+const ATTN_V = [
+  [0.9, -0.2, 0.4, 0.1],
+  [0.2, 0.8, -0.3, 0.5],
+  [-0.4, 0.1, 0.9, -0.2],
+  [0.3, 0.5, 0.2, 0.8]
+];
+
+const STATE = { B: 2, T: 4, dModel: 512, heads: 8, dFf: 2048, layers: 6 };
+const PAPER = { B: 2, T: 4, dModel: 512, heads: 8, dFf: 2048, layers: 6 };
+const VIS = { T: 4, dModel: 16, heads: 4, dK: 4 };
+
+function derive(state) {
+  return {
+    B: state.B,
+    T: state.T,
+    dModel: state.dModel,
+    heads: state.heads,
+    dK: Math.floor(state.dModel / state.heads),
+    dV: Math.floor(state.dModel / state.heads),
+    dFf: state.dFf,
+    layers: state.layers
+  };
+}
+function snapHeads(dModel, requested) {
+  const max = Math.min(16, dModel);
+  const want = clamp(Math.round(requested), 1, max);
+  if (dModel % want === 0) return want;
+  for (let h = want; h >= 1; h -= 1) {
+    if (dModel % h === 0) return h;
+  }
+  return 1;
+}
+function syncLiveTable() {
+  const d = derive(STATE);
+  $$('[data-live]').forEach((el) => {
+    const key = el.dataset.live;
+    if (key === 'dK') el.textContent = d.dK;
+    else if (key === 'dV') el.textContent = d.dV;
+    else el.textContent = d[key];
+  });
+}
+
+/* ---------- Hero heat map ---------- */
+function initHeroHeat() {
+  const host = $('#hero-heat');
+  if (!host) return;
+  const raw = ATTN_HEADS[2].raw;
+  for (let i = 0; i < 4; i += 1) {
+    const weights = softmax(raw[i].map((value) => value / Math.sqrt(ATTN_DK)));
+    for (let j = 0; j < 4; j += 1) {
+      const cell = document.createElement('span');
+      cell.className = 'heat-cell';
+      cell.style.background = heatColor(weights[j]);
+      cell.title = ATTN_TOKENS[i] + ' → ' + ATTN_TOKENS[j] + ': ' + weights[j].toFixed(2);
+      host.appendChild(cell);
+    }
+  }
+}
+
+/* ---------- Projection lab ---------- */
+let selectedHead = 0;
+
+function buildProjectionLab() {
+  const xGrid = $('#x-grid');
+  const qkvGrid = $('#qkv-grid');
+  if (!xGrid || !qkvGrid) return;
+
+  xGrid.innerHTML = '';
+  xGrid.style.setProperty('--cols', String(VIS.dModel));
+  xGrid.style.setProperty('--minw', '280px');
+  for (let r = 0; r < VIS.T; r += 1) {
+    const label = document.createElement('div');
+    label.className = 'row-label';
+    label.textContent = ATTN_TOKENS[r];
+    xGrid.appendChild(label);
+    for (let c = 0; c < VIS.dModel; c += 1) {
+      const cell = document.createElement('span');
+      cell.className = 'cell';
+      const alpha = 0.12 + hash01(r, c, 1) * 0.58;
+      cell.style.background = 'hsla(190, 88%, 62%, ' + alpha.toFixed(2) + ')';
+      cell.title = ATTN_TOKENS[r] + ' · Feature ' + (c + 1);
+      xGrid.appendChild(cell);
+    }
+  }
+
+  qkvGrid.innerHTML = '';
+  qkvGrid.style.setProperty('--cols', String(VIS.dModel * 3));
+  qkvGrid.style.setProperty('--minw', '600px');
+  for (let r = 0; r < VIS.T; r += 1) {
+    const label = document.createElement('div');
+    label.className = 'row-label';
+    label.textContent = ATTN_TOKENS[r];
+    qkvGrid.appendChild(label);
+    for (let c = 0; c < VIS.dModel * 3; c += 1) {
+      const kindIndex = Math.floor(c / VIS.dModel);
+      const within = c % VIS.dModel;
+      const head = Math.floor(within / VIS.dK);
+      const dim = within % VIS.dK;
+      const cell = document.createElement('span');
+      cell.className = 'cell';
+      const alpha = kindIndex === 0 ? 0.38 : kindIndex === 1 ? 0.58 : 0.82;
+      cell.style.background = headColor(head, alpha);
+      cell.dataset.head = String(head);
+      cell.dataset.kind = kindIndex === 0 ? 'q' : kindIndex === 1 ? 'k' : 'v';
+      const kind = kindIndex === 0 ? 'Q' : kindIndex === 1 ? 'K' : 'V';
+      cell.title = kind + ' · Head ' + head + ' · Dim ' + (dim + 1);
+      if (within === 0 || within % VIS.dK === 0) cell.classList.add('group-sep');
+      qkvGrid.appendChild(cell);
+    }
+  }
+
+  const legend = $('#head-legend');
+  if (legend) {
+    legend.innerHTML = '<span style="color:var(--dim)">Q blass · K mittel · V kräftig</span>';
+    for (let i = 0; i < VIS.heads; i += 1) {
+      const item = document.createElement('span');
+      item.innerHTML = '<i class="head-dot" style="--hc:' + headColor(i) + '"></i>Head ' + i;
+      legend.appendChild(item);
+    }
+  }
+
+  const headsRow = $('#heads-row');
+  if (headsRow) {
+    headsRow.innerHTML = '';
+    for (let i = 0; i < VIS.heads; i += 1) {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'head-card';
+      card.dataset.head = String(i);
+      card.style.setProperty('--hc', headColor(i));
+      card.innerHTML =
+        '<span class="head-title">Head ' + i + '<small>d_k = ' + VIS.dK + '</small></span>' +
+        '<span class="head-vec q">' + '<span></span>'.repeat(VIS.dK) + '</span>' +
+        '<span class="head-vec k">' + '<span></span>'.repeat(VIS.dK) + '</span>' +
+        '<span class="head-vec v">' + '<span></span>'.repeat(VIS.dK) + '</span>';
+      card.addEventListener('click', () => selectProjectionHead(i));
+      headsRow.appendChild(card);
+    }
+  }
+  selectProjectionHead(0);
+}
+
+function selectProjectionHead(index) {
+  selectedHead = index;
+  $$('#qkv-grid .cell').forEach((cell) => {
+    const head = Number(cell.dataset.head);
+    cell.classList.toggle('head-focus', head === index);
+    cell.classList.toggle('head-dim', head !== index);
+  });
+  $$('#heads-row .head-card').forEach((card) => {
+    card.classList.toggle('is-selected', Number(card.dataset.head) === index);
+  });
+  const label = $('#head-focus-label');
+  if (label) {
+    const start = index * VIS.dK;
+    const end = start + VIS.dK;
+    label.innerHTML = '<b>Head ' + index + '</b> · Q-Spalten [' + start + ':' + end + '] · ' +
+      'K-Spalten [' + start + ':' + end + '] · V-Spalten [' + start + ':' + end + ']';
+  }
+}
+
+function initProjectionLab() {
+  buildProjectionLab();
+}
+
+/* ---------- Attention lab ---------- */
+const attnState = { head: 1, scaled: true, causal: false, query: 2, hover: null };
+
+function attentionWeights(raw, scaled, causal) {
+  return raw.map((row, i) => {
+    const logits = row.map((score, j) => {
+      if (causal && j > i) return -Infinity;
+      return scaled ? score / Math.sqrt(ATTN_DK) : score;
+    });
+    return softmax(logits);
+  });
+}
+
+function initAttentionLab() {
+  const tabs = $('#head-tabs');
+  if (tabs) {
+    tabs.innerHTML = '';
+    ATTN_HEADS.forEach((head, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'head-tab';
+      button.dataset.head = String(index);
+      button.textContent = 'H' + index;
+      button.title = head.name;
+      button.addEventListener('click', () => {
+        attnState.head = index;
+        renderAttention();
+      });
+      tabs.appendChild(button);
+    });
+  }
+
+  const scaleToggle = $('#scale-toggle');
+  if (scaleToggle) {
+    scaleToggle.checked = attnState.scaled;
+    scaleToggle.addEventListener('change', () => {
+      attnState.scaled = scaleToggle.checked;
+      renderAttention();
+    });
+  }
+  const causalToggle = $('#causal-toggle');
+  if (causalToggle) {
+    causalToggle.checked = attnState.causal;
+    causalToggle.addEventListener('change', () => {
+      attnState.causal = causalToggle.checked;
+      renderAttention();
+    });
+  }
+
+  const grid = $('#heat-grid');
+  if (grid) {
+    grid.addEventListener('mouseover', (event) => {
+      const cell = event.target.closest('.heat-cell');
+      if (!cell) return;
+      const i = Number(cell.dataset.row);
+      const j = Number(cell.dataset.col);
+      attnState.hover = { i, j };
+      highlightAttentionCell(i, j);
+      const weights = attentionWeights(ATTN_HEADS[attnState.head].raw, attnState.scaled, attnState.causal);
+      showAttentionDetail(i, j, weights[i][j]);
+    });
+    grid.addEventListener('mouseleave', () => {
+      attnState.hover = null;
+      clearAttentionHighlights();
+      showAttentionSummary();
+    });
+    grid.addEventListener('click', (event) => {
+      const cell = event.target.closest('.heat-cell');
+      if (!cell) return;
+      attnState.query = Number(cell.dataset.row);
+      renderAttention();
+    });
+  }
+
+  renderAttention();
+}
+
+function renderAttention() {
+  const grid = $('#heat-grid');
+  if (!grid) return;
+  const head = ATTN_HEADS[attnState.head];
+  const weights = attentionWeights(head.raw, attnState.scaled, attnState.causal);
+
+  $$('#head-tabs .head-tab').forEach((tab) => {
+    tab.classList.toggle('is-active', Number(tab.dataset.head) === attnState.head);
+  });
+  const desc = $('#head-desc');
+  if (desc) desc.textContent = head.desc;
+
+  grid.innerHTML = '';
+  const corner = document.createElement('div');
+  corner.className = 'heat-corner';
+  corner.textContent = 'Q \\ K';
+  grid.appendChild(corner);
+
+  ATTN_TOKENS.forEach((token, index) => {
+    const label = document.createElement('button');
+    label.type = 'button';
+    label.className = 'heat-axis';
+    label.dataset.col = String(index);
+    label.textContent = token;
+    label.addEventListener('click', () => {
+      attnState.query = index;
+      renderAttention();
+    });
+    grid.appendChild(label);
+  });
+
+  weights.forEach((row, i) => {
+    const label = document.createElement('button');
+    label.type = 'button';
+    label.className = 'heat-axis';
+    label.dataset.row = String(i);
+    label.textContent = ATTN_TOKENS[i];
+    label.addEventListener('click', () => {
+      attnState.query = i;
+      renderAttention();
+    });
+    grid.appendChild(label);
+
+    row.forEach((weight, j) => {
+      const cell = document.createElement('div');
+      cell.className = 'heat-cell';
+      cell.dataset.row = String(i);
+      cell.dataset.col = String(j);
+      cell.setAttribute('role', 'gridcell');
+      cell.style.background = heatColor(weight);
+      cell.textContent = weight.toFixed(2);
+      const masked = attnState.causal && j > i;
+      if (masked) {
+        cell.classList.add('is-masked');
+        cell.textContent = '0';
+        cell.title = 'maskiert: ' + ATTN_TOKENS[i] + ' darf ' + ATTN_TOKENS[j] + ' nicht sehen';
+        cell.setAttribute('aria-label', ATTN_TOKENS[i] + ' attends to ' + ATTN_TOKENS[j] + ': maskiert');
+      } else {
+        cell.title = ATTN_TOKENS[i] + ' attends to ' + ATTN_TOKENS[j] + ': ' + weight.toFixed(3);
+        cell.setAttribute('aria-label', ATTN_TOKENS[i] + ' attends to ' + ATTN_TOKENS[j] + ': ' + weight.toFixed(3));
+      }
+      if (i === attnState.query) cell.classList.add('is-selected-row');
+      grid.appendChild(cell);
+    });
+  });
+
+  updateAttentionBars(weights[attnState.query]);
+  updateValueMix(weights[attnState.query]);
+  showAttentionSummary();
+}
+
+function highlightAttentionCell(i, j) {
+  const grid = $('#heat-grid');
+  if (!grid) return;
+  $$('.heat-cell', grid).forEach((cell) => {
+    const row = Number(cell.dataset.row);
+    const col = Number(cell.dataset.col);
+    cell.classList.toggle('is-row-hl', row === i && col !== j);
+    cell.classList.toggle('is-col-hl', col === j && row !== i);
+  });
+  $$('.heat-axis[data-row]', grid).forEach((label) => label.classList.toggle('is-hl', Number(label.dataset.row) === i));
+  $$('.heat-axis[data-col]', grid).forEach((label) => label.classList.toggle('is-hl', Number(label.dataset.col) === j));
+}
+function clearAttentionHighlights() {
+  const grid = $('#heat-grid');
+  if (!grid) return;
+  $$('.heat-cell', grid).forEach((cell) => cell.classList.remove('is-row-hl', 'is-col-hl'));
+  $$('.heat-axis', grid).forEach((label) => label.classList.remove('is-hl'));
+}
+function showAttentionDetail(i, j, weight) {
+  const detail = $('#attn-detail');
+  if (!detail) return;
+  const masked = attnState.causal && j > i;
+  detail.innerHTML = 'Query <b>' + ATTN_TOKENS[i] + '</b> <span class="arrow">→</span> Key <b>' +
+    ATTN_TOKENS[j] + '</b>: ' + (masked ? 'maskiert (0)' : weight.toFixed(3)) +
+    (masked ? '' : ' · Zeilensumme = 1.00');
+}
+function showAttentionSummary() {
+  const detail = $('#attn-detail');
+  if (!detail) return;
+  const weights = attentionWeights(ATTN_HEADS[attnState.head].raw, attnState.scaled, attnState.causal);
+  const row = weights[attnState.query];
+  const top = row
+    .map((value, index) => ({ value, index }))
+    .sort((a, b) => b.value - a.value)[0];
+  detail.innerHTML = 'Ausgewählte Query: <b>' + ATTN_TOKENS[attnState.query] + '</b> · stärkster Key: <b>' +
+    ATTN_TOKENS[top.index] + '</b> (' + top.value.toFixed(3) + ')';
+}
+
+function updateAttentionBars(row) {
+  const host = $('#attn-bars');
+  if (!host) return;
+  host.innerHTML = '';
+  ATTN_TOKENS.forEach((token, index) => {
+    const bar = document.createElement('div');
+    bar.className = 'bar-row';
+    bar.innerHTML = '<span>' + token + '</span>' +
+      '<span class="bar-track"><span class="bar-fill" style="width:' + (row[index] * 100).toFixed(1) + '%"></span></span>' +
+      '<span class="bar-value">' + row[index].toFixed(2) + '</span>';
+    host.appendChild(bar);
+  });
+  const label = $('#attn-query-label');
+  if (label) label.textContent = 'Query: ' + ATTN_TOKENS[attnState.query];
+}
+
+function updateValueMix(row) {
+  const host = $('#value-mix');
+  if (!host) return;
+  host.innerHTML = '';
+  const header = document.createElement('div');
+  header.className = 'vm-head';
+  header.innerHTML = '<span>Key</span><span>Gewicht</span><span>Value</span>';
+  host.appendChild(header);
+
+  ATTN_TOKENS.forEach((token, index) => {
+    const weight = row[index];
+    const cells = ATTN_V[index].map((value) =>
+      '<span style="--op:' + (0.15 + weight * 0.85).toFixed(2) + '" title="' + value.toFixed(2) + '"></span>'
+    ).join('');
+    const rowEl = document.createElement('div');
+    rowEl.className = 'vm-row';
+    rowEl.innerHTML = '<span>' + token + '</span>' +
+      '<span class="bar-track"><span class="bar-fill" style="width:' + (weight * 100).toFixed(1) + '%"></span></span>' +
+      '<span class="vm-vec">' + cells + '</span>';
+    host.appendChild(rowEl);
+  });
+
+  const output = [0, 0, 0, 0];
+  for (let j = 0; j < ATTN_TOKENS.length; j += 1) {
+    for (let c = 0; c < 4; c += 1) {
+      output[c] += row[j] * ATTN_V[j][c];
+    }
+  }
+  const maxAbs = Math.max.apply(null, output.map((value) => Math.abs(value))) || 1;
+  const outputCells = output.map((value) =>
+    '<span style="--op:' + (0.22 + 0.78 * Math.abs(value) / maxAbs).toFixed(2) + '" title="' + value.toFixed(3) + '"></span>'
+  ).join('');
+  const outRow = document.createElement('div');
+  outRow.className = 'vm-out';
+  outRow.innerHTML = '<span><b>Σ</b></span><span class="vm-vec">' + outputCells + '</span>';
+  host.appendChild(outRow);
+}
+
+/* ---------- Sharpness demo ---------- */
+const SHARP_LOGITS = [0.4, 1.6, 3.1, 0.1];
+
+function initSharpness() {
+  const slider = $('#sharp-scale');
+  if (!slider) return;
+  slider.addEventListener('input', renderSharpness);
+  renderSharpness();
+}
+
+function renderSharpness() {
+  const slider = $('#sharp-scale');
+  if (!slider) return;
+  const scale = Number(slider.value);
+  const out = $('#sharp-scale-out');
+  if (out) out.textContent = '× ' + scale.toFixed(2);
+  const weights = softmax(SHARP_LOGITS.map((value) => value * scale));
+  const host = $('#sharp-bars');
+  if (host) {
+    host.innerHTML = '';
+    ATTN_TOKENS.forEach((token, index) => {
+      const row = document.createElement('div');
+      row.className = 'sharp-row';
+      row.innerHTML = '<span>' + token + '</span>' +
+        '<span class="bar-track"><span class="bar-fill" style="width:' + (weights[index] * 100).toFixed(1) + '%"></span></span>' +
+        '<span class="bar-value">' + weights[index].toFixed(2) + '</span>';
+      host.appendChild(row);
+    });
+  }
+  const max = Math.max.apply(null, weights);
+  const entropy = weights.reduce((sum, p) => (p > 0 ? sum - p * Math.log(p) : sum), 0);
+  const maxEl = $('#sharp-max');
+  const entropyEl = $('#sharp-entropy');
+  if (maxEl) maxEl.textContent = max.toFixed(2);
+  if (entropyEl) entropyEl.textContent = entropy.toFixed(2);
+}
+
+/* ---------- Concatenation lab ---------- */
+let concatTimers = [];
+
+function buildConcatLab() {
+  const heads = $('#concat-heads');
+  const strip = $('#concat-strip');
+  const wo = $('#wo-matrix');
+  const output = $('#output-strip');
+  if (!heads || !strip || !wo || !output) return;
+
+  heads.innerHTML = '';
+  strip.innerHTML = '';
+  output.innerHTML = '';
+  wo.innerHTML = '';
+
+  for (let h = 0; h < VIS.heads; h += 1) {
+    const block = document.createElement('div');
+    block.className = 'head-block';
+    block.style.setProperty('--hc', headColor(h));
+    block.innerHTML = '<span class="hb-title">H' + h + '</span><span class="hb-cells">' +
+      '<span class="hb-cell"></span>'.repeat(VIS.dK) + '</span>';
+    heads.appendChild(block);
+    for (let d = 0; d < VIS.dK; d += 1) {
+      const cell = document.createElement('span');
+      cell.className = 'cs-cell';
+      cell.style.setProperty('--hc', headColor(h));
+      strip.appendChild(cell);
+    }
+  }
+  for (let d = 0; d < VIS.dModel; d += 1) {
+    const cell = document.createElement('span');
+    cell.className = 'cs-cell';
+    cell.style.setProperty('--hc', headColor(Math.floor(d / VIS.dK)));
+    output.appendChild(cell);
+  }
+
+  for (let r = 0; r < VIS.dModel; r += 1) {
+    for (let c = 0; c < VIS.dModel; c += 1) {
+      const cell = document.createElement('span');
+      cell.style.setProperty('--a', (0.06 + hash01(r, c, 7) * 0.55).toFixed(2));
+      wo.appendChild(cell);
+    }
+  }
+}
+
+function playConcat() {
+  const stage = $('#concat-stage');
+  const status = $('#concat-status');
+  if (!stage) return;
+  concatTimers.forEach((timer) => clearTimeout(timer));
+  concatTimers = [];
+  stage.classList.remove('is-joined', 'is-projected');
+  if (status) status.textContent = 'Heads werden konkateniert …';
+  concatTimers.push(setTimeout(() => {
+    stage.classList.add('is-joined');
+    if (status) status.textContent = 'Concat ist fertig. Jetzt projiziert W^O zurück auf d_model.';
+  }, reduceMotion ? 0 : 260));
+  concatTimers.push(setTimeout(() => {
+    stage.classList.add('is-projected');
+    if (status) status.textContent = 'Fertig: Aus h · d_v ist wieder d_model geworden.';
+  }, reduceMotion ? 0 : 980));
+}
+
+function resetConcat() {
+  const stage = $('#concat-stage');
+  const status = $('#concat-status');
+  concatTimers.forEach((timer) => clearTimeout(timer));
+  concatTimers = [];
+  if (stage) stage.classList.remove('is-joined', 'is-projected');
+  if (status) status.textContent = 'Bereit. Starte die Animation.';
+}
+
+/* ---------- LayerNorm lab ---------- */
+const NORM_N = 4;
+const normState = {
+  x: [0.4, -1.2, 0.8, 0.1],
+  s: [0.7, 0.3, -0.5, 1.1],
+  gamma: 1,
+  beta: 0
+};
+
+function buildNormLab() {
+  const sliders = $('#norm-sliders');
+  const affine = $('#norm-affine');
+  if (!sliders || !affine) return;
+
+  sliders.innerHTML = '';
+  for (let i = 0; i < NORM_N; i += 1) {
+    const item = document.createElement('div');
+    item.className = 'slider-item';
+    item.innerHTML = '<label for="nx' + i + '">x<sub>' + i + '</sub><output id="nx' + i + '-out">' + normState.x[i].toFixed(1) + '</output></label>' +
+      '<input id="nx' + i + '" type="range" min="-3" max="3" step="0.1" value="' + normState.x[i] + '">';
+    sliders.appendChild(item);
+    item.querySelector('input').addEventListener('input', (event) => {
+      normState.x[i] = Number(event.target.value);
+      const out = $('#nx' + i + '-out');
+      if (out) out.textContent = normState.x[i].toFixed(1);
+      renderNorm();
+    });
+  }
+  for (let i = 0; i < NORM_N; i += 1) {
+    const item = document.createElement('div');
+    item.className = 'slider-item';
+    item.innerHTML = '<label for="ns' + i + '">s<sub>' + i + '</sub><output id="ns' + i + '-out">' + normState.s[i].toFixed(1) + '</output></label>' +
+      '<input id="ns' + i + '" type="range" min="-3" max="3" step="0.1" value="' + normState.s[i] + '">';
+    sliders.appendChild(item);
+    item.querySelector('input').addEventListener('input', (event) => {
+      normState.s[i] = Number(event.target.value);
+      const out = $('#ns' + i + '-out');
+      if (out) out.textContent = normState.s[i].toFixed(1);
+      renderNorm();
+    });
+  }
+
+  affine.innerHTML = '';
+  const gammaItem = document.createElement('div');
+  gammaItem.className = 'slider-item';
+  gammaItem.innerHTML = '<label for="norm-gamma">γ<output id="norm-gamma-out">' + normState.gamma.toFixed(1) + '</output></label>' +
+    '<input id="norm-gamma" type="range" min="-2" max="2" step="0.1" value="' + normState.gamma + '">';
+  affine.appendChild(gammaItem);
+  gammaItem.querySelector('input').addEventListener('input', (event) => {
+    normState.gamma = Number(event.target.value);
+    const out = $('#norm-gamma-out');
+    if (out) out.textContent = normState.gamma.toFixed(1);
+    renderNorm();
+  });
+  const betaItem = document.createElement('div');
+  betaItem.className = 'slider-item';
+  betaItem.innerHTML = '<label for="norm-beta">β<output id="norm-beta-out">' + normState.beta.toFixed(1) + '</output></label>' +
+    '<input id="norm-beta" type="range" min="-1" max="1" step="0.1" value="' + normState.beta + '">';
+  affine.appendChild(betaItem);
+  betaItem.querySelector('input').addEventListener('input', (event) => {
+    normState.beta = Number(event.target.value);
+    const out = $('#norm-beta-out');
+    if (out) out.textContent = normState.beta.toFixed(1);
+    renderNorm();
+  });
+
+  const random = $('#norm-random');
+  if (random) {
+    random.addEventListener('click', () => {
+      normState.x = normState.x.map(() => Number((Math.random() * 4 - 2).toFixed(1)));
+      normState.s = normState.s.map(() => Number((Math.random() * 4 - 2).toFixed(1)));
+      syncNormInputs();
+      renderNorm();
+    });
+  }
+  const reset = $('#norm-reset');
+  if (reset) {
+    reset.addEventListener('click', () => {
+      normState.x = [0.4, -1.2, 0.8, 0.1];
+      normState.s = [0.7, 0.3, -0.5, 1.1];
+      normState.gamma = 1;
+      normState.beta = 0;
+      syncNormInputs();
+      renderNorm();
+    });
+  }
+
+  renderNorm();
+}
+
+function syncNormInputs() {
+  for (let i = 0; i < NORM_N; i += 1) {
+    const nx = $('#nx' + i);
+    const ns = $('#ns' + i);
+    const nxOut = $('#nx' + i + '-out');
+    const nsOut = $('#ns' + i + '-out');
+    if (nx) nx.value = normState.x[i];
+    if (ns) ns.value = normState.s[i];
+    if (nxOut) nxOut.textContent = normState.x[i].toFixed(1);
+    if (nsOut) nsOut.textContent = normState.s[i].toFixed(1);
+  }
+  const gamma = $('#norm-gamma');
+  const beta = $('#norm-beta');
+  const gammaOut = $('#norm-gamma-out');
+  const betaOut = $('#norm-beta-out');
+  if (gamma) gamma.value = normState.gamma;
+  if (beta) beta.value = normState.beta;
+  if (gammaOut) gammaOut.textContent = normState.gamma.toFixed(1);
+  if (betaOut) betaOut.textContent = normState.beta.toFixed(1);
+}
+
+function makeNormRow(title, subtitle, values, rowClass) {
+  const maxAbs = Math.max(0.1, ...values.map((value) => Math.abs(value))) * 1.15;
+  const row = document.createElement('div');
+  row.className = 'vector-row ' + rowClass;
+  const label = document.createElement('div');
+  label.className = 'vector-label';
+  label.innerHTML = '<b>' + title + '</b>' + subtitle;
+  row.appendChild(label);
+  values.forEach((value) => {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    const cell = document.createElement('div');
+    cell.className = 'bar-cell';
+    const fill = document.createElement('div');
+    fill.className = 'fill';
+    const height = (Math.abs(value) / maxAbs) * 50;
+    fill.style.height = height.toFixed(1) + '%';
+    if (value >= 0) fill.style.bottom = '50%';
+    else fill.style.top = '50%';
+    cell.appendChild(fill);
+    const number = document.createElement('span');
+    number.className = 'bar-num';
+    number.textContent = value.toFixed(2);
+    col.appendChild(cell);
+    col.appendChild(number);
+    row.appendChild(col);
+  });
+  return row;
+}
+
+function renderNorm() {
+  const host = $('#norm-rows');
+  const readouts = $('#norm-readouts');
+  if (!host) return;
+  const sum = normState.x.map((value, index) => value + normState.s[index]);
+  const mean = sum.reduce((a, b) => a + b, 0) / NORM_N;
+  const variance = sum.reduce((a, b) => a + (b - mean) * (b - mean), 0) / NORM_N;
+  const eps = 1e-5;
+  const normalized = sum.map((value) => normState.gamma * (value - mean) / Math.sqrt(variance + eps) + normState.beta);
+
+  host.innerHTML = '';
+  host.appendChild(makeNormRow('x', 'Residual-Input', normState.x, 'row-x'));
+  host.appendChild(makeNormRow('s', 'SubLayer(x)', normState.s, 'row-s'));
+  host.appendChild(makeNormRow('x + s', 'Summe', sum, 'row-sum'));
+  host.appendChild(makeNormRow('LN(x+s)', 'normalisiert', normalized, 'row-ln'));
+
+  if (readouts) {
+    readouts.innerHTML =
+      '<span class="readout">μ <b>' + mean.toFixed(3) + '</b></span>' +
+      '<span class="readout">σ² <b>' + variance.toFixed(3) + '</b></span>' +
+      '<span class="readout">ε <b>' + eps.toExponential(0) + '</b></span>' +
+      '<span class="readout">γ <b>' + normState.gamma.toFixed(1) + '</b></span>' +
+      '<span class="readout">β <b>' + normState.beta.toFixed(1) + '</b></span>';
+  }
+}
+
+/* ---------- FFN lab ---------- */
+const FFN_IN = 8;
+const FFN_HID = 16;
+const FFN_OUT = 8;
+let ffnFocus = false;
+let ffnLaneRefs = [];
+
+function makeFFNVec(kind, count, seed, laneIndex) {
+  const vec = document.createElement('div');
+  vec.className = 'ffn-vec ' + kind;
+  for (let i = 0; i < count; i += 1) {
+    const span = document.createElement('span');
+    const value = hash01(seed, i, laneIndex);
+    span.style.setProperty('--a', (0.18 + value * 0.72).toFixed(2));
+    span.style.setProperty('--i', String(i));
+    if (kind === 'hidden' && value < 0.34) span.classList.add('off');
+    vec.appendChild(span);
+  }
+  return vec;
+}
+
+function buildFFN() {
+  const board = $('#ffn-board');
+  if (!board) return;
+  board.innerHTML = '';
+  ffnLaneRefs = [];
+
+  const headers = ['Token', 'x · d_model', 'W1 + b1', 'h · GELU', 'W2 + b2', 'y · d_model'];
+  headers.forEach((text, index) => {
+    const head = document.createElement('div');
+    head.className = 'ffn-head';
+    head.style.gridColumn = String(index + 1);
+    head.style.gridRow = '1';
+    head.textContent = text;
+    board.appendChild(head);
+  });
+
+  const w1 = document.createElement('div');
+  w1.className = 'weight-slab ffn-w1';
+  w1.style.gridColumn = '3';
+  w1.style.gridRow = '2 / 6';
+  w1.innerHTML = '<b>W1</b><span>d_model → d_ff</span><span>8 → 16</span><span>für alle Tokens</span>';
+  board.appendChild(w1);
+
+  const w2 = document.createElement('div');
+  w2.className = 'weight-slab ffn-w2';
+  w2.style.gridColumn = '5';
+  w2.style.gridRow = '2 / 6';
+  w2.innerHTML = '<b>W2</b><span>d_ff → d_model</span><span>16 → 8</span><span>für alle Tokens</span>';
+  board.appendChild(w2);
+
+  ATTN_TOKENS.forEach((token, lane) => {
+    const row = lane + 2;
+    const label = document.createElement('div');
+    label.className = 'ffn-token';
+    label.style.gridColumn = '1';
+    label.style.gridRow = String(row);
+    label.textContent = token;
+    board.appendChild(label);
+
+    const input = makeFFNVec('input', FFN_IN, 3, lane);
+    input.style.gridColumn = '2';
+    input.style.gridRow = String(row);
+    board.appendChild(input);
+
+    const hidden = makeFFNVec('hidden', FFN_HID, 11, lane);
+    hidden.style.gridColumn = '4';
+    hidden.style.gridRow = String(row);
+    board.appendChild(hidden);
+
+    const output = makeFFNVec('output', FFN_OUT, 23, lane);
+    output.style.gridColumn = '6';
+    output.style.gridRow = String(row);
+    board.appendChild(output);
+
+    ffnLaneRefs.push({ label, input, hidden, output, token });
+  });
+}
+
+function setFFNFocus(active) {
+  ffnFocus = active;
+  ffnLaneRefs.forEach((lane) => {
+    const opacity = active && lane.token !== 'cat' ? '0.18' : '1';
+    lane.label.style.opacity = opacity;
+    lane.input.style.opacity = opacity;
+    lane.hidden.style.opacity = opacity;
+    lane.output.style.opacity = opacity;
+  });
+  const button = $('#ffn-focus');
+  if (button) button.textContent = active ? 'Alle Tokens zeigen' : 'Nur „cat“ zeigen';
+}
+
+function runFFN() {
+  const board = $('#ffn-board');
+  if (!board) return;
+  board.classList.remove('is-running');
+  void board.offsetWidth;
+  board.classList.add('is-running');
+  setTimeout(() => board.classList.remove('is-running'), reduceMotion ? 40 : 1250);
+}
+
+function updateFFNParam() {
+  const el = $('#ffn-param');
+  if (!el) return;
+  const params = 2 * STATE.dModel * STATE.dFf + STATE.dFf + STATE.dModel;
+  el.textContent = fmtParams(params);
+}
+
+function initFFN() {
+  buildFFN();
+  setFFNFocus(false);
+  updateFFNParam();
+  const run = $('#ffn-run');
+  if (run) run.addEventListener('click', runFFN);
+  const focus = $('#ffn-focus');
+  if (focus) focus.addEventListener('click', () => setFFNFocus(!ffnFocus));
+  const reset = $('#ffn-reset');
+  if (reset) {
+    reset.addEventListener('click', () => {
+      setFFNFocus(false);
+      const board = $('#ffn-board');
+      if (board) board.classList.remove('is-running');
+    });
+  }
+}
+
+/* ---------- Playground ---------- */
+function initPlayground() {
+  const inputs = {
+    B: $('#pg-B'),
+    T: $('#pg-T'),
+    dModel: $('#pg-dModel'),
+    heads: $('#pg-heads'),
+    dFf: $('#pg-dFf'),
+    layers: $('#pg-layers')
+  };
+  if (!inputs.B) return;
+
+  Object.keys(inputs).forEach((key) => {
+    inputs[key].addEventListener('input', () => {
+      STATE[key] = Number(inputs[key].value);
+      updatePlayground();
+    });
+  });
+
+  const reset = $('#pg-reset');
+  if (reset) {
+    reset.addEventListener('click', () => {
+      Object.assign(STATE, PAPER);
+      inputs.B.value = STATE.B;
+      inputs.T.value = STATE.T;
+      inputs.dModel.value = STATE.dModel;
+      inputs.heads.value = STATE.heads;
+      inputs.dFf.value = STATE.dFf;
+      inputs.layers.value = STATE.layers;
+      updatePlayground();
+    });
+  }
+
+  const copy = $('#pg-copy');
+  if (copy) {
+    copy.addEventListener('click', () => {
+      const text = JSON.stringify(STATE, null, 2);
+      const note = $('#pg-copy-note');
+      const show = (message) => {
+        if (!note) return;
+        note.style.display = 'block';
+        note.textContent = message;
+        setTimeout(() => { note.style.display = 'none'; }, 2600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => show('Config kopiert.'), () => show('Kopieren nicht erlaubt.'));
+      } else {
+        const area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        try {
+          document.execCommand('copy');
+          show('Config kopiert.');
+        } catch (error) {
+          show('Kopieren nicht erlaubt.');
+        }
+        area.remove();
+      }
+    });
+  }
+
+  updatePlayground();
+}
+
+function updatePlayground() {
+  const hInput = $('#pg-heads');
+  const requested = Number(hInput.value);
+  const snapped = snapHeads(STATE.dModel, requested);
+  if (snapped !== requested) {
+    STATE.heads = snapped;
+    hInput.value = String(snapped);
+  } else {
+    STATE.heads = snapped;
+  }
+  const d = derive(STATE);
+
+  const outputs = {
+    B: $('#out-B'),
+    T: $('#out-T'),
+    dModel: $('#out-dModel'),
+    heads: $('#out-heads'),
+    dFf: $('#out-dFf'),
+    layers: $('#out-layers')
+  };
+  Object.keys(outputs).forEach((key) => {
+    if (outputs[key]) outputs[key].textContent = STATE[key];
+  });
+
+  const note = $('#pg-note');
+  if (note) {
+    note.textContent = snapped !== requested
+      ? 'h wurde auf ' + snapped + ' gesetzt, weil h die Modellbreite teilen muss.'
+      : '';
+  }
+
+  const shape = (parts) => '(' + parts.join(', ') + ')';
+  const setShape = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+  setShape('shape-input', shape([d.B, d.T, d.dModel]));
+  setShape('shape-qkv', shape([d.B, d.T, d.dModel * 3]));
+  setShape('shape-heads', shape([d.B, d.heads, d.T, d.dK]));
+  setShape('shape-scores', shape([d.B, d.heads, d.T, d.T]));
+  setShape('shape-headout', shape([d.B, d.heads, d.T, d.dV]));
+  setShape('shape-concat', shape([d.B, d.T, d.heads * d.dV]));
+  setShape('shape-wo', shape([d.B, d.T, d.dModel]));
+  setShape('shape-ffn1', shape([d.B, d.T, d.dFf]));
+  setShape('shape-ffn2', shape([d.B, d.T, d.dModel]));
+  setShape('shape-out', shape([d.B, d.T, d.dModel]));
+
+  const scoreElems = d.B * d.heads * d.T * d.T;
+  const attnParams = 4 * d.dModel * d.dModel;
+  const ffnParams = 2 * d.dModel * d.dFf;
+  const normParams = 4 * d.dModel;
+  const perLayer = attnParams + ffnParams + normParams;
+  const total = perLayer * d.layers;
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+  setText('stat-dk', d.dK);
+  setText('stat-ratio', (d.dFf / d.dModel).toFixed(1) + '×');
+  setText('stat-score-elems', fmt(scoreElems));
+  setText('stat-score-mem', fmtMemory(scoreElems * 2));
+  setText('stat-attn-params', fmtParams(attnParams));
+  setText('stat-ffn-params', fmtParams(ffnParams));
+  setText('stat-per-layer', fmtParams(perLayer));
+  setText('stat-total', fmtParams(total));
+
+  renderMiniScore(d);
+  syncLiveTable();
+  updateFFNParam();
+}
+
+function renderMiniScore(d) {
+  const host = $('#mini-score');
+  if (!host) return;
+  host.style.gridTemplateColumns = 'repeat(' + d.T + ', minmax(0, 1fr))';
+  host.innerHTML = '';
+  for (let i = 0; i < d.T; i += 1) {
+    for (let j = 0; j < d.T; j += 1) {
+      const cell = document.createElement('span');
+      cell.className = 'cell';
+      cell.style.setProperty('--a', (0.06 + hash01(i, j, 19) * 0.68).toFixed(2));
+      cell.title = 'score[' + i + ',' + j + ']';
+      host.appendChild(cell);
+    }
+  }
+  const head = $('#mini-score-head');
+  const dims = $('#mini-score-dims');
+  if (head) head.textContent = 'Score-Matrix · B=' + d.B + ', ein Head';
+  if (dims) dims.textContent = d.T + ' × ' + d.T;
+}
+
+/* ---------- Guided tour ---------- */
+const TOUR_STEPS = [
+  {
+    title: 'Der Input',
+    target: 'mod-input',
+    arch: 'arch-input',
+    shape: 'B × T × d_model',
+    tex: String.raw`X \in \mathbb{R}^{B \times T \times d_{\mathrm{model}}}`,
+    text: 'Wir folgen dem Token „cat“ an Position 2. Seine Zeile x_cat ist ein Vektor der Länge d_model. Batch- und Zeitachse sind nur Container: Der Layer verarbeitet alle Sequenzen und Positionen parallel.'
+  },
+  {
+    title: 'Q, K, V projizieren',
+    target: 'qkv-proj',
+    arch: 'arch-attn',
+    shape: 'Q, K, V ∈ B × T × d_model',
+    tex: String.raw`Q = XW^Q,\qquad K = XW^K,\qquad V = XW^V`,
+    text: 'Drei gelernte lineare Abbildungen erzeugen Query, Key und Value. Die Query von „cat“ fragt, welche anderen Tokens für sie relevant sind. Key und Value kommen von allen Tokens.'
+  },
+  {
+    title: 'In Heads aufteilen',
+    target: 'head-split',
+    arch: 'arch-attn',
+    shape: 'B × h × T × d_k',
+    tex: String.raw`d_k = d_v = d_{\mathrm{model}}/h`,
+    text: 'Die Modellbreite wird in h Köpfe zerlegt. Jeder Kopf sieht nur d_k Kanäle und kann eine andere Beziehung lernen: Nachbarschaft, Syntax, globale Struktur oder Inhalt.'
+  },
+  {
+    title: 'Scores berechnen',
+    target: 'scores',
+    arch: 'arch-attn',
+    shape: 'B × h × T × T',
+    tex: String.raw`S = QK^\top`,
+    text: 'Die Query von „cat“ wird mit jedem Key verglichen. Das Skalarprodukt misst Kompatibilität. Es entsteht eine T×T-Matrix pro Head und Batch-Element.'
+  },
+  {
+    title: 'Skalieren',
+    target: 'scaling',
+    arch: 'arch-attn',
+    shape: 'B × h × T × T',
+    tex: String.raw`S' = S/\sqrt{d_k}`,
+    text: 'Ohne Skalierung wachsen die Dot-Produkte mit d_k. Die Softmax würde extrem scharf und die Gradienten winzig. Die Division durch √d_k hält die Varianz bei etwa 1.'
+  },
+  {
+    title: 'Maskieren',
+    target: 'masking',
+    arch: 'arch-attn',
+    shape: 'B × h × T × T',
+    tex: String.raw`S_{ij} = -\infty \quad \text{für} \quad j > i`,
+    text: 'Im Decoder darf Position i nicht in die Zukunft schauen. Die Maskierung setzt illegale Scores vor der Softmax auf −∞. Im Encoder entfällt dieser Schritt.'
+  },
+  {
+    title: 'Softmax',
+    target: 'softmax',
+    arch: 'arch-attn',
+    shape: 'B × h × T × T',
+    tex: String.raw`A = \mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)`,
+    text: 'Jede Zeile wird zu einer Wahrscheinlichkeitsverteilung über die Keys. Die Zeilensumme ist 1. Die Heatmap zeigt, welcher Head auf welche Wörter achtet.'
+  },
+  {
+    title: 'Values gewichten',
+    target: 'weighted',
+    arch: 'arch-attn',
+    shape: 'B × h × T × d_v',
+    tex: String.raw`\mathrm{head}_i = A_iV_i`,
+    text: 'Die Attention-Gewichte mischen die Value-Vektoren. „cat“ erhält eine neue Repräsentation, die Information aus den relevanten Tokens enthält.'
+  },
+  {
+    title: 'Heads konkatenieren',
+    target: 'concat',
+    arch: 'arch-attn',
+    shape: 'B × T × h·d_v',
+    tex: String.raw`[H_1;\dots;H_h] \in \mathbb{R}^{B \times T \times h d_v}`,
+    text: 'Die h Head-Ausgaben werden entlang der Feature-Achse aneinandergehängt. Aus h mal d_v wird wieder d_model. Noch sind die Head-Subräume aber getrennt.'
+  },
+  {
+    title: 'W^O projizieren',
+    target: 'projection',
+    arch: 'arch-attn',
+    shape: 'B × T × d_model',
+    tex: String.raw`\mathrm{MHA} = [H_1;\dots;H_h]W^O`,
+    text: 'W^O mischt die Head-Subräume. Erst hier fließen Informationen zwischen den Köpfen. Jeder Head hat eigene Q/K/V-Projektionen, aber nicht sein eigenes FFN.'
+  },
+  {
+    title: 'Residual + LayerNorm',
+    target: 'addnorm1',
+    arch: 'arch-addnorm1',
+    shape: 'B × T × d_model',
+    tex: String.raw`\mathrm{LayerNorm}(X + \mathrm{MHA}(X))`,
+    text: 'Der Input wird zum Attention-Output addiert. Die LayerNorm normalisiert jeden Token-Vektor über seine d_model Kanäle und skaliert mit dem gelernten γ und β.'
+  },
+  {
+    title: 'FFN',
+    target: 'ffn',
+    arch: 'arch-ffn',
+    shape: 'B × T × d_ff → B × T × d_model',
+    tex: String.raw`\mathrm{FFN}(x) = \max(0,xW_1+b_1)W_2+b_2`,
+    text: 'Das FFN wirkt position-wise: dasselbe kleine MLP auf jeden Token. Die versteckte Schicht ist typischerweise viermal breiter als d_model. Zwischen den Positionen wird hier nichts gemischt.'
+  },
+  {
+    title: 'Residual + LayerNorm 2',
+    target: 'addnorm2',
+    arch: 'arch-addnorm2',
+    shape: 'B × T × d_model',
+    tex: String.raw`\mathrm{LayerNorm}(Z + \mathrm{FFN}(Z))`,
+    text: 'Wieder ein Residualpfad und eine LayerNorm. Danach ist der Layer-Ausgang bereit für den nächsten Block. Die Form bleibt identisch, deshalb lassen sich N Layer stapeln.'
+  },
+  {
+    title: 'Output',
+    target: 'output',
+    arch: 'arch-output',
+    shape: 'B × T × d_model',
+    tex: String.raw`X^{(l+1)} \in \mathbb{R}^{B \times T \times d_{\mathrm{model}}}`,
+    text: 'Der Output hat exakt dieselbe Form wie der Input. Attention hat Information zwischen den Positionen gemischt, das FFN hat jede Position individuell verarbeitet. Das ist der vollständige Transformer-Layer.'
+  }
+];
+
+const tour = { active: false, index: 0, target: null };
+
+function initTour() {
+  const dots = $('#tour-dots');
+  if (dots) {
+    dots.innerHTML = '';
+    TOUR_STEPS.forEach((step, index) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'tour-dot';
+      dot.title = (index + 1) + ' · ' + step.title;
+      dot.setAttribute('aria-label', 'Schritt ' + (index + 1) + ': ' + step.title);
+      dot.addEventListener('click', () => jumpTour(index));
+      dots.appendChild(dot);
+    });
+  }
+  const hero = $('#hero-tour');
+  if (hero) hero.addEventListener('click', () => startTour());
+  const nav = $('#nav-tour');
+  if (nav) nav.addEventListener('click', () => startTour());
+  const prev = $('#tour-prev');
+  if (prev) prev.addEventListener('click', prevTour);
+  const next = $('#tour-next');
+  if (next) next.addEventListener('click', nextTour);
+  const close = $('#tour-close');
+  if (close) close.addEventListener('click', closeTour);
+
+  document.addEventListener('keydown', (event) => {
+    if (!tour.active) return;
+    const tag = event.target && event.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON' || tag === 'A') return;
+    if (event.key === 'ArrowRight' || event.key === ' ') {
+      event.preventDefault();
+      nextTour();
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      prevTour();
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      closeTour();
+    }
+  });
+}
+
+function startTour() {
+  tour.active = true;
+  tour.index = 0;
+  const dock = $('#tour-dock');
+  if (dock) dock.hidden = false;
+  document.body.classList.add('tour-active');
+  renderTourStep(0, true);
+}
+
+function closeTour() {
+  tour.active = false;
+  const dock = $('#tour-dock');
+  if (dock) dock.hidden = true;
+  document.body.classList.remove('tour-active');
+  $$('.tour-target').forEach((el) => el.classList.remove('tour-target'));
+  $$('.arch-node').forEach((node) => node.classList.remove('is-active', 'is-visited'));
+  tour.target = null;
+}
+
+function jumpTour(index) {
+  if (!tour.active) return;
+  renderTourStep(index, true);
+}
+function nextTour() {
+  if (!tour.active) return;
+  renderTourStep(Math.min(TOUR_STEPS.length - 1, tour.index + 1), true);
+}
+function prevTour() {
+  if (!tour.active) return;
+  renderTourStep(Math.max(0, tour.index - 1), true);
+}
+
+function renderTourStep(index, scroll) {
+  tour.index = clamp(index, 0, TOUR_STEPS.length - 1);
+  const step = TOUR_STEPS[tour.index];
+
+  $$('.tour-target').forEach((el) => el.classList.remove('tour-target'));
+  const target = document.getElementById(step.target);
+  if (target) {
+    target.classList.add('tour-target');
+    tour.target = target;
+    if (scroll) {
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      });
+    }
+  }
+
+  $$('.arch-node').forEach((node) => node.classList.remove('is-active', 'is-visited'));
+  const visitedArch = new Set();
+  for (let i = 0; i <= tour.index; i += 1) visitedArch.add(TOUR_STEPS[i].arch);
+  visitedArch.forEach((id) => {
+    const node = document.getElementById(id);
+    if (node) node.classList.add('is-visited');
+  });
+  const activeArch = document.getElementById(step.arch);
+  if (activeArch) {
+    activeArch.classList.add('is-active');
+    activeArch.classList.remove('is-visited');
+  }
+
+  const label = $('#tour-step-label');
+  const title = $('#tour-step-title');
+  const text = $('#tour-step-text');
+  const shape = $('#tour-shape');
+  const progress = $('#tour-progress-fill');
+  if (label) label.textContent = 'Schritt ' + (tour.index + 1) + ' / ' + TOUR_STEPS.length;
+  if (title) title.textContent = step.title;
+  if (text) text.textContent = step.text;
+  if (shape) shape.textContent = step.shape;
+  if (progress) progress.style.width = (((tour.index + 1) / TOUR_STEPS.length) * 100).toFixed(2) + '%';
+
+  setTex($('#tour-math'), step.tex, true);
+
+  $$('#tour-dots .tour-dot').forEach((dot, i) => {
+    dot.classList.toggle('is-active', i === tour.index);
+    dot.classList.toggle('is-done', i < tour.index);
+  });
+
+  const prev = $('#tour-prev');
+  const next = $('#tour-next');
+  if (prev) prev.disabled = tour.index === 0;
+  if (next) {
+    next.disabled = tour.index === TOUR_STEPS.length - 1;
+    next.textContent = tour.index === TOUR_STEPS.length - 1 ? 'Fertig' : 'Weiter →';
+  }
+}
+
+/* ---------- Initialize everything ---------- */
+function initConcatLab() {
+  buildConcatLab();
+  const play = $('#concat-play');
+  if (play) play.addEventListener('click', playConcat);
+  const reset = $('#concat-reset');
+  if (reset) reset.addEventListener('click', resetConcat);
+}
+
+function init() {
+  renderStaticMath();
+  initBackground();
+  initScrollUI();
+  initReveal();
+  initArchitecture();
+  initHeroHeat();
+  initProjectionLab();
+  initAttentionLab();
+  initSharpness();
+  initConcatLab();
+  buildNormLab();
+  initFFN();
+  initPlayground();
+  initTour();
+  syncLiveTable();
+  if (!window.temml) window.__loadLocalTemml();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+window.addEventListener('load', () => {
+  window.__rerenderAllMath();
+  drawArchLinks();
+  setTimeout(drawArchLinks, 500);
+});
+</script>
+</body>
+</html>
