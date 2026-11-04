@@ -80,4 +80,24 @@ mach allgemein ein paar mehr keywords fett
 
 " Das Rezept wurde dann zu einem Engineering-Programm. ULMFiT lieferte die Dreischritt-Vorlage: auf allgemeinem Text pretrainen, auf der Zieldomäne fine-tunen, auf der Aufgabe fine-tunen. RoBERTa zeigte, dass BERT untertrainiert war und mehr Daten mit dynamischer Maskierung es verbesserten. ELECTRA änderte das Ziel vom Füllen von Lücken zum Erkennen ersetzter Tokens, was ein Trainingssignal an jeder Position liefert. T5 verwandelte jede Aufgabe in Text-zu-Text. " verlinke da die originalarbeiten wenn du sie findest
 
+"Drei verschiedene Hebel "  die dt übersetzung ist hier falsch. es ist "die katze saß auf DER matte", nicht DIE matte
 
+schaue für die "Mechanismus · Attention" demo in ../lndw/index.html wie die rechnugnen gehen und dass man die ergebnisse nutzt um die neuen vektoren zu generieren. zeige genau das. es geht darum dass man das was aus dem attn raus kommt nimmt und damit die vektoren gewichtet addiert, zeige das mit latex/temml
+
+bei "Ziel · Pretraining" sind die bars alle leer
+
+"Skalierung ist eine Strategie, ein Compute-Budget auszugeben, kein Teil des Blocks." ist bullshit. entferne das
+
+entferne "Warum derselbe Block Encoder oder Decoder sein kann Warum derselbe Block Encoder oder Decoder sein kann Die Maske und das Trainingsziel entscheiden den Vertrag. BERTs Encoder liest den ganzen Satz und füllt maskierte Lücken. GPTs Decoder liest nur die Vergangenheit und sagt das nächste Token voraus. Ein Encoder-Decoder-Modell wie der ursprüngliche Transformer liest die Quelle und erzeugt das Ziel. Der Block ist geteilt; der Informationsfluss ist anders."
+
+"Die Standardgeschichte ist eine Parade berühmter Namen und plötzlicher Durchbrüche" richtig aber schlecht formuliert
+
+"und das Geld ging" und das geld gestrichen wurde
+
+"Der Transformer verdichtete eine sehr lange Zündschnur." pass das an an den neuen kram ganz oben wo Zündschnur auch falsch war
+
+" „KI wurde 2022 erfunden.“ Die Schnittstelle war neu; die Abstammungslinie ist mindestens vierzigtausend Jahre alt. " und eigentlich noch viel älter
+
+" „Der Transformer verdichtete eine lange Zündschnur.“ Zählen, Logik, Feedback, Lernen und Hardware mussten alle vorhanden sein. " same mit dem Zündschnur
+
+" Für die materielle und menschliche Geschichte, die die Standardparade auslässt (die Arbeit, die Minen, die Frauen, die die ersten Programme schrieben, die Techniker, die die Maschinen verdrahteten), geht die breitere Geschichte hinter dieser Seite weiter. Das ist die andere Hälfte dieser Geschichte. " entferne diesen satz komplett
