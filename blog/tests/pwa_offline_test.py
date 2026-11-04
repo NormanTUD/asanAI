@@ -92,20 +92,27 @@ def local_server(port: int):
 
 
 def wait_until_cached(page, url: str, prefix: str, timeout_ms: int = 120000) -> bool:
-    page.wait_for_function(
-        """async ({ url, prefix }) => {
-            const names = await caches.keys();
-            for (const name of names) {
-                if (!name.startsWith(prefix)) continue;
-                const cache = await caches.open(name);
-                if (await cache.match(url, { ignoreSearch: true })) return true;
-            }
-            return false;
-        }""",
-        arg={"url": url, "prefix": prefix},
-        timeout=timeout_ms,
-    )
-    return True
+    # Poll from Python instead of page.wait_for_function: an async predicate
+    # can resolve immediately there, so the wait returned before the cache
+    # existed and the offline reload raced the caching pass.
+    deadline = time.time() + timeout_ms / 1000.0
+    while time.time() < deadline:
+        found = page.evaluate(
+            """async ({ url, prefix }) => {
+                const names = await caches.keys();
+                for (const name of names) {
+                    if (!name.startsWith(prefix)) continue;
+                    const cache = await caches.open(name);
+                    if (await cache.match(url, { ignoreSearch: true })) return true;
+                }
+                return false;
+            }""",
+            {"url": url, "prefix": prefix},
+        )
+        if found:
+            return True
+        time.sleep(0.1)
+    raise TimeoutError(f"timed out waiting for {url} in {prefix}*")
 
 
 def main() -> int:

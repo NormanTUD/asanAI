@@ -16,15 +16,6 @@ const STORAGE_TARGET_RATIO = 0.6;
 const STORAGE_CHECK_DELAY = 5000;
 let storageCheckTimer = null;
 
-function dbg(message) {
-	try {
-		caches.open("swdbg").then(function (cache) {
-			return cache.put("/swdbg/" + Date.now() + "-" + Math.random(), new Response(String(message)));
-		}).catch(function () {});
-	} catch (error) {
-	}
-}
-
 const SCOPE_URL = new URL(self.registration.scope);
 const OFFLINE_URL = new URL("offline.html", SCOPE_URL).href;
 
@@ -168,7 +159,6 @@ async function trimCache(cache, maxEntries) {
 	try {
 		const keys = await cache.keys();
 		const excess = keys.length - maxEntries;
-		if (excess > 0) dbg("trim " + cache.name + " " + keys.length + "/" + maxEntries);
 		for (let i = 0; i < excess; i += 1) {
 			await cache.delete(keys[i]);
 		}
@@ -189,7 +179,6 @@ async function storageEstimate() {
 
 async function enforceStorageBudget() {
 	const first = await storageEstimate();
-	dbg("budget " + (first && first.usage) + "/" + (first && first.quota));
 	if (!first || !first.quota || !first.usage) {
 		return;
 	}
@@ -206,7 +195,6 @@ async function enforceStorageBudget() {
 			continue;
 		}
 		const removeCount = Math.max(1, Math.ceil(keys.length * 0.25));
-		dbg("budget evict " + cacheName + " n=" + removeCount + " euler=" + keys.map(function (k) { return k.url; }).filter(function (u) { return u.indexOf("euler") !== -1; }).join(","));
 		for (let i = 0; i < removeCount; i += 1) {
 			await cache.delete(keys[i]);
 		}
@@ -284,7 +272,6 @@ function collectHtmlAssetUrls(html, baseUrl) {
 }
 
 async function cacheAssetUrls(cache, list) {
-	dbg("cacheAssetUrls " + cache.name + " n=" + list.length + " euler=" + list.filter(function (u) { return u.indexOf("euler") !== -1; }).join(","));
 	let total = 0;
 	let cached = 0;
 	let failed = 0;
@@ -294,23 +281,17 @@ async function cacheAssetUrls(cache, list) {
 		await Promise.all(batch.map(async function (href) {
 			total += 1;
 			try {
-				if (href.indexOf("euler") !== -1) dbg("euler start " + href);
-				const hit = await cache.match(href);
-				if (href.indexOf("euler") !== -1) dbg("euler match " + Boolean(hit));
-				if (hit) {
-					if (href.indexOf("euler") !== -1) dbg("euler already cached");
+				if (await cache.match(href)) {
 					cached += 1;
 					return;
 				}
 				const response = await fetch(href);
-				if (href.indexOf("euler") !== -1) dbg("euler fetch " + response.status + " " + response.type);
 				if (await putIfCacheable(cache, href, response, MAX_ASSETS)) {
 					cached += 1;
 				} else {
 					failed += 1;
 				}
 			} catch (error) {
-				if (href.indexOf("euler") !== -1) dbg("euler error " + String(error));
 				failed += 1;
 			}
 		}));
@@ -400,7 +381,6 @@ async function refreshAsset(cache, request) {
 async function handleAsset(event, request) {
 	const cache = await caches.open(ASSETS_CACHE);
 	const cached = await cache.match(request);
-	if (request.url.indexOf("euler") !== -1) dbg("handleAsset euler cached=" + Boolean(cached));
 	if (cached) {
 		// Re-downloading versioned scripts, fonts and images on every request
 		// wastes bandwidth; only mutable text assets get a background refresh.
@@ -424,7 +404,6 @@ async function handleAsset(event, request) {
 }
 
 async function cachePage(pageUrl, assetUrls) {
-	dbg("cachePage " + pageUrl + " n=" + (assetUrls || []).length + " euler=" + (assetUrls || []).filter(function (u) { return u.indexOf("euler") !== -1; }).join(","));
 	const pageCache = await caches.open(PAGES_CACHE);
 	const assetCache = await caches.open(ASSETS_CACHE);
 	let total = 0;
@@ -487,7 +466,6 @@ async function cachePage(pageUrl, assetUrls) {
 	});
 
 	const assetResult = await cacheAssetUrls(assetCache, Array.from(uniqueAssets));
-	dbg("cachePage result " + pageUrl + " " + JSON.stringify(assetResult));
 	total += assetResult.total;
 	cached += assetResult.cached;
 	failed += assetResult.failed;
@@ -526,11 +504,9 @@ self.addEventListener("install", function (event) {
 
 self.addEventListener("activate", function (event) {
 	event.waitUntil((async function () {
-		dbg("activate");
 		const keys = await caches.keys();
 		await Promise.all(keys.map(function (key) {
 			if (key.startsWith(CACHE_PREFIX) && key !== SHELL_CACHE && key !== PAGES_CACHE && key !== ASSETS_CACHE) {
-				dbg("activate delete " + key);
 				return caches.delete(key);
 			}
 			return Promise.resolve(false);
