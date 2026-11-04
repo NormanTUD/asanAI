@@ -210,6 +210,26 @@ Alignment research initially assumed that human-labelled preference data was the
 </div>
 
 <div class="md">
+## Weight-Space Programming
+
+### Reading and Writing the Weights
+
+In November 2026, a team at MIT CSAIL reported a set of experiments in which GPT-6 Astra treated a network's weights as a text artifact it could read and rewrite (\cite[Takehi et al., 2026]{takehi2026weightspace}). Given only the raw weights of small grid-game policies, with no game names in the prompt, Astra named the correct game each time. Given the weights of diffusion models, it identified the generated shape without running a forward pass. Given only the middle transformer blocks of a small character model, with the input and output layers removed, it named the training language and the copying heads, matching the induction heads that were measured by running the model.
+
+The report also shows writing. Astra repaired a stuck car-driving policy by changing 3.5% of its weights, wrote MinAtar policies from scratch that beat a PPO baseline trained for 100 million steps, and wrote a Go network inside a Python sandbox without training. The headline experiment edited Qwen3.5-0.8B. Astra traced its repetitive reasoning loops to a direction written by the middle MLP layers, subtracted that direction from a small set of output columns, and changed 0.016% of the model's weights. MATH-500 rose from 7.9% to 48.1% and IFEval from 21.0% to 62.3% (\cite[Takehi et al., 2026]{takehi2026weightspace}).
+</div>
+
+<div class="md">
+### A Composition, Not a Superpower
+
+The framing needs care. In the raw-weight-only setting, where no tools are available and the network is never run, the experiments covered networks of roughly 17,000 to 172,000 weights. Every experiment on a real language model gave Astra Python, and the Qwen edit also allowed practice batches. The Qwen failure was specific, a reasoning loop, and the repair removed the loop rather than teaching new mathematics. When the same procedure ran on Gemma 3 270M, which rarely loops, it produced no reliable gain; the authors conclude that editing could remove an obstacle that hid an ability, but could not add an ability the model lacked (\cite[Takehi et al., 2026]{takehi2026weightspace}).
+
+That is why this is best read as a composition of capabilities the course has already met: mechanistic interpretability (finding a direction in the weights), model editing (changing it surgically), and code-writing agents (writing the analysis and the patch). \cite[Goedecke (2026)]{goedecke2026weightspace} and \cite[Honnibal (2026)]{honnibal2026weightspace} both argue that a competent human ML engineer could carry out the same steps, and that the headline conflates reading raw weights with tool-assisted editing. A same-day independent reproduction on toy algorithmic tasks reported success on ten tasks but found that its three language-task results were affected by evaluation leakage (\cite[Singh, 2026]{singh2026weightspace}). What is new is that a general-purpose model can plan and execute the whole loop, not that it has a direct channel into weight space that bypasses the tools.
+
+The safety implication matters more than the benchmark gain. If a model can locate a behaviour's direction in the weights and remove it without data, the same access can remove a safety behaviour. The refusal direction in the [Mechanistic Interpretability](mechanistic_interpretability.php) chapter is the clean existing example: a rank-one weight edit removes refusal while benchmark accuracy barely moves. Weight-space programming automates the search for that direction, which makes the old interpretability result both more useful for auditing and more dangerous as an attack surface. The authors list auditing without evaluation, zero-data unlearning, and recursive self-improvement among the applications (\cite[Takehi et al., 2026]{takehi2026weightspace}). Whether the loop becomes a reliable engineering discipline or stays a collection of narrow demonstrations is the open question.
+</div>
+
+<div class="md">
 ## Limits and Failure Modes
 
 ### The Inverse of “Knowing What It Doesn't Know”
