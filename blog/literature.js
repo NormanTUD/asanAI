@@ -10800,6 +10800,36 @@ window.bibData = {
 		year: 2023,
 		alternativetitle: "Sparks of AGI"
 	},
+	/* ── Weight-Space Programming (unexpected_capabilities.php,
+	 *  mechanistic_interpretability.php, alignment.php) ───────────────── */
+	"takehi2026weightspace": {
+		url: "https://rikiyat.github.io/blog/weight-space-programming/",
+		title: "Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights",
+		author: "Rikiya Takehi, Jayden Teoh, Alex Zhang, Omar Khattab",
+		year: 2026,
+		alternativetitle: "Takehi et al., Weight-Space Programming (2026)"
+	},
+	"goedecke2026weightspace": {
+		url: "https://www.seangoedecke.com/llms-are-not-superhuman-at-reading-and-writing-neural-network-weights/",
+		title: "LLMs are not superhuman at reading and writing neural network weights",
+		author: "Sean Goedecke",
+		year: 2026,
+		alternativetitle: "Goedecke, LLMs Are Not Superhuman at Weight Editing (2026)"
+	},
+	"honnibal2026weightspace": {
+		url: "https://honnibal.dev/blog/astra-read-write-misleading",
+		title: "The 'Astra can read and write weights to improve Qwen' post is misleading",
+		author: "Matthew Honnibal",
+		year: 2026,
+		alternativetitle: "Honnibal, The Astra Weight-Editing Post Is Misleading (2026)"
+	},
+	"singh2026weightspace": {
+		url: "https://csinva.io/weight-space-programming-autoresearch/analyze/toy_examples/report.html",
+		title: "Weight-Space Programming from scratch on simple tasks",
+		author: "Chandan Singh",
+		year: 2026,
+		alternativetitle: "Singh, Weight-Space Programming from Scratch (2026)"
+	},
 	"nye2021scratchpad": {
 		url: "https://arxiv.org/abs/2112.00114",
 		title: "Show Your Work: Scratchpads for Intermediate Computation with Language Models",
