@@ -233,7 +233,17 @@
 								and the token stream, embedding map, and positional waves update.
 							</p>
 						</div>
-<div class="demo-loader-status" id="demo-loader-status">The interactive demos load when you reach this section.</div>
+<div class="demo-loader-status" id="demo-loader-status">
+<div class="demo-loader-head">
+<span class="demo-loader-title" id="demo-loader-title">The interactive demos load when you reach this section.</span>
+<span class="demo-loader-count" id="demo-loader-count"></span>
+</div>
+<div class="demo-loader-track" id="demo-loader-track" hidden><div class="demo-loader-fill" id="demo-loader-fill"></div></div>
+<div class="demo-loader-meta" id="demo-loader-meta" hidden>
+<span id="demo-loader-current"></span>
+<span id="demo-loader-percent"></span>
+</div>
+</div>
 <div class="viz-container" id="transformer-viz-bpe"></div>
 <div style="background: var(--mn-bg-subtle, #f8fafc); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
 <div id="transformer-plotly-space" style="width: 100%; height: 500px; background: var(--mn-surface, white); border-radius: 8px;"></div>
@@ -1006,35 +1016,181 @@
 
 
 
+	<?php
+	$tmDemoFiles = [
+		'assets/full/shim.js',
+		'assets/full/transformer.js',
+		'assets/full/vendor/plotly-2.24.1.min.js',
+		'assets/full/vendor/echarts.min.js',
+		'assets/full/attention_engine.js',
+		'assets/full/llm_river.js',
+		'assets/full/provenance.js',
+		'assets/full/demo-i18n.js',
+		'assets/full/demo-render.js'
+	];
+	$tmDemoSizes = [];
+	$tmDemoTotal = 0;
+	foreach ($tmDemoFiles as $tmFile) {
+		$tmSize = @filesize(__DIR__ . '/' . $tmFile);
+		$tmDemoSizes[$tmFile] = $tmSize ?: 0;
+		$tmDemoTotal += $tmSize ?: 0;
+	}
+	?>
 	<script>
 	(function () {
 		"use strict";
+		var files = <?php echo json_encode($tmDemoFiles, JSON_UNESCAPED_SLASHES); ?>;
+		var sizes = <?php echo json_encode($tmDemoSizes, JSON_UNESCAPED_SLASHES); ?>;
+		var totalBytes = <?php echo (int) $tmDemoTotal; ?> || 1;
+		var perfOnly = /[?&]demo_perf=1(?:&|$)/.test(location.search);
+		var fetchOnly = /[?&]demo_perf=fetch(?:&|$)/.test(location.search);
+		var labels = {
+			"plotly-2.24.1.min.js": ["Plotly (charts)", "Plotly (Diagramme)"],
+			"echarts.min.js": ["ECharts (position waves)", "ECharts (Positionswellen)"],
+			"shim.js": ["Demo shim", "Demo-Shim"],
+			"transformer.js": ["Transformer engine", "Transformer-Engine"],
+			"attention_engine.js": ["Attention engine", "Attention-Engine"],
+			"llm_river.js": ["Token river", "Token-Fluss"],
+			"provenance.js": ["Formula provenance", "Formel-Herkunft"],
+			"demo-i18n.js": ["German demo texts", "Deutsche Demo-Texte"],
+			"demo-render.js": ["Formula renderer", "Formel-Renderer"]
+		};
 		var started = false, done = false;
 		var hosts = ["inputlab", "block", "output", "realmodel"].map(function (id) { return document.getElementById(id); }).filter(Boolean);
 		if (!hosts.length) hosts = [document.body];
 		var status = document.getElementById("demo-loader-status");
+		var titleEl = document.getElementById("demo-loader-title");
+		var countEl = document.getElementById("demo-loader-count");
+		var trackEl = document.getElementById("demo-loader-track");
+		var fillEl = document.getElementById("demo-loader-fill");
+		var metaEl = document.getElementById("demo-loader-meta");
+		var currentEl = document.getElementById("demo-loader-current");
+		var percentEl = document.getElementById("demo-loader-percent");
+		var completedBytes = 0, completedFiles = 0, currentBytes = 0, currentFile = "";
+		var frame = null;
+		var perf = { start: performance.now(), files: [], totalBytes: totalBytes };
 		function t(en, de) { return (window.TM && TM.lang && TM.lang() === "de") ? de : en; }
-		function setStatus(text) { if (status) status.textContent = text; }
-		function loadScript(src) {
+		function fmtMB(bytes) {
+			var mb = bytes / 1048576;
+			return (mb >= 10 ? mb.toFixed(0) : mb.toFixed(1)) + " MB";
+		}
+		function labelFor(file) {
+			var base = file.split("/").pop();
+			var pair = labels[base];
+			if (!pair) return base;
+			return TM.lang && TM.lang() === "de" ? pair[1] : pair[0];
+		}
+		function paint() {
+			frame = null;
+			if (!status) return;
+			var loaded = Math.min(totalBytes, completedBytes + currentBytes);
+			var pct = Math.max(0, Math.min(100, Math.round(loaded / totalBytes * 100)));
+			fillEl.style.width = pct + "%";
+			percentEl.textContent = pct + "%";
+			countEl.textContent = completedFiles + " / " + files.length + " " + t("files", "Dateien");
+			currentEl.textContent = (currentFile ? labelFor(currentFile) + " · " : "") + fmtMB(loaded) + " / " + fmtMB(totalBytes);
+		}
+		function schedulePaint() {
+			if (frame) return;
+			frame = requestAnimationFrame(paint);
+		}
+		function showLoading() {
+			if (!status) return;
+			status.style.display = "block";
+			status.classList.add("is-loading");
+			titleEl.textContent = t("Loading the interactive transformer demos…", "Interaktive Transformer-Demos werden geladen…");
+			trackEl.hidden = false;
+			metaEl.hidden = false;
+			countEl.hidden = false;
+			paint();
+		}
+		function setCurrent(file) {
+			currentFile = file;
+			currentBytes = 0;
+			schedulePaint();
+		}
+		function addBytes(n) {
+			currentBytes += n;
+			schedulePaint();
+		}
+		function finishFile(file, bytes, fetchMs, execMs, cached) {
+			completedBytes += bytes || sizes[file] || 0;
+			completedFiles++;
+			perf.files.push({ file: file, bytes: bytes || sizes[file] || 0, fetchMs: fetchMs, execMs: execMs, cached: !!cached });
+			currentFile = "";
+			currentBytes = 0;
+			schedulePaint();
+		}
+		function initializeFile(file, text, fetchMs, bytes) {
+			if (fetchOnly) { finishFile(file, bytes, fetchMs, 0, false); return Promise.resolve(); }
+			if (titleEl) titleEl.textContent = t("Initializing ", "Initialisiere ") + labelFor(file) + "…";
+			schedulePaint();
+			return new Promise(function (resolve) {
+				requestAnimationFrame(function () {
+					var t0 = performance.now();
+					var script = document.createElement("script");
+					script.textContent = text;
+					document.body.appendChild(script);
+					finishFile(file, bytes, fetchMs, performance.now() - t0, false);
+					resolve();
+				});
+			});
+		}
+		function loadScript(file) {
 			return new Promise(function (resolve, reject) {
 				var script = document.createElement("script");
-				script.src = src;
+				script.src = file;
 				script.async = false;
 				script.onload = resolve;
-				script.onerror = function () { reject(new Error(src)); };
+				script.onerror = function () { reject(new Error(file)); };
 				document.body.appendChild(script);
+			});
+		}
+		function loadFile(file) {
+			setCurrent(file);
+			var t0 = performance.now();
+			return fetch(file, { credentials: "same-origin" }).then(function (response) {
+				if (!response.ok) throw new Error(file + " " + response.status);
+				var reader = response.body && response.body.getReader ? response.body.getReader() : null;
+				if (!reader) {
+					return response.text().then(function (text) {
+						return initializeFile(file, text, performance.now() - t0, sizes[file] || 0);
+					});
+				}
+				var chunks = [], loaded = 0;
+				function pump() {
+					return reader.read().then(function (result) {
+						if (result.done) return;
+						chunks.push(result.value);
+						loaded += result.value.length;
+						addBytes(result.value.length);
+						return pump();
+					});
+				}
+				return pump().then(function () {
+					return new Blob(chunks).text();
+				}).then(function (text) {
+					return initializeFile(file, text, performance.now() - t0, loaded);
+				});
+			}).catch(function () {
+				return loadScript(file).then(function () {
+					finishFile(file, sizes[file] || 0, null, null, false);
+				});
 			});
 		}
 		var tfPromise = null;
 		function loadTF() {
 			if (window.tf) return Promise.resolve();
 			if (tfPromise) return tfPromise;
+			var box = document.getElementById("training-status");
+			if (box) {
+				box.style.display = "block";
+				box.textContent = t("Loading TensorFlow.js…", "TensorFlow.js wird geladen…");
+			}
 			tfPromise = loadScript("assets/full/vendor/tf.min.js").then(function () {
 				if (!window.tf) throw new Error("TensorFlow.js missing");
 				var ready = tf.setBackend ? tf.setBackend("cpu") : Promise.resolve();
-				return Promise.resolve(ready).then(function () {
-					return tf.ready ? tf.ready() : null;
-				});
+				return Promise.resolve(ready).then(function () { return tf.ready ? tf.ready() : null; });
 			});
 			return tfPromise;
 		}
@@ -1046,63 +1202,82 @@
 				if (window.tf) return;
 				event.preventDefault();
 				event.stopImmediatePropagation();
-				var box = document.getElementById("training-status");
-				if (box) {
-					box.style.display = "block";
-					box.textContent = t("Loading TensorFlow.js…", "TensorFlow.js wird geladen…");
-				}
 				loadTF().then(function () {
 					if (typeof train_transformer === "function") train_transformer();
 				}).catch(function () {
+					var box = document.getElementById("training-status");
 					if (box) box.textContent = t("TensorFlow.js could not load.", "TensorFlow.js konnte nicht geladen werden.");
 				});
 			}, true);
 		}
+		function finish() {
+			done = true;
+			perf.totalMs = performance.now() - perf.start;
+			window.__tmDemoPerf = perf;
+			if (status) {
+				titleEl.textContent = t("Interactive demos ready.", "Interaktive Demos bereit.");
+				fillEl.style.width = "100%";
+				percentEl.textContent = "100%";
+				countEl.textContent = files.length + " / " + files.length + " " + t("files", "Dateien");
+				currentEl.textContent = t("Done", "Fertig") + " · " + fmtMB(totalBytes);
+				setTimeout(function () { if (status) status.style.display = "none"; }, 1200);
+			}
+		}
+		function showPerf() {
+			var pre = document.createElement("pre");
+			pre.id = "demo-perf-out";
+			pre.style.cssText = "white-space:pre-wrap;font-size:11px;background:#fff;border:1px solid #ccc;padding:8px;margin:8px 0;";
+			pre.textContent = JSON.stringify(perf, null, 2);
+			document.body.appendChild(pre);
+		}
 		function loadAll() {
 			if (started) return;
 			started = true;
-			setStatus(t("Loading the interactive transformer demos…", "Interaktive Transformer-Demos werden geladen…"));
-			var vendor = [
-				"assets/full/vendor/plotly-2.24.1.min.js",
-				"assets/full/vendor/echarts.min.js"
-			];
-			var core = [
-				"assets/full/shim.js",
-				"assets/full/transformer.js",
-				"assets/full/attention_engine.js",
-				"assets/full/llm_river.js",
-				"assets/full/provenance.js",
-				"assets/full/demo-i18n.js",
-				"assets/full/demo-render.js"
-			];
-			Promise.all(vendor.map(loadScript)).then(function () {
-				return core.reduce(function (p, src) {
-					return p.then(function () { return loadScript(src); });
-				}, Promise.resolve());
-			}).then(function () {
+			showLoading();
+			files.reduce(function (p, file, index) {
+				return p.then(function () { return loadFile(file); }).then(function () {
+					if (index === 1) {
+						try {
+							var corpus = document.getElementById("transformer-training-data");
+							if (corpus && typeof transformer_tokenize_render === "function") {
+								transformer_tokenize_render(corpus.value, "transformer-viz-bpe");
+							}
+						} catch (e) {}
+					}
+				});
+			}, Promise.resolve()).then(function () {
+				perf.scriptsMs = performance.now() - perf.start;
+				window.__tmDemoPerf = perf;
+				if (perfOnly || fetchOnly) { showPerf(); finish(); return; }
 				try {
 					var ifs = document.getElementById("ifscalfactornotone");
 					if (ifs) ifs.style.display = "none";
-					if (typeof loadTransformerModule === "function") loadTransformerModule();
-					wireTrain();
-					done = true;
-					if (status) {
-						status.textContent = t("Interactive demos ready.", "Interaktive Demos bereit.");
-						setTimeout(function () { if (status) status.style.display = "none"; }, 900);
-					}
+					if (titleEl) titleEl.textContent = t("Starting the transformer engine…", "Starte die Transformer-Engine…");
+					schedulePaint();
+					requestAnimationFrame(function () {
+						var t0 = performance.now();
+						var result = typeof loadTransformerModule === "function" ? loadTransformerModule() : null;
+						Promise.resolve(result).then(function () {
+							perf.engineMs = performance.now() - t0;
+							wireTrain();
+							finish();
+						}).catch(function () {
+							perf.engineMs = performance.now() - t0;
+							window.__tmDemoPerf = perf;
+							if (status) titleEl.textContent = t("The demos could not start.", "Die Demos konnten nicht starten.");
+						});
+					});
 				} catch (e) {
-					setStatus(t("The demos could not start.", "Die Demos konnten nicht starten."));
+					if (status) titleEl.textContent = t("The demos could not start.", "Die Demos konnten nicht starten.");
 				}
 			}).catch(function () {
-				setStatus(t("The demos could not load.", "Die Demos konnten nicht geladen werden."));
+				if (status) titleEl.textContent = t("The demos could not load.", "Die Demos konnten nicht geladen werden.");
 			});
 		}
 		function near() {
 			if (started) return true;
 			var limit = (window.innerHeight || 800) + 900;
-			for (var i = 0; i < hosts.length; i++) {
-				if (hosts[i].getBoundingClientRect().top < limit) return true;
-			}
+			for (var i = 0; i < hosts.length; i++) if (hosts[i].getBoundingClientRect().top < limit) return true;
 			return false;
 		}
 		if ("IntersectionObserver" in window) {
