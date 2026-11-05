@@ -3890,6 +3890,7 @@ html[data-theme="dark"] .myth--ok b { color: var(--tm-green); }
 	overflow-x: auto;
 	overflow-y: hidden;
 }
+#emb-equation { height: auto; min-height: 5.6rem; overflow-y: visible; }
 .emb-equation math { font-size: 1.08rem; }
 .emb-formula {
 	height: auto;
