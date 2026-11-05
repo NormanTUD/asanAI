@@ -2548,7 +2548,6 @@ function buildTemperatureSection(logits, logitValues, temperature) {
     const scaledProbs = softmax(scaledLogitValues);
 
     const scaledProbRows = buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature);
-    const entropySection = buildEntropyLatex(probs, scaledProbs, logits.length, temperature);
 
     return `
 <div style="overflow-x:auto; padding:10px 0;">
@@ -2562,7 +2561,7 @@ $$
 $$
 </div>
 
-        ${entropySection}`;
+`;
 }
 
 function buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature) {

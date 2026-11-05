@@ -145,6 +145,14 @@
 	overflow: auto;
 }
 .logit_calc { overflow-x: auto; }
+#transformer-output-projection { text-align: center; }
+#transformer-output-projection .logit_calc {
+	display: block;
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center !important;
+}
 .head-tab-in-layer { border-radius: 0; background: var(--tm-wash); }
 
 /* Keep the demo lab inside the compact column. */

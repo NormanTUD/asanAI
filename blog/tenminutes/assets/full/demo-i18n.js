@@ -175,7 +175,6 @@
 		"Press Train Model to start": "Drücke „Modell trainieren“, um zu starten",
 		"Temperature scaling": "Temperatur-Skalierung",
 		"🧩 What each layer is doing — measured live from the weights": "🧩 Was jede Schicht tut — live aus den Gewichten gemessen",
-		"Pre-Layer Normalization (applied before the sublayer)": "Pre-Layer-Normalisierung (vor der Unterschicht)",
 		"Residual connection": "Residual-Verbindung",
 		"Output projection": "Ausgabeprojektion",
 		"Output Projection Matrix": "Ausgabeprojektionsmatrix",
@@ -216,8 +215,6 @@
 			.replace(/\bTraining Complete!\b/g, "Training abgeschlossen!")
 			.replace(/\bTraining Stopped\.\b/g, "Training gestoppt.")
 			.replace(/^Layer (\d+)/, "Schicht $1")
-			.replace(/Pre-Layer Normalization \(applied /g, "Pre-Layer-Normalisierung (angewendet ")
-			.replace(/ the sublayer\)/g, " der Unterschicht)")
 			.replace(/Residual connection/g, "Residual-Verbindung")
 			.replace(/\(Pre-LN: no normalization on sublayer output\)/g, "(Pre-LN: keine Normalisierung auf der Ausgabe der Unterschicht)")
 			.replace(/Pre-Layer Normalization \(applied\b/g, "Pre-Layer-Normalisierung (angewendet")

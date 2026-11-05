@@ -93,26 +93,27 @@ class AttentionEngine {
 		const vMatrixTex = this._attnRowLabeledMatrix(Vi, displayTokens, n, 'V proj');
 		const contextMatrixTex = this._attnRowLabeledMatrix(context, displayTokens, n, 'head ctx');
 
+		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+		const contextText = isDe
+			? `Der <b>Kontextvektor</b> jedes Tokens ist ein gewichteter Durchschnitt aller Value-Vektoren, die es sehen kann. Die Attention-Gewichte (aus Softmax) bestimmen, wie viel jedes Value beiträgt. Token $i$ kann nur auf Tokens $0 \\ldots i$ schauen (kausale Maske).`
+			: `Each token's <b>context vector</b> is a weighted average of all Value vectors it can see. The attention weights (from Softmax) determine how much each Value contributes. Token $i$ can only attend to tokens $0 \\ldots i$ (causal mask).`;
+		const producesText = isDe
+			? `Das erzeugt einen $d_k = ${d_k}$-dimensionalen Kontextvektor pro Token und Head.`
+			: `This produces one $d_k = ${d_k}$-dimensional context vector per token per head.`;
+		const stackingText = isDe
+			? `Alle Kontextvektoren übereinander ergeben die Ausgabe dieses Heads — eine Matrix der Form $(T \\times d_k) = (${n} \\times ${d_k})$.`
+			: `Stacking all context vectors gives the output of this head — a matrix of shape $(T \\times d_k) = (${n} \\times ${d_k})$.`;
+		const matrixText = isDe
+			? `In der <b>Attention-Gewichte-Matrix</b>: Zeilen sind <b>Query</b>-Tokens (wer schaut), Spalten sind <b>Key</b>-Tokens (wer angeschaut wird). Jede Zeile summiert zu 1 (Softmax). Die Spaltenköpfe zeigen, welches Token zu jeder Spalte gehört.`
+			: `In the <b>Attention Weights</b> matrix: rows are <b>query</b> tokens (who is looking), columns are <b>key</b> tokens (who is being looked at). Each row sums to 1 (softmax). The column headers show which token each column corresponds to.`;
+
 		return `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
-    <p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Context Matrix for Head ${headIdx + 1}</p>
-    <p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">
-	Each token's <b>context vector</b> is a weighted average of all Value vectors it can see.
-	The attention weights (from Softmax) determine how much each Value contributes.
-	Token $i$ can only attend to tokens $0 \\ldots i$ (causal mask).
-    </p>
+    <p style="font-weight:600; color:#1e40af; margin-bottom:6px;">${isDe ? 'Kontextmatrix für Head' : 'Context Matrix for Head'} ${headIdx + 1}</p>
+    <p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">${contextText}</p>
     $$ \\text{context}_i = \\sum_{j=0}^{i} \\underbrace{\\alpha_{i,j}}_{\\substack{\\text{attention} \\\\ \\text{weight}}} \\cdot \\underbrace{V_j}_{\\substack{\\text{Value vector} \\\\ \\text{of token } j}} $$
-    <p style="font-size:0.8rem; color:#64748b;">
-	This produces one $d_k = ${d_k}$-dimensional context vector per token per head.
-    </p>
-    <p style="font-size:0.85rem; color:#334155; margin-bottom:4px;">
-	Stacking all context vectors gives the output of this head — a matrix of shape
-	$(T \\times d_k) = (${n} \\times ${d_k})$.
-    </p>
-    <p style="font-size:0.82rem; color:#64748b; margin-bottom:10px;">
-	In the <b>Attention Weights</b> matrix: rows are <b>query</b> tokens (who is looking),
-	columns are <b>key</b> tokens (who is being looked at).
-	Each row sums to 1 (softmax). The column headers show which token each column corresponds to.
-    </p>
+    <p style="font-size:0.8rem; color:#64748b;">${producesText}</p>
+    <p style="font-size:0.85rem; color:#334155; margin-bottom:4px;">${stackingText}</p>
+    <p style="font-size:0.82rem; color:#64748b; margin-bottom:10px;">${matrixText}</p>
     <div style="overflow-x:auto;">
     $$ \\underbrace{${contextMatrixTex}}_{\\text{head}_{${headIdx + 1}}\\;(${n} \\times ${d_k})} = \\underbrace{${weightMatrixTex}}_{\\substack{\\text{Attention Weights}\\;(${n} \\times ${n}) \\\\ \\text{rows}=\\text{query},\\; \\text{cols}=\\text{key}}} \\cdot \\underbrace{${vMatrixTex}}_{V_{${headIdx + 1}}\\;(${n} \\times ${d_k})} $$
     </div>
