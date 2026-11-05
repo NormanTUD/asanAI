@@ -591,10 +591,10 @@
 	}
 
 	function observe() {
+		visible = true;
+		t0 = performance.now();
+		requestDraw();
 		if (!("IntersectionObserver" in window) || !wrap) {
-			visible = true;
-			t0 = performance.now();
-			requestDraw();
 			return;
 		}
 		const observer = new IntersectionObserver(entries => {

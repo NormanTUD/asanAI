@@ -19,9 +19,10 @@
 					<h1>One word <em>at a time.</em></h1>
 					<p class="hero-deck">
 						A language model predicts the next word from the text so far. That one loop is
-						the engine behind <strong>chat, code, translation, and reasoning</strong>. Start
-						here: the rest of the calendar is machinery for making this single prediction
-						better.
+						the engine behind <strong>chat, code, translation, and reasoning</strong>. Work
+						through this page and you will have a broad picture of the transformer that
+						drives it: enough to see how the parts fit together, without following every
+						detail.
 					</p>
 				</div>
 			</section>
@@ -33,6 +34,62 @@
 						<h2 class="section-title">A first intuition: predict the next word.</h2>
 						<div class="prose">
 							<p>
+								A <strong>large language model</strong> (<strong>LLM</strong>) is a program
+								trained on a very large body of text: Wikipedia, books, web pages, code, and
+								conversation. It learns one skill, <strong>predicting the next token</strong>,
+								and that skill carries chat, translation, and much of what looks like
+								reasoning. You may already use one on your phone: you type a question, and the
+								answer appears one word at a time.
+							</p>
+						</div>
+
+						<div class="demo demo--paper" id="phone-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The model in your pocket <span>· demo 01a</span></p>
+									<p class="demo-sub">A search box, a voice query, an AI answer and the links below it. The animation runs once on load; replay it with the button.</p>
+								</div>
+								<span class="demo-badge">live</span>
+							</div>
+							<div class="demo-body">
+								<div class="ia-stage">
+									<div class="ia-phone" id="ia-phone">
+										<div class="ia-phone-frame"></div>
+										<div class="ia-phone-notch"></div>
+										<div class="ia-phone-screen">
+											<div class="ia-app-logo" id="ia-logo" aria-hidden="true"></div>
+											<div class="ia-search-bar" id="ia-search-bar">
+												<div class="ia-search-icon" aria-hidden="true"></div>
+												<div class="ia-search-text" id="ia-search-text"></div>
+												<div class="ia-mic-btn" id="ia-mic-btn" aria-hidden="true">
+													<div class="ia-mic-icon"></div>
+												</div>
+											</div>
+											<div class="ia-ai-card" id="ia-ai-card">
+												<div class="ia-ai-text" id="ia-ai-text"></div>
+												<div class="ia-ai-thinking" id="ia-ai-thinking" aria-hidden="true">
+													<span></span><span></span><span></span>
+												</div>
+											</div>
+											<div class="ia-serp" id="ia-serp"></div>
+										</div>
+									</div>
+									<div class="ia-waveform" id="ia-waveform" aria-hidden="true">
+										<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>
+										<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>
+										<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>
+										<div class="ia-bar"></div><div class="ia-bar"></div>
+									</div>
+								</div>
+								<div class="demo-controls">
+									<button class="btn-demo btn-demo--green" type="button" id="ph-replay">Replay the animation ↻</button>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The phone does not look up a stored answer. The summary is written one token at a time, and the same loop runs in the data centre behind it.</span></div>
+						</div>
+
+						<div class="prose">
+							<p>
 								Here is the core idea. A language model reads a sequence of
 								tokens and returns a <strong>probability for every possible next
 								token</strong>. One is chosen, appended to the input, and the whole thing
@@ -40,31 +97,31 @@
 							</p>
 							<p>
 								Two words in that description are doing quiet work. “Probability” means the
-								model scores all candidates at once; it does not first know the answer and
-								then assign a score. The other word is “token”. The demo below calls its
-								tokens words because that is easiest to follow, but a token can be a whole
-								word, a word fragment, a single character, a group of characters, a space,
-								or a punctuation mark. “Unbelievable” may arrive as several pieces such as
-								“un”, “believ”, and “able”. A leading space is a byte of its own and can be
-								a token. The loop does not care what the pieces are; it predicts the next
-								one.
+								model scores all candidates at once; it does not first pick an answer and
+								then decide how sure it is. The other word is “token”. The demo below calls
+								its tokens words because that is easiest to follow, but a token can be a
+								whole word, a word fragment, a single character, a group of characters, a
+								space, a punctuation mark, or an emoji. When “unbelievable” is not in the
+								vocabulary, the tokenizer splits it into several pieces such as “un”,
+								“believ”, and “able”. The loop does not care what the pieces are; it
+								predicts the next one.
 							</p>
 							<p>
-								This page is the start of a technical intuition, not the complete picture.
-								A real model adds a tokenizer, layers of attention, a feed-forward network,
-								position information, training data, and post-training. The loop comes first
-								because everything else serves to make this one prediction better. Each
-								part adds a capability that improves the prediction.
+								This page builds a technical intuition, not the complete picture. A real
+								model adds a tokenizer, layers of attention, a feed-forward network, position
+								information, training data, and post-training. The loop comes first because
+								every other part exists to make this one prediction possible. Each part
+								supplies something the loop needs; none of them is an optional upgrade.
 							</p>
 							<p>
 								A conversation, a poem, a Python function: in an LLM, all of it is generated
 								by this loop. That sounds like a small mechanism until you see what the
 								context can contain: the question, a worked example, a program's output, or
 								the model's own earlier reasoning. Each new token refers to everything before
-								it. Why not predict the whole answer at once? The loop works token by token:
-								the model outputs a distribution over the <em>next</em> slot, chooses a
-								token, appends it, and repeats. That lets every word respond to the words
-								already written.
+								it. Why not predict the whole answer at once? Because each step can only
+								commit to one token, and every later token has to react to the ones already
+								written. The loop is a slow, step-by-step approach to a plausible answer,
+								not the whole solution in one shot.
 							</p>
 						</div>
 						<div class="aha">
@@ -79,10 +136,19 @@
 						<h2 class="section-title">Write a sentence, one word at a time.</h2>
 						<div class="prose">
 							<p>
-								Below is a small demo, not a real model. What it shows is the autoregressive
-								idea: the next token is chosen from a distribution, appended to the context,
-								and the whole thing runs again. A real model computes that distribution from
-								learned weights.
+								The demo below shows the idea, not a trained model. The next token is chosen
+								from a probability distribution, appended to the context, and the whole thing
+								runs again. A real model computes that distribution with learned weights.
+								Prediction here means nothing mystical: the model states how likely each
+								candidate is.
+							</p>
+							<p>
+								Temperature is why the text is not identical every time you ask. People do
+								not repeat the same sentence word for word either, and a little randomness
+								keeps generated text from sounding mechanical. Higher temperatures widen the
+								field of plausible continuations. That is welcome in a story and unwelcome in
+								a balance sheet, so the setting depends on the task. Temperature decides how
+								far the model may drift from the most probable path.
 							</p>
 						</div>
 
@@ -90,7 +156,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The autoregressive loop <span>· demo 01</span></p>
-									<p class="demo-sub">Click a candidate or let the demo choose. Each choice opens only the continuations that make sense from there, so the tree narrows as you go.</p>
+									<p class="demo-sub">Let the demo choose the next word, or switch between sampling, greedy, and top-p. Each choice opens only the continuations that make sense from there, so the tree narrows as you go.</p>
 								</div>
 								<span class="demo-badge">live</span>
 							</div>
@@ -132,29 +198,16 @@
 								</div>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>The distribution is the model; the choice is how you draw from it. Greedy, sampling, and top-p all read the same probabilities differently.</span></div>
-							<div class="demo-foot">
-								This story is a handful of handwritten continuations, not a trained model.
-								Switch between greedy, sampling, and top-p. Try temperature 0.2, then 1.8.
-							</div>
 						</div>
 
 						<div class="prose">
 							<p>
 								Sampling is one way to choose. Greedy takes the most likely token every
 								time, which makes the text deterministic and often repetitive. Top-p sorts
-								the tokens and keeps the shortest prefix whose cumulative probability
-								reaches the threshold p, then samples from that prefix. Temperature shapes
-								the distribution before any of these choices: low values concentrate it,
-								high values flatten it.
-							</p>
-							<p>
-								Temperature is used because exact repetition is not how people write. Human
-								answers vary from one telling to the next, and a little randomness makes
-								generated text feel less mechanical. Higher temperatures widen the field of
-								plausible continuations. In a story that can be creative and surprising; in
-								a balance sheet it is careless. The right setting depends on the context.
-								Different sampled tokens also lead to different follow-on contexts, so
-								temperature changes which path the text takes, not just its tone.
+								the tokens by probability and keeps the smallest set whose cumulative
+								probability reaches the threshold p, then samples from that set. Temperature
+								shapes the distribution before any of these choices: low values concentrate
+								it, high values flatten it.
 							</p>
 							<div class="demo demo--paper" id="truth-tunnel-demo">
 								<div class="demo-head">
@@ -182,7 +235,7 @@
 										</label>
 									</div>
 								</div>
-								<div class="demo-insight"><b>Takeaway</b><span>The model never decides that something is right. It builds a distribution and draws from it; the tunnel shows how context narrows that distribution.</span></div>
+								<div class="demo-insight"><b>Takeaway</b><span>The model never decides that something is right. It builds a distribution from its training data and draws from it; the tunnel shows how context narrows that distribution.</span></div>
 							</div>
 							<p>
 								The formula puts <span data-tex="T" data-tex-display="false"></span> in the
@@ -205,24 +258,27 @@
 						<div class="prose">
 							<p>
 								The loop is the outside view. Inside, one token passes through a fixed
-								pipeline. Each step changes the representation. The steps follow the order of
-								a real transformer pass (<a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a>): text becomes ids, ids become vectors, position adds where each
-								token sits, attention adds context, the feed-forward network computes, and the
-								residual stream carries the result to the next layer, where attention and the
-								feed-forward network work again; at the end, a token is chosen.
+								pipeline, and each step changes its representation. The steps below
+								correspond to what <a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani et al., 2017</a> described as a transformer: text becomes ids, ids become
+								vectors, position adds where each token sits, attention adds context, the
+								feed-forward network computes, and the residual stream carries the result to
+								the next layer, where attention and the feed-forward network work again; at
+								the end, a token is chosen.
 							</p>
 							<p>
-								A transformer is a stack of layers, each applied to the output of the one
-								before it:
-								<span data-tex="\operatorname{layer}_N(\cdots\operatorname{layer}_2(\operatorname{layer}_1(x))\cdots)" data-tex-display="false"></span>.
-								Early layers work on the token vectors directly. Later layers work on the
-								original signal plus everything the earlier layers have written into it.
+								A transformer is a stack of layers. Each layer reads the running vector,
+								computes an update, and adds that update back to the vector. Written out,
+								the first steps look like this:
+							</p>
+							<div class="prose-math" data-tex="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{token vector}})}_{\text{what layer 1 adds}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{running vector}})}_{\text{what layer 2 adds}} \end{aligned}" data-tex-de="\begin{aligned} x_1 &amp;= x_0 + \underbrace{\operatorname{layer}_1(\underbrace{x_0}_{\text{Token-Vektor}})}_{\text{was Schicht 1 hinzufügt}} \\ x_2 &amp;= x_1 + \underbrace{\operatorname{layer}_2(\underbrace{x_1}_{\text{laufender Vektor}})}_{\text{was Schicht 2 hinzufügt}} \end{aligned}" data-tex-display="true"></div>
+							<p>
+								The original signal stays in the sum. Later layers read it together with
+								everything the earlier layers have added.
 							</p>
 							<p>
 								The six steps below are a technical intuition, not a complete circuit
 								diagram. Each step isolates one job and shows a small, simplified version of
-								it. The notes mark what is simplified, so the picture does not pretend to be
-								the whole machine.
+								it.
 							</p>
 						</div>
 
@@ -236,7 +292,7 @@
 							</div>
 							<div class="demo-body">
 								<div class="step-pane" id="step-tokenize">
-									<p class="step-note step-lead">A token is not a word. Before the model can read anything, text is encoded as numbers. Every character has a number called a Unicode code point, and an encoding turns that number into bytes. A byte-level tokenizer starts from all 256 possible bytes, so every piece of text is representable, including characters it never saw in training. Rare words split into smaller pieces the vocabulary already knows. New emoji still work because related emoji share their first bytes: most characters in the main emoji block begin with <code>F0 9F</code>. A space is a byte too, and it is a token of its own.</p>
+									<p class="step-note step-lead">A token is not a word. Before the model can read anything, text is encoded as numbers. Every character has a Unicode code point, and an encoding turns that number into bytes. A byte-level tokenizer starts from all 256 possible bytes, so every piece of text is representable, including characters it never saw in training. Rare words split into <strong>subwords</strong>: pieces the vocabulary already knows. The tokenizer does not care about syllables or meaning. It might split “unbelievable” into “un”, “believ”, and “able”, and the same piece reappears in other words: the “un” in “unhappy” and in “unmarried” has the same id. New emoji still work because related emoji share their first bytes: most characters in the main emoji block begin with <code>F0 9F</code>. A space is a byte too, and it can be a token of its own.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 1 · Tokenize</span>
@@ -256,7 +312,7 @@
 								</div>
 
 								<div class="step-pane" id="step-embed">
-									<p class="step-note step-lead">Each token id points to a vector of learned parameters. A real model uses thousands of dimensions, often around ten thousand; this demo uses two so the picture fits on screen. The vector is the token's starting representation. Training arranges these points so that related tokens sit near each other and directions carry relationships, which is what the demo below lets you move around.</p>
+									<p class="step-note step-lead">Each token id points to a vector of learned parameters. A real model uses thousands of dimensions, often around ten thousand; this demo uses two so the picture fits on screen, but the principle is the same. The vector is the token's starting representation. The model learns these points from its training data (Wikipedia, books, web pages, code) and chooses the rules itself. Related tokens end up near each other, and directions carry relationships.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 2 · Embed</span>
@@ -265,7 +321,7 @@
 										<div class="step-toolbar">
 											<div class="step-chips">
 												<button class="chip is-on" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
-												<button class="chip" type="button" data-emb="Man + Power">Man + Power</button>
+												<button class="chip" type="button" data-emb="Man + 2 * Power">Man + 2 · Power</button>
 												<button class="chip" type="button" data-emb="Prince + Power">Prince + Power</button>
 												<button class="chip" type="button" data-emb="gender">male ↔ female</button>
 												<button class="chip" type="button" data-emb="power">power</button>
@@ -275,6 +331,7 @@
 										<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
 										<div class="step-out" id="iemb-out">The space has two semantic axes in this demo: <b>power</b> and <b>gender</b>. Choose an example to see where it lands.</div>
 									</div>
+									<div class="prose-math" id="iemb-formula" data-tex-display="true" hidden></div>
 									<p class="step-note">Meaning becomes geometry (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>). Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this demo uses two so you can see the idea.</p>
 								</div>
 
@@ -286,28 +343,19 @@
 											<h3 class="sp-title">Every slot gets its own fingerprint</h3>
 										</div>
 										<div class="step-toolbar">
-											<label>Context length
-												<input type="range" id="ipe-pos" min="16" max="128" step="8" value="64">
-												<output id="ipe-pos-out">64 positions</output>
-											</label>
-											<label>Dimensions
-												<input type="range" id="ipe-dims" min="2" max="64" step="2" value="24">
-												<output id="ipe-dims-out">24</output>
+											<label>Position
+												<input type="range" id="ipe-pos" min="0" max="12" step="1" value="7">
+												<output id="ipe-pos-out">7</output>
 											</label>
 										</div>
-										<canvas class="step-canvas" id="ipe-canvas" style="height:340px" aria-label="A heatmap of positional encodings for a long context"></canvas>
-										<div class="pos-legend" aria-hidden="true">
-											<span><i class="pl-neg"></i>−1</span>
-											<span><i class="pl-zero"></i>0</span>
-											<span><i class="pl-pos"></i>+1</span>
-										</div>
-										<div class="step-out" id="ipe-out">Each row is one position; each column is one dimension. Drag the context length to 128 and watch the high-frequency waves repeat while the low-frequency ones keep moving.</div>
+										<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="Three rings, one per pair of dimensions: moving the token forward rotates each pair by a different angle"></canvas>
+										<div class="step-out" id="ipe-out">Position <b>7</b> · pair d0/d1 turns <b>201°</b> · pair d2/d3 turns <b>124°</b> · pair d4/d5 turns <b>80°</b>.</div>
 									</div>
-									<p class="step-note">The heatmap shows one common scheme. Each position gets a mix of slow and fast waves, so nearby positions share some structure while every position stays distinct. A raw index would grow without bound and say nothing about relative distance; a wave pattern does not.</p>
+									<p class="step-note">The demo shows the idea of rotary position embeddings (RoPE). Each pair of dimensions is a wheel, and the token sits at the axle. Moving the token forward by one position rotates every wheel by a different, fixed angle. The token itself stays the same; only its angle changes. Attention can then compare two tokens by the angle between their wheels, which encodes their relative distance.</p>
 								</div>
 
 								<div class="step-pane" id="step-attention">
-									<p class="step-note step-lead">Attention lets each token look at the other tokens in the context, decide which ones matter for it, and pull their information into its own vector. That is how “bank” moves toward the river reading or the money reading. The demo shows one simplified attention head; a real layer runs many heads in parallel.</p>
+									<p class="step-note step-lead">Attention lets each token look at the other tokens in the context, decide which ones matter for it, and pull their information into its own vector. That is how “bank” moves toward the river reading or the money reading. The demo shows one simplified attention head. A real layer runs many heads in parallel, each attending to something different: one to the previous word, another to the subject, another to a clue far back in the context. Their results are concatenated and projected back.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 4 · Attend</span>
@@ -331,26 +379,26 @@
 
 								<div class="step-pane layer-pane" id="layer-detail">
 									<div class="step-pane-head">
-										<span class="sp-kicker">The layer in detail · projection and bend</span>
+										<span class="sp-kicker">The layer in detail · the MLP</span>
 										<h3 class="sp-title">A projection, a bias, a bend</h3>
 									</div>
-									<p class="step-note step-lead">A dense layer computes an affine projection, <span data-tex="Wx + b" data-tex-display="false"></span>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
-									<div class="layer-formula" data-tex="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{weight}\\\text{matrix}}}\,x + \underbrace{b}_{\text{bias}}\right)"></div>
+									<p class="step-note step-lead">After attention, each token passes through a small network of its own: the feed-forward network, usually a multilayer perceptron (MLP). It first computes an affine projection, <span data-tex="Wx + b" data-tex-display="false"></span>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
+									<div class="layer-formula" data-tex="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{weight}\\\text{matrix}}}\,x + \underbrace{b}_{\text{bias}}\right)" data-tex-de="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{Gewichts-}\\\text{Matrix}}}\,x + \underbrace{b}_{\text{Bias}}\right)"></div>
 									<div class="collapse-card">
 										<div class="cc-label">Worked example · 2 inputs, 3 outputs</div>
 										<div class="collapse-math" data-tex="\begin{aligned} W &amp;= \begin{pmatrix} 1 &amp; 2 \\ 0 &amp; -1 \\ 2 &amp; 1 \end{pmatrix}, \quad x = \begin{pmatrix} 3 \\ 1 \end{pmatrix}, \quad b = \begin{pmatrix} 0 \\ 0 \\ -2 \end{pmatrix} \\[6pt] Wx &amp;= \begin{pmatrix} 1\cdot 3 + 2\cdot 1 \\ 0\cdot 3 + (-1)\cdot 1 \\ 2\cdot 3 + 1\cdot 1 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \\ 7 \end{pmatrix} \\[6pt] z = Wx + b &amp;= \begin{pmatrix} 5 \\ -1 \\ 7 \end{pmatrix} + \begin{pmatrix} 0 \\ 0 \\ -2 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \\ 5 \end{pmatrix} \\[6pt] \operatorname{ReLU}(z) &amp;= \begin{pmatrix} 5 \\ 0 \\ 5 \end{pmatrix} \end{aligned}"></div>
 										<p>Read <span data-tex="W" data-tex-display="false"></span> row by row: the first output mixes the inputs as <span data-tex="1\cdot 3 + 2\cdot 1" data-tex-display="false"></span>, the second as <span data-tex="0\cdot 3 + (-1)\cdot 1" data-tex-display="false"></span>, the third as <span data-tex="2\cdot 3 + 1\cdot 1" data-tex-display="false"></span>. The bias adds <span data-tex="0" data-tex-display="false"></span>, <span data-tex="0" data-tex-display="false"></span>, and <span data-tex="-2" data-tex-display="false"></span>, so <span data-tex="z = (5, -1, 5)" data-tex-display="false"></span>. ReLU, the activation introduced below, sends the negative entry to zero and leaves the other two unchanged. A real layer runs the same dot products and the same bend with thousands of rows and columns.</p>
 									</div>
-									<h4 class="layer-subhead">Two dense layers without an activation</h4>
+									<h4 class="layer-subhead">Depth without a nonlinearity</h4>
 									<div class="collapse-card">
 										<div class="cc-label">two dense layers without a nonlinearity</div>
 										<div class="collapse-math" id="collapse-math" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \\[4pt] W &amp;= W_2 W_1, \qquad b = W_2 b_1 + b_2 \end{aligned}"></div>
-										<p>Stack two dense layers, one after the other. The product <span data-tex="W_2 W_1" data-tex-display="false"></span> is itself a new single weight matrix: every row of <span data-tex="W_1" data-tex-display="false"></span> is mixed through the columns of <span data-tex="W_2" data-tex-display="false"></span>. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <span data-tex="W" data-tex-display="false"></span> maps d inputs directly to k outputs: the hidden layer has disappeared. The biases also merge into <span data-tex="W_2 b_1 + b_2" data-tex-display="false"></span>. Without a nonlinearity, two dense layers are exactly one dense layer with a combined <span data-tex="W" data-tex-display="false"></span>; depth adds no expressive power. That is why an activation function is needed.</p>
+										<p>Stack two projections, one after the other. The product <span data-tex="W_2 W_1" data-tex-display="false"></span> is itself a new single weight matrix: every row of <span data-tex="W_1" data-tex-display="false"></span> is mixed with the columns of <span data-tex="W_2" data-tex-display="false"></span>, and the result is a new matrix. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <span data-tex="W" data-tex-display="false"></span> maps d inputs directly to k outputs: the hidden layer has disappeared. The biases also merge into <span data-tex="W_2 b_1 + b_2" data-tex-display="false"></span>. Without a nonlinearity, two layers are exactly one layer with a combined <span data-tex="W" data-tex-display="false"></span>; depth without a nonlinearity adds no expressive power. That is why a nonlinear activation is needed.</p>
 									</div>
-									<h4 class="layer-subhead">Activation functions</h4>
+									<h4 class="layer-subhead">Nonlinear activation functions</h4>
 									<div class="activation-card">
 										<div class="activation-copy">
-											<p>An <b>activation function</b> is applied to each coordinate after the projection. It adds the nonlinearity that a stack of dense layers otherwise lacks.</p>
+											<p>A <b>nonlinear activation function</b> is applied to each coordinate after the projection. It adds the nonlinearity that a stack of linear layers otherwise lacks.</p>
 											<p><span data-tex="\operatorname{ReLU}(z) = \max(0, z)" data-tex-display="false"></span> passes positive values unchanged and sends the entire negative half-space to zero. The graph is flat, then a straight rise: a hard fold at <span data-tex="z = 0" data-tex-display="false"></span>. Because many inputs become the same output, ReLU is not injective; it can change the topology of the representation.</p>
 											<p><b>Sigmoid</b> squashes every value into (0, 1); <b>tanh</b> squashes it into (-1, 1). Both are strictly increasing, so they bend smoothly without mapping distinct inputs to the same output. <b>GELU</b> is smooth but not monotonic: it dips slightly below zero, so it is also many-to-one. Other choices include SiLU/Swish, ELU, and gated variants such as SwiGLU.</p>
 										</div>
@@ -389,13 +437,13 @@
 											</figure>
 										</div>
 									</div>
-									<h4 class="layer-subhead">A layer bends the space</h4>
-									<p class="step-note curve-intro">A dense layer works on one token at a time. With a smooth activation it bends the surrounding space instead of only stretching it. ReLU would crease the same space flat on one side of <span data-tex="z = 0" data-tex-display="false"></span>. The cut still happens: the layer changes the space in which the cut is made.</p>
+									<h4 class="layer-subhead">Where the bend happens</h4>
+									<p class="step-note curve-intro">After attention has placed each token in context, the MLP works on that token on its own. It projects the vector, adds a bias, and applies a nonlinearity. A smooth activation bends the surrounding space instead of only stretching it; ReLU folds it along a crease at <span data-tex="z = 0" data-tex-display="false"></span>. This moves the token toward a region where the next token is easier to separate.</p>
 									<div class="demo demo--paper ism-panel" data-arrow-nav style="margin-top:14px">
 										<div class="demo-head">
 											<div>
-												<p class="demo-title">A layer bends the space <span>· demo 07</span></p>
-												<p class="demo-sub">Seven steps from an inseparable ring to a single threshold on a one-dimensional score.</p>
+												<p class="demo-title">Watch the MLP bend the space <span>· demo 07</span></p>
+												<p class="demo-sub">A straight line is the easiest separator, but it is not always possible in the original space. The MLP lifts the points into a new plane where it becomes possible. In an LLM the same idea runs in thousands of dimensions and helps the model isolate and represent internal states.</p>
 											</div>
 											<span class="demo-badge">drag / step</span>
 										</div>
@@ -414,15 +462,14 @@
 												<span id="ism-counter" class="ism-counter">1 / 7</span>
 											</div>
 										</div>
-										<div class="demo-insight"><b>Takeaway</b><span>The layer projects the points into a higher-dimensional space where a straight line can separate what was inseparable before. That is what a dense layer does: it changes the space in which the cut is made.</span></div>
+										<div class="demo-insight"><b>Takeaway</b><span>The layers in an MLP lift the points into a higher-dimensional space where a straight line can separate what was inseparable before. They change the space in which the cut is made.</span></div>
 									</div>
-									<div class="step-out">The cut still happens. The layer changes the space so that a straight cut in the new space separates the classes in the old one. ReLU is the sharp version: a fold along a crease.</div>
 									<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into one that a straight threshold can separate.</p>
 									<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>).</p>
 								</div>
 
 								<div class="step-pane" id="step-ffn">
-									<p class="step-note step-lead">A feed-forward network works on each token separately. It expands the vector into a wider hidden layer, applies an activation, and projects back to the original width. Attention mixes information across tokens; the feed-forward part does the per-token computation. The labelled patterns below are a reading aid, not stored rules.</p>
+									<p class="step-note step-lead">A feed-forward network works on each token separately. It expands the vector into a wider hidden layer, applies an activation, and projects back to the original width. Attention mixes information across tokens; the feed-forward part does the per-token computation. The patterns below are a strongly simplified picture of which regions the network activates for a given context; they are not stored rules.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 5 · Feed-forward</span>
@@ -453,26 +500,37 @@
 											</div>
 										</div>
 										<div class="step-out" id="iffn-out"></div>
-										<p class="step-note ffn-caveat"><b>What is simplified:</b> a real FFN has no labelled keys or values. The “patterns” are learned directions in W₁; the “pull” is a learned direction in W₂ that changes the next-token distribution. The labels are a reading aid, not stored rules.</p>
+										<p class="step-note ffn-caveat"><b>What is simplified:</b> a real FFN has no labelled keys or values. The “patterns” are learned directions in W₁; the “pull” is a learned direction in W₂ that changes the next-token distribution. The labels are a simplified picture, not stored rules.</p>
 									</div>
 								</div>
 
 								<div class="step-pane" id="step-residual">
-									<p class="step-note step-lead">Every layer reads the same running vector, computes an update, and adds it back. Think of the stream as a shared notebook that any layer can write to. Earlier notes stay in place; later layers read the original entry plus everything written since. The rule is <span data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)" data-tex-display="false"></span>: the new state is the old state plus a change.</p>
+									<p class="step-note step-lead">Every layer reads the same running vector, computes an update, and adds it back. Think of the stream as a shared notebook that any layer can write to. Earlier notes stay in place; later layers read the original entry plus everything written since. The rule is <span data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)" data-tex-display="false"></span>: the new state is the old state plus a change. Each attention block contains many heads, and each MLP contains several layers; the diagram folds them into one step at a time.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 6 · Residual</span>
 											<h3 class="sp-title">Every layer adds to the same stream</h3>
 										</div>
+										<figure class="res-notebook">
+											<div class="res-nb-page">
+												<p class="res-nb-sentence"><span class="res-nb-emb">The</span> <span class="res-nb-emb res-nb-att">cat</span> <span class="res-nb-emb res-nb-mlp">sat</span> on the <span class="res-nb-emb">mat</span> because <span class="res-nb-emb res-nb-att">she</span> was <span class="res-nb-emb res-nb-mlp">tired</span>.</p>
+												<p class="res-nb-note res-nb-note--emb"><b>Embedding</b> every word becomes a vector.</p>
+												<p class="res-nb-note res-nb-note--att"><b>Attention</b> “she” points back to “cat”.</p>
+												<p class="res-nb-note res-nb-note--mlp"><b>MLP</b> “tired” explains why the cat sat.</p>
+											</div>
+											<figcaption>One shared page. Each layer writes in its own color, and earlier notes stay readable.</figcaption>
+										</figure>
 										<div class="res-stream">
 											<div class="res-layers" id="ires-layers"></div>
 											<div class="res-panel">
 												<div class="res-bars" id="ires-bars"></div>
+												<div class="res-vector" id="ires-vector" aria-live="polite"></div>
 												<div class="res-legend"><span><i></i> running stream</span><span id="ires-out"></span></div>
+												<div class="prose-math" data-tex="\underbrace{x_{n+1}}_{\text{new stream}} = \underbrace{x_n}_{\text{running stream}} + \underbrace{\operatorname{layer}_{n+1}(x_n)}_{\text{what this layer writes}}" data-tex-de="\underbrace{x_{n+1}}_{\text{neuer Stream}} = \underbrace{x_n}_{\text{laufender Stream}} + \underbrace{\operatorname{layer}_{n+1}(x_n)}_{\text{was diese Schicht schreibt}}" data-tex-display="true"></div>
 											</div>
 										</div>
 									</div>
-									<p class="step-note">The addition is the point. Nothing is overwritten, so the original signal survives, and gradients have a short path back through the sum. That is a large part of why very deep networks train at all. The demo lets you add the updates one at a time and watch the bars accumulate.</p>
+									<p class="step-note">The addition is the point. Nothing is overwritten, so the original signal survives, and gradients have a short path back through the sum. That is a large part of why very deep networks train at all. The numbers under the bars are the same sum written out one coordinate at a time.</p>
 								</div>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Tokens become vectors, positions add where each token sits, attention mixes context, the feed-forward network computes, and the residual stream carries the result to the next layer.</span></div>
@@ -486,7 +544,7 @@
 
 					<section class="section-block" id="meadow">
 						<div class="section-kicker"><span class="sk-num">04</span> The geometry</div>
-						<h2 class="section-title">Relationships are reusable directions.</h2>
+						<h2 class="section-title">Meaning becomes geometry.</h2>
 						<div class="prose">
 							<p>
 								The model arranges every token as a point in a learned vector space, and
@@ -544,7 +602,7 @@
 							<div class="demo-foot">The axes are a small slice of a much larger space. Real embeddings are higher-dimensional and noisier.</div>
 						</div>
 						<div class="prose" style="margin-top:22px">
-							<p><strong>The meadow of words.</strong> The plot above shows directions. The meadow shows how the model divides the space into cells. After all the layers, the model has a vector for each token, and every token in the vocabulary owns the region of that space closest to it. The image is two-dimensional, while a real model works in thousands of dimensions, but the picture is the same: the vocabulary forms bubbles, and a new thought falls into the bubble whose centre is nearest. The closer the thought is to a word's centre, the more likely that word is; near the edges the estimate becomes less precise. Temperature and top-k change how large the candidate set is. Move the pointer and the thought lands in a cell, or on a seam where two words are almost equally near.</p>
+							<p><strong>The meadow of words.</strong> The plot above shows directions. The meadow shows how the model divides the space into cells. After all the layers, the model has a vector for each token, and every token in the vocabulary owns the region of that space closest to it. The image is two-dimensional, while a real model works in thousands of dimensions, but the principle is the same: the vocabulary forms bubbles, and every thought falls into one of them or near its border. The closer the thought is to a word's centre, the more likely that word is; near the edges the estimate becomes less precise. Temperature and top-k change how large the candidate set is. Move the pointer and the thought lands in a cell, or on a seam where two words are almost equally near.</p>
 						</div>
 
 						<div class="demo demo--paper" id="meadow-demo">
@@ -570,7 +628,7 @@
 								</div>
 								<p class="meadow-caption" id="md-caption">Move the pointer across the meadow.</p>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Words divide the space of thoughts into cells. Certainty is being deep inside a cell; uncertainty is standing on a seam.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>Words divide the space of thoughts into cells. Certainty is being deep inside a cell; uncertainty is standing on a seam or right at the edge.</span></div>
 							<div class="demo-foot">More words make smaller cells and thinner seams, but the ambiguous share never reaches zero. In a real model the space has thousands of dimensions and the vocabulary has tens of thousands of tokens.</div>
 						</div>
 
@@ -581,15 +639,15 @@
 						<h2 class="section-title">Text in, geometry, one word out.</h2>
 						<div class="prose">
 							<p>
-								Put the pieces in order and the outline is simple. The real model is much
+								The pieces fit together in a fixed order. The real model is much
 								larger, and the remaining pages fill in the details. Text is cut into
 								<strong>tokens</strong>. Each token becomes a <strong>vector</strong>. A
 								<strong>position signal</strong> is added. Layer after layer,
 								<strong>attention</strong> lets every vector look at its neighbours while a
-								<strong>residual stream</strong> carries earlier findings forward. The
+								<strong>residual stream</strong> keeps earlier results and enriches them with new ones. The
 								final vector is scored against the vocabulary and turned into a
 								distribution; one token is drawn. It is appended, and the next pass begins;
-								the loop ends when the model emits the special token &lt;|endoftext|&gt;.
+								the loop ends when the model emits the special token <strong>&lt;|endoftext|&gt;</strong>.
 							</p>
 							<p>
 								No step has a tidy fact database, and no step “understands” in the human
@@ -600,10 +658,12 @@
 							</p>
 							<p>
 								So where is a fact, if not in a table? Mostly in the feed-forward weights,
-								and often <strong>superposed</strong> (<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>): many features share the same
-								directions rather than each owning a private neuron. That is why a fact can
-								be partly present, why a model can know something without being able to say
-								it reliably, and why editing one fact can disturb another.
+								and often <strong>superposed</strong> (<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>; <a href="https://already-clean.goodfire.com/" rel="noopener">Goodfire</a>): several features share the same
+								directions instead of each owning a private neuron. A single direction can
+								therefore carry parts of several facts at once. That is why a fact can be
+								partly present, why the model may know something without being able to say it
+								reliably, and why editing one fact can disturb another: both are written along
+								the same direction.
 							</p>
 						</div>
 						<div class="keypoints">
@@ -614,19 +674,20 @@
 						</div>
 						<div class="prose">
 							<p>
-								Compression-as-intelligence is a working hypothesis, not a proved identity.
-								Solomonoff’s universal prior scores each possible explanation by how short a
-								program can produce it: simpler explanations get more weight. His convergence
-								theorem says that, in the limit, a predictor built this way learns any pattern
-								that a finite program can generate
+								The idea that compressing well and predicting well are related is a working
+								hypothesis, not a proved identity. A good compressor has to capture regularities
+								in its data; a good predictor has to capture the same regularities. Solomonoff
+								made this precise by scoring each possible explanation with the length of the
+								shortest program that produces it. A short program that reproduces the data
+								gets a high score, so simple explanations are favoured. His convergence theorem
+								says that a predictor built this way learns, in the limit, any pattern that a
+								finite program can generate
 								(<a href="https://doi.org/10.1109/TIT.1978.1055913" rel="noopener">Solomonoff, 1978</a>).
-								The catch is that this score cannot be computed in practice, so the result
-								describes an ideal predictor, not a particular model. It does not settle whether
-								a model grasps the world. The honest position is that the evidence is still
-								catching up to the philosophy, and that both awe and scepticism respond to the
-								same remarkable fact: a loop this simple gets this far. Put differently, a
-								language model is a finite vocabulary laid over a continuum of meaning, with a
-								loop that keeps falling to the next word.
+								That score cannot be computed in practice, so the theorem describes an ideal
+								predictor rather than a particular model. It also does not settle whether a
+								model grasps the world. The honest position is that the evidence is still
+								catching up to the argument, and that both awe and scepticism respond to the
+								same fact: a loop this simple gets this far.
 							</p>
 						</div>
 					</section>
@@ -651,6 +712,11 @@
 		var MAX_STEPS = 6;
 		var LANG = TM.lang();
 		var DE = LANG === "de";
+		if (DE) {
+			document.querySelectorAll("[data-tex-de]").forEach(function (el) {
+				el.setAttribute("data-tex", el.getAttribute("data-tex-de"));
+			});
+		}
 		function hexToRgb(hex) {
 			var h = String(hex || "").replace("#", "");
 			if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
@@ -884,11 +950,11 @@
 				? "Greedy ist der Grenzfall T → 0: Es nimmt immer das wahrscheinlichste Wort, deshalb ist der Temperaturregler bei 0,05 fixiert. Der Text ist deterministisch und oft repetitiv."
 				: "Greedy is the limit T → 0: it always takes the highest-probability word, so the temperature slider is pinned at 0.05. The text is deterministic and often repetitive.";
 			else if (decodeMode === "topp") why.textContent = DE
-				? "Die Temperatur formt zuerst die Verteilung; Top-p behält dann den kürzesten Anfang der sortierten Wörter, deren kumulierte Wahrscheinlichkeit 90 % erreicht, und zieht daraus. Die blassen Balken liegen außerhalb dieses Anfangs."
-				: "Temperature reshapes the distribution first; top-p then keeps the shortest prefix of sorted words whose cumulative probability reaches 90%, and samples among them. The faded bars are outside that prefix.";
+				? "Die Temperatur formt zuerst die Verteilung; Top-p behält dann die kleinste Menge der sortierten Wörter, deren kumulierte Wahrscheinlichkeit 90 % erreicht, und zieht daraus. Die blassen Balken liegen außerhalb dieser Menge."
+				: "Temperature reshapes the distribution first; top-p then keeps the smallest set of sorted words whose cumulative probability reaches 90%, and samples among them. The faded bars are outside that set.";
 			else why.textContent = DE
-				? "Sampling zieht aus der ganzen temperaturgeformten Verteilung. Niedriges T verhält sich fast gierig; hohes T flacht die Verteilung ab und tauscht Kohärenz gegen Überraschung."
-				: "Sampling draws from the whole temperature-shaped distribution. Low T behaves almost greedily; high T flattens the distribution and trades coherence for surprise.";
+				? "Sampling zieht aus der ganzen Verteilung nach der Temperaturformung. Niedriges T verhält sich fast gierig; hohes T flacht die Verteilung ab und tauscht Kohärenz gegen Überraschung."
+				: "Sampling draws from the whole distribution after temperature has shaped it. Low T behaves almost greedily; high T flattens the distribution and trades coherence for surprise.";
 		}
 		function setTemp(value) {
 			temp = Math.max(0.05, Math.min(1.8, value));
@@ -947,6 +1013,172 @@
 		setTemp(temp);
 		setTempEnabled(true);
 		reset();
+
+		/* ── demo 01a: the model in your pocket ──────────────── */
+		var phStage = document.getElementById("phone-demo");
+		if (phStage) {
+			var phLogo = document.getElementById("ia-logo");
+			var phSearchBar = document.getElementById("ia-search-bar");
+			var phSearchText = document.getElementById("ia-search-text");
+			var phMic = document.getElementById("ia-mic-btn");
+			var phWave = document.getElementById("ia-waveform");
+			var phCard = document.getElementById("ia-ai-card");
+			var phAiText = document.getElementById("ia-ai-text");
+			var phThinking = document.getElementById("ia-ai-thinking");
+			var phSerp = document.getElementById("ia-serp");
+			var phReplay = document.getElementById("ph-replay");
+			var PH_SATZ = DE ? "warum ist der himmel blau?" : "why is the sky blue?";
+			var PH_AI = DE ? [
+				{ t: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm): " },
+				{ t: "Rayleigh-Streuung", c: "b" },
+				{ t: "." }
+			] : [
+				{ t: "The sky is blue because air molecules scatter short-wavelength light more strongly than long-wavelength light. Blue (450 nm) is scattered about 4× more than red (650 nm): " },
+				{ t: "Rayleigh scattering", c: "b" },
+				{ t: "." }
+			];
+			var PH_RESULTS = DE ? [
+				{ name: "Wikipedia", url: "de.wikipedia.org › Rayleigh-Jeans-Gesetz", title: "Rayleigh-Jeans-Gesetz", snippet: "Das Plancksche Strahlungsgesetz ist eine Interpolationsformel der beiden anderen Gesetze.", icon: "assets/favicon_wikipedia.ico" },
+				{ name: "Wikipedia", url: "de.wikipedia.org › Rayleigh-Streuung", title: "Rayleigh-Streuung", snippet: "Die Streuung von Licht an Teilchen, die kleiner sind als seine Wellenlänge.", icon: "assets/favicon_wikipedia.ico" },
+				{ name: "Leifi Physik", url: "www.leifiphysik.de › optik › streuung", title: "Warum ist der Himmel blau?", snippet: "Kurzwelliges blaues Licht wird stärker gestreut als langwelliges rotes Licht.", icon: "assets/favicon_leifiphysik.ico" }
+			] : [
+				{ name: "Wikipedia", url: "en.wikipedia.org › Rayleigh–Jeans law", title: "Rayleigh–Jeans law", snippet: "The Planck law interpolates between the Rayleigh–Jeans law and Wien's law.", icon: "assets/favicon_wikipedia.ico" },
+				{ name: "Wikipedia", url: "en.wikipedia.org › Rayleigh scattering", title: "Rayleigh scattering", snippet: "Scattering of light by particles smaller than its wavelength.", icon: "assets/favicon_wikipedia.ico" },
+				{ name: "Wikipedia", url: "en.wikipedia.org › Diffuse sky radiation", title: "Diffuse sky radiation", snippet: "Short-wavelength blue light is scattered more strongly than long-wavelength red light.", icon: "assets/favicon_wikipedia.ico" }
+			];
+			var phTimers = [];
+			var phReduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+			function phLater(fn, ms) {
+				var id = setTimeout(fn, ms);
+				phTimers.push(id);
+				return id;
+			}
+			function phClear() {
+				phTimers.forEach(clearTimeout);
+				phTimers = [];
+			}
+			function phLogoBuild() {
+				var letters = DE ? "Suche".split("") : "Search".split("");
+				phLogo.innerHTML = letters.map(function (ch, i) {
+					return '<span class="ia-l' + (i + 1) + '">' + ch + "</span>";
+				}).join("");
+			}
+			function phSerpBuild() {
+				phSerp.innerHTML = PH_RESULTS.map(function (r, i) {
+					return '<div class="ia-result r' + (i + 1) + '">' +
+						'<div class="ia-res-head">' +
+							'<img class="ia-res-fav" src="' + r.icon + '" alt="">' +
+							'<div class="ia-res-lines">' +
+								'<span class="ia-res-name">' + r.name + '</span>' +
+								'<span class="ia-res-url">' + r.url + '</span>' +
+							'</div>' +
+						'</div>' +
+						'<div class="ia-res-title">' + r.title + '</div>' +
+						'<div class="ia-res-snippet">' + r.snippet + '</div>' +
+					'</div>';
+				}).join("");
+			}
+			function phSetCentered(on) {
+				phSearchBar.classList.toggle("centered", !!on);
+			}
+			function phReset() {
+				phClear();
+				phSetCentered(true);
+				phSearchText.textContent = "";
+				phSearchText.classList.remove("typing");
+				phMic.classList.remove("listening");
+				phWave.classList.remove("active");
+				phCard.classList.remove("on");
+				phAiText.innerHTML = "";
+				phThinking.classList.remove("on");
+				phSerp.classList.remove("on");
+			}
+			function phTypeSearch(text, done) {
+				if (phReduce) {
+					phSearchText.textContent = text;
+					done();
+					return;
+				}
+				phSearchText.classList.add("typing");
+				phSearchText.innerHTML = '<span class="ia-caret"></span>';
+				var i = 0;
+				var timer = setInterval(function () {
+					if (i < text.length) {
+						i += 1;
+						phSearchText.innerHTML = text.slice(0, i) + '<span class="ia-caret"></span>';
+					} else {
+						clearInterval(timer);
+						phSearchText.classList.remove("typing");
+						phSearchText.textContent = text;
+						phLater(done, 120);
+					}
+				}, 13);
+				phTimers.push(timer);
+			}
+			function phTypeAnswer() {
+				var spans = PH_AI.map(function (seg) {
+					var el = document.createElement("span");
+					if (seg.c) el.className = "ia-" + seg.c;
+					phAiText.appendChild(el);
+					return el;
+				});
+				if (phReduce) {
+					spans.forEach(function (el, i) { el.textContent = PH_AI[i].t; });
+					return;
+				}
+				var si = 0;
+				var ci = 0;
+				function tick() {
+					var remaining = 8;
+					while (remaining > 0 && si < spans.length) {
+						var seg = PH_AI[si];
+						var take = Math.min(remaining, seg.t.length - ci);
+						ci += take;
+						remaining -= take;
+						spans[si].textContent = seg.t.slice(0, ci);
+						if (ci >= seg.t.length) { si += 1; ci = 0; }
+					}
+					if (si < spans.length) phLater(tick, 16);
+				}
+				tick();
+			}
+			function phPlay() {
+				phReset();
+				phLogoBuild();
+				phSerpBuild();
+				if (phReduce) {
+					phSearchText.textContent = PH_SATZ;
+					phSetCentered(false);
+					phCard.classList.add("on");
+					phTypeAnswer();
+					phSerp.classList.add("on");
+					return;
+				}
+				phMic.classList.add("listening");
+				phWave.classList.add("active");
+				phTypeSearch(PH_SATZ, function () {
+					phSearchText.textContent = PH_SATZ;
+					phSetCentered(false);
+					phLater(function () {
+						phCard.classList.add("on");
+						phThinking.classList.add("on");
+						phLater(function () {
+							phThinking.classList.remove("on");
+							phMic.classList.remove("listening");
+							phWave.classList.remove("active");
+							phTypeAnswer();
+							phSerp.classList.add("on");
+						}, 240);
+					}, 320);
+				});
+			}
+			phLogoBuild();
+			phSerpBuild();
+			if (phReplay) phReplay.addEventListener("click", phPlay);
+			phReset();
+			phPlay();
+		}
 
 		/* ── truth tunnel ────────────────────────────────────── */
 		var isoCanvas = document.getElementById("tt-canvas");
@@ -1399,7 +1631,9 @@
 		var embOut = document.getElementById("iemb-out");
 		var embDirMode = null;
 		var embResult = null;
+		var embHover = null;
 		var embApi = null;
+		var embFormula = document.getElementById("iemb-formula");
 		function evalEmb(expr) {
 			var toks = expr.match(/[A-Za-z]+|\d+|[+\-*()/]/g) || [];
 			var i = 0;
@@ -1470,6 +1704,42 @@
 				mult = 1;
 			});
 			return { pos: pos, steps: steps };
+		}
+		function embHideFormula() {
+			if (!embFormula) return;
+			embFormula.hidden = true;
+			embFormula.removeAttribute("data-tex");
+			embFormula.removeAttribute("data-tex-rendered");
+			embFormula.innerHTML = "";
+		}
+		function embTex(expr) {
+			var toks = expr.match(/[A-Za-z]+|\d+|[+\-*()/]/g) || [];
+			var sign = 1, coef = 1, terms = [], bad = false;
+			toks.forEach(function (t) {
+				if (bad) return;
+				if (t === "+") { sign = 1; return; }
+				if (t === "-") { sign = -1; return; }
+				if (t === "*") return;
+				if (t === "/" || t === "(" || t === ")") { bad = true; return; }
+				if (/^\d+$/.test(t)) { coef = parseInt(t, 10); return; }
+				var norm = Object.keys(embSpace).find(function (w) { return w.toLowerCase() === t.toLowerCase(); });
+				if (!norm) { bad = true; return; }
+				terms.push({ sign: sign, coef: coef, word: norm });
+				sign = 1;
+				coef = 1;
+			});
+			var ev = evalEmb(expr);
+			if (bad || !terms.length || !ev || ev.kind !== "vec") return "";
+			var lhs = "";
+			terms.forEach(function (term, idx) {
+				var v = embSpace[term.word];
+				var cell = "\\underbrace{\\begin{pmatrix}" + v[0] + "\\\\" + v[1] + "\\end{pmatrix}}_{\\text{" + embLabel(term.word) + "}}";
+				if (term.coef !== 1) cell = term.coef + "\\cdot " + cell;
+				if (idx === 0) lhs += (term.sign < 0 ? "-" : "") + cell;
+				else lhs += " " + (term.sign < 0 ? "-" : "+") + " " + cell;
+			});
+			var near = embNearest(ev.v);
+			return "\\begin{aligned} \\underbrace{" + lhs + "}_{\\text{" + (DE ? "Summe der Vektoren" : "sum of the vectors") + "}} &= \\begin{pmatrix}" + ev.v[0].toFixed(0) + "\\\\" + ev.v[1].toFixed(0) + "\\end{pmatrix} \\\\ &= \\underbrace{x_{\\text{" + embLabel(near.word) + "}}}_{\\text{" + (DE ? "Ergebnis" : "result") + "}} \\end{aligned}";
 		}
 		function embNearest(pos) {
 			var best = null, bd = Infinity;
@@ -1548,6 +1818,11 @@
 				ctx.fillStyle = hi ? color : (c.dark ? "rgba(238,247,244,.42)" : "rgba(18,38,45,.45)");
 				ctx.textAlign = "center";
 				ctx.fillText(embLabel(word), x, y - 11);
+				if (word === embHover) {
+					ctx.font = "600 10px Barlow, system-ui, sans-serif";
+					ctx.fillStyle = c.muted;
+					ctx.fillText("(" + v[0] + ", " + v[1] + ")", x, y + 18);
+				}
 			});
 
 			if (embDirMode) {
@@ -1639,10 +1914,46 @@
 				embResult = { pos: ev.v, nearest: near.word, steps: steps.steps };
 				if (embOut) embOut.innerHTML = '→ <b>(' + ev.v[0].toFixed(1) + ', ' + ev.v[1].toFixed(1) + ')</b> · ' + (DE ? 'nächstes Wort' : 'nearest word') + ': <b>' + embLabel(near.word) + '</b> (' + (DE ? 'Abstand ' : 'distance ') + near.dist.toFixed(2) + ')';
 			}
+			if (embFormula) {
+				var tex = ev && ev.kind === "vec" ? embTex(expr) : "";
+				if (tex) {
+					embFormula.hidden = false;
+					embFormula.setAttribute("data-tex", tex);
+					embFormula.removeAttribute("data-tex-rendered");
+					TM.typesetMath(embFormula.parentNode);
+				} else {
+					embHideFormula();
+				}
+			}
 			if (embApi) embApi.redraw();
 		}
 		if (embCanvas) {
 			embApi = TM.initCanvas(embCanvas, drawEmb);
+			embCanvas.addEventListener("pointermove", function (event) {
+				var rect = embCanvas.getBoundingClientRect();
+				var pad = 44;
+				function px(x) { return pad + (x - embRange.x0) / (embRange.x1 - embRange.x0) * (rect.width - pad * 2); }
+				function py(y) { return rect.height - pad - (y - embRange.y0) / (embRange.y1 - embRange.y0) * (rect.height - pad * 2); }
+				var mxp = event.clientX - rect.left;
+				var myp = event.clientY - rect.top;
+				var best = null;
+				var bestDist = 16;
+				Object.keys(embSpace).forEach(function (word) {
+					var v = embSpace[word];
+					var d = Math.hypot(px(v[0]) - mxp, py(v[1]) - myp);
+					if (d < bestDist) { bestDist = d; best = word; }
+				});
+				if (best !== embHover) {
+					embHover = best;
+					if (embApi) embApi.redraw();
+				}
+			});
+			embCanvas.addEventListener("pointerleave", function () {
+				if (embHover) {
+					embHover = null;
+					if (embApi) embApi.redraw();
+				}
+			});
 			document.querySelectorAll("[data-emb]").forEach(function (btn) {
 				btn.addEventListener("click", function () {
 					var expr = btn.getAttribute("data-emb");
@@ -1651,6 +1962,7 @@
 						embDirMode = null;
 						embResult = null;
 						if (embOut) embOut.innerHTML = embDefault();
+						embHideFormula();
 						if (embApi) embApi.redraw();
 						return;
 					}
@@ -1660,6 +1972,7 @@
 						embDirMode = expr === "directions" ? "all" : expr;
 						embResult = null;
 						if (embOut) embOut.innerHTML = embDirText(embDirMode);
+						embHideFormula();
 						if (embApi) embApi.redraw();
 					} else {
 						updateEmb(expr);
@@ -1673,116 +1986,122 @@
 		var posCanvas = document.getElementById("ipe-canvas");
 		var posOut = document.getElementById("ipe-out");
 		var posApi = null;
-		var posDims = 24;
-		var posCount = 64;
-		var D_MODEL = 64;
-		function peValue(pos, dim) {
-			var pair = Math.floor(dim / 2) * 2;
-			var denom = Math.pow(10000, pair / D_MODEL);
-			return dim % 2 === 0 ? Math.sin(pos / denom) : Math.cos(pos / denom);
-		}
-		function posColor(v, c) {
-			var a = Math.pow(Math.min(1, Math.abs(v)), 0.6);
-			var neutral = c.dark ? [30, 58, 74] : [226, 232, 240];
-			var target = hexToRgb(v >= 0 ? c.green : c.coral);
-			var r = Math.round(neutral[0] + (target[0] - neutral[0]) * a);
-			var g = Math.round(neutral[1] + (target[1] - neutral[1]) * a);
-			var b = Math.round(neutral[2] + (target[2] - neutral[2]) * a);
-			return "rgb(" + r + "," + g + "," + b + ")";
+		var posMax = 12;
+		var pos = 7;
+		var POS_FREQ = [0.5, 0.31, 0.2];
+		var POS_COLORS = ["green", "blue", "gold"];
+		function posAngle(pair, p) {
+			return p * POS_FREQ[pair];
 		}
 		function drawPos(ctx, w, h) {
 			var c = TM.colors();
-			var positions = posCount;
-			var padL = 38, padR = 10, padT = 8;
-			var heatH = Math.round(h * 0.64);
-			var heatW = w - padL - padR;
-			var cw = heatW / positions;
-			var ch = heatH / posDims;
-			var stats = [];
-			for (var sd = 0; sd < posDims; sd++) {
-				var vals = [];
-				for (var sp = 0; sp < positions; sp++) vals.push(peValue(sp, sd));
-				var mean = vals.reduce(function (a, b) { return a + b; }, 0) / positions;
-				var maxDev = Math.max.apply(null, vals.map(function (v) { return Math.abs(v - mean); })) || 1;
-				stats.push({ mean: mean, maxDev: maxDev });
-			}
-			function cellT(pos, dim) {
-				return (peValue(pos, dim) - stats[dim].mean) / stats[dim].maxDev;
-			}
 			ctx.clearRect(0, 0, w, h);
-			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.18)" : "rgba(0,75,111,.18)";
-			ctx.lineWidth = 1;
-			ctx.strokeRect(padL, padT, heatW, heatH);
-			for (var p = 0; p < positions; p++) {
-				for (var d = 0; d < posDims; d++) {
-					var v = cellT(p, d);
-					var x = padL + p * cw;
-					var y = padT + d * ch;
-					ctx.fillStyle = posColor(v, c);
-					ctx.fillRect(x + 0.5, y + 0.5, Math.max(1, cw - 1), Math.max(1, ch - 1));
-				}
-			}
-			ctx.fillStyle = c.muted;
-			ctx.font = "500 9px Barlow, system-ui, sans-serif";
-			ctx.textAlign = "center";
-			var labelStep = Math.max(4, Math.round(positions / 8));
-			for (var p2 = 0; p2 < positions; p2 += labelStep) {
-				ctx.fillText(String(p2), padL + p2 * cw + cw / 2, padT + heatH + 13);
-			}
-			ctx.textAlign = "right";
-			for (var d2 = 0; d2 < posDims; d2 += 2) {
-				ctx.fillText("d" + d2, padL - 6, padT + d2 * ch + ch * 0.7);
-			}
-			var stripTop = padT + heatH + 30;
-			var gap = 1;
-			var stripW = Math.max(4, Math.min(18, (heatW - 92 - (posDims - 1) * gap) / posDims));
-			var stripH = 12;
+			var cx = w / 2;
+			var cy = h / 2;
+			var radius = Math.min(64, (w - 160) / 2);
+			var offsets = [-112, 0, 112];
+			var labels = ["d0/d1", "d2/d3", "d4/d5"];
 			ctx.textAlign = "left";
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.fillStyle = c.muted;
+			ctx.fillText(DE ? "Ein Token, drei Drehungen" : "one token, three rotations", 14, 18);
+
+			offsets.forEach(function (oy, pair) {
+				var ringY = cy + oy;
+				var color = c[POS_COLORS[pair]];
+				// ring
+				ctx.beginPath();
+				ctx.ellipse(cx, ringY, radius, radius * 0.42, 0, 0, Math.PI * 2);
+				ctx.strokeStyle = c.dark ? "rgba(238,247,244,.18)" : "rgba(0,75,111,.18)";
+				ctx.lineWidth = 1;
+				ctx.stroke();
+				// trail of integer positions already passed
+				for (var k = 0; k < pos; k++) {
+					var ta = posAngle(pair, k);
+					ctx.beginPath();
+					ctx.arc(cx + radius * Math.cos(ta), ringY + radius * 0.42 * Math.sin(ta), 1.6, 0, Math.PI * 2);
+					ctx.fillStyle = c.faint;
+					ctx.globalAlpha = 0.45;
+					ctx.fill();
+					ctx.globalAlpha = 1;
+				}
+				// rotated arc from the start direction
+				var theta = posAngle(pair, pos);
+				ctx.beginPath();
+				ctx.ellipse(cx, ringY, radius, radius * 0.42, 0, 0, Math.min(theta, Math.PI * 2));
+				ctx.strokeStyle = color;
+				ctx.globalAlpha = 0.5;
+				ctx.lineWidth = 2;
+				ctx.stroke();
+				ctx.globalAlpha = 1;
+				// axle
+				ctx.beginPath();
+				ctx.arc(cx, ringY, 2, 0, Math.PI * 2);
+				ctx.fillStyle = c.ink;
+				ctx.fill();
+				// original token at angle 0: hollow grey dot
+				var ox = cx + radius, oyy = ringY;
+				ctx.beginPath();
+				ctx.arc(ox, oyy, 4.5, 0, Math.PI * 2);
+				ctx.fillStyle = c.paper;
+				ctx.fill();
+				ctx.strokeStyle = c.faint;
+				ctx.lineWidth = 1.5;
+				ctx.stroke();
+				// current position
+				var x = cx + radius * Math.cos(theta);
+				var y = ringY + radius * 0.42 * Math.sin(theta);
+				ctx.beginPath();
+				ctx.moveTo(cx, ringY);
+				ctx.lineTo(x, y);
+				ctx.strokeStyle = color;
+				ctx.lineWidth = 1.4;
+				ctx.stroke();
+				ctx.beginPath();
+				ctx.arc(x, y, 5.5, 0, Math.PI * 2);
+				ctx.fillStyle = color;
+				ctx.fill();
+				ctx.strokeStyle = c.paper;
+				ctx.lineWidth = 1.5;
+				ctx.stroke();
+				// labels
+				ctx.textAlign = "left";
+				ctx.fillStyle = color;
+				ctx.font = "600 10px Barlow, system-ui, sans-serif";
+				ctx.fillText(labels[pair], cx + radius + 16, ringY - 6);
+				ctx.fillStyle = c.muted;
+				ctx.font = "500 9px Barlow, system-ui, sans-serif";
+				var deg = Math.round((theta * 180 / Math.PI) % 360);
+				ctx.fillText(deg + "°", cx + radius + 16, ringY + 8);
+			});
+			// original token marker at the middle ring
+			ctx.textAlign = "center";
 			ctx.fillStyle = c.muted;
 			ctx.font = "500 9px Barlow, system-ui, sans-serif";
-			ctx.fillText(DE ? "Fingerabdrücke" : "fingerprints", padL, stripTop - 6);
-			[0, positions - 1].forEach(function (pos, row) {
-				var y = stripTop + row * (stripH + 6);
-				ctx.textAlign = "right";
-				ctx.fillStyle = pos === 0 ? c.coral : c.green;
-				ctx.fillText((DE ? "Pos. " : "pos ") + pos, padL - 6, y + stripH - 2);
-				ctx.textAlign = "left";
-				for (var d3 = 0; d3 < posDims; d3++) {
-					var v3 = cellT(pos, d3);
-					var xx = padL + d3 * (stripW + gap);
-					ctx.fillStyle = posColor(v3, c);
-					ctx.fillRect(xx, y, stripW, stripH);
-				}
-			});
+			ctx.fillText(DE ? "Kreuz = Token-Achse" : "cross = token axle", cx, cy + 42);
 			if (posOut) {
-				var p0 = [], pn = [];
-				for (var k = 0; k < Math.min(4, posDims); k++) {
-					p0.push(peValue(0, k).toFixed(2));
-					pn.push(peValue(positions - 1, k).toFixed(2));
-				}
-				posOut.innerHTML = 'Position 0: <b>[' + p0.join(", ") + ']</b> · Position ' + (positions - 1) + ': <b>[' + pn.join(", ") + ']</b> <span class="pos-note">· each column scaled to its own range</span>';
+				var degs = POS_FREQ.map(function (f) {
+					return Math.round((pos * f * 180 / Math.PI) % 360) + "°";
+				});
+				posOut.innerHTML = (DE ? 'Position ' : 'position ') + '<b>' + pos + '</b>' +
+					' · d0/d1 <b>' + degs[0] + '</b>' +
+					' · d2/d3 <b>' + degs[1] + '</b>' +
+					' · d4/d5 <b>' + degs[2] + '</b>.';
 			}
 		}
 		if (posCanvas) {
 			posApi = TM.initCanvas(posCanvas, drawPos);
-			var posSlider = document.getElementById("ipe-dims");
-			var posDimsOut = document.getElementById("ipe-dims-out");
+			var posSlider = document.getElementById("ipe-pos");
+			var posCountOut = document.getElementById("ipe-pos-out");
 			if (posSlider) {
 				posSlider.addEventListener("input", function () {
-					posDims = parseInt(posSlider.value, 10);
-					if (posDimsOut) posDimsOut.textContent = String(posDims);
+					pos = parseInt(posSlider.value, 10);
+					if (posCountOut) posCountOut.textContent = String(pos);
 					if (posApi) posApi.redraw();
 				});
 			}
-			var posCountSlider = document.getElementById("ipe-pos");
-			var posCountOut = document.getElementById("ipe-pos-out");
-			if (posCountSlider) {
-				posCountSlider.addEventListener("input", function () {
-					posCount = parseInt(posCountSlider.value, 10);
-					if (posCountOut) posCountOut.textContent = posCount + (DE ? " Positionen" : " positions");
-					if (posApi) posApi.redraw();
-				});
-			}
+			if (posCountOut) posCountOut.textContent = String(pos);
+			if (posApi) posApi.redraw();
 		}
 
 		/* ── attention ───────────────────────────────────────── */
@@ -1936,11 +2255,11 @@
 					{ label: "Merkmal: Turm / Burg", on: true }
 				],
 				values: [
-					{ label: "Nächste-Token-Zug: Schlüssel, Tür, öffnen", on: false },
-					{ label: "Nächste-Token-Zug: König, Turm, Burg", on: true },
-					{ label: "Nächste-Token-Zug: alt, prächtig, Garten", on: true }
+					{ label: "Nächste-Token-Hinweis: Schlüssel, Tür, öffnen", on: false },
+					{ label: "Nächste-Token-Hinweis: König, Turm, Burg", on: true },
+					{ label: "Nächste-Token-Hinweis: alt, prächtig, Garten", on: true }
 				],
-				desc: 'Der Kontext ist <b>Ich besichtige das Schloss</b>. Attention hat diesen Kontext bereits in den Token-Vektor gelegt. Die Gebäude- und Burgmuster passen; das Mechanik-Muster bleibt still. Jeder Treffer schreibt einen Nächste-Token-Zug in den Stream.'
+				desc: 'Der Kontext ist <b>Ich besichtige das Schloss</b>. Attention hat diesen Kontext bereits in den Token-Vektor gelegt. Die Gebäude- und Burgmuster passen; das Mechanik-Muster bleibt still. Jeder Treffer schreibt einen Nächste-Token-Hinweis in den Stream.'
 			},
 			tech: {
 				keys: [
@@ -1949,13 +2268,27 @@
 					{ label: "Merkmal: Turm / Burg", on: false }
 				],
 				values: [
-					{ label: "Nächste-Token-Zug: Schlüssel, Tür, öffnen", on: true },
-					{ label: "Nächste-Token-Zug: König, Turm, Burg", on: false },
-					{ label: "Nächste-Token-Zug: alt, prächtig, Garten", on: false }
+					{ label: "Nächste-Token-Hinweis: Schlüssel, Tür, öffnen", on: true },
+					{ label: "Nächste-Token-Hinweis: König, Turm, Burg", on: false },
+					{ label: "Nächste-Token-Hinweis: alt, prächtig, Garten", on: false }
 				],
 				desc: 'Der Kontext ist <b>Ich öffne das Schloss</b>. Jetzt passt das Mechanik-Muster, und die Gebäude- und Burgmuster bleiben still. Der Value verschiebt die Nächste-Token-Verteilung in Richtung „Schlüssel“, „Tür“ und „öffnen“.'
 			}
 		};
+		function fitFFNHeight() {
+			var out = document.getElementById("iffn-out");
+			if (!out) return;
+			var dataSet = DE ? ffnScenariosDe : ffnScenarios;
+			var prev = out.innerHTML;
+			var max = 0;
+			out.style.minHeight = "";
+			Object.keys(dataSet).forEach(function (key) {
+				out.innerHTML = dataSet[key].desc;
+				max = Math.max(max, out.offsetHeight);
+			});
+			out.innerHTML = prev;
+			if (max > 0) out.style.minHeight = max + "px";
+		}
 		function renderFFN(mode) {
 			var data = (DE ? ffnScenariosDe : ffnScenarios)[mode];
 			var keysEl = document.getElementById("iffn-keys");
@@ -1976,6 +2309,12 @@
 			btn.addEventListener("click", function () { renderFFN(btn.getAttribute("data-ffn")); });
 		});
 		renderFFN("fruit");
+		window.addEventListener("load", fitFFNHeight);
+		window.addEventListener("resize", function () {
+			clearTimeout(fitFFNHeight._timer);
+			fitFFNHeight._timer = setTimeout(fitFFNHeight, 120);
+		});
+		if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitFFNHeight);
 
 		/* ── residual stream ─────────────────────────────────── */
 		var resBase = [0.35, 0.5, 0.28, 0.62, 0.44, 0.3, 0.55, 0.4, 0.33, 0.48];
@@ -1991,6 +2330,7 @@
 		var resBars = document.getElementById("ires-bars");
 		var resLayers = document.getElementById("ires-layers");
 		var resOut = document.getElementById("ires-out");
+		var resVector = document.getElementById("ires-vector");
 		function renderRes() {
 			if (resLayers) {
 				resLayers.innerHTML = resUpdates.map(function (u, i) {
@@ -2014,12 +2354,13 @@
 				}).join("");
 			}
 			if (resOut) resOut.innerHTML = DE ? resUpdates[resStep].noteDe : resUpdates[resStep].note;
+			if (resVector) resVector.textContent = "[" + cum.map(function (v) { return v.toFixed(2); }).join(", ") + "]";
 		}
 		renderRes();
 
 
 		window.addEventListener("tm:theme", function () {
-			if (api) api.redraw();
+			if (isoApi) isoApi.redraw();
 			if (embApi) embApi.redraw();
 			if (posApi) posApi.redraw();
 			if (attApi) attApi.redraw();

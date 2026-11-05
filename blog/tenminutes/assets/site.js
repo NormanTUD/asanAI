@@ -237,7 +237,7 @@
 
 	function initReveal() {
 		document.querySelectorAll(".demo").forEach(function (n) {
-			if (!n.hasAttribute("data-reveal")) n.setAttribute("data-reveal", "");
+			n.classList.add("is-in");
 		});
 		var nodes = document.querySelectorAll("[data-reveal]");
 		if (!nodes.length) return;
