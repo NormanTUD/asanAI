@@ -748,13 +748,13 @@
 			return [parseInt(h.slice(0, 2), 16) || 0, parseInt(h.slice(2, 4), 16) || 0, parseInt(h.slice(4, 6), 16) || 0];
 		}
 		var NOUNS = DE ? [
-			{ t: "Drache", l: 3.4 }, { t: "Prinzessin", l: 1.1 }, { t: "Roboter", l: 0.7 }, { t: "Schloss", l: 0.4 }, { t: "Fluss", l: 0.2 }
+			{ t: "Drache", l: 3.4 }, { t: "Ritter", l: 1.1 }, { t: "Roboter", l: 0.7 }, { t: "Schloss", l: 0.4 }, { t: "Fluss", l: 0.2 }
 		] : [
 			{ t: "dragon", l: 3.4 }, { t: "princess", l: 1.1 }, { t: "robot", l: 0.7 }, { t: "castle", l: 0.4 }, { t: "river", l: 0.2 }
 		];
 		var ACTIONS = DE ? {
 			Drache: [{ t: "fliegen", l: 3.5 }, { t: "brüllen", l: 1.5 }, { t: "schlafen", l: 0.8 }, { t: "schwimmen", l: 0.5 }, { t: "singen", l: 0.3 }],
-			Prinzessin: [{ t: "singen", l: 3.4 }, { t: "tanzen", l: 1.5 }, { t: "träumen", l: 0.9 }, { t: "schlafen", l: 0.5 }, { t: "schwimmen", l: 0.3 }],
+			Ritter: [{ t: "kämpfen", l: 3.4 }, { t: "reiten", l: 1.5 }, { t: "singen", l: 0.9 }, { t: "schlafen", l: 0.5 }, { t: "tanzen", l: 0.3 }],
 			Roboter: [{ t: "fliegen", l: 3.3 }, { t: "piepen", l: 1.5 }, { t: "singen", l: 0.9 }, { t: "schlafen", l: 0.5 }, { t: "schwimmen", l: 0.3 }],
 			Schloss: [{ t: "glänzen", l: 3.2 }, { t: "leuchten", l: 1.5 }, { t: "schlafen", l: 0.8 }, { t: "singen", l: 0.4 }],
 			Fluss: [{ t: "fließen", l: 3.5 }, { t: "singen", l: 1.2 }, { t: "brüllen", l: 0.8 }, { t: "gefrieren", l: 0.5 }, { t: "glänzen", l: 0.3 }]
@@ -767,7 +767,7 @@
 		};
 		var RELATIVE = DE ? {
 			Drache: [{ t: "der", l: 3.6 }],
-			Prinzessin: [{ t: "die", l: 3.6 }],
+			Ritter: [{ t: "der", l: 3.6 }],
 			Roboter: [{ t: "der", l: 3.6 }],
 			Schloss: [{ t: "das", l: 3.6 }],
 			Fluss: [{ t: "der", l: 3.6 }]
@@ -806,7 +806,7 @@
 			return [];
 		}
 		function nounArticle() {
-			return DE && generated[0] === "Prinzessin" ? "eine" : "ein";
+			return "ein";
 		}
 		var base = DE ? ["Es", "war", "einmal", "ein"] : ["Once", "upon", "a", "time", "there", "was", "a"];
 		var generated = [];

@@ -8,6 +8,7 @@ DONE — Der Satz zur „Arbeitshypothese“ war nicht mehr vorhanden.
 DONE — Embedding-Absatz: Schlüssel „image“ → „picture“ korrigiert; erscheint jetzt deutsch.
 DONE — Attention: Gewichtsmatrix und gewichtete Value-Summe mit zwei underbrace-Ebenen ergänzt.
 DONE — Tokenizer-Chips ins Deutsche übersetzt.
+DONE — Demo 01: „Prinzessin“ durch „Ritter“ ersetzt; alle deutschen Nomen nehmen jetzt „ein“, der Artikel-Sonderfall ist entfernt.
 
 history:
 
