@@ -81,6 +81,8 @@
 							<span class="demo-badge">illustrative</span>
 						</div>
 						<div class="demo-body">
+							<p class="lens-question" data-lens-question></p>
+							<p class="lens-prompt"><code data-lens-prompt></code></p>
 							<div class="dist-bars" data-lens-bars></div>
 							<div class="demo-controls">
 								<label>Layer <input type="range" data-lens-layer min="0" max="6" step="1" value="0"><output data-lens-layer-out>0</output></label>

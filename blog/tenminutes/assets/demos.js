@@ -1768,8 +1768,15 @@
 		var top = $("[data-lens-top]", root);
 		var paris = $("[data-lens-paris]", root);
 		var name = $("[data-lens-layer-name]", root);
+		var question = $("[data-lens-question]", root);
+		var prompt = $("[data-lens-prompt]", root);
+		var title = $(".demo-title", root);
+		var sub = $(".demo-sub", root);
 		if (!bars || !range) return;
-		var tokens = [ "the", "city", "capital", "France", "Lyon", "Paris" ];
+		var DE = !!(window.TM && TM.lang && TM.lang() === "de");
+		if (title) title.innerHTML = DE ? 'Sieh die Antwort entstehen <span>· Demo</span>' : 'Watch the answer form <span>· demo</span>';
+		if (sub) sub.textContent = DE ? "Die Logit-Linse liest den Residual Stream in jeder Schicht. Frühe Schichten sind unentschieden; die finalen Schichten konzentrieren sich auf die Antwort." : "The logit lens reads the residual stream at each layer. Early layers are undecided; the final layers concentrate on the answer.";
+		var tokens = DE ? [ "die", "Stadt", "Hauptstadt", "Frankreich", "Lyon", "Paris" ] : [ "the", "city", "capital", "France", "Lyon", "Paris" ];
 		var layers = [
 			[ 0.28, 0.21, 0.18, 0.14, 0.11, 0.08 ],
 			[ 0.12, 0.26, 0.24, 0.18, 0.12, 0.08 ],
@@ -1779,7 +1786,9 @@
 			[ 0.01, 0.01, 0.01, 0.02, 0.08, 0.87 ],
 			[ 0.00, 0.00, 0.00, 0.01, 0.03, 0.96 ]
 		];
-		var names = [ "embedding", "block 1", "block 2", "block 3", "block 4", "block 5", "output" ];
+		var names = DE ? [ "Embedding", "Block 1", "Block 2", "Block 3", "Block 4", "Block 5", "Ausgabe" ] : [ "embedding", "block 1", "block 2", "block 3", "block 4", "block 5", "output" ];
+		if (question) question.textContent = DE ? "Frage: Was ist die Hauptstadt Frankreichs?" : "Question: What is the capital of France?";
+		if (prompt) prompt.textContent = DE ? "Die Hauptstadt von Frankreich ist ___" : "The capital of France is ___";
 		function render() {
 			var l = parseInt(range.value, 10) || 0;
 			if (out) out.textContent = l;
