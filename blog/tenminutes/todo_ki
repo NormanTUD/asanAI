@@ -1,0 +1,3 @@
+intuition:
+
+" The loop is the outside view. Inside, one token passes through a fixed pipeline, and each step changes its representation. The steps below correspond to what Vaswani et al., 2017 described as a transformer: text becomes ids, ids become vectors, position adds where each token sits, attention adds context, the feed-forward network computes, and the residual stream carries the result to the next layer, where attention and the feed-forward network work again; at the end, a token is chosen. " wird irgendwie nicht auf deutsch übersetzt
