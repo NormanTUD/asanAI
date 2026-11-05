@@ -67,7 +67,7 @@
 	} else {
 		render();
 	}
-	[300, 900, 1800, 3200, 6000].forEach(function (ms) {
+	[300, 1200].forEach(function (ms) {
 		setTimeout(render, ms);
 	});
 	window.addEventListener("load", render);

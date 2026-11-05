@@ -233,6 +233,7 @@
 								and the token stream, embedding map, and positional waves update.
 							</p>
 						</div>
+<div class="demo-loader-status" id="demo-loader-status">The interactive demos load when you reach this section.</div>
 <div class="viz-container" id="transformer-viz-bpe"></div>
 <div style="background: var(--mn-bg-subtle, #f8fafc); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
 <div id="transformer-plotly-space" style="width: 100%; height: 500px; background: var(--mn-surface, white); border-radius: 8px;"></div>
@@ -1004,22 +1005,121 @@
 	</script>
 
 
-	<script src="assets/full/vendor/jquery-3.7.1.min.js"></script>
-	<script src="assets/full/vendor/plotly-2.24.1.min.js"></script>
-	<script src="assets/full/vendor/echarts.min.js"></script>
-	<script src="assets/full/vendor/echarts-gl.min.js"></script>
-	<script src="assets/full/vendor/tf.min.js"></script>
-	<script src="assets/full/shim.js"></script>
-	<script src="assets/full/transformer.js"></script>
-	<script src="assets/full/attention_engine.js"></script>
-	<script src="assets/full/llm_river.js"></script>
-	<script src="assets/full/provenance.js"></script>
-	<script src="assets/full/demo-i18n.js"></script>
-	<script src="assets/full/demo-render.js"></script>
+
 	<script>
-	document.addEventListener("DOMContentLoaded", function () {
-		if (typeof loadTransformerModule === "function") loadTransformerModule();
-	});
+	(function () {
+		"use strict";
+		var started = false, done = false;
+		var hosts = ["inputlab", "block", "output", "realmodel"].map(function (id) { return document.getElementById(id); }).filter(Boolean);
+		if (!hosts.length) hosts = [document.body];
+		var status = document.getElementById("demo-loader-status");
+		function t(en, de) { return (window.TM && TM.lang && TM.lang() === "de") ? de : en; }
+		function setStatus(text) { if (status) status.textContent = text; }
+		function loadScript(src) {
+			return new Promise(function (resolve, reject) {
+				var script = document.createElement("script");
+				script.src = src;
+				script.async = false;
+				script.onload = resolve;
+				script.onerror = function () { reject(new Error(src)); };
+				document.body.appendChild(script);
+			});
+		}
+		var tfPromise = null;
+		function loadTF() {
+			if (window.tf) return Promise.resolve();
+			if (tfPromise) return tfPromise;
+			tfPromise = loadScript("assets/full/vendor/tf.min.js").then(function () {
+				if (!window.tf) throw new Error("TensorFlow.js missing");
+				var ready = tf.setBackend ? tf.setBackend("cpu") : Promise.resolve();
+				return Promise.resolve(ready).then(function () {
+					return tf.ready ? tf.ready() : null;
+				});
+			});
+			return tfPromise;
+		}
+		function wireTrain() {
+			var btn = document.querySelector(".train-btn");
+			if (!btn || btn._tmTfWired) return;
+			btn._tmTfWired = true;
+			btn.addEventListener("click", function (event) {
+				if (window.tf) return;
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				var box = document.getElementById("training-status");
+				if (box) {
+					box.style.display = "block";
+					box.textContent = t("Loading TensorFlow.js…", "TensorFlow.js wird geladen…");
+				}
+				loadTF().then(function () {
+					if (typeof train_transformer === "function") train_transformer();
+				}).catch(function () {
+					if (box) box.textContent = t("TensorFlow.js could not load.", "TensorFlow.js konnte nicht geladen werden.");
+				});
+			}, true);
+		}
+		function loadAll() {
+			if (started) return;
+			started = true;
+			setStatus(t("Loading the interactive transformer demos…", "Interaktive Transformer-Demos werden geladen…"));
+			var vendor = [
+				"assets/full/vendor/plotly-2.24.1.min.js",
+				"assets/full/vendor/echarts.min.js"
+			];
+			var core = [
+				"assets/full/shim.js",
+				"assets/full/transformer.js",
+				"assets/full/attention_engine.js",
+				"assets/full/llm_river.js",
+				"assets/full/provenance.js",
+				"assets/full/demo-i18n.js",
+				"assets/full/demo-render.js"
+			];
+			Promise.all(vendor.map(loadScript)).then(function () {
+				return core.reduce(function (p, src) {
+					return p.then(function () { return loadScript(src); });
+				}, Promise.resolve());
+			}).then(function () {
+				try {
+					var ifs = document.getElementById("ifscalfactornotone");
+					if (ifs) ifs.style.display = "none";
+					if (typeof loadTransformerModule === "function") loadTransformerModule();
+					wireTrain();
+					done = true;
+					if (status) {
+						status.textContent = t("Interactive demos ready.", "Interaktive Demos bereit.");
+						setTimeout(function () { if (status) status.style.display = "none"; }, 900);
+					}
+				} catch (e) {
+					setStatus(t("The demos could not start.", "Die Demos konnten nicht starten."));
+				}
+			}).catch(function () {
+				setStatus(t("The demos could not load.", "Die Demos konnten nicht geladen werden."));
+			});
+		}
+		function near() {
+			if (started) return true;
+			var limit = (window.innerHeight || 800) + 900;
+			for (var i = 0; i < hosts.length; i++) {
+				if (hosts[i].getBoundingClientRect().top < limit) return true;
+			}
+			return false;
+		}
+		if ("IntersectionObserver" in window) {
+			var io = new IntersectionObserver(function (entries) {
+				if (entries.some(function (entry) { return entry.isIntersecting; })) {
+					io.disconnect();
+					loadAll();
+				}
+			}, { rootMargin: "900px 0px" });
+			hosts.forEach(function (host) { io.observe(host); });
+		}
+		window.addEventListener("scroll", function () { if (near()) loadAll(); }, { passive: true });
+		var watch = setInterval(function () {
+			if (near()) { clearInterval(watch); loadAll(); }
+		}, 800);
+		if (near()) { clearInterval(watch); loadAll(); }
+	})();
 	</script>
 </body>
 </html>

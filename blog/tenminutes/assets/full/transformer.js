@@ -613,7 +613,7 @@ function reset_graph() {
 		}
 	}
 	drawTrainingPlaceholder();
-	$("#show_training_sentences").hide();
+	var _tmSts = document.getElementById("show_training_sentences"); if (_tmSts) _tmSts.style.display = "none";
 	const tw = document.getElementById('tda-toggle-training-windows');
 	if (tw) tw.innerText = 'Show training windows';
 }

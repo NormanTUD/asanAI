@@ -175,3 +175,14 @@
 }
 .glossary-term:hover > .glossary-tooltip,
 .glossary-term:focus > .glossary-tooltip { display: block; }
+
+.demo-loader-status {
+	margin: 16px 0;
+	padding: 12px 14px;
+	border: 1px dashed var(--tm-line-strong);
+	background: var(--tm-paper-2);
+	font-family: var(--tm-ui);
+	font-size: .75rem;
+	line-height: 1.6;
+	color: var(--tm-muted);
+}

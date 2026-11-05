@@ -218,7 +218,8 @@
 		[
 			"training-status", "show_training_sentences", "current_training_sentence",
 			"nr_params", "param-breakdown-table", "transformer-vector-math-result",
-			"transformer-train-card"
+			"transformer-train-card", "ffn-equations-container",
+			"transformer-output-projection", "transformer-migration-plots-container"
 		].forEach(watch);
 		var btn = document.querySelector(".train-btn");
 		if (btn && window.MutationObserver) {
@@ -229,5 +230,5 @@
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
 	else start();
-	[400, 1200, 2600, 5000].forEach(function (ms) { setTimeout(function () { walk(document.body); }, ms); });
+	[350, 1200].forEach(function (ms) { setTimeout(function () { walk(document.body); }, ms); });
 })();
