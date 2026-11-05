@@ -6736,3 +6736,164 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	text-transform: uppercase;
 	color: var(--tm-muted);
 }
+
+/* ── live math lab ───────────────────────────────────────── */
+.mathlab {
+	margin: 24px 0 0;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-card);
+}
+.mathlab-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px 16px;
+	align-items: center;
+	padding: 14px 16px;
+	border-bottom: 1px solid var(--tm-line);
+	background: var(--tm-paper-2);
+}
+.mathlab-controls label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-family: var(--tm-ui);
+	font-size: .7rem;
+	color: var(--tm-muted);
+}
+.mathlab-controls .ml-wide { flex: 1 1 240px; }
+.mathlab-controls input[type="text"],
+.mathlab-controls select {
+	min-width: 0;
+	padding: 4px 6px;
+	border: 1px solid var(--tm-line);
+	border-radius: 0;
+	background: var(--tm-card);
+	color: var(--tm-ink);
+	font-family: var(--tm-mono);
+	font-size: .72rem;
+}
+.mathlab-controls input[type="text"] { width: 100%; }
+.mathlab-controls input[type="range"] { width: 92px; }
+.mathlab-controls output {
+	min-width: 2.4em;
+	font-family: var(--tm-mono);
+	font-size: .7rem;
+	color: var(--tm-petrol);
+}
+.mathlab-controls .btn-demo { padding: 7px 12px; font-size: .7rem; }
+.ml-sampled {
+	font-family: var(--tm-mono);
+	font-size: .7rem;
+	color: var(--tm-green-deep);
+}
+.ml-token-line {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+	padding: 12px 16px 4px;
+}
+.ml-token {
+	padding: 3px 7px;
+	border: 1px solid var(--tm-line);
+	border-radius: 0;
+	background: var(--tm-wash);
+	color: var(--tm-petrol);
+	font-family: var(--tm-mono);
+	font-size: .68rem;
+	cursor: pointer;
+}
+.ml-token.is-selected {
+	background: var(--tm-green);
+	border-color: var(--tm-green);
+	color: #ffffff;
+}
+.ml-token .ml-token-id {
+	margin-left: 5px;
+	opacity: .55;
+	font-size: .58rem;
+}
+.mathlab-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1px;
+	background: var(--tm-line);
+	border-top: 1px solid var(--tm-line);
+}
+.ml-card {
+	min-width: 0;
+	padding: 16px;
+	background: var(--tm-card);
+}
+.ml-card--wide { grid-column: 1 / -1; }
+.ml-kicker {
+	margin-bottom: 10px;
+	font-family: var(--tm-mono);
+	font-size: .6rem;
+	letter-spacing: .1em;
+	text-transform: uppercase;
+	color: var(--tm-muted);
+}
+.ml-formula {
+	margin: 0 0 10px;
+	padding: 8px 0;
+	overflow-x: auto;
+	overflow-y: hidden;
+	border-bottom: 1px solid var(--tm-line);
+	color: var(--tm-ink);
+}
+.ml-formula:last-of-type { border-bottom: 0; }
+.ml-formula math { font-size: 1em; }
+.ml-live {
+	margin: 8px 0 0;
+	font-family: var(--tm-mono);
+	font-size: .68rem;
+	line-height: 1.6;
+	color: var(--tm-ink-soft);
+	overflow-wrap: anywhere;
+}
+.ml-live b { color: var(--tm-petrol); font-weight: 700; }
+.ml-live .is-good { color: var(--tm-green-deep); }
+.ml-live .is-bad { color: var(--tm-coral); }
+.ml-canvas {
+	display: block;
+	width: 100%;
+	margin: 10px 0 0;
+	background: var(--tm-paper-2);
+	border: 1px solid var(--tm-line);
+}
+.ml-vecmath-label,
+.ml-eps-label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 12px;
+	font-family: var(--tm-ui);
+	font-size: .68rem;
+	color: var(--tm-muted);
+}
+.ml-vecmath-label input {
+	flex: 1 1 auto;
+	min-width: 0;
+	padding: 4px 6px;
+	border: 1px solid var(--tm-line);
+	border-radius: 0;
+	background: var(--tm-card);
+	color: var(--tm-ink);
+	font-family: var(--tm-mono);
+	font-size: .7rem;
+}
+.ml-eps-label input[type="range"] { width: 120px; }
+.ml-foot {
+	padding: 12px 16px;
+	border-top: 1px solid var(--tm-line);
+	font-family: var(--tm-ui);
+	font-size: .68rem;
+	line-height: 1.6;
+	color: var(--tm-muted);
+	background: var(--tm-paper-2);
+}
+@media (max-width: 760px) {
+	.mathlab-grid { grid-template-columns: minmax(0, 1fr); }
+	.ml-card--wide { grid-column: auto; }
+	.mathlab-controls input[type="range"] { width: 78px; }
+}

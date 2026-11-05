@@ -6,6 +6,7 @@
 	if (!root) return;
 	var DE = window.TM && TM.lang ? TM.lang() === "de" : false;
 	var tf = window.tf;
+	if (tf && tf.setBackend) { try { tf.setBackend("cpu"); } catch (e) {} }
 	var corpusEl = root.querySelector("[data-tiny-corpus]");
 	var dEl = root.querySelector("[data-tiny-d]");
 	var headsEl = root.querySelector("[data-tiny-heads]");
@@ -32,8 +33,11 @@
 	var model = null, opt = null, params = [], maskT = null;
 	var lossHistory = [], attnHeads = [];
 	var training = false;
+	var stopRequested = false;
+	var stopped = false;
 	var lastLoss = null;
 	var sampleText = "";
+	var activeLr = 0.01;
 
 	function txt(en, de) { return DE ? de : en; }
 
@@ -116,7 +120,8 @@
 		model.layers.forEach(function (L) {
 			params.push(L.Wq, L.Wk, L.Wv, L.Wo, L.g1, L.b1, L.g2, L.b2, L.W1, L.b1ff, L.W2, L.b2ff);
 		});
-		opt = tf.train.adam(parseFloat(lrEl.value) || 0.01);
+		activeLr = parseFloat(lrEl.value) || 0.01;
+		opt = tf.train.adam(activeLr);
 		if (paramsEl) paramsEl.textContent = params.reduce(function (s, p) { return s + p.size; }, 0).toLocaleString();
 		lossHistory = [];
 		attnHeads = [];
@@ -173,23 +178,42 @@
 	function updateReadout() {
 		if (lossEl) lossEl.textContent = lastLoss == null ? "..." : lastLoss.toFixed(3);
 		if (epochEl) epochEl.textContent = String(lossHistory.length);
-		if (statusEl) statusEl.textContent = training ? txt("training…", "trainiert…") : (lastLoss == null ? txt("ready", "bereit") : txt("trained", "trainiert"));
+		if (statusEl) statusEl.textContent = training
+			? (stopRequested ? txt("stopping…", "stoppt…") : txt("training…", "trainiert…"))
+			: (lastLoss == null ? txt("ready", "bereit") : (stopped ? txt("stopped", "gestoppt") : txt("trained", "trainiert")));
+		if (trainBtn) trainBtn.textContent = training ? txt("Stop ■", "Stopp ■") : txt("Train ▶", "Trainieren ▶");
+		try {
+			window.dispatchEvent(new CustomEvent("tiny:update", {
+				detail: {
+					loss: lastLoss,
+					epoch: lossHistory.length,
+					lr: activeLr,
+					training: training,
+					status: statusEl ? statusEl.textContent : ""
+				}
+			}));
+		} catch (e) {}
 	}
 
 	async function train() {
-		if (!tf || training) return;
+		if (!tf) return;
+		if (training) { stopRequested = true; updateReadout(); return; }
 		readConfig();
 		buildVocab();
 		if (vocab.length < 2) { if (statusEl) statusEl.textContent = txt("corpus too small", "Korpus zu klein"); return; }
 		buildModel();
-		opt = tf.train.adam(parseFloat(lrEl.value) || 0.01);
+		activeLr = parseFloat(lrEl.value) || 0.01;
+		opt = tf.train.adam(activeLr);
 		var epochs = Math.max(1, parseInt(epochsEl.value, 10) || 300);
 		training = true;
-		trainBtn.disabled = true;
-		resetBtn.disabled = true;
-		sampleBtn.disabled = true;
+		stopRequested = false;
+		stopped = false;
+		if (trainBtn) trainBtn.disabled = false;
+		if (resetBtn) resetBtn.disabled = true;
+		if (sampleBtn) sampleBtn.disabled = true;
 		updateReadout();
 		for (var e = 0; e < epochs; e++) {
+			if (stopRequested) { stopped = true; break; }
 			var loss = opt.minimize(lossFn, true, params);
 			lastLoss = loss.dataSync()[0];
 			loss.dispose();
@@ -197,16 +221,19 @@
 			if (e % 5 === 0 || e === epochs - 1) {
 				updateReadout();
 				if (lossApi) lossApi.redraw();
-				await tf.nextFrame();
+				await new Promise(function (resolve) { setTimeout(resolve, 0); });
 			}
 		}
 		training = false;
-		trainBtn.disabled = false;
-		resetBtn.disabled = false;
-		sampleBtn.disabled = false;
+		stopRequested = false;
+		if (trainBtn) trainBtn.disabled = false;
+		if (resetBtn) resetBtn.disabled = false;
+		if (sampleBtn) sampleBtn.disabled = false;
 		updateReadout();
-		showAttention();
-		sample();
+		if (lastLoss != null) {
+			showAttention();
+			sample();
+		}
 	}
 
 	function showAttention() {
@@ -277,10 +304,14 @@
 			for (var i = 0; i < T; i++) {
 				for (var j = 0; j < T; j++) {
 					var v = data[(hh * T + i) * T + j] || 0;
-					ctx.fillStyle = v <= 0.001
-						? (c.dark ? "rgba(120,140,150,.10)" : "rgba(120,140,150,.08)")
-						: "color-mix(in srgb, " + c.green + " " + Math.min(100, v * 180).toFixed(1) + "%, " + c.paper2 + ")";
+					if (v <= 0.001) {
+						ctx.fillStyle = c.dark ? "rgba(120,140,150,.10)" : "rgba(120,140,150,.08)";
+					} else {
+						ctx.globalAlpha = Math.min(0.95, 0.14 + v * 1.5);
+						ctx.fillStyle = c.green;
+					}
 					ctx.fillRect(ox + j * size, oy + i * size, Math.max(1, size - 1), Math.max(1, size - 1));
+					ctx.globalAlpha = 1;
 				}
 			}
 			ctx.fillStyle = c.muted;
@@ -302,7 +333,7 @@
 		if (!seq.length) seq = ids.slice(0, Math.min(3, ids.length));
 		var T = cfg.context;
 		var out = prompt;
-		for (var step = 0; step < 24; step++) {
+		for (var step = 0; step < 16; step++) {
 			var ctxIds = seq.slice(-T);
 			while (ctxIds.length < T) ctxIds.unshift(0);
 			var logits = forward(ctxIds, false);
@@ -323,6 +354,7 @@
 
 	function reset() {
 		if (training) return;
+		stopped = false;
 		readConfig();
 		buildVocab();
 		buildModel();
@@ -343,6 +375,7 @@
 	if (resetBtn) resetBtn.addEventListener("click", reset);
 	if (sampleBtn) sampleBtn.addEventListener("click", sample);
 	[dEl, headsEl, layersEl, contextEl].forEach(function (el) { if (el) el.addEventListener("change", reset); });
+	if (lrEl) lrEl.addEventListener("input", updateReadout);
 	var corpusTimer = null;
 	if (corpusEl) corpusEl.addEventListener("input", function () {
 		if (corpusTimer) clearTimeout(corpusTimer);
@@ -352,5 +385,5 @@
 		if (lossApi) lossApi.redraw();
 		if (attnApi) attnApi.redraw();
 	});
-	reset();
+	if (tf.ready) { tf.ready().then(reset); } else { reset(); }
 })();
