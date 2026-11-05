@@ -161,6 +161,20 @@
 			"author": "Ten Minutes",
 			"license": "CC0 1.0",
 			"source": "assets/img/tokenization.svg"
+		},
+		{
+			"src": "assets/img/stop-edges-v.png",
+			"title": "Vertical-edge feature map of the stop sign",
+			"author": "Ten Minutes",
+			"license": "CC0 1.0",
+			"source": "assets/img/stop-edges-v.png"
+		},
+		{
+			"src": "assets/img/stop-edges-mag.png",
+			"title": "Combined edge-magnitude feature map of the stop sign",
+			"author": "Ten Minutes",
+			"license": "CC0 1.0",
+			"source": "assets/img/stop-edges-mag.png"
 		}
 	]
 }

@@ -764,20 +764,8 @@
 		var inputSizeEl = $("[data-conv-input-size]", root);
 		var outputSizeEl = $("[data-conv-output-size]", root);
 		var scanBtn = $("[data-conv-scan]", root);
-		var paintBtn = $("[data-conv-paint]", root);
-		var imageBtn = $("[data-conv-image]", root);
-		var hintEl = $("[data-conv-hint]", root);
 		var kernelGrid = $("[data-conv-kernel-grid]", root);
 		if (!canvas) return;
-		var size = 14;
-		var input = [];
-		for (var y = 0; y < size; y++) {
-			input.push([]);
-			for (var x = 0; x < size; x++) {
-				var dx = x - (size - 1) / 2, dy = y - (size - 1) / 2;
-				input[y].push(dx * dx + dy * dy < 18 ? 1 : 0);
-			}
-		}
 		var kernels = {
 			edge: [ [-1, -1, -1], [-1, 8, -1], [-1, -1, -1] ],
 			blur: [ [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9] ],
@@ -787,6 +775,14 @@
 			emboss: [ [-2, -1, 0], [-1, 1, 1], [0, 1, 2] ]
 		};
 		var current = "edge";
+		var imageLoaded = false;
+		var img = null;
+		var gw = 0, gh = 0;
+		var input = [];
+		var outCanvas = document.createElement("canvas");
+		var outCtx = outCanvas.getContext("2d");
+		var scanCell = -1;
+		var scanTimer = null;
 		function renderKernel() {
 			if (!kernelGrid) return;
 			kernelGrid.innerHTML = "";
@@ -799,99 +795,118 @@
 				});
 			});
 		}
-		var imageLoaded = false;
-		var scanCell = -1;
-		var scanTimer = null;
-		var lastGeom = null;
-		var imageGrid = null;
 		function conv(kernel) {
 			var out = [];
-			for (var y = 1; y < size - 1; y++) {
-				out.push([]);
-				for (var x = 1; x < size - 1; x++) {
-					var s = 0;
-					for (var ky = -1; ky <= 1; ky++) for (var kx = -1; kx <= 1; kx++) {
-						s += input[y + ky][x + kx] * kernel[ky + 1][kx + 1];
+			for (var y = 1; y < gh - 1; y++) {
+				var row = [];
+				for (var x = 1; x < gw - 1; x++) {
+					var sum = 0;
+					for (var ky = -1; ky <= 1; ky++) {
+						for (var kx = -1; kx <= 1; kx++) {
+							sum += input[y + ky][x + kx] * kernel[ky + 1][kx + 1];
+						}
 					}
-					out[y - 1].push(s);
+					row.push(sum);
 				}
+				out.push(row);
 			}
 			return out;
 		}
 		function draw(ctx, W, H) {
 			var c = colors();
-			var out = conv(kernels[current]);
-			var pad = 18, gap = 36;
-			var cell = Math.min((W - pad * 2 - gap) / (size + size - 2), (H - pad * 2 - 26) / size);
-			var ox = pad, oy = pad + 18;
 			ctx.clearRect(0, 0, W, H);
-			ctx.font = "600 11px Barlow, system-ui, sans-serif";
-			lastGeom = { pad: pad, gap: gap, cell: cell, ox: ox, oy: oy, ox2: ox + size * cell + gap };
+			var pad = 18, gap = 36;
+			if (!imageLoaded || !img || !gw || !gh) {
+				ctx.fillStyle = c.muted;
+				ctx.font = "600 11px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "center";
+				ctx.fillText(DEMO_DE ? "Bild wird geladen …" : "loading image …", W / 2, H / 2);
+				ctx.textAlign = "left";
+				return;
+			}
+			var ow = gw - 2, oh = gh - 2;
+			var maxIW = (W - pad * 2 - gap) / 2;
+			var maxIH = H - pad * 2 - 26;
+			var scale = Math.min(maxIW / gw, maxIH / gh);
+			var iw = gw * scale, ih = gh * scale;
+			var ox = pad, oy = pad + 18;
+			var ox2 = ox + iw + gap;
 			ctx.fillStyle = c.muted;
-			ctx.fillText(imageLoaded ? "input · stop sign" : "input · painted", ox, pad + 4);
-			ctx.fillText("feature map · " + current, ox + size * cell + gap, pad + 4);
-			for (var y = 0; y < size; y++) {
-				for (var x = 0; x < size; x++) {
-					var v = clamp(input[y][x], 0, 1);
-					ctx.fillStyle = rgb(mix(hexToRgb(c.petrol), hexToRgb(c.card), v));
-					ctx.fillRect(ox + x * cell, oy + y * cell, cell - 1, cell - 1);
-				}
-			}
-			var flat = [];
-			out.forEach(function (row) { row.forEach(function (v) { flat.push(v); }); });
-			var mn = Math.min.apply(null, flat), mx = Math.max.apply(null, flat);
+			ctx.font = "600 11px Barlow, system-ui, sans-serif";
+			ctx.fillText(DEMO_DE ? "Eingabe · Stoppschild" : "input · stop sign", ox, pad + 4);
+			ctx.fillText((DEMO_DE ? "Feature-Map · " : "feature map · ") + current, ox2, pad + 4);
+			ctx.drawImage(img, ox, oy, iw, ih);
+			var out = conv(kernels[current]);
+			var mn = Infinity, mx = -Infinity;
+			out.forEach(function (row) {
+				row.forEach(function (v) {
+					if (v < mn) mn = v;
+					if (v > mx) mx = v;
+				});
+			});
 			var span = mx - mn || 1;
-			var ox2 = ox + size * cell + gap;
-			for (var yy = 0; yy < out.length; yy++) {
-				for (var xx = 0; xx < out[yy].length; xx++) {
-					var t = Math.abs(out[yy][xx] - mn) / span;
-					ctx.fillStyle = rgb(mix(hexToRgb(c.paper2), hexToRgb(c.green), t));
-					ctx.fillRect(ox2 + xx * cell, oy + yy * cell, cell - 1, cell - 1);
+			outCanvas.width = ow;
+			outCanvas.height = oh;
+			var id = outCtx.createImageData(ow, oh);
+			var data = id.data;
+			for (var y = 0; y < oh; y++) {
+				for (var x = 0; x < ow; x++) {
+					var t = (out[y][x] - mn) / span;
+					var v = Math.round(t * 255);
+					var i = (y * ow + x) * 4;
+					data[i] = v;
+					data[i + 1] = v;
+					data[i + 2] = v;
+					data[i + 3] = 255;
 				}
 			}
+			outCtx.putImageData(id, 0, 0);
+			ctx.drawImage(outCanvas, ox2, oy, iw, ih);
 			if (scanCell >= 0) {
-				var ow = size - 2;
 				var sy = Math.floor(scanCell / ow), sx = scanCell % ow;
+				var cell = iw / gw;
 				ctx.strokeStyle = c.gold;
-				ctx.lineWidth = 2.6;
+				ctx.lineWidth = 2.4;
 				ctx.strokeRect(ox + sx * cell - 1, oy + sy * cell - 1, cell * 3 + 2, cell * 3 + 2);
 				ctx.strokeStyle = c.coral;
-				ctx.lineWidth = 2.2;
-				ctx.strokeRect(ox2 + sx * cell - 1, oy + sy * cell - 1, cell + 2, cell + 2);
+				ctx.lineWidth = 2;
+				ctx.strokeRect(ox2 + sx * (iw / ow) - 1, oy + sy * (ih / oh) - 1, iw / ow + 2, ih / oh + 2);
 				ctx.fillStyle = c.gold;
 				ctx.font = "600 10px Barlow, system-ui, sans-serif";
-				ctx.fillText("3×3 window", ox + sx * cell, oy + sy * cell - 5);
+				ctx.fillText("3×3", ox + sx * cell, oy + sy * cell - 5);
 			}
-			if (inputSizeEl) inputSizeEl.textContent = size + " × " + size;
-			if (outputSizeEl) outputSizeEl.textContent = (size - 2) + " × " + (size - 2);
+			if (inputSizeEl) inputSizeEl.textContent = gw + " × " + gh;
+			if (outputSizeEl) outputSizeEl.textContent = ow + " × " + oh;
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
 		renderKernel();
-		var img = new Image();
-		img.onload = function () {
-			var n = 32;
+		var image = new Image();
+		image.onload = function () {
+			img = image;
+			var n = 128;
+			gw = n;
+			gh = Math.round(n * image.height / image.width);
 			var off = document.createElement("canvas");
-			off.width = n; off.height = n;
+			off.width = gw;
+			off.height = gh;
 			var octx = off.getContext("2d");
-			try { octx.drawImage(img, 0, 0, n, n); } catch (err) { return; }
+			try { octx.drawImage(image, 0, 0, gw, gh); } catch (err) { return; }
 			var data;
-			try { data = octx.getImageData(0, 0, n, n).data; } catch (err) { return; }
-			var grid = [];
-			for (var y = 0; y < n; y++) {
-				grid.push([]);
-				for (var x = 0; x < n; x++) {
-					var i = (y * n + x) * 4;
-					grid[y].push((data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114) / 255);
+			try { data = octx.getImageData(0, 0, gw, gh).data; } catch (err) { return; }
+			input = [];
+			for (var y = 0; y < gh; y++) {
+				var row = [];
+				for (var x = 0; x < gw; x++) {
+					var i = (y * gw + x) * 4;
+					row.push((data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114) / 255);
 				}
+				input.push(row);
 			}
-			imageGrid = grid.map(function (row) { return row.slice(); });
-			input = grid;
-			size = n;
 			imageLoaded = true;
 			api.redraw();
 		};
-		img.src = TM.asset("../stop_sign.jpg");
+		image.src = TM.asset("../stop_sign.jpg");
 		chips.forEach(function (chip) {
 			chip.addEventListener("click", function () {
 				chips.forEach(function (x) { x.classList.remove("is-on"); });
@@ -901,55 +916,22 @@
 				api.redraw();
 			});
 		});
-		canvas.addEventListener("click", function (ev) {
-			if (!lastGeom) return;
-			var rect = canvas.getBoundingClientRect();
-			var x = ev.clientX - rect.left;
-			var y = ev.clientY - rect.top;
-			var g = lastGeom;
-			var ix = Math.floor((x - g.ox) / g.cell);
-			var iy = Math.floor((y - g.oy) / g.cell);
-			if (ix < 0 || iy < 0 || ix >= size || iy >= size) return;
-			input[iy][ix] = input[iy][ix] > 0.5 ? 0 : 1;
-			imageLoaded = false;
-			api.redraw();
-			if (hintEl) hintEl.textContent = "You painted cell " + (iy * size + ix + 1) + ". Watch the feature map change.";
-		});
 		if (scanBtn) scanBtn.addEventListener("click", function () {
 			if (scanTimer) {
-				clearInterval(scanTimer); scanTimer = null; scanCell = -1;
-				scanBtn.textContent = "Scan the kernel ▶";
+				clearInterval(scanTimer);
+				scanTimer = null;
+				scanCell = -1;
+				scanBtn.textContent = DEMO_DE ? "Kernel scannen ▶" : "Scan the kernel ▶";
 				api.redraw();
 				return;
 			}
+			if (!imageLoaded) return;
 			scanCell = 0;
-			scanBtn.textContent = "Stop scan ■";
+			scanBtn.textContent = DEMO_DE ? "Scan stoppen ■" : "Stop scan ■";
 			scanTimer = setInterval(function () {
-				scanCell = (scanCell + 1) % ((size - 2) * (size - 2));
+				scanCell = (scanCell + 1) % ((gw - 2) * (gh - 2));
 				api.redraw();
 			}, 30);
-			api.redraw();
-		});
-		if (paintBtn) paintBtn.addEventListener("click", function () {
-			if (scanTimer) { clearInterval(scanTimer); scanTimer = null; scanBtn.textContent = "Scan the kernel ▶"; }
-			scanCell = -1;
-			size = 14;
-			input = [];
-			for (var py = 0; py < size; py++) {
-				input.push([]);
-				for (var px = 0; px < size; px++) input[py].push(0);
-			}
-			imageLoaded = false;
-			api.redraw();
-			if (hintEl) hintEl.textContent = "Blank grid. Click cells to draw a shape, then pick a kernel or scan it.";
-		});
-		if (imageBtn) imageBtn.addEventListener("click", function () {
-			if (!imageGrid) return;
-			if (scanTimer) { clearInterval(scanTimer); scanTimer = null; scanBtn.textContent = "Scan the kernel ▶"; }
-			scanCell = -1;
-			input = imageGrid.map(function (row) { return row.slice(); });
-			size = imageGrid.length;
-			imageLoaded = true;
 			api.redraw();
 		});
 		api.redraw();
@@ -4013,7 +3995,6 @@
 			else if (type === "preference") initPreference(root);
 			else if (type === "mary") initMary(root);
 			else if (type === "logitlens") initLogitLens(root);
-			else if (type === "visionlayers") initVisionLayers(root);
 			else if (type === "filter") initFilter(root);
 			else if (type === "residual") initResidual(root);
 			else if (type === "science") initScience(root);

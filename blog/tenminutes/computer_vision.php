@@ -58,7 +58,7 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">A filter that slides <span>· demo</span></p>
-								<p class="demo-sub">The kernel is a tiny learned pattern. Pick one, paint your own input, or scan the 3×3 window across the image.</p>
+								<p class="demo-sub">The kernel is a tiny learned pattern. Pick one and scan the 3×3 window across the real stop sign.</p>
 							</div>
 							<span class="demo-badge">live</span>
 						</div>
@@ -66,10 +66,8 @@
 							<canvas class="demo-canvas demo-canvas--md" data-conv-canvas aria-label="A convolution applied to a small grid"></canvas>
 							<div class="demo-controls">
 								<button class="btn-demo btn-demo--green" type="button" data-conv-scan>Scan the kernel ▶</button>
-								<button class="btn-demo" type="button" data-conv-paint>Blank grid</button>
-								<button class="btn-demo" type="button" data-conv-image>Restore image</button>
 							</div>
-							<p class="demo-hint" data-conv-hint>Click any input cell to paint it. The output is recomputed by the same 3×3 kernel.</p>
+							<p class="demo-hint" data-conv-hint>The kernel slides over the real stop sign. The feature map on the right is the actual output of the convolution.</p>
 							<div class="chip-row" style="margin-top:12px">
 								<button class="chip is-on" type="button" data-kernel="edge">edge</button>
 								<button class="chip" type="button" data-kernel="blur">blur</button>
@@ -79,9 +77,9 @@
 								<button class="chip" type="button" data-kernel="emboss">emboss</button>
 							</div>
 							<div class="demo-readout">
-								<div><b>Input</b><span data-conv-input-size>14 × 14</span></div>
+								<div><b>Input</b><span data-conv-input-size>128 × 132</span></div>
 								<div><b>Kernel</b><span>3 × 3</span></div>
-								<div><b>Feature map</b><span data-conv-output-size>12 × 12</span></div>
+								<div><b>Feature map</b><span data-conv-output-size>126 × 130</span></div>
 							</div>
 							<div class="conv-kernel-show">
 								<span class="conv-kernel-label">Kernel</span>
@@ -92,28 +90,22 @@
 						<div class="demo-foot">Source image: a stop sign in Victoria, Australia. Photo: Matthew Paul Argall, <a href="https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg" rel="noopener">CC0</a>.</div>
 					</div>
 
-					<div class="demo demo--paper" data-demo="visionlayers">
-						<div class="demo-head">
-							<div>
-								<p class="demo-title">What each layer sees <span>· demo</span></p>
-								<p class="demo-sub">Early layers respond to edges, middle layers to parts, later layers to whole objects. The receptive field grows with depth.</p>
-							</div>
-							<span class="demo-badge">live</span>
-						</div>
-						<div class="demo-body">
-							<canvas class="demo-canvas demo-canvas--md" data-vision-canvas aria-label="A cat face at three levels of feature abstraction"></canvas>
-							<div class="chip-row" style="margin-top:12px">
-								<button class="chip is-on" type="button" data-vision-layer="edges">edges</button>
-								<button class="chip" type="button" data-vision-layer="parts">parts</button>
-								<button class="chip" type="button" data-vision-layer="object">object</button>
-							</div>
-							<div class="demo-readout">
-								<div><b>Layer</b><span data-vision-label>early</span></div>
-								<div><b>Feature</b><span data-vision-feature>edges</span></div>
-								<div><b>Receptive field</b><span data-vision-field>small</span></div>
-							</div>
-						</div>
-						<div class="demo-insight"><b>Takeaway</b><span>A vision model does not see a cat in one step. It builds the cat from edges, parts, and finally an object.</span></div>
+					<div class="prose">
+						<p>What the network sees at each layer can be made visible. The first layer responds to local edges. Here is the real stop sign, the response of a vertical-edge kernel, and the combined edge magnitude from vertical and horizontal kernels. Deeper layers combine these edges into corners, parts, and finally the whole sign.</p>
+					</div>
+					<div class="image-trio">
+						<figure>
+							<img src="../stop_sign.jpg" alt="A red octagonal stop sign in Victoria, Australia" loading="lazy">
+							<figcaption>Input: the real stop sign. Photo: Matthew Paul Argall, <a href="https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg" rel="noopener">CC0</a>.</figcaption>
+						</figure>
+						<figure>
+							<img src="assets/img/stop-edges-v.png" alt="Vertical-edge feature map of the stop sign" loading="lazy">
+							<figcaption>Vertical edges: the actual output of a vertical Sobel kernel. Processing: Ten Minutes, <a href="assets/img/stop-edges-v.png">CC0 1.0</a>, from the CC0 photo.</figcaption>
+						</figure>
+						<figure>
+							<img src="assets/img/stop-edges-mag.png" alt="Combined edge-magnitude feature map of the stop sign" loading="lazy">
+							<figcaption>Combined edge magnitude: vertical and horizontal responses. Processing: Ten Minutes, <a href="assets/img/stop-edges-mag.png">CC0 1.0</a>.</figcaption>
+						</figure>
 					</div>
 
 					<section class="section-block" id="takeaway">
