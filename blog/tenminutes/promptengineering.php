@@ -125,14 +125,32 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Prompting is distribution engineering. Each clear constraint closes a door the model would otherwise have walked through.</span></div>
 					</div>
 
-
-
-
-
-
+					<section class="section-block" id="agents">
+						<div class="section-kicker"><span class="sk-num">05</span> The agent loop</div>
+						<h2 class="section-title">Prompting becomes supervision.</h2>
+						<div class="prose">
+							<p>When the model writes code, treat the prompt as a work order. Ask for a short spec first: acceptance criteria, edge cases, a test plan, and open questions. Read it before you allow code. This one step prevents most rework.</p>
+							<p>Protect what already works. Existing module interfaces are contracts: add alongside them instead of deleting, and ask before changing a public interface. Keep tasks small, commit every few minutes, and make every claim checkable. Run the tests yourself and read the raw output; a summary is not a passed test.</p>
+							<p>An agent session has a budget. When 20-50% of the context remains, write a handover: what works, what failed, the next step, temporary branches or files, and the traps you found. If the agent starts spinning, stop it, ask what it is doing, and offer a different route. A debugger or a minimal reproduction beats another round of guesses.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Spec first</b><span>Acceptance criteria, edge cases, tests, open questions.</span></div>
+							<div class="keypoint"><b>Keep working code intact</b><span>Keep interfaces; add, do not delete; ask before removals.</span></div>
+							<div class="keypoint"><b>Verify every claim</b><span>Run the tests; read the raw output; count requirements.</span></div>
+							<div class="keypoint"><b>Small steps</b><span>Leaf-sized tasks, frequent commits, reversible changes.</span></div>
+							<div class="keypoint"><b>Hand over early</b><span>Write the state before the context runs out.</span></div>
+							<div class="keypoint"><b>Stop the spin</b><span>Interrupt, ask, debug, or try five different routes.</span></div>
+						</div>
+						<div class="fieldnotes">
+							<h4>The ten-rule ceiling</h4>
+							<p>Keep standing instructions short. Ten golden rules are read; a hundred are skimmed and ignored. For parallel agents, separate workspaces and explicit names matter more than another paragraph of instructions.</p>
+							<h4>Recover and finish cleanly</h4>
+							<p>If branches are tangled, ask for a rescue plan with reversible steps before any command runs. When the agent says it is done, ask for a fresh test run, a self-review for missing edge cases, and a cleanup of debug leftovers.</p>
+						</div>
+					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">06</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

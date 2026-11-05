@@ -2652,7 +2652,7 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
     const { logits, predictions } = computeFinalPredictions(h_last, vocabulary, d_model, temperature);
     const { chipsDiv, detailsDiv } = ensureProjectionSubContainers(container);
 
-    chipsDiv.innerHTML = buildPredictionChipsHtml(predictions, temperature);
+    chipsDiv.innerHTML = buildPredictionChipsHtml(predictions.filter(function (p) { return p.word !== TM_EOS_TOKEN; }), temperature);
     detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
 
     // SCOPED rendering — do NOT call global render_temml()
@@ -3174,12 +3174,10 @@ function render_token_picker() {
 	if (!palette || !chips || !input || !window.persistentEmbeddingSpace) return;
 
 	var probs = _tmTokenPickerProbs();
-	var tokens = Object.keys(window.persistentEmbeddingSpace).filter(function (token) {
-		return token !== TM_EOS_TOKEN;
-	});
+	var tokens = Object.keys(window.persistentEmbeddingSpace);
 	tokens.sort(function (a, b) {
-		var aw = /^\s+$/.test(a), bw = /^\s+$/.test(b);
-		if (aw !== bw) return aw ? -1 : 1;
+		var pa = probs[a] || 0, pb = probs[b] || 0;
+		if (pb !== pa) return pb - pa;
 		return a.localeCompare(b);
 	});
 	var signature = tokens.join('\u0001') + '|' + tokens.map(function (token) {
@@ -3216,7 +3214,7 @@ function render_token_picker() {
 			var chip = event.target.closest && event.target.closest('.tm-token-chip');
 			if (!chip) return;
 			var token = chip.getAttribute('data-token');
-			if (token == null) return;
+			if (token == null || token === TM_EOS_TOKEN) return;
 			runAfterBusyPaint(function () {
 				input.value += token;
 				input.dispatchEvent(new Event('input', { bubbles: true }));
