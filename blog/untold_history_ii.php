@@ -658,7 +658,7 @@ Alchemy's dream of a perfecting *elixir* became, in his hands, *pharmacology*: t
 
 #### Silicon Purification: From Sand to Semiconductor
 
-The journey from common beach sand (silicon dioxide, SiO₂) to a functioning microprocessor requires chemical transformations of extraordinary precision. The Siemens process, developed in the 1950s, reduces silicon dioxide with carbon at high temperatures, then purifies it through reaction with hydrogen chloride to form trichlorosilane (SiHCl₃), which is subsequently decomposed to yield polycrystalline silicon of 99.9999999% purity (nine nines). This “electronic grade” silicon is then grown into single crystals via the Czochralski process \cite{semiconductor}. Without these chemical purification methods, transistors cannot function, impurity concentrations of even a few parts per billion alter semiconductor behavior catastrophically. The entire digital age rests upon chemistry's ability to produce materials of unprecedented purity.
+The journey from common beach sand (silicon dioxide, SiO₂) to a functioning microprocessor requires chemical transformations of extraordinary precision. In an electric arc furnace at about 1900 °C, carbon strips the oxygen from quartz and leaves metallurgical-grade silicon that is only 98 to 99 percent pure. That is not enough for a transistor. The Siemens process converts the silicon to trichlorosilane (SiHCl₃), distils the compound to separate it from impurities, and reduces it again with hydrogen at about 1100 °C, leaving polycrystalline silicon of 99.9999999% purity (nine nines) (\cite[Yan, 2019]{yan2019siemens}). This “electronic grade” silicon is then grown into single crystals via the \citeauthor{czochralski1918} process \cite{czochralski1918}. Without these chemical purification methods, transistors cannot function: impurity concentrations of even a few parts per billion alter semiconductor behavior catastrophically. The entire digital age rests upon chemistry's ability to produce materials of unprecedented purity.
 
 #### Doping: The Chemistry of Controlled Impurity
 
@@ -787,15 +787,79 @@ None of these components was invented for AI. Yet remove any single element and 
 
 The previous sections treated the chip as a component. This section treats it as a manufactured object, because a modern accelerator is not designed in a vacuum: it is the output of an industrial system that turns purified sand into patterned silicon, and then packages that silicon with memory, power delivery and cooling. Remove the fab and the design is only a file.
 
+### Why Silicon Won
+
+Silicon is the second most abundant element in Earth's continental crust after oxygen, making up roughly 28 percent of it by mass (\cite[Taylor, 1964]{taylor1964crust}). It reaches the factory as quartz and sand, both silicon dioxide. The element itself was first isolated as an amorphous powder by Jöns Jacob Berzelius in 1824, and Henri Sainte-Claire Deville obtained crystalline silicon in 1854 (\cite[Weeks, 1945]{weeks1945elements}). Abundance alone would not have made silicon the substrate of the digital age. Germanium, the material of the first point-contact transistor in 1947, has higher carrier mobility, and early transistors were made from it (\cite[Bardeen and Brattain, 1948]{semiconductor}). Silicon won on three properties that matter to a factory more than to a physicist.
+
+First, silicon grows its own oxide. When silicon is heated in oxygen it forms silicon dioxide, a stable insulator that bonds to the surface and seals it. Carl Frosch and Lincoln Derrick at Bell Labs showed in 1955 that this oxide protects silicon during diffusion and can be patterned to mask dopants selectively, and they patented the process in 1957 (\cite[Frosch and Derrick, 1957]{frosch1957surface}; \cite[U.S. Patent 2,802,760]{froschderick1957patent}). The oxide is what makes passivation possible, and it is what photolithography etches.
+
+Second, silicon has a wider band gap than germanium: about 1.12 eV against 0.66 eV. A wider gap means less leakage and operation at higher temperatures, which matters when billions of transistors share one package (\cite[Sze and Ng, 2007]{sze2007physics}). Third, silicon is cheap and its ore is everywhere. Germanium is far scarcer and is recovered mainly as a by-product of zinc refining (\cite[USGS, 2025]{usgs_germanium2025}).
+
+The manufacturing answer to germanium arrived in 1954. Morris Tanenbaum at Bell Labs demonstrated the first working silicon transistor on 26 January 1954, and Gordon Teal and Willis Adcock at Texas Instruments announced a production silicon transistor in May of that year (\cite[Tanenbaum et al., 1955]{tanenbaum1955silicon}; \cite[Teal, 1976]{teal1976singlecrystals}). The decisive step came five years later, when Jean Hoerni at Fairchild combined the oxide with a metal interconnect in the planar process, filed in May 1959 (\cite[Hoerni, 1959]{hoerni1959planar}). That process made the integrated circuit manufacturable. Silicon did not win because it was the best semiconductor. It won because it was the one whose surface could be controlled.
+
+### From Sand to Single Crystal
+
+The first transformation is chemical. Quartz is reduced with carbon in an electric arc furnace at about 1900 °C, producing metallurgical-grade silicon that is 98 to 99 percent pure. That is far too dirty for a transistor. The Siemens process converts the silicon to trichlorosilane, distils it, and reduces it again with hydrogen at about 1100 °C, leaving polycrystalline silicon of electronic grade, often described as nine nines, or 99.9999999 percent pure (\cite[Yan, 2019]{yan2019siemens}).
+
+The second transformation is crystallographic. The purified polysilicon is melted in a quartz crucible, and a small seed crystal is dipped into the melt and pulled upward while rotating. The liquid freezes onto the seed in the same crystal orientation. Jan Czochralski invented the pulling method in 1916 while studying the crystallization of metals and published it in 1918 (\cite[Czochralski, 1918]{czochralski1918}). Gordon Teal and Ernest Buehler adapted it at Bell Labs in the early 1950s to grow the first high-quality germanium and silicon single crystals (\cite[Teal, 1976]{teal1976singlecrystals}). The result is a cylindrical ingot with the continuous lattice that a transistor needs.
+
+<figure>
+    <img style="width: 40%; height: auto; display: block; margin: 1em auto;" src="czochralski_silicon_1956.jpg" alt="A silicon crystal being pulled from the melt by the Czochralski process at Raytheon in 1956" />
+    <figcaption class="md">The \citealternativetitle{img_czochralski_1956} (Public Domain): a silicon crystal being pulled from the melt at Raytheon in 1956. The induction coil heats the crucible, and the technician measures the temperature with an optical pyrometer. Source: George E. Meyers, \citeyear{img_czochralski_1956}, \citealternativetitle{img_czochralski_1956}, Wikimedia Commons.</figcaption>
+</figure>
+
+Zone refining is the second purification trick. In 1952, William Pfann at Bell Labs passed a narrow molten zone along a silicon rod. Impurities prefer the liquid, so they are swept to one end while the rest of the rod grows purer (\cite[Pfann, 1952]{pfann1952zonemelting}). Float-zone silicon made this way is the purest silicon available, and it is used where very high resistivity matters.
+
+The ingot is then cut into wafers. Diamond wire saws slice it into discs, and lapping, etching and polishing remove the saw damage and leave a mirror surface. The industry's largest standard wafer is 300 mm across and less than a millimetre thick (\cite[Hahn, 2001]{hahn2001wafer300}). One wafer is patterned with the same die repeated across its surface, then diced into individual chips.
+
+<figure>
+    <img style="width: 42%; height: auto; display: block; margin: 1em auto;" src="monocrystalline_silicon_ingot.jpg" alt="A monocrystalline silicon ingot and silicon rods on display in the Museum of Mineralogy in Munich" />
+    <figcaption class="md">The \citealternativetitle{img_silicon_ingot} (CC0): a monocrystalline silicon ingot and several silicon rods in the Museum of Mineralogy in Munich. The ingot is the output of the puller, before it is sawed into wafers. Source: ArticCynda, \citeyear{img_silicon_ingot}, \citealternativetitle{img_silicon_ingot}, Wikimedia Commons.</figcaption>
+</figure>
+
+<figure>
+    <img style="width: 62%; height: auto; display: block; margin: 1em auto;" src="silicon_wafer_300mm.jpg" alt="A 300 mm silicon wafer with a mirror-polished surface" />
+    <figcaption class="md">The \citealternativetitle{img_silicon_wafer_300mm} (CC BY-SA 3.0): a 300 mm silicon wafer, the industry's largest standard size. The mirror surface is the polished substrate on which every layer is printed. Source: Peellden, \citeyear{img_silicon_wafer_300mm}, \citealternativetitle{img_silicon_wafer_300mm}, Wikimedia Commons.</figcaption>
+</figure>
+
+<figure>
+    <img style="width: 38%; height: auto; display: block; margin: 1em auto;" src="silicon_wafer_dicing.png" alt="A processed semiconductor wafer on dicing tape, with individual dies already removed" />
+    <figcaption class="md">The \citealternativetitle{img_silicon_wafer_dicing} (CC BY-SA 4.0): a processed wafer on dicing tape, with individual dies already picked up. The wafer is the unit of production, the die the unit of sale. Source: Khpsoi, \citeyear{img_silicon_wafer_dicing}, \citealternativetitle{img_silicon_wafer_dicing}, Wikimedia Commons.</figcaption>
+</figure>
+
+### Printing the Pattern
+
+Photolithography is the step that turns a flat wafer into a circuit. The wafer is coated with a photoresist, a polymer that changes solubility when exposed to light. A mask, or reticle, carries the pattern for one layer. Light projects the pattern through the mask, the exposed resist is developed away, and the opening is used to etch the underlying film or to implant dopants. The resist is stripped and the cycle repeats for the next layer. A modern logic chip may go through this loop dozens of times, and every layer must be aligned to the one below it.
+
+<figure>
+    <img style="width: 70%; height: auto; display: block; margin: 1em auto;" src="photolithography_process.png" alt="Diagram of the photolithography process: photoresist is applied, exposed through a mask, and developed; positive and negative resists behave oppositely" />
+    <figcaption class="md">The \citealternativetitle{img_photolithography_process} (CC BY-SA 4.0): the heart of the cycle. Photoresist is applied to the substrate, exposed through a mask, and developed. A positive resist keeps the exposed areas soluble and removes them; a negative resist hardens where it is exposed. Source: May lam, \citeyear{img_photolithography_process}, \citealternativetitle{img_photolithography_process}, Wikimedia Commons.</figcaption>
+</figure>
+
+The idea came from printing, not from electronics. Photoengraving had been used to make printing plates since the nineteenth century, and printed-circuit boards used photoresists in the 1940s and 1950s (\cite[Levinson, 2005]{levinson2005lithography}). The transfer to silicon happened at Bell Labs: Jules Andrus filed a patent on photolithographic fabrication of semiconductor devices in 1957 (\cite[Andrus, 1957]{andrus1957photolith}). At the Diamond Ordnance Fuze Laboratory, Jay Lathrop and James Nall used a photoresist to pattern germanium for miniaturized circuits, and their 1958 paper introduced the word "photolithography" to semiconductor manufacturing (\cite[Lathrop, 2013]{lathrop2013photolith}).
+
+The machines evolved through a sequence of optical tricks. Early aligners pressed a mask against the whole wafer, or held it just above the surface. Projection aligners such as the Perkin-Elmer Micralign, introduced in 1973, imaged the mask onto the wafer without contact, which kept defects down and extended the life of the mask (\cite[Perkin-Elmer, 1973]{perkinelmer1973micralign}). Step-and-repeat reduction steppers, such as the GCA DSW 4800 in 1975, projected a reduced image of a single field and stepped it across the wafer, making it possible to print features smaller than the mask itself (\cite[GCA, 1975]{gca1975stepper}). Later step-and-scan systems moved the mask and the wafer together during exposure, which improved focus across the field (\cite[Levinson, 2005]{levinson2005lithography}).
+
+The next jump was the light source. In 1982 Kanti Jain and co-workers at IBM demonstrated lithography with an excimer laser, a pulsed ultraviolet source far brighter than a mercury lamp (\cite[Jain et al., 1982]{jain1982excimer}). The industry settled on krypton fluoride at 248 nm and argon fluoride at 193 nm. These deep-ultraviolet wavelengths became the workhorse of chipmaking for the next three decades (\cite[Levinson, 2005]{levinson2005lithography}).
+
+The resolution of an optical system is set by the Rayleigh criterion, $CD = k_1 \lambda / \mathrm{NA}$, where $\lambda$ is the wavelength, $\mathrm{NA}$ is the numerical aperture of the lens, and $k_1$ is a process factor. Shorter wavelengths and larger apertures print smaller features. The 193 nm generation was extended past its apparent limit by immersion: a film of ultrapure water between the last lens and the wafer raises the effective numerical aperture above 1.0, because water has a refractive index of about 1.44 (\cite[Lin, 2004]{lin2004immersion}). Immersion extended 193 nm for another decade, but only with multiple patterning, in which one layer is exposed several times with shifted masks and etched between passes. That is expensive, and it is why the industry spent two decades building a shorter wavelength.
+
+### EUV: Light at 13.5 Nanometres
+
+The most difficult step is printing the pattern at the smallest dimensions. ASML describes extreme ultraviolet (EUV) lithography as using light with a wavelength of 13.5 nm, the cutting edge of lithography and the highest resolution available, and states that it is currently the world's only manufacturer of EUV systems (\cite[ASML, 2026]{asml2025annualreport}). EUV simplifies manufacturing relative to multiple-patterning with deep-ultraviolet immersion: one exposure per critical layer instead of several, fewer masks and process steps, and better yield and scalability for advanced logic and memory (\cite[ASML, 2026]{asml2025annualreport}).
+
+At 13.5 nm every material absorbs, including air and glass, so the beam travels in vacuum and is shaped by multilayer mirrors rather than lenses (\cite[Joo, 2014]{joo2014vacuum}). The light itself comes from a tin plasma: a droplet of molten tin is hit by a laser, vaporised into a plasma, and its emission is collected and focused (\cite[Tomie, 2012]{tomie2012tin}). The underlying idea is older. Soft X-ray reduction lithography with multilayer mirrors was demonstrated in the late 1980s, with experiments on a synchrotron beamline and demagnified patterns below 0.5 micrometres (\cite[Kinoshita et al., 1989]{kinoshita1989euv}). The industrial machine took another two decades; the physics was already in place.
+
 ### The Foundry: Designing Without a Factory
 
 The pure-play foundry is a relatively recent institutional invention. TSMC was founded in 1987 as a joint venture and incorporated as a dedicated foundry: it manufactures semiconductors using its customers' proprietary integrated-circuit designs rather than selling chips under its own brand (\cite[TSMC, 2026]{tsmc2025annualreport}). That separation let companies design chips without owning a fabrication plant, while the foundry amortized the enormous fixed cost of the plant across many customers. TSMC's own filing describes fabs as "largely fixed cost assets" whose economics improve as utilization rises (\cite[TSMC, 2026]{tsmc2025annualreport}). The fabless model is therefore not a detail of business history: it is why a startup can specify an AI accelerator and have it manufactured at the leading edge.
 
-### EUV: Light at 13.5 Nanometres
-
-The most difficult step is printing the pattern. ASML describes extreme ultraviolet (EUV) lithography as using light with a wavelength of 13.5 nm, the cutting edge of lithography and the highest resolution available, and states that it is currently the world's only manufacturer of EUV systems (\cite[ASML, 2026]{asml2025annualreport}). EUV simplifies manufacturing relative to multiple-patterning with deep-ultraviolet immersion: one exposure per critical layer instead of several, fewer masks and process steps, and better yield and scalability for advanced logic and memory (\cite[ASML, 2026]{asml2025annualreport}). The underlying idea is older. Soft X-ray reduction lithography with multilayer mirrors was demonstrated in the late 1980s, with experiments on a synchrotron beamline and demagnified patterns below 0.5 micrometres (\cite[Kinoshita et al., 1989]{kinoshita1989euv}). The industrial machine took another two decades; the physics was already in place.
-
 ### The Cleanroom and the Ultrapure Drop
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="photolithography_cleanroom.jpg" alt="The photolithography laboratory in the London Centre for Nanotechnology cleanroom" />
+    <figcaption class="md">The \citealternativetitle{img_photolithography_cleanroom} (CC BY 2.0): the photolithography laboratory in the London Centre for Nanotechnology. A fab is a contamination-control problem before it is a computer. Source: UCL Mathematical &amp; Physical Sciences, photo by O. Usher, \citeyear{img_photolithography_cleanroom}, \citealternativetitle{img_photolithography_cleanroom}, Wikimedia Commons.</figcaption>
+</figure>
 
 A fab is a contamination-control problem before it is a computer. VLSI yields require control of particulate contamination during manufacture, and the ambient air of the production facility is one source; measuring ultrafine particles of 0.1 micrometres or less in real time requires instruments such as the differential mobility analyzer and the diffusion battery (\cite[Donovan et al., 1985]{donovan1985cleanroom}). Water is the other carrier: ultrafiltration removes particles, colloids and large macromolecules from ultrapure water, and leak detection in membrane modules is a prerequisite for defect-free manufacturing (\cite[Ruth and Berndt, 2016]{ruth2016ultrapure}). The cleanroom is not a metaphor for precision; it is the physical condition under which a wafer can be patterned at all.
 
