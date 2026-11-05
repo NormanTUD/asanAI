@@ -9,7 +9,8 @@
 	var DE = LANG === "de";
 	var WORDS = DE ? ["Hund", "Katze", "Baum", "Haus", "Auto", "Buch", "Maus", "Lampe", "Blume", "Stein", "Tisch", "Stuhl", "Wasser", "Feuer", "Nacht", "Sonne", "Regen", "Mond", "Kaffee", "Stern", "Fluss", "Berg", "Vogel", "Fisch", "Milch", "Zucker", "Tür", "Fenster", "Brücke", "Feld", "Küche", "Garten", "Schiff", "Uhr", "Straße", "Stadt", "Brot", "Apfel", "Tee", "Hut", "Glocke"] : ["Dog", "Cat", "Tree", "House", "Car", "Book", "Mouse", "Lamp", "Flower", "Stone", "Table", "Chair", "Water", "Fire", "Night", "Sun", "Rain", "Moon", "Coffee", "Star", "River", "Mountain", "Bird", "Fish", "Milk", "Sugar", "Door", "Window", "Bridge", "Field", "Kitchen", "Garden", "Ship", "Clock", "Road", "City", "Bread", "Apple", "Tea", "Hat", "Bell"];
 	var HUES = [188, 220, 260, 290, 320, 350, 15, 40, 60, 90, 140, 170, 200, 240, 280, 310, 340, 25, 50, 75, 120, 155, 195, 230, 270, 300, 330, 10, 45, 100, 160, 210, 250, 295, 335, 20, 65, 130, 185, 245, 305];
-	var CW = 560, CH = 196;
+	var FIELD_SCALE = 2;
+	var CW = 560 * FIELD_SCALE, CH = 196 * FIELD_SCALE;
 	var currentN = 12;
 	var T = 0.8;
 	var K = 5;
@@ -101,19 +102,23 @@
 	function scaleFor(a) { return Math.sqrt(CW * CH / Math.max(1, a.length)) * 0.52; }
 	function distTo(a, x, y) { return Math.hypot(x - a.x, y - a.y); }
 	function nearestTwo(x, y, a) {
-		var d1 = 1e9, d2 = 1e9, i1 = 0;
+		var d1 = 1e18, d2 = 1e18, i1 = 0;
 		for (var i = 0; i < a.length; i++) {
-			var d = distTo(a[i], x, y);
+			var dx = x - a[i].x;
+			var dy = y - a[i].y;
+			var d = dx * dx + dy * dy;
 			if (d < d1) { d2 = d1; i1 = i; d1 = d; }
 			else if (d < d2) { d2 = d; }
 		}
-		return { i1: i1, d1: d1, d2: d2, m: d2 - d1 };
+		var r1 = Math.sqrt(d1);
+		var r2 = Math.sqrt(d2);
+		return { i1: i1, d1: r1, d2: r2, m: r2 - r1 };
 	}
 	function colorFor(m, idx, pal, scale, arr) {
 		var q = clamp(m / scale, 0, 1);
 		var col = hsl(arr[idx].c, 34 + 16 * q, pal.dark ? 28 + 16 * q : 64 + 16 * q);
 		var eps = 0.32 * scale;
-		var edgePx = 2.4;
+		var edgePx = 2.4 * FIELD_SCALE;
 		if (m < eps) col = mix(col, pal.gold, 0.55 * (1 - smoothstep(edgePx, eps, m)));
 		if (m < edgePx) col = mix(pal.edge, col, smoothstep(0, edgePx * 0.75, m));
 		return col;

@@ -369,7 +369,7 @@
 										<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A token at the centre of three 3D orbits: one per pair of dimensions, each wheel turning at its own speed as the position advances"></canvas>
 										<div class="step-out" id="ipe-out">Position <b>7</b> · pair d0/d1 turns <b>41°</b> · pair d2/d3 turns <b>40°</b> · pair d4/d5 turns <b>4°</b>.</div>
 									</div>
-									<p class="step-note">The heatmap above shows the classic sinusoidal encoding: each position gets a fingerprint built from slow and fast waves. The wheels below show RoPE, a scheme used by many current models. Each pair of dimensions is a wheel, and the token sits at the axle. Moving the token forward by one position rotates every wheel by a different fixed angle, set by the RoPE frequency for that pair. The token itself stays the same; only its angle changes. Attention compares two tokens by the angle between their rotated keys and queries, which depends on the distance between their positions. The demo uses a narrow model width so the turns stay visible; a real model uses thousands of dimensions.</p>
+									<p class="step-note">The heatmap above shows the classic sinusoidal encoding: each position gets a fingerprint built from slow and fast waves. The wheels below show RoPE, a scheme used by many current models. Each pair of dimensions is a wheel, and the token sits at the axle. Moving the token forward by one position rotates every wheel by a different fixed angle, set by the RoPE frequency for that pair. The token itself stays the same; only its angle changes. The ring is only the path the pair can take; the coloured arrow is the rotated pair itself, and the faint dashed line is its unrotated state. Attention compares two tokens by the angle between their rotated keys and queries, which depends on the distance between their positions. The demo uses a narrow model width so the turns stay visible; a real model uses thousands of dimensions.</p>
 								</div>
 
 								<div class="step-pane" id="step-attention">
@@ -722,7 +722,7 @@
 	<script src="assets/demos.js?v=20261104c"></script>
 	<script src="assets/space-morph.js?v=20261104"></script>
 	<script src="assets/embedding-plot.js?v=20261104"></script>
-	<script src="assets/word-meadow.js?v=20261104"></script>
+	<script src="assets/word-meadow.js?v=20261105c"></script>
 	<script>
 	(function () {
 		"use strict";
@@ -2148,6 +2148,8 @@
 		}
 		function drawHeat(ctx, w, h) {
 			var c = TM.colors();
+			var dpr = (ctx.getTransform && ctx.getTransform().a) || 1;
+			function edge(v) { return Math.round(v * dpr) / dpr; }
 			var padL = 38, padR = 10, padT = 8;
 			var heatH = Math.round(h * 0.64);
 			var heatW = w - padL - padR;
@@ -2169,12 +2171,14 @@
 			ctx.lineWidth = 1;
 			ctx.strokeRect(padL, padT, heatW, heatH);
 			for (var p = 0; p < heatCount; p++) {
+				var x0 = edge(padL + p * cw);
+				var x1 = edge(padL + (p + 1) * cw);
 				for (var d = 0; d < heatDims; d++) {
 					var v = cellT(p, d);
-					var x = padL + p * cw;
-					var y = padT + d * ch;
+					var y0 = edge(padT + d * ch);
+					var y1 = edge(padT + (d + 1) * ch);
 					ctx.fillStyle = heatColor(v, c);
-					ctx.fillRect(x + 0.5, y + 0.5, Math.max(1, cw - 1), Math.max(1, ch - 1));
+					ctx.fillRect(x0, y0, Math.max(1, x1 - x0), Math.max(1, y1 - y0));
 				}
 			}
 			ctx.fillStyle = c.muted;
@@ -2189,7 +2193,7 @@
 				ctx.fillText("d" + d2, padL - 6, padT + d2 * ch + ch * 0.7);
 			}
 			var stripTop = padT + heatH + 30;
-			var gap = 1;
+			var gap = 0;
 			var stripW = Math.max(2, Math.min(18, (heatW - 92 - (heatDims - 1) * gap) / heatDims));
 			var stripH = 12;
 			ctx.textAlign = "left";
@@ -2204,9 +2208,10 @@
 				ctx.textAlign = "left";
 				for (var d3 = 0; d3 < heatDims; d3++) {
 					var v3 = cellT(position, d3);
-					var xx = padL + d3 * (stripW + gap);
+					var xx0 = edge(padL + d3 * (stripW + gap));
+					var xx1 = edge(padL + (d3 + 1) * (stripW + gap));
 					ctx.fillStyle = heatColor(v3, c);
-					ctx.fillRect(xx, y, stripW, stripH);
+					ctx.fillRect(xx0, y, Math.max(1, xx1 - xx0), stripH);
 				}
 			});
 			if (heatOut) {
@@ -2261,6 +2266,7 @@
 		});
 		var POS_COLORS = ["green", "blue", "gold"];
 		var POS_LABELS = ["d0/d1", "d2/d3", "d4/d5"];
+		var POS_START = 0.55;
 		var posReduce = TM.prefersReduced();
 		var posAuto = !posReduce;
 		var posClock = 0;
@@ -2383,10 +2389,11 @@
 				var sweep = ((theta % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
 				if (theta > 0.0001 && sweep < 0.0001) sweep = Math.PI * 2;
 				if (sweep > 0.0001) {
+					var arcStart = POS_START + Math.max(0, theta - sweep);
 					var steps = Math.max(2, Math.ceil(sweep / (Math.PI * 2) * SEGMENTS));
 					ctx.beginPath();
 					for (i = 0; i <= steps; i++) {
-						var p = project(posOrbit(pair, sweep * i / steps));
+						var p = project(posOrbit(pair, arcStart + sweep * i / steps));
 						if (i === 0) ctx.moveTo(p.x, p.y);
 						else ctx.lineTo(p.x, p.y);
 					}
@@ -2394,8 +2401,8 @@
 					ctx.lineWidth = 7;
 					ctx.stroke();
 					for (i = 0; i < steps; i++) {
-						var p1 = project(posOrbit(pair, sweep * i / steps));
-						var p2 = project(posOrbit(pair, sweep * (i + 1) / steps));
+						var p1 = project(posOrbit(pair, arcStart + sweep * i / steps));
+						var p2 = project(posOrbit(pair, arcStart + sweep * (i + 1) / steps));
 						var nearArc = (1 - (p1.z + p2.z) / 2) / 2;
 						ctx.beginPath();
 						ctx.moveTo(p1.x, p1.y);
@@ -2406,7 +2413,16 @@
 					}
 				}
 
-				var start = project(posOrbit(pair, 0));
+				var start = project(posOrbit(pair, POS_START));
+				ctx.save();
+				ctx.setLineDash([4, 4]);
+				ctx.beginPath();
+				ctx.moveTo(cx, cy);
+				ctx.lineTo(start.x, start.y);
+				ctx.strokeStyle = posRgba(color, 0.3);
+				ctx.lineWidth = 1.2;
+				ctx.stroke();
+				ctx.restore();
 				ctx.beginPath();
 				ctx.arc(start.x, start.y, 3.2, 0, Math.PI * 2);
 				ctx.fillStyle = c.paper;
@@ -2415,8 +2431,14 @@
 				ctx.lineWidth = 1.4;
 				ctx.stroke();
 
-				var marker = project(posOrbit(pair, theta));
+				var marker = project(posOrbit(pair, POS_START + theta));
 				var nearMarker = (1 - marker.z) / 2;
+				ctx.beginPath();
+				ctx.moveTo(cx, cy);
+				ctx.lineTo(marker.x, marker.y);
+				ctx.strokeStyle = posRgba(color, 0.72);
+				ctx.lineWidth = 3;
+				ctx.stroke();
 				posGlow(ctx, marker.x, marker.y, 20, color, 0.22 + nearMarker * 0.14);
 				ctx.beginPath();
 				ctx.arc(marker.x, marker.y, 4.6 + nearMarker * 2.6, 0, Math.PI * 2);
