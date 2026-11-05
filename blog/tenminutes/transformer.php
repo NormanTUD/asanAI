@@ -40,417 +40,9 @@
 							prose for the route, and use the live panels when you want the detail.
 						</p>
 					</div>
-					<section class="section-block" id="before">
-						<div class="section-kicker"><span class="sk-num">01</span> Before 2017</div>
-						<h2 class="section-title">The problem was the queue.</h2>
-						<div class="prose">
-							<p>
-								Attention, context, position, and fact lookup supplied the parts. Now they assemble
-								into one block. Recurrent networks read a sequence one step at a time. Information about the
-								beginning had to survive a long chain of updates before it could influence the
-								end. Convolutions could parallelize, but the path between distant tokens still
-								grew with distance.
-							</p>
-							<p>
-								The transformer made that path short: in one attention step, every token can
-								read every other token, or every earlier token, in a decoder. The price is
-								<strong>quadratic work</strong> (each token compares with each other token) but the comparison is a matrix multiplication, and matrix multiplications fill
-								a GPU. That trade is what made scale practical.
-							</p>
-						</div>
-						<div class="pullquote">
-							Attention is not a metaphor for looking. It is a learned, differentiable routing
-							operation: a query asks, keys answer, values travel.
-							<cite>The core of the architecture</cite>
-						</div>
-						<div class="aha">
-							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">The transformer did not merely make language models deeper. It made them parallel.</p>
-							<p class="aha-sub">Every token can look at every other token in the same step. That one change turned a sequential bottleneck into a matrix multiplication, and made scale practical.</p>
-						</div>
-					</section>
-
-					<section class="section-block" id="pipeline">
-						<div class="section-kicker"><span class="sk-num">02</span> The pipeline</div>
-						<h2 class="section-title">From text to a distribution.</h2>
-						<div class="prose">
-							<p>
-								Here is the whole machine as a route. Start with “the cat sat”, step through
-								the block, predict the next token, then append it and run the loop again. The
-								block in the middle repeats <em>N</em> times; everything else happens once.
-							</p>
-							<p>
-								Training and generation share this route. In training, the model is shown the
-								next token and must make it more likely. In generation, it chooses one token,
-								appends it to the context, and starts again. <strong>The model never sees the
-								sentence it is about to write</strong>: only the tokens already on the page.
-							</p>
-							<p>
-								One detail confuses many readers: during training the model produces a
-								distribution at <em>every</em> position, not only the last. The causal mask
-								ensures that the prediction at position <em>i</em> sees only positions up to
-								<em>i</em>, so a single forward pass supplies a training signal for every
-								next-token pair in the sequence. At generation time only the last position
-								matters; the earlier distributions are discarded. This is why training can use
-								a whole document in parallel while generation still has to go one token at a
-								time.
-							</p>
-						</div>
-
-						<div class="demo" id="pipeline-demo" data-arrow-nav>
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">The transformer pipeline <span>· demo 01</span></p>
-									<p class="demo-sub">Start with “the cat sat”. Step through the six stages, predict the next token, append it, and run the loop again: on → the → mat → . Stages 04-05 are the transformer block; real models stack that block dozens to hundreds of times.</p>
-								</div>
-								<span class="demo-badge">click / step</span>
-							</div>
-							<div class="demo-body">
-								<div class="pipe-tokens" id="pipe-tokens"></div>
-								<div class="flow flow--six" id="pipe-flow" role="group" aria-label="Transformer stages"></div>
-								<div class="flow-repeat">04 + 05 repeat × N blocks · often 32-100+ layers</div>
-								<div class="flow-detail" id="pipe-detail">
-									<h4 id="pipe-title">Tokenize</h4>
-									<p id="pipe-text"></p>
-									<p class="pipe-shape" id="pipe-shape"></p>
-								</div>
-								<div class="pipe-prediction" id="pipe-prediction">Next token: <b>...</b></div>
-								<div class="demo-controls">
-									<button class="btn-demo btn-demo--green" type="button" id="pipe-next" data-arrow-next>Next step in pipeline →</button>
-									<button class="btn-demo" type="button" id="pipe-run">Run the loop ▶</button>
-									<button class="btn-demo" type="button" id="pipe-mask-toggle">Show causal mask</button>
-									<button class="btn-demo" type="button" id="pipe-reset">Reset</button>
-									<span class="pipe-note" id="pipe-counter" style="margin:0">Stage 1 of 6</span>
-								</div>
-								<div class="causal-mask" id="pipe-mask" hidden>
-									<div class="cm-grid" id="cm-grid" aria-label="Causal attention mask: rows are queries, columns are keys"></div>
-									<p>Rows are queries, columns are keys. A decoder may attend only to itself and the past; the future is masked. That is what makes next-token prediction causal during training.</p>
-								</div>
-							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Attention mixes across positions; the feed-forward network computes per position; the residual stream carries everything forward.</span></div>
-							<div class="demo-foot">
-								The pipeline is the GPT-style decoder route. An encoder such as BERT keeps the
-								same block but removes the causal mask and trains with masked tokens instead
-								of next-token prediction.
-							</div>
-						</div>
-
-						<div class="aha">
-							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">It predicts locally, and can still build a world model.</p>
-							<p class="aha-sub">The model has no explicit paragraph plan: it predicts one token, appends it, and predicts again. But next-token prediction can require a 								structured internal state. In the Othello (Reversi) experiment (<a href="https://arxiv.org/abs/2210.13382" rel="noopener">Li et al., 2022</a>), a transformer trained only on legal moves (with no board and no rules) spontaneously represented the board; intervening on that representation changed its next move. Coherence can therefore come from a learned world model in the residual stream, not only from a chain of surface bets. The model is still fallible, that world model is partial, and small errors can compound.</p>
-						</div>
-
-						<div class="trythis">
-							<b>Try this</b>
-							<ol>
-								<li>Step to <strong>Attention</strong>. Which stage is the only one where information moves <em>between</em> positions?</li>
-								<li>Step to <strong>Feed-forward</strong>. Why is it “per-token” while attention is “across tokens”?</li>
-								<li>Run to the end. At which point does the model commit to one token, and what decides it?</li>
-							</ol>
-						</div>
-					</section>
-
-					<section class="section-block" id="layerlens">
-						<div class="section-kicker"><span class="sk-num">03</span> The layer lens</div>
-						<h2 class="section-title">A word changes its meaning with depth.</h2>
-						<div class="prose">
-							<p>
-								At the input, “bank” is already a vector. Then each block edits it. The
-								residual stream: the running vector from <a href="intuition#inside">the six-step demo</a>: carries the
-								old representation forward and adds a new one on
-								top: <span data-tex="z = x + \operatorname{Attention}(\operatorname{Norm}(x))" data-tex-display="false"></span>, then
-								<span data-tex="y = z + \operatorname{FFN}(\operatorname{Norm}(z))" data-tex-display="false"></span>. Nothing is overwritten; everything
-								accumulates.
-							</p>
-							<p>
-								The layer lens below is a deliberately simple story: context pulls the word
-								toward one of two clusters. With “river” in the sentence, “bank” drifts toward
-								the river cluster; with “loan”, toward finance. It never lands exactly on the
-								cluster centre: the lexical word is still part of the sum. Every token in the
-								sentence contributes a little, so the path is not a clean straight line; it
-								picks up a small amount of noise along the way. Drag the layer slider and switch
-								the context. Real trajectories are high-dimensional and much messier; the
-								qualitative idea (context accumulates with depth) is the point.
-							</p>
-							<p>
-								<strong>The word does not travel from layer to layer.</strong> The stream stays;
-								each block writes an update into it. That is why a late layer can still recover
-								the original lexical sense: nothing was replaced.
-							</p>
-						</div>
-
-						<div class="demo" id="layer-demo">
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">The layer lens <span>· demo 02</span></p>
-									<p class="demo-sub">Pick a context, then drag through layers 0-11.</p>
-								</div>
-								<span class="demo-badge">illustrative</span>
-							</div>
-							<div class="demo-body">
-								<canvas class="demo-canvas" id="layer-canvas" style="height:320px" aria-label="A word moving between two semantic clusters across layers"></canvas>
-								<div class="demo-readout">
-									<div><b>Layer</b><span id="layer-num">0 / 11</span></div>
-									<div><b>Context</b><span id="layer-context">river bank</span></div>
-									<div><b>Pull</b><span id="layer-pull">neutral</span></div>
-								</div>
-								<div class="demo-controls">
-									<div class="chip-row" id="layer-contexts">
-										<button class="chip is-on" type="button" data-ctx="river">“the river bank”</button>
-										<button class="chip" type="button" data-ctx="loan">“the bank loan”</button>
-										<button class="chip" type="button" data-ctx="none">no context</button>
-									</div>
-									<label>Layer <input type="range" id="layer-slider" min="0" max="11" step="1" value="0"><output id="layer-out">0</output></label>
-								</div>
-								<p class="meadow-caption" id="layer-caption" style="color:var(--tm-muted)">At the input, “bank” sits between the clusters. Context has not pulled it yet.</p>
-							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Depth assembles context. The word is not looked up in a dictionary; it is moved by the evidence in the sentence.</span></div>
-							<div class="demo-foot">
-								This is a 2-D cartoon of a high-dimensional residual stream. The real lesson is
-								in the architecture: every layer reads the stream, computes an update, and adds
-								it back.
-							</div>
-						</div>
-
-						<div class="trythis">
-							<b>Try this</b>
-							<ol>
-								<li>Set the layer to 11 for “the bank loan”. Why does “bank” stop short of the finance cluster?</li>
-								<li>Switch to “the river bank” without moving the slider. What changes, and what stays the same?</li>
-								<li>Choose “no context”. Why is there no target at all?</li>
-							</ol>
-						</div>
-					</section>
-
-					<section class="section-block" id="inputlab">
-						<div class="section-kicker"><span class="sk-num">04</span> Preparing the input</div>
-						<h2 class="section-title">From text to a stream of vectors.</h2>
-						<div class="prose">
-							<p>
-								Tokens become integers, integers become vectors, and position tags each
-								vector with its place in the sequence. Change the corpus or the tokenizer
-								and the token stream, embedding map, and positional waves update.
-							</p>
-						</div>
-<div class="demo-loader-status" id="demo-loader-status">
-<div class="demo-loader-head">
-<span class="demo-loader-title" id="demo-loader-title">The interactive demos load when you reach this section.</span>
-<span class="demo-loader-count" id="demo-loader-count"></span>
-</div>
-<div class="demo-loader-track" id="demo-loader-track" hidden><div class="demo-loader-fill" id="demo-loader-fill"></div></div>
-<div class="demo-loader-meta" id="demo-loader-meta" hidden>
-<span id="demo-loader-current"></span>
-<span id="demo-loader-percent"></span>
-</div>
-</div>
-<div class="viz-container" id="transformer-viz-bpe"></div>
-<div style="background: var(--mn-bg-subtle, #f8fafc); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
-<div id="transformer-plotly-space" style="width: 100%; height: 500px; background: var(--mn-surface, white); border-radius: 8px;"></div>
-<div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
-<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px; max-height: 420px; overflow-y: auto;"></div>
-<p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
-<input id="transformer-vector-math-input" oninput="debounced_vector_math()" onkeydown="if(event.key==='Enter'){event.preventDefault(); immediate_vector_math();}" placeholder="e.g., king - man + woman" style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" type="text"/>
-<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: var(--mn-surface, white); border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
-<em style="color: #94a3b8;">Enter an equation and press Enter...</em>
-</div>
-</div>
-<div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
-<div id="transformer-pe-shift-plot" style="width: 100%; height: 600px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
-<div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
-						<div class="md" id="ifscalfactornotone" style="display:none">In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">0.1</span> because of the low dimensionality of our space.</div>
-					</section>
-
-					<section class="section-block" id="block">
-						<div class="section-kicker"><span class="sk-num">05</span> Inside the block</div>
-						<h2 class="section-title">Two sublayers, one residual stream.</h2>
-						<div class="prose">
-							<p>
-								<strong>Attention</strong> mixes information across positions. Each token is
-								projected into a <strong>query</strong>, a <strong>key</strong>, and a
-								<strong>value</strong>. The query asks “what am I looking for?”, the key says
-								“what do I contain?”, and the value carries the content that gets moved.
-							</p>
-							<p>
-								The dot product of a query and a key is a similarity score. Softmax turns the
-								scores into weights that sum to one, and the output is a weighted average of
-								the values. The scaling factor <span data-tex="1/\sqrt{d_k}" data-tex-display="false"></span> keeps those scores from
-								growing too large as the head dimension grows; without it, softmax saturates
-								and the gradients shrink.
-							</p>
-							<p>
-								<strong>Attention has no fixed grammar.</strong> It follows no hand-written tree;
-								it learns which positions should exchange information. Position is handled
-								before attention: the original block adds sinusoidal vectors, while modern
-								blocks often rotate queries and keys by position instead (<a href="https://arxiv.org/abs/2104.09864" rel="noopener">Su et al., 2021</a>). The link between “it” and
-								a noun is computed, not looked up, which is why the same head can resolve it
-								differently in different sentences. Several heads run in parallel in
-								lower-dimensional subspaces, so one head can track a pronoun while another
-								tracks a verb or a nearby adjective.
-							</p>
-							<p>
-								<strong>Feed-forward</strong> transforms each position independently: expand
-								to a wider hidden dimension, apply a nonlinearity, contract back. Attention
-								decides <em>what to look at</em>; the FFN decides <em>what to do with it</em>.
-								The wide hidden layer gives the network room to combine features, and much of
-								the model’s factual recall is associated with these weights, though knowledge
-								is distributed, not stored in one place. The usual expansion factor is four;
-								it is an empirical convention, not a law. Modern models often use gated
-								variants such as SwiGLU with a different ratio, but the shape is the same:
-								wide, nonlinear, then narrow again.
-							</p>
-							<p>
-								<strong>Residual connections</strong> (<a href="https://arxiv.org/abs/1512.03385" rel="noopener">He et al., 2015</a>) give the gradient an identity path
-								around each sublayer, so a deep stack can still learn. They also make the
-								block additive: the branch computes an update, and the update is added to the
-								running stream. Nothing is overwritten.
-							</p>
-							<p>
-								<strong>Layer normalization</strong> (<a href="https://arxiv.org/abs/1607.06450" rel="noopener">Ba, Kiros &amp; Hinton, 2016</a>) keeps activations in a healthy range. The
-								2017 block normalized after the residual addition; modern stacks usually
-								normalize <em>inside</em> the branch (pre-norm), leaving the stream unbroken,
-								and often replace LayerNorm with RMSNorm, which rescales by the root mean
-								square without subtracting the mean. Gated feed-forward variants such as
-								SwiGLU are a separate change (<a href="https://arxiv.org/abs/2002.05202" rel="noopener">Shazeer, 2020</a>). The stream stays simple; each branch
-								arrives already scaled.
-							</p>
-							<p>
-								Where do the parameters actually live? In a typical decoder, most are in the
-								attention projections and the FFN matrices; the embedding and unembedding
-								tables can be large, and are sometimes tied. That is why a “7B” model is not a
-								container of seven billion facts. It is seven billion numbers whose joint
-								action produces the behaviour, with facts spread across many of them.
-							</p>
-						</div>
-						<div class="formula-grid">
-							<div class="formula-card">
-								<div class="fc-kicker">Attention · what it does</div>
-								<div class="fc-formula" data-tex="\operatorname{Attention}(Q,K,V) = \operatorname{softmax}\left(\frac{QK^{\mathsf{T}}}{\sqrt{d_k}}\right)V" data-tex-display="false"></div>
-								<p><b>Q</b> is what a token is looking for, <b>K</b> is what each token offers, and <b>V</b> is the content that travels. The dot product scores every pair, softmax turns the row into weights, and the output is a weighted mix of values. The <span data-tex="\sqrt{d_k}" data-tex-display="false"></span> keeps the scores from exploding as heads get wider.</p>
-							</div>
-							<div class="formula-card">
-								<div class="fc-kicker">Residual · why depth works</div>
-								<div class="fc-formula" data-tex="\begin{aligned} z &amp;= x + \operatorname{Attention}(\operatorname{Norm}(x)) \\ y &amp;= z + \operatorname{FeedForward}(\operatorname{Norm}(z)) \end{aligned}"></div>
-								<p>The plus sign is the residual stream. Each sublayer computes an <b>update</b> and adds it to what is already there. The identity path carries gradients backwards and gives every layer a shared workspace. Pre-norm moves the normalization into the branch so the main stream stays clean.</p>
-							</div>
-							<div class="formula-card">
-								<div class="fc-kicker">Feed-forward · what it computes</div>
-								<div class="fc-formula" data-tex="\operatorname{FFN}(x) = W_2 \cdot \operatorname{act}(W_1 x + b_1) + b_2" data-tex-display="false"></div>
-								<p>The first matrix expands the vector, the nonlinearity lets the model combine features, and the second matrix contracts it back. This is per-token computation: no information moves between positions here. Much of the model’s stored association memory lives in these weights.</p>
-							</div>
-						</div>
-<div id="ffn-equations-container"></div>
-<div id="transformer-migration-plots-container"></div>
-						<div class="fieldnotes">
-							<h4>Why the block works at all</h4>
-							<p>The block is a division of labour. Attention supplies content-based routing; the FFN supplies per-token computation; the residual stream supplies a shared, additive workspace; normalization keeps the scale stable. The causal mask turns the same machinery into an autoregressive predictor. These pieces work because they compose, and because the whole stack is trained end-to-end on next-token prediction.</p>
-						</div>
-						<div class="fieldnotes">
-							<h4>Decoder only, or encoder too?</h4>
-							<p>BERT kept the encoder and trained bidirectionally with masked tokens; GPT kept the decoder and trained autoregressively with a causal mask. The same block, two contracts with the data.</p>
-						</div>
-						<div class="keypoints">
-							<div class="keypoint"><b>Multi-head</b><span>Several attention heads run in parallel, each in a lower-dimensional subspace, then concatenate.</span></div>
-							<div class="keypoint"><b>Causal mask</b><span>In a decoder, token i may only attend to tokens ≤ i. The future is not available.</span></div>
-							<div class="keypoint"><b>Residual</b><span>The stream is a highway for information and gradients; each layer adds a small update.</span></div>
-							<div class="keypoint"><b>Pre-norm</b><span>Normalizing the branch instead of the stream makes deep stacks easier to train.</span></div>
-						</div>
-					</section>
-
-					<section class="section-block" id="output">
-						<div class="section-kicker"><span class="sk-num">06</span> From vectors to words</div>
-						<h2 class="section-title">Logits, softmax, and the stop token.</h2>
-						<div class="prose">
-							<p>
-								The final hidden state of the last token is multiplied by an unembedding matrix,
-								producing a <strong>logit</strong> for every token in the vocabulary. A logit
-								is not a probability; it is an unnormalized score. Adding the same constant to
-								every logit changes nothing after softmax, so only differences between logits
-								matter. Softmax turns them into a probability distribution. A decoding rule
-								chooses one token: greedy takes the maximum, sampling draws from the
-								distribution, temperature scales the logits, top-k/top-p restrict the pool. The
-								chosen token is appended to the context and the loop runs again.
-							</p>
-							<p>
-								How does it stop? There is no separate stop detector. The end-of-sequence token
-								is an ordinary vocabulary entry; “stopping” means the distribution puts enough
-								mass on EOS at a natural boundary. Instruction-tuned models may also carry a
-								rough sense of how long an answer should be, but that is a learned estimate,
-								not an odometer.
-							</p>
-						</div>
-						<div class="aha">
-							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">There is no stop button.</p>
-							<p class="aha-sub">EOS is just another token. The model stops when the next-token distribution has learned that a natural boundary is the most likely next move.</p>
-						</div>
-						<div class="formula" data-tex="\operatorname{P}(\text{token}) = \operatorname{softmax}\left(\frac{\text{logits}}{T}\right)"></div>
-						<div class="prose">
-							<p>
-								Temperature <span data-tex="T" data-tex-display="false"></span> changes the shape of the distribution without
-								changing the model. At <span data-tex="T = 1" data-tex-display="false"></span> the softmax uses the logits as
-								they are. Lower values sharpen the distribution toward the top token; higher
-								values flatten it and give rare tokens more room.
-								<strong>Temperature is a dial on diversity.</strong> The knowledge sits in
-								the logits; temperature changes how widely the model explores them, and a
-								different early token sends the text down a different path.
-							</p>
-						</div>
-						<div class="myth-grid">
-							<div class="myth">
-								<b>Common misreading</b>
-								<span>“Attention is all you need, literally.” Attention routes; the FFN computes; residuals carry; normalization stabilizes. Remove any one and the machine changes.</span>
-							</div>
-							<div class="myth myth--ok">
-								<b>Better frame</b>
-								<span>“The block is a division of labour.” Attention moves information; the FFN transforms it; the residual stream keeps a shared workspace.</span>
-							</div>
-							<div class="myth">
-								<b>Common misreading</b>
-								<span>“The model builds a syntax tree and then reads it.” Syntax is distributed across heads and layers, not stored as one object.</span>
-							</div>
-							<div class="myth myth--ok">
-								<b>Better frame</b>
-								<span>“Depth builds structure bottom-up.” Lower layers assemble local units; higher layers integrate larger relations.</span>
-							</div>
-						</div>
-<div id="transformer-temperature-block">
-<label style="font-weight: bold;">Temperature ($T$): <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span></label>
-<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-<b>Effect:</b> Controls the “sharpness” of the probability distribution.<br/>
-<b>Reason:</b> Low values ($T &lt; 1$) force the model to be deterministic; high values ($T &gt; 1$) increase diversity by making unlikely words more probable.
-	</p>
-<input id="transformer-temperature" max="2.0" min="0.1" oninput="document.getElementById('temp-val').innerText = this.value; rerender_temperature_only();" step="0.1" style="width: 100%; vertical-align: middle;" type="range" value="1.0"/>
-</div>
-<div id="transformer-output-projection" style="background: var(--mn-surface, white); padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
-<div>
-<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
-<input class="bw-cell" id="transformer-master-token-input" style="width: 90%; font-size: 1.1rem;" type="text" value="the"/>
-<div class="tm-token-builder" id="transformer-token-builder">
-	<div class="tm-token-builder-row">
-		<label class="tm-token-builder-label" for="transformer-token-picker-select">Token-only input</label>
-		<select id="transformer-token-picker-select" aria-label="Available tokens"></select>
-		<button type="button" id="transformer-token-picker-add">Add</button>
-		<button type="button" id="transformer-token-picker-clear">Clear</button>
-	</div>
-	<div class="tm-token-builder-chips" id="transformer-token-picker-chips" aria-label="Prompt tokens"></div>
-	<p class="tm-token-builder-note">Space is shown as ␣; <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
-</div>
-
-</div>
-						<div class="prose">
-							<p>
-								One last surprise from recent research: in a simplified setting, a linear
-								attention layer can implement a step of gradient descent on the examples in the
-								prompt (<a href="https://arxiv.org/abs/2212.07677" rel="noopener">von Oswald et al., 2022</a>). That reframes in-context learning as an optimizer the model learned to
-								run inside its forward pass. The result is suggestive, not a complete
-								explanation; it is one of the most interesting open threads in the field.
-							</p>
-						</div>
-					</section>
 
 					<section class="section-block" id="realmodel">
-						<div class="section-kicker"><span class="sk-num">07</span> The real model</div>
+						<div class="section-kicker"><span class="sk-num">01</span> The real model</div>
 						<h2 class="section-title">Train a tiny transformer.</h2>
 <div id="transformer-train-card">
 <div class="transformer-train-controls">
@@ -671,6 +263,412 @@
 							<p>
 								Change the architecture, the corpus, or the optimizer above, then train.
 								The loss, the attention heads, and the per-layer panels update live.
+							</p>
+						</div>
+					</section>
+					<section class="section-block" id="before">
+						<div class="section-kicker"><span class="sk-num">02</span> Before 2017</div>
+						<h2 class="section-title">The problem was the queue.</h2>
+						<div class="prose">
+							<p>
+								Attention, context, position, and fact lookup supplied the parts. Now they assemble
+								into one block. Recurrent networks read a sequence one step at a time. Information about the
+								beginning had to survive a long chain of updates before it could influence the
+								end. Convolutions could parallelize, but the path between distant tokens still
+								grew with distance.
+							</p>
+							<p>
+								The transformer made that path short: in one attention step, every token can
+								read every other token, or every earlier token, in a decoder. The price is
+								<strong>quadratic work</strong> (each token compares with each other token) but the comparison is a matrix multiplication, and matrix multiplications fill
+								a GPU. That trade is what made scale practical.
+							</p>
+						</div>
+						<div class="pullquote">
+							Attention is not a metaphor for looking. It is a learned, differentiable routing
+							operation: a query asks, keys answer, values travel.
+							<cite>The core of the architecture</cite>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">The transformer did not merely make language models deeper. It made them parallel.</p>
+							<p class="aha-sub">Every token can look at every other token in the same step. That one change turned a sequential bottleneck into a matrix multiplication, and made scale practical.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="pipeline">
+						<div class="section-kicker"><span class="sk-num">03</span> The pipeline</div>
+						<h2 class="section-title">From text to a distribution.</h2>
+						<div class="prose">
+							<p>
+								Here is the whole machine as a route. Start with “the cat sat”, step through
+								the block, predict the next token, then append it and run the loop again. The
+								block in the middle repeats <em>N</em> times; everything else happens once.
+							</p>
+							<p>
+								Training and generation share this route. In training, the model is shown the
+								next token and must make it more likely. In generation, it chooses one token,
+								appends it to the context, and starts again. <strong>The model never sees the
+								sentence it is about to write</strong>: only the tokens already on the page.
+							</p>
+							<p>
+								One detail confuses many readers: during training the model produces a
+								distribution at <em>every</em> position, not only the last. The causal mask
+								ensures that the prediction at position <em>i</em> sees only positions up to
+								<em>i</em>, so a single forward pass supplies a training signal for every
+								next-token pair in the sequence. At generation time only the last position
+								matters; the earlier distributions are discarded. This is why training can use
+								a whole document in parallel while generation still has to go one token at a
+								time.
+							</p>
+						</div>
+
+						<div class="demo" id="pipeline-demo" data-arrow-nav>
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The transformer pipeline <span>· demo 01</span></p>
+									<p class="demo-sub">Start with “the cat sat”. Step through the six stages, predict the next token, append it, and run the loop again: on → the → mat → . Stages 04-05 are the transformer block; real models stack that block dozens to hundreds of times.</p>
+								</div>
+								<span class="demo-badge">click / step</span>
+							</div>
+							<div class="demo-body">
+								<div class="pipe-tokens" id="pipe-tokens"></div>
+								<div class="flow flow--six" id="pipe-flow" role="group" aria-label="Transformer stages"></div>
+								<div class="flow-repeat">04 + 05 repeat × N blocks · often 32-100+ layers</div>
+								<div class="flow-detail" id="pipe-detail">
+									<h4 id="pipe-title">Tokenize</h4>
+									<p id="pipe-text"></p>
+									<p class="pipe-shape" id="pipe-shape"></p>
+								</div>
+								<div class="pipe-prediction" id="pipe-prediction">Next token: <b>...</b></div>
+								<div class="demo-controls">
+									<button class="btn-demo btn-demo--green" type="button" id="pipe-next" data-arrow-next>Next step in pipeline →</button>
+									<button class="btn-demo" type="button" id="pipe-run">Run the loop ▶</button>
+									<button class="btn-demo" type="button" id="pipe-mask-toggle">Show causal mask</button>
+									<button class="btn-demo" type="button" id="pipe-reset">Reset</button>
+									<span class="pipe-note" id="pipe-counter" style="margin:0">Stage 1 of 6</span>
+								</div>
+								<div class="causal-mask" id="pipe-mask" hidden>
+									<div class="cm-grid" id="cm-grid" aria-label="Causal attention mask: rows are queries, columns are keys"></div>
+									<p>Rows are queries, columns are keys. A decoder may attend only to itself and the past; the future is masked. That is what makes next-token prediction causal during training.</p>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Attention mixes across positions; the feed-forward network computes per position; the residual stream carries everything forward.</span></div>
+							<div class="demo-foot">
+								The pipeline is the GPT-style decoder route. An encoder such as BERT keeps the
+								same block but removes the causal mask and trains with masked tokens instead
+								of next-token prediction.
+							</div>
+						</div>
+
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">It predicts locally, and can still build a world model.</p>
+							<p class="aha-sub">The model has no explicit paragraph plan: it predicts one token, appends it, and predicts again. But next-token prediction can require a 								structured internal state. In the Othello (Reversi) experiment (<a href="https://arxiv.org/abs/2210.13382" rel="noopener">Li et al., 2022</a>), a transformer trained only on legal moves (with no board and no rules) spontaneously represented the board; intervening on that representation changed its next move. Coherence can therefore come from a learned world model in the residual stream, not only from a chain of surface bets. The model is still fallible, that world model is partial, and small errors can compound.</p>
+						</div>
+
+						<div class="trythis">
+							<b>Try this</b>
+							<ol>
+								<li>Step to <strong>Attention</strong>. Which stage is the only one where information moves <em>between</em> positions?</li>
+								<li>Step to <strong>Feed-forward</strong>. Why is it “per-token” while attention is “across tokens”?</li>
+								<li>Run to the end. At which point does the model commit to one token, and what decides it?</li>
+							</ol>
+						</div>
+					</section>
+
+					<section class="section-block" id="layerlens">
+						<div class="section-kicker"><span class="sk-num">04</span> The layer lens</div>
+						<h2 class="section-title">A word changes its meaning with depth.</h2>
+						<div class="prose">
+							<p>
+								At the input, “bank” is already a vector. Then each block edits it. The
+								residual stream: the running vector from <a href="intuition#inside">the six-step demo</a>: carries the
+								old representation forward and adds a new one on
+								top: <span data-tex="z = x + \operatorname{Attention}(\operatorname{Norm}(x))" data-tex-display="false"></span>, then
+								<span data-tex="y = z + \operatorname{FFN}(\operatorname{Norm}(z))" data-tex-display="false"></span>. Nothing is overwritten; everything
+								accumulates.
+							</p>
+							<p>
+								The layer lens below is a deliberately simple story: context pulls the word
+								toward one of two clusters. With “river” in the sentence, “bank” drifts toward
+								the river cluster; with “loan”, toward finance. It never lands exactly on the
+								cluster centre: the lexical word is still part of the sum. Every token in the
+								sentence contributes a little, so the path is not a clean straight line; it
+								picks up a small amount of noise along the way. Drag the layer slider and switch
+								the context. Real trajectories are high-dimensional and much messier; the
+								qualitative idea (context accumulates with depth) is the point.
+							</p>
+							<p>
+								<strong>The word does not travel from layer to layer.</strong> The stream stays;
+								each block writes an update into it. That is why a late layer can still recover
+								the original lexical sense: nothing was replaced.
+							</p>
+						</div>
+
+						<div class="demo" id="layer-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The layer lens <span>· demo 02</span></p>
+									<p class="demo-sub">Pick a context, then drag through layers 0-11.</p>
+								</div>
+								<span class="demo-badge">illustrative</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas" id="layer-canvas" style="height:320px" aria-label="A word moving between two semantic clusters across layers"></canvas>
+								<div class="demo-readout">
+									<div><b>Layer</b><span id="layer-num">0 / 11</span></div>
+									<div><b>Context</b><span id="layer-context">river bank</span></div>
+									<div><b>Pull</b><span id="layer-pull">neutral</span></div>
+								</div>
+								<div class="demo-controls">
+									<div class="chip-row" id="layer-contexts">
+										<button class="chip is-on" type="button" data-ctx="river">“the river bank”</button>
+										<button class="chip" type="button" data-ctx="loan">“the bank loan”</button>
+										<button class="chip" type="button" data-ctx="none">no context</button>
+									</div>
+									<label>Layer <input type="range" id="layer-slider" min="0" max="11" step="1" value="0"><output id="layer-out">0</output></label>
+								</div>
+								<p class="meadow-caption" id="layer-caption" style="color:var(--tm-muted)">At the input, “bank” sits between the clusters. Context has not pulled it yet.</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Depth assembles context. The word is not looked up in a dictionary; it is moved by the evidence in the sentence.</span></div>
+							<div class="demo-foot">
+								This is a 2-D cartoon of a high-dimensional residual stream. The real lesson is
+								in the architecture: every layer reads the stream, computes an update, and adds
+								it back.
+							</div>
+						</div>
+
+						<div class="trythis">
+							<b>Try this</b>
+							<ol>
+								<li>Set the layer to 11 for “the bank loan”. Why does “bank” stop short of the finance cluster?</li>
+								<li>Switch to “the river bank” without moving the slider. What changes, and what stays the same?</li>
+								<li>Choose “no context”. Why is there no target at all?</li>
+							</ol>
+						</div>
+					</section>
+
+					<section class="section-block" id="inputlab">
+						<div class="section-kicker"><span class="sk-num">05</span> Preparing the input</div>
+						<h2 class="section-title">From text to a stream of vectors.</h2>
+						<div class="prose">
+							<p>
+								Tokens become integers, integers become vectors, and position tags each
+								vector with its place in the sequence. Change the corpus or the tokenizer
+								and the token stream, embedding map, and positional waves update.
+							</p>
+						</div>
+<div class="demo-loader-status" id="demo-loader-status">
+<div class="demo-loader-head">
+<span class="demo-loader-title" id="demo-loader-title">The interactive demos load when you reach this section.</span>
+<span class="demo-loader-count" id="demo-loader-count"></span>
+</div>
+<div class="demo-loader-track" id="demo-loader-track" hidden><div class="demo-loader-fill" id="demo-loader-fill"></div></div>
+<div class="demo-loader-meta" id="demo-loader-meta" hidden>
+<span id="demo-loader-current"></span>
+<span id="demo-loader-percent"></span>
+</div>
+</div>
+<div class="viz-container" id="transformer-viz-bpe"></div>
+<div style="background: var(--mn-bg-subtle, #f8fafc); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
+<div id="transformer-plotly-space" style="width: 100%; height: 500px; background: var(--mn-surface, white); border-radius: 8px;"></div>
+<div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
+<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px; max-height: 420px; overflow-y: auto;"></div>
+<p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
+<input id="transformer-vector-math-input" oninput="debounced_vector_math()" onkeydown="if(event.key==='Enter'){event.preventDefault(); immediate_vector_math();}" placeholder="e.g., king - man + woman" style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" type="text"/>
+<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: var(--mn-surface, white); border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
+<em style="color: #94a3b8;">Enter an equation and press Enter...</em>
+</div>
+</div>
+<div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+<div id="transformer-pe-shift-plot" style="width: 100%; height: 600px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+<div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
+						<div class="md" id="ifscalfactornotone" style="display:none">In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">0.1</span> because of the low dimensionality of our space.</div>
+					</section>
+
+					<section class="section-block" id="block">
+						<div class="section-kicker"><span class="sk-num">06</span> Inside the block</div>
+						<h2 class="section-title">Two sublayers, one residual stream.</h2>
+						<div class="prose">
+							<p>
+								<strong>Attention</strong> mixes information across positions. Each token is
+								projected into a <strong>query</strong>, a <strong>key</strong>, and a
+								<strong>value</strong>. The query asks “what am I looking for?”, the key says
+								“what do I contain?”, and the value carries the content that gets moved.
+							</p>
+							<p>
+								The dot product of a query and a key is a similarity score. Softmax turns the
+								scores into weights that sum to one, and the output is a weighted average of
+								the values. The scaling factor <span data-tex="1/\sqrt{d_k}" data-tex-display="false"></span> keeps those scores from
+								growing too large as the head dimension grows; without it, softmax saturates
+								and the gradients shrink.
+							</p>
+							<p>
+								<strong>Attention has no fixed grammar.</strong> It follows no hand-written tree;
+								it learns which positions should exchange information. Position is handled
+								before attention: the original block adds sinusoidal vectors, while modern
+								blocks often rotate queries and keys by position instead (<a href="https://arxiv.org/abs/2104.09864" rel="noopener">Su et al., 2021</a>). The link between “it” and
+								a noun is computed, not looked up, which is why the same head can resolve it
+								differently in different sentences. Several heads run in parallel in
+								lower-dimensional subspaces, so one head can track a pronoun while another
+								tracks a verb or a nearby adjective.
+							</p>
+							<p>
+								<strong>Feed-forward</strong> transforms each position independently: expand
+								to a wider hidden dimension, apply a nonlinearity, contract back. Attention
+								decides <em>what to look at</em>; the FFN decides <em>what to do with it</em>.
+								The wide hidden layer gives the network room to combine features, and much of
+								the model’s factual recall is associated with these weights, though knowledge
+								is distributed, not stored in one place. The usual expansion factor is four;
+								it is an empirical convention, not a law. Modern models often use gated
+								variants such as SwiGLU with a different ratio, but the shape is the same:
+								wide, nonlinear, then narrow again.
+							</p>
+							<p>
+								<strong>Residual connections</strong> (<a href="https://arxiv.org/abs/1512.03385" rel="noopener">He et al., 2015</a>) give the gradient an identity path
+								around each sublayer, so a deep stack can still learn. They also make the
+								block additive: the branch computes an update, and the update is added to the
+								running stream. Nothing is overwritten.
+							</p>
+							<p>
+								<strong>Layer normalization</strong> (<a href="https://arxiv.org/abs/1607.06450" rel="noopener">Ba, Kiros &amp; Hinton, 2016</a>) keeps activations in a healthy range. The
+								2017 block normalized after the residual addition; modern stacks usually
+								normalize <em>inside</em> the branch (pre-norm), leaving the stream unbroken,
+								and often replace LayerNorm with RMSNorm, which rescales by the root mean
+								square without subtracting the mean. Gated feed-forward variants such as
+								SwiGLU are a separate change (<a href="https://arxiv.org/abs/2002.05202" rel="noopener">Shazeer, 2020</a>). The stream stays simple; each branch
+								arrives already scaled.
+							</p>
+							<p>
+								Where do the parameters actually live? In a typical decoder, most are in the
+								attention projections and the FFN matrices; the embedding and unembedding
+								tables can be large, and are sometimes tied. That is why a “7B” model is not a
+								container of seven billion facts. It is seven billion numbers whose joint
+								action produces the behaviour, with facts spread across many of them.
+							</p>
+						</div>
+						<div class="formula-grid">
+							<div class="formula-card">
+								<div class="fc-kicker">Attention · what it does</div>
+								<div class="fc-formula" data-tex="\operatorname{Attention}(Q,K,V) = \operatorname{softmax}\left(\frac{QK^{\mathsf{T}}}{\sqrt{d_k}}\right)V" data-tex-display="false"></div>
+								<p><b>Q</b> is what a token is looking for, <b>K</b> is what each token offers, and <b>V</b> is the content that travels. The dot product scores every pair, softmax turns the row into weights, and the output is a weighted mix of values. The <span data-tex="\sqrt{d_k}" data-tex-display="false"></span> keeps the scores from exploding as heads get wider.</p>
+							</div>
+							<div class="formula-card">
+								<div class="fc-kicker">Residual · why depth works</div>
+								<div class="fc-formula" data-tex="\begin{aligned} z &amp;= x + \operatorname{Attention}(\operatorname{Norm}(x)) \\ y &amp;= z + \operatorname{FeedForward}(\operatorname{Norm}(z)) \end{aligned}"></div>
+								<p>The plus sign is the residual stream. Each sublayer computes an <b>update</b> and adds it to what is already there. The identity path carries gradients backwards and gives every layer a shared workspace. Pre-norm moves the normalization into the branch so the main stream stays clean.</p>
+							</div>
+							<div class="formula-card">
+								<div class="fc-kicker">Feed-forward · what it computes</div>
+								<div class="fc-formula" data-tex="\operatorname{FFN}(x) = W_2 \cdot \operatorname{act}(W_1 x + b_1) + b_2" data-tex-display="false"></div>
+								<p>The first matrix expands the vector, the nonlinearity lets the model combine features, and the second matrix contracts it back. This is per-token computation: no information moves between positions here. Much of the model’s stored association memory lives in these weights.</p>
+							</div>
+						</div>
+<div id="ffn-equations-container"></div>
+<div id="transformer-migration-plots-container"></div>
+						<div class="fieldnotes">
+							<h4>Why the block works at all</h4>
+							<p>The block is a division of labour. Attention supplies content-based routing; the FFN supplies per-token computation; the residual stream supplies a shared, additive workspace; normalization keeps the scale stable. The causal mask turns the same machinery into an autoregressive predictor. These pieces work because they compose, and because the whole stack is trained end-to-end on next-token prediction.</p>
+						</div>
+						<div class="fieldnotes">
+							<h4>Decoder only, or encoder too?</h4>
+							<p>BERT kept the encoder and trained bidirectionally with masked tokens; GPT kept the decoder and trained autoregressively with a causal mask. The same block, two contracts with the data.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Multi-head</b><span>Several attention heads run in parallel, each in a lower-dimensional subspace, then concatenate.</span></div>
+							<div class="keypoint"><b>Causal mask</b><span>In a decoder, token i may only attend to tokens ≤ i. The future is not available.</span></div>
+							<div class="keypoint"><b>Residual</b><span>The stream is a highway for information and gradients; each layer adds a small update.</span></div>
+							<div class="keypoint"><b>Pre-norm</b><span>Normalizing the branch instead of the stream makes deep stacks easier to train.</span></div>
+						</div>
+					</section>
+
+					<section class="section-block" id="output">
+						<div class="section-kicker"><span class="sk-num">07</span> From vectors to words</div>
+						<h2 class="section-title">Logits, softmax, and the stop token.</h2>
+						<div class="prose">
+							<p>
+								The final hidden state of the last token is multiplied by an unembedding matrix,
+								producing a <strong>logit</strong> for every token in the vocabulary. A logit
+								is not a probability; it is an unnormalized score. Adding the same constant to
+								every logit changes nothing after softmax, so only differences between logits
+								matter. Softmax turns them into a probability distribution. A decoding rule
+								chooses one token: greedy takes the maximum, sampling draws from the
+								distribution, temperature scales the logits, top-k/top-p restrict the pool. The
+								chosen token is appended to the context and the loop runs again.
+							</p>
+							<p>
+								How does it stop? There is no separate stop detector. The end-of-sequence token
+								is an ordinary vocabulary entry; “stopping” means the distribution puts enough
+								mass on EOS at a natural boundary. Instruction-tuned models may also carry a
+								rough sense of how long an answer should be, but that is a learned estimate,
+								not an odometer.
+							</p>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">There is no stop button.</p>
+							<p class="aha-sub">EOS is just another token. The model stops when the next-token distribution has learned that a natural boundary is the most likely next move.</p>
+						</div>
+						<div class="formula" data-tex="\operatorname{P}(\text{token}) = \operatorname{softmax}\left(\frac{\text{logits}}{T}\right)"></div>
+						<div class="prose">
+							<p>
+								Temperature <span data-tex="T" data-tex-display="false"></span> changes the shape of the distribution without
+								changing the model. At <span data-tex="T = 1" data-tex-display="false"></span> the softmax uses the logits as
+								they are. Lower values sharpen the distribution toward the top token; higher
+								values flatten it and give rare tokens more room.
+								<strong>Temperature is a dial on diversity.</strong> The knowledge sits in
+								the logits; temperature changes how widely the model explores them, and a
+								different early token sends the text down a different path.
+							</p>
+						</div>
+						<div class="myth-grid">
+							<div class="myth">
+								<b>Common misreading</b>
+								<span>“Attention is all you need, literally.” Attention routes; the FFN computes; residuals carry; normalization stabilizes. Remove any one and the machine changes.</span>
+							</div>
+							<div class="myth myth--ok">
+								<b>Better frame</b>
+								<span>“The block is a division of labour.” Attention moves information; the FFN transforms it; the residual stream keeps a shared workspace.</span>
+							</div>
+							<div class="myth">
+								<b>Common misreading</b>
+								<span>“The model builds a syntax tree and then reads it.” Syntax is distributed across heads and layers, not stored as one object.</span>
+							</div>
+							<div class="myth myth--ok">
+								<b>Better frame</b>
+								<span>“Depth builds structure bottom-up.” Lower layers assemble local units; higher layers integrate larger relations.</span>
+							</div>
+						</div>
+<div id="transformer-temperature-block">
+<label style="font-weight: bold;">Temperature ($T$): <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span></label>
+<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+<b>Effect:</b> Controls the “sharpness” of the probability distribution.<br/>
+<b>Reason:</b> Low values ($T &lt; 1$) force the model to be deterministic; high values ($T &gt; 1$) increase diversity by making unlikely words more probable.
+	</p>
+<input id="transformer-temperature" max="2.0" min="0.1" oninput="document.getElementById('temp-val').innerText = this.value; rerender_temperature_only();" step="0.1" style="width: 100%; vertical-align: middle;" type="range" value="1.0"/>
+</div>
+<div id="transformer-output-projection" style="background: var(--mn-surface, white); padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
+<div>
+<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
+<input id="transformer-master-token-input" type="hidden" value="the"/>
+<div class="tm-token-builder" id="transformer-token-builder">
+	<div class="tm-token-builder-head">
+		<span class="tm-token-builder-label">Token-only input</span>
+		<button type="button" id="transformer-token-picker-clear">Clear</button>
+	</div>
+	<div class="tm-token-builder-chips" id="transformer-token-picker-chips" aria-label="Prompt tokens"></div>
+	<div class="tm-token-builder-palette-label">Available tokens</div>
+	<div class="tm-token-builder-palette" id="transformer-token-picker-palette" aria-label="Available tokens"></div>
+	<p class="tm-token-builder-note">Space is shown as ␣; <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
+</div>
+						<div class="prose">
+							<p>
+								One last surprise from recent research: in a simplified setting, a linear
+								attention layer can implement a step of gradient descent on the examples in the
+								prompt (<a href="https://arxiv.org/abs/2212.07677" rel="noopener">von Oswald et al., 2022</a>). That reframes in-context learning as an optimizer the model learned to
+								run inside its forward pass. The result is suggestive, not a complete
+								explanation; it is one of the most interesting open threads in the field.
 							</p>
 						</div>
 					</section>

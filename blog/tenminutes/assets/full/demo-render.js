@@ -109,8 +109,34 @@
 	window.addEventListener("scroll", hideGlossaryTips, { passive: true });
 	window.addEventListener("resize", hideGlossaryTips);
 
+
+	/* Show a filled track on the WebKit sliders. Firefox uses its own
+	   ::-moz-range-progress rule. */
+	function paintRange(input) {
+		var min = parseFloat(input.min);
+		var max = parseFloat(input.max);
+		var value = parseFloat(input.value);
+		if (!isFinite(min)) min = 0;
+		if (!isFinite(max)) max = 100;
+		if (!isFinite(value)) value = min;
+		var pct = max > min ? ((value - min) / (max - min)) * 100 : 0;
+		input.style.setProperty("--tm-range-pct", Math.max(0, Math.min(100, pct)) + "%");
+	}
+	function initRanges() {
+		document.querySelectorAll('#transformer_config input[type="range"], #transformer-temperature').forEach(function (input) {
+			if (input._tmRangePainted) return;
+			input._tmRangePainted = true;
+			paintRange(input);
+			input.addEventListener("input", function () { paintRange(input); });
+			input.addEventListener("change", function () { paintRange(input); });
+		});
+	}
+
 	// Do not run inside the script-loading task: finish the file and let the
 	// engine start first, then convert the few labels asynchronously.
+	initRanges();
+	setTimeout(initRanges, 300);
+	setTimeout(initRanges, 1500);
 	setTimeout(render, 0);
 	setTimeout(render, 800);
 	setTimeout(render, 2000);

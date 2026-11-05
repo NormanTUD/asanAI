@@ -2668,6 +2668,7 @@ window.appendToken = (token) => {
 		input.value += (input.value ? " " : "") + token;
 	}
 	// Trigger update
+	if (typeof render_token_picker_chips === 'function') render_token_picker_chips();
 	run_transformer_demo();
 };
 
@@ -3033,6 +3034,18 @@ function _tmPickerDisplay(token) {
 	return String(token).replace(/ /g, '␣').replace(/\n/g, '⏎');
 }
 
+function _tmTokenColorChip(token) {
+	var color = tokenColor(token);
+	var chip = document.createElement('button');
+	chip.type = 'button';
+	chip.className = 'tm-token-chip';
+	chip.textContent = _tmPickerDisplay(token);
+	chip.style.background = color.bg;
+	chip.style.borderColor = color.border;
+	chip.title = token === ' ' ? 'space' : token;
+	return chip;
+}
+
 function render_token_picker_chips() {
 	var input = document.getElementById('transformer-master-token-input');
 	var chips = document.getElementById('transformer-token-picker-chips');
@@ -3042,20 +3055,19 @@ function render_token_picker_chips() {
 	var tokens = tokenizeTextCore(input.value, type);
 	chips.innerHTML = '';
 	tokens.forEach(function (token, idx) {
-		var chip = document.createElement('span');
-		chip.className = 'tm-token-builder-chip';
+		var chip = _tmTokenColorChip(token);
+		chip.classList.add('is-selected');
 		chip.setAttribute('data-idx', String(idx));
-		chip.textContent = _tmPickerDisplay(token);
-		chip.title = token === ' ' ? 'space' : token;
+		chip.title = token === ' ' ? 'space — click to remove' : token + ' — click to remove';
 		chips.appendChild(chip);
 	});
 }
 
 function render_token_picker() {
-	var select = document.getElementById('transformer-token-picker-select');
+	var palette = document.getElementById('transformer-token-picker-palette');
 	var chips = document.getElementById('transformer-token-picker-chips');
 	var input = document.getElementById('transformer-master-token-input');
-	if (!select || !chips || !input || !window.persistentEmbeddingSpace) return;
+	if (!palette || !chips || !input || !window.persistentEmbeddingSpace) return;
 
 	var tokens = Object.keys(window.persistentEmbeddingSpace).filter(function (token) {
 		return token !== TM_EOS_TOKEN;
@@ -3066,25 +3078,26 @@ function render_token_picker() {
 		return a.localeCompare(b);
 	});
 	var signature = tokens.join('\u0001');
-	if (select.dataset.tmPickerSig !== signature) {
-		select.innerHTML = '';
+	if (palette.dataset.tmPickerSig !== signature) {
+		palette.innerHTML = '';
 		tokens.forEach(function (token) {
-			var option = document.createElement('option');
-			option.value = token;
-			option.textContent = _tmPickerDisplay(token);
-			select.appendChild(option);
+			var chip = _tmTokenColorChip(token);
+			chip.setAttribute('data-token', token);
+			palette.appendChild(chip);
 		});
-		select.dataset.tmPickerSig = signature;
+		palette.dataset.tmPickerSig = signature;
 	}
 
-	if (!select._tmPickerBound) {
-		select._tmPickerBound = true;
-		var addBtn = document.getElementById('transformer-token-picker-add');
+	if (!palette._tmPickerBound) {
+		palette._tmPickerBound = true;
 		var clearBtn = document.getElementById('transformer-token-picker-clear');
 		var typeEl = document.getElementById('transformer-tokenizer-type');
-		if (addBtn) addBtn.addEventListener('click', function () {
-			if (select.selectedIndex < 0) return;
-			input.value += select.value;
+		palette.addEventListener('click', function (event) {
+			var chip = event.target.closest && event.target.closest('.tm-token-chip');
+			if (!chip) return;
+			var token = chip.getAttribute('data-token');
+			if (token == null) return;
+			input.value += token;
 			input.dispatchEvent(new Event('input', { bubbles: true }));
 			render_token_picker_chips();
 		});
@@ -3094,7 +3107,7 @@ function render_token_picker() {
 			render_token_picker_chips();
 		});
 		chips.addEventListener('click', function (event) {
-			var chip = event.target.closest && event.target.closest('.tm-token-builder-chip');
+			var chip = event.target.closest && event.target.closest('.tm-token-chip');
 			if (!chip) return;
 			var idx = parseInt(chip.getAttribute('data-idx'), 10);
 			var type = typeEl ? typeEl.value : 'regex';

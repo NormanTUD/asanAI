@@ -990,18 +990,16 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 
 <div>
 	<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
-	<input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" value="the">
+	<input type="hidden" id="transformer-master-token-input" value="the">
 <div class="tm-token-builder" id="transformer-token-builder">
-	<div class="tm-token-builder-row">
-		<label class="tm-token-builder-label" for="transformer-token-picker-select">Token-only input</label>
-		<select id="transformer-token-picker-select" aria-label="Available tokens"></select>
-		<button type="button" id="transformer-token-picker-add">Add</button>
+	<div class="tm-token-builder-head">
+		<span class="tm-token-builder-label">Token-only input</span>
 		<button type="button" id="transformer-token-picker-clear">Clear</button>
 	</div>
 	<div class="tm-token-builder-chips" id="transformer-token-picker-chips" aria-label="Prompt tokens"></div>
+	<div class="tm-token-builder-palette-label">Available tokens</div>
+	<div class="tm-token-builder-palette" id="transformer-token-picker-palette" aria-label="Available tokens"></div>
 	<p class="tm-token-builder-note">Space is shown as ␣; <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
-</div>
-
 </div>
 
 <div class="md">
