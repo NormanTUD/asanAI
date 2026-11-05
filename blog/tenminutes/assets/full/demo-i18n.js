@@ -99,7 +99,47 @@
 		"Betti curves β₀ / β₁ over scale ε": "Betti-Kurven β₀ / β₁ über Skala ε",
 		"Topology by layer, β₀ / β₁": "Topologie pro Schicht, β₀ / β₁",
 		"Learning field, ‖ΔW‖ per matrix (weight deltas)": "Lernfeld, ‖ΔW‖ pro Matrix (Gewichts-Deltas)",
-		"How to read the phase diagram": "Wie du das Phasendiagramm liest"
+		"How to read the phase diagram": "Wie du das Phasendiagramm liest",
+		"before": "vor",
+		"Epoch": "Epoche",
+		"Loss": "Fehler",
+		"ETA": "Restzeit",
+		"Probability": "Wahrscheinlichkeit",
+		"Probabilities": "Wahrscheinlichkeiten",
+		"Logits": "Logits",
+		"Embedding Space": "Embedding-Raum",
+		"Positional Encoding": "Positions-Encoding",
+		"Attention Matrix": "Attention-Matrix",
+		"Query": "Query",
+		"Key": "Key",
+		"Value": "Value",
+		"Scores": "Scores",
+		"Context": "Kontext",
+		"Concat": "Konkat",
+		"Output": "Ausgabe",
+		"Input": "Eingabe",
+		"Hidden": "Hidden",
+		"Head": "Head",
+		"Dimension": "Dimension",
+		"Cosine similarity": "Kosinus-Ähnlichkeit",
+		"Nearest": "Nächste",
+		"Vector": "Vektor",
+		"Matrix": "Matrix",
+		"Tokens": "Tokens",
+		"Token IDs": "Token-IDs",
+		"Words": "Wörter",
+		"Epochs": "Epochen",
+		"Training loss over epochs": "Trainingsfehler über Epochen",
+		"Temperature scaling": "Temperatur-Skalierung",
+		"🧩 What each layer is doing — measured live from the weights": "🧩 Was jede Schicht tut — live aus den Gewichten gemessen",
+		"Pre-Layer Normalization (applied before the sublayer)": "Pre-Layer-Normalisierung (vor der Unterschicht)",
+		"Residual connection": "Residual-Verbindung",
+		"Output projection": "Ausgabeprojektion",
+		"Output Projection Matrix": "Ausgabeprojektionsmatrix",
+		"Feed-Forward Network": "Feed-Forward-Netz",
+		"Layer Normalization": "Layer-Normalisierung",
+		"Scaled Dot-Product Attention": "Skalierte Dot-Product-Attention",
+		"Concatenated head contexts": "Konkatenierte Head-Kontexte"
 	};
 
 	var RE = [
@@ -107,6 +147,8 @@
 		[/^Parameters: ([\d,]+)$/, "Parameter: $1"],
 		[/^Window (\d+):$/, "Fenster $1:"],
 		[/^Epoch (\d+)$/, "Epoche $1"],
+		[/^Layer (\d+)$/, "Schicht $1"],
+		[/^Dimension (\d+)$/, "Dimension $1"],
 		[/^Loss: ([\d.]+)$/, "Fehler: $1"]
 	];
 
@@ -121,6 +163,20 @@
 		if (!match) return;
 		var key = norm(match[2]);
 		if (MAP[key] != null) { node.nodeValue = match[1] + MAP[key] + match[3]; return; }
+		var sub = key
+			.replace(/\bTraining Complete!\b/g, "Training abgeschlossen!")
+			.replace(/\bTraining Stopped\.\b/g, "Training gestoppt.")
+			.replace(/^Layer (\d+)/, "Schicht $1")
+			.replace(/Pre-Layer Normalization \(applied /g, "Pre-Layer-Normalisierung (angewendet ")
+			.replace(/ the sublayer\)/g, " der Unterschicht)")
+			.replace(/Residual connection/g, "Residual-Verbindung")
+			.replace(/Output projection/g, "Ausgabeprojektion")
+			.replace(/Output Projection Matrix/g, "Ausgabeprojektionsmatrix")
+			.replace(/Feed-Forward Network/g, "Feed-Forward-Netz")
+			.replace(/Layer Normalization/g, "Layer-Normalisierung")
+			.replace(/Scaled Dot-Product Attention/g, "Skalierte Dot-Product-Attention")
+			.replace(/Concatenated head contexts/g, "Konkatenierte Head-Kontexte");
+		if (sub !== key) { node.nodeValue = match[1] + sub + match[3]; return; }
 		for (var i = 0; i < RE.length; i++) {
 			if (RE[i][0].test(key)) {
 				node.nodeValue = match[1] + key.replace(RE[i][0], RE[i][1]) + match[3];
@@ -161,7 +217,8 @@
 		walk(document.body);
 		[
 			"training-status", "show_training_sentences", "current_training_sentence",
-			"nr_params", "param-breakdown-table", "transformer-vector-math-result"
+			"nr_params", "param-breakdown-table", "transformer-vector-math-result",
+			"transformer-train-card"
 		].forEach(watch);
 		var btn = document.querySelector(".train-btn");
 		if (btn && window.MutationObserver) {

@@ -671,7 +671,6 @@
 <div id="show_training_sentences" style="display: none">
 <p>Current Training Windows: <span id="current_training_sentence"></span></p><br/>
 </div>
-						<div id="transformer_site"></div>
 					</section>
 
 					<section class="section-block" id="takeaway">
@@ -1015,7 +1014,6 @@
 	<script src="assets/full/attention_engine.js"></script>
 	<script src="assets/full/llm_river.js"></script>
 	<script src="assets/full/provenance.js"></script>
-	<script src="assets/full/transformer_layer_summary.js"></script>
 	<script src="assets/full/demo-i18n.js"></script>
 	<script src="assets/full/demo-render.js"></script>
 	<script>
