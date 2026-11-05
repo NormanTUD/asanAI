@@ -3887,6 +3887,23 @@ html[data-theme="dark"] .myth--ok b { color: var(--tm-green); }
 	overflow-y: hidden;
 }
 .emb-equation math { font-size: 1.08rem; }
+.emb-formula {
+	height: auto;
+	min-height: 76px;
+}
+.emb-formula math { font-size: 1rem; }
+.emb-formula--probe {
+	position: absolute !important;
+	left: -10000px;
+	top: 0;
+	width: auto;
+	height: auto !important;
+	min-height: 0 !important;
+	margin: 0 !important;
+	visibility: hidden;
+	pointer-events: none;
+	overflow: visible !important;
+}
 .att-budget {
 	display: flex;
 	height: 14px;

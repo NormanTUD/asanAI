@@ -6,7 +6,7 @@
 	<meta name="description" content="A ten-minute interactive introduction to next-token prediction, the loop behind large language models.">
 	<meta name="theme-color" content="#ffffff">
 	<title>One Word at a Time | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css?v=20261104f">
+	<link rel="stylesheet" href="assets/site.css?v=20261105">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 </head>
 <body data-lesson="intuition" data-page="lesson">
@@ -331,7 +331,7 @@
 										<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
 										<div class="step-out" id="iemb-out">The space has two semantic axes in this demo: <b>power</b> and <b>gender</b>. Choose an example to see where it lands.</div>
 									</div>
-									<div class="prose-math" id="iemb-formula" data-tex-display="true" hidden></div>
+									<div class="prose-math emb-equation emb-formula" id="iemb-formula" data-tex-display="true" aria-live="polite"></div>
 									<p class="step-note">Meaning becomes geometry (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>). Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this demo uses two so you can see the idea.</p>
 								</div>
 
@@ -344,11 +344,11 @@
 										</div>
 										<div class="step-toolbar">
 											<label>Position
-												<input type="range" id="ipe-pos" min="0" max="12" step="1" value="7">
+												<input type="range" id="ipe-pos" min="0" max="100" step="1" value="7">
 												<output id="ipe-pos-out">7</output>
 											</label>
 										</div>
-										<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="Three rings, one per pair of dimensions: moving the token forward rotates each pair by a different angle"></canvas>
+										<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A token at the centre of three 3D orbits: one per pair of dimensions, each wheel turning at its own speed as the position advances"></canvas>
 										<div class="step-out" id="ipe-out">Position <b>7</b> · pair d0/d1 turns <b>201°</b> · pair d2/d3 turns <b>124°</b> · pair d4/d5 turns <b>80°</b>.</div>
 									</div>
 									<p class="step-note">The demo shows the idea of rotary position embeddings (RoPE). Each pair of dimensions is a wheel, and the token sits at the axle. Moving the token forward by one position rotates every wheel by a different, fixed angle. The token itself stays the same; only its angle changes. Attention can then compare two tokens by the angle between their wheels, which encodes their relative distance.</p>
@@ -1175,9 +1175,56 @@
 			}
 			phLogoBuild();
 			phSerpBuild();
-			if (phReplay) phReplay.addEventListener("click", phPlay);
+			var phStarted = false;
+			function phStart() {
+				if (phStarted) return;
+				phStarted = true;
+				phPlay();
+			}
+			if (phReplay) phReplay.addEventListener("click", function () {
+				phStarted = true;
+				phPlay();
+			});
 			phReset();
-			phPlay();
+			if (phReduce) {
+				phStart();
+			} else {
+				var phVisible = false;
+				var phQueued = false;
+				var phLoadBound = false;
+				function phQueue() {
+					if (phQueued) return;
+					phQueued = true;
+					requestAnimationFrame(function () {
+						requestAnimationFrame(function () {
+							phLater(phStart, 180);
+						});
+					});
+				}
+				function phMaybeQueue() {
+					if (!phVisible || phQueued) return;
+					if (document.readyState === "complete") {
+						phQueue();
+						return;
+					}
+					if (!phLoadBound) {
+						phLoadBound = true;
+						window.addEventListener("load", function () {
+							if (phVisible) phQueue();
+						}, { once: true });
+					}
+				}
+				if ("IntersectionObserver" in window) {
+					new IntersectionObserver(function (entries) {
+						if (!entries[0].isIntersecting) return;
+						phVisible = true;
+						phMaybeQueue();
+					}, { threshold: 0.25 }).observe(phStage);
+				} else {
+					phVisible = true;
+					phMaybeQueue();
+				}
+			}
 		}
 
 		/* ── truth tunnel ────────────────────────────────────── */
@@ -1707,7 +1754,6 @@
 		}
 		function embHideFormula() {
 			if (!embFormula) return;
-			embFormula.hidden = true;
 			embFormula.removeAttribute("data-tex");
 			embFormula.removeAttribute("data-tex-rendered");
 			embFormula.innerHTML = "";
@@ -1772,6 +1818,72 @@
 			return DE
 				? 'Die <b>Geschlechtsrichtung</b> (grün) ist dieselbe von Mann zu Frau und von König zu Königin. Die <b>Machtrichtung</b> (gold) ist dieselbe entlang Mann → Prinz → König. Bedeutung lebt in Positionen und Richtungen.'
 				: 'The <b>gender</b> arrow (green) is the same from man to woman and from king to queen. The <b>power</b> arrow (gold) is the same along man → prince → king. Meaning lives in positions and in directions.';
+		}
+		function embDirTex(mode) {
+			function vec(word) {
+				return "\\vec{x}_{\\text{" + embLabel(word) + "}}";
+			}
+			function join(lines) {
+				if (lines.length === 1) return lines[0];
+				return "\\begin{aligned}" + lines.join(" \\\\ ") + "\\end{aligned}";
+			}
+			function equation(kind) {
+				if (kind === "gender") {
+					return "\\underbrace{\\underbrace{" + vec("Woman") + " - " + vec("Man") + "}_{\\text{" +
+						(DE ? "Schritt von Mann zu Frau" : "step from man to woman") + "}} = " +
+						"\\underbrace{" + vec("Queen") + " - " + vec("King") + "}_{\\text{" +
+						(DE ? "Schritt von König zu Königin" : "step from king to queen") + "}}}_{\\text{" +
+						(DE ? "dieselbe Geschlechtsrichtung" : "the same gender direction") + "}}";
+				}
+				return "\\underbrace{\\underbrace{" + vec("Prince") + " - " + vec("Man") + "}_{\\text{" +
+					(DE ? "ein Machtschritt" : "one power step") + "}} = " +
+					"\\underbrace{" + vec("King") + " - " + vec("Prince") + "}_{\\text{" +
+					(DE ? "noch ein Machtschritt" : "another power step") + "}}}_{\\text{" +
+					(DE ? "dieselbe Machtrichtung" : "the same power direction") + "}}";
+			}
+			if (mode === "gender") return equation("gender");
+			if (mode === "power") return equation("power");
+			return join([equation("gender"), equation("power")]);
+		}
+		var embProbe = null;
+		var embMeasureTimer = null;
+		function embProbeEl() {
+			if (embProbe) return embProbe;
+			if (!embFormula || !embFormula.parentNode) return null;
+			embProbe = document.createElement("div");
+			embProbe.className = "prose-math emb-equation emb-formula emb-formula--probe";
+			embProbe.setAttribute("aria-hidden", "true");
+			embFormula.parentNode.insertBefore(embProbe, embFormula.nextSibling);
+			return embProbe;
+		}
+		function embMeasureFormula() {
+			if (!embFormula || !window.temml) return;
+			var width = embFormula.getBoundingClientRect().width;
+			var probe = embProbeEl();
+			if (!width || !probe) return;
+			probe.style.width = width + "px";
+			var expressions = ["King - Man + Woman", "Man + 2 * Power", "Prince + Power"];
+			var texs = expressions.map(embTex).filter(Boolean);
+			texs.push(embDirTex("gender"), embDirTex("power"), embDirTex("all"));
+			var tallest = 0;
+			texs.forEach(function (tex) {
+				try {
+					probe.innerHTML = temml.renderToString(tex, { displayMode: true });
+					tallest = Math.max(tallest, probe.getBoundingClientRect().height);
+				} catch (e) {}
+			});
+			probe.innerHTML = "";
+			if (tallest > 0) embFormula.style.minHeight = Math.ceil(tallest) + "px";
+		}
+		function embSetFormula(tex) {
+			if (!embFormula) return;
+			if (!tex) {
+				embHideFormula();
+				return;
+			}
+			embFormula.setAttribute("data-tex", tex);
+			embFormula.removeAttribute("data-tex-rendered");
+			TM.typesetMath(embFormula.parentNode);
 		}
 		function drawEmb(ctx, w, h) {
 			var c = TM.colors();
@@ -1916,14 +2028,7 @@
 			}
 			if (embFormula) {
 				var tex = ev && ev.kind === "vec" ? embTex(expr) : "";
-				if (tex) {
-					embFormula.hidden = false;
-					embFormula.setAttribute("data-tex", tex);
-					embFormula.removeAttribute("data-tex-rendered");
-					TM.typesetMath(embFormula.parentNode);
-				} else {
-					embHideFormula();
-				}
+				embSetFormula(tex);
 			}
 			if (embApi) embApi.redraw();
 		}
@@ -1972,7 +2077,7 @@
 						embDirMode = expr === "directions" ? "all" : expr;
 						embResult = null;
 						if (embOut) embOut.innerHTML = embDirText(embDirMode);
-						embHideFormula();
+						embSetFormula(embDirTex(embDirMode));
 						if (embApi) embApi.redraw();
 					} else {
 						updateEmb(expr);
@@ -1980,128 +2085,263 @@
 				});
 			});
 			updateEmb("King - Man + Woman");
+			embMeasureFormula();
+			window.addEventListener("resize", function () {
+				clearTimeout(embMeasureTimer);
+				embMeasureTimer = setTimeout(embMeasureFormula, 160);
+			});
+			if (document.fonts && document.fonts.ready) {
+				document.fonts.ready.then(function () { embMeasureFormula(); });
+			}
 		}
 
 		/* ── positions ───────────────────────────────────────── */
 		var posCanvas = document.getElementById("ipe-canvas");
 		var posOut = document.getElementById("ipe-out");
 		var posApi = null;
-		var posMax = 12;
 		var pos = 7;
+		var posShown = 7;
 		var POS_FREQ = [0.5, 0.31, 0.2];
 		var POS_COLORS = ["green", "blue", "gold"];
+		var POS_LABELS = ["d0/d1", "d2/d3", "d4/d5"];
+		var posReduce = TM.prefersReduced();
+		var posClock = 0;
 		function posAngle(pair, p) {
 			return p * POS_FREQ[pair];
+		}
+		function posOrbit(pair, theta) {
+			var co = Math.cos(theta);
+			var si = Math.sin(theta);
+			if (pair === 0) return [co, si, 0];
+			if (pair === 1) return [si, 0, co];
+			return [0, co, si];
+		}
+		function posDegrees(theta) {
+			var deg = (theta * 180 / Math.PI) % 360;
+			if (deg < 0) deg += 360;
+			var rounded = Math.round(deg);
+			return rounded === 360 ? 0 : rounded;
+		}
+		function posRgba(hex, alpha) {
+			var rgb = hexToRgb(hex);
+			return "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + alpha + ")";
+		}
+		function posProjector(w, h) {
+			var t = posClock * 0.00018;
+			var az = -0.62 + (posReduce ? 0 : Math.sin(t) * 0.26);
+			var el = 0.34 + (posReduce ? 0 : Math.sin(t * 0.7) * 0.035);
+			var ca = Math.cos(az), sa = Math.sin(az);
+			var ce = Math.cos(el), se = Math.sin(el);
+			var unit = Math.min(w * 0.29, h * 0.36);
+			var cx = w / 2;
+			var cy = h * 0.52;
+			function project(p) {
+				var x1 = p[0] * ca + p[2] * sa;
+				var z1 = -p[0] * sa + p[2] * ca;
+				var y1 = p[1] * ce - z1 * se;
+				var z2 = p[1] * se + z1 * ce;
+				var depth = z2 + 6.4;
+				var scale = 5.9 / Math.max(depth, 0.6);
+				return { x: cx + x1 * unit * scale, y: cy - y1 * unit * scale, z: z2 };
+			}
+			project.cx = cx;
+			project.cy = cy;
+			project.unit = unit;
+			return project;
+		}
+		function posGlow(ctx, x, y, r, color, alpha) {
+			var g = ctx.createRadialGradient(x, y, 0, x, y, r);
+			g.addColorStop(0, posRgba(color, alpha));
+			g.addColorStop(1, posRgba(color, 0));
+			ctx.fillStyle = g;
+			ctx.beginPath();
+			ctx.arc(x, y, r, 0, Math.PI * 2);
+			ctx.fill();
+		}
+		function posPill(ctx, c, w, h, x, y, color, text) {
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			var tw = ctx.measureText(text).width;
+			var bw = tw + 12;
+			var bh = 16;
+			var bx = TM.clamp(x - bw / 2, 4, w - bw - 4);
+			var by = TM.clamp(y - bh / 2, 4, h - bh - 4);
+			ctx.fillStyle = c.dark ? "rgba(4,34,46,.88)" : "rgba(255,255,255,.94)";
+			TM.roundRect(ctx, bx, by, bw, bh, 8);
+			ctx.fill();
+			ctx.strokeStyle = posRgba(color, 0.45);
+			ctx.lineWidth = 1;
+			ctx.stroke();
+			ctx.fillStyle = color;
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			ctx.fillText(text, bx + bw / 2, by + bh / 2 + 0.5);
+			ctx.textBaseline = "alphabetic";
 		}
 		function drawPos(ctx, w, h) {
 			var c = TM.colors();
 			ctx.clearRect(0, 0, w, h);
-			var cx = w / 2;
-			var cy = h / 2;
-			var radius = Math.min(64, (w - 160) / 2);
-			var offsets = [-112, 0, 112];
-			var labels = ["d0/d1", "d2/d3", "d4/d5"];
+			var project = posProjector(w, h);
+			var cx = project.cx;
+			var cy = project.cy;
+			var unit = project.unit;
+
+			var stageGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, unit * 1.6);
+			stageGlow.addColorStop(0, posRgba(c.sky, c.dark ? 0.16 : 0.08));
+			stageGlow.addColorStop(1, posRgba(c.sky, 0));
+			ctx.fillStyle = stageGlow;
+			ctx.beginPath();
+			ctx.arc(cx, cy, unit * 1.6, 0, Math.PI * 2);
+			ctx.fill();
+
 			ctx.textAlign = "left";
 			ctx.font = "600 10px Barlow, system-ui, sans-serif";
 			ctx.fillStyle = c.muted;
 			ctx.fillText(DE ? "Ein Token, drei Drehungen" : "one token, three rotations", 14, 18);
+			ctx.textAlign = "right";
+			ctx.fillText((DE ? "Position " : "position ") + "m = " + pos, w - 14, 18);
+			ctx.textAlign = "left";
 
-			offsets.forEach(function (oy, pair) {
-				var ringY = cy + oy;
+			var SEGMENTS = 72;
+			POS_FREQ.forEach(function (freq, pair) {
 				var color = c[POS_COLORS[pair]];
-				// ring
-				ctx.beginPath();
-				ctx.ellipse(cx, ringY, radius, radius * 0.42, 0, 0, Math.PI * 2);
-				ctx.strokeStyle = c.dark ? "rgba(238,247,244,.18)" : "rgba(0,75,111,.18)";
-				ctx.lineWidth = 1;
-				ctx.stroke();
-				// trail of integer positions already passed
-				for (var k = 0; k < pos; k++) {
-					var ta = posAngle(pair, k);
-					ctx.beginPath();
-					ctx.arc(cx + radius * Math.cos(ta), ringY + radius * 0.42 * Math.sin(ta), 1.6, 0, Math.PI * 2);
-					ctx.fillStyle = c.faint;
-					ctx.globalAlpha = 0.45;
-					ctx.fill();
-					ctx.globalAlpha = 1;
+				var theta = posAngle(pair, posShown);
+				var i;
+
+				var ring = [];
+				for (i = 0; i <= SEGMENTS; i++) {
+					ring.push(project(posOrbit(pair, i / SEGMENTS * Math.PI * 2)));
 				}
-				// rotated arc from the start direction
-				var theta = posAngle(pair, pos);
+				ctx.lineCap = "round";
+				for (i = 0; i < SEGMENTS; i++) {
+					var a = ring[i];
+					var b = ring[i + 1];
+					var near = (1 - (a.z + b.z) / 2) / 2;
+					ctx.beginPath();
+					ctx.moveTo(a.x, a.y);
+					ctx.lineTo(b.x, b.y);
+					ctx.strokeStyle = posRgba(color, 0.07 + near * 0.17);
+					ctx.lineWidth = 1;
+					ctx.stroke();
+				}
+
+				var sweep = ((theta % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+				if (theta > 0.0001 && sweep < 0.0001) sweep = Math.PI * 2;
+				if (sweep > 0.0001) {
+					var steps = Math.max(2, Math.ceil(sweep / (Math.PI * 2) * SEGMENTS));
+					ctx.beginPath();
+					for (i = 0; i <= steps; i++) {
+						var p = project(posOrbit(pair, sweep * i / steps));
+						if (i === 0) ctx.moveTo(p.x, p.y);
+						else ctx.lineTo(p.x, p.y);
+					}
+					ctx.strokeStyle = posRgba(color, 0.14);
+					ctx.lineWidth = 7;
+					ctx.stroke();
+					for (i = 0; i < steps; i++) {
+						var p1 = project(posOrbit(pair, sweep * i / steps));
+						var p2 = project(posOrbit(pair, sweep * (i + 1) / steps));
+						var nearArc = (1 - (p1.z + p2.z) / 2) / 2;
+						ctx.beginPath();
+						ctx.moveTo(p1.x, p1.y);
+						ctx.lineTo(p2.x, p2.y);
+						ctx.strokeStyle = posRgba(color, 0.35 + nearArc * 0.6);
+						ctx.lineWidth = 2.2;
+						ctx.stroke();
+					}
+				}
+
+				var start = project(posOrbit(pair, 0));
 				ctx.beginPath();
-				ctx.ellipse(cx, ringY, radius, radius * 0.42, 0, 0, Math.min(theta, Math.PI * 2));
-				ctx.strokeStyle = color;
-				ctx.globalAlpha = 0.5;
-				ctx.lineWidth = 2;
-				ctx.stroke();
-				ctx.globalAlpha = 1;
-				// axle
-				ctx.beginPath();
-				ctx.arc(cx, ringY, 2, 0, Math.PI * 2);
-				ctx.fillStyle = c.ink;
-				ctx.fill();
-				// original token at angle 0: hollow grey dot
-				var ox = cx + radius, oyy = ringY;
-				ctx.beginPath();
-				ctx.arc(ox, oyy, 4.5, 0, Math.PI * 2);
+				ctx.arc(start.x, start.y, 3.2, 0, Math.PI * 2);
 				ctx.fillStyle = c.paper;
 				ctx.fill();
-				ctx.strokeStyle = c.faint;
-				ctx.lineWidth = 1.5;
-				ctx.stroke();
-				// current position
-				var x = cx + radius * Math.cos(theta);
-				var y = ringY + radius * 0.42 * Math.sin(theta);
-				ctx.beginPath();
-				ctx.moveTo(cx, ringY);
-				ctx.lineTo(x, y);
-				ctx.strokeStyle = color;
+				ctx.strokeStyle = posRgba(color, 0.6);
 				ctx.lineWidth = 1.4;
 				ctx.stroke();
+
+				var marker = project(posOrbit(pair, theta));
+				var nearMarker = (1 - marker.z) / 2;
+				posGlow(ctx, marker.x, marker.y, 20, color, 0.22 + nearMarker * 0.14);
 				ctx.beginPath();
-				ctx.arc(x, y, 5.5, 0, Math.PI * 2);
+				ctx.arc(marker.x, marker.y, 4.6 + nearMarker * 2.6, 0, Math.PI * 2);
 				ctx.fillStyle = color;
 				ctx.fill();
-				ctx.strokeStyle = c.paper;
-				ctx.lineWidth = 1.5;
+				ctx.strokeStyle = c.card;
+				ctx.lineWidth = 2;
 				ctx.stroke();
-				// labels
-				ctx.textAlign = "left";
-				ctx.fillStyle = color;
-				ctx.font = "600 10px Barlow, system-ui, sans-serif";
-				ctx.fillText(labels[pair], cx + radius + 16, ringY - 6);
-				ctx.fillStyle = c.muted;
-				ctx.font = "500 9px Barlow, system-ui, sans-serif";
-				var deg = Math.round((theta * 180 / Math.PI) % 360);
-				ctx.fillText(deg + "°", cx + radius + 16, ringY + 8);
+
+				var dx = marker.x - cx;
+				var dy = marker.y - cy;
+				var len = Math.hypot(dx, dy) || 1;
+				var label = POS_LABELS[pair] + (w >= 520 ? " · " + posDegrees(theta) + "°" : "");
+				posPill(ctx, c, w, h, marker.x + dx / len * 28, marker.y + dy / len * 28, color, label);
 			});
-			// original token marker at the middle ring
-			ctx.textAlign = "center";
-			ctx.fillStyle = c.muted;
-			ctx.font = "500 9px Barlow, system-ui, sans-serif";
-			ctx.fillText(DE ? "Kreuz = Token-Achse" : "cross = token axle", cx, cy + 42);
-			if (posOut) {
+
+			var ballRadius = Math.max(10, unit * 0.12);
+			var ball = ctx.createRadialGradient(cx - ballRadius * 0.4, cy - ballRadius * 0.45, ballRadius * 0.12, cx, cy, ballRadius);
+			ball.addColorStop(0, c.dark ? "#f2fbf8" : "#ffffff");
+			ball.addColorStop(0.36, c.sky);
+			ball.addColorStop(0.72, c.petrol);
+			ball.addColorStop(1, "#000000");
+			ctx.fillStyle = ball;
+			ctx.beginPath();
+			ctx.arc(cx, cy, ballRadius, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.strokeStyle = posRgba(c.sky, 0.55);
+			ctx.lineWidth = 1;
+			ctx.stroke();
+		}
+		if (posCanvas) {
+			posApi = TM.initCanvas(posCanvas, drawPos);
+			var posSlider = document.getElementById("ipe-pos");
+			var posCountOut = document.getElementById("ipe-pos-out");
+			var posVisible = true;
+			posClock = posReduce ? 0 : ((window.performance && performance.now) ? performance.now() : 0);
+			function posRenderOut() {
+				if (!posOut) return;
 				var degs = POS_FREQ.map(function (f) {
-					return Math.round((pos * f * 180 / Math.PI) % 360) + "°";
+					return posDegrees(pos * f) + "°";
 				});
 				posOut.innerHTML = (DE ? 'Position ' : 'position ') + '<b>' + pos + '</b>' +
 					' · d0/d1 <b>' + degs[0] + '</b>' +
 					' · d2/d3 <b>' + degs[1] + '</b>' +
 					' · d4/d5 <b>' + degs[2] + '</b>.';
 			}
-		}
-		if (posCanvas) {
-			posApi = TM.initCanvas(posCanvas, drawPos);
-			var posSlider = document.getElementById("ipe-pos");
-			var posCountOut = document.getElementById("ipe-pos-out");
+			function posTick(now) {
+				if (posApi && posVisible && !document.hidden) {
+					posClock = now;
+					var diff = pos - posShown;
+					if (Math.abs(diff) > 0.0005) {
+						posShown += diff * 0.18;
+						if (Math.abs(pos - posShown) < 0.01) posShown = pos;
+					} else {
+						posShown = pos;
+					}
+					posApi.redraw();
+				}
+				requestAnimationFrame(posTick);
+			}
 			if (posSlider) {
 				posSlider.addEventListener("input", function () {
-					pos = parseInt(posSlider.value, 10);
+					pos = TM.clamp(parseInt(posSlider.value, 10) || 0, 0, 100);
+					if (posReduce) posShown = pos;
 					if (posCountOut) posCountOut.textContent = String(pos);
-					if (posApi) posApi.redraw();
+					posRenderOut();
+					if (posApi && posReduce) posApi.redraw();
 				});
 			}
+			if ("IntersectionObserver" in window) {
+				new IntersectionObserver(function (entries) {
+					posVisible = entries[0].isIntersecting;
+				}, { threshold: 0.01 }).observe(posCanvas);
+			}
+			window.addEventListener("tm:theme", function () {
+				if (posApi) posApi.redraw();
+			});
 			if (posCountOut) posCountOut.textContent = String(pos);
+			posRenderOut();
 			if (posApi) posApi.redraw();
+			if (!posReduce) requestAnimationFrame(posTick);
 		}
 
 		/* ── attention ───────────────────────────────────────── */
