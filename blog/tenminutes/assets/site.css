@@ -1493,7 +1493,7 @@ input[type="range"]::-moz-range-thumb {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 640px;
+	height: 780px;
 	overflow: hidden;
 }
 .ia-phone {
@@ -1800,7 +1800,7 @@ input[type="range"]::-moz-range-thumb {
 	color: #4d5156;
 }
 @media (max-width: 460px) {
-	.ia-stage { height: 540px; }
+	.ia-stage { height: 690px; }
 	.ia-phone { transform: scale(0.82); }
 }
 @media (prefers-reduced-motion: reduce) {

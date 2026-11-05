@@ -1,10 +1,10 @@
 # Deep fact audit
 
 - lessons: 99
-- claims: 7328
-- statements: 17111
-- relations: 51944
-- uncovered years: 48
+- claims: 7352
+- statements: 17192
+- relations: 52103
+- uncovered years: 54
 - uncovered quantities: 6
 - uncited specific claims: 307
 - citation keys not found in lesson: 0
@@ -110,7 +110,7 @@
 | transformer | 32 | 260 | 837 | 0 | 0 |
 | unexpected_capabilities | 40 | 274 | 578 | 4 | 1 |
 | untold_history_i | 520 | 458 | 1503 | 3 | 0 |
-| untold_history_ii | 648 | 562 | 1853 | 0 | 0 |
+| untold_history_ii | 672 | 643 | 2012 | 6 | 0 |
 | untold_history_iii | 1639 | 922 | 3559 | 1 | 0 |
 | vectorsearch | 31 | 149 | 588 | 0 | 0 |
 | vibe_coding | 35 | 176 | 453 | 0 | 0 |
@@ -153,7 +153,7 @@
 - tokenizerlab.php: 1235
 - tokenizerlab.php: 2024
 - tokenizerlab.php: 2025
-- … and 13 more
+- … and 19 more
 
 ## Uncovered quantities
 

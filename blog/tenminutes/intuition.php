@@ -47,7 +47,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The model in your pocket <span>· demo 01a</span></p>
-									<p class="demo-sub">A search box, a voice query, an AI answer and the links below it. The animation runs once on load; replay it with the button.</p>
+									<p class="demo-sub">A search box, a voice query, an AI answer and the links below it. The animation runs once when the demo comes into view.</p>
 								</div>
 								<span class="demo-badge">live</span>
 							</div>
@@ -81,9 +81,6 @@
 										<div class="ia-bar"></div><div class="ia-bar"></div>
 									</div>
 								</div>
-								<div class="demo-controls">
-									<button class="btn-demo btn-demo--green" type="button" id="ph-replay">Replay the animation ↻</button>
-								</div>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>The phone does not look up a stored answer. The summary is written one token at a time, and the same loop runs in the data centre behind it.</span></div>
 						</div>
@@ -97,8 +94,9 @@
 							</p>
 							<p>
 								Two words in that description are doing quiet work. “Probability” means the
-								model scores all candidates at once; it does not first pick an answer and
-								then decide how sure it is. The other word is “token”. The demo below calls
+								model assigns a score to every possible next token, and the scores sum to
+								one. It does not first choose an answer and then attach a confidence; the
+								whole distribution is the output. The other word is “token”. The demo below calls
 								its tokens words because that is easiest to follow, but a token can be a
 								whole word, a word fragment, a single character, a group of characters, a
 								space, a punctuation mark, or an emoji. When “unbelievable” is not in the
@@ -1019,7 +1017,6 @@
 			var phAiText = document.getElementById("ia-ai-text");
 			var phThinking = document.getElementById("ia-ai-thinking");
 			var phSerp = document.getElementById("ia-serp");
-			var phReplay = document.getElementById("ph-replay");
 			var PH_SATZ = DE ? "warum ist der himmel blau?" : "why is the sky blue?";
 			var PH_AI = DE ? [
 				{ t: "Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm): " },
@@ -1174,10 +1171,6 @@
 				phStarted = true;
 				phPlay();
 			}
-			if (phReplay) phReplay.addEventListener("click", function () {
-				phStarted = true;
-				phPlay();
-			});
 			phReset();
 			if (phReduce) {
 				phStart();
