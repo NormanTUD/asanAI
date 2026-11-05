@@ -1,0 +1,85 @@
+alles hier gilt sowohl für die deutsche als auch die englische. checke es in beiden. pass die sprache auch an sofern das beispiel das verlangt.
+
+intuition:
+
+mach wichtige keywords dickgedruckt. mach dass die demos NICHT erst laden wenn man scrollt sondern gleich da sind. die seiten sind kurz genug dass das ghet.
+
+entferne "Beginne hier: Der Rest des Kalenders ist Technik, um diese eine Vorhersage besser zu machen.". fange eine kurze intro an damit dass es hier darum geht, dass man transformer umfassend verstehen soll wenn man das durchgearbeitet hat. es geht nicht darum bis in jedes detail zu gehen sondern darum einen guten gesamtüberblick zu kriegen
+
+entferne "und vergibt dann eine Punktzahl"
+
+"ein Leerzeichen oder ein Satzzeichen sein" oder ein emoji oder sowas.
+
+"Unbelievable“ kann als mehrere Stücke wie „un“, „believ“ und „able“ ankommen" es kommt nicht an sondern wird vom tokenizer so getrennt
+
+"Ein führendes Leerzeichen ist ein eigenes Byte und kann ein Token sein" entferne diesen satz
+
+"Jeder Teil erweitert die Schleife um eine Fähigkeit, die die Vorhersage verbessert." das stimmt nciht. jeder teil hier ist ein teil der die vorhersage erst ermöglicht
+
+"LLM": du erwähnst das hier direkt aber sagst nicht wofür das steht. fange mit einer kurzintro an über was LLM sind. mach das auf deutsch und englisch. wähle das smartphone beispiel auch als demo was in ../lndw/index.html ist. 
+
+"Warum nicht die ganze Antwort auf einmal vorhersagen? Die Schleife arbeitet tokenweise: Das Modell gibt eine Verteilung über den nächsten Slot aus, wählt ein Token, hängt es an und wiederholt den Schritt. So kann jedes Wort auf die bereits geschriebenen Wörter reagieren. " das ist keine antwort auf die frage. es ist ein langsames schrittweises sich-herantasten an eine plausible lösung, nicht die ganze lösung auf einmal
+
+"Unten ist eine kleine Demo, kein echtes Modell" -> "Die folgende Demo zeigt ...", den paragraph überarbeiten
+
+demo: "Die autoregressive Schleife ": "Klicke auf einen Kandidaten" geht nicht. schreib auch in nem zweiten absatz davor was die temperatur ist und warum man die hat. einerseits macht es antworten menschlicher weil wir auch auf die gleiche frage nicht immer identisch antworten, es erlaubt kreativität, aber man will das nicht immer. kreative geschichten sind toll, aber kreative buchführung nicht. mit temperature kann man das einstellen wie weit er divergiert vom pfad der als der wahrscheinlichste gilt
+
+"ganzen temperaturgeformten Verteilung" temperaturgeformten ist kein richtiges wort, weg damit
+
+entferne " Diese Geschichte besteht aus einer Handvoll handgeschriebener Fortsetzungen, kein trainiertes Modell. Wechsle zwischen Greedy, Sampling und Top-p. Probiere Temperatur 0,2 und dann 1,8. "
+
+"und behält den kürzesten Anfang" behält die mit der höchsten wahrscheinlichkeit
+
+"Es baut eine Verteilung und zieht daraus" es baut ne verteilung aus den trainingsdaten die man ihm gegeben hat. gehe auch kurz auf die trainingsdaten ein, dass das das gesamte wikipedia, reddit usw ist am anfang der seite
+
+"Ein guter Prädiktor komprimiert." es heißt Predictor, nciht Prädiktor; erklär dass KI hier ne prediction macht, dh ne vorhersage. halte dich dabei aber kurz.
+
+"Die Schritte folgen der Reihenfolge eines echten Transformer-Durchlaufs (Vaswani et al., 2017):" sage lieber: die hier beschriebenen schritte entsprechen dem, was vaswani et al beschrieben haben als transfofmer
+
+"Frühe Schichten arbeiten direkt auf den Token-Vektoren. Spätere Schichten arbeiten auf dem ursprünglichen Signal plus allem, was die früheren Schichten hineingeschrieben haben." zeige das in der formel, mach daraus die mit dem residual stream danach. zeige da dass man nicht layer2(layer1(x)) macht sondern x_2 layer1(x_1) + x, layer2(x_2) + x_2 usw. zeige das seperat.
+
+entferne "Die Notizen markieren, was vereinfacht ist, damit das Bild nicht vorgibt, die ganze Maschine zu sein."
+
+"Ein Token ist kein Wort. Bevor das Modell irgendetwas lesen kann, wird Text als Zahlen kodiert. Jedes Zeichen hat eine Zahl, die Unicode-Codepoint heißt, und eine Kodierung verwandelt diese Zahl in Bytes. Ein Byte-Level-Tokenizer beginnt mit allen 256 möglichen Bytes, sodass jedes Textstück darstellbar ist, auch Zeichen, die es im Training nie gesehen hat. Seltene Wörter zerfallen in kleinere Stücke, die das Vokabular bereits kennt. Neue Emoji funktionieren trotzdem, weil verwandte Emoji ihre ersten Bytes teilen: Die meisten Zeichen im Haupt-Emoji-Block beginnen mit F0 9F. Ein Leerzeichen ist auch ein Byte und ist ein eigenes Token." formulier das leicht um: es geht darum dass er nicht nur einzelne buchstaben nimmt sondern auch tatsächliche subwörter. wähle statt "ver-ständ-nis" ein anderes wort. zeige auch dass diese wortteile in anderen worten vorkommen, wie "un" in "unverheiratet". mach das klar, dann macht es mehr sinn. wähle auch zB "unverheiratet" (wo un die gleiche id hat), im englischen wähle auch ne entsprechung wo das alles geht mit tokens und subtokens.
+
+"diese Demo nutzt zwei, damit das Bild auf den Bildschirm passt" -> damit man es anzeigen kann, aber die prinzipien sind die gleichen
+
+"Training ordnet diese Punkte so an, dass verwandte Tokens nahe beieinander liegen" erwähne auch kurz am anfang dass die trainiert werden dh er aus den trainingsdaten die du ja auch erwähnen sollst (wikipedia, chatgpt usw.) sich selbst die regeln raussucht nach denen er die sachen macht die er macht, formulier das besser.
+
+entferne "das ist, was die Demo unten bewegen lässt."
+
+zeige unter "Schritt 2 · Embedding" die formel für das ausgewählte beispiel mit temml. ich will dass man das da wirklich sieht wie könig - mann + frau = königin wird und dass man es per hand nachrechnen kann. mouseover auf die tokens im plot sollen ihre koordinaten anzeigen. mach auch "mann + 2*macht" zu könig
+
+für: "Schritt 3 · Position" zeige in der demo auch wie das in 3d wirklich aussieht. lass mich mit EINEM slider die position eines tokens festlegen udn das originaltoken in der mitte sehen so dass ich sehe wie wenn das an erster, zweiter, dritter usw position wäre für das llm angezeigt wäre. ich will das wirklich sehen mit dem ROPE positional embedding zeug so dass ich den punkt wirklich da sehe.
+
+entferne "Die Heatmap zeigt ein verbreitetes Schema"
+
+"Die Schicht im Detail · Projektion und Biegung" sage davor dass es in ein FFN kommt, ein sogenanntes multi-layer-perzeptron, was das macht was da mit der dense schicht beschrieben ist. nenne es nicht dense sondern MLP
+
+"Jede Zeile von W1 wird durch die Spalten von W2." ist unvollständig als satz.
+
+"Tiefe fügt keine Ausdruckskraft hinzu" tiefe OHNE NONLINEARITÄT das ist wichtig
+
+"Aktivierungsfunktionen" -> Nichtlineare Aktivierungsfunktionen
+
+"Eine Schicht biegt den Raum" ist als überschrift 2 mal, auch bei der demo 07
+
+"Eine Dense-Schicht arbeitet mit einem Token gleichzeitig. Mit einer glatten Aktivierung biegt sie den umgebenden Raum, statt ihn nur zu strecken. ReLU würde denselben Raum auf einer Seite von z=0. Der Schnitt passiert weiterhin: Die Schicht ändert den Raum, in dem der Schnitt gemacht wird." mach klarer dass das passiert nachdem die attention layer die eiznelnen tokens in kontext gesetzt habne. das MLP ist dafür da die im raum zu verschieben so dass man am ende auf den nächsten token kommt
+
+"Sieben Schritte von einem untrennbaren Ring zu einer einzigen Schwelle auf einem eindimensionalen Score." mach klarer dass es darum geht dass man datensätze gern durch ne einfache linie trennen würde weil man das durch ne relativ einfache fkt mahcne kann dann. aber das geht nicht immer. daher macht man das mit dem dense was es in ne neue ebene hebt, und dann da trennbar macht. sage auch dass das beispiel hier relativ einfache daten sind aber das bei LLM halt in tausenden dimensionen ist und dabei hilft, sachverhalte zu isolieren und intern zu verstehen 
+
+"Genau das macht eine Dense-Schicht" nicht eine dense schicht sondern mehrere in einem MLP. sie heben daten in eine höhere dimension und erlauben die dann da besser zu trennen
+
+"Der Schnitt passiert weiterhin. Die Schicht ändert den Raum, sodass ein gerader Schnitt im neuen Raum die Klassen im alten trennt. ReLU ist die scharfe Version: eine Falte entlang einer Kante." ebntferne das
+
+"Die beschrifteten Muster unten sind eine Lesehilfe, keine gespeicherten Regeln." eher das unten ist ein sehr stark vereinfachtes beispiel welche regionen im netz aktiviert wernde je nach kontext.
+
+"der „Zug“ ist eine gelernte Richtung" welcher zug?
+
+wenn ich bei "Schritt 5 · Feed-Forward" das andere bsp wähle, dann springt der content darutner weil das "Der Kontext ist Ich öffne das Schloss. Jetzt passt das Mechanik-Muster, und die Gebäude- und Burgmuster bleiben still. Der Value verschiebt die Nächste-Token-Verteilung in Richtung „Schlüssel“, „Tür“ und „öffnen“." krüzer ist als "Der Kontext ist Ich besichtige das Schloss. Attention hat diesen Kontext bereits in den Token-Vektor gelegt. Die Gebäude- und Burgmuster passen; das Mechanik-Muster bleibt still. Jeder Treffer schreibt einen Nächste-Token-Zug in den Stream.", mach dass es immer die gleiche höhe hat, nämlich die höhe des längeren satzes, und das andere dann da halt leerzeile oder so anzeigt, aber so dass es nicht springt
+
+"Jede Schicht liest denselben laufenden Vektor" das ist der residual stream. schreib vorher was über den residual stream. nehme das analogie bild aus ../lndw/index.html mit dem gemeinsamen notizbuch. übersetze das natrülich auch auf englisch, aber nehme das bild und die visualisierung, die ist gut, da können sich leute was vorstellen. zeige unter den bar plots von Schritt 6 · Residual auch den vektor als zahlen. "Die Addition ist der Punkt": erwähne hier nochmal die formel mit dem x_1 = x_0 + layer1(x_0). entferne den teilsatz "Die Demo lässt dich die Updates einzeln addieren und die Balken wachsen sehen.". zeige auch bei " laufender StreamEin Mustertreffer schreibt einen Nächste-Token-Hinweis in den Stream." nochmal das alles als formel, aber so dass es mit dem plot darüber mit den barp lots korreliert
+
+mach außerdem klarer dass es nicht nur einen attention head gibt sondern viele, sowohl bei "Schritt 6 · Residual" als auch bei Schritt 4 · Attention dahinter, das netz macht nicht nur einen sondern ganz viele davon die auf verschiedene sachen achten können, der eine achtet zB auf dies und der andere auf das, such das raus
+
+die demo aus "Macht und Geschlecht"  ist fast identisch mit der vorher, nur dass hier die formeln angezeigt werden unten. entferne "Beziehungen sind wiederverwendbare Richtungen." komplett und schreib das mit den formeln in Schritt 2 · Embedding, mach die formeln aber so dass da sowohl die vektoren als auch mit underbraces darunter die worte stehen, sowohl auf deutsch als auch auf englisch
