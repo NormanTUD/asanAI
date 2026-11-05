@@ -242,7 +242,7 @@
 						</div>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">Logic becomes something you can turn.</p>
+							<p class="aha-big">Thinking becomes something you can mechanically do.</p>
 							<p class="aha-sub">A syllogism, a grammar, and a wheel of concepts are all attempts to make valid reasoning mechanical, long before there is a machine to run it.</p>
 						</div>
 					</section>

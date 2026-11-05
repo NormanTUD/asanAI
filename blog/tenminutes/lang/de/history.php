@@ -134,7 +134,7 @@ return [
 		'. Image:' => '. Bild:',
 		'A Llull volvelle from the' => 'Ein Llull-Volvelle aus der',
 		'tradition. Image: Ramon Llull,' => 'Tradition. Bild: Ramon Llull,',
-		'Logic becomes something you can turn.' => 'Logik wird zu etwas, das man drehen kann.',
+		'Thinking becomes something you can mechanically do.' => 'Denken wird zu etwas, das man mechanisch ausführen kann.',
 		'A syllogism, a grammar, and a wheel of concepts are all attempts to make valid reasoning mechanical, long before there is a machine to run it.' => 'Ein Syllogismus, eine Grammatik und ein Begriffsrad sind alles Versuche, gültiges Denken mechanisch zu machen, lange bevor es eine Maschine gibt, die es ausführt.',
 		'Calculemus' => 'Calculemus',
 		'Reason becomes arithmetic.' => 'Vernunft wird zu Arithmetik.',
