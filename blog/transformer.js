@@ -2939,12 +2939,12 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 
 const TM_EOS_TOKEN = '<|endoftext|>';
 
-function tokenizeText(text, type) {
+function tokenizeTextCore(text, type) {
 	const raw = String(text == null ? '' : text);
 	const cleaned = raw.split(TM_EOS_TOKEN).join(' ');
 	if (type === 'bpe') {
 		const words = cleaned.match(/\S+|\s+/g) || [];
-		const tokens = words.flatMap(word => {
+		return words.flatMap(word => {
 			// Don't sub-split whitespace tokens
 			if (/^\s+$/.test(word)) {
 				return word;  // keep each space run as one token
@@ -2954,11 +2954,13 @@ function tokenizeText(text, type) {
 			}
 			return word;
 		});
-		tokens.push(TM_EOS_TOKEN);
-		return tokens;
 	}
 	// Regex tokenizer: now also captures whitespace runs
-	const tokens = cleaned.match(/[\w]+|[^\w\s]|\s+/g) || [];
+	return cleaned.match(/[\w]+|[^\w\s]|\s+/g) || [];
+}
+
+function tokenizeText(text, type) {
+	const tokens = tokenizeTextCore(text, type);
 	tokens.push(TM_EOS_TOKEN);
 	return tokens;
 }
@@ -2988,6 +2990,88 @@ function renderTokenChips(container, tokens) {
 		badge.setAttribute('title', `"${t}" → ID ${c.id}`);
 		container.appendChild(badge);
 	});
+}
+
+
+function _tmPickerDisplay(token) {
+	return String(token).replace(/ /g, '␣').replace(/\n/g, '⏎');
+}
+
+function render_token_picker_chips() {
+	var input = document.getElementById('transformer-master-token-input');
+	var chips = document.getElementById('transformer-token-picker-chips');
+	if (!input || !chips) return;
+	var typeEl = document.getElementById('transformer-tokenizer-type');
+	var type = typeEl ? typeEl.value : 'regex';
+	var tokens = tokenizeTextCore(input.value, type);
+	chips.innerHTML = '';
+	tokens.forEach(function (token, idx) {
+		var chip = document.createElement('span');
+		chip.className = 'tm-token-builder-chip';
+		chip.setAttribute('data-idx', String(idx));
+		chip.textContent = _tmPickerDisplay(token);
+		chip.title = token === ' ' ? 'space' : token;
+		chips.appendChild(chip);
+	});
+}
+
+function render_token_picker() {
+	var select = document.getElementById('transformer-token-picker-select');
+	var chips = document.getElementById('transformer-token-picker-chips');
+	var input = document.getElementById('transformer-master-token-input');
+	if (!select || !chips || !input || !window.persistentEmbeddingSpace) return;
+
+	var tokens = Object.keys(window.persistentEmbeddingSpace).filter(function (token) {
+		return token !== TM_EOS_TOKEN;
+	});
+	tokens.sort(function (a, b) {
+		var aw = /^\s+$/.test(a), bw = /^\s+$/.test(b);
+		if (aw !== bw) return aw ? -1 : 1;
+		return a.localeCompare(b);
+	});
+	var signature = tokens.join('\u0001');
+	if (select.dataset.tmPickerSig !== signature) {
+		select.innerHTML = '';
+		tokens.forEach(function (token) {
+			var option = document.createElement('option');
+			option.value = token;
+			option.textContent = _tmPickerDisplay(token);
+			select.appendChild(option);
+		});
+		select.dataset.tmPickerSig = signature;
+	}
+
+	if (!select._tmPickerBound) {
+		select._tmPickerBound = true;
+		var addBtn = document.getElementById('transformer-token-picker-add');
+		var clearBtn = document.getElementById('transformer-token-picker-clear');
+		var typeEl = document.getElementById('transformer-tokenizer-type');
+		if (addBtn) addBtn.addEventListener('click', function () {
+			if (select.selectedIndex < 0) return;
+			input.value += select.value;
+			input.dispatchEvent(new Event('input', { bubbles: true }));
+			render_token_picker_chips();
+		});
+		if (clearBtn) clearBtn.addEventListener('click', function () {
+			input.value = '';
+			input.dispatchEvent(new Event('input', { bubbles: true }));
+			render_token_picker_chips();
+		});
+		chips.addEventListener('click', function (event) {
+			var chip = event.target.closest && event.target.closest('.tm-token-builder-chip');
+			if (!chip) return;
+			var idx = parseInt(chip.getAttribute('data-idx'), 10);
+			var type = typeEl ? typeEl.value : 'regex';
+			var tokens = tokenizeTextCore(input.value, type);
+			if (idx < 0 || idx >= tokens.length) return;
+			tokens.splice(idx, 1);
+			input.value = tokens.join('');
+			input.dispatchEvent(new Event('input', { bubbles: true }));
+			render_token_picker_chips();
+		});
+		input.addEventListener('input', render_token_picker_chips);
+	}
+	render_token_picker_chips();
 }
 
 function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") {

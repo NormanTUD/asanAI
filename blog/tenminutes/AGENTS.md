@@ -346,13 +346,16 @@ space-curvature demo uses it for its step buttons.
   December.
 - Current arc, keep it coherent if you reorder:
   1. The Idea (1–5): prediction, history, language, tokens (4), embeddings (5)
-  2. Failure and Learning (6–11): hallucination (6), smallest learner,
-     dreams, overfitting, depth, nonlinearity
-  3. Data, Senses, and Practice (12–17)
-  4. Inside the Transformer (18–22): attention, context, position, facts,
-     transformer (22 ≈ 70 %)
-  5. From Model to Assistant (23–27)
-  6. The Larger Questions (28–31)
+  2. Failure, Data, and Learning (6–11): hallucination (6), training data (7),
+     smallest learner (8), generalization (9), nonlinearity (10), depth (11)
+  3. Senses and Signals (12–15): vision (12), inceptionism (13), multimodal (14),
+     speech/audio (15)
+  4. Inside the Transformer (16–20): attention (16), context (17), position (18),
+     facts (19), transformer (20 ≈ 65 %)
+  5. From Model to Assistant (21–27): sampling, fine-tuning, RAG, prompt,
+     reasoning, running locally, evaluation
+  6. The Larger Questions (28–31): society (28), AI for science (29),
+     philosophy (30), people (31)
 - Deliberate merges / omissions:
   - `minimalneuron.php` represents the old “smallest network” and
     “watch it learn” pair. Do not re-add `traininglab.php` as a separate door
