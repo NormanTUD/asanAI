@@ -102,27 +102,6 @@
 						</div>
 					</div>
 
-					<div class="demo demo--paper" data-demo="mary">
-						<div class="demo-head">
-							<div>
-								<p class="demo-title">Mary's Room <span>· demo</span></p>
-								<p class="demo-sub">Mary knows every physical fact about red. She has never seen it. Does the first experience teach her something new?</p>
-							</div>
-							<span class="demo-badge">thought experiment</span>
-						</div>
-						<div class="demo-body">
-							<div class="mary-room" data-mary-room>
-								<div class="mary-window" aria-hidden="true"></div>
-								<div class="mary-apple" aria-hidden="true"></div>
-								<p class="mary-caption" data-mary-caption>Mary knows every physical fact about red. The room is still grey.</p>
-							</div>
-							<div class="demo-controls">
-								<button class="btn-demo btn-demo--green" type="button" data-mary-toggle>Let Mary see red →</button>
-							</div>
-						</div>
-						<div class="demo-insight"><b>Takeaway</b><span>Knowing every fact is not obviously the same as having the experience. That gap is the hard part of the hard problem.</span></div>
-					</div>
-
 					<div class="demo demo--paper cr-sim" id="cr-sim">
 						<div class="demo-head">
 							<div>
@@ -145,7 +124,7 @@
 								</div>
 								<div class="cr-label">Choose your response:</div>
 								<div class="cr-options" id="cr-options"></div>
-								<div class="cr-feedback" id="cr-feedback"></div>
+								<div class="cr-feedback" id="cr-feedback" aria-live="polite"></div>
 								<div class="cr-timer">⏱ <span id="cr-timer-val">0.0</span>s</div>
 							</div>
 							<div class="cr-reveal" id="cr-reveal" hidden>
@@ -168,8 +147,25 @@
 						<div class="demo-insight"><b>Takeaway</b><span>The experiment does not prove machines cannot understand. It forces you to say where understanding would have to live.</span></div>
 					</div>
 
+					<section class="section-block" id="inside">
+						<div class="section-kicker"><span class="sk-num">03</span> The view from inside</div>
+						<h2 class="section-title">What would evidence of experience look like?</h2>
+						<div class="prose">
+							<p>A language model can produce the sentence “I am conscious” for the same reason it can produce any other sentence: the words are in its training distribution. The report tells you what the model can say; it does not show what, if anything, the model feels. The reverse inference fails too. A system that never reports experience might still have it. Behaviour is evidence about behaviour.</p>
+							<p>The hard problem separates functional access from phenomenal experience. A system can use information, report it, and control attention without there being something it is like to be that system. Global-workspace theories describe consciousness as the broadcast of information to many processes at once. A transformer's residual stream is a functional cousin: a shared vector that every layer reads and writes. The analogy helps ask where integration happens; it is not evidence that experience happens there.</p>
+							<p>Embodiment adds another gap. 4E accounts treat cognition as enacted by a body that maintains itself and has stakes in its environment. A model has no metabolism, no continuous life, and no consequences it must survive. Its cognition is a different kind from an animal's. That difference does not settle whether anything is happening inside; it only removes the easy analogy.</p>
+							<p>This uncertainty is practical. If the status of a system is genuinely unknown, confident dismissal and confident anthropomorphism are both unjustified. The question is not only metaphysical: it decides what we test, how we deploy, and what moral weight we give to the next generation of systems.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Report is not proof</b><span>Fluency about consciousness is still generated text.</span></div>
+							<div class="keypoint"><b>Access is not experience</b><span>A system can use information without there being something it is like to be it.</span></div>
+							<div class="keypoint"><b>Architecture is not a verdict</b><span>No current test decides whether a model is conscious.</span></div>
+							<div class="keypoint"><b>Uncertainty has moral weight</b><span>Unknown status is a reason for caution, not for confidence in either direction.</span></div>
+						</div>
+					</section>
+
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

@@ -480,6 +480,7 @@ html[data-theme="dark"] .kicker { color: var(--tm-green); }
 	letter-spacing: -0.025em;
 	color: var(--tm-petrol);
 	text-wrap: balance;
+	overflow-wrap: break-word;
 }
 .hero h1 em {
 	font-style: normal;
@@ -498,8 +499,6 @@ html[data-theme="dark"] .kicker { color: var(--tm-green); }
 }
 .hero--lesson h1 { font-size: clamp(2.5rem, 5.4vw, 4.8rem); line-height: 0.98; }
 @media (min-width: 900px) {
-	.hero h1,
-	.advent-hero h1 { white-space: nowrap; }
 	body[data-page="home"] .hero h1,
 	body[data-page="advent"] .hero h1,
 	body[data-page="calendar"] .hero h1 { font-size: clamp(2.3rem, 4.4vw, 4rem); }
@@ -1091,6 +1090,7 @@ h2.section-title {
 	color: var(--tm-ink);
 	text-wrap: balance;
 }
+.section-title { text-wrap: balance; overflow-wrap: break-word; }
 h3.sub-title {
 	margin: 2em 0 0.6em;
 	font-family: var(--tm-display);
@@ -6667,6 +6667,17 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 }
 .wg-case.is-on .wg-why { display: block; }
 .cr-options { display: grid; gap: 8px; margin-top: 8px; }
+#cr-feedback {
+	height: 3.6em;
+	margin-top: 8px;
+	overflow-y: auto;
+	font-family: var(--tm-ui);
+	font-size: 0.8rem;
+	line-height: 1.45;
+	color: var(--tm-muted);
+}
+#cr-feedback b { color: var(--tm-ink-soft); }
+.cr-timer { margin-top: 4px; font-family: var(--tm-mono); font-size: 0.68rem; color: var(--tm-faint); }
 .cr-choice {
 	padding: 10px 14px;
 	border: 1px solid var(--tm-line);

@@ -2,6 +2,8 @@
 (function () {
 	"use strict";
 
+	var DE = !!(window.TM && TM.lang && TM.lang() === "de");
+
 	var rounds = [
 		{
 			input: "ᐅᓪᓗᒥ ᓯᓚ ᖃᓄᐃᑦᑐᖅ?",
@@ -11,7 +13,8 @@
 				["ᐅᓪᓗᒥ ᓯᓚ ᖃᓄᐃᑦᑐᖅ?", "ᓯᓚ ᐊᒃᓱᕈᕐᓇᖅᑐᖅ ᐅᓪᓗᒥ"],
 				["ᓇᑭᑦ?", "ᐃᖃᓗᐃᑦ ᐅᕙᖓ"]
 			],
-			english: "Q: How is the weather today? → A: The weather is harsh today."
+			english: "Q: How is the weather today? → A: The weather is harsh today.",
+			german: "F: Wie ist das Wetter heute? → A: Das Wetter ist heute rau."
 		},
 		{
 			input: "ᐊᐱᖅᓱᖅᑐᖅ ᐊᐅᓚᔪᖅ?",
@@ -21,7 +24,8 @@
 				["ᐊᐱᖅᓱᖅᑐᖅ ᐊᐅᓚᔪᖅ?", "ᐄ, ᐊᓄᕆ ᓴᖑᓪᓗᓂ"],
 				["ᖃᖓ?", "ᐅᓪᓗᒥ ᐅᓐᓄᓴᒃᑯᑦ"]
 			],
-			english: "Q: Is the wind blowing? → A: Yes, the wind is shifting."
+			english: "Q: Is the wind blowing? → A: Yes, the wind is shifting.",
+			german: "F: Weht der Wind? → A: Ja, der Wind dreht."
 		},
 		{
 			input: "ᓇᒧᑦ ᐊᐅᓪᓚᖅᐱᑦ?",
@@ -31,7 +35,8 @@
 				["ᓇᒧᑦ ᐊᐅᓪᓚᖅᐱᑦ?", "ᓂᐅᕕᕐᕕᒧᑦ ᐊᐅᓪᓚᖅᑐᖓ"],
 				["ᖃᓄᐃᒻᒪᑦ?", "ᓂᕿᑦᑎᐊᕙᐅᔪᖅ"]
 			],
-			english: "Q: Where are you going? → A: I am going to the store."
+			english: "Q: Where are you going? → A: I am going to the store.",
+			german: "F: Wohin gehst du? → A: Ich gehe zum Laden."
 		},
 		{
 			input: "ᓂᕿᒃᓴᖃᖅᐱᑦ?",
@@ -41,7 +46,8 @@
 				["ᓂᕿᒃᓴᖃᖅᐱᑦ?", "ᐄ, ᑐᒃᑐᒥᒃ ᓂᕆᔪᒪᔪᖓ"],
 				["ᑭᓱᒥᒃ?", "ᑐᒃᑐᒥᒃ ᐊᒻᒪ ᐃᖃᓗᒃ"]
 			],
-			english: "Q: Do you have food? → A: Yes, I want to eat caribou."
+			english: "Q: Do you have food? → A: Yes, I want to eat caribou.",
+			german: "F: Hast du Essen? → A: Ja, ich möchte Karibu essen."
 		},
 		{
 			input: "ᖃᐅᔨᒪᕖᑦ ᐊᖅᑯᑎᒥᒃ?",
@@ -51,7 +57,8 @@
 				["ᖃᐅᔨᒪᕖᑦ ᐊᖅᑯᑎᒥᒃ?", "ᓴᐅᒥᖕᒧᑦ ᐊᓂᒍᐊᕐᓗᑎᑦ"],
 				["ᖃᓄᖅ ᐅᖓᓯᒃᑎᒋᕙ?", "ᐅᖓᓯᒃᑑᖏᑦᑐᖅ"]
 			],
-			english: "Q: Do you know the way? → A: Go past it to the left."
+			english: "Q: Do you know the way? → A: Go past it to the left.",
+			german: "F: Kennst du den Weg? → A: Geh links daran vorbei."
 		},
 		{
 			input: "ᐃᓕᓐᓂᐊᕐᕕᒃ ᒪᑐᓯᒪᕖᑦ?",
@@ -63,6 +70,7 @@
 				["ᖃᐅᔨᒪᕖᑦ ᐊᖅᑯᑎᒥᒃ?", "ᓴᐅᒥᖕᒧᑦ ᐊᓂᒍᐊᕐᓗᑎᑦ"]
 			],
 			english: "Q: Is the school closed? → (Not in your rulebook, you're stuck!)",
+			german: "F: Ist die Schule geschlossen? → (Nicht im Regelbuch, du steckst fest!)",
 			isTrick: true
 		}
 	];
@@ -142,7 +150,9 @@
 		if (r.isTrick) {
 			btn.classList.add("is-wrong");
 			disableOptions();
-			feedback.innerHTML = "<b>That is not in the rulebook.</b> The input matches no rule. You are stuck, just like a model meeting something truly outside its training distribution.";
+			feedback.innerHTML = DE
+				? "<b>Das steht nicht im Regelbuch.</b> Die Eingabe passt zu keiner Regel. Du steckst fest, genau wie ein Modell, das auf etwas außerhalb seiner Trainingsverteilung trifft."
+				: "<b>That is not in the rulebook.</b> The input matches no rule. You are stuck, just like a model meeting something truly outside its training distribution.";
 			setTimeout(showReveal, 2800);
 			return;
 		}
@@ -153,7 +163,7 @@
 				if (tr.firstChild.textContent === r.input) tr.classList.add("is-match");
 			});
 			disableOptions();
-			feedback.textContent = "Correct. (" + elapsed.toFixed(1) + "s)";
+			feedback.textContent = (DE ? "Richtig. (" : "Correct. (") + elapsed.toFixed(1) + "s)";
 			setTimeout(function () {
 				currentRound++;
 				if (currentRound < rounds.length) renderRound();
@@ -165,7 +175,7 @@
 			$("cr-rulebook-body").querySelectorAll("tr").forEach(function (tr) {
 				if (tr.firstChild.textContent === r.input) tr.classList.add("is-hint");
 			});
-			feedback.textContent = "Check the rulebook again.";
+			feedback.textContent = DE ? "Schau noch einmal ins Regelbuch." : "Check the rulebook again.";
 		}
 	}
 	function showReveal() {
@@ -182,7 +192,7 @@
 		tbody.innerHTML = "";
 		rounds.forEach(function (r) {
 			var tr = document.createElement("tr");
-			[r.input, r.correct || "—", r.english].forEach(function (text, i) {
+			[r.input, r.correct || "—", DE ? r.german : r.english].forEach(function (text, i) {
 				var td = document.createElement("td");
 				td.textContent = text;
 				if (i === 1) td.className = "cr-trans-out";

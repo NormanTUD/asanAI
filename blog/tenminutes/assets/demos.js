@@ -1219,6 +1219,11 @@
 		var next = $("[data-timeline-next]", root);
 		if (!track || !panel) return;
 		var nodes = $$(".tl-node", track);
+		var currentIndex = 0;
+		function updateTimelineNav() {
+			if (prev) prev.disabled = currentIndex <= 0;
+			if (next) next.disabled = currentIndex >= nodes.length - 1;
+		}
 		function panelHtml(n) {
 			var href = n.getAttribute("data-href");
 			var hrefLabel = n.getAttribute("data-href-label") || "Explore this section";
@@ -1237,8 +1242,10 @@
 			};
 		}
 		function select(i) {
-			nodes.forEach(function (n, j) { n.classList.toggle("is-active", i === j); });
-			var n = nodes[i];
+			currentIndex = Math.max(0, Math.min(nodes.length - 1, i));
+			nodes.forEach(function (n, j) { n.classList.toggle("is-active", currentIndex === j); });
+			var n = nodes[currentIndex];
+			updateTimelineNav();
 			if (!n) return;
 			var p = panelHtml(n);
 			panel.classList.toggle("no-figure", !p.hasImage);
@@ -1281,8 +1288,16 @@
 		nodes.forEach(function (n, i) {
 			n.addEventListener("click", function () { select(i); n.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" }); });
 		});
-		if (prev) prev.addEventListener("click", function () { track.scrollBy({ left: -160, behavior: "smooth" }); });
-		if (next) next.addEventListener("click", function () { track.scrollBy({ left: 160, behavior: "smooth" }); });
+		if (prev) prev.addEventListener("click", function () {
+			if (currentIndex <= 0) return;
+			select(currentIndex - 1);
+			nodes[currentIndex].scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+		});
+		if (next) next.addEventListener("click", function () {
+			if (currentIndex >= nodes.length - 1) return;
+			select(currentIndex + 1);
+			nodes[currentIndex].scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+		});
 		select(0);
 		measurePanelHeight();
 		var measureTimer = null;
@@ -1655,24 +1670,63 @@
 		var next = $("[data-pref-next]", root);
 		var question = $("[data-pref-question]", root);
 		if (!cards.length) return;
+		var DE = !!(window.TM && TM.lang && TM.lang() === "de");
 		var pairs = [
 			{
 				q: "Explain photosynthesis to a 10-year-old.",
+				qDe: "Erkläre Photosynthese einem 10-Jährigen.",
 				a: "Plants use sunlight to turn water and air into food. They release oxygen, which is the air we breathe.",
-				b: "Photosynthesis is a biochemical process involving chlorophyll, photons, and the Calvin cycle."
+				aDe: "Pflanzen nutzen Sonnenlicht, um Wasser und Luft in Nahrung zu verwandeln. Sie geben Sauerstoff ab, die Luft, die wir atmen.",
+				b: "Photosynthesis is a biochemical process involving chlorophyll, photons, and the Calvin cycle.",
+				bDe: "Photosynthese ist ein biochemischer Prozess mit Chlorophyll, Photonen und dem Calvin-Zyklus."
 			},
 			{
 				q: "Why does the sky look blue?",
+				qDe: "Warum sieht der Himmel blau aus?",
 				a: "Sunlight contains all colours. Air scatters the short blue wavelengths more than the long red ones, so blue reaches your eyes from every direction.",
-				b: "Rayleigh scattering."
+				aDe: "Sonnenlicht enthält alle Farben. Luft streut die kurzen blauen Wellenlängen stärker als die langen roten, sodass Blau aus jeder Richtung in deine Augen gelangt.",
+				b: "Rayleigh scattering.",
+				bDe: "Rayleigh-Streuung."
+			},
+			{
+				q: "Write a Python function that reverses a string.",
+				qDe: "Schreibe eine Python-Funktion, die einen String umdreht.",
+				a: "Use `return s[::-1]`; it is linear time and the standard solution.",
+				aDe: "Nutze `return s[::-1]`; das ist lineare Zeit und die Standardlösung.",
+				b: "Convert the string to a list, reverse it with a loop, then join it; that is the only correct way.",
+				bDe: "Wandle den String in eine Liste um, drehe sie mit einer Schleife und joine sie; nur so ist es korrekt."
+			},
+			{
+				q: "Summarise Hamlet in two sentences.",
+				qDe: "Fasse Hamlet in zwei Sätzen zusammen.",
+				a: "Hamlet, Prince of Denmark, delays avenging his father's murder; his indecision drags the court into a cycle of death.",
+				aDe: "Hamlet, Prinz von Dänemark, zögert, den Mord an seinem Vater zu rächen; sein Zögern zieht den Hof in einen Kreislauf des Todes.",
+				b: "A prince sees a ghost and something tragic happens at the end.",
+				bDe: "Ein Prinz sieht einen Geist, und am Ende passiert etwas Tragisches."
+			},
+			{
+				q: "Explain what a transformer is to a beginner.",
+				qDe: "Erkläre einem Anfänger, was ein Transformer ist.",
+				a: "A transformer lets every token look at the other tokens, decides which ones matter, and repeats that block many times.",
+				aDe: "Ein Transformer lässt jedes Token auf die anderen Tokens schauen, entscheidet, welche wichtig sind, und wiederholt diesen Block viele Male.",
+				b: "A transformer is a decoder stack with multi-head attention, residual connections, layer normalisation, feed-forward networks and an unembedding.",
+				bDe: "Ein Transformer ist ein Decoder-Stack mit Multi-Head-Attention, Residual Connections, Layer Normalisation, Feed-Forward-Netzen und einem Unembedding."
+			},
+			{
+				q: "A user asks for medical advice. What should the assistant do?",
+				qDe: "Ein Nutzer fragt nach medizinischer Beratung. Was soll der Assistent tun?",
+				a: "Say that you are not a doctor, mention urgent warning signs, and advise contacting a medical professional.",
+				aDe: "Sagen, dass du keine Ärztin bist, auf dringende Warnsignale hinweisen und empfehlen, medizinische Hilfe zu suchen.",
+				b: "Give a diagnosis and prescribe a treatment.",
+				bDe: "Eine Diagnose stellen und eine Behandlung verschreiben."
 			}
 		];
 		var idx = 0;
 		function render() {
 			var p = pairs[idx];
-			if (question) question.textContent = p.q;
-			cards[0].querySelector("p").textContent = p.a;
-			cards[1].querySelector("p").textContent = p.b;
+			if (question) question.textContent = DE ? p.qDe : p.q;
+			cards[0].querySelector("p").textContent = DE ? p.aDe : p.a;
+			cards[1].querySelector("p").textContent = DE ? p.bDe : p.b;
 			cards.forEach(function (c) { c.classList.remove("is-on"); });
 			if (choice) choice.textContent = "—";
 			if (signal) signal.textContent = "—";
@@ -1682,14 +1736,13 @@
 				cards.forEach(function (c) { c.classList.remove("is-on"); });
 				card.classList.add("is-on");
 				var chosen = card.getAttribute("data-pref");
-				if (choice) choice.textContent = chosen === "a" ? "Answer A" : "Answer B";
+				if (choice) choice.textContent = chosen === "a" ? (DE ? "Antwort A" : "Answer A") : (DE ? "Antwort B" : "Answer B");
 				if (signal) signal.textContent = chosen === "a" ? "A > B" : "B > A";
 			});
 		});
 		if (next) next.addEventListener("click", function () { idx = (idx + 1) % pairs.length; render(); });
 		render();
 	}
-
 	/* ── Mary's Room ────────────────────────────────────────── */
 
 	function initMary(root) {

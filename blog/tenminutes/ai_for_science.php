@@ -15,8 +15,8 @@
 		<div class="shell">
 			<section class="hero hero--lesson">
 				<div>
-					<p class="kicker">Prediction becomes discovery · AI for science</p>
-					<h1>The models learned to see. <em>Now they help us find.</em></h1>
+					<p class="kicker">From AlphaFold to the lab · AI for science</p>
+					<h1>Prediction becomes discovery.</h1>
 					<p class="hero-deck">
 						The same prediction engine that writes a sentence can propose a protein, a crystal,
 						a forecast, or a proof. The hard part is not the proposal; it is knowing which

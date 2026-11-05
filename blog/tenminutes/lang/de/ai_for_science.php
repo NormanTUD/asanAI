@@ -3,9 +3,8 @@ return [
 	'title' => 'KI für die Wissenschaft | Ten Minutes',
 	'description' => 'AlphaFold, Materialien, Wetter und Mathematik: Wie Modelle, die die Welt vorhersagen, helfen, in ihr zu entdecken, und warum Verifikation der Engpass bleibt.',
 	'texts' => [
-		'Prediction becomes discovery · AI for science' => 'Vorhersage wird Entdeckung · KI für die Wissenschaft',
-		'The models learned to see.' => 'Die Modelle lernten zu sehen.',
-		'Now they help us find.' => 'Jetzt helfen sie uns zu finden.',
+		'From AlphaFold to the lab · AI for science' => 'Von AlphaFold ins Labor · KI für die Wissenschaft',
+		'Prediction becomes discovery.' => 'Vorhersage wird Entdeckung.',
 		'The same prediction engine that writes a sentence can propose a protein, a crystal, a forecast, or a proof. The hard part is not the proposal; it is knowing which proposals are true.' => 'Dieselbe Vorhersagemaschine, die einen Satz schreibt, kann ein Protein, einen Kristall, eine Wettervorhersage oder einen Beweis vorschlagen. Das Schwierige ist nicht der Vorschlag; es ist zu wissen, welche Vorschläge wahr sind.',
 		'The loop closes' => 'Die Schleife schließt sich',
 		'From predicting text to predicting the world.' => 'Von der Textvorhersage zur Weltvorhersage.',
