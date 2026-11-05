@@ -365,10 +365,10 @@
 											</label>
 											<button class="chip is-on" type="button" id="ipe-autorotate" aria-pressed="true">Auto-rotate view</button>
 										</div>
-										<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A token at the centre of three 3D orbits: one per pair of dimensions, each wheel turning at its own speed as the position advances"></canvas>
-										<div class="step-out" id="ipe-out">One token at position <b>7</b> · d0/d1 turns <b>41°</b> · d2/d3 turns <b>40°</b> · d4/d5 turns <b>4°</b>.</div>
+										<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
+										<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
 									</div>
-									<p class="step-note">The wheels show RoPE, a scheme used by many current models. Each pair of dimensions is a wheel, and the blue sphere in the middle is the original word. The three rings are separate planes for three dimension pairs, not three positions. Moving the token forward by one position rotates every wheel by a different fixed angle, set by the RoPE frequency for that pair. The token itself stays the same; only its angle changes. The ring is only the path the pair can take; the coloured arrow is the rotated pair itself, and the faint dashed line is its unrotated state. Attention compares two tokens by the angle between their rotated keys and queries, which depends on the distance between their positions. The demo uses a narrow model width so the turns stay visible; a real model uses thousands of dimensions.</p>
+									<p class="step-note">The plot shows the sinusoidal encoding as one vector for the selected position. The three axes are the first three dimensions; the blue sphere is the original word, and the arrow is its position vector. Move the slider and the point follows the curve. A real model uses thousands of dimensions.</p>
 								</div>
 
 								<div class="step-pane" id="step-attention">
@@ -573,55 +573,15 @@
 								up so far. To score the next word, the model multiplies that vector with
 								the vocabulary matrix and compares the angle to every word's vector.
 								Angles are more reliable than distances in high dimensions: distances
-								bunch together, while directions stay distinct. The closest directions
-								become the probabilities, and one token is drawn from them.
+								bunch together, while directions stay distinct. It selects by angle:
+								the words with the smallest angles go into a probability distribution,
+								and from that it draws the next token with the same mechanism as the
+								opening loop (greedy, sampling, or top-p). Then it appends the token
+								and starts again.
 							</p>
-							<p>
-								The plot below is a two-dimensional slice: <strong>Power</strong> on
-								the horizontal axis and <strong>Gender</strong> on the vertical one.
-								Nobody writes those axes down; they are a human-readable projection of
-								directions the model found useful. In a real embedding the space has
-								thousands of dimensions, most of them unnamed.
-							</p>
-							<p>
-								Use the buttons to do the arithmetic. <em>King − Man + Woman</em>
-								lands near <em>Queen</em>, because the gender direction is shared.
-								The direction is the point, not the exact coordinates. Real
-								embeddings are noisier, and the geometry inherits the biases of the
-								text it was trained on.
-							</p>
-						</div>
-
-						<div class="demo demo--paper" id="embedding-plot-demo">
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">Power and gender <span>· demo 08</span></p>
-									<p class="demo-sub">Words are points in a learned space. The same direction carries a relationship from one pair to another.</p>
-								</div>
-								<span class="demo-badge">2-D slice</span>
-							</div>
-							<div class="demo-body">
-								<div class="chip-row" id="emb-examples">
-									<button class="chip is-on" type="button" data-emb-ex="King - Man + Woman">King − Man + Woman</button>
-									<button class="chip" type="button" data-emb-ex="Man + Power">Man + Power</button>
-									<button class="chip" type="button" data-emb-ex="Woman + 2*Power">Woman + 2·Power</button>
-									<button class="chip" type="button" data-emb-ex="Prince + Power">Prince + Power</button>
-									<button class="chip" type="button" data-emb-ex="directions">↗ Directions</button>
-								</div>
-								<canvas class="demo-canvas" id="emb-plot-canvas" style="height:340px" aria-label="A two-dimensional embedding space with Power on the x-axis and Gender on the y-axis"></canvas>
-								<div class="emb-equation" id="emb-plot-equation" data-tex-display="false"></div>
-								<div class="demo-readout">
-									<div><b>Expression</b><span id="emb-plot-expr">King − Man + Woman</span></div>
-									<div><b>Lands near</b><span id="emb-plot-nearest">Queen</span></div>
-									<div><b>Distance</b><span id="emb-plot-dist">...</span></div>
-								</div>
-								<p class="demo-hint">The axes are a slice through a much larger space. The direction is the point, not the exact numbers.</p>
-							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Relationships are reusable directions. “King − Man + Woman” lands near “Queen” because the gender direction is shared.</span></div>
-							<div class="demo-foot">The axes are a small slice of a much larger space. Real embeddings are higher-dimensional and noisier.</div>
 						</div>
 						<div class="prose" style="margin-top:22px">
-							<p><strong>The meadow of words.</strong> The plot above shows directions. The meadow shows how the model divides the space into cells. After all the layers, the model has a vector for each token, and every token in the vocabulary owns the region of that space closest to it. The image is two-dimensional, while a real model works in thousands of dimensions, but the principle is the same: the vocabulary forms bubbles, and every thought falls into one of them or near its border. The closer the thought is to a word's centre, the more likely that word is; near the edges the estimate becomes less precise. Temperature and top-k change how large the candidate set is. Move the pointer and the thought lands in a cell, or on a seam where two words are almost equally near.</p>
+							<p><strong>The meadow of words.</strong> The meadow shows how the model divides the space into cells. After all the layers, the model has a vector for each token, and every token in the vocabulary owns the region of that space closest to it. The image is two-dimensional, while a real model works in thousands of dimensions, but the principle is the same: the vocabulary forms bubbles, and every thought falls into one of them or near its border. The closer the thought is to a word's centre, the more likely that word is; near the edges the estimate becomes less precise. Temperature and top-k change how large the candidate set is. Move the pointer and the thought lands in a cell, or on a seam where two words are almost equally near.</p>
 						</div>
 
 						<div class="demo demo--paper" id="meadow-demo">
@@ -725,7 +685,6 @@
 	<script src="assets/site.js?v=20261104"></script>
 	<script src="assets/demos.js?v=20261104c"></script>
 	<script src="assets/space-morph.js?v=20261104"></script>
-	<script src="assets/embedding-plot.js?v=20261104"></script>
 	<script src="assets/word-meadow.js?v=20261105c"></script>
 	<script>
 	(function () {
@@ -2263,32 +2222,16 @@
 		var posApi = null;
 		var pos = 7;
 		var posShown = 7;
-		var POS_BASE = 10000;
-		var POS_DIM = 8;
-		var POS_FREQ = [0, 1, 2].map(function (i) {
-			return Math.pow(POS_BASE, -2 * i / POS_DIM);
-		});
+		var POS_D_MODEL = 64;
 		var POS_COLORS = ["green", "blue", "gold"];
-		var POS_LABELS = ["d0/d1", "d2/d3", "d4/d5"];
-		var POS_START = 0.55;
+		var POS_LABELS = ["d0", "d1", "d2"];
 		var posReduce = TM.prefersReduced();
 		var posAuto = !posReduce;
 		var posClock = 0;
-		function posAngle(pair, p) {
-			return p * POS_FREQ[pair];
-		}
-		function posOrbit(pair, theta) {
-			var co = Math.cos(theta);
-			var si = Math.sin(theta);
-			if (pair === 0) return [co, si, 0];
-			if (pair === 1) return [si, 0, co];
-			return [0, co, si];
-		}
-		function posDegrees(theta) {
-			var deg = (theta * 180 / Math.PI) % 360;
-			if (deg < 0) deg += 360;
-			var rounded = Math.round(deg);
-			return rounded === 360 ? 0 : rounded;
+		function posPE(position, dim) {
+			var pair = Math.floor(dim / 2) * 2;
+			var denom = Math.pow(10000, pair / POS_D_MODEL);
+			return dim % 2 === 0 ? Math.sin(position / denom) : Math.cos(position / denom);
 		}
 		function posRgba(hex, alpha) {
 			var rgb = hexToRgb(hex);
@@ -2345,6 +2288,9 @@
 			ctx.fillText(text, bx + bw / 2, by + bh / 2 + 0.5);
 			ctx.textBaseline = "alphabetic";
 		}
+		function posVector(position) {
+			return [posPE(position, 0), posPE(position, 1), posPE(position, 2)];
+		}
 		function drawPos(ctx, w, h) {
 			var c = TM.colors();
 			ctx.clearRect(0, 0, w, h);
@@ -2367,97 +2313,71 @@
 			ctx.fillText((DE ? "Position " : "position ") + "m = " + pos, w - 14, 18);
 			ctx.textAlign = "left";
 
-			var SEGMENTS = 72;
-			POS_FREQ.forEach(function (freq, pair) {
-				var color = c[POS_COLORS[pair]];
-				var theta = posAngle(pair, posShown);
-				var i;
+			POS_LABELS.forEach(function (label, i) {
+				var plus = [0, 0, 0];
+				var minus = [0, 0, 0];
+				plus[i] = 1.08;
+				minus[i] = -1.08;
+				var a = project(plus);
+				var b = project(minus);
+				ctx.beginPath();
+				ctx.moveTo(a.x, a.y);
+				ctx.lineTo(b.x, b.y);
+				ctx.strokeStyle = posRgba(c[POS_COLORS[i]], 0.5);
+				ctx.lineWidth = 1.4;
+				ctx.stroke();
+				posPill(ctx, c, w, h, a.x, a.y, c[POS_COLORS[i]], label);
+			});
 
-				var ring = [];
-				for (i = 0; i <= SEGMENTS; i++) {
-					ring.push(project(posOrbit(pair, i / SEGMENTS * Math.PI * 2)));
+			if (posShown > 0.01) {
+				var steps = Math.max(2, Math.min(240, Math.floor(posShown)));
+				ctx.beginPath();
+				for (var i = 0; i <= steps; i++) {
+					var t = posShown * i / steps;
+					var q = project(posVector(t));
+					if (i === 0) ctx.moveTo(q.x, q.y);
+					else ctx.lineTo(q.x, q.y);
 				}
-				ctx.lineCap = "round";
-				for (i = 0; i < SEGMENTS; i++) {
-					var a = ring[i];
-					var b = ring[i + 1];
-					var near = (1 - (a.z + b.z) / 2) / 2;
-					ctx.beginPath();
-					ctx.moveTo(a.x, a.y);
-					ctx.lineTo(b.x, b.y);
-					ctx.strokeStyle = posRgba(color, 0.07 + near * 0.17);
-					ctx.lineWidth = 1;
-					ctx.stroke();
-				}
+				ctx.strokeStyle = posRgba(c.sky, 0.42);
+				ctx.lineWidth = 1.6;
+				ctx.stroke();
+			}
 
-				var sweep = ((theta % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-				if (theta > 0.0001 && sweep < 0.0001) sweep = Math.PI * 2;
-				if (sweep > 0.0001) {
-					var arcStart = POS_START + Math.max(0, theta - sweep);
-					var steps = Math.max(2, Math.ceil(sweep / (Math.PI * 2) * SEGMENTS));
-					ctx.beginPath();
-					for (i = 0; i <= steps; i++) {
-						var p = project(posOrbit(pair, arcStart + sweep * i / steps));
-						if (i === 0) ctx.moveTo(p.x, p.y);
-						else ctx.lineTo(p.x, p.y);
-					}
-					ctx.strokeStyle = posRgba(color, 0.14);
-					ctx.lineWidth = 7;
-					ctx.stroke();
-					for (i = 0; i < steps; i++) {
-						var p1 = project(posOrbit(pair, arcStart + sweep * i / steps));
-						var p2 = project(posOrbit(pair, arcStart + sweep * (i + 1) / steps));
-						var nearArc = (1 - (p1.z + p2.z) / 2) / 2;
-						ctx.beginPath();
-						ctx.moveTo(p1.x, p1.y);
-						ctx.lineTo(p2.x, p2.y);
-						ctx.strokeStyle = posRgba(color, 0.35 + nearArc * 0.6);
-						ctx.lineWidth = 2.2;
-						ctx.stroke();
-					}
-				}
-
-				var start = project(posOrbit(pair, POS_START));
+			var v = posVector(posShown);
+			var tip = project(v);
+			v.forEach(function (val, i) {
+				var foot = [0, 0, 0];
+				foot[i] = val;
+				var f = project(foot);
 				ctx.save();
 				ctx.setLineDash([4, 4]);
 				ctx.beginPath();
-				ctx.moveTo(cx, cy);
-				ctx.lineTo(start.x, start.y);
-				ctx.strokeStyle = posRgba(color, 0.3);
-				ctx.lineWidth = 1.2;
+				ctx.moveTo(tip.x, tip.y);
+				ctx.lineTo(f.x, f.y);
+				ctx.strokeStyle = posRgba(c[POS_COLORS[i]], 0.55);
+				ctx.lineWidth = 1;
 				ctx.stroke();
 				ctx.restore();
 				ctx.beginPath();
-				ctx.arc(start.x, start.y, 3.2, 0, Math.PI * 2);
-				ctx.fillStyle = c.paper;
+				ctx.arc(f.x, f.y, 2.6, 0, Math.PI * 2);
+				ctx.fillStyle = c[POS_COLORS[i]];
 				ctx.fill();
-				ctx.strokeStyle = posRgba(color, 0.6);
-				ctx.lineWidth = 1.4;
-				ctx.stroke();
-
-				var marker = project(posOrbit(pair, POS_START + theta));
-				var nearMarker = (1 - marker.z) / 2;
-				ctx.beginPath();
-				ctx.moveTo(cx, cy);
-				ctx.lineTo(marker.x, marker.y);
-				ctx.strokeStyle = posRgba(color, 0.72);
-				ctx.lineWidth = 3;
-				ctx.stroke();
-				posGlow(ctx, marker.x, marker.y, 20, color, 0.22 + nearMarker * 0.14);
-				ctx.beginPath();
-				ctx.arc(marker.x, marker.y, 4.6 + nearMarker * 2.6, 0, Math.PI * 2);
-				ctx.fillStyle = color;
-				ctx.fill();
-				ctx.strokeStyle = c.card;
-				ctx.lineWidth = 2;
-				ctx.stroke();
-
-				var dx = marker.x - cx;
-				var dy = marker.y - cy;
-				var len = Math.hypot(dx, dy) || 1;
-				var label = POS_LABELS[pair] + (w >= 520 ? " · " + posDegrees(theta) + "°" : "");
-				posPill(ctx, c, w, h, marker.x + dx / len * 28, marker.y + dy / len * 28, color, label);
 			});
+
+			ctx.beginPath();
+			ctx.moveTo(cx, cy);
+			ctx.lineTo(tip.x, tip.y);
+			ctx.strokeStyle = posRgba(c.green, 0.9);
+			ctx.lineWidth = 2.6;
+			ctx.stroke();
+			posGlow(ctx, tip.x, tip.y, 22, c.green, 0.3);
+			ctx.beginPath();
+			ctx.arc(tip.x, tip.y, 6, 0, Math.PI * 2);
+			ctx.fillStyle = c.green;
+			ctx.fill();
+			ctx.strokeStyle = c.card;
+			ctx.lineWidth = 2;
+			ctx.stroke();
 
 			var ballRadius = Math.max(10, unit * 0.12);
 			var ball = ctx.createRadialGradient(cx - ballRadius * 0.4, cy - ballRadius * 0.45, ballRadius * 0.12, cx, cy, ballRadius);
@@ -2485,21 +2405,16 @@
 			var posCountOut = document.getElementById("ipe-pos-out");
 			var posVisible = true;
 			posClock = (window.performance && performance.now) ? performance.now() : 0;
-			function posTurnNote(theta) {
-				var turns = theta / (Math.PI * 2);
-				if (turns < 1.5) return "";
-				var text = turns.toFixed(1).replace(".", DE ? "," : ".");
-				return ' <span class="pos-note">' + text + (DE ? " Umdrehungen" : " turns") + '</span>';
+			function posFormat(value) {
+				return value.toFixed(2).replace(".", DE ? "," : ".");
 			}
 			function posRenderOut() {
 				if (!posOut) return;
-				var degs = POS_FREQ.map(function (f) {
-					return posDegrees(pos * f) + "°";
-				});
 				posOut.innerHTML = (DE ? 'Ein Token an Position ' : 'One token at position ') + '<b>' + pos + '</b>' +
-					' · d0/d1 <b>' + degs[0] + '</b>' + posTurnNote(pos * POS_FREQ[0]) +
-					' · d2/d3 <b>' + degs[1] + '</b>' + posTurnNote(pos * POS_FREQ[1]) +
-					' · d4/d5 <b>' + degs[2] + '</b>' + posTurnNote(pos * POS_FREQ[2]) + '.';
+					' · d0 <b>' + posFormat(posPE(pos, 0)) + '</b>' +
+					' · d1 <b>' + posFormat(posPE(pos, 1)) + '</b>' +
+					' · d2 <b>' + posFormat(posPE(pos, 2)) + '</b>' +
+					' · d3 <b>' + posFormat(posPE(pos, 3)) + '</b>.';
 			}
 			function posTick(now) {
 				if (posApi && posVisible && !document.hidden) {
@@ -2562,12 +2477,12 @@
 			{ sentence: 'Ich gehe zur <span class="aw-bank">Bank</span>.', contexts: [], shift: [5, 5], weights: { bank: 1, river: 0, money: 0 }, caption: 'Ohne eindeutigen Kontext: <b>Bank</b> bleibt in der Mitte, mehrdeutig.' },
 			{ sentence: 'Ich sitze im <span class="aw-river">Park</span> auf der <span class="aw-bank">Bank</span>.', contexts: ['river'], shift: [3.2, 6.8], weights: { bank: 0.35, river: 0.65, money: 0 }, caption: '<b>Park</b> ist der Nachbar → Bank bewegt sich zur Sitzbank-Bedeutung.' },
 			{ sentence: 'Ich bringe mein <span class="aw-money">Geld</span> zur <span class="aw-bank">Bank</span>.', contexts: ['money'], shift: [7.2, 3.2], weights: { bank: 0.3, river: 0, money: 0.7 }, caption: '<b>Geld</b> ist der Nachbar → Bank bewegt sich zur Finanzbedeutung.' },
-			{ sentence: 'Nach dem Spaziergang im <span class="aw-river">Park</span> gehe ich zur <span class="aw-bank">Bank</span>, um mein <span class="aw-money">Geld</span> einzuzahlen.', contexts: ['river', 'money'], shift: [6.6, 3.9], weights: { bank: 0.25, river: 0.35, money: 0.4 }, caption: 'Beide Nachbarn konkurrieren; <b>Geld</b> gewinnt, also kippt Bank zur Finanzbedeutung.' }
+			{ sentence: 'Nach dem Spaziergang im <span class="aw-river">Park</span> gehe ich zur <span class="aw-bank">Bank</span>, um mein <span class="aw-money">Geld</span> einzuzahlen.', contexts: ['river', 'money'], shift: [6.6, 5.6], weights: { bank: 0.25, river: 0.35, money: 0.4 }, caption: 'Beide Nachbarn ziehen; <b>Geld</b> bleibt etwas stärker, <b>Park</b> hebt die Bedeutung an.' }
 		] : [
 			{ sentence: 'I walk to the <span class="aw-bank">bank</span>.', contexts: [], shift: [5, 5], weights: { bank: 1, river: 0, money: 0 }, caption: 'No unambiguous context: <b>bank</b> stays in the middle, ambiguous.' },
 			{ sentence: 'I sit by the <span class="aw-river">river</span> on the <span class="aw-bank">bank</span>.', contexts: ['river'], shift: [3.2, 6.8], weights: { bank: 0.35, river: 0.65, money: 0 }, caption: '<b>River</b> is the neighbour → bank moves toward the water sense.' },
 			{ sentence: 'I bring my <span class="aw-money">money</span> to the <span class="aw-bank">bank</span>.', contexts: ['money'], shift: [7.2, 3.2], weights: { bank: 0.3, river: 0, money: 0.7 }, caption: '<b>Money</b> is the neighbour → bank moves toward finance.' },
-			{ sentence: 'After the walk by the <span class="aw-river">river</span> I go to the <span class="aw-bank">bank</span> to deposit my <span class="aw-money">money</span>.', contexts: ['river', 'money'], shift: [6.6, 3.9], weights: { bank: 0.25, river: 0.35, money: 0.4 }, caption: 'Both neighbours compete; <b>money</b> wins, so bank tilts toward finance.' }
+			{ sentence: 'After the walk by the <span class="aw-river">river</span> I go to the <span class="aw-bank">bank</span> to deposit my <span class="aw-money">money</span>.', contexts: ['river', 'money'], shift: [6.6, 5.6], weights: { bank: 0.25, river: 0.35, money: 0.4 }, caption: 'Both neighbours pull; <b>money</b> stays slightly stronger, <b>river</b> lifts the meaning.' }
 		];
 		var attPos = { bank: [5, 5], river: [0.5, 9.5], money: [10.5, 0.5] };
 		var attColors = { bank: "#63a44b", river: "#5c9baf", money: "#9f9700" };
