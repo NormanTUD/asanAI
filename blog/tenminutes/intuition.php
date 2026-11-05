@@ -368,7 +368,7 @@
 										<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
 										<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
 									</div>
-									<p class="step-note">The plot shows the sinusoidal encoding as one vector for the selected position. The three axes are the first three dimensions; the blue sphere is the original word, and the arrow is its position vector. Move the slider and the point follows the curve. A real model uses thousands of dimensions.</p>
+									<p class="step-note">The plot shows the sinusoidal encoding as one vector for the selected position. The three axes are the first three dimensions; the blue sphere is the original word, and the arrow is its position vector. Move the slider and the point follows the curve. The demo computes 64 dimensions; a real model uses thousands.</p>
 								</div>
 
 								<div class="step-pane" id="step-attention">
@@ -587,7 +587,7 @@
 						<div class="demo demo--paper" id="meadow-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">The meadow of words <span>· demo 09</span></p>
+									<p class="demo-title">The meadow of words <span>· demo 08</span></p>
 									<p class="demo-sub">Every word owns a cell. Move the pointer; the thought falls into the nearest cell. The golden seams are where two words are equally near.</p>
 								</div>
 								<span class="demo-badge">move me</span>
