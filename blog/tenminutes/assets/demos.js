@@ -3312,6 +3312,20 @@
 			el.style.visibility = "";
 			el.style.minHeight = max + "px";
 		}
+		function maxHeightProbe(el, htmls) {
+			if (!el) return;
+			var probe = document.createElement("div");
+			probe.className = el.className;
+			probe.style.cssText = "position:absolute;left:-99999px;top:0;visibility:hidden;pointer-events:none;width:" + el.getBoundingClientRect().width + "px;";
+			document.body.appendChild(probe);
+			var max = 0;
+			htmls.forEach(function (html) {
+				probe.innerHTML = html;
+				max = Math.max(max, probe.offsetHeight);
+			});
+			document.body.removeChild(probe);
+			el.style.minHeight = max + "px";
+		}
 		function measureHeights() {
 			var stepSamples = [];
 			var answerSamples = [];
@@ -3325,7 +3339,7 @@
 				answerSamples.push(answerHtml(p, "steps"), answerHtml(p, "answer"));
 				voteSamples.push(votesHtml(p, 4), votesHtml(p, 1));
 			});
-			if (questionEl && questionEl.parentNode) maxHeight(questionEl.parentNode, questionSamples);
+			if (questionEl && questionEl.parentNode) maxHeightProbe(questionEl.parentNode, questionSamples);
 			maxHeight(stepsEl, stepSamples);
 			maxHeight(answerEl, answerSamples);
 			maxHeight(votesEl, voteSamples);

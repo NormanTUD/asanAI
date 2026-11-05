@@ -161,7 +161,10 @@ if (PHP_SAPI !== 'cli') {
 			}
 		}
 		if ($isHtml) {
-			$buffer = preg_replace('/<\/body>/i', $tm_i18nScript . '</body>', $buffer, 1) ?? $buffer;
+			$bodyPos = stripos($buffer, '</body>');
+			if ($bodyPos !== false) {
+				$buffer = substr($buffer, 0, $bodyPos) . $tm_i18nScript . substr($buffer, $bodyPos);
+			}
 		}
 		return $buffer;
 	});

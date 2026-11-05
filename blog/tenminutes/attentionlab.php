@@ -268,6 +268,12 @@
 						<h2 class="section-title">Softmax solves a transport problem.</h2>
 						<div class="prose">
 							<p>
+								Argmax returns the index of the largest number and throws away the rest of
+								the distribution. Softmax keeps every score and turns it into a weight, so
+								nothing disappears; it is a soft, temperature-controlled version of that
+								choice. There is a stronger description of what it computes.
+							</p>
+							<p>
 								Softmax is often introduced as a smooth argmax. There is a stronger
 								description. For one query, the attention row is the exact solution to a
 								one-sided entropic optimal transport problem (<a href="https://arxiv.org/abs/2508.08369" rel="noopener">Litman, 2025</a>).
@@ -444,6 +450,7 @@
 				if (i !== query) b.style.background = "rgba(99, 164, 75, " + (0.04 + w[i] * 0.3).toFixed(3) + ")";
 				b.addEventListener("click", function () {
 					query = i;
+					document.querySelectorAll("[data-att-preset]").forEach(function (x) { x.classList.remove("is-on"); });
 					renderSentence();
 					if (matrixApi) matrixApi.redraw();
 				});
@@ -520,6 +527,7 @@
 					headsEl.querySelectorAll("[data-head]").forEach(function (x) { x.classList.remove("is-on"); });
 					btn.classList.add("is-on");
 					head = btn.getAttribute("data-head");
+					document.querySelectorAll("[data-att-preset]").forEach(function (x) { x.classList.remove("is-on"); });
 					renderSentence();
 					if (matrixApi) matrixApi.redraw();
 				});
