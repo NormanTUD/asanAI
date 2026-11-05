@@ -5306,7 +5306,15 @@ function buildVocabTransitionRows(tokens, start_h, end_h, d_model) {
 			const fromProb = Math.round(fromItem.prob * 100);
 			const toProb = Math.round(toItem.prob * 100);
 
-			return `${colorCmd} \\text{${cleanFrom} } (${fromProb}\\%) \\rightarrow \\text{${cleanTo}} (${toProb}\\%)`;
+			if (fromItem.word === toItem.word) {
+				if (fromProb === toProb) {
+					return `${colorCmd} \\text{${cleanFrom}}`;
+				}
+				const arrow = toProb > fromProb ? '\\uparrow' : '\\downarrow';
+				return `${colorCmd} \\text{${cleanFrom}} (${fromProb}\\% \\,${arrow}\\, ${toProb}\\%)`;
+			}
+
+			return `${colorCmd} \\text{${cleanFrom}} (${fromProb}\\%) \\rightarrow \\text{${cleanTo}} (${toProb}\\%)`;
 		}).join(' & ');
 	}).join(' \\\\ ');
 }
@@ -5336,8 +5344,8 @@ function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, 
 	const hAfterMatrix = matrixToPmatrixLabeled(h_after, ts, stageLabel);
 	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
 	const interpNote = isDe
-		? 'Die linke Matrix ist der Hidden State $h_\\text{after}$ nach diesem Layer. Die rechte Gleichung projiziert ihn mit der Vokabular-Matrix $W_\\text{vocab}$ auf Wörter. Das ist Logit-Lens/Feature Migration und nur zur Interpretation; der Forward-Pass benutzt diese Projektion nicht.'
-		: 'The left matrix is the hidden state $h_\\text{after}$ after this layer. The equation on the right projects it with the vocabulary matrix $W_\\text{vocab}$ onto words. This is logit lens/feature migration and only for interpretation; the forward pass does not use it.';
+		? 'Die linke Matrix ist der Hidden State $h_\\text{after}$ nach diesem Layer. Die rechte Gleichung projiziert ihn mit der Vokabular-Matrix $W_\\text{vocab}$ auf Wörter: Sie zeigt, welche Wörter der Layer nahelegt und wie sich diese Repräsentationen verschieben. In der Tabelle stehen gleiche Wörter ohne Prozentwerte; ↑/↓ zeigt, ob die Wahrscheinlichkeit steigt oder fällt, ein Wortwechsel steht als alt → neu. Jede Zeile gehört zu einer Token-Position; die Spalten sind die wahrscheinlichsten Wörter vor und nach der Projektion. Das ist Logit-Lens/Feature Migration und nur zur Interpretation; der Forward-Pass benutzt diese Projektion nicht.'
+		: 'The left matrix is the hidden state $h_\\text{after}$ after this layer. The equation on the right projects it with the vocabulary matrix $W_\\text{vocab}$ onto words: it shows which words the layer suggests and how those representations shift. In the table, unchanged words appear without percentages; ↑/↓ shows whether their probability rises or falls, and a word change appears as old → new. Each row belongs to one token position; the columns are the most likely words before and after the projection. This is logit lens/feature migration and only for interpretation; the forward pass does not use it.';
 	const latexString = `<div style="overflow-x: auto; overflow-y: hidden; max-width: 100%; padding-bottom: 10px;">
 <div style="display:block; margin:6px 0;">$$h_\\text{after} = ${hAfterMatrix}$$</div>
 <p style="font-size:.78rem; color:var(--mn-text-secondary, #475569); margin:8px 0; line-height:1.45;">${interpNote}</p>
