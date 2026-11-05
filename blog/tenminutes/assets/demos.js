@@ -3573,13 +3573,13 @@
 		var concEl = $("[data-hb-conc]", root);
 		var budgetEl = $("[data-hb-budget]", root);
 		var noteEl = $("[data-hb-note]", root);
-		var tokens = ["Maria", "told", "the", "bank", "she", "loan"];
+		var tokens = DEMO_DE ? ["Maria", "sagte", "der", "Bank", "sie", "Kredit"] : ["Maria", "told", "the", "bank", "she", "loan"];
 		var heads = {
 			coref: [0.46, 0.04, 0.03, 0.08, 0.14, 0.25],
 			syntax: [0.18, 0.28, 0.19, 0.10, 0.15, 0.10],
 			meaning: [0.04, 0.05, 0.04, 0.40, 0.10, 0.37]
 		};
-		var names = { coref: "Coreference", syntax: "Syntax", meaning: "Meaning" };
+		var names = DEMO_DE ? { coref: "Koreferenz", syntax: "Syntax", meaning: "Bedeutung" } : { coref: "Coreference", syntax: "Syntax", meaning: "Meaning" };
 		var head = "coref";
 		var weights = heads[head].slice();
 
@@ -3609,9 +3609,9 @@
 			});
 			if (headEl) headEl.textContent = names[head];
 			if (topEl) topEl.textContent = tokens[top];
-			if (concEl) concEl.textContent = Math.round(weights[top] * 100) + "% on one token";
+			if (concEl) concEl.textContent = Math.round(weights[top] * 100) + (DEMO_DE ? " % auf einem Token" : "% on one token");
 			if (budgetEl) budgetEl.textContent = "1.00 / 1.00";
-			if (noteEl) noteEl.textContent = "One head, one budget. A click moves 0.20 of the budget to that token; every other token gives up its share. Switch heads: each has its own budget.";
+			if (noteEl) noteEl.textContent = DEMO_DE ? "Ein Head, ein Budget. Ein Klick verschiebt 0,20 des Budgets auf dieses Token; jedes andere Token gibt seinen Anteil ab. Wechsle Heads: Jeder hat sein eigenes Budget." : "One head, one budget. A click moves 0.20 of the budget to that token; every other token gives up its share. Switch heads: each has its own budget.";
 		}
 		$$("[data-hb-head]", root).forEach(function (btn) {
 			btn.addEventListener("click", function () {

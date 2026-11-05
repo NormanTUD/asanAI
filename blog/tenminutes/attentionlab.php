@@ -132,12 +132,12 @@
 									<div><b>Weight</b><span id="att-weight">0.48</span></div>
 									<div><b>Row sum</b><span>1.00</span></div>
 								</div>
-								<p class="vec-note" id="att-top3" style="color:var(--tm-muted)">Top 3: Maria 48% · bank 12% · loan 8%. Every row sums to 1: attention is a finite budget.</p>
+								<p class="vec-note" id="att-top3" style="color:var(--tm-muted)">Top 3: Maria 60% · she 14% · bank 12%. Every row sums to 1: attention is a finite budget.</p>
 								<div class="att-matrix" id="att-matrix">
 									<canvas id="att-matrix-canvas" aria-label="Attention matrix: rows are queries, columns are keys"></canvas>
 									<p class="pipe-note">Rows = query, columns = key. The causal mask is always on: each row can see itself and the past, never the future. The row is renormalized over those positions only.</p>
 								</div>
-								<p class="meadow-caption" id="att-caption" style="color:var(--tm-muted)">The coreference head links “she” back to “Maria”.</p>
+								<p class="meadow-caption" id="att-caption" style="color:var(--tm-muted)">The coreference head links “she” back to “Maria”. The pronoun needs a referent; the head retrieves it.</p>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Attention routes information; it does not explain the answer. The weights show where a head looked, not what the rest of the network did with it.</span></div>
 							<div class="demo-foot">
@@ -263,8 +263,63 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="transport">
+						<div class="section-kicker"><span class="sk-num">05</span> Optimal transport</div>
+						<h2 class="section-title">Softmax solves a transport problem.</h2>
+						<div class="prose">
+							<p>
+								Softmax is often introduced as a smooth argmax. There is a stronger
+								description. For one query, the attention row is the exact solution to a
+								one-sided entropic optimal transport problem (<a href="https://arxiv.org/abs/2508.08369" rel="noopener">Litman, 2025</a>).
+								The cost of sending attention to key <span data-tex="j" data-tex-display="false"></span>
+								is the negative similarity,
+								<span data-tex="C_j = -\langle q, k_j\rangle" data-tex-display="false"></span>.
+								The row <span data-tex="p" data-tex-display="false"></span> is a distribution over
+								keys. The problem is to minimize the expected cost while keeping the
+								distribution's entropy high. The temperature <span data-tex="\tau" data-tex-display="false"></span>
+								is the weight on entropy.
+							</p>
+							<div class="formula" data-tex="\begin{aligned} C_j &amp;= -\langle q, k_j\rangle \\[2pt] p^\star &amp;= \arg\min_{p\in\Delta^{m-1}} \sum_{j=1}^{m} p_j C_j - \tau H(p), \quad H(p) = -\sum_j p_j \log p_j \\[2pt] p_j^\star &amp;= \frac{\exp(\langle q, k_j\rangle / \tau)}{\sum_{l=1}^{m}\exp(\langle q, k_l\rangle / \tau)} \end{aligned}">C_j = -<q,k_j>; p* = argmin Σ p_j C_j - τ H(p); p_j* = exp(<q,k_j>/τ) / Σ exp(<q,k_l>/τ)</div>
+							<p>
+								The entropy term is why softmax is smooth: it stops the row from collapsing
+								onto one key. High <span data-tex="\tau" data-tex-display="false"></span> buys more
+								entropy and spreads the budget; low <span data-tex="\tau" data-tex-display="false"></span>
+								approaches the argmax. The dual potential is the log-sum-exp; its gradient is
+								the attention row, and its Hessian is
+								<span data-tex="\tau" data-tex-display="false"></span> times the Fisher
+								information of the attention distribution. That is why the backward pass is
+								not an arbitrary chain rule: the standard gradient is the natural gradient in
+								disguise, and the update is an advantage-based policy gradient (Litman, 2025).
+							</p>
+							<div class="formula" data-tex="\begin{aligned} \phi^\star(s) &amp;= \tau \log\sum_{j=1}^{m} e^{s_j/\tau}, \qquad \nabla_s \phi^\star = p^\star \\[2pt] \nabla_s^2 \phi^\star &amp;= \tau F(s), \qquad F(s) = \frac{1}{\tau^2}\left(\operatorname{diag}(p^\star) - p^\star (p^\star)^\top\right) \\[2pt] \frac{\partial \mathcal L}{\partial s_j} &amp;= p_j^\star\left(u_j - \bar u\right), \quad u_j = -\frac{\partial \mathcal L}{\partial p_j}, \quad \bar u = \sum_k p_k^\star u_k \end{aligned}">φ*(s) = τ log Σ exp(s_j/τ), ∇φ* = p*; ∇²φ* = τ F(s), F(s) = (diag(p*) - p*p*ᵀ)/τ²; ∂L/∂s_j = p_j*(u_j - ū)</div>
+						</div>
+
+						<div class="demo demo--paper" id="eot-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Temperature is entropy <span>· demo 03</span></p>
+									<p class="demo-sub">The scores are fixed. Change τ and watch the softmax move between a sharp argmax and a spread-out row.</p>
+								</div>
+								<span class="demo-badge">one-sided EOT</span>
+							</div>
+							<div class="demo-body">
+								<div class="dist-bars" id="eot-bars"></div>
+								<div class="demo-controls">
+									<label>Temperature τ <input type="range" id="eot-temp" min="0.1" max="3" step="0.05" value="1"><output id="eot-temp-out">1.00</output></label>
+								</div>
+								<div class="demo-readout">
+									<div><b>Entropy H(p)</b><span id="eot-entropy">...</span></div>
+									<div><b>Expected similarity</b><span id="eot-sim">...</span></div>
+									<div><b>Objective J</b><span id="eot-obj">...</span></div>
+									<div><b>Top token</b><span id="eot-top">...</span></div>
+								</div>
+								<p class="demo-hint" id="eot-note">Higher τ spreads the budget; lower τ concentrates it. The EOT objective trades similarity against entropy.</p>
+							</div>
+						</div>
+					</section>
+
 					<section class="section-block" id="limits">
-						<div class="section-kicker"><span class="sk-num">05</span> The limits</div>
+						<div class="section-kicker"><span class="sk-num">06</span> The limits</div>
 						<h2 class="section-title">An attention map is not an explanation.</h2>
 						<div class="prose">
 							<p>
@@ -501,6 +556,53 @@
 			renderSentence();
 			if (matrixApi) matrixApi.redraw();
 			if (window.TM && TM.typesetMath) TM.typesetMath();
+		}
+
+		/* ── EOT temperature demo ───────────────────────────── */
+		var eotBars = document.getElementById("eot-bars");
+		if (eotBars) {
+			var eotTokens = ATT_DE ? ["Maria", "Bank", "Kredit", "sie", "zurückzahlen", "morgen"] : ["Maria", "bank", "loan", "she", "repay", "tomorrow"];
+			var eotScores = [3.0, 1.2, 2.2, 0.8, 2.6, 0.5];
+			var eotTemp = document.getElementById("eot-temp");
+			var eotTempOut = document.getElementById("eot-temp-out");
+			var eotEntropy = document.getElementById("eot-entropy");
+			var eotSim = document.getElementById("eot-sim");
+			var eotObj = document.getElementById("eot-obj");
+			var eotTop = document.getElementById("eot-top");
+			var eotNote = document.getElementById("eot-note");
+			function escapeEot(s) {
+				return String(s).replace(/[&<>"]/g, function (c) {
+					return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+				});
+			}
+			function renderEot() {
+				var tau = Math.max(0.1, parseFloat(eotTemp.value) || 1);
+				var exps = eotScores.map(function (s) { return Math.exp(s / tau); });
+				var sum = exps.reduce(function (a, b) { return a + b; }, 0);
+				var p = exps.map(function (e) { return e / sum; });
+				var entropy = -p.reduce(function (a, x) { return a + (x > 0 ? x * Math.log(x) : 0); }, 0);
+				var sim = p.reduce(function (a, x, i) { return a + x * eotScores[i]; }, 0);
+				var obj = -sim + tau * entropy;
+				var top = 0;
+				p.forEach(function (x, i) { if (x > p[top]) top = i; });
+				eotBars.innerHTML = eotTokens.map(function (tok, i) {
+					var pct = Math.round(p[i] * 100);
+					return '<div class="dist-row">' +
+						'<span class="dist-label">' + escapeEot(tok) + '</span>' +
+						'<span class="dist-track"><span class="dist-fill" style="width:' + pct + '%;background:' + (i === top ? "var(--tm-green)" : "var(--tm-sky)") + '"></span></span>' +
+						'<span class="dist-val">' + pct + '%</span></div>';
+				}).join("");
+				if (eotEntropy) eotEntropy.textContent = entropy.toFixed(2) + " nats";
+				if (eotSim) eotSim.textContent = sim.toFixed(2);
+				if (eotObj) eotObj.textContent = obj.toFixed(2);
+				if (eotTop) eotTop.textContent = eotTokens[top];
+				if (eotTempOut) eotTempOut.textContent = tau.toFixed(2);
+				if (eotNote) eotNote.textContent = ATT_DE
+					? "Höheres τ verteilt das Budget; niedrigeres τ konzentriert es. Die EOT-Zielfunktion handelt Ähnlichkeit gegen Entropie."
+					: "Higher τ spreads the budget; lower τ concentrates it. The EOT objective trades similarity against entropy.";
+			}
+			if (eotTemp) eotTemp.addEventListener("input", renderEot);
+			renderEot();
 		}
 	})();
 	</script>
