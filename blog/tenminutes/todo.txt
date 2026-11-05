@@ -90,4 +90,14 @@ wiese der worte: "Das Bild ist zweidimensional, während ein echtes Modell in Ta
 
 "Unsicherheit heißt, auf einer Naht zu stehen." oder komplett am rand
 
+"Bring die Teile in Reihenfolge, und die Kontur ist einfach" ist ein nonsens-satz, weg damit
+
+"während ein Residual Stream frühere Funde weiterträgt" nicht frühere funde weiterträgt, sondern frühere ergebnisse behält, aber mit neuen anreichert
+
+"<|endoftext|>": mach das dick
+
+"Meist in den Feed-Forward-Gewichten, und oft überlagert" oft (vermutlich) überlagert, aber das ist noch nciht ganz klar, siehe https://already-clean.goodfire.com/ und zitier das auch
+
+"Deshalb kann ein Fakt teilweise vorhanden sein, deshalb kann ein Modell etwas wissen, ohne es zuverlässig sagen zu können, und deshalb kann das Ändern eines Fakts einen anderen stören. " dieser satz macht noch keinen so richtigne sinn
+
 
