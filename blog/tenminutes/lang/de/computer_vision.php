@@ -7,6 +7,7 @@ return [
 		'layered pattern detection.' => 'geschichtete Mustererkennung.',
 		'A computer does not see a cat. It sees a grid of numbers. Convolution learns small local patterns, and depth combines them into edges, parts, and objects.' => 'Ein Computer sieht keine Katze. Er sieht ein Gitter aus Zahlen. Faltung lernt kleine lokale Muster, und Tiefe kombiniert sie zu Kanten, Teilen und Objekten.',
 		'A filter that slides' => 'Ein Filter, der gleitet',
+		'A filter slides over the stop sign' => 'Ein Filter gleitet über das Stoppschild',
 		'Local patterns, shared weights.' => 'Lokale Muster, geteilte Gewichte.',
 		'Training data was text. Now the data is a grid of pixels. A convolution (' => 'Trainingsdaten waren Text. Jetzt sind die Daten ein Pixelgitter. Eine Faltung (',
 		') applies a small kernel to every local patch of the image. The kernel is a set of learned weights; it responds strongly to a particular pattern, such as a vertical edge or a patch of colour. An image itself is just a grid of numbers: each pixel is a brightness or a set of colour values, usually red, green, and blue. There is no cat in the pixels; there are only numbers that a trained hierarchy can interpret.' => ') wendet einen kleinen Kernel auf jeden lokalen Patch des Bildes an. Der Kernel ist eine Menge gelernter Gewichte; er reagiert stark auf ein bestimmtes Muster, etwa eine vertikale Kante oder einen Farbfleck. Ein Bild selbst ist nur ein Zahlengitter: Jedes Pixel ist eine Helligkeit oder eine Menge von Farbwerten, meist Rot, Grün und Blau. In den Pixeln steckt keine Katze; es sind nur Zahlen, die eine trainierte Hierarchie interpretieren kann.',
@@ -78,8 +79,8 @@ return [
 		'The aha' => 'Der Aha-Moment',
 		'A machine sees by building patterns on top of patterns.' => 'Eine Maschine sieht, indem sie Muster auf Muster baut.',
 		'The cat is never in the pixels; it is in the hierarchy the network learns.' => 'Die Katze steckt nie in den Pixeln; sie steckt in der Hierarchie, die das Netz lernt.',
-	],
 		'What the network sees at each layer can be made visible. The first layer responds to local edges. Here is the real stop sign, the response of a vertical-edge kernel, and the combined edge magnitude from vertical and horizontal kernels. Deeper layers combine these edges into corners, parts, and finally the whole sign.' => 'Was das Netz in jeder Schicht sieht, lässt sich sichtbar machen. Die erste Schicht reagiert auf lokale Kanten. Hier sind das echte Stoppschild, die Antwort eines Vertikalkanten-Kernels und die kombinierte Kantenstärke aus vertikalen und horizontalen Kernels. Tiefere Schichten setzen diese Kanten zu Ecken, Teilen und schließlich zum ganzen Schild zusammen.',
+	],
 	'blocks' => [
 		'Input: the real stop sign. Photo: Matthew Paul Argall, <a href="https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg" rel="noopener">CC0</a>.' => 'Eingabe: das echte Stoppschild. Foto: Matthew Paul Argall, <a href="https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg" rel="noopener">CC0</a>.',
 		'Vertical edges: the actual output of a vertical Sobel kernel. Processing: Ten Minutes, <a href="assets/img/stop-edges-v.png">CC0 1.0</a>, from the CC0 photo.' => 'Vertikale Kanten: die tatsächliche Ausgabe eines vertikalen Sobel-Kernels. Verarbeitung: Ten Minutes, <a href="assets/img/stop-edges-v.png">CC0 1.0</a>, aus dem CC0-Foto.',

@@ -57,7 +57,7 @@
 					<div class="demo demo--paper" data-demo="convolution">
 						<div class="demo-head">
 							<div>
-								<p class="demo-title">A filter that slides <span>· demo</span></p>
+								<p class="demo-title">A filter slides over the stop sign <span>· demo</span></p>
 								<p class="demo-sub">The kernel is a tiny learned pattern. Pick one and scan the 3×3 window across the real stop sign.</p>
 							</div>
 							<span class="demo-badge">live</span>
