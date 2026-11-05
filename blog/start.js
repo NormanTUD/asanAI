@@ -141,6 +141,18 @@ function observeAndRenderMath(targetNode = document.body) {
 
 	const config = { childList: true, subtree: true, characterData: true };
 
+	// Coalesce bursts of DOM mutations into one render pass. Widgets insert
+	// dozens of nodes while the page loads; without this, every insertion ran
+	// a full-document scan (the dominant startup cost on heavy lessons).
+	let scheduled = null;
+	const schedule = function() {
+		if (scheduled) clearTimeout(scheduled);
+		scheduled = setTimeout(function() {
+			scheduled = null;
+			render_temml();
+		}, 60);
+	};
+
 	const callback = function(mutationsList) {
 		for (const mutation of mutationsList) {
 			if (mutation.type === 'characterData' || mutation.type === 'childList') {
@@ -150,7 +162,7 @@ function observeAndRenderMath(targetNode = document.body) {
 				}
 			}
 		}
-		render_temml();
+		schedule();
 	};
 
 	const observer = new MutationObserver(callback);
@@ -219,6 +231,11 @@ function _fixMathInElement(el) {
     // ===== For elements WITHOUT code blocks, fix the em/strong issue =====
     // The problem: markdown renderers turn _x_ into <em>x</em> inside math
     // We need to undo this ONLY inside $...$ delimiters
+
+    // Serialising innerHTML is expensive on large containers, and the fix
+    // below only ever fires when an <em>/<strong> sits inside the math.
+    // Cheap test first; most elements bail out here.
+    if (!el.querySelector('em, strong')) return false;
 
     let html = el.innerHTML;
     if (!html.includes('$')) return false;
