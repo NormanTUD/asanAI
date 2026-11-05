@@ -1016,7 +1016,6 @@
 	<script src="assets/full/llm_river.js"></script>
 	<script src="assets/full/provenance.js"></script>
 	<script src="assets/full/transformer_layer_summary.js"></script>
-	<script src="assets/full/demo-i18n.js"></script>
 	<script src="assets/full/demo-render.js"></script>
 	<script>
 	document.addEventListener("DOMContentLoaded", function () {

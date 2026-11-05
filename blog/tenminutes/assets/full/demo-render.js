@@ -62,18 +62,13 @@
 		} catch (e) {}
 	}
 
-	var timer = null;
-	function schedule() {
-		if (timer) return;
-		timer = setTimeout(function () { timer = null; render(); }, 300);
-	}
-
 	if (document.readyState === "loading") {
 		document.addEventListener("DOMContentLoaded", render);
 	} else {
 		render();
 	}
-	var observer = new MutationObserver(schedule);
-	observer.observe(document.body, { childList: true, subtree: true });
+	[300, 900, 1800, 3200, 6000].forEach(function (ms) {
+		setTimeout(render, ms);
+	});
 	window.addEventListener("load", render);
 })();
