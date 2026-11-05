@@ -120,7 +120,7 @@
 								Java, is about <strong>500,000 years old</strong>: the oldest known
 								deliberate geometric incision. It is a pattern; it does not yet record a
 								count, and whether it carried symbolic meaning is debated. What is clear is
-								that the mark was made on purpose and kept.
+								that the mark was made on purpose.
 							</p>
 						</div>
 						<figure>

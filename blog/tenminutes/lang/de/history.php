@@ -73,7 +73,7 @@ return [
 		'Trinil' => 'Trinil',
 		', Java, is about' => ', Java, ist etwa',
 		'500,000 years old' => '500.000 Jahre alt',
-		': the oldest known deliberate geometric incision. It is a pattern; it does not yet record a count, and whether it carried symbolic meaning is debated. What is clear is that the mark was made on purpose and kept.' => ': die älteste bekannte absichtliche geometrische Ritzung. Sie ist ein Muster; sie zeichnet noch keine Zahl auf, und ob sie symbolische Bedeutung trug, ist umstritten. Klar ist, dass die Markierung absichtlich gemacht und behalten wurde.',
+		': the oldest known deliberate geometric incision. It is a pattern; it does not yet record a count, and whether it carried symbolic meaning is debated. What is clear is that the mark was made on purpose.' => ': die älteste bekannte absichtliche geometrische Ritzung. Sie ist ein Muster; sie zeichnet noch keine Zahl auf, und ob sie symbolische Bedeutung trug, ist umstritten. Klar ist, dass die Markierung absichtlich gemacht wurde.',
 		'The Trinil shell, c. 500,000 years ago, with a zig-zag of grooves cut by' => 'Die Trinil-Muschel, ca. 500.000 Jahre alt, mit einem Zickzack aus Rillen, geschnitten von',
 		'Homo erectus' => 'Homo erectus',
 		'. Image: Naturalis Biodiversity Center,' => '. Bild: Naturalis Biodiversity Center,',
