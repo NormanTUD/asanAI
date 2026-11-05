@@ -59,7 +59,6 @@ return [
 		'CC BY-SA 3.0' => 'CC BY-SA 3.0',
 		'Takeaway' => 'Fazit',
 		'No single cause produced the LLM. Many independent developments became useful together.' => 'Keine einzelne Ursache brachte das LLM hervor. Viele unabhängige Entwicklungen wurden zusammen nützlich.',
-		'A compressed route through a much longer history. The captions and notes carry the primary sources, contested dates, and the contributors the standard story forgets.' => 'Eine komprimierte Route durch eine viel längere Geschichte. Die Bildunterschriften und Notizen tragen die Primärquellen, umstrittene Daten und die Beitragenden, die die Standardgeschichte vergisst.',
 		'External memory' => 'Externes Gedächtnis',
 		'Tools, marks, and memory.' => 'Werkzeuge, Spuren und Gedächtnis.',
 		'Long before counting, there is technique. At' => 'Lange vor dem Zählen gibt es Technik. Bei',

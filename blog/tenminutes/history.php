@@ -94,11 +94,6 @@
 								<div class="tl-panel" id="timeline-panel" aria-live="polite"></div>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>No single cause produced the LLM. Many independent developments became useful together.</span></div>
-							<div class="demo-foot">
-								A compressed route through a much longer history. The captions and notes carry
-								the primary sources, contested dates, and the contributors the standard story
-								forgets.
-							</div>
 						</div>
 					</section>
 
