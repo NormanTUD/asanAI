@@ -10,6 +10,7 @@
 <script src="../temml.min.js"></script>
 <style>
   :root { --accent: #b388ff; --accent-2: #4dd0e1; --accent-3: #ff7ab6; --good: #7ee7b0; }
+  html { overflow-x: hidden; }
   .tex { display: inline-block; vertical-align: middle; }
   .tex-display {
     display: block;
@@ -228,7 +229,7 @@
 
   <div class="tex-display" data-tex="\underbrace{x_i}_{\substack{\text{Vektor von Token }i\\\text{z.B. Token 2 = world}}}=\underbrace{E}_{\substack{50257\times 768\\\text{Embedding-Tabelle}}}[\underbrace{\text{id}_i}_{\text{z.B. }995}]+\underbrace{P[i]}_{\text{Positionsvektor}}\in\mathbb{R}^{\underbrace{768}_{\substack{d_{\text{model}}\\\text{Zahlen pro Token}}}}"></div>
 
-  <div class="tex-display" data-tex="\underbrace{X}_{\substack{2\times 768\\\text{beide Tokens}}}=\begin{bmatrix}x_{1,1}&\cdots&x_{1,768}\\x_{2,1}&\cdots&x_{2,768}\end{bmatrix}"></div>
+  <div class="tex-display" data-tex="\underbrace{X}_{\substack{2\times 768\\\text{beide Tokens}}}=\begin{bmatrix}x_{1,1}&amp;\cdots&amp;x_{1,768}\\x_{2,1}&amp;\cdots&amp;x_{2,768}\end{bmatrix}"></div>
 
   <p>
     Ab hier gibt es keine „Liste von Tokens“ mehr, die irgendwo
@@ -389,9 +390,9 @@
   </div>
   <div class="shape-ribbon" aria-label="Shapes im Überblick">
     <span><b>T×768</b> Eingang</span>
-    <span>→ <b>H×T×64</b> Q/K/V</span>
-    <span>→ <b>H×T×T</b> Scores</span>
-    <span>→ <b>H×T×64</b> Heads</span>
+    <span>→ <b>12×T×64</b> Q/K/V</span>
+    <span>→ <b>12×T×T</b> Scores</span>
+    <span>→ <b>12×T×64</b> Heads</span>
     <span>→ <b>T×768</b> Concat</span>
     <span>→ <b>T×3072</b> FFN hidden</span>
     <span>→ <b>T×768</b> Ausgang</span>
@@ -419,8 +420,9 @@
     Bei GPT-2 gibt es 12 Heads. Jeder Head hat eigene Projektionen
     <span class="mono">W_Q, W_K, W_V</span> der Form
     <span class="mono">768 × 64</span>. Zusammen sind das
-    <span class="mono">12 × 64 = 768</span> Dimensionen. Die Q/K/V-Vektoren
-    werden also nicht breiter als der Token-Vektor, sie werden nur in Heads
+    <span class="mono">12 × 64 = 768</span> Dimensionen. Jedes von Q, K und V
+    hat für sich wieder 768 Dimensionen, pro Head sind es 64. Die Vektoren
+    werden also nicht breiter als der Token-Vektor, sondern in Heads
     aufgeteilt.
   </p>
 
@@ -459,14 +461,14 @@
   <div class="tex-display" data-tex="\underbrace{s_{ij}^{(h)}}_{\substack{\text{Score: wie gut passt}\\\text{Query }i\text{ zu Key }j}}=\frac{\underbrace{q_i^{(h)}\cdot k_j^{(h)}}_{\text{Dot-Produkt über 64 Zahlen}}}{\underbrace{\sqrt{64}}_{\substack{\sqrt{d_{\text{head}}}\\\text{Skalierung}}}}"></div>
   <div class="tex-display" data-tex="\underbrace{\alpha_{ij}^{(h)}}_{\substack{\text{Gewicht von Token }j\\\text{für Token }i}}=\frac{\exp(s_{ij}^{(h)})}{\sum_{\ell=1}^{\underbrace{T}_{\text{Anzahl Tokens}}}\exp(s_{i\ell}^{(h)})}\qquad\underbrace{o_i^{(h)}}_{\substack{\text{Ausgabe von Head }h\\\text{für Token }i}}=\sum_{j=1}^{T}\underbrace{\alpha_{ij}^{(h)}}_{\text{Gewicht}}\underbrace{v_j^{(h)}}_{\text{Value von }j}"></div>
 
-  <div class="tex-display" data-tex="\underbrace{M_{ij}}_{\text{Kausalmaske}}=\begin{cases}0&j\le i\\-\infty&j>i\end{cases}\qquad s_{ij}^{(h)}\leftarrow\frac{q_i^{(h)}\cdot k_j^{(h)}}{\sqrt{64}}+M_{ij}"></div>
+  <div class="tex-display" data-tex="\underbrace{M_{ij}}_{\text{Kausalmaske}}=\begin{cases}0&amp;j\le i\\-\infty&amp;j>i\end{cases}\qquad s_{ij}^{(h)}\leftarrow\frac{q_i^{(h)}\cdot k_j^{(h)}}{\sqrt{64}}+M_{ij}"></div>
 
   <p>
     In einem Encoder wie BERT ist die Maske leer, dann darf jeder Token alle
     anderen sehen. In einem Decoder wie GPT-2 ist die obere rechte Hälfte
     der Score-Matrix verboten. Für zwei Tokens sieht die Maske so aus:
   </p>
-  <div class="tex-display" data-tex="\underbrace{M}_{\text{2 Tokens}}=\begin{bmatrix}0&-\infty\\0&0\end{bmatrix}"></div>
+  <div class="tex-display" data-tex="\underbrace{M}_{\text{2 Tokens}}=\begin{bmatrix}0&amp;-\infty\\0&amp;0\end{bmatrix}"></div>
 
   <h3>Rechnung per Hand, ohne Modell</h3>
   <p>
@@ -483,7 +485,7 @@
     </div>
     <div class="panel">
       <h3>Scores und Gewichte</h3>
-      <div class="tex-display" data-tex="\underbrace{S}_{\text{2}\times\text{2}}=\begin{bmatrix}0.707&0.707\\0.707&-0.707\end{bmatrix},\qquad\underbrace{A}_{\text{Softmax pro Zeile}}=\begin{bmatrix}0.500&0.500\\0.804&0.196\end{bmatrix}"></div>
+      <div class="tex-display" data-tex="\underbrace{S}_{\text{2}\times\text{2}}=\begin{bmatrix}0.707&amp;0.707\\0.707&amp;-0.707\end{bmatrix},\qquad\underbrace{A}_{\text{Softmax pro Zeile}}=\begin{bmatrix}0.500&amp;0.500\\0.804&amp;0.196\end{bmatrix}"></div>
       <div class="tex-display" data-tex="\underbrace{o_2}_{\text{Ausgabe Token 2}}=\underbrace{0.804}_{\alpha_{21}}\underbrace{\begin{bmatrix}1\\2\end{bmatrix}}_{v_1}+\underbrace{0.196}_{\alpha_{22}}\underbrace{\begin{bmatrix}3\\4\end{bmatrix}}_{v_2}=\begin{bmatrix}1.391\\2.391\end{bmatrix}"></div>
     </div>
   </div>
@@ -544,7 +546,11 @@
   </p>
 
   <details class="full-vector">
-    <summary>Vollständige 64 Zahlen: q2, k1, k2, v1, v2 und o2</summary>
+    <summary>Vollständige 64 Zahlen für Head 0: q2, k1, k2, v1, v2 und o2</summary>
+    <p class="caption" style="margin-top:0.6rem">
+      Die Zahlen sind auf vier Nachkommastellen gerundet. Die Dot-Produkte
+      oben wurden mit den ungerundeten Werten gerechnet.
+    </p>
     <div id="full-vector-content"></div>
   </details>
 
@@ -578,12 +584,12 @@
     </div>
   </div>
 
-  <div class="tex-display" data-tex="\underbrace{o_i}_{\substack{\text{ein Vektor pro Token}\\\text{nach Concat der Heads}}}=\left[\underbrace{o_i^{(1)}}_{64},\;\underbrace{o_i^{(2)}}_{64},\;\ldots,\;\underbrace{o_i^{(12)}}_{64}\right]\in\mathbb{R}^{\underbrace{768}_{\substack{12\cdot64\\\text{Feature-Achse}}}}"></div>
+  <div class="tex-display" data-tex="\underbrace{o_i}_{\substack{\text{ein Vektor pro Token}\\\text{nach Concat der Heads}}}=\left[\underbrace{o_i^{(1)}}_{64\text{ Zahlen}},\;\underbrace{o_i^{(2)}}_{64\text{ Zahlen}},\;\ldots,\;\underbrace{o_i^{(12)}}_{64\text{ Zahlen}}\right]\in\mathbb{R}^{\underbrace{768}_{\substack{12\cdot64\\\text{Feature-Achse}}}}"></div>
   <div class="tex-display" data-tex="\underbrace{a_i}_{\substack{\text{Attention-Delta}\\\text{für Token }i}}=\underbrace{o_i}_{\text{concat}}\underbrace{W_O}_{\substack{768\times768\\\text{mischt die Heads}}}"></div>
 
   <p>
-    Wichtig: Die Concat-Achse ist die Feature-Achse. Die erste Hälfte des
-    768-Vektors kommt von Head 1, die nächsten 64 Zahlen von Head 2, und so
+    Wichtig: Die Concat-Achse ist die Feature-Achse. Die ersten 64 Zahlen des
+    768-Vektors kommen von Head 1, die nächsten 64 Zahlen von Head 2, und so
     weiter. Die beiden Tokens werden dabei nicht zusammengelegt. Es gibt
     weiterhin zwei Zeilen, jede mit 768 Zahlen.
   </p>
@@ -646,13 +652,12 @@
   </p>
 
   <div class="note">
-    <strong>Wichtig für dein Bild:</strong> Die Attention-Heads schreiben
-    nicht einzeln in den Residualstrom. Ihre Ausgaben werden erst
-    konkateniert, dann mit <span class="mono">W_O</span> gemischt, und erst
-    das Ergebnis wird addiert. Das FFN sieht danach den bereits addierten
-    Vektor, nicht die rohen Head-Ausgaben. Mathematisch lässt sich der Beitrag
-    jedes Heads über den passenden Spaltenblock von <span class="mono">W_O</span>
-    zerlegen. Der Forward-Pass addiert aber die bereits gemischte Summe.
+    <strong>Wichtig für dein Bild:</strong> Im Forward-Pass werden die
+    Head-Ausgaben erst konkateniert, dann mit <span class="mono">W_O</span>
+    gemischt, und erst das Ergebnis wird addiert. Das FFN sieht danach den
+    bereits addierten Vektor, nicht die rohen Head-Ausgaben. Für die Analyse
+    kann man den Beitrag jedes Heads über den passenden Spaltenblock von
+    <span class="mono">W_O</span> zerlegen; am Forward-Pass ändert das nichts.
   </div>
 </section>
 
@@ -840,8 +845,9 @@ reshape:      (2, 768)      # Token bleibt vorne
 
   <p>
     Die Token-Achse ist die <span class="mono">T</span>-Achse. Sie bleibt in
-    jeder Zeile erhalten. Die Feature-Achse wächst und schrumpft:
-    <span class="mono">768 → 64 pro Head → 768 → 3072 → 768</span>. Die
+    jeder Zeile erhalten. Die Feature-Achse wird aufgeteilt und wieder
+    zusammengesetzt:
+    <span class="mono">768 → 12 × 64 pro Head → 768 → 3072 → 768</span>. Die
     Attention-Scores sind die einzige Stelle, an der zusätzlich eine
     <span class="mono">T × T</span>-Achse entsteht. Diese Matrix sagt, welcher
     Token welchen anderen ansieht.
@@ -869,8 +875,9 @@ reshape:      (2, 768)      # Token bleibt vorne
       <div class="k">2</div>
       <h3>Attention mischt Tokens</h3>
       <p>
-        Die Score-Matrix ist <span class="mono">T × T</span>. Jede Zeile ist
-        eine gewichtete Summe über die Values aller sichtbaren Tokens.
+        Die Gewichtsmatrix ist <span class="mono">T × T</span>. Jede Zeile
+        verteilt Gewicht über die sichtbaren Tokens; die Ausgabe ist die
+        gewichtete Summe ihrer Values.
       </p>
     </div>
     <div class="card">
@@ -998,8 +1005,8 @@ x = x + ffn_out                       # Residual, Zeile für Zeile</div>
     <span class="mono">Hello world</span> und
     <span class="mono">Hello there</span>. Die nächste-Token-Vorhersage für
     <span class="mono">Water is made of hydrogen and</span> ist
-    <span class="mono">oxygen</span>, was zu einem korrekt laufenden
-    GPT-2-small-Forward-Pass passt.
+    <span class="mono">oxygen</span>; das ist ein zusätzlicher
+    Plausibilitätscheck für den Forward-Pass.
   </p>
 </section>
 
@@ -1122,6 +1129,32 @@ x = x + ffn_out                       # Residual, Zeile für Zeile</div>
       h += "</div></div>";
     });
     g.innerHTML = h;
+  })();
+
+  /* ---------- full head-0 vectors ---------- */
+  (function () {
+    const el = document.getElementById("full-vector-content");
+    if (!el) return;
+    const names = [
+      ["q2", "Query Token 2 (Head 0)"],
+      ["k1", "Key Token 1 (Head 0)"],
+      ["k2", "Key Token 2 (Head 0)"],
+      ["v1", "Value Token 1 (Head 0)"],
+      ["v2", "Value Token 2 (Head 0)"],
+      ["out2", "Ausgabe Token 2 (Head 0)"]
+    ];
+    let h = "";
+    names.forEach(function (pair) {
+      const vals = D.head0_full[pair[0]];
+      h += '<div class="vec-label">' + pair[1] + " · 64 Zahlen</div><pre>";
+      for (let i = 0; i < vals.length; i += 8) {
+        h += vals.slice(i, i + 8).map(function (x) {
+          return (x >= 0 ? " " : "") + x.toFixed(4);
+        }).join("  ") + "\n";
+      }
+      h += "</pre>";
+    });
+    el.innerHTML = h;
   })();
 
   /* ---------- concat table ---------- */
