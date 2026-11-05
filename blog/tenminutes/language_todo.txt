@@ -16,3 +16,14 @@ Erledigt:
 
 - Nachtrag: Othello-GPT-Evidenz statt „umstritten“; word2vec als „neuester größerer Schritt“.
 - Timeline „Hören“: Gray928-Cochlea (Henry Vandyke Carter, Gray’s Anatomy 1918, gemeinfrei); „Tokens“: eigenes Tokenisierungsdiagramm (Ten Minutes, CC0 1.0). Beide mit Quelle und Lizenz im Panel.
+
+Nachtrag (November 2026):
+- „Vokaltrakt“ → „Sprechapparat“ in Beschreibung, Hero, Fließtext und Keypoint. Der Fachbegriff ist korrekt, aber für die Seite zu technisch.
+- Hero: „mussten Menschen die Voraussetzungen dafür schaffen“ → „mussten erst ein Sprechapparat, Symbole, Schrift und ein Maß für Information entstehen“.
+- Hören/Sprechen: neuer Absatz zur Evolution des Ohrs (Kieferknochen, Cochlea) und zum abgesenkten Kehlkopf; Quellen Clack 1997 und Maier/Ruf 2016 verlinkt.
+- Shannon-Absatz: Non sequitur behoben; Shannons Maß als Trainingssignal eingeführt, danach die Deflationsdebatte und Othello-GPT.
+- Proto-Schriften: Wadi-el-Hol-Absatz und Bild ergänzt; Keilschrift-Bild ergänzt.
+- Buchdruck: eigener Absatz und Caxton-Bild ergänzt.
+- Embeddings: Firth-Zitat, word2vec und der Abschnitt „Von Text zu Vektoren“ überarbeitet; der Erbe-Absatz verlinkt Shannon 1948, Mikolov 2013 und Firth 1957.
+- Timeline: Proto-script- und Embeddings-Knoten ergänzt, Printing mit Bild, Tokens auf 2015–heute verschoben.
+- Selbstkritik: Das Buchdruck-Bild ist die Caxton-Feier von 1877, keine Gutenberg-Presse; die Bildunterschrift sagt das. Die Ohr-/Kehlkopf-Darstellung bleibt eine kurze Zusammenfassung einer umstrittenen Forschungsdebatte.
