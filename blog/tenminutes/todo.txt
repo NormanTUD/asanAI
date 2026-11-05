@@ -106,3 +106,13 @@ tokenizerlab (Nachtrag November 2026):
 - „A model never sees words“ → „A modern LLM never sees words“ (deutsch: „Ein modernes LLM sieht Wörter niemals“); auch der Folgeabsatz nennt jetzt das moderne LLM.
 - BPE-Absatz ergänzt: BPE ist im Kern ein Kompressionsalgorithmus; Ziel ist, möglichst viel Text und damit möglichst viel mögliche Bedeutung mit möglichst wenigen Tokens darzustellen.
 - „toy vocabulary“ / „Spielzeug-Vokabular“ überall durch „demo vocabulary“ / „Demo-Vokabular“ ersetzt (inkl. Badge, Metadaten und Demo-Fußzeile).
+
+tokenizerlab / embeddinglab (Nachtrag):
+- tokenizerlab: Glitch-Token-Satz vollständig übersetzt.
+- tokenizerlab: Lange-Wort-Beispiel nutzt jetzt echte Zweibuchstaben-Stücke (su/pe/rc/al/…); 17 Zwei-Zeichen-Tokens statt vieler Einzelzeichen.
+- tokenizerlab: BPE als Kompressionsalgorithmus erklärt; „toy vocabulary“ / „Spielzeug-Vokabular“ → „demo vocabulary“ / „Demo-Vokabular“.
+- embeddinglab: Kurze Geschichte von Harris über Firth, LSA und word2vec bis GloVe/ELMo/BERT ergänzt; „Embedding“ als wörtliche „Einbettung“ erklärt.
+- embeddinglab: Semantische Karte vollständig eingedeutscht (Canvas-Wörter, Analogien, Richtungsnotizen, Readouts, Formel).
+- embeddinglab: Formel zeigt die tatsächlichen 2-D-Vektoren mit Namen als Underbrace.
+- embeddinglab: „angle“ → „Winkel“, „scale-invariant“ → „skaleninvariant“; Kosinus-Warnung um Softmax ergänzt; dynamische Winkel-/Magnitude-Captions übersetzt.
+- embeddinglab: Neuer Plot „Die Magnitude kann sich ändern“ mit gleicher Richtung und unterschiedlicher Länge.

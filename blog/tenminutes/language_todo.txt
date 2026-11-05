@@ -27,3 +27,7 @@ Nachtrag (November 2026):
 - Embeddings: Firth-Zitat, word2vec und der Abschnitt „Von Text zu Vektoren“ überarbeitet; der Erbe-Absatz verlinkt Shannon 1948, Mikolov 2013 und Firth 1957.
 - Timeline: Proto-script- und Embeddings-Knoten ergänzt, Printing mit Bild, Tokens auf 2015–heute verschoben.
 - Selbstkritik: Das Buchdruck-Bild ist die Caxton-Feier von 1877, keine Gutenberg-Presse; die Bildunterschrift sagt das. Die Ohr-/Kehlkopf-Darstellung bleibt eine kurze Zusammenfassung einer umstrittenen Forschungsdebatte.
+
+Nachtrag 2:
+- „Die Gehörknöchelchen stammen von Kieferknochen“ → „entwickelten sich aus Kieferknochen“ (englisch: „evolved from“).
+- Hören: Das Cochlea-Bild in der Timeline und als statische Figur durch „Anatomy of the Human Ear“ ersetzt (Lars Chittka; Axel Brockmann, CC BY 2.5, via Wikimedia Commons); Credit im Manifest ergänzt.
