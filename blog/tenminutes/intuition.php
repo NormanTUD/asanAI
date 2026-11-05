@@ -702,8 +702,8 @@
 								That score cannot be computed in practice, so the theorem describes an ideal
 								predictor rather than a particular model. It also does not settle whether a
 								model grasps the world. The honest position is that the evidence is still
-								catching up to the argument, and that both awe and scepticism respond to the
-								same fact: a loop this simple gets this far.
+								catching up to the argument, and one should be both in awe and have scepticism in
+								response to the fact: a loop this simple gets this far.
 							</p>
 						</div>
 					</section>
