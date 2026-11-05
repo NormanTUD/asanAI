@@ -1658,3 +1658,55 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand November 202
    Lokal: server_room.jpg (2048x1360; ausgeliefert via image.php w=1000)
    Genutzt in: untold_history_i.php § "Buildings: From Monument to Server Hall"
    Status: OK - Lizenz klar (CC BY-SA 3.0)
+
+=== SILICON, WAFERS UND LITHOGRAFIE (untold_history_ii.php, Stand: November 2026) ===
+============================================================================
+Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand November 2026.
+
+1. img_czochralski_1956
+   URL: https://commons.wikimedia.org/wiki/File:Silicon_grown_by_Czochralski_process_1956.jpg
+   Lizenz: Public domain
+   Autor: George E. Meyers
+   Lokal: czochralski_silicon_1956.jpg (840x1085)
+   Genutzt in: untold_history_ii.php § "From Sand to Single Crystal"
+   Status: OK - Public Domain
+
+2. img_silicon_ingot
+   URL: https://commons.wikimedia.org/wiki/File:Monocrystalline_silicon_ingot.jpg
+   Lizenz: CC0
+   Autor: ArticCynda
+   Lokal: monocrystalline_silicon_ingot.jpg (1200x1618; verkleinert aus 3120x4208)
+   Genutzt in: untold_history_ii.php § "From Sand to Single Crystal"
+   Status: OK - Lizenz klar (CC0)
+
+3. img_silicon_wafer_300mm
+   URL: https://commons.wikimedia.org/wiki/File:12-inch_silicon_wafer.jpg
+   Lizenz: CC BY-SA 3.0
+   Autor: Peellden
+   Lokal: silicon_wafer_300mm.jpg (1200x1200; verkleinert aus 2000x2000)
+   Genutzt in: untold_history_ii.php § "From Sand to Single Crystal"
+   Status: OK - Lizenz klar (CC BY-SA 3.0)
+
+4. img_photolithography_process
+   URL: https://commons.wikimedia.org/wiki/File:Photoresist_of_Photolithography.png
+   Lizenz: CC BY-SA 4.0
+   Autor: May lam
+   Lokal: photolithography_process.png (1265x1329)
+   Genutzt in: untold_history_ii.php § "Printing the Pattern"
+   Status: OK - Lizenz klar (CC BY-SA 4.0)
+
+5. img_photolithography_cleanroom
+   URL: https://commons.wikimedia.org/wiki/File:Cleanroom_-_photolithography_lab_(9148355219).jpg
+   Lizenz: CC BY 2.0
+   Autor: UCL Mathematical & Physical Sciences (Foto: O. Usher)
+   Lokal: photolithography_cleanroom.jpg (1400x937; verkleinert aus 3872x2592)
+   Genutzt in: untold_history_ii.php § "The Cleanroom and the Ultrapure Drop"
+   Status: OK - Lizenz klar (CC BY 2.0)
+
+6. img_silicon_wafer_dicing
+   URL: https://commons.wikimedia.org/wiki/File:A_semiconductor_wafer_on_a_dicing_(blue)_tape._Few_chips_(dies)_from_the_wafer_have_already_been_picked_up_(removed)_for_further_manufacturing.png
+   Lizenz: CC BY-SA 4.0
+   Autor: Khpsoi
+   Lokal: silicon_wafer_dicing.png (671x663)
+   Genutzt in: untold_history_ii.php § "From Sand to Single Crystal"
+   Status: OK - Lizenz klar (CC BY-SA 4.0)

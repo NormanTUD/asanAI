@@ -24887,11 +24887,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "usgs_germanium2025",
    "usgs2026mcs"
   ],
   "cited_in": [
+   "untold_history_ii",
    "untold_history_iii"
   ]
  },
@@ -67469,9 +67471,7 @@
   "keys": [
    "siemensprocess"
   ],
-  "cited_in": [
-   "untold_history_ii"
-  ]
+  "cited_in": []
  },
  {
   "name": "Sigmund Freud",
@@ -82893,6 +82893,568 @@
   ],
   "cited_in": [
    "normalizationlab"
+  ]
+ },
+ {
+  "name": "S. R. Taylor",
+  "canon": "S. R. Taylor",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1964,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "taylor1964crust"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Mary Elvira Weeks",
+  "canon": "Mary Elvira Weeks",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1945,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "weeks1945elements"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "C. J. Frosch",
+  "canon": "C. J. Frosch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1957,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "frosch1957surface"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "L. Derick",
+  "canon": "L. Derick",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1957,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "frosch1957surface"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Carl J. Frosch",
+  "canon": "Carl J. Frosch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1957,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "froschderick1957patent"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Lincoln Derick",
+  "canon": "Lincoln Derick",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1957,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "froschderick1957patent"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Jean A. Hoerni",
+  "canon": "Jean A. Hoerni",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1959,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hoerni1959planar"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "M. Tanenbaum",
+  "canon": "M. Tanenbaum",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1955,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "tanenbaum1955silicon"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "L. B. Valdes",
+  "canon": "L. B. Valdes",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1955,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "tanenbaum1955silicon"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "E. Buehler",
+  "canon": "E. Buehler",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1955,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "tanenbaum1955silicon"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "N. B. Hannay",
+  "canon": "N. B. Hannay",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1955,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "tanenbaum1955silicon"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Gordon K. Teal",
+  "canon": "Gordon K. Teal",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1976,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "teal1976singlecrystals"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "W. G. Pfann",
+  "canon": "W. G. Pfann",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1952,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pfann1952zonemelting"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Dazhou Yan",
+  "canon": "Dazhou Yan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "yan2019siemens"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Peter O. Hahn",
+  "canon": "Peter O. Hahn",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2001,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hahn2001wafer300"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Harry J. Levinson",
+  "canon": "Harry J. Levinson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2005,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "levinson2005lithography"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Jules Andrus",
+  "canon": "Jules Andrus",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1957,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "andrus1957photolith"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Jay W. Lathrop",
+  "canon": "Jay W. Lathrop",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2013,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lathrop2013photolith"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Chip History Center",
+  "canon": "Chip History Center",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1973,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "perkinelmer1973micralign",
+   "gca1975stepper"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "K. Jain",
+  "canon": "K. Jain",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1982,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jain1982excimer"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "C. G. Willson",
+  "canon": "C. G. Willson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1982,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jain1982excimer"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "B. J. Lin",
+  "canon": "B. J. Lin",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1982,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jain1982excimer"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Burn-Jeng Lin",
+  "canon": "Burn-Jeng Lin",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2004,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lin2004immersion"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Toshihisa Tomie",
+  "canon": "Toshihisa Tomie",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "tomie2012tin"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Jang Hun Joo",
+  "canon": "Jang Hun Joo",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2014,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "joo2014vacuum"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "S. M. Sze",
+  "canon": "S. M. Sze",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2007,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "sze2007physics"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Kwok K. Ng",
+  "canon": "Kwok K. Ng",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2007,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "sze2007physics"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "George E. Meyers",
+  "canon": "George E. Meyers",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1956,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_czochralski_1956"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "ArticCynda",
+  "canon": "ArticCynda",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_silicon_ingot"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Peellden",
+  "canon": "Peellden",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2011,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_silicon_wafer_300mm"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "May lam",
+  "canon": "May lam",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_photolithography_process"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "UCL Mathematical & Physical Sciences (photo: O. Usher)",
+  "canon": "UCL Mathematical & Physical Sciences",
+  "alias": "photo: O. Usher",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2013,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_photolithography_cleanroom"
+  ],
+  "cited_in": [
+   "untold_history_ii"
+  ]
+ },
+ {
+  "name": "Khpsoi",
+  "canon": "Khpsoi",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_silicon_wafer_dicing"
+  ],
+  "cited_in": [
+   "untold_history_ii"
   ]
  },
  {

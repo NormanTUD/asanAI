@@ -17964,6 +17964,168 @@
    "year": "2016",
    "url": "https://doi.org/10.1109/ASMC.2016.7491077"
   },
+  "taylor1964crust": {
+   "title": "Abundance of chemical elements in the continental crust: a new table",
+   "author": "S. R. Taylor",
+   "year": "1964",
+   "url": "https://doi.org/10.1016/0016-7037(64)90129-2"
+  },
+  "weeks1945elements": {
+   "title": "Discovery of the Elements",
+   "author": "Mary Elvira Weeks",
+   "year": "1945",
+   "url": "https://archive.org/details/in.ernet.dli.2015.19567"
+  },
+  "frosch1957surface": {
+   "title": "Surface Protection and Selective Masking during Diffusion in Silicon",
+   "author": "C. J. Frosch, L. Derick",
+   "year": "1957",
+   "url": "https://doi.org/10.1149/1.2428650"
+  },
+  "froschderick1957patent": {
+   "title": "Oxidation of Semiconductive Surfaces for Controlled Diffusion (U.S. Patent 2,802,760)",
+   "author": "Carl J. Frosch, Lincoln Derick",
+   "year": "1957",
+   "url": "https://patents.google.com/patent/US2802760A/en"
+  },
+  "hoerni1959planar": {
+   "title": "Method of Manufacturing Semiconductor Devices (U.S. Patent 3,025,589)",
+   "author": "Jean A. Hoerni",
+   "year": "1959",
+   "url": "https://patents.google.com/patent/US3025589A/en"
+  },
+  "tanenbaum1955silicon": {
+   "title": "Silicon n-p-n Grown Junction Transistors",
+   "author": "M. Tanenbaum, L. B. Valdes, E. Buehler, N. B. Hannay",
+   "year": "1955",
+   "url": "https://doi.org/10.1063/1.1722071"
+  },
+  "teal1976singlecrystals": {
+   "title": "Single crystals of germanium and silicon: Basic to the transistor and integrated circuit",
+   "author": "Gordon K. Teal",
+   "year": "1976",
+   "url": "https://doi.org/10.1109/T-ED.1976.18464"
+  },
+  "pfann1952zonemelting": {
+   "title": "Principles of Zone-Melting",
+   "author": "W. G. Pfann",
+   "year": "1952",
+   "url": "https://doi.org/10.1007/BF03398137"
+  },
+  "yan2019siemens": {
+   "title": "Siemens Process",
+   "author": "Dazhou Yan",
+   "year": "2019",
+   "url": "https://doi.org/10.1007/978-3-662-56472-1_4"
+  },
+  "hahn2001wafer300": {
+   "title": "The 300 mm silicon wafer: a cost and technology challenge",
+   "author": "Peter O. Hahn",
+   "year": "2001",
+   "url": "https://doi.org/10.1016/S0167-9317(00)00499-8"
+  },
+  "levinson2005lithography": {
+   "title": "Principles of Lithography (2nd ed.)",
+   "author": "Harry J. Levinson",
+   "year": "2005",
+   "url": ""
+  },
+  "andrus1957photolith": {
+   "title": "Fabrication of Semiconductor Devices (U.S. Patent 3,122,817)",
+   "author": "Jules Andrus",
+   "year": "1957",
+   "url": "https://patents.google.com/patent/US3122817A/en"
+  },
+  "lathrop2013photolith": {
+   "title": "The Diamond Ordnance Fuze Laboratory's Photolithographic Approach to Microcircuits",
+   "author": "Jay W. Lathrop",
+   "year": "2013",
+   "url": "https://doi.org/10.1109/MAHC.2011.83"
+  },
+  "perkinelmer1973micralign": {
+   "title": "Perkin-Elmer Series 100 Projection Scanning Aligners",
+   "author": "Chip History Center",
+   "year": "1973",
+   "url": "https://www.chiphistory.org/154-perkin-elmer-micralign-projection-mask-alignment-system"
+  },
+  "gca1975stepper": {
+   "title": "GCA Mann 4800 Direct Step on Wafer System",
+   "author": "Chip History Center",
+   "year": "1975",
+   "url": "https://www.chiphistory.org/99-gca-mann-4800-direct-step-on-wafer-system"
+  },
+  "jain1982excimer": {
+   "title": "Ultrafast deep UV lithography with excimer lasers",
+   "author": "K. Jain, C. G. Willson, B. J. Lin",
+   "year": "1982",
+   "url": "https://doi.org/10.1109/EDL.1982.25476"
+  },
+  "lin2004immersion": {
+   "title": "Immersion lithography and its impact on semiconductor manufacturing",
+   "author": "Burn-Jeng Lin",
+   "year": "2004",
+   "url": "https://doi.org/10.1117/1.1756917"
+  },
+  "tomie2012tin": {
+   "title": "Tin laser-produced plasma as the light source for extreme ultraviolet lithography high-volume manufacturing",
+   "author": "Toshihisa Tomie",
+   "year": "2012",
+   "url": "https://doi.org/10.1117/1.JMM.11.2.021109"
+  },
+  "joo2014vacuum": {
+   "title": "Vacuum Technology for EUV Lithography",
+   "author": "Jang Hun Joo",
+   "year": "2014",
+   "url": "https://doi.org/10.5757/vacmag.1.3.14"
+  },
+  "sze2007physics": {
+   "title": "Physics of Semiconductor Devices (3rd ed.)",
+   "author": "S. M. Sze, Kwok K. Ng",
+   "year": "2007",
+   "url": ""
+  },
+  "usgs_germanium2025": {
+   "title": "Germanium: Mineral Commodity Summaries 2025",
+   "author": "U.S. Geological Survey",
+   "year": "2025",
+   "url": "https://pubs.usgs.gov/periodicals/mcs2025/mcs2025-germanium.pdf"
+  },
+  "img_czochralski_1956": {
+   "title": "Silicon grown by the Czochralski process at Raytheon, 1956",
+   "author": "George E. Meyers",
+   "year": "1956",
+   "url": "https://commons.wikimedia.org/wiki/File:Silicon_grown_by_Czochralski_process_1956.jpg"
+  },
+  "img_silicon_ingot": {
+   "title": "Monocrystalline silicon ingot",
+   "author": "ArticCynda",
+   "year": "2017",
+   "url": "https://commons.wikimedia.org/wiki/File:Monocrystalline_silicon_ingot.jpg"
+  },
+  "img_silicon_wafer_300mm": {
+   "title": "12-inch silicon wafer",
+   "author": "Peellden",
+   "year": "2011",
+   "url": "https://commons.wikimedia.org/wiki/File:12-inch_silicon_wafer.jpg"
+  },
+  "img_photolithography_process": {
+   "title": "Photoresist of Photolithography",
+   "author": "May lam",
+   "year": "2017",
+   "url": "https://commons.wikimedia.org/wiki/File:Photoresist_of_Photolithography.png"
+  },
+  "img_photolithography_cleanroom": {
+   "title": "Cleanroom: photolithography lab",
+   "author": "UCL Mathematical & Physical Sciences (photo: O. Usher)",
+   "year": "2013",
+   "url": "https://commons.wikimedia.org/wiki/File:Cleanroom_-_photolithography_lab_(9148355219).jpg"
+  },
+  "img_silicon_wafer_dicing": {
+   "title": "A semiconductor wafer on a dicing (blue) tape",
+   "author": "Khpsoi",
+   "year": "2021",
+   "url": "https://commons.wikimedia.org/wiki/File:A_semiconductor_wafer_on_a_dicing_(blue)_tape._Few_chips_(dies)_from_the_wafer_have_already_been_picked_up_(removed)_for_further_manufacturing.png"
+  },
   "amazons3_2006": {
    "title": "Amazon Web Services Launches Amazon S3",
    "author": "Amazon Web Services",
@@ -21217,7 +21379,7 @@
   "czochralski1918": [
    "untold_history_ii"
   ],
-  "siemensprocess": [
+  "pfann1952zonemelting": [
    "untold_history_ii"
   ],
   "semiconductor": [
@@ -21742,6 +21904,9 @@
    "ai_for_science",
    "untold_history_ii"
   ],
+  "yan2019siemens": [
+   "untold_history_ii"
+  ],
   "icecorewiki": [
    "untold_history_ii"
   ],
@@ -21876,13 +22041,88 @@
   "cady1922": [
    "untold_history_ii"
   ],
-  "tsmc2025annualreport": [
+  "taylor1964crust": [
+   "untold_history_ii"
+  ],
+  "weeks1945elements": [
+   "untold_history_ii"
+  ],
+  "frosch1957surface": [
+   "untold_history_ii"
+  ],
+  "froschderick1957patent": [
+   "untold_history_ii"
+  ],
+  "sze2007physics": [
+   "untold_history_ii"
+  ],
+  "usgs_germanium2025": [
+   "untold_history_ii"
+  ],
+  "tanenbaum1955silicon": [
+   "untold_history_ii"
+  ],
+  "teal1976singlecrystals": [
+   "untold_history_ii"
+  ],
+  "hoerni1959planar": [
+   "untold_history_ii"
+  ],
+  "img_czochralski_1956": [
+   "untold_history_ii"
+  ],
+  "hahn2001wafer300": [
+   "untold_history_ii"
+  ],
+  "img_silicon_ingot": [
+   "untold_history_ii"
+  ],
+  "img_silicon_wafer_300mm": [
+   "untold_history_ii"
+  ],
+  "img_silicon_wafer_dicing": [
+   "untold_history_ii"
+  ],
+  "img_photolithography_process": [
+   "untold_history_ii"
+  ],
+  "levinson2005lithography": [
+   "untold_history_ii"
+  ],
+  "andrus1957photolith": [
+   "untold_history_ii"
+  ],
+  "lathrop2013photolith": [
+   "untold_history_ii"
+  ],
+  "perkinelmer1973micralign": [
+   "untold_history_ii"
+  ],
+  "gca1975stepper": [
+   "untold_history_ii"
+  ],
+  "jain1982excimer": [
+   "untold_history_ii"
+  ],
+  "lin2004immersion": [
    "untold_history_ii"
   ],
   "asml2025annualreport": [
    "untold_history_ii"
   ],
+  "joo2014vacuum": [
+   "untold_history_ii"
+  ],
+  "tomie2012tin": [
+   "untold_history_ii"
+  ],
   "kinoshita1989euv": [
+   "untold_history_ii"
+  ],
+  "tsmc2025annualreport": [
+   "untold_history_ii"
+  ],
+  "img_photolithography_cleanroom": [
    "untold_history_ii"
   ],
   "donovan1985cleanroom": [
@@ -68215,6 +68455,280 @@
     "ruth2016ultrapure"
    ]
   },
+  "S. R. Taylor": {
+   "count": 1,
+   "minyear": 1964,
+   "maxyear": 1964,
+   "keys": [
+    "taylor1964crust"
+   ]
+  },
+  "Mary Elvira Weeks": {
+   "count": 1,
+   "minyear": 1945,
+   "maxyear": 1945,
+   "keys": [
+    "weeks1945elements"
+   ]
+  },
+  "C. J. Frosch": {
+   "count": 1,
+   "minyear": 1957,
+   "maxyear": 1957,
+   "keys": [
+    "frosch1957surface"
+   ]
+  },
+  "L. Derick": {
+   "count": 1,
+   "minyear": 1957,
+   "maxyear": 1957,
+   "keys": [
+    "frosch1957surface"
+   ]
+  },
+  "Carl J. Frosch": {
+   "count": 1,
+   "minyear": 1957,
+   "maxyear": 1957,
+   "keys": [
+    "froschderick1957patent"
+   ]
+  },
+  "Lincoln Derick": {
+   "count": 1,
+   "minyear": 1957,
+   "maxyear": 1957,
+   "keys": [
+    "froschderick1957patent"
+   ]
+  },
+  "Jean A. Hoerni": {
+   "count": 1,
+   "minyear": 1959,
+   "maxyear": 1959,
+   "keys": [
+    "hoerni1959planar"
+   ]
+  },
+  "M. Tanenbaum": {
+   "count": 1,
+   "minyear": 1955,
+   "maxyear": 1955,
+   "keys": [
+    "tanenbaum1955silicon"
+   ]
+  },
+  "L. B. Valdes": {
+   "count": 1,
+   "minyear": 1955,
+   "maxyear": 1955,
+   "keys": [
+    "tanenbaum1955silicon"
+   ]
+  },
+  "E. Buehler": {
+   "count": 1,
+   "minyear": 1955,
+   "maxyear": 1955,
+   "keys": [
+    "tanenbaum1955silicon"
+   ]
+  },
+  "N. B. Hannay": {
+   "count": 1,
+   "minyear": 1955,
+   "maxyear": 1955,
+   "keys": [
+    "tanenbaum1955silicon"
+   ]
+  },
+  "Gordon K. Teal": {
+   "count": 1,
+   "minyear": 1976,
+   "maxyear": 1976,
+   "keys": [
+    "teal1976singlecrystals"
+   ]
+  },
+  "W. G. Pfann": {
+   "count": 1,
+   "minyear": 1952,
+   "maxyear": 1952,
+   "keys": [
+    "pfann1952zonemelting"
+   ]
+  },
+  "Dazhou Yan": {
+   "count": 1,
+   "minyear": 2019,
+   "maxyear": 2019,
+   "keys": [
+    "yan2019siemens"
+   ]
+  },
+  "Peter O. Hahn": {
+   "count": 1,
+   "minyear": 2001,
+   "maxyear": 2001,
+   "keys": [
+    "hahn2001wafer300"
+   ]
+  },
+  "Harry J. Levinson": {
+   "count": 1,
+   "minyear": 2005,
+   "maxyear": 2005,
+   "keys": [
+    "levinson2005lithography"
+   ]
+  },
+  "Jules Andrus": {
+   "count": 1,
+   "minyear": 1957,
+   "maxyear": 1957,
+   "keys": [
+    "andrus1957photolith"
+   ]
+  },
+  "Jay W. Lathrop": {
+   "count": 1,
+   "minyear": 2013,
+   "maxyear": 2013,
+   "keys": [
+    "lathrop2013photolith"
+   ]
+  },
+  "Chip History Center": {
+   "count": 2,
+   "minyear": 1973,
+   "maxyear": 1975,
+   "keys": [
+    "perkinelmer1973micralign",
+    "gca1975stepper"
+   ]
+  },
+  "K. Jain": {
+   "count": 1,
+   "minyear": 1982,
+   "maxyear": 1982,
+   "keys": [
+    "jain1982excimer"
+   ]
+  },
+  "C. G. Willson": {
+   "count": 1,
+   "minyear": 1982,
+   "maxyear": 1982,
+   "keys": [
+    "jain1982excimer"
+   ]
+  },
+  "B. J. Lin": {
+   "count": 1,
+   "minyear": 1982,
+   "maxyear": 1982,
+   "keys": [
+    "jain1982excimer"
+   ]
+  },
+  "Burn-Jeng Lin": {
+   "count": 1,
+   "minyear": 2004,
+   "maxyear": 2004,
+   "keys": [
+    "lin2004immersion"
+   ]
+  },
+  "Toshihisa Tomie": {
+   "count": 1,
+   "minyear": 2012,
+   "maxyear": 2012,
+   "keys": [
+    "tomie2012tin"
+   ]
+  },
+  "Jang Hun Joo": {
+   "count": 1,
+   "minyear": 2014,
+   "maxyear": 2014,
+   "keys": [
+    "joo2014vacuum"
+   ]
+  },
+  "S. M. Sze": {
+   "count": 1,
+   "minyear": 2007,
+   "maxyear": 2007,
+   "keys": [
+    "sze2007physics"
+   ]
+  },
+  "Kwok K. Ng": {
+   "count": 1,
+   "minyear": 2007,
+   "maxyear": 2007,
+   "keys": [
+    "sze2007physics"
+   ]
+  },
+  "U.S. Geological Survey": {
+   "count": 2,
+   "minyear": 2025,
+   "maxyear": 2026,
+   "keys": [
+    "usgs_germanium2025",
+    "usgs2026mcs"
+   ]
+  },
+  "George E. Meyers": {
+   "count": 1,
+   "minyear": 1956,
+   "maxyear": 1956,
+   "keys": [
+    "img_czochralski_1956"
+   ]
+  },
+  "ArticCynda": {
+   "count": 1,
+   "minyear": 2017,
+   "maxyear": 2017,
+   "keys": [
+    "img_silicon_ingot"
+   ]
+  },
+  "Peellden": {
+   "count": 1,
+   "minyear": 2011,
+   "maxyear": 2011,
+   "keys": [
+    "img_silicon_wafer_300mm"
+   ]
+  },
+  "May lam": {
+   "count": 1,
+   "minyear": 2017,
+   "maxyear": 2017,
+   "keys": [
+    "img_photolithography_process"
+   ]
+  },
+  "UCL Mathematical & Physical Sciences (photo: O. Usher)": {
+   "count": 1,
+   "minyear": 2013,
+   "maxyear": 2013,
+   "keys": [
+    "img_photolithography_cleanroom"
+   ]
+  },
+  "Khpsoi": {
+   "count": 1,
+   "minyear": 2021,
+   "maxyear": 2021,
+   "keys": [
+    "img_silicon_wafer_dicing"
+   ]
+  },
   "Amazon Web Services": {
    "count": 1,
    "minyear": 2006,
@@ -68779,14 +69293,6 @@
    "maxyear": 2018,
    "keys": [
     "usgs2015wateruse"
-   ]
-  },
-  "U.S. Geological Survey": {
-   "count": 1,
-   "minyear": 2026,
-   "maxyear": 2026,
-   "keys": [
-    "usgs2026mcs"
    ]
   },
   "Parliament of the United Kingdom": {
