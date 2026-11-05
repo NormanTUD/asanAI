@@ -2937,10 +2937,14 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 
 // Updated Tokenizer to allow different containers
 
+const TM_EOS_TOKEN = '<|endoftext|>';
+
 function tokenizeText(text, type) {
+	const raw = String(text == null ? '' : text);
+	const cleaned = raw.split(TM_EOS_TOKEN).join(' ');
 	if (type === 'bpe') {
-		const words = text.match(/\S+|\s+/g) || [];
-		return words.flatMap(word => {
+		const words = cleaned.match(/\S+|\s+/g) || [];
+		const tokens = words.flatMap(word => {
 			// Don't sub-split whitespace tokens
 			if (/^\s+$/.test(word)) {
 				return word;  // keep each space run as one token
@@ -2950,9 +2954,13 @@ function tokenizeText(text, type) {
 			}
 			return word;
 		});
+		tokens.push(TM_EOS_TOKEN);
+		return tokens;
 	}
 	// Regex tokenizer: now also captures whitespace runs
-	return text.match(/[\w]+|[^\w\s]|\s+/g) || [];
+	const tokens = cleaned.match(/[\w]+|[^\w\s]|\s+/g) || [];
+	tokens.push(TM_EOS_TOKEN);
+	return tokens;
 }
 
 function renderTokenChips(container, tokens) {
@@ -2989,7 +2997,12 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
 	const tokens = tokenizeText(text, type);
 
 	const container = document.getElementById(containerId);
+	const signature = tokens.join('\u0001');
+	if (container && container.dataset.tmTokenSig === signature && container.children.length) {
+		return tokens;
+	}
 	renderTokenChips(container, tokens);
+	if (container) container.dataset.tmTokenSig = signature;
 
 	return tokens;
 }

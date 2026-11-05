@@ -1255,7 +1255,7 @@ function _execute_positional_waves_render(d_model, tokens) {
 	}, true);
 }
 
-function run_transformer_demo(activeId = null) {
+function run_transformer_demo(activeId = null, inputOnly = false) {
 	const trainingInput = document.getElementById('transformer-training-data');
 	const masterInput = document.getElementById('transformer-master-token-input');
 
@@ -1272,23 +1272,114 @@ function run_transformer_demo(activeId = null) {
 		: trainingInput.value;
 	const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe");
 
+	// Input-only pass: tokenizer, embeddings, positional encoding. The
+	// attention/FFN/output demos are built lazily when their sections are near.
+	if (inputOnly) {
+		const config = getTransformerConfig();
+		const { d_model, n_heads, n_layers, temperature } = config;
+		const vocabulary = [...new Set(trainingTokens)];
+		const knownTokens = getKnownTokensForVisualization(vizTokens, masterTokens, vocabulary);
+		if (!validateModelDimensions(d_model, n_heads)) return;
+		handleWeightReinit(d_model, n_heads, n_layers);
+		const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
+		const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
+		window.__tmInputState = { h0, tokensWithPositional, knownTokens, trainingTokens, masterTokens, vocabulary, config };
+		show_nr_of_params();
+		return;
+	}
+
+	window.__tmBlockRendered = true;
+	if (!window.__tmSkipFinalProjection) window.__tmOutputRendered = true;
+
 	// 3. Run the network
 	run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
 
 	show_nr_of_params();
+}
 
-	// TDA live: keep a "current state" snapshot even when not training
-	if (window.TDALive && !window.isTraining) {
-		const { d_model, n_layers, n_heads } = getTransformerConfig();
-		const trainTokens = transformer_tokenize_render(trainingInput.value, null);
-		window.TDALive.captureEpoch({
-			epoch: -1,
-			tokens: trainTokens,
-			d_model, n_layers, n_heads,
-			weights: window.currentWeights,
-			prevWeights: null,
-			loss: null
-		});
+function render_transformer_block() {
+	if (window.__tmBlockRendered) return;
+	window.__tmBlockRendered = true;
+	run_transformer_demo(null, false);
+}
+
+function render_transformer_output() {
+	if (window.__tmOutputRendered) return;
+	window.__tmOutputRendered = true;
+	run_transformer_demo(null, false);
+}
+
+function observeTransformerSections() {
+	if (!window.IntersectionObserver) return;
+	var targets = [
+		{ id: 'block', fn: render_transformer_block },
+		{ id: 'output', fn: render_transformer_output }
+	];
+	targets.forEach(function (target) {
+		var el = document.getElementById(target.id);
+		if (!el) return;
+		var io = new IntersectionObserver(function (entries) {
+			if (entries.some(function (entry) { return entry.isIntersecting; })) {
+				io.disconnect();
+				target.fn();
+			}
+		}, { rootMargin: '600px 0px' });
+		io.observe(el);
+	});
+}
+
+function _tmVisible(id) {
+	var el = document.getElementById(id);
+	return !!(el && isElementInViewport(el));
+}
+
+function markTrainingDirty() {
+	window.__tmTrainingDirty = { loss: true, input: true, block: true, output: true };
+}
+
+function render_transformer_output_only() {
+	var trainingInput = document.getElementById('transformer-training-data');
+	var masterInput = document.getElementById('transformer-master-token-input');
+	if (!trainingInput || !masterInput || !window.currentWeights) return;
+	var config = getTransformerConfig();
+	var trainingTokens = transformer_tokenize_render(trainingInput.value, null);
+	var masterTokens = transformer_tokenize_render(masterInput.value, null);
+	var vocabulary = [...new Set(trainingTokens)];
+	renderFinalProbabilities(masterTokens, vocabulary, window.currentWeights, config.d_model, config.n_heads, config.n_layers, config.temperature);
+	window.__tmOutputRendered = true;
+}
+
+function refreshTrainingDemos() {
+	var dirty = window.__tmTrainingDirty;
+	if (!dirty) return;
+	var inputVisible = _tmVisible('inputlab');
+	var blockVisible = _tmVisible('block');
+	var outputVisible = _tmVisible('output');
+
+	if (dirty.loss && _tmVisible('training-loss-plot')) {
+		renderLossGraph();
+		dirty.loss = false;
+	}
+	if (dirty.input && inputVisible) {
+		run_transformer_demo(null, true);
+		calculate_vector_math();
+		tled_syncTableFromSpace();
+		dirty.input = false;
+	}
+	if (dirty.block && blockVisible) {
+		window.__tmSkipInputVisuals = true;
+		window.__tmSkipFinalProjection = !outputVisible;
+		try {
+			run_transformer_demo(null, false);
+		} finally {
+			window.__tmSkipInputVisuals = false;
+			window.__tmSkipFinalProjection = false;
+		}
+		dirty.block = false;
+		dirty.output = !outputVisible;
+	} else if (dirty.output && outputVisible) {
+		render_transformer_output_only();
+		dirty.output = false;
 	}
 }
 
@@ -1611,12 +1702,10 @@ function updateEpochProgress(epochIdx, totalEpochs, loss, startTime, status) {
 }
 
 async function syncTrainingState(weightVars) {
-	renderLossGraph();
 	window.currentWeights = await convert_tensors_to_weights(weightVars);
-	run_transformer_demo();
+	markTrainingDirty();
+	refreshTrainingDemos();
 	await new Promise(function (resolve) { setTimeout(resolve, 0); });
-	calculate_vector_math();
-	tled_syncTableFromSpace();
 }
 
 function convert_weights_to_tensors(weights) {
@@ -1901,11 +1990,12 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 
 function renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature) {
 	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
-	render_embedding_plot(d_model);
-	tled_initEditor();
-
-	calculate_positional_injection(knownTokens, d_model);
-	render_positional_waves(d_model, knownTokens);
+	if (!window.__tmSkipInputVisuals) {
+		render_embedding_plot(d_model);
+		tled_initEditor();
+		calculate_positional_injection(knownTokens, d_model);
+		render_positional_waves(d_model, knownTokens);
+	}
 
 	const h0 = render_positional_shift_plot(knownTokens, d_model);
 
@@ -2178,7 +2268,9 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
 
 	// 5. Final probabilities — ALWAYS based on master-token-input
-	renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
+	if (!window.__tmSkipFinalProjection) {
+		renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
+	}
 }
 
 function getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary) {
@@ -2880,10 +2972,14 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 
 // Updated Tokenizer to allow different containers
 
+const TM_EOS_TOKEN = '<|endoftext|>';
+
 function tokenizeText(text, type) {
+	const raw = String(text == null ? '' : text);
+	const cleaned = raw.split(TM_EOS_TOKEN).join(' ');
 	if (type === 'bpe') {
-		const words = text.match(/\S+|\s+/g) || [];
-		return words.flatMap(word => {
+		const words = cleaned.match(/\S+|\s+/g) || [];
+		const tokens = words.flatMap(word => {
 			// Don't sub-split whitespace tokens
 			if (/^\s+$/.test(word)) {
 				return word;  // keep each space run as one token
@@ -2893,9 +2989,13 @@ function tokenizeText(text, type) {
 			}
 			return word;
 		});
+		tokens.push(TM_EOS_TOKEN);
+		return tokens;
 	}
 	// Regex tokenizer: now also captures whitespace runs
-	return text.match(/[\w]+|[^\w\s]|\s+/g) || [];
+	const tokens = cleaned.match(/[\w]+|[^\w\s]|\s+/g) || [];
+	tokens.push(TM_EOS_TOKEN);
+	return tokens;
 }
 
 function renderTokenChips(container, tokens) {
@@ -2932,7 +3032,12 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
 	const tokens = tokenizeText(text, type);
 
 	const container = document.getElementById(containerId);
+	const signature = tokens.join('\u0001');
+	if (container && container.dataset.tmTokenSig === signature && container.children.length) {
+		return tokens;
+	}
 	renderTokenChips(container, tokens);
+	if (container) container.dataset.tmTokenSig = signature;
 
 	return tokens;
 }
@@ -7218,10 +7323,22 @@ async function loadTransformerModule () {
 
 	observer_vector_math();
 
+	window.__tmBlockRendered = false;
+	window.__tmOutputRendered = false;
 	drawTrainingPlaceholder();
 	updateTrainButtonState();
 	updateArchitectureValidityUI();
-	run_transformer_demo()
+	run_transformer_demo(null, true);
+	observeTransformerSections();
+	window.addEventListener("scroll", function () {
+		if (!window.__tmTrainingDirty) return;
+		if (window.__tmTrainingRefreshQueued) return;
+		window.__tmTrainingRefreshQueued = true;
+		requestAnimationFrame(function () {
+			window.__tmTrainingRefreshQueued = false;
+			refreshTrainingDemos();
+		});
+	}, { passive: true });
 
 	const inputElement = document.getElementById('transformer-master-token-input');
 	inputElement.addEventListener('input', (event) => {

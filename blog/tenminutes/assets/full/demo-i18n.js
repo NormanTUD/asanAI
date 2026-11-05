@@ -215,7 +215,7 @@
 		"tled-editor-container", "transformer-viz-embeddings", "param-breakdown-table",
 		"nr_params", "show_training_sentences", "training-status", "current_training_sentence",
 		"training-loss-plot", "transformer-plotly-space", "transformer-pe-wave-plot",
-		"transformer-pe-shift-plot"
+		"transformer-pe-shift-plot", "transformer-temperature-block"
 	];
 	function walkHosts() {
 		HOSTS.forEach(function (id) {

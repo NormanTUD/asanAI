@@ -249,3 +249,14 @@
 	margin-left: auto;
 	margin-right: auto;
 }
+
+/* Keep glossary tooltips inside the viewport and inside their own box. */
+.glossary-tooltip {
+	overflow-wrap: anywhere;
+	white-space: normal;
+	max-width: min(320px, calc(100vw - 24px));
+	pointer-events: none;
+}
+
+/* The Train button is the first control in the training card. */
+#transformer-train-card .transformer-train-actions { margin-left: 0; }

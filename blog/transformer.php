@@ -130,6 +130,7 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 
 <div class="transformer_corpus">
     <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
+    <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 8px;">The token <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
     <textarea
         id="transformer-training-data"
         style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);"

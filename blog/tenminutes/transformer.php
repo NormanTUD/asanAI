@@ -414,7 +414,7 @@
 								<span>“Depth builds structure bottom-up.” Lower layers assemble local units; higher layers integrate larger relations.</span>
 							</div>
 						</div>
-<div>
+<div id="transformer-temperature-block">
 <label style="font-weight: bold;">Temperature ($T$): <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span></label>
 <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
 <b>Effect:</b> Controls the “sharpness” of the probability distribution.<br/>
@@ -441,30 +441,41 @@
 					<section class="section-block" id="realmodel">
 						<div class="section-kicker"><span class="sk-num">07</span> The real model</div>
 						<h2 class="section-title">Train a tiny transformer.</h2>
-						<div class="prose">
-							<p>
-								Everything above is a real computation, not a cartoon. The demo below is a
-								word-level decoder: token and position embeddings, one or two
-								multi-head attention blocks, a feed-forward network, a residual stream, layer
-								normalisation, an unembedding, and a cross-entropy loss. TensorFlow.js
-								computes the gradients, so the Train button really updates the weights. The
-								model is tiny (a few thousand parameters), but the operations and the
-								formulas are the same as in a large transformer.
-							</p>
-							<p>
-								The forward pass, written out for one block, is below. Each line is an
-								operation the code performs; the underbraces name the part that a large model
-								scales up.
-							</p>
-							<p>
-								The training card below is the original interactive training demo. Change the
-								architecture or the corpus, start training, and watch the loss, the attention
-								heads, and the per-layer panels update. The long prose and the code block stay in
-								the original lesson; here you get the compact route and the live demos.
-							</p>
-						</div>
-						<div class="formula" data-tex="\underbrace{\begin{aligned} x_i &amp;= \underbrace{E[t_i]}_{\text{token}} + \underbrace{P_i}_{\text{position}} \\ Q &amp;= XW_Q,\quad K = XW_K,\quad V = XW_V \\ S &amp;= \underbrace{\frac{QK^\top}{\sqrt{d_k}}}_{\text{similarity}} \\ A &amp;= \operatorname{softmax}(\operatorname{mask}(S)) \\ H &amp;= \underbrace{AV}_{\text{context}} \\ X &amp;\leftarrow X + \underbrace{\operatorname{Concat}(H_1,\dots,H_h)W_O}_{\text{multi-head attention}} \\ X &amp;\leftarrow X + \underbrace{\operatorname{GELU}(XW_1+b_1)W_2+b_2}_{\text{feed-forward}} \\ z &amp;= \operatorname{LN}(X)W_U \end{aligned}}_{\text{one tiny decoder block, repeated}}">x_i = E[t_i] + P_i; Q=XW_Q, K=XW_K, V=XW_V; S=QKᵀ/√d_k; A=softmax(mask(S)); H=AV; X←X+Concat(H_i)W_O; X←X+GELU(XW_1+b_1)W_2+b_2; z=LN(X)W_U</div>
-						<div class="formula" data-tex="\underbrace{\underbrace{\mathcal L = -\frac{1}{T}\sum_{t=1}^{T}\log\operatorname{softmax}(z_t)_{y_t}}_{\text{cross-entropy loss}} \qquad \underbrace{\theta \leftarrow \theta - \eta\frac{\hat m}{\sqrt{\hat v}+\epsilon}}_{\text{Adam update}}}_{\text{what the Train button does}}">L = -1/T Σ log softmax(z_t)[y_t]; θ ← θ − η m̂/(√v̂+ε)</div>
+<div id="transformer-train-card">
+<div class="transformer-train-controls">
+<div class="transformer-train-actions">
+<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
+</div>
+<label class="transformer-train-field">
+<span class="transformer-train-label">Epochs</span>
+<input id="train-epochs" min="1" step="1" type="number" value="200"/>
+</label>
+<label class="transformer-train-field">
+<span class="transformer-train-label">Learning Rate</span>
+<input id="train-lr" min="0" step="0.01" type="number" value="0.01"/>
+</label>
+<div class="transformer-train-field">
+<span class="transformer-train-label">Optimizer</span>
+<div aria-label="Optimizer" class="transformer-opt-group" id="train-optimizer" role="radiogroup">
+<label class="transformer-opt">
+<input checked="" name="train-optimizer-choice" type="radio" value="adam"/>
+<span class="glossary-term" data-tooltip-id="tt-train-adam">Adam<span class="glossary-tooltip" data-tooltip-id="tt-train-adam">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
+</label>
+<label class="transformer-opt">
+<input name="train-optimizer-choice" type="radio" value="sgd"/>
+<span class="glossary-term" data-tooltip-id="tt-train-sgd">SGD<span class="glossary-tooltip" data-tooltip-id="tt-train-sgd">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
+</label>
+<label class="transformer-opt">
+<input name="train-optimizer-choice" type="radio" value="rmsprop"/>
+<span class="glossary-term" data-tooltip-id="tt-train-rmsprop">RMSProp<span class="glossary-tooltip" data-tooltip-id="tt-train-rmsprop">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
+</label>
+</div>
+</div>
+
+</div>
+<div class="transformer-train-status" id="training-status"></div>
+<div id="training-loss-plot"></div>
+</div>
 <div id="transformer_config">
 <div style="margin-bottom: 15px;">
 <label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
@@ -486,18 +497,18 @@
 </div>
 <div style="margin-bottom: 15px;">
 <label style="font-weight: bold;">Network Depth ($N$ layers): </label>
-<span id="depth-val" style="font-weight: bold; color: #3b82f6;">4</span>
+<span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
 <p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
-<input id="transformer-depth" max="12" min="1" oninput="document.getElementById('depth-val').innerText = this.value; debounced_run_transformer_demo();" style="width: 100%;" type="range" value="4"/>
+<input id="transformer-depth" max="12" min="1" oninput="document.getElementById('depth-val').innerText = this.value; debounced_run_transformer_demo();" style="width: 100%;" type="range" value="2"/>
 </div>
 <div style="margin-bottom: 15px;">
 <label style="font-weight: bold;">Context Size: </label>
-<span id="context-val" style="font-weight: bold; color: #3b82f6;">128</span>
+<span id="context-val" style="font-weight: bold; color: #3b82f6;">32</span>
 <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
 <b>Effect:</b> Sets the maximum number of tokens the model can “see” at once during training and inference.<br/>
 <b>Reason:</b> A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\text{Context}^2$, so a full forward pass costs quadratically in context length. A <i>KV-Cache</i> avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.
 	    </p>
-<input id="transformer-context-size" max="256" min="2" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();" step="1" style="width: 100%;" type="range" value="128"/>
+<input id="transformer-context-size" max="256" min="2" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();" step="1" style="width: 100%;" type="range" value="32"/>
 </div>
 <div style="display: none">
 <label style="font-weight: bold;">Tokenizer: </label>
@@ -523,6 +534,7 @@
 </div>
 <div class="transformer_corpus">
 <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
+    <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 8px;">The token <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
 <textarea id="transformer-training-data" oninput="debounced_run_transformer_demo('transformer-training-data')" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);">the king rules the land and the queen rules the sea</textarea>
 </div>
 <style>
@@ -635,40 +647,21 @@
 	}
 }
 </style>
-<div id="transformer-train-card">
-<div class="transformer-train-controls">
-<label class="transformer-train-field">
-<span class="transformer-train-label">Epochs</span>
-<input id="train-epochs" min="1" step="1" type="number" value="200"/>
-</label>
-<label class="transformer-train-field">
-<span class="transformer-train-label">Learning Rate</span>
-<input id="train-lr" min="0" step="0.01" type="number" value="0.01"/>
-</label>
-<div class="transformer-train-field">
-<span class="transformer-train-label">Optimizer</span>
-<div aria-label="Optimizer" class="transformer-opt-group" id="train-optimizer" role="radiogroup">
-<label class="transformer-opt">
-<input checked="" name="train-optimizer-choice" type="radio" value="adam"/>
-<span class="glossary-term" data-tooltip-id="tt-train-adam">Adam<span class="glossary-tooltip" data-tooltip-id="tt-train-adam">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
-</label>
-<label class="transformer-opt">
-<input name="train-optimizer-choice" type="radio" value="sgd"/>
-<span class="glossary-term" data-tooltip-id="tt-train-sgd">SGD<span class="glossary-tooltip" data-tooltip-id="tt-train-sgd">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
-</label>
-<label class="transformer-opt">
-<input name="train-optimizer-choice" type="radio" value="rmsprop"/>
-<span class="glossary-term" data-tooltip-id="tt-train-rmsprop">RMSProp<span class="glossary-tooltip" data-tooltip-id="tt-train-rmsprop">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
-</label>
-</div>
-</div>
-<div class="transformer-train-actions">
-<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
-</div>
-</div>
-<div class="transformer-train-status" id="training-status"></div>
-<div id="training-loss-plot"></div>
-</div>
+
+						<div class="prose">
+							<p>
+								The demo above is a word-level decoder: token and position
+								embeddings, one or more multi-head attention blocks, a feed-forward
+								network, a residual stream, layer normalisation, an unembedding, and a
+								cross-entropy loss. TensorFlow.js computes the gradients, so the Train
+								button really updates the weights. The model is tiny, but the operations
+								and the formulas are the same as in a large transformer.
+							</p>
+							<p>
+								Change the architecture, the corpus, or the optimizer above, then train.
+								The loss, the attention heads, and the per-layer panels update live.
+							</p>
+						</div>
 					</section>
 
 					<section class="section-block" id="takeaway">
