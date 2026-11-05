@@ -34,7 +34,7 @@
 						<h2 class="section-title">A first intuition: predict the next word.</h2>
 						<div class="prose">
 							<p>
-								A <strong>large language model</strong> (<strong>LLM</strong>) is a program
+								A <strong>large language model</strong> (<strong>L</strong>arge <strong>L</strong>anguage <strong>M</strong>odel, <strong>LLM</strong>) is a program
 								trained on a very large body of text: Wikipedia, books, web pages, code, and
 								conversation. It learns one skill, <strong>predicting the next token</strong>,
 								and that skill carries chat, translation, and much of what looks like
@@ -109,7 +109,7 @@
 							<p>
 								This page builds a technical intuition, not the complete picture. A real
 								model adds a tokenizer, layers of attention, a feed-forward network, position
-								information, training data, and post-training. The loop comes first because
+								information, training data, and post-training. The loop comes first and last because
 								every other part exists to make this one prediction possible. Each part
 								supplies something the loop needs; none of them is an optional upgrade.
 							</p>
