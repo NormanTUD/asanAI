@@ -39,6 +39,10 @@
 							there so you can see the equations and the numbers move together. Read the
 							prose for the route, and use the live panels when you want the detail.
 						</p>
+						<p>
+							This is the hardest chapter in the calendar. The following days become
+							lighter again.
+						</p>
 					</div>
 
 					<section class="section-block" id="realmodel">
@@ -109,7 +113,7 @@
 <span id="context-val" style="font-weight: bold; color: #3b82f6;">32</span>
 <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
 <b>Effect:</b> Sets the maximum number of tokens the model can “see” at once during training and inference.<br/>
-<b>Reason:</b> A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\text{Context}^2$, so a full forward pass costs quadratically in context length. A <i>KV-Cache</i> avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.
+<b>Reason:</b> A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\text{Context}^2$, so a full forward pass costs quadratically in context length. A KV-Cache avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.
 	    </p>
 <input id="transformer-context-size" max="256" min="2" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();" step="1" style="width: 100%;" type="range" value="32"/>
 </div>
@@ -138,7 +142,7 @@
 <div class="transformer_corpus">
 <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
     <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 8px;">The token <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
-<textarea id="transformer-training-data" oninput="debounced_run_transformer_demo('transformer-training-data')" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);">the king rules the land and the queen rules the sea</textarea>
+<textarea id="transformer-training-data" oninput="debounced_run_transformer_demo('transformer-training-data')" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "der könig herrscht über das land und die königin herrscht über das meer" : "the king rules the land and the queen rules the sea"; ?></textarea>
 </div>
 <style>
 #transformer-train-card {
@@ -696,6 +700,7 @@
 	<script>
 	(function () {
 		"use strict";
+		var DE = TM.lang() === "de";
 
 		/* ── pipeline ────────────────────────────────────────── */
 		var stages = [
@@ -736,6 +741,46 @@
 				title: "Unembed + sample",
 				text: "The final hidden state is multiplied by an unembedding matrix, giving a logit for every vocabulary token. Softmax turns logits into probabilities; a decoding rule samples or takes the argmax; the token is appended and the loop repeats until EOS.",
 				shape: "[T, d_{\\text{model}}] \\to [T, |V|] \\to \\text{one distribution}"
+			}
+		];
+		var stagesDe = [
+			{
+				name: "Tokenisieren",
+				title: "Tokenisieren",
+				text: "Text wird in Teilwort-Tokens zerlegt und auf ganzzahlige IDs abgebildet. Das Vokabular steht vor dem Training fest. In GPT-2 Byte-Level-BPE wird „the cat sat“ zu [262, 3797, 3332].",
+				shape: "\\text{Text} \\to [T]"
+			},
+			{
+				name: "Embedding",
+				title: "Embedding",
+				text: "Jede Token-ID indexiert eine Zeile der Embedding-Matrix W_E und erzeugt einen dichten Vektor der Dimension d_model. Ähnliche Bedeutungen landen in diesem Raum nahe beieinander, aber das ist nur die erste Schicht.",
+				shape: "[T] \\to [T, d_{\\text{model}}]"
+			},
+			{
+				name: "Position",
+				title: "Position hinzufügen",
+				text: "Jede Embedding bekommt ein Positionssignal (sinusoidal im Original; moderne Modelle nutzen oft RoPE, das Queries und Keys stattdessen dreht). Ohne es wären „dog bites man“ und „man bites dog“ eine ungeordnete Menge derselben Vektoren.",
+				shape: "[T, d_{\\text{model}}] + [T, d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
+			},
+			{
+				name: "Attention",
+				repeat: true,
+				title: "Attention + Residual",
+				text: "Jedes Token projiziert in Query, Key und Value. Skalierte Skalarprodukte entscheiden, wer auf wen achtet; Softmax normalisiert die Gewichte; Values werden gemittelt. Eine kausale Maske im Decoder versteckt die Zukunft. Das Ergebnis wird zurück in den Residual Stream addiert. Das ist ein Block in einem Stapel von N Blöcken; echte Modelle wiederholen ihn Dutzende bis Hunderte Male, oft 32-100+ Schichten.",
+				shape: "[T, d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
+			},
+			{
+				name: "Feed-Forward",
+				repeat: true,
+				title: "Feed-Forward + Residual",
+				text: "Ein MLP pro Token erweitert den Vektor (meist 4×), wendet eine Nichtlinearität wie GELU oder SwiGLU an und zieht ihn wieder zusammen. Attention routet Information; das FFN rechnet damit. Das Ergebnis wird erneut in den Stream addiert. Der Attention+FFN-Block wiederholt sich N-mal; die Demo zeigt einen Durchlauf.",
+				shape: "[T, d_{\\text{model}}] \\to [T, 4d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
+			},
+			{
+				name: "Unembedding",
+				title: "Unembedding + Sampling",
+				text: "Der letzte Hidden State wird mit einer Unembedding-Matrix multipliziert und ergibt einen Logit für jedes Vokabular-Token. Softmax macht daraus Wahrscheinlichkeiten; eine Decoding-Regel zieht oder nimmt das Argmax; das Token wird angehängt, und die Schleife läuft bis EOS.",
+				shape: "[T, d_{\\text{model}}] \\to [T, |V|] \\to \\text{eine Verteilung}"
 			}
 		];
 		var flow = document.getElementById("pipe-flow");
@@ -783,42 +828,44 @@
 			if (!prediction) return;
 			if (currentStage === stages.length - 1) {
 				if (genIndex < continuation.length) {
-					prediction.innerHTML = 'Next token: <b>' + continuation[genIndex].w + '</b> · predict to append and loop';
+					prediction.innerHTML = DE ? ('Nächstes Token: <b>' + continuation[genIndex].w + '</b> · vorhersagen, anhängen und Schleife weiter') : ('Next token: <b>' + continuation[genIndex].w + '</b> · predict to append and loop');
 				} else {
-					prediction.innerHTML = 'Sequence complete: <b>' + sentence() + '</b>';
+					prediction.innerHTML = DE ? ('Sequenz vollständig: <b>' + sentence() + '</b>') : ('Sequence complete: <b>' + sentence() + '</b>');
 				}
 			} else {
-				prediction.innerHTML = 'Next token: <b>...</b> · run to Unembed to predict';
+				prediction.innerHTML = DE ? 'Nächstes Token: <b>...</b> · bis Unembedding laufen, um vorherzusagen' : 'Next token: <b>...</b> · run to Unembed to predict';
 			}
 		}
 		function selectStage(i) {
 			currentStage = TM.clamp(i, 0, stages.length - 1);
 			var stage = stages[currentStage];
-			if (detailTitle) detailTitle.textContent = stage.title;
-			if (detailText) detailText.textContent = stage.text;
+			var st = (DE && stagesDe[currentStage]) ? stagesDe[currentStage] : stage;
+			var shapePrefix = DE ? "Form: " : "Shape: ";
+			if (detailTitle) detailTitle.textContent = st.title;
+			if (detailText) detailText.textContent = st.text;
 			if (detailShape) {
 				if (window.temml) {
-					try { detailShape.innerHTML = "Shape: " + temml.renderToString(stage.shape, { displayMode: false }); }
-					catch (e) { detailShape.textContent = "Shape: " + stage.shape; }
+					try { detailShape.innerHTML = shapePrefix + temml.renderToString(st.shape, { displayMode: false }); }
+					catch (e) { detailShape.textContent = shapePrefix + st.shape; }
 				} else {
-					detailShape.textContent = "Shape: " + stage.shape;
+					detailShape.textContent = shapePrefix + st.shape;
 				}
 			}
-			if (counter) counter.textContent = "Stage " + (currentStage + 1) + " of " + stages.length;
+			if (counter) counter.textContent = DE ? ("Stufe " + (currentStage + 1) + " von " + stages.length) : ("Stage " + (currentStage + 1) + " of " + stages.length);
 			flow.querySelectorAll(".flow-step").forEach(function (b) {
 				b.classList.toggle("is-active", parseInt(b.getAttribute("data-stage"), 10) === currentStage);
 			});
 			renderTokens(currentStage);
 			updatePrediction();
 			if (nextBtn) {
-				if (currentStage < stages.length - 1) nextBtn.textContent = "Next step in pipeline →";
-				else if (genIndex < continuation.length) nextBtn.textContent = 'Predict "' + continuation[genIndex].w + '" & append →';
-				else nextBtn.textContent = "Start over ↺";
+				if (currentStage < stages.length - 1) nextBtn.textContent = DE ? "Nächster Schritt in der Pipeline →" : "Next step in pipeline →";
+				else if (genIndex < continuation.length) nextBtn.textContent = DE ? ('„' + continuation[genIndex].w + '“ vorhersagen & anhängen →') : ('Predict "' + continuation[genIndex].w + '" & append →');
+				else nextBtn.textContent = DE ? "Neu starten ↺" : "Start over ↺";
 			}
 		}
 		function stopRun() {
 			if (runTimer) { clearInterval(runTimer); runTimer = null; }
-			if (runBtn) runBtn.textContent = "Run the loop ▶";
+			if (runBtn) runBtn.textContent = DE ? "Schleife starten ▶" : "Run the loop ▶";
 		}
 		function appendPrediction() {
 			if (genIndex >= continuation.length) { resetLoop(); return; }
@@ -833,7 +880,7 @@
 			}
 			currentStage = 0;
 			selectStage(0);
-			if (prediction) prediction.innerHTML = 'Appended: <b>' + next.w + '</b> · run the loop again';
+			if (prediction) prediction.innerHTML = DE ? ('Angehängt: <b>' + next.w + '</b> · Schleife erneut starten') : ('Appended: <b>' + next.w + '</b> · run the loop again');
 		}
 		function resetLoop() {
 			stopRun();
@@ -848,7 +895,7 @@
 				b.type = "button";
 				b.className = "flow-step" + (i === 0 ? " is-active" : "") + (stage.repeat ? " is-loop" : "");
 				b.setAttribute("data-stage", i);
-				b.innerHTML = '<span class="fs-num">0' + (i + 1) + "</span><b>" + stage.name + "</b>" + (stage.repeat ? '<span class="fs-repeat">× N</span>' : "");
+				b.innerHTML = '<span class="fs-num">0' + (i + 1) + "</span><b>" + (DE ? stagesDe[i].name : stage.name) + "</b>" + (stage.repeat ? '<span class="fs-repeat">× N</span>' : "");
 				b.addEventListener("click", function () { stopRun(); selectStage(i); });
 				flow.appendChild(b);
 			});
@@ -865,7 +912,7 @@
 		if (runBtn) {
 			runBtn.addEventListener("click", function () {
 				if (runTimer) { stopRun(); return; }
-				runBtn.textContent = "Pause ⏸";
+				runBtn.textContent = DE ? "Pause ⏸" : "Pause ⏸";
 				runTimer = setInterval(function () {
 					if (currentStage < stages.length - 1) {
 						selectStage(currentStage + 1);
@@ -887,7 +934,7 @@
 					var cell = document.createElement("span");
 					cell.className = "cm-cell" + (mj > mi ? " is-masked" : "");
 					cell.textContent = mj > mi ? "×" : "•";
-					cell.setAttribute("aria-label", "query " + (mi + 1) + ", key " + (mj + 1) + (mj > mi ? ": masked" : ": allowed"));
+					cell.setAttribute("aria-label", DE ? ("Query " + (mi + 1) + ", Key " + (mj + 1) + (mj > mi ? ": maskiert" : ": erlaubt")) : ("query " + (mi + 1) + ", key " + (mj + 1) + (mj > mi ? ": masked" : ": allowed")));
 					cmGrid.appendChild(cell);
 				}
 			}
@@ -895,13 +942,14 @@
 		if (maskToggle && maskWrap) {
 			maskToggle.addEventListener("click", function () {
 				maskWrap.hidden = !maskWrap.hidden;
-				maskToggle.textContent = maskWrap.hidden ? "Show causal mask" : "Hide causal mask";
+				maskToggle.textContent = maskWrap.hidden ? (DE ? "Kausale Maske zeigen" : "Show causal mask") : (DE ? "Kausale Maske verbergen" : "Hide causal mask");
 			});
 		}
 
 		/* ── layer lens ──────────────────────────────────────── */
 		var canvas = document.getElementById("layer-canvas");
 		if (!canvas) return;
+		var DE = TM.lang() === "de";
 		var context = "river";
 		var layer = 0;
 		var slider = document.getElementById("layer-slider");
@@ -910,8 +958,8 @@
 		var layerPull = document.getElementById("layer-pull");
 		var layerCaption = document.getElementById("layer-caption");
 		var clusters = {
-			river: { x: 0.25, y: 0.66, label: "river / water", color: "#5c9baf" },
-			finance: { x: 0.76, y: 0.34, label: "finance / money", color: "#9f9700" }
+			river: { x: 0.25, y: 0.66, label: DE ? "Fluss / Park" : "river / water", color: "#5c9baf" },
+			finance: { x: 0.76, y: 0.34, label: DE ? "Geld / Zinsen" : "finance / money", color: "#9f9700" }
 		};
 		var start = { x: 0.5, y: 0.5 };
 		var maxPull = 0.8;
@@ -972,16 +1020,23 @@
 			ctx.font = "700 12px Barlow, system-ui, sans-serif";
 			ctx.fillStyle = c.ink;
 			ctx.textAlign = "center";
-			ctx.fillText("bank", cur.x * w, cur.y * h - 12);
+			ctx.fillText(DE ? "Bank" : "bank", cur.x * w, cur.y * h - 12);
 			if (layerNum) layerNum.textContent = layer + " / 11";
-			if (layerContext) layerContext.textContent = context === "river" ? "river bank" : context === "loan" ? "bank loan" : "no context";
+			if (layerContext) layerContext.textContent = DE ? (context === "river" ? "Bank am Fluss" : context === "loan" ? "Bank mit Zinsen" : "kein Kontext") : (context === "river" ? "river bank" : context === "loan" ? "bank loan" : "no context");
 			var pull = context === "none" ? 0 : maxPull * (1 - Math.cos((layer / 11) * Math.PI)) / 2;
-			if (layerPull) layerPull.textContent = context === "none" ? "neutral" : Math.round(pull * 100) + "% " + (context === "river" ? "water" : "finance");
+			if (layerPull) layerPull.textContent = context === "none" ? (DE ? "neutral" : "neutral") : Math.round(pull * 100) + "% " + (DE ? (context === "river" ? "Wasser" : "Finanzen") : (context === "river" ? "water" : "finance"));
 			if (layerCaption) {
-				if (layer === 0) layerCaption.textContent = "At the input, “bank” sits between the clusters. Context has not pulled it yet.";
-				else if (context === "none") layerCaption.textContent = "Without context, the word has no target to move toward. The sentence is what gives it one.";
-				else if (layer > 7) layerCaption.textContent = "Deep in the stack, the pull is strong, but “bank” still keeps its lexical sense; it approaches the " + (context === "river" ? "river" : "finance") + " cluster without becoming that prototype. The small wobble is the rest of the sentence contributing.";
-				else layerCaption.textContent = "Each layer reads the residual stream, computes an update, and adds it back. The path wobbles a little: every token contributes, not only the word that sets the main direction.";
+				if (DE) {
+					if (layer === 0) layerCaption.textContent = "Am Eingang sitzt „Bank“ zwischen den Clustern. Der Kontext hat sie noch nicht gezogen.";
+					else if (context === "none") layerCaption.textContent = "Ohne Kontext hat das Wort kein Ziel, zu dem es wandern könnte. Der Satz gibt ihm eines.";
+					else if (layer > 7) layerCaption.textContent = "Tief im Stapel ist der Zug stark, aber „Bank“ behält ihre lexikalische Bedeutung; sie nähert sich dem " + (context === "river" ? "Fluss-/Park-" : "Geld-") + "Cluster, ohne zum Prototyp zu werden. Das kleine Wackeln kommt vom Rest des Satzes.";
+					else layerCaption.textContent = "Jede Schicht liest den Residual Stream, berechnet ein Update und addiert es zurück. Der Pfad wackelt ein wenig: Jedes Token trägt bei, nicht nur das Wort, das die Hauptrichtung setzt.";
+				} else {
+					if (layer === 0) layerCaption.textContent = "At the input, “bank” sits between the clusters. Context has not pulled it yet.";
+					else if (context === "none") layerCaption.textContent = "Without context, the word has no target to move toward. The sentence is what gives it one.";
+					else if (layer > 7) layerCaption.textContent = "Deep in the stack, the pull is strong, but “bank” still keeps its lexical sense; it approaches the " + (context === "river" ? "river" : "finance") + " cluster without becoming that prototype. The small wobble is the rest of the sentence contributing.";
+					else layerCaption.textContent = "Each layer reads the residual stream, computes an update, and adds it back. The path wobbles a little: every token contributes, not only the word that sets the main direction.";
+				}
 			}
 		});
 		document.querySelectorAll("[data-ctx]").forEach(function (btn) {
@@ -1013,7 +1068,6 @@
 		'assets/full/vendor/echarts.min.js',
 		'assets/full/vendor/echarts-gl.min.js',
 		'assets/full/attention_engine.js',
-		'assets/full/llm_river.js',
 	];
 	$tmDemoSizes = [];
 	$tmDemoTotal = 0;
@@ -1038,7 +1092,6 @@
 			"shim.js": ["Demo shim", "Demo-Shim"],
 			"transformer.js": ["Transformer engine", "Transformer-Engine"],
 			"attention_engine.js": ["Attention engine", "Attention-Engine"],
-			"llm_river.js": ["Token river", "Token-Fluss"],
 			"demo-i18n.js": ["German demo texts", "Deutsche Demo-Texte"],
 			"demo-render.js": ["Formula renderer", "Formel-Renderer"]
 		};

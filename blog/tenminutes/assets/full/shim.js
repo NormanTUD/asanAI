@@ -27,6 +27,39 @@
 			.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 			.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 	}
+	var TM_TEX_MAP = {
+		"attention weight": "Attention-Gewicht",
+		"Value vector": "Value-Vektor",
+		"of token": "von Token",
+		"Attention Weights": "Attention-Gewichte",
+		"rows": "Zeilen",
+		"cols": "Spalten",
+		"query": "Query",
+		"key": "Key",
+		"head": "Head",
+		"Output Projection Matrix": "Ausgabeprojektionsmatrix",
+		"Projected attention output": "Projizierte Attention-Ausgabe",
+		"Concatenated head contexts": "Konkatenierte Head-Kontexte",
+		"one tiny decoder block, repeated": "ein winziger Decoder-Block, wiederholt",
+		"cross-entropy loss": "Cross-Entropy-Loss",
+		"Adam update": "Adam-Update",
+		"what the Train button does": "was der Trainieren-Button macht"
+	};
+	function tmTranslateTex(tex) {
+		if (!(window.TM && TM.lang && TM.lang() === "de")) return tex;
+		return String(tex).replace(/\\text\{([^{}]*)\}/g, function (match, label) {
+			return TM_TEX_MAP[label] ? "\\text{" + TM_TEX_MAP[label] + "}" : match;
+		});
+	}
+	function tmTranslateTexElements(scope) {
+		if (!scope || !scope.querySelectorAll) return;
+		scope.querySelectorAll("[data-tex]").forEach(function (el) {
+			if (el.getAttribute("data-tex-rendered") === "1") return;
+			var tex = el.getAttribute("data-tex");
+			if (tex) el.setAttribute("data-tex", tmTranslateTex(tex));
+		});
+	}
+
 	function renderRawMath(scope) {
 		if (!scope || !scope.querySelectorAll) return;
 		function skipEl(el) {
@@ -58,6 +91,7 @@
 	function render_temml(root) {
 		var scope = root && root.querySelectorAll ? root : document;
 		if (scope !== document) renderRawMath(scope);
+		tmTranslateTexElements(scope);
 		if (window.TM && TM.typesetMath) {
 			TM.typesetMath(scope);
 			return;
@@ -93,6 +127,10 @@
 			border: "hsla(" + hue + ", 60%, 70%, 0.25)"
 		};
 	}
+	window.themeRiverRegistry = window.themeRiverRegistry || new Map();
+	window.tlab_render_themeriver = function () {};
+	window._execute_themeriver_render = function () {};
+
 	window.Prov = window.Prov || {
 		recordPre: function () {}, recordLayer: function () {}, recordFfn: function () {},
 		recordFinal: function () {}, apply: function () {}, init: function () {}

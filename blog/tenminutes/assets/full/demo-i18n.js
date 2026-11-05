@@ -44,6 +44,7 @@
 		"Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.": "Rechne mit den Tokens des aktuellen Vokabulars, um zu sehen, wie Konzepte im dynamischen Vektorraum zueinander liegen.",
 		"Enter an equation and press Enter...": "Gib eine Gleichung ein und drücke Enter …",
 		"Temperature ($T$):": "Temperatur ($T$):",
+		"A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\\text{Context}^2$, so a full forward pass costs quadratically in context length. A KV-Cache avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.": "Ein größeres Kontextfenster erlaubt weiter reichende Abhängigkeiten, aber die Attention-Score-Matrix hat die Größe $\\text{Context}^2$; ein voller Vorwärtspass kostet also quadratisch in der Kontextlänge. Ein KV-Cache vermeidet das Neuberechnen vergangener Keys und Values während der Generierung: Er senkt die Arbeit pro Schritt und tauscht sie gegen linearen Speicher, macht Attention aber nicht subquadratisch.",
 		"Controls the “sharpness” of the probability distribution.": "Steuert die „Schärfe“ der Wahrscheinlichkeitsverteilung.",
 		"Low values ($T < 1$) force the model to be deterministic; high values ($T > 1$) increase diversity by making unlikely words more probable.": "Kleine Werte ($T < 1$) machen das Modell deterministischer; große Werte ($T > 1$) erhöhen die Vielfalt, indem unwahrscheinliche Wörter wahrscheinlicher werden.",
 		"Input (Inference):": "Eingabe (Inferenz):",
@@ -130,6 +131,35 @@
 		"Words": "Wörter",
 		"Epochs": "Epochen",
 		"Training loss over epochs": "Trainingsfehler über Epochen",
+		"What Happens Next": "Was als Nächstes passiert",
+		"This head's context matrix is": "Die Kontextmatrix dieses Heads ist",
+		"All heads run in parallel, each capturing different relationships. Their outputs are then:": "Alle Heads laufen parallel und erfassen unterschiedliche Beziehungen. Ihre Ausgaben werden dann:",
+		"Concatenated": "Konkateniert",
+		"along the": "entlang der",
+		"dimension:": "Dimension:",
+		"Output projection": "Ausgabeprojektion",
+		"mixes head outputs:": "mischt die Head-Ausgaben:",
+		"Added back": "Addiert",
+		"to the input via the residual connection:": "zum Eingang über die Residual-Verbindung:",
+		"The concatenation, projection, and residual steps are shown in the sections below this head view.": "Die Konkatenation, Projektion und Residual-Schritte stehen in den Abschnitten unter dieser Head-Ansicht.",
+		"Context Matrix for Head": "Kontextmatrix für Head",
+		"Each token's": "Jedes Tokens",
+		"context vector": "Kontextvektor",
+		"is a weighted average of all Value vectors it can see.": "ist ein gewichteter Durchschnitt aller Value-Vektoren, die es sehen kann.",
+		"The attention weights (from Softmax) determine how much each Value contributes. Token $i$ can only attend to tokens $0 \\ldots i$ (causal mask).": "Die Attention-Gewichte (aus Softmax) bestimmen, wie viel jedes Value beiträgt. Token $i$ darf nur auf Tokens $0 \\ldots i$ schauen (kausale Maske).",
+		"Stacking all context vectors gives the output of this head — a matrix of shape": "Alle Kontextvektoren übereinander ergeben die Ausgabe dieses Heads — eine Matrix der Form",
+		"In the": "In der",
+		"Attention Weights": "Attention-Gewichte",
+		"matrix: rows are": "Matrix: Zeilen sind",
+		"query": "Query",
+		"tokens (who is looking), columns are": "Tokens (wer schaut), Spalten sind",
+		"key": "Key",
+		"tokens (who is being looked at). Each row sums to 1 (softmax). The column headers show which token each column corresponds to.": "Tokens (wer angeschaut wird). Jede Zeile summiert zu 1 (Softmax). Die Spaltenköpfe zeigen, welches Token zu jeder Spalte gehört.",
+		"Residual connection (Pre-LN: no normalization on sublayer output):": "Residual-Verbindung (Pre-LN: keine Normalisierung auf der Ausgabe der Unterschicht):",
+		"Pre-Layer Normalization (applied before the sublayer)": "Pre-Layer-Normalisierung (vor der Unterschicht)",
+		"Query (attending)": "Query (schaut)",
+		"Key (attended to)": "Key (wird angeschaut)",
+
 		"The training plot appears here": "Der Trainingsplot erscheint hier",
 		"Press Train Model to start": "Drücke „Modell trainieren“, um zu starten",
 		"Temperature scaling": "Temperatur-Skalierung",
@@ -150,6 +180,11 @@
 		[/^Window (\d+):$/, "Fenster $1:"],
 		[/^Epoch (\d+)$/, "Epoche $1"],
 		[/^Layer (\d+)$/, "Schicht $1"],
+		[/^one of (\d+) heads$/, "einer von $1 Heads"],
+		[/^Context Matrix for Head (\d+)$/, "Kontextmatrix für Head $1"],
+		[/^What Happens with the Attention Weights — Head (\d+), Layer (\d+)$/, "Was mit den Attention-Gewichten passiert — Head $1, Schicht $2"],
+		[/^This produces one \$d_k = (\d+)\$-dimensional context vector per token per head\.$/, "Das erzeugt einen Kontextvektor der Dimension $d_k = $1 pro Token und Head."],
+
 		[/^Dimension (\d+)$/, "Dimension $1"],
 		[/^Loss: ([\d.]+)$/, "Fehler: $1"]
 	];
@@ -223,8 +258,23 @@
 			if (el) walk(el);
 		});
 	}
+	function watchDynamic(id) {
+		var el = document.getElementById(id);
+		if (!el || !window.MutationObserver) return;
+		new MutationObserver(function (mutations) {
+			mutations.forEach(function (mutation) {
+				mutation.addedNodes.forEach(function (node) {
+					if (node.nodeType === 1) walk(node);
+					else if (node.nodeType === 3) translateTextNode(node);
+				});
+			});
+		}).observe(el, { childList: true, subtree: true, characterData: true });
+	}
 	function start() {
 		walkHosts();
+		watchDynamic("ffn-equations-container");
+		watchDynamic("transformer-output-projection");
+		watchDynamic("transformer-migration-plots-container");
 		[350, 1200, 2500, 5000, 9000].forEach(function (ms) { setTimeout(walkHosts, ms); });
 		setInterval(function () {
 			["training-status", "current_training_sentence", "show_training_sentences",

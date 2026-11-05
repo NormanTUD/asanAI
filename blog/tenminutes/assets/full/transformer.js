@@ -5586,6 +5586,7 @@ function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbe
 			data: [{ value: [x1, y1], _hover: `${dispToken} +PE` }],
 			symbol: 'triangle', symbolSize: 11,
 			itemStyle: { color: tokenColor, borderWidth: 1, borderColor: '#ffffff' },
+			label: { show: true, formatter: dispToken, position: 'top', color: tokenColor, fontSize: 9 },
 			tooltip: { formatter: p => `<b>${dispToken}</b> + positional encoding` },
 			z: 12
 		});
@@ -5597,7 +5598,7 @@ function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbe
 
 	chart.setOption({
 		title: {
-			text: 'Semantic Vector → + Positional Shift', left: 'center',
+			text: (window.TM && TM.lang && TM.lang() === 'de') ? 'Semantischer Vektor → + Positionsverschiebung' : 'Semantic Vector → + Positional Shift', left: 'center',
 			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
 		},
 		backgroundColor: 'transparent',
@@ -5664,6 +5665,7 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 				{
 					value: to3, symbolSize: 13,
 					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#ffffff' },
+					label: { show: true, formatter: dispToken, color: tokenColor, fontSize: 9 },
 					_hover: `${dispToken} + PE (pos ${pos})`
 				}
 			],
@@ -5769,11 +5771,13 @@ function renderShiftECharts(container, echartsData, d_model) {
 	myChart.setOption({
 		backgroundColor: 'transparent',
 		title: {
-			text: "Semantic Vector → + Positional Shift",
+			text: (window.TM && TM.lang && TM.lang() === 'de') ? "Semantischer Vektor → + Positionsverschiebung" : "Semantic Vector → + Positional Shift",
 			left: 'center',
 			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
 		},
 		tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+		legend: { data: echartsData.map(d => d.name), bottom: 0, left: 'center', textStyle: { fontSize: 10, color: themeColor('#1e293b') } },
+		grid: { top: 50, bottom: 55, left: 20, right: 20 },
 		parallelAxis: axes,
 		series: [{
 			type: 'parallel', data: echartsData,
