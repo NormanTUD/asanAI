@@ -127,3 +127,10 @@ attentionlab (Nachtrag):
 - Neuer Abschnitt „Optimal transport“: SDPA als einseitiges entropisches Optimal-Transport-Problem, Kosten C_j = −⟨q,k_j⟩, EOT-Ziel, Softmax als eindeutige Lösung; duales Log-Sum-Exp-Potenzial, Fisher-Information und vorteilsbasierter Policy-Gradient als Backward-Pass.
 - Neue interaktive Demo „Temperatur ist Entropie“ mit τ-Regler, Entropie, erwarteter Ähnlichkeit und EOT-Zielfunktion.
 - „Ein Head, ein Budget“ nutzt jetzt deutsche Tokens, Head-Namen, Konzentrations- und Notiztexte.
+
+Nachtrag computer_vision / transformer:
+- computer_vision: Bildtrio und die zugehörige Prosa entfernt. Die Filter-Demo zeigt das echte Stoppschild und die echte Kernel-Ausgabe; die 3×3-Kernel-Matrix ist jetzt editierbar (Number-Inputs), und unter dem Bild steht für den aktuellen Pixel die vollständige LaTeX-Rechnung (Pixel · Kernel, Summe, Ausgabe). Klick auf Eingabe oder Feature-Map wählt den Pixel; der Scan aktualisiert die Formel.
+
+Nachtrag transformer:
+- Der kompakte Text und die Navigation bleiben wie zuvor; der winzige Char-Level-Demo-Block wurde durch die vollständigen interaktiven Demos aus ../transformer.php ersetzt. Die Demos laufen in einem eingebetteten Rahmen; Prosa, Codeblock, Loader, Topbar, TOC, Sidebar, Quiz und Footer der Langfassung werden darin ausgeblendet. Die Abschnittsüberschriften der Langfassung bleiben als Beschriftung der Demo-Gruppen stehen.
+- Der Rahmen wächst mit der Demo-Höhe, sodass die Compact-Seite normal scrollt; der Ladehinweis verschwindet, sobald die Langfassung ihren Inhalt freigibt.

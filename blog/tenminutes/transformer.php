@@ -8,8 +8,9 @@
 	<title>The Whole Machine | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
+	<link rel="stylesheet" href="assets/full/demos.css">
 </head>
-<body data-lesson="transformer" data-page="lesson">
+<body data-lesson="transformer" data-page="lesson" data-no-full-article>
 	<div class="readbar" aria-hidden="true"><span></span></div>
 
 	<main id="main">
@@ -214,8 +215,35 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="inputlab">
+						<div class="section-kicker"><span class="sk-num">04</span> Preparing the input</div>
+						<h2 class="section-title">From text to a stream of vectors.</h2>
+						<div class="prose">
+							<p>
+								Tokens become integers, integers become vectors, and position tags each
+								vector with its place in the sequence. Change the corpus or the tokenizer
+								and the token stream, embedding map, and positional waves update.
+							</p>
+						</div>
+<div class="viz-container" id="transformer-viz-bpe"></div>
+<div style="background: var(--mn-bg-subtle, #f8fafc); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
+<div id="transformer-plotly-space" style="width: 100%; height: 500px; background: var(--mn-surface, white); border-radius: 8px;"></div>
+<div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
+<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px; max-height: 420px; overflow-y: auto;"></div>
+<p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
+<input id="transformer-vector-math-input" oninput="debounced_vector_math()" onkeydown="if(event.key==='Enter'){event.preventDefault(); immediate_vector_math();}" placeholder="e.g., king - man + woman" style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" type="text"/>
+<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: var(--mn-surface, white); border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
+<em style="color: #94a3b8;">Enter an equation and press Enter...</em>
+</div>
+</div>
+<div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+<div id="transformer-pe-shift-plot" style="width: 100%; height: 600px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+<div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
+						<div class="md" id="ifscalfactornotone" style="display:none">In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">0.1</span> because of the low dimensionality of our space.</div>
+					</section>
+
 					<section class="section-block" id="block">
-						<div class="section-kicker"><span class="sk-num">04</span> Inside the block</div>
+						<div class="section-kicker"><span class="sk-num">05</span> Inside the block</div>
 						<h2 class="section-title">Two sublayers, one residual stream.</h2>
 						<div class="prose">
 							<p>
@@ -292,6 +320,8 @@
 								<p>The first matrix expands the vector, the nonlinearity lets the model combine features, and the second matrix contracts it back. This is per-token computation: no information moves between positions here. Much of the model’s stored association memory lives in these weights.</p>
 							</div>
 						</div>
+<div id="ffn-equations-container"></div>
+<div id="transformer-migration-plots-container"></div>
 						<div class="fieldnotes">
 							<h4>Why the block works at all</h4>
 							<p>The block is a division of labour. Attention supplies content-based routing; the FFN supplies per-token computation; the residual stream supplies a shared, additive workspace; normalization keeps the scale stable. The causal mask turns the same machinery into an autoregressive predictor. These pieces work because they compose, and because the whole stack is trained end-to-end on next-token prediction.</p>
@@ -309,7 +339,7 @@
 					</section>
 
 					<section class="section-block" id="output">
-						<div class="section-kicker"><span class="sk-num">05</span> From vectors to words</div>
+						<div class="section-kicker"><span class="sk-num">06</span> From vectors to words</div>
 						<h2 class="section-title">Logits, softmax, and the stop token.</h2>
 						<div class="prose">
 							<p>
@@ -365,6 +395,19 @@
 								<span>“Depth builds structure bottom-up.” Lower layers assemble local units; higher layers integrate larger relations.</span>
 							</div>
 						</div>
+<div>
+<label style="font-weight: bold;">Temperature ($T$): <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span></label>
+<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+<b>Effect:</b> Controls the “sharpness” of the probability distribution.<br/>
+<b>Reason:</b> Low values ($T &lt; 1$) force the model to be deterministic; high values ($T &gt; 1$) increase diversity by making unlikely words more probable.
+	</p>
+<input id="transformer-temperature" max="2.0" min="0.1" oninput="document.getElementById('temp-val').innerText = this.value; rerender_temperature_only();" step="0.1" style="width: 100%; vertical-align: middle;" type="range" value="1.0"/>
+</div>
+<div id="transformer-output-projection" style="background: var(--mn-surface, white); padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
+<div>
+<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
+<input class="bw-cell" id="transformer-master-token-input" style="width: 90%; font-size: 1.1rem;" type="text" value="the"/>
+</div>
 						<div class="prose">
 							<p>
 								One last surprise from recent research: in a simplified setting, a linear
@@ -377,12 +420,12 @@
 					</section>
 
 					<section class="section-block" id="realmodel">
-						<div class="section-kicker"><span class="sk-num">06</span> The real model</div>
+						<div class="section-kicker"><span class="sk-num">07</span> The real model</div>
 						<h2 class="section-title">Train a tiny transformer.</h2>
 						<div class="prose">
 							<p>
 								Everything above is a real computation, not a cartoon. The demo below is a
-								character-level decoder: token and position embeddings, one or two
+								word-level decoder: token and position embeddings, one or two
 								multi-head attention blocks, a feed-forward network, a residual stream, layer
 								normalisation, an unembedding, and a cross-entropy loss. TensorFlow.js
 								computes the gradients, so the Train button really updates the weights. The
@@ -394,53 +437,379 @@
 								operation the code performs; the underbraces name the part that a large model
 								scales up.
 							</p>
+							<p>
+								The training card below is the original interactive training demo. Change the
+								architecture or the corpus, start training, and watch the loss, the attention
+								heads, and the per-layer panels update. The long prose and the code block stay in
+								the original lesson; here you get the compact route and the live demos.
+							</p>
 						</div>
 						<div class="formula" data-tex="\underbrace{\begin{aligned} x_i &amp;= \underbrace{E[t_i]}_{\text{token}} + \underbrace{P_i}_{\text{position}} \\ Q &amp;= XW_Q,\quad K = XW_K,\quad V = XW_V \\ S &amp;= \underbrace{\frac{QK^\top}{\sqrt{d_k}}}_{\text{similarity}} \\ A &amp;= \operatorname{softmax}(\operatorname{mask}(S)) \\ H &amp;= \underbrace{AV}_{\text{context}} \\ X &amp;\leftarrow X + \underbrace{\operatorname{Concat}(H_1,\dots,H_h)W_O}_{\text{multi-head attention}} \\ X &amp;\leftarrow X + \underbrace{\operatorname{GELU}(XW_1+b_1)W_2+b_2}_{\text{feed-forward}} \\ z &amp;= \operatorname{LN}(X)W_U \end{aligned}}_{\text{one tiny decoder block, repeated}}">x_i = E[t_i] + P_i; Q=XW_Q, K=XW_K, V=XW_V; S=QKᵀ/√d_k; A=softmax(mask(S)); H=AV; X←X+Concat(H_i)W_O; X←X+GELU(XW_1+b_1)W_2+b_2; z=LN(X)W_U</div>
 						<div class="formula" data-tex="\underbrace{\underbrace{\mathcal L = -\frac{1}{T}\sum_{t=1}^{T}\log\operatorname{softmax}(z_t)_{y_t}}_{\text{cross-entropy loss}} \qquad \underbrace{\theta \leftarrow \theta - \eta\frac{\hat m}{\sqrt{\hat v}+\epsilon}}_{\text{Adam update}}}_{\text{what the Train button does}}">L = -1/T Σ log softmax(z_t)[y_t]; θ ← θ − η m̂/(√v̂+ε)</div>
-						<div class="demo demo--paper" id="tiny-transformer-demo">
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">A real, trainable transformer <span>· demo 04</span></p>
-									<p class="demo-sub">A character-level decoder trained in your browser with TensorFlow.js. Change the corpus, train it, and inspect the real attention heads.</p>
-								</div>
-								<span class="demo-badge">live training</span>
-							</div>
-							<div class="demo-body">
-								<div class="tiny-config">
-									<label>d_model <select data-tiny-d><option value="8" selected>8</option><option value="12">12</option><option value="16">16</option></select></label>
-									<label>Heads <select data-tiny-heads><option value="1">1</option><option value="2" selected>2</option><option value="4">4</option></select></label>
-									<label>Layers <select data-tiny-layers><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select></label>
-									<label>Context <select data-tiny-context><option value="8">8</option><option value="12">12</option><option value="16" selected>16</option></select></label>
-								</div>
-								<label class="tiny-corpus-label">Corpus
-									<textarea class="demo-input tiny-corpus" data-tiny-corpus>the king rules the land and the queen rules the sea. the king rules the land and the queen rules the sea.</textarea>
-								</label>
-								<div class="demo-controls">
-									<button class="btn-demo btn-demo--green" type="button" data-tiny-train>Train ▶</button>
-									<button class="btn-demo" type="button" data-tiny-reset>Reset</button>
-									<button class="btn-demo" type="button" data-tiny-sample>Sample</button>
-									<label>Epochs <input type="number" data-tiny-epochs value="300" min="1" step="10"></label>
-									<label>Learning rate <input type="number" data-tiny-lr value="0.01" min="0.001" step="0.001"></label>
-								</div>
-								<div class="demo-readout">
-									<div><b>Parameters</b><span data-tiny-params>...</span></div>
-									<div><b>Loss</b><span data-tiny-loss>...</span></div>
-									<div><b>Epoch</b><span data-tiny-epoch>0</span></div>
-									<div><b>Status</b><span data-tiny-status>ready</span></div>
-								</div>
-								<canvas class="demo-canvas" data-tiny-loss-canvas style="height:120px;margin-top:10px" aria-label="Training loss over epochs"></canvas>
-								<div class="tiny-attn-wrap">
-									<p class="tiny-attn-label">Attention heads (last layer, real weights)</p>
-									<canvas class="demo-canvas" data-tiny-attn-canvas style="height:260px" aria-label="Real attention head matrices"></canvas>
-								</div>
-								<p class="demo-hint" data-tiny-sample-out>Train the model, then press Sample to generate a short continuation.</p>
-							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>The formulas are not decoration: the code computes exactly these operations, and gradient descent changes the weights.</span></div>
+<div id="transformer_config">
+<div style="margin-bottom: 15px;">
+<label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
+<span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
+<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+<b>Dependency:</b> Must be a multiple of Heads.<br/>
+<b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = \frac{d_{\text{model}}}{h}$) of the vector to perform dot products.
+        </p>
+<input id="transformer-dimension-model" max="16" min="2" oninput="syncTransformerSettings('dim')" step="1" style="width: 100%;" type="range" value="3"/>
+</div>
+<div style="margin-bottom: 15px;">
+<label style="font-weight: bold;">Attention Heads ($h$): </label>
+<span id="heads-val" style="font-weight: bold; color: #3b82f6;">3</span>
+<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+<b>Dependency:</b> $d_{\text{model}}$ must be a multiple of $h$.<br/>
+<b>Reason:</b> Multi-head attention splits the main vector into $h$ parallel “viewpoints.” If $d_{\text{model}}$ is 4 and $h$ is 2, each head looks at 2 dimensions.
+        </p>
+<input id="transformer-heads" max="8" min="1" oninput="syncTransformerSettings('heads')" style="width: 100%;" type="range" value="3"/>
+</div>
+<div style="margin-bottom: 15px;">
+<label style="font-weight: bold;">Network Depth ($N$ layers): </label>
+<span id="depth-val" style="font-weight: bold; color: #3b82f6;">4</span>
+<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
+<input id="transformer-depth" max="12" min="1" oninput="document.getElementById('depth-val').innerText = this.value; debounced_run_transformer_demo();" style="width: 100%;" type="range" value="4"/>
+</div>
+<div style="margin-bottom: 15px;">
+<label style="font-weight: bold;">Context Size: </label>
+<span id="context-val" style="font-weight: bold; color: #3b82f6;">128</span>
+<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+<b>Effect:</b> Sets the maximum number of tokens the model can “see” at once during training and inference.<br/>
+<b>Reason:</b> A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\text{Context}^2$, so a full forward pass costs quadratically in context length. A <i>KV-Cache</i> avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.
+	    </p>
+<input id="transformer-context-size" max="256" min="2" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();" step="1" style="width: 100%;" type="range" value="128"/>
+</div>
+<div style="display: none">
+<label style="font-weight: bold;">Tokenizer: </label>
+<select id="transformer-tokenizer-type" onchange="debounced_run_transformer_demo()" style="padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1;">
+<option selected="" value="regex">Words (Non-Alphanumeric Split)</option>
+<option value="bpe">Byte-Pair Encoding (BPE)</option>
+</select>
+</div>
+<div id="nr_params" style="display: none"></div>
+<div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">
+<button id="param-breakdown-btn" onclick="toggleParamBreakdown()" style="background: none; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 16px;
+		       cursor: pointer; font-size: 0.85rem; color: #3b82f6; font-weight: 600;
+		       display: flex; align-items: center; gap: 6px; transition: all 0.15s;">
+<span id="param-breakdown-arrow" style="transition: transform 0.2s;">▶</span>
+		Show Parameter Breakdown
+	    </button>
+</div>
+<div id="param-breakdown-chart" style="display: none; margin-top: 10px; padding: 15px;
+	     background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 10px;">
+<div id="param-breakdown-plotly" style="width: 100%; height: 350px;"></div>
+<div id="param-breakdown-table" style="margin-top: 10px; font-size: 0.82rem; overflow-x: auto;"></div>
+</div>
+</div>
+<div class="transformer_corpus">
+<label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
+<textarea id="transformer-training-data" oninput="debounced_run_transformer_demo('transformer-training-data')" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);">the king rules the land and the queen rules the sea</textarea>
+</div>
+<style>
+#transformer-train-card {
+	background: var(--mn-emerald-light, #f0fdf4);
+	border: 1px solid var(--mn-emerald, #10b981);
+	border-radius: 10px;
+	margin: 15px 0;
+	padding: 14px 16px;
+}
+.transformer-train-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 14px 22px;
+}
+.transformer-train-field {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+.transformer-train-field > .transformer-train-label {
+	font-weight: 600;
+	font-size: 0.8rem;
+	color: var(--mn-text-secondary, #475569);
+}
+.transformer-train-field input[type="number"] {
+	width: 72px;
+	padding: 5px 8px;
+	font-size: 0.9rem;
+	background: var(--mn-surface, #fff);
+	color: var(--mn-text, #1e293b);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 6px;
+}
+.transformer-train-field input[type="number"]:focus {
+	outline: 2px solid var(--mn-emerald, #10b981);
+	outline-offset: 1px;
+}
+.transformer-opt-group {
+	display: flex;
+	gap: 2px;
+	padding: 3px;
+	background: var(--mn-surface, #fff);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 8px;
+}
+.transformer-opt {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border-radius: 6px;
+	font-size: 0.85rem;
+	font-weight: 500;
+	color: var(--mn-text-secondary, #475569);
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+.transformer-opt:hover {
+	background: var(--mn-bg-subtle, #f1f5f9);
+}
+.transformer-opt input[type="radio"] {
+	margin: 0;
+	accent-color: var(--mn-emerald, #10b981);
+	cursor: pointer;
+}
+.transformer-opt:has(input:checked) {
+	background: var(--mn-emerald-light, #d1fae5);
+	color: var(--mn-text, #0f172a);
+}
+.transformer-opt input:checked + .glossary-term {
+	font-weight: 600;
+}
+.transformer-opt .glossary-term {
+	background: transparent;
+	padding: 0;
+}
+.transformer-train-actions {
+	display: flex;
+	gap: 8px;
+	margin-left: auto;
+}
+#tda-toggle-training-windows {
+	padding: 4px 12px;
+	border-radius: 6px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #fff);
+	color: var(--mn-text, #0f172a);
+	cursor: pointer;
+	font-weight: 600;
+}
+.transformer-train-status {
+	min-height: 20px;
+	margin-top: 10px;
+	font-size: 0.85rem;
+	color: var(--mn-emerald, #047857);
+}
+#training-loss-plot {
+	width: 100%;
+	height: 200px;
+	margin-top: 10px;
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-radius: 8px;
+	background: var(--mn-surface, #fff);
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-user-drag: none;
+	touch-action: pan-y;
+}
+#training-loss-plot .nsewdrag {
+	cursor: default;
+}
+@media (max-width: 640px) {
+	.transformer-train-actions {
+		margin-left: 0;
+		width: 100%;
+	}
+}
+</style>
+<div id="transformer-train-card">
+<div class="transformer-train-controls">
+<label class="transformer-train-field">
+<span class="transformer-train-label">Epochs</span>
+<input id="train-epochs" min="1" step="1" type="number" value="200"/>
+</label>
+<label class="transformer-train-field">
+<span class="transformer-train-label">Learning Rate</span>
+<input id="train-lr" min="0" step="0.01" type="number" value="0.01"/>
+</label>
+<div class="transformer-train-field">
+<span class="transformer-train-label">Optimizer</span>
+<div aria-label="Optimizer" class="transformer-opt-group" id="train-optimizer" role="radiogroup">
+<label class="transformer-opt">
+<input checked="" name="train-optimizer-choice" type="radio" value="adam"/>
+<span class="glossary-term" data-tooltip-id="tt-train-adam">Adam<span class="glossary-tooltip" data-tooltip-id="tt-train-adam">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
+</label>
+<label class="transformer-opt">
+<input name="train-optimizer-choice" type="radio" value="sgd"/>
+<span class="glossary-term" data-tooltip-id="tt-train-sgd">SGD<span class="glossary-tooltip" data-tooltip-id="tt-train-sgd">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
+</label>
+<label class="transformer-opt">
+<input name="train-optimizer-choice" type="radio" value="rmsprop"/>
+<span class="glossary-term" data-tooltip-id="tt-train-rmsprop">RMSProp<span class="glossary-tooltip" data-tooltip-id="tt-train-rmsprop">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
+</label>
+</div>
+</div>
+<div class="transformer-train-actions">
+<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
+<button class="btn" id="tda-toggle-training-windows" onclick="toggleTrainingWindows()" type="button">Show training windows</button>
+</div>
+</div>
+<div class="transformer-train-status" id="training-status"></div>
+<div id="training-loss-plot"></div>
+</div>
+<div id="show_training_sentences" style="display: none">
+<p>Current Training Windows: <span id="current_training_sentence"></span></p><br/>
+</div>
+					</section>
+
+					<section class="section-block" id="topology">
+						<div class="section-kicker"><span class="sk-num">08</span> The shape of the stream</div>
+						<h2 class="section-title">Attractors, persistence, and the geometry of meaning.</h2>
+						<div class="prose">
+							<p>
+								The topology panel treats the residual states as a point cloud. It tracks
+								where the stream pulls states in, where it pushes them away, and how the
+								shape of that cloud changes across layers and training epochs.
+							</p>
 						</div>
+<div class="tda-live-section" id="tda-live-section" style="margin: 20px 0; padding: 18px; background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 12px;">
+<details id="tda-live-details" open>
+<summary style="cursor: pointer; font-size: 1.05rem; font-weight: 700; color: var(--mn-text, #0f172a); padding: 6px 0;">
+		🧭 TDA Live, Attractors in the Residual Stream
+	</summary>
+<p style="font-size: 0.85rem; color: var(--mn-text-muted, #64748b); margin: 6px 0 12px 0; max-width: 900px;">
+		A <b>topological data analysis</b> of the residual stream and the weight deltas (weights minus their previous
+		values). Tokens drift through a phase space; over epochs the drift field reorganizes into <b>attractors</b> (stable
+		sinks where states settle, blue) and <b>repellers</b> (unstable points the flow pushes away from, red, not
+		necessarily sources of the flow, just points of locally positive divergence). The phase diagram shows the flow
+		vectors, the basin of attraction, and the <b>persistence</b> (shape) of the resulting structures via H₀
+		components and H₁ loops.
+	</p>
+<!-- Controls -->
+<div id="tda-live-controls" style="display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 12px; font-size: 0.86rem;">
+<select id="tda-live-mode" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);" title="What to analyze">
+<option selected="" value="residual">Residual stream</option>
+<option value="delta">Weight deltas (ΔW)</option>
+<option value="weights">Weights (W)</option>
+</select>
+<select id="tda-live-dim" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);" title="View dimension">
+<option selected="" value="3d">3D (drag to rotate)</option>
+<option value="2d">2D</option>
+</select>
+<select id="tda-live-projection" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);" title="Projection method">
+<option selected="" value="auto">Auto (native / PCA)</option>
+<option value="pca">Force PCA</option>
+<option value="native">Native dims</option>
+<option value="slice">Slice dims (choose axes)</option>
+</select>
+<span id="tda-live-slice-controls" style="display: none; gap: 6px; align-items: center; font-size: 0.8rem; color: var(--mn-text-muted, #475569);" title="Model-space axes to plot as x / y / z">
+			axes
+			<input id="tda-live-axis0" max="63" min="0" style="width: 44px; padding: 2px 4px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);" type="number" value="0"/>
+			,
+			<input id="tda-live-axis1" max="63" min="0" style="width: 44px; padding: 2px 4px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);" type="number" value="1"/>
+			,
+			<input id="tda-live-axis2" max="63" min="0" style="width: 44px; padding: 2px 4px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);" type="number" value="2"/>
+</span>
+<span style="display: inline-flex; gap: 5px; align-items: center; font-size: 0.8rem; color: var(--mn-text-muted, #64748b);">Layer:
+			<select id="tda-live-layer" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);" title="Which residual layer the phase plot shows. 'All layers' stacks every layer; a number shows only that layer as an epoch trail."></select>
+</span>
+<select id="tda-live-colorby" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);" title="Color the point cloud by">
+<option selected="" value="token">Token</option>
+<option value="layer">Layer</option>
+<option value="density">Density (attractor)</option>
+<option value="velocity">Flow magnitude</option>
+</select>
+<select id="tda-live-flow" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);" title="Vector field source">
+<option selected="" value="solo">Solo point (phase map)</option>
+<option value="context">In context (sentence)</option>
+</select>
+<label><input checked="" id="tda-live-vf" type="checkbox"/> Vector field</label>
+<label><input checked="" id="tda-live-stream" type="checkbox"/> Streamlines</label>
+<label><input checked="" id="tda-live-trails" type="checkbox"/> Epoch trails</label>
+<label><input checked="" id="tda-live-attractors" type="checkbox"/> Attractor / repeller</label>
+<label><input id="tda-live-basins" type="checkbox"/> Basins (2D)</label>
+<label><input id="tda-live-attn" type="checkbox"/> Attention flow</label>
+<label><input checked="" id="tda-live-auto" type="checkbox"/> Auto-update</label>
+<span style="display: inline-flex; gap: 6px; align-items: center;">
+			Grid <input id="tda-live-grid" max="14" min="3" style="width: 90px;" type="range" value="9"/>
+<span id="tda-live-grid-val">9</span>
+</span>
+<span style="display: inline-flex; gap: 6px; align-items: center;">
+			Eps steps <input id="tda-live-eps" max="80" min="10" style="width: 90px;" type="range" value="40"/>
+<span id="tda-live-eps-val">40</span>
+</span>
+<span style="display: inline-flex; gap: 6px; align-items: center;">
+			History <input id="tda-live-hist" max="60" min="5" style="width: 90px;" type="range" value="30"/>
+<span id="tda-live-hist-val">30</span>
+</span>
+<button id="tda-live-recompute" style="padding: 4px 12px; border-radius: 6px; border: 1px solid #3b82f6; background: #eff6ff; color: #1d4ed8; cursor: pointer; font-weight: 600;">⟳ Recompute</button>
+<button id="tda-live-retrace" style="padding: 4px 12px; border-radius: 6px; border: 1px solid #10b981; background: #ecfdf5; color: #047857; cursor: pointer; font-weight: 600;" title="Restart the epoch trail from the current state — follow training from here, again and again">↺ Trace from now</button>
+<button id="tda-live-reset" style="padding: 4px 12px; border-radius: 6px; border: 1px solid #ef4444; background: #fef2f2; color: #b91c1c; cursor: pointer; font-weight: 600;">Clear history</button>
+<span id="tda-live-status" style="color: var(--mn-text-muted, #64748b); font-size: 0.8rem;"></span>
+</div>
+<!-- Explainer (live, updated by tda_live.js) -->
+<div id="tda-live-explain" style="font-size: 0.88rem; line-height: 1.5; color: var(--mn-text, #334155); background: var(--mn-bg-subtle, #f1f5f9); border-left: 3px solid #3b82f6; padding: 10px 14px; border-radius: 0 8px 8px 0; margin-bottom: 10px;"></div>
+<!-- Stats -->
+<div id="tda-live-stats" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; font-size: 0.85rem;"></div>
+<!-- Legend -->
+<div id="tda-live-legend" style="display: flex; flex-wrap: wrap; gap: 10px 4px; margin-bottom: 10px; line-height: 1.45;"></div>
+<!-- Main phase space -->
+<div id="tda-live-phase" style="width: 100%; height: 540px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
+<!-- Attractor / repeller emergence across layers -->
+<div style="margin-top: 14px;">
+<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Attractor &amp; repeller emergence across layers</div>
+<div id="tda-live-sweep-summary" style="font-size: 0.78rem; color: var(--mn-text-muted, #64748b); margin-bottom: 6px; line-height: 1.5;"></div>
+<div id="tda-live-sweep" style="width: 100%; height: 300px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
+<div>
+<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Persistence diagram, shape of attractors (H₀ red, H₁ blue)</div>
+<div id="tda-live-persistence" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
+</div>
+<div>
+<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Persistence barcode</div>
+<div id="tda-live-barcode" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
+</div>
+<div>
+<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Betti curves β₀ / β₁ over scale ε</div>
+<div id="tda-live-betti" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
+</div>
+<div>
+<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Topology by layer, β₀ / β₁</div>
+<div id="tda-live-topo" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
+</div>
+<div>
+<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Learning field, ‖ΔW‖ per matrix (weight deltas)</div>
+<div id="tda-live-weights" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
+</div>
+</div>
+<details style="margin-top: 14px; font-size: 0.85rem; color: var(--mn-text-muted, #475569);">
+<summary style="cursor: pointer; font-weight: 700; color: var(--mn-text, #334155);">❓ How to read the phase diagram</summary>
+<div style="padding: 10px 14px; background: var(--mn-bg-subtle, #f8fafc); border-radius: 8px; line-height: 1.6;">
+<p style="margin: 0 0 8px 0;"><b>The idea:</b> run a point (a token's hidden state) through one more transformer layer and look at the “push” it gets. Repeat this on a grid of points and you get a <b>vector field</b>, a map of how the network moves states around.</p>
+<ul style="margin: 0; padding-left: 20px;">
+<li><b style="color:#2563eb;">Blue cones / arrows</b> = the state is <i>pulled in</i> (negative divergence → an <b>attractor</b>). Hidden states that get pulled in and stay = the “meanings” the model converges to.</li>
+<li><b style="color:#dc2626;">Red cones / arrows</b> = the state is <i>pushed away</i> (positive divergence → a <b>repeller</b>). Unstable points the model keeps everything away from.</li>
+<li><b>Thin colored lines</b> = <b>streamlines</b>: follow one state starting anywhere, it drifts along these lines. Green = it settled into an attractor.</li>
+<li><b>Colored dots</b> = the actual residual states of the words in your sentence (one per token per layer, color = token). See how they sit relative to attractors.</li>
+<li><b>Blue diamond</b> = detected attractor center, <b>red ✕</b> = repeller center.</li>
+<li><b>Persistence / Barcode / Betti:</b> the “shape” of the cloud of states. β₀ = number of separate clusters, β₁ = number of loops/holes in the structure. Hover over any element in the plot for details.</li>
+</ul>
+<p style="margin: 8px 0 0 0;">Tip: switch <b>Projection → Slice dims</b> to look at raw 2D/3D slices of the higher-dimensional state space (choose the axes), or <b>Force PCA</b> if the plot looks flat. To inspect one layer, pick it in the <b>Layer</b> menu in the controls above (or click a layer in the emergence summary), the phase plot then shows only that layer's states as an epoch trail. Toggle <b>2D/3D</b>, enable <b>Basins (2D)</b> to color the region each attractor “owns”, and watch the <b>Attractor &amp; repeller emergence</b> panel to see where each one is born across layers. The plot is interactive, drag to rotate while training runs.</p>
+</div>
+</details>
+</details>
+<br/>
+<script src="transformer_layer_summary.js?v=&lt;?php echo filemtime(__DIR__.'/transformer_layer_summary.js'); ?&gt;"></script>
+</div>
+						<div id="transformer_site"></div>
 					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">07</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">09</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -456,9 +825,7 @@
 	</main>
 
 
-	<script src="../../tf/tf.min.js"></script>
 	<script src="assets/site.js"></script>
-	<script src="assets/tiny-transformer.js"></script>
 	<script src="../temml.min.js"></script>
 	<script>
 	(function () {
@@ -769,6 +1136,26 @@
 		}
 		window.addEventListener("tm:theme", function () { api.redraw(); });
 	})();
+	</script>
+
+
+	<script src="assets/full/vendor/jquery-3.7.1.min.js"></script>
+	<script src="assets/full/vendor/plotly-2.24.1.min.js"></script>
+	<script src="assets/full/vendor/echarts.min.js"></script>
+	<script src="assets/full/vendor/echarts-gl.min.js"></script>
+	<script src="assets/full/vendor/tf.min.js"></script>
+	<script src="assets/full/shim.js"></script>
+	<script src="assets/full/transformer.js"></script>
+	<script src="assets/full/attention_engine.js"></script>
+	<script src="assets/full/tda_live.js"></script>
+	<script src="assets/full/llm_river.js"></script>
+	<script src="assets/full/provenance.js"></script>
+	<script src="assets/full/transformer_layer_summary.js"></script>
+	<script src="assets/full/demo-i18n.js"></script>
+	<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		if (typeof loadTransformerModule === "function") loadTransformerModule();
+	});
 	</script>
 </body>
 </html>
