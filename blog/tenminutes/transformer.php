@@ -376,8 +376,71 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="realmodel">
+						<div class="section-kicker"><span class="sk-num">06</span> The real model</div>
+						<h2 class="section-title">Train a tiny transformer.</h2>
+						<div class="prose">
+							<p>
+								Everything above is a real computation, not a cartoon. The demo below is a
+								character-level decoder: token and position embeddings, one or two
+								multi-head attention blocks, a feed-forward network, a residual stream, layer
+								normalisation, an unembedding, and a cross-entropy loss. TensorFlow.js
+								computes the gradients, so the Train button really updates the weights. The
+								model is tiny (a few thousand parameters), but the operations and the
+								formulas are the same as in a large transformer.
+							</p>
+							<p>
+								The forward pass, written out for one block, is below. Each line is an
+								operation the code performs; the underbraces name the part that a large model
+								scales up.
+							</p>
+						</div>
+						<div class="formula" data-tex="\underbrace{\begin{aligned} x_i &amp;= \underbrace{E[t_i]}_{\text{token}} + \underbrace{P_i}_{\text{position}} \\ Q &amp;= XW_Q,\quad K = XW_K,\quad V = XW_V \\ S &amp;= \underbrace{\frac{QK^\top}{\sqrt{d_k}}}_{\text{similarity}} \\ A &amp;= \operatorname{softmax}(\operatorname{mask}(S)) \\ H &amp;= \underbrace{AV}_{\text{context}} \\ X &amp;\leftarrow X + \underbrace{\operatorname{Concat}(H_1,\dots,H_h)W_O}_{\text{multi-head attention}} \\ X &amp;\leftarrow X + \underbrace{\operatorname{GELU}(XW_1+b_1)W_2+b_2}_{\text{feed-forward}} \\ z &amp;= \operatorname{LN}(X)W_U \end{aligned}}_{\text{one tiny decoder block, repeated}}">x_i = E[t_i] + P_i; Q=XW_Q, K=XW_K, V=XW_V; S=QKᵀ/√d_k; A=softmax(mask(S)); H=AV; X←X+Concat(H_i)W_O; X←X+GELU(XW_1+b_1)W_2+b_2; z=LN(X)W_U</div>
+						<div class="formula" data-tex="\underbrace{\underbrace{\mathcal L = -\frac{1}{T}\sum_{t=1}^{T}\log\operatorname{softmax}(z_t)_{y_t}}_{\text{cross-entropy loss}} \qquad \underbrace{\theta \leftarrow \theta - \eta\frac{\hat m}{\sqrt{\hat v}+\epsilon}}_{\text{Adam update}}}_{\text{what the Train button does}}">L = -1/T Σ log softmax(z_t)[y_t]; θ ← θ − η m̂/(√v̂+ε)</div>
+						<div class="demo demo--paper" id="tiny-transformer-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">A real, trainable transformer <span>· demo 04</span></p>
+									<p class="demo-sub">A character-level decoder trained in your browser with TensorFlow.js. Change the corpus, train it, and inspect the real attention heads.</p>
+								</div>
+								<span class="demo-badge">live training</span>
+							</div>
+							<div class="demo-body">
+								<div class="tiny-config">
+									<label>d_model <select data-tiny-d><option value="8" selected>8</option><option value="12">12</option><option value="16">16</option></select></label>
+									<label>Heads <select data-tiny-heads><option value="1">1</option><option value="2" selected>2</option><option value="4">4</option></select></label>
+									<label>Layers <select data-tiny-layers><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select></label>
+									<label>Context <select data-tiny-context><option value="8">8</option><option value="12">12</option><option value="16" selected>16</option></select></label>
+								</div>
+								<label class="tiny-corpus-label">Corpus
+									<textarea class="demo-input tiny-corpus" data-tiny-corpus>the king rules the land and the queen rules the sea. the king rules the land and the queen rules the sea.</textarea>
+								</label>
+								<div class="demo-controls">
+									<button class="btn-demo btn-demo--green" type="button" data-tiny-train>Train ▶</button>
+									<button class="btn-demo" type="button" data-tiny-reset>Reset</button>
+									<button class="btn-demo" type="button" data-tiny-sample>Sample</button>
+									<label>Epochs <input type="number" data-tiny-epochs value="300" min="1" step="10"></label>
+									<label>Learning rate <input type="number" data-tiny-lr value="0.01" min="0.001" step="0.001"></label>
+								</div>
+								<div class="demo-readout">
+									<div><b>Parameters</b><span data-tiny-params>...</span></div>
+									<div><b>Loss</b><span data-tiny-loss>...</span></div>
+									<div><b>Epoch</b><span data-tiny-epoch>0</span></div>
+									<div><b>Status</b><span data-tiny-status>ready</span></div>
+								</div>
+								<canvas class="demo-canvas" data-tiny-loss-canvas style="height:120px;margin-top:10px" aria-label="Training loss over epochs"></canvas>
+								<div class="tiny-attn-wrap">
+									<p class="tiny-attn-label">Attention heads (last layer, real weights)</p>
+									<canvas class="demo-canvas" data-tiny-attn-canvas style="height:260px" aria-label="Real attention head matrices"></canvas>
+								</div>
+								<p class="demo-hint" data-tiny-sample-out>Train the model, then press Sample to generate a short continuation.</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The formulas are not decoration: the code computes exactly these operations, and gradient descent changes the weights.</span></div>
+						</div>
+					</section>
+
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">06</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">07</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -393,7 +456,9 @@
 	</main>
 
 
+	<script src="../../tf/tf.min.js"></script>
 	<script src="assets/site.js"></script>
+	<script src="assets/tiny-transformer.js"></script>
 	<script src="../temml.min.js"></script>
 	<script>
 	(function () {

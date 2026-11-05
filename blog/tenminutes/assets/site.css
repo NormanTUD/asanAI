@@ -6697,3 +6697,42 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 }
 .conv-kernel-grid .conv-kernel-input:focus { outline: 2px solid var(--tm-green); outline-offset: 1px; }
 #conv-formula { min-height: 128px; }
+
+/* ── tiny trainable transformer ───────────────────────────── */
+.tiny-config { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-bottom: 12px; }
+.tiny-config label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-family: var(--tm-ui);
+	font-size: .72rem;
+	color: var(--tm-muted);
+}
+.tiny-config select {
+	padding: 4px 6px;
+	border: 1px solid var(--tm-line);
+	border-radius: 6px;
+	background: var(--tm-paper-2);
+	color: var(--tm-ink);
+	font-family: var(--tm-mono);
+	font-size: .72rem;
+}
+.tiny-corpus-label {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-bottom: 10px;
+	font-family: var(--tm-ui);
+	font-size: .72rem;
+	color: var(--tm-muted);
+}
+.tiny-corpus { width: 100%; min-height: 72px; resize: vertical; }
+.tiny-attn-wrap { margin-top: 12px; }
+.tiny-attn-label {
+	margin: 0 0 4px;
+	font-family: var(--tm-mono);
+	font-size: .62rem;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	color: var(--tm-muted);
+}
