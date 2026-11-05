@@ -116,3 +116,14 @@ tokenizerlab / embeddinglab (Nachtrag):
 - embeddinglab: Formel zeigt die tatsächlichen 2-D-Vektoren mit Namen als Underbrace.
 - embeddinglab: „angle“ → „Winkel“, „scale-invariant“ → „skaleninvariant“; Kosinus-Warnung um Softmax ergänzt; dynamische Winkel-/Magnitude-Captions übersetzt.
 - embeddinglab: Neuer Plot „Die Magnitude kann sich ändern“ mit gleicher Richtung und unterschiedlicher Länge.
+
+computer_vision / inceptionism / multimodal (Nachtrag):
+- Convolution-Demo zeigt jetzt das echte Stoppschild (Farbe) und die echte, kontrastnormalisierte Ausgabe der Kerne als Graustufenbild; der 3×3-Kernel wird als Raster angezeigt. Die abstrakte Blau/Grün-Pixelkarte und der Malen/Restore-Modus sind weg.
+- „Was jede Schicht sieht“ und „Wie weit eine Einheit sehen kann“ entfernt. Stattdessen ein Bildtrio aus echtem Stoppschild, realer vertikaler Sobel-Kante und realer kombinierter Kantenstärke (Quelle CC0, Verarbeitung Ten Minutes, CC0).
+- Inceptionism enthält nur noch Inceptionism (Gradientenaufstieg, DeepDream, Feature-Visualisierung); der Diffusionsteil ist nach Multimodal verschoben und dort als eigener Abschnitt „Destroy a picture. Learn to undo it.“ erklärt.
+- Deutsche Schlüssel für die Inceptionism-/Multimodal-Absätze an die geänderten englischen Texte angepasst.
+
+attentionlab (Nachtrag):
+- Neuer Abschnitt „Optimal transport“: SDPA als einseitiges entropisches Optimal-Transport-Problem, Kosten C_j = −⟨q,k_j⟩, EOT-Ziel, Softmax als eindeutige Lösung; duales Log-Sum-Exp-Potenzial, Fisher-Information und vorteilsbasierter Policy-Gradient als Backward-Pass.
+- Neue interaktive Demo „Temperatur ist Entropie“ mit τ-Regler, Entropie, erwarteter Ähnlichkeit und EOT-Zielfunktion.
+- „Ein Head, ein Budget“ nutzt jetzt deutsche Tokens, Head-Namen, Konzentrations- und Notiztexte.
