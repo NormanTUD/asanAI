@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer: Der Datenfluss Token für Token, mit echten GPT-2-Vektoren</title>
+<meta name="description" content="Was zwischen Tokenizer, Q/K/V, Attention, Concat, Residualstrom und FFN wirklich passiert. Mit Temml-Formeln, Shapes und einem echten GPT-2-Lauf für zwei Tokens.">
+<link rel="stylesheet" href="visual_math_base.css">
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<script src="../temml.min.js"></script>
+<style>
+  :root { --accent: #b388ff; --accent-2: #4dd0e1; --accent-3: #ff7ab6; --good: #7ee7b0; }
+  .tex { display: inline-block; vertical-align: middle; }
+  .tex-display {
+    display: block;
+    margin: 1.1rem 0;
+    padding: 0.65rem 0.9rem;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    text-align: center;
+  }
+  .tex-display .tml-display { margin: 0; }
+  .tex-error { color: var(--accent-3); font-family: var(--mono); font-size: 0.85rem; }
+  .two-col { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
+  @media (max-width: 860px) { .two-col { grid-template-columns: 1fr; } }
+  .note { border-left: 2px solid var(--accent-2); padding: 0.15rem 0 0.15rem 1rem; color: var(--muted); }
+  .note strong { color: var(--ink); }
+  .formula-label { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); margin-bottom: 0.2rem; }
+  .num-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.78rem; }
+  .num-table th, .num-table td { padding: 0.32rem 0.45rem; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  .num-table th:first-child, .num-table td:first-child { text-align: left; }
+  .num-table thead th { color: var(--faint); font-weight: 500; font-size: 0.7rem; letter-spacing: 0.04em; }
+  .num-table tbody tr:hover { background: rgba(255,255,255,0.035); }
+  .num-table .row-label { color: var(--muted); }
+  .num-table .row-label b { color: var(--ink); font-weight: 600; }
+  .num-pos { color: var(--accent-2); }
+  .num-neg { color: var(--accent-3); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; padding: 0.35rem 0.5rem; background: rgba(0,0,0,0.12); }
+  .attn-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.55rem; }
+  @media (max-width: 900px) { .attn-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .attn-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .attn-card { border: 1px solid var(--line); border-radius: 12px; padding: 0.45rem; background: rgba(255,255,255,0.025); }
+  .attn-card h4 { margin: 0 0 0.3rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.05em; color: var(--muted); font-weight: 500; }
+  .attn-matrix { display: grid; grid-template-columns: 1.1rem 1fr 1fr; gap: 2px; font-family: var(--mono); font-size: 0.65rem; }
+  .attn-matrix .corner { color: var(--faint); }
+  .attn-matrix .axis { color: var(--faint); display: flex; align-items: center; justify-content: center; }
+  .attn-cell {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 1.55rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(77,208,225, calc(0.06 + var(--w) * 0.72));
+    color: hsl(220 24% calc(94% - var(--w) * 58%));
+    font-variant-numeric: tabular-nums;
+  }
+  .head-stripe { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.45rem; }
+  @media (max-width: 900px) { .head-stripe { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .head-stripe { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .head-block { border: 1px solid var(--line); border-radius: 10px; padding: 0.4rem 0.45rem; background: rgba(255,255,255,0.025); }
+  .head-block h4 { margin: 0 0 0.2rem; font-family: var(--mono); font-size: 0.64rem; color: hsl(calc(190 + var(--i) * 12) 75% 70%); font-weight: 500; }
+  .head-block .vals { font-family: var(--mono); font-size: 0.64rem; line-height: 1.45; color: var(--muted); }
+  .flow-svg { width: 100%; height: auto; display: block; }
+  .flow-svg .box { fill: rgba(255,255,255,0.035); stroke: rgba(255,255,255,0.16); stroke-width: 1; }
+  .flow-svg .box.attn { fill: rgba(179,136,255,0.10); stroke: var(--accent); stroke-width: 1.2; }
+  .flow-svg .box.ffn { fill: rgba(126,231,176,0.07); stroke: rgba(126,231,176,0.45); }
+  .flow-svg .label { fill: var(--ink); font-family: var(--sans); font-size: 13px; font-weight: 600; }
+  .flow-svg .sub { fill: var(--muted); font-family: var(--sans); font-size: 10.5px; }
+  .flow-svg .shape { fill: var(--faint); font-family: var(--mono); font-size: 9.5px; }
+  .flow-svg .lane-cyan { stroke: var(--accent-2); stroke-width: 1.8; fill: none; }
+  .flow-svg .lane-pink { stroke: var(--accent-3); stroke-width: 1.8; fill: none; }
+  .flow-svg .residual { stroke-dasharray: 4 5; opacity: 0.55; stroke-width: 1.2; fill: none; }
+  .flow-svg .mix { stroke: var(--accent); stroke-width: 1.1; fill: none; opacity: 0.55; stroke-dasharray: 3 4; }
+  .flow-svg .plus { fill: var(--bg); stroke-width: 1.4; }
+  .flow-svg .plus-cyan { stroke: var(--accent-2); }
+  .flow-svg .plus-pink { stroke: var(--accent-3); }
+  .flow-svg .plus-text { fill: var(--ink); font-family: var(--mono); font-size: 13px; font-weight: 600; }
+  .legend { display: flex; flex-wrap: wrap; gap: 0.8rem 1.2rem; margin-top: 0.7rem; color: var(--muted); font-size: 0.82rem; }
+  .legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .legend i { width: 1.2rem; height: 0.18rem; display: inline-block; border-radius: 2px; }
+  .big-answer { border: 1px solid rgba(179,136,255,0.35); background: linear-gradient(140deg, rgba(179,136,255,0.12), rgba(77,208,225,0.05)); border-radius: 18px; padding: 1.1rem 1.2rem; }
+  .big-answer h3 { margin: 0 0 0.5rem; font-family: var(--serif); font-size: 1.35rem; font-weight: 500; }
+  .big-answer p { margin: 0.5rem 0 0; color: var(--muted); }
+  .mini-code { font-family: var(--mono); font-size: 0.78rem; line-height: 1.55; background: rgba(0,0,0,0.25); border: 1px solid var(--line); border-radius: 12px; padding: 0.8rem 0.9rem; overflow-x: auto; white-space: pre; color: var(--muted); }
+  .kpi { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.6rem; }
+  @media (max-width: 760px) { .kpi { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .kpi div { border: 1px solid var(--line); border-radius: 12px; padding: 0.55rem 0.65rem; background: rgba(255,255,255,0.025); }
+  .kpi b { display: block; font-family: var(--mono); font-size: 1.1rem; color: var(--ink); }
+  .kpi span { display: block; font-size: 0.72rem; color: var(--faint); margin-top: 0.15rem; }
+  .check { color: var(--good); font-family: var(--mono); font-size: 0.82rem; }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Transformer · Datenfluss</div>
+    <h1>Ein Token,<br><em>768 Zahlen</em></h1>
+    <p class="lede">
+      Was zwischen Tokenizer, Q/K/V, Attention, Concat, Residualstrom und FFN
+      wirklich passiert. Schritt für Schritt, mit Shapes und mit echten
+      GPT-2-Vektoren für zwei Tokens.
+    </p>
+    <div class="hero-chips">
+      <span class="chip"><b>2</b> Tokens</span>
+      <span class="chip"><b>768</b> Dimensionen</span>
+      <span class="chip"><b>12</b> Heads</span>
+      <span class="chip"><b>3072</b> FFN-Breite</span>
+      <span class="chip"><b>12</b> Blöcke</span>
+    </div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</header>
+
+<nav class="dotnav" id="dotnav" aria-label="Abschnitte"></nav>
+
+<main>
+
+<section class="chapter reveal" id="kurz" data-nav="Kurzantwort">
+  <div class="chapter-head">
+    <div class="chapter-num">01 / KURZANTWORT</div>
+    <div>
+      <h2>Die Concatenation ist über Heads, nicht über Tokens</h2>
+      <p class="dek">
+        Der eine Punkt, an dem dein Bild kippt: Die Ausgaben der Attention-Heads
+        werden nicht zu einem einzigen Vektor aller Tokens zusammengeklebt.
+        Jeder Token behält seine eigene Zeile. Concatenation verlängert die
+        Feature-Achse, nicht die Token-Achse.
+      </p>
+    </div>
+  </div>
+
+  <div class="big-answer">
+    <h3>Merksatz</h3>
+    <p>
+      <strong>Attention</strong> ist der einzige Ort, an dem Informationen
+      zwischen Tokens ausgetauscht werden. Das <strong>FFN</strong> mischt nur
+      die Features innerhalb eines Tokens. <strong>Concat</strong> verbindet
+      die 12 Heads desselben Tokens.
+    </p>
+    <p>
+      Das FFN bekommt also nicht „alle Tokens als einen Vektor“, sondern eine
+      Matrix mit einer Zeile pro Token. Es gibt keinen späteren Schritt, der
+      die Tokens wieder trennt, weil sie nie zu einem einzigen Vektor
+      verschmolzen wurden.
+    </p>
+  </div>
+
+  <div class="tex-display" data-tex="\underbrace{O}_{\substack{T\times 768\\\text{eine Zeile pro Token}}}=\begin{bmatrix}\leftarrow\text{Token 1}\rightarrow\\\leftarrow\text{Token 2}\rightarrow\end{bmatrix}\qquad\text{Concat: }\underbrace{[\,o_i^{(1)}\;\|\;\cdots\;\|\;o_i^{(12)}\,]}_{\text{über Heads, nicht über Tokens}}"></div>
+
+  <p class="caption">
+    <b>Die entscheidende Form:</b> Die Token-Achse bleibt erhalten. Die
+    Feature-Achse wächst von 64 auf 768, weil die 12 Head-Ausgaben
+    hintereinandergelegt werden.
+  </p>
+</section>
+
+<section class="chapter reveal" id="token" data-nav="Token &amp; Embedding">
+  <div class="chapter-head">
+    <div class="chapter-num">02 / VOM TEXT ZUM VEKTOR</div>
+    <div>
+      <h2>Token, ID, Embedding, Position</h2>
+      <p class="dek">
+        Der Tokenizer macht aus Text Tokens. Jedes Token bekommt eine ID, und
+        jede ID zeigt auf eine Zeile der Embedding-Tabelle. Bei GPT-2 kommt
+        ein gelernter Positionsvektor dazu.
+      </p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="k">Beispiel</div>
+      <h3>Hello world</h3>
+      <p>
+        GPT-2 zerlegt den Text in zwei Tokens: <span class="mono">Hello</span>
+        und <span class="mono"> world</span>. Die IDs sind
+        <span class="mono">15496</span> und <span class="mono">995</span>.
+        Das führende Leerzeichen gehört zum zweiten Token.
+      </p>
+    </div>
+    <div class="card">
+      <div class="k">Vokabular</div>
+      <h3>50257 Zeilen</h3>
+      <p>
+        Die Embedding-Tabelle <span class="mono">E</span> hat
+        <span class="mono">50257 × 768</span> Einträge. Die ID ist der
+        Zeilenindex. Die Zeile ist der Vektor des Tokens.
+      </p>
+    </div>
+  </div>
+
+  <div class="tex-display" data-tex="\underbrace{x_i}_{\substack{\text{Vektor von Token }i\\\text{z.B. Token 2 = world}}}=\underbrace{E}_{\substack{50257\times 768\\\text{Embedding-Tabelle}}}[\underbrace{\text{id}_i}_{\text{z.B. }995}]+\underbrace{P[i]}_{\text{Positionsvektor}}\in\mathbb{R}^{\underbrace{768}_{\substack{d_{\text{model}}\\\text{Zahlen pro Token}}}}"></div>
+
+  <div class="tex-display" data-tex="\underbrace{X}_{\substack{2\times 768\\\text{beide Tokens}}}=\begin{bmatrix}x_{1,1}&\cdots&x_{1,768}\\x_{2,1}&\cdots&x_{2,768}\end{bmatrix}"></div>
+
+  <p>
+    Ab hier gibt es keine „Liste von Tokens“ mehr, die irgendwo
+    zusammengeklebt wird. Es gibt eine Matrix <span class="mono">X</span> mit
+    zwei Zeilen. Zeile 1 ist Token 1, Zeile 2 ist Token 2. Diese Zuordnung
+    bleibt durch den ganzen Block erhalten.
+  </p>
+
+  <div class="table-wrap" style="margin-top:0.8rem">
+    <table class="num-table" id="embed-table"></table>
+  </div>
+  <p class="caption">
+    <b>Auszug:</b> die ersten 12 der 768 Zahlen. Die vollständigen Vektoren
+    haben 768 Koordinaten.
+  </p>
+
+  <div class="note">
+    <strong>Position:</strong> GPT-2 addiert einen gelernten Vektor
+    <span class="mono">P[i]</span> aus einer Tabelle der Größe
+    <span class="mono">1024 × 768</span>. Moderne Modelle wie Llama drehen
+    stattdessen Q und K mit RoPE. Für den Datenfluss ändert das nichts:
+    Position wird vor oder in der Attention eingebaut, die Matrixform bleibt
+    <span class="mono">T × 768</span>.
+  </div>
+</section>
+
+<section class="chapter reveal" id="diagramm" data-nav="Datenfluss">
+  <div class="chapter-head">
+    <div class="chapter-num">03 / DER BLOCK</div>
+    <div>
+      <h2>Zwei Spuren, ein Residualstrom</h2>
+      <p class="dek">
+        Jeder Token läuft in seiner eigenen Spur durch den Block. Die
+        Attention verbindet die Spuren. Das FFN tut es nicht. Die gestrichelte
+        Linie ist der Residualstrom: Er trägt den Token-Vektor an den
+        Sublayern vorbei und addiert deren Ausgaben.
+      </p>
+    </div>
+  </div>
+
+  <div class="canvas-card" style="min-height:0;padding:0.5rem">
+    <svg class="flow-svg" viewBox="0 0 1180 470" role="img" aria-labelledby="flow-title flow-desc">
+      <title id="flow-title">Datenfluss durch einen Transformer-Block für zwei Tokens</title>
+      <desc id="flow-desc">Zwei Token-Spuren laufen durch Embedding, LayerNorm, QKV, Attention, Concat, Residual, LayerNorm und FFN. Attention verbindet beide Spuren, FFN nicht.</desc>
+      <defs>
+        <marker id="arr-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4dd0e1"/></marker>
+        <marker id="arr-pink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ff7ab6"/></marker>
+        <marker id="arr-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b388ff"/></marker>
+      </defs>
+
+      <!-- residual stream token 1, above -->
+      <path class="lane-cyan residual" d="M 260 105 V 58 H 905 V 126" marker-end="url(#arr-cyan)"/>
+      <path class="lane-cyan residual" d="M 905 58 H 1085 V 126" marker-end="url(#arr-cyan)"/>
+      <text class="sub" x="285" y="50">Residualstrom Token 1</text>
+
+      <!-- residual stream token 2, below -->
+      <path class="lane-pink residual" d="M 260 355 V 424 H 905 V 332" marker-end="url(#arr-pink)"/>
+      <path class="lane-pink residual" d="M 905 424 H 1085 V 332" marker-end="url(#arr-pink)"/>
+      <text class="sub" x="285" y="444">Residualstrom Token 2</text>
+
+      <!-- token 1 lane -->
+      <text class="label" x="22" y="132">Token 1</text>
+      <text class="sub" x="22" y="149">Hello</text>
+      <path class="lane-cyan" d="M 96 140 H 126" marker-end="url(#arr-cyan)"/>
+      <rect class="box" x="130" y="105" width="130" height="70" rx="12"/>
+      <text class="label" x="195" y="132" text-anchor="middle">Embedding</text>
+      <text class="sub" x="195" y="149" text-anchor="middle">+ Position</text>
+      <text class="shape" x="195" y="194" text-anchor="middle">2 × 768</text>
+      <path class="lane-cyan" d="M 260 140 H 290" marker-end="url(#arr-cyan)"/>
+      <rect class="box" x="294" y="115" width="58" height="50" rx="10"/>
+      <text class="label" x="323" y="145" text-anchor="middle">LN1</text>
+      <path class="lane-cyan" d="M 352 140 H 386" marker-end="url(#arr-cyan)"/>
+      <rect class="box" x="390" y="105" width="92" height="70" rx="12"/>
+      <text class="label" x="436" y="132" text-anchor="middle">Q / K / V</text>
+      <text class="sub" x="436" y="149" text-anchor="middle">12 Heads</text>
+      <text class="shape" x="436" y="194" text-anchor="middle">12 × 2 × 64</text>
+      <path class="lane-cyan" d="M 482 140 H 526" marker-end="url(#arr-cyan)"/>
+
+      <!-- token 2 lane -->
+      <text class="label" x="22" y="312">Token 2</text>
+      <text class="sub" x="22" y="329">world</text>
+      <path class="lane-pink" d="M 96 320 H 126" marker-end="url(#arr-pink)"/>
+      <rect class="box" x="130" y="285" width="130" height="70" rx="12"/>
+      <text class="label" x="195" y="312" text-anchor="middle">Embedding</text>
+      <text class="sub" x="195" y="329" text-anchor="middle">+ Position</text>
+      <path class="lane-pink" d="M 260 320 H 290" marker-end="url(#arr-pink)"/>
+      <rect class="box" x="294" y="295" width="58" height="50" rx="10"/>
+      <text class="label" x="323" y="325" text-anchor="middle">LN1</text>
+      <path class="lane-pink" d="M 352 320 H 386" marker-end="url(#arr-pink)"/>
+      <rect class="box" x="390" y="285" width="92" height="70" rx="12"/>
+      <text class="label" x="436" y="312" text-anchor="middle">Q / K / V</text>
+      <text class="sub" x="436" y="329" text-anchor="middle">12 Heads</text>
+      <path class="lane-pink" d="M 482 320 H 526" marker-end="url(#arr-pink)"/>
+
+      <!-- attention block -->
+      <rect class="box attn" x="530" y="88" width="190" height="290" rx="18"/>
+      <text class="label" x="625" y="116" text-anchor="middle">Attention</text>
+      <text class="sub" x="625" y="134" text-anchor="middle">12 Heads, je 64 Dims</text>
+      <text class="sub" x="625" y="151" text-anchor="middle">Scores: 12 × 2 × 2</text>
+      <path class="mix" d="M 548 175 C 612 175, 650 300, 704 300" marker-end="url(#arr-purple)"/>
+      <path class="mix" d="M 548 300 C 612 300, 650 175, 704 175" marker-end="url(#arr-purple)"/>
+      <text class="sub" x="625" y="238" text-anchor="middle" style="fill:var(--accent)">Tokens mischen</text>
+      <text class="sub" x="625" y="256" text-anchor="middle" style="fill:var(--accent)">sich hier</text>
+
+      <!-- attention outputs to concat -->
+      <path class="lane-cyan" d="M 720 140 H 756" marker-end="url(#arr-cyan)"/>
+      <path class="lane-pink" d="M 720 320 H 756" marker-end="url(#arr-pink)"/>
+
+      <!-- concat token 1 -->
+      <rect class="box" x="760" y="105" width="112" height="70" rx="12"/>
+      <text class="label" x="816" y="132" text-anchor="middle">Concat</text>
+      <text class="sub" x="816" y="149" text-anchor="middle">+ W_O</text>
+      <text class="shape" x="816" y="194" text-anchor="middle">12 × 64 → 768</text>
+      <path class="lane-cyan" d="M 872 140 H 893" marker-end="url(#arr-cyan)"/>
+      <circle class="plus plus-cyan" cx="905" cy="140" r="12"/>
+      <text class="plus-text" x="905" y="145" text-anchor="middle">+</text>
+
+      <!-- concat token 2 -->
+      <rect class="box" x="760" y="285" width="112" height="70" rx="12"/>
+      <text class="label" x="816" y="312" text-anchor="middle">Concat</text>
+      <text class="sub" x="816" y="329" text-anchor="middle">+ W_O</text>
+      <path class="lane-pink" d="M 872 320 H 893" marker-end="url(#arr-pink)"/>
+      <circle class="plus plus-pink" cx="905" cy="320" r="12"/>
+      <text class="plus-text" x="905" y="325" text-anchor="middle">+</text>
+
+      <!-- FFN token 1 -->
+      <path class="lane-cyan" d="M 917 140 H 938" marker-end="url(#arr-cyan)"/>
+      <rect class="box ffn" x="942" y="105" width="110" height="70" rx="12"/>
+      <text class="label" x="997" y="132" text-anchor="middle">LN2 + FFN</text>
+      <text class="sub" x="997" y="149" text-anchor="middle">768→3072→768</text>
+      <text class="shape" x="997" y="194" text-anchor="middle">pro Token</text>
+      <path class="lane-cyan" d="M 1052 140 H 1073" marker-end="url(#arr-cyan)"/>
+      <circle class="plus plus-cyan" cx="1085" cy="140" r="12"/>
+      <text class="plus-text" x="1085" y="145" text-anchor="middle">+</text>
+      <path class="lane-cyan" d="M 1097 140 H 1145" marker-end="url(#arr-cyan)"/>
+      <text class="sub" x="1152" y="136">Block 2</text>
+
+      <!-- FFN token 2 -->
+      <path class="lane-pink" d="M 917 320 H 938" marker-end="url(#arr-pink)"/>
+      <rect class="box ffn" x="942" y="285" width="110" height="70" rx="12"/>
+      <text class="label" x="997" y="312" text-anchor="middle">LN2 + FFN</text>
+      <text class="sub" x="997" y="329" text-anchor="middle">768→3072→768</text>
+      <path class="lane-pink" d="M 1052 320 H 1073" marker-end="url(#arr-pink)"/>
+      <circle class="plus plus-pink" cx="1085" cy="320" r="12"/>
+      <text class="plus-text" x="1085" y="325" text-anchor="middle">+</text>
+      <path class="lane-pink" d="M 1097 320 H 1145" marker-end="url(#arr-pink)"/>
+      <text class="sub" x="1152" y="316">Block 2</text>
+
+      <text class="sub" x="997" y="245" text-anchor="middle" style="fill:var(--good)">gleiche Gewichte, getrennte Zeilen</text>
+    </svg>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--accent-2)"></i> Token 1</span>
+    <span><i style="background:var(--accent-3)"></i> Token 2</span>
+    <span><i style="background:var(--accent)"></i> Attention mischt Tokens</span>
+    <span><i style="background:var(--good)"></i> FFN bleibt pro Token</span>
+    <span><i style="background:repeating-linear-gradient(90deg,var(--muted) 0 4px,transparent 4px 8px)"></i> Residualstrom</span>
+  </div>
+</section>
+
+<section class="chapter reveal" id="qkv" data-nav="Q, K, V">
+  <div class="chapter-head">
+    <div class="chapter-num">04 / Q, K, V</div>
+    <div>
+      <h2>Drei Rollen, drei Projektionen</h2>
+      <p class="dek">
+        Jeder Token erzeugt pro Head einen Query, einen Key und einen Value.
+        Der Query fragt, der Key antwortet, der Value ist der Inhalt, der
+        weitergereicht wird. Die drei Vektoren sind nicht die Token-Vektoren
+        selbst, sondern gelernte lineare Projektionen davon.
+      </p>
+    </div>
+  </div>
+
+  <div class="tex-display" data-tex="\underbrace{u_i}_{\text{normierter Token-Vektor}}=\operatorname{LN}(x_i)"></div>
+  <div class="tex-display" data-tex="\underbrace{q_i^{(h)}}_{\substack{\text{Query von Token }i\\\text{Head }h}}=\underbrace{u_i}_{\text{Token-Vektor}}\underbrace{W_Q^{(h)}}_{\substack{768\times 64\\\text{gelernte Projektion}}},\qquad\underbrace{k_j^{(h)}}_{\text{Key von Token }j}=u_jW_K^{(h)},\qquad\underbrace{v_j^{(h)}}_{\text{Value von Token }j}=u_jW_V^{(h)}"></div>
+
+  <p>
+    Bei GPT-2 gibt es 12 Heads. Jeder Head hat eigene Projektionen
+    <span class="mono">W_Q, W_K, W_V</span> der Form
+    <span class="mono">768 × 64</span>. Zusammen sind das
+    <span class="mono">12 × 64 = 768</span> Dimensionen. Die Q/K/V-Vektoren
+    werden also nicht breiter als der Token-Vektor, sie werden nur in Heads
+    aufgeteilt.
+  </p>
+
+  <div class="kpi">
+    <div><b>768</b><span>d_model</span></div>
+    <div><b>12</b><span>Heads</span></div>
+    <div><b>64</b><span>d_head</span></div>
+    <div><b>2</b><span>Tokens in unserem Lauf</span></div>
+    <div><b>12 × 2 × 64</b><span>Q, K, V pro Lauf</span></div>
+  </div>
+
+  <div class="table-wrap" style="margin-top:0.9rem">
+    <table class="num-table" id="qkv-table"></table>
+  </div>
+  <p class="caption">
+    <b>Echter GPT-2-Lauf, Block 1, Head 0:</b> die ersten 12 der 64 Zahlen
+    pro Vektor. Die Zeilen sind Q, K, V für Token 1 (Hello) und Token 2
+    ( world).
+  </p>
+</section>
+
+<section class="chapter reveal" id="attention" data-nav="Attention">
+  <div class="chapter-head">
+    <div class="chapter-num">05 / ATTENTION</div>
+    <div>
+      <h2>Ein Query fragt alle Keys, dann werden Values gemittelt</h2>
+      <p class="dek">
+        Für jeden Token und jeden Head entsteht eine Zeile von
+        Aufmerksamkeitsgewichten. Die Gewichte summieren sich zu 1. Die
+        Ausgabe ist die gewichtete Summe der Value-Vektoren. Bei einem
+        Decoder-Modell wie GPT-2 darf ein Token nur nach links schauen.
+      </p>
+    </div>
+  </div>
+
+  <div class="tex-display" data-tex="\underbrace{s_{ij}^{(h)}}_{\substack{\text{Score: wie gut passt}\\\text{Query }i\text{ zu Key }j}}=\frac{\underbrace{q_i^{(h)}\cdot k_j^{(h)}}_{\text{Dot-Produkt über 64 Zahlen}}}{\underbrace{\sqrt{64}}_{\substack{\sqrt{d_{\text{head}}}\\\text{Skalierung}}}}"></div>
+  <div class="tex-display" data-tex="\underbrace{\alpha_{ij}^{(h)}}_{\substack{\text{Gewicht von Token }j\\\text{für Token }i}}=\frac{\exp(s_{ij}^{(h)})}{\sum_{\ell=1}^{\underbrace{T}_{\text{Anzahl Tokens}}}\exp(s_{i\ell}^{(h)})}\qquad\underbrace{o_i^{(h)}}_{\substack{\text{Ausgabe von Head }h\\\text{für Token }i}}=\sum_{j=1}^{T}\underbrace{\alpha_{ij}^{(h)}}_{\text{Gewicht}}\underbrace{v_j^{(h)}}_{\text{Value von }j}"></div>
+
+  <div class="tex-display" data-tex="\underbrace{M_{ij}}_{\text{Kausalmaske}}=\begin{cases}0&j\le i\\-\infty&j>i\end{cases}\qquad s_{ij}^{(h)}\leftarrow\frac{q_i^{(h)}\cdot k_j^{(h)}}{\sqrt{64}}+M_{ij}"></div>
+
+  <p>
+    In einem Encoder wie BERT ist die Maske leer, dann darf jeder Token alle
+    anderen sehen. In einem Decoder wie GPT-2 ist die obere rechte Hälfte
+    der Score-Matrix verboten. Für zwei Tokens sieht die Maske so aus:
+  </p>
+  <div class="tex-display" data-tex="\underbrace{M}_{\text{2 Tokens}}=\begin{bmatrix}0&-\infty\\0&0\end{bmatrix}"></div>
+
+  <h3>Rechnung per Hand, ohne Modell</h3>
+  <p>
+    Zwei Tokens, ein Head, <span class="mono">d_head = 2</span>. Die Zahlen
+    sind absichtlich klein, damit du jede Zeile nachrechnen kannst.
+  </p>
+
+  <div class="two-col">
+    <div class="panel">
+      <h3>Vektoren</h3>
+      <div class="tex-display" data-tex="\underbrace{q_1}_{\text{Query Token 1}}=\begin{bmatrix}1\\0\end{bmatrix},\quad\underbrace{q_2}_{\text{Query Token 2}}=\begin{bmatrix}0\\1\end{bmatrix}"></div>
+      <div class="tex-display" data-tex="\underbrace{k_1}_{\text{Key Token 1}}=\begin{bmatrix}1\\1\end{bmatrix},\qquad\underbrace{k_2}_{\text{Key Token 2}}=\begin{bmatrix}1\\-1\end{bmatrix}"></div>
+      <div class="tex-display" data-tex="\underbrace{v_1}_{\text{Value Token 1}}=\begin{bmatrix}1\\2\end{bmatrix},\qquad\underbrace{v_2}_{\text{Value Token 2}}=\begin{bmatrix}3\\4\end{bmatrix}"></div>
+    </div>
+    <div class="panel">
+      <h3>Scores und Gewichte</h3>
+      <div class="tex-display" data-tex="\underbrace{S}_{\text{2}\times\text{2}}=\begin{bmatrix}0.707&0.707\\0.707&-0.707\end{bmatrix},\qquad\underbrace{A}_{\text{Softmax pro Zeile}}=\begin{bmatrix}0.500&0.500\\0.804&0.196\end{bmatrix}"></div>
+      <div class="tex-display" data-tex="\underbrace{o_2}_{\text{Ausgabe Token 2}}=\underbrace{0.804}_{\alpha_{21}}\underbrace{\begin{bmatrix}1\\2\end{bmatrix}}_{v_1}+\underbrace{0.196}_{\alpha_{22}}\underbrace{\begin{bmatrix}3\\4\end{bmatrix}}_{v_2}=\begin{bmatrix}1.391\\2.391\end{bmatrix}"></div>
+    </div>
+  </div>
+
+  <p>
+    Das Handbeispiel rechnet ohne Kausalmaske, damit du die volle 2×2-Matrix
+    siehst. Mit GPT-2s Maske wäre die obere rechte Zelle 0, und die erste
+    Zeile wäre <span class="mono">[1,0]</span>.
+  </p>
+
+  <p>
+    Die erste Zeile der Score-Matrix gehört zu Token 1: Query
+    <span class="mono">[1,0]</span> trifft Key <span class="mono">[1,1]</span>
+    und Key <span class="mono">[1,-1]</span>, beide ergeben
+    <span class="mono">1</span>. Nach der Skalierung mit
+    <span class="mono">√2</span> sind das <span class="mono">0.707</span>.
+    Die Softmax macht daraus <span class="mono">[0.5, 0.5]</span>.
+  </p>
+  <p>
+    Die zweite Zeile gehört zu Token 2: Query <span class="mono">[0,1]</span>
+    trifft Key <span class="mono">[1,1]</span> mit
+    <span class="mono">1</span> und Key <span class="mono">[1,-1]</span> mit
+    <span class="mono">-1</span>. Nach der Skalierung sind das
+    <span class="mono">0.707</span> und <span class="mono">-0.707</span>.
+    Die Softmax macht daraus <span class="mono">[0.804, 0.196]</span>.
+    Deshalb ist die Ausgabe von Token 2 näher an
+    <span class="mono">v_1 = [1,2]</span> als an
+    <span class="mono">v_2 = [3,4]</span>.
+  </p>
+
+  <h3>Derselbe Schritt mit echten GPT-2-Vektoren</h3>
+  <p>
+    Jetzt Head 0, Token 2 ( world) aus Block 1. Der Query hat 64 Zahlen, der
+    Key hat 64 Zahlen. Die ersten vier Terme des Dot-Produkts sind:
+  </p>
+  <div class="tex-display" data-tex="\underbrace{q_2^{(0)}\cdot k_1^{(0)}}_{\text{64 Produkte, dann summieren}}=0.530255\cdot(-1.252595)+1.033059\cdot2.319985+(-0.003864)\cdot0.172185+(-1.135221)\cdot(-0.230587)+\cdots=11.256"></div>
+  <div class="tex-display" data-tex="\underbrace{s_{2,1}^{(0)}}_{\text{Score Token 2}\to\text{Token 1}}=\frac{11.256}{\underbrace{8}_{\sqrt{64}}}=1.407,\qquad\underbrace{s_{2,2}^{(0)}}_{\text{Score Token 2}\to\text{Token 2}}=\frac{-13.002}{8}=-1.625"></div>
+  <div class="tex-display" data-tex="\underbrace{\alpha_{2,1}^{(0)}}_{\text{Gewicht Token 1}}=\frac{e^{1.407}}{e^{1.407}+e^{-1.625}}=0.954,\qquad\underbrace{\alpha_{2,2}^{(0)}}_{\text{Gewicht Token 2}}=0.046"></div>
+
+  <p>
+    Die ersten vier Terme ergeben <span class="mono">1.994</span>. Die
+    restlichen 60 Terme heben die Summe auf <span class="mono">11.256</span>.
+    Das ist der Grund, warum die volle 64-dimensionale Rechnung nötig ist:
+    Ein paar Koordinaten erzählen nicht die ganze Geschichte.
+  </p>
+
+  <p>
+    Nun die Ausgabe von Head 0 für Token 2. Sie ist die gewichtete Summe der
+    beiden Value-Vektoren, also <span class="mono">0.954 · v_1 + 0.046 · v_2</span>.
+    Die ersten 12 der 64 Zahlen sind:
+  </p>
+  <div class="tex-display" data-tex="\underbrace{o_2^{(0)}}_{\text{Head 0, Token 2}}=\begin{bmatrix}0.159\\0.195\\-0.036\\0.074\\0.035\\-0.131\\-0.153\\0.020\\0.193\\-0.008\\0.114\\0.046\\\vdots\end{bmatrix}"></div>
+
+  <p>
+    Das ist der Vektor, der aus einem Attention-Head direkt herauskommt:
+    <strong>ein Vektor der Länge 64 pro Token und Head</strong>. Noch kein
+    768-Vektor, noch kein FFN, noch kein neuer Token-Vektor.
+  </p>
+
+  <h3>Alle 12 Heads im echten Lauf</h3>
+  <p>
+    Zeile = welcher Token fragt, Spalte = welchen Token es ansieht. Weil GPT-2
+    kausal ist, ist die erste Zeile bei jedem Head <span class="mono">[1,0]</span>:
+    Token 1 darf nur sich selbst sehen. Die zweite Zeile unterscheidet sich
+    von Head zu Head. Genau das ist Multi-Head-Attention: verschiedene Heads
+    lernen verschiedene Beziehungen.
+  </p>
+  <div class="attn-grid" id="attn-grid"></div>
+  <p class="caption">
+    <b>Echter GPT-2-Lauf, Block 1:</b> Aufmerksamkeitsgewichte für alle 12
+    Heads. Head 1 sieht Token 2 fast nur bei sich selbst
+    (<span class="mono">0.998</span>), Head 0 sieht Token 2 zu
+    <span class="mono">95.4 %</span> bei Token 1.
+  </p>
+</section>
+
+<section class="chapter reveal" id="concat" data-nav="Concat &amp; W_O">
+  <div class="chapter-head">
+    <div class="chapter-num">06 / CONCAT UND W_O</div>
+    <div>
+      <h2>Aus 12 Head-Vektoren wird ein 768-Vektor</h2>
+      <p class="dek">
+        Die 12 Head-Ausgaben desselben Tokens werden hintereinandergelegt.
+        Das ergibt 12 × 64 = 768 Zahlen. Danach mischt die gelernte Matrix
+        W_O die Heads. Erst dieses Ergebnis geht in den Residualstrom.
+      </p>
+    </div>
+  </div>
+
+  <div class="tex-display" data-tex="\underbrace{o_i}_{\substack{\text{ein Vektor pro Token}\\\text{nach Concat der Heads}}}=\left[\underbrace{o_i^{(1)}}_{64},\;\underbrace{o_i^{(2)}}_{64},\;\ldots,\;\underbrace{o_i^{(12)}}_{64}\right]\in\mathbb{R}^{\underbrace{768}_{\substack{12\cdot64\\\text{Feature-Achse}}}}"></div>
+  <div class="tex-display" data-tex="\underbrace{a_i}_{\substack{\text{Attention-Delta}\\\text{für Token }i}}=\underbrace{o_i}_{\text{concat}}\underbrace{W_O}_{\substack{768\times768\\\text{mischt die Heads}}}"></div>
+
+  <p>
+    Wichtig: Die Concat-Achse ist die Feature-Achse. Die erste Hälfte des
+    768-Vektors kommt von Head 1, die nächsten 64 Zahlen von Head 2, und so
+    weiter. Die beiden Tokens werden dabei nicht zusammengelegt. Es gibt
+    weiterhin zwei Zeilen, jede mit 768 Zahlen.
+  </p>
+
+  <div class="head-stripe" id="head-stripe"></div>
+  <p class="caption">
+    <b>Echter GPT-2-Lauf, Token 2:</b> die ersten 4 Zahlen jedes der 12
+    Heads. Diese 12 Blöcke werden konkateniert. Head 0 liefert die
+    Dimensionen 1 bis 64, Head 1 die Dimensionen 65 bis 128, und so weiter.
+  </p>
+
+  <div class="table-wrap" style="margin-top:0.9rem">
+    <table class="num-table" id="concat-table"></table>
+  </div>
+  <p class="caption">
+    <b>Nach dem Concat:</b> Die ersten 12 Zahlen von <span class="mono">o_i</span>
+    sind genau die ersten 12 Zahlen von Head 0. Nach <span class="mono">W_O</span>
+    sind es andere Zahlen, weil die Heads gemischt werden.
+  </p>
+</section>
+
+<section class="chapter reveal" id="residual" data-nav="Residualstrom">
+  <div class="chapter-head">
+    <div class="chapter-num">07 / RESIDUALSTROM</div>
+    <div>
+      <h2>Der Token-Vektor ist ein Kanal, kein Zwischenergebnis</h2>
+      <p class="dek">
+        Jeder SubLayer liest den Token-Vektor, berechnet ein Delta und addiert
+        es zurück. Der Token-Vektor wird nicht ersetzt, er wird ergänzt. Das
+        ist der Residualstrom. Er ist pro Token getrennt und hat immer die
+        Form 768.
+      </p>
+    </div>
+  </div>
+
+  <div class="tex-display" data-tex="\underbrace{x_i'}_{\text{neuer Token-Vektor}}=\underbrace{x_i}_{\text{alter Token-Vektor}}+\underbrace{a_i}_{\text{Attention-Delta}}"></div>
+  <div class="tex-display" data-tex="\underbrace{x_i''}_{\text{nach dem FFN}}=\underbrace{x_i'}_{\text{nach Attention}}+\underbrace{f_i}_{\text{FFN-Delta}}"></div>
+
+  <p>
+    Die Addition ist koordinatenweise. Für die erste Koordinate von Token 2
+    im echten Lauf:
+  </p>
+  <div class="tex-display" data-tex="\underbrace{-0.1248}_{\text{Embedding}}+\underbrace{(-1.1841)}_{\text{Attention-Delta}}=\underbrace{-1.3089}_{\text{Residual nach Attention}}"></div>
+
+  <p>
+    Das ist keine Metapher: Die erste Zahl des Token-Vektors ist die Summe
+    der ersten Zahl des alten Vektors und der ersten Zahl des Attention-Deltas.
+    Die anderen 767 Koordinaten funktionieren genauso. Der Residualstrom ist
+    der rote Faden, der den Token durch alle 12 Blöcke trägt.
+  </p>
+
+  <div class="table-wrap">
+    <table class="num-table" id="residual-table"></table>
+  </div>
+  <p class="caption">
+    <b>Echter GPT-2-Lauf, Token 2:</b> Embedding, Attention-Delta und die
+    Summe. Die ersten 12 von 768 Koordinaten. Alle Zahlen sind auf sechs
+    Nachkommastellen gerundet; deshalb kann die letzte Stelle einer Summe um
+    eins abweichen.
+  </p>
+
+  <div class="note">
+    <strong>Wichtig für dein Bild:</strong> Die Attention-Heads schreiben
+    nicht einzeln in den Residualstrom. Ihre Ausgaben werden erst
+    konkateniert, dann mit <span class="mono">W_O</span> gemischt, und erst
+    das Ergebnis wird addiert. Das FFN sieht danach den bereits addierten
+    Vektor, nicht die rohen Head-Ausgaben. Mathematisch lässt sich der Beitrag
+    jedes Heads über den passenden Spaltenblock von <span class="mono">W_O</span>
+    zerlegen. Der Forward-Pass addiert aber die bereits gemischte Summe.
+  </div>
+</section>
+
+<section class="chapter reveal" id="ffn" data-nav="LayerNorm &amp; FFN">
+  <div class="chapter-head">
+    <div class="chapter-num">08 / LAYERNORM UND FFN</div>
+    <div>
+      <h2>Das FFN sieht einen Vektor pro Token</h2>
+      <p class="dek">
+        Vor dem FFN wird pro Token über die 768 Features normalisiert. Dann
+        expandiert das FFN auf 3072, wendet GELU elementweise an und projiziert
+        zurück auf 768. Dieselben Gewichte gelten für jeden Token, aber jede
+        Zeile wird getrennt verarbeitet.
+      </p>
+    </div>
+  </div>
+
+  <div class="tex-display" data-tex="\underbrace{\mu_i}_{\text{Mittelwert}}=\frac{1}{\underbrace{768}_{d_{\text{model}}}}\sum_{k=1}^{768}x_{i,k}',\qquad\underbrace{\sigma_i^2}_{\text{Varianz}}=\frac{1}{768}\sum_{k=1}^{768}(x_{i,k}'-\mu_i)^2"></div>
+  <div class="tex-display" data-tex="\underbrace{h_i}_{\text{normiert}}=\underbrace{\gamma}_{\text{gelernt}}\odot\frac{x_i'-\mu_i}{\sqrt{\sigma_i^2+\varepsilon}}+\underbrace{\beta}_{\text{gelernt}}"></div>
+
+  <p>
+    Mittelwert und Varianz laufen über die 768 Features <em>eines</em> Tokens.
+    Nicht über die Tokens. Die LayerNorm mischt also nichts zwischen Token 1
+    und Token 2. Sie normiert jede Zeile für sich.
+  </p>
+
+  <div class="tex-display" data-tex="\underbrace{u_i}_{\text{FFN-Eingang, 768}}=\operatorname{LN}(x_i')"></div>
+  <div class="tex-display" data-tex="\underbrace{z_i}_{\substack{\text{versteckte Schicht}\\\text{3072 Zahlen}}}=\operatorname{GELU}\left(\underbrace{u_i}_{\text{768}}\underbrace{W_1}_{\substack{768\times3072\\\text{Expansion}}}+\underbrace{b_1}_{\text{3072}}\right)"></div>
+  <div class="tex-display" data-tex="\underbrace{f_i}_{\substack{\text{FFN-Ausgabe}\\\text{wieder 768}}}=\underbrace{z_i}_{\text{3072}}\underbrace{W_2}_{\substack{3072\times768\\\text{Rückprojektion}}}+\underbrace{b_2}_{\text{768}}"></div>
+
+  <p>
+    Das ist die Antwort auf „Was kommt in das FFN rein?“: der normierte
+    Residualvektor <em>eines</em> Tokens, also 768 Zahlen. Bei zwei Tokens
+    sind es zwei solche Vektoren. Das FFN verarbeitet sie mit denselben
+    Gewichten, aber getrennt:
+  </p>
+  <div class="tex-display" data-tex="\operatorname{FFN}\left(\begin{bmatrix}u_1\\u_2\end{bmatrix}\right)=\begin{bmatrix}\operatorname{FFN}(u_1)\\\operatorname{FFN}(u_2)\end{bmatrix}"></div>
+
+  <div class="big-answer" style="margin-top:1rem">
+    <h3>Wie werden daraus wieder einzelne Tokens?</h3>
+    <p>
+      Sie werden nicht wieder einzelne Tokens. Sie sind die ganze Zeit
+      einzelne Tokens. Der Tensor hat vor, in und nach dem FFN die Form
+      <span class="mono">2 × 768</span>, nicht <span class="mono">1536</span>.
+      Die erste Achse ist die Token-Achse. Sie hat zwei Einträge: Zeile 1
+      gehört zu Token 1, Zeile 2 zu Token 2.
+    </p>
+    <p>
+      Stell dir zwei Notizbücher vor, eines pro Token. Jedes hat 768 Seiten.
+      Attention lässt die beiden voneinander abschreiben. Danach hat jedes
+      immer noch sein eigenes Notizbuch. Das FFN bearbeitet jedes Notizbuch
+      für sich. Es gibt keinen Moment, in dem beide Notizbücher zu einem
+      einzigen gebunden werden.
+    </p>
+  </div>
+
+  <div class="two-col" style="margin-top:1rem">
+    <div class="panel">
+      <h3>Tabelle statt Vektor</h3>
+      <div class="tex-display" data-tex="\underbrace{X}_{\substack{2\times768\\\text{zwei Zeilen}}}=\begin{bmatrix}\leftarrow\text{Token 1}\rightarrow\\\leftarrow\text{Token 2}\rightarrow\end{bmatrix}\qquad\underbrace{\operatorname{FFN}(X)}_{\substack{2\times768\\\text{zwei Zeilen}}}=\begin{bmatrix}\operatorname{FFN}(x_1)\\\operatorname{FFN}(x_2)\end{bmatrix}"></div>
+      <p>
+        Die Zeilen sind die Tokens. Die Spalten sind die Features. Concat
+        verlängert die Spalten. Das FFN bearbeitet jede Zeile. Keine Operation
+        in diesem Bild fügt die beiden Zeilen zu einer einzigen Zeile zusammen.
+      </p>
+    </div>
+    <div class="panel">
+      <h3>Wo die Token-Achse bleibt</h3>
+      <div class="mini-code">heads:        (12, 2, 64)   # Head, Token, Feature
+transpose:    (2, 12, 64)   # Token, Head, Feature
+reshape:      (2, 768)      # Token bleibt vorne
+
+# falsch wäre:
+# reshape(1536)     -> beide Tokens vermischt
+# reshape(12, 128)  -> Head und Token vermischt</div>
+      <p>
+        Der Unterschied ist die Reihenfolge der Achsen. Ein
+        <span class="mono">reshape</span> nach <span class="mono">(2, 768)</span>
+        fasst nur Head und Feature zusammen. Die <span class="mono">2</span>
+        bleibt die Token-Achse.
+      </p>
+    </div>
+  </div>
+
+  <p>
+    Am Ende eines Forward-Passes wird auch nicht die ganze Tabelle in Text
+    zurückverwandelt. Für die nächste Token-Vorhersage nimmt GPT-2 die letzte
+    Zeile, macht daraus 50257 Logits und wählt ein Token. Dieses neue Token
+    wird an die Eingabe gehängt, und der nächste Forward-Pass läuft über die
+    verlängerte Tabelle. Die bereits gelesenen Tokens behalten ihre Zeilen.
+    Es gibt keinen Schritt, in dem ein einziger großer Vektor wieder in
+    Tokens zerlegt wird.
+  </p>
+
+  <div class="table-wrap">
+    <table class="num-table" id="ffn-table"></table>
+  </div>
+  <p class="caption">
+    <b>Echter GPT-2-Lauf, Token 2:</b> LN2-Ausgang, FFN-Eingang,
+    versteckte Schicht vor und nach GELU, FFN-Ausgang und der neue
+    Residualvektor. Die ersten 12 von 768 beziehungsweise 3072 Zahlen.
+  </p>
+
+  <div class="tex-display" data-tex="\underbrace{-1.3089}_{\text{nach Attention}}+\underbrace{(-0.5021)}_{\text{FFN-Delta}}=\underbrace{-1.8110}_{\text{nach FFN}}"></div>
+  <p class="caption">
+    <b>Koordinatenprobe:</b> Auch das FFN schreibt nur ein Delta in den
+    Residualstrom. Es ersetzt den Token-Vektor nicht.
+  </p>
+</section>
+
+<section class="chapter reveal" id="block" data-nav="12 Blöcke">
+  <div class="chapter-head">
+    <div class="chapter-num">09 / DER GANZE STAPEL</div>
+    <div>
+      <h2>12-mal derselbe Datenfluss, dann Logits</h2>
+      <p class="dek">
+        Ein Block ist Attention plus FFN mit zwei Residualverbindungen. GPT-2
+        small stapelt 12 davon. Danach folgt eine letzte LayerNorm und die
+        Unembedding-Matrix, die aus 768 Zahlen 50257 Logits macht.
+      </p>
+    </div>
+  </div>
+
+  <div class="tex-display" data-tex="\underbrace{X'}_{\text{nach Attention}}=\underbrace{X}_{\text{Eingang}}+\operatorname{MHA}(\operatorname{LN}_1(X)),\qquad\underbrace{X''}_{\text{nach FFN}}=\underbrace{X'}_{\text{nach Attention}}+\operatorname{FFN}(\operatorname{LN}_2(X'))"></div>
+
+  <p>
+    Das ist die Pre-Norm-Variante, die GPT-2 verwendet: Die LayerNorm sitzt
+    auf dem Lesepfad, die Addition bleibt sauber. Der klassische Transformer
+    von 2017 verwendete Post-Norm, also
+    <span class="mono">LN(x + Sublayer(x))</span>. Für die Frage nach der
+    Token-Achse ist der Unterschied nicht entscheidend: In beiden Varianten
+    bleibt die Form <span class="mono">T × 768</span>.
+  </p>
+
+  <div class="tex-display" data-tex="\underbrace{\ell}_{\text{Logits, 50257}}=\operatorname{LN}_f(X^{(12)})\underbrace{W_U^T}_{\substack{768\times50257\\\text{Unembedding}}}"></div>
+
+  <p>
+    Für die nächste Token-Vorhersage wird die letzte Zeile verwendet, also der
+    Vektor des letzten Tokens. Die Softmax über die 50257 Logits ergibt die
+    Wahrscheinlichkeiten. Im echten Lauf für <span class="mono">Hello world</span>
+    sind die wahrscheinlichsten nächsten Tokens:
+  </p>
+  <div class="table-wrap">
+    <table class="num-table" id="top-table"></table>
+  </div>
+  <p class="caption">
+    <b>Echter GPT-2-Lauf:</b> nächste-Token-Wahrscheinlichkeiten nach allen
+    12 Blöcken. GPT-2 small ist ein kleines Modell, deshalb sind die
+    Wahrscheinlichkeiten flach. Das Komma ist trotzdem plausibel.
+  </p>
+
+  <h3>Der Beweis, dass Token 1 Token 2 nicht sieht</h3>
+  <p>
+    Wir lassen denselben Präfix mit einem anderen zweiten Token laufen:
+    <span class="mono">Hello world</span> und <span class="mono">Hello there</span>.
+    Wenn die Kausalmaske stimmt, muss der finale Vektor von Token 1 in beiden
+    Läufen exakt identisch sein. Token 2 darf sich ändern.
+  </p>
+  <div class="table-wrap">
+    <table class="num-table" id="causal-table"></table>
+  </div>
+  <p class="caption">
+    <b>Maximale absolute Differenz</b> zwischen den beiden Läufen. Token 1
+    bleibt bei <span class="mono">0.0</span>, Token 2 ändert sich. Genau das
+    bedeutet kausale Attention: Information fließt nur von links nach rechts.
+  </p>
+</section>
+
+<section class="chapter reveal" id="shapes" data-nav="Shapes">
+  <div class="chapter-head">
+    <div class="chapter-num">10 / SHAPES</div>
+    <div>
+      <h2>Die Formen von oben nach unten</h2>
+      <p class="dek">
+        Alle Formen für unseren Lauf mit zwei Tokens. <span class="mono">B</span>
+        ist die Batch-Größe, <span class="mono">T</span> die Sequenzlänge.
+        Für ein einzelnes Beispiel ist <span class="mono">B = 1</span>.
+      </p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="num-table" id="shape-table"></table>
+  </div>
+
+  <p>
+    Die Token-Achse ist die <span class="mono">T</span>-Achse. Sie bleibt in
+    jeder Zeile erhalten. Die Feature-Achse wächst und schrumpft:
+    <span class="mono">768 → 64 pro Head → 768 → 3072 → 768</span>. Die
+    Attention-Scores sind die einzige Stelle, an der zusätzlich eine
+    <span class="mono">T × T</span>-Achse entsteht. Diese Matrix sagt, welcher
+    Token welchen anderen ansieht.
+  </p>
+</section>
+
+<section class="chapter reveal" id="fazit" data-nav="Fazit">
+  <div class="chapter-head">
+    <div class="chapter-num">11 / FAZIT</div>
+    <div>
+      <h2>Was du dir merken solltest</h2>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="k">1</div>
+      <h3>Concat ist über Heads</h3>
+      <p>
+        Aus 12 Head-Ausgaben à 64 wird ein 768-Vektor pro Token. Nicht ein
+        768-Vektor für alle Tokens.
+      </p>
+    </div>
+    <div class="card">
+      <div class="k">2</div>
+      <h3>Attention mischt Tokens</h3>
+      <p>
+        Die Score-Matrix ist <span class="mono">T × T</span>. Jede Zeile ist
+        eine gewichtete Summe über die Values aller sichtbaren Tokens.
+      </p>
+    </div>
+    <div class="card">
+      <div class="k">3</div>
+      <h3>Das FFN mischt Features</h3>
+      <p>
+        Es sieht eine Matrix <span class="mono">T × 768</span> und wendet
+        dieselbe MLP auf jede Zeile an. Keine Token-Interaktion.
+      </p>
+    </div>
+    <div class="card">
+      <div class="k">4</div>
+      <h3>Der Residualstrom ist pro Token</h3>
+      <p>
+        Jeder Token hat seinen eigenen 768-Kanal. Sublayer addieren Deltas,
+        sie ersetzen den Kanal nicht.
+      </p>
+    </div>
+    <div class="card">
+      <div class="k">5</div>
+      <h3>Es gibt keinen Trennungsschritt</h3>
+      <p>
+        Die Tokens waren nie in einem einzigen Vektor. Die Zeilen bleiben
+        Zeilen, von der Embedding-Matrix bis zu den Logits.
+      </p>
+    </div>
+    <div class="card">
+      <div class="k">6</div>
+      <h3>Nur die letzte Zeile wird zur Vorhersage</h3>
+      <p>
+        Für das nächste Token verwendet GPT-2 den finalen Vektor des letzten
+        Tokens. Die anderen Zeilen bleiben für die Berechnung wichtig, aber
+        nicht für diesen einen Softmax-Schritt.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="chapter reveal" id="quellen" data-nav="Quellen">
+  <div class="chapter-head">
+    <div class="chapter-num">12 / QUELLEN &amp; RECHENWEG</div>
+    <div>
+      <h2>Woher die Zahlen kommen</h2>
+      <p class="dek">
+        Die Formeln folgen dem Original-Transformer und der GPT-2-Architektur.
+        Die Vektoren stammen aus einem echten Forward-Pass von GPT-2 small,
+        den ich lokal mit NumPy gerechnet habe.
+      </p>
+    </div>
+  </div>
+
+  <div class="sources">
+    <ol>
+      <li>
+        Ashish Vaswani et al. (2017). <em>Attention Is All You Need.</em>
+        <a href="https://arxiv.org/abs/1706.03762">arXiv:1706.03762</a>.
+        Die Originalarchitektur mit Multi-Head Attention, Residualverbindungen,
+        LayerNorm und position-wise FFN.
+      </li>
+      <li>
+        Alec Radford et al. (2019). <em>Language Models are Unsupervised
+        Multitask Learners.</em>
+        <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">OpenAI PDF</a>.
+        GPT-2, inklusive der 12-Block-/12-Head-Konfiguration von GPT-2 small.
+      </li>
+      <li>
+        Hugging Face. <em>openai-community/gpt2 model card and config.</em>
+        <a href="https://huggingface.co/openai-community/gpt2">huggingface.co/openai-community/gpt2</a>.
+        Verwendete Werte: <span class="mono">n_layer=12</span>,
+        <span class="mono">n_head=12</span>, <span class="mono">n_embd=768</span>,
+        <span class="mono">n_ctx=1024</span>, <span class="mono">vocab_size=50257</span>.
+      </li>
+      <li>
+        Nelson Elhage et al. (2021). <em>A Mathematical Framework for
+        Transformer Circuits.</em>
+        <a href="https://transformer-circuits.pub/2021/framework/index.html">Transformer Circuits Thread</a>.
+        Der Residualstrom als Kommunikationskanal und die Aufteilung in
+        QK- und OV-Schaltkreise.
+      </li>
+      <li>
+        Jimmy Lei Ba, Jamie Ryan Kiros, Geoffrey E. Hinton (2016).
+        <em>Layer Normalization.</em>
+        <a href="https://arxiv.org/abs/1607.06450">arXiv:1607.06450</a>.
+      </li>
+      <li>
+        Dan Hendrycks, Kevin Gimpel (2016). <em>Gaussian Error Linear Units
+        (GELUs).</em>
+        <a href="https://arxiv.org/abs/1606.08415">arXiv:1606.08415</a>.
+      </li>
+    </ol>
+    <p class="note">
+      Der Lauf verwendet die vortrainierten GPT-2-small-Gewichte aus dem
+      lokalen Hugging-Face-Cache, gelesen als Safetensors und mit NumPy
+      weitergerechnet. Der Tokenizer ist die GPT-2-Byte-Level-BPE. Die
+      Token-IDs für <span class="mono">Hello world</span> sind
+      <span class="mono">[15496, 995]</span>.
+    </p>
+  </div>
+
+  <h3>Der Kern des Rechenwegs</h3>
+  <div class="mini-code">u = LayerNorm(x)                      # pro Token, über 768 Features
+qkv = u @ W_qkv + b_qkv               # (T, 2304)
+q, k, v = split(qkv, 3, axis=-1)      # je (T, 768)
+q = q.reshape(T, 12, 64).transpose(1, 0, 2)
+k = k.reshape(T, 12, 64).transpose(1, 0, 2)
+v = v.reshape(T, 12, 64).transpose(1, 0, 2)
+scores = q @ k.transpose(0, 2, 1) / sqrt(64) + causal_mask
+alpha = softmax(scores, axis=-1)      # (12, T, T)
+heads = alpha @ v                     # (12, T, 64)
+concat = heads.transpose(1, 0, 2).reshape(T, 768)
+attn_out = concat @ W_o + b_o         # (T, 768)
+x = x + attn_out                      # Residual, Zeile für Zeile
+u = LayerNorm(x)
+hidden = gelu(u @ W_1 + b_1)          # (T, 3072)
+ffn_out = hidden @ W_2 + b_2          # (T, 768)
+x = x + ffn_out                       # Residual, Zeile für Zeile</div>
+
+  <p>
+    Verifikation: Die Token-IDs stimmen mit dem GPT-2-Tokenizer überein. Die
+    Attention-Zeilen summieren sich zu 1. Eine unabhängige, explizite
+    Ein-Token-Rechnung für LayerNorm, Q/K/V, einen Dot-Produkt-Score und die
+    Softmax stimmt mit der vektoriellen Version bis auf
+    <span class="mono">1e-6</span> überein. Der Kausalitätstest liefert für
+    Token 1 exakt <span class="mono">0.0</span> Differenz zwischen
+    <span class="mono">Hello world</span> und
+    <span class="mono">Hello there</span>. Die nächste-Token-Vorhersage für
+    <span class="mono">Water is made of hydrogen and</span> ist
+    <span class="mono">oxygen</span>, was zu einem korrekt laufenden
+    GPT-2-small-Forward-Pass passt.
+  </p>
+</section>
+
+</main>
+
+<footer class="site-foot">
+  <p>
+    Ein Experiment in <span class="mono">blog/test/</span>. Die Formeln werden
+    mit Temml gerendert, die Zahlen mit NumPy gerechnet. Keine Netzwerkaufrufe
+    beim Laden.
+  </p>
+</footer>
+
+<script id="trace-data" type="application/json">{"meta":{"model":"GPT-2 small","text":"Hello world","ids":[15496,995],"tokens":["Hello"," world"],"T":2,"d_model":768,"heads":12,"d_head":64,"layers":12,"d_ff":3072,"vocab":50257,"params_m":124.4},"embedding":[[-0.087471,-0.330112,0.01523,-0.135311,-0.120346,-0.14081,-0.180396,-0.339367,-0.059497,-0.07066,0.003237,-0.110272],[-0.124828,0.098074,-0.08925,-0.127287,-0.036509,0.018714,-0.28259,0.179784,0.09755,0.004206,-0.019358,-0.199779]],"ln1":[[-0.052242,-0.128742,-0.055896,-0.070832,-0.077598,-0.081236,0.134085,-0.128632,-0.032835,-0.042056,-0.001034,-0.062126],[-0.130008,0.11241,-0.125546,-0.115632,-0.047452,0.008029,0.011514,0.193875,0.097845,-0.001758,-0.021803,-0.199096]],"head0":{"q":[[0.470091,-0.077501,0.553072,-0.701201,-0.252557,0.751932,-0.776505,0.373018,-0.511436,0.845431,0.41552,-0.927927],[0.530255,1.033059,-0.003864,-1.135221,0.134006,-0.250586,-0.379821,0.155115,-0.68164,0.148487,0.682852,-0.190434]],"k":[[-1.252595,2.319985,0.172185,-0.230587,0.675785,0.567377,-0.170026,0.172467,-2.188353,0.926291,0.981361,0.126314],[-2.630666,3.893141,1.310064,0.067431,1.360321,-0.364333,1.433753,0.102289,-2.068066,0.201296,0.514216,0.13089]],"v":[[0.163697,0.204168,-0.043643,0.076579,0.038157,-0.119813,-0.149142,0.031555,0.203177,-0.008414,0.121487,0.04098],[0.060563,-0.002155,0.123542,0.015918,-0.023883,-0.365792,-0.227565,-0.212325,-0.022797,-0.00479,-0.051058,0.140171]],"attn":[[1.0,0.0],[0.954007,0.045993]],"out":[[0.163697,0.204168,-0.043643,0.076579,0.038157,-0.119813,-0.149142,0.031555,0.203177,-0.008414,0.121487,0.04098],[0.158954,0.194679,-0.035954,0.073789,0.035304,-0.131126,-0.152749,0.020338,0.192784,-0.008248,0.113551,0.045542]]},"attention_all":[[[1.0,0.0],[0.954007,0.045993]],[[1.0,0.0],[0.002254,0.997746]],[[1.0,0.0],[0.854554,0.145446]],[[1.0,0.0],[0.466164,0.533836]],[[1.0,0.0],[0.934913,0.065087]],[[1.0,0.0],[0.034992,0.965008]],[[1.0,0.0],[0.960317,0.039683]],[[1.0,0.0],[0.962705,0.037295]],[[1.0,0.0],[0.851588,0.148412]],[[1.0,0.0],[0.800572,0.199428]],[[1.0,0.0],[0.610327,0.389673]],[[1.0,0.0],[0.781776,0.218224]]],"head_stripe":{"token0":[[0.163697,0.204168,-0.043643,0.076579],[0.310184,0.117814,-0.088173,0.16485],[0.219119,0.008663,0.073504,0.155637],[-0.003126,-0.107499,-0.048325,-0.385547],[-0.098262,-0.037282,-0.041934,-0.114541],[-0.134017,-0.20885,-0.439458,0.490884],[-0.005806,-0.219883,0.027365,0.023194],[-0.00963,-0.273524,-0.013823,0.177822],[0.741472,-0.178453,-0.006651,-0.113241],[0.074412,0.023964,0.031744,-0.186458],[0.093921,-0.247298,-0.078721,0.042782],[0.029328,-0.295493,0.158596,-0.314185]],"token1":[[0.158954,0.194679,-0.035954,0.073789],[0.464278,0.013406,-0.040532,-0.01398],[0.209916,-0.009803,0.070086,0.160884],[0.033134,-0.037499,-0.073432,-0.243719],[-0.111368,-0.028923,-0.042969,-0.113431],[-0.089679,0.042323,-0.123054,0.180265],[-0.001057,-0.214769,0.026228,0.023602],[-0.023471,-0.272545,-0.014009,0.175736],[0.723997,-0.137407,-0.037902,-0.087067],[0.031115,0.140441,0.058007,-0.109038],[-0.118259,-0.148555,0.081258,-0.019037],[0.05281,-0.222185,0.126127,-0.229506]]},"concat":[[0.163697,0.204168,-0.043643,0.076579,0.038157,-0.119813,-0.149142,0.031555,0.203177,-0.008414,0.121487,0.04098],[0.158954,0.194679,-0.035954,0.073789,0.035304,-0.131126,-0.152749,0.020338,0.192784,-0.008248,0.113551,0.045542]],"attn_out":[[0.248999,-0.400079,-0.239026,-0.037045,0.06059,-0.034001,0.444824,-1.793713,-0.666663,0.006713,1.051289,-0.054716],[-1.184143,0.058121,0.021047,-0.027173,0.026849,0.038066,0.411061,-0.29687,-0.508292,0.018032,1.225368,-0.086424]],"resid_attn":[[0.161527,-0.730192,-0.223796,-0.172355,-0.059756,-0.174811,0.264428,-2.133079,-0.72616,-0.063947,1.054526,-0.164988],[-1.308972,0.156195,-0.068202,-0.15446,-0.009661,0.05678,0.128472,-0.117086,-0.410742,0.022238,1.206009,-0.286203]],"ln2":[[0.060272,-0.098704,-0.035577,-0.172257,-0.061691,-0.219785,0.032655,-0.093679,-0.127792,-0.078538,0.197517,-0.16331],[-0.099232,0.053647,-0.012181,-0.172749,-0.036299,-0.001185,0.019011,0.041839,-0.067496,-0.01425,0.208547,-0.29357]],"ffn_hidden":[[-0.105234,-0.251872,-0.595153,0.213854,-0.503227,-0.108304,-0.400762,-0.993244,-1.388091,-0.376787,2.674747,-1.476263],[0.20011,-0.738979,-0.450739,-1.139414,-0.801838,-0.515251,-0.970829,-1.03299,-1.46609,-0.885898,-1.270931,-1.657523]],"ffn_act":[[-0.048207,-0.100894,-0.164217,0.125033,-0.154711,-0.049482,-0.137989,-0.159363,-0.114827,-0.133074,2.665218,-0.103468],[0.115924,-0.170001,-0.146993,-0.145206,-0.169532,-0.156238,-0.161122,-0.155944,-0.104774,-0.166516,-0.129705,-0.08089]],"ffn_out":[[0.516838,-0.729446,1.057801,-1.383601,0.393371,0.25793,1.030123,-0.102436,-0.22729,0.151114,-0.314875,0.746852],[-0.502145,0.097501,0.882397,-0.462364,-0.869919,-0.456391,1.349176,0.41984,-1.556167,-0.065284,0.612561,-0.631014]],"resid_ffn":[[0.678365,-1.459638,0.834005,-1.555956,0.333615,0.083119,1.294551,-2.235515,-0.95345,0.087167,0.739651,0.581864],[-1.811116,0.253696,0.814195,-0.616825,-0.87958,-0.399611,1.477648,0.302753,-1.966909,-0.043046,1.81857,-0.917217]],"final_ln":[[-9e-06,-0.140212,-0.208451,-0.028112,-0.090179,-0.198509,4.072485,-0.248994,-0.171685,-0.016896,0.456422,-0.048937],[-0.166325,0.219104,0.044473,0.023849,0.200795,-0.26756,2.639023,-0.160502,-0.065317,-0.028726,0.35509,-0.542165]],"top":[{"id":11,"tok":",","p":0.275432},{"id":13,"tok":".","p":0.139477},{"id":0,"tok":"!","p":0.090686},{"id":2474,"tok":"!\"","p":0.0378},{"id":318,"tok":" is","p":0.028224},{"id":1,"tok":"\"","p":0.019414},{"id":526,"tok":".\"","p":0.019265},{"id":553,"tok":",\"","p":0.015269}],"dot":{"q":[0.530255,1.033059,-0.003864,-1.135221,0.134006,-0.250586,-0.379821,0.155115,-0.68164,0.148487,0.682852,-0.190434],"k0":[-1.252595,2.319985,0.172185,-0.230587,0.675785,0.567377,-0.170026,0.172467,-2.188353,0.926291,0.981361,0.126314],"k1":[-2.630666,3.893141,1.310064,0.067431,1.360321,-0.364333,1.433753,0.102289,-2.068066,0.201296,0.514216,0.13089],"dot0":11.255718,"dot1":-13.001787,"score0":1.406965,"score1":-1.625223,"alpha0":0.954007,"alpha1":0.045993},"hand":{"q":[[1,0],[0,1]],"k":[[1,1],[1,-1]],"v":[[1,2],[3,4]],"scores":[[0.707107,0.707107],[0.707107,-0.707107]],"alpha":[[0.5,0.5],[0.80443,0.19557]],"out":[[2.0,3.0],[1.391141,2.391141]]},"causal":{"token0_layer0":0.0,"token1_layer0":4.633813,"token0_final":0.0,"token1_final":45.023018,"token0_logits":0.0,"token1_logits":25.968967}}</script>
+<script>
+(function () {
+  "use strict";
+  const D = JSON.parse(document.getElementById("trace-data").textContent);
+
+  /* ---------- Temml ---------- */
+  function renderMath() {
+    if (!window.temml) return;
+    document.querySelectorAll(".tex-display[data-tex]").forEach(function (el) {
+      try {
+        el.innerHTML = window.temml.renderToString(el.dataset.tex, { displayMode: true });
+      } catch (err) {
+        el.textContent = "Temml-Fehler: " + err.message;
+        el.classList.add("tex-error");
+      }
+    });
+    document.querySelectorAll(".tex[data-tex]").forEach(function (el) {
+      try {
+        el.innerHTML = window.temml.renderToString(el.dataset.tex, { displayMode: false });
+      } catch (err) {
+        el.textContent = "Temml-Fehler: " + err.message;
+        el.classList.add("tex-error");
+      }
+    });
+  }
+
+  /* ---------- numbers ---------- */
+  function fmt(x, n) {
+    if (n === undefined) n = 3;
+    const v = Number(x);
+    if (!Number.isFinite(v)) return "-";
+    return (v >= 0 ? " " : "") + v.toFixed(n);
+  }
+  function cls(x) { return Number(x) >= 0 ? "num-pos" : "num-neg"; }
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function tokenLabel(i) {
+    return i === 0 ? "Token 1 (Hello)" : "Token 2 ( world)";
+  }
+  function vecCells(arr, n) {
+    return arr.slice(0, n === undefined ? 12 : n).map(function (x) {
+      return '<td class="' + cls(x) + '">' + fmt(x) + "</td>";
+    }).join("");
+  }
+  function tableHead(n) {
+    let h = "<thead><tr><th>Vektor</th>";
+    for (let i = 1; i <= n; i++) h += "<th>" + i + "</th>";
+    return h + "</tr></thead>";
+  }
+
+  /* ---------- embedding table ---------- */
+  (function () {
+    const t = document.getElementById("embed-table");
+    let h = tableHead(12) + "<tbody>";
+    D.embedding.forEach(function (v, i) {
+      h += '<tr><td class="row-label"><b>' + esc(D.meta.tokens[i]) + "</b> · ID " + D.meta.ids[i] + "</td>" + vecCells(v, 12) + "</tr>";
+    });
+    t.innerHTML = h + "</tbody>";
+  })();
+
+  /* ---------- qkv table ---------- */
+  (function () {
+    const t = document.getElementById("qkv-table");
+    const names = [["q", "Query"], ["k", "Key"], ["v", "Value"]];
+    let h = tableHead(12) + "<tbody>";
+    for (let ti = 0; ti < 2; ti++) {
+      names.forEach(function (pair) {
+        h += '<tr><td class="row-label"><b>' + pair[1] + "</b> · " + tokenLabel(ti) + "</td>" + vecCells(D.head0[pair[0]][ti], 12) + "</tr>";
+      });
+    }
+    t.innerHTML = h + "</tbody>";
+  })();
+
+  /* ---------- attention grid ---------- */
+  (function () {
+    const g = document.getElementById("attn-grid");
+    let h = "";
+    D.attention_all.forEach(function (mat, head) {
+      h += '<div class="attn-card"><h4>Head ' + head + "</h4>";
+      h += '<div class="attn-matrix"><div class="corner"></div><div class="axis">T1</div><div class="axis">T2</div>';
+      h += '<div class="axis">T1</div>';
+      for (let j = 0; j < 2; j++) {
+        const w = mat[0][j];
+        h += '<div class="attn-cell" style="--w:' + w + '">' + w.toFixed(2) + "</div>";
+      }
+      h += '<div class="axis">T2</div>';
+      for (let j = 0; j < 2; j++) {
+        const w = mat[1][j];
+        h += '<div class="attn-cell" style="--w:' + w + '">' + w.toFixed(2) + "</div>";
+      }
+      h += "</div></div>";
+    });
+    g.innerHTML = h;
+  })();
+
+  /* ---------- head stripe ---------- */
+  (function () {
+    const g = document.getElementById("head-stripe");
+    let h = "";
+    D.head_stripe.token1.forEach(function (vals, head) {
+      h += '<div class="head-block" style="--i:' + head + '"><h4>Head ' + head + "</h4><div class=\"vals\">";
+      vals.forEach(function (x) { h += '<span class="' + cls(x) + '">' + fmt(x) + "</span><br>"; });
+      h += "</div></div>";
+    });
+    g.innerHTML = h;
+  })();
+
+  /* ---------- concat table ---------- */
+  (function () {
+    const t = document.getElementById("concat-table");
+    let h = tableHead(12) + "<tbody>";
+    [0, 1].forEach(function (ti) {
+      h += '<tr><td class="row-label"><b>Concat</b> · ' + tokenLabel(ti) + "</td>" + vecCells(D.concat[ti], 12) + "</tr>";
+      h += '<tr><td class="row-label"><b>nach W_O</b> · ' + tokenLabel(ti) + "</td>" + vecCells(D.attn_out[ti], 12) + "</tr>";
+      h += '<tr><td class="row-label"><b>Residual</b> · ' + tokenLabel(ti) + "</td>" + vecCells(D.resid_attn[ti], 12) + "</tr>";
+    });
+    t.innerHTML = h + "</tbody>";
+  })();
+
+  /* ---------- residual table ---------- */
+  (function () {
+    const t = document.getElementById("residual-table");
+    let h = tableHead(12) + "<tbody>";
+    h += '<tr><td class="row-label"><b>Embedding x</b> · Token 2</td>' + vecCells(D.embedding[1], 12) + "</tr>";
+    h += '<tr><td class="row-label"><b>Attention-Delta a</b> · Token 2</td>' + vecCells(D.attn_out[1], 12) + "</tr>";
+    h += '<tr><td class="row-label"><b>x + a</b> · Token 2</td>' + vecCells(D.resid_attn[1], 12) + "</tr>";
+    t.innerHTML = h + "</tbody>";
+  })();
+
+  /* ---------- ffn table ---------- */
+  (function () {
+    const t = document.getElementById("ffn-table");
+    let h = tableHead(12) + "<tbody>";
+    h += '<tr><td class="row-label"><b>LN2</b> · Token 2</td>' + vecCells(D.ln2[1], 12) + "</tr>";
+    h += '<tr><td class="row-label"><b>FFN hidden (vor GELU)</b> · Token 2</td>' + vecCells(D.ffn_hidden[1], 12) + "</tr>";
+    h += '<tr><td class="row-label"><b>FFN hidden (nach GELU)</b> · Token 2</td>' + vecCells(D.ffn_act[1], 12) + "</tr>";
+    h += '<tr><td class="row-label"><b>FFN-Ausgabe</b> · Token 2</td>' + vecCells(D.ffn_out[1], 12) + "</tr>";
+    h += '<tr><td class="row-label"><b>Residual nach FFN</b> · Token 2</td>' + vecCells(D.resid_ffn[1], 12) + "</tr>";
+    t.innerHTML = h + "</tbody>";
+  })();
+
+  /* ---------- top tokens ---------- */
+  (function () {
+    const t = document.getElementById("top-table");
+    let h = "<thead><tr><th>Rang</th><th>Token</th><th>ID</th><th>Wahrscheinlichkeit</th></tr></thead><tbody>";
+    D.top.forEach(function (row, i) {
+      h += "<tr><td class=\"row-label\">" + (i + 1) + "</td><td>" + esc(JSON.stringify(row.tok)) + "</td><td>" + row.id + "</td><td class=\"num-pos\">" + (row.p * 100).toFixed(2) + " %</td></tr>";
+    });
+    t.innerHTML = h + "</tbody>";
+  })();
+
+  /* ---------- causal table ---------- */
+  (function () {
+    const t = document.getElementById("causal-table");
+    const rows = [
+      ["Block 1, Token 1", D.causal.token0_layer0],
+      ["Block 1, Token 2", D.causal.token1_layer0],
+      ["Finaler Vektor, Token 1", D.causal.token0_final],
+      ["Finaler Vektor, Token 2", D.causal.token1_final],
+      ["Logits, Token 1", D.causal.token0_logits],
+      ["Logits, Token 2", D.causal.token1_logits]
+    ];
+    let h = "<thead><tr><th>Vergleich: Hello world vs Hello there</th><th>max |Δ|</th></tr></thead><tbody>";
+    rows.forEach(function (r) {
+      h += '<tr><td class="row-label">' + r[0] + '</td><td class="' + (r[1] === 0 ? "check" : "num-neg") + '">' + r[1].toFixed(6) + "</td></tr>";
+    });
+    t.innerHTML = h + "</tbody>";
+  })();
+
+  /* ---------- shape table ---------- */
+  (function () {
+    const t = document.getElementById("shape-table");
+    const rows = [
+      ["Token-IDs", "(2,)", "zwei ganze Zahlen"],
+      ["Embedding + Position", "(2, 768)", "eine Zeile pro Token"],
+      ["LayerNorm 1", "(2, 768)", "pro Token über 768 Features"],
+      ["Q, K, V zusammen", "(2, 2304)", "3 × 768"],
+      ["Q, K, V pro Head", "(12, 2, 64)", "Heads vor der Token-Achse"],
+      ["Scores pro Head", "(12, 2, 2)", "Query × Key"],
+      ["Attention-Gewichte", "(12, 2, 2)", "Softmax pro Zeile"],
+      ["Head-Ausgaben", "(12, 2, 64)", "gewichtete Values"],
+      ["Concat über Heads", "(2, 768)", "12 × 64"],
+      ["W_O", "(2, 768)", "Heads gemischt"],
+      ["Residual nach Attention", "(2, 768)", "x + a"],
+      ["LayerNorm 2", "(2, 768)", "pro Token"],
+      ["FFN hidden", "(2, 3072)", "Expansion"],
+      ["FFN-Ausgabe", "(2, 768)", "Rückprojektion"],
+      ["Residual nach FFN", "(2, 768)", "x + f"],
+      ["Finale LayerNorm", "(2, 768)", "nach 12 Blöcken"],
+      ["Logits", "(2, 50257)", "eine Zeile pro Token"],
+      ["Nächster Token", "(50257,)", "letzte Zeile"]
+    ];
+    let h = "<thead><tr><th>Schritt</th><th>Shape</th><th>Bedeutung</th></tr></thead><tbody>";
+    rows.forEach(function (r) {
+      h += '<tr><td class="row-label"><b>' + r[0] + '</b></td><td class="mono">' + r[1] + '</td><td style="text-align:left;color:var(--muted)">' + r[2] + "</td></tr>";
+    });
+    t.innerHTML = h + "</tbody>";
+  })();
+
+  /* ---------- start ---------- */
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", renderMath);
+  } else {
+    renderMath();
+  }
+  window.addEventListener("load", renderMath);
+})();
+</script>
+<script src="visual_math_base.js"></script>
+</body>
+</html>
