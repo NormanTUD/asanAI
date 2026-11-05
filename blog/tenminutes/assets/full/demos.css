@@ -153,3 +153,25 @@
 #transformer_site .plot-container,
 #transformer_site [id^="transformer-"],
 #transformer_site [id^="tda-"] { max-width: 100%; }
+
+/* Glossary tooltips inside the copied demos. */
+.glossary-term { position: relative; cursor: help; border-bottom: 1px dotted var(--tm-line-strong); }
+.glossary-tooltip {
+	display: none;
+	position: absolute;
+	left: 0;
+	top: 100%;
+	z-index: 50;
+	width: max-content;
+	max-width: 320px;
+	padding: 8px 10px;
+	background: var(--tm-card);
+	color: var(--tm-ink);
+	border: 1px solid var(--tm-line-strong);
+	font-family: var(--tm-ui);
+	font-size: .72rem;
+	line-height: 1.5;
+	box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+.glossary-term:hover > .glossary-tooltip,
+.glossary-term:focus > .glossary-tooltip { display: block; }

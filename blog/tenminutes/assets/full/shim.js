@@ -2,6 +2,8 @@
 (function () {
 	"use strict";
 
+	if (window.tf && tf.setBackend) { try { tf.setBackend("cpu"); } catch (e) {} }
+
 	function isDark() {
 		return document.documentElement.getAttribute("data-theme") === "dark";
 	}
