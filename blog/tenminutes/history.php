@@ -487,7 +487,7 @@
 								<span class="ps-kicker">Spotlight · 1928-1971</span>
 								<h3>The perceptron was a physical machine.</h3>
 								<p>
-									Motor-driven potentiometers whose resistance <em>was</em> the weight, wired
+									Motor-driven potentiometers whose resistance was the weight, wired
 									to photocells, nudged after every mistake. Rosenblatt’s work is the hinge
 									between “a program does what it is told” and “a model learns from what it
 									sees.” He died in a sailing accident in 1971, two years after the critique
