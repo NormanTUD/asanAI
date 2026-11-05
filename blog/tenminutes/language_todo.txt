@@ -14,12 +14,5 @@ Erledigt:
 - Englische Fassung an denselben Stellen mitgezogen, wo die Korrektur auch inhaltlich gilt.
 - Selbstkritik: Die Timeline bleibt eine Auswahl; „Sprache kam zuerst“ ist bewusst die Kurzfassung der längeren Vorgeschichte. Die Mehrdeutigkeitsdemo zeigt drei klar unterscheidbare Fälle, nicht die ganze Bandbreite syntaktischer Ambiguität. Die Wortstellung im Teleskop-Beispiel ist im Deutschen natürlich; die anderen beiden Beispiele sind absichtlich andere Typen von Ambiguität.
 
-- Nachtrag: „Umstritten ist …“ durch die Othello-GPT-Evidenz ersetzt (Li et al., 2022) und als offene Generalisierungsfrage formuliert; „Der letzte Schritt“ entfernt, word2vec bleibt als „neuester größerer Schritt“.
-
-weiter todo:
-
-"Umstritten ist, ob das Training auf Vorhersage trotzdem ein internes Weltmodell hervorbringt. Der letzte Schritt ist geometrisch. Von word2vec (Mikolov et al., 2013) und Teilwort-Tokenizern bis zu modernen Embeddings werden Tokens zu Vektoren, und Bedeutung wird zu einem Muster aus Abständen und Richtungen. Der Beitrag von word2vec war, die alte distributionelle Intuition im großen Maßstab berechenbar zu machen: Ein Vektor wird gelernt, indem das Modell aus dem Wort seine Nachbarn oder aus den Nachbarn das Wort vorhersagt. Das Modell erbt den ganzen Stack (Körper, Symbol, Schrift, Information) und komprimiert ihn in Gewichte." ist es nicht mehr afaik, siehe das reversi/othello paper . und was ist "der letzte schritt"? entferne das, aber lass das mit von word2vec. es ist der neueste größere schritt
-
-finde für "hören" und "tokens" passende gemeinfreie abbildungen in 
-
-Die lange Vorgeschichte der Sprachtechnologie 
+- Nachtrag: Othello-GPT-Evidenz statt „umstritten“; word2vec als „neuester größerer Schritt“.
+- Timeline „Hören“: Gray928-Cochlea (Henry Vandyke Carter, Gray’s Anatomy 1918, gemeinfrei); „Tokens“: eigenes Tokenisierungsdiagramm (Ten Minutes, CC0 1.0). Beide mit Quelle und Lizenz im Panel.

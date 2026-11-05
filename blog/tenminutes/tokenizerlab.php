@@ -63,8 +63,9 @@
 							<p>
 								One consequence looks like a bug until you see it: many tokenizers fold the
 								leading space into the token. “word” and “ word” can be different slots. That is
-								why a prompt ending in a space can behave differently from one that does not,
-								and why formatting is not cosmetic to a model.
+								why a prompt ending in a space can behave differently from one that does not
+								when the tokenizer preserves that space, and why formatting is not
+								cosmetic to a model.
 							</p>
 						</div>
 						<div class="aha">
@@ -220,7 +221,7 @@
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Numbers</b><span><code>1234</code> and <code>1235</code> may split differently. Arithmetic then runs across pieces that do not line up with digits.</span></div>
-							<div class="keypoint"><b>Spaces</b><span>A prompt ending in “is” and one ending in “is ” can have different next-token distributions. Whitespace is content.</span></div>
+							<div class="keypoint"><b>Spaces</b><span>In common byte-level tokenizers, a prompt ending in “is” and one ending in “is ” can tokenize differently and lead to different next-token distributions. Some API wrappers trim trailing whitespace before tokenization; the raw model does not.</span></div>
 							<div class="keypoint"><b>Unicode</b><span>The same visible “é” can be one code point or two. Emoji, flags, and combining marks multiply the cases.</span></div>
 							<div class="keypoint"><b>Portability</b><span>Token IDs are not portable. A different model family has a different vocabulary; its token counts are not a budget for another.</span></div>
 						</div>
