@@ -464,7 +464,8 @@
 										</div>
 										<div class="demo-insight"><b>Takeaway</b><span>The layers in an MLP lift the points into a higher-dimensional space where a straight line can separate what was inseparable before. They change the space in which the cut is made.</span></div>
 									</div>
-									<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into one that a straight threshold can separate.</p>
+									<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into one that a straight line can separate, which in higher dimensions means a plane or hyperplane.</p>
+									<p class="step-note">An MLP also translates the representation. Its affine step can move a feature into a region where the next layer can use it; separation and translation are two descriptions of the same learned transformation.</p>
 									<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>).</p>
 								</div>
 
@@ -505,7 +506,7 @@
 								</div>
 
 								<div class="step-pane" id="step-residual">
-									<p class="step-note step-lead">Every layer reads the same running vector, computes an update, and adds it back. Think of the stream as a shared notebook that any layer can write to. Earlier notes stay in place; later layers read the original entry plus everything written since. The rule is <span data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)" data-tex-display="false"></span>: the new state is the old state plus a change. Each attention block contains many heads, and each MLP contains several layers; the diagram folds them into one step at a time.</p>
+									<p class="step-note step-lead">Every layer reads the same running vector, the residual stream, computes an update, and adds it back. Think of the stream as a shared notebook that any layer can write to. Earlier notes stay in place; later layers read the original entry plus everything written since. The rule is <span data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)" data-tex-display="false"></span>: the new state is the old state plus a change. Each attention block contains many heads, and each MLP contains several layers; the diagram folds them into one step at a time.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 6 · Residual</span>
@@ -715,7 +716,9 @@
 		if (DE) {
 			document.querySelectorAll("[data-tex-de]").forEach(function (el) {
 				el.setAttribute("data-tex", el.getAttribute("data-tex-de"));
+				el.removeAttribute("data-tex-rendered");
 			});
+			TM.typesetMath();
 		}
 		function hexToRgb(hex) {
 			var h = String(hex || "").replace("#", "");

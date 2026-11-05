@@ -240,6 +240,42 @@
 	var api = TM.initCanvas(canvas, draw);
 	if (!api) return;
 
+	var equationEl = document.getElementById("emb-plot-equation");
+	var equationProbe = null;
+	var equationMeasureTimer = null;
+
+	function equationProbeEl() {
+		if (equationProbe) return equationProbe;
+		if (!equationEl || !equationEl.parentNode) return null;
+		equationProbe = document.createElement("div");
+		equationProbe.className = "emb-equation emb-equation--probe";
+		equationProbe.setAttribute("aria-hidden", "true");
+		equationEl.parentNode.insertBefore(equationProbe, equationEl.nextSibling);
+		return equationProbe;
+	}
+
+	function reserveEquationHeight() {
+		if (!equationEl || !window.temml) return;
+		var width = equationEl.getBoundingClientRect().width;
+		var probe = equationProbeEl();
+		if (!width || !probe) return;
+		probe.style.width = width + "px";
+		var texs = ["King - Man + Woman", "Man + Power", "Woman + 2*Power", "Prince + Power"].map(function (expr) {
+			var info = analyze(expr);
+			return info ? equationLatex(expr, info.nearest) : "";
+		}).filter(Boolean);
+		texs.push(directionsLatex());
+		var tallest = 0;
+		texs.forEach(function (tex) {
+			try {
+				probe.innerHTML = temml.renderToString(tex, { displayMode: false });
+				tallest = Math.max(tallest, probe.getBoundingClientRect().height);
+			} catch (e) {}
+		});
+		probe.innerHTML = "";
+		if (tallest > 0) equationEl.style.minHeight = Math.ceil(tallest) + "px";
+	}
+
 	function update() {
 		if (current.mode === "directions") {
 			result = null;
@@ -275,5 +311,13 @@
 		});
 	});
 	window.addEventListener("tm:theme", update);
+	reserveEquationHeight();
 	update();
+	window.addEventListener("resize", function () {
+		clearTimeout(equationMeasureTimer);
+		equationMeasureTimer = setTimeout(reserveEquationHeight, 160);
+	});
+	if (document.fonts && document.fonts.ready) {
+		document.fonts.ready.then(function () { reserveEquationHeight(); });
+	}
 })();

@@ -195,8 +195,8 @@
 	function axisGeom() {
 		AX_Y = H * 0.80;
 		const scale = base();
-		AX_L = W / 2 - scale * 1.05;
-		AX_R = W / 2 + scale * 1.05;
+		AX_L = W / 2 - scale * 1.5;
+		AX_R = W / 2 + scale * 1.5;
 	}
 
 	const sx = score => AX_L + (AX_R - AX_L) * clamp((score - SMIN) / (SMAX - SMIN), 0, 1);
@@ -312,15 +312,16 @@
 		ctx.lineTo(TX, AX_Y + 36);
 		ctx.stroke();
 
+		const narrow = (AX_R - AX_L) < 380;
 		ctx.textAlign = "center";
 		ctx.fillStyle = C.planeStrong;
 		ctx.font = "13px Georgia, serif";
 		ctx.fillText("s = 0", TX, AX_Y + 58);
 		ctx.font = "600 13px system-ui, sans-serif";
 		ctx.fillStyle = C.inner;
-		ctx.fillText(DE ? "s < 0   innerer Kern" : "s < 0   inner core", lerp(AX_L, TX, 0.40), AX_Y + 58);
+		ctx.fillText(DE ? (narrow ? "s < 0   Kern" : "s < 0   innerer Kern") : (narrow ? "s < 0   core" : "s < 0   inner core"), lerp(AX_L, TX, 0.40), AX_Y + 58);
 		ctx.fillStyle = C.outer;
-		ctx.fillText(DE ? "s > 0   äußerer Ring" : "s > 0   outer ring", lerp(TX, AX_R, 0.55), AX_Y + 58);
+		ctx.fillText(DE ? (narrow ? "s > 0   Ring" : "s > 0   äußerer Ring") : (narrow ? "s > 0   ring" : "s > 0   outer ring"), lerp(TX, AX_R, 0.55), AX_Y + 58);
 		ctx.textAlign = "left";
 		ctx.globalAlpha = 1;
 	}

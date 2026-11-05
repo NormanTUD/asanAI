@@ -3898,11 +3898,27 @@ html[data-theme="dark"] .myth--ok b { color: var(--tm-green); }
 	top: 0;
 	width: auto;
 	height: auto !important;
+	font-family: var(--tm-mono);
+	font-size: 0.7rem;
+	text-align: center;
+}
+.emb-equation--probe {
+	position: absolute !important;
+	left: -10000px;
+	top: 0;
+	height: auto !important;
 	min-height: 0 !important;
-	margin: 0 !important;
+	margin: 0;
+	padding: 4px 0;
+	align-items: flex-start;
+	overflow: visible !important;
 	visibility: hidden;
 	pointer-events: none;
-	overflow: visible !important;
+}
+.emb-equation--probe math {
+	display: block;
+	margin: 0 auto;
+	font-size: 1.05rem;
 }
 .att-budget {
 	display: flex;
