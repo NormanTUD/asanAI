@@ -32,7 +32,7 @@
 						<h2 class="section-title">Many currents met here.</h2>
 						<div class="prose">
 							<p>
-								Modern AI has no single line to the large language model. It is a sum of
+								The way to modern <strong>LLM</strong> was not a straight line, but a sum of
 								developments that were never meant to meet: <strong>least squares</strong>,
 								invented by astronomers to fit noisy observations of the sky, now helps decide
 								which word comes next; <strong>formal logic</strong>, built to settle arguments,
