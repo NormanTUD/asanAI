@@ -16,7 +16,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>Language is a <em>very old technology.</em></h1>
-					<p class="hero-deck">Before text could become training data, humans had to build the machinery for it: a vocal tract, symbols, writing, and a way to measure information. This is the long prehistory behind every token.</p>
+					<p class="hero-deck">Before text could become training data, a speech apparatus, symbols, writing, and a way to measure information had to come into being. This is the long prehistory behind every token.</p>
 				</div>
 			</section>
 
@@ -28,6 +28,7 @@
 						<div class="prose">
 							<p>The history of computing traces the ideas that made computation possible. The medium those ideas needed is language. Every language model is downstream of a biological development: genomic evidence suggests the human capacity for language was present at least 135,000 years ago, and in widespread social use by 100,000 years ago.</p>
 							<p>That date comes from genetic and archaeological inference, not from a preserved organ of language; it is a range, not a timestamp. The human vocal tract can make a much wider range of sounds than those of other primates can: the descended larynx, the vocal folds that sit in it, and fine motor control are part of the story, though the exact biological package is still debated. That made spoken language possible, and spoken language made culture cumulative.</p>
+							<p>Hearing and speech did not evolve together. The ear is a recycling solution: the middle-ear bones descend from jaw bones, and the cochlea was added later (<a href="https://pubmed.ncbi.nlm.nih.gov/9310195/" rel="noopener">Clack, 1997</a>; <a href="https://pubmed.ncbi.nlm.nih.gov/26397963/" rel="noopener">Maier and Ruf, 2016</a>). The descended larynx gives the tongue room, but it also lowers the airway into a position where breathing and swallowing share a path, which is one reason humans choke more easily than other primates. The order and timing of these changes are still debated.</p>
 							<p>Listening came first. The ear is built from ancient hair cells, a cochlea, and a middle ear assembled from jaw bones; it is far older than speech. A fetus begins to hear before birth, and newborns prefer the voice they heard in the womb (<a href="https://pubmed.ncbi.nlm.nih.gov/7979483/" rel="noopener">Hepper and Shahidullah, 1994</a>; <a href="https://pubmed.ncbi.nlm.nih.gov/7375928/" rel="noopener">DeCasper and Fifer, 1980</a>). The channel that lets a child learn language was in place long before the first word was spoken.</p>
 							<p>But speech is fleeting. Writing, which appeared in Mesopotamia around 3200 BCE, turned it into something that could survive the speaker, travel across distance, and be re-read. It did not begin as literature. It grew out of accounting: clay tokens for goods, then marks pressed into tablets, then signs for the sounds of names. Oral tradition already used rhythm and story as memory technology; writing made memory external and inspectable.</p>
 						</div>
