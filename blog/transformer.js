@@ -571,6 +571,31 @@ function getPositionColor(index, total, format = 'rgb') {
 	return `rgb(${r}, ${g}, ${b})`;
 }
 
+function drawTrainingPlaceholder() {
+	// The plot box is always mounted; draw a message instead of leaving it
+	// empty, so the panel reads as "not started yet" rather than "broken".
+	const box = document.getElementById('training-loss-plot');
+	if (!box || typeof Plotly === 'undefined') return;
+	const layout = {
+		annotations: [{
+			text: 'The training plot appears here<br>' +
+				'<span style="font-size:0.82em">Press Train Model to start</span>',
+			showarrow: false,
+			x: 0.5, y: 0.5,
+			xref: 'paper', yref: 'paper',
+			font: { size: 13, color: themeColor('#94a3b8') }
+		}],
+		margin: { t: 16, b: 16, l: 16, r: 16 },
+		paper_bgcolor: 'rgba(0,0,0,0)',
+		plot_bgcolor: 'rgba(0,0,0,0)',
+		xaxis: { visible: false },
+		yaxis: { visible: false },
+	};
+	try {
+		Plotly.react(box, [], layout, { responsive: true, displayModeBar: false });
+	} catch (e) { /* Plotly unavailable */ }
+}
+
 function reset_graph() {
 	// The loss panel stays mounted at a fixed 200px so the page never shifts
 	// during training. Use Plotly.purge so the next Plotly.react() call
@@ -585,6 +610,7 @@ function reset_graph() {
 			lp.innerHTML = '';
 		}
 	}
+	drawTrainingPlaceholder();
 	$("#show_training_sentences").hide();
 	const tw = document.getElementById('tda-toggle-training-windows');
 	if (tw) tw.innerText = 'Show training windows';
@@ -1817,6 +1843,11 @@ async function convert_tensors_to_weights(vars) {
 }
 
 function renderLossGraph() {
+	if (!window.lossHistory || window.lossHistory.length === 0) {
+		drawTrainingPlaceholder();
+		return;
+	}
+
 	const lineColor = themeColor('#10b981');
 	const trace = {
 		x: Array.from({length: window.lossHistory.length}, (_, i) => i),
@@ -7244,6 +7275,7 @@ async function loadTransformerModule () {
 
 	observer_vector_math();
 
+	drawTrainingPlaceholder();
 	updateTrainButtonState();
 	updateArchitectureValidityUI();
 	run_transformer_demo()

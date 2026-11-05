@@ -136,55 +136,159 @@ Each slider below carries a short note on why its constraint exists. What hyperp
         oninput="debounced_run_transformer_demo('transformer-training-data')">the king rules the land and the queen rules the sea</textarea>
 </div>
 
-<div style="background: #f0fdf4; padding: 15px; border: 1px solid #10b981; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;">
-    <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
-        <div>
-            <label style="font-weight: bold; font-size: 0.9rem;">Epochs:</label>
-            <input type="number" id="train-epochs" value="200" style="width: 60px; padding: 4px; background: var(--mn-surface, white); color: var(--mn-text, #1e293b); border: 1px solid var(--mn-border, #cbd5e1); border-radius: 4px;">
-        </div>
-        <div>
-            <label style="font-weight: bold; font-size: 0.9rem;">Learning Rate:</label>
-            <input type="number" id="train-lr" value="0.01" step="0.01" style="width: 70px; padding: 4px; background: var(--mn-surface, white); color: var(--mn-text, #1e293b); border: 1px solid var(--mn-border, #cbd5e1); border-radius: 4px;">
-        </div>
-        <div>
-            <label style="font-weight: bold; font-size: 0.9rem;">Optimizer:</label>
-            <div id="train-optimizer" style="display: inline-flex; gap: 12px; align-items: center; font-size: 0.9rem; padding: 4px 0;">
-                <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
-                    <input type="radio" name="train-optimizer-choice" value="adam" checked>
-                    <span class="glossary-term">Adam<span class=“glossary-tooltip”>An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
-                </label>
-                <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
-                    <input type="radio" name="train-optimizer-choice" value="sgd">
-                    <span class="glossary-term">SGD<span class=“glossary-tooltip”>Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
-                </label>
-                <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
-                    <input type="radio" name="train-optimizer-choice" value="rmsprop">
-                    <span class="glossary-term">RMSProp<span class=“glossary-tooltip”>Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
-                </label>
-            </div>
-        </div>
+<style>
+#transformer-train-card {
+	background: var(--mn-emerald-light, #f0fdf4);
+	border: 1px solid var(--mn-emerald, #10b981);
+	border-radius: 10px;
+	margin: 15px 0;
+	padding: 14px 16px;
+}
+.transformer-train-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 14px 22px;
+}
+.transformer-train-field {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+.transformer-train-field > .transformer-train-label {
+	font-weight: 600;
+	font-size: 0.8rem;
+	color: var(--mn-text-secondary, #475569);
+}
+.transformer-train-field input[type="number"] {
+	width: 72px;
+	padding: 5px 8px;
+	font-size: 0.9rem;
+	background: var(--mn-surface, #fff);
+	color: var(--mn-text, #1e293b);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 6px;
+}
+.transformer-train-field input[type="number"]:focus {
+	outline: 2px solid var(--mn-emerald, #10b981);
+	outline-offset: 1px;
+}
+.transformer-opt-group {
+	display: flex;
+	gap: 2px;
+	padding: 3px;
+	background: var(--mn-surface, #fff);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 8px;
+}
+.transformer-opt {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border-radius: 6px;
+	font-size: 0.85rem;
+	font-weight: 500;
+	color: var(--mn-text-secondary, #475569);
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+.transformer-opt:hover {
+	background: var(--mn-bg-subtle, #f1f5f9);
+}
+.transformer-opt input[type="radio"] {
+	margin: 0;
+	accent-color: var(--mn-emerald, #10b981);
+	cursor: pointer;
+}
+.transformer-opt:has(input:checked) {
+	background: var(--mn-emerald-light, #d1fae5);
+	color: var(--mn-text, #0f172a);
+}
+.transformer-opt input:checked + .glossary-term {
+	font-weight: 600;
+}
+.transformer-opt .glossary-term {
+	background: transparent;
+	padding: 0;
+}
+.transformer-train-actions {
+	display: flex;
+	gap: 8px;
+	margin-left: auto;
+}
+#tda-toggle-training-windows {
+	padding: 4px 12px;
+	border-radius: 6px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #fff);
+	color: var(--mn-text, #0f172a);
+	cursor: pointer;
+	font-weight: 600;
+}
+.transformer-train-status {
+	min-height: 20px;
+	margin-top: 10px;
+	font-size: 0.85rem;
+	color: var(--mn-emerald, #047857);
+}
+#training-loss-plot {
+	width: 100%;
+	height: 200px;
+	margin-top: 10px;
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-radius: 8px;
+	background: var(--mn-surface, #fff);
+}
+@media (max-width: 640px) {
+	.transformer-train-actions {
+		margin-left: 0;
+		width: 100%;
+	}
+}
+</style>
 
-	<button class="btn train-btn" onclick="train_transformer()">Train Model</button>
-	<button class="btn" id="tda-toggle-training-windows" onclick="toggleTrainingWindows()" style="padding: 4px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a); cursor: pointer; font-weight: 600; margin-left: 6px;">Show training windows</button>
-
-	<div id="training-status" style="margin-top: 10px; font-size: 0.85rem; color: #047857; min-height: 20px;"></div>
-	<div id="training-loss-plot" style="width: 100%; height: 200px; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: var(--mn-surface, white);"></div>
-    </div>
+<div id="transformer-train-card">
+	<div class="transformer-train-controls">
+		<label class="transformer-train-field">
+			<span class="transformer-train-label">Epochs</span>
+			<input type="number" id="train-epochs" value="200" min="1" step="1">
+		</label>
+		<label class="transformer-train-field">
+			<span class="transformer-train-label">Learning Rate</span>
+			<input type="number" id="train-lr" value="0.01" step="0.01" min="0">
+		</label>
+		<div class="transformer-train-field">
+			<span class="transformer-train-label">Optimizer</span>
+			<div id="train-optimizer" class="transformer-opt-group" role="radiogroup" aria-label="Optimizer">
+				<label class="transformer-opt">
+					<input type="radio" name="train-optimizer-choice" value="adam" checked>
+					<span class="glossary-term" data-tooltip-id="tt-train-adam">Adam<span class="glossary-tooltip" data-tooltip-id="tt-train-adam">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
+				</label>
+				<label class="transformer-opt">
+					<input type="radio" name="train-optimizer-choice" value="sgd">
+					<span class="glossary-term" data-tooltip-id="tt-train-sgd">SGD<span class="glossary-tooltip" data-tooltip-id="tt-train-sgd">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
+				</label>
+				<label class="transformer-opt">
+					<input type="radio" name="train-optimizer-choice" value="rmsprop">
+					<span class="glossary-term" data-tooltip-id="tt-train-rmsprop">RMSProp<span class="glossary-tooltip" data-tooltip-id="tt-train-rmsprop">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
+				</label>
+			</div>
+		</div>
+		<div class="transformer-train-actions">
+			<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
+			<button class="btn" id="tda-toggle-training-windows" onclick="toggleTrainingWindows()" type="button">Show training windows</button>
+		</div>
+	</div>
+	<div id="training-status" class="transformer-train-status"></div>
+	<div id="training-loss-plot"></div>
 </div>
 <script>
 (function () {
-	// Keep the loss panel a fixed height from the start so training never
-	// shifts the page; draw an empty placeholder chart until the first epoch.
-	const box = document.getElementById('training-loss-plot');
-	if (!box || typeof Plotly === 'undefined') return;
-	try {
-		Plotly.react(box, [], {
-			title: { text: 'Loss over epochs — press Train Model to start', font: { size: 12, color: '#94a3b8' } },
-			margin: { t: 28, b: 24, l: 46, r: 14 },
-			paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
-			xaxis: { visible: false }, yaxis: { visible: false },
-		}, { responsive: true });
-	} catch (e) { /* Plotly unavailable */ }
+	// Keep the loss panel mounted at a fixed height from the first paint and
+	// show a readable placeholder so training never shifts the page.
+	if (typeof drawTrainingPlaceholder === 'function') drawTrainingPlaceholder();
 })();
 </script>
 

@@ -10199,7 +10199,13 @@ html.dark #reading-progress {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: all 0.2s ease;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity .35s ease, visibility .35s ease, all .2s ease;
+}
+html.is-ready #reader-toggle {
+	opacity: 1;
+	visibility: visible;
 }
 #reader-toggle svg {
 	width: 18px;
