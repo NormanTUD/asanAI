@@ -571,63 +571,53 @@ function getPositionColor(index, total, format = 'rgb') {
 	return `rgb(${r}, ${g}, ${b})`;
 }
 
+function _tmEcharts(dom) {
+	if (!dom || !window.echarts) return null;
+	var chart = echarts.getInstanceByDom(dom);
+	if (!chart) { dom.innerHTML = ""; chart = echarts.init(dom); }
+	return chart;
+}
+function _tmEchartsDispose(dom) {
+	if (!dom || !window.echarts) return;
+	var chart = echarts.getInstanceByDom(dom);
+	if (chart) chart.dispose();
+}
+function _tmFromPlotlyTraces(traces) {
+	var out = [];
+	(traces || []).forEach(function (t) {
+		if (!t || !t.x || !t.y) return;
+		var data = [];
+		for (var i = 0; i < t.x.length; i++) data.push([t.x[i], t.y[i]]);
+		var mode = t.mode || "";
+		if (mode.indexOf("lines") >= 0) {
+			out.push({ type: "line", name: t.name, data: data, showSymbol: false, smooth: false,
+				lineStyle: { color: (t.line && t.line.color) || undefined, width: (t.line && t.line.width) || 2 } });
+		}
+		if (mode.indexOf("markers") >= 0 || mode.indexOf("text") >= 0) {
+			out.push({ type: "scatter", name: t.name, data: data,
+				symbolSize: (t.marker && t.marker.size) || 6,
+				itemStyle: { color: (t.marker && t.marker.color) || undefined },
+				label: { show: mode.indexOf("text") >= 0,
+					formatter: function (p) { return String((t.text && t.text[p.dataIndex]) || "").replace(/<[^>]*>/g, ""); },
+					position: "top", fontSize: 9 } });
+		}
+	});
+	return out;
+}
+
 function drawTrainingPlaceholder() {
-	// The plot box is always mounted; draw a message instead of leaving it
-	// empty, so the panel reads as "not started yet" rather than "broken".
-	const box = document.getElementById('training-loss-plot');
-	if (!box || typeof Plotly === 'undefined') return;
-	const layout = {
-		annotations: [{
-			text: 'The training plot appears here<br>' +
-				'<span style="font-size:0.82em">Press Train Model to start</span>',
-			showarrow: false,
-			x: 0.5, y: 0.5,
-			xref: 'paper', yref: 'paper',
-			xanchor: 'center', yanchor: 'middle', align: 'center',
-			font: { size: 13, color: themeColor('#94a3b8') }
-		}],
-		margin: { t: 16, b: 16, l: 16, r: 16 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		dragmode: false,
-		xaxis: { visible: false },
-		yaxis: { visible: false },
-	};
-	try {
-		Plotly.react(box, [], layout, { responsive: true, displayModeBar: false });
-	} catch (e) { /* Plotly unavailable */ }
+	var box = document.getElementById('training-loss-plot');
+	if (!box) return;
+	_tmEchartsDispose(box);
+	box.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;text-align:center;font-size:13px;line-height:1.5;color:' + themeColor("#94a3b8") + ';">The training plot appears here<br><span style="font-size:0.82em">Press Train Model to start</span></div>';
 }
 
 function reset_graph() {
-	// The loss panel stays mounted at a fixed 200px so the page never shifts
-	// during training. Use Plotly.purge so the next Plotly.react() call
-	// re-creates the chart cleanly — clearing innerHTML alone leaves Plotly's
-	// internal state referring to a chart whose DOM is gone, which renders
-	// an empty box.
-	const lp = document.getElementById('training-loss-plot');
-	if (lp) {
-		if (typeof Plotly !== 'undefined') {
-			try { Plotly.purge(lp); } catch (e) { lp.innerHTML = ''; }
-		} else {
-			lp.innerHTML = '';
-		}
-	}
+	var lp = document.getElementById('training-loss-plot');
+	if (lp) { _tmEchartsDispose(lp); lp.innerHTML = ''; }
 	drawTrainingPlaceholder();
-	var _tmSts = document.getElementById("show_training_sentences"); if (_tmSts) _tmSts.style.display = "none";
-	const tw = document.getElementById('tda-toggle-training-windows');
-	if (tw) tw.innerText = 'Show training windows';
 }
 
-function toggleTrainingWindows() {
-	// User-controlled toggle: the auto-show used to add ~460px mid-page
-	// and shove every panel below down. The user now decides when to see it.
-	const box = document.getElementById('show_training_sentences');
-	const btn = document.getElementById('tda-toggle-training-windows');
-	if (!box) return;
-	const showing = getComputedStyle(box).display !== 'none';
-	box.style.display = showing ? 'none' : 'block';
-	if (btn) btn.innerText = showing ? 'Show training windows' : 'Hide training windows';
-}
 
 function computePositionalEncoding(pos, d_model, scalar = 1.0) {
 	const pe = new Array(d_model);
@@ -807,11 +797,28 @@ const grandTotal = embeddingParams + totalAttention + totalFFN + totalNorm;
 }
 
 function renderParamSunburst(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff) {
-	const sunburstData = buildSunburstData(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff);
-	const trace = buildSunburstTrace(sunburstData);
-	const layout = buildSunburstLayout();
-
-	Plotly.react('param-breakdown-plotly', [trace], layout, { responsive: true });
+	var el = document.getElementById('param-breakdown-plotly');
+	var chart = _tmEcharts(el);
+	if (!chart) return;
+	var data = buildSunburstData(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff);
+	var nodes = {};
+	data.ids.forEach(function (id, i) {
+		nodes[id] = { name: data.labels[i], value: data.values[i], hover: data.hoverTexts[i],
+			itemStyle: { color: data.colors[i] }, children: [] };
+	});
+	var tree = [];
+	data.ids.forEach(function (id, i) {
+		var node = nodes[id], parent = data.parents[i];
+		if (parent && nodes[parent]) nodes[parent].children.push(node); else tree.push(node);
+	});
+	chart.setOption({
+		tooltip: { trigger: 'item', formatter: function (p) { return (p.data && p.data.hover) || p.name; } },
+		title: { text: 'Parameter Distribution', left: 'center', textStyle: { fontSize: 14 } },
+		series: [{ type: 'sunburst', data: tree, radius: ['15%', '90%'],
+			label: { rotate: 'radial', fontSize: 10 },
+			itemStyle: { borderColor: '#fff', borderWidth: 1 },
+			emphasis: { focus: 'ancestor' } }]
+	}, true);
 }
 
 // ─── Sunburst data assembly ─────────────────────────────────────────
@@ -1112,8 +1119,7 @@ window.showLayer = (containerId, layerIdx, numLayers) => {
         registryEntry.instance._renderLayerContent(layerIdx);
     }
 
-    const heatmaps = activeContent?.querySelectorAll('[id^="attn-heatmap-"]');
-    if (heatmaps) heatmaps.forEach(hm => { try { Plotly.Plots.resize(hm); } catch(e) {} });
+
 
     // SCOPED, not global
     if (activeContent) _renderTemmlOnElements([activeContent]);
@@ -1131,8 +1137,7 @@ window.showHeadInLayer = (containerId, layerIdx, headIdx, numHeads) => {
         registryEntry.instance._renderHeadContent(layerIdx, headIdx);
     }
 
-    const heatmapDiv = activeContent?.querySelector('[id^="attn-heatmap-"]');
-    if (heatmapDiv) { try { Plotly.Plots.resize(heatmapDiv); } catch(e) {} }
+
 
     // SCOPED, not global
     if (activeContent) _renderTemmlOnElements([activeContent]);
@@ -1217,71 +1222,37 @@ function render_positional_waves(d_model, tokens) {
 }
 
 function _execute_positional_waves_render(d_model, tokens) {
-	const containerId = 'transformer-pe-wave-plot';
-	const container = document.getElementById(containerId);
-	if (!container) return;
-
-	const traces = [];
-	const resolution = 0.1;
-	const seqLen = tokens.length;
-	const maxPos = Math.max(1, seqLen);
-
-	for (let i = 0; i < d_model; i++) {
-		let x = [], y = [];
-		for (let p = 0; p <= maxPos; p += resolution) {
-			let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-			let val = ((i % 2 === 0)
-				? Math.sin(p / div_term)
-				: Math.cos(p / div_term)) * posEmbedScalar;
-			x.push(p);
-			y.push(val);
+	var container = document.getElementById('transformer-pe-wave-plot');
+	var chart = _tmEcharts(container);
+	if (!chart) return;
+	var series = [];
+	var resolution = 0.1;
+	var maxPos = Math.max(1, tokens.length);
+	for (var i = 0; i < d_model; i++) {
+		var data = [];
+		for (var p = 0; p <= maxPos; p += resolution) {
+			var div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+			var val = ((i % 2 === 0) ? Math.sin(p / div_term) : Math.cos(p / div_term)) * posEmbedScalar;
+			data.push([p, val]);
 		}
-		traces.push({
-			x: x, y: y, mode: 'lines',
-			name: `Dim ${i} ${i % 2 === 0 ? 'Sin' : 'Cos'}`,
-			line: { shape: 'spline', width: 2 }
-		});
+		series.push({ type: 'line', name: 'Dim ' + i + (i % 2 === 0 ? ' Sin' : ' Cos'),
+			data: data, smooth: true, showSymbol: false, lineStyle: { width: 2 } });
 	}
-
-	tokens.forEach((token, pos) => {
-		traces.push({
-			x: [pos], y: [0], mode: 'markers+text',
-			text: [displayToken(token)], textposition: 'top center',
-			textfont: { color: themeColor('#1e293b'), size: 12 },
-			marker: { size: 12, color: '#3b82f6' },
-			name: `Pos ${pos}: ${displayToken(token)}`, showlegend: false
-		});
+	tokens.forEach(function (token, pos) {
+		series.push({ type: 'scatter', data: [[pos, 0]], symbolSize: 10,
+			itemStyle: { color: '#3b82f6' },
+			label: { show: true, formatter: displayToken(token), position: 'top', fontSize: 11 } });
 	});
-
-	const axisTitleFont = { size: 12, color: themeColor('#64748b') };
-	const tickFont = { size: 11, color: themeColor('#64748b') };
-
-	const layout = {
-		title: {
-			text: 'Sinusoidal Positional Waves',
-			font: { size: 16, color: themeColor('#1e293b') }
-		},
-		margin: { t: 50, b: 50, l: 50, r: 20 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		font: { color: themeColor('#475569') },
-		xaxis: {
-			title: { text: 'Token Position', font: axisTitleFont },
-			gridcolor: themeColor('#f1f5f9'),
-			zerolinecolor: themeColor('#e2e8f0'),
-			tickfont: tickFont
-		},
-		yaxis: {
-			title: { text: 'PE Value', font: axisTitleFont },
-			range: [-1.1, 1.1],
-			gridcolor: themeColor('#f1f5f9'),
-			zerolinecolor: themeColor('#e2e8f0'),
-			tickfont: tickFont
-		},
-		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: themeColor('#f8fafc'), size: 12 } }
-	};
-
-	Plotly.react(containerId, traces, layout);
+	chart.setOption({
+		title: { text: 'Sinusoidal Positional Waves', left: 'center', textStyle: { fontSize: 16 } },
+		tooltip: { trigger: 'axis' },
+		xAxis: { type: 'value', name: 'Token Position', nameLocation: 'middle', nameGap: 28,
+			splitLine: { lineStyle: { color: themeColor('#f1f5f9') } } },
+		yAxis: { type: 'value', name: 'PE Value', min: -1.1, max: 1.1,
+			splitLine: { lineStyle: { color: themeColor('#f1f5f9') } } },
+		grid: { left: 50, right: 20, top: 50, bottom: 50 },
+		series: series
+	}, true);
 }
 
 function run_transformer_demo(activeId = null) {
@@ -1592,7 +1563,6 @@ function ensureWeightsAndEmbeddings(tokens, n_layers, d_model) {
 async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime) {
 	const clipValue = 1.0;
 	const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
-	buildTrainingWindows(tokens, thisContextSize);
 
 	// TDA live: snapshot the weights BEFORE the gradient step so we can
 	// compute the weight deltas (W_new - W_prev) for this epoch.
@@ -1609,7 +1579,6 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 	window.lossHistory.push(lossValue[0]);
 
 	// Render predictions
-	renderTrainingWindowPredictions(d_model, n_layers);
 
 	// Progress & ETA
 	updateEpochProgress(epochIdx, totalEpochs, lossValue[0], startTime, status);
@@ -1845,47 +1814,21 @@ async function convert_tensors_to_weights(vars) {
 }
 
 function renderLossGraph() {
-	if (!window.lossHistory || window.lossHistory.length === 0) {
-		drawTrainingPlaceholder();
-		return;
-	}
-
-	const lineColor = themeColor('#10b981');
-	const trace = {
-		x: Array.from({length: window.lossHistory.length}, (_, i) => i),
-		y: window.lossHistory,
-		type: 'scatter',
-		mode: 'lines',
-		line: { color: lineColor, width: 2 }
-	};
-
-	const axisTitleFont = { size: 11, color: themeColor('#64748b') };
-	const tickFont = { size: 11, color: themeColor('#64748b') };
-
-	const layout = {
-		title: { text: 'Training Loss', font: { size: 12, color: themeColor('#1e293b') } },
-		margin: { t: 30, b: 30, l: 40, r: 10 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		dragmode: false,
-		font: { color: themeColor('#475569') },
-		xaxis: {
-			title: { text: 'Total Epochs', font: axisTitleFont },
-			gridcolor: themeColor('#f1f5f9'),
-			zerolinecolor: themeColor('#e2e8f0'),
-			tickfont: tickFont
-		},
-		yaxis: {
-			title: { text: 'Loss', font: axisTitleFont },
-			gridcolor: themeColor('#f1f5f9'),
-			zerolinecolor: themeColor('#e2e8f0'),
-			tickfont: tickFont
-		},
-		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: themeColor('#f8fafc'), size: 12 } }
-	};
-
-	// Loss panel is always mounted at a fixed height; just render into it.
-	Plotly.react('training-loss-plot', [trace], layout, { responsive: true, displayModeBar: false });
+	if (!window.lossHistory || window.lossHistory.length === 0) { drawTrainingPlaceholder(); return; }
+	var chart = _tmEcharts(document.getElementById('training-loss-plot'));
+	if (!chart) return;
+	var data = window.lossHistory.map(function (v, i) { return [i, v]; });
+	chart.setOption({
+		title: { text: 'Training Loss', left: 'center', textStyle: { fontSize: 12 } },
+		tooltip: { trigger: 'axis' },
+		xAxis: { type: 'value', name: 'Total Epochs', nameLocation: 'middle', nameGap: 22,
+			splitLine: { lineStyle: { color: themeColor('#f1f5f9') } } },
+		yAxis: { type: 'value', name: 'Loss',
+			splitLine: { lineStyle: { color: themeColor('#f1f5f9') } } },
+		grid: { left: 44, right: 10, top: 30, bottom: 30 },
+		series: [{ type: 'line', data: data, showSymbol: false,
+			lineStyle: { color: themeColor('#10b981'), width: 2 } }]
+	}, true);
 }
 
 function handleWeightReinit(d_model, n_heads, n_layers) {
@@ -4949,10 +4892,18 @@ function _traj_build_slice_layout(dimA, dimB, annotations) {
 
 // ─── 12. Render a single dimension-pair slice plot ───
 function _traj_render_single_slice(grid, tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab) {
-	const plotId = _traj_ensure_slice_div(grid, dimA, dimB);
-	const { traces, annotations } = _traj_build_slice_traces(tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab);
-	const layout = _traj_build_slice_layout(dimA, dimB, annotations);
-	Plotly.react(plotId, traces, layout, { responsive: true });
+	var plotId = _traj_ensure_slice_div(grid, dimA, dimB);
+	var chart = _tmEcharts(document.getElementById(plotId));
+	if (!chart) return;
+	var built = _traj_build_slice_traces(tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab);
+	chart.setOption({
+		title: { text: 'Dim ' + dimA + ' × Dim ' + dimB, left: 'center', textStyle: { fontSize: 13 } },
+		tooltip: { trigger: 'item' },
+		xAxis: { type: 'value', name: 'Dim ' + dimA, scale: true },
+		yAxis: { type: 'value', name: 'Dim ' + dimB, scale: true },
+		grid: { left: 45, right: 10, bottom: 45, top: 40 },
+		series: _tmFromPlotlyTraces(built.traces)
+	}, true);
 }
 
 // ─── Main function: now a clean orchestrator ───
@@ -4999,34 +4950,23 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 		_traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab, vfEnabled);
 		return;
 	}
-
-	// ── 2D: Plotly path ──
-	const result = _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
-
-	// ── VF overlay (all-layers) — now as TRACES, not annotations ──
-	let vfTraces = [];
+	var result = _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
+	var vfTraces = [];
 	if (vfEnabled) {
-		const { n_heads, n_layers } = getTransformerConfig();
-		const computed = _compute_trajectory_vf_2d(d_model, n_heads, n_layers);
+		var cfg = getTransformerConfig();
+		var computed = _compute_trajectory_vf_2d(d_model, cfg.n_heads, cfg.n_layers);
 		if (computed) vfTraces = _traj_vf_2d_plotly_traces(computed);
 	}
-
-	const axisTemplate = {
-		showticklabels: false, showgrid: true, zeroline: false,
-		title: { text: "" }, backgroundcolor: "#f9fafb"
-	};
-
-	const layout = {
-		title: '<b>Token Trajectory: Embedding + Position through the Layers</b>',
-		xaxis: axisTemplate, yaxis: axisTemplate,
-		annotations: result.annotations,  // ← only stage labels, no VF annotations
-		margin: { l: 10, r: 10, b: 50, t: 80 },
-		showlegend: true,
-		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1, font: { size: 14, color: themeColor('#1e293b') } }
-	};
-
-	// Combine token traces + VF traces
-	Plotly.react(trajDiv.id, [...result.traces, ...vfTraces], layout);
+	var chart = _tmEcharts(trajDiv);
+	if (!chart) return;
+	chart.setOption({
+		title: { text: 'Token Trajectory: Embedding + Position through the Layers', left: 'center', textStyle: { fontSize: 13 } },
+		tooltip: { trigger: 'item' },
+		xAxis: { type: 'value', show: false },
+		yAxis: { type: 'value', show: false },
+		grid: { left: 10, right: 10, bottom: 50, top: 80 },
+		series: _tmFromPlotlyTraces([...result.traces, ...vfTraces])
+	}, true);
 }
 
 // ─── Main 3D ECharts renderer ───────────────────────────────

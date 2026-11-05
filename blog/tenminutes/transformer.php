@@ -607,15 +607,6 @@
 	gap: 8px;
 	margin-left: auto;
 }
-#tda-toggle-training-windows {
-	padding: 4px 12px;
-	border-radius: 6px;
-	border: 1px solid var(--mn-border, #cbd5e1);
-	background: var(--mn-surface, #fff);
-	color: var(--mn-text, #0f172a);
-	cursor: pointer;
-	font-weight: 600;
-}
 .transformer-train-status {
 	min-height: 20px;
 	margin-top: 10px;
@@ -673,14 +664,10 @@
 </div>
 <div class="transformer-train-actions">
 <button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
-<button class="btn" id="tda-toggle-training-windows" onclick="toggleTrainingWindows()" type="button">Show training windows</button>
 </div>
 </div>
 <div class="transformer-train-status" id="training-status"></div>
 <div id="training-loss-plot"></div>
-</div>
-<div id="show_training_sentences" style="display: none">
-<p>Current Training Windows: <span id="current_training_sentence"></span></p><br/>
 </div>
 					</section>
 
@@ -1020,8 +1007,8 @@
 	$tmDemoFiles = [
 		'assets/full/shim.js',
 		'assets/full/transformer.js',
-		'assets/full/vendor/plotly-2.24.1.min.js',
 		'assets/full/vendor/echarts.min.js',
+		'assets/full/vendor/echarts-gl.min.js',
 		'assets/full/attention_engine.js',
 		'assets/full/llm_river.js',
 		'assets/full/demo-i18n.js',
@@ -1044,8 +1031,8 @@
 		var fetchOnly = /[?&]demo_perf=fetch(?:&|$)/.test(location.search);
 		var engineOnly = /[?&]demo_perf=engine(?:&|$)/.test(location.search);
 		var labels = {
-			"plotly-2.24.1.min.js": ["Plotly (charts)", "Plotly (Diagramme)"],
 			"echarts.min.js": ["ECharts (position waves)", "ECharts (Positionswellen)"],
+			"echarts-gl.min.js": ["ECharts GL (3D)", "ECharts GL (3D)"],
 			"shim.js": ["Demo shim", "Demo-Shim"],
 			"transformer.js": ["Transformer engine", "Transformer-Engine"],
 			"attention_engine.js": ["Attention engine", "Attention-Engine"],
