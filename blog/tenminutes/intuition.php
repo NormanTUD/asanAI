@@ -607,7 +607,7 @@
 								</div>
 								<p class="meadow-caption" id="md-caption">Move the pointer across the meadow.</p>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Words divide the space of thoughts into cells. Certainty is being deep inside a cell; uncertainty is standing on a seam or right at the edge.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>Words divide the space of thoughts into cells. Certainty is being deep inside a cell; uncertainty is standing on a seam or right at the edge. The model can think more finely than one word can say.</span></div>
 							<div class="demo-foot">More words make smaller cells and thinner seams, but the ambiguous share never reaches zero. In a real model the space has thousands of dimensions and the vocabulary has tens of thousands of tokens.</div>
 						</div>
 
