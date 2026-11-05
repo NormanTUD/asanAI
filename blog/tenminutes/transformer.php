@@ -1011,7 +1011,6 @@
 		'assets/full/vendor/echarts-gl.min.js',
 		'assets/full/attention_engine.js',
 		'assets/full/llm_river.js',
-		'assets/full/demo-i18n.js',
 	];
 	$tmDemoSizes = [];
 	$tmDemoTotal = 0;
@@ -1247,7 +1246,9 @@
 							wireTrain();
 							if (engineOnly) { showPerf(); finish(); return; }
 							finish();
-							loadScript("assets/full/demo-render.js").catch(function () {});
+							loadScript("assets/full/demo-i18n.js").then(function () {
+								return loadScript("assets/full/demo-render.js");
+							}).catch(function () {});
 						}).catch(function () {
 							perf.engineMs = performance.now() - t0;
 							window.__tmDemoPerf = perf;
