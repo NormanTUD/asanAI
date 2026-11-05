@@ -2455,7 +2455,7 @@
 			posClock = (window.performance && performance.now) ? performance.now() : 0;
 			function posTurnNote(theta) {
 				var turns = theta / (Math.PI * 2);
-				if (turns < 1) return "";
+				if (turns < 1.5) return "";
 				var text = turns.toFixed(1).replace(".", DE ? "," : ".");
 				return ' <span class="pos-note">' + text + (DE ? " Umdrehungen" : " turns") + '</span>';
 			}
