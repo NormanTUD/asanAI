@@ -691,12 +691,11 @@
 						</div>
 						<div class="prose">
 							<p>
-								The idea that compressing well and predicting well are related is a working
-								hypothesis, not a proved identity. A good compressor has to capture regularities
+								A good compressor has to capture regularities
 								in its data; a good predictor has to capture the same regularities. Solomonoff
 								made this precise by scoring each possible explanation with the length of the
 								shortest program that produces it. A short program that reproduces the data
-								gets a high score, so simple explanations are favoured. His convergence theorem
+								is better than a long one, so simple explanations are favoured. His convergence theorem
 								says that a predictor built this way learns, in the limit, any pattern that a
 								finite program can generate
 								(<a href="https://doi.org/10.1109/TIT.1978.1055913" rel="noopener">Solomonoff, 1978</a>).

@@ -9,3 +9,5 @@ intuition:
 entferne "Bedeutung wird zur Geometrie." komplett, das its alles schon oben. mach stattdessen kurz etwas über das was dann am ende passiert, dass im letzten token durch das wiederholte mischen über attn und verschieben über das mlp die gesamte bedeutung des bisherigen kontextes reingemixt ist und man die mit einem vektor multipliziert und dann die winkel zu jedem anderem wort vergleicht. schreib vorher kurz darüber, dass winkel in höheren dimensionen zuverlässiger sind als bloße abstände. und dass dann darauf basierend das nächste wort gewählt wird
 
 "Meist in den Feed-Forward-Gewichten, und oft überlagert" -> überfliege dazu https://already-clean.goodfire.com/ , evtl ist das auch nicht so.
+
+entferne "Die Idee, dass gutes Komprimieren und gutes Vorhersagen zusammenhängen, ist eine Arbeitshypothese, keine bewiesene Identität"
