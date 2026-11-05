@@ -839,7 +839,7 @@
 			var opts = choicesFor();
 			var next;
 			if (opts.length) {
-				next = '<span class="nt-tree-next">' + (opts.length === 1 ? (DE ? "nächstes (nur eine Möglichkeit):" : "next (only one):") : (DE ? "nächstes:" : "next:")) + '</span> '
+				next = '<span class="nt-tree-next">' + (opts.length === 1 ? (DE ? "nächstes:" : "next:") : (DE ? "nächstes:" : "next:")) + '</span> '
 					+ opts.map(function (o) {
 						return '<button type="button" class="nt-tree-branch" data-nt-choice="' + escapeHtml(o.t) + '" aria-label="' + escapeHtml((DE ? "Wähle " : "Choose ") + o.t) + '">' + escapeHtml(o.t) + '</button>';
 					}).join('<span class="nt-tree-sep">·</span>');
