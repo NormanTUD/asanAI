@@ -6,6 +6,7 @@
 	<meta name="description" content="Images as grids of numbers, convolutions as sliding filters, and the hierarchy from edges to objects.">
 	<meta name="theme-color" content="#ffffff">
 	<title>How Machines See | Ten Minutes</title>
+	<link rel="stylesheet" href="../Temml-Local.min.css">
 	<link rel="stylesheet" href="assets/site.css">
 </head>
 <body data-lesson="computer_vision" data-page="lesson">
@@ -85,27 +86,10 @@
 								<span class="conv-kernel-label">Kernel</span>
 								<div class="conv-kernel-grid" data-conv-kernel-grid></div>
 							</div>
+							<div class="conv-formula" id="conv-formula" data-tex-display="true"></div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>A convolution shares one small filter across the whole image. Depth stacks those filters into a hierarchy: edges, parts, objects.</span></div>
 						<div class="demo-foot">Source image: a stop sign in Victoria, Australia. Photo: Matthew Paul Argall, <a href="https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg" rel="noopener">CC0</a>.</div>
-					</div>
-
-					<div class="prose">
-						<p>What the network sees at each layer can be made visible. The first layer responds to local edges. Here is the real stop sign, the response of a vertical-edge kernel, and the combined edge magnitude from vertical and horizontal kernels. Deeper layers combine these edges into corners, parts, and finally the whole sign.</p>
-					</div>
-					<div class="image-trio">
-						<figure>
-							<img src="../stop_sign.jpg" alt="A red octagonal stop sign in Victoria, Australia" loading="lazy">
-							<figcaption>Input: the real stop sign. Photo: Matthew Paul Argall, <a href="https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg" rel="noopener">CC0</a>.</figcaption>
-						</figure>
-						<figure>
-							<img src="assets/img/stop-edges-v.png" alt="Vertical-edge feature map of the stop sign" loading="lazy">
-							<figcaption>Vertical edges: the actual output of a vertical Sobel kernel. Processing: Ten Minutes, <a href="assets/img/stop-edges-v.png">CC0 1.0</a>, from the CC0 photo.</figcaption>
-						</figure>
-						<figure>
-							<img src="assets/img/stop-edges-mag.png" alt="Combined edge-magnitude feature map of the stop sign" loading="lazy">
-							<figcaption>Combined edge magnitude: vertical and horizontal responses. Processing: Ten Minutes, <a href="assets/img/stop-edges-mag.png">CC0 1.0</a>.</figcaption>
-						</figure>
 					</div>
 
 					<section class="section-block" id="takeaway">
@@ -122,6 +106,7 @@
 		</div>
 	</main>
 
+	<script src="../temml.min.js"></script>
 	<script src="assets/site.js"></script>
 	<script src="assets/demos.js"></script>
 </body>

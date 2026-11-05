@@ -765,6 +765,7 @@
 		var outputSizeEl = $("[data-conv-output-size]", root);
 		var scanBtn = $("[data-conv-scan]", root);
 		var kernelGrid = $("[data-conv-kernel-grid]", root);
+		var formulaEl = document.getElementById("conv-formula");
 		if (!canvas) return;
 		var kernels = {
 			edge: [ [-1, -1, -1], [-1, 8, -1], [-1, -1, -1] ],
@@ -781,19 +782,62 @@
 		var input = [];
 		var outCanvas = document.createElement("canvas");
 		var outCtx = outCanvas.getContext("2d");
-		var scanCell = -1;
+		var scanCell = 0;
 		var scanTimer = null;
+		var lastGeom = null;
+		function kernelValue(v) {
+			return Math.abs(v - Math.round(v)) < 0.001 ? String(v) : v.toFixed(2);
+		}
 		function renderKernel() {
 			if (!kernelGrid) return;
 			kernelGrid.innerHTML = "";
-			kernels[current].forEach(function (row) {
-				row.forEach(function (v) {
-					var el = document.createElement("div");
-					el.className = "conv-cell" + (v < 0 ? " is-negative" : "");
-					el.textContent = Math.abs(v - Math.round(v)) < 0.001 ? String(v) : v.toFixed(2);
-					kernelGrid.appendChild(el);
+			kernels[current].forEach(function (row, ky) {
+				row.forEach(function (v, kx) {
+					var input = document.createElement("input");
+					input.type = "number";
+					input.step = "0.01";
+					input.className = "conv-kernel-input";
+					input.value = kernelValue(v);
+					input.setAttribute("aria-label", (DEMO_DE ? "Kernel Zeile " : "kernel row ") + (ky + 1) + (DEMO_DE ? ", Spalte " : ", column ") + (kx + 1));
+					input.addEventListener("input", function () {
+						var val = parseFloat(input.value);
+						if (!isFinite(val)) val = 0;
+						if (current !== "custom") {
+							kernels.custom = kernels[current].map(function (r) { return r.slice(); });
+							current = "custom";
+							chips.forEach(function (x) { x.classList.remove("is-on"); });
+						}
+						kernels.custom[ky][kx] = val;
+						api.redraw();
+						updateFormula();
+					});
+					kernelGrid.appendChild(input);
 				});
 			});
+		}
+		function updateFormula() {
+			if (!formulaEl || !imageLoaded || !gw || !gh || scanCell < 0) return;
+			var ow = gw - 2;
+			var sx = scanCell % ow;
+			var sy = Math.floor(scanCell / ow);
+			if (sx < 0 || sy < 0 || sy >= gh - 2) return;
+			var k = kernels[current];
+			var rows = [];
+			var total = 0;
+			for (var i = 0; i < 3; i++) {
+				var cells = [];
+				for (var j = 0; j < 3; j++) {
+					var p = input[sy + i][sx + j];
+					var kv = k[i][j];
+					total += p * kv;
+					cells.push(p.toFixed(2) + "\\cdot(" + kernelValue(kv) + ")");
+				}
+				rows.push(cells.join(" & "));
+			}
+			var tex = "\\underbrace{\\underbrace{\\begin{matrix}" + rows.join(" \\\\ ") + "\\end{matrix}}_{\\text{" + (DEMO_DE ? "neun Produkte" : "nine products") + "}} = " + total.toFixed(2) + "}_{\\text{" + (DEMO_DE ? "Ausgabe an " : "output at ") + "(" + sx + "," + sy + ")}}";
+			formulaEl.setAttribute("data-tex", tex);
+			formulaEl.removeAttribute("data-tex-rendered");
+			if (window.TM && TM.typesetMath) TM.typesetMath(formulaEl.parentNode);
 		}
 		function conv(kernel) {
 			var out = [];
@@ -831,6 +875,7 @@
 			var iw = gw * scale, ih = gh * scale;
 			var ox = pad, oy = pad + 18;
 			var ox2 = ox + iw + gap;
+			lastGeom = { ox: ox, oy: oy, iw: iw, ih: ih, ox2: ox2, ow: ow, oh: oh, gw: gw, gh: gh };
 			ctx.fillStyle = c.muted;
 			ctx.font = "600 11px Barlow, system-ui, sans-serif";
 			ctx.fillText(DEMO_DE ? "Eingabe · Stoppschild" : "input · stop sign", ox, pad + 4);
@@ -904,6 +949,7 @@
 				input.push(row);
 			}
 			imageLoaded = true;
+			updateFormula();
 			api.redraw();
 		};
 		image.src = TM.asset("../stop_sign.jpg");
@@ -913,8 +959,34 @@
 				chip.classList.add("is-on");
 				current = chip.getAttribute("data-kernel");
 				renderKernel();
+				updateFormula();
 				api.redraw();
 			});
+		});
+		canvas.addEventListener("click", function (ev) {
+			if (!lastGeom || !imageLoaded) return;
+			var rect = canvas.getBoundingClientRect();
+			var x = ev.clientX - rect.left;
+			var y = ev.clientY - rect.top;
+			var g = lastGeom;
+			var ow = g.ow, oh = g.oh;
+			var sx, sy;
+			if (x >= g.ox2 && x <= g.ox2 + g.iw && y >= g.oy && y <= g.oy + g.ih) {
+				sx = Math.floor((x - g.ox2) / (g.iw / ow));
+				sy = Math.floor((y - g.oy) / (g.ih / oh));
+			} else if (x >= g.ox && x <= g.ox + g.iw && y >= g.oy && y <= g.oy + g.ih) {
+				var ix = Math.floor((x - g.ox) / (g.iw / g.gw));
+				var iy = Math.floor((y - g.oy) / (g.ih / g.gh));
+				sx = ix - 1;
+				sy = iy - 1;
+			} else {
+				return;
+			}
+			sx = Math.max(0, Math.min(ow - 1, sx));
+			sy = Math.max(0, Math.min(oh - 1, sy));
+			scanCell = sy * ow + sx;
+			updateFormula();
+			api.redraw();
 		});
 		if (scanBtn) scanBtn.addEventListener("click", function () {
 			if (scanTimer) {
@@ -922,14 +994,17 @@
 				scanTimer = null;
 				scanCell = -1;
 				scanBtn.textContent = DEMO_DE ? "Kernel scannen ▶" : "Scan the kernel ▶";
+				updateFormula();
 				api.redraw();
 				return;
 			}
 			if (!imageLoaded) return;
 			scanCell = 0;
 			scanBtn.textContent = DEMO_DE ? "Scan stoppen ■" : "Stop scan ■";
+			updateFormula();
 			scanTimer = setInterval(function () {
 				scanCell = (scanCell + 1) % ((gw - 2) * (gh - 2));
+				if (scanCell % 8 === 0) updateFormula();
 				api.redraw();
 			}, 30);
 			api.redraw();

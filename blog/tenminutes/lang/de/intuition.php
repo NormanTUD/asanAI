@@ -12,7 +12,7 @@ return [
 		'The model in your pocket' => 'Das Modell in deiner Tasche',
 		'· demo 01a' => '· Demo 01a',
 		'A search box, a voice query, an AI answer and the links below it. The animation runs once when the demo comes into view.' => 'Ein Suchfeld, eine Sprachfrage, eine KI-Antwort und die Links darunter. Die Animation läuft einmal, wenn die Demo sichtbar wird.',
-		'The search engine does not look up a stored answer. The summary is written one token at a time, and the same loop runs in the data centre behind it.' => 'Die Suchmaschine keine gespeicherte Antwort nach. Die Zusammenfassung entsteht Token für Token, und dieselbe Schleife läuft im Rechenzentrum dahinter.',
+		'The search engine does not look up a stored answer. The summary is written one token at a time, and the same loop runs in the data centre behind it.' => 'Die Suchmaschine schlägt keine gespeicherte Antwort nach. Die Zusammenfassung entsteht Token für Token, und dieselbe Schleife läuft im Rechenzentrum dahinter.',
 		'A first intuition: predict the next word.' => 'Eine erste Intuition: das nächste Wort vorhersagen.',
 		'Here is the core idea. A language model reads a sequence of tokens and returns a' => 'Hier ist die Kernidee. Ein Sprachmodell liest eine Folge von Tokens und liefert eine',
 		'probability for every possible next token' => 'Wahrscheinlichkeit für jedes mögliche nächste Token',

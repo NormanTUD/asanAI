@@ -6627,7 +6627,7 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	text-transform: uppercase;
 	color: var(--tm-muted);
 }
-.conv-kernel-grid { display: grid; grid-template-columns: repeat(3, 2rem); gap: 3px; }
+.conv-kernel-grid { display: grid; grid-template-columns: repeat(3, 2.4rem); gap: 3px; }
 .conv-kernel-grid .conv-cell { width: 2rem; height: 2rem; font-size: .65rem; }
 
 /* ── Winograd schema + Chinese Room choice buttons ─────────── */
@@ -6683,3 +6683,17 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 .cr-choice.is-spent { opacity: .42; cursor: default; }
 .cr-choice.is-right { border-color: var(--tm-green); background: color-mix(in srgb, var(--tm-green) 12%, var(--tm-paper-2)); }
 .cr-choice.is-wrong { border-color: var(--tm-coral); background: color-mix(in srgb, var(--tm-coral) 12%, var(--tm-paper-2)); }
+
+.conv-kernel-grid .conv-kernel-input {
+	width: 2.4rem;
+	height: 2.2rem;
+	padding: 0;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-paper-2);
+	color: var(--tm-ink);
+	font-family: var(--tm-mono);
+	font-size: .68rem;
+	text-align: center;
+}
+.conv-kernel-grid .conv-kernel-input:focus { outline: 2px solid var(--tm-green); outline-offset: 1px; }
+#conv-formula { min-height: 128px; }
