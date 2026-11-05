@@ -20,7 +20,7 @@
 					<p class="hero-deck">
 						A language model predicts the next word from the text so far. That one loop is
 						the engine behind <strong>chat, code, translation, and reasoning</strong>. Work
-						through this page and you will have a broad picture of the transformer that
+						through this page and you will have a good intuitive picture of the transformer that
 						drives it: enough to see how the parts fit together, without following every
 						detail.
 					</p>
