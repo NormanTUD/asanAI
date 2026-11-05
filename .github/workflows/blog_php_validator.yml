@@ -142,6 +142,9 @@ jobs:
       - name: Run RAG chat formatting tests
         run: node blog/tests/rag_chat_test.js
 
+      - name: Run transformer attention / plot tests
+        run: node blog/tests/transformer_test.js
+
   semantic-index-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10

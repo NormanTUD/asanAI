@@ -583,11 +583,13 @@ function drawTrainingPlaceholder() {
 			showarrow: false,
 			x: 0.5, y: 0.5,
 			xref: 'paper', yref: 'paper',
+			xanchor: 'center', yanchor: 'middle', align: 'center',
 			font: { size: 13, color: themeColor('#94a3b8') }
 		}],
 		margin: { t: 16, b: 16, l: 16, r: 16 },
 		paper_bgcolor: 'rgba(0,0,0,0)',
 		plot_bgcolor: 'rgba(0,0,0,0)',
+		dragmode: false,
 		xaxis: { visible: false },
 		yaxis: { visible: false },
 	};
@@ -1865,6 +1867,7 @@ function renderLossGraph() {
 		margin: { t: 30, b: 30, l: 40, r: 10 },
 		paper_bgcolor: 'rgba(0,0,0,0)',
 		plot_bgcolor: 'rgba(0,0,0,0)',
+		dragmode: false,
 		font: { color: themeColor('#475569') },
 		xaxis: {
 			title: { text: 'Total Epochs', font: axisTitleFont },
@@ -1882,7 +1885,7 @@ function renderLossGraph() {
 	};
 
 	// Loss panel is always mounted at a fixed height; just render into it.
-	Plotly.react('training-loss-plot', [trace], layout);
+	Plotly.react('training-loss-plot', [trace], layout, { responsive: true, displayModeBar: false });
 }
 
 function handleWeightReinit(d_model, n_heads, n_layers) {

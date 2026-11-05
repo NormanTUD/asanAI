@@ -240,6 +240,13 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	border: 1px solid var(--mn-border, #e2e8f0);
 	border-radius: 8px;
 	background: var(--mn-surface, #fff);
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-user-drag: none;
+	touch-action: pan-y;
+}
+#training-loss-plot .nsewdrag {
+	cursor: default;
 }
 @media (max-width: 640px) {
 	.transformer-train-actions {
@@ -451,9 +458,9 @@ $$PE_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}
 
 These functions were chosen because they create unique, continuous patterns for each position, enabling the model to infer both absolute and relative positions. Because the formula is defined for any position, the encoding can be *computed* beyond the training length; whether the trained model actually generalizes there is a separate empirical question, and in practice it often does not. Additionally, their multi-frequency nature allows the model to capture both local and global positional relationships. The network's layers learn to interpret these fixed “geometric fingerprints” by adjusting their weights, enabling the model to apply position-specific logic and reason about sequence structure effectively.
 
-The key to how the model infers relative positions lies in the mathematical properties of sine and cosine. For any fixed offset $k$, the positional encoding at position $\text{pos} + k$ can be expressed as a linear transformation of the encoding at position $\text{pos}$. This linearity is what lets the attention mechanism — through its $\mathbf{q}\cdot\mathbf{k}$ dot products — score a relative offset in a position-invariant way, so a head can learn to “attend $k$ steps back” regardless of the absolute location. (The FFN, being a pointwise operation, operates on the features that attention has already mixed; the relative-position geometry itself comes from the sinusoidal encodings interacting inside attention.) Over multiple layers, the network entangles positional and semantic information, enabling it to reason about sequence structure and relationships. This is what lets the model generalize to unseen sequences and retain positional understanding even when tokens are shifted or reordered.
+The key to how the model infers relative positions lies in the mathematical properties of sine and cosine. For any fixed offset $k$, the positional encoding at position $\text{pos} + k$ can be expressed as a linear transformation of the encoding at position $\text{pos}$. This linearity is what lets the attention mechanism — through its $\mathbf{q}\cdot\mathbf{k}$ dot products — score a relative offset in a position-invariant way, so a head can learn to “attend $k$ steps back” regardless of the absolute location. (The FFN, being a pointwise operation, operates on the features that attention has already mixed; the relative-position geometry itself comes from the sinusoidal encodings interacting inside attention.) Over multiple layers, the network entangles positional and semantic information, enabling it to reason about sequence structure and relationships. This is what lets attention compare positions by their offset rather than their absolute index.
 
-This is required because the network looks at all words simultaneously, instead of after another. Since the matrix can be permuted and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.
+This is required because the network looks at all words simultaneously instead of one after another. Since the matrix can be permuted and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.
 </div>
 
 <div class="md" id="ifscalfactornotone" style="display: none">
@@ -1037,7 +1044,7 @@ Meaning emerges not from words themselves, but from how vectors **move, align, a
 
 ### The model as a machine that learns *inside* its forward pass
 
-The most startling recent result is that a trained Transformer does not merely *predict* from its context — it **runs gradient descent on the examples in its prompt, right inside the forward pass**. (\cite[von Oswald et al., 2022]{vonoswald2022indc}) showed that the data transformation performed by a single linear self-attention layer is, to first order, *one step of gradient descent* on a squared-error regression loss: the attention weights play the role of a preconditioner, and the value vectors carry the residuals that the step moves along. A trained model has learned to become a <span class="glossary-term" data-tooltip-id="tt-mesa-optimizer">mesa-optimizer</span>: hand it a few input/output pairs in its context and its forward pass takes a handful of gradient steps over them and reads off the answer. That reinterprets **in-context learning** — the ability to "learn" a brand-new task from a handful of examples in the prompt, with no weight updates at all — as nothing mysterious: it is the same optimizer the model uses to *train itself*, reused at inference time on the prompt's own examples.
+A striking result is that a trained Transformer does not merely *predict* from its context — it **runs gradient descent on the examples in its prompt, right inside the forward pass**. (\cite[von Oswald et al., 2022]{vonoswald2022indc}) showed that the data transformation performed by a single linear self-attention layer is, to first order, *one step of gradient descent* on a squared-error regression loss: the attention weights play the role of a preconditioner, and the value vectors carry the residuals that the step moves along. A trained model has learned to become a <span class="glossary-term" data-tooltip-id="tt-mesa-optimizer">mesa-optimizer</span>: hand it a few input/output pairs in its context and its forward pass takes a handful of gradient steps over them and reads off the answer. That reinterprets **in-context learning** — the ability to "learn" a brand-new task from a handful of examples in the prompt, with no weight updates at all — as nothing mysterious: it is the same optimizer the model uses to *train itself*, reused at inference time on the prompt's own examples.
 
 ### Inference vs. Training: Two Modes of Operation
 

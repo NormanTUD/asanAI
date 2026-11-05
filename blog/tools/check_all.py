@@ -218,6 +218,12 @@ STAGES: tuple[Stage, ...] = (
         needs=("node",),
     ),
     Stage(
+        "node-transformer",
+        "unit",
+        (node("transformer_test.js"),),
+        needs=("node",),
+    ),
+    Stage(
         "node-youtube",
         "unit",
         (node("youtube_test.js"),),

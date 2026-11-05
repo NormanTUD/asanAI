@@ -689,6 +689,75 @@
       "confidence": "provenance"
     },
     {
+      "id": "transformer-rel-mqa-part-of-transformer",
+      "from": "multi-query-attention",
+      "to": "transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "Multi-query attention (MQA) keeps all query heads but shares one K/V head across them",
+      "citation_keys": [
+        "shazeer2019mqa"
+      ]
+    },
+    {
+      "id": "transformer-rel-gqa-part-of-transformer",
+      "from": "grouped-query-attention",
+      "to": "transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "grouped-query attention (GQA) shares one per group and became the mainstream compromise",
+      "citation_keys": [
+        "ainslie2023gqa"
+      ]
+    },
+    {
+      "id": "transformer-rel-mla-part-of-transformer",
+      "from": "multi-head-latent-attention",
+      "to": "transformer",
+      "kind": "part_of",
+      "qualifiers": {},
+      "quote": "DeepSeek-V2 went further with **multi-head latent attention** (MLA)",
+      "citation_keys": [
+        "deepseek2024v2"
+      ]
+    },
+    {
+      "id": "prov-transformer-grouped-query-attention",
+      "from": "grouped-query-attention",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "continuing pretraining for roughly 5 percent of the original compute",
+      "citation_keys": [
+        "ainslie2023gqa"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-multi-head-latent-attention",
+      "from": "multi-head-latent-attention",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "it reported a KV cache over 90 percent smaller than an equivalent MHA configuration",
+      "citation_keys": [
+        "deepseek2024v2"
+      ],
+      "confidence": "provenance"
+    },
+    {
+      "id": "prov-transformer-multi-query-attention",
+      "from": "multi-query-attention",
+      "to": "transformer",
+      "kind": "mentioned_in",
+      "qualifiers": {},
+      "quote": "incremental decoding is bound not by arithmetic but by **memory bandwidth**",
+      "citation_keys": [
+        "shazeer2019mqa"
+      ],
+      "confidence": "provenance"
+    },
+    {
       "id": "struct-transformer-block-1-part_of-transformer",
       "from": "transformer-block-1",
       "to": "transformer",
@@ -8797,75 +8866,6 @@
       "quote": "",
       "citation_keys": [],
       "confidence": "provenance"
-    },
-    {
-      "id": "transformer-rel-mqa-part-of-transformer",
-      "from": "multi-query-attention",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "Multi-query attention (MQA) keeps all query heads but shares one K/V head across them",
-      "citation_keys": [
-        "shazeer2019mqa"
-      ]
-    },
-    {
-      "id": "transformer-rel-gqa-part-of-transformer",
-      "from": "grouped-query-attention",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "grouped-query attention (GQA) shares one per group and became the mainstream compromise",
-      "citation_keys": [
-        "ainslie2023gqa"
-      ]
-    },
-    {
-      "id": "transformer-rel-mla-part-of-transformer",
-      "from": "multi-head-latent-attention",
-      "to": "transformer",
-      "kind": "part_of",
-      "qualifiers": {},
-      "quote": "DeepSeek-V2 went further with **multi-head latent attention** (MLA)",
-      "citation_keys": [
-        "deepseek2024v2"
-      ]
-    },
-    {
-      "id": "prov-transformer-grouped-query-attention",
-      "from": "grouped-query-attention",
-      "to": "transformer",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "continuing pretraining for roughly 5 percent of the original compute",
-      "citation_keys": [
-        "ainslie2023gqa"
-      ],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-transformer-multi-head-latent-attention",
-      "from": "multi-head-latent-attention",
-      "to": "transformer",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "it reported a KV cache over 90 percent smaller than an equivalent MHA configuration",
-      "citation_keys": [
-        "deepseek2024v2"
-      ],
-      "confidence": "provenance"
-    },
-    {
-      "id": "prov-transformer-multi-query-attention",
-      "from": "multi-query-attention",
-      "to": "transformer",
-      "kind": "mentioned_in",
-      "qualifiers": {},
-      "quote": "incremental decoding is bound not by arithmetic but by **memory bandwidth**",
-      "citation_keys": [
-        "shazeer2019mqa"
-      ],
-      "confidence": "provenance"
     }
   ],
   "statements": [
@@ -9242,7 +9242,7 @@
     },
     {
       "id": "transformer-stmt-54",
-      "quote": "This is required because the network looks at all words simultaneously, instead of after another.",
+      "quote": "This is required because the network looks at all words simultaneously instead of one after another.",
       "block_id": "transformer-block-46",
       "section": "Positional Encoding",
       "kind": "statement"
@@ -10334,7 +10334,7 @@
     },
     {
       "id": "transformer-stmt-210",
-      "quote": "The most startling recent result is that a trained Transformer does not merely *predict* from its context — it **runs gradient descent on the examples in its prompt, right inside the forward pass**.",
+      "quote": "A striking result is that a trained Transformer does not merely *predict* from its context — it **runs gradient descent on the examples in its prompt, right inside the forward pass**.",
       "block_id": "transformer-block-155",
       "section": "The model as a machine that learns *inside* its forward pass",
       "kind": "statement"
@@ -10795,19 +10795,19 @@
     },
     {
       "id": "transformer-block-18",
-      "quote": "Epochs:",
+      "quote": "Epochs",
       "kind": "paragraph",
       "section": "Hyperparameters for this demo"
     },
     {
       "id": "transformer-block-19",
-      "quote": "Learning Rate:",
+      "quote": "Learning Rate",
       "kind": "paragraph",
       "section": "Hyperparameters for this demo"
     },
     {
       "id": "transformer-block-20",
-      "quote": "Optimizer:",
+      "quote": "Optimizer",
       "kind": "paragraph",
       "section": "Hyperparameters for this demo"
     },
@@ -10963,7 +10963,7 @@
     },
     {
       "id": "transformer-block-46",
-      "quote": "This is required because the network looks at all words simultaneously, instead of after another. Since the matrix can be permuted and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.",
+      "quote": "This is required because the network looks at all words simultaneously instead of one after another. Since the matrix can be permuted and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.",
       "kind": "paragraph",
       "section": "Positional Encoding"
     },
@@ -11617,7 +11617,7 @@
     },
     {
       "id": "transformer-block-155",
-      "quote": "The most startling recent result is that a trained Transformer does not merely *predict* from its context — it **runs gradient descent on the examples in its prompt, right inside the forward pass**. (\\cite[von Oswald et al., 2022]{vonoswald2022indc}) showed that the data transformation performed by a single linear self-attention layer is, to first order, *one step of gradient descent* on a squared-error regression loss: the attention weights play the role of a preconditioner, and the value vectors carry the residuals that the step moves along. A trained model has learned to become a mesa-optimizer : hand it a few input/output pairs in its context and its forward pass takes a handful of gradient steps over them and reads off the answer. That reinterprets **in-context learning** — the ability to \"learn\" a brand-new task from a handful of examples in the prompt, with no weight updates at all — as nothing mysterious: it is the same optimizer the model uses to *train itself*, reused at inference time on the prompt's own examples.",
+      "quote": "A striking result is that a trained Transformer does not merely *predict* from its context — it **runs gradient descent on the examples in its prompt, right inside the forward pass**. (\\cite[von Oswald et al., 2022]{vonoswald2022indc}) showed that the data transformation performed by a single linear self-attention layer is, to first order, *one step of gradient descent* on a squared-error regression loss: the attention weights play the role of a preconditioner, and the value vectors carry the residuals that the step moves along. A trained model has learned to become a mesa-optimizer : hand it a few input/output pairs in its context and its forward pass takes a handful of gradient steps over them and reads off the answer. That reinterprets **in-context learning** — the ability to \"learn\" a brand-new task from a handful of examples in the prompt, with no weight updates at all — as nothing mysterious: it is the same optimizer the model uses to *train itself*, reused at inference time on the prompt's own examples.",
       "kind": "paragraph",
       "section": "The model as a machine that learns *inside* its forward pass"
     },
