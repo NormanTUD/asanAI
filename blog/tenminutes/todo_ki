@@ -11,3 +11,7 @@ entferne "Bedeutung wird zur Geometrie." komplett, das its alles schon oben. mac
 "Meist in den Feed-Forward-Gewichten, und oft überlagert" -> überfliege dazu https://already-clean.goodfire.com/ , evtl ist das auch nicht so.
 
 entferne "Die Idee, dass gutes Komprimieren und gutes Vorhersagen zusammenhängen, ist eine Arbeitshypothese, keine bewiesene Identität"
+
+history:
+
+nehme aus der ../statistics.php das beispiel von gauß mit den kleinsten quadraten für die astronomie. das ist sehr anschaulich. nehme auch das bild von ceres und das bild vom flammarion engraving direkt an den anfang. (ceres, truth vs noisy observation errors)
