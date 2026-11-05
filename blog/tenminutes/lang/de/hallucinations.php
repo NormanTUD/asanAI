@@ -1,7 +1,7 @@
 <?php
 return [
 	'title' => 'Wenn das Modell nicht weiß | Ten Minutes',
-	'description' => 'Warum ein Nächste-Token-Prädiktor selbstsicher klingen und trotzdem falsch sein kann und wie man ihn nutzt, ohne ihm blind zu vertrauen.',
+	'description' => 'Warum ein Next-Token-Predictor selbstsicher klingen und trotzdem falsch sein kann und wie man ihn nutzt, ohne ihm blind zu vertrauen.',
 	'texts' => [
 		'Plausible is' => 'Plausibel ist',
 		'not the same as true.' => 'nicht dasselbe wie wahr.',

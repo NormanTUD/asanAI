@@ -15,7 +15,7 @@ return [
 		'for a software architecture: an LLM wrapped in an' => 'für eine Softwarearchitektur: ein LLM, eingewickelt in eine',
 		'observe → reason → act' => 'beobachten → denken → handeln',
 		'loop, with access to external interfaces such as a file system, the network, a search engine, or other tools. It is not a claim about consciousness, intentionality, or genuine philosophical agency.' => 'Schleife, mit Zugriff auf externe Schnittstellen wie Dateisystem, Netzwerk, Suchmaschine oder andere Werkzeuge. Es ist keine Behauptung über Bewusstsein, Intentionalität oder echte philosophische Handlungsfähigkeit.',
-		'The LLM at the centre is still the same reactive, stateless next-token predictor from the' => 'Das LLM im Zentrum ist weiterhin derselbe reaktive, zustandslose Nächste-Token-Prädiktor aus der',
+		'The LLM at the centre is still the same reactive, stateless next-token predictor from the' => 'Das LLM im Zentrum ist weiterhin derselbe reaktive, zustandslose Next-Token-Predictor aus der',
 		'next-token loop' => 'Nächste-Token-Schleife',
 		'. What changes is the' => '. Was sich ändert, ist das',
 		'scaffolding around it' => 'Gerüst um es herum',

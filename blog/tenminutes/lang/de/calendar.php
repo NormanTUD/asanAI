@@ -58,7 +58,7 @@ return [
 		'Assistant' => 'Assistent',
 		'Choosing the Next Token' => 'Das nächste Token wählen',
 		'Temperature, top-p, sampling: the knobs that turn a probability distribution into a voice.' => 'Temperatur, Top-p, Sampling: die Regler, die aus einer Wahrscheinlichkeitsverteilung eine Stimme machen.',
-		'Turning a Predictor into an Assistant' => 'Aus einem Prädiktor einen Assistenten machen',
+		'Turning a Predictor into an Assistant' => 'Aus einem Predictor einen Assistenten machen',
 		'Instruction tuning and feedback teach a raw next-word model to answer, refuse, and follow a format.' => 'Instruction Tuning und Feedback bringen einem rohen Nächste-Wort-Modell bei zu antworten, abzulehnen und ein Format einzuhalten.',
 		'Giving It a Search Engine' => 'Eine Suchmaschine hinzufügen',
 		'Retrieval, embeddings, and citations: how a model can answer from documents instead of memory.' => 'Retrieval, Embeddings und Zitate: wie ein Modell aus Dokumenten statt aus dem Gedächtnis antworten kann.',

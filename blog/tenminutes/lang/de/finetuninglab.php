@@ -1,6 +1,6 @@
 <?php
 return [
-	'title' => 'Aus einem Prädiktor einen Assistenten machen | Ten Minutes',
+	'title' => 'Aus einem Predictor einen Assistenten machen | Ten Minutes',
 	'description' => 'Pretraining, SFT, Präferenzoptimierung und der Post-Training-Stack, der ein Modell hilfreich macht.',
 	'texts' => [
 		'The assistant is' => 'Der Assistent wird',
@@ -8,7 +8,7 @@ return [
 		'A pretrained model is a very good internet simulator. It does not yet follow instructions, refuse harmful requests, or hold a conversation. Post-training is how it becomes an assistant.' => 'Ein pretrainiertes Modell ist ein sehr guter Internet-Simulator. Es folgt noch keinen Anweisungen, lehnt keine schädlichen Anfragen ab und führt kein Gespräch. Post-Training macht daraus einen Assistenten.',
 		'From raw text to instructions' => 'Von Rohtext zu Anweisungen',
 		'Teaching the format.' => 'Das Format lehren.',
-		'Sampling chose tokens. Now the predictor becomes an assistant. Pretraining teaches next-token prediction on a huge corpus: the' => 'Sampling wählte Tokens. Jetzt wird der Prädiktor zum Assistenten. Pretraining lehrt Nächste-Token-Vorhersage auf einem riesigen Korpus: die',
+		'Sampling chose tokens. Now the predictor becomes an assistant. Pretraining teaches next-token prediction on a huge corpus: the' => 'Sampling wählte Tokens. Jetzt wird der Predictor zum Assistenten. Pretraining lehrt Nächste-Token-Vorhersage auf einem riesigen Korpus: die',
 		'next-token loop' => 'Nächste-Token-Schleife',
 		'. The result is fluent but uncontrolled. Supervised fine-tuning then shows the model examples of instructions and good answers, teaching it the format of a conversation (' => '. Das Ergebnis ist flüssig, aber unkontrolliert. Supervised Fine-Tuning zeigt dem Modell dann Beispiele von Anweisungen und guten Antworten und lehrt es das Format eines Gesprächs (',
 		'Fine-tuning changes behaviour, when to answer, when to refuse, how to structure a response, and which tone to use. Why not just prompt? A prompt can shape one conversation; fine-tuning bakes a behaviour into the weights, so it survives across prompts and users.' => 'Fine-Tuning ändert Verhalten: wann geantwortet wird, wann abgelehnt wird, wie eine Antwort aufgebaut ist und welcher Ton verwendet wird. Warum nicht einfach prompten? Ein Prompt kann ein Gespräch formen; Fine-Tuning schreibt ein Verhalten in die Gewichte, sodass es über Prompts und Nutzer hinweg bleibt.',
