@@ -18,10 +18,9 @@
 				<div>
 					<h1>A <span class="very">very</span> brief history of AI.</h1>
 					<p class="hero-deck">
-						Modern AI grew out of counting bones, geared models of the sky, formal logic,
+						Modern AI grew out of counting bones, models of the sky, formal logic,
 						cybernetic feedback, a machine that learned from its mistakes, two winters, and
-						a crowd of contributors who are usually left out of the story. The route is
-						longer and more collective than the usual parade of famous names.
+						a crowd of contributors who are usually left out of the story.
 					</p>
 				</div>
 			</section>
