@@ -478,10 +478,6 @@
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>A single layer is one straight cut. XOR needs two cuts, and that is why a hidden layer helps.</span></div>
 						</div>
-						<div class="fieldnotes">
-							<h4>The bibliography was a giveaway</h4>
-							<p>The 1943 paper cites Carnap’s <em>Logical Syntax of Language</em>, Hilbert and Ackermann’s <em>Grundzüge der theoretischen Logik</em>, and Russell and Whitehead’s <em>Principia Mathematica</em>. It cites no neurophysiologist. The physiology sits in the assumptions; the argument is in the logic.</p>
-						</div>
 						<div class="profile-spotlight">
 							<figure>
 								<img src="../frank_rosenblatt_portrait.jpg" alt="Portrait of Frank Rosenblatt" loading="lazy">

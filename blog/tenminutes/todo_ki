@@ -24,4 +24,6 @@ wenn ich auf den text klicke im history part "Leibniz’ Staffelwalzen-Rechner w
 
 " Die SNARC (1951) was the first physical neural network. Then, in 1958, Frank Rosenblatt introduced the perceptron (Rosenblatt, 1958)" das wird iwie nicht richtig übersetzt. fixe das.
 
+"Warum XOR die einzelne Schicht sprengte · Demo 03": die zahlen gehen rechts aus dem bild raus in dem plot. und der text rechts nutzt die breite nicht sinnvoll. das "wahr falsch" scheint zu dem text zu gehören aber es gehört zum plot, zeige da im plot selbst wahr und falsch statt 0 und 1
+
 
