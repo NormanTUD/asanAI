@@ -50,6 +50,9 @@ return [
 		"'Paris' is a pattern in the weights, not a row in a table." => '„Paris“ ist ein Muster in den Gewichten, keine Zeile in einer Tabelle.',
 		'The model computes an answer; it does not look one up.' => 'Das Modell berechnet eine Antwort; es schlägt sie nicht nach.',
 	],
+	'blocks' => [
+		'Watch the answer form <span>· demo</span>' => 'Sieh die Antwort entstehen <span>· Demo</span>',
+	],
 	'attrs' => [
 		'Scroll left' => 'Nach links scrollen',
 		'A forward pass in five steps' => 'Ein Vorwärtspass in fünf Schritten',
