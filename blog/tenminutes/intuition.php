@@ -2550,12 +2550,12 @@
 			{ sentence: 'Ich gehe zur <span class="aw-bank">Bank</span>.', contexts: [], shift: [5, 5], caption: 'Ohne eindeutigen Kontext: <b>Bank</b> bleibt in der Mitte, mehrdeutig.' },
 			{ sentence: 'Ich sitze im <span class="aw-river">Park</span> auf der <span class="aw-bank">Bank</span>.', contexts: ['river'], shift: [3.2, 6.8], caption: '<b>Park</b> ist der Nachbar → Bank bewegt sich zur Sitzbank-Bedeutung.' },
 			{ sentence: 'Ich bringe mein <span class="aw-money">Geld</span> zur <span class="aw-bank">Bank</span>.', contexts: ['money'], shift: [7.2, 3.2], caption: '<b>Geld</b> ist der Nachbar → Bank bewegt sich zur Finanzbedeutung.' },
-			{ sentence: 'Nach dem Spaziergang im <span class="aw-river">Park</span> gehe ich zur <span class="aw-bank">Bank</span>, um mein <span class="aw-money">Geld</span> einzuzahlen.', contexts: ['river', 'money'], shift: [6.6, 3.9], caption: 'Beide Nachbarn konkurrieren; <b>Geld</b> gewinnt knapp, also kippt Bank zur Finanzbedeutung.' }
+			{ sentence: 'Nach dem Spaziergang im <span class="aw-river">Park</span> gehe ich zur <span class="aw-bank">Bank</span>, um mein <span class="aw-money">Geld</span> einzuzahlen.', contexts: ['river', 'money'], shift: [6.6, 3.9], caption: 'Beide Nachbarn konkurrieren; <b>Geld</b> gewinnt, also kippt Bank zur Finanzbedeutung.' }
 		] : [
 			{ sentence: 'I walk to the <span class="aw-bank">bank</span>.', contexts: [], shift: [5, 5], caption: 'No unambiguous context: <b>bank</b> stays in the middle, ambiguous.' },
 			{ sentence: 'I sit by the <span class="aw-river">river</span> on the <span class="aw-bank">bank</span>.', contexts: ['river'], shift: [3.2, 6.8], caption: '<b>River</b> is the neighbour → bank moves toward the water sense.' },
 			{ sentence: 'I bring my <span class="aw-money">money</span> to the <span class="aw-bank">bank</span>.', contexts: ['money'], shift: [7.2, 3.2], caption: '<b>Money</b> is the neighbour → bank moves toward finance.' },
-			{ sentence: 'After the walk by the <span class="aw-river">river</span> I go to the <span class="aw-bank">bank</span> to deposit my <span class="aw-money">money</span>.', contexts: ['river', 'money'], shift: [6.6, 3.9], caption: 'Both neighbours compete; <b>money</b> wins by a hair, so bank tilts toward finance.' }
+			{ sentence: 'After the walk by the <span class="aw-river">river</span> I go to the <span class="aw-bank">bank</span> to deposit my <span class="aw-money">money</span>.', contexts: ['river', 'money'], shift: [6.6, 3.9], caption: 'Both neighbours compete; <b>money</b> wins, so bank tilts toward finance.' }
 		];
 		var attPos = { bank: [5, 5], river: [0.5, 9.5], money: [10.5, 0.5] };
 		var attColors = { bank: "#63a44b", river: "#5c9baf", money: "#9f9700" };
