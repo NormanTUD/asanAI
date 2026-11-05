@@ -1958,6 +1958,7 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 
 function renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature) {
 	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
+	render_token_picker();
 	render_embedding_plot(d_model);
 	tled_initEditor();
 
@@ -2373,22 +2374,17 @@ function computeFinalPredictions(h_last, vocabulary, d_model, temperature) {
 }
 
 function buildPredictionChipsHtml(predictions, temperature) {
-	let html = `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">`;
+	let html = `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 8px;">`;
 
 	predictions.forEach(p => {
 		const intensity = Math.min(1, p.prob * 5);
 		const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 		const displayWord = /^\s+$/.test(p.word) ? p.word.replace(/ /g, '␣') : p.word;
+		const title = `Original: ${(p.originalProb * 100).toFixed(1)}%; T=${temperature}: ${(p.prob * 100).toFixed(1)}%`;
 
-		const tempInfo = `<span style="font-size:0.7rem; opacity:0.85; display:block; margin-top:2px; visibility:${Math.abs(temperature - 1.0) < 0.01 ? 'hidden' : 'visible'};">
-    Original: ${(p.originalProb * 100).toFixed(1)}%<br>
-    T=${temperature}: ${(p.prob * 100).toFixed(1)}%
-</span>`;
-
-		html += `<button class="predict-chip" onclick="select_suggested_word('${safeWord}')"
-	    style="background:rgba(59, 130, 246, ${0.18 + intensity * 0.55}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: var(--mn-text); text-align:center;">
+		html += `<button class="predict-chip" title="${escapeHtml(title)}" onclick="select_suggested_word('${safeWord}')"
+	    style="background:rgba(59, 130, 246, ${0.18 + intensity * 0.55}); padding:4px 8px; border-radius:0; border:1px solid #3b82f6; cursor:pointer; color: var(--mn-text); text-align:left; font-size:.75rem; line-height:1.25;">
 	    <strong>${escapeHtml(displayWord)}</strong> (${(p.prob * 100).toFixed(1)}%)
-	    ${tempInfo}
 	</button>`;
 	});
 
@@ -2418,9 +2414,14 @@ function buildHLastDisplayLatex(h_last) {
 
 function buildHLastSection(h_last) {
 	const hLastLatex = buildHLastDisplayLatex(h_last);
-	return `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+	const head = isDe ? 'Aktuell' : 'Current';
+	const note = isDe
+		? '(die letzte Zeile der Ausgabematrix der letzten Schicht der Inferenzdaten)'
+		: "(the last layers' output matrix last line of the inference-data)";
+	return `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; text-align: center;">
     <span class="md">
-    <p class="logit_calc">Current $h_\\text{last} = [${hLastLatex}]$ (the last layers' output matrix last line of the <i>inference</i>-data)</p>\n`;
+    <p class="logit_calc" style="text-align: center; margin-left: auto; margin-right: auto;">${head} $h_\\text{last} = [${hLastLatex}]$ ${note}</p>\n`;
 }
 
 function buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits) {
@@ -2619,6 +2620,7 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
         }]);
         window.Prov.apply(overDivs[3], { inline: true, grids: ['F:ent_orig', 'F:ent_scaled', 'F:ent_max'] });
     }
+    if (typeof render_token_picker === 'function') render_token_picker();
 }
 
 window.appendToken = (token) => {
@@ -3010,6 +3012,19 @@ function _tmTokenColorChip(token) {
 	return chip;
 }
 
+function _tmTokenPickerProbs() {
+	var cache = window._cachedFinalProjection;
+	if (!cache || !cache.h_final || !cache.h_final.length) return {};
+	var tempEl = document.getElementById('transformer-temperature');
+	var temperature = parseFloat(tempEl ? tempEl.value : 1) || 1;
+	try {
+		var computed = computeFinalPredictions(cache.h_final[cache.h_final.length - 1], cache.vocabulary, cache.d_model, temperature);
+		var map = {};
+		computed.predictions.forEach(function (p) { map[p.word] = p.prob; });
+		return map;
+	} catch (e) { return {}; }
+}
+
 function render_token_picker_chips() {
 	var input = document.getElementById('transformer-master-token-input');
 	var chips = document.getElementById('transformer-token-picker-chips');
@@ -3033,6 +3048,7 @@ function render_token_picker() {
 	var input = document.getElementById('transformer-master-token-input');
 	if (!palette || !chips || !input || !window.persistentEmbeddingSpace) return;
 
+	var probs = _tmTokenPickerProbs();
 	var tokens = Object.keys(window.persistentEmbeddingSpace).filter(function (token) {
 		return token !== TM_EOS_TOKEN;
 	});
@@ -3041,12 +3057,20 @@ function render_token_picker() {
 		if (aw !== bw) return aw ? -1 : 1;
 		return a.localeCompare(b);
 	});
-	var signature = tokens.join('\u0001');
+	var signature = tokens.join('\u0001') + '|' + tokens.map(function (token) {
+		return (probs[token] || 0).toFixed(4);
+	}).join(',');
 	if (palette.dataset.tmPickerSig !== signature) {
 		palette.innerHTML = '';
 		tokens.forEach(function (token) {
 			var chip = _tmTokenColorChip(token);
 			chip.setAttribute('data-token', token);
+			if (probs[token] != null) {
+				var pct = document.createElement('span');
+				pct.className = 'tm-token-chip-prob';
+				pct.textContent = (probs[token] * 100).toFixed(1) + '%';
+				chip.appendChild(pct);
+			}
 			palette.appendChild(chip);
 		});
 		palette.dataset.tmPickerSig = signature;
@@ -3056,6 +3080,7 @@ function render_token_picker() {
 		palette._tmPickerBound = true;
 		var clearBtn = document.getElementById('transformer-token-picker-clear');
 		var typeEl = document.getElementById('transformer-tokenizer-type');
+		var tempEl = document.getElementById('transformer-temperature');
 		palette.addEventListener('click', function (event) {
 			var chip = event.target.closest && event.target.closest('.tm-token-chip');
 			if (!chip) return;
@@ -3082,7 +3107,11 @@ function render_token_picker() {
 			input.dispatchEvent(new Event('input', { bubbles: true }));
 			render_token_picker_chips();
 		});
-		input.addEventListener('input', render_token_picker_chips);
+		input.addEventListener('input', function () {
+			render_token_picker_chips();
+			render_token_picker();
+		});
+		if (tempEl) tempEl.addEventListener('input', function () { render_token_picker(); });
 	}
 	render_token_picker_chips();
 }

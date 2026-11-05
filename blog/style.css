@@ -14841,3 +14841,9 @@ summary:focus-visible,
 	box-shadow: 0 0 0 2px var(--mn-surface, #fff) inset;
 	outline: 1px solid var(--mn-border, #cbd5e1);
 }
+
+.tm-token-chip-prob {
+	margin-left: 5px;
+	font-size: .62rem;
+	opacity: .9;
+}

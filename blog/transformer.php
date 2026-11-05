@@ -1001,6 +1001,7 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 	<div class="tm-token-builder-palette" id="transformer-token-picker-palette" aria-label="Available tokens"></div>
 	<p class="tm-token-builder-note">Space is shown as ␣; <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
 </div>
+</div>
 
 <div class="md">
 ## The Whole Machine

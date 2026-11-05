@@ -424,3 +424,9 @@
 	box-shadow: 0 0 0 2px var(--tm-card, #fff) inset;
 	outline: 1px solid var(--tm-line-strong, #cbd5e1);
 }
+
+.tm-token-chip-prob {
+	margin-left: 5px;
+	font-size: .62rem;
+	opacity: .9;
+}

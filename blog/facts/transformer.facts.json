@@ -11627,13 +11627,13 @@
     },
     {
       "id": "transformer-block-136",
-      "quote": "Token-only input",
+      "quote": "Token-only input Clear",
       "kind": "paragraph",
       "section": "Step-by-Step Logit Calculation"
     },
     {
       "id": "transformer-block-137",
-      "quote": "Add Clear",
+      "quote": "Available tokens",
       "kind": "paragraph",
       "section": "Step-by-Step Logit Calculation"
     },

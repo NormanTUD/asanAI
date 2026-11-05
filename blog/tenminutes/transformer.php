@@ -662,6 +662,7 @@
 	<div class="tm-token-builder-palette" id="transformer-token-picker-palette" aria-label="Available tokens"></div>
 	<p class="tm-token-builder-note">Space is shown as ␣; <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
 </div>
+</div>
 						<div class="prose">
 							<p>
 								One last surprise from recent research: in a simplified setting, a linear
