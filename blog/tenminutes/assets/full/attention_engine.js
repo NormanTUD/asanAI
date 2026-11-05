@@ -204,19 +204,22 @@ class AttentionEngine {
 		const rows = mat.map((row, tIdx) => {
 			const color = this._attnPosColor(tIdx, n);
 			const safe = this._attnSafeTok(displayTokens, tIdx);
-			let subscript;
-			if (stageLabel) {
-				subscript = `_{${tIdx},\\,\\text{${stageLabel}}}`;
-			} else {
-				subscript = `_{${tIdx}}`;
-			}
-			const label = `${color} \\text{${safe}}${subscript}`;
+			const label = `${color} \\text{${safe}}_{${tIdx}}`;
 			const vals = row.map(v => `${color} ${this._attnNum(v).toFixed(nr_fixed)}`).join(' & ');
 			return `${label} & ${vals}`;
 		}).join(' \\\\ ');
 
-		return `\\left(\\begin{array}{${colSpec}} & ${colHeaders} \\\\ \\hline ${rows} \\end{array}\\right)`;
+		let footer = '';
+		if (stageLabel) {
+			const first = this._attnSafeTok(displayTokens, 0);
+			const stage = String(stageLabel).replace(/#/g, '\\#').replace(/_/g, '\\_').replace(/&/g, '\\&');
+			const blanks = Array(numCols).fill('').join(' & ');
+			footer = ` \\\\ \\underbrace{\\phantom{\\text{${first}}}}_{\\text{${stage}}} & ${blanks}`;
+		}
+
+		return `\\left(\\begin{array}{${colSpec}} & ${colHeaders} \\\\ \\hline ${rows}${footer} \\end{array}\\right)`;
 	}
+
 
 
 	dot(A, B) {

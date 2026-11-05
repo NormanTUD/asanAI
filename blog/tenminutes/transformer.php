@@ -556,6 +556,15 @@
 								<span>“Depth builds structure bottom-up.” Lower layers assemble local units; higher layers integrate larger relations.</span>
 							</div>
 						</div>
+<div id="transformer-temperature-block">
+<label style="font-weight: bold;">Temperature ($T$): <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span></label>
+<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+<b>Effect:</b> Controls the “sharpness” of the probability distribution.<br/>
+<b>Reason:</b> Low values ($T &lt; 1$) force the model to be deterministic; high values ($T &gt; 1$) increase diversity by making unlikely words more probable.
+	</p>
+<input id="transformer-temperature" max="2.0" min="0.1" oninput="document.getElementById('temp-val').innerText = this.value; rerender_temperature_only();" step="0.1" style="width: 100%; vertical-align: middle;" type="range" value="1.0"/>
+</div>
+<div id="transformer-output-projection" style="background: var(--mn-surface, white); padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
 <div>
 <label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
 <input id="transformer-master-token-input" type="hidden" value="the"/>
@@ -568,18 +577,10 @@
 	<div class="tm-token-builder-palette-label">Available tokens</div>
 	<div class="tm-token-builder-palette" id="transformer-token-picker-palette" aria-label="Available tokens"></div>
 	<p class="tm-token-builder-note">Space is shown as ␣; <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
-	<p class="tm-token-builder-note">Click a token to append it. The result chips below the calculation are clickable too.</p>
+	<p class="tm-token-builder-note">Click a token to append it. The result chips in the calculation above are clickable too.</p>
 </div>
 </div>
-						<div id="transformer-temperature-block">
-<label style="font-weight: bold;">Temperature ($T$): <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span></label>
-<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-<b>Effect:</b> Controls the “sharpness” of the probability distribution.<br/>
-<b>Reason:</b> Low values ($T &lt; 1$) force the model to be deterministic; high values ($T &gt; 1$) increase diversity by making unlikely words more probable.
-	</p>
-<input id="transformer-temperature" max="2.0" min="0.1" oninput="document.getElementById('temp-val').innerText = this.value; rerender_temperature_only();" step="0.1" style="width: 100%; vertical-align: middle;" type="range" value="1.0"/>
-</div>
-<div id="transformer-output-projection" style="background: var(--mn-surface, white); padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
+						
 
 <div class="prose">
 							<p>

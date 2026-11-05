@@ -185,7 +185,7 @@ return [
 
 
 		'Add' => 'Hinzufügen',
-		'Click a token to append it. The result chips below the calculation are clickable too.' => 'Klicke auf ein Token, um es anzuhängen. Auch die Ergebnis-Chips unter der Berechnung sind anklickbar.',
+		'Click a token to append it. The result chips in the calculation above are clickable too.' => 'Klicke auf ein Token, um es anzuhängen. Auch die Ergebnis-Chips in der Berechnung darüber sind anklickbar.',
 		'Clear' => 'Leeren',
 		'Space is shown as ␣;' => 'Leerzeichen wird als ␣ angezeigt;',
 		'The token' => 'Das Token',
