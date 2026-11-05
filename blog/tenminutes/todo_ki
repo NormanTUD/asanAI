@@ -3,6 +3,7 @@ intuition:
 DONE — Schleifen-Absatz: die zwei Textknoten-Schlüssel an die Link-Grenzen angepasst, deutsche Fassung erscheint.
 DONE — Positionsdemo: Heatmap-Text davor, Erklärung danach; blaue Kugel als Originalwort beschriftet.
 DONE — Schritt 3: 3D-Darstellung auf echte sinusförmige Positionskodierung umgestellt; eine Position, drei Dimensionsachsen, Werte real für d0-d2 berechnet, Readout d0-d3; Erklärung gekürzt.
+DONE — Schritt 3: Der 3D-Plot lässt sich jetzt per Maus ziehen (Zeiger greift/zieht); Auto-Rotation pausiert beim ersten Ziehen.
 DONE — Attention-Beispiel „Park + Geld“: Punkt geht jetzt stärker nach oben, Bildunterschrift angepasst.
 DONE — „Bedeutung wird zur Geometrie.“ entfernt; der Abschnitt heißt jetzt „Der finale Vektor wählt ein Wort.“; der Winkel-/Endtext ersetzt die redundante Geometrie-Einführung.
 DONE — Superposition als umstrittene Lesart formuliert, Goodfire 2026 als Gegenposition verlinkt.

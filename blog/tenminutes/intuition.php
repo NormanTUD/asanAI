@@ -368,7 +368,7 @@
 										<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
 										<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
 									</div>
-									<p class="step-note">The plot shows the sinusoidal encoding as one vector for the selected position. The three axes are the first three dimensions; the blue sphere is the original word, and the arrow is its position vector. Move the slider and the point follows the curve. The demo computes 64 dimensions; a real model uses thousands.</p>
+									<p class="step-note">The plot shows the sinusoidal encoding as one vector for the selected position. The three axes are the first three dimensions; the blue sphere is the original word, and the arrow is its position vector. Move the slider and the point follows the curve. Drag the plot to rotate it. The demo computes 64 dimensions; a real model uses thousands.</p>
 								</div>
 
 								<div class="step-pane" id="step-attention">
@@ -2228,6 +2228,9 @@
 		var posReduce = TM.prefersReduced();
 		var posAuto = !posReduce;
 		var posClock = 0;
+		var posYaw = 0;
+		var posPitch = 0;
+		var posDrag = null;
 		function posPE(position, dim) {
 			var pair = Math.floor(dim / 2) * 2;
 			var denom = Math.pow(10000, pair / POS_D_MODEL);
@@ -2239,8 +2242,8 @@
 		}
 		function posProjector(w, h) {
 			var t = posClock * 0.00018;
-			var az = -0.62 + (posAuto ? Math.sin(t) * 0.26 : 0);
-			var el = 0.34 + (posAuto ? Math.sin(t * 0.7) * 0.035 : 0);
+			var az = -0.62 + posYaw + (posAuto ? Math.sin(t) * 0.26 : 0);
+			var el = TM.clamp(0.34 + posPitch + (posAuto ? Math.sin(t * 0.7) * 0.035 : 0), -1.2, 1.2);
 			var ca = Math.cos(az), sa = Math.sin(az);
 			var ce = Math.cos(el), se = Math.sin(el);
 			var unit = Math.min(w * 0.29, h * 0.36);
@@ -2453,6 +2456,39 @@
 					if (posApi) posApi.redraw();
 				});
 			}
+			function posEndDrag(ev) {
+				if (!posDrag) return;
+				posDrag = null;
+				posCanvas.classList.remove("is-dragging");
+				if (posCanvas.hasPointerCapture && posCanvas.hasPointerCapture(ev.pointerId)) {
+					posCanvas.releasePointerCapture(ev.pointerId);
+				}
+			}
+			posCanvas.addEventListener("pointerdown", function (ev) {
+				if (ev.button !== undefined && ev.button !== 0) return;
+				posDrag = { x: ev.clientX, y: ev.clientY };
+				posCanvas.classList.add("is-dragging");
+				if (posAuto) {
+					var t = posClock * 0.00018;
+					posYaw += Math.sin(t) * 0.26;
+					posPitch = TM.clamp(posPitch + Math.sin(t * 0.7) * 0.035, -1.2, 1.2);
+					posAuto = false;
+					if (posAutoBtn) {
+						posAutoBtn.classList.remove("is-on");
+						posAutoBtn.setAttribute("aria-pressed", "false");
+					}
+				}
+				if (posCanvas.setPointerCapture) posCanvas.setPointerCapture(ev.pointerId);
+			});
+			posCanvas.addEventListener("pointermove", function (ev) {
+				if (!posDrag) return;
+				posYaw += (ev.clientX - posDrag.x) * 0.01;
+				posPitch = TM.clamp(posPitch + (ev.clientY - posDrag.y) * 0.01, -1.2, 1.2);
+				posDrag = { x: ev.clientX, y: ev.clientY };
+				if (posApi) posApi.redraw();
+			});
+			posCanvas.addEventListener("pointerup", posEndDrag);
+			posCanvas.addEventListener("pointercancel", posEndDrag);
 			if ("IntersectionObserver" in window) {
 				new IntersectionObserver(function (entries) {
 					posVisible = entries[0].isIntersecting;

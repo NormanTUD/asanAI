@@ -4924,6 +4924,8 @@ html[data-theme="light"] .step-note b { color: var(--tm-ink); }
 		rgba(3, 25, 34, 0.5);
 	touch-action: none;
 }
+#ipe-canvas { cursor: grab; }
+#ipe-canvas.is-dragging { cursor: grabbing; }
 html[data-theme="light"] .step-canvas {
 	border-color: var(--tm-line);
 	background:
