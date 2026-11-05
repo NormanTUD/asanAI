@@ -19,3 +19,9 @@ Erledigt:
 - Ganze Schleife: „Positionssignal“ mit Fugen-s, „Schicht für Schicht lässt Attention …“, Token wird angehängt und die Schleife endet bei `<|endoftext|>`; „Faktensuche“-Satz entfernt; „next-token-predictor“; Keypoint neu formuliert.
 - Solomonoff-Absatz allgemeinverständlich neu geschrieben (Prior wird erklärt, keine unvermittelte Fachsprache); „ehrliche Position“ und Schlusssatz neu formuliert.
 - Selbstkritik: Die Telefonhöhe ist mit 570 px großzügig; das erzeugt am Anfang Leerraum, ist aber der einzige Weg, den Sprung bei sehr schmalen Viewports sicher zu vermeiden, ohne den Inhalt abzuschneiden. „Ein next-token-predictor“ ist absichtlich kleingeschrieben, weil du den englischen Begriff wolltest; grammatisch runder wäre „Ein Next-Token-Predictor“. Die deutsche Attention-Demo nutzt Park/Sitzbank statt Fluss/Ufer, damit „Bank“ mehrdeutig bleibt; die Metapher ist dadurch eine andere als im Englischen. Der rote Innenkern ist eine bewusste Ausnahme von der lilafarbenen Palette, weil der Text von roten Punkten spricht und die Anweisung explizit war. „Origami in N dimensions“ und „stochastic parroting“ bleiben als Werk-/Fachbegriffe englisch. Die englische Fassung wurde überall dort mitgezogen, wo die Korrektur auch inhaltlich für sie gilt.
+
+Nachtrag (November 2026):
+- Handy-Demo: Replay-Button samt Handler entfernt; die Animation startet nur noch, wenn die Demo sichtbar wird. Untertitel angepasst.
+- Handy-Schatten: Bühnenhöhe auf 780 px (mobil 690 px) erhöht, damit der vorhandene Schatten oben und unten vollständig sichtbar bleibt.
+- Wahrscheinlichkeits-Satz neu: Das Modell weist jedem möglichen nächsten Token einen Wert zu; die Werte summieren sich zu eins, und die ganze Verteilung ist die Ausgabe.
+- Autoregressive Schleife: Beim Abschluss wird der Cursor nicht mehr aus dem DOM entfernt, sondern nur unsichtbar; dadurch bleibt die Zeilenbox stabil und der Halb-Pixel-Sprung verschwindet.

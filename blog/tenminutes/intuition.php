@@ -823,10 +823,9 @@
 				if (i && !noSpace) html += " ";
 				html += '<span class="' + item.cls + '">' + escapeHtml(item.tok) + "</span>";
 			});
+			html += '<span class="cursor' + (stage >= MAX_STEPS ? " is-done" : "") + '" aria-hidden="true"></span>';
 			if (stage >= MAX_STEPS) {
 				html += ' <span class="given" style="opacity:.55">' + (DE ? "Sequenz vollständig" : "sequence complete") + '</span>';
-			} else {
-				html += '<span class="cursor" aria-hidden="true"></span>';
 			}
 			sentenceEl.innerHTML = html;
 			renderTree();

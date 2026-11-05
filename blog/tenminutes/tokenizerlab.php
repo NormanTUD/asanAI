@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	<meta name="description" content="Pick a word, a number, or a script and watch a toy tokenizer split it. See why spelling, numbers, and languages pay different token costs.">
+	<meta name="description" content="Pick a word, a number, or a script and watch a demo tokenizer split it. See why spelling, numbers, and languages pay different token costs.">
 	<meta name="theme-color" content="#ffffff">
 	<title>Chopping Text into Tokens | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
@@ -17,7 +17,7 @@
 				<div>
 					<h1>Chopping text <em>into tokens.</em></h1>
 					<p class="hero-deck">
-						A model never sees words. It sees <strong>tokens</strong> (chunks of text) and
+						A modern LLM never sees words. It sees <strong>tokens</strong> (chunks of text) and
 						turns each one into a vector. That single decision explains why models struggle
 						to count letters, why some languages cost more, and why a vocabulary entry is
 						not the same thing as a learned concept.
@@ -32,7 +32,7 @@
 						<h2 class="section-title">Computers need numbers. Text is not numbers.</h2>
 						<div class="prose">
 							<p>
-								The next-token loop spoke of words. A real model does not see words; it sees tokens. The very
+								The next-token loop spoke of words. A modern LLM does not see words; it sees tokens. The very
 								first thing it does is <strong>chop the input into small pieces called
 								tokens</strong>. We can first think of these as words, but
 								they do not have to be. A token can be a whole word, a subword, a number, a
@@ -80,7 +80,7 @@
 						<h2 class="section-title">A live, deliberately tiny tokenizer.</h2>
 						<div class="prose">
 							<p>
-								The box below uses a hand-built toy vocabulary, not the tokenizer of a real
+								The box below uses a hand-built demo vocabulary, not the tokenizer of a real
 								model. It behaves the same way in principle: greedily match the longest
 								known piece, split the rest into smaller pieces, and count every space and
 								punctuation mark as its own token.
@@ -93,7 +93,7 @@
 									<p class="demo-title">Tokenize this <span>· demo 01</span></p>
 									<p class="demo-sub">Pick a word, a number, or a script the vocabulary has never seen.</p>
 								</div>
-								<span class="demo-badge">toy vocab</span>
+								<span class="demo-badge">demo vocab</span>
 							</div>
 							<div class="demo-body">
 								<div class="chip-row" style="margin-top:10px">
@@ -121,7 +121,7 @@
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>A token is a slot, not a concept. The tokenizer decides which slots exist; training decides which slots get meaning.</span></div>
 							<div class="demo-foot">
-								Toy vocabulary: common English words, a few subword pieces, and a
+								Demo vocabulary: common English words, a few subword pieces, and a
 								character fallback. A real tokenizer has tens of thousands of learned
 								merges; the mechanism, not the exact count, is the point.
 							</div>
@@ -134,8 +134,12 @@
 						<div class="prose">
 							<p>
 								How is the vocabulary built? The workhorse is <strong>Byte Pair Encoding
-								(BPE)</strong>: originally a data-compression scheme (<a href="https://www.derczynski.com/papers/archive/BPE_Gage.pdf" rel="noopener">Gage, 1994</a>), adapted for subword tokenization by <a href="https://arxiv.org/abs/1508.07909" rel="noopener">Sennrich et al., 2016</a>: start from a base alphabet (characters, or bytes for byte-level BPE) repeatedly merge the most frequent
-								adjacent pair in the training text, and stop at the target vocabulary size.
+								(BPE)</strong>, at heart a compression algorithm: it tries to represent as much
+text, and therefore as much possible meaning, with as few tokens as possible. BPE
+began as a data-compression scheme (<a href="https://www.derczynski.com/papers/archive/BPE_Gage.pdf" rel="noopener">Gage, 1994</a>), adapted for subword
+tokenization by <a href="https://arxiv.org/abs/1508.07909" rel="noopener">Sennrich et al., 2016</a>: start from a base alphabet (characters, or
+bytes for byte-level BPE) repeatedly merge the most frequent adjacent pair in the
+training text, and stop at the target vocabulary size.
 								<strong>Unigram / SentencePiece</strong> (<a href="https://arxiv.org/abs/1804.10959" rel="noopener">Kudo, 2018</a>) fits a unigram language model over
 								candidate subwords and prunes the set that best explains the corpus.
 								<strong>Byte-level BPE</strong> (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" rel="noopener">Radford et al., 2019</a>) starts from all 256 bytes, so every input is
@@ -162,14 +166,14 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The same sentence, different tax <span>· demo 02</span></p>
-									<p class="demo-sub">The toy vocabulary is English-heavy. Watch what that does to other languages.</p>
+									<p class="demo-sub">The demo vocabulary is English-heavy. Watch what that does to other languages.</p>
 								</div>
 								<span class="demo-badge">illustrative</span>
 							</div>
 							<div class="demo-body">
 								<div class="lang-compare" id="lang-compare"></div>
 								<p class="lang-note">
-									These counts come from the same toy vocabulary, so the German and Hindi
+									These counts come from the same demo vocabulary, so the German and Hindi
 									numbers are exaggerated. Real tokenizers are trained multilingually and the
 									gap is smaller, but it does not disappear, and it is measured in cost,
 									context, and capacity.

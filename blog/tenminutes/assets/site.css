@@ -2556,6 +2556,7 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	vertical-align: -0.14em;
 	animation: blink 1s steps(2) infinite;
 }
+.prediction-sentence .cursor.is-done { visibility: hidden; }
 @keyframes pop { from { transform: scale(0.9); opacity: 0.2; } }
 @keyframes blink { 50% { opacity: 0; } }
 

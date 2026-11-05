@@ -8748,7 +8748,7 @@
       "qualifiers": {
         "approx": true
       },
-      "quote": "Gordon Teal and Ernest Buehler adapted it at Bell Labs in the early 1950s",
+      "quote": "Gordon Teal's group at Bell Labs adapted it in the early 1950s",
       "citation_keys": [
         "teal1976singlecrystals"
       ],
@@ -33793,7 +33793,7 @@
     },
     {
       "id": "untold_history_ii-stmt-554",
-      "quote": "Gordon Teal and Ernest Buehler adapted it at Bell Labs in the early 1950s to grow the first high-quality germanium and silicon single crystals (\\cite[Teal, 1976]{teal1976singlecrystals}).",
+      "quote": "Gordon Teal's group at Bell Labs adapted it in the early 1950s to grow the first high-quality germanium and silicon single crystals (\\cite[Teal, 1976]{teal1976singlecrystals}).",
       "block_id": "untold_history_ii-block-246",
       "section": "From Sand to Single Crystal",
       "kind": "statement"
@@ -35895,7 +35895,7 @@
     },
     {
       "id": "untold_history_ii-block-246",
-      "quote": "The second transformation is crystallographic. The purified polysilicon is melted in a quartz crucible, and a small seed crystal is dipped into the melt and pulled upward while rotating. The liquid freezes onto the seed in the same crystal orientation. Jan Czochralski invented the pulling method in 1916 while studying the crystallization of metals and published it in 1918 (\\cite[Czochralski, 1918]{czochralski1918}). Gordon Teal and Ernest Buehler adapted it at Bell Labs in the early 1950s to grow the first high-quality germanium and silicon single crystals (\\cite[Teal, 1976]{teal1976singlecrystals}). The result is a cylindrical ingot with the continuous lattice that a transistor needs.",
+      "quote": "The second transformation is crystallographic. The purified polysilicon is melted in a quartz crucible, and a small seed crystal is dipped into the melt and pulled upward while rotating. The liquid freezes onto the seed in the same crystal orientation. Jan Czochralski invented the pulling method in 1916 while studying the crystallization of metals and published it in 1918 (\\cite[Czochralski, 1918]{czochralski1918}). Gordon Teal's group at Bell Labs adapted it in the early 1950s to grow the first high-quality germanium and silicon single crystals (\\cite[Teal, 1976]{teal1976singlecrystals}). The result is a cylindrical ingot with the continuous lattice that a transistor needs.",
       "kind": "paragraph",
       "section": "From Sand to Single Crystal"
     },
