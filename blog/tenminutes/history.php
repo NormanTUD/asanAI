@@ -1062,7 +1062,7 @@
 				date: "c. 300 BCE",
 				name: "Counting boards",
 				era: "Antiquity · spatial abstraction",
-				title: "The grid becomes a machine",
+				title: "Calculating becomes a machine",
 				text: "The Salamis Tablet (c. 300 BCE) is the oldest surviving counting board: a marble slab with etched lines and pebbles (calculi). It maps numbers to grid coordinates, uses a rule-based physical system for arithmetic, and stores intermediate sums outside the head. The word calculus comes from the pebbles.",
 				img: "../salamic_table.jpg",
 				alt: "The Salamis Tablet counting board",
