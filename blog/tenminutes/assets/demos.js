@@ -3260,36 +3260,75 @@
 		chips.innerHTML = problems.map(function (p, i) {
 			return '<button class="chip' + (i === 0 ? " is-on" : "") + '" type="button" data-reasoning-i="' + i + '">' + escapeHtml(p.label) + "</button>";
 		}).join("");
+		function stepsHtml(p, m) {
+			if (m === "steps") {
+				return p.steps.map(function (s, i) {
+					return '<div class="cot-step is-on" style="transition-delay:' + (i * 55) + 'ms">' + escapeHtml(s) + "</div>";
+				}).join("");
+			}
+			return '<div class="cot-step is-on">' + (DEMO_DE ? "Die Antwort wirkt offensichtlich: " : "The answer feels obvious: ") + escapeHtml(p.quick) + ".</div>";
+		}
+		function answerHtml(p, m) {
+			if (m === "steps") {
+				return (DEMO_DE ? "Antwort: <b>" : "Answer: <b>") + p.correct + "</b>";
+			}
+			return (DEMO_DE ? "Antwort: <b>" : "Answer: <b>") + p.quick + "</b> <span style=\"color:var(--tm-coral)\">" + (DEMO_DE ? "· wahrscheinlich falsch" : "· likely wrong") + "</span>";
+		}
+		function votesHtml(p, correctCount) {
+			var votes = [];
+			for (var i = 0; i < 5; i++) votes.push(i < correctCount ? p.correct : p.quick);
+			return (DEMO_DE ? "Fünf gezogene Pfade → " : "Five sampled paths → ") + votes.map(function (v, i) {
+				return '<span style="display:inline-block;margin-right:5px;padding:2px 7px;border:1px solid var(--tm-line);border-radius:999px;font-family:var(--tm-mono);font-size:.62rem;color:' + (v === p.correct ? "var(--tm-green-deep)" : "var(--tm-coral)") + ';animation:pop .3s ease both;animation-delay:' + (i * 80) + 'ms">' + escapeHtml(v) + "</span>";
+			}).join("") + (DEMO_DE ? "<br><b>" + correctCount + " / 5</b> " + (correctCount === 1 ? "stimmt" : "stimmen") + " für " + escapeHtml(p.correct) + ". Mehrheitsentscheidung hilft nur, wenn die Fehler nicht alle gleich sind." : "<br><b>" + correctCount + " / 5</b> agree on " + escapeHtml(p.correct) + ". Majority voting helps only when the errors are not all the same.");
+		}
 		function render() {
 			var p = problems[current];
 			if (questionEl) questionEl.textContent = p.q;
 			modeBtns.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-reasoning-mode") === mode); });
-			if (mode === "steps") {
-				stepsEl.innerHTML = p.steps.map(function (s, i) {
-					return '<div class="cot-step is-on" style="transition-delay:' + (i * 55) + 'ms">' + escapeHtml(s) + "</div>";
-				}).join("");
-				if (answerEl) answerEl.innerHTML = (DEMO_DE ? "Antwort: <b>" : "Answer: <b>") + p.correct + "</b>";
-				if (tokensEl) tokensEl.textContent = p.tokens[1] + (DEMO_DE ? " Tokens" : " tokens");
-				if (confidenceEl) confidenceEl.textContent = DEMO_DE ? "geprüft" : "checked";
-			} else {
-				stepsEl.innerHTML = '<div class="cot-step is-on">' + (DEMO_DE ? "Die Antwort wirkt offensichtlich: " : "The answer feels obvious: ") + escapeHtml(p.quick) + ".</div>";
-				if (answerEl) answerEl.innerHTML = (DEMO_DE ? "Antwort: <b>" : "Answer: <b>") + p.quick + "</b> <span style=\"color:var(--tm-coral)\">" + (DEMO_DE ? "· wahrscheinlich falsch" : "· likely wrong") + "</span>";
-				if (tokensEl) tokensEl.textContent = p.tokens[0] + (DEMO_DE ? " Tokens" : " tokens");
-				if (confidenceEl) confidenceEl.textContent = DEMO_DE ? "schnell, ungeprüft" : "fast, unchecked";
-			}
-			if (mode === "steps" && answerEl) answerEl.title = "";
-			if (mode !== "steps" && answerEl) answerEl.title = DEMO_DE ? p.quickWhy : p.quickWhy;
+			stepsEl.innerHTML = stepsHtml(p, mode);
+			if (answerEl) answerEl.innerHTML = answerHtml(p, mode);
+			if (tokensEl) tokensEl.textContent = p.tokens[mode === "steps" ? 1 : 0] + (DEMO_DE ? " Tokens" : " tokens");
+			if (confidenceEl) confidenceEl.textContent = mode === "steps" ? (DEMO_DE ? "geprüft" : "checked") : (DEMO_DE ? "schnell, ungeprüft" : "fast, unchecked");
+			if (answerEl) answerEl.title = mode === "steps" ? "" : p.quickWhy;
 			if (votesEl && sampled.length) renderVotes();
 			else if (votesEl) votesEl.innerHTML = DEMO_DE ? "Sampling ist aus, bis du <b>5 Pfade ziehen</b> drückst." : "Sampling is disabled until you press <b>Sample 5 paths</b>.";
 		}
 		function renderVotes() {
+			if (!votesEl) return;
 			var p = problems[current];
-			var correctCount = mode === "steps" ? 4 : 1;
-			var votes = [];
-			for (var i = 0; i < 5; i++) votes.push(i < correctCount ? p.correct : p.quick);
-			votesEl.innerHTML = (DEMO_DE ? "Fünf gezogene Pfade → " : "Five sampled paths → ") + votes.map(function (v, i) {
-				return '<span style="display:inline-block;margin-right:5px;padding:2px 7px;border:1px solid var(--tm-line);border-radius:999px;font-family:var(--tm-mono);font-size:.62rem;color:' + (v === p.correct ? "var(--tm-green-deep)" : "var(--tm-coral)") + ';animation:pop .3s ease both;animation-delay:' + (i * 80) + 'ms">' + escapeHtml(v) + "</span>";
-			}).join("") + (DEMO_DE ? "<br><b>" + correctCount + " / 5</b> " + (correctCount === 1 ? "stimmt" : "stimmen") + " für " + escapeHtml(p.correct) + ". Mehrheitsentscheidung hilft nur, wenn die Fehler nicht alle gleich sind." : "<br><b>" + correctCount + " / 5</b> agree on " + escapeHtml(p.correct) + ". Majority voting helps only when the errors are not all the same.");
+			votesEl.innerHTML = votesHtml(p, mode === "steps" ? 4 : 1);
+		}
+		function maxHeight(el, htmls) {
+			if (!el) return;
+			var old = el.innerHTML;
+			el.style.visibility = "hidden";
+			el.style.minHeight = "0";
+			var max = 0;
+			htmls.forEach(function (html) {
+				el.innerHTML = html;
+				max = Math.max(max, el.offsetHeight);
+			});
+			el.innerHTML = old;
+			el.style.visibility = "";
+			el.style.minHeight = max + "px";
+		}
+		function measureHeights() {
+			var stepSamples = [];
+			var answerSamples = [];
+			var questionSamples = [];
+			var voteSamples = [
+				DEMO_DE ? "Sampling ist aus, bis du <b>5 Pfade ziehen</b> drückst." : "Sampling is disabled until you press <b>Sample 5 paths</b>."
+			];
+			problems.forEach(function (p) {
+				questionSamples.push('<strong>Problem:</strong> ' + escapeHtml(p.q));
+				stepSamples.push(stepsHtml(p, "steps"), stepsHtml(p, "answer"));
+				answerSamples.push(answerHtml(p, "steps"), answerHtml(p, "answer"));
+				voteSamples.push(votesHtml(p, 4), votesHtml(p, 1));
+			});
+			if (questionEl && questionEl.parentNode) maxHeight(questionEl.parentNode, questionSamples);
+			maxHeight(stepsEl, stepSamples);
+			maxHeight(answerEl, answerSamples);
+			maxHeight(votesEl, voteSamples);
 		}
 		modeBtns.forEach(function (b) {
 			b.addEventListener("click", function () {
@@ -3310,8 +3349,14 @@
 		if (sampleBtn) sampleBtn.addEventListener("click", function () { sampled = [1, 2, 3, 4, 5]; renderVotes(); });
 		if (resetBtn) resetBtn.addEventListener("click", function () { sampled = []; render(); });
 		render();
+		measureHeights();
+		var resizeTimer = null;
+		window.addEventListener("resize", function () {
+			clearTimeout(resizeTimer);
+			resizeTimer = setTimeout(measureHeights, 120);
+		});
+		if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureHeights);
 	}
-
 	/* ── prompt builder ─────────────────────────────────────── */
 
 	function initPrompt(root) {
@@ -3399,7 +3444,34 @@
 				sampledEl.innerHTML = "<b>" + (DEMO_DE ? "Gezogen:" : "Sampled:") + "</b> " + escapeHtml(candidates[pick].text).replace(/\n/g, "<br>");
 			}
 		});
+		function measureSampleHeight() {
+			if (!sampledEl) return;
+			var initial = DEMO_DE
+				? "Drücke auf Ziehen, um eine Antwort aus der aktuellen Verteilung zu ziehen."
+				: "Press sample to draw an answer from the current distribution.";
+			var samples = [initial].concat(candidates.map(function (c) {
+				return "<b>" + (DEMO_DE ? "Gezogen:" : "Sampled:") + "</b> " + escapeHtml(c.text).replace(/\n/g, "<br>");
+			}));
+			var old = sampledEl.innerHTML;
+			sampledEl.style.visibility = "hidden";
+			sampledEl.style.minHeight = "0";
+			var max = 0;
+			samples.forEach(function (html) {
+				sampledEl.innerHTML = html;
+				max = Math.max(max, sampledEl.offsetHeight);
+			});
+			sampledEl.innerHTML = old;
+			sampledEl.style.visibility = "";
+			sampledEl.style.minHeight = max + "px";
+		}
+		var sampleResize = null;
+		window.addEventListener("resize", function () {
+			clearTimeout(sampleResize);
+			sampleResize = setTimeout(measureSampleHeight, 120);
+		});
+		if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureSampleHeight);
 		render();
+		measureSampleHeight();
 	}
 
 	/* ── positional rail ────────────────────────────────────── */
