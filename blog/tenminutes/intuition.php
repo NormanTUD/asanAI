@@ -380,9 +380,9 @@
 										<div class="step-toolbar">
 											<div class="step-chips" id="iatt-examples">
 												<button class="chip is-on" type="button" data-att="0">no unambiguous context</button>
-												<button class="chip" type="button" data-att="1">river nearby</button>
-												<button class="chip" type="button" data-att="2">money nearby</button>
-												<button class="chip" type="button" data-att="3">both nearby</button>
+												<button class="chip" type="button" data-att="1">river in context</button>
+												<button class="chip" type="button" data-att="2">money in context</button>
+												<button class="chip" type="button" data-att="3">both in context</button>
 											</div>
 										</div>
 										<div class="attn-sentence" id="iatt-sentence">I walk to the <span class="aw-bank">bank</span>.</div>
