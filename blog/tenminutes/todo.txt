@@ -82,4 +82,12 @@ wenn ich bei "Schritt 5 · Feed-Forward" das andere bsp wähle, dann springt der
 
 mach außerdem klarer dass es nicht nur einen attention head gibt sondern viele, sowohl bei "Schritt 6 · Residual" als auch bei Schritt 4 · Attention dahinter, das netz macht nicht nur einen sondern ganz viele davon die auf verschiedene sachen achten können, der eine achtet zB auf dies und der andere auf das, such das raus
 
-die demo aus "Macht und Geschlecht"  ist fast identisch mit der vorher, nur dass hier die formeln angezeigt werden unten. entferne "Beziehungen sind wiederverwendbare Richtungen." komplett und schreib das mit den formeln in Schritt 2 · Embedding, mach die formeln aber so dass da sowohl die vektoren als auch mit underbraces darunter die worte stehen, sowohl auf deutsch als auch auf englisch
+die demo aus "Macht und Geschlecht"  ist fast identisch mit der vorher, nur dass hier die formeln angezeigt werden unten. entferne "Beziehungen sind wiederverwendbare Richtungen." komplett und schreib das mit den formeln in Schritt 2 · Embedding, mach die formeln aber so dass da sowohl die vektoren als auch mit underbraces darunter die worte stehen, sowohl auf deutsch als auch auf englisch. mach das mit den wiedervewendbaren richtungen bei der vorherigen demo klarer im schritt 2. achte darauf dass die demos ihre höhe behalten und von anfang an die höhe haben des maximaleintrages, zB der höchsten formel, so dass das Bild danach NICHT rumspringt wenn ich andere bsps auswähle
+
+wiese der worte: "Das Bild ist zweidimensional, während ein echtes Modell in Tausenden Dimensionen arbeitet, aber das Bild ist dasselbe", nicht das bild sondern das prinzip
+
+"und ein neuer Gedanke fällt in die Blase, deren Zentrum am nächsten ist." ist falsch formuliert. jeder gedanke fällt in so eine blase oder in die nähe so einer blase.
+
+"Unsicherheit heißt, auf einer Naht zu stehen." oder komplett am rand
+
+
