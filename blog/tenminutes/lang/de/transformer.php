@@ -17,7 +17,7 @@ return [
 		'residuals' => 'Residuals',
 		'carry the past forward, and' => 'tragen die Vergangenheit weiter, und',
 		'logits' => 'Logits',
-		'turn the result into a bet on the next token. Stack the block and you have the transformer. Step through the pipeline, then slide through the layers and watch a word change its meaning under context.' => 'verwandeln das Ergebnis in eine Wette auf das nächste Token. Stapel den Block, und du hast den Transformer. Schreite durch die Pipeline und schiebe dann durch die Schichten, um zu sehen, wie ein Wort unter Kontext seine Bedeutung ändert.',
+		'turn the result into a bet on the next token. Stack the block and you have the transformer. See the token stream, then follow the real model from embeddings to the next-token distribution.' => 'verwandeln das Ergebnis in eine Wette auf das nächste Token. Stapel den Block, und du hast den Transformer. Sieh dir den Tokenstrom an und folge dann dem echten Modell von den Embeddings bis zur Wahrscheinlichkeitsverteilung des nächsten Tokens.',
 		'Before 2017' => 'Vor 2017',
 		'The problem was the queue.' => 'Das Problem war die Warteschlange.',
 		'Attention, context, position, and fact lookup supplied the parts. Now they assemble into one block. Recurrent networks read a sequence one step at a time. Information about the beginning had to survive a long chain of updates before it could influence the end. Convolutions could parallelize, but the path between distant tokens still grew with distance.' => 'Attention, Kontext, Position und Faktensuche lieferten die Teile. Jetzt fügen sie sich zu einem Block zusammen. Rekurrente Netze lesen eine Sequenz Schritt für Schritt. Information über den Anfang musste eine lange Kette von Updates überleben, bevor sie das Ende beeinflussen konnte. Faltungen konnten parallelisieren, aber der Weg zwischen entfernten Tokens wuchs weiterhin mit der Distanz.',
@@ -185,6 +185,7 @@ return [
 
 
 		'Add' => 'Hinzufügen',
+		'Click a token to append it. The result chips below the calculation are clickable too.' => 'Klicke auf ein Token, um es anzuhängen. Auch die Ergebnis-Chips unter der Berechnung sind anklickbar.',
 		'Clear' => 'Leeren',
 		'Space is shown as ␣;' => 'Leerzeichen wird als ␣ angezeigt;',
 		'The token' => 'Das Token',

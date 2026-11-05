@@ -438,3 +438,39 @@
 	font-size: .62rem;
 	opacity: .9;
 }
+
+#tlab-final-results { text-align: left; }
+#tlab-final-results p { text-align: left; }
+#tlab-final-results .prediction-chip-container { justify-content: flex-start; }
+
+#tm-inference-busy {
+	position: fixed;
+	inset: 0;
+	z-index: 10000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 20, 28, .28);
+}
+#tm-inference-busy[hidden] { display: none; }
+.tm-inference-busy-card {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 16px 20px;
+	background: var(--tm-card, #fff);
+	border: 1px solid var(--tm-line-strong, #cbd5e1);
+	box-shadow: 0 8px 28px rgba(0, 0, 0, .14);
+	color: var(--tm-ink, #000);
+	font-family: var(--tm-ui, sans-serif);
+	font-size: .9rem;
+}
+.tm-inference-spinner {
+	width: 20px;
+	height: 20px;
+	border: 3px solid color-mix(in srgb, var(--tm-green, #63a44b) 25%, transparent);
+	border-top-color: var(--tm-green, #63a44b);
+	border-radius: 50%;
+	animation: tm-inference-spin .7s linear infinite;
+}
+@keyframes tm-inference-spin { to { transform: rotate(360deg); } }

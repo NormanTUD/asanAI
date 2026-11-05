@@ -24,8 +24,8 @@
 						exchange information, <strong>feed-forward</strong> transforms them,
 						<strong>residuals</strong> carry the past forward, and <strong>logits</strong>
 						turn the result into a bet on the next token. Stack the block and you have the
-						transformer. Step through the pipeline, then slide through the layers and watch
-						a word change its meaning under context.
+						transformer. See the token stream, then follow the real model from embeddings to
+						the next-token distribution.
 					</p>
 				</div>
 			</section>
@@ -327,58 +327,12 @@
 							</p>
 						</div>
 
-						<div class="demo" id="pipeline-demo" data-arrow-nav>
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">The transformer pipeline <span>· demo 01</span></p>
-									<p class="demo-sub">Start with “the cat sat”. Step through the six stages, predict the next token, append it, and run the loop again: on → the → mat → . Stages 04-05 are the transformer block; real models stack that block dozens to hundreds of times.</p>
-								</div>
-								<span class="demo-badge">click / step</span>
-							</div>
-							<div class="demo-body">
-								<div class="pipe-tokens" id="pipe-tokens"></div>
-								<div class="flow flow--six" id="pipe-flow" role="group" aria-label="Transformer stages"></div>
-								<div class="flow-repeat">04 + 05 repeat × N blocks · often 32-100+ layers</div>
-								<div class="flow-detail" id="pipe-detail">
-									<h4 id="pipe-title">Tokenize</h4>
-									<p id="pipe-text"></p>
-									<p class="pipe-shape" id="pipe-shape"></p>
-								</div>
-								<div class="pipe-prediction" id="pipe-prediction">Next token: <b>...</b></div>
-								<div class="demo-controls">
-									<button class="btn-demo btn-demo--green" type="button" id="pipe-next" data-arrow-next>Next step in pipeline →</button>
-									<button class="btn-demo" type="button" id="pipe-run">Run the loop ▶</button>
-									<button class="btn-demo" type="button" id="pipe-mask-toggle">Show causal mask</button>
-									<button class="btn-demo" type="button" id="pipe-reset">Reset</button>
-									<span class="pipe-note" id="pipe-counter" style="margin:0">Stage 1 of 6</span>
-								</div>
-								<div class="causal-mask" id="pipe-mask" hidden>
-									<div class="cm-grid" id="cm-grid" aria-label="Causal attention mask: rows are queries, columns are keys"></div>
-									<p>Rows are queries, columns are keys. A decoder may attend only to itself and the past; the future is masked. That is what makes next-token prediction causal during training.</p>
-								</div>
-							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Attention mixes across positions; the feed-forward network computes per position; the residual stream carries everything forward.</span></div>
-							<div class="demo-foot">
-								The pipeline is the GPT-style decoder route. An encoder such as BERT keeps the
-								same block but removes the causal mask and trains with masked tokens instead
-								of next-token prediction.
-							</div>
-						</div>
-
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">It predicts locally, and can still build a world model.</p>
 							<p class="aha-sub">The model has no explicit paragraph plan: it predicts one token, appends it, and predicts again. But next-token prediction can require a 								structured internal state. In the Othello (Reversi) experiment (<a href="https://arxiv.org/abs/2210.13382" rel="noopener">Li et al., 2022</a>), a transformer trained only on legal moves (with no board and no rules) spontaneously represented the board; intervening on that representation changed its next move. Coherence can therefore come from a learned world model in the residual stream, not only from a chain of surface bets. The model is still fallible, that world model is partial, and small errors can compound.</p>
 						</div>
 
-						<div class="trythis">
-							<b>Try this</b>
-							<ol>
-								<li>Step to <strong>Attention</strong>. Which stage is the only one where information moves <em>between</em> positions?</li>
-								<li>Step to <strong>Feed-forward</strong>. Why is it “per-token” while attention is “across tokens”?</li>
-								<li>Run to the end. At which point does the model commit to one token, and what decides it?</li>
-							</ol>
-						</div>
 					</section>
 
 					<section class="section-block" id="layerlens">
@@ -394,14 +348,13 @@
 								accumulates.
 							</p>
 							<p>
-								The layer lens below is a deliberately simple story: context pulls the word
-								toward one of two clusters. With “river” in the sentence, “bank” drifts toward
-								the river cluster; with “loan”, toward finance. It never lands exactly on the
-								cluster centre: the lexical word is still part of the sum. Every token in the
-								sentence contributes a little, so the path is not a clean straight line; it
-								picks up a small amount of noise along the way. Drag the layer slider and switch
-								the context. Real trajectories are high-dimensional and much messier; the
-								qualitative idea (context accumulates with depth) is the point.
+								A simple mental picture: context pulls the word toward one of two clusters.
+								With “river” in the sentence, “bank” drifts toward the river cluster; with
+								“loan”, toward finance. It never lands exactly on the cluster centre: the
+								lexical word is still part of the sum. Every token in the sentence contributes
+								a little, so the path is not a clean straight line. Real trajectories are
+								high-dimensional and much messier; the qualitative idea, that context
+								accumulates with depth, is the point.
 							</p>
 							<p>
 								<strong>The word does not travel from layer to layer.</strong> The stream stays;
@@ -410,48 +363,7 @@
 							</p>
 						</div>
 
-						<div class="demo" id="layer-demo">
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">The layer lens <span>· demo 02</span></p>
-									<p class="demo-sub">Pick a context, then drag through layers 0-11.</p>
-								</div>
-								<span class="demo-badge">illustrative</span>
-							</div>
-							<div class="demo-body">
-								<canvas class="demo-canvas" id="layer-canvas" style="height:320px" aria-label="A word moving between two semantic clusters across layers"></canvas>
-								<div class="demo-readout">
-									<div><b>Layer</b><span id="layer-num">0 / 11</span></div>
-									<div><b>Context</b><span id="layer-context">river bank</span></div>
-									<div><b>Pull</b><span id="layer-pull">neutral</span></div>
-								</div>
-								<div class="demo-controls">
-									<div class="chip-row" id="layer-contexts">
-										<button class="chip is-on" type="button" data-ctx="river">“the river bank”</button>
-										<button class="chip" type="button" data-ctx="loan">“the bank loan”</button>
-										<button class="chip" type="button" data-ctx="none">no context</button>
-									</div>
-									<label>Layer <input type="range" id="layer-slider" min="0" max="11" step="1" value="0"><output id="layer-out">0</output></label>
-								</div>
-								<p class="meadow-caption" id="layer-caption" style="color:var(--tm-muted)">At the input, “bank” sits between the clusters. Context has not pulled it yet.</p>
-							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Depth assembles context. The word is not looked up in a dictionary; it is moved by the evidence in the sentence.</span></div>
-							<div class="demo-foot">
-								This is a 2-D cartoon of a high-dimensional residual stream. The real lesson is
-								in the architecture: every layer reads the stream, computes an update, and adds
-								it back.
-							</div>
-						</div>
-
-						<div class="trythis">
-							<b>Try this</b>
-							<ol>
-								<li>Set the layer to 11 for “the bank loan”. Why does “bank” stop short of the finance cluster?</li>
-								<li>Switch to “the river bank” without moving the slider. What changes, and what stays the same?</li>
-								<li>Choose “no context”. Why is there no target at all?</li>
-							</ol>
-						</div>
-					</section>
+						</section>
 
 					<section class="section-block" id="inputlab">
 						<div class="section-kicker"><span class="sk-num">05</span> Preparing the input</div>
@@ -656,6 +568,7 @@
 	<div class="tm-token-builder-palette-label">Available tokens</div>
 	<div class="tm-token-builder-palette" id="transformer-token-picker-palette" aria-label="Available tokens"></div>
 	<p class="tm-token-builder-note">Space is shown as ␣; <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
+	<p class="tm-token-builder-note">Click a token to append it. The result chips below the calculation are clickable too.</p>
 </div>
 </div>
 						<div id="transformer-temperature-block">
@@ -695,370 +608,17 @@
 		</div>
 	</main>
 
+	<div id="tm-inference-busy" hidden aria-live="polite" aria-busy="true">
+		<div class="tm-inference-busy-card">
+			<span class="tm-inference-spinner" aria-hidden="true"></span>
+			<span id="tm-inference-busy-text">Computing the next step…</span>
+		</div>
+	</div>
+
 
 	<script src="assets/site.js"></script>
 	<script src="../temml.min.js"></script>
-	<script>
-	(function () {
-		"use strict";
-		var DE = TM.lang() === "de";
 
-		/* ── pipeline ────────────────────────────────────────── */
-		var stages = [
-			{
-				name: "Tokenize",
-				title: "Tokenize",
-				text: "Text is cut into subword tokens and mapped to integer IDs. The vocabulary is fixed before training. In GPT-2 byte-level BPE, “the cat sat” becomes [262, 3797, 3332].",
-				shape: "\\text{text} \\to [T]"
-			},
-			{
-				name: "Embed",
-				title: "Embed",
-				text: "Each token ID indexes a row of the embedding matrix W_E, producing a dense vector of dimension d_model. Similar meanings end up near each other in this space, but this is only the first layer.",
-				shape: "[T] \\to [T, d_{\\text{model}}]"
-			},
-			{
-				name: "Position",
-				title: "Add position",
-				text: "								A position signal is added to each embedding (sinusoidal in the original; modern models often use rotary/RoPE, which rotates queries and keys instead). Without it, “dog bites man” and “man bites dog” would be an unordered bag of the same vectors.",
-				shape: "[T, d_{\\text{model}}] + [T, d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
-			},
-			{
-				name: "Attention",
-				repeat: true,
-				title: "Attention + residual",
-				text: "Each token projects to a query, key, and value. Scaled dot products decide who attends to whom; softmax normalizes the weights; values are averaged. A causal mask in a decoder hides the future. The result is added back to the residual stream. This is one block in a stack of N blocks; real models repeat that block dozens to hundreds of times, often 32-100+ layers.",
-				shape: "[T, d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
-			},
-			{
-				name: "Feed-forward",
-				repeat: true,
-				title: "Feed-forward + residual",
-				text: "A per-token MLP expands the vector (usually 4×), applies a nonlinearity such as GELU or SwiGLU, and contracts it back. Attention routes information; the FFN computes with it. The result is added to the stream again. The attention + feed-forward block repeats N times; the demo shows one pass.",
-				shape: "[T, d_{\\text{model}}] \\to [T, 4d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
-			},
-			{
-				name: "Unembed",
-				title: "Unembed + sample",
-				text: "The final hidden state is multiplied by an unembedding matrix, giving a logit for every vocabulary token. Softmax turns logits into probabilities; a decoding rule samples or takes the argmax; the token is appended and the loop repeats until EOS.",
-				shape: "[T, d_{\\text{model}}] \\to [T, |V|] \\to \\text{one distribution}"
-			}
-		];
-		var stagesDe = [
-			{
-				name: "Tokenisieren",
-				title: "Tokenisieren",
-				text: "Text wird in Teilwort-Tokens zerlegt und auf ganzzahlige IDs abgebildet. Das Vokabular steht vor dem Training fest. In GPT-2 Byte-Level-BPE wird „the cat sat“ zu [262, 3797, 3332].",
-				shape: "\\text{Text} \\to [T]"
-			},
-			{
-				name: "Embedding",
-				title: "Embedding",
-				text: "Jede Token-ID indexiert eine Zeile der Embedding-Matrix W_E und erzeugt einen dichten Vektor der Dimension d_model. Ähnliche Bedeutungen landen in diesem Raum nahe beieinander, aber das ist nur die erste Schicht.",
-				shape: "[T] \\to [T, d_{\\text{model}}]"
-			},
-			{
-				name: "Position",
-				title: "Position hinzufügen",
-				text: "Jede Embedding bekommt ein Positionssignal (sinusoidal im Original; moderne Modelle nutzen oft RoPE, das Queries und Keys stattdessen dreht). Ohne es wären „dog bites man“ und „man bites dog“ eine ungeordnete Menge derselben Vektoren.",
-				shape: "[T, d_{\\text{model}}] + [T, d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
-			},
-			{
-				name: "Attention",
-				repeat: true,
-				title: "Attention + Residual",
-				text: "Jedes Token projiziert in Query, Key und Value. Skalierte Skalarprodukte entscheiden, wer auf wen achtet; Softmax normalisiert die Gewichte; Values werden gemittelt. Eine kausale Maske im Decoder versteckt die Zukunft. Das Ergebnis wird zurück in den Residual Stream addiert. Das ist ein Block in einem Stapel von N Blöcken; echte Modelle wiederholen ihn Dutzende bis Hunderte Male, oft 32-100+ Schichten.",
-				shape: "[T, d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
-			},
-			{
-				name: "Feed-Forward",
-				repeat: true,
-				title: "Feed-Forward + Residual",
-				text: "Ein MLP pro Token erweitert den Vektor (meist 4×), wendet eine Nichtlinearität wie GELU oder SwiGLU an und zieht ihn wieder zusammen. Attention routet Information; das FFN rechnet damit. Das Ergebnis wird erneut in den Stream addiert. Der Attention+FFN-Block wiederholt sich N-mal; die Demo zeigt einen Durchlauf.",
-				shape: "[T, d_{\\text{model}}] \\to [T, 4d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
-			},
-			{
-				name: "Unembedding",
-				title: "Unembedding + Sampling",
-				text: "Der letzte Hidden State wird mit einer Unembedding-Matrix multipliziert und ergibt einen Logit für jedes Vokabular-Token. Softmax macht daraus Wahrscheinlichkeiten; eine Decoding-Regel zieht oder nimmt das Argmax; das Token wird angehängt, und die Schleife läuft bis EOS.",
-				shape: "[T, d_{\\text{model}}] \\to [T, |V|] \\to \\text{eine Verteilung}"
-			}
-		];
-		var flow = document.getElementById("pipe-flow");
-		var detailTitle = document.getElementById("pipe-title");
-		var detailText = document.getElementById("pipe-text");
-		var detailShape = document.getElementById("pipe-shape");
-		var counter = document.getElementById("pipe-counter");
-		var pipeTokens = document.getElementById("pipe-tokens");
-		var nextBtn = document.getElementById("pipe-next");
-		var resetBtn = document.getElementById("pipe-reset");
-		var currentStage = 0;
-		var baseTokens = [
-			{ w: "the", id: 262 },
-			{ w: "cat", id: 3797 },
-			{ w: "sat", id: 3332 }
-		];
-		var continuation = [
-			{ w: "on", id: 319 },
-			{ w: "the", id: 262 },
-			{ w: "mat", id: 2603 },
-			{ w: ".", id: 13 }
-		];
-		var tokens = baseTokens.map(function (t) { return { w: t.w, id: t.id }; });
-		var genIndex = 0;
-		var runTimer = null;
-		var prediction = document.getElementById("pipe-prediction");
-		var runBtn = document.getElementById("pipe-run");
-
-		function sentence() {
-			return tokens.map(function (t) { return t.w; }).join(" ").replace(/ ([.,!?])/g, "$1");
-		}
-		function renderTokens(stage) {
-			if (!pipeTokens) return;
-			pipeTokens.innerHTML = "";
-			tokens.forEach(function (t, i) {
-				var span = document.createElement("span");
-				span.className = "pipe-token" +
-					(stage === 0 && i === tokens.length - 1 ? " is-active" : "") +
-					(t.isNew ? " is-new" : "");
-				span.textContent = t.w + " · " + t.id;
-				pipeTokens.appendChild(span);
-			});
-		}
-		function updatePrediction() {
-			if (!prediction) return;
-			if (currentStage === stages.length - 1) {
-				if (genIndex < continuation.length) {
-					prediction.innerHTML = DE ? ('Nächstes Token: <b>' + continuation[genIndex].w + '</b> · vorhersagen, anhängen und Schleife weiter') : ('Next token: <b>' + continuation[genIndex].w + '</b> · predict to append and loop');
-				} else {
-					prediction.innerHTML = DE ? ('Sequenz vollständig: <b>' + sentence() + '</b>') : ('Sequence complete: <b>' + sentence() + '</b>');
-				}
-			} else {
-				prediction.innerHTML = DE ? 'Nächstes Token: <b>...</b> · bis Unembedding laufen, um vorherzusagen' : 'Next token: <b>...</b> · run to Unembed to predict';
-			}
-		}
-		function selectStage(i) {
-			currentStage = TM.clamp(i, 0, stages.length - 1);
-			var stage = stages[currentStage];
-			var st = (DE && stagesDe[currentStage]) ? stagesDe[currentStage] : stage;
-			var shapePrefix = DE ? "Form: " : "Shape: ";
-			if (detailTitle) detailTitle.textContent = st.title;
-			if (detailText) detailText.textContent = st.text;
-			if (detailShape) {
-				if (window.temml) {
-					try { detailShape.innerHTML = shapePrefix + temml.renderToString(st.shape, { displayMode: false }); }
-					catch (e) { detailShape.textContent = shapePrefix + st.shape; }
-				} else {
-					detailShape.textContent = shapePrefix + st.shape;
-				}
-			}
-			if (counter) counter.textContent = DE ? ("Stufe " + (currentStage + 1) + " von " + stages.length) : ("Stage " + (currentStage + 1) + " of " + stages.length);
-			flow.querySelectorAll(".flow-step").forEach(function (b) {
-				b.classList.toggle("is-active", parseInt(b.getAttribute("data-stage"), 10) === currentStage);
-			});
-			renderTokens(currentStage);
-			updatePrediction();
-			if (nextBtn) {
-				if (currentStage < stages.length - 1) nextBtn.textContent = DE ? "Nächster Schritt in der Pipeline →" : "Next step in pipeline →";
-				else if (genIndex < continuation.length) nextBtn.textContent = DE ? ('„' + continuation[genIndex].w + '“ vorhersagen & anhängen →') : ('Predict "' + continuation[genIndex].w + '" & append →');
-				else nextBtn.textContent = DE ? "Neu starten ↺" : "Start over ↺";
-			}
-		}
-		function stopRun() {
-			if (runTimer) { clearInterval(runTimer); runTimer = null; }
-			if (runBtn) runBtn.textContent = DE ? "Schleife starten ▶" : "Run the loop ▶";
-		}
-		function appendPrediction() {
-			if (genIndex >= continuation.length) { resetLoop(); return; }
-			var next = continuation[genIndex];
-			tokens.forEach(function (t) { t.isNew = false; });
-			tokens.push({ w: next.w, id: next.id, isNew: true });
-			genIndex++;
-			if (genIndex >= continuation.length) {
-				selectStage(stages.length - 1);
-				stopRun();
-				return;
-			}
-			currentStage = 0;
-			selectStage(0);
-			if (prediction) prediction.innerHTML = DE ? ('Angehängt: <b>' + next.w + '</b> · Schleife erneut starten') : ('Appended: <b>' + next.w + '</b> · run the loop again');
-		}
-		function resetLoop() {
-			stopRun();
-			tokens = baseTokens.map(function (t) { return { w: t.w, id: t.id }; });
-			genIndex = 0;
-			currentStage = 0;
-			selectStage(0);
-		}
-		if (flow) {
-			stages.forEach(function (stage, i) {
-				var b = document.createElement("button");
-				b.type = "button";
-				b.className = "flow-step" + (i === 0 ? " is-active" : "") + (stage.repeat ? " is-loop" : "");
-				b.setAttribute("data-stage", i);
-				b.innerHTML = '<span class="fs-num">0' + (i + 1) + "</span><b>" + (DE ? stagesDe[i].name : stage.name) + "</b>" + (stage.repeat ? '<span class="fs-repeat">× N</span>' : "");
-				b.addEventListener("click", function () { stopRun(); selectStage(i); });
-				flow.appendChild(b);
-			});
-			selectStage(0);
-		}
-		if (nextBtn) {
-			nextBtn.addEventListener("click", function () {
-				stopRun();
-				if (currentStage < stages.length - 1) selectStage(currentStage + 1);
-				else if (genIndex < continuation.length) appendPrediction();
-				else resetLoop();
-			});
-		}
-		if (runBtn) {
-			runBtn.addEventListener("click", function () {
-				if (runTimer) { stopRun(); return; }
-				runBtn.textContent = DE ? "Pause ⏸" : "Pause ⏸";
-				runTimer = setInterval(function () {
-					if (currentStage < stages.length - 1) {
-						selectStage(currentStage + 1);
-					} else if (genIndex < continuation.length) {
-						appendPrediction();
-					} else {
-						stopRun();
-					}
-				}, 700);
-			});
-		}
-		if (resetBtn) resetBtn.addEventListener("click", resetLoop);
-		var maskToggle = document.getElementById("pipe-mask-toggle");
-		var maskWrap = document.getElementById("pipe-mask");
-		var cmGrid = document.getElementById("cm-grid");
-		if (cmGrid) {
-			for (var mi = 0; mi < 6; mi++) {
-				for (var mj = 0; mj < 6; mj++) {
-					var cell = document.createElement("span");
-					cell.className = "cm-cell" + (mj > mi ? " is-masked" : "");
-					cell.textContent = mj > mi ? "×" : "•";
-					cell.setAttribute("aria-label", DE ? ("Query " + (mi + 1) + ", Key " + (mj + 1) + (mj > mi ? ": maskiert" : ": erlaubt")) : ("query " + (mi + 1) + ", key " + (mj + 1) + (mj > mi ? ": masked" : ": allowed")));
-					cmGrid.appendChild(cell);
-				}
-			}
-		}
-		if (maskToggle && maskWrap) {
-			maskToggle.addEventListener("click", function () {
-				maskWrap.hidden = !maskWrap.hidden;
-				maskToggle.textContent = maskWrap.hidden ? (DE ? "Kausale Maske zeigen" : "Show causal mask") : (DE ? "Kausale Maske verbergen" : "Hide causal mask");
-			});
-		}
-
-		/* ── layer lens ──────────────────────────────────────── */
-		var canvas = document.getElementById("layer-canvas");
-		if (!canvas) return;
-		var DE = TM.lang() === "de";
-		var context = "river";
-		var layer = 0;
-		var slider = document.getElementById("layer-slider");
-		var layerNum = document.getElementById("layer-num");
-		var layerContext = document.getElementById("layer-context");
-		var layerPull = document.getElementById("layer-pull");
-		var layerCaption = document.getElementById("layer-caption");
-		var clusters = {
-			river: { x: 0.25, y: 0.66, label: DE ? "Fluss / Park" : "river / water", color: "#5c9baf" },
-			finance: { x: 0.76, y: 0.34, label: DE ? "Geld / Zinsen" : "finance / money", color: "#9f9700" }
-		};
-		var start = { x: 0.5, y: 0.5 };
-		var maxPull = 0.8;
-		var api = TM.initCanvas(canvas, function (ctx, w, h) {
-			var c = TM.colors();
-			ctx.clearRect(0, 0, w, h);
-			ctx.strokeStyle = c.dark ? "rgba(92, 155, 175, .1)" : "rgba(0,75,111,.07)";
-			ctx.lineWidth = 1;
-			for (var gx = 0; gx < w; gx += 44) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke(); }
-			for (var gy = 0; gy < h; gy += 44) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
-			Object.keys(clusters).forEach(function (key) {
-				var cl = clusters[key];
-				var x = cl.x * w, y = cl.y * h;
-				var g = ctx.createRadialGradient(x, y, 2, x, y, 90);
-				g.addColorStop(0, cl.color + "55");
-				g.addColorStop(1, cl.color + "00");
-				ctx.beginPath(); ctx.arc(x, y, 90, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
-				ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fillStyle = cl.color; ctx.fill();
-				ctx.font = "600 10px Barlow, system-ui, sans-serif";
-				ctx.fillStyle = c.muted;
-				ctx.textAlign = "center";
-				ctx.fillText(cl.label, x, y + 20);
-			});
-			var path = [];
-			for (var i = 0; i <= 11; i++) {
-				var t = i / 11;
-				var target = context === "river" ? clusters.river : context === "loan" ? clusters.finance : start;
-				var curve = context === "none" ? 0 : maxPull * (1 - Math.cos(t * Math.PI)) / 2;
-				var other = context === "river" ? clusters.finance : context === "loan" ? clusters.river : start;
-				var noise = context === "none" ? 0 : 0.035 * Math.sin(i * 2.4 + 0.8) * Math.sin(t * Math.PI) * curve;
-				path.push({
-					x: TM.lerp(start.x, target.x, curve) + (other.x - target.x) * noise,
-					y: TM.lerp(start.y, target.y, curve * (1 + 0.18 * Math.sin(t * Math.PI))) + (other.y - target.y) * noise
-				});
-			}
-			ctx.beginPath();
-			path.forEach(function (p, i) {
-				if (i === 0) ctx.moveTo(p.x * w, p.y * h);
-				else ctx.lineTo(p.x * w, p.y * h);
-			});
-			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.28)" : "rgba(0,75,111,.25)";
-			ctx.setLineDash([3, 4]);
-			ctx.lineWidth = 1.2;
-			ctx.stroke();
-			ctx.setLineDash([]);
-			path.forEach(function (p, i) {
-				ctx.beginPath();
-				ctx.arc(p.x * w, p.y * h, i === layer ? 7 : 2.5, 0, Math.PI * 2);
-				ctx.fillStyle = i === layer ? c.green : c.lineStrong;
-				ctx.fill();
-				if (i === layer) {
-					ctx.strokeStyle = c.card;
-					ctx.lineWidth = 2;
-					ctx.stroke();
-				}
-			});
-			var cur = path[layer];
-			ctx.font = "700 12px Barlow, system-ui, sans-serif";
-			ctx.fillStyle = c.ink;
-			ctx.textAlign = "center";
-			ctx.fillText(DE ? "Bank" : "bank", cur.x * w, cur.y * h - 12);
-			if (layerNum) layerNum.textContent = layer + " / 11";
-			if (layerContext) layerContext.textContent = DE ? (context === "river" ? "Bank am Fluss" : context === "loan" ? "Bank mit Zinsen" : "kein Kontext") : (context === "river" ? "river bank" : context === "loan" ? "bank loan" : "no context");
-			var pull = context === "none" ? 0 : maxPull * (1 - Math.cos((layer / 11) * Math.PI)) / 2;
-			if (layerPull) layerPull.textContent = context === "none" ? (DE ? "neutral" : "neutral") : Math.round(pull * 100) + "% " + (DE ? (context === "river" ? "Wasser" : "Finanzen") : (context === "river" ? "water" : "finance"));
-			if (layerCaption) {
-				if (DE) {
-					if (layer === 0) layerCaption.textContent = "Am Eingang sitzt „Bank“ zwischen den Clustern. Der Kontext hat sie noch nicht gezogen.";
-					else if (context === "none") layerCaption.textContent = "Ohne Kontext hat das Wort kein Ziel, zu dem es wandern könnte. Der Satz gibt ihm eines.";
-					else if (layer > 7) layerCaption.textContent = "Tief im Stapel ist der Zug stark, aber „Bank“ behält ihre lexikalische Bedeutung; sie nähert sich dem " + (context === "river" ? "Fluss-/Park-" : "Geld-") + "Cluster, ohne zum Prototyp zu werden. Das kleine Wackeln kommt vom Rest des Satzes.";
-					else layerCaption.textContent = "Jede Schicht liest den Residual Stream, berechnet ein Update und addiert es zurück. Der Pfad wackelt ein wenig: Jedes Token trägt bei, nicht nur das Wort, das die Hauptrichtung setzt.";
-				} else {
-					if (layer === 0) layerCaption.textContent = "At the input, “bank” sits between the clusters. Context has not pulled it yet.";
-					else if (context === "none") layerCaption.textContent = "Without context, the word has no target to move toward. The sentence is what gives it one.";
-					else if (layer > 7) layerCaption.textContent = "Deep in the stack, the pull is strong, but “bank” still keeps its lexical sense; it approaches the " + (context === "river" ? "river" : "finance") + " cluster without becoming that prototype. The small wobble is the rest of the sentence contributing.";
-					else layerCaption.textContent = "Each layer reads the residual stream, computes an update, and adds it back. The path wobbles a little: every token contributes, not only the word that sets the main direction.";
-				}
-			}
-		});
-		document.querySelectorAll("[data-ctx]").forEach(function (btn) {
-			btn.addEventListener("click", function () {
-				document.querySelectorAll("[data-ctx]").forEach(function (x) { x.classList.remove("is-on"); });
-				btn.classList.add("is-on");
-				context = btn.getAttribute("data-ctx");
-				api.redraw();
-			});
-		});
-		if (slider) {
-			slider.addEventListener("input", function () {
-				layer = parseInt(slider.value, 10);
-				var out = document.getElementById("layer-out");
-				if (out) out.textContent = layer;
-				api.redraw();
-			});
-		}
-		window.addEventListener("tm:theme", function () { api.redraw(); });
-	})();
-	</script>
 
 
 

@@ -1263,7 +1263,10 @@ function run_transformer_demo(activeId = null, inputOnly = false) {
 	const trainingInput = document.getElementById('transformer-training-data');
 	const masterInput = document.getElementById('transformer-master-token-input');
 
-	if (!trainingInput || !masterInput) return;
+	if (!trainingInput || !masterInput) {
+		if (window.__tmBusyInference && typeof window.tmHideInferenceBusy === 'function') window.tmHideInferenceBusy();
+		return;
+	}
 
 	// 1. Tokenize both for logic
 	const trainingTokens = transformer_tokenize_render(trainingInput.value, null);
@@ -1289,6 +1292,7 @@ function run_transformer_demo(activeId = null, inputOnly = false) {
 		const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
 		window.__tmInputState = { h0, tokensWithPositional, knownTokens, trainingTokens, masterTokens, vocabulary, config };
 		show_nr_of_params();
+		if (window.__tmBusyInference && typeof window.tmHideInferenceBusy === 'function') window.tmHideInferenceBusy();
 		return;
 	}
 
@@ -1299,6 +1303,7 @@ function run_transformer_demo(activeId = null, inputOnly = false) {
 	run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
 
 	show_nr_of_params();
+	if (window.__tmBusyInference && typeof window.tmHideInferenceBusy === 'function') window.tmHideInferenceBusy();
 }
 
 function render_transformer_block() {
@@ -1603,6 +1608,7 @@ function finalizeTrainingSession(btn, status, completedAll) {
 	status.innerText += completedAll ? " Training Complete!" : " Training Stopped.";
 	hideTrainingProgressBar();
 	if (window.TDALive) window.TDALive.endSession();
+	window._tmSelectedProbCache = null;
 	if (typeof render_token_picker === 'function') render_token_picker();
 }
 
@@ -1936,6 +1942,7 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 		window.last_d_model = d_model;
 		window.last_n_heads = n_heads;
 		window._cachedFinalProjection = null;
+		window._tmSelectedProbCache = null;
 
 		reset_graph();
 		calculate_vector_math();
@@ -2371,18 +2378,41 @@ function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_
 	render_final_projection(h_final, vocabulary, d_model, temperature);
 }
 
+window.tmShowInferenceBusy = function () {
+	const el = document.getElementById('tm-inference-busy');
+	if (!el) return;
+	window.__tmBusyInference = true;
+	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+	const text = document.getElementById('tm-inference-busy-text');
+	if (text) text.textContent = isDe ? 'Berechne den nächsten Schritt…' : 'Computing the next step…';
+	el.hidden = false;
+	clearTimeout(window.__tmBusyInferenceTimer);
+	window.__tmBusyInferenceTimer = setTimeout(function () {
+		if (typeof window.tmHideInferenceBusy === 'function') window.tmHideInferenceBusy();
+	}, 10000);
+};
+
+window.tmHideInferenceBusy = function () {
+	const el = document.getElementById('tm-inference-busy');
+	if (el) el.hidden = true;
+	window.__tmBusyInference = false;
+	clearTimeout(window.__tmBusyInferenceTimer);
+};
+
 window.select_suggested_word = (word) => {
 	const masterInput = document.getElementById('transformer-master-token-input');
+	if (!masterInput) return;
 
-	// Check if input has content and does NOT end with a space
-	if (masterInput.value.length > 0 && !masterInput.value.endsWith(' ')) {
-		masterInput.value += ' ';
-	}
-
-	masterInput.value += word;
-
-	// Set master as active and re-run
-	run_transformer_demo('transformer-master-token-input');
+	if (typeof window.tmShowInferenceBusy === 'function') window.tmShowInferenceBusy();
+	requestAnimationFrame(function () {
+		setTimeout(function () {
+			if (masterInput.value.length > 0 && !masterInput.value.endsWith(' ')) {
+				masterInput.value += ' ';
+			}
+			masterInput.value += word;
+			masterInput.dispatchEvent(new Event('input', { bubbles: true }));
+		}, 0);
+	});
 };
 
 function computeFinalPredictions(h_last, vocabulary, d_model, temperature) {
@@ -2596,9 +2626,16 @@ function ensureProjectionSubContainers(container) {
 	let detailsDiv = document.getElementById('tlab-final-details');
 
 	if (!chipsDiv || !detailsDiv) {
+		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+		const resultLabel = isDe
+			? 'Nächste Tokens – klicke ein Ergebnis an, um es an den Prompt anzuhängen:'
+			: 'Next tokens – click a result to append it to the prompt:';
 		container.innerHTML = `
-	    <div id="tlab-final-chips" style="position: sticky; top: 0; z-index: 10; background: ${themeColor('#fff')}; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;"></div>
 	    <div id="tlab-final-details"></div>
+	    <div id="tlab-final-results" style="margin-top:16px; padding-top:12px; border-top:1px solid var(--mn-border, #e2e8f0); text-align:left;">
+		<p style="font-size:.82rem; color:var(--mn-text-secondary, #334155); margin:0 0 8px;">${resultLabel}</p>
+		<div id="tlab-final-chips"></div>
+	    </div>
 	`;
 		chipsDiv = document.getElementById('tlab-final-chips');
 		detailsDiv = document.getElementById('tlab-final-details');
@@ -2615,8 +2652,7 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
     const { logits, predictions } = computeFinalPredictions(h_last, vocabulary, d_model, temperature);
     const { chipsDiv, detailsDiv } = ensureProjectionSubContainers(container);
 
-    chipsDiv.style.display = 'none';
-    chipsDiv.innerHTML = '';
+    chipsDiv.innerHTML = buildPredictionChipsHtml(predictions, temperature);
     detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
 
     // SCOPED rendering — do NOT call global render_temml()
@@ -3073,6 +3109,10 @@ function _tmTokenPickerSelectedProbs(tokens) {
 	if (window.isTraining || !window.currentWeights || !window.persistentEmbeddingSpace) return {};
 	const cfg = getTransformerConfig();
 	if (!cfg.d_model || !cfg.n_heads || !cfg.n_layers || cfg.d_model % cfg.n_heads !== 0) return {};
+	const cacheKey = tokens.join('\u0001') + '|' + (document.getElementById('transformer-temperature')?.value || '1');
+	if (window._tmSelectedProbCache && window._tmSelectedProbCache.key === cacheKey) {
+		return window._tmSelectedProbCache.value;
+	}
 	try {
 		const h = runSimpleForwardPass(tokens, window.currentWeights, cfg.d_model, cfg.n_heads, cfg.n_layers, false);
 		const vocab = Object.keys(window.persistentEmbeddingSpace).filter(token => token !== TM_EOS_TOKEN);
@@ -3094,6 +3134,7 @@ function _tmTokenPickerSelectedProbs(tokens) {
 			const probs = softmax(logits.map(v => v / (cfg.temperature || 1)));
 			result[i] = probs[idx];
 		}
+		window._tmSelectedProbCache = { key: cacheKey, value: result };
 		return result;
 	} catch (e) {
 		return {};
@@ -3165,19 +3206,27 @@ function render_token_picker() {
 		var clearBtn = document.getElementById('transformer-token-picker-clear');
 		var typeEl = document.getElementById('transformer-tokenizer-type');
 		var tempEl = document.getElementById('transformer-temperature');
+		function runAfterBusyPaint(work) {
+			if (window.tmShowInferenceBusy) window.tmShowInferenceBusy();
+			requestAnimationFrame(function () {
+				setTimeout(work, 0);
+			});
+		}
 		palette.addEventListener('click', function (event) {
 			var chip = event.target.closest && event.target.closest('.tm-token-chip');
 			if (!chip) return;
 			var token = chip.getAttribute('data-token');
 			if (token == null) return;
-			input.value += token;
-			input.dispatchEvent(new Event('input', { bubbles: true }));
-			render_token_picker_chips();
+			runAfterBusyPaint(function () {
+				input.value += token;
+				input.dispatchEvent(new Event('input', { bubbles: true }));
+			});
 		});
 		if (clearBtn) clearBtn.addEventListener('click', function () {
-			input.value = '';
-			input.dispatchEvent(new Event('input', { bubbles: true }));
-			render_token_picker_chips();
+			runAfterBusyPaint(function () {
+				input.value = '';
+				input.dispatchEvent(new Event('input', { bubbles: true }));
+			});
 		});
 		chips.addEventListener('click', function (event) {
 			var chip = event.target.closest && event.target.closest('.tm-token-chip');
@@ -3186,13 +3235,13 @@ function render_token_picker() {
 			var type = typeEl ? typeEl.value : 'regex';
 			var tokens = tokenizeTextCore(input.value, type);
 			if (idx < 0 || idx >= tokens.length) return;
-			tokens.splice(idx, 1);
-			input.value = tokens.join('');
-			input.dispatchEvent(new Event('input', { bubbles: true }));
-			render_token_picker_chips();
+			runAfterBusyPaint(function () {
+				tokens.splice(idx, 1);
+				input.value = tokens.join('');
+				input.dispatchEvent(new Event('input', { bubbles: true }));
+			});
 		});
 		input.addEventListener('input', function () {
-			render_token_picker_chips();
 			render_token_picker();
 		});
 		if (tempEl) tempEl.addEventListener('input', function () { render_token_picker(); });
@@ -6009,7 +6058,7 @@ function debounce(func, wait) {
 // 300ms is usually the "sweet spot" for human typing speed
 const debouncedRun = debounce((id) => {
 	run_transformer_demo(id);
-}, 600);
+}, 100);
 
 // ═══════════════════════════════════════════════════════════════
 // Vector Math — v9 NUCLEAR REWRITE
