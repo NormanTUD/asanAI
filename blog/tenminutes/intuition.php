@@ -118,10 +118,8 @@
 								by this loop. That sounds like a small mechanism until you see what the
 								context can contain: a question, a worked example, a program's output, or
 								the model's own earlier reasoning. Each new token refers to everything before
-								it. Why not predict the whole answer at once? Because each step can only
-								commit to one token, and every later token has to react to the ones already
-								written. The loop is a slow, step-by-step approach to a plausible answer,
-								not the whole solution in one shot.
+								it. The loop is a slow, step-by-step approach to a plausible answer, not the
+								whole solution in one shot.
 							</p>
 						</div>
 						<div class="aha">
