@@ -72,6 +72,10 @@ function _defaultGrid3DConfig(overrides = {}) {
 	};
 }
 
+function _tmParamDe() {
+	return !!(window.TM && TM.lang && TM.lang() === 'de');
+}
+
 function _resetParamBreakdownState(nrDiv, toggleDiv, chartDiv) {
 	if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
 	if (toggleDiv) toggleDiv.style.display = 'none';
@@ -82,7 +86,7 @@ function _resetParamBreakdownState(nrDiv, toggleDiv, chartDiv) {
 		window._paramBreakdownRendered = false;
 		const btn = document.getElementById('param-breakdown-btn');
 		if (btn) {
-			btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> Show Parameter Breakdown`;
+			btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> ${_tmParamDe() ? 'Parameter-Aufschlüsselung zeigen' : 'Show Parameter Breakdown'}`;
 		}
 		paramBreakdownObserver.unobserve(chartDiv);
 	}
@@ -715,7 +719,7 @@ function toggleParamBreakdown() {
 		chartDiv.style.display = 'block';
 
 		// Update button text with arrow already rotated via inline style
-		btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(90deg);">▶</span> Hide Parameter Breakdown`;
+		btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(90deg);">▶</span> ${_tmParamDe() ? 'Parameter-Aufschlüsselung ausblenden' : 'Hide Parameter Breakdown'}`;
 
 		// Start observing for lazy render
 		paramBreakdownObserver.observe(chartDiv);
@@ -727,7 +731,7 @@ function toggleParamBreakdown() {
 		chartDiv.style.display = 'none';
 
 		// Update button text with arrow in default (collapsed) rotation
-		btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> Show Parameter Breakdown`;
+		btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> ${_tmParamDe() ? 'Parameter-Aufschlüsselung zeigen' : 'Show Parameter Breakdown'}`;
 
 		paramBreakdownObserver.unobserve(chartDiv);
 	}
@@ -813,7 +817,7 @@ function renderParamSunburst(layerBreakdowns, embeddingParams, grandTotal, d_mod
 	});
 	chart.setOption({
 		tooltip: { trigger: 'item', formatter: function (p) { return (p.data && p.data.hover) || p.name; } },
-		title: { text: 'Parameter Distribution', left: 'center', textStyle: { fontSize: 14 } },
+		title: { text: _tmParamDe() ? 'Parameterverteilung' : 'Parameter Distribution', left: 'center', textStyle: { fontSize: 14 } },
 		series: [{ type: 'sunburst', data: tree, radius: ['15%', '90%'],
 			label: { rotate: 'radial', fontSize: 10 },
 			itemStyle: { borderColor: '#fff', borderWidth: 1 },
@@ -849,10 +853,10 @@ function createEmptySunburstArrays() {
 
 function appendSunburstRoot(data, grandTotal) {
 	data.ids.push('total');
-	data.labels.push(`Total: ${grandTotal.toLocaleString()}`);
+	data.labels.push(`${_tmParamDe() ? 'Gesamt' : 'Total'}: ${grandTotal.toLocaleString()}`);
 	data.parents.push('');
 	data.values.push(grandTotal);
-	data.hoverTexts.push(`Total parameters: ${grandTotal.toLocaleString()}`);
+	data.hoverTexts.push(`${_tmParamDe() ? 'Gesamtparameter' : 'Total parameters'}: ${grandTotal.toLocaleString()}`);
 	data.colors.push('#1e293b');
 }
 
@@ -861,7 +865,7 @@ function appendSunburstEmbeddings(data, embeddingParams) {
 	data.labels.push('Embeddings');
 	data.parents.push('total');
 	data.values.push(embeddingParams);
-	data.hoverTexts.push(`Embedding table: ${embeddingParams.toLocaleString()} params<br>vocab × d_model`);
+	data.hoverTexts.push(`${_tmParamDe() ? 'Embedding-Tabelle' : 'Embedding table'}: ${embeddingParams.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>vocab × d_model`);
 	data.colors.push(data.embColor);
 }
 
@@ -870,10 +874,10 @@ function appendSunburstLayer(data, lb, d_model, d_ff) {
 
 	// Layer parent node
 	data.ids.push(layerId);
-	data.labels.push(`Layer ${lb.layer}`);
+	data.labels.push(`${_tmParamDe() ? 'Schicht' : 'Layer'} ${lb.layer}`);
 	data.parents.push('total');
 	data.values.push(lb.total);
-	data.hoverTexts.push(`Layer ${lb.layer}: ${lb.total.toLocaleString()} params`);
+	data.hoverTexts.push(`${_tmParamDe() ? 'Schicht' : 'Layer'} ${lb.layer}: ${lb.total.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}`);
 	data.colors.push('#475569');
 
 	appendSunburstAttention(data, layerId, lb, d_model);
@@ -888,7 +892,7 @@ function appendSunburstAttention(data, layerId, lb, d_model) {
 	data.labels.push('Attention');
 	data.parents.push(layerId);
 	data.values.push(lb.attention.total);
-	data.hoverTexts.push(`Attention: ${lb.attention.total.toLocaleString()} params<br>Q + K + V + O projections`);
+	data.hoverTexts.push(`Attention: ${lb.attention.total.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>${_tmParamDe() ? 'Q + K + V + O-Projektionen' : 'Q + K + V + O projections'}`);
 	data.colors.push(data.attnColor);
 
 	const attnChildren = [
@@ -910,13 +914,13 @@ function appendSunburstFFN(data, layerId, lb, d_model, d_ff) {
 	data.labels.push('FFN');
 	data.parents.push(layerId);
 	data.values.push(lb.ffn.total);
-	data.hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} params<br>W1 + b1 + W2 + b2`);
+	data.hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>W1 + b1 + W2 + b2`);
 	data.colors.push(data.ffnColor);
 
 	const ffnChildren = [
 		{ key: 'w1', label: 'W₁', desc: `Expansion: ${d_model}×${d_ff}` },
 		{ key: 'b1', label: 'b₁', desc: `Bias: ${d_ff}` },
-		{ key: 'w2', label: 'W₂', desc: `Compression: ${d_ff}×${d_model}` },
+		{ key: 'w2', label: 'W₂', desc: `${_tmParamDe() ? 'Kompression' : 'Compression'}: ${d_ff}×${d_model}` },
 		{ key: 'b2', label: 'b₂', desc: `Bias: ${d_model}` }
 	];
 
@@ -932,14 +936,14 @@ function appendSunburstNorm(data, layerId, lb, d_model) {
 	data.labels.push('LayerNorm');
 	data.parents.push(layerId);
 	data.values.push(lb.norm.total);
-	data.hoverTexts.push(`LayerNorm: ${lb.norm.total.toLocaleString()} params<br>γ + β (pre-attn & pre-FFN)`);
+	data.hoverTexts.push(`LayerNorm: ${lb.norm.total.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>γ + β (pre-attn & pre-FFN)`);
 	data.colors.push(data.normColor);
 
 	appendSunburstLeaf(data, `${normId}-pre-attn`, 'Pre-Attn', normId, lb.norm.pre_attn,
-		`Pre-Attention Norm: ${lb.norm.pre_attn.toLocaleString()} params<br>γ (${d_model}) + β (${d_model})`, data.normColor);
+		`Pre-Attention Norm: ${lb.norm.pre_attn.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>γ (${d_model}) + β (${d_model})`, data.normColor);
 
 	appendSunburstLeaf(data, `${normId}-pre-ffn`, 'Pre-FFN', normId, lb.norm.pre_ffn,
-		`Pre-FFN Norm: ${lb.norm.pre_ffn.toLocaleString()} params<br>γ₂ (${d_model}) + β₂ (${d_model})`, data.normColor);
+		`Pre-FFN Norm: ${lb.norm.pre_ffn.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>γ₂ (${d_model}) + β₂ (${d_model})`, data.normColor);
 }
 
 function appendSunburstLeaf(data, id, label, parentId, value, hoverDesc, color) {
@@ -947,7 +951,7 @@ function appendSunburstLeaf(data, id, label, parentId, value, hoverDesc, color) 
 	data.labels.push(label);
 	data.parents.push(parentId);
 	data.values.push(value);
-	data.hoverTexts.push(`${label}: ${value.toLocaleString()} params<br>${hoverDesc}`);
+	data.hoverTexts.push(`${label}: ${value.toLocaleString()} ${_tmParamDe() ? 'Parameter' : 'params'}<br>${hoverDesc}`);
 	data.colors.push(color);
 }
 
@@ -972,7 +976,7 @@ function buildSunburstTrace(data) {
 
 function buildSunburstLayout() {
 	return {
-		title: { text: 'Parameter Distribution', font: { size: 14, color: '#1e293b' } },
+		title: { text: _tmParamDe() ? 'Parameterverteilung' : 'Parameter Distribution', font: { size: 14, color: '#1e293b' } },
 		margin: { t: 40, b: 10, l: 10, r: 10 }
 	};
 }
@@ -1015,10 +1019,10 @@ function buildParamTableHeader() {
 	return `<table style="width:100%; border-collapse:collapse; font-family:'Inter',sans-serif; font-size:0.8rem;">
     <thead>
     <tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
-	<th style="padding:6px 10px; text-align:left;">Component</th>
-	<th style="padding:6px 10px; text-align:right;">Parameters</th>
-	<th style="padding:6px 10px; text-align:right;">% of Total</th>
-	<th style="padding:6px 10px; text-align:left;">Shape</th>
+	<th style="padding:6px 10px; text-align:left;">${_tmParamDe() ? 'Komponente' : 'Component'}</th>
+	<th style="padding:6px 10px; text-align:right;">${_tmParamDe() ? 'Parameter' : 'Parameters'}</th>
+	<th style="padding:6px 10px; text-align:right;">${_tmParamDe() ? '% der Gesamtzahl' : '% of Total'}</th>
+	<th style="padding:6px 10px; text-align:left;">${_tmParamDe() ? 'Form' : 'Shape'}</th>
     </tr>
     </thead>
     <tbody>`;
@@ -1039,7 +1043,7 @@ function buildAllLayerRows(layerBreakdowns, fmt, pct) {
 
 function buildSingleLayerRows(lb, fmt, pct) {
 	let html = `<tr style="background:#f8fafc; border-bottom:1px solid #f1f5f9;">
-	<td style="padding:6px 10px; font-weight:600;" colspan="4">Layer ${lb.layer} — ${fmt(lb.total)} params (${pct(lb.total)}%)</td>
+	<td style="padding:6px 10px; font-weight:600;" colspan="4">${_tmParamDe() ? 'Schicht' : 'Layer'} ${lb.layer} — ${fmt(lb.total)} ${_tmParamDe() ? 'Parameter' : 'params'} (${pct(lb.total)}%)</td>
     </tr>`;
 
 	html += buildLayerSubRow('Attention (Q+K+V+O)', '#3b82f6', lb.attention.total, '4 × (d×d)', fmt, pct);
@@ -1061,11 +1065,11 @@ function buildLayerSubRow(label, color, total, shape, fmt, pct, extraStyle = 'bo
 function buildTotalRow(grandTotal, totalAttn, totalFFN, fmt, pct) {
 	const attnVsFFN = totalAttn > 0 ? (totalFFN / totalAttn).toFixed(1) : '—';
 	return `<tr style="background:#f0fdf4; border-top:2px solid #10b981; font-weight:700;">
-    <td style="padding:8px 10px;">Total</td>
+    <td style="padding:8px 10px;">${_tmParamDe() ? 'Gesamt' : 'Total'}</td>
     <td style="padding:8px 10px; text-align:right;">${fmt(grandTotal)}</td>
     <td style="padding:8px 10px; text-align:right;">100%</td>
     <td style="padding:8px 10px; color:#064e3b; font-weight:normal; font-size:0.75rem;">
-	FFN is ${attnVsFFN}× the size of Attention
+	${_tmParamDe() ? `FFN ist ${attnVsFFN}× so groß wie Attention` : `FFN is ${attnVsFFN}× the size of Attention`}
     </td>
     </tr>`;
 }
@@ -1599,6 +1603,7 @@ function finalizeTrainingSession(btn, status, completedAll) {
 	status.innerText += completedAll ? " Training Complete!" : " Training Stopped.";
 	hideTrainingProgressBar();
 	if (window.TDALive) window.TDALive.endSession();
+	if (typeof render_token_picker === 'function') render_token_picker();
 }
 
 async function train_transformer() {
@@ -2611,7 +2616,8 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
     const { logits, predictions } = computeFinalPredictions(h_last, vocabulary, d_model, temperature);
     const { chipsDiv, detailsDiv } = ensureProjectionSubContainers(container);
 
-    chipsDiv.innerHTML = buildPredictionChipsHtml(predictions, temperature);
+    chipsDiv.style.display = 'none';
+    chipsDiv.innerHTML = '';
     detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
 
     // SCOPED rendering — do NOT call global render_temml()
@@ -2979,22 +2985,26 @@ const TM_EOS_TOKEN = '<|endoftext|>';
 
 function tokenizeTextCore(text, type) {
 	const raw = String(text == null ? '' : text);
-	const cleaned = raw.split(TM_EOS_TOKEN).join(' ');
-	if (type === 'bpe') {
-		const words = cleaned.match(/\S+|\s+/g) || [];
-		return words.flatMap(word => {
-			// Don't sub-split whitespace tokens
-			if (/^\s+$/.test(word)) {
-				return word;  // keep each space run as one token
-			}
-			if (word.length > 4) {
-				return word.match(/.{1,3}/g);
-			}
-			return word;
-		});
+	const cleaned = raw.split(TM_EOS_TOKEN).join(' ').replace(/ {2,}/g, ' ');
+	const tokens = [];
+	let i = 0;
+	while (i < cleaned.length) {
+		const ch = String.fromCodePoint(cleaned.codePointAt(i));
+		if (/\s/u.test(ch)) {
+			tokens.push(ch);
+			i += ch.length;
+			continue;
+		}
+		const word = cleaned.slice(i).match(/^[\p{L}\p{M}\p{N}_]+/u);
+		if (word) {
+			tokens.push(word[0]);
+			i += word[0].length;
+			continue;
+		}
+		tokens.push(ch);
+		i += ch.length;
 	}
-	// Regex tokenizer: now also captures whitespace runs
-	return cleaned.match(/[\w]+|[^\w\s]|\s+/g) || [];
+	return tokens;
 }
 
 function tokenizeText(text, type) {
@@ -3010,7 +3020,7 @@ function renderTokenChips(container, tokens) {
 
 	tokens.forEach((t, i) => {
 		const c = tokenColor(t);
-		const displayToken = /^\s+$/.test(t) ? t.replace(/ /g, '␣') : t;
+		const displayToken = t.replace(/ /g, '␣').replace(/\t/g, '⇥').replace(/\n/g, '⏎').replace(/\r/g, '␍');
 
 		const badge = document.createElement('div');
 		badge.className = 'token-badge token-enter';
@@ -3032,7 +3042,7 @@ function renderTokenChips(container, tokens) {
 
 
 function _tmPickerDisplay(token) {
-	return String(token).replace(/ /g, '␣').replace(/\n/g, '⏎');
+	return String(token).replace(/ /g, '␣').replace(/\t/g, '⇥').replace(/\n/g, '⏎').replace(/\r/g, '␍');
 }
 
 function _tmTokenColorChip(token) {
@@ -3043,7 +3053,7 @@ function _tmTokenColorChip(token) {
 	chip.textContent = _tmPickerDisplay(token);
 	chip.style.background = color.bg;
 	chip.style.borderColor = color.border;
-	chip.title = token === ' ' ? 'space' : token;
+	chip.title = token === ' ' ? ((window.TM && TM.lang && TM.lang() === 'de') ? 'Leerzeichen' : 'space') : token;
 	return chip;
 }
 
@@ -3060,6 +3070,37 @@ function _tmTokenPickerProbs() {
 	} catch (e) { return {}; }
 }
 
+function _tmTokenPickerSelectedProbs(tokens) {
+	if (window.isTraining || !window.currentWeights || !window.persistentEmbeddingSpace) return {};
+	const cfg = getTransformerConfig();
+	if (!cfg.d_model || !cfg.n_heads || !cfg.n_layers || cfg.d_model % cfg.n_heads !== 0) return {};
+	try {
+		const h = runSimpleForwardPass(tokens, window.currentWeights, cfg.d_model, cfg.n_heads, cfg.n_layers, false);
+		const vocab = Object.keys(window.persistentEmbeddingSpace).filter(token => token !== TM_EOS_TOKEN);
+		const rows = vocab.map(word => window.persistentEmbeddingSpace[word]);
+		const result = {};
+		if (tokens.length) {
+			const firstIdx = vocab.indexOf(tokens[0]);
+			if (firstIdx >= 0) {
+				const start = runSimpleForwardPass([TM_EOS_TOKEN], window.currentWeights, cfg.d_model, cfg.n_heads, cfg.n_layers, false);
+				const logits = rows.map(row => dotProduct(start[0], row));
+				const probs = softmax(logits.map(v => v / (cfg.temperature || 1)));
+				result[0] = probs[firstIdx];
+			}
+		}
+		for (let i = 1; i < tokens.length; i++) {
+			const idx = vocab.indexOf(tokens[i]);
+			if (idx < 0) continue;
+			const logits = rows.map(row => dotProduct(h[i - 1], row));
+			const probs = softmax(logits.map(v => v / (cfg.temperature || 1)));
+			result[i] = probs[idx];
+		}
+		return result;
+	} catch (e) {
+		return {};
+	}
+}
+
 function render_token_picker_chips() {
 	var input = document.getElementById('transformer-master-token-input');
 	var chips = document.getElementById('transformer-token-picker-chips');
@@ -3067,12 +3108,21 @@ function render_token_picker_chips() {
 	var typeEl = document.getElementById('transformer-tokenizer-type');
 	var type = typeEl ? typeEl.value : 'regex';
 	var tokens = tokenizeTextCore(input.value, type);
+	var selectedProbs = _tmTokenPickerSelectedProbs(tokens);
 	chips.innerHTML = '';
 	tokens.forEach(function (token, idx) {
 		var chip = _tmTokenColorChip(token);
 		chip.classList.add('is-selected');
 		chip.setAttribute('data-idx', String(idx));
-		chip.title = token === ' ' ? 'space — click to remove' : token + ' — click to remove';
+		var prob = selectedProbs[idx];
+		if (prob != null) {
+			var pct = document.createElement('span');
+			pct.className = 'tm-token-chip-prob';
+			pct.textContent = (prob * 100).toFixed(1) + '%';
+			chip.appendChild(pct);
+		}
+		var removeLabel = (window.TM && TM.lang && TM.lang() === 'de') ? ' — zum Entfernen klicken' : ' — click to remove';
+		chip.title = (token === ' ' ? ((window.TM && TM.lang && TM.lang() === 'de') ? 'Leerzeichen' : 'space') : token) + (prob != null ? ' — ' + (prob * 100).toFixed(1) + '%' : '') + removeLabel;
 		chips.appendChild(chip);
 	});
 }
@@ -3491,6 +3541,9 @@ function _renderTemmlOnElements(elements) {
     }
     elements.forEach(el => {
         if (!el) return;
+        if (window.tmTranslateTex && el.innerHTML) {
+            el.innerHTML = window.tmTranslateTex(el.innerHTML);
+        }
         try {
             temml.renderMathInElement(el, {
                 delimiters: [
@@ -3837,7 +3890,7 @@ function createVFToggleButton(id, d_model, existingVfEnabled) {
 	toggleBtn.className = 'migration-vf-toggle';
 	toggleBtn.dataset.mode = existingVfEnabled ? 'on' : 'off';
 	toggleBtn.dataset.migrationId = id;
-	toggleBtn.textContent = existingVfEnabled ? '🧭 Hide Vector Field' : '🧭 Show Vector Field';
+	toggleBtn.textContent = existingVfEnabled ? ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field') : ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field');
 	toggleBtn.style.cssText = `
 	margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
 	border: 1px solid #3b82f6; background: ${existingVfEnabled ? '#dbeafe' : '#fff'}; color: #3b82f6;
@@ -3862,13 +3915,13 @@ function createVFToggleButton(id, d_model, existingVfEnabled) {
 
 		if (currentMode === 'off') {
 			toggleBtn.dataset.mode = 'on';
-			toggleBtn.textContent = '🧭 Hide Vector Field';
+			toggleBtn.textContent = ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field');
 			toggleBtn.style.background = '#dbeafe';
 			regData._vfEnabled = true;
 			render_migration_logic(migId, regData.tokens, regData.start_h, regData.end_h, regData.layerNum, regData.d_model, regData.h_after, regData.tokenStrings);
 		} else {
 			toggleBtn.dataset.mode = 'off';
-			toggleBtn.textContent = '🧭 Show Vector Field';
+			toggleBtn.textContent = ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field');
 			toggleBtn.style.background = themeColor('#ffffff');
 			regData._vfEnabled = false;
 			render_migration_logic(migId, regData.tokens, regData.start_h, regData.end_h, regData.layerNum, regData.d_model, regData.h_after, regData.tokenStrings);
@@ -4704,11 +4757,11 @@ function syncVFToggleButtonState(id, plotDiv, vfEnabled) {
 
 	if (vfEnabled) {
 		toggleBtn.dataset.mode = 'on';
-		toggleBtn.textContent = '🧭 Hide Vector Field';
+		toggleBtn.textContent = ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field');
 		toggleBtn.style.background = '#dbeafe';
 	} else {
 		toggleBtn.dataset.mode = 'off';
-		toggleBtn.textContent = '🧭 Show Vector Field';
+		toggleBtn.textContent = ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field');
 		toggleBtn.style.background = themeColor('#ffffff');
 	}
 }
@@ -7488,8 +7541,8 @@ function createTrajectoryVFToggleButton() {
 	toggleBtn.className = 'trajectory-vf-toggle';
 	toggleBtn.dataset.mode = window._trajectoryVfEnabled ? 'on' : 'off';
 	toggleBtn.textContent = window._trajectoryVfEnabled
-		? '🧭 Hide Vector Field'
-		: '🧭 Show Vector Field';
+		? ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field')
+		: ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field');
 	toggleBtn.style.cssText = `
 	margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
 	border: 1px solid #8b5cf6;
@@ -7513,8 +7566,8 @@ function createTrajectoryVFToggleButton() {
 		window._trajectoryVfEnabled = !isOn;
 		toggleBtn.dataset.mode = isOn ? 'off' : 'on';
 		toggleBtn.textContent = isOn
-			? '🧭 Show Vector Field'
-			: '🧭 Hide Vector Field';
+			? ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field')
+			: ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field');
 		toggleBtn.style.background = isOn ? themeColor('#ffffff') : '#ede9fe';
 
 		// Re-render trajectory

@@ -25,6 +25,8 @@
 		"Words (Non-Alphanumeric Split)": "Wörter (nicht-alphanumerisch getrennt)",
 		"Byte-Pair Encoding (BPE)": "Byte-Pair-Encoding (BPE)",
 		"Show Parameter Breakdown": "Parameter-Aufschlüsselung zeigen",
+		"Hide Parameter Breakdown": "Parameter-Aufschlüsselung ausblenden",
+		"Parameter Distribution": "Parameterverteilung",
 		"Training Data (Corpus):": "Trainingsdaten (Korpus):",
 		"Epochs": "Epochen",
 		"Learning Rate": "Lernrate",
@@ -143,8 +145,8 @@
 		"to the input via the residual connection:": "zum Eingang über die Residual-Verbindung:",
 		"The concatenation, projection, and residual steps are shown in the sections below this head view.": "Die Konkatenation, Projektion und Residual-Schritte stehen in den Abschnitten unter dieser Head-Ansicht.",
 		"Context Matrix for Head": "Kontextmatrix für Head",
-		"Each token's": "Jedes Tokens",
-		"context vector": "Kontextvektor",
+		"Each token's": "Der",
+		"context vector": "Kontextvektor jedes Tokens",
 		"is a weighted average of all Value vectors it can see.": "ist ein gewichteter Durchschnitt aller Value-Vektoren, die es sehen kann.",
 		"The attention weights (from Softmax) determine how much each Value contributes. Token $i$ can only attend to tokens $0 \\ldots i$ (causal mask).": "Die Attention-Gewichte (aus Softmax) bestimmen, wie viel jedes Value beiträgt. Token $i$ darf nur auf Tokens $0 \\ldots i$ schauen (kausale Maske).",
 		"Stacking all context vectors gives the output of this head — a matrix of shape": "Alle Kontextvektoren übereinander ergeben die Ausgabe dieses Heads — eine Matrix der Form",
@@ -159,6 +161,15 @@
 		"Pre-Layer Normalization (applied before the sublayer)": "Pre-Layer-Normalisierung (vor der Unterschicht)",
 		"Query (attending)": "Query (schaut)",
 		"Key (attended to)": "Key (wird angeschaut)",
+		"Click a word to see where it focuses its attention.": "Klicke auf ein Wort, um zu sehen, worauf es seine Attention richtet.",
+		"Click a token to highlight its attention connections. Line thickness = attention weight.": "Klicke auf ein Token, um seine Attention-Verbindungen hervorzuheben. Linienstärke = Attention-Gewicht.",
+		"3. Residual connection (Pre-LN: no normalization on sublayer output):": "3. Residual-Verbindung (Pre-LN: keine Normalisierung auf der Ausgabe der Unterschicht):",
+		"(Pre-LN: no normalization on sublayer output):": "(Pre-LN: keine Normalisierung auf der Ausgabe der Unterschicht):",
+		"1. Normalize": "1. Normalisiere",
+		"Normalize": "Normalisiere",
+		"Pre-LN: Normalize": "Pre-LN: Normalisiere",
+		"before attention:": "vor Attention:",
+		"before FFN": "vor dem FFN",
 
 		"The training plot appears here": "Der Trainingsplot erscheint hier",
 		"Press Train Model to start": "Drücke „Modell trainieren“, um zu starten",
@@ -184,6 +195,7 @@
 		[/^Context Matrix for Head (\d+)$/, "Kontextmatrix für Head $1"],
 		[/^What Happens with the Attention Weights — Head (\d+), Layer (\d+)$/, "Was mit den Attention-Gewichten passiert — Head $1, Schicht $2"],
 		[/^This produces one \$d_k = (\d+)\$-dimensional context vector per token per head\.$/, "Das erzeugt einen Kontextvektor der Dimension $d_k = $1 pro Token und Head."],
+		[/^3\. Residual connection \(Pre-LN: no normalization on sublayer output\):$/, "3. Residual-Verbindung (Pre-LN: keine Normalisierung auf der Ausgabe der Unterschicht):"],
 
 		[/^Dimension (\d+)$/, "Dimension $1"],
 		[/^Loss: ([\d.]+)$/, "Fehler: $1"]
@@ -207,6 +219,15 @@
 			.replace(/Pre-Layer Normalization \(applied /g, "Pre-Layer-Normalisierung (angewendet ")
 			.replace(/ the sublayer\)/g, " der Unterschicht)")
 			.replace(/Residual connection/g, "Residual-Verbindung")
+			.replace(/\(Pre-LN: no normalization on sublayer output\)/g, "(Pre-LN: keine Normalisierung auf der Ausgabe der Unterschicht)")
+			.replace(/Pre-Layer Normalization \(applied\b/g, "Pre-Layer-Normalisierung (angewendet")
+			.replace(/\bthe sublayer\)/g, "der Unterschicht)")
+			.replace(/^is a weighted average of all Value vectors it can see\./g, "ist ein gewichteter Durchschnitt aller Value-Vektoren, die es sehen kann.")
+			.replace(/^This produces one\b/g, "Das erzeugt einen")
+			.replace(/-dimensional context vector per token per head\./g, "-dimensionalen Kontextvektor pro Token und Head.")
+			.replace(/before attention:/g, "vor Attention:")
+			.replace(/before FFN/g, "vor dem FFN")
+			.replace(/All heads run in parallel, each capturing different relationships\. Their outputs are then:/g, "Alle Heads laufen parallel und erfassen unterschiedliche Beziehungen. Ihre Ausgaben werden dann:")
 			.replace(/Output projection/g, "Ausgabeprojektion")
 			.replace(/Output Projection Matrix/g, "Ausgabeprojektionsmatrix")
 			.replace(/Feed-Forward Network/g, "Feed-Forward-Netz")

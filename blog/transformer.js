@@ -1537,6 +1537,7 @@ function finalizeTrainingSession(btn, status, completedAll) {
 	status.innerText += completedAll ? " Training Complete!" : " Training Stopped.";
 	hideTrainingProgressBar();
 	if (window.TDALive) window.TDALive.endSession();
+	if (typeof render_token_picker === 'function') render_token_picker();
 }
 
 async function train_transformer() {
@@ -2944,22 +2945,26 @@ const TM_EOS_TOKEN = '<|endoftext|>';
 
 function tokenizeTextCore(text, type) {
 	const raw = String(text == null ? '' : text);
-	const cleaned = raw.split(TM_EOS_TOKEN).join(' ');
-	if (type === 'bpe') {
-		const words = cleaned.match(/\S+|\s+/g) || [];
-		return words.flatMap(word => {
-			// Don't sub-split whitespace tokens
-			if (/^\s+$/.test(word)) {
-				return word;  // keep each space run as one token
-			}
-			if (word.length > 4) {
-				return word.match(/.{1,3}/g);
-			}
-			return word;
-		});
+	const cleaned = raw.split(TM_EOS_TOKEN).join(' ').replace(/ {2,}/g, ' ');
+	const tokens = [];
+	let i = 0;
+	while (i < cleaned.length) {
+		const ch = String.fromCodePoint(cleaned.codePointAt(i));
+		if (/\s/u.test(ch)) {
+			tokens.push(ch);
+			i += ch.length;
+			continue;
+		}
+		const word = cleaned.slice(i).match(/^[\p{L}\p{M}\p{N}_]+/u);
+		if (word) {
+			tokens.push(word[0]);
+			i += word[0].length;
+			continue;
+		}
+		tokens.push(ch);
+		i += ch.length;
 	}
-	// Regex tokenizer: now also captures whitespace runs
-	return cleaned.match(/[\w]+|[^\w\s]|\s+/g) || [];
+	return tokens;
 }
 
 function tokenizeText(text, type) {
@@ -2975,7 +2980,7 @@ function renderTokenChips(container, tokens) {
 
 	tokens.forEach((t, i) => {
 		const c = tokenColor(t);
-		const displayToken = /^\s+$/.test(t) ? t.replace(/ /g, '␣') : t;
+		const displayToken = t.replace(/ /g, '␣').replace(/\t/g, '⇥').replace(/\n/g, '⏎').replace(/\r/g, '␍');
 
 		const badge = document.createElement('div');
 		badge.className = 'token-badge token-enter';
@@ -2997,7 +3002,7 @@ function renderTokenChips(container, tokens) {
 
 
 function _tmPickerDisplay(token) {
-	return String(token).replace(/ /g, '␣').replace(/\n/g, '⏎');
+	return String(token).replace(/ /g, '␣').replace(/\t/g, '⇥').replace(/\n/g, '⏎').replace(/\r/g, '␍');
 }
 
 function _tmTokenColorChip(token) {
@@ -3008,7 +3013,7 @@ function _tmTokenColorChip(token) {
 	chip.textContent = _tmPickerDisplay(token);
 	chip.style.background = color.bg;
 	chip.style.borderColor = color.border;
-	chip.title = token === ' ' ? 'space' : token;
+	chip.title = token === ' ' ? ((window.TM && TM.lang && TM.lang() === 'de') ? 'Leerzeichen' : 'space') : token;
 	return chip;
 }
 
@@ -3025,6 +3030,37 @@ function _tmTokenPickerProbs() {
 	} catch (e) { return {}; }
 }
 
+function _tmTokenPickerSelectedProbs(tokens) {
+	if (window.isTraining || !window.currentWeights || !window.persistentEmbeddingSpace) return {};
+	const cfg = getTransformerConfig();
+	if (!cfg.d_model || !cfg.n_heads || !cfg.n_layers || cfg.d_model % cfg.n_heads !== 0) return {};
+	try {
+		const h = runSimpleForwardPass(tokens, window.currentWeights, cfg.d_model, cfg.n_heads, cfg.n_layers, false);
+		const vocab = Object.keys(window.persistentEmbeddingSpace).filter(token => token !== TM_EOS_TOKEN);
+		const rows = vocab.map(word => window.persistentEmbeddingSpace[word]);
+		const result = {};
+		if (tokens.length) {
+			const firstIdx = vocab.indexOf(tokens[0]);
+			if (firstIdx >= 0) {
+				const start = runSimpleForwardPass([TM_EOS_TOKEN], window.currentWeights, cfg.d_model, cfg.n_heads, cfg.n_layers, false);
+				const logits = rows.map(row => dotProduct(start[0], row));
+				const probs = softmax(logits.map(v => v / (cfg.temperature || 1)));
+				result[0] = probs[firstIdx];
+			}
+		}
+		for (let i = 1; i < tokens.length; i++) {
+			const idx = vocab.indexOf(tokens[i]);
+			if (idx < 0) continue;
+			const logits = rows.map(row => dotProduct(h[i - 1], row));
+			const probs = softmax(logits.map(v => v / (cfg.temperature || 1)));
+			result[i] = probs[idx];
+		}
+		return result;
+	} catch (e) {
+		return {};
+	}
+}
+
 function render_token_picker_chips() {
 	var input = document.getElementById('transformer-master-token-input');
 	var chips = document.getElementById('transformer-token-picker-chips');
@@ -3032,12 +3068,21 @@ function render_token_picker_chips() {
 	var typeEl = document.getElementById('transformer-tokenizer-type');
 	var type = typeEl ? typeEl.value : 'regex';
 	var tokens = tokenizeTextCore(input.value, type);
+	var selectedProbs = _tmTokenPickerSelectedProbs(tokens);
 	chips.innerHTML = '';
 	tokens.forEach(function (token, idx) {
 		var chip = _tmTokenColorChip(token);
 		chip.classList.add('is-selected');
 		chip.setAttribute('data-idx', String(idx));
-		chip.title = token === ' ' ? 'space — click to remove' : token + ' — click to remove';
+		var prob = selectedProbs[idx];
+		if (prob != null) {
+			var pct = document.createElement('span');
+			pct.className = 'tm-token-chip-prob';
+			pct.textContent = (prob * 100).toFixed(1) + '%';
+			chip.appendChild(pct);
+		}
+		var removeLabel = (window.TM && TM.lang && TM.lang() === 'de') ? ' — zum Entfernen klicken' : ' — click to remove';
+		chip.title = (token === ' ' ? ((window.TM && TM.lang && TM.lang() === 'de') ? 'Leerzeichen' : 'space') : token) + (prob != null ? ' — ' + (prob * 100).toFixed(1) + '%' : '') + removeLabel;
 		chips.appendChild(chip);
 	});
 }
@@ -3802,7 +3847,7 @@ function createVFToggleButton(id, d_model, existingVfEnabled) {
 	toggleBtn.className = 'migration-vf-toggle';
 	toggleBtn.dataset.mode = existingVfEnabled ? 'on' : 'off';
 	toggleBtn.dataset.migrationId = id;
-	toggleBtn.textContent = existingVfEnabled ? '🧭 Hide Vector Field' : '🧭 Show Vector Field';
+	toggleBtn.textContent = existingVfEnabled ? ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field') : ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field');
 	toggleBtn.style.cssText = `
 	margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
 	border: 1px solid #3b82f6; background: ${existingVfEnabled ? '#dbeafe' : '#fff'}; color: #3b82f6;
@@ -3827,13 +3872,13 @@ function createVFToggleButton(id, d_model, existingVfEnabled) {
 
 		if (currentMode === 'off') {
 			toggleBtn.dataset.mode = 'on';
-			toggleBtn.textContent = '🧭 Hide Vector Field';
+			toggleBtn.textContent = ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field');
 			toggleBtn.style.background = '#dbeafe';
 			regData._vfEnabled = true;
 			render_migration_logic(migId, regData.tokens, regData.start_h, regData.end_h, regData.layerNum, regData.d_model, regData.h_after, regData.tokenStrings);
 		} else {
 			toggleBtn.dataset.mode = 'off';
-			toggleBtn.textContent = '🧭 Show Vector Field';
+			toggleBtn.textContent = ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field');
 			toggleBtn.style.background = themeColor('#ffffff');
 			regData._vfEnabled = false;
 			render_migration_logic(migId, regData.tokens, regData.start_h, regData.end_h, regData.layerNum, regData.d_model, regData.h_after, regData.tokenStrings);
@@ -4669,11 +4714,11 @@ function syncVFToggleButtonState(id, plotDiv, vfEnabled) {
 
 	if (vfEnabled) {
 		toggleBtn.dataset.mode = 'on';
-		toggleBtn.textContent = '🧭 Hide Vector Field';
+		toggleBtn.textContent = ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field');
 		toggleBtn.style.background = '#dbeafe';
 	} else {
 		toggleBtn.dataset.mode = 'off';
-		toggleBtn.textContent = '🧭 Show Vector Field';
+		toggleBtn.textContent = ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field');
 		toggleBtn.style.background = themeColor('#ffffff');
 	}
 }
@@ -7444,8 +7489,8 @@ function createTrajectoryVFToggleButton() {
 	toggleBtn.className = 'trajectory-vf-toggle';
 	toggleBtn.dataset.mode = window._trajectoryVfEnabled ? 'on' : 'off';
 	toggleBtn.textContent = window._trajectoryVfEnabled
-		? '🧭 Hide Vector Field'
-		: '🧭 Show Vector Field';
+		? ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field')
+		: ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field');
 	toggleBtn.style.cssText = `
 	margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
 	border: 1px solid #8b5cf6;
@@ -7469,8 +7514,8 @@ function createTrajectoryVFToggleButton() {
 		window._trajectoryVfEnabled = !isOn;
 		toggleBtn.dataset.mode = isOn ? 'off' : 'on';
 		toggleBtn.textContent = isOn
-			? '🧭 Show Vector Field'
-			: '🧭 Hide Vector Field';
+			? ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld zeigen' : '🧭 Show Vector Field')
+			: ((window.TM && TM.lang && TM.lang() === 'de') ? '🧭 Vektorfeld ausblenden' : '🧭 Hide Vector Field');
 		toggleBtn.style.background = isOn ? themeColor('#ffffff') : '#ede9fe';
 
 		// Re-render trajectory

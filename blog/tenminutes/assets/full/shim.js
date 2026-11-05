@@ -29,17 +29,68 @@
 	}
 	var TM_TEX_MAP = {
 		"attention weight": "Attention-Gewicht",
+		"weight": "Gewicht",
 		"Value vector": "Value-Vektor",
 		"of token": "von Token",
+		"of token ": "von Token ",
 		"Attention Weights": "Attention-Gewichte",
 		"rows": "Zeilen",
 		"cols": "Spalten",
 		"query": "Query",
 		"key": "Key",
 		"head": "Head",
-		"Output Projection Matrix": "Ausgabeprojektionsmatrix",
+		"Output of attention sublayer": "Ausgabe der Attention-Unterschicht",
 		"Projected attention output": "Projizierte Attention-Ausgabe",
+		"Output Projection Matrix": "Ausgabeprojektionsmatrix",
 		"Concatenated head contexts": "Konkatenierte Head-Kontexte",
+		"emb. + PE": "Embedding + PE",
+		"after attn residual": "nach Attention-Residual",
+		"after W^O proj": "nach W^O-Projektion",
+		"concat heads": "konkatenierte Heads",
+		"after LN": "nach LN",
+		"after LN₂": "nach LN₂",
+		"after GELU": "nach GELU",
+		"FFN output": "FFN-Ausgabe",
+		"layer output": "Schicht-Ausgabe",
+		"Layer output": "Schicht-Ausgabe",
+		"Normalized input": "Normalisierte Eingabe",
+		"Hidden layer (expanded)": "Versteckte Schicht (expandiert)",
+		"FFN output (compressed)": "FFN-Ausgabe (komprimiert)",
+		"Activation": "Aktivierung",
+		"Expansion": "Expansion",
+		"Weight Matrix": "Gewichtsmatrix",
+		"Expansion Bias": "Expansions-Bias",
+		"Compression": "Kompression",
+		"Compression Bias": "Kompressions-Bias",
+		"Learnable": "Lernbar",
+		"Scale Parameter": "Skalierungsparameter",
+		"Shift Parameter": "Verschiebungsparameter",
+		"Hadamard": "Hadamard",
+		"Product": "Produkt",
+		"Mean of ": "Mittelwert von ",
+		"Variance of ": "Varianz von ",
+		"Parameter": "Parameter",
+		"words": "Wörter",
+		"word": "Wort",
+		"word probabilities": "Wortwahrscheinlichkeiten",
+		"Raw score": "Roher Score",
+		"for word ": "für Wort ",
+		"Temperature": "Temperatur",
+		"flattens": "flacht ab",
+		"sharpens": "schärft",
+		"probability": "Wahrscheinlichkeit",
+		"Scaled": "Skaliert",
+		"Change from": "Änderung durch",
+		"scaling": "Skalierung",
+		"Entropy of": "Entropie der",
+		"unscaled distribution": "ungeskalierten Verteilung",
+		"Entropy after": "Entropie nach",
+		"temperature scaling": "Temperatur-Skalierung",
+		"Maximum possible entropy": "Maximal mögliche Entropie",
+		"uniform distribution": "Gleichverteilung",
+		"over all": "über alle",
+		"bits": "Bits",
+		"Total ": "Gesamt ",
 		"one tiny decoder block, repeated": "ein winziger Decoder-Block, wiederholt",
 		"cross-entropy loss": "Cross-Entropy-Loss",
 		"Adam update": "Adam-Update",
@@ -49,7 +100,14 @@
 		if (!(window.TM && TM.lang && TM.lang() === "de")) return tex;
 		return String(tex).replace(/\\text\{([^{}]*)\}/g, function (match, label) {
 			return TM_TEX_MAP[label] ? "\\text{" + TM_TEX_MAP[label] + "}" : match;
-		});
+		})
+			.replace(/\\text\{out layer (\d+)\}/g, "\\text{Ausgabe Schicht $1}")
+			.replace(/\\text\{hidden dim (\d+)\}/g, "\\text{Hidden-Dimension $1}")
+			.replace(/\\text\{(\d+) words\}/g, "\\text{$1 Wörter}")
+			.replace(/\\text\{\(Temperature = 1\)\}/g, "\\text{(Temperatur = 1)}")
+			.replace(/\\text\{\(T = ([\d.]+)\)\}/g, "\\text{(T = $1)}")
+			.replace(/\\text\{head (\d+) ctx\}/g, "\\text{Head $1 Kontext}")
+			.replace(/\\text\{after concat\}/g, "\\text{nach Konkat}");
 	}
 	function tmTranslateTexElements(scope) {
 		if (!scope || !scope.querySelectorAll) return;
@@ -130,6 +188,7 @@
 	window.themeRiverRegistry = window.themeRiverRegistry || new Map();
 	window.tlab_render_themeriver = function () {};
 	window._execute_themeriver_render = function () {};
+	window.forceRerenderVisibleThemeRiver = function () {};
 
 	window.Prov = window.Prov || {
 		recordPre: function () {}, recordLayer: function () {}, recordFfn: function () {},
@@ -144,6 +203,7 @@
 	window.escapeHtml = escapeHtml;
 	window.tokenColor = tokenColor;
 	window.render_temml = render_temml;
+	window.tmTranslateTex = tmTranslateTex;
 	window.updateLoadingStatus = function () {};
 	window.showTrainingProgressBar = function () {};
 	window.hideTrainingProgressBar = function () {};
