@@ -937,7 +937,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		this._markHeadRendered(headDiv, layerIdx, headIdx, hd.this_weights);
 
 		headContentObserver.unobserve(headDiv);
-		render_temml();
+		render_temml(headDiv);
 
 		this._annotateHead(headDiv, layerIdx, headIdx);
 
@@ -985,7 +985,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			this._morphEquationsAndResult(layerIdx, headIdx, hd, displayTokens, layerData);
 
 		if (needsTemml) {
-			render_temml();
+			render_temml(headDiv);
 			this._annotateHead(headDiv, layerIdx, headIdx);
 		}
 	}
@@ -2193,7 +2193,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		}
 
 		tooltip.innerHTML = html;
-		render_temml();
+		render_temml(tooltip);
 		this._positionTooltip(tooltip, e);
 	}
 
@@ -2216,7 +2216,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		}
 
 		tooltip.innerHTML = html;
-		render_temml();
+		render_temml(tooltip);
 		this._positionTooltip(tooltip, e);
 	}
 

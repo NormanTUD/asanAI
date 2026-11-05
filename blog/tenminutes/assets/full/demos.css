@@ -234,3 +234,18 @@
 	box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
 	background: var(--tm-card);
 }
+
+/* Center the single-head attention head-view and matrix SVGs. */
+[id^="apv-headview-wrap-"],
+[id^="apv-matrix-wrap-"] {
+	width: 100%;
+	max-width: 840px;
+	margin-left: auto;
+	margin-right: auto;
+}
+[id^="apv-headview-wrap-"] > svg,
+[id^="apv-matrix-wrap-"] > svg {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}

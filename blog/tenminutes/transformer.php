@@ -1042,6 +1042,7 @@
 		var totalBytes = <?php echo (int) $tmDemoTotal; ?> || 1;
 		var perfOnly = /[?&]demo_perf=1(?:&|$)/.test(location.search);
 		var fetchOnly = /[?&]demo_perf=fetch(?:&|$)/.test(location.search);
+		var engineOnly = /[?&]demo_perf=engine(?:&|$)/.test(location.search);
 		var labels = {
 			"plotly-2.24.1.min.js": ["Plotly (charts)", "Plotly (Diagramme)"],
 			"echarts.min.js": ["ECharts (position waves)", "ECharts (Positionswellen)"],
@@ -1118,20 +1119,18 @@
 			currentBytes = 0;
 			schedulePaint();
 		}
-		function initializeFile(file, fetchMs, bytes) {
+		function initializeFile(file, text, fetchMs, bytes) {
 			if (fetchOnly) { finishFile(file, bytes, fetchMs, 0, false); return Promise.resolve(); }
 			if (titleEl) titleEl.textContent = t("Initializing ", "Initialisiere ") + labelFor(file) + "…";
 			schedulePaint();
 			return new Promise(function (resolve) {
 				requestAnimationFrame(function () {
 					var t0 = performance.now();
-					loadScript(file).then(function () {
-						finishFile(file, bytes, fetchMs, performance.now() - t0, false);
-						resolve();
-					}).catch(function () {
-						finishFile(file, bytes, fetchMs, null, false);
-						resolve();
-					});
+					var script = document.createElement("script");
+					script.textContent = text;
+					document.body.appendChild(script);
+					finishFile(file, bytes, fetchMs, performance.now() - t0, false);
+					resolve();
 				});
 			});
 		}
@@ -1152,21 +1151,24 @@
 				if (!response.ok) throw new Error(file + " " + response.status);
 				var reader = response.body && response.body.getReader ? response.body.getReader() : null;
 				if (!reader) {
-					return response.text().then(function () {
-						return initializeFile(file, performance.now() - t0, sizes[file] || 0);
+					return response.text().then(function (text) {
+						return initializeFile(file, text, performance.now() - t0, sizes[file] || 0);
 					});
 				}
-				var loaded = 0;
+				var chunks = [], loaded = 0;
 				function pump() {
 					return reader.read().then(function (result) {
 						if (result.done) return;
+						chunks.push(result.value);
 						loaded += result.value.length;
 						addBytes(result.value.length);
 						return pump();
 					});
 				}
 				return pump().then(function () {
-					return initializeFile(file, performance.now() - t0, loaded);
+					return new Blob(chunks).text();
+				}).then(function (text) {
+					return initializeFile(file, text, performance.now() - t0, loaded);
 				});
 			}).catch(function () {
 				return loadScript(file).then(function () {
@@ -1256,13 +1258,9 @@
 						Promise.resolve(result).then(function () {
 							perf.engineMs = performance.now() - t0;
 							wireTrain();
-							if (titleEl) titleEl.textContent = t("Translating and rendering the demos…", "Übersetze und rendere die Demos…");
-							schedulePaint();
-							loadScript("assets/full/demo-render.js").then(function () {
-								finish();
-							}).catch(function () {
-								finish();
-							});
+							if (engineOnly) { showPerf(); finish(); return; }
+							finish();
+							loadScript("assets/full/demo-render.js").catch(function () {});
 						}).catch(function () {
 							perf.engineMs = performance.now() - t0;
 							window.__tmDemoPerf = perf;

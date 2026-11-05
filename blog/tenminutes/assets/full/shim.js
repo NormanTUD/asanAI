@@ -27,12 +27,41 @@
 			.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 			.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 	}
+	function renderRawMath(scope) {
+		if (!scope || !scope.querySelectorAll) return;
+		function skipEl(el) {
+			return !el || !el.closest || el.closest("script,style,code,pre,textarea,math,[data-tex],[data-no-math],.no-math");
+		}
+		var walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, null);
+		var nodes = [];
+		while (walker.nextNode()) nodes.push(walker.currentNode);
+		nodes.forEach(function (node) {
+			if (skipEl(node.parentElement)) return;
+			var text = node.nodeValue;
+			if (!text || text.indexOf("$") === -1) return;
+			var re = /\$\$([^$]+)\$\$|\$([^$]+)\$/g;
+			var match, last = 0, frag = document.createDocumentFragment(), changed = false;
+			while ((match = re.exec(text))) {
+				changed = true;
+				if (match.index > last) frag.appendChild(document.createTextNode(text.slice(last, match.index)));
+				var span = document.createElement("span");
+				span.setAttribute("data-tex", match[1] != null ? match[1] : match[2]);
+				span.setAttribute("data-tex-display", match[1] != null ? "true" : "false");
+				frag.appendChild(span);
+				last = re.lastIndex;
+			}
+			if (!changed) return;
+			if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+			node.parentNode.replaceChild(frag, node);
+		});
+	}
 	function render_temml(root) {
+		var scope = root && root.querySelectorAll ? root : document;
+		if (scope !== document) renderRawMath(scope);
 		if (window.TM && TM.typesetMath) {
-			TM.typesetMath(root || document.body);
+			TM.typesetMath(scope);
 			return;
 		}
-		var scope = root && root.querySelectorAll ? root : document;
 		var nodes = scope.querySelectorAll("[data-tex]");
 		for (var i = 0; i < nodes.length; i++) {
 			var el = nodes[i];

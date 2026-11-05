@@ -208,13 +208,6 @@
 			else if (child.nodeType === 1) walk(child);
 		}
 	}
-	function watch(id) {
-		var el = document.getElementById(id);
-		if (!el || !window.MutationObserver) return;
-		new MutationObserver(function () { walk(el); }).observe(el, {
-			childList: true, subtree: true, characterData: true
-		});
-	}
 	var HOSTS = [
 		"transformer_config", "transformer-train-card", "transformer-output-projection",
 		"ffn-equations-container", "transformer-migration-plots-container",
@@ -232,15 +225,17 @@
 	}
 	function start() {
 		walkHosts();
-		HOSTS.forEach(watch);
-		var btn = document.querySelector(".train-btn");
-		if (btn && window.MutationObserver) {
-			new MutationObserver(function () { walk(btn); }).observe(btn, {
-				childList: true, subtree: true, characterData: true
+		[350, 1200, 2500, 5000, 9000].forEach(function (ms) { setTimeout(walkHosts, ms); });
+		setInterval(function () {
+			["training-status", "current_training_sentence", "show_training_sentences",
+			 "nr_params", "param-breakdown-table"].forEach(function (id) {
+				var el = document.getElementById(id);
+				if (el && el.offsetParent !== null) walk(el);
 			});
-		}
+			var btn = document.querySelector(".train-btn");
+			if (btn) walk(btn);
+		}, 700);
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
-	else start();
-	[350, 1200].forEach(function (ms) { setTimeout(walkHosts, ms); });
+	else setTimeout(start, 0);
 })();
