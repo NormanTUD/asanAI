@@ -350,6 +350,7 @@
 												<output id="ipe-heat-dims-out">24</output>
 											</label>
 										</div>
+										<p class="step-note">The heatmap below shows the classic sinusoidal encoding: each position gets a fingerprint built from slow and fast waves.</p>
 										<canvas class="step-canvas" id="ipe-heatmap" style="height:220px" aria-label="A heatmap of classic sinusoidal positional encodings for a long context"></canvas>
 										<div class="pos-legend" aria-hidden="true">
 											<span><i class="pl-neg"></i>−1</span>
@@ -367,7 +368,7 @@
 										<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A token at the centre of three 3D orbits: one per pair of dimensions, each wheel turning at its own speed as the position advances"></canvas>
 										<div class="step-out" id="ipe-out">Position <b>7</b> · pair d0/d1 turns <b>41°</b> · pair d2/d3 turns <b>40°</b> · pair d4/d5 turns <b>4°</b>.</div>
 									</div>
-									<p class="step-note">The heatmap above shows the classic sinusoidal encoding: each position gets a fingerprint built from slow and fast waves. The wheels below show RoPE, a scheme used by many current models. Each pair of dimensions is a wheel, and the token sits at the axle. Moving the token forward by one position rotates every wheel by a different fixed angle, set by the RoPE frequency for that pair. The token itself stays the same; only its angle changes. The ring is only the path the pair can take; the coloured arrow is the rotated pair itself, and the faint dashed line is its unrotated state. Attention compares two tokens by the angle between their rotated keys and queries, which depends on the distance between their positions. The demo uses a narrow model width so the turns stay visible; a real model uses thousands of dimensions.</p>
+									<p class="step-note">The wheels show RoPE, a scheme used by many current models. Each pair of dimensions is a wheel, and the blue sphere in the middle is the original word. Moving the token forward by one position rotates every wheel by a different fixed angle, set by the RoPE frequency for that pair. The token itself stays the same; only its angle changes. The ring is only the path the pair can take; the coloured arrow is the rotated pair itself, and the faint dashed line is its unrotated state. Attention compares two tokens by the angle between their rotated keys and queries, which depends on the distance between their positions. The demo uses a narrow model width so the turns stay visible; a real model uses thousands of dimensions.</p>
 								</div>
 
 								<div class="step-pane" id="step-attention">
@@ -561,7 +562,7 @@
 
 					<section class="section-block" id="meadow">
 						<div class="section-kicker"><span class="sk-num">04</span> The geometry</div>
-						<h2 class="section-title">Meaning becomes geometry.</h2>
+						<h2 class="section-title">Directions and regions.</h2>
 						<div class="prose">
 							<p>
 								The model arranges every token as a point in a learned vector space, and
@@ -667,6 +668,16 @@
 								the loop ends when the model emits the special token <strong>&lt;|endoftext|&gt;</strong>.
 							</p>
 							<p>
+								At the end of the pipeline, the last token carries the whole context.
+								Attention has repeatedly mixed information between tokens, and the MLP
+								has shifted it at every layer, so the vector now holds the meaning built
+								up so far. To score the next word, the model multiplies that vector with
+								the vocabulary matrix and compares the angle to every word's vector.
+								Angles are more reliable than distances in high dimensions: distances
+								bunch together, while directions stay distinct. The closest directions
+								become the probabilities, and one token is drawn from them.
+							</p>
+							<p>
 								No step has a tidy fact database, and no step “understands” in the human
 								sense. Knowledge is distributed across the weights; meaning lives in the
 								<strong>geometry</strong> (directions, distances, regions) and at each
@@ -675,12 +686,17 @@
 							</p>
 							<p>
 								So where is a fact, if not in a table? Mostly in the feed-forward weights,
-								and often <strong>superposed</strong> (<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>; <a href="https://already-clean.goodfire.com/" rel="noopener">Goodfire</a>): several features share the same
-								directions instead of each owning a private neuron. A single direction can
-								therefore carry parts of several facts at once. That is why a fact can be
-								partly present, why the model may know something without being able to say it
-								reliably, and why editing one fact can disturb another: both are written along
-								the same direction.
+								where features can share directions instead of each owning a private
+								neuron. The usual reading is that they are <strong>superposed</strong>
+								(<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>),
+								but that reading is contested: a
+								<a href="https://already-clean.goodfire.com/" rel="noopener">2026 Goodfire essay</a>
+								argues that much of what looked like superposition is ordinary
+								generalization. Where features do share a direction, one direction can
+								carry parts of several facts at once. That is why a fact can be partly
+								present, why the model may know something without being able to say it
+								reliably, and why editing one fact can disturb another: both are written
+								along the same direction.
 							</p>
 						</div>
 						<div class="keypoints">
@@ -2465,6 +2481,12 @@
 			ctx.strokeStyle = posRgba(c.sky, 0.55);
 			ctx.lineWidth = 1;
 			ctx.stroke();
+
+			ctx.textAlign = "center";
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.fillStyle = c.muted;
+			ctx.fillText(DE ? "Token (Originalwort)" : "token (original word)", cx, cy + ballRadius + 16);
+			ctx.textAlign = "left";
 		}
 		if (posCanvas) {
 			posApi = TM.initCanvas(posCanvas, drawPos);

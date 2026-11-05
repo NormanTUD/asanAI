@@ -4,6 +4,22 @@
 	"note": "Ten Minutes keeps its own image credits; literature.js is not loaded at runtime. Entries with literatureKey are checked against blog/literature.js by blog/tests/tenminutes_image_credits_test.py.",
 	"images": [
 		{
+			"src": "../ceres.jpg",
+			"title": "Ceres, photographed by the Dawn probe",
+			"author": "NASA / JPL-Caltech / UCLA / MPS / DLR / IDA / Justin Cowart",
+			"license": "Public domain",
+			"source": "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg",
+			"literatureKey": "ceresimage"
+		},
+		{
+			"src": "../flammarion.jpg",
+			"title": "The Flammarion engraving",
+			"author": "Unknown Artist",
+			"license": "Public domain",
+			"source": "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg",
+			"literatureKey": "flammarion"
+		},
+		{
 			"src": "../ishango.jpg",
 			"title": "The Ishango bone",
 			"author": "Ben2",

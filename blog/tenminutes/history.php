@@ -30,6 +30,29 @@
 					<section class="section-block" id="fuse">
 						<div class="section-kicker"><span class="sk-num">01</span> The long background</div>
 						<h2 class="section-title">Many currents met here.</h2>
+						<div class="split-figure">
+							<figure>
+								<img src="../ceres.jpg" alt="The dwarf planet Ceres photographed by the Dawn probe" loading="lazy">
+								<figcaption>Ceres, photographed by the Dawn probe in 2015. Image: NASA / JPL-Caltech / UCLA / MPS / DLR / IDA / Justin Cowart, <a href="https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg" rel="noopener">public domain</a>.</figcaption>
+							</figure>
+							<figure>
+								<img src="../flammarion.jpg" alt="The Flammarion engraving: a traveller lifts the edge of the sky" loading="lazy">
+								<figcaption>The Flammarion engraving (1888): a traveller looks beyond the horizon. Image: Unknown Artist, <a href="https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg" rel="noopener">public domain</a>.</figcaption>
+							</figure>
+						</div>
+						<div class="prose">
+							<p>
+								In 1801 Giuseppe Piazzi spotted Ceres, the first asteroid, and then
+								lost it in the sun's glare after 41 days of observation. Carl
+								Friedrich Gauß treated the noisy positions as a whole and assumed
+								the true orbit lay in the middle of the errors. His method of least
+								squares minimised the squared distance between the observations and
+								the orbit, and it predicted where Ceres would reappear. The move is
+								the one a model repeats when it fits weights to noisy data: no single
+								measurement is trusted, and the fit is chosen to be closest to all
+								of them at once.
+							</p>
+						</div>
 						<div class="prose">
 							<p>
 								The way to modern <strong>LLM</strong> was not a straight line, but a sum of
@@ -95,11 +118,6 @@
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>No single cause produced the LLM. Many independent developments became useful together.</span></div>
 						</div>
-					</section>
-
-					<section class="section-block" id="memory">
-						<div class="section-kicker"><span class="sk-num">03</span> External memory</div>
-						<h2 class="section-title">Tools, marks, and memory.</h2>
 						<div class="prose">
 							<p>
 								Long before counting, there is technique. At
@@ -141,49 +159,6 @@
 							<img src="../blombosochre.jpg" alt="Engraved ochre from Blombos Cave with cross-hatched geometric patterns" loading="lazy">
 							<figcaption>Engraved ochre from Blombos Cave, c. 75,000 years ago. Image: Chris Henshilwood, <a href="https://www.donsmaps.com/blombos.html" rel="noopener">CC BY 2.5</a>.</figcaption>
 						</figure>
-						<div class="prose">
-							<p>
-								The oldest counting tool is a bone. The <strong><a href="https://cacm.acm.org/blogcacm/technical-marvels-part-2-lebombo-and-ishango-bones/" rel="noopener">Lebombo bone</a></strong>
-								(c. 43,000-42,000 years ago) carries 29 notches. The
-								<strong>Dolní Věstonice wolf bone</strong> (c. 27,000) carries 55 notches
-								in two groups of 30 and 25. The <strong><a href="https://arxiv.org/abs/1204.1019" rel="noopener">Ishango bone</a></strong>
-								(c. 18,000 BCE) carries grouped notches. One column groups 11, 13, 17, and
-								19, the primes between 10 and 20; some read that as a prime-number list,
-								while others read the marks as a tally, a lunar record, or something else.
-								The grouping is suggestive, not a decoded message. The same idea (outsource
-								counting to a physical object) appears independently in Africa and Europe.
-							</p>
-						</div>
-						<figure style="max-width: 420px; margin: 24px auto;">
-							<img src="../ishango.jpg" alt="The Ishango bone, a baboon fibula with grouped notches" loading="lazy">
-							<figcaption>The Ishango bone, c. 18,000 BCE. Image: Ben2, <a href="https://commons.wikimedia.org/wiki/File:Os_d%27Ishango_IRSNB.JPG" rel="noopener">CC BY-SA 3.0</a>.</figcaption>
-						</figure>
-						<div class="prose">
-							<p>
-								The <strong><a href="https://archive.org/details/numismatischezei31stuoft/mode/2up" rel="noopener">Salamis Tablet</a></strong> (c. 300 BCE) is the oldest surviving
-								counting board: a marble slab with etched lines and pebbles (<em>calculi</em>).
-								It maps numbers to grid coordinates, uses a rule-based physical system for
-								arithmetic, and stores intermediate sums outside the head. The word
-								<em>calculus</em> comes from the pebbles.
-							</p>
-						</div>
-						<figure>
-							<img src="../salamic_table.jpg" alt="The Salamis Tablet counting board" loading="lazy">
-							<figcaption>The Salamis Tablet, c. 300 BCE. Image: Wilhelm Kubitschek, <a href="https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg" rel="noopener">public domain</a>.</figcaption>
-						</figure>
-						<div class="prose">
-							<p>
-								The <strong><a href="https://www.cs.virginia.edu/~robins/Decoding_an_Ancient_Computer.pdf" rel="noopener">Antikythera mechanism</a></strong> (c. 200-60 BCE, recovered in 1901)
-								takes the next step: at least 30 meshing bronze gears model the sky, predicting
-								astronomical positions and eclipses decades in advance. For over a millennium,
-								no equally complex geared technology is known in the West. Computation also
-								has roots in mechanical <em>simulation</em>.
-							</p>
-						</div>
-						<figure>
-							<img src="../antikythera.jpg" alt="Fragments of the Antikythera mechanism" loading="lazy">
-							<figcaption>Fragments of the Antikythera mechanism. Image: Therese Clutario, <a href="https://commons.wikimedia.org/wiki/File:Fragments_of_the_Antikythera_Mechanism.jpg" rel="noopener">CC BY 2.0</a>.</figcaption>
-						</figure>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">Memory can sit on a shelf.</p>
@@ -192,7 +167,7 @@
 					</section>
 
 					<section class="section-block" id="logic">
-						<div class="section-kicker"><span class="sk-num">04</span> The rules of thought</div>
+						<div class="section-kicker"><span class="sk-num">03</span> The rules of thought</div>
 						<h2 class="section-title">Reason and speech become calculi.</h2>
 						<div class="prose">
 							<p>
@@ -248,7 +223,7 @@
 					</section>
 
 					<section class="section-block" id="leibniz">
-						<div class="section-kicker"><span class="sk-num">05</span> Calculemus</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Calculemus</div>
 						<h2 class="section-title">Reason becomes arithmetic.</h2>
 						<div class="prose">
 							<p>
@@ -286,7 +261,7 @@
 					</section>
 
 					<section class="section-block" id="engines">
-						<div class="section-kicker"><span class="sk-num">06</span> Engines and programs</div>
+						<div class="section-kicker"><span class="sk-num">05</span> Engines and programs</div>
 						<h2 class="section-title">The machine learns to follow a stored plan.</h2>
 						<div class="prose">
 							<p>
@@ -354,7 +329,7 @@
 					</section>
 
 					<section class="section-block" id="neuron">
-						<div class="section-kicker"><span class="sk-num">07</span> The neuron and the perceptron</div>
+						<div class="section-kicker"><span class="sk-num">06</span> The neuron and the perceptron</div>
 						<h2 class="section-title">A machine that learns from its mistakes.</h2>
 						<div class="prose">
 							<p>
@@ -472,7 +447,6 @@
 									<svg class="gate-plot" id="gate-plot" viewBox="0 0 360 330" role="img" aria-label="A two-dimensional plot of the four input combinations for a logic gate"></svg>
 									<div class="gate-side">
 										<p class="gate-readout" id="gate-readout"></p>
-										<p class="gate-legend"><span class="gate-dot gate-dot--true"></span> true · <span class="gate-dot gate-dot--false"></span> false</p>
 									</div>
 								</div>
 							</div>
@@ -579,7 +553,7 @@
 					</section>
 
 					<section class="section-block" id="winters">
-						<div class="section-kicker"><span class="sk-num">08</span> Winters and the return</div>
+						<div class="section-kicker"><span class="sk-num">07</span> Winters and the return</div>
 						<h2 class="section-title">Promise, winter, quiet accumulation.</h2>
 						<div class="prose">
 							<p>
@@ -710,7 +684,7 @@
 					</section>
 
 					<section class="section-block" id="llms">
-						<div class="section-kicker"><span class="sk-num">09</span> The LLM line</div>
+						<div class="section-kicker"><span class="sk-num">08</span> The LLM line</div>
 						<h2 class="section-title">Attention, then pretraining, then scale.</h2>
 						<div class="prose">
 							<p>
@@ -920,7 +894,7 @@
 					</section>
 
 					<section class="section-block" id="lessons">
-						<div class="section-kicker"><span class="sk-num">10</span> What the history teaches</div>
+						<div class="section-kicker"><span class="sk-num">09</span> What the history teaches</div>
 						<h2 class="section-title">A collective, uneven climb.</h2>
 						<div class="prose">
 							<p>
@@ -1002,9 +976,14 @@
 				out += '<text x="' + (padL + plotW / 2) + '" y="' + (H - 12) + '" text-anchor="middle" fill="var(--tm-muted)" font-size="11">' + (GATE_DE ? "Eingang A" : "Input A") + '</text>';
 				out += '<text x="14" y="' + (padT + plotH / 2) + '" text-anchor="middle" fill="var(--tm-muted)" font-size="11" transform="rotate(-90 14 ' + (padT + plotH / 2) + ')">' + (GATE_DE ? "Eingang B" : "Input B") + '</text>';
 				[0, 1].forEach(function (v) {
-					out += '<text x="' + gx(v) + '" y="' + (padT + plotH + 18) + '" text-anchor="middle" fill="var(--tm-muted)" font-size="10">' + v + '</text>';
-					out += '<text x="' + (padL - 12) + '" y="' + (gy(v) + 3) + '" text-anchor="end" fill="var(--tm-muted)" font-size="10">' + v + '</text>';
+					var tick = v ? (GATE_DE ? "wahr" : "true") : (GATE_DE ? "falsch" : "false");
+					out += '<text x="' + gx(v) + '" y="' + (padT + plotH + 18) + '" text-anchor="middle" fill="var(--tm-muted)" font-size="10">' + tick + '</text>';
+					out += '<text x="' + (padL - 12) + '" y="' + (gy(v) + 3) + '" text-anchor="end" fill="var(--tm-muted)" font-size="10">' + tick + '</text>';
 				});
+				out += '<circle cx="' + (W - 132) + '" cy="14" r="5" fill="var(--tm-green)"></circle>';
+				out += '<text x="' + (W - 123) + '" y="18" fill="var(--tm-muted)" font-size="10">' + (GATE_DE ? "wahr" : "true") + '</text>';
+				out += '<circle cx="' + (W - 62) + '" cy="14" r="5" fill="var(--tm-coral)"></circle>';
+				out += '<text x="' + (W - 53) + '" y="18" fill="var(--tm-muted)" font-size="10">' + (GATE_DE ? "falsch" : "false") + '</text>';
 				if (gateMode !== "xor") {
 					var a, b;
 					if (gateMode === "or") { a = [0.58, -0.08]; b = [-0.08, 0.58]; }
@@ -1012,8 +991,11 @@
 					out += '<line x1="' + gx(a[0]) + '" y1="' + gy(a[1]) + '" x2="' + gx(b[0]) + '" y2="' + gy(b[1]) + '" stroke="var(--tm-blue)" stroke-width="1" stroke-dasharray="6 5"></line>';
 				}
 				GATE_DATA[gateMode].forEach(function (p) {
-					out += '<circle cx="' + gx(p[0]) + '" cy="' + gy(p[1]) + '" r="10" fill="' + (p[2] ? "var(--tm-green)" : "var(--tm-coral)") + '" stroke="var(--tm-card)" stroke-width="2"></circle>';
-					out += '<text x="' + (gx(p[0]) + 16) + '" y="' + (gy(p[1]) + 4) + '" fill="var(--tm-ink)" font-size="11">' + p[0] + "," + p[1] + '</text>';
+					var px = gx(p[0]);
+					var py = gy(p[1]);
+					var anchor = p[0] === 1 ? "end" : "start";
+					out += '<circle cx="' + px + '" cy="' + py + '" r="10" fill="' + (p[2] ? "var(--tm-green)" : "var(--tm-coral)") + '" stroke="var(--tm-card)" stroke-width="2"></circle>';
+					out += '<text x="' + (px + (p[0] === 1 ? -16 : 16)) + '" y="' + (py + 4) + '" text-anchor="' + anchor + '" fill="var(--tm-ink)" font-size="11">' + p[0] + "," + p[1] + '</text>';
 				});
 				gateRoot.innerHTML = out;
 				if (gateReadout) {
@@ -1134,7 +1116,7 @@
 				name: "Shannon & Theseus",
 				era: "Cybernetics · learning by maze",
 				title: "A mouse that learns the maze",
-				text: "Claude Shannon builds Theseus, a relay-powered mouse that learns a 25-square maze by trial and error. It is not a neural network; it is a search over switches. The lesson is the one the field keeps relearning: a machine can adapt its behaviour from feedback without being told the route.",
+				text: "Claude Shannon builds Theseus, a relay-powered mouse that learns a 25-square maze by trial and error. It is not a neural network; it is an electromechanical machine that finds the route through its relays. The lesson is the one the field keeps relearning: a machine can adapt its behaviour from feedback without being told the route.",
 				img: "assets/img/theseus-shannon.jpg",
 				alt: "Theseus, the maze-solving mouse, at the MIT Museum",
 				cap: "Theseus, the maze-solving mouse built by Claude and Betty Shannon (1950), MIT Museum. Image: Nickknack00, <a href='https://commons.wikimedia.org/wiki/File:Theseus_(1950),_Betty_and_Claude_Shannon,_MIT_Museum.jpg' rel='noopener'>CC BY 4.0</a>."

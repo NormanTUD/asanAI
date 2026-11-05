@@ -2673,7 +2673,7 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 }
 .gate-layout {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) 190px;
+	grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
 	gap: 14px;
 	align-items: start;
 	margin-top: 12px;
@@ -2702,22 +2702,6 @@ button.dist-row:focus-visible { outline: 2px solid var(--tm-green); outline-offs
 	line-height: 1.5;
 	color: var(--tm-ink-soft);
 }
-.gate-legend {
-	margin: 12px 0 0;
-	font-family: var(--tm-ui);
-	font-size: 0.72rem;
-	color: var(--tm-muted);
-}
-.gate-dot {
-	display: inline-block;
-	width: 9px;
-	height: 9px;
-	margin-right: 4px;
-	border: 1px solid var(--tm-card);
-	border-radius: 50%;
-}
-.gate-dot--true { background: var(--tm-green); }
-.gate-dot--false { background: var(--tm-coral); }
 .iso-grid {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) 190px;
@@ -4793,7 +4777,7 @@ body[data-page="lesson"] .lesson-main > .section-block > .myth-grid {
 	scrollbar-width: auto;
 	scrollbar-color: var(--tm-green) color-mix(in srgb, var(--tm-line) 70%, transparent);
 }
-.timeline-track:focus { outline: 2px solid var(--tm-green); outline-offset: 4px; }
+.timeline-track:focus-visible { outline: 2px solid var(--tm-green); outline-offset: 4px; }
 .timeline-track.is-dragging {
 	cursor: grabbing;
 	scroll-behavior: auto;
