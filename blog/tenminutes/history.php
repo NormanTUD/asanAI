@@ -349,7 +349,7 @@
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">The stored program separates the machine from its behaviour.</p>
-							<p class="aha-sub">Once instructions live in the same memory as data, a computer can be changed by writing rather than by rebuilding. Software is born.</p>
+							<p class="aha-sub">Once instructions live in the same memory as data, a computer can be changed by writing rather than by rebuilding.</p>
 						</div>
 					</section>
 

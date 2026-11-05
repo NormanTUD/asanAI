@@ -178,7 +178,7 @@ return [
 		'Claude Shannon. Image: Tekniska Museet,' => 'Claude Shannon. Bild: Tekniska Museet,',
 		'Howard Aiken. Image: MacTutor History of Mathematics,' => 'Howard Aiken. Bild: MacTutor History of Mathematics,',
 		'The stored program separates the machine from its behaviour.' => 'Das gespeicherte Programm trennt die Maschine von ihrem Verhalten.',
-		'Once instructions live in the same memory as data, a computer can be changed by writing rather than by rebuilding. Software is born.' => 'Sobald Anweisungen im selben Speicher wie Daten liegen, kann ein Computer durch Schreiben statt durch Umbauen verändert werden. Software wird geboren.',
+		'Once instructions live in the same memory as data, a computer can be changed by writing rather than by rebuilding.' => 'Sobald Anweisungen im selben Speicher wie Daten liegen, kann ein Computer durch Schreiben statt durch Umbauen verändert werden.',
 		'The neuron and the perceptron' => 'Das Neuron und das Perceptron',
 		'A machine that learns from its mistakes.' => 'Eine Maschine, die aus ihren Fehlern lernt.',
 		'The first' => 'Das erste',
