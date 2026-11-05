@@ -1019,7 +1019,7 @@
 					var a, b;
 					if (gateMode === "or") { a = [0.58, -0.08]; b = [-0.08, 0.58]; }
 					else { a = [0.42, 1.08]; b = [1.08, 0.42]; }
-					out += '<line x1="' + gx(a[0]) + '" y1="' + gy(a[1]) + '" x2="' + gx(b[0]) + '" y2="' + gy(b[1]) + '" stroke="var(--tm-blue)" stroke-width="2.4" stroke-dasharray="6 5"></line>';
+					out += '<line x1="' + gx(a[0]) + '" y1="' + gy(a[1]) + '" x2="' + gx(b[0]) + '" y2="' + gy(b[1]) + '" stroke="var(--tm-blue)" stroke-width="1" stroke-dasharray="6 5"></line>';
 				}
 				GATE_DATA[gateMode].forEach(function (p) {
 					out += '<circle cx="' + gx(p[0]) + '" cy="' + gy(p[1]) + '" r="10" fill="' + (p[2] ? "var(--tm-green)" : "var(--tm-coral)") + '" stroke="var(--tm-card)" stroke-width="2"></circle>';
