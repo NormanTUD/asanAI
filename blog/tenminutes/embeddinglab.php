@@ -306,24 +306,26 @@
 	(function () {
 		"use strict";
 
+		var DE = TM.lang() === "de";
+
 		/* ── semantic map ────────────────────────────────────── */
 		var words = [
-			{ w: "Man", x: 0.18, y: 0.52, c: "#5c9baf" },
-			{ w: "Woman", x: 0.34, y: 0.52, c: "#5c9baf" },
-			{ w: "King", x: 0.18, y: 0.34, c: "#63a44b" },
-			{ w: "Queen", x: 0.34, y: 0.34, c: "#63a44b" },
-			{ w: "Uncle", x: 0.18, y: 0.70, c: "#5c9baf" },
-			{ w: "Aunt", x: 0.34, y: 0.70, c: "#5c9baf" },
-			{ w: "Prince", x: 0.18, y: 0.16, c: "#63a44b" },
-			{ w: "Princess", x: 0.34, y: 0.16, c: "#63a44b" },
-			{ w: "France", x: 0.54, y: 0.80, c: "#9f9700" },
-			{ w: "Paris", x: 0.68, y: 0.66, c: "#9f9700" },
-			{ w: "Germany", x: 0.54, y: 0.90, c: "#9f9700" },
-			{ w: "Berlin", x: 0.68, y: 0.76, c: "#9f9700" },
-			{ w: "Dog", x: 0.82, y: 0.52, c: "#9185be" },
-			{ w: "Puppy", x: 0.70, y: 0.36, c: "#9185be" },
-			{ w: "Cat", x: 0.90, y: 0.58, c: "#9185be" },
-			{ w: "Kitten", x: 0.78, y: 0.42, c: "#9185be" }
+			{ w: "Man", de: "Mann", x: 0.18, y: 0.52, c: "#5c9baf" },
+			{ w: "Woman", de: "Frau", x: 0.34, y: 0.52, c: "#5c9baf" },
+			{ w: "King", de: "König", x: 0.18, y: 0.34, c: "#63a44b" },
+			{ w: "Queen", de: "Königin", x: 0.34, y: 0.34, c: "#63a44b" },
+			{ w: "Uncle", de: "Onkel", x: 0.18, y: 0.70, c: "#5c9baf" },
+			{ w: "Aunt", de: "Tante", x: 0.34, y: 0.70, c: "#5c9baf" },
+			{ w: "Prince", de: "Prinz", x: 0.18, y: 0.16, c: "#63a44b" },
+			{ w: "Princess", de: "Prinzessin", x: 0.34, y: 0.16, c: "#63a44b" },
+			{ w: "France", de: "Frankreich", x: 0.54, y: 0.80, c: "#9f9700" },
+			{ w: "Paris", de: "Paris", x: 0.68, y: 0.66, c: "#9f9700" },
+			{ w: "Germany", de: "Deutschland", x: 0.54, y: 0.90, c: "#9f9700" },
+			{ w: "Berlin", de: "Berlin", x: 0.68, y: 0.76, c: "#9f9700" },
+			{ w: "Dog", de: "Hund", x: 0.82, y: 0.52, c: "#9185be" },
+			{ w: "Puppy", de: "Welpe", x: 0.70, y: 0.36, c: "#9185be" },
+			{ w: "Cat", de: "Katze", x: 0.90, y: 0.58, c: "#9185be" },
+			{ w: "Kitten", de: "Kätzchen", x: 0.78, y: 0.42, c: "#9185be" }
 		];
 		var analogies = [
 			{ a: "King", b: "Man", c: "Woman", target: "Queen", label: "King − Man + Woman" },
