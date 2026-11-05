@@ -207,6 +207,12 @@
 		topBtn.style.bottom = (barEl && barEl.style.display !== 'none') ? '60px' : '';
 	}
 
+	/** Keep the RAG chat launcher and its panel clear of the sticky bar. */
+	function positionChatWidgets() {
+		const height = (barEl && barEl.style.display !== 'none') ? barEl.offsetHeight : 0;
+		document.documentElement.style.setProperty('--tlab-sticky-bar-height', height + 'px');
+	}
+
 	/** Slide the bar into view */
 	function showBar() {
 		if (!barEl) createStickyBar();
@@ -215,6 +221,7 @@
 		barEl.style.opacity = '1';
 		barEl.style.transform = 'translateY(0)';
 		positionTopButton();
+		positionChatWidgets();
 	}
 
 	/** Slide the bar out of view */
@@ -226,6 +233,7 @@
 			if (barEl && barEl.style.opacity === '0') {
 				barEl.style.display = 'none';
 				positionTopButton();
+				positionChatWidgets();
 			}
 		}, 260);
 	}
@@ -253,6 +261,8 @@
 				trainBtn.style.cursor   = mainBtn.disabled ? 'not-allowed' : 'pointer';
 			}
 		}
+
+		positionChatWidgets();
 	}
 
 	/** Draw a tiny sparkline of the loss history */
@@ -379,6 +389,8 @@
 	};
 
 	// ---- Initialize ----
+	window.addEventListener('resize', positionChatWidgets);
+
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', initSiteObserver);
 	} else {

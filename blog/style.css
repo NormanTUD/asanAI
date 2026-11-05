@@ -14089,7 +14089,7 @@ summary:focus-visible,
 #rag-chat-toggle {
 	position: fixed;
 	right: 22px;
-	bottom: max(22px, env(safe-area-inset-bottom));
+	bottom: calc(max(22px, env(safe-area-inset-bottom)) + var(--tlab-sticky-bar-height, 0px));
 	z-index: 9998;
 	display: flex;
 	align-items: center;
@@ -14141,7 +14141,7 @@ summary:focus-visible,
 #rag-chat-panel {
 	position: fixed;
 	right: 22px;
-	bottom: max(90px, calc(env(safe-area-inset-bottom) + 90px));
+	bottom: calc(max(90px, calc(env(safe-area-inset-bottom) + 90px)) + var(--tlab-sticky-bar-height, 0px));
 	z-index: 9999;
 	display: flex;
 	flex-direction: column;
@@ -14640,13 +14640,13 @@ summary:focus-visible,
 		right: 10px;
 		left: 10px;
 		width: auto;
-		bottom: max(82px, calc(env(safe-area-inset-bottom) + 82px));
+		bottom: calc(max(82px, calc(env(safe-area-inset-bottom) + 82px)) + var(--tlab-sticky-bar-height, 0px));
 		height: min(72vh, 640px);
 		border-radius: 24px;
 	}
 	#rag-chat-toggle {
 		right: 15px;
-		bottom: max(16px, env(safe-area-inset-bottom));
+		bottom: calc(max(16px, env(safe-area-inset-bottom)) + var(--tlab-sticky-bar-height, 0px));
 		width: 54px;
 		height: 54px;
 	}
