@@ -366,9 +366,9 @@
 											<button class="chip is-on" type="button" id="ipe-autorotate" aria-pressed="true">Auto-rotate view</button>
 										</div>
 										<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A token at the centre of three 3D orbits: one per pair of dimensions, each wheel turning at its own speed as the position advances"></canvas>
-										<div class="step-out" id="ipe-out">Position <b>7</b> · pair d0/d1 turns <b>41°</b> · pair d2/d3 turns <b>40°</b> · pair d4/d5 turns <b>4°</b>.</div>
+										<div class="step-out" id="ipe-out">One token at position <b>7</b> · d0/d1 turns <b>41°</b> · d2/d3 turns <b>40°</b> · d4/d5 turns <b>4°</b>.</div>
 									</div>
-									<p class="step-note">The wheels show RoPE, a scheme used by many current models. Each pair of dimensions is a wheel, and the blue sphere in the middle is the original word. Moving the token forward by one position rotates every wheel by a different fixed angle, set by the RoPE frequency for that pair. The token itself stays the same; only its angle changes. The ring is only the path the pair can take; the coloured arrow is the rotated pair itself, and the faint dashed line is its unrotated state. Attention compares two tokens by the angle between their rotated keys and queries, which depends on the distance between their positions. The demo uses a narrow model width so the turns stay visible; a real model uses thousands of dimensions.</p>
+									<p class="step-note">The wheels show RoPE, a scheme used by many current models. Each pair of dimensions is a wheel, and the blue sphere in the middle is the original word. The three rings are separate planes for three dimension pairs, not three positions. Moving the token forward by one position rotates every wheel by a different fixed angle, set by the RoPE frequency for that pair. The token itself stays the same; only its angle changes. The ring is only the path the pair can take; the coloured arrow is the rotated pair itself, and the faint dashed line is its unrotated state. Attention compares two tokens by the angle between their rotated keys and queries, which depends on the distance between their positions. The demo uses a narrow model width so the turns stay visible; a real model uses thousands of dimensions.</p>
 								</div>
 
 								<div class="step-pane" id="step-attention">
@@ -389,6 +389,8 @@
 										<div class="attn-sentence" id="iatt-sentence">I walk to the <span class="aw-bank">bank</span>.</div>
 										<canvas class="step-canvas" id="iatt-canvas" aria-label="Attention moving the embedding of bank toward the context"></canvas>
 										<div class="step-out" id="iatt-out">No unambiguous context: bank stays in the middle, ambiguous.</div>
+										<div class="attn-matrix" id="iatt-matrix" aria-live="polite"></div>
+										<div class="prose-math attn-sum" id="iatt-sum" data-tex-display="true"></div>
 									</div>
 									<p class="step-note"><b>This step is an intuition, not a real attention head.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result: context changes the representation. It shows one simplified attention head, not the many heads and layers of a real model.</p>
 									<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the context, because the values it collects are different.</p>
@@ -561,19 +563,18 @@
 					</section>
 
 					<section class="section-block" id="meadow">
-						<div class="section-kicker"><span class="sk-num">04</span> The geometry</div>
-						<h2 class="section-title">Directions and regions.</h2>
+						<div class="section-kicker"><span class="sk-num">04</span> The last step</div>
+						<h2 class="section-title">The final vector picks a word.</h2>
 						<div class="prose">
 							<p>
-								The model arranges every token as a point in a learned vector space, and
-								relationships often show up as directions: the direction from
-								<strong>man</strong> to <strong>woman</strong> is the same as
-								<strong>king</strong> to <strong>queen</strong>, and a different direction
-								takes <strong>man</strong> to <strong>prince</strong>. The idea that
-								concepts can be read as regions and directions in a geometric space goes
-								back to the conceptual spaces of
-								<a href="https://en.wikipedia.org/wiki/Conceptual_space" rel="noopener">Gärdenfors (2000)</a>.
-								In an LLM the space is learned from text rather than designed by hand.
+								At the end of the pipeline, the last token carries the whole context.
+								Attention has repeatedly mixed information between tokens, and the MLP
+								has shifted it at every layer, so the vector now holds the meaning built
+								up so far. To score the next word, the model multiplies that vector with
+								the vocabulary matrix and compares the angle to every word's vector.
+								Angles are more reliable than distances in high dimensions: distances
+								bunch together, while directions stay distinct. The closest directions
+								become the probabilities, and one token is drawn from them.
 							</p>
 							<p>
 								The plot below is a two-dimensional slice: <strong>Power</strong> on
@@ -666,16 +667,6 @@
 								final vector is scored against the vocabulary and turned into a
 								distribution; one token is drawn. It is appended, and the next pass begins;
 								the loop ends when the model emits the special token <strong>&lt;|endoftext|&gt;</strong>.
-							</p>
-							<p>
-								At the end of the pipeline, the last token carries the whole context.
-								Attention has repeatedly mixed information between tokens, and the MLP
-								has shifted it at every layer, so the vector now holds the meaning built
-								up so far. To score the next word, the model multiplies that vector with
-								the vocabulary matrix and compares the angle to every word's vector.
-								Angles are more reliable than distances in high dimensions: distances
-								bunch together, while directions stay distinct. The closest directions
-								become the probabilities, and one token is drawn from them.
 							</p>
 							<p>
 								No step has a tidy fact database, and no step “understands” in the human
@@ -2505,7 +2496,7 @@
 				var degs = POS_FREQ.map(function (f) {
 					return posDegrees(pos * f) + "°";
 				});
-				posOut.innerHTML = (DE ? 'Position ' : 'position ') + '<b>' + pos + '</b>' +
+				posOut.innerHTML = (DE ? 'Ein Token an Position ' : 'One token at position ') + '<b>' + pos + '</b>' +
 					' · d0/d1 <b>' + degs[0] + '</b>' + posTurnNote(pos * POS_FREQ[0]) +
 					' · d2/d3 <b>' + degs[1] + '</b>' + posTurnNote(pos * POS_FREQ[1]) +
 					' · d4/d5 <b>' + degs[2] + '</b>' + posTurnNote(pos * POS_FREQ[2]) + '.';
@@ -2568,15 +2559,15 @@
 		var attApi = null;
 		var attIndex = 0;
 		var attExamples = DE ? [
-			{ sentence: 'Ich gehe zur <span class="aw-bank">Bank</span>.', contexts: [], shift: [5, 5], caption: 'Ohne eindeutigen Kontext: <b>Bank</b> bleibt in der Mitte, mehrdeutig.' },
-			{ sentence: 'Ich sitze im <span class="aw-river">Park</span> auf der <span class="aw-bank">Bank</span>.', contexts: ['river'], shift: [3.2, 6.8], caption: '<b>Park</b> ist der Nachbar → Bank bewegt sich zur Sitzbank-Bedeutung.' },
-			{ sentence: 'Ich bringe mein <span class="aw-money">Geld</span> zur <span class="aw-bank">Bank</span>.', contexts: ['money'], shift: [7.2, 3.2], caption: '<b>Geld</b> ist der Nachbar → Bank bewegt sich zur Finanzbedeutung.' },
-			{ sentence: 'Nach dem Spaziergang im <span class="aw-river">Park</span> gehe ich zur <span class="aw-bank">Bank</span>, um mein <span class="aw-money">Geld</span> einzuzahlen.', contexts: ['river', 'money'], shift: [6.6, 3.9], caption: 'Beide Nachbarn konkurrieren; <b>Geld</b> gewinnt, also kippt Bank zur Finanzbedeutung.' }
+			{ sentence: 'Ich gehe zur <span class="aw-bank">Bank</span>.', contexts: [], shift: [5, 5], weights: { bank: 1, river: 0, money: 0 }, caption: 'Ohne eindeutigen Kontext: <b>Bank</b> bleibt in der Mitte, mehrdeutig.' },
+			{ sentence: 'Ich sitze im <span class="aw-river">Park</span> auf der <span class="aw-bank">Bank</span>.', contexts: ['river'], shift: [3.2, 6.8], weights: { bank: 0.35, river: 0.65, money: 0 }, caption: '<b>Park</b> ist der Nachbar → Bank bewegt sich zur Sitzbank-Bedeutung.' },
+			{ sentence: 'Ich bringe mein <span class="aw-money">Geld</span> zur <span class="aw-bank">Bank</span>.', contexts: ['money'], shift: [7.2, 3.2], weights: { bank: 0.3, river: 0, money: 0.7 }, caption: '<b>Geld</b> ist der Nachbar → Bank bewegt sich zur Finanzbedeutung.' },
+			{ sentence: 'Nach dem Spaziergang im <span class="aw-river">Park</span> gehe ich zur <span class="aw-bank">Bank</span>, um mein <span class="aw-money">Geld</span> einzuzahlen.', contexts: ['river', 'money'], shift: [6.6, 3.9], weights: { bank: 0.25, river: 0.35, money: 0.4 }, caption: 'Beide Nachbarn konkurrieren; <b>Geld</b> gewinnt, also kippt Bank zur Finanzbedeutung.' }
 		] : [
-			{ sentence: 'I walk to the <span class="aw-bank">bank</span>.', contexts: [], shift: [5, 5], caption: 'No unambiguous context: <b>bank</b> stays in the middle, ambiguous.' },
-			{ sentence: 'I sit by the <span class="aw-river">river</span> on the <span class="aw-bank">bank</span>.', contexts: ['river'], shift: [3.2, 6.8], caption: '<b>River</b> is the neighbour → bank moves toward the water sense.' },
-			{ sentence: 'I bring my <span class="aw-money">money</span> to the <span class="aw-bank">bank</span>.', contexts: ['money'], shift: [7.2, 3.2], caption: '<b>Money</b> is the neighbour → bank moves toward finance.' },
-			{ sentence: 'After the walk by the <span class="aw-river">river</span> I go to the <span class="aw-bank">bank</span> to deposit my <span class="aw-money">money</span>.', contexts: ['river', 'money'], shift: [6.6, 3.9], caption: 'Both neighbours compete; <b>money</b> wins, so bank tilts toward finance.' }
+			{ sentence: 'I walk to the <span class="aw-bank">bank</span>.', contexts: [], shift: [5, 5], weights: { bank: 1, river: 0, money: 0 }, caption: 'No unambiguous context: <b>bank</b> stays in the middle, ambiguous.' },
+			{ sentence: 'I sit by the <span class="aw-river">river</span> on the <span class="aw-bank">bank</span>.', contexts: ['river'], shift: [3.2, 6.8], weights: { bank: 0.35, river: 0.65, money: 0 }, caption: '<b>River</b> is the neighbour → bank moves toward the water sense.' },
+			{ sentence: 'I bring my <span class="aw-money">money</span> to the <span class="aw-bank">bank</span>.', contexts: ['money'], shift: [7.2, 3.2], weights: { bank: 0.3, river: 0, money: 0.7 }, caption: '<b>Money</b> is the neighbour → bank moves toward finance.' },
+			{ sentence: 'After the walk by the <span class="aw-river">river</span> I go to the <span class="aw-bank">bank</span> to deposit my <span class="aw-money">money</span>.', contexts: ['river', 'money'], shift: [6.6, 3.9], weights: { bank: 0.25, river: 0.35, money: 0.4 }, caption: 'Both neighbours compete; <b>money</b> wins, so bank tilts toward finance.' }
 		];
 		var attPos = { bank: [5, 5], river: [0.5, 9.5], money: [10.5, 0.5] };
 		var attColors = { bank: "#63a44b", river: "#5c9baf", money: "#9f9700" };
@@ -2655,6 +2646,8 @@
 				ctx.fillText(label, tx, ty);
 			}
 		}
+		var attMatrix = document.getElementById("iatt-matrix");
+		var attSum = document.getElementById("iatt-sum");
 		function renderAtt() {
 			var ex = attExamples[attIndex];
 			if (attSentence) attSentence.innerHTML = ex.sentence;
@@ -2662,6 +2655,28 @@
 			document.querySelectorAll("[data-att]").forEach(function (b) {
 				b.classList.toggle("is-on", parseInt(b.getAttribute("data-att"), 10) === attIndex);
 			});
+			if (attMatrix) {
+				var cols = ["bank", "river", "money"];
+				var html = '<div class="am-title">' + (DE ? "Attention-Gewichte für " : "attention weights for ") + attLabel("bank") + "</div>";
+				html += '<div class="am-row">';
+				cols.forEach(function (word) {
+					var pct = Math.round(ex.weights[word] * 100);
+					html += '<div class="am-cell"><b>' + attLabel(word) + "</b><span>" + pct + (DE ? " %" : "%") + '</span><span class="am-bar"><i style="width:' + pct + "%;background:" + attColors[word] + '"></i></span></div>';
+				});
+				html += "</div>";
+				attMatrix.innerHTML = html;
+			}
+			if (attSum) {
+				var parts = ["bank", "river", "money"].filter(function (word) {
+					return ex.weights[word] > 0;
+				}).map(function (word) {
+					return ex.weights[word].toFixed(2) + "\\,v_{\\text{" + attLabel(word) + "}}";
+				});
+				var tex = "\\underbrace{\\underbrace{" + parts.join(" + ") + "}_{\\text{" + (DE ? "Summe der gewichteten Values" : "sum of the weighted values") + "}} = \\text{out}_{\\text{" + attLabel("bank") + "}}}_{\\text{" + (DE ? "was Bank aus dem Kontext mitnimmt" : "what bank takes from the context") + "}}";
+				attSum.setAttribute("data-tex", tex);
+				attSum.removeAttribute("data-tex-rendered");
+				if (TM.typesetMath) TM.typesetMath(attSum.parentNode);
+			}
 			if (attApi) attApi.redraw();
 		}
 		if (attCanvas) {

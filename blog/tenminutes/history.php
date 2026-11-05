@@ -701,7 +701,10 @@
 								<strong>query</strong>, a <strong>key</strong>, and a <strong>value</strong>.
 								The query of one token is compared with the keys of the others; the scores
 								are scaled, passed through a softmax, and used as weights to mix the values.
-								A causal mask in a decoder hides future tokens, so the model cannot see the
+								The original transformer had two halves: an <strong>encoder</strong>, which
+								reads the whole input with both directions visible, and a
+								<strong>decoder</strong>, which generates the output one token at a time. A
+								causal mask in the decoder hides future tokens, so the model cannot see the
 								answer it is supposed to predict. With the mask on, each token may attend only
 								to itself and the past, which is exactly the signal used to train a model to
 								complete a sentence. Several heads run in parallel, each in its own subspace,
@@ -726,8 +729,9 @@
 								made the recipe <strong>pretrain, then fine-tune</strong> the default.
 							</p>
 							<p>
-								<strong>GPT</strong> took the other branch: a decoder-only transformer trained
-								autoregressively on the next token. GPT-2 (2019) showed that a large model
+								<strong>GPT</strong> took the other branch: it kept the decoder half, dropped
+								the encoder, and trained autoregressively on the next token. GPT-2 (2019)
+								showed that a large model
 								could perform some tasks zero-shot, from a prompt alone. GPT-3 (Brown et al.,
 								2020), with 175 billion parameters, showed that scale could produce a
 								flexible few-shot learner. The same block, two contracts with the data: BERT
@@ -735,28 +739,28 @@
 								token.
 							</p>
 							<p>
-								The recipe then became an engineering programme. <strong>ULMFiT</strong>
+								The recipe then became an engineering programme.
+								<strong><a href="https://arxiv.org/abs/1801.06146" rel="noopener">ULMFiT</a></strong>
 								supplied the three-step template: pretrain on general text, fine-tune on the
-								target domain, fine-tune on the task. <strong>RoBERTa</strong> showed that
-								BERT had been undertrained, and that more data with dynamic masking improved
-								it. <strong>ELECTRA</strong> changed the objective from filling blanks to
-								detecting replaced tokens, which gives a training signal at every position.
-								<strong>T5</strong> turned every task into text-to-text.
-							</p>
-							<p class="step-note">Primary papers:
-								<a href="https://arxiv.org/abs/1801.06146" rel="noopener">ULMFiT</a>,
-								<a href="https://arxiv.org/abs/1907.11692" rel="noopener">RoBERTa</a>,
-								<a href="https://arxiv.org/abs/2003.10555" rel="noopener">ELECTRA</a>,
-								<a href="https://arxiv.org/abs/1910.10683" rel="noopener">T5</a>.
+								target domain, fine-tune on the task.
+								<strong><a href="https://arxiv.org/abs/1907.11692" rel="noopener">RoBERTa</a></strong>
+								showed that BERT had been undertrained, and that more data with dynamic
+								masking improved it.
+								<strong><a href="https://arxiv.org/abs/2003.10555" rel="noopener">ELECTRA</a></strong>
+								changed the objective from filling blanks to detecting replaced tokens,
+								which gives a training signal at every position.
+								<strong><a href="https://arxiv.org/abs/1910.10683" rel="noopener">T5</a></strong>
+								turned every task into text-to-text.
 							</p>
 							<p>
-								<strong>Chinchilla</strong> (Hoffmann et al., 2022) showed that, for a fixed
-								compute budget, many models were too large for the amount of data they saw; a
-								smaller model trained on more tokens can do better. The rough rule of thumb
-								from that work is about twenty training tokens per parameter, though later
-								models often go further. <strong>LLaMA</strong>
-								applied that lesson and released models that could run on ordinary hardware,
-								which helped the open-weight ecosystem grow.
+								The <strong>Chinchilla experiments</strong>
+								(<a href="https://arxiv.org/abs/2203.15556" rel="noopener">Hoffmann et al., 2022</a>)
+								tested how to spend a fixed compute budget. They found that many models were
+								too large for the amount of data they saw; a smaller model trained on more
+								tokens can do better. The rough rule of thumb from that work is about twenty
+								training tokens per parameter, though later models often go further.
+								<strong>LLaMA</strong> applied that lesson and released models that could run
+								on ordinary hardware, which helped the open-weight ecosystem grow.
 							</p>
 							<p>
 								The final layer is <strong>post-training</strong>. A raw next-token predictor
@@ -820,7 +824,7 @@
 										<p class="llm-note llm-mask-note"><b>Causal mask</b> (also called an autoregressive mask): a word may only see itself and the words before it. Future cells are set to zero before the softmax and the row is renormalised, so it still sums to <b>1.00</b>. That is what stops the model from reading the answer it is about to write.</p>
 									</div>
 									<div class="llm-qkv">
-										<span class="is-q">query</span><span class="llm-arrow">×</span><span class="is-k">keys</span><span class="llm-arrow">→</span><span class="is-s">softmax</span><span class="llm-arrow">→</span><span class="is-v">mix values</span>
+										<span class="is-q">query</span><span class="llm-arrow">×</span><span class="is-k" data-no-i18n>keys</span><span class="llm-arrow">→</span><span class="is-s">softmax</span><span class="llm-arrow">→</span><span class="is-v">mix values</span>
 									</div>
 									<div class="llm-attn-math">
 										<div class="llm-math-label">One head, one token</div>
@@ -1166,7 +1170,7 @@
 				name: "Scale & alignment",
 				era: "LLMs · post-training",
 				title: "Scale, then steer",
-				text: "GPT-3 (Brown et al., 2020) shows that a 175-billion-parameter decoder can learn from a handful of examples in the prompt. Chinchilla (Hoffmann et al., 2022) shows that many models were too large for their training data: for the same compute, a smaller model on more tokens does better. LLaMA brings that lesson to open weights. RLHF and InstructGPT shape the next-token distribution toward answers people find helpful.",
+				text: "GPT-3 (Brown et al., 2020) shows that a 175-billion-parameter language model can learn from a handful of examples in the prompt. The Chinchilla experiments (Hoffmann et al., 2022) show that many models were too large for their training data: for the same compute, a smaller model on more tokens does better. LLaMA brings that lesson to open weights. RLHF and InstructGPT shape the next-token distribution toward answers people find helpful.",
 				img: "../data_center.jpg",
 				alt: "A data center aisle of server racks",
 				cap: "A data center aisle: the compute behind the scale era. Image: Christopher Bowns, <a href='https://commons.wikimedia.org/wiki/File:Virginia_Tech_-_data_center.jpg' rel='noopener'>CC BY-SA 2.0</a>."
@@ -1347,6 +1351,7 @@
 			var convFormula = document.getElementById("conv-formula");
 			var convMode = "edges";
 			var convPos = 0;
+			var convVisited = {};
 			function convCell(value, cls) {
 				var el = document.createElement("div");
 				el.className = "conv-cell" + (cls ? " " + cls : "");
@@ -1387,23 +1392,27 @@
 					});
 				});
 				convOutput.innerHTML = "";
+				convVisited[convPos] = true;
 				var values = [];
 				for (var orow = 0; orow < 3; orow++) {
 					for (var ocol = 0; ocol < 3; ocol++) {
 						var sum = 0;
 						for (var i = 0; i < 3; i++) for (var j = 0; j < 3; j++) sum += CONV_IMG[orow + i][ocol + j] * k[i][j];
 						values.push(sum);
-						var out = convCell(sum.toFixed(2), orow === row && ocol === col ? "is-current" : "");
-						var heat = Math.min(1, Math.abs(sum) / 3);
-						out.style.background = "color-mix(in srgb, var(--tm-green) " + (heat * 72) + "%, var(--tm-paper-2))";
+						var seen = !!convVisited[orow * 3 + ocol];
+						var out = convCell(seen ? sum.toFixed(2) : "?", (orow === row && ocol === col ? "is-current" : "") + (seen ? "" : " is-unvisited"));
+						if (seen) {
+							var heat = Math.min(1, Math.abs(sum) / 3);
+							out.style.background = "color-mix(in srgb, var(--tm-green) " + (heat * 72) + "%, var(--tm-paper-2))";
+						}
 						convOutput.appendChild(out);
 					}
 				}
 				if (convReadout) {
 					var total = values[convPos];
 					convReadout.textContent = CONV_DE
-						? "Position (" + row + ", " + col + "): Die neun Produkte aus Bildausschnitt und Kernel ergeben " + total.toFixed(2) + ". Die übrigen Zellen der Feature Map entstehen genauso, nur mit dem Fenster an einer anderen Stelle."
-						: "Position (" + row + ", " + col + "): the nine products of patch and kernel add up to " + total.toFixed(2) + ". The other feature-map cells are made the same way, with the window at another position.";
+						? "Position (" + row + ", " + col + "): Die neun Produkte aus Bildausschnitt und Kernel ergeben " + total.toFixed(2) + ". Die übrigen Zellen der Feature Map füllen sich, sobald der Kernel sie erreicht."
+						: "Position (" + row + ", " + col + "): the nine products of patch and kernel add up to " + total.toFixed(2) + ". The other feature-map cells fill in as the kernel reaches them.";
 				}
 				if (convFormula) {
 					convFormula.setAttribute("data-tex", convFormulaTex(k, row, col, values[convPos]));
@@ -1414,6 +1423,8 @@
 			document.querySelectorAll("[data-kernel]").forEach(function (btn) {
 				btn.addEventListener("click", function () {
 					convMode = btn.getAttribute("data-kernel");
+					convPos = 0;
+					convVisited = {};
 					document.querySelectorAll("[data-kernel]").forEach(function (b) { b.classList.toggle("is-on", b === btn); });
 					convRender();
 				});
