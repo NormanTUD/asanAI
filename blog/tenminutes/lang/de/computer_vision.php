@@ -79,18 +79,8 @@ return [
 		'The aha' => 'Der Aha-Moment',
 		'A machine sees by building patterns on top of patterns.' => 'Eine Maschine sieht, indem sie Muster auf Muster baut.',
 		'The cat is never in the pixels; it is in the hierarchy the network learns.' => 'Die Katze steckt nie in den Pixeln; sie steckt in der Hierarchie, die das Netz lernt.',
-		'What the network sees at each layer can be made visible. The first layer responds to local edges. Here is the real stop sign, the response of a vertical-edge kernel, and the combined edge magnitude from vertical and horizontal kernels. Deeper layers combine these edges into corners, parts, and finally the whole sign.' => 'Was das Netz in jeder Schicht sieht, lässt sich sichtbar machen. Die erste Schicht reagiert auf lokale Kanten. Hier sind das echte Stoppschild, die Antwort eines Vertikalkanten-Kernels und die kombinierte Kantenstärke aus vertikalen und horizontalen Kernels. Tiefere Schichten setzen diese Kanten zu Ecken, Teilen und schließlich zum ganzen Schild zusammen.',
-	],
-	'blocks' => [
-		'Input: the real stop sign. Photo: Matthew Paul Argall, <a href="https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg" rel="noopener">CC0</a>.' => 'Eingabe: das echte Stoppschild. Foto: Matthew Paul Argall, <a href="https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg" rel="noopener">CC0</a>.',
-		'Vertical edges: the actual output of a vertical Sobel kernel. Processing: Ten Minutes, <a href="assets/img/stop-edges-v.png">CC0 1.0</a>, from the CC0 photo.' => 'Vertikale Kanten: die tatsächliche Ausgabe eines vertikalen Sobel-Kernels. Verarbeitung: Ten Minutes, <a href="assets/img/stop-edges-v.png">CC0 1.0</a>, aus dem CC0-Foto.',
-		'Combined edge magnitude: vertical and horizontal responses. Processing: Ten Minutes, <a href="assets/img/stop-edges-mag.png">CC0 1.0</a>.' => 'Kombinierte Kantenstärke: vertikale und horizontale Antworten. Verarbeitung: Ten Minutes, <a href="assets/img/stop-edges-mag.png">CC0 1.0</a>.',
 	],
 	'attrs' => [
-		'A red octagonal stop sign in Victoria, Australia' => 'Ein rotes achteckiges Stoppschild in Victoria, Australien',
-		'Vertical-edge feature map of the stop sign' => 'Feature-Map der vertikalen Kanten des Stoppschilds',
-		'Combined edge-magnitude feature map of the stop sign' => 'Feature-Map der kombinierten Kantenstärke des Stoppschilds',
-
 		'A convolution applied to a small grid' => 'Eine Faltung auf ein kleines Gitter angewendet',
 		'A cat face at three levels of feature abstraction' => 'Ein Katzengesicht auf drei Ebenen der Merkmalsabstraktion',
 		'Segment Anything Model segmentation examples' => 'Segment-Anything-Model-Segmentierungsbeispiele',
