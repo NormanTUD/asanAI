@@ -9,6 +9,7 @@ DONE — Embedding-Absatz: Schlüssel „image“ → „picture“ korrigiert; 
 DONE — Attention: Gewichtsmatrix und gewichtete Value-Summe mit zwei underbrace-Ebenen ergänzt.
 DONE — Tokenizer-Chips ins Deutsche übersetzt.
 DONE — Demo 01: „Prinzessin“ durch „Ritter“ ersetzt; alle deutschen Nomen nehmen jetzt „ein“, der Artikel-Sonderfall ist entfernt.
+DONE — Demo 01: Höhe des Erklärtexts auf 42 px fixiert; beim Abschluss springt nichts mehr.
 
 history:
 
