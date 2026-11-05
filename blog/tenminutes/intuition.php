@@ -310,7 +310,7 @@
 								</div>
 
 								<div class="step-pane" id="step-embed">
-									<p class="step-note step-lead">Each token id points to a vector of learned parameters. A real model uses thousands of dimensions, often around ten thousand; this demo uses two so the picture fits on screen, but the principle is the same. The vector is the token's starting representation. The model learns these points from its training data (Wikipedia, books, web pages, code) and chooses the rules itself. Related tokens end up near each other, and directions carry relationships.</p>
+									<p class="step-note step-lead">Each token id points to a vector of learned parameters. A real model uses thousands of dimensions, often around ten thousand; this demo uses two so the picture can be represented, but the principle is the same. The vector is the token's starting representation. The model learns these points from its training data (Wikipedia, books, web pages, code) and chooses the rules itself. Related tokens end up near each other, and directions carry relationships.</p>
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 2 · Embed</span>
