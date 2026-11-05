@@ -21769,6 +21769,203 @@ window.bibData = {
 		url: "https://doi.org/10.1109/ASMC.2016.7491077",
 		alternativetitle: "Ruth and Berndt, 2016"
 	},
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Silicon, wafers and lithography  (untold_history_ii.php)
+	 *  Why silicon won, how sand becomes a single crystal, and how a circuit
+	 *  is printed: sources for "The Fab" section.
+	 *  ───────────────────────────────────────────────────────────────────── */
+	"taylor1964crust": {
+		title: "Abundance of chemical elements in the continental crust: a new table",
+		author: "S. R. Taylor",
+		year: 1964,
+		url: "https://doi.org/10.1016/0016-7037(64)90129-2",
+		alternativetitle: "Taylor, 1964"
+	},
+	"weeks1945elements": {
+		title: "Discovery of the Elements",
+		author: "Mary Elvira Weeks",
+		year: 1945,
+		url: "https://archive.org/details/in.ernet.dli.2015.19567",
+		alternativetitle: "Weeks, Discovery of the Elements (1945)"
+	},
+	"frosch1957surface": {
+		title: "Surface Protection and Selective Masking during Diffusion in Silicon",
+		author: "C. J. Frosch, L. Derick",
+		year: 1957,
+		url: "https://doi.org/10.1149/1.2428650",
+		alternativetitle: "Frosch and Derrick, 1957"
+	},
+	"froschderick1957patent": {
+		title: "Oxidation of Semiconductive Surfaces for Controlled Diffusion (U.S. Patent 2,802,760)",
+		author: "Carl J. Frosch, Lincoln Derick",
+		year: 1957,
+		url: "https://patents.google.com/patent/US2802760A/en",
+		alternativetitle: "U.S. Patent 2,802,760"
+	},
+	"hoerni1959planar": {
+		title: "Method of Manufacturing Semiconductor Devices (U.S. Patent 3,025,589)",
+		author: "Jean A. Hoerni",
+		year: 1959,
+		url: "https://patents.google.com/patent/US3025589A/en",
+		alternativetitle: "Hoerni, planar process (1959)"
+	},
+	"tanenbaum1955silicon": {
+		title: "Silicon n-p-n Grown Junction Transistors",
+		author: "M. Tanenbaum, L. B. Valdes, E. Buehler, N. B. Hannay",
+		year: 1955,
+		url: "https://doi.org/10.1063/1.1722071",
+		alternativetitle: "Tanenbaum et al., 1955"
+	},
+	"teal1976singlecrystals": {
+		title: "Single crystals of germanium and silicon: Basic to the transistor and integrated circuit",
+		author: "Gordon K. Teal",
+		year: 1976,
+		url: "https://doi.org/10.1109/T-ED.1976.18464",
+		alternativetitle: "Teal, 1976"
+	},
+	"pfann1952zonemelting": {
+		title: "Principles of Zone-Melting",
+		author: "W. G. Pfann",
+		year: 1952,
+		url: "https://doi.org/10.1007/BF03398137",
+		alternativetitle: "Pfann, 1952"
+	},
+	"yan2019siemens": {
+		title: "Siemens Process",
+		author: "Dazhou Yan",
+		year: 2019,
+		url: "https://doi.org/10.1007/978-3-662-56472-1_4",
+		alternativetitle: "Yan, Siemens Process (2019)"
+	},
+	"hahn2001wafer300": {
+		title: "The 300 mm silicon wafer: a cost and technology challenge",
+		author: "Peter O. Hahn",
+		year: 2001,
+		url: "https://doi.org/10.1016/S0167-9317(00)00499-8",
+		alternativetitle: "Hahn, 2001"
+	},
+	"levinson2005lithography": {
+		title: "Principles of Lithography (2nd ed.)",
+		author: "Harry J. Levinson",
+		year: 2005
+	},
+	"andrus1957photolith": {
+		title: "Fabrication of Semiconductor Devices (U.S. Patent 3,122,817)",
+		author: "Jules Andrus",
+		year: 1957,
+		url: "https://patents.google.com/patent/US3122817A/en",
+		alternativetitle: "Andrus, 1957"
+	},
+	"lathrop2013photolith": {
+		title: "The Diamond Ordnance Fuze Laboratory's Photolithographic Approach to Microcircuits",
+		author: "Jay W. Lathrop",
+		year: 2013,
+		url: "https://doi.org/10.1109/MAHC.2011.83",
+		alternativetitle: "Lathrop, 2013"
+	},
+	"perkinelmer1973micralign": {
+		title: "Perkin-Elmer Series 100 Projection Scanning Aligners",
+		author: "Chip History Center",
+		year: 1973,
+		url: "https://www.chiphistory.org/154-perkin-elmer-micralign-projection-mask-alignment-system",
+		alternativetitle: "Perkin-Elmer Micralign (1973)"
+	},
+	"gca1975stepper": {
+		title: "GCA Mann 4800 Direct Step on Wafer System",
+		author: "Chip History Center",
+		year: 1975,
+		url: "https://www.chiphistory.org/99-gca-mann-4800-direct-step-on-wafer-system",
+		alternativetitle: "GCA DSW 4800 (1975)"
+	},
+	"jain1982excimer": {
+		title: "Ultrafast deep UV lithography with excimer lasers",
+		author: "K. Jain, C. G. Willson, B. J. Lin",
+		year: 1982,
+		url: "https://doi.org/10.1109/EDL.1982.25476",
+		alternativetitle: "Jain et al., 1982"
+	},
+	"lin2004immersion": {
+		title: "Immersion lithography and its impact on semiconductor manufacturing",
+		author: "Burn-Jeng Lin",
+		year: 2004,
+		url: "https://doi.org/10.1117/1.1756917",
+		alternativetitle: "Lin, 2004"
+	},
+	"tomie2012tin": {
+		title: "Tin laser-produced plasma as the light source for extreme ultraviolet lithography high-volume manufacturing",
+		author: "Toshihisa Tomie",
+		year: 2012,
+		url: "https://doi.org/10.1117/1.JMM.11.2.021109",
+		alternativetitle: "Tomie, 2012"
+	},
+	"joo2014vacuum": {
+		title: "Vacuum Technology for EUV Lithography",
+		author: "Jang Hun Joo",
+		year: 2014,
+		url: "https://doi.org/10.5757/vacmag.1.3.14",
+		alternativetitle: "Joo, 2014"
+	},
+	"sze2007physics": {
+		title: "Physics of Semiconductor Devices (3rd ed.)",
+		author: "S. M. Sze, Kwok K. Ng",
+		year: 2007
+	},
+	"usgs_germanium2025": {
+		title: "Germanium: Mineral Commodity Summaries 2025",
+		author: "U.S. Geological Survey",
+		year: 2025,
+		url: "https://pubs.usgs.gov/periodicals/mcs2025/mcs2025-germanium.pdf",
+		alternativetitle: "USGS, 2025"
+	},
+	"img_czochralski_1956": {
+		title: "Silicon grown by the Czochralski process at Raytheon, 1956",
+		author: "George E. Meyers",
+		year: 1956,
+		url: "https://commons.wikimedia.org/wiki/File:Silicon_grown_by_Czochralski_process_1956.jpg",
+		alternativetitle: "Czochralski crystal growth at Raytheon, 1956",
+		license: "Public domain"
+	},
+	"img_silicon_ingot": {
+		title: "Monocrystalline silicon ingot",
+		author: "ArticCynda",
+		year: 2017,
+		url: "https://commons.wikimedia.org/wiki/File:Monocrystalline_silicon_ingot.jpg",
+		alternativetitle: "Monocrystalline silicon ingot",
+		license: "CC0"
+	},
+	"img_silicon_wafer_300mm": {
+		title: "12-inch silicon wafer",
+		author: "Peellden",
+		year: 2011,
+		url: "https://commons.wikimedia.org/wiki/File:12-inch_silicon_wafer.jpg",
+		alternativetitle: "300 mm silicon wafer",
+		license: "CC BY-SA 3.0"
+	},
+	"img_photolithography_process": {
+		title: "Photoresist of Photolithography",
+		author: "May lam",
+		year: 2017,
+		url: "https://commons.wikimedia.org/wiki/File:Photoresist_of_Photolithography.png",
+		alternativetitle: "Photolithography process with positive and negative resist",
+		license: "CC BY-SA 4.0"
+	},
+	"img_photolithography_cleanroom": {
+		title: "Cleanroom: photolithography lab",
+		author: "UCL Mathematical & Physical Sciences (photo: O. Usher)",
+		year: 2013,
+		url: "https://commons.wikimedia.org/wiki/File:Cleanroom_-_photolithography_lab_(9148355219).jpg",
+		alternativetitle: "Photolithography laboratory, London Centre for Nanotechnology",
+		license: "CC BY 2.0"
+	},
+	"img_silicon_wafer_dicing": {
+		title: "A semiconductor wafer on a dicing (blue) tape",
+		author: "Khpsoi",
+		year: 2021,
+		url: "https://commons.wikimedia.org/wiki/File:A_semiconductor_wafer_on_a_dicing_(blue)_tape._Few_chips_(dies)_from_the_wafer_have_already_been_picked_up_(removed)_for_further_manufacturing.png",
+		alternativetitle: "Wafer on dicing tape",
+		license: "CC BY-SA 4.0"
+	},
 	"amazons3_2006": {
 		title: "Amazon Web Services Launches Amazon S3",
 		author: "Amazon Web Services",
