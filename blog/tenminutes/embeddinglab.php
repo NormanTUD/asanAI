@@ -65,9 +65,13 @@
 							<p>You shall know a word by the company it keeps.</p>
 							<cite>J. R. Firth, <em>A Synopsis of Linguistic Theory</em> (1957), p. 11</cite>
 						</div>
+						<div class="prose">
+							<p>The line runs from Harris to word2vec. <a href="https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf" rel="noopener">Harris (1954)</a> proposed that words with similar distributions have similar meanings; <a href="https://archive.org/details/papersinlinguist0000firt" rel="noopener">Firth (1957)</a> turned the idea into a slogan. Latent semantic analysis (<a href="https://web.archive.org/web/20040726210957id_/http://lsa.colorado.edu:80/papers/JASIS.lsi.90.pdf" rel="noopener">Deerwester et al., 1990</a>) made the idea computable with a matrix factorization, and <a href="https://arxiv.org/abs/1301.3781" rel="noopener">word2vec (Mikolov et al., 2013)</a> made it cheap at scale. GloVe (<a href="https://aclanthology.org/D14-1162/" rel="noopener">Pennington et al., 2014</a>) added global co-occurrence statistics; ELMo (<a href="https://aclanthology.org/N18-1202/" rel="noopener">Peters et al., 2018</a>) and BERT (<a href="https://aclanthology.org/N19-1423/" rel="noopener">Devlin et al., 2019</a>) made the vector contextual.</p>
+						</div>
 						<div class="fieldnotes">
 							<h4>What the coordinate means</h4>
 							<p>There is no “temperature neuron” in a real model. A dimension is a latent feature: a direction the optimization found useful, not a label a human chose. The 1-D line is a teaching device.</p>
+							<p>The word “embedding” is literal: the vector embeds the token in a space. It is not a definition; it is a learned coordinate.</p>
 						</div>
 					</section>
 
@@ -172,10 +176,14 @@
 							</p>
 							<p>
 								One caution: a cosine of 0.8 is not “80% similar”. It is the cosine of an
-								angle, not a probability. The number is useful for ranking neighbours inside
-								one model; comparing raw cosine values across different models or datasets is
-								usually meaningless, because each space has its own geometry and its own
-								baseline level of similarity.
+								angle, not a probability. Softmax is the operation that turns a vector of
+								scores into probabilities that sum to one; cosine is not softmax, because it
+								is a similarity between two vectors, not a distribution over candidates. If
+								you want a percentage, you have to normalize the similarities over a fixed
+								candidate set, and the number then depends on that set. The raw cosine is
+								useful for ranking neighbours inside one model; comparing raw cosine values
+								across different models or datasets is usually meaningless, because each
+								space has its own geometry and its own baseline level of similarity.
 							</p>
 						</div>
 
@@ -213,6 +221,21 @@
 								one reason a “nearest neighbour” can feel surprising: the space is vast, and
 								absolute distance is less informative than direction.
 							</div>
+						</div>
+
+						<div class="demo demo--paper" id="magnitude-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Magnitude can change <span>· demo 03</span></p>
+									<p class="demo-sub">Two vectors point in the same direction. One is longer; the angle stays the same.</p>
+								</div>
+								<span class="demo-badge">same angle</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas" id="magnitude-canvas" style="height:260px" aria-label="Two vectors with the same direction and different lengths"></canvas>
+								<p class="meadow-caption" id="magnitude-caption" style="color:var(--tm-muted)">A and B point the same way. B is longer, so the Euclidean gap grows; the angle stays zero and the cosine stays 1.00.</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Length is not direction. A longer vector can mean the same thing; that is why cosine is the usual default.</span></div>
 						</div>
 					</section>
 
@@ -328,10 +351,10 @@
 			{ w: "Kitten", de: "Kätzchen", x: 0.78, y: 0.42, c: "#9185be" }
 		];
 		var analogies = [
-			{ a: "King", b: "Man", c: "Woman", target: "Queen", label: "King − Man + Woman" },
-			{ a: "Uncle", b: "Man", c: "Woman", target: "Aunt", label: "Uncle − Man + Woman" },
-			{ a: "Paris", b: "France", c: "Germany", target: "Berlin", label: "Paris − France + Germany" },
-			{ a: "Puppy", b: "Dog", c: "Cat", target: "Kitten", label: "Puppy − Dog + Cat" }
+			{ a: "King", b: "Man", c: "Woman", target: "Queen", label: "King − Man + Woman", labelDe: "König − Mann + Frau" },
+			{ a: "Uncle", b: "Man", c: "Woman", target: "Aunt", label: "Uncle − Man + Woman", labelDe: "Onkel − Mann + Frau" },
+			{ a: "Paris", b: "France", c: "Germany", target: "Berlin", label: "Paris − France + Germany", labelDe: "Paris − Frankreich + Deutschland" },
+			{ a: "Puppy", b: "Dog", c: "Cat", target: "Kitten", label: "Puppy − Dog + Cat", labelDe: "Welpe − Hund + Katze" }
 		];
 		var dirSets = {
 			gender: [["Man", "Woman"], ["King", "Queen"], ["Uncle", "Aunt"], ["Prince", "Princess"]],
@@ -340,10 +363,10 @@
 			young: [["Dog", "Puppy"], ["Cat", "Kitten"]]
 		};
 		var directionMeta = {
-			gender: { label: "gender", color: "#5c9baf", hint: "a horizontal arrow, repeated across four pairs" },
-			royalty: { label: "power", color: "#63a44b", hint: "a vertical arrow: an ordinary person becomes a ruler" },
-			capital: { label: "capital", color: "#9f9700", hint: "a diagonal up-right arrow: a country resolves to its capital" },
-			young: { label: "age", color: "#9185be", hint: "a diagonal up-left arrow: an adult becomes a juvenile" }
+			gender: { label: "gender", labelDe: "Geschlecht", color: "#5c9baf", hint: "a horizontal arrow, repeated across four pairs", hintDe: "ein horizontaler Pfeil, der sich über vier Paare wiederholt" },
+			royalty: { label: "power", labelDe: "Macht", color: "#63a44b", hint: "a vertical arrow: an ordinary person becomes a ruler", hintDe: "ein vertikaler Pfeil: aus einer gewöhnlichen Person wird ein Herrscher" },
+			capital: { label: "capital", labelDe: "Hauptstadt", color: "#9f9700", hint: "a diagonal up-right arrow: a country resolves to its capital", hintDe: "ein diagonaler Pfeil nach oben rechts: ein Land führt zu seiner Hauptstadt" },
+			young: { label: "age", labelDe: "Alter", color: "#9185be", hint: "a diagonal up-left arrow: an adult becomes a juvenile", hintDe: "ein diagonaler Pfeil nach oben links: aus einem Erwachsenen wird ein Jungtier" }
 		};
 		var selected = "King";
 		var analogyIndex = 0;
@@ -356,6 +379,9 @@
 		var captionEl = document.getElementById("emb-caption");
 
 		function get(name) { return words.find(function (w) { return w.w === name; }); }
+		function wordLabel(word) { return DE && word && word.de ? word.de : (word ? word.w : ""); }
+		function labelFor(name) { var w = get(name); return w ? wordLabel(w) : name; }
+		function analogyLabel(an) { return DE && an.labelDe ? an.labelDe : an.label; }
 		function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
 		function nearestOf(name) {
 			var base = get(name);
@@ -465,12 +491,13 @@
 				ctx.font = (isSel ? "700 " : "600 ") + "11px Barlow, system-ui, sans-serif";
 				ctx.textAlign = "center";
 				ctx.fillStyle = isSel || isOperand ? c.ink : c.muted;
-				ctx.fillText(word.w, x, y - 11);
+				ctx.fillText(wordLabel(word), x, y - 11);
 			});
 
-			if (selectedEl) selectedEl.textContent = selected;
-			if (nearestEl) nearestEl.textContent = nearest ? nearest.w : "...";
-			if (resultEl) resultEl.textContent = res ? res.nearest.w : "—";
+			var selWord = get(selected);
+			if (selectedEl) selectedEl.textContent = selWord ? wordLabel(selWord) : selected;
+			if (nearestEl) nearestEl.textContent = nearest ? wordLabel(nearest) : "...";
+			if (resultEl) resultEl.textContent = res ? wordLabel(res.nearest) : "—";
 			var alignEl = document.getElementById("emb-align");
 			if (alignEl) {
 				if (!res) alignEl.textContent = "—";
@@ -482,14 +509,20 @@
 				}
 			}
 			if (captionEl) {
-				if (an) captionEl.setAttribute("aria-label", an.label + " lands near " + res.nearest.w);
+				if (an) captionEl.setAttribute("aria-label", DE ? analogyLabel(an) + " landet in der Nähe von " + wordLabel(res.nearest) : an.label + " lands near " + res.nearest.w);
 				else captionEl.removeAttribute("aria-label");
 			}
 			var note = document.getElementById("emb-direction-note");
 			if (note) {
-				if (!showDirection) note.textContent = "Each relation has its own arrow. The direction buttons overlay one family at a time; “all” shows that they are deliberately distinct.";
-				else if (showDirection === "all") note.textContent = "Four relations, four different directions. Gender is horizontal, power vertical, capital up-right, age up-left. Real embeddings are noisier, but this is why a direction can act as a reusable operator.";
-				else note.textContent = "The " + directionMeta[showDirection].label + " direction is " + directionMeta[showDirection].hint + ". The same arrow appears in every pair of that family.";
+				if (!showDirection) note.textContent = DE
+					? "Jede Beziehung hat ihren eigenen Pfeil. Die Richtungsbuttons legen jeweils eine Familie darüber; „alle“ zeigt, dass sie bewusst verschieden sind."
+					: "Each relation has its own arrow. The direction buttons overlay one family at a time; “all” shows that they are deliberately distinct.";
+				else if (showDirection === "all") note.textContent = DE
+					? "Vier Beziehungen, vier verschiedene Richtungen. Geschlecht ist horizontal, Macht vertikal, Hauptstadt diagonal nach oben rechts, Alter diagonal nach oben links. Echte Embeddings sind verrauschter, aber deshalb kann eine Richtung als wiederverwendbarer Operator wirken."
+					: "Four relations, four different directions. Gender is horizontal, power vertical, capital up-right, age up-left. Real embeddings are noisier, but this is why a direction can act as a reusable operator.";
+				else note.textContent = DE
+					? "Die Richtung „" + directionMeta[showDirection].labelDe + "“ ist " + directionMeta[showDirection].hintDe + ". Derselbe Pfeil erscheint in jedem Paar dieser Familie."
+					: "The " + directionMeta[showDirection].label + " direction is " + directionMeta[showDirection].hint + ". The same arrow appears in every pair of that family.";
 			}
 		}
 		if (canvas) {
@@ -508,6 +541,11 @@
 					if (api) api.redraw();
 				}
 			});
+			function vectorTex(name) {
+				var w = get(name);
+				if (!w) return "";
+				return "\\underbrace{(" + w.x.toFixed(2) + ",\\," + w.y.toFixed(2) + ")}_{\\text{" + labelFor(name) + "}}";
+			}
 			function setEquation(an) {
 				var el = document.getElementById("emb-equation");
 				if (!el) return;
@@ -517,7 +555,9 @@
 					el.innerHTML = "";
 					return;
 				}
-				el.setAttribute("data-tex", "\\text{" + an.a + "} - \\text{" + an.b + "} + \\text{" + an.c + "} \\approx \\text{" + an.target + "}");
+				var tex = "\\underbrace{" + vectorTex(an.a) + " - " + vectorTex(an.b) + " + " + vectorTex(an.c) + "}_{\\text{" + (DE ? "Vektorrechnung" : "vector arithmetic") + "}} \\approx " + vectorTex(an.target);
+				el.setAttribute("data-tex", tex);
+				el.setAttribute("data-tex-display", "true");
 				el.removeAttribute("data-tex-rendered");
 				if (window.TM && TM.typesetMath) TM.typesetMath();
 			}
@@ -608,9 +648,15 @@
 				if (outB) outB.textContent = cosB.value + "°";
 				if (outM) outM.textContent = m.toFixed(2);
 				if (cosCaption) {
-					if (m > 1.9) cosCaption.textContent = "B is stretched far out: Euclidean distance is large, but the angle is unchanged. Cosine says they still mean the same direction.";
-					else if (Math.abs(cos) < 0.08) cosCaption.textContent = "Nearly a right angle: the vectors are close to unrelated in this projection. Cosine is near zero.";
-					else cosCaption.textContent = "The dashed line is the Euclidean gap. Stretch B: the gap grows, but the directions stay the same.";
+					if (m > 1.9) cosCaption.textContent = DE
+						? "B ist weit gestreckt: Der euklidische Abstand ist groß, aber der Winkel bleibt gleich. Kosinus sagt, sie zeigen weiterhin in dieselbe Richtung."
+						: "B is stretched far out: Euclidean distance is large, but the angle is unchanged. Cosine says they still mean the same direction.";
+					else if (Math.abs(cos) < 0.08) cosCaption.textContent = DE
+						? "Fast ein rechter Winkel: Die Vektoren sind in dieser Projektion nahezu unverbunden. Kosinus ist nahe null."
+						: "Nearly a right angle: the vectors are close to unrelated in this projection. Cosine is near zero.";
+					else cosCaption.textContent = DE
+						? "Die gestrichelte Linie ist die euklidische Lücke. Strecke B: Die Lücke wächst, aber die Richtungen bleiben gleich."
+						: "The dashed line is the Euclidean gap. Stretch B: the gap grows, but the directions stay the same.";
 				}
 			});
 			function redrawCos() { cosApi.redraw(); }
@@ -628,6 +674,41 @@
 				});
 			});
 			["tm:theme", "resize"].forEach(function (ev) { window.addEventListener(ev, redrawCos); });
+		}
+
+		/* ── magnitude demo ──────────────────────────────────── */
+		var magCanvas = document.getElementById("magnitude-canvas");
+		if (magCanvas) {
+			var magApi = TM.initCanvas(magCanvas, function (ctx, w, h) {
+				var c = TM.colors();
+				ctx.clearRect(0, 0, w, h);
+				var ox = w * 0.18, oy = h * 0.72;
+				var ang = -0.55;
+				var R = Math.min(w, h) * 0.42;
+				var ax = ox + Math.cos(ang) * R, ay = oy + Math.sin(ang) * R;
+				var bx = ox + Math.cos(ang) * R * 1.8, by = oy + Math.sin(ang) * R * 1.8;
+				ctx.strokeStyle = c.dark ? "rgba(92,155,175,.16)" : "rgba(0,75,111,.12)";
+				ctx.lineWidth = 1;
+				ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(w, oy); ctx.stroke();
+				ctx.beginPath(); ctx.moveTo(ox, 0); ctx.lineTo(ox, h); ctx.stroke();
+				drawArrow(ctx, ox, oy, ax, ay, c.sky, false);
+				drawArrow(ctx, ox, oy, bx, by, c.gold, false);
+				ctx.setLineDash([4, 4]);
+				ctx.strokeStyle = c.coral;
+				ctx.lineWidth = 1.2;
+				ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+				ctx.setLineDash([]);
+				ctx.font = "600 11px Barlow, system-ui, sans-serif";
+				ctx.fillStyle = c.ink;
+				ctx.textAlign = "center";
+				ctx.fillText("A", ax + 14, ay - 8);
+				ctx.fillText("B", bx + 14, by - 8);
+				ctx.fillStyle = c.muted;
+				ctx.font = "600 10px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "left";
+				ctx.fillText(DE ? "gleiche Richtung · |B| = 1,8 |A|" : "same direction · |B| = 1.8 |A|", 14, 20);
+			});
+			window.addEventListener("tm:theme", function () { if (magApi) magApi.redraw(); });
 		}
 	})();
 	</script>

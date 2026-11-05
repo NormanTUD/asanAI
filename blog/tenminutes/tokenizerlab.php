@@ -295,7 +295,8 @@ training text, and stop at the target vocabulary size.
 			"at", "by", "from", "that", "this", "it", "we", "you", "they", "he", "she", "i",
 			"once", "upon", "time", "there", "here", "world", "words", "word", "data", "facts",
 			"fact", "human", "humans", "machine", "machines", "learn", "learns", "learning",
-			"france", "paris", "city", "river", "bank", "cake", "king", "queen", "man", "woman"
+			"france", "paris", "city", "river", "bank", "cake", "king", "queen", "man", "woman",
+			"su", "pe", "rc", "al", "if", "ra", "gi", "li", "st", "ic", "ex", "pi", "id", "oc", "io", "us"
 		].sort(function (a, b) { return b.length - a.length; });
 		var COLORS = ["#63a44b", "#5c9baf", "#9f9700", "#9185be", "#869b55", "#1275ac", "#009299", "#92a19a"];
 
