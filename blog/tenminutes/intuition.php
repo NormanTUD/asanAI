@@ -6,7 +6,7 @@
 	<meta name="description" content="A ten-minute interactive introduction to next-token prediction, the loop behind large language models.">
 	<meta name="theme-color" content="#ffffff">
 	<title>One Word at a Time | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css?v=20261105">
+	<link rel="stylesheet" href="assets/site.css?v=20261105b">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 </head>
 <body data-lesson="intuition" data-page="lesson">
@@ -343,15 +343,33 @@
 											<h3 class="sp-title">Every slot gets its own fingerprint</h3>
 										</div>
 										<div class="step-toolbar">
-											<label>Position
-												<input type="range" id="ipe-pos" min="0" max="100" step="1" value="7">
-												<output id="ipe-pos-out">7</output>
+											<label>Context length
+												<input type="range" id="ipe-heat-context" min="16" max="128" step="8" value="64">
+												<output id="ipe-heat-context-out">64</output>
+											</label>
+											<label>Dimensions
+												<input type="range" id="ipe-heat-dims" min="2" max="64" step="2" value="24">
+												<output id="ipe-heat-dims-out">24</output>
 											</label>
 										</div>
+										<canvas class="step-canvas" id="ipe-heatmap" style="height:220px" aria-label="A heatmap of classic sinusoidal positional encodings for a long context"></canvas>
+										<div class="pos-legend" aria-hidden="true">
+											<span><i class="pl-neg"></i>−1</span>
+											<span><i class="pl-zero"></i>0</span>
+											<span><i class="pl-pos"></i>+1</span>
+										</div>
+										<div class="step-out" id="ipe-heat-out">Each row is one position; each column is one dimension.</div>
+										<div class="step-toolbar">
+											<label>Position
+												<input type="range" id="ipe-pos" min="0" max="1000" step="1" value="7">
+												<output id="ipe-pos-out">7</output>
+											</label>
+											<button class="chip is-on" type="button" id="ipe-autorotate" aria-pressed="true">Auto-rotate view</button>
+										</div>
 										<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A token at the centre of three 3D orbits: one per pair of dimensions, each wheel turning at its own speed as the position advances"></canvas>
-										<div class="step-out" id="ipe-out">Position <b>7</b> · pair d0/d1 turns <b>201°</b> · pair d2/d3 turns <b>124°</b> · pair d4/d5 turns <b>80°</b>.</div>
+										<div class="step-out" id="ipe-out">Position <b>7</b> · pair d0/d1 turns <b>41°</b> · pair d2/d3 turns <b>40°</b> · pair d4/d5 turns <b>4°</b>.</div>
 									</div>
-									<p class="step-note">The demo shows the idea of rotary position embeddings (RoPE). Each pair of dimensions is a wheel, and the token sits at the axle. Moving the token forward by one position rotates every wheel by a different, fixed angle. The token itself stays the same; only its angle changes. Attention can then compare two tokens by the angle between their wheels, which encodes their relative distance.</p>
+									<p class="step-note">The heatmap above shows the classic sinusoidal encoding: each position gets a fingerprint built from slow and fast waves. The wheels below show RoPE, a scheme used by many current models. Each pair of dimensions is a wheel, and the token sits at the axle. Moving the token forward by one position rotates every wheel by a different fixed angle, set by the RoPE frequency for that pair. The token itself stays the same; only its angle changes. Attention compares two tokens by the angle between their rotated keys and queries, which depends on the distance between their positions. The demo uses a narrow model width so the turns stay visible; a real model uses thousands of dimensions.</p>
 								</div>
 
 								<div class="step-pane" id="step-attention">
@@ -822,7 +840,9 @@
 			var next;
 			if (opts.length) {
 				next = '<span class="nt-tree-next">' + (opts.length === 1 ? (DE ? "nächstes (nur eine Möglichkeit):" : "next (only one):") : (DE ? "nächstes:" : "next:")) + '</span> '
-					+ opts.map(function (o) { return '<span class="nt-tree-branch">' + escapeHtml(o.t) + '</span>'; }).join('<span class="nt-tree-sep">·</span>');
+					+ opts.map(function (o) {
+						return '<button type="button" class="nt-tree-branch" data-nt-choice="' + escapeHtml(o.t) + '" aria-label="' + escapeHtml((DE ? "Wähle " : "Choose ") + o.t) + '">' + escapeHtml(o.t) + '</button>';
+					}).join('<span class="nt-tree-sep">·</span>');
 			} else {
 				next = '<span class="nt-tree-end">' + (DE ? "Satzende" : "end of sentence") + '</span>';
 			}
@@ -1004,6 +1024,13 @@
 		}
 		if (stepBtn) stepBtn.addEventListener("click", sample);
 		if (resetBtn) resetBtn.addEventListener("click", reset);
+		if (treeEl) {
+			treeEl.addEventListener("click", function (ev) {
+				var branch = ev.target.closest("[data-nt-choice]");
+				if (!branch || !treeEl.contains(branch)) return;
+				choose(branch.getAttribute("data-nt-choice"));
+			});
+		}
 		document.querySelectorAll("[data-decode]").forEach(function (b) {
 			b.addEventListener("click", function () { setDecodeMode(b.getAttribute("data-decode")); });
 		});
@@ -2098,16 +2125,144 @@
 			}
 		}
 
+		/* ── position heatmap ───────────────────────────────── */
+		var heatCanvas = document.getElementById("ipe-heatmap");
+		var heatOut = document.getElementById("ipe-heat-out");
+		var heatApi = null;
+		var heatCount = 64;
+		var heatDims = 24;
+		var HEAT_D_MODEL = 64;
+		function heatValue(position, dim) {
+			var pair = Math.floor(dim / 2) * 2;
+			var denom = Math.pow(10000, pair / HEAT_D_MODEL);
+			return dim % 2 === 0 ? Math.sin(position / denom) : Math.cos(position / denom);
+		}
+		function heatColor(v, c) {
+			var a = Math.pow(Math.min(1, Math.abs(v)), 0.6);
+			var neutral = c.dark ? [30, 58, 74] : [226, 232, 240];
+			var target = hexToRgb(v >= 0 ? c.green : c.coral);
+			var r = Math.round(neutral[0] + (target[0] - neutral[0]) * a);
+			var g = Math.round(neutral[1] + (target[1] - neutral[1]) * a);
+			var b = Math.round(neutral[2] + (target[2] - neutral[2]) * a);
+			return "rgb(" + r + "," + g + "," + b + ")";
+		}
+		function drawHeat(ctx, w, h) {
+			var c = TM.colors();
+			var padL = 38, padR = 10, padT = 8;
+			var heatH = Math.round(h * 0.64);
+			var heatW = w - padL - padR;
+			var cw = heatW / heatCount;
+			var ch = heatH / heatDims;
+			var stats = [];
+			for (var sd = 0; sd < heatDims; sd++) {
+				var vals = [];
+				for (var sp = 0; sp < heatCount; sp++) vals.push(heatValue(sp, sd));
+				var mean = vals.reduce(function (a, b) { return a + b; }, 0) / heatCount;
+				var maxDev = Math.max.apply(null, vals.map(function (v) { return Math.abs(v - mean); })) || 1;
+				stats.push({ mean: mean, maxDev: maxDev });
+			}
+			function cellT(position, dim) {
+				return (heatValue(position, dim) - stats[dim].mean) / stats[dim].maxDev;
+			}
+			ctx.clearRect(0, 0, w, h);
+			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.18)" : "rgba(0,75,111,.18)";
+			ctx.lineWidth = 1;
+			ctx.strokeRect(padL, padT, heatW, heatH);
+			for (var p = 0; p < heatCount; p++) {
+				for (var d = 0; d < heatDims; d++) {
+					var v = cellT(p, d);
+					var x = padL + p * cw;
+					var y = padT + d * ch;
+					ctx.fillStyle = heatColor(v, c);
+					ctx.fillRect(x + 0.5, y + 0.5, Math.max(1, cw - 1), Math.max(1, ch - 1));
+				}
+			}
+			ctx.fillStyle = c.muted;
+			ctx.font = "500 9px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "center";
+			var labelStep = Math.max(4, Math.round(heatCount / 8));
+			for (var p2 = 0; p2 < heatCount; p2 += labelStep) {
+				ctx.fillText(String(p2), padL + p2 * cw + cw / 2, padT + heatH + 13);
+			}
+			ctx.textAlign = "right";
+			for (var d2 = 0; d2 < heatDims; d2 += 2) {
+				ctx.fillText("d" + d2, padL - 6, padT + d2 * ch + ch * 0.7);
+			}
+			var stripTop = padT + heatH + 30;
+			var gap = 1;
+			var stripW = Math.max(2, Math.min(18, (heatW - 92 - (heatDims - 1) * gap) / heatDims));
+			var stripH = 12;
+			ctx.textAlign = "left";
+			ctx.fillStyle = c.muted;
+			ctx.font = "500 9px Barlow, system-ui, sans-serif";
+			ctx.fillText(DE ? "Fingerabdrücke" : "fingerprints", padL, stripTop - 6);
+			[0, heatCount - 1].forEach(function (position, row) {
+				var y = stripTop + row * (stripH + 6);
+				ctx.textAlign = "right";
+				ctx.fillStyle = position === 0 ? c.coral : c.green;
+				ctx.fillText((DE ? "Pos. " : "pos ") + position, padL - 6, y + stripH - 2);
+				ctx.textAlign = "left";
+				for (var d3 = 0; d3 < heatDims; d3++) {
+					var v3 = cellT(position, d3);
+					var xx = padL + d3 * (stripW + gap);
+					ctx.fillStyle = heatColor(v3, c);
+					ctx.fillRect(xx, y, stripW, stripH);
+				}
+			});
+			if (heatOut) {
+				var p0 = [], pn = [];
+				for (var k = 0; k < Math.min(4, heatDims); k++) {
+					p0.push(heatValue(0, k).toFixed(2));
+					pn.push(heatValue(heatCount - 1, k).toFixed(2));
+				}
+				heatOut.innerHTML = (DE ? 'Position 0: ' : 'position 0: ') + '<b>[' + p0.join(", ") + ']</b>' +
+					(DE ? ' · Position ' : ' · position ') + (heatCount - 1) + ': <b>[' + pn.join(", ") + ']</b> ' +
+					'<span class="pos-note">' + (DE ? "· jede Spalte auf ihren eigenen Bereich skaliert" : "· each column scaled to its own range") + '</span>';
+			}
+		}
+		if (heatCanvas) {
+			heatApi = TM.initCanvas(heatCanvas, drawHeat);
+			var heatContextSlider = document.getElementById("ipe-heat-context");
+			var heatContextOut = document.getElementById("ipe-heat-context-out");
+			var heatDimsSlider = document.getElementById("ipe-heat-dims");
+			var heatDimsOut = document.getElementById("ipe-heat-dims-out");
+			if (heatContextSlider) {
+				heatContextSlider.addEventListener("input", function () {
+					heatCount = TM.clamp(parseInt(heatContextSlider.value, 10) || 16, 16, 128);
+					if (heatContextOut) heatContextOut.textContent = String(heatCount);
+					if (heatApi) heatApi.redraw();
+				});
+			}
+			if (heatDimsSlider) {
+				heatDimsSlider.addEventListener("input", function () {
+					heatDims = TM.clamp(parseInt(heatDimsSlider.value, 10) || 2, 2, 64);
+					if (heatDimsOut) heatDimsOut.textContent = String(heatDims);
+					if (heatApi) heatApi.redraw();
+				});
+			}
+			window.addEventListener("tm:theme", function () {
+				if (heatApi) heatApi.redraw();
+			});
+			if (heatContextOut) heatContextOut.textContent = String(heatCount);
+			if (heatDimsOut) heatDimsOut.textContent = String(heatDims);
+			if (heatApi) heatApi.redraw();
+		}
+
 		/* ── positions ───────────────────────────────────────── */
 		var posCanvas = document.getElementById("ipe-canvas");
 		var posOut = document.getElementById("ipe-out");
 		var posApi = null;
 		var pos = 7;
 		var posShown = 7;
-		var POS_FREQ = [0.5, 0.31, 0.2];
+		var POS_BASE = 10000;
+		var POS_DIM = 8;
+		var POS_FREQ = [0, 1, 2].map(function (i) {
+			return Math.pow(POS_BASE, -2 * i / POS_DIM);
+		});
 		var POS_COLORS = ["green", "blue", "gold"];
 		var POS_LABELS = ["d0/d1", "d2/d3", "d4/d5"];
 		var posReduce = TM.prefersReduced();
+		var posAuto = !posReduce;
 		var posClock = 0;
 		function posAngle(pair, p) {
 			return p * POS_FREQ[pair];
@@ -2131,8 +2286,8 @@
 		}
 		function posProjector(w, h) {
 			var t = posClock * 0.00018;
-			var az = -0.62 + (posReduce ? 0 : Math.sin(t) * 0.26);
-			var el = 0.34 + (posReduce ? 0 : Math.sin(t * 0.7) * 0.035);
+			var az = -0.62 + (posAuto ? Math.sin(t) * 0.26 : 0);
+			var el = 0.34 + (posAuto ? Math.sin(t * 0.7) * 0.035 : 0);
 			var ca = Math.cos(az), sa = Math.sin(az);
 			var ce = Math.cos(el), se = Math.sin(el);
 			var unit = Math.min(w * 0.29, h * 0.36);
@@ -2196,11 +2351,9 @@
 			ctx.arc(cx, cy, unit * 1.6, 0, Math.PI * 2);
 			ctx.fill();
 
-			ctx.textAlign = "left";
+			ctx.textAlign = "right";
 			ctx.font = "600 10px Barlow, system-ui, sans-serif";
 			ctx.fillStyle = c.muted;
-			ctx.fillText(DE ? "Ein Token, drei Drehungen" : "one token, three rotations", 14, 18);
-			ctx.textAlign = "right";
 			ctx.fillText((DE ? "Position " : "position ") + "m = " + pos, w - 14, 18);
 			ctx.textAlign = "left";
 
@@ -2299,38 +2452,58 @@
 			var posSlider = document.getElementById("ipe-pos");
 			var posCountOut = document.getElementById("ipe-pos-out");
 			var posVisible = true;
-			posClock = posReduce ? 0 : ((window.performance && performance.now) ? performance.now() : 0);
+			posClock = (window.performance && performance.now) ? performance.now() : 0;
+			function posTurnNote(theta) {
+				var turns = theta / (Math.PI * 2);
+				if (turns < 1) return "";
+				var text = turns.toFixed(1).replace(".", DE ? "," : ".");
+				return ' <span class="pos-note">' + text + (DE ? " Umdrehungen" : " turns") + '</span>';
+			}
 			function posRenderOut() {
 				if (!posOut) return;
 				var degs = POS_FREQ.map(function (f) {
 					return posDegrees(pos * f) + "°";
 				});
 				posOut.innerHTML = (DE ? 'Position ' : 'position ') + '<b>' + pos + '</b>' +
-					' · d0/d1 <b>' + degs[0] + '</b>' +
-					' · d2/d3 <b>' + degs[1] + '</b>' +
-					' · d4/d5 <b>' + degs[2] + '</b>.';
+					' · d0/d1 <b>' + degs[0] + '</b>' + posTurnNote(pos * POS_FREQ[0]) +
+					' · d2/d3 <b>' + degs[1] + '</b>' + posTurnNote(pos * POS_FREQ[1]) +
+					' · d4/d5 <b>' + degs[2] + '</b>' + posTurnNote(pos * POS_FREQ[2]) + '.';
 			}
 			function posTick(now) {
 				if (posApi && posVisible && !document.hidden) {
-					posClock = now;
-					var diff = pos - posShown;
-					if (Math.abs(diff) > 0.0005) {
-						posShown += diff * 0.18;
-						if (Math.abs(pos - posShown) < 0.01) posShown = pos;
-					} else {
-						posShown = pos;
+					var moving = Math.abs(pos - posShown) > 0.0005;
+					if (posAuto || moving) {
+						posClock = now;
+						if (moving) {
+							posShown += (pos - posShown) * 0.18;
+							if (Math.abs(pos - posShown) < 0.01) posShown = pos;
+						} else {
+							posShown = pos;
+						}
+						posApi.redraw();
 					}
-					posApi.redraw();
 				}
 				requestAnimationFrame(posTick);
 			}
 			if (posSlider) {
 				posSlider.addEventListener("input", function () {
-					pos = TM.clamp(parseInt(posSlider.value, 10) || 0, 0, 100);
+					pos = TM.clamp(parseInt(posSlider.value, 10) || 0, 0, 1000);
 					if (posReduce) posShown = pos;
 					if (posCountOut) posCountOut.textContent = String(pos);
 					posRenderOut();
-					if (posApi && posReduce) posApi.redraw();
+					if (posApi) posApi.redraw();
+				});
+			}
+			var posAutoBtn = document.getElementById("ipe-autorotate");
+			if (posAutoBtn) {
+				posAutoBtn.classList.toggle("is-on", posAuto);
+				posAutoBtn.setAttribute("aria-pressed", posAuto ? "true" : "false");
+				posAutoBtn.addEventListener("click", function () {
+					posAuto = !posAuto;
+					posAutoBtn.classList.toggle("is-on", posAuto);
+					posAutoBtn.setAttribute("aria-pressed", posAuto ? "true" : "false");
+					if (posAuto) posClock = (window.performance && performance.now) ? performance.now() : 0;
+					if (posApi) posApi.redraw();
 				});
 			}
 			if ("IntersectionObserver" in window) {
@@ -2344,7 +2517,7 @@
 			if (posCountOut) posCountOut.textContent = String(pos);
 			posRenderOut();
 			if (posApi) posApi.redraw();
-			if (!posReduce) requestAnimationFrame(posTick);
+			requestAnimationFrame(posTick);
 		}
 
 		/* ── attention ───────────────────────────────────────── */
