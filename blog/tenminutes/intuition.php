@@ -116,7 +116,7 @@
 							<p>
 								A conversation, a poem, a Python function: in an LLM, all of it is generated
 								by this loop. That sounds like a small mechanism until you see what the
-								context can contain: the question, a worked example, a program's output, or
+								context can contain: a question, a worked example, a program's output, or
 								the model's own earlier reasoning. Each new token refers to everything before
 								it. Why not predict the whole answer at once? Because each step can only
 								commit to one token, and every later token has to react to the ones already
