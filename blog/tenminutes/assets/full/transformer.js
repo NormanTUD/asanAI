@@ -613,7 +613,7 @@ function drawTrainingPlaceholder() {
 	var box = document.getElementById('training-loss-plot');
 	if (!box) return;
 	_tmEchartsDispose(box);
-	box.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;text-align:center;font-size:13px;line-height:1.5;color:' + themeColor("#94a3b8") + ';">The training plot appears here<br><span style="font-size:0.82em">Press Train Model to start</span></div>';
+	box.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;font-size:13px;line-height:1.5;color:' + themeColor("#94a3b8") + ';"><span>The training plot appears here</span><span style="font-size:0.82em;margin-top:4px">Press Train Model to start</span></div>';
 }
 
 function reset_graph() {
@@ -2140,7 +2140,7 @@ function buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts,
     <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $\\underbrace{W^O{${sup}}}_{\\text{Output Projection Matrix}}$ mixes head outputs:</p>
     $$ \\underbrace{\\text{MultiHeadAttention}_{\\text{proj}}${sup}}_{\\text{Projected attention output}} = \\underbrace{\\text{Concat}(\\text{Heads})}_{\\text{Concatenated head contexts}} \\cdot \\underbrace{W^O{${sup}}}_{\\text{Output Projection Matrix}} $$
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after W^O proj')}}_{\\text{MultiHeadAttention}_{\\text{proj}}${sup}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts, 'concat heads')}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O{${sup}}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after output projection')}}_{\\text{MultiHeadAttention}_{\\text{proj}}${sup}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts, 'concat heads')}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O{${sup}}} $$
     </div>
     </div>
 
@@ -2149,7 +2149,7 @@ function buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts,
     $$ \\underbrace{${hOutName}${sup}}_{\\text{Output of attention sublayer}} = \\underbrace{${hInName}${sup}}_{\\text{${hInStage}}} + \\underbrace{\\text{MultiHeadAttention}_{\\text{proj}}${sup}}_{\\text{Projected attention output}} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts, 'after attn residual')}}_{${hOutName}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts, hInStage)}}_{${hInName}${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after W^O proj')}}_{\\text{MultiHeadAttention}_{\\text{proj}}${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts, 'after attn residual')}}_{${hOutName}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts, hInStage)}}_{${hInName}${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after output projection')}}_{\\text{MultiHeadAttention}_{\\text{proj}}${sup}} $$
     </div>
     `;
 }
@@ -3615,7 +3615,6 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 		const result = forwardOneLayer(h_current, this_weights[n], d_model, n_heads, tokenStrings, "unified-attention-engine", n);
 
 		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, result.h_out, n + 1, d_model, result.h_out, tokenStrings);
-		tlab_render_weight_grid(`migration-layer-${n + 1}`, n);
 
 		h_current = result.h_out;
 	}
@@ -3686,103 +3685,6 @@ function tlab_get_colorblind_pixel(val) {
 	const b = Math.floor(77 * (1 - t));
 
 	return `rgb(${r}, ${g}, ${b})`;
-}
-
-function tlab_render_weight_grid(id, layerNum) {
-	requestAnimationFrame(() => {
-		const plotDiv = document.getElementById(id);
-		if (!plotDiv || !window.currentWeights || !window.currentWeights[layerNum]) return;
-
-		if (window._activeMigrationIds) {
-			window._activeMigrationIds.add(id);
-		}
-
-		const gridBox = ensureWeightGridContainer(plotDiv);
-		const targets = getWeightTargets(layerNum);
-
-		targets.forEach(target => renderSingleWeightCanvas(gridBox, target));
-		removeOrphanedWeightWrappers(gridBox, targets);
-	});
-}
-
-function ensureWeightGridContainer(plotDiv) {
-	let weightContainer = plotDiv.nextElementSibling;
-	if (!weightContainer || !weightContainer.classList.contains('weight-grid-viz')) {
-		weightContainer = document.createElement('div');
-		weightContainer.className = 'weight-grid-viz';
-		weightContainer.style = "display: flex; flex-direction: column; align-items: center; margin: 40px 0; padding: 0; clear: both; width: 100%;";
-		plotDiv.parentNode.insertBefore(weightContainer, plotDiv.nextSibling);
-	}
-
-	let gridBox = weightContainer.querySelector('.weight-grid-row');
-	if (!gridBox) {
-		gridBox = document.createElement('div');
-		gridBox.className = 'weight-grid-row';
-		gridBox.style = "display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 10px; width: 100%;";
-		weightContainer.appendChild(gridBox);
-	}
-
-	return gridBox;
-}
-
-function getWeightTargets(layerNum) {
-	const weights = window.currentWeights[layerNum];
-	return [
-		{ name: 'W1', data: weights.W1 },
-		{ name: 'W2', data: weights.W2 },
-		{ name: 'Q',  data: weights.attention?.query },
-		{ name: 'K',  data: weights.attention?.key },
-		{ name: 'V',  data: weights.attention?.value }
-	].filter(t => t.data && t.data.length);
-}
-
-function renderSingleWeightCanvas(gridBox, target) {
-	const rows = target.data.length;
-	const cols = Array.isArray(target.data[0]) ? target.data[0].length : 1;
-
-	let wrap = gridBox.querySelector(`[data-weight-name="${target.name}"]`);
-	let canvas;
-
-	if (!wrap) {
-		wrap = document.createElement('div');
-		wrap.setAttribute('data-weight-name', target.name);
-		wrap.style = "text-align: center; flex: 1 1 0%; display: flex; flex-direction: column; min-width: 0px;";
-		wrap.innerHTML = `<div style="font-size: 10px; font-weight: bold; color: #94a3b8; margin-bottom: 5px; font-family: monospace; white-space: nowrap;">${target.name}</div>`;
-
-		canvas = document.createElement('canvas');
-		canvas.style.cssText = "width:100%; height:auto; image-rendering:pixelated; display:block; max-height:145px; outline:1px solid #f1f5f9;";
-		wrap.appendChild(canvas);
-		gridBox.appendChild(wrap);
-	} else {
-		canvas = wrap.querySelector('canvas');
-	}
-
-	if (canvas.width !== cols || canvas.height !== rows) {
-		canvas.width = cols;
-		canvas.height = rows;
-	}
-
-	paintWeightPixels(canvas, target.data, rows, cols);
-}
-
-function paintWeightPixels(canvas, data, rows, cols) {
-	const ctx = canvas.getContext('2d');
-	for (let r = 0; r < rows; r++) {
-		for (let c = 0; c < cols; c++) {
-			const val = Array.isArray(data[r]) ? data[r][c] : data[r];
-			ctx.fillStyle = tlab_get_colorblind_pixel(val);
-			ctx.fillRect(c, r, 1, 1);
-		}
-	}
-}
-
-function removeOrphanedWeightWrappers(gridBox, targets) {
-	const activeNames = new Set(targets.map(t => t.name));
-	gridBox.querySelectorAll('[data-weight-name]').forEach(el => {
-		if (!activeNames.has(el.getAttribute('data-weight-name'))) {
-			el.remove();
-		}
-	});
 }
 
 function tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex) {
@@ -4101,6 +4003,7 @@ function _renderMigrationError(plotDiv) {
 }
 
 function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
+	document.querySelectorAll('.weight-grid-viz').forEach(el => el.remove());
 	const plotDiv = document.getElementById(id);
 	if (!plotDiv) return;
 
@@ -4123,7 +4026,6 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 
 	syncVFToggleButtonState(id, plotDiv, vfEnabled);
 	tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model, tokenStrings);
-	tlab_render_weight_grid(id, layerNum - 1);
 }
 
 function _mig_ec2d_vocab_series() {
@@ -4673,12 +4575,12 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 		title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center',
 			textStyle: { fontSize: 14, color: themeColor('#1e293b') } },
 		tooltip: { show: true, trigger: 'item', confine: true },
-		legend: { data: legendData, orient: 'horizontal', bottom: 0,
-			left: 'center', textStyle: { fontSize: 11, color: themeColor('#1e293b') } },
+		legend: { data: legendData, type: 'scroll', orient: 'horizontal', bottom: 0,
+			left: 'center', width: '92%', textStyle: { fontSize: 11, color: themeColor('#1e293b') } },
 		xAxis3D: { type: 'value', name: 'Dim 0' },
 		yAxis3D: { type: 'value', name: 'Dim 1' },
 		zAxis3D: { type: 'value', name: 'Dim 2' },
-		grid3D: _defaultGrid3DConfig(),
+		grid3D: _defaultGrid3DConfig({ bottom: 55 }),
 		series: series,
 		animation: false
 	}, true);
@@ -5504,12 +5406,7 @@ function ensureLatexDebugDiv(id, plotDiv) {
 		latexDiv.id = id + '-latex-debug';
 		latexDiv.style.cssText = 'margin-top: 20px; overflow-x: auto; font-size: 0.8rem; max-width: 100%; box-sizing: border-box;';
 
-		const weightGrid = plotDiv.nextElementSibling;
-		if (weightGrid && weightGrid.classList.contains('weight-grid-viz')) {
-			weightGrid.parentNode.insertBefore(latexDiv, weightGrid.nextSibling);
-		} else {
-			plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
-		}
+		plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
 	}
 	return latexDiv;
 }
@@ -5525,7 +5422,15 @@ function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, 
 	}
 
 	const hAfterMatrix = matrixToPmatrixLabeled(h_after, ts, stageLabel);
-	const latexString = `<div style="overflow-x: auto; overflow-y: hidden; max-width: 100%; padding-bottom: 10px;">$$h_\\text{after} = ${hAfterMatrix}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$</div>`;
+	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+	const interpNote = isDe
+		? 'Die linke Matrix ist der Hidden State $h_\\text{after}$ nach diesem Layer. Die rechte Gleichung projiziert ihn mit der Vokabular-Matrix $W_\\text{vocab}$ auf Wörter. Das ist Logit-Lens/Feature Migration und nur zur Interpretation; der Forward-Pass benutzt diese Projektion nicht.'
+		: 'The left matrix is the hidden state $h_\\text{after}$ after this layer. The equation on the right projects it with the vocabulary matrix $W_\\text{vocab}$ onto words. This is logit lens/feature migration and only for interpretation; the forward pass does not use it.';
+	const latexString = `<div style="overflow-x: auto; overflow-y: hidden; max-width: 100%; padding-bottom: 10px;">
+<div style="display:block; margin:6px 0;">$$h_\\text{after} = ${hAfterMatrix}$$</div>
+<p style="font-size:.78rem; color:var(--mn-text-secondary, #475569); margin:8px 0; line-height:1.45;">${interpNote}</p>
+<div style="display:block; margin:6px 0;">$$h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$</div>
+</div>`;
 
 	const latexDiv = ensureLatexDebugDiv(id, plotDiv);
 
@@ -5786,8 +5691,8 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 		backgroundColor: 'transparent',
 		tooltip: { show: true, trigger: 'item', confine: true },
 		legend: {
-			data: legendData, orient: 'horizontal',
-			bottom: 0, left: 'center', textStyle: { fontSize: 11, color: axis3DText }
+			data: legendData, type: 'scroll', orient: 'horizontal',
+			bottom: 0, left: 'center', width: '92%', textStyle: { fontSize: 11, color: axis3DText }
 		},
 		xAxis3D: {
 			type: 'value', name: 'Dim 0',
@@ -5810,7 +5715,7 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 			axisLine: { lineStyle: { color: axis3DLine } },
 			splitLine: { lineStyle: { color: themeColor('#334155') } }
 		},
-		grid3D: _defaultGrid3DConfig(),
+		grid3D: _defaultGrid3DConfig({ bottom: 55 }),
 		series: series,
 		animation: false
 	}, true);
@@ -7265,32 +7170,28 @@ function matrixToPmatrixLabeled(matrix, tokenStrings, stageLabel) {
 	const total = matrix.length;
 	const numCols = matrix[0].length;
 	const colSpec = 'r|' + 'r'.repeat(numCols);
+	const escapeLabel = (value) => String(value)
+		.replace(/#/g, '\\#')
+		.replace(/_/g, '\\_')
+		.replace(/&/g, '\\&');
 
 	const rows = matrix.map((row, tIdx) => {
 		const colorCmd = getPositionColor(tIdx, total, 'temml');
-		const safeLabel = displayToken(tokenStrings[tIdx])
-			.replace(/#/g, '\\#')
-			.replace(/_/g, '\\_')
-			.replace(/&/g, '\\&');
-
-		let subscript;
-		if (stageLabel) {
-			const safeStage = stageLabel
-				.replace(/#/g, '\\#')
-				.replace(/_/g, '\\_')
-				.replace(/&/g, '\\&')
-				.replace(/\^(\w+)/g, '}^{$1}\\text{');
-			subscript = `_{${tIdx},\\,\\text{${safeStage}}}`;
-		} else {
-			subscript = `_{${tIdx}}`;
-		}
-
-		const label = `${colorCmd} \\text{${safeLabel}}${subscript}`;
+		const safeLabel = escapeLabel(displayToken(tokenStrings[tIdx]));
+		const label = `${colorCmd} \\text{${safeLabel}}_{${tIdx}}`;
 		const vals = row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
 		return `${label} & ${vals}`;
 	}).join(' \\\\ ');
 
-	return `\\left(\\begin{array}{${colSpec}} ${rows} \\end{array}\\right)`;
+	let footer = '';
+	if (stageLabel) {
+		const safeStage = escapeLabel(stageLabel);
+		const firstLabel = escapeLabel(displayToken(tokenStrings[0]));
+		const blanks = Array(numCols).fill('').join(' & ');
+		footer = ` \\\\ \\underbrace{\\phantom{\\text{${firstLabel}}}}_{\\text{${safeStage}}} & ${blanks}`;
+	}
+
+	return `\\left(\\begin{array}{${colSpec}} ${rows}${footer} \\end{array}\\right)`;
 }
 
 function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {

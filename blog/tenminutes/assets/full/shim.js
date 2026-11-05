@@ -45,6 +45,9 @@
 		"Concatenated head contexts": "Konkatenierte Head-Kontexte",
 		"emb. + PE": "Embedding + PE",
 		"after attn residual": "nach Attention-Residual",
+		"after output projection": "nach Ausgabeprojektion",
+		"head ctx": "Head-Kontext",
+		"V proj": "V-Projektion",
 		"after W^O proj": "nach W^O-Projektion",
 		"concat heads": "konkatenierte Heads",
 		"after LN": "nach LN",
@@ -94,6 +97,12 @@
 		"over all": "über alle",
 		"bits": "Bits",
 		"Total ": "Gesamt ",
+		"Query Weights": "Query-Gewichte",
+		"Key Weights": "Key-Gewichte",
+		"Value Weights": "Value-Gewichte",
+		'"What am I looking for?"': '„Wonach suche ich?“',
+		'"What do I contain?"': '„Was enthalte ich?“',
+		'"What do I offer?"': '„Was biete ich an?“',
 		"one tiny decoder block, repeated": "ein winziger Decoder-Block, wiederholt",
 		"cross-entropy loss": "Cross-Entropy-Loss",
 		"Adam update": "Adam-Update",
@@ -101,8 +110,8 @@
 	};
 	function tmTranslateTex(tex) {
 		if (!(window.TM && TM.lang && TM.lang() === "de")) return tex;
-		return String(tex).replace(/\\text\{([^{}]*)\}/g, function (match, label) {
-			return TM_TEX_MAP[label] ? "\\text{" + TM_TEX_MAP[label] + "}" : match;
+		return String(tex).replace(/\\(text|textbf)\{([^{}]*)\}/g, function (match, cmd, label) {
+			return TM_TEX_MAP[label] ? "\\" + cmd + "{" + TM_TEX_MAP[label] + "}" : match;
 		})
 			.replace(/\\text\{out layer (\d+)\}/g, "\\text{Ausgabe Schicht $1}")
 			.replace(/\\text\{hidden dim (\d+)\}/g, "\\text{Hidden-Dimension $1}")
