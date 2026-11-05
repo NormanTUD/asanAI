@@ -150,22 +150,27 @@
 			else if (child.nodeType === 1) walk(child);
 		}
 	}
+	function watch(id) {
+		var el = document.getElementById(id);
+		if (!el || !window.MutationObserver) return;
+		new MutationObserver(function () { walk(el); }).observe(el, {
+			childList: true, subtree: true, characterData: true
+		});
+	}
 	function start() {
 		walk(document.body);
-		var observer = new MutationObserver(function (mutations) {
-			mutations.forEach(function (mutation) {
-				if (mutation.type === "childList") {
-					mutation.addedNodes.forEach(function (node) {
-						if (node.nodeType === 1) walk(node);
-						else if (node.nodeType === 3) translateTextNode(node);
-					});
-				} else if (mutation.type === "characterData") {
-					translateTextNode(mutation.target);
-				}
+		[
+			"training-status", "show_training_sentences", "current_training_sentence",
+			"nr_params", "param-breakdown-table", "transformer-vector-math-result"
+		].forEach(watch);
+		var btn = document.querySelector(".train-btn");
+		if (btn && window.MutationObserver) {
+			new MutationObserver(function () { walk(btn); }).observe(btn, {
+				childList: true, subtree: true, characterData: true
 			});
-		});
-		observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+		}
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
 	else start();
+	[400, 1200, 2600, 5000].forEach(function (ms) { setTimeout(function () { walk(document.body); }, ms); });
 })();
