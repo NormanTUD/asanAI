@@ -130,6 +130,8 @@
 		"Words": "Wörter",
 		"Epochs": "Epochen",
 		"Training loss over epochs": "Trainingsfehler über Epochen",
+		"The training plot appears here": "Der Trainingsplot erscheint hier",
+		"Press Train Model to start": "Drücke „Modell trainieren“, um zu starten",
 		"Temperature scaling": "Temperatur-Skalierung",
 		"🧩 What each layer is doing — measured live from the weights": "🧩 Was jede Schicht tut — live aus den Gewichten gemessen",
 		"Pre-Layer Normalization (applied before the sublayer)": "Pre-Layer-Normalisierung (vor der Unterschicht)",
@@ -213,14 +215,24 @@
 			childList: true, subtree: true, characterData: true
 		});
 	}
+	var HOSTS = [
+		"transformer_config", "transformer-train-card", "transformer-output-projection",
+		"ffn-equations-container", "transformer-migration-plots-container",
+		"transformer-vector-math-result", "transformer-pe-integration-results",
+		"tled-editor-container", "transformer-viz-embeddings", "param-breakdown-table",
+		"nr_params", "show_training_sentences", "training-status", "current_training_sentence",
+		"training-loss-plot", "transformer-plotly-space", "transformer-pe-wave-plot",
+		"transformer-pe-shift-plot"
+	];
+	function walkHosts() {
+		HOSTS.forEach(function (id) {
+			var el = document.getElementById(id);
+			if (el) walk(el);
+		});
+	}
 	function start() {
-		walk(document.body);
-		[
-			"training-status", "show_training_sentences", "current_training_sentence",
-			"nr_params", "param-breakdown-table", "transformer-vector-math-result",
-			"transformer-train-card", "ffn-equations-container",
-			"transformer-output-projection", "transformer-migration-plots-container"
-		].forEach(watch);
+		walkHosts();
+		HOSTS.forEach(watch);
 		var btn = document.querySelector(".train-btn");
 		if (btn && window.MutationObserver) {
 			new MutationObserver(function () { walk(btn); }).observe(btn, {
@@ -230,5 +242,5 @@
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
 	else start();
-	[350, 1200].forEach(function (ms) { setTimeout(function () { walk(document.body); }, ms); });
+	[350, 1200].forEach(function (ms) { setTimeout(walkHosts, ms); });
 })();

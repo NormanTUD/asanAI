@@ -1024,9 +1024,7 @@
 		'assets/full/vendor/echarts.min.js',
 		'assets/full/attention_engine.js',
 		'assets/full/llm_river.js',
-		'assets/full/provenance.js',
 		'assets/full/demo-i18n.js',
-		'assets/full/demo-render.js'
 	];
 	$tmDemoSizes = [];
 	$tmDemoTotal = 0;
@@ -1051,7 +1049,6 @@
 			"transformer.js": ["Transformer engine", "Transformer-Engine"],
 			"attention_engine.js": ["Attention engine", "Attention-Engine"],
 			"llm_river.js": ["Token river", "Token-Fluss"],
-			"provenance.js": ["Formula provenance", "Formel-Herkunft"],
 			"demo-i18n.js": ["German demo texts", "Deutsche Demo-Texte"],
 			"demo-render.js": ["Formula renderer", "Formel-Renderer"]
 		};
@@ -1121,18 +1118,20 @@
 			currentBytes = 0;
 			schedulePaint();
 		}
-		function initializeFile(file, text, fetchMs, bytes) {
+		function initializeFile(file, fetchMs, bytes) {
 			if (fetchOnly) { finishFile(file, bytes, fetchMs, 0, false); return Promise.resolve(); }
 			if (titleEl) titleEl.textContent = t("Initializing ", "Initialisiere ") + labelFor(file) + "…";
 			schedulePaint();
 			return new Promise(function (resolve) {
 				requestAnimationFrame(function () {
 					var t0 = performance.now();
-					var script = document.createElement("script");
-					script.textContent = text;
-					document.body.appendChild(script);
-					finishFile(file, bytes, fetchMs, performance.now() - t0, false);
-					resolve();
+					loadScript(file).then(function () {
+						finishFile(file, bytes, fetchMs, performance.now() - t0, false);
+						resolve();
+					}).catch(function () {
+						finishFile(file, bytes, fetchMs, null, false);
+						resolve();
+					});
 				});
 			});
 		}
@@ -1153,24 +1152,21 @@
 				if (!response.ok) throw new Error(file + " " + response.status);
 				var reader = response.body && response.body.getReader ? response.body.getReader() : null;
 				if (!reader) {
-					return response.text().then(function (text) {
-						return initializeFile(file, text, performance.now() - t0, sizes[file] || 0);
+					return response.text().then(function () {
+						return initializeFile(file, performance.now() - t0, sizes[file] || 0);
 					});
 				}
-				var chunks = [], loaded = 0;
+				var loaded = 0;
 				function pump() {
 					return reader.read().then(function (result) {
 						if (result.done) return;
-						chunks.push(result.value);
 						loaded += result.value.length;
 						addBytes(result.value.length);
 						return pump();
 					});
 				}
 				return pump().then(function () {
-					return new Blob(chunks).text();
-				}).then(function (text) {
-					return initializeFile(file, text, performance.now() - t0, loaded);
+					return initializeFile(file, performance.now() - t0, loaded);
 				});
 			}).catch(function () {
 				return loadScript(file).then(function () {
@@ -1260,7 +1256,13 @@
 						Promise.resolve(result).then(function () {
 							perf.engineMs = performance.now() - t0;
 							wireTrain();
-							finish();
+							if (titleEl) titleEl.textContent = t("Translating and rendering the demos…", "Übersetze und rendere die Demos…");
+							schedulePaint();
+							loadScript("assets/full/demo-render.js").then(function () {
+								finish();
+							}).catch(function () {
+								finish();
+							});
 						}).catch(function () {
 							perf.engineMs = performance.now() - t0;
 							window.__tmDemoPerf = perf;

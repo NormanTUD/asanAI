@@ -64,6 +64,11 @@
 			border: "hsla(" + hue + ", 60%, 70%, 0.25)"
 		};
 	}
+	window.Prov = window.Prov || {
+		recordPre: function () {}, recordLayer: function () {}, recordFfn: function () {},
+		recordFinal: function () {}, apply: function () {}, init: function () {}
+	};
+
 	window.isDarkMode = isDark;
 	window.themeColor = themeColor;
 	window.cssVar = function (name) {
