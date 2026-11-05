@@ -421,7 +421,7 @@
 								The collaboration was also a friendship. McCulloch invited the homeless Pitts
 								to live with his family; Pitts called the house home for the rest of his life.
 								McCulloch called him his “bootlegged collaborator.” Both wrote poetry. Pitts
-								struggled with depression, broke with Norbert Wiener, and died in 1969 at
+								struggled with depression and died in 1969 at
 								forty-six; McCulloch died a few months later. The 1943 neuron outlived them
 								both.
 							</p>
