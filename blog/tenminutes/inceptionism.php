@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	<meta name="description" content="From Inceptionism's dreams to diffusion: how a network turns random noise into an image.">
+	<meta name="description" content="How Inceptionism turns a frozen classifier around: gradient ascent on the input, layer by layer, to see what the network has learned.">
 	<meta name="theme-color" content="#ffffff">
 	<title>What the Network Dreams | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
@@ -16,7 +16,7 @@
 			<section class="hero hero--lesson">
 				<div>
 					<h1>Turn the network <em>around.</em></h1>
-					<p class="hero-deck">Normally we adjust the weights to fit an image. Inceptionism flips the direction: freeze the weights and adjust the image until it becomes what the network recognizes. Diffusion models go further and learn to reverse noise itself.</p>
+					<p class="hero-deck">Normally we adjust the weights to fit an image. Inceptionism flips the direction: freeze the weights and adjust the image until it becomes what the network recognizes. The result is a picture of the network's learned features, not a photograph it has stored.</p>
 				</div>
 			</section>
 
@@ -26,9 +26,10 @@
 						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
 						<h2 class="section-title">The reverse direction.</h2>
 						<div class="prose">
-							<p>The tiny learner fitted a line. A deep vision network learns features; turn the network around to see them. A classifier is trained to map an image to a label. If you freeze its weights and run gradient ascent on a class score, the pixels change instead of the parameters. Start from noise, ask for 'banana', and the noise slowly organizes into banana-like shapes.</p>
-							<p>The result looks surreal because the network is not drawing a photograph. It is projecting its learned features back into pixel space. Low layers produce edges and strokes; higher layers assemble whole objects. Freezing the weights is the point: the question is not “what would a good image look like?” but “what does this fixed detector respond to?” The image is the answer, read backwards.</p>
-							<p>Starting from noise matters too. A blank or natural image already contains structure the network can latch onto; noise is neutral enough that the gradient has to supply the shape. Iterating the process (recognize, amplify, repeat) is what turns a faint preference into a full-blown hallucination.</p>
+							<p>The tiny learner fitted a line. A deep vision network learns features; turn the network around to see them. A classifier is trained to map an image to a label. If you freeze its weights and run gradient ascent on a class score, the pixels change instead of the parameters. Start from noise, ask for “banana”, and the noise slowly organizes into banana-like shapes.</p>
+							<p>The procedure is gradient ascent on the input. For a chosen layer and channel, compute the gradient of the mean activation with respect to the pixels, add a small step to the image, blur the result a little, and repeat. For a class visualization, maximize the class score instead. The blur keeps the optimization from collapsing into high-frequency noise and makes the patterns readable. Mordvintsev, Olah and Tyka describe exactly this loop in the 2015 Inceptionism essay (<a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Mordvintsev et al., 2015</a>).</p>
+							<p>The result looks surreal because the network is not drawing a photograph. It is projecting its learned features back into pixel space. Lower layers produce edges, strokes, and textures; higher layers assemble parts and whole objects. Freezing the weights is the point: the question is not “what would a good image look like?” but “what does this fixed detector respond to?” The image is the answer, read backwards.</p>
+							<p>Starting from noise matters too. A blank or natural image already contains structure the network can latch onto; noise is neutral enough that the gradient has to supply the shape. In DeepDream, a real photo is fed in, the gradient amplifies whatever a chosen layer already detects, and the result is fed back in. That loop (recognize, amplify, repeat) is what turns a faint preference into a full-blown hallucination, and why a cloud can become a bird.</p>
 						</div>
 					</section>
 
@@ -37,7 +38,7 @@
 						<h2 class="section-title">A window into learned features.</h2>
 						<div class="prose">
 							<p>Inceptionism (<a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Mordvintsev et al., 2015</a>) is a simple interpretability tool. It shows that the network's knowledge is distributed across layers and can be visualized by optimizing the input. It also explains pareidolia: like a child seeing animals in clouds, the network finds its templates in noise.</p>
-							<p>The dreams also reveal associations in the training data. A dumbbell may appear with an arm because the two co-occur; a tower may grow fractal copies of itself because the network has learned a texture. These are not symbols the model understands; they are patterns it has learned to expect. The images are not evidence that the model is conscious or dreaming in the human sense. They are a picture of what the weights have learned to respond to. Nor is this how modern image generators work: a diffusion model is trained to reverse noise, so it learns the distribution of images. Inceptionism interrogates a classifier that was never trained to make images at all. That is exactly why its “dreams” look like the inside of a feature detector rather than a photograph.</p>
+							<p>The dreams also reveal associations in the training data. A dumbbell may appear with an arm because the two co-occur; a tower may grow fractal copies of itself because the network has learned a texture. These are not symbols the model understands; they are patterns it has learned to expect. The images are not evidence that the model is conscious or dreaming in the human sense. They are a picture of what the weights have learned to respond to. Inceptionism interrogates a classifier that was never trained to make images at all. That is why its “dreams” look like the inside of a feature detector rather than a photograph.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Freeze the weights</b><span>The parameters stay fixed; the input becomes the variable.</span></div>
@@ -86,27 +87,13 @@
 						<figcaption>Start from a real photo and the network edits where it already sees something: towers here, animals there. Image: Mordvintsev, Olah &amp; Tyka, <a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/" rel="noopener">Inceptionism</a>, CC BY 4.0.</figcaption>
 					</figure>
 
-					<section class="section-block" id="diffusion">
-						<div class="section-kicker"><span class="sk-num">03</span> How generators learn it</div>
-						<h2 class="section-title">Destroy a picture. Learn to undo it.</h2>
-						<div class="prose">
-							<p>Modern image generators learn the same trick from data. Take a training photograph, add a little random noise, record the result. Add more noise, record again. Repeat until the picture is pure static. Do this for millions of images and you have a long record of pictures dissolving.</p>
-							<p>A network is then trained to reverse one step at a time. Given a noisy image, it predicts the noise that was just added and subtracts it. The forward destruction is fixed, so all the learning goes into the repair. This is a diffusion model (<a href="https://arxiv.org/abs/2006.11239" rel="noopener">Ho et al., 2020</a>), the recipe behind Stable Diffusion, DALL·E 2, and Imagen.</p>
-							<p>At generation time there is no training image to destroy. You start with fresh random noise and run the learned repair steps in reverse. Each step removes a little noise, and a new picture appears. Inceptionism asks what a fixed classifier responds to. Diffusion learns the distribution of images well enough to build one from nothing.</p>
-						</div>
-						<figure>
-							<img src="../diffusion_ddim_steps.jpg" alt="A grid of denoising steps, from noisy colour fields to a detailed castle" loading="lazy">
-							<figcaption>Denoising steps from a Stable Diffusion model. Each frame is one step from noise toward a finished image. Image: Benlisquare, <a href="https://commons.wikimedia.org/wiki/File:X-Y_plot_of_algorithmically-generated_AI_art_of_European-style_castle_in_Japan_demonstrating_DDIM_diffusion_steps.png" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0.</figcaption>
-						</figure>
-					</section>
-
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">Start with random noise. Learn to reverse the damage. Get an image.</p>
-							<p class="aha-sub">A diffusion model is trained on real images that are destroyed step by step with random noise. It learns to undo each step, so generation begins at pure noise and ends with a new picture.</p>
+							<p class="aha-big">Freeze the weights. Optimize the pixels. See what the network responds to.</p>
+							<p class="aha-sub">Inceptionism runs a classifier backwards: gradient ascent on the input, layer by layer. The images are not stored pictures; they are a readable projection of learned features.</p>
 						</div>
 					</section>
 				</article>

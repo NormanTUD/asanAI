@@ -154,6 +154,27 @@
 								woman ≈ queen</em> is a striking regularity, not a law.
 							</div>
 						</div>
+						<div class="prose">
+							<p>Meaning also survives a rotation. If you rotate every vector in the space, the distances and angles between words stay the same, so “king” stays near “queen”. That is why two languages can have different-looking embedding spaces and still share the same relative geometry. Align the spaces with a rotation and a shift, and the words line up.</p>
+						</div>
+						<div class="demo demo--paper" id="crosslingual-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The same geometry in two languages <span>· demo 01b</span></p>
+									<p class="demo-sub">English and Japanese place the same concepts in the same relative geometry, only rotated. Align them and watch the points meet.</p>
+								</div>
+								<span class="demo-badge">cross-lingual</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas" id="crosslingual-canvas" style="height:340px" aria-label="English and Japanese word embeddings before and after alignment"></canvas>
+								<div class="demo-controls">
+									<button class="btn-demo btn-demo--green" type="button" id="cl-align">Align languages ▶</button>
+									<button class="btn-demo" type="button" id="cl-reset">Reset</button>
+								</div>
+								<p class="meadow-caption" id="cl-status" style="color:var(--tm-muted)">English and Japanese use the same relative geometry; the Japanese set is rotated by 55°.</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Different languages can share one geometric structure. The labels differ; the relations between the concepts do not.</span></div>
+						</div>
 
 					</section>
 
@@ -274,10 +295,6 @@
 								<b>Better frame</b>
 								<span>Meaning is a region, not a coordinate. A concept is a neighbourhood, a direction, or a subspace: often distributed across many dimensions.</span>
 							</div>
-							<div class="myth">
-								<b>Common misreading</b>
-								<span>“Cosine similarity proves understanding.” It proves geometric alignment. The interpretation of that alignment is a separate, contested question.</span>
-							</div>
 							<div class="myth myth--ok">
 								<b>Better frame</b>
 								<span>“Direction is meaning, magnitude is often noise” works as a default. Anisotropy and norm effects complicate it.</span>
@@ -289,15 +306,15 @@
 								and superposition</strong> (<a href="https://arxiv.org/abs/2209.10652" rel="noopener">Elhage et al., 2022</a>): a single neuron often responds to several
 								unrelated features because the model compresses more concepts than it has
 								dimensions. The second is the <strong>manifold hypothesis</strong>: real data
-								lies on a lower-dimensional surface inside the huge ambient space, which is
-								why high-dimensional models can generalize instead of merely memorizing.
-							</p>
-							<p>
-								The longer treatment pushes further into Voronoi cells (the territory of each
-								token), persistent homology (holes in the semantic manifold), hyperbolic
-								embeddings (hierarchies), and the geometry of negation. The ten-minute
-								version keeps one sentence: <strong>the model computes with positions and
-								directions, and meaning is what those positions do when we read them.</strong>
+								lies on or near a much lower-dimensional surface inside the huge ambient
+								space. A photograph of a face has millions of pixel values, but the set of
+								plausible faces is far smaller than the set of all pixel grids; sentences are
+								similar. If the data lies on a manifold, a model can learn the local
+								coordinates of that surface instead of memorizing every point. That is one
+								reason a high-dimensional model can generalize: it interpolates along the
+								manifold, not through the empty space around it. The hypothesis is a guide,
+								not a theorem; real embeddings are noisy, and the manifold may have many
+								dimensions.
 							</p>
 						</div>
 						<div class="keypoints">
@@ -597,6 +614,123 @@
 				});
 			}
 			window.addEventListener("tm:theme", function () { if (api) api.redraw(); });
+		}
+
+		/* ── cross-lingual alignment ─────────────────────────── */
+		var clCanvas = document.getElementById("crosslingual-canvas");
+		if (clCanvas) {
+			var clStatus = document.getElementById("cl-status");
+			var clAlign = document.getElementById("cl-align");
+			var clReset = document.getElementById("cl-reset");
+			var CL_KEYS = ["Man", "Woman", "King", "Queen", "Prince", "Princess"];
+			var CL_JP = { Man: "男", Woman: "女", King: "王様", Queen: "女王", Prince: "王子", Princess: "王女" };
+			var clAngle = 55;
+			var clOffset = 1;
+			var clAnim = null;
+			var clApi = null;
+			var clReduce = TM.prefersReduced();
+			var clC = (function () {
+				var sx = 0, sy = 0;
+				CL_KEYS.forEach(function (k) { var w = get(k); sx += w.x; sy += w.y; });
+				return { x: sx / CL_KEYS.length, y: sy / CL_KEYS.length };
+			})();
+			function clPoint(key, angle) {
+				var w = get(key);
+				var dx = w.x - clC.x, dy = w.y - clC.y;
+				var a = angle * Math.PI / 180;
+				return { x: dx * Math.cos(a) - dy * Math.sin(a), y: dx * Math.sin(a) + dy * Math.cos(a) };
+			}
+			function clScreen(p, cx, cy, scale) {
+				return { x: cx + p.x * scale, y: cy + p.y * scale };
+			}
+			function drawCL(ctx, w, h) {
+				var c = TM.colors();
+				ctx.clearRect(0, 0, w, h);
+				var scale = Math.min(w, h) * 1.5;
+				var ex = w * 0.31, ey = h * 0.52;
+				var jx = ex + (w * 0.69 - ex) * clOffset;
+				var jy = ey;
+				var en = {}, jp = {};
+				CL_KEYS.forEach(function (k) {
+					en[k] = clScreen(clPoint(k, 0), ex, ey, scale);
+					jp[k] = clScreen(clPoint(k, clAngle), jx, jy, scale);
+				});
+				if (clOffset > 0.01) {
+					ctx.save();
+					ctx.setLineDash([3, 4]);
+					ctx.strokeStyle = c.dark ? "rgba(238,247,244,.22)" : "rgba(0,75,111,.18)";
+					ctx.lineWidth = 1;
+					CL_KEYS.forEach(function (k) {
+						ctx.beginPath(); ctx.moveTo(en[k].x, en[k].y); ctx.lineTo(jp[k].x, jp[k].y); ctx.stroke();
+					});
+					ctx.restore();
+				}
+				var pairs = [["Man", "Woman"], ["King", "Queen"], ["Prince", "Princess"], ["Man", "Prince"], ["Prince", "King"], ["Woman", "Princess"], ["Princess", "Queen"]];
+				[en, jp].forEach(function (set) {
+					pairs.forEach(function (pair) {
+						ctx.beginPath();
+						ctx.moveTo(set[pair[0]].x, set[pair[0]].y);
+						ctx.lineTo(set[pair[1]].x, set[pair[1]].y);
+						ctx.strokeStyle = c.dark ? "rgba(238,247,244,.14)" : "rgba(0,75,111,.12)";
+						ctx.lineWidth = 1;
+						ctx.stroke();
+					});
+				});
+				[["Man", "King"], ["King", "Queen"]].forEach(function (pair) {
+					drawArrow(ctx, en[pair[0]].x, en[pair[0]].y, en[pair[1]].x, en[pair[1]].y, c.blue, false);
+				});
+				[["Man", "King"], ["King", "Queen"]].forEach(function (pair) {
+					drawArrow(ctx, jp[pair[0]].x, jp[pair[0]].y, jp[pair[1]].x, jp[pair[1]].y, c.green, false);
+				});
+				ctx.font = "600 11px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "center";
+				CL_KEYS.forEach(function (k) {
+					ctx.beginPath(); ctx.arc(en[k].x, en[k].y, 4.5, 0, Math.PI * 2); ctx.fillStyle = c.blue; ctx.fill();
+					ctx.strokeStyle = c.card; ctx.lineWidth = 1.5; ctx.stroke();
+					ctx.fillStyle = c.ink; ctx.fillText(k, en[k].x, en[k].y - 10);
+					ctx.beginPath(); ctx.arc(jp[k].x, jp[k].y, 4.5, 0, Math.PI * 2); ctx.fillStyle = c.green; ctx.fill();
+					ctx.strokeStyle = c.card; ctx.lineWidth = 1.5; ctx.stroke();
+					ctx.fillStyle = c.ink; ctx.fillText(CL_JP[k], jp[k].x, jp[k].y + 16);
+				});
+				ctx.fillStyle = c.muted;
+				ctx.font = "600 10px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "left";
+				ctx.fillText(DE ? "Englisch" : "English", 14, 20);
+				ctx.textAlign = "right";
+				ctx.fillText(DE ? "Japanisch" : "Japanese", w - 14, 20);
+			}
+			clApi = TM.initCanvas(clCanvas, drawCL);
+			function clSetStatus() {
+				if (!clStatus) return;
+				if (clOffset < 0.01 && clAngle < 0.5) clStatus.textContent = DE
+					? "Ausgerichtet: gleiche Geometrie, andere Beschriftung."
+					: "Aligned: same geometry, different labels.";
+				else clStatus.textContent = DE
+					? "Englisch und Japanisch nutzen dieselbe relative Geometrie; der japanische Satz ist um 55° gedreht."
+					: "English and Japanese use the same relative geometry; the Japanese set is rotated by 55°.";
+			}
+			function clAnimate(targetAngle, targetOffset) {
+				if (clAnim) cancelAnimationFrame(clAnim);
+				var startAngle = clAngle, startOffset = clOffset;
+				var start = performance.now();
+				var duration = clReduce ? 0 : 1400;
+				function frame(now) {
+					var raw = duration ? Math.min((now - start) / duration, 1) : 1;
+					var t = raw < 0.5 ? 4 * raw * raw * raw : 1 - Math.pow(-2 * raw + 2, 3) / 2;
+					clAngle = startAngle + (targetAngle - startAngle) * t;
+					clOffset = startOffset + (targetOffset - startOffset) * t;
+					if (clApi) clApi.redraw();
+					clSetStatus();
+					if (raw < 1) clAnim = requestAnimationFrame(frame);
+					else clAnim = null;
+				}
+				clAnim = requestAnimationFrame(frame);
+				clSetStatus();
+			}
+			if (clAlign) clAlign.addEventListener("click", function () { clAnimate(0, 0); });
+			if (clReset) clReset.addEventListener("click", function () { clAnimate(55, 1); });
+			clSetStatus();
+			window.addEventListener("tm:theme", function () { if (clApi) clApi.redraw(); });
 		}
 
 		/* ── cosine demo ─────────────────────────────────────── */

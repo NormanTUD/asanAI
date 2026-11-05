@@ -38,6 +38,7 @@
 							<p>Confidence is a property of the text, not of the model's knowledge. A fluent answer with a plausible citation can be wrong in every detail. Temperature makes this worse: a higher temperature flattens the distribution and can push the model toward less likely, more inventive continuations (<a href="https://arxiv.org/abs/1904.09751" rel="noopener">Holtzman et al., 2020</a>). Why doesn't the model simply say “I don't know”? Sometimes it does, but that is a behaviour learned in post-training, not a reading from an internal truth meter. One common failure is <strong>sycophancy</strong>: the model agrees with a false premise and invents a justification (<a href="https://arxiv.org/abs/2310.13548" rel="noopener">Sharma et al., 2023</a>). There is no dial inside the model labelled certainty.</p>
 							<p>Hallucination is not uniform. Models are most reliable where the pattern is dense and redundant (common syntax, well-known facts, code idioms) and least reliable where the pattern is sparse, recent, private, or contradictory. Scale lowers the error rate on many benchmarks, but it also makes a wrong answer sound better; it shifts the odds, it does not install a guarantee.</p>
 							<p>Use the model as a draft, a tutor, or a search aid, not as an oracle. Verify names, numbers, quotes, and citations. Give it documents with retrieval, ask it to show its sources, and keep a human in the loop for anything that matters. Retrieval helps because it changes the task: instead of recalling a fact from compressed weights, the model can copy a passage that is present in the context. It is not a guarantee (the model can still misread the passage) but it makes “where did this come from?” a question with an answer.</p>
+							<p>Arithmetic is a special case. A model predicts digits; it does not calculate. Numbers are tokenized in chunks, so “1234.56” may become “123”, “4”, “.”, and “56”, and the model has to carry the digits in its head without a scratchpad. Small changes in tokenization or wording can therefore change the result. For any exact calculation, use a calculator or code, not the model's prose.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Pattern completion</b><span>The model predicts plausible text; it does not consult a truth database.</span></div>
@@ -52,7 +53,7 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">The distribution behind the sentence <span>· demo</span></p>
-								<p class="demo-sub">The model has just read “The capital of France is”. Change the temperature and the candidate filter. After top-p, the surviving bars are renormalized to 100%; cut tokens are shown in grey and do not count.</p>
+								<p class="demo-sub">The model has just read “The capital of France is”. Change the temperature and the candidate filter. Top-p is a cumulative probability between 0 and 1, so decimals are meaningful; top-k would be the integer count. After top-p, the surviving bars are renormalized to 100%; cut tokens are shown in grey and do not count.</p>
 							</div>
 							<span class="demo-badge">live</span>
 						</div>

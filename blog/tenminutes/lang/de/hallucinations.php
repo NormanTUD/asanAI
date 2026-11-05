@@ -31,7 +31,7 @@ return [
 		'Check claims and sources; use retrieval and tools for grounding.' => 'Prüfe Behauptungen und Quellen; nutze Retrieval und Werkzeuge zur Erdung.',
 		'The distribution behind the sentence' => 'Die Verteilung hinter dem Satz',
 		'· demo' => '· Demo',
-		'The model has just read “The capital of France is”. Change the temperature and the candidate filter. After top-p, the surviving bars are renormalized to 100%; cut tokens are shown in grey and do not count.' => 'Das Modell hat gerade „The capital of France is“ gelesen. Ändere Temperatur und Kandidatenfilter. Nach Top-p werden die überlebenden Balken auf 100 % renormalisiert; abgeschnittene Tokens sind grau und zählen nicht.',
+		'The model has just read “The capital of France is”. Change the temperature and the candidate filter. Top-p is a cumulative probability between 0 and 1, so decimals are meaningful; top-k would be the integer count. After top-p, the surviving bars are renormalized to 100%; cut tokens are shown in grey and do not count.' => 'Das Modell hat gerade „Die Hauptstadt von Frankreich ist“ gelesen. Ändere Temperatur und Kandidatenfilter. Top-p ist eine kumulative Wahrscheinlichkeit zwischen 0 und 1, daher sind Dezimalwerte sinnvoll; Top-k wäre die ganzzahlige Anzahl. Nach Top-p werden die überlebenden Balken auf 100 % renormalisiert; abgeschnittene Tokens sind grau und zählen nicht.',
 		'live' => 'live',
 		'Top-p' => 'Top-p',
 		'Draw a token →' => 'Ein Token ziehen →',
@@ -77,6 +77,7 @@ return [
 		'The aha' => 'Der Aha-Moment',
 		'The model is not lying. It is completing a pattern.' => 'Das Modell lügt nicht. Es vervollständigt ein Muster.',
 		'Truth is a property of your workflow, not a promise from the model.' => 'Wahrheit ist eine Eigenschaft deines Workflows, kein Versprechen des Modells.',
+		'Arithmetic is a special case. A model predicts digits; it does not calculate. Numbers are tokenized in chunks, so “1234.56” may become “123”, “4”, “.”, and “56”, and the model has to carry the digits in its head without a scratchpad. Small changes in tokenization or wording can therefore change the result. For any exact calculation, use a calculator or code, not the model\'s prose.' => 'Rechnen ist ein Sonderfall. Ein Modell sagt Ziffern voraus; es rechnet nicht. Zahlen werden in Stücken tokenisiert, sodass „1234,56“ zu „123“, „4“, „.“ und „56“ werden kann, und das Modell muss die Stellen im Kopf tragen, ohne Notizblock. Kleine Änderungen an der Tokenisierung oder Formulierung können deshalb das Ergebnis ändern. Für jede exakte Rechnung nutze einen Taschenrechner oder Code, nicht die Prosa des Modells.',
 	],
 	'attrs' => [
 		'Draw this token' => 'Dieses Token ziehen',

@@ -47,7 +47,13 @@
 		var count = $("[data-sampling-count]", root);
 		var entropy = $("[data-sampling-entropy]", root);
 		if (!bars) return;
-		var tokens = [
+		var tokens = DEMO_DE ? [
+			{ t: "Paris", z: 2.9, c: "var(--tm-green)" },
+			{ t: "Lyon", z: 1.1, c: "var(--tm-sky)" },
+			{ t: "Berlin", z: 0.7, c: "var(--tm-gold)" },
+			{ t: "Frosch", z: -0.4, c: "var(--tm-coral)" },
+			{ t: "der", z: -1.1, c: "var(--tm-faint)" }
+		] : [
 			{ t: "Paris", z: 2.9, c: "var(--tm-green)" },
 			{ t: "Lyon", z: 1.1, c: "var(--tm-sky)" },
 			{ t: "Berlin", z: 0.7, c: "var(--tm-gold)" },
@@ -352,6 +358,9 @@
 		var best = $("[data-linefit-best-val]", root);
 		var bestBtn = $("[data-linefit-best]", root);
 		var stepBtn = $("[data-linefit-step]", root);
+		var lossChart = $("[data-linefit-loss-chart]", root);
+		var lossHistory = [];
+		var lossApi = null;
 		if (!canvas) return;
 		var noise = [0.04, -0.03, 0.02, -0.05, 0.01, 0.06, -0.02, 0.03, -0.04, 0.05, 0.0, -0.01, 0.04, -0.02, 0.02, -0.03, 0.05, -0.04, 0.01, 0.03];
 		var pts = noise.map(function (n, i) {
@@ -360,6 +369,12 @@
 		});
 		var target = { a: 0.75, b: 0.18 };
 		function val(el, fallback) { return parseFloat(el && el.value) || fallback; }
+		function mseOf(a, bb) {
+			return pts.reduce(function (s, p) {
+				var d = (a * p.x + bb) - p.y;
+				return s + d * d;
+			}, 0) / pts.length;
+		}
 		function draw(ctx, W, H) {
 			var c = colors();
 			var a = val(w, 0.4), bb = val(b, 0.2);
@@ -403,10 +418,7 @@
 				ctx.lineWidth = 1.5;
 				ctx.stroke();
 			});
-			var mse = pts.reduce(function (s, p) {
-				var d = (a * p.x + bb) - p.y;
-				return s + d * d;
-			}, 0) / pts.length;
+			var mse = mseOf(a, bb);
 			if (wOut) wOut.textContent = a.toFixed(2);
 			if (bOut) bOut.textContent = bb.toFixed(2);
 			if (loss) loss.textContent = mse.toFixed(3);
@@ -414,38 +426,76 @@
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
-		function redraw() { api.redraw(); }
-		if (w) w.addEventListener("input", redraw);
-		if (b) b.addEventListener("input", redraw);
+		function drawLossChart(ctx, W, H) {
+			var c = colors();
+			ctx.clearRect(0, 0, W, H);
+			var padL = 40, padR = 12, padT = 10, padB = 22;
+			var n = lossHistory.length;
+			var max = Math.max.apply(null, lossHistory) || 1;
+			var min = Math.min.apply(null, lossHistory);
+			var span = Math.max(max - min, 0.0001);
+			ctx.strokeStyle = c.line;
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(padL, padT);
+			ctx.lineTo(padL, H - padB);
+			ctx.lineTo(W - padR, H - padB);
+			ctx.stroke();
+			if (n > 0) {
+				ctx.beginPath();
+				lossHistory.forEach(function (v, i) {
+					var x = n === 1 ? padL : padL + i / (n - 1) * (W - padL - padR);
+					var y = H - padB - (v - min) / span * (H - padT - padB);
+					if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+				});
+				ctx.strokeStyle = c.green;
+				ctx.lineWidth = 2;
+				ctx.stroke();
+				if (n > 0) {
+					var last = lossHistory[n - 1];
+					ctx.fillStyle = c.green;
+					ctx.beginPath();
+					ctx.arc(n === 1 ? padL : W - padR, H - padB - (last - min) / span * (H - padT - padB), 3, 0, Math.PI * 2);
+					ctx.fill();
+				}
+			}
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 9px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "right";
+			ctx.fillText(max.toFixed(2), padL - 5, padT + 8);
+			ctx.fillText(min.toFixed(2), padL - 5, H - padB);
+			ctx.textAlign = "left";
+			ctx.fillText(DEMO_DE ? "Fehler" : "loss", padL + 4, padT + 8);
+			ctx.textAlign = "right";
+			ctx.fillText(DEMO_DE ? "Schritt" : "step", W - padR, H - 6);
+			ctx.textAlign = "left";
+		}
+		if (lossChart) lossApi = canvasDemo(lossChart, drawLossChart);
+		function redraw() { api.redraw(); if (lossApi) lossApi.redraw(); }
+		if (w) w.addEventListener("input", function () { lossHistory = [mseOf(val(w, 0.4), val(b, 0.2))]; redraw(); });
+		if (b) b.addEventListener("input", function () { lossHistory = [mseOf(val(w, 0.4), val(b, 0.2))]; redraw(); });
 		if (bestBtn) bestBtn.addEventListener("click", function () {
 			if (w) w.value = target.a.toFixed(2);
 			if (b) b.value = target.b.toFixed(2);
+			lossHistory = [mseOf(target.a, target.b)];
 			redraw();
 		});
-		var training = false;
 		if (stepBtn) stepBtn.addEventListener("click", function () {
-			if (training) return;
-			training = true;
-			var rounds = 0;
-			var tick = function () {
-				var ca = val(w, 0.4), cb = val(b, 0.2);
-				var da = 0, db = 0;
-				pts.forEach(function (p) {
-					var e = (ca * p.x + cb) - p.y;
-					da += 2 * e * p.x;
-					db += 2 * e;
-				});
-				da /= pts.length;
-				db /= pts.length;
-				if (w) w.value = clamp(ca - 0.55 * da, -1, 2).toFixed(2);
-				if (b) b.value = clamp(cb - 0.55 * db, -1, 2).toFixed(2);
-				redraw();
-				rounds++;
-				if (rounds < 9) requestAnimationFrame(tick);
-				else training = false;
-			};
-			requestAnimationFrame(tick);
+			var ca = val(w, 0.4), cb = val(b, 0.2);
+			var da = 0, db = 0;
+			pts.forEach(function (p) {
+				var e = (ca * p.x + cb) - p.y;
+				da += 2 * e * p.x;
+				db += 2 * e;
+			});
+			da /= pts.length;
+			db /= pts.length;
+			if (w) w.value = clamp(ca - 0.55 * da, -1, 2).toFixed(2);
+			if (b) b.value = clamp(cb - 0.55 * db, -1, 2).toFixed(2);
+			lossHistory.push(mseOf(val(w, 0.4), val(b, 0.2)));
+			redraw();
 		});
+		lossHistory = [mseOf(val(w, 0.4), val(b, 0.2))];
 		redraw();
 	}
 
@@ -717,6 +767,7 @@
 		var paintBtn = $("[data-conv-paint]", root);
 		var imageBtn = $("[data-conv-image]", root);
 		var hintEl = $("[data-conv-hint]", root);
+		var kernelGrid = $("[data-conv-kernel-grid]", root);
 		if (!canvas) return;
 		var size = 14;
 		var input = [];
@@ -736,6 +787,18 @@
 			emboss: [ [-2, -1, 0], [-1, 1, 1], [0, 1, 2] ]
 		};
 		var current = "edge";
+		function renderKernel() {
+			if (!kernelGrid) return;
+			kernelGrid.innerHTML = "";
+			kernels[current].forEach(function (row) {
+				row.forEach(function (v) {
+					var el = document.createElement("div");
+					el.className = "conv-cell" + (v < 0 ? " is-negative" : "");
+					el.textContent = Math.abs(v - Math.round(v)) < 0.001 ? String(v) : v.toFixed(2);
+					kernelGrid.appendChild(el);
+				});
+			});
+		}
 		var imageLoaded = false;
 		var scanCell = -1;
 		var scanTimer = null;
@@ -804,9 +867,10 @@
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
+		renderKernel();
 		var img = new Image();
 		img.onload = function () {
-			var n = 16;
+			var n = 32;
 			var off = document.createElement("canvas");
 			off.width = n; off.height = n;
 			var octx = off.getContext("2d");
@@ -833,6 +897,7 @@
 				chips.forEach(function (x) { x.classList.remove("is-on"); });
 				chip.classList.add("is-on");
 				current = chip.getAttribute("data-kernel");
+				renderKernel();
 				api.redraw();
 			});
 		});
@@ -2179,6 +2244,11 @@
 		var wEl = $("[data-perceptron-w]", root);
 		var bEl = $("[data-perceptron-b]", root);
 		var noteEl = $("[data-perceptron-note]", root);
+		var lossEl = $("[data-perceptron-loss]", root);
+		var lossChart = $("[data-perceptron-loss-chart]", root);
+		var lossHistory = [];
+		var lossApi = null;
+		var running = false;
 		var modeChips = $$("[data-perceptron-dataset]", root);
 		if (!canvas) return;
 
@@ -2278,6 +2348,7 @@
 			if (accB) accB.textContent = Math.round(a.b * 100) + "%";
 			if (wEl) wEl.textContent = w[0].toFixed(2) + " / " + w[1].toFixed(2);
 			if (bEl) bEl.textContent = b.toFixed(2);
+			if (lossEl) lossEl.textContent = Math.round((1 - a.all) * 100) + "%";
 			if (mode === "xor" && steps > 12) {
 				ctx.fillStyle = c.coral;
 				ctx.font = "700 11px Barlow, system-ui, sans-serif";
@@ -2314,10 +2385,67 @@
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
-		if (trainBtn) trainBtn.addEventListener("click", function () { update(); api.redraw(); });
+		function drawLossChart(ctx, W, H) {
+			var c = colors();
+			ctx.clearRect(0, 0, W, H);
+			var padL = 40, padR = 12, padT = 10, padB = 22;
+			var n = lossHistory.length;
+			ctx.strokeStyle = c.line;
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(padL, padT);
+			ctx.lineTo(padL, H - padB);
+			ctx.lineTo(W - padR, H - padB);
+			ctx.stroke();
+			ctx.beginPath();
+			lossHistory.forEach(function (v, i) {
+				var x = n <= 1 ? padL : padL + i / (n - 1) * (W - padL - padR);
+				var y = H - padB - v * (H - padT - padB);
+				if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+			});
+			ctx.strokeStyle = c.green;
+			ctx.lineWidth = 2;
+			ctx.stroke();
+			if (n > 0) {
+				var last = lossHistory[n - 1];
+				ctx.fillStyle = c.green;
+				ctx.beginPath();
+				ctx.arc(n === 1 ? padL : W - padR, H - padB - last * (H - padT - padB), 3, 0, Math.PI * 2);
+				ctx.fill();
+			}
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 9px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "right";
+			ctx.fillText("100%", padL - 5, padT + 8);
+			ctx.fillText("0%", padL - 5, H - padB);
+			ctx.textAlign = "left";
+			ctx.fillText(DEMO_DE ? "Fehler" : "error", padL + 4, padT + 8);
+			ctx.textAlign = "right";
+			ctx.fillText(DEMO_DE ? "Update" : "update", W - padR, H - 6);
+			ctx.textAlign = "left";
+		}
+		if (lossChart) lossApi = canvasDemo(lossChart, drawLossChart);
+		function redraw() { api.redraw(); if (lossApi) lossApi.redraw(); }
+		if (trainBtn) trainBtn.addEventListener("click", function () {
+			if (running) return;
+			update();
+			lossHistory.push(1 - accuracy().all);
+			redraw();
+		});
 		if (runBtn) runBtn.addEventListener("click", function () {
-			for (var i = 0; i < 20; i++) update();
-			api.redraw();
+			if (running) return;
+			running = true;
+			var count = 0;
+			function tick() {
+				if (count >= 20) { running = false; return; }
+				var changed = update();
+				lossHistory.push(1 - accuracy().all);
+				redraw();
+				count++;
+				if (changed && count < 20) setTimeout(tick, 35);
+				else running = false;
+			}
+			setTimeout(tick, 20);
 		});
 		function reset() {
 			build(mode);
@@ -2325,7 +2453,9 @@
 			b = -0.08;
 			cursor = 0;
 			steps = 0;
-			api.redraw();
+			running = false;
+			lossHistory = [1 - accuracy().all];
+			redraw();
 		}
 		if (resetBtn) resetBtn.addEventListener("click", reset);
 		modeChips.forEach(function (chip) {
@@ -2337,7 +2467,8 @@
 			});
 		});
 		build(mode);
-		api.redraw();
+		lossHistory = [1 - accuracy().all];
+		redraw();
 	}
 
 	/* ── gradient descent ───────────────────────────────────── */
@@ -2842,17 +2973,27 @@
 			{ title: "Language Models are Few-Shot Learners", meta: "Brown et al. · NeurIPS 2020", real: true, why: "Real. The GPT-3 paper.", whyDe: "Echt. Die GPT-3-Arbeit." },
 			{ title: "Recursive Semantic Anchoring in Transformer Pretraining", meta: "Keller & Voss · ICML 2021", real: false, why: "Fabricated. Plausible title, plausible venue, no such paper.", whyDe: "Fabriziert. Plausibler Titel, plausible Konferenz, keine solche Arbeit." },
 			{ title: "The 2019 Zurich Study on Latent Memory Consolidation", meta: "M. Roth · Nature Neuroscience 2019", real: false, why: "Fabricated. A generic study-shaped sentence, not a citation.", whyDe: "Fabriziert. Ein generisch klingender Studientitel, keine echte Zitation." },
-			{ title: "Denoising Diffusion Probabilistic Models", meta: "Ho et al. · NeurIPS 2020", real: true, why: "Real. The DDPM paper.", whyDe: "Echt. Die DDPM-Arbeit." }
+			{ title: "Denoising Diffusion Probabilistic Models", meta: "Ho et al. · NeurIPS 2020", real: true, why: "Real. The DDPM paper.", whyDe: "Echt. Die DDPM-Arbeit." },
+			{ title: "ImageNet Classification with Deep Convolutional Neural Networks", meta: "Krizhevsky et al. · NeurIPS 2012", real: true, why: "Real. The AlexNet paper.", whyDe: "Echt. Die AlexNet-Arbeit." },
+			{ title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding", meta: "Devlin et al. · NAACL 2019", real: true, why: "Real. The BERT paper.", whyDe: "Echt. Die BERT-Arbeit." },
+			{ title: "Generative Adversarial Networks", meta: "Goodfellow et al. · NeurIPS 2014", real: true, why: "Real. The GAN paper.", whyDe: "Echt. Die GAN-Arbeit." },
+			{ title: "Adaptive Gradient Manifold Pruning for Low-Resource Translation", meta: "P. Almeida & R. Chen · ACL 2022", real: false, why: "Fabricated. Plausible title, plausible venue, no such paper.", whyDe: "Fabriziert. Plausibler Titel, plausible Konferenz, keine solche Arbeit." },
+			{ title: "Temporal Context Compression in Sparse Mixture-of-Experts", meta: "N. Iwasaki et al. · ICLR 2021", real: false, why: "Fabricated. A convincing combination of real buzzwords, not a real paper.", whyDe: "Fabriziert. Eine überzeugende Kombination echter Schlagwörter, keine echte Arbeit." },
+			{ title: "A Unified Theory of Token-Level Semantic Drift", meta: "L. Moreau · NeurIPS 2020", real: false, why: "Fabricated. The title sounds like a paper, but the work does not exist.", whyDe: "Fabriziert. Der Titel klingt wie eine Arbeit, aber die Arbeit existiert nicht." }
 		];
-		var round = [], answered = 0, correct = 0, seed = 3;
+		var round = [], answered = 0, correct = 0, seed = 3, lastTitles = [];
 		function rnd() { seed += 1; return (Math.sin(seed * 7.31) * 43758.5453) % 1; }
 		function pickRound() {
 			var copy = pool.slice();
-			for (var i = copy.length - 1; i > 0; i--) {
+			var fresh = copy.filter(function (x) { return lastTitles.indexOf(x.title) === -1; });
+			var source = fresh.length >= 4 ? fresh : copy;
+			for (var i = source.length - 1; i > 0; i--) {
 				var j = Math.floor(Math.abs(rnd()) * (i + 1));
-				var t = copy[i]; copy[i] = copy[j]; copy[j] = t;
+				var t = source[i]; source[i] = source[j]; source[j] = t;
 			}
-			return copy.slice(0, 4);
+			var picked = source.slice(0, 4);
+			lastTitles = picked.map(function (x) { return x.title; });
+			return picked;
 		}
 		function render() {
 			list.innerHTML = round.map(function (r, i) {

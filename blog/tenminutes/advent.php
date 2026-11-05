@@ -124,11 +124,11 @@
 						<p>One input, one output, two numbers to adjust: the smallest learner, and the loop behind every network.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-8" href="inceptionism" data-day="8" data-slug="inceptionism">
+					<a class="day-card is-available" id="day-8" href="computer_vision" data-day="8" data-slug="computer_vision">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">08</span><span class="dc-part">Learning</span></div>
-						<h3>What the Network Dreams</h3>
-						<p>Turn the network around, then see how diffusion models learn to build an image from noise.</p>
+						<h3>How Machines See</h3>
+						<p>A picture is a grid of numbers. Convolution learns edges, then parts, then whole objects.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
 					<a class="day-card is-available" id="day-9" href="overandunderfittinglab" data-day="9" data-slug="overandunderfittinglab">
@@ -163,11 +163,11 @@
 						<p>Common Crawl, deduplication, contamination: the text diet behind every model, and why data is half the secret.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
-					<a class="day-card is-available" id="day-13" href="computer_vision" data-day="13" data-slug="computer_vision">
+					<a class="day-card is-available" id="day-13" href="inceptionism" data-day="13" data-slug="inceptionism">
 						<span class="dc-today" hidden>Today</span>
 						<div class="dc-top"><span class="dc-num">13</span><span class="dc-part">The World</span></div>
-						<h3>How Machines See</h3>
-						<p>A picture is a grid of numbers. Convolution learns edges, then parts, then whole objects.</p>
+						<h3>What the Network Dreams</h3>
+						<p>Turn a classifier around and see which learned features its “dreams” reveal.</p>
 						<div class="dc-foot"><span class="dc-tag dc-open">Open lesson →</span></div>
 					</a>
 					<a class="day-card is-available" id="day-14" href="multimodal" data-day="14" data-slug="multimodal">

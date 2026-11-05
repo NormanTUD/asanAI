@@ -80,6 +80,7 @@
 								<div><b>Training error</b><span data-linefit-loss>...</span></div>
 								<div><b>Good fit</b><span data-linefit-best-val>...</span></div>
 							</div>
+							<canvas class="demo-canvas" data-linefit-loss-chart style="height:110px;margin-top:10px" aria-label="Training loss over steps"></canvas>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>Learning is the search for a and b that make the error smaller. A larger network repeats this loop with many more numbers.</span></div>
 					</div>
@@ -105,12 +106,14 @@
 										<button class="btn-demo" type="button" data-perceptron-run>Train 20</button>
 										<button class="btn-demo" type="button" data-perceptron-reset>Reset</button>
 									</div>
+									<canvas class="demo-canvas" data-perceptron-loss-chart style="height:110px;margin-top:10px" aria-label="Training loss over updates"></canvas>
 								</div>
 								<div class="pc-legend">
 									<div class="pc-class"><i></i>Class A <b data-perceptron-acc-a>...</b></div>
 									<div class="pc-class b"><i></i>Class B <b data-perceptron-acc-b>...</b></div>
 									<div class="demo-kpis">
 										<div class="demo-kpi"><b>Accuracy</b><span data-perceptron-acc>...</span></div>
+										<div class="demo-kpi"><b>Error</b><span data-perceptron-loss>...</span></div>
 										<div class="demo-kpi"><b>Weights</b><span data-perceptron-w>...</span></div>
 										<div class="demo-kpi"><b>Bias</b><span data-perceptron-b>...</span></div>
 									</div>

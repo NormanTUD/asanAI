@@ -21,7 +21,7 @@ return [
 		'A Tiny Example Network' => 'Ein winziges Beispielnetz',
 		'One input, one output, two numbers to adjust: the smallest learner, and the loop behind every network.' => 'Ein Eingang, ein Ausgang, zwei Zahlen zum Einstellen: der kleinste Lerner und die Schleife hinter jedem Netz.',
 		'What the Network Dreams' => 'Was das Netz träumt',
-		'Turn the network around, then see how diffusion models learn to build an image from noise.' => 'Dreh das Netz um und sieh, wie Diffusionsmodelle lernen, aus Rauschen ein Bild zu bauen.',
+		'Turn a classifier around and see which learned features its “dreams” reveal.' => 'Dreh einen Klassifikator um und sieh, welche gelernten Merkmale seine „Träume“ verraten.',
 		'Pattern or Memorization?' => 'Muster oder Auswendiglernen?',
 		'A model can learn the rule or learn the noise. The difference decides whether it generalizes.' => 'Ein Modell kann die Regel lernen oder das Rauschen. Der Unterschied entscheidet, ob es generalisiert.',
 		'Why Depth Helps' => 'Warum Tiefe hilft',

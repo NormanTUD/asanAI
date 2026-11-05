@@ -59,6 +59,7 @@ return [
 		'Class A' => 'Klasse A',
 		'Class B' => 'Klasse B',
 		'Accuracy' => 'Genauigkeit',
+		'Error' => 'Fehler',
 		'Weights' => 'Gewichte',
 		'0 updates.' => '0 Updates.',
 		'Each mistake pushes the line: w ← w + η·y·x, b ← b + η·y.' => 'Jeder Fehler schiebt die Linie: w ← w + η·y·x, b ← b + η·y.',
@@ -72,5 +73,7 @@ return [
 	'attrs' => [
 		'Points and a line fitted by weight and bias' => 'Punkte und eine Linie, gefittet durch Gewicht und Bias',
 		'Two classes of points and a learned decision boundary' => 'Zwei Klassen von Punkten und eine gelernte Entscheidungsgrenze',
+		'Training loss over steps' => 'Trainingsfehler über Schritte',
+		'Training loss over updates' => 'Trainingsfehler über Updates',
 	],
 ];

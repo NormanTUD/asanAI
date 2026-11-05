@@ -6617,3 +6617,69 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 	font-size: 1.125rem;
 	line-height: 1.875rem;
 }
+
+.conv-kernel-show { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.conv-kernel-label {
+	font-family: var(--tm-ui);
+	font-size: .62rem;
+	font-weight: 700;
+	letter-spacing: .1em;
+	text-transform: uppercase;
+	color: var(--tm-muted);
+}
+.conv-kernel-grid { display: grid; grid-template-columns: repeat(3, 2rem); gap: 3px; }
+.conv-kernel-grid .conv-cell { width: 2rem; height: 2rem; font-size: .65rem; }
+
+/* ── Winograd schema + Chinese Room choice buttons ─────────── */
+.wg-cases { display: grid; gap: 10px; }
+.wg-case {
+	display: grid;
+	gap: 5px;
+	width: 100%;
+	padding: 13px 15px;
+	border: 1px solid var(--tm-line);
+	border-radius: 10px;
+	background: var(--tm-paper-2);
+	color: var(--tm-ink-soft);
+	font-family: var(--tm-prose);
+	text-align: left;
+	cursor: pointer;
+}
+.wg-case.is-on {
+	border-color: var(--tm-green);
+	background: color-mix(in srgb, var(--tm-green) 7%, var(--tm-paper-2));
+	box-shadow: 0 0 0 2px color-mix(in srgb, var(--tm-green) 18%, transparent);
+}
+.wg-sentence { font-size: .94rem; line-height: 1.5; color: var(--tm-ink); }
+.wg-answer {
+	font-family: var(--tm-mono);
+	font-size: .68rem;
+	color: var(--tm-green-deep);
+	opacity: .55;
+}
+.wg-case.is-on .wg-answer { opacity: 1; }
+.wg-why {
+	display: none;
+	margin: 0;
+	font-size: .8rem;
+	line-height: 1.5;
+	color: var(--tm-muted);
+}
+.wg-case.is-on .wg-why { display: block; }
+.cr-options { display: grid; gap: 8px; margin-top: 8px; }
+.cr-choice {
+	padding: 10px 14px;
+	border: 1px solid var(--tm-line);
+	border-radius: 9px;
+	background: var(--tm-paper-2);
+	color: var(--tm-ink);
+	font-family: var(--tm-prose);
+	font-size: .88rem;
+	line-height: 1.4;
+	text-align: left;
+	cursor: pointer;
+}
+.cr-choice:hover { border-color: var(--tm-green); background: color-mix(in srgb, var(--tm-green) 6%, var(--tm-paper-2)); }
+.cr-choice.is-spent { opacity: .42; cursor: default; }
+.cr-choice.is-right { border-color: var(--tm-green); background: color-mix(in srgb, var(--tm-green) 12%, var(--tm-paper-2)); }
+.cr-choice.is-wrong { border-color: var(--tm-coral); background: color-mix(in srgb, var(--tm-coral) 12%, var(--tm-paper-2)); }

@@ -83,6 +83,10 @@
 								<div><b>Kernel</b><span>3 × 3</span></div>
 								<div><b>Feature map</b><span data-conv-output-size>12 × 12</span></div>
 							</div>
+							<div class="conv-kernel-show">
+								<span class="conv-kernel-label">Kernel</span>
+								<div class="conv-kernel-grid" data-conv-kernel-grid></div>
+							</div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>A convolution shares one small filter across the whole image. Depth stacks those filters into a hierarchy: edges, parts, objects.</span></div>
 						<div class="demo-foot">Source image: a stop sign in Victoria, Australia. Photo: Matthew Paul Argall, <a href="https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg" rel="noopener">CC0</a>.</div>
@@ -111,43 +115,6 @@
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>A vision model does not see a cat in one step. It builds the cat from edges, parts, and finally an object.</span></div>
 					</div>
-
-					<div class="demo demo--paper" data-demo="receptive">
-						<div class="demo-head">
-							<div>
-								<p class="demo-title">How far one unit can see <span>· demo</span></p>
-								<p class="demo-sub">Stacking convolutions widens the receptive field without widening the kernel. Pick a cell; add layers; watch the window grow.</p>
-							</div>
-							<span class="demo-badge">interactive</span>
-						</div>
-						<div class="demo-body">
-							<div class="demo-controls" style="margin-top:0">
-								<label>Depth <input type="range" data-rf-depth min="1" max="4" step="1" value="1"><output data-rf-depth-out>1</output></label>
-								<label>Kernel <input type="range" data-rf-kernel min="3" max="5" step="2" value="3"><output data-rf-kernel-out>3×3</output></label>
-							</div>
-							<div class="rf-wrap" style="margin-top:12px">
-								<div class="rf-panel">
-									<h4>input · click a cell</h4>
-									<div class="rf-grid" data-rf-input></div>
-								</div>
-								<div class="rf-panel">
-									<h4>feature map · one unit</h4>
-									<div class="rf-grid" data-rf-output></div>
-								</div>
-							</div>
-							<div class="demo-readout">
-								<div><b>Layers</b><span data-rf-layers>1</span></div>
-								<div><b>Receptive field</b><span data-rf-size>3×3</span></div>
-								<div><b>Kernel params</b><span data-rf-params>9</span></div>
-							</div>
-							<p class="demo-hint" data-rf-note></p>
-						</div>
-						<div class="demo-insight"><b>Takeaway</b><span>Depth multiplies context. A 3×3 kernel stacked four times sees a 9×9 patch, without a 9×9 weight matrix.</span></div>
-					</div>
-
-
-
-
 
 					<section class="section-block" id="takeaway">
 						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>

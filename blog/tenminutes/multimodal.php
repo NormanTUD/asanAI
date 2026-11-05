@@ -99,8 +99,21 @@
 
 
 
+					<section class="section-block" id="generate">
+						<div class="section-kicker"><span class="sk-num">03</span> From noise to image</div>
+						<h2 class="section-title">Destroy a picture. Learn to undo it.</h2>
+						<div class="prose">
+							<p>Multimodal systems can also go the other way: from text to an image. A diffusion model starts with random noise and learns to reverse a fixed noising process. During training, a photo is corrupted step by step with noise; the network learns to predict and subtract one step. At generation time it starts from fresh noise and denoises repeatedly, guided by a text embedding. That is how Stable Diffusion, DALL·E 2, and Imagen turn a prompt into pixels (<a href="https://arxiv.org/abs/2006.11239" rel="noopener">Ho et al., 2020</a>; <a href="https://arxiv.org/abs/2112.10752" rel="noopener">Rombach et al., 2022</a>).</p>
+							<p>This is not the same as Inceptionism. Inceptionism interrogates a frozen classifier; diffusion learns the distribution of images. The connection is the image side of the shared space: CLIP-style text embeddings can steer the denoising process.</p>
+						</div>
+						<figure>
+							<img src="../diffusion_ddim_steps.jpg" alt="A grid of denoising steps, from noisy colour fields to a detailed castle" loading="lazy">
+							<figcaption>Denoising steps from a Stable Diffusion model. Each frame is one step from noise toward a finished image. Image: Benlisquare, <a href="https://commons.wikimedia.org/wiki/File:X-Y_plot_of_algorithmically-generated_AI_art_of_European-style_castle_in_Japan_demonstrating_DDIM_diffusion_steps.png" rel="noopener">CC BY-SA 4.0</a>, via Wikimedia Commons.</figcaption>
+						</figure>
+					</section>
+
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
