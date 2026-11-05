@@ -279,7 +279,7 @@
 								distribution's entropy high. The temperature <span data-tex="\tau" data-tex-display="false"></span>
 								is the weight on entropy.
 							</p>
-							<div class="formula" data-tex="\begin{aligned} C_j &amp;= -\langle q, k_j\rangle \\[2pt] p^\star &amp;= \arg\min_{p\in\Delta^{m-1}} \sum_{j=1}^{m} p_j C_j - \tau H(p), \quad H(p) = -\sum_j p_j \log p_j \\[2pt] p_j^\star &amp;= \frac{\exp(\langle q, k_j\rangle / \tau)}{\sum_{l=1}^{m}\exp(\langle q, k_l\rangle / \tau)} \end{aligned}">C_j = -<q,k_j>; p* = argmin Σ p_j C_j - τ H(p); p_j* = exp(<q,k_j>/τ) / Σ exp(<q,k_l>/τ)</div>
+							<div class="formula" data-tex="\underbrace{ \underbrace{C_j = -\langle q,k_j\rangle}_{\text{cost of key }j} \quad \underbrace{p^\star = \arg\min_{p\in\Delta^{m-1}} \sum_{j=1}^{m} p_j C_j - \tau H(p)}_{\text{expected cost minus entropy}} \;\Longrightarrow\; \underbrace{p_j^\star = \frac{\exp(\langle q,k_j\rangle/\tau)}{\sum_{l=1}^{m}\exp(\langle q,k_l\rangle/\tau)}}_{\text{the softmax row}} }_{\text{one query, one-sided entropic optimal transport}}">C_j = -<q,k_j>; p* = argmin Σ p_j C_j - τ H(p); p_j* = exp(<q,k_j>/τ) / Σ exp(<q,k_l>/τ)</div>
 							<p>
 								The entropy term is why softmax is smooth: it stops the row from collapsing
 								onto one key. High <span data-tex="\tau" data-tex-display="false"></span> buys more
@@ -291,7 +291,7 @@
 								not an arbitrary chain rule: the standard gradient is the natural gradient in
 								disguise, and the update is an advantage-based policy gradient (Litman, 2025).
 							</p>
-							<div class="formula" data-tex="\begin{aligned} \phi^\star(s) &amp;= \tau \log\sum_{j=1}^{m} e^{s_j/\tau}, \qquad \nabla_s \phi^\star = p^\star \\[2pt] \nabla_s^2 \phi^\star &amp;= \tau F(s), \qquad F(s) = \frac{1}{\tau^2}\left(\operatorname{diag}(p^\star) - p^\star (p^\star)^\top\right) \\[2pt] \frac{\partial \mathcal L}{\partial s_j} &amp;= p_j^\star\left(u_j - \bar u\right), \quad u_j = -\frac{\partial \mathcal L}{\partial p_j}, \quad \bar u = \sum_k p_k^\star u_k \end{aligned}">φ*(s) = τ log Σ exp(s_j/τ), ∇φ* = p*; ∇²φ* = τ F(s), F(s) = (diag(p*) - p*p*ᵀ)/τ²; ∂L/∂s_j = p_j*(u_j - ū)</div>
+							<div class="formula" data-tex="\underbrace{ \underbrace{\phi^\star(s) = \tau \log\sum_{j=1}^{m} e^{s_j/\tau}, \qquad \nabla_s\phi^\star = p^\star}_{\text{dual potential and its gradient}} \quad \underbrace{\nabla_s^2\phi^\star = \tau F(s), \quad F(s) = \frac{1}{\tau^2}\left(\operatorname{diag}(p^\star)-p^\star(p^\star)^\top\right)}_{\text{Hessian is Fisher information}} \quad \underbrace{\frac{\partial\mathcal L}{\partial s_j}=p_j^\star(u_j-\bar u), \quad \bar u=\sum_k p_k^\star u_k}_{\text{advantage-based update}} }_{\text{forward inference and backward learning share one geometry}}">φ*(s) = τ log Σ exp(s_j/τ), ∇φ* = p*; ∇²φ* = τ F(s), F(s) = (diag(p*) - p*p*ᵀ)/τ²; ∂L/∂s_j = p_j*(u_j - ū)</div>
 						</div>
 
 						<div class="demo demo--paper" id="eot-demo">
