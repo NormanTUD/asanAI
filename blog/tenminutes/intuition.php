@@ -82,7 +82,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>The phone does not look up a stored answer. The summary is written one token at a time, and the same loop runs in the data centre behind it.</span></div>
+							<div class="demo-insight"><b>Takeaway</b><span>The search engine does not look up a stored answer. The summary is written one token at a time, and the same loop runs in the data centre behind it.</span></div>
 						</div>
 
 						<div class="prose">
