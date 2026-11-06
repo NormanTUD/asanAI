@@ -368,9 +368,45 @@
 		schedule();
 	}
 
+	var DEMO_TYPES = {
+		sampling: "generative", decoding: "interactive", predict: "interactive",
+		linefit: "canvas", perceptron: "canvas", gradient: "plot",
+		optimizer: "compare", polyfit: "plot", activation: "plot",
+		datamix: "compare", filter: "stepper", convolution: "canvas",
+		visionlayers: "canvas", receptive: "plot", vram: "calculator",
+		budget: "calculator", retrieval: "compare", ragspace: "canvas",
+		entropy: "plot", prompt: "generative", cot: "stepper",
+		reasoning: "compare", timeline: "timeline", contamination: "plot",
+		science: "plot", position: "canvas", trajectory: "canvas",
+		bend: "canvas", headbudget: "plot", waveform: "canvas",
+		align: "compare", preference: "compare", logitlens: "plot",
+		residual: "plot", mary: "interactive", chinese: "interactive",
+		ambiguity: "compare", verify: "calculator", citecheck: "compare",
+		myths: "interactive", folds: "plot", negation: "compare"
+	};
+	var DEMO_TYPE_CLASS = /demo--(interactive|canvas|plot|stepper|timeline|calculator|compare|generative)/;
+
+	function initDemoTypes() {
+		document.querySelectorAll(".demo").forEach(function (n) {
+			if (DEMO_TYPE_CLASS.test(n.className)) return;
+			var type = n.getAttribute("data-demo-type");
+			if (!type) {
+				var slug = n.getAttribute("data-demo");
+				if (slug && DEMO_TYPES[slug]) type = DEMO_TYPES[slug];
+			}
+			if (!type) {
+				if (n.classList.contains("timeline-shell")) type = "timeline";
+				else if (n.querySelector("canvas")) type = "canvas";
+				else type = "interactive";
+			}
+			n.classList.add("demo--" + type);
+		});
+	}
+
 	/* ── page chrome ───────────────────────────────────────── */
 
 	function initPage() {
+		initDemoTypes();
 		initTheme();
 		initReadbar();
 		initReveal();
