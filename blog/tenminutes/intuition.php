@@ -2679,7 +2679,7 @@
 			});
 			if (attMatrix) {
 				var cols = ["bank", "river", "money"];
-				var html = '<div class="am-title">' + (DE ? "Attention-Gewichte für " : "attention weights for ") + attLabel("bank") + "</div>";
+				var html = '<div class="am-title">' + (DE ? "Aufmerksamkeit von " : "attention from ") + attLabel("bank") + (DE ? ": wie stark sie auf jedes Wort achtet" : ": how strongly it looks at each word") + "</div>";
 				html += '<div class="am-row">';
 				cols.forEach(function (word) {
 					var pct = Math.round(ex.weights[word] * 100);
@@ -2697,13 +2697,13 @@
 			if (attSum) {
 				function vec(word) {
 					var p = attPos[word];
-					return "\\begin{pmatrix}" + p[0].toFixed(2) + "\\\\" + p[1].toFixed(2) + "\\end{pmatrix}";
+					return "(" + p[0].toFixed(2) + ", " + p[1].toFixed(2) + ")";
 				}
 				var words = ["bank", "river", "money"].filter(function (word) {
 					return ex.weights[word] > 0;
 				});
 				var weighted = words.map(function (word) {
-					return "\\underbrace{" + ex.weights[word].toFixed(2) + "}_{\\text{" + (DE ? "Gewicht" : "weight") + "}}\\underbrace{" + vec(word) + "}_{v_{\\text{" + attLabel(word) + "}}}";
+					return "\\underbrace{" + Math.round(ex.weights[word] * 100) + "\\%}_{\\text{" + (DE ? "Aufmerksamkeit" : "attention") + "}}\\," + "\\underbrace{" + vec(word) + "}_{v_{\\text{" + attLabel(word) + "}}}";
 				});
 				var xTerms = [], yTerms = [];
 				words.forEach(function (word) {
@@ -2712,8 +2712,8 @@
 					xTerms.push(w + "\\cdot " + p[0].toFixed(2));
 					yTerms.push(w + "\\cdot " + p[1].toFixed(2));
 				});
-				var arithmetic = "\\begin{pmatrix}" + xTerms.join(" + ") + "\\\\" + yTerms.join(" + ") + "\\end{pmatrix}";
-				var outTex = "\\begin{pmatrix}" + outv[0].toFixed(2) + "\\\\" + outv[1].toFixed(2) + "\\end{pmatrix}";
+				var arithmetic = "\\big(" + xTerms.join(" + ") + ",\\; " + yTerms.join(" + ") + "\\big)";
+				var outTex = "(" + outv[0].toFixed(2) + ", " + outv[1].toFixed(2) + ")";
 				var tex = "\\underbrace{\\begin{aligned} \\text{out}_{\\text{" + attLabel("bank") + "}} &= " + weighted.join(" + ") + " \\\\ &= " + arithmetic + " = \\underbrace{" + outTex + "}_{\\text{" + (DE ? "gewichtete Summe" : "weighted sum") + "}} \\end{aligned}}_{\\text{" + (DE ? "was Bank aus dem Kontext mitnimmt" : "what bank takes from the context") + "}}";
 				attSum.setAttribute("data-tex", tex);
 				attSum.removeAttribute("data-tex-rendered");
