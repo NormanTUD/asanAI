@@ -7,8 +7,9 @@
 	<meta name="theme-color" content="#ffffff">
 	<title>Meaning as Geometry | Ten Minutes</title>
 	<link rel="stylesheet" href="../Temml-Local.min.css">
-	<link rel="stylesheet" href="../embedding_manifold.css">
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="../embedding_manifold.css?v=<?php echo filemtime(__DIR__.'/../embedding_manifold.css'); ?>">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
+	<link rel="stylesheet" href="../prism-tomorrow.min.css">
 </head>
 <body data-lesson="embeddinglab" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -69,14 +70,14 @@
 							</div>
 							<div class="demo-body">
 								<canvas class="demo-canvas" id="oned-canvas" style="height:150px" aria-label="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Eine Temperaturlinie mit Gefrierpunkt bei -30, Kalt bei 5, Lauwarm bei 30 und Heiß bei 100' : 'A temperature line with Freezing at -30, Cold at 5, Lukewarm at 30, and Hot at 100'; ?>"></canvas>
-								<p class="meadow-caption" style="color:var(--tm-muted)"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Kalt + 25 = Lauwarm; Lauwarm + 70 = Heiß. Dieselbe Achse kann Wörter ordnen, aber sie trägt nur eine Relation.' : 'Cold + 25 = Lukewarm; Lukewarm + 70 = Hot. The same axis can order words, but it can only carry one relation.'; ?></p>
+								<p class="meadow-caption" style="color:var(--tm-muted)"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Heiß − Lauwarm = 70; Lauwarm − Kalt = 25. Dieselbe Achse kann Wörter ordnen, aber sie trägt nur eine Relation.' : 'Hot − Lukewarm = 70; Lukewarm − Cold = 25. The same axis can order words, but it can only carry one relation.'; ?></p>
 							</div>
 						</div>
 
-						<div class="fieldnotes">
-							<h4>What the coordinate means</h4>
-							<p>There is no “temperature neuron” in a real model. A dimension is a latent feature: a direction the optimization found useful, not a label a human chose. The 1-D line is a teaching device.</p>
-							<p>The word “embedding” is literal: the vector embeds the token in a space. It is not a definition; it is a learned coordinate.</p>
+						<div class="aha">
+							<span class="aha-kicker"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Der Aha-Moment' : 'The aha'; ?></span>
+							<p class="aha-big"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Wörter können Zahlen sein, mit denen man rechnen kann.' : 'Words can be numbers you can calculate with.'; ?></p>
+							<p class="aha-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ähnliche Wörter landen nahe beieinander, und die Richtung zwischen zwei Punkten kann eine Relation tragen. Die Koordinaten werden aus Text gelernt, nicht von Hand zugewiesen.' : 'Similar words land near each other, and the direction between two points can carry a relation. The coordinates are learned from text, not assigned by hand.'; ?></p>
 						</div>
 					</section>
 
@@ -188,32 +189,62 @@
 								Tokens sind nicht immer ganze Wörter, sondern oft Wortteile. Deshalb können sich Sprachen einen Token teilen: Das Stück <code>en</code> kommt in Englisch, Deutsch, Französisch und sogar Python vor. Alle vier Mannigfaltigkeiten laufen durch denselben <code>en</code>-Punkt in der Mitte; jede farbige Fläche ist eine eigene Untermannigfaltigkeit der großen Mannigfaltigkeit und steht für eine andere Sprache. Jede Fläche trifft ihn an einer anderen Stelle ihrer eigenen Fläche: Mitte, Rand, oben oder unten. Auch die übrigen Wörter sind in einzelne Tokens zerlegt, etwa <code>op</code> + <code>en</code> für „open“ oder <code>mean</code> + <code>ing</code> für „meaning“. Jede farbige Fläche ist eine eigene Untermannigfaltigkeit der großen Mannigfaltigkeit und steht für eine andere Sprache. Die Struktur ist dabei nicht nur gedreht, sondern auch geschert und gekippt, also schief im Raum. Bei echten Embeddings ist das viel unordentlicher als in diesem theoretischen Bild, aber das Prinzip ist dasselbe.
 							</p>
 							<p>Auch ein kurzes Gedicht ist eine solche Mannigfaltigkeit: ein eindimensionaler Pfad durch den Raum. Jeder mögliche Kontext ist das.</p>
+							<p>Die Linie ist eine eindimensionale Mannigfaltigkeit mit Rand: lokal ein Segment, eingebettet in 768 Dimensionen. Die endlichen Token-Punkte sind nulldimensional; die stetige Interpolation durch sie ist die 1D-Mannigfaltigkeit. Die 3D-Ansicht ist eine PCA-Projektion, ein Schatten: Abstände und scheinbare Kreuzungen gehören zum Schatten, nicht zum vollen Raum.</p>
 							<?php else: ?>
 							<p>
 								Tokens are not always whole words; they are often pieces of words. That is why languages can share a token: the piece <code>en</code> occurs in English, German, French and even Python. All four manifolds pass through the same <code>en</code> point in the middle; each coloured surface is its own submanifold of the larger manifold and stands for a different language. Each meets it at a different place on its own sheet (centre, edge, top, or bottom). The other words are also split into tokens, for example <code>op</code> + <code>en</code> for “open” or <code>mean</code> + <code>ing</code> for “meaning”. Each coloured surface is its own submanifold of the larger manifold and stands for a different language. The structure is not only rotated but also sheared and tilted, so it lies obliquely in space. Real embeddings are much messier than this theoretical picture, but the principle is the same.
 							</p>
 							<p>A short poem is such a manifold too: a one-dimensional path through the space. Every possible context is one.</p>
+							<p>The line is a one-dimensional manifold with boundary: locally a segment, embedded in 768 dimensions. The finite token points are zero-dimensional; the continuous interpolation through them is the 1D manifold. The 3D view is a PCA projection, a shadow: distances and apparent crossings belong to the shadow, not the full space.</p>
 							<?php endif; ?>
 						</div>
 						<div class="demo demo--paper demo--canvas" id="tm-poem-manifold-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Gedicht ist eine Linie' : 'A poem is a line'; ?> <span>· demo 01d</span></p>
-									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Zwei kurze Gedichte, jedes ein eindimensionaler Pfad durch den 768-dimensionalen Embedding-Raum von GPT-2. Wechsle die Sprache, um die Linien zu vergleichen.' : 'Two short poems, each a one-dimensional path through GPT-2’s 768-dimensional embedding space. Switch language to compare the lines.'; ?></p>
+									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Drei kurze Texte, jeder ein eindimensionaler Pfad durch den 768-dimensionalen Embedding-Raum von GPT-2. Wechsle das Beispiel, um die Linien zu vergleichen.' : 'Three short texts, each a one-dimensional path through GPT-2’s 768-dimensional embedding space. Switch examples to compare the lines.'; ?></p>
 								</div>
 								<span class="demo-badge"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'echtes GPT-2' : 'real GPT-2'; ?></span>
 							</div>
 							<div class="demo-body">
+								<div class="big-quote poem-quote" id="poem-quote">
+									<p><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? '„Die Löcher sind das Wichtigste am Sieb.“' : '“The fool sees not the same tree that a wise man sees.”'; ?></p>
+									<cite><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Joachim Ringelnatz (zugeschrieben). Die Zuschreibung ist verbreitet, aber nicht gesichert.' : 'William Blake, Proverbs of Hell, The Marriage of Heaven and Hell (c. 1790).'; ?></cite>
+								</div>
 								<div class="chip-row" id="poem-lang">
 									<button class="chip is-on" type="button" data-poem="en"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Englisch · Blake' : 'English · Blake'; ?></button>
 									<button class="chip" type="button" data-poem="de"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Deutsch · Ringelnatz' : 'German · Ringelnatz'; ?></button>
+									<button class="chip" type="button" data-poem="alice"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Alice · Carroll' : 'Alice · Carroll'; ?></button>
 								</div>
 								<div id="tm-poem-en" style="width:100%"></div>
 								<div id="tm-poem-de" style="width:100%" hidden></div>
-								<p class="meadow-caption" id="poem-caption" style="color:var(--tm-muted)"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Joachim Ringelnatz (zugeschrieben), „Die Löcher sind das Wichtigste am Sieb.“ Die Zuschreibung ist verbreitet, aber nicht gesichert. Die Linie folgt den GPT-2-Tokens in ihrer Reihenfolge.' : 'William Blake, “The fool sees not the same tree that a wise man sees.” From Proverbs of Hell, The Marriage of Heaven and Hell (c. 1790). The line follows the GPT-2 tokens in order.'; ?></p>
+								<div id="tm-poem-alice" style="width:100%" hidden></div>
+								<p class="meadow-caption" id="poem-caption" style="color:var(--tm-muted)"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Die Linie folgt den GPT-2-Tokens in Leserichtung. Die 3D-Ansicht ist eine PCA-Projektion der 768-dimensionalen Token- und Positions-Embeddings.' : 'The line follows the GPT-2 tokens in reading order. The 3D view is a PCA projection of 768-dimensional token and position embeddings.'; ?></p>
+								<p class="demo-hint" id="poem-token-note"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Die deutsche Linie zerfällt in Byte-Level-Tokens. Stücke wie „icht“ und „ig“ sind keine Wörter, sondern Wortfragmente.' : ''; ?></p>
 							</div>
 							<div class="demo-insight"><b><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Fazit' : 'Takeaway'; ?></b><span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz ist ein eindimensionaler Pfad, keine Wolke. Der Pfad lebt in einem viel größeren Raum; die 3D-Linie ist sein Schatten.' : 'A sentence is a one-dimensional path, not a cloud. The path lives in a much larger space; the 3D line is a shadow of it.'; ?></span></div>
 						</div>
+						<details class="em-code">
+							<summary><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Die Skripte, die die Daten erzeugt haben' : 'The scripts that made the data'; ?></summary>
+							<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
+							<p>Die Skripte laden GPT-2 nach <code>/tmp</code>, lesen die Token- und Positions-Embeddings, projizieren sie mit PCA auf drei Dimensionen und schreiben <code>embedding_manifold_data.js</code> und <code>poem_manifold_data.js</code>. Sie brauchen <code>uv</code>; die Abhängigkeiten stehen in <code>requirements.txt</code>.</p>
+							<pre><code class="language-bash">uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
+    blog/tools/embedding_manifold/embedding_manifold.py
+uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
+    blog/tools/embedding_manifold/poem_manifold.py</code></pre>
+							<p><button class="btn-demo" type="button" data-copy="#alice-script">Alice-Skript kopieren</button> <button class="btn-demo" type="button" data-copy="#poem-script">Gedicht-Skript kopieren</button></p>
+							<?php else: ?>
+							<p>The scripts download GPT-2 to <code>/tmp</code>, read the token and position embeddings, project them to three dimensions with PCA, and write <code>embedding_manifold_data.js</code> and <code>poem_manifold_data.js</code>. They need <code>uv</code>; the dependencies are in <code>requirements.txt</code>.</p>
+							<pre><code class="language-bash">uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
+    blog/tools/embedding_manifold/embedding_manifold.py
+uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
+    blog/tools/embedding_manifold/poem_manifold.py</code></pre>
+							<p><button class="btn-demo" type="button" data-copy="#alice-script">Copy Alice script</button> <button class="btn-demo" type="button" data-copy="#poem-script">Copy poem script</button></p>
+							<?php endif; ?>
+							<pre><code class="language-text"><?php echo htmlspecialchars((string) @file_get_contents(__DIR__ . '/../tools/embedding_manifold/requirements.txt'), ENT_QUOTES, 'UTF-8'); ?></code></pre>
+							<pre><code class="language-python" id="alice-script"><?php echo htmlspecialchars((string) @file_get_contents(__DIR__ . '/../tools/embedding_manifold/embedding_manifold.py'), ENT_QUOTES, 'UTF-8'); ?></code></pre>
+							<pre><code class="language-python" id="poem-script"><?php echo htmlspecialchars((string) @file_get_contents(__DIR__ . '/../tools/embedding_manifold/poem_manifold.py'), ENT_QUOTES, 'UTF-8'); ?></code></pre>
+						</details>
 
 					</section>
 
@@ -283,20 +314,7 @@
 							</div>
 						</div>
 
-						<div class="demo demo--paper demo--canvas" id="magnitude-demo">
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">Magnitude can change <span>· demo 03</span></p>
-									<p class="demo-sub">Two vectors point in the same direction. One is longer; the angle stays the same.</p>
-								</div>
-								<span class="demo-badge">same angle</span>
-							</div>
-							<div class="demo-body">
-								<canvas class="demo-canvas" id="magnitude-canvas" style="height:260px" aria-label="Two vectors with the same direction and different lengths"></canvas>
-								<p class="meadow-caption" id="magnitude-caption" style="color:var(--tm-muted)">A and B point the same way. B is longer, so the Euclidean gap grows; the angle stays zero and the cosine stays 1.00.</p>
-							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Length is not direction. A longer vector can mean the same thing; that is why cosine is the usual default.</span></div>
-						</div>
+
 					</section>
 
 					<section class="section-block" id="real">
@@ -364,67 +382,10 @@
 						</div>
 					</section>
 
-					<section class="section-block" id="sentence-manifold">
-						<div class="section-kicker"><span class="sk-num">05</span> <?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Vom Satz zur Linie' : 'From a sentence to a line'; ?></div>
-						<h2 class="section-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz ist eine Linie durch den Bedeutungsraum.' : 'A sentence is a line through meaning space.'; ?></h2>
-						<div class="big-quote">
-							<p>“Wer in aller Welt bin ich? Ah, das ist das große Rätsel!”</p>
-							<cite>Lewis Carroll, <em>Alice’s Abenteuer im Wunderland</em>, trans. Antonie Zimmermann (1869), ch. II, spelling modernized. English: “Who in the world am I? Ah, that’s the great puzzle!”, <em>Alice’s Adventures in Wonderland</em> (1865), ch. II.</cite>
-						</div>
-						<div class="prose">
-							<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
-							<p>
-								Ein Satz ist ein Weg: Zerlege ihn in Tokens, mache jedes Token zu einem Vektor, addiere seinen Positionsvektor, und du bekommst einen Punkt pro Token in Leserichtung. Die Kurve durch diese Punkte ist eine eindimensionale Mannigfaltigkeit mit Rand: lokal sieht sie aus wie ein Liniensegment, und sie ist in den 768-dimensionalen Embedding-Raum eingebettet. Die Tokens sind Stichproben; die Kurve ist das Objekt.
-							</p>
-							<p>
-								Die Demo nutzt die echte Embedding-Tabelle von GPT-2. Der deutsche Alice-Satz zerfällt in 27 Byte-Level-Tokens; jedes Token hat 768 Dimensionen, und jede Position addiert einen eigenen 768-dimensionalen Vektor. Eine Projektion auf die ersten drei Hauptkomponenten macht die Punkte sichtbar. Die Projektion ist ein Schatten: Abstände und scheinbare Kreuzungen gehören zum Schatten, nicht zum vollen 768-dimensionalen Raum.
-							</p>
-							<p>
-								Ist das wirklich eine eindimensionale Mannigfaltigkeit? Die endliche Menge der Token-Punkte ist nulldimensional. Die stetige Interpolation durch sie, parametrisiert durch eine Koordinate entlang des Satzes, ist eine eindimensionale Mannigfaltigkeit. Sie ist in den hochdimensionalen Raum eingebettet, und ihre Form hält fest, welche Tokens das Modell nahe beieinander platziert; ihre Richtung hält die Reihenfolge fest. Die 3D-Ansicht ist nicht die Mannigfaltigkeit selbst, sondern eine Projektion von ihr.
-							</p>
-							<?php else: ?>
-							<p>
-								A sentence is a path: tokenize it, turn each token into a vector, add its position vector, and you get one point per token in reading order. The curve through those points is a one-dimensional manifold with boundary: locally it looks like a line segment, and it is embedded in the 768-dimensional embedding space. The tokens are samples; the curve is the object.
-							</p>
-							<p>
-								The demo uses the real GPT-2 embedding table. The German Alice sentence splits into 27 byte-level tokens; each token has 768 dimensions, and each position adds its own 768-dimensional vector. A projection onto the first three principal components makes the points visible. The projection is a shadow: distances and apparent crossings belong to the shadow, not to the full 768-dimensional space.
-							</p>
-							<p>
-								Is it really a one-dimensional manifold? The finite set of token points is zero-dimensional. The continuous interpolation through them, parameterised by one coordinate along the sentence, is a one-dimensional manifold. It is embedded in the high-dimensional space, and its shape records which tokens the model places near each other; its direction records the order. The 3D view is not the manifold itself; it is a projection of it.
-							</p>
-							<?php endif; ?>
-						</div>
-						<div class="demo demo--paper demo--canvas" id="tm-sentence-manifold-demo">
-							<div class="demo-head">
-								<div>
-									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz als Linie' : 'A sentence as a line'; ?> <span>· demo 05</span></p>
-									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Echte GPT-2-Embeddings, auf drei Dimensionen projiziert. Die Linie folgt der Satzreihenfolge; die Punkte sind Tokens.' : 'Real GPT-2 embeddings projected to three dimensions. The line follows the sentence order; the points are tokens.'; ?></p>
-								</div>
-								<span class="demo-badge">3D · line</span>
-							</div>
-							<div class="demo-body">
-								<div id="tm-sentence-manifold"></div>
-							</div>
-							<div class="demo-insight"><b><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Fazit' : 'Takeaway'; ?></b><span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz ist ein 1D-Pfad durch den 768-dimensionalen Embedding-Raum. Die 3D-Ansicht ist ein Schatten dieses Pfades: Sie zeigt Reihenfolge und Nachbarschaften, aber keinen Beweis über die Bedeutung.' : 'A sentence is a 1D path through the 768-dimensional embedding space. The 3D view is a shadow of that path: it shows order and neighbourhoods, not a proof about meaning.'; ?></span></div>
-						</div>
-						<details class="em-code">
-							<summary><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Das Skript, das die Daten erzeugt hat' : 'The script that made the data'; ?></summary>
-							<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
-							<p>Das Skript lädt GPT-2 nach <code>/tmp</code>, liest die Token- und Positions-Embeddings, projiziert sie mit PCA auf drei Dimensionen und schreibt <code>embedding_manifold_data.js</code>. Es braucht <code>uv</code>; die Abhängigkeiten stehen in <code>requirements.txt</code>.</p>
-							<pre><code class="language-bash">uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
-    blog/tools/embedding_manifold/embedding_manifold.py</code></pre>
-							<?php else: ?>
-							<p>The script downloads GPT-2 to <code>/tmp</code>, reads the token and position embeddings, projects them to three dimensions with PCA, and writes <code>embedding_manifold_data.js</code>. It needs <code>uv</code>; the dependencies are in <code>requirements.txt</code>.</p>
-							<pre><code class="language-bash">uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
-    blog/tools/embedding_manifold/embedding_manifold.py</code></pre>
-							<?php endif; ?>
-							<pre><code class="language-text"><?php echo htmlspecialchars((string) @file_get_contents(__DIR__ . '/../tools/embedding_manifold/requirements.txt'), ENT_QUOTES, 'UTF-8'); ?></code></pre>
-							<pre><code class="language-python"><?php echo htmlspecialchars((string) @file_get_contents(__DIR__ . '/../tools/embedding_manifold/embedding_manifold.py'), ENT_QUOTES, 'UTF-8'); ?></code></pre>
-						</details>
-					</section>
+
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">06</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -439,7 +400,7 @@
 
 
 	<script src="../temml.min.js"></script>
-	<script src="assets/site.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 	<script src="../plotly-2.24.1.min.js"></script>
 	<script src="../manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/../manifold_scenes.js'); ?>"></script>
 	<script src="../embedding_manifold_data.js?v=<?php echo filemtime(__DIR__.'/../embedding_manifold_data.js'); ?>"></script>
@@ -452,26 +413,6 @@
 			ManifoldScenes.renderDualPlotly('tm-dual-manifolds', 'tm-dual-controls');
 		}
 
-		var sentenceHost = document.getElementById('tm-sentence-manifold');
-		var sentenceReady = false;
-		function drawSentenceLine() {
-			if (sentenceReady || !sentenceHost || !window.EmbeddingManifold) return;
-			sentenceReady = true;
-			window.EmbeddingManifold.renderLine('tm-sentence-manifold', { mode: 'combined' });
-		}
-		if (sentenceHost) {
-			if ('IntersectionObserver' in window) {
-				var sentenceIo = new IntersectionObserver(function (entries) {
-					if (entries.some(function (e) { return e.isIntersecting; })) {
-						sentenceIo.disconnect();
-						drawSentenceLine();
-					}
-				}, { rootMargin: '500px 0px' });
-				sentenceIo.observe(sentenceHost);
-			} else {
-				drawSentenceLine();
-			}
-		}
 	})();
 	</script>
 	<script>
@@ -693,7 +634,7 @@
 			function vectorTex(name) {
 				var w = get(name);
 				if (!w) return "";
-				return "\\underbrace{(" + w.x.toFixed(2) + ",\\," + w.y.toFixed(2) + ")}_{\\text{" + labelFor(name) + "}}";
+				return "\\underbrace{\\begin{pmatrix}" + w.x.toFixed(2) + "\\\\" + w.y.toFixed(2) + "\\end{pmatrix}}_{\\text{" + labelFor(name) + "}}";
 			}
 			function setEquation(an) {
 				var el = document.getElementById("emb-equation");
@@ -825,40 +766,6 @@
 			["tm:theme", "resize"].forEach(function (ev) { window.addEventListener(ev, redrawCos); });
 		}
 
-		/* ── magnitude demo ──────────────────────────────────── */
-		var magCanvas = document.getElementById("magnitude-canvas");
-		if (magCanvas) {
-			var magApi = TM.initCanvas(magCanvas, function (ctx, w, h) {
-				var c = TM.colors();
-				ctx.clearRect(0, 0, w, h);
-				var ox = w * 0.18, oy = h * 0.72;
-				var ang = -0.55;
-				var R = Math.min(w, h) * 0.42;
-				var ax = ox + Math.cos(ang) * R, ay = oy + Math.sin(ang) * R;
-				var bx = ox + Math.cos(ang) * R * 1.8, by = oy + Math.sin(ang) * R * 1.8;
-				ctx.strokeStyle = c.dark ? "rgba(92,155,175,.16)" : "rgba(0,75,111,.12)";
-				ctx.lineWidth = 1;
-				ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(w, oy); ctx.stroke();
-				ctx.beginPath(); ctx.moveTo(ox, 0); ctx.lineTo(ox, h); ctx.stroke();
-				drawArrow(ctx, ox, oy, ax, ay, c.sky, false);
-				drawArrow(ctx, ox, oy, bx, by, c.gold, false);
-				ctx.setLineDash([4, 4]);
-				ctx.strokeStyle = c.coral;
-				ctx.lineWidth = 1.2;
-				ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
-				ctx.setLineDash([]);
-				ctx.font = "600 11px Barlow, system-ui, sans-serif";
-				ctx.fillStyle = c.ink;
-				ctx.textAlign = "center";
-				ctx.fillText("A", ax + 14, ay - 8);
-				ctx.fillText("B", bx + 14, by - 8);
-				ctx.fillStyle = c.muted;
-				ctx.font = "600 10px Barlow, system-ui, sans-serif";
-				ctx.textAlign = "left";
-				ctx.fillText(DE ? "gleiche Richtung · |B| = 1,8 |A|" : "same direction · |B| = 1.8 |A|", 14, 20);
-			});
-			window.addEventListener("tm:theme", function () { if (magApi) magApi.redraw(); });
-		}
 	})();
 	</script>
 	<script>
@@ -878,8 +785,8 @@
 				{ value: 100, label: de ? "Heiß" : "Hot", color: c.gold }
 			],
 			ops: [
-				{ from: 5, to: 30, label: de ? "Kalt + 25 = Lauwarm" : "Cold + 25 = Lukewarm", color: c.green },
-				{ from: 30, to: 100, label: de ? "Lauwarm + 70 = Heiß" : "Lukewarm + 70 = Hot", color: c.gold }
+				{ from: 30, to: 100, label: de ? "Heiß − Lauwarm = 70" : "Hot − Lukewarm = 70", color: c.gold },
+				{ from: 5, to: 30, label: de ? "Lauwarm − Kalt = 25" : "Lukewarm − Cold = 25", color: c.green }
 			]
 		});
 	})();
@@ -887,41 +794,78 @@
 	<script>
 	(function () {
 		"use strict";
-		var data = window.TM_POEM_MANIFOLD;
+		var poemData = window.TM_POEM_MANIFOLD;
+		var aliceData = window.TM_EMBEDDING_MANIFOLD;
 		var api = window.EmbeddingManifold;
-		if (!data || !api) return;
-		var current = TM.lang() === "de" ? "de" : "en";
+		if (!poemData || !aliceData || !api) return;
+		var uiDe = TM.lang() === "de";
+		var current = uiDe ? "de" : "en";
 		var caption = document.getElementById("poem-caption");
+		var note = document.getElementById("poem-token-note");
+		var quote = document.getElementById("poem-quote");
 		var hosts = {
 			en: document.getElementById("tm-poem-en"),
-			de: document.getElementById("tm-poem-de")
+			de: document.getElementById("tm-poem-de"),
+			alice: document.getElementById("tm-poem-alice")
 		};
 		var chips = Array.prototype.slice.call(document.querySelectorAll("#poem-lang [data-poem]"));
-		function hint(lang) {
-			return lang === "de"
-				? "Ziehe zum Drehen, scrolle zum Zoomen. Die Linie verbindet die Tokens in Gedichtreihenfolge; die 3D-Lage ist eine PCA-Projektion."
-				: "Drag to rotate, scroll to zoom. The line connects the tokens in poem order; the 3D layout is a PCA projection.";
+		var fragmentNoteDe = "Die deutsche Linie zerfällt in Byte-Level-Tokens. Stücke wie „icht“ und „ig“ sind keine Wörter, sondern Wortfragmente.";
+		var fragmentNoteEn = "The German line is split into byte-level tokens. Pieces such as “icht” and “ig” are not words; they are word fragments.";
+		var sources = {
+			en: {
+				data: poemData.poems.en,
+				payload: poemData.poems.en,
+				quote: "“" + poemData.poems.en.sentence + "”",
+				cite: poemData.poems.en.author + ", " + poemData.poems.en.source + "."
+			},
+			de: {
+				data: poemData.poems.de,
+				payload: poemData.poems.de,
+				quote: "„" + poemData.poems.de.sentence + "“",
+				cite: poemData.poems.de.author + ". " + poemData.poems.de.note
+			},
+			alice: {
+				data: aliceData,
+				payload: aliceData.modes.combined,
+				quote: "„" + aliceData.sentence.de + "“",
+				cite: "Lewis Carroll, Alice’s Abenteuer im Wunderland, trans. Antonie Zimmermann (1869), ch. II. English: “" + aliceData.sentence.en + "”, Alice’s Adventures in Wonderland (1865), ch. II."
+			}
+		};
+		function hint() {
+			return uiDe
+				? "Ziehe zum Drehen, scrolle zum Zoomen. Die Linie verbindet die Tokens in Leserichtung; die 3D-Lage ist eine PCA-Projektion."
+				: "Drag to rotate, scroll to zoom. The line connects the tokens in reading order; the 3D layout is a PCA projection.";
 		}
-		function aria(lang) {
-			return lang === "de"
-				? "Dreidimensionale Projektion der GPT-2-Token-Embeddings eines Gedichts, verbunden in Leserichtung"
-				: "Three-dimensional projection of the GPT-2 token embeddings of a poem, connected in reading order";
+		function aria() {
+			return uiDe
+				? "Dreidimensionale Projektion der GPT-2-Token-Embeddings eines kurzen Textes, verbunden in Leserichtung"
+				: "Three-dimensional projection of the GPT-2 token embeddings of a short text, connected in reading order";
 		}
 		function render(lang) {
-			var poem = data.poems[lang];
+			var source = sources[lang];
 			var host = hosts[lang];
 			if (host && !host.getAttribute("data-demo-ready")) {
-				api.renderLine(host.id, { data: poem, payload: poem, hint: hint(lang), ariaLabel: aria(lang) });
+				api.renderLine(host.id, { data: source.data, payload: source.payload, hint: hint(), ariaLabel: aria() });
 			}
-			hosts.en.hidden = lang !== "en";
-			hosts.de.hidden = lang !== "de";
+			Object.keys(hosts).forEach(function (key) { hosts[key].hidden = key !== lang; });
 			chips.forEach(function (chip) {
 				chip.classList.toggle("is-on", chip.getAttribute("data-poem") === lang);
 			});
+			if (quote) {
+				var p = quote.querySelector("p");
+				var cite = quote.querySelector("cite");
+				if (p) p.textContent = source.quote;
+				if (cite) cite.textContent = source.cite;
+			}
 			if (caption) {
-				caption.textContent = lang === "de"
-					? poem.author + ", „" + poem.sentence + "“ " + poem.note + " Die Linie folgt den GPT-2-Tokens in ihrer Reihenfolge."
-					: poem.author + ", “" + poem.sentence + "” " + poem.source + ". The line follows the GPT-2 tokens in order.";
+				caption.textContent = uiDe
+					? "Die Linie folgt den GPT-2-Tokens in Leserichtung. Die 3D-Ansicht ist eine PCA-Projektion der 768-dimensionalen Token- und Positions-Embeddings."
+					: "The line follows the GPT-2 tokens in reading order. The 3D view is a PCA projection of 768-dimensional token and position embeddings.";
+			}
+			if (note) {
+				var isGerman = lang === "de" || lang === "alice";
+				note.textContent = isGerman ? (uiDe ? fragmentNoteDe : fragmentNoteEn) : "";
+				note.hidden = !isGerman;
 			}
 		}
 		chips.forEach(function (chip) {
@@ -930,5 +874,7 @@
 		render(current);
 	})();
 	</script>
+	<script src="../prism.min.js" defer></script>
+	<script src="../prism-python.min.js" defer></script>
 </body>
 </html>
