@@ -7158,3 +7158,27 @@ body[data-page="lesson"] .lesson-main > .section-block > figure.coherence-figure
 .demo--paper .demo-foot { color: var(--tm-muted); }
 
 html[data-theme="light"] .demo--paper .demo-foot { color: var(--tm-muted); }
+
+html[data-theme="light"] .demo input[type="range"] {
+	--range-track: var(--tm-line-strong) !important;
+	--range-thumb: var(--tm-green) !important;
+	--range-thumb-border: var(--tm-card) !important;
+}
+html[data-theme="light"] .demo input[type="range"]::-webkit-slider-thumb {
+	background: var(--range-thumb) !important;
+	border: 3px solid var(--range-thumb-border) !important;
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--range-thumb) 22%, transparent) !important;
+}
+html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
+	background: var(--range-thumb) !important;
+	border: 3px solid var(--range-thumb-border) !important;
+}
+
+.oned-twod-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 18px;
+}
+@media (max-width: 640px) {
+	.oned-twod-grid { grid-template-columns: 1fr; }
+}

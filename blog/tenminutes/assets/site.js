@@ -176,6 +176,67 @@
 		return { redraw: request, ctx: ctx };
 	};
 
+	TM.numberLine = function (canvas, opts) {
+		if (!canvas) return null;
+		opts = opts || {};
+		var api = TM.initCanvas(canvas, function (ctx, w, h) {
+			var c = TM.colors();
+			var points = opts.points || [];
+			var ops = opts.ops || [];
+			if (!points.length) return;
+			var values = points.map(function (p) { return p.value; });
+			var min = opts.min != null ? opts.min : Math.min.apply(null, values);
+			var max = opts.max != null ? opts.max : Math.max.apply(null, values);
+			if (min === max) { min -= 1; max += 1; }
+			var padL = 42, padR = 42;
+			var axisY = h * 0.64;
+			function X(v) { return padL + (v - min) / (max - min) * (w - padL - padR); }
+			ctx.clearRect(0, 0, w, h);
+			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.28)" : "rgba(0,75,111,.3)";
+			ctx.lineWidth = 2;
+			ctx.beginPath();
+			ctx.moveTo(padL - 10, axisY);
+			ctx.lineTo(w - padR + 10, axisY);
+			ctx.stroke();
+			ctx.fillStyle = ctx.strokeStyle;
+			ctx.beginPath(); ctx.moveTo(padL - 14, axisY - 5); ctx.lineTo(padL - 4, axisY); ctx.lineTo(padL - 14, axisY + 5); ctx.fill();
+			ctx.beginPath(); ctx.moveTo(w - padR + 14, axisY - 5); ctx.lineTo(w - padR + 4, axisY); ctx.lineTo(w - padR + 14, axisY + 5); ctx.fill();
+			points.forEach(function (p) {
+				var x = X(p.value);
+				ctx.strokeStyle = c.dark ? "rgba(238,247,244,.36)" : "rgba(0,75,111,.36)";
+				ctx.lineWidth = 1;
+				ctx.beginPath(); ctx.moveTo(x, axisY - 7); ctx.lineTo(x, axisY + 7); ctx.stroke();
+				ctx.beginPath(); ctx.arc(x, axisY, 6, 0, Math.PI * 2);
+				ctx.fillStyle = p.color || c.green;
+				ctx.fill();
+				ctx.lineWidth = 2; ctx.strokeStyle = c.paper; ctx.stroke();
+				ctx.fillStyle = c.ink;
+				ctx.font = "700 11px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "center";
+				ctx.fillText(p.label, x, axisY - 18);
+				ctx.fillStyle = c.muted;
+				ctx.font = "600 10px Barlow, system-ui, sans-serif";
+				ctx.fillText(String(p.value), x, axisY + 24);
+			});
+			ops.forEach(function (op, i) {
+				var y = 20 + i * 26;
+				var x1 = X(op.from), x2 = X(op.to);
+				var dir = x2 >= x1 ? 1 : -1;
+				ctx.strokeStyle = op.color || c.blue;
+				ctx.lineWidth = 1.6;
+				ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2, y); ctx.stroke();
+				ctx.fillStyle = op.color || c.blue;
+				ctx.beginPath();
+				ctx.moveTo(x2, y); ctx.lineTo(x2 - dir * 8, y - 4); ctx.lineTo(x2 - dir * 8, y + 4); ctx.fill();
+				ctx.font = "600 10px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "center";
+				ctx.fillText(op.label, (x1 + x2) / 2, y - 6);
+			});
+		});
+		window.addEventListener("tm:theme", function () { api.redraw(); });
+		return api;
+	};
+
 	TM.roundRect = function (ctx, x, y, w, h, r) {
 		var rr = Math.min(r, Math.abs(w) / 2, Math.abs(h) / 2);
 		ctx.beginPath();
