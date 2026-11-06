@@ -7,8 +7,9 @@
 	var CARET = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>';
 
 	// Margin layout: the dock lives in the left margin, its right edge kept
-	// GAP px clear of the centered reading column. Hidden when that margin
-	// can't fit MIN_W (i.e. phones / narrow screens / reader mode).
+	// GAP px clear of the centered reading column. On narrow screens the
+	// left margin no longer fits the full panel, but the pill stays visible
+	// and the panel opens over the column with a viewport-capped width.
 	var LEFT_PAD = 24, GAP = 22, MAX_W = 500, MIN_W = 240;
 	var spy = { items: [], activeList: null, active: null, ticking: false };
 
@@ -366,9 +367,10 @@
 			if (!c) return;
 			var colLeft = c.getBoundingClientRect().left;
 			var avail = colLeft - LEFT_PAD - GAP;
-			if (avail < MIN_W) { dock.style.display = 'none'; return; }
 			dock.style.display = '';
-			panel.style.width = Math.min(MAX_W, avail) + 'px';
+			// Keep the dock visible on narrow screens; cap the panel so it
+			// still fits the viewport instead of disappearing.
+			panel.style.width = Math.min(MAX_W, Math.max(MIN_W, avail)) + 'px';
 		}
 
 		function centerOn(node) {

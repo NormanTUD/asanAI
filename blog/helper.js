@@ -3474,3 +3474,56 @@ const cssVar = (name) => window.__MN_DARK.themeVar(name);
 	});
 })();
 
+/* Keep every Plotly chart inside its host when the host changes size
+   without a window resize (reading column, reader mode, tab reveal,
+   responsive devtools). Plotly's own `responsive:true` only listens to
+   window resize, so wide inner .svg-containers could otherwise stay
+   wider than the column and trip the layout guardrail. */
+(function setupGlobalPlotlyResizeObserver() {
+	if (window.__plotlyResizeObserverInstalled) return;
+	window.__plotlyResizeObserverInstalled = true;
+	if (typeof window.ResizeObserver === 'undefined') return;
+
+	var pending = new Set();
+	var raf = 0;
+	var flush = function () {
+		raf = 0;
+		if (typeof Plotly === 'undefined' || !Plotly.Plots || !Plotly.Plots.resize) {
+			pending.clear();
+			return;
+		}
+		pending.forEach(function (el) {
+			try {
+				if (el.isConnected && el.offsetParent !== null) Plotly.Plots.resize(el);
+			} catch (e) { /* disposed chart */ }
+		});
+		pending.clear();
+	};
+	var queue = function (el) {
+		pending.add(el);
+		if (!raf) raf = requestAnimationFrame(flush);
+	};
+	var ro = new ResizeObserver(function (entries) {
+		for (var i = 0; i < entries.length; i++) queue(entries[i].target);
+	});
+	var observeAll = function (root) {
+		var nodes = (root || document).querySelectorAll('.js-plotly-plot');
+		nodes.forEach(function (el) {
+			if (el._plotlyResizeObserved) return;
+			el._plotlyResizeObserved = true;
+			ro.observe(el);
+		});
+	};
+	var start = function () {
+		observeAll(document);
+		// Charts are created lazily and swapped in; watch for new hosts.
+		new MutationObserver(function () { observeAll(document); })
+			.observe(document.body, { childList: true, subtree: true });
+	};
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', start, { once: true });
+	} else {
+		start();
+	}
+})();
+

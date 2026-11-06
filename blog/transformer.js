@@ -1201,7 +1201,7 @@ function render_positional_waves(d_model, tokens) {
         positionalWavesObserver,
         { d_model, tokens },
         () => _execute_positional_waves_render(d_model, tokens),
-        `<div class="plot-loading" style="height:100%; flex-direction:column; gap:14px;"><div class="spinner"></div><span>Waiting for Positional Waves plot to load...</span></div>`
+        PlotState.loadingMarkup('Waiting for Positional Waves plot to load...')
     );
 }
 
@@ -1308,7 +1308,187 @@ function run_transformer_demo(activeId = null) {
 			loss: null
 		});
 	}
+
+	// Keep the address bar in sync with the current run (cheap + debounced).
+	if (typeof scheduleRunUrlSync === 'function') scheduleRunUrlSync();
 }
+
+/* ── TransformerRun: one shareable snapshot of the current experiment ──
+   Prompt + architecture + training settings live in many controls; this
+   unifies them in the URL so a reader can copy a link to the exact run. */
+const TRANSFORMER_RUN_KEYS = ['d', 'h', 'n', 'c', 't', 'train', 'prompt', 'epochs', 'lr', 'opt'];
+let _runUrlTimer = null;
+let _lastRunUrl = null;
+
+function collectTransformerRun() {
+	const cfg = getTransformerConfig();
+	const val = (id) => document.getElementById(id);
+	const ctx = val('transformer-context-size');
+	const train = val('transformer-training-data');
+	const prompt = val('transformer-master-token-input');
+	const epochs = val('train-epochs');
+	const lr = val('train-lr');
+	const opt = document.querySelector('input[name="train-optimizer-choice"]:checked');
+	return {
+		d: cfg.d_model,
+		h: cfg.n_heads,
+		n: cfg.n_layers,
+		c: ctx ? parseInt(ctx.value) : undefined,
+		t: cfg.temperature,
+		train: train ? train.value : undefined,
+		prompt: prompt ? prompt.value : undefined,
+		epochs: epochs ? parseInt(epochs.value) : undefined,
+		lr: lr ? parseFloat(lr.value) : undefined,
+		opt: opt ? opt.value : undefined
+	};
+}
+
+function _runNum(params, key) {
+	if (!params.has(key)) return undefined;
+	const v = Number(params.get(key));
+	return Number.isFinite(v) ? v : undefined;
+}
+
+function transformerRunFromURL() {
+	const params = new URLSearchParams(location.search);
+	if (!TRANSFORMER_RUN_KEYS.some((k) => params.has(k))) return null;
+	return {
+		d: _runNum(params, 'd'),
+		h: _runNum(params, 'h'),
+		n: _runNum(params, 'n'),
+		c: _runNum(params, 'c'),
+		t: _runNum(params, 't'),
+		train: params.has('train') ? params.get('train') : undefined,
+		prompt: params.has('prompt') ? params.get('prompt') : undefined,
+		epochs: _runNum(params, 'epochs'),
+		lr: _runNum(params, 'lr'),
+		opt: params.get('opt') || undefined
+	};
+}
+
+function applyTransformerRun(cfg) {
+	if (!cfg) return;
+	const setVal = (id, v) => {
+		if (v === undefined || v === null) return;
+		const el = document.getElementById(id);
+		if (el) el.value = String(v);
+	};
+	setVal('transformer-dimension-model', cfg.d);
+	setVal('transformer-heads', cfg.h);
+	setVal('transformer-depth', cfg.n);
+	setVal('transformer-context-size', cfg.c);
+	setVal('transformer-temperature', cfg.t);
+	setVal('train-epochs', cfg.epochs);
+	setVal('train-lr', cfg.lr);
+	if (typeof cfg.train === 'string') {
+		const trainEl = document.getElementById('transformer-training-data');
+		if (trainEl) trainEl.value = cfg.train;
+	}
+	if (typeof cfg.prompt === 'string') {
+		const promptEl = document.getElementById('transformer-master-token-input');
+		if (promptEl) promptEl.value = cfg.prompt;
+	}
+	if (cfg.opt) {
+		const radio = document.querySelector('input[name="train-optimizer-choice"][value="' + cfg.opt + '"]');
+		if (radio) radio.checked = true;
+	}
+	const label = (id, v) => {
+		if (v === undefined) return;
+		const el = document.getElementById(id);
+		if (el) el.innerText = String(v);
+	};
+	label('dim-val', cfg.d);
+	label('heads-val', cfg.h);
+	label('depth-val', cfg.n);
+	label('context-val', cfg.c);
+	label('temp-val', cfg.t);
+	if (typeof render_token_picker_chips === 'function') render_token_picker_chips();
+	if (typeof updateArchitectureValidityUI === 'function') updateArchitectureValidityUI();
+}
+
+function transformerRunParams() {
+	const cfg = collectTransformerRun();
+	const params = new URLSearchParams(location.search);
+	TRANSFORMER_RUN_KEYS.forEach((k) => params.delete(k));
+	const put = (k, v) => {
+		if (v === undefined || v === null || v === '' || Number.isNaN(v)) return;
+		params.set(k, String(v));
+	};
+	put('d', cfg.d);
+	put('h', cfg.h);
+	put('n', cfg.n);
+	put('c', cfg.c);
+	put('t', cfg.t);
+	put('epochs', cfg.epochs);
+	put('lr', cfg.lr);
+	put('opt', cfg.opt);
+	put('train', cfg.train);
+	put('prompt', cfg.prompt);
+	return params;
+}
+
+function scheduleRunUrlSync() {
+	if (_runUrlTimer) clearTimeout(_runUrlTimer);
+	_runUrlTimer = setTimeout(() => {
+		_runUrlTimer = null;
+		const qs = transformerRunParams().toString();
+		if (qs === _lastRunUrl) return;
+		_lastRunUrl = qs;
+		try {
+			history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
+		} catch (e) { /* history unavailable */ }
+	}, 300);
+}
+
+function bindTransformerRunURL() {
+	const root = document.getElementById('transformer_site');
+	if (!root || root._runUrlBound) return;
+	root._runUrlBound = true;
+	const onChange = (e) => {
+		const t = e.target;
+		if (!t || !t.closest) return;
+		if (t.closest('#transformer_config, #transformer-train-card, #transformer-training-data')) {
+			scheduleRunUrlSync();
+		}
+	};
+	root.addEventListener('input', onChange);
+	root.addEventListener('change', onChange);
+}
+
+function scrollToRunStep(attempt) {
+	attempt = attempt || 0;
+	const step = new URLSearchParams(location.search).get('step');
+	if (!step) return;
+	const target = document.getElementById('step-' + step);
+	if (!target) return;
+	target.scrollIntoView({ behavior: 'auto', block: 'start' });
+	// The loader / resume banner can move the page after this runs; retry
+	// briefly until the section actually sits at the top.
+	if (attempt < 2 && Math.abs(target.getBoundingClientRect().top) > 8) {
+		setTimeout(() => scrollToRunStep(attempt + 1), 700);
+	}
+}
+
+window.TransformerRun = {
+	snapshot: collectTransformerRun,
+	apply: applyTransformerRun,
+	fromURL: transformerRunFromURL,
+	toURL: () => location.origin + location.pathname + '?' + transformerRunParams().toString(),
+	share: function (btn) {
+		const url = this.toURL();
+		const done = () => {
+			if (!btn) return;
+			const old = btn.textContent;
+			btn.textContent = 'Link copied';
+			setTimeout(() => { btn.textContent = old; }, 1600);
+		};
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(url).then(done).catch(done);
+		} else {
+			done();
+		}
+	}
+};
 
 function get_init_weights(n_layers, d_model) {
 	const weights = [];
@@ -1466,9 +1646,19 @@ async function train_transformer() {
 	const startTime  = performance.now();
 	let completedAll = true;
 
+	// Training is CPU-heavy; the expensive visual rebuild is throttled so the
+	// page keeps responding to hover/scroll/slider input while it runs.
+	const VISUAL_INTERVAL_MS = 150;
+	let lastVisualSync = 0;
+
 	for (let i = 0; i < epochs; i++) {
 		if (!window.isTraining) { completedAll = false; break; }
-		await runSingleEpoch(i, epochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime);
+		const isLast = (i === epochs - 1);
+		const doVisualSync = isLast || (performance.now() - lastVisualSync >= VISUAL_INTERVAL_MS);
+		await runSingleEpoch(i, epochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime, doVisualSync);
+		if (doVisualSync) lastVisualSync = performance.now();
+		// Yield a frame even when the visual sync was skipped.
+		await tf.nextFrame();
 	}
 
 	// Sync final weights back to JS arrays BEFORE disposing
@@ -1479,6 +1669,9 @@ async function train_transformer() {
 
 	// Also dispose the optimizer's internal state
 	dispose(optimizer);
+
+	// Reflect the final (or last stopped) state once the tensors are gone.
+	run_transformer_demo();
 
 	finalizeTrainingSession(btn, status, completedAll);
 }
@@ -1495,13 +1688,13 @@ function ensureWeightsAndEmbeddings(tokens, n_layers, d_model) {
 	get_or_init_embeddings(tokens, d_model);
 }
 
-async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime) {
+async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime, doVisualSync = true) {
 	const clipValue = 1.0;
 	const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
 
 	// TDA live: snapshot the weights BEFORE the gradient step so we can
 	// compute the weight deltas (W_new - W_prev) for this epoch.
-	const tdaPrevWeights = (window.TDALive && window.currentWeights)
+	const tdaPrevWeights = (doVisualSync && window.TDALive && window.currentWeights)
 		? JSON.parse(JSON.stringify(window.currentWeights))
 		: null;
 
@@ -1516,19 +1709,21 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 	// Progress & ETA
 	updateEpochProgress(epochIdx, totalEpochs, lossValue[0], startTime, status);
 
-	// Sync state
-	await syncTrainingState(weightVars);
+	if (doVisualSync) {
+		// Sync state
+		await syncTrainingState(weightVars);
 
-	// TDA live: capture residual stream + weight deltas for this epoch
-	if (window.TDALive) {
-		window.TDALive.captureEpoch({
-			epoch: epochIdx,
-			tokens,
-			d_model, n_layers, n_heads,
-			weights: window.currentWeights,
-			prevWeights: tdaPrevWeights,
-			loss: lossValue[0]
-		});
+		// TDA live: capture residual stream + weight deltas for this epoch
+		if (window.TDALive) {
+			window.TDALive.captureEpoch({
+				epoch: epochIdx,
+				tokens,
+				d_model, n_layers, n_heads,
+				weights: window.currentWeights,
+				prevWeights: tdaPrevWeights,
+				loss: lossValue[0]
+			});
+		}
 	}
 
 	dispose(cost);
@@ -2524,7 +2719,7 @@ function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
 		embeddingObserver,
 		{ d_model: dimensions, highlightPos, steps },
 		() => _execute_embedding_render(dimensions, highlightPos, steps),
-		`<div class="plot-loading" style="height:100%; flex-direction:column; gap:14px;"><div class="spinner"></div><span>Wait for Embedding Space to load...</span></div>`
+		PlotState.loadingMarkup('Wait for Embedding Space to load...')
 	);
 }
 
@@ -3552,7 +3747,7 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 		migrationObserver,
 		registryData,
 		() => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings),
-		`<div class="plot-loading" style="height:100%; flex-direction:column; gap:14px;"><div class="spinner"></div><span>Loading feature migration plot...</span></div>`
+		PlotState.loadingMarkup('Loading feature migration plot...')
 	);
 
 	const plotDiv = document.getElementById(id);
@@ -3762,6 +3957,10 @@ function buildMigrationRegistryData(tokens, start_h, end_h, layerNum, d_model, h
 }
 
 function _renderChartError(container, title, message) {
+	if (window.PlotState) {
+		PlotState.error(container, title, message);
+		return;
+	}
 	container.innerHTML = '';
 	const err = document.createElement('div');
 	err.style.cssText = `
@@ -5293,7 +5492,7 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 		positionalShiftObserver,
 		{ tokenStrings, d_model, injectedEmbeddings },
 		() => _execute_shift_render(tokenStrings, d_model, injectedEmbeddings),
-		`<div class="plot-loading" style="height:100%; flex-direction:column; gap:14px;"><div class="spinner"></div><span>Wait for Positional Shift Plot to load...</span></div>`
+		PlotState.loadingMarkup('Wait for Positional Shift Plot to load...')
 	);
 
 	return injectedEmbeddings;
@@ -7284,9 +7483,14 @@ async function loadTransformerModule () {
 	observer_vector_math();
 
 	drawTrainingPlaceholder();
+	const initialRun = transformerRunFromURL();
+	if (initialRun) applyTransformerRun(initialRun);
 	updateTrainButtonState();
 	updateArchitectureValidityUI();
-	run_transformer_demo()
+	run_transformer_demo();
+	bindTransformerRunURL();
+	window.addEventListener('blogPostLoadComplete', scrollToRunStep, { once: true });
+	scrollToRunStep();
 
 	const inputElement = document.getElementById('transformer-master-token-input');
 	inputElement.addEventListener('input', (event) => {

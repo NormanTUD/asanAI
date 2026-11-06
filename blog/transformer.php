@@ -18,6 +18,7 @@ featured: true
 <script src="attention_engine.js?v=<?php echo filemtime(__DIR__.'/attention_engine.js'); ?>"></script>
 <script src="provenance.js?v=<?php echo filemtime(__DIR__.'/provenance.js'); ?>"></script>
 <script src="tda_live.js?v=<?php echo filemtime(__DIR__.'/tda_live.js'); ?>"></script>
+<link rel="stylesheet" href="transformer.css?v=<?php echo filemtime(__DIR__.'/transformer.css'); ?>">
 
 <!--
 https://nlp.seas.harvard.edu/2018/04/03/attention.html
@@ -41,7 +42,7 @@ below are the $d_{\text{model}}$, $h$ and $N$ of those equations: move any of th
 by one step and the change shows up, visibly, in the equations and plots that follow.
 </div>
 
-<div class="md">
+<div class="md" id="step-config">
 ## Before the Transformer
 
 Long before the Transformer, sequence models were recurrent. An encoder read a sentence one token at a time into a single fixed-length vector, and a decoder generated the translation from that vector alone. \cite[Bahdanau et al. (2014)]{bahdanau2014} attacked that bottleneck: their decoder could look back at every encoder state and learn a soft alignment, so the relevant source words changed at each output step (\cite[Bahdanau et al., 2014]{bahdanau2014}). This was attention before it had a Transformer to live in.
@@ -61,45 +62,45 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 </div>
 
 <div id="transformer_config">
-	<div style="margin-bottom: 15px;">
-		<label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
-		<span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
-		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+	<div class="transformer-config-field">
+		<label class="transformer-slider-label">Model Dimension ($d_{\text{model}}$): </label>
+		<span id="dim-val" class="transformer-slider-value">3</span>
+		<p class="transformer-slider-note">
             <b>Dependency:</b> Must be a multiple of Heads.<br>
             <b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = \frac{d_{\text{model}}}{h}$) of the vector to perform dot products.
         </p>
 		<input type="range" id="transformer-dimension-model" min="2" max="16" step="1" value="3"
-			style="width: 100%;" oninput="syncTransformerSettings('dim')">
+			oninput="syncTransformerSettings('dim')">
 	</div>
 
-	<div style="margin-bottom: 15px;">
-		<label style="font-weight: bold;">Attention Heads ($h$): </label>
-		<span id="heads-val" style="font-weight: bold; color: #3b82f6;">3</span>
-		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+	<div class="transformer-config-field">
+		<label class="transformer-slider-label">Attention Heads ($h$): </label>
+		<span id="heads-val" class="transformer-slider-value">3</span>
+		<p class="transformer-slider-note">
 	    <b>Dependency:</b> $d_{\text{model}}$ must be a multiple of $h$.<br>
             <b>Reason:</b> Multi-head attention splits the main vector into $h$ parallel “viewpoints.” If $d_{\text{model}}$ is 4 and $h$ is 2, each head looks at 2 dimensions.
         </p>
 		<input type="range" id="transformer-heads" min="1" max="8" value="3"
-			style="width: 100%;" oninput="syncTransformerSettings('heads')">
+			oninput="syncTransformerSettings('heads')">
 	</div>
 
-	<div style="margin-bottom: 15px;">
-		<label style="font-weight: bold;">Network Depth ($N$ layers): </label>
-		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">4</span>
-		<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
+	<div class="transformer-config-field">
+		<label class="transformer-slider-label">Network Depth ($N$ layers): </label>
+		<span id="depth-val" class="transformer-slider-value">4</span>
+		<p class="transformer-slider-note">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
 		<input type="range" id="transformer-depth" min="1" max="12" value="4"
-			style="width: 100%;" oninput="document.getElementById('depth-val').innerText = this.value; debounced_run_transformer_demo();">
+			oninput="document.getElementById('depth-val').innerText = this.value; debounced_run_transformer_demo();">
 	</div>
 
-	<div style="margin-bottom: 15px;">
-	    <label style="font-weight: bold;">Context Size: </label>
-	    <span id="context-val" style="font-weight: bold; color: #3b82f6;">128</span>
-	    <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+	<div class="transformer-config-field">
+	    <label class="transformer-slider-label">Context Size: </label>
+	    <span id="context-val" class="transformer-slider-value">128</span>
+	    <p class="transformer-slider-note">
 		<b>Effect:</b> Sets the maximum number of tokens the model can “see” at once during training and inference.<br>
 		<b>Reason:</b> A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\text{Context}^2$, so a full forward pass costs quadratically in context length. A <i>KV-Cache</i> avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.
 	    </p>
 	    <input type="range" id="transformer-context-size" min="2" max="256" step="1" value="128"
-		style="width: 100%;" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();">
+		oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();">
 	</div>
 
 	<div style="display: none">
@@ -136,118 +137,6 @@ Each slider below carries a short note on why its constraint exists. What hyperp
         style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);"
         oninput="debounced_run_transformer_demo('transformer-training-data')">the king rules the land and the queen rules the sea</textarea>
 </div>
-
-<style>
-#transformer-train-card {
-	background: var(--mn-emerald-light, #f0fdf4);
-	border: 1px solid var(--mn-emerald, #10b981);
-	border-radius: 10px;
-	margin: 15px 0;
-	padding: 14px 16px;
-}
-.transformer-train-controls {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-end;
-	gap: 14px 22px;
-}
-.transformer-train-field {
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
-}
-.transformer-train-field > .transformer-train-label {
-	font-weight: 600;
-	font-size: 0.8rem;
-	color: var(--mn-text-secondary, #475569);
-}
-.transformer-train-field input[type="number"] {
-	width: 72px;
-	padding: 5px 8px;
-	font-size: 0.9rem;
-	background: var(--mn-surface, #fff);
-	color: var(--mn-text, #1e293b);
-	border: 1px solid var(--mn-border, #cbd5e1);
-	border-radius: 6px;
-}
-.transformer-train-field input[type="number"]:focus {
-	outline: 2px solid var(--mn-emerald, #10b981);
-	outline-offset: 1px;
-}
-.transformer-opt-group {
-	display: flex;
-	gap: 2px;
-	padding: 3px;
-	background: var(--mn-surface, #fff);
-	border: 1px solid var(--mn-border, #cbd5e1);
-	border-radius: 8px;
-}
-.transformer-opt {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	padding: 4px 10px;
-	border-radius: 6px;
-	font-size: 0.85rem;
-	font-weight: 500;
-	color: var(--mn-text-secondary, #475569);
-	cursor: pointer;
-	white-space: nowrap;
-	transition: background-color 0.15s ease, color 0.15s ease;
-}
-.transformer-opt:hover {
-	background: var(--mn-bg-subtle, #f1f5f9);
-}
-.transformer-opt input[type="radio"] {
-	margin: 0;
-	accent-color: var(--mn-emerald, #10b981);
-	cursor: pointer;
-}
-.transformer-opt:has(input:checked) {
-	background: var(--mn-emerald-light, #d1fae5);
-	color: var(--mn-text, #0f172a);
-}
-.transformer-opt input:checked + .glossary-term {
-	font-weight: 600;
-}
-.transformer-opt .glossary-term {
-	background: transparent;
-	padding: 0;
-}
-.transformer-train-actions {
-	display: flex;
-	gap: 8px;
-	margin-left: auto;
-}
-.transformer-train-status {
-	min-height: 20px;
-	margin-top: 10px;
-	font-size: 0.85rem;
-	color: var(--mn-emerald, #047857);
-}
-#training-loss-plot {
-	width: 100%;
-	height: 200px;
-	margin-top: 10px;
-	border: 1px solid var(--mn-border, #e2e8f0);
-	border-radius: 8px;
-	background: var(--mn-surface, #fff);
-	user-select: none;
-	-webkit-user-select: none;
-	-webkit-user-drag: none;
-	touch-action: pan-y;
-}
-#training-loss-plot .nsewdrag {
-	cursor: default;
-}
-@media (max-width: 640px) {
-	.transformer-train-actions {
-		margin-left: 0;
-		width: 100%;
-	}
-}
-</style>
-
 <div id="transformer-train-card">
 	<div class="transformer-train-controls">
 		<label class="transformer-train-field">
@@ -277,6 +166,7 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		</div>
 		<div class="transformer-train-actions">
 			<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
+			<button class="btn" type="button" onclick="TransformerRun.share(this)">Share run</button>
 		</div>
 	</div>
 	<div id="training-status" class="transformer-train-status"></div>
@@ -290,7 +180,7 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 })();
 </script>
 
-<div class="md">
+<div class="md" id="step-input">
 ## Preparing the Input
 
 A transformer never sees text — only a stream of vectors it can move around. This part turns a raw sentence into that stream: chop it into tokens, look each one up as a vector, tag each vector with its position, and see where the whole stream flows.
@@ -310,23 +200,23 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 * **Feature Space (Dynamic):** As vectors pass through the layers, they enter the Feature Space. Here, the representation of a word is no longer fixed; it “migrates” based on the surrounding tokens. The hidden states $h_0, h_1, \dots, h_n$ represent the coordinates of the word as it is refined by the model's internal logic. The **Feature Space** is highly abstract, and not humanly interpretable anymore.
 </div>
 
-<div style="background: var(--mn-bg-subtle, #f8fafc); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
+<div class="transformer-viz-card">
 	<div id="transformer-plotly-space" style="width: 100%; height: 500px; background: var(--mn-surface, white); border-radius: 8px;"></div>
 	<div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
 
 	<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px; max-height: 420px; overflow-y: auto;"></div>
 
-	<p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
+	<p class="transformer-slider-note" style="font-size: 0.9rem; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
 	<input
 	    type="text"
 	    id="transformer-vector-math-input"
-	    style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);"
+	    class="transformer-vector-input"
 	    placeholder="e.g., king - man + woman"
 	    oninput="debounced_vector_math()"
 	    onkeydown="if(event.key==='Enter'){event.preventDefault(); immediate_vector_math();}"
 	>
-	<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: var(--mn-surface, white); border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
-		<em style="color: #94a3b8;">Enter an equation and press Enter...</em>
+	<div id="transformer-vector-math-result" class="transformer-vector-result">
+		<em style="color: var(--mn-text-muted);">Enter an equation and press Enter...</em>
 	</div>
 </div>
 
@@ -494,7 +384,7 @@ This architecture is governed by the \cite[Information Bottleneck principle]{tis
 
 </div>
 
-<div class="md" data-mathlevel="65">
+<div class="md" data-mathlevel="65" id="step-attention">
 ## Attention: Letting Tokens Talk
 
 Attention is the heart of the transformer — the one place where one token's information can flow into another. This part builds it up from a single head to the full multi-head mechanism.
@@ -776,7 +666,7 @@ Scaling became a science in 2020. \cite[Kaplan et al. (2020)]{kaplan2020scaling}
 The modern block, in one line: **normalize the branch, rotate positions, gate the FFN, and share the KV heads.**
 </div>
 
-<div class="md">
+<div class="md" id="step-code">
 ## The Same, in Code: A Transformer You Can Run
 
 Everything above — the embeddings, the residual blocks, the attention, the final projection — is a lot of structure. Here is that exact structure as executable code, three ways, in the tabs below: a complete transformer written in pure Python with no framework at all, modelled on nanoGPT, plus the same model built with PyTorch and TensorFlow. Read any of them top to bottom and every line maps back to one of the equations on this page.
@@ -844,7 +734,7 @@ parameters while keeping per-token compute roughly constant, since only
 a small fraction of parameters are active for any given input.
 </div>
 
-<div class="md" data-mathlevel="55">
+<div class="md" data-mathlevel="55" id="step-output">
 ## From Vectors to Words
 
 With the final hidden state in hand, all that remains is to read it back out as a probability distribution over the vocabulary.
@@ -964,8 +854,8 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 
 
 <div>
-	<label style="font-weight: bold;">Temperature ($T$): <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span></label>
-	<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+	<label class="transformer-slider-label">Temperature ($T$): <span id="temp-val" class="transformer-slider-value">1.0</span></label>
+	<p class="transformer-slider-note">
 		<b>Effect:</b> Controls the “sharpness” of the probability distribution.<br>
 		<b>Reason:</b> Low values ($T < 1$) force the model to be deterministic; high values ($T > 1$) increase diversity by making unlikely words more probable.
 	</p>
@@ -989,7 +879,7 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 </div>
 </div>
 
-<div class="md">
+<div class="md" id="step-machine">
 ## The Whole Machine
 
 Zoom out: the full pipeline, how the model knows when to stop, and how the two operating modes differ.

@@ -188,6 +188,23 @@ const _temmlOpts = {
    unlike the annotation's text node. Only stamp from a PRISTINE annotation
    (exactly one text child); a mangled annotation (embedded markup from a
    re-parse) must never overwrite a good source. */
+/* Temml's underbrace/overbrace output uses <munder>/<mover> with the
+   stretchy brace operator. Firefox warns when it has to infer the accent
+   placement from that operator, so make the intent explicit. */
+function _stampAccentAttrs(root) {
+	if (!root || !root.querySelectorAll) return;
+	root.querySelectorAll('munder').forEach((m) => {
+		const op = Array.from(m.children).find((c) =>
+			c.localName === 'mo' && (c.textContent.indexOf('\u23DF') !== -1 || c.textContent.indexOf('\u0332') !== -1));
+		if (op && !m.hasAttribute('accentunder')) m.setAttribute('accentunder', 'true');
+	});
+	root.querySelectorAll('mover').forEach((m) => {
+		const op = Array.from(m.children).find((c) =>
+			c.localName === 'mo' && (c.textContent.indexOf('\u23DE') !== -1 || c.textContent.indexOf('\u0305') !== -1));
+		if (op && !m.hasAttribute('accent')) m.setAttribute('accent', 'true');
+	});
+}
+
 function _stampMathTex(root) {
 	if (!root || root.nodeType !== 1) return;
 	const maths = root.querySelectorAll ? root.querySelectorAll('math') : [];
@@ -200,6 +217,24 @@ function _stampMathTex(root) {
 		}
 	}
 }
+
+(function installAccentStampObserver() {
+	if (window.__mnAccentStampInstalled) return;
+	window.__mnAccentStampInstalled = true;
+	const stamp = (node) => {
+		if (!node || node.nodeType !== 1) return;
+		if (node.localName === 'munder' || node.localName === 'mover') {
+			_stampAccentAttrs(node.parentElement || node);
+		} else {
+			_stampAccentAttrs(node);
+		}
+	};
+	new MutationObserver((mutations) => {
+		for (const mut of mutations) {
+			for (const node of mut.addedNodes) stamp(node);
+		}
+	}).observe(document.documentElement, { childList: true, subtree: true });
+})();
 
 /* Display math inside a MathML <math> element does not expose a native
    scrollbar in Chromium even with overflow-x:auto, so wide equations

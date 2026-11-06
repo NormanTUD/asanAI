@@ -3312,6 +3312,43 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	animation: spin 0.8s linear infinite;
 }
 
+/* Shared empty / error states (modules/plot_state.js). */
+.plot-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 160px;
+	padding: 24px;
+	box-sizing: border-box;
+	text-align: center;
+	color: var(--mn-text-muted);
+	font-family: var(--mn-font-body);
+	font-size: .85rem;
+	line-height: 1.6;
+}
+.plot-state-title { font-weight: 700; color: var(--mn-text); }
+.plot-state-msg { max-width: 52ch; }
+.plot-state--error {
+	background: color-mix(in srgb, var(--mn-rose) 10%, transparent);
+	border: 1px solid color-mix(in srgb, var(--mn-rose) 55%, transparent);
+	border-radius: 12px;
+	color: color-mix(in srgb, var(--mn-rose) 80%, var(--mn-text));
+}
+.plot-state--error .plot-state-title { color: var(--mn-rose); }
+.plot-state-retry {
+	margin-top: 4px;
+	padding: 6px 14px;
+	border-radius: 8px;
+	border: 1px solid var(--mn-accent);
+	background: transparent;
+	color: var(--mn-accent);
+	font: 600 .82rem var(--mn-font-body);
+	cursor: pointer;
+}
+.plot-state-retry:hover { background: color-mix(in srgb, var(--mn-accent) 12%, transparent); }
+
 @keyframes spin {
 	to { transform: rotate(360deg); }
 }
@@ -12649,6 +12686,8 @@ html.reader-mode .mnq-hud { --mnq-hud-rest: .28; }
 /* the chapter switcher and the badge share the bottom-left corner: the
    switcher sits at the very bottom, the badge above it */
 html:has(#chsw-dock) .mnq-hud { bottom: 76px; }
+html:has(#training-progress-bar-container) .mnq-hud { bottom: calc(20px + var(--tlab-sticky-bar-height, 0px)); }
+html:has(#training-progress-bar-container):has(#chsw-dock) .mnq-hud { bottom: calc(76px + var(--tlab-sticky-bar-height, 0px)); }
 html:has(#chsw-dock.is-open) .mnq-hud { opacity: 0; pointer-events: none; }
 html.mnq-panel-open { overflow: hidden; }
 @media print { .mnq-hud, .mnq-toasts, #mnq-lesson { display: none !important; } }
@@ -12661,6 +12700,8 @@ html.mnq-panel-open { overflow: hidden; }
 /* the chapter switcher + badge stack in the same bottom-left column —
    keep the toasts above the badge so everything stays readable */
 html:has(#chsw-dock) .mnq-toasts { --mnq-toasts-bottom: 132px; }
+html:has(#training-progress-bar-container) .mnq-toasts { --mnq-toasts-bottom: calc(78px + var(--tlab-sticky-bar-height, 0px)); }
+html:has(#training-progress-bar-container):has(#chsw-dock) .mnq-toasts { --mnq-toasts-bottom: calc(132px + var(--tlab-sticky-bar-height, 0px)); }
 html:has(#loader) .mnq-toasts { visibility: hidden; }
 .mnq-toast {
 	display: flex; align-items: center; gap: 10px;
