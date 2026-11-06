@@ -48,6 +48,33 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="coherence">
+						<div class="section-kicker"><span class="sk-num">03</span> Coherence and noise</div>
+						<h2 class="section-title">Perfect data would be coherent.</h2>
+						<div class="prose">
+							<p>Two perfectly neutral observers describing the same fact from different perspectives should agree wherever their views overlap. Think of a panorama photo taken with a phone: the overlapping strips must match, or the seam is visible. Perfect data would have that property everywhere.</p>
+							<p>Real data does not. People have different opinions, make mistakes, lie, measure badly, and cannot always say exactly what they mean. Sometimes all at once. A corpus is therefore full of contradictions, gaps, and noise.</p>
+							<p>That does not make it useless. It is like Gauß and Ceres: individual observations scatter around the true orbit, but their errors cancel on average. A model trained on the corpus learns the middle of the cloud, not any single voice. It finds something between the measurements; the fit is the compromise, not a transcript.</p>
+							<p>The choice of training data is therefore also the choice of what the network does. A corpus is a worldview: what it includes, what it leaves out, and which voices it treats as normal.</p>
+						</div>
+						<figure class="coherence-figure">
+							<svg viewBox="0 0 420 220" role="img" aria-label="Noisy measurements around a fitted path">
+							  <g><line x1="44" y1="24" x2="44" y2="188" class="coh-grid"/><line x1="88" y1="24" x2="88" y2="188" class="coh-grid"/><line x1="132" y1="24" x2="132" y2="188" class="coh-grid"/><line x1="176" y1="24" x2="176" y2="188" class="coh-grid"/><line x1="220" y1="24" x2="220" y2="188" class="coh-grid"/><line x1="264" y1="24" x2="264" y2="188" class="coh-grid"/><line x1="308" y1="24" x2="308" y2="188" class="coh-grid"/><line x1="352" y1="24" x2="352" y2="188" class="coh-grid"/><line x1="396" y1="24" x2="396" y2="188" class="coh-grid"/><line x1="44" y1="24" x2="396" y2="24" class="coh-grid"/><line x1="44" y1="57" x2="396" y2="57" class="coh-grid"/><line x1="44" y1="90" x2="396" y2="90" class="coh-grid"/><line x1="44" y1="123" x2="396" y2="123" class="coh-grid"/><line x1="44" y1="156" x2="396" y2="156" class="coh-grid"/></g>
+							  <line x1="44" y1="188" x2="396" y2="188" class="coh-axis"/>
+							  <line x1="44" y1="24" x2="44" y2="188" class="coh-axis"/>
+							  <path d="M44.0 80.7 L47.5 83.7 L51.0 86.7 L54.6 89.8 L58.1 93.0 L61.6 96.2 L65.1 99.5 L68.6 102.7 L72.2 106.0 L75.7 109.3 L79.2 112.5 L82.7 115.8 L86.2 119.0 L89.8 122.2 L93.3 125.3 L96.8 128.3 L100.3 131.3 L103.8 134.2 L107.4 136.9 L110.9 139.6 L114.4 142.2 L117.9 144.6 L121.4 146.9 L125.0 149.1 L128.5 151.1 L132.0 152.9 L135.5 154.6 L139.0 156.1 L142.6 157.5 L146.1 158.7 L149.6 159.6 L153.1 160.4 L156.6 161.1 L160.2 161.5 L163.7 161.7 L167.2 161.8 L170.7 161.6 L174.2 161.3 L177.8 160.7 L181.3 160.0 L184.8 159.1 L188.3 158.0 L191.8 156.7 L195.4 155.3 L198.9 153.6 L202.4 151.8 L205.9 149.9 L209.4 147.8 L213.0 145.6 L216.5 143.2 L220.0 140.7 L223.5 138.0 L227.0 135.3 L230.6 132.5 L234.1 129.5 L237.6 126.5 L241.1 123.4 L244.6 120.3 L248.2 117.1 L251.7 113.9 L255.2 110.6 L258.7 107.3 L262.2 104.1 L265.8 100.8 L269.3 97.5 L272.8 94.3 L276.3 91.1 L279.8 88.0 L283.4 84.9 L286.9 81.9 L290.4 79.0 L293.9 76.2 L297.4 73.5 L301.0 70.9 L304.5 68.4 L308.0 66.0 L311.5 63.8 L315.0 61.7 L318.6 59.8 L322.1 58.1 L325.6 56.5 L329.1 55.0 L332.6 53.8 L336.2 52.7 L339.7 51.9 L343.2 51.2 L346.7 50.7 L350.2 50.4 L353.8 50.2 L357.3 50.3 L360.8 50.6 L364.3 51.0 L367.8 51.7 L371.4 52.5 L374.9 53.6 L378.4 54.8 L381.9 56.1 L385.4 57.7 L389.0 59.4 L392.5 61.3 L396.0 63.3" class="coh-fit"/>
+							  <g><circle cx="160.5" cy="149.7" r="3.2" class="coh-dot"/><circle cx="75.5" cy="92.7" r="3.2" class="coh-dot"/><circle cx="232.1" cy="134.4" r="3.2" class="coh-dot"/><circle cx="222.5" cy="135.2" r="3.2" class="coh-dot"/><circle cx="63.7" cy="103.0" r="3.2" class="coh-dot"/><circle cx="81.7" cy="112.7" r="3.2" class="coh-dot"/><circle cx="194.5" cy="152.3" r="3.2" class="coh-dot"/><circle cx="126.5" cy="156.3" r="3.2" class="coh-dot"/><circle cx="263.1" cy="86.0" r="3.2" class="coh-dot"/><circle cx="185.1" cy="164.9" r="3.2" class="coh-dot"/><circle cx="380.9" cy="29.3" r="3.2" class="coh-dot"/><circle cx="148.9" cy="151.5" r="3.2" class="coh-dot"/><circle cx="99.8" cy="122.0" r="3.2" class="coh-dot"/><circle cx="326.8" cy="47.9" r="3.2" class="coh-dot"/><circle cx="112.1" cy="157.9" r="3.2" class="coh-dot"/><circle cx="176.9" cy="170.6" r="3.2" class="coh-dot"/><circle cx="236.1" cy="123.3" r="3.2" class="coh-dot"/><circle cx="120.6" cy="144.5" r="3.2" class="coh-dot"/><circle cx="281.0" cy="97.9" r="3.2" class="coh-dot"/><circle cx="248.9" cy="111.1" r="3.2" class="coh-dot"/><circle cx="204.2" cy="158.5" r="3.2" class="coh-dot"/><circle cx="287.2" cy="58.0" r="3.2" class="coh-dot"/><circle cx="133.5" cy="168.9" r="3.2" class="coh-dot"/><circle cx="346.8" cy="58.3" r="3.2" class="coh-dot"/><circle cx="297.5" cy="82.6" r="3.2" class="coh-dot"/><circle cx="90.9" cy="85.3" r="3.2" class="coh-dot"/></g>
+							  <g class="coh-legend">
+							    <circle cx="52" cy="20" r="3.2" class="coh-dot"/>
+							    <text x="60" y="23">MEASUREMENTS</text>
+							    <line x1="152" y1="20" x2="170" y2="20" class="coh-fit"/>
+							    <text x="176" y="23">FIT</text>
+							  </g>
+							</svg>
+							<figcaption>Noisy measurements (blue) and the fitted path (green). The fit is not any single observation; it is the compromise between all of them.</figcaption>
+						</figure>
+					</section>
+
 
 					<div class="demo demo--paper" data-demo="datamix">
 						<div class="demo-head">
@@ -99,7 +126,7 @@
 
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
