@@ -117,7 +117,6 @@
 								<p class="demo-title">The long prehistory of language technology <span>· demo</span></p>
 								<p class="demo-sub">Follow the path from listening and speech to writing, grammar, printing, information, and tokens. Each step made text more durable, more comparable, or more computable.</p>
 							</div>
-							<span class="demo-badge">step by step</span>
 						</div>
 						<div class="demo-body">
 							<div class="timeline-scroller">
