@@ -86,7 +86,6 @@
 								<p class="demo-title">From one neuron to a hierarchy <span>· demo</span></p>
 								<p class="demo-sub">Depth is composition. Select a step to see what the stack adds.</p>
 							</div>
-							<span class="demo-badge">step through</span>
 						</div>
 						<div class="demo-body">
 							<div class="timeline-scroller">
