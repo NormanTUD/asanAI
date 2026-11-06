@@ -1082,7 +1082,7 @@
 					paper_bgcolor: "rgba(0,0,0,0)",
 					plot_bgcolor: "rgba(0,0,0,0)",
 					font: { color: c.ink, family: "Open Sans, sans-serif", size: 12 },
-					title: { text: CERES_DE ? "Ceres: Wahrheit vs. verrauschte Beobachtungen" : "Ceres: truth vs. noisy observations", font: { color: c.ink } },
+					title: { text: CERES_DE ? "Ceres: Wahrheit gegen verrauschte Beobachtungen" : "Ceres: truth vs. noisy observations", font: { color: c.ink } },
 					xaxis: {
 						title: { text: CERES_DE ? "Zeit / Bogen" : "Time / arc" },
 						domain: [0, 0.58],

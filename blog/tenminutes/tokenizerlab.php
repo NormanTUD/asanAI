@@ -17,7 +17,7 @@
 				<div>
 					<h1>Chopping text <em>into tokens.</em></h1>
 					<p class="hero-deck">
-						A modern LLM never sees words. It sees <strong>tokens</strong> (chunks of text) and
+						An LLM never sees words. It sees <strong>tokens</strong> (chunks of text) and
 						turns each one into a vector. That single decision explains why models struggle
 						to count letters, why some languages cost more, and why a vocabulary entry is
 						not the same thing as a learned concept.
