@@ -3176,6 +3176,7 @@
 				var active = document.querySelector('.prov-cell.prov-active');
 				if (active) active.classList.remove('prov-active');
 				cell.classList.add('prov-active');
+				_traceView = 'deriv';
 				S.show(cell.getAttribute('data-prov-id'));
 			}, 250);
 		}
@@ -3199,14 +3200,26 @@
 	}
 
 	function _onDocClick(e) {
-		/* Hover opens the quick-peek tooltip; a click on an annotated cell
-		   must neither pin it nor jump into the Light Cone view, otherwise
-		   the popup cannot be dismissed by simply moving the mouse away.
-		   Pinning stays available through the explicit Pin button. */
+		/* Hover is only a quick formula peek. Clicking an annotated cell
+		   commits to the Light Cone analysis and pins the tooltip so it
+		   stays while the reader inspects it. Clicking anywhere else (or
+		   the × / Escape) closes and unpins. */
 		var cell = e.target && e.target.closest ? e.target.closest('[data-prov-id]') : null;
-		if (cell) return;
-		if (S._pinned) return;
+		if (cell) {
+			if (_timer) { clearTimeout(_timer); _timer = null; }
+			_clearHide();
+			S._activeCell = cell;
+			var active = document.querySelector('.prov-cell.prov-active');
+			if (active) active.classList.remove('prov-active');
+			cell.classList.add('prov-active');
+			S._pinned = true;
+			_traceView = 'cone';
+			S.show(cell.getAttribute('data-prov-id'));
+			e.stopPropagation();
+			return;
+		}
 		if (e.target && e.target.closest && e.target.closest('#prov-tooltip')) return;
+		S._pinned = false;
 		S.hide();
 	}
 

@@ -2180,9 +2180,7 @@ function renderTrajectoryPlot(d_model) {
 		trajectoryObserver,
 		{ d_model },
 		() => tlab_render_trajectory_plot(d_model),
-		`<div class="traj-loading-placeholder" style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
-	    Rendering the Token Trajectory Plot may take a while
-	</div>`
+		`<div class="plot-loading traj-loading-placeholder" style="height:100%; flex-direction:column; gap:14px;"><div class="spinner"></div><span>Loading token trajectory: embedding → position → layer outputs...</span></div>`
 	);
 }
 
@@ -2378,25 +2376,6 @@ function computeFinalPredictions(h_last, vocabulary, d_model, temperature) {
 	return { logits, predictions };
 }
 
-function buildPredictionChipsHtml(predictions, temperature) {
-	let html = `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 8px;">`;
-
-	predictions.forEach(p => {
-		const intensity = Math.min(1, p.prob * 5);
-		const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-		const displayWord = /^\s+$/.test(p.word) ? p.word.replace(/ /g, '␣') : p.word;
-		const title = `Original: ${(p.originalProb * 100).toFixed(1)}%; T=${temperature}: ${(p.prob * 100).toFixed(1)}%`;
-
-		html += `<button class="predict-chip" title="${escapeHtml(title)}" onclick="select_suggested_word('${safeWord}')"
-	    style="background:rgba(59, 130, 246, ${0.18 + intensity * 0.55}); padding:4px 8px; border-radius:0; border:1px solid #3b82f6; cursor:pointer; color: var(--mn-text); text-align:left; font-size:.75rem; line-height:1.25;">
-	    <strong>${escapeHtml(displayWord)}</strong> (${(p.prob * 100).toFixed(1)}%)
-	</button>`;
-	});
-
-	html += `</div>`;
-	return html;
-}
-
 function buildLogitDetailsHtml(h_last, logits) {
 	const temperature = parseFloat(document.getElementById('transformer-temperature')?.value) || 1.0;
 	const logitValues = logits.map(l => l.val);
@@ -2558,19 +2537,16 @@ $$
 }
 
 function ensureProjectionSubContainers(container) {
-	let chipsDiv = document.getElementById('tlab-final-chips');
-	let detailsDiv = document.getElementById('tlab-final-details');
+	const oldChips = document.getElementById('tlab-final-chips');
+	if (oldChips) oldChips.remove();
 
-	if (!chipsDiv || !detailsDiv) {
-		container.innerHTML = `
-	    <div id="tlab-final-chips" style="position: sticky; top: 0; z-index: 10; background: ${themeColor('#fff')}; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;"></div>
-	    <div id="tlab-final-details"></div>
-	`;
-		chipsDiv = document.getElementById('tlab-final-chips');
+	let detailsDiv = document.getElementById('tlab-final-details');
+	if (!detailsDiv) {
+		container.innerHTML = `<div id="tlab-final-details"></div>`;
 		detailsDiv = document.getElementById('tlab-final-details');
 	}
 
-	return { chipsDiv, detailsDiv };
+	return { detailsDiv };
 }
 
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
@@ -2578,14 +2554,13 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
     if (!container) return;
 
     const h_last = h_final[h_final.length - 1];
-    const { logits, predictions } = computeFinalPredictions(h_last, vocabulary, d_model, temperature);
-    const { chipsDiv, detailsDiv } = ensureProjectionSubContainers(container);
+    const { logits } = computeFinalPredictions(h_last, vocabulary, d_model, temperature);
+    const { detailsDiv } = ensureProjectionSubContainers(container);
 
-    chipsDiv.innerHTML = buildPredictionChipsHtml(predictions.filter(function (p) { return p.word !== TM_EOS_TOKEN; }), temperature);
     detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
 
     // SCOPED rendering — do NOT call global render_temml()
-    _renderTemmlOnElements([chipsDiv, detailsDiv]);
+    _renderTemmlOnElements([detailsDiv]);
 
     // Provenance: record the final stage and annotate the rendered numbers
     if (window.Prov) {
@@ -3679,7 +3654,8 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 		transformerLabVisMigrationDataRegistry,
 		migrationObserver,
 		registryData,
-		() => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings)
+		() => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings),
+		`<div class="plot-loading" style="height:100%; flex-direction:column; gap:14px;"><div class="spinner"></div><span>Loading feature migration plot...</span></div>`
 	);
 
 	const plotDiv = document.getElementById(id);
@@ -3920,6 +3896,9 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 	document.querySelectorAll('.weight-grid-viz').forEach(el => el.remove());
 	const plotDiv = document.getElementById(id);
 	if (!plotDiv) return;
+
+	const loadingPlaceholder = plotDiv.querySelector('.plot-loading');
+	if (loadingPlaceholder) loadingPlaceholder.remove();
 
 	plotDiv.style.width = '100%';
 
