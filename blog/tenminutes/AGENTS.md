@@ -225,6 +225,25 @@ These are the only accent colours. Do not introduce new accent hues.
 | Light Green | `#869b55` | `134/155/85` |
 | Yellow | `#9f9700` | `159/151/0` |
 
+### Semantic meaning (ScaDS.AI)
+
+The colours carry meaning. Use the colour that matches the subject, and use
+another hue only with a stated reason. This applies to demos, charts, tags,
+highlights, diagrams, and any new UI.
+
+| Colour | HEX | Meaning |
+|---|---|---|
+| Black | `#000000` | Text, structure, neutral emphasis |
+| Dark Blue | `#004B6F` | Primary UI, links, headings |
+| Green | `#63a44b` | Signal, success, positive |
+| Blue | `#1275ac` | Secondary UI, hover, interaction |
+| Teal | `#009299` | Living Lab: very interactive |
+| Lilac | `#9185be` | Responsible AI |
+| Light Blue | `#5c9baf` | Applied AI and Big Data |
+| Grey | `#92a19a` | Big Data Analytics and Engineering |
+| Light Green | `#869B55` | AI Algorithms and Methods |
+| Yellow | `#9F9700` | Architecture, Scalability and Security |
+
 Paper, card, muted text, and near-black are neutrals, not brand accents. In
 light mode the page and card surfaces are pure white (`#ffffff`); borders and
 shadows carry the separation. `--tm-muted` remains `#627476` so small text
