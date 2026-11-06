@@ -7426,6 +7426,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 		<summary>Attention</summary>
 		<div class="tm-layer-subbox-body">
 			<p class="tm-level-text">${isDe ? 'Attention lässt jedes Token die anderen lesen. Die Query fragt, was es sucht; der Key sagt, was ein anderes Token anbietet; der Value ist der Inhalt, der bei einem guten Match weitergegeben wird. Die Köpfe laufen parallel, jeder mit einer eigenen Frage. Die Bögen unten sind Attention-Gewichte: Eine dickere Linie trägt mehr Information.' : 'Attention lets every token read the others. The query asks what it is looking for; the key says what another token offers; the value is the content that travels when the match is good. The heads run in parallel, each with its own question. The arcs below are attention weights: a thicker line carries more information.'}</p>
+			<canvas id="${prefix}-attention-lines" class="tm-layer-attention-lines" aria-label="${isDe ? 'Attention-Linien dieses Layers' : 'Attention lines for this layer'}"></canvas>
 			<p class="unified-layer-hint">${isDe ? 'Klicke auf ein Wort, um zu sehen, worauf es seine Attention richtet.' : 'Click a word to see where it focuses its attention.'}</p>
 			<div id="${prefix}-attention-heads"></div>
 		</div>
@@ -7434,15 +7435,12 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 		<summary>${isDe ? 'FFN / MLP' : 'FFN / MLP'}</summary>
 		<div class="tm-layer-subbox-body">
 			<p class="tm-level-text">${isDe ? 'Hier stehen die exakten Matrizen dieser Schicht: Pre-LayerNorm, Query-, Key- und Value-Projektionen, die Softmax-Gewichte, der gewichtete Value-Mix, die Ausgabeprojektion, der Residual-Schritt, dann die FFN-Expansion, GELU und die Kompression. Jede Zeile ist eine Token-Position; jede Spalte eine Dimension.' : 'Here are the exact matrices of this layer: pre-LayerNorm, the query, key and value projections, the softmax weights, the weighted value mix, the output projection, the residual add, then the FFN expansion, GELU and compression. Each row is a token position; each column is a dimension.'}</p>
+			<canvas id="${prefix}-ffn-heatmap" class="tm-layer-ffn-heatmap" aria-label="${isDe ? 'FFN-Aktivierungen für alle Tokens in dieser Schicht' : 'FFN activations for all tokens in this layer'}"></canvas>
 			<div id="${prefix}-formula-body">
-				<div id="${prefix}-layernorm-viz" class="tm-formula-block"></div>
-				<div id="${prefix}-concat-viz" class="tm-formula-block"></div>
-				<div id="${prefix}-h1-final-viz" class="tm-formula-block"></div>
-				<p class="tm-formula-kicker">${isDe ? 'Feed-Forward-Netz:' : 'Feed-Forward Network:'}</p>
-				<div id="${prefix}-step-1" class="math_transformer"></div>
-				<div id="${prefix}-step-2" class="math_transformer"></div>
-				<div id="${prefix}-step-3" class="math_transformer"></div>
-				<div id="${prefix}-hlast" class="tm-hlast"></div>
+				<details class="tm-formula-step" open><summary>${isDe ? 'LayerNorm' : 'LayerNorm'}</summary><div id="${prefix}-layernorm-viz" class="tm-formula-block"></div></details>
+				<details class="tm-formula-step"><summary>${isDe ? 'Attention-Ausgabe + Residual' : 'Attention output + residual'}</summary><div id="${prefix}-concat-viz" class="tm-formula-block"></div><div id="${prefix}-h1-final-viz" class="tm-formula-block"></div></details>
+				<details class="tm-formula-step"><summary>${isDe ? 'FFN / MLP' : 'FFN / MLP'}</summary><p class="tm-formula-kicker">${isDe ? 'Feed-Forward-Netz:' : 'Feed-Forward Network:'}</p><div id="${prefix}-step-1" class="math_transformer"></div><div id="${prefix}-step-2" class="math_transformer"></div><div id="${prefix}-step-3" class="math_transformer"></div></details>
+				<details class="tm-formula-step"><summary>h_last</summary><div id="${prefix}-hlast" class="tm-hlast"></div></details>
 			</div>
 		</div>
 	</details>
@@ -7463,8 +7461,10 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 				renderLayerMigration(layerIndex);
 				renderLayerMigrationPlot(layerIndex);
 			} else if (kind === 'attention') {
+				renderLayerAttentionLines(layerIndex);
 				renderLayerAttention(layerIndex);
 			} else if (kind === 'ffn') {
+				renderLayerFFNHeatmap(layerIndex);
 				renderLayerFormulas(layerIndex);
 			}
 		});
@@ -7490,8 +7490,10 @@ function refreshOpenLayerSubboxes() {
 			renderLayerMigration(idx);
 			renderLayerMigrationPlot(idx);
 		} else if (kind === 'attention') {
+			renderLayerAttentionLines(idx);
 			renderLayerAttention(idx);
 		} else if (kind === 'ffn') {
+			renderLayerFFNHeatmap(idx);
 			renderLayerFormulas(idx);
 		}
 	});
@@ -7510,6 +7512,20 @@ function openUnifiedLayer(layerIdx) {
 window.showUnifiedLayer = function (layerIdx) {
 	openUnifiedLayer(layerIdx);
 };
+
+function renderLayerAttentionLines(layerIdx) {
+	const canvas = document.getElementById(`unified-layer-${layerIdx}-attention-lines`);
+	if (canvas && window.TransformerSteps && window.TransformerSteps.renderLayerAttentionLines) {
+		window.TransformerSteps.renderLayerAttentionLines(canvas.id, layerIdx);
+	}
+}
+
+function renderLayerFFNHeatmap(layerIdx) {
+	const canvas = document.getElementById(`unified-layer-${layerIdx}-ffn-heatmap`);
+	if (canvas && window.TransformerSteps && window.TransformerSteps.renderLayerFFNHeatmap) {
+		window.TransformerSteps.renderLayerFFNHeatmap(canvas.id, layerIdx);
+	}
+}
 
 function renderLayerAttention(layerIdx) {
 	const registryEntry = attentionRenderRegistry.get('unified-attention-engine');
