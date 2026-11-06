@@ -1719,3 +1719,21 @@ Rosenblattperceptron.png
     Lokal: rosenblatt_perceptron_cc.png (600x285)
     Genutzt in: tenminutes/minimalneuron.php § The perceptron
     Status: OK - CC BY-SA 3.0, Quelle im Caption verlinkt
+
+=== TEN MINUTES: Hubel and Wiesel orientation responses (tenminutes/computer_vision.php) ===
+Hubel+wiesel.jpg
+    URL: https://commons.wikimedia.org/wiki/File:Hubel%2Bwiesel.jpg
+    Lizenz: CC BY-SA 3.0
+    Autor: Jimmierock (eigenes Werk, 2012)
+    Lokal: hubel_wiesel_orientation.jpg (387x520)
+    Genutzt in: tenminutes/computer_vision.php § A filter that slides
+    Status: OK - Attribution und Lizenz im Caption verlinkt
+
+=== TEN MINUTES: Neocognitron-inspired architecture (tenminutes/computer_vision.php) ===
+A Biologically-Inspired Neural Network Architecture for Image Processing (IA abiologicallyins1094530625).pdf, Figure 18, p. 45
+    URL: https://commons.wikimedia.org/wiki/File:A_Biologically-Inspired_Neural_Network_Architecture_for_Image_Processing_(IA_abiologicallyins1094530625).pdf
+    Lizenz: Public domain (US Navy thesis)
+    Autor: Laurence E. Lazofson
+    Lokal: neocognitron_lazofson.png (1370x1740, aus Seite 45 / Figure 18 ausgeschnitten)
+    Genutzt in: tenminutes/computer_vision.php § A filter that slides
+    Status: OK - gemeinfrei, Quelle und Ausschnitt im Caption genannt

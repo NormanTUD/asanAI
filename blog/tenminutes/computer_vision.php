@@ -32,7 +32,18 @@
 							<p>The design has two ancestors. David Hubel and Torsten Wiesel recorded from the cat’s visual cortex and found neurons tuned to oriented edges and moving bars, with simple cells feeding complex cells in a hierarchy (<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1359523/" rel="noopener">Hubel &amp; Wiesel, 1962</a>). Kunihiko Fukushima’s <strong>Neocognitron</strong> (1980) turned that into a layered network of convolution-like and pooling-like stages that tolerated small shifts (<a href="https://doi.org/10.1007/BF00344251" rel="noopener">Fukushima, 1980</a>). Modern CNNs keep the same ingredients: local filters, shared weights, and depth.</p>
 							<p>Stack convolutions and the hierarchy grows. Early layers detect edges and textures; middle layers combine them into parts; later layers respond to whole objects. That is the feature hierarchy behind modern vision: the 2012 AlexNet result made it hard to ignore (<a href="https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf" rel="noopener">Krizhevsky et al., 2012</a>); its ReLU activations and dropout were as important as its depth. Pooling between stages lowers the resolution, so later layers see a larger region of the image (their receptive field grows) and the representation becomes less sensitive to small shifts.</p>
 						</div>
-					</section>
+					
+						<div class="split-figure">
+							<figure>
+								<img src="../hubel_wiesel_orientation.jpg" alt="Orientation-selective neural responses in the cat visual cortex" loading="lazy">
+								<figcaption>Orientation-selective responses of neurons in the cat visual cortex, after Hubel and Wiesel. Image: Jimmierock, <a href="https://commons.wikimedia.org/wiki/File:Hubel%2Bwiesel.jpg" rel="noopener">CC BY-SA 3.0</a>, via Wikimedia Commons.</figcaption>
+							</figure>
+							<figure>
+								<img src="../neocognitron_lazofson.png" alt="A layered biologically motivated convolutional network diagram" loading="lazy">
+								<figcaption>A biologically motivated convolutional architecture, after Hubel and Wiesel and Fukushima’s Neocognitron. Diagram: Laurence E. Lazofson, U.S. Navy thesis, p. 45, <a href="https://commons.wikimedia.org/wiki/File:A_Biologically-Inspired_Neural_Network_Architecture_for_Image_Processing_(IA_abiologicallyins1094530625).pdf" rel="noopener">public domain</a>, via Wikimedia Commons.</figcaption>
+							</figure>
+						</div>
+</section>
 
 					<section class="section-block" id="detail">
 						<div class="section-kicker"><span class="sk-num">02</span> From classification to space</div>
