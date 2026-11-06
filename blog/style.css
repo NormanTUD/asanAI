@@ -1933,6 +1933,17 @@ html.theme-transition *::after {
 	overflow-y: hidden;
 }
 
+/* Real scroller for a wide display equation. Chromium does not paint a
+   scrollbar on a MathML <math> even with overflow-x:auto, so
+   ensureDisplayMathScrollable() moves the overflow into this div and
+   widens the math to its intrinsic content width. */
+.math-scroll {
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+}
+
 /* 4. Special layout tags (guardrail-exempt, author-labelled) — the
    ONLY sanctioned ways to let content scroll inside its own box when
    clamping alone cannot fit it. layout_guardrail.js exempts both and

@@ -555,6 +555,10 @@ function _vmUpdateResult(resDiv, html) {
             }
         } catch(e) {}
 
+        if (typeof ensureDisplayMathScrollable === 'function') {
+            ensureDisplayMathScrollable(resDiv);
+        }
+
         // Re-observe the result div (innerHTML killed the old observation)
         vectorMathObserver.observe(resDiv);
     });
@@ -1212,7 +1216,7 @@ function render_positional_waves(d_model, tokens) {
         positionalWavesObserver,
         { d_model, tokens },
         () => _execute_positional_waves_render(d_model, tokens),
-        `<div style="padding:20px; color:#64748b;">Waiting for Positional Waves plot to load...</div>`
+        `<div class="plot-loading" style="height:100%; flex-direction:column; gap:14px;"><div class="spinner"></div><span>Waiting for Positional Waves plot to load...</span></div>`
     );
 }
 
@@ -2648,7 +2652,7 @@ function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
 		embeddingObserver,
 		{ d_model: dimensions, highlightPos, steps },
 		() => _execute_embedding_render(dimensions, highlightPos, steps),
-		`<div style="padding:20px; color:#64748b;">Wait for Embedding Space to load...</div>`
+		`<div class="plot-loading" style="height:100%; flex-direction:column; gap:14px;"><div class="spinner"></div><span>Wait for Embedding Space to load...</span></div>`
 	);
 }
 
@@ -3509,6 +3513,9 @@ function _renderTemmlOnElements(elements) {
                 annotate: true
             });
         } catch(e) {}
+        if (typeof ensureDisplayMathScrollable === 'function') {
+            ensureDisplayMathScrollable(el);
+        }
     });
 }
 
@@ -5410,7 +5417,7 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 		positionalShiftObserver,
 		{ tokenStrings, d_model, injectedEmbeddings },
 		() => _execute_shift_render(tokenStrings, d_model, injectedEmbeddings),
-		`<div style="padding:20px; color:#64748b;">Wait for Positional Shift Plot to load...</div>`
+		`<div class="plot-loading" style="height:100%; flex-direction:column; gap:14px;"><div class="spinner"></div><span>Wait for Positional Shift Plot to load...</span></div>`
 	);
 
 	return injectedEmbeddings;
@@ -6073,6 +6080,10 @@ function _vmRenderResult(html) {
         }
     } catch(e) {}
 
+    if (typeof ensureDisplayMathScrollable === 'function') {
+        ensureDisplayMathScrollable(resDiv);
+    }
+
     // IMMEDIATELY restore input if it was disturbed
     if (inputEl) {
         if (inputEl.value !== window._vmInputValue && window._vmInputValue !== '') {
@@ -6415,6 +6426,11 @@ function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weigh
 		container._attnWebHoverIndex ?? null
 	);
 
+	// Always redraw through the current closure; the scroll listener and
+	// the ResizeObserver only attach once, but the chips are rebuilt on
+	// every token change.
+	container._attnWebDraw = drawArcs;
+
 	// Only re-attach events if chips were rebuilt or first time
 	if (chipsRebuilt || !container._attnWebInitialized) {
 		container._attnWebHoverIndex = null;
@@ -6429,8 +6445,22 @@ function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weigh
 
 		// Only attach scroll listener once
 		if (!container._attnWebInitialized) {
-			container.addEventListener('scroll', drawArcs);
-			attachResizeHandler(containerId, drawArcs);
+			container.addEventListener('scroll', () => {
+				if (container._attnWebDraw) container._attnWebDraw();
+			});
+			attachResizeHandler(containerId, () => {
+				if (container._attnWebDraw) container._attnWebDraw();
+			});
+			// The web is often first rendered while its tab is hidden
+			// (clientWidth 0); redraw the moment it gets a real size and
+			// whenever the token strip grows or shrinks.
+			if (typeof ResizeObserver !== 'undefined') {
+				container._attnWebResizeObserver = new ResizeObserver(() => {
+					if (container._attnWebDraw) container._attnWebDraw();
+				});
+				container._attnWebResizeObserver.observe(container);
+				container._attnWebResizeObserver.observe(strip);
+			}
 		}
 		container._attnWebInitialized = true;
 	}
@@ -6446,6 +6476,10 @@ function attachChipHoverEvents(chips, onHover, onLeave) {
 }
 
 function drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex) {
+	// A hidden tab reports zero size; keep the previous canvas and wait
+	// for the ResizeObserver to fire once the tab becomes visible.
+	if (!container.clientWidth) return;
+
 	const scrollW = container.scrollWidth;
 	const scrollH = container.scrollHeight;
 	canvas.width  = scrollW;

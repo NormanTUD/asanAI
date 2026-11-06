@@ -201,6 +201,52 @@ function _stampMathTex(root) {
 	}
 }
 
+/* Display math inside a MathML <math> element does not expose a native
+   scrollbar in Chromium even with overflow-x:auto, so wide equations
+   (the generated matrix products in the transformer lab especially)
+   cannot be scrolled sideways. Widen the math to its intrinsic content
+   width; if an existing overflow ancestor then scrolls, done, otherwise
+   wrap the math in a real <div> scroller. Idempotent per math element. */
+function _hasOverflowingScrollerAbove(el) {
+	let p = el.parentElement;
+	while (p && p !== document.body) {
+		const ox = getComputedStyle(p).overflowX;
+		if ((ox === 'auto' || ox === 'scroll') && p.scrollWidth > p.clientWidth + 1) {
+			return true;
+		}
+		p = p.parentElement;
+	}
+	return false;
+}
+
+function ensureDisplayMathScrollable(root) {
+	const scope = root && root.querySelectorAll ? root : document;
+	const maths = scope.querySelectorAll('math.tml-display, math[display="block"]');
+	for (const m of maths) {
+		if (!m.isConnected) continue;
+		if (m.dataset.mathScrollReady === '1') continue;
+		if (m.closest('.lp-overlay')) continue;
+		if (m.clientWidth === 0) continue;
+		if (m.scrollWidth <= m.clientWidth + 1) continue;
+
+		m.style.maxWidth = 'none';
+		m.style.overflow = 'visible';
+		m.style.width = (Math.ceil(m.scrollWidth) + 2) + 'px';
+
+		if (!_hasOverflowingScrollerAbove(m)) {
+			const scroller = document.createElement('div');
+			scroller.className = 'math-scroll';
+			m.parentNode.insertBefore(scroller, m);
+			scroller.appendChild(m);
+		}
+		m.dataset.mathScrollReady = '1';
+	}
+}
+
+window.addEventListener('blogPostLoadComplete', function () {
+	ensureDisplayMathScrollable(document);
+});
+
 function _fixMathInElement(el) {
     // ===== Skip already-rendered elements =====
     if (el.hasAttribute('data-math-rendered')) return false;
@@ -363,6 +409,7 @@ const _temmlObserver = new IntersectionObserver((entries) => {
                     _stampMathTex(el);
                     el.setAttribute('data-math-rendered', 'true');
                 }
+                ensureDisplayMathScrollable(el);
             }
             _temmlObserver.unobserve(el);
         }
@@ -1042,6 +1089,10 @@ function render_temml() {
 		}
 	});
 
+
+	/* Wide equations: make sure each overflowing display math has a real
+	   horizontal scroller (see ensureDisplayMathScrollable). */
+	ensureDisplayMathScrollable(document);
 
 	/* ═══════════════════════════════════════════════════════════════
 	   LIVE UPDATE CHECK  (every render pass)
