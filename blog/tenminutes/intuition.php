@@ -337,16 +337,16 @@
 													<span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Lade die Mannigfaltigkeiten …' : 'Loading the manifolds …'; ?></span>
 												</div>
 											</div>
-											<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;"></div>
+											<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;min-height:118px;"></div>
 										</div>
 									</div>
 									<p class="meadow-caption" style="color:var(--tm-muted);margin-top:10px;">
 										<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
 										Aus den Wörtern (Tokens) und ihrer Lage zueinander lassen sich Übersetzungen ableiten, allein aus diesen Relationen. In echten Modellen ist das nicht nur komplexer, weil der Raum hochdimensional ist, sondern auch, weil es Tokens sind und keine ganzen Wörter.
-										Was du siehst, sind sogenannte <b>Mannigfaltigkeiten</b>: gekrümmte Flächen, auf denen die Wortpunkte liegen. In echten Modellen sind diese Flächen viel komplexer und hochdimensional; als Intuition ist das Bild trotzdem gut.
+										Was du siehst, sind sogenannte <b>Mannigfaltigkeiten</b>: Räume, in denen die Wortpunkte liegen. In der Nähe jedes Punktes sehen sie flach aus wie eine Ebene, als Ganzes können sie aber gekrümmt sein, ähnlich wie die Erdoberfläche für jemanden, der darauf steht.
 										<?php else: ?>
 										The words (tokens) and their positions relative to each other are enough to derive translations, from those relations alone. In real models this is more complex not only because the space is high-dimensional, but also because they are tokens, not whole words.
-										What you see are so-called <b>manifolds</b>: curved surfaces on which the word points lie. In real models these surfaces are far more complex and high-dimensional; as an intuition the picture still works well.
+										What you see are so-called <b>manifolds</b>: spaces in which the word points lie. Near each point they look flat like a plane, but as a whole they can be curved, much like the Earth's surface looks flat from where you stand.
 										<?php endif; ?>
 									</p>
 								</div>
