@@ -7295,93 +7295,114 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	if (!stack) {
 		stack = document.createElement('div');
 		stack.className = 'unified-layer-stack';
-		stack.style.cssText = 'margin-top:20px; display:flex; flex-direction:column; gap:12px;';
 		container.appendChild(stack);
 	}
 
 	const prefix = `unified-layer-${layerIndex}`;
 	if (document.getElementById(`${prefix}-card`)) return;
 
-	const card = document.createElement('details');
+	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+	const card = document.createElement('section');
 	card.id = `${prefix}-card`;
-	card.className = 'unified-layer-card';
+	card.className = 'tm-layer-card';
 	card.dataset.layerIdx = layerIndex;
-	card.style.cssText = 'border:1px solid #3b82f6; border-radius:10px; overflow:hidden; background:#fff;';
 
-	const summary = document.createElement('summary');
-	summary.className = 'unified-layer-summary';
-	summary.style.cssText = 'cursor:pointer; padding:12px 16px; background:#dbeafe; font-weight:700; display:flex; align-items:center; justify-content:space-between; gap:10px;';
-	summary.innerHTML = `<span>Layer ${layerIndex + 1}</span><span class="unified-layer-status" style="font-weight:600; font-size:0.78rem; color:#1e40af;"></span>`;
-	card.appendChild(summary);
+	const head = document.createElement('button');
+	head.type = 'button';
+	head.className = 'tm-layer-head';
+	head.setAttribute('aria-expanded', 'false');
+	head.innerHTML = `<span class="tm-layer-num">Layer ${layerIndex + 1}</span><span class="tm-layer-sub">${isDe ? 'Attention mischt, das FFN schreibt, der Residual-Stream addiert.' : 'Attention mixes, the FFN writes, the residual stream adds.'}</span><span class="tm-layer-chevron" aria-hidden="true">⌄</span>`;
+	card.appendChild(head);
 
-	const contentDiv = document.createElement('div');
-	contentDiv.id = `${prefix}-content`;
-	contentDiv.className = 'unified-layer-tab-content';
-	contentDiv.dataset.layerIdx = layerIndex;
-	contentDiv.dataset.rendered = 'false';
-	contentDiv.style.display = 'block';
-	contentDiv.style.padding = '15px';
-	contentDiv.style.background = themeColor('#f8f9ff');
-	contentDiv.style.overflowAnchor = 'none';
-	contentDiv.innerHTML = `
-    <div style="margin-bottom: 18px;">
-	<canvas id="${prefix}-residual-canvas" class="layer-residual-canvas" aria-label="${(window.TM && TM.lang && TM.lang() === 'de') ? 'Residual-Stream-Updates dieser Schicht pro Token' : 'Residual stream updates for this layer, per token'}"></canvas>
-	<p class="unified-layer-hint" style="font-size:0.82rem; color:#475569; margin:0 0 10px;">${(window.TM && TM.lang && TM.lang() === 'de') ? 'Klicke auf ein Wort, um zu sehen, worauf es seine Attention richtet.' : 'Click a word to see where it focuses its attention.'}</p>
-	<div id="${prefix}-attention-heads" style="margin-top: 4px;"></div>
+	const preview = document.createElement('div');
+	preview.className = 'tm-layer-preview';
+	preview.innerHTML = `<canvas id="${prefix}-residual-canvas" data-layer-idx="${layerIndex}" class="layer-residual-canvas" aria-label="${isDe ? 'Residual-Stream-Updates dieser Schicht pro Token' : 'Residual stream updates for this layer, per token'}"></canvas>`;
+	card.appendChild(preview);
+
+	const body = document.createElement('div');
+	body.className = 'tm-layer-body';
+	body.hidden = true;
+	body.innerHTML = `
+    <div class="tm-level-rail" role="tablist" aria-label="${isDe ? 'Detailstufe' : 'Detail level'}">
+	<button type="button" class="tm-level-step is-active" data-level="0" role="tab" aria-selected="true">${isDe ? 'Wohin die Punkte wandern' : 'Where the points move'}</button>
+	<button type="button" class="tm-level-step" data-level="1" role="tab" aria-selected="false">Attention</button>
+	<button type="button" class="tm-level-step" data-level="2" role="tab" aria-selected="false">${isDe ? 'Formeln' : 'Formulas'}</button>
     </div>
-    <details id="${prefix}-formulas" class="layer-formulas" style="border:1px solid #93c5fd; border-radius:8px; background:#fff; margin-top:12px;">
-	<summary style="cursor:pointer; padding:10px 14px; font-weight:700; color:#1e40af; background:#eff6ff;">Formulas and matrices</summary>
-	<div id="${prefix}-formula-body" style="padding:14px;">
-	    <div id="${prefix}-layernorm-viz" style="margin-top: 10px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
-	    <div id="${prefix}-concat-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;"></div>
-	    <div id="${prefix}-h1-final-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #8b5cf6; border-radius: 12px; background: #f5f3ff; overflow-x: auto;"></div>
-	    <p style="color: #f59e0b; margin: 18px 0 12px 0; font-size: 0.95rem;">Feed-Forward Network:</p>
-	    <div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
-	    <div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
-	    <div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
-	    <div id="${prefix}-migration-container" style="margin-top: 24px;">
-		<p class="migration-parallel-note" style="font-size:0.8rem; color:#475569; margin:0 0 10px; line-height:1.5;">${(window.TM && TM.lang && TM.lang() === 'de') ? 'Parallele Koordinaten: Jede Linie ist ein Token, jede senkrechte Achse eine Dimension. Der Weg der Linie zeigt, wie sich der Vektor des Tokens von Schicht zu Schicht verändert; so siehst du alle Dimensionen auf einmal, ohne sie auf zwei Achsen zu projizieren.' : 'Parallel coordinates: each line is one token, each vertical axis is one dimension. The path shows how the token vector changes from layer to layer, so you can see all dimensions at once without projecting them onto two axes.'}</p>
-	    </div>
+    <div class="tm-level-pane" data-level="0">
+	<canvas id="${prefix}-migration-canvas" data-layer-idx="${layerIndex}" class="tm-migration-canvas" aria-label="${isDe ? 'Pfeile zeigen, wohin sich die Token-Vektoren in dieser Schicht bewegen' : 'Arrows show where the token vectors move in this layer'}"></canvas>
+	<div id="${prefix}-migration-container" class="tm-migration-detail">
+	    <p class="migration-parallel-note">${isDe ? 'Parallele Koordinaten: Jede Linie ist ein Token, jede senkrechte Achse eine Dimension. Der Weg der Linie zeigt, wie sich der Vektor des Tokens von Schicht zu Schicht verändert; so siehst du alle Dimensionen auf einmal, ohne sie auf zwei Achsen zu projizieren.' : 'Parallel coordinates: each line is one token, each vertical axis is one dimension. The path shows how the token vector changes from layer to layer, so you can see all dimensions at once without projecting them onto two axes.'}</p>
 	</div>
-    </details>
+    </div>
+    <div class="tm-level-pane" data-level="1" hidden>
+	<p class="unified-layer-hint">${isDe ? 'Klicke auf ein Wort, um zu sehen, worauf es seine Attention richtet.' : 'Click a word to see where it focuses its attention.'}</p>
+	<div id="${prefix}-attention-heads"></div>
+    </div>
+    <div class="tm-level-pane" data-level="2" hidden>
+	<div id="${prefix}-formula-body">
+	    <div id="${prefix}-layernorm-viz" class="tm-formula-block"></div>
+	    <div id="${prefix}-concat-viz" class="tm-formula-block"></div>
+	    <div id="${prefix}-h1-final-viz" class="tm-formula-block"></div>
+	    <p class="tm-formula-kicker">${isDe ? 'Feed-Forward-Netz:' : 'Feed-Forward Network:'}</p>
+	    <div id="${prefix}-step-1" class="math_transformer"></div>
+	    <div id="${prefix}-step-2" class="math_transformer"></div>
+	    <div id="${prefix}-step-3" class="math_transformer"></div>
+	</div>
+    </div>
     `;
-	card.appendChild(contentDiv);
+	card.appendChild(body);
 
-	card.addEventListener('toggle', function () {
-		if (!card.open) return;
-		openUnifiedLayer(layerIndex);
+	head.addEventListener('click', function () {
+		const open = body.hidden;
+		body.hidden = !open;
+		head.setAttribute('aria-expanded', String(open));
+		card.classList.toggle('is-open', open);
+		if (open) setLayerLevel(layerIndex, 0);
 	});
-	const formulas = contentDiv.querySelector(`#${prefix}-formulas`);
-	if (formulas) {
-		formulas.addEventListener('toggle', function () {
-			if (formulas.open) renderLayerFormulas(layerIndex);
+	body.querySelectorAll('.tm-level-step').forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			setLayerLevel(layerIndex, parseInt(btn.dataset.level, 10));
 		});
-	}
+	});
 	stack.appendChild(card);
 }
 
-function openUnifiedLayer(layerIdx) {
-	window._activeUnifiedLayerIdx = layerIdx;
+function setLayerLevel(layerIdx, level) {
 	const card = _tmLayerCard(layerIdx);
-	if (card) {
-		const status = card.querySelector('.unified-layer-status');
-		if (status) status.textContent = (window.TM && TM.lang && TM.lang() === 'de') ? 'offen' : 'open';
+	if (!card) return;
+	card.querySelectorAll('.tm-level-step').forEach(function (btn) {
+		const active = parseInt(btn.dataset.level, 10) === level;
+		btn.classList.toggle('is-active', active);
+		btn.setAttribute('aria-selected', String(active));
+	});
+	card.querySelectorAll('.tm-level-pane').forEach(function (pane) {
+		pane.hidden = parseInt(pane.dataset.level, 10) !== level;
+	});
+	if (level === 0) {
+		if (window.TransformerSteps && window.TransformerSteps.renderLayerMigration) {
+			window.TransformerSteps.renderLayerMigration(`unified-layer-${layerIdx}-migration-canvas`, layerIdx);
+		}
+		renderLayerMigrationPlot(layerIdx);
+	} else if (level === 1) {
+		renderLayerAttention(layerIdx);
+	} else if (level === 2) {
+		renderLayerFormulas(layerIdx);
 	}
-	renderLayerAttention(layerIdx);
-	const residualCanvas = document.getElementById(`unified-layer-${layerIdx}-residual-canvas`);
-	if (residualCanvas && window.TransformerSteps && window.TransformerSteps.renderLayerResidual) {
-		window.TransformerSteps.renderLayerResidual(residualCanvas.id, layerIdx);
-	}
-	const formulas = document.getElementById(`unified-layer-${layerIdx}-formulas`);
-	if (formulas && formulas.open) renderLayerFormulas(layerIdx);
+}
+
+function openUnifiedLayer(layerIdx) {
+	const card = _tmLayerCard(layerIdx);
+	if (!card) return;
+	const body = card.querySelector('.tm-layer-body');
+	const head = card.querySelector('.tm-layer-head');
+	if (body) body.hidden = false;
+	if (head) head.setAttribute('aria-expanded', 'true');
+	card.classList.add('is-open');
+	setLayerLevel(layerIdx, 0);
 }
 
 window.showUnifiedLayer = function (layerIdx) {
-	const card = _tmLayerCard(layerIdx);
-	if (card) {
-		card.open = true;
-		openUnifiedLayer(layerIdx);
-	}
+	openUnifiedLayer(layerIdx);
 };
 
 function renderLayerAttention(layerIdx) {
@@ -7394,6 +7415,19 @@ function renderLayerAttention(layerIdx) {
 		if (mhaRegistry && mhaRegistry.layers[layerIdx]) {
 			registryEntry.instance.executeActualRender(registryEntry.headData, registryEntry.tokens);
 		}
+	}
+}
+
+function renderLayerMigrationPlot(layerIdx) {
+	const migrationId = `migration-layer-${layerIdx + 1}`;
+	const migrationData = transformerLabVisMigrationDataRegistry.get(migrationId);
+	if (!migrationData) return;
+	const plotDiv = document.getElementById(migrationId);
+	if (!plotDiv) return;
+	tlab_render_latex_matrix(migrationId, plotDiv, migrationData.tokens, migrationData.start_h, migrationData.end_h, migrationData.h_after, migrationData.d_model, migrationData.tokenStrings);
+	if (isElementInViewport(plotDiv)) {
+		render_migration_logic(migrationId, migrationData.tokens, migrationData.start_h, migrationData.end_h, migrationData.layerNum, migrationData.d_model, migrationData.h_after, migrationData.tokenStrings);
+		migrationData.rendered = true;
 	}
 }
 
@@ -7413,18 +7447,6 @@ function renderLayerFormulas(layerIdx) {
 	const ffn = trace.ffn || (window.__tmFFNTrace || [])[layerIdx];
 	if (ffn) {
 		render_ffn(ffn.h1, ffn.normed_h1, ffn.W1, ffn.b1, ffn.out_L1, ffn.W2, ffn.b2, ffn.out_FFN, ffn.h2, ffn.gamma2, ffn.beta2, layerIdx, tokens);
-	}
-	const migrationId = `migration-layer-${layerIdx + 1}`;
-	const migrationData = transformerLabVisMigrationDataRegistry.get(migrationId);
-	if (migrationData) {
-		const plotDiv = document.getElementById(migrationId);
-		if (plotDiv) {
-			tlab_render_latex_matrix(migrationId, plotDiv, migrationData.tokens, migrationData.start_h, migrationData.end_h, migrationData.h_after, migrationData.d_model, migrationData.tokenStrings);
-			if (isElementInViewport(plotDiv)) {
-				render_migration_logic(migrationId, migrationData.tokens, migrationData.start_h, migrationData.end_h, migrationData.layerNum, migrationData.d_model, migrationData.h_after, migrationData.tokenStrings);
-				migrationData.rendered = true;
-			}
-		}
 	}
 	body.dataset.formulasRendered = 'true';
 	_renderTemmlOnElements([body]);
