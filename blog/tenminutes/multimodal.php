@@ -53,7 +53,6 @@
 								<p class="demo-title">Two towers, one answer <span>· demo</span></p>
 								<p class="demo-sub">Multimodal models align separate spaces and then use them together. Select a stage.</p>
 							</div>
-							<span class="demo-badge">step through</span>
 						</div>
 						<div class="demo-body">
 							<div class="timeline-scroller">
