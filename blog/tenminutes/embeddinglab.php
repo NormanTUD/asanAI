@@ -33,17 +33,7 @@
 						<div class="section-kicker"><span class="sk-num">01</span> One dimension</div>
 						<h2 class="section-title">A word becomes a number.</h2>
 						<div class="prose">
-							<p>
-								Tokenization turned text into token IDs. An ID is still just an index. The next step
-								is geometry. The idea that concepts can be read as regions and directions in a space
-								goes back to the conceptual spaces of
-								<a href="https://en.wikipedia.org/wiki/Conceptual_space" rel="noopener">Gärdenfors (2000)</a>;
-								in a neural embedding the space is learned from text. Start with a single axis: temperature. Give <strong>Freezing</strong> the
-								coordinate −30, <strong>Cold</strong> 5, <strong>Warm</strong> 35, and
-								<strong>Boiling</strong> 100. In this one-dimensional world, “Cold” is
-								mathematically close to “Freezing” and far from “Boiling”. You can even do
-								approximate arithmetic: <code>Boiling − Hot ≈ Warm</code>.
-							</p>
+							<p>Tokenization turned text into token IDs. An ID is still just an index. The next step is geometry. The idea that concepts can be read as regions and directions in a space goes back to the conceptual spaces of <a href="https://en.wikipedia.org/wiki/Conceptual_space" rel="noopener">Gärdenfors (2000)</a>; in a neural embedding the space is learned from text. Start with a single axis: temperature. Give <strong>Freezing</strong> the coordinate −30, <strong>Cold</strong> 5, <strong>Lukewarm</strong> 30, and <strong>Hot</strong> 100. In this one-dimensional world, “Cold” is mathematically close to “Freezing” and far from “Hot”. You can even do approximate arithmetic: <code>Cold + 25 = Lukewarm</code>, and <code>Lukewarm + 70 = Hot</code>.</p>
 							<p>
 								The coordinates are hand-assigned here. In a real model nobody writes them
 								down: the model discovers a position for every token from the company it
@@ -69,6 +59,20 @@
 						<div class="prose">
 							<p>The line runs from Harris to word2vec. <a href="https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf" rel="noopener">Harris (1954)</a> proposed that words with similar distributions have similar meanings; <a href="https://archive.org/details/papersinlinguist0000firt" rel="noopener">Firth (1957)</a> turned the idea into a slogan. Latent semantic analysis (<a href="https://web.archive.org/web/20040726210957id_/http://lsa.colorado.edu:80/papers/JASIS.lsi.90.pdf" rel="noopener">Deerwester et al., 1990</a>) made the idea computable with a matrix factorization, and <a href="https://arxiv.org/abs/1301.3781" rel="noopener">word2vec (Mikolov et al., 2013)</a> made it cheap at scale. GloVe (<a href="https://aclanthology.org/D14-1162/" rel="noopener">Pennington et al., 2014</a>) added global co-occurrence statistics; ELMo (<a href="https://aclanthology.org/N18-1202/" rel="noopener">Peters et al., 2018</a>) and BERT (<a href="https://aclanthology.org/N19-1423/" rel="noopener">Devlin et al., 2019</a>) made the vector contextual.</p>
 						</div>
+						<div class="demo demo--paper demo--plot" id="oned-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Eine Achse, eine Relation' : 'One axis, one relation'; ?> <span>· demo 01a</span></p>
+									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Temperatur ist eine einzige Zahl. Bewegung auf der Linie ist Addition; der Abstand zwischen zwei Punkten ist ihre Differenz.' : 'Temperature is a single number. Moving along the line is addition; the distance between two points is their difference.'; ?></p>
+								</div>
+								<span class="demo-badge">1-D</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas" id="oned-canvas" style="height:150px" aria-label="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Eine Temperaturlinie mit Gefrierpunkt bei -30, Kalt bei 5, Lauwarm bei 30 und Heiß bei 100' : 'A temperature line with Freezing at -30, Cold at 5, Lukewarm at 30, and Hot at 100'; ?>"></canvas>
+								<p class="meadow-caption" style="color:var(--tm-muted)"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Kalt + 25 = Lauwarm; Lauwarm + 70 = Heiß. Dieselbe Achse kann Wörter ordnen, aber sie trägt nur eine Relation.' : 'Cold + 25 = Lukewarm; Lukewarm + 70 = Hot. The same axis can order words, but it can only carry one relation.'; ?></p>
+							</div>
+						</div>
+
 						<div class="fieldnotes">
 							<h4>What the coordinate means</h4>
 							<p>There is no “temperature neuron” in a real model. A dimension is a latent feature: a direction the optimization found useful, not a label a human chose. The 1-D line is a teaching device.</p>
@@ -158,25 +162,6 @@
 						<div class="prose">
 							<p>Meaning also survives a rotation. If you rotate every vector in the space, the distances and angles between words stay the same, so “king” stays near “queen”. That is why two languages can have different-looking embedding spaces and still share the same relative geometry. Align the spaces with a rotation and a shift, and the words line up.</p>
 						</div>
-						<div class="demo demo--paper demo--canvas" id="crosslingual-demo">
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">The same geometry in two languages <span>· demo 01b</span></p>
-									<p class="demo-sub">English and Japanese place the same concepts in the same relative geometry, only rotated. Align them and watch the points meet.</p>
-								</div>
-								<span class="demo-badge">cross-lingual</span>
-							</div>
-							<div class="demo-body">
-								<canvas class="demo-canvas" id="crosslingual-canvas" style="height:340px" aria-label="English and Japanese word embeddings before and after alignment"></canvas>
-								<div class="demo-controls">
-									<button class="btn-demo btn-demo--green" type="button" id="cl-align">Align languages ▶</button>
-									<button class="btn-demo" type="button" id="cl-reset">Reset</button>
-								</div>
-								<p class="meadow-caption" id="cl-status" style="color:var(--tm-muted)">English and Japanese use the same relative geometry; the Japanese set is rotated by 55°.</p>
-							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Different languages can share one geometric structure. The labels differ; the relations between the concepts do not.</span></div>
-						</div>
-
 						<div class="demo demo--paper demo--canvas" id="tm-dual-manifold-demo" style="margin-top:22px">
 							<div class="demo-head">
 								<div>
@@ -202,25 +187,32 @@
 							<p>
 								Tokens sind nicht immer ganze Wörter, sondern oft Wortteile. Deshalb können sich Sprachen einen Token teilen: Das Stück <code>en</code> kommt in Englisch, Deutsch, Französisch und sogar Python vor. Alle vier Mannigfaltigkeiten laufen durch denselben <code>en</code>-Punkt in der Mitte; jede farbige Fläche ist eine eigene Untermannigfaltigkeit der großen Mannigfaltigkeit und steht für eine andere Sprache. Jede Fläche trifft ihn an einer anderen Stelle ihrer eigenen Fläche: Mitte, Rand, oben oder unten. Auch die übrigen Wörter sind in einzelne Tokens zerlegt, etwa <code>op</code> + <code>en</code> für „open“ oder <code>mean</code> + <code>ing</code> für „meaning“. Jede farbige Fläche ist eine eigene Untermannigfaltigkeit der großen Mannigfaltigkeit und steht für eine andere Sprache. Die Struktur ist dabei nicht nur gedreht, sondern auch geschert und gekippt, also schief im Raum. Bei echten Embeddings ist das viel unordentlicher als in diesem theoretischen Bild, aber das Prinzip ist dasselbe.
 							</p>
-							<p>Ein Satz ist übrigens auch eine solche Mannigfaltigkeit. Jeder mögliche Kontext ist das.</p>
+							<p>Auch ein kurzes Gedicht ist eine solche Mannigfaltigkeit: ein eindimensionaler Pfad durch den Raum. Jeder mögliche Kontext ist das.</p>
 							<?php else: ?>
 							<p>
 								Tokens are not always whole words; they are often pieces of words. That is why languages can share a token: the piece <code>en</code> occurs in English, German, French and even Python. All four manifolds pass through the same <code>en</code> point in the middle; each coloured surface is its own submanifold of the larger manifold and stands for a different language. Each meets it at a different place on its own sheet (centre, edge, top, or bottom). The other words are also split into tokens, for example <code>op</code> + <code>en</code> for “open” or <code>mean</code> + <code>ing</code> for “meaning”. Each coloured surface is its own submanifold of the larger manifold and stands for a different language. The structure is not only rotated but also sheared and tilted, so it lies obliquely in space. Real embeddings are much messier than this theoretical picture, but the principle is the same.
 							</p>
-							<p>A sentence is such a manifold too. Every possible context is one.</p>
+							<p>A short poem is such a manifold too: a one-dimensional path through the space. Every possible context is one.</p>
 							<?php endif; ?>
 						</div>
-						<div class="demo demo--paper demo--canvas" id="tm-language-manifold-demo">
+						<div class="demo demo--paper demo--canvas" id="tm-poem-manifold-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz ist eine Mannigfaltigkeit' : 'A sentence is a manifold'; ?> <span>· demo 01d</span></p>
-									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Jeder mögliche Kontext ist eine. Die Flächen unten zeigen, wie verschiedene Sprachen dieselbe Token-Mannigfaltigkeit teilen.' : 'Every possible context is one. The surfaces below show how different languages share the same token manifold.'; ?></p>
+									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Gedicht ist eine Linie' : 'A poem is a line'; ?> <span>· demo 01d</span></p>
+									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Zwei kurze Gedichte, jedes ein eindimensionaler Pfad durch den 768-dimensionalen Embedding-Raum von GPT-2. Wechsle die Sprache, um die Linien zu vergleichen.' : 'Two short poems, each a one-dimensional path through GPT-2’s 768-dimensional embedding space. Switch language to compare the lines.'; ?></p>
 								</div>
-								<span class="demo-badge">3D</span>
+								<span class="demo-badge"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'echtes GPT-2' : 'real GPT-2'; ?></span>
 							</div>
 							<div class="demo-body">
-								<div id="tm-language-manifolds" style="width:100%;height:560px;"></div>
+								<div class="chip-row" id="poem-lang">
+									<button class="chip is-on" type="button" data-poem="en">English · Blake</button>
+									<button class="chip" type="button" data-poem="de">Deutsch · Ringelnatz</button>
+								</div>
+								<div id="tm-poem-en" style="width:100%"></div>
+								<div id="tm-poem-de" style="width:100%" hidden></div>
+								<p class="meadow-caption" id="poem-caption" style="color:var(--tm-muted)"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Joachim Ringelnatz (zugeschrieben), „Die Löcher sind das Wichtigste am Sieb.“ Die Zuschreibung ist verbreitet, aber nicht gesichert. Die Linie folgt den GPT-2-Tokens in ihrer Reihenfolge.' : 'William Blake, “The fool sees not the same tree that a wise man sees.” From Proverbs of Hell, The Marriage of Heaven and Hell (c. 1790). The line follows the GPT-2 tokens in order.'; ?></p>
 							</div>
+							<div class="demo-insight"><b><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Fazit' : 'Takeaway'; ?></b><span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz ist ein eindimensionaler Pfad, keine Wolke. Der Pfad lebt in einem viel größeren Raum; die 3D-Linie ist sein Schatten.' : 'A sentence is a one-dimensional path, not a cloud. The path lives in a much larger space; the 3D line is a shadow of it.'; ?></span></div>
 						</div>
 
 					</section>
@@ -451,25 +443,10 @@
 	<script src="../plotly-2.24.1.min.js"></script>
 	<script src="../manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/../manifold_scenes.js'); ?>"></script>
 	<script src="../embedding_manifold_data.js?v=<?php echo filemtime(__DIR__.'/../embedding_manifold_data.js'); ?>"></script>
+	<script src="../poem_manifold_data.js?v=<?php echo filemtime(__DIR__.'/../poem_manifold_data.js'); ?>"></script>
 	<script src="../embedding_manifold.js?v=<?php echo filemtime(__DIR__.'/../embedding_manifold.js'); ?>"></script>
 	<script>
 	(function () {
-		var host = document.getElementById('tm-language-manifolds');
-		if (!host || !window.ManifoldScenes) return;
-		var drawn = false;
-		function draw() {
-			if (drawn) return;
-			drawn = true;
-			ManifoldScenes.renderLanguages('tm-language-manifolds');
-		}
-		if ('IntersectionObserver' in window) {
-			var io = new IntersectionObserver(function (entries) {
-				if (entries.some(function (e) { return e.isIntersecting; })) { io.disconnect(); draw(); }
-			}, { rootMargin: '400px 0px' });
-			io.observe(host);
-		} else { draw(); }
-		window.addEventListener('tm:theme', function () { drawn = false; draw(); });
-
 		var dualHost = document.getElementById('tm-dual-manifolds');
 		if (dualHost && window.ManifoldScenes && window.ManifoldScenes.renderDualPlotly) {
 			ManifoldScenes.renderDualPlotly('tm-dual-manifolds', 'tm-dual-controls');
@@ -771,123 +748,6 @@
 			window.addEventListener("tm:theme", function () { if (api) api.redraw(); });
 		}
 
-		/* ── cross-lingual alignment ─────────────────────────── */
-		var clCanvas = document.getElementById("crosslingual-canvas");
-		if (clCanvas) {
-			var clStatus = document.getElementById("cl-status");
-			var clAlign = document.getElementById("cl-align");
-			var clReset = document.getElementById("cl-reset");
-			var CL_KEYS = ["Man", "Woman", "King", "Queen", "Prince", "Princess"];
-			var CL_JP = { Man: "男", Woman: "女", King: "王様", Queen: "女王", Prince: "王子", Princess: "王女" };
-			var clAngle = 55;
-			var clOffset = 1;
-			var clAnim = null;
-			var clApi = null;
-			var clReduce = TM.prefersReduced();
-			var clC = (function () {
-				var sx = 0, sy = 0;
-				CL_KEYS.forEach(function (k) { var w = get(k); sx += w.x; sy += w.y; });
-				return { x: sx / CL_KEYS.length, y: sy / CL_KEYS.length };
-			})();
-			function clPoint(key, angle) {
-				var w = get(key);
-				var dx = w.x - clC.x, dy = w.y - clC.y;
-				var a = angle * Math.PI / 180;
-				return { x: dx * Math.cos(a) - dy * Math.sin(a), y: dx * Math.sin(a) + dy * Math.cos(a) };
-			}
-			function clScreen(p, cx, cy, scale) {
-				return { x: cx + p.x * scale, y: cy + p.y * scale };
-			}
-			function drawCL(ctx, w, h) {
-				var c = TM.colors();
-				ctx.clearRect(0, 0, w, h);
-				var scale = Math.min(w, h) * 1.5;
-				var ex = w * 0.31, ey = h * 0.52;
-				var jx = ex + (w * 0.69 - ex) * clOffset;
-				var jy = ey;
-				var en = {}, jp = {};
-				CL_KEYS.forEach(function (k) {
-					en[k] = clScreen(clPoint(k, 0), ex, ey, scale);
-					jp[k] = clScreen(clPoint(k, clAngle), jx, jy, scale);
-				});
-				if (clOffset > 0.01) {
-					ctx.save();
-					ctx.setLineDash([3, 4]);
-					ctx.strokeStyle = c.dark ? "rgba(238,247,244,.22)" : "rgba(0,75,111,.18)";
-					ctx.lineWidth = 1;
-					CL_KEYS.forEach(function (k) {
-						ctx.beginPath(); ctx.moveTo(en[k].x, en[k].y); ctx.lineTo(jp[k].x, jp[k].y); ctx.stroke();
-					});
-					ctx.restore();
-				}
-				var pairs = [["Man", "Woman"], ["King", "Queen"], ["Prince", "Princess"], ["Man", "Prince"], ["Prince", "King"], ["Woman", "Princess"], ["Princess", "Queen"]];
-				[en, jp].forEach(function (set) {
-					pairs.forEach(function (pair) {
-						ctx.beginPath();
-						ctx.moveTo(set[pair[0]].x, set[pair[0]].y);
-						ctx.lineTo(set[pair[1]].x, set[pair[1]].y);
-						ctx.strokeStyle = c.dark ? "rgba(238,247,244,.14)" : "rgba(0,75,111,.12)";
-						ctx.lineWidth = 1;
-						ctx.stroke();
-					});
-				});
-				[["Man", "King"], ["King", "Queen"]].forEach(function (pair) {
-					drawArrow(ctx, en[pair[0]].x, en[pair[0]].y, en[pair[1]].x, en[pair[1]].y, c.blue, false);
-				});
-				[["Man", "King"], ["King", "Queen"]].forEach(function (pair) {
-					drawArrow(ctx, jp[pair[0]].x, jp[pair[0]].y, jp[pair[1]].x, jp[pair[1]].y, c.green, false);
-				});
-				ctx.font = "600 11px Barlow, system-ui, sans-serif";
-				ctx.textAlign = "center";
-				CL_KEYS.forEach(function (k) {
-					ctx.beginPath(); ctx.arc(en[k].x, en[k].y, 4.5, 0, Math.PI * 2); ctx.fillStyle = c.blue; ctx.fill();
-					ctx.strokeStyle = c.card; ctx.lineWidth = 1.5; ctx.stroke();
-					ctx.fillStyle = c.ink; ctx.fillText(k, en[k].x, en[k].y - 10);
-					ctx.beginPath(); ctx.arc(jp[k].x, jp[k].y, 4.5, 0, Math.PI * 2); ctx.fillStyle = c.green; ctx.fill();
-					ctx.strokeStyle = c.card; ctx.lineWidth = 1.5; ctx.stroke();
-					ctx.fillStyle = c.ink; ctx.fillText(CL_JP[k], jp[k].x, jp[k].y + 16);
-				});
-				ctx.fillStyle = c.muted;
-				ctx.font = "600 10px Barlow, system-ui, sans-serif";
-				ctx.textAlign = "left";
-				ctx.fillText(DE ? "Englisch" : "English", 14, 20);
-				ctx.textAlign = "right";
-				ctx.fillText(DE ? "Japanisch" : "Japanese", w - 14, 20);
-			}
-			clApi = TM.initCanvas(clCanvas, drawCL);
-			function clSetStatus() {
-				if (!clStatus) return;
-				if (clOffset < 0.01 && clAngle < 0.5) clStatus.textContent = DE
-					? "Ausgerichtet: gleiche Geometrie, andere Beschriftung."
-					: "Aligned: same geometry, different labels.";
-				else clStatus.textContent = DE
-					? "Englisch und Japanisch nutzen dieselbe relative Geometrie; der japanische Satz ist um 55° gedreht."
-					: "English and Japanese use the same relative geometry; the Japanese set is rotated by 55°.";
-			}
-			function clAnimate(targetAngle, targetOffset) {
-				if (clAnim) cancelAnimationFrame(clAnim);
-				var startAngle = clAngle, startOffset = clOffset;
-				var start = performance.now();
-				var duration = clReduce ? 0 : 1400;
-				function frame(now) {
-					var raw = duration ? Math.min((now - start) / duration, 1) : 1;
-					var t = raw < 0.5 ? 4 * raw * raw * raw : 1 - Math.pow(-2 * raw + 2, 3) / 2;
-					clAngle = startAngle + (targetAngle - startAngle) * t;
-					clOffset = startOffset + (targetOffset - startOffset) * t;
-					if (clApi) clApi.redraw();
-					clSetStatus();
-					if (raw < 1) clAnim = requestAnimationFrame(frame);
-					else clAnim = null;
-				}
-				clAnim = requestAnimationFrame(frame);
-				clSetStatus();
-			}
-			if (clAlign) clAlign.addEventListener("click", function () { clAnimate(0, 0); });
-			if (clReset) clReset.addEventListener("click", function () { clAnimate(55, 1); });
-			clSetStatus();
-			window.addEventListener("tm:theme", function () { if (clApi) clApi.redraw(); });
-		}
-
 		/* ── cosine demo ─────────────────────────────────────── */
 		var cosCanvas = document.getElementById("cosine-canvas");
 		if (cosCanvas) {
@@ -907,7 +767,7 @@
 				var b = parseFloat(cosB.value) * Math.PI / 180;
 				var m = parseFloat(cosM.value);
 				var ox = w / 2, oy = h / 2;
-				var R = Math.min(w, h) * 0.32;
+				var R = Math.min(w, h) * 0.34 / Math.max(1, m);
 				var ax = ox + Math.cos(a) * R, ay = oy - Math.sin(a) * R;
 				var bx = ox + Math.cos(b) * R * m, by = oy - Math.sin(b) * R * m;
 				var dot = Math.cos(a) * Math.cos(b) + Math.sin(a) * Math.sin(b);
@@ -999,6 +859,75 @@
 			});
 			window.addEventListener("tm:theme", function () { if (magApi) magApi.redraw(); });
 		}
+	})();
+	</script>
+	<script>
+	(function () {
+		"use strict";
+		var canvas = document.getElementById("oned-canvas");
+		if (!canvas || !TM.numberLine) return;
+		var de = TM.lang() === "de";
+		var c = TM.colors();
+		TM.numberLine(canvas, {
+			min: -40,
+			max: 110,
+			points: [
+				{ value: -30, label: de ? "Gefrierpunkt" : "Freezing", color: c.sky },
+				{ value: 5, label: de ? "Kalt" : "Cold", color: c.blue },
+				{ value: 30, label: de ? "Lauwarm" : "Lukewarm", color: c.green },
+				{ value: 100, label: de ? "Heiß" : "Hot", color: c.gold }
+			],
+			ops: [
+				{ from: 5, to: 30, label: de ? "Kalt + 25 = Lauwarm" : "Cold + 25 = Lukewarm", color: c.green },
+				{ from: 30, to: 100, label: de ? "Lauwarm + 70 = Heiß" : "Lukewarm + 70 = Hot", color: c.gold }
+			]
+		});
+	})();
+	</script>
+	<script>
+	(function () {
+		"use strict";
+		var data = window.TM_POEM_MANIFOLD;
+		var api = window.EmbeddingManifold;
+		if (!data || !api) return;
+		var current = TM.lang() === "de" ? "de" : "en";
+		var caption = document.getElementById("poem-caption");
+		var hosts = {
+			en: document.getElementById("tm-poem-en"),
+			de: document.getElementById("tm-poem-de")
+		};
+		var chips = Array.prototype.slice.call(document.querySelectorAll("#poem-lang [data-poem]"));
+		function hint(lang) {
+			return lang === "de"
+				? "Ziehe zum Drehen, scrolle zum Zoomen. Die Linie verbindet die Tokens in Gedichtreihenfolge; die 3D-Lage ist eine PCA-Projektion."
+				: "Drag to rotate, scroll to zoom. The line connects the tokens in poem order; the 3D layout is a PCA projection.";
+		}
+		function aria(lang) {
+			return lang === "de"
+				? "Dreidimensionale Projektion der GPT-2-Token-Embeddings eines Gedichts, verbunden in Leserichtung"
+				: "Three-dimensional projection of the GPT-2 token embeddings of a poem, connected in reading order";
+		}
+		function render(lang) {
+			var poem = data.poems[lang];
+			var host = hosts[lang];
+			if (host && !host.getAttribute("data-demo-ready")) {
+				api.renderLine(host.id, { data: poem, payload: poem, hint: hint(lang), ariaLabel: aria(lang) });
+			}
+			hosts.en.hidden = lang !== "en";
+			hosts.de.hidden = lang !== "de";
+			chips.forEach(function (chip) {
+				chip.classList.toggle("is-on", chip.getAttribute("data-poem") === lang);
+			});
+			if (caption) {
+				caption.textContent = lang === "de"
+					? poem.author + ", „" + poem.sentence + "“ " + poem.note + " Die Linie folgt den GPT-2-Tokens in ihrer Reihenfolge."
+					: poem.author + ", “" + poem.sentence + "” " + poem.source + ". The line follows the GPT-2 tokens in order.";
+			}
+		}
+		chips.forEach(function (chip) {
+			chip.addEventListener("click", function () { render(chip.getAttribute("data-poem")); });
+		});
+		render(current);
 	})();
 	</script>
 </body>
