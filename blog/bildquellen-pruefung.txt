@@ -1746,3 +1746,21 @@ Sprite_Sheet.png, sleigh frame (64,29)-(112,48)
     Lokal: santa_sleigh_pixel.png (48x19, aus dem Sprite-Sheet ausgeschnitten)
     Genutzt in: tenminutes/index.php, saisonaler Overlay am 24. Dezember
     Status: OK - CC0, Quelle und Autor im Seiten-Credit genannt
+
+=== TEN MINUTES: Deep Blue timeline image (tenminutes/ai_and_society.php) ===
+Deep Blue.jpg
+    URL: https://commons.wikimedia.org/wiki/File:Deep_Blue.jpg
+    Lizenz: CC BY 2.0
+    Autor: James the photographer
+    Lokal: deep_blue_1997.jpg (400x601)
+    Genutzt in: tenminutes/ai_and_society.php, Timeline 1997
+    Status: OK - Autor und Lizenz im Timeline-Caption verlinkt
+
+=== TEN MINUTES: LISP machine timeline image (tenminutes/ai_and_society.php) ===
+Symbolics 3620 (1).jpg
+    URL: https://commons.wikimedia.org/wiki/File:Symbolics_3620_(1).jpg
+    Lizenz: CC BY 2.0
+    Autor: leighklotz
+    Lokal: symbolics_lisp_machine.jpg (960x640)
+    Genutzt in: tenminutes/ai_and_society.php, Timeline 1980s Expert Systems
+    Status: OK - Autor und Lizenz im Timeline-Caption verlinkt
