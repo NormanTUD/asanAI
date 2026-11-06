@@ -917,7 +917,6 @@
 							</p>
 						</div>
 						<div class="keypoints">
-							<div class="keypoint"><b>Abstraction</b><span>Each layer hides the layer below. That is the source of both power and confusion.</span></div>
 							<div class="keypoint"><b>External memory</b><span>Notches, tablets, punched cards, caches: a count kept where you can return to it.</span></div>
 							<div class="keypoint"><b>Convergence</b><span>Ideas from astronomy, logic, biology, and games met by accident and circumstance.</span></div>
 							<div class="keypoint"><b>The missing names</b><span>The wider history follows the materials, labour, and contributors the parade forgets.</span></div>
@@ -930,10 +929,6 @@
 							<div class="myth myth--ok">
 								<b>Better frame</b>
 								<span>“The transformer bundled a long prehistory.” Counting, logic, feedback, learning, and hardware all had to be in place.</span>
-							</div>
-							<div class="myth">
-								<b>Common misreading</b>
-								<span>“The perceptron failed, so neural networks were wrong.” A single layer failed a specific test; depth and learning rules came later.</span>
 							</div>
 							<div class="myth myth--ok">
 								<b>Better frame</b>

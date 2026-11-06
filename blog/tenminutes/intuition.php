@@ -335,6 +335,13 @@
 											<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;"></div>
 										</div>
 									</div>
+									<p class="meadow-caption" style="color:var(--tm-muted);margin-top:10px;">
+										<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
+										Was du siehst, sind sogenannte <b>Mannigfaltigkeiten</b>: gekrümmte Flächen, auf denen die Wortpunkte liegen. In echten Modellen sind diese Flächen viel komplexer und hochdimensional; als Intuition ist das Bild trotzdem gut.
+										<?php else: ?>
+										What you see are so-called <b>manifolds</b>: curved surfaces on which the word points lie. In real models these surfaces are far more complex and high-dimensional; as an intuition the picture still works well.
+										<?php endif; ?>
+									</p>
 								</div>
 
 								<div class="step-pane" id="step-position">
