@@ -107,6 +107,8 @@ tokenizerlab:
 य
 44742
 ा
-48265" mach dass da manchmal auf zwei drei zeichen stehen als ein token. nehme nicht namaste sondern अहिंसा. zeige den emoji selbst und mach es einen zusammengesetzten, black + cat
+48265" mach dass da manchmal auf zwei drei zeichen stehen als ein token. nehme nicht namaste sondern अहिंसा. zeige den emoji selbst und mach es einen zusammengesetzten, black + cat. zeige da in den token boxen black + den joiner (den als hex code) + cat
+
+"und er bepreist jede Sprache anders" ist nonsens, entferne das. "Ein Wort, das in der dominanten Sprache ein häufiges Teilwort ist, kann in einer anderen mehrere Tokens brauchen" das gilt nur wenn das aus anderen tokens ist, die tokens können ganze worte sein aber müssen es nicht, sie können aus mehreren sprachen sein sind aber in der praxis weil die meisten daten auf englisch sind auch wnen sie ganze worte sind englisch.
 
 
