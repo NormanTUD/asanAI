@@ -77,3 +77,36 @@ in "Die lange Vorgeschichte der Sprachtechnologie " ist "schrift" bei 3200vchr u
 tokenizerlab:
 
 "Ein modernes LLM sieht Wörter niemals" word order, ein "LLM sieht niemals Worte".
+
+"das Modell denkt in Tokens" denkt in anfürhungszeichen
+
+"jeder Tippfehler" tippfehler sind ein guter punkt. erwähne auch in der intuition dass attn und ffn auf daten mit und ohne tippfehlern trainieren und daher lernen, mit tippfehlern umzugehen und trotzdem was nützliches daraus zu machen
+
+"Ein laufender, absichtlich winziger Tokenizer." es ist ein kleiner beispieltokenizer. entferne von dem "bonjour" und "zurich". bei dem hier "न
+25599
+म
+22361
+स
+3503
+्
+19920
+त
+6171
+े
+29634
+␣
+29159
+द
+9409
+ु
+26396
+न
+25599
+ि
+22646
+य
+44742
+ा
+48265" mach dass da manchmal auf zwei drei zeichen stehen als ein token. nehme nicht namaste sondern अहिंसा. zeige den emoji selbst und mach es einen zusammengesetzten, black + cat
+
+
