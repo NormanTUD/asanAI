@@ -293,6 +293,10 @@ return [
 		'From vectors to words' => 'Von Vektoren zu Wörtern',
 		'The final vector is multiplied by the unembedding matrix, producing one logit per vocabulary entry. Softmax turns the logits into probabilities; temperature sharpens or flattens the distribution.' => 'Der letzte Vektor wird mit der Unembedding-Matrix multipliziert und erzeugt einen Logit pro Vokabulareintrag. Softmax macht aus den Logits Wahrscheinlichkeiten; die Temperatur schärft oder flacht die Verteilung ab.',
 		'The output section below lets you change the temperature and click tokens to append them. The layer cards show the logit lens for every layer.' => 'Im Ausgabeabschnitt unten kannst du die Temperatur ändern und Tokens anklicken, um sie anzuhängen. Die Schichtkarten zeigen die Logit-Linse für jede Schicht.',
+		'Tokenized input' => 'Tokenisierter Satz',
+		'Sample' => 'Ziehen',
+		'Temperature' => 'Temperatur',
+		'The FFN transforms one token at a time. The heatmap shows the hidden activations for every token: the pattern the layer writes back.' => 'Das FFN transformiert jeweils ein Token. Die Heatmap zeigt die versteckten Aktivierungen für jedes Token: das Muster, das die Schicht zurückschreibt.',
 	],
 	'attrs' => [
 		'e.g., king - man + woman' => 'z. B. king - man + woman',
@@ -316,5 +320,6 @@ return [
 		'Top next-token logits' => 'Top-Logits des nächsten Tokens',
 		'Collapse step' => 'Schritt einklappen',
 		'Expand step' => 'Schritt ausklappen',
+		'Append a token' => 'Token anhängen',
 	],
 ];

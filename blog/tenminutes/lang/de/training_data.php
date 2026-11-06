@@ -53,6 +53,7 @@ return [
 		'Kept' => 'Behalten',
 		'Dropped' => 'Verworfen',
 		'Avg quality' => 'Durchschnittsqualität',
+		'Web left (rough)' => 'Web-Rest (grob)',
 		'Quality and quantity pull in different directions. The useful recipe is the one that keeps enough scale without teaching the model noise.' => 'Qualität und Quantität ziehen in verschiedene Richtungen. Das nützliche Rezept ist das, das genug Umfang behält, ohne dem Modell Rauschen beizubringen.',
 		'The short version.' => 'Die Kurzfassung.',
 		'The aha' => 'Der Aha-Moment',
