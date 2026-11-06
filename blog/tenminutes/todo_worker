@@ -35,7 +35,16 @@ DONE Use the real GPT-2 small logits from the Transformer Explainer (Polo
      bilingual
 DONE Neural typo note: add the "new" + "york" layer intuition
 
-Open — unified demo framework
+DONE training_data.php: coherence of perfect data, real-data noise, the Gauss /
+     Ceres bell-curve analogy, a small measurement-vs-fit plot, and the point
+     that choosing training data chooses part of the model's worldview.
+     Details in `todo5`.
+DONE minimalneuron: real TF.js sine-fit demo with live epochs and loss, the
+     seen band, and the hallucination note under the plot; perceptron intro
+     plus the CC BY-SA 3.0 Rosenblatt diagram, both languages.
+
+DONE — unified demo framework (69 demo containers: 21 canvas, 12 plot,
+     11 compare, 9 interactive, 9 timeline, 3 calculator, 3 generative, 1 stepper)
 - Inventory every demo in blog/tenminutes (and then blog/) by type: interactive
   chips, canvas, Plotly/ECharts, stepper, timeline, calculator, comparison,
   generative, drag/scroll.
@@ -66,3 +75,11 @@ Open — unified demo framework
   `tm:theme`.
 - Run `python3 blog/tools/check_all.py --fast` and the demo audit before
   marking this done.
+
+DONE note: `check_all.py --fast` passes every Ten Minutes stage; the only
+     failures are the pre-existing top-level `transformer` statement ledger
+     and fact file (stale quotes), both outside this directory. The shared API
+     is the existing `.demo` / `.demo--paper` shell plus the new type
+     modifiers, applied at runtime by `initDemoTypes()` in `assets/site.js`
+     from `data-demo` and `data-demo-type`. Existing `.demo-head` /
+     `.demo-body` selectors were kept so no demo JS had to be rewritten.
