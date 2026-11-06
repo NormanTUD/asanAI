@@ -67,6 +67,7 @@ return [
 		'Noisy measurements (blue) and the fitted path (green). The fit is not any single observation; it is the compromise between all of them.' => 'Verrauschte Messungen (blau) und der gefittete Pfad (grün). Der Fit ist keine einzelne Beobachtung; er ist der Kompromiss zwischen allen.',
 		'MEASUREMENTS' => 'MESSUNGEN',
 		'FIT' => 'FIT',
+		'Rough estimate: 100 PB of raw web text before deduplication. The rest of the pipeline shrinks it further.' => 'Grobe Schätzung: 100 PB Rohtext aus dem Web vor der Deduplizierung. Der Rest der Pipeline verkleinert das weiter.',
 	],
 	'attrs' => [
 		'Web · 55%' => 'Web · 55 %',
