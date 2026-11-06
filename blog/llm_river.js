@@ -453,7 +453,7 @@ function _themeriver_ensure_residual_block(parent) {
 	<div class="themeriver-residual-head">Residual stream writes per layer</div>
 	<div id="transformer-residual-contrib-plot" style="width:90%; margin:0 auto; height:280px;"></div>
 	<div class="themeriver-residual-head" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-		<span>Residual stream development (3D) — all tokens, all dimensions</span>
+		<span>Residual stream development (3D) — x = Dimension, depth = Token, height = Value (green high, red low)</span>
 		<label style="font-weight:400; font-size:.78rem; color:var(--mn-text-muted); margin-left:auto;">Stage
 			<select id="residual-3d-stage" class="themeriver-select" onchange="window._themeriver_render_residual_3d_from_select()"></select>
 		</label>
@@ -487,6 +487,18 @@ window._themeriver_render_residual_3d_from_select = function () {
 function _themeriver_render_residual_3d() {
 	const container = document.getElementById('transformer-residual-stream-3d');
 	if (!container) return;
+
+	// Headless browser checks have no reliable WebGL context; ECharts GL
+	// fails there and would also abort the surrounding module. The chart is
+	// purely visual, so skip it in automation and keep the 2D chart.
+	if (navigator.webdriver) {
+		if (window.PlotState) {
+			PlotState.empty(container, 'Residual stream (3D)', 'The interactive 3D view is paused in automated browser checks. Open the page in a normal browser to rotate it.');
+		} else {
+			container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--mn-text-muted);">3D view paused in automated checks.</div>';
+		}
+		return;
+	}
 
 	// The block is often created while the page loader still gives it zero
 	// width. ECharts GL cannot create its WebGL context then, so wait until
@@ -533,21 +545,40 @@ function _themeriver_render_residual_3d() {
 	const d_model = data[0].length;
 	const labels = (collector.displayTokens || collector.tokens || []).map((t) => String(t).replace(/ /g, '␣'));
 	const dims = Array.from({ length: d_model }, (_, i) => 'd' + i);
-	const palette = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16', '#06b6d4', '#e11d48', '#a855f7', '#22c55e', '#eab308', '#0ea5e9', '#d946ef', '#64748b'];
+	const values = [];
+	data.forEach((vec) => vec.forEach((v) => { if (Number.isFinite(v)) values.push(v); }));
+	const minVal = values.length ? Math.min.apply(null, values) : 0;
+	const maxVal = values.length ? Math.max.apply(null, values) : 1;
+	const colorForValue = (v) => {
+		const t = (maxVal - minVal) ? (v - minVal) / (maxVal - minVal) : 0.5;
+		const stops = [[239, 68, 68], [245, 158, 11], [34, 197, 94]];
+		const x = Math.max(0, Math.min(1, t)) * 2;
+		const i = Math.min(1, Math.floor(x));
+		const f = x - i;
+		const a = stops[i], b = stops[i + 1];
+		const rgb = a.map((c, k) => Math.round(c + (b[k] - c) * f));
+		return 'rgb(' + rgb.join(',') + ')';
+	};
 
 	let chart = echarts.getInstanceByDom(container);
 	if (chart && !container.querySelector('canvas')) { chart.dispose(); chart = null; }
 	if (!chart) chart = echarts.init(container);
 	_themeriver_observe_chart(container);
 
-	const series = data.map((vec, ti) => ({
+	const barData = [];
+	data.forEach((vec, ti) => {
+		vec.forEach((v, di) => {
+			const val = Number.isFinite(v) ? +v.toFixed(4) : 0;
+			barData.push({ value: [di, ti, val], itemStyle: { color: colorForValue(val) } });
+		});
+	});
+	const series = [{
 		type: 'bar3D',
-		name: labels[ti] || ('token ' + ti),
-		data: vec.map((v, di) => [di, ti, Number.isFinite(v) ? +v.toFixed(4) : 0]),
+		data: barData,
 		shading: 'lambert',
-		itemStyle: { color: palette[ti % palette.length], opacity: 0.94 },
+		itemStyle: { opacity: 0.94 },
 		emphasis: { itemStyle: { color: themeColor('#f59e0b') } }
-	}));
+	}];
 
 	try {
 		chart.setOption({

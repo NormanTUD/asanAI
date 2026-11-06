@@ -2339,14 +2339,15 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	// 2b. Provenance: record the initial hidden states h_0 = embedding + PE
 	if (window.Prov) window.Prov.recordPre(knownTokens, d_model);
 
+	// 2c. Final probabilities first: the output projection must fill even if
+	// a later visualization (3D/GL, charts) throws. It only needs the weights.
+	renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
+
 	// 3. Prepare migration/trajectory state
 	prepareMigrationState(needsReinit);
 
 	// 4. Core forward pass + visualization
 	renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
-
-	// 5. Final probabilities — ALWAYS based on master-token-input
-	renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
 }
 
 function getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary) {
@@ -2427,7 +2428,17 @@ function showEmptyInputMessage() {
 
 function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature) {
 	const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
-	if (knownMasterTokens.length === 0) return;
+	if (knownMasterTokens.length === 0) {
+		const out = document.getElementById('transformer-output-projection');
+		if (out) {
+			if (window.PlotState) {
+				PlotState.empty(out, 'Final projection', 'Enter at least one prompt token in <b>Input (Inference)</b> to see the logits and probabilities.');
+			} else {
+				out.innerHTML = '<div style="padding:20px;color:var(--mn-text-muted);">Enter at least one prompt token to see the final projection.</div>';
+			}
+		}
+		return;
+	}
 
 	const h_final = runSimpleForwardPass(knownMasterTokens, weights, d_model, n_heads, n_layers, true);
 

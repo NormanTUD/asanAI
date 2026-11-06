@@ -179,6 +179,14 @@ def test_main_ui(driver, base, results):
             "return document.body.innerText.indexOf('What each layer is doing') === -1"
         ),
     )
+    projection_len = driver.execute_script(
+        "var el = document.getElementById('transformer-output-projection'); return el ? el.innerHTML.length : 0;"
+    )
+    results.check(
+        "final projection is filled",
+        projection_len > 1000,
+        f"innerHTML length {projection_len}",
+    )
     quiz = driver.execute_script(
         """
 const fb = document.querySelector('.mn-quiz .mnz-feedback');

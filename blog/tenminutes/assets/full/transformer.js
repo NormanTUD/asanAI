@@ -2276,16 +2276,17 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	// 2b. Provenance: record the initial hidden states h_0 = embedding + PE
 	if (window.Prov) window.Prov.recordPre(knownTokens, d_model);
 
+	// 2c. Final probabilities first, so the output panel fills even if a
+	// later 3D/chart visualization throws.
+	if (!window.__tmSkipFinalProjection) {
+		renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
+	}
+
 	// 3. Prepare migration/trajectory state
 	prepareMigrationState(needsReinit);
 
 	// 4. Core forward pass + visualization
 	renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
-
-	// 5. Final probabilities — ALWAYS based on master-token-input
-	if (!window.__tmSkipFinalProjection) {
-		renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
-	}
 }
 
 function getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary) {
