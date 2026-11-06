@@ -61,7 +61,6 @@
 								<p class="demo-title">Expectation cycles and consequences <span>· demo</span></p>
 								<p class="demo-sub">The public relationship with AI has never been stable. Select an era to see what changed.</p>
 							</div>
-							<span class="demo-badge">step through</span>
 						</div>
 						<div class="demo-body">
 							<div class="timeline-scroller">
