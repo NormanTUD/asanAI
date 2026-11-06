@@ -1,0 +1,156 @@
+/* Transformer lesson chrome. Every colour goes through a --mn-* token so
+   light, dark and reader mode stay consistent. Moved out of the lesson PHP
+   so the markup stays readable and the styles are cacheable. */
+
+#transformer-train-card {
+	background: var(--mn-emerald-light, #f0fdf4);
+	border: 1px solid var(--mn-emerald, #10b981);
+	border-radius: 10px;
+	margin: 15px 0;
+	padding: 14px 16px;
+}
+.transformer-train-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 14px 22px;
+}
+.transformer-train-field {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+.transformer-train-field > .transformer-train-label {
+	font-weight: 600;
+	font-size: 0.8rem;
+	color: var(--mn-text-secondary, #475569);
+}
+.transformer-train-field input[type="number"] {
+	width: 72px;
+	padding: 5px 8px;
+	font-size: 0.9rem;
+	background: var(--mn-surface, #fff);
+	color: var(--mn-text, #1e293b);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 6px;
+}
+.transformer-train-field input[type="number"]:focus {
+	outline: 2px solid var(--mn-emerald, #10b981);
+	outline-offset: 1px;
+}
+.transformer-opt-group {
+	display: flex;
+	gap: 2px;
+	padding: 3px;
+	background: var(--mn-surface, #fff);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 8px;
+}
+.transformer-opt {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border-radius: 6px;
+	font-size: 0.85rem;
+	font-weight: 500;
+	color: var(--mn-text-secondary, #475569);
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+.transformer-opt:hover {
+	background: var(--mn-bg-subtle, #f1f5f9);
+}
+.transformer-opt input[type="radio"] {
+	margin: 0;
+	accent-color: var(--mn-emerald, #10b981);
+	cursor: pointer;
+}
+.transformer-opt:has(input:checked) {
+	background: var(--mn-emerald-light, #d1fae5);
+	color: var(--mn-text, #0f172a);
+}
+.transformer-opt input:checked + .glossary-term {
+	font-weight: 600;
+}
+.transformer-opt .glossary-term {
+	background: transparent;
+	padding: 0;
+}
+.transformer-train-actions {
+	display: flex;
+	gap: 8px;
+	margin-left: auto;
+}
+.transformer-train-status {
+	min-height: 20px;
+	margin-top: 10px;
+	font-size: 0.85rem;
+	color: var(--mn-emerald, #047857);
+}
+#training-loss-plot {
+	width: 100%;
+	height: 200px;
+	margin-top: 10px;
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-radius: 8px;
+	background: var(--mn-surface, #fff);
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-user-drag: none;
+	touch-action: pan-y;
+}
+#training-loss-plot .nsewdrag {
+	cursor: default;
+}
+
+/* Hyperparameter sliders */
+.transformer-config-field { margin-bottom: 15px; }
+.transformer-slider-label {
+	display: block;
+	font-weight: 700;
+	color: var(--mn-text);
+}
+.transformer-slider-value {
+	font-weight: 700;
+	color: var(--mn-accent);
+}
+.transformer-slider-note {
+	font-size: 0.75rem;
+	color: var(--mn-text-muted);
+	margin: 2px 0;
+}
+
+/* Embedding / vector-math card */
+.transformer-viz-card {
+	background: var(--mn-bg-subtle, #f8fafc);
+	padding: 20px;
+	border-radius: 12px;
+	margin: 20px 0;
+	border: 1px solid var(--mn-border, #e2e8f0);
+}
+.transformer-vector-input {
+	width: 100%;
+	padding: 10px;
+	font-size: 1.1rem;
+	border-radius: 8px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #fff);
+	color: var(--mn-text, #1e293b);
+}
+.transformer-vector-result {
+	margin-top: 15px;
+	padding: 15px;
+	background: var(--mn-surface, #fff);
+	border-radius: 8px;
+	border: 1px dashed var(--mn-border, #cbd5e1);
+	overflow-x: auto;
+}
+
+@media (max-width: 640px) {
+	.transformer-train-actions {
+		margin-left: 0;
+		width: 100%;
+	}
+}
