@@ -111,4 +111,16 @@ tokenizerlab:
 
 "und er bepreist jede Sprache anders" ist nonsens, entferne das. "Ein Wort, das in der dominanten Sprache ein häufiges Teilwort ist, kann in einer anderen mehrere Tokens brauchen" das gilt nur wenn das aus anderen tokens ist, die tokens können ganze worte sein aber müssen es nicht, sie können aus mehreren sprachen sein sind aber in der praxis weil die meisten daten auf englisch sind auch wnen sie ganze worte sind englisch.
 
+"Die wahrscheinliche Ursache ist eine Diskrepanz zwischen dem Korpus, mit dem der Tokenizer trainiert wurde und dem Korpus, mit dem das Modell trainiert wurde" das stimmt nicht. es ist der kontext in dem die sind. diese namen wie solidgoldmargikarp war in zählthreads auf reddit extrem viele male und war daher zwar oft genug da um ein eigenes token zu kriegen aber nie in nem kontext der iwie sinn ergeben hat.
+
+"Ein Token kann in einem häufig und im anderen abwesend sein, sodass sein Embedding nahe an der Zufallsinitialisierung bleibt." es gibt auch hapax legomena, dh sachen die nur ein einziges mal vorkamen. das würde kein eigenes token kriegen, aber sowas in der art wäre ein wort das in nie einem erkennbaren kontext auftritt.
+
+"1234 und 1235 können unterschiedlich zerlegt werden. Arithmetik läuft dann über Stücke, die nicht mit Ziffern übereinstimmen." zeige das an denen als bsp, trenne 123-4 und 12-35. dann sieht man es.
+
+"In verbreiteten Byte-Level-Tokenizern können ein Prompt mit „is“ und einer mit „is “ unterschiedlich tokenisiert werden" sage dazu dass das "is " (is mit leerzeichen dahinter) ist, manche sehen das nicht
+
+"Dasselbe sichtbare „é“ kann ein Codepoint oder zwei sein" erkläre auch kurz encodings hier. erkläre sie auch in der history file, wann das erste usw. und dass bei utf8 ein encoding aus mehreren bytes bestehen kann. aber nr kurz, damit wir jetzt wieder darauf referenzieren können
+
+" Byte-level BPE (Radford et al., 2019) beseitigt den schlimmsten Fehler: Wenn das Alphabet alle 256 Bytes umfasst, hat jede mögliche Eingabe eine Tokenisierung, und nichts ist je unbekannt. Aber es beseitigt die Inflation nicht: Ein thailändischer Satz hat weiterhin mehr Bytes, also mehr Tokens, als derselbe Satz auf Englisch. Byte-Level ist der Boden, nicht die Lösung. Die nächste Grenze ist, den diskreten Engpass ganz zu verkleinern oder zu entfernen: Byte-zu-Byte-Modelle und kontinuierliche „Pre-Token“-Räume. Ob das die Lücke schließt oder nur die Verzerrung verschiebt, ist offen. " sage hier dazu dass man einfach für jede bitkombination aus den 256 bit ein token generiert und dann weitere tokens nur noch zsmgesetzte  daraus sind aber die 256 basis-tokens quasi bleiben und damit jeder text lesbar wird
+
 
