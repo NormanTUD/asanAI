@@ -981,6 +981,30 @@
 				? "Sampling zieht aus der ganzen Verteilung nach der Temperaturformung. Niedriges T verhält sich fast gierig; hohes T flacht die Verteilung ab und tauscht Kohärenz gegen Überraschung."
 				: "Sampling draws from the whole distribution after temperature has shaped it. Low T behaves almost greedily; high T flattens the distribution and trades coherence for surprise.";
 		}
+		function measureWhyHeight() {
+			var why = document.getElementById("nt-why");
+			if (!why) return;
+			var previous = why.textContent;
+			why.style.minHeight = "0px";
+			var candidates = DE ? [
+				"Greedy ist der Grenzfall T → 0: Es nimmt immer das wahrscheinlichste Wort, deshalb ist der Temperaturregler bei 0,05 fixiert. Der Text ist deterministisch und oft repetitiv.",
+				"Die Temperatur formt zuerst die Verteilung; Top-p behält dann die kleinste Menge der sortierten Wörter, deren kumulierte Wahrscheinlichkeit 90 % erreicht, und zieht daraus. Die blassen Balken liegen außerhalb dieser Menge.",
+				"Sampling zieht aus der ganzen Verteilung nach der Temperaturformung. Niedriges T verhält sich fast gierig; hohes T flacht die Verteilung ab und tauscht Kohärenz gegen Überraschung.",
+				"Hier ergibt nur eine Fortsetzung Sinn: „supercalifragilisticexpialidocious“. Der Baum hat sich auf einen Zweig verengt."
+			] : [
+				"Greedy is the limit T → 0: it always takes the highest-probability word, so the temperature slider is pinned at 0.05. The text is deterministic and often repetitive.",
+				"Temperature reshapes the distribution first; top-p then keeps the smallest set of sorted words whose cumulative probability reaches 90%, and samples among them. The faded bars are outside that set.",
+				"Sampling draws from the whole distribution after temperature has shaped it. Low T behaves almost greedily; high T flattens the distribution and trades coherence for surprise.",
+				"Only one continuation makes sense here: “supercalifragilisticexpialidocious”. The tree has narrowed to a single branch."
+			];
+			var max = 0;
+			candidates.forEach(function (text) {
+				why.textContent = text;
+				max = Math.max(max, why.offsetHeight);
+			});
+			why.textContent = previous;
+			if (max) why.style.minHeight = max + "px";
+		}
 		function setTemp(value) {
 			temp = Math.max(0.05, Math.min(1.8, value));
 			if (tempEl) tempEl.value = temp;
@@ -1045,6 +1069,9 @@
 		setTemp(temp);
 		setTempEnabled(true);
 		reset();
+		measureWhyHeight();
+		window.addEventListener("resize", measureWhyHeight);
+		if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureWhyHeight);
 
 		/* ── demo 01a: the model in your pocket ──────────────── */
 		var phStage = document.getElementById("phone-demo");
