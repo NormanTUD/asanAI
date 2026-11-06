@@ -133,11 +133,17 @@
 
 		/* Reserve the tallest possible explanation before it is shown, so
 		   answering a question cannot push the content below it down. */
-		function reserveFeedbackHeight() {
+		function reserveFeedbackHeight(tries) {
+			tries = tries || 0;
 			const fb = body.querySelector(".mnz-feedback");
 			if (!fb) return;
 			const width = fb.getBoundingClientRect().width;
-			if (!width) return;
+			if (!width) {
+				// #contents is still hidden behind the page loader on the
+				// first pass; retry once the layout has a width.
+				if (tries < 12) setTimeout(() => reserveFeedbackHeight(tries + 1), 400);
+				return;
+			}
 			const longest = Q.reduce((a, q) =>
 				((q.explain || "").length > (a.explain || "").length ? q : a), Q[0] || {});
 			const probe = document.createElement("div");
@@ -158,8 +164,21 @@
 		document.querySelectorAll(".mn-quiz").forEach(mount);
 	}
 
+	function reapplyFeedbackReserves() {
+		document.querySelectorAll(".mn-quiz").forEach(function (root) {
+			if (root._mnzReserveFeedback) root._mnzReserveFeedback();
+		});
+	}
+
 	window.MNQuiz = { mountAll: mountAll };
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mountAll);
 	else mountAll();
 	window.addEventListener("blogPostLoadComplete", mountAll);
+	window.addEventListener("blogPostLoadComplete", reapplyFeedbackReserves);
+	window.addEventListener("load", reapplyFeedbackReserves);
+	var _mnzResizeTimer = null;
+	window.addEventListener("resize", () => {
+		clearTimeout(_mnzResizeTimer);
+		_mnzResizeTimer = setTimeout(reapplyFeedbackReserves, 200);
+	});
 })();

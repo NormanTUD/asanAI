@@ -1313,6 +1313,15 @@ function run_transformer_demo(activeId = null) {
 
 	// Keep the address bar in sync with the current run (cheap + debounced).
 	if (typeof scheduleRunUrlSync === 'function') scheduleRunUrlSync();
+
+	// Keep the Probability Flow residual-write chart in step with the new
+	// weights/token position (the river itself may already be rendered).
+	if (typeof _themeriver_render_residual_contrib === 'function' &&
+		document.getElementById('transformer-residual-contrib-plot')) {
+		const tokenSel = document.getElementById('themeriver-token-select');
+		const tokenIdx = tokenSel ? (parseInt(tokenSel.value) || 0) : 0;
+		_themeriver_render_residual_contrib(tokenIdx, getTransformerConfig().d_model);
+	}
 }
 
 /* ── TransformerRun: one shareable snapshot of the current experiment ──

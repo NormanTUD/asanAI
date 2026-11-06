@@ -106,6 +106,8 @@ function _themeriver_render_residual_contrib(tokenIdx, d_model) {
 	const container = document.getElementById('transformer-residual-contrib-plot');
 	if (!container) return;
 	const empty = (msg) => {
+		const old = echarts.getInstanceByDom(container);
+		if (old) old.dispose();
 		if (window.PlotState) PlotState.empty(container, 'Residual stream', msg);
 		else container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--mn-text-muted);">' + msg + '</div>';
 	};
@@ -137,7 +139,11 @@ function _themeriver_render_residual_contrib(tokenIdx, d_model) {
 	}
 
 	let chart = echarts.getInstanceByDom(container);
-	if (!chart) chart = echarts.init(container);
+	if (!chart || !container.querySelector('canvas')) {
+		if (chart) chart.dispose();
+		container.innerHTML = '';
+		chart = echarts.init(container);
+	}
 
 	const axisFont = { fontSize: 11, color: themeColor('#64748b') };
 	chart.setOption({
@@ -149,8 +155,8 @@ function _themeriver_render_residual_contrib(tokenIdx, d_model) {
 		tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
 		legend: { bottom: 0, textStyle: { fontSize: 10 } },
 		grid: { top: 40, bottom: 42, left: 48, right: 16 },
-		xaxis: { type: 'category', data: layers, axisLabel: axisFont, axisLine: { lineStyle: { color: themeColor('#cbd5e1') } } },
-		yaxis: {
+		xAxis: { type: 'category', data: layers, axisLabel: axisFont, axisLine: { lineStyle: { color: themeColor('#cbd5e1') } } },
+		yAxis: {
 			type: 'value',
 			name: '‖write‖',
 			nameTextStyle: axisFont,

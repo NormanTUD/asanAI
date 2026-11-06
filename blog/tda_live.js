@@ -1773,9 +1773,9 @@
 				const r = ly.repellers.length ? `<b style="color:${tc("#dc2626")};">${ly.repellers.length} rep</b>` : "0 rep";
 				const active = CFG.layer === ly.L;
 				const title = CFG.layer === ly.L ? "Layer " + (ly.L + 1) + " — shown in the phase plot" : "Click to view layer " + (ly.L + 1) + " in the phase plot";
-				return `<span data-layer="${ly.L}" title="${title}" style="cursor:pointer;white-space:nowrap;${active ? "text-decoration:underline;text-underline-offset:3px;font-weight:700;" : ""}">L${ly.L}: ${a} / ${r} · drift ${ly.drift.toFixed(3)}</span>`;
+				return `<span data-layer="${ly.L}" title="${title}" style="display:inline-block;cursor:pointer;white-space:nowrap;${active ? "text-decoration:underline;text-underline-offset:3px;font-weight:700;" : ""}">L${ly.L}: ${a} / ${r} · drift ${ly.drift.toFixed(3)}</span>`;
 			});
-			const html = parts.join("&nbsp;&nbsp;·&nbsp;&nbsp;");
+			const html = parts.join(" · ");
 			if (sum._last !== html) { sum._last = html; sum.innerHTML = html; }
 		}
 	}

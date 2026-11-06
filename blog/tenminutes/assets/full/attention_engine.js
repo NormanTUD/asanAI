@@ -840,7 +840,7 @@ $$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{So
 Click a word to see where it focuses its attention.
 </p>
 <div id="${webContainerId}" style="padding-top:20px;position:relative; height:200px; margin-bottom:20px; background: var(--mn-surface, #fcfdfe); border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; overflow-x:auto; overflow-y:hidden;">
-<canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
+<canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; max-width:none; pointer-events:none; z-index:5;"></canvas>
 <div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
 </div>
 
@@ -851,7 +851,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 </div>
 
 <div style="font-size:0.75rem; color:#94a3b8; text-align:center;">
-Click a token to highlight its attention connections. Line thickness = attention weight.
+Hover a token to highlight its attention connections. Line thickness = attention weight.
 </div>
 </div>
 
@@ -1863,28 +1863,36 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const self = this;
 		let currentHover = null;
 
-		svg.addEventListener('click', (e) => {
-			const el = e.target.closest('[data-apv-side]');
-			if (el) {
-				const side = el.getAttribute('data-apv-side');
-				const index = parseInt(el.getAttribute('data-apv-idx'));
-				const key = `${side}-${index}`;
-				if (currentHover === key) {
-					currentHover = null;
-					self._apvHoveredToken.set(layerIdx, null);
-				} else {
-					currentHover = key;
-					self._apvHoveredToken.set(layerIdx, { side, index });
-				}
-				self._apvUpdateHoverState(svg, layerIdx);
-				return;
-			}
-			if (currentHover !== null) {
-				currentHover = null;
-				self._apvHoveredToken.set(layerIdx, null);
-				self._apvUpdateHoverState(svg, layerIdx);
-			}
-		});
+		const setHover = (side, index) => {
+			const key = (side == null) ? null : `${side}-${index}`;
+			if (key === currentHover) return;
+			currentHover = key;
+			self._apvHoveredToken.set(layerIdx, key ? { side, index } : null);
+			self._apvUpdateHoverState(svg, layerIdx);
+		};
+		const over = (e) => {
+			const el = e.target.closest && e.target.closest('[data-apv-side]');
+			if (!el) return;
+			setHover(el.getAttribute('data-apv-side'), parseInt(el.getAttribute('data-apv-idx')));
+		};
+		const out = (e) => {
+			const el = e.target.closest && e.target.closest('[data-apv-side]');
+			if (!el) return;
+			const to = e.relatedTarget;
+			if (to && to.closest && to.closest('[data-apv-side]')) return;
+			setHover(null);
+		};
+		const leave = () => setHover(null);
+
+		if (svg._apvHoverHandlers) {
+			svg.removeEventListener('mouseover', svg._apvHoverHandlers.over);
+			svg.removeEventListener('mouseout', svg._apvHoverHandlers.out);
+			svg.removeEventListener('mouseleave', svg._apvHoverHandlers.leave);
+		}
+		svg._apvHoverHandlers = { over, out, leave };
+		svg.addEventListener('mouseover', over);
+		svg.addEventListener('mouseout', out);
+		svg.addEventListener('mouseleave', leave);
 	}
 
 	_apvUpdateHoverState(svg, layerIdx) {
@@ -2225,19 +2233,27 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	}
 
 	_apvBindTooltipMouseEvents(svg, tooltip, cache, buildTooltip) {
-		let lastClickEvent = null;
+		let lastHoverEvent = null;
 
-		svg.addEventListener('click', (e) => {
-			lastClickEvent = e;
+		svg.addEventListener('mouseover', (e) => {
+			lastHoverEvent = e;
 			buildTooltip(e);
 		});
 
 		svg._apvTooltipRebuild = () => {
-			if (lastClickEvent && tooltip.style.display !== 'none') {
+			if (lastHoverEvent && tooltip.style.display !== 'none') {
 				cache.lastKey = null;
-				buildTooltip(lastClickEvent);
+				buildTooltip(lastHoverEvent);
 			}
 		};
+
+		if (!svg._apvTooltipLeaveBound) {
+			svg._apvTooltipLeaveBound = true;
+			svg.addEventListener('mouseleave', () => {
+				tooltip.style.display = 'none';
+				cache.lastKey = null;
+			});
+		}
 	}
 
 	_createTooltipElement(layerIdx, headDisplayOffset) {
@@ -2645,28 +2661,36 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const hoverKey = `${layerIdx}-${headIdx}`;
 		let currentHover = null;
 
-		svg.addEventListener('click', (e) => {
-			const el = e.target.closest('[data-apv-side]');
-			if (el) {
-				const side = el.getAttribute('data-apv-side');
-				const index = parseInt(el.getAttribute('data-apv-idx'));
-				const key = `${side}-${index}`;
-				if (currentHover === key) {
-					currentHover = null;
-					self._apvHoveredToken.set(hoverKey, null);
-				} else {
-					currentHover = key;
-					self._apvHoveredToken.set(hoverKey, { side, index });
-				}
-				self._apvUpdateSingleHeadHoverState(svg, layerIdx, headIdx, headData, tokens);
-				return;
-			}
-			if (currentHover !== null) {
-				currentHover = null;
-				self._apvHoveredToken.set(hoverKey, null);
-				self._apvUpdateSingleHeadHoverState(svg, layerIdx, headIdx, headData, tokens);
-			}
-		});
+		const setHover = (side, index) => {
+			const key = (side == null) ? null : `${side}-${index}`;
+			if (key === currentHover) return;
+			currentHover = key;
+			self._apvHoveredToken.set(hoverKey, key ? { side, index } : null);
+			self._apvUpdateSingleHeadHoverState(svg, layerIdx, headIdx, headData, tokens);
+		};
+		const over = (e) => {
+			const el = e.target.closest && e.target.closest('[data-apv-side]');
+			if (!el) return;
+			setHover(el.getAttribute('data-apv-side'), parseInt(el.getAttribute('data-apv-idx')));
+		};
+		const out = (e) => {
+			const el = e.target.closest && e.target.closest('[data-apv-side]');
+			if (!el) return;
+			const to = e.relatedTarget;
+			if (to && to.closest && to.closest('[data-apv-side]')) return;
+			setHover(null);
+		};
+		const leave = () => setHover(null);
+
+		if (svg._apvHoverHandlers) {
+			svg.removeEventListener('mouseover', svg._apvHoverHandlers.over);
+			svg.removeEventListener('mouseout', svg._apvHoverHandlers.out);
+			svg.removeEventListener('mouseleave', svg._apvHoverHandlers.leave);
+		}
+		svg._apvHoverHandlers = { over, out, leave };
+		svg.addEventListener('mouseover', over);
+		svg.addEventListener('mouseout', out);
+		svg.addEventListener('mouseleave', leave);
 	}
 
 	_apvUpdateSingleHeadHoverState(svg, layerIdx, headIdx, headData, tokens) {

@@ -1270,14 +1270,16 @@ function run_transformer_demo(activeId = null, inputOnly = false) {
 
 	// 1. Tokenize both for logic
 	const trainingTokens = transformer_tokenize_render(trainingInput.value, null);
-	const masterTokens = transformer_tokenize_render(masterInput.value, null);
+	// Inference prompts carry no EOS: the next token is read from the last
+	// real token, and EOS was never trained as an input.
+	const masterTokens = transformer_tokenize_render(masterInput.value, null, false);
 
 	// 2. BPE visualization: respect the toggle mode
 	const vizMode = window.tlabVisualizationMode || 'train';
 	const vizSourceValue = (vizMode === 'inference')
 		? masterInput.value
 		: trainingInput.value;
-	const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe");
+	const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe", vizMode !== 'inference');
 
 	// Input-only pass: tokenizer, embeddings, positional encoding. The
 	// attention/FFN/output demos are built lazily when their sections are near.
@@ -1352,7 +1354,7 @@ function render_transformer_output_only() {
 	if (!trainingInput || !masterInput || !window.currentWeights) return;
 	var config = getTransformerConfig();
 	var trainingTokens = transformer_tokenize_render(trainingInput.value, null);
-	var masterTokens = transformer_tokenize_render(masterInput.value, null);
+	var masterTokens = transformer_tokenize_render(masterInput.value, null, false);
 	var vocabulary = [...new Set(trainingTokens)];
 	renderFinalProbabilities(masterTokens, vocabulary, window.currentWeights, config.d_model, config.n_heads, config.n_layers, config.temperature);
 	window.__tmOutputRendered = true;
@@ -3247,11 +3249,13 @@ function render_token_picker() {
 	render_token_picker_chips();
 }
 
-function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") {
+function transformer_tokenize_render(text, containerId = "transformer-viz-bpe", appendEos = true) {
 	const typeElement = document.getElementById('transformer-tokenizer-type');
 	const type = typeElement ? typeElement.value : 'regex';
 
-	const tokens = tokenizeText(text, type);
+	// Training corpora end with EOS so the model learns to stop; inference
+	// prompts must not, or the model reads the next token at the EOS position.
+	const tokens = appendEos ? tokenizeText(text, type) : tokenizeTextCore(text, type);
 
 	const container = document.getElementById(containerId);
 	const signature = tokens.join('\u0001');
@@ -6503,6 +6507,8 @@ function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weigh
 		container._attnWebHoverIndex ?? null
 	);
 
+	container._attnWebDraw = drawArcs;
+
 	// Only re-attach events if chips were rebuilt or first time
 	if (chipsRebuilt || !container._attnWebInitialized) {
 		container._attnWebHoverIndex = null;
@@ -6517,8 +6523,19 @@ function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weigh
 
 		// Only attach scroll listener once
 		if (!container._attnWebInitialized) {
-			container.addEventListener('scroll', drawArcs);
-			attachResizeHandler(containerId, drawArcs);
+			container.addEventListener('scroll', () => {
+				if (container._attnWebDraw) container._attnWebDraw();
+			});
+			attachResizeHandler(containerId, () => {
+				if (container._attnWebDraw) container._attnWebDraw();
+			});
+			if (typeof ResizeObserver !== 'undefined') {
+				container._attnWebResizeObserver = new ResizeObserver(() => {
+					if (container._attnWebDraw) container._attnWebDraw();
+				});
+				container._attnWebResizeObserver.observe(container);
+				container._attnWebResizeObserver.observe(strip);
+			}
 		}
 		container._attnWebInitialized = true;
 	}
@@ -6534,6 +6551,8 @@ function attachChipHoverEvents(chips, onHover, onLeave) {
 }
 
 function drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex) {
+	if (!container.clientWidth) return;
+
 	const scrollW = container.scrollWidth;
 	const scrollH = container.scrollHeight;
 	canvas.width  = scrollW;
