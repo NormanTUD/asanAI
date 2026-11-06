@@ -34,6 +34,24 @@ The Ten Minutes pages follow the public scads.ai theme, not the standalone
 - Do not switch back to Lingua Franca / system-ui / Source Serif 4 without
   checking against the live scads.ai theme.
 
+## Contrast contract
+
+Text must be readable on the surface it actually sits on. Dark demo shells
+(`.demo` without `.demo--paper`) use light text (`#eef7f4`, `--tm-lime`).
+Paper surfaces (`.demo--paper`, `.step-pane`, the page background) use
+`--tm-ink`, `--tm-petrol`, or `--tm-muted`. A component that leaves a demo
+shell, such as a stepped demo pane or a standalone metric card, must be added
+to the paper-context selector group. Never leave a light-shell colour on a
+white card. This has already broken the slider tracks and the token-stat
+readouts; treat it as a recurring hazard.
+
+Before finishing any demo or layout change, inspect the computed
+`color`/`background-color` of readouts, chips, buttons, sliders, captions, and
+labels in both `html[data-theme="light"]` and `html[data-theme="dark"]`.
+White-on-white, lime-on-white, and `rgba(238,247,244,…)` on white are bugs.
+The global contracts at the end of `assets/site.css` (slider track/thumb and
+light readout text) are the safety net; do not remove them.
+
 ## Branding and page chrome
 
 - The brand name is **ScaDS.AI Dresden/Leipzig** (not just `ScaDS.AI`).
