@@ -75,6 +75,19 @@ it:
 
 ## Bilingual pages (`?lang=de` / `?lang=en`)
 
+**Hard rule: this directory is bilingual.** Every page, every figure, every
+demo, and every runtime string exists in English and German. A change to an
+English string is not finished until its German counterpart is in
+`lang/de/<slug>.php` or in the demo's `DE ? ... : ...` branch. This covers
+prose, headings, figure captions, image `alt` text, `aria-label`s, plot titles,
+axis labels, legends, trace names, buttons, status messages, readouts,
+tooltips, timeline `data-*` values, and text drawn into a canvas or SVG.
+Untranslated English on the German page is a bug, not an acceptable fallback.
+Proper names, paper titles, code identifiers, and established ML jargon may
+stay English; everything else is translated. When you change an English string,
+update its German key in the same edit and test the page with `?lang=de` and
+`?lang=en`.
+
 - English is the default. `?lang=de` or `?lang=en` switches the page; the choice
   is stored in the `tm_lang` cookie and `localStorage`, and internal links keep
   `?lang=de`.
@@ -113,6 +126,14 @@ both languages, including the strings its JavaScript builds at runtime.
   captions, statuses, readouts, tooltips, aria-labels, canvas labels, axis text,
   and branch alternatives all need an English and a German version. Keep proper
   paper titles, code identifiers, and technical terms in English.
+- **Charts, plots, and canvases count.** Plot titles, axis titles, tick labels,
+  legends, trace names, tooltips, and status text drawn by Plotly, ECharts,
+  canvas, or SVG must switch with the page language. A German page with an
+  English plot title, or an English page with a German one, is not finished.
+- **Finish with the bilingual audit.** For every page you touched, load
+  `?lang=de` and `?lang=en`, exercise every control, and compare the visible
+  strings. Figure captions, `alt` text, and the `data-*` attributes used by
+  demos and timelines are part of the audit, not an afterthought.
 - **Keep the dictionary key and the English source string in sync.** When you
   edit an English string in HTML or JS, update its German key in the same edit.
   A tag inside a text node splits it; either use a `blocks` entry for the whole

@@ -2,4 +2,8 @@ weiterlesen ab "Bedeutung ist Geometrie."
 
 mach das sprachumschalten wirklich flüssig, auch alle demos.
 
-hier im gilt: bei keiner interaktion darf ein div seine höhe dynamisch verändern. das ist optisch störend. lieber etwas mehr freiraum dazwischen lassen auf der maximalen höhe. teste das automatisch durch monkey testing in einem browser. messe höhen usw. und klicke dann wild rum. was seine höhe geändert hat fixe es.
+hier im gilt: bei keiner interaktion darf ein div seine höhe dynamisch verändern. das ist optisch störend. lieber etwas mehr freiraum dazwischen lassen auf der maximalen höhe. teste das automatisch durch monkey testing in einem browser. messe höhen usw. und klicke dann wild rum. was seine höhe geändert hat fixe es. die einzige ausnahme ist in transformers. das ist zu komplex dafür. lass das aus.
+
+computer_vision:
+
+"Ein Filter gleitet über das Stoppschild": das kleine viereck im bild sollte sich mit de rmaus bewegen on move nicht on click. das bild sollte zentriert sein. der kernel zwischen inputbild und dem bild rechts. zeige unten die zahlen als 0-255 an, nciht 0-1. färbe die matrix ein dass es rgb ist.

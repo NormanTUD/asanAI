@@ -77,7 +77,7 @@
 
 					<section class="section-block" id="lab">
 						<div class="section-kicker"><span class="sk-num">02</span> Try it</div>
-						<h2 class="section-title">A live, deliberately tiny tokenizer.</h2>
+						<h2 class="section-title">A small example tokenizer.</h2>
 						<div class="prose">
 							<p>
 								The box below uses a hand-built demo vocabulary, not the tokenizer of a real
@@ -103,10 +103,9 @@
 									<button class="chip" type="button" data-preset="transformer">transformer</button>
 									<button class="chip" type="button" data-preset="1234.56">1234.56</button>
 									<button class="chip" type="button" data-preset="Once upon a time, there was a tokenizer.">a story</button>
-									<button class="chip" type="button" data-preset="Bonjour le monde">Bonjour</button>
-									<button class="chip" type="button" data-preset="Zürich">Zürich</button>
-									<button class="chip" type="button" data-preset="नमस्ते दुनिया">नमस्ते</button>
-									<button class="chip" type="button" data-preset="👩‍💻🚀">emoji</button>
+									<button class="chip" type="button" data-preset="1234 1235">1234 vs 1235</button>
+									<button class="chip" type="button" data-preset="अहिंसा">अहिंसा</button>
+									<button class="chip" type="button" data-preset="🐈‍⬛">🐈‍⬛</button>
 									<button class="chip" type="button" data-preset="supercalifragilisticexpialidocious">long word</button>
 								</div>
 								<div class="token-stream" id="tok-stream" style="margin-top:12px" aria-live="polite"></div>
@@ -146,12 +145,14 @@ training text, and stop at the target vocabulary size.
 								representable; the price is that a non-ASCII character can take several tokens.
 							</p>
 							<p>
-								A tokenizer is fixed before a single weight is trained, and it prices every
-								language differently. A word that is one high-frequency subword in the
-								dominant language may need several tokens in another. For many lower-resource
-								and non-Latin scripts, the result is routinely <strong>several times more
-								tokens per word</strong> than English. The same meaning is longer at the token
-								layer.
+								The tokenizer is fixed before a single weight is trained. Its vocabulary is a
+								sample of the training corpus, and most large corpora are English-heavy. A
+								common English word can therefore be one token, while a word from another
+								language may be split into pieces. The pieces can be whole words in the source
+								language, but they often are not; they can also be fragments of several
+								languages. For many lower-resource and non-Latin scripts, the result is
+								routinely <strong>several times more tokens per word</strong> than English.
+								The same meaning is longer at the token layer.
 							</p>
 							<p>
 								That compounds in three places at once: <strong>cost</strong> (tokens are
@@ -199,11 +200,16 @@ training text, and stop at the target vocabulary size.
 								The canonical examples come from the GPT-2/GPT-3 tokenizer:
 								<code>SolidGoldMagikarp</code>, <code>petertodd</code>, <code>externalToEVA</code>
 								(<a href="https://www.lesswrong.com/posts/aPeJE8bSo6rAFoLqg/solidgoldmagikarp-plus-prompt-generation" rel="noopener">Rumbelow &amp; Watkins, 2023</a>).
-								The likely cause is a mismatch between the corpus used to <em>train the
-								tokenizer</em> and the corpus used to <em>train the model</em>. A token can be
-								frequent in one and absent from the other, leaving its embedding close to random
-								initialization. The lesson is not “avoid one weird string”; it is that
-								<strong>a vocabulary entry is not a learned concept</strong>.
+								The likely cause is the context, not a different corpus.
+								<code>SolidGoldMagikarp</code> appeared many times in counting threads on
+								Reddit, often enough to get its own token, but almost never in a sentence
+								that gave it a usable meaning. The token is frequent in the tokenizer’s
+								counts and absent from the model’s useful contexts. There are also
+								<strong>hapax legomena</strong>, words that occur only once in a corpus.
+								Such a word would not get its own token, but something like it would be a
+								word that never appears in a recognisable context. The lesson is not “avoid
+								one weird string”; it is that <strong>a vocabulary entry is not a learned
+								concept</strong>.
 							</p>
 						</div>
 						<div class="aha">
@@ -224,12 +230,15 @@ training text, and stop at the target vocabulary size.
 							</p>
 						</div>
 						<div class="keypoints">
-							<div class="keypoint"><b>Numbers</b><span><code>1234</code> and <code>1235</code> may split differently. Arithmetic then runs across pieces that do not line up with digits.</span></div>
-							<div class="keypoint"><b>Spaces</b><span>In common byte-level tokenizers, a prompt ending in “is” and one ending in “is ” can tokenize differently and lead to different next-token distributions. Some API wrappers trim trailing whitespace before tokenization; the raw model does not.</span></div>
+							<div class="keypoint"><b>Numbers</b><span><code>1234</code> may split as <code>123</code> + <code>4</code>, while <code>1235</code> may split as <code>12</code> + <code>35</code>. Arithmetic then runs across pieces that do not line up with digits.</span></div>
+							<div class="keypoint"><b>Spaces</b><span>In common byte-level tokenizers, a prompt with “is” and one with “is ” (the same word followed by a space) can tokenize differently and lead to different next-token distributions. Some API wrappers trim trailing whitespace before tokenization; the raw model does not.</span></div>
 							<div class="keypoint"><b>Unicode</b><span>The same visible “é” can be one code point or two. Emoji, flags, and combining marks multiply the cases.</span></div>
 							<div class="keypoint"><b>Portability</b><span>Token IDs are not portable. A different model family has a different vocabulary; its token counts are not a budget for another.</span></div>
 						</div>
 						<div class="prose">
+							<p>
+								A character encoding maps characters to bytes. ASCII (1963) gave 128 characters a 7-bit code. UTF-8 (1993) encodes each code point in one to four bytes, so a character like “é” can be one code point stored as two bytes. The same visible character can also be a base letter plus a combining accent. Tokenizers work on the byte or character sequence they are given, which is why the same text can tokenize differently across encodings.
+							</p>
 							<p>
 								The spelling failures have the same root. Ask a model how many r's are in
 								“strawberry” and it may answer two. The word is probably one token or a few
@@ -242,13 +251,15 @@ training text, and stop at the target vocabulary size.
 								systems give the model a calculator.
 							</p>
 							<p>
-								<strong>Byte-level BPE</strong> (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" rel="noopener">Radford et al., 2019</a>) removes the worst failure, if the alphabet is
-								all 256 bytes, every possible input has a tokenization and nothing is ever
-								unknown. But it does not remove the inflation: a Thai sentence is still more
-								bytes, hence more tokens, than the same sentence in English. Byte-level is the
-								floor, not the fix. The frontier is to shrink or remove the discrete
-								bottleneck altogether: byte-to-byte models and continuous “pre-token” spaces.
-								Whether that closes the gap or merely moves the bias is an open question.
+								<strong>Byte-level BPE</strong> (<a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" rel="noopener">Radford et al., 2019</a>) removes the worst failure. Its base vocabulary has one token
+								for each of the 256 possible byte values, and every further token is composed
+								of those bytes. Because the 256 base tokens stay in the vocabulary, any byte
+								sequence can be spelled out, so no input is ever unknown. But it does not
+								remove the inflation: a Thai sentence is still more bytes, hence more tokens,
+								than the same sentence in English. Byte-level is the floor, not the fix. The
+								frontier is to shrink or remove the discrete bottleneck altogether:
+								byte-to-byte models and continuous “pre-token” spaces. Whether that closes the
+								gap or merely moves the bias is an open question.
 							</p>
 							<p>
 								The engineering checklist is short: measure tokens per word for every language
