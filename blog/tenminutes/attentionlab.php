@@ -104,7 +104,7 @@
 							</p>
 						</div>
 
-						<div class="demo" id="attention-demo">
+						<div class="demo demo--interactive" id="attention-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Attention explorer <span>· demo 01</span></p>
@@ -300,7 +300,7 @@
 							<div class="formula" data-tex="\underbrace{ \underbrace{\phi^\star(s) = \tau \log\sum_{j=1}^{m} e^{s_j/\tau}, \qquad \nabla_s\phi^\star = p^\star}_{\text{dual potential and its gradient}} \quad \underbrace{\nabla_s^2\phi^\star = \tau F(s), \quad F(s) = \frac{1}{\tau^2}\left(\operatorname{diag}(p^\star)-p^\star(p^\star)^\top\right)}_{\text{Hessian is Fisher information}} \quad \underbrace{\frac{\partial\mathcal L}{\partial s_j}=p_j^\star(u_j-\bar u), \quad \bar u=\sum_k p_k^\star u_k}_{\text{advantage-based update}} }_{\text{forward inference and backward learning share one geometry}}">φ*(s) = τ log Σ exp(s_j/τ), ∇φ* = p*; ∇²φ* = τ F(s), F(s) = (diag(p*) - p*p*ᵀ)/τ²; ∂L/∂s_j = p_j*(u_j - ū)</div>
 						</div>
 
-						<div class="demo demo--paper" id="eot-demo">
+						<div class="demo demo--paper demo--plot" id="eot-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Temperature is entropy <span>· demo 03</span></p>
