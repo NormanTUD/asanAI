@@ -252,6 +252,15 @@
 								<strong>IEEE 754</strong> conventions for these formats.
 							</p>
 							<p>
+								Text has its own encoding layer. Telegraph codes such as Baudot (1870s)
+								packed characters into five bits. ASCII (1963) standardised 7-bit codes
+								for 128 characters. Unicode (1991) gave the world one code-point space, and
+								UTF-8 (1993) encodes each code point in one to four bytes. A single visible
+								character can therefore span several bytes, and the same character can be a
+								base letter plus a combining mark. Every later step that handles text
+								depends on that layer.
+							</p>
+							<p>
 								In the same long arc, reasoning becomes a formal system. Aristotle’s
 								<strong>syllogism</strong> separates the structure of an argument from its
 								content. Pāṇini’s <em>Aṣṭādhyāyī</em> gives Sanskrit a fully generative grammar
