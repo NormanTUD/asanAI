@@ -758,6 +758,93 @@
 
 	/* ── convolution ────────────────────────────────────────── */
 
+	function initPooling(root) {
+		var inputEl = $("[data-pool-input]", root);
+		var outputEl = $("[data-pool-output]", root);
+		var readout = $("[data-pool-readout]", root);
+		var modes = $$("[data-pool-mode]", root);
+		if (!inputEl || !outputEl) return;
+		var values = [
+			[3, 1, 4, 1],
+			[5, 9, 2, 6],
+			[5, 3, 5, 8],
+			[9, 7, 9, 3]
+		];
+		var selected = 0;
+		var mode = "max";
+		function blockValues(block) {
+			var by = Math.floor(block / 2) * 2;
+			var bx = (block % 2) * 2;
+			return [
+				values[by][bx], values[by][bx + 1],
+				values[by + 1][bx], values[by + 1][bx + 1]
+			];
+		}
+		function pooled(block) {
+			var vals = blockValues(block);
+			if (mode === "avg") {
+				return vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
+			}
+			return Math.max.apply(null, vals);
+		}
+		function format(v) {
+			if (mode === "avg") {
+				var text = Number(v).toFixed(1);
+				return DEMO_DE ? text.replace(".", ",") : text;
+			}
+			return String(v);
+		}
+		function render() {
+			inputEl.innerHTML = "";
+			values.forEach(function (row, ry) {
+				row.forEach(function (v, rx) {
+					var block = Math.floor(ry / 2) * 2 + Math.floor(rx / 2);
+					var cell = document.createElement("button");
+					cell.type = "button";
+					cell.className = "pool-cell" + (block === selected ? " is-in-block" : "");
+					cell.setAttribute("data-block", block);
+					cell.textContent = v;
+					cell.setAttribute("aria-label", (DEMO_DE ? "Block " : "block ") + (block + 1) +
+						(DEMO_DE ? ", Zeile " : ", row ") + (ry + 1) +
+						(DEMO_DE ? ", Spalte " : ", column ") + (rx + 1) + ": " + v);
+					cell.addEventListener("click", function () {
+						selected = block;
+						render();
+					});
+					inputEl.appendChild(cell);
+				});
+			});
+			outputEl.innerHTML = "";
+			for (var block = 0; block < 4; block++) {
+				var out = document.createElement("button");
+				out.type = "button";
+				out.className = "pool-cell" + (block === selected ? " is-selected" : "");
+				out.setAttribute("data-block", block);
+				out.textContent = format(pooled(block));
+				out.setAttribute("aria-label", (DEMO_DE ? "Ausgabe für Block " : "output for block ") + (block + 1) + ": " + format(pooled(block)));
+				out.addEventListener("click", (function (b) {
+					return function () { selected = b; render(); };
+				})(block));
+				outputEl.appendChild(out);
+			}
+			if (readout) {
+				var vals = blockValues(selected);
+				var sum = vals.reduce(function (a, b) { return a + b; }, 0);
+				readout.textContent = mode === "avg"
+					? (DEMO_DE ? "Block " : "Block ") + (selected + 1) + ": (" + vals.join(" + ") + ") / 4 = " + format(sum / 4)
+					: (DEMO_DE ? "Block " : "Block ") + (selected + 1) + ": max(" + vals.join(", ") + ") = " + format(Math.max.apply(null, vals));
+			}
+		}
+		modes.forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				mode = btn.getAttribute("data-pool-mode");
+				modes.forEach(function (x) { x.classList.toggle("is-on", x === btn); });
+				render();
+			});
+		});
+		render();
+	}
+
 	function initConvolution(root) {
 		var canvas = $("[data-conv-canvas]", root);
 		var chips = $$("[data-kernel]", root);
@@ -827,27 +914,22 @@
 			var channelColors = dark
 				? ["#ff7b72", "#7ee787", "#79c0ff"]
 				: ["#a93226", "#1e8449", "#1f618d"];
-			var channels = [
-				{ key: "R", color: channelColors[0], idx: 0 },
-				{ key: "G", color: channelColors[1], idx: 1 },
-				{ key: "B", color: channelColors[2], idx: 2 }
-			];
-			var channelRows = channels.map(function (ch) {
-				var rows = [];
-				var total = 0;
-				for (var i = 0; i < 3; i++) {
-					var cells = [];
-					for (var j = 0; j < 3; j++) {
-						var p = inputRGB[sy + i][sx + j][ch.idx];
-						var kv = k[i][j];
-						total += p * kv;
-						cells.push("\\textcolor{" + ch.color + "}{" + p + "}\\cdot(" + kernelValue(kv) + ")");
-					}
-					rows.push(cells.join(" & "));
+			var pixelRows = [];
+			var kernelRows = [];
+			var totals = [0, 0, 0];
+			for (var i = 0; i < 3; i++) {
+				var cells = [];
+				for (var j = 0; j < 3; j++) {
+					var px = inputRGB[sy + i][sx + j];
+					var kv = k[i][j];
+					for (var ch = 0; ch < 3; ch++) totals[ch] += px[ch] * kv;
+					cells.push("\\begin{pmatrix}\\textcolor{" + channelColors[0] + "}{" + px[0] + "}\\\\ \\textcolor{" + channelColors[1] + "}{" + px[1] + "}\\\\ \\textcolor{" + channelColors[2] + "}{" + px[2] + "}\\end{pmatrix}");
 				}
-				return "\\textcolor{" + ch.color + "}{\\text{" + ch.key + "}} &: \\begin{matrix}" + rows.join(" \\\\ ") + "\\end{matrix} = \\textcolor{" + ch.color + "}{" + Math.round(total) + "}";
-			});
-			var tex = "\\underbrace{\\underbrace{\\begin{aligned}" + channelRows.join(" \\\\[4pt] ") + "\\end{aligned}}_{\\text{" + (DEMO_DE ? "drei Farbkanäle" : "three colour channels") + "}}}_{\\text{" + (DEMO_DE ? "Ausgabe an " : "output at ") + "(" + sx + "," + sy + ")" + "}}";
+				pixelRows.push(cells.join(" & "));
+				kernelRows.push(k[i].map(kernelValue).join(" & "));
+			}
+			var outVec = "\\begin{pmatrix}\\textcolor{" + channelColors[0] + "}{" + Math.round(totals[0]) + "}\\\\ \\textcolor{" + channelColors[1] + "}{" + Math.round(totals[1]) + "}\\\\ \\textcolor{" + channelColors[2] + "}{" + Math.round(totals[2]) + "}\\end{pmatrix}";
+			var tex = "\\underbrace{\\underbrace{\\begin{pmatrix}" + pixelRows.join(" \\\\ ") + "\\end{pmatrix}}_{\\text{" + (DEMO_DE ? "9 Pixel, je R/G/B" : "9 pixels, each RGB") + "}} \\odot \\begin{pmatrix}" + kernelRows.join(" \\\\ ") + "\\end{pmatrix} \\;\\xrightarrow{\\text{" + (DEMO_DE ? "Summe" : "sum") + "}}\\; " + outVec + "}_{\\text{" + (DEMO_DE ? "Ausgabe an " : "output at ") + "(" + sx + "," + sy + ")" + "}}";
 			formulaEl.setAttribute("data-tex", tex);
 			formulaEl.removeAttribute("data-tex-rendered");
 			if (window.TM && TM.typesetMath) TM.typesetMath(formulaEl.parentNode);
@@ -4290,6 +4372,7 @@
 			else if (type === "activation") initActivation(root);
 			else if (type === "datamix") initDataMix(root);
 			else if (type === "convolution") initConvolution(root);
+			else if (type === "pooling") initPooling(root);
 			else if (type === "vram") initVram(root);
 			else if (type === "budget") initBudget(root);
 			else if (type === "retrieval") initRetrieval(root);

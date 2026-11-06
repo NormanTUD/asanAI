@@ -2,9 +2,9 @@
 
 - lessons: 99
 - claims: 7352
-- statements: 17199
-- relations: 52122
-- uncovered years: 54
+- statements: 17264
+- relations: 52290
+- uncovered years: 56
 - uncovered quantities: 6
 - uncited specific claims: 307
 - citation keys not found in lesson: 0
@@ -40,7 +40,7 @@
 | derivativelab | 22 | 58 | 214 | 0 | 0 |
 | differentiation | 21 | 82 | 300 | 0 | 0 |
 | diffusion | 33 | 171 | 417 | 0 | 1 |
-| embeddinglab | 25 | 544 | 1406 | 0 | 0 |
+| embeddinglab | 25 | 570 | 1458 | 2 | 0 |
 | evaluation | 36 | 132 | 435 | 2 | 0 |
 | fact_lookup | 37 | 213 | 560 | 0 | 0 |
 | finetuninglab | 50 | 102 | 360 | 0 | 0 |
@@ -107,7 +107,7 @@
 | training_infrastructure | 32 | 55 | 239 | 0 | 0 |
 | trainingdynamics | 23 | 29 | 140 | 0 | 0 |
 | traininglab | 15 | 7 | 67 | 0 | 0 |
-| transformer | 32 | 260 | 843 | 0 | 0 |
+| transformer | 32 | 299 | 959 | 0 | 0 |
 | unexpected_capabilities | 40 | 274 | 578 | 4 | 1 |
 | untold_history_i | 520 | 458 | 1503 | 3 | 0 |
 | untold_history_ii | 672 | 643 | 2012 | 6 | 0 |
@@ -121,6 +121,8 @@
 - attentionlab.php: 2020
 - attentionlab.php: 2021
 - attentionlab.php: 2022
+- embeddinglab.php: 1865
+- embeddinglab.php: 1869
 - evaluation.php: 2009
 - evaluation.php: 2020
 - human_mind.php: 1974
@@ -151,9 +153,7 @@
 - statistics_ii.php: 2007
 - tokenizerlab.php: 1234
 - tokenizerlab.php: 1235
-- tokenizerlab.php: 2024
-- tokenizerlab.php: 2025
-- … and 19 more
+- … and 21 more
 
 ## Uncovered quantities
 

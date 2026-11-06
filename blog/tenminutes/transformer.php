@@ -56,41 +56,6 @@
 					<section class="section-block" id="realmodel">
 						<div class="section-kicker"><span class="sk-num">01</span> The real model</div>
 						<h2 class="section-title">Train a tiny transformer.</h2>
-<div id="transformer-train-card">
-<div class="transformer-train-controls">
-<div class="transformer-train-actions">
-<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
-</div>
-<label class="transformer-train-field">
-<span class="transformer-train-label">Epochs</span>
-<input id="train-epochs" min="1" step="1" type="number" value="200"/>
-</label>
-<label class="transformer-train-field">
-<span class="transformer-train-label">Learning Rate</span>
-<input id="train-lr" min="0" step="0.01" type="number" value="0.01"/>
-</label>
-<div class="transformer-train-field">
-<span class="transformer-train-label">Optimizer</span>
-<div aria-label="Optimizer" class="transformer-opt-group" id="train-optimizer" role="radiogroup">
-<label class="transformer-opt">
-<input checked="" name="train-optimizer-choice" type="radio" value="adam"/>
-<span class="glossary-term" data-tooltip-id="tt-train-adam">Adam<span class="glossary-tooltip" data-tooltip-id="tt-train-adam">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
-</label>
-<label class="transformer-opt">
-<input name="train-optimizer-choice" type="radio" value="sgd"/>
-<span class="glossary-term" data-tooltip-id="tt-train-sgd">SGD<span class="glossary-tooltip" data-tooltip-id="tt-train-sgd">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
-</label>
-<label class="transformer-opt">
-<input name="train-optimizer-choice" type="radio" value="rmsprop"/>
-<span class="glossary-term" data-tooltip-id="tt-train-rmsprop">RMSProp<span class="glossary-tooltip" data-tooltip-id="tt-train-rmsprop">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
-</label>
-</div>
-</div>
-
-</div>
-<div class="transformer-train-status" id="training-status"></div>
-<div id="training-loss-plot"></div>
-</div>
 <div id="transformer_config">
 <div style="margin-bottom: 15px;">
 <label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
@@ -125,6 +90,10 @@
 	    </p>
 <input id="transformer-context-size" max="256" min="2" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();" step="1" style="width: 100%;" type="range" value="32"/>
 </div>
+<div style="margin-bottom: 15px;">
+<label style="font-weight: bold; display: flex; align-items: center; gap: 8px;"><input id="transformer-kv-cache" type="checkbox"/> KV cache</label>
+<p style="font-size: 0.75rem; color: #64748b; margin: 4px 0;">Reuse the keys and values of earlier tokens when you append a token. Only the new token's query is computed; the next-token distribution is identical. <span id="tm-kv-cache-status">Off</span></p>
+</div>
 <div style="display: none">
 <label style="font-weight: bold;">Tokenizer: </label>
 <select id="transformer-tokenizer-type" onchange="debounced_run_transformer_demo()" style="padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1;">
@@ -151,6 +120,41 @@
 <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
     <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 8px;">The token <code>&lt;|endoftext|&gt;</code> is appended automatically.</p>
 <textarea id="transformer-training-data" oninput="debounced_run_transformer_demo('transformer-training-data')" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);"><?php echo function_exists("tm_lang") && tm_lang() === "de" ? "der könig herrscht über das land und die königin herrscht über das meer" : "the king rules the land and the queen rules the sea"; ?></textarea>
+</div>
+<div id="transformer-train-card">
+<div class="transformer-train-controls">
+<div class="transformer-train-actions">
+<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
+</div>
+<label class="transformer-train-field">
+<span class="transformer-train-label">Epochs</span>
+<input id="train-epochs" min="1" step="1" type="number" value="200"/>
+</label>
+<label class="transformer-train-field">
+<span class="transformer-train-label">Learning Rate</span>
+<input id="train-lr" min="0" step="0.01" type="number" value="0.01"/>
+</label>
+<div class="transformer-train-field">
+<span class="transformer-train-label">Optimizer</span>
+<div aria-label="Optimizer" class="transformer-opt-group" id="train-optimizer" role="radiogroup">
+<label class="transformer-opt">
+<input checked="" name="train-optimizer-choice" type="radio" value="adam"/>
+<span class="glossary-term" data-tooltip-id="tt-train-adam">Adam<span class="glossary-tooltip" data-tooltip-id="tt-train-adam">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
+</label>
+<label class="transformer-opt">
+<input name="train-optimizer-choice" type="radio" value="sgd"/>
+<span class="glossary-term" data-tooltip-id="tt-train-sgd">SGD<span class="glossary-tooltip" data-tooltip-id="tt-train-sgd">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
+</label>
+<label class="transformer-opt">
+<input name="train-optimizer-choice" type="radio" value="rmsprop"/>
+<span class="glossary-term" data-tooltip-id="tt-train-rmsprop">RMSProp<span class="glossary-tooltip" data-tooltip-id="tt-train-rmsprop">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
+</label>
+</div>
+</div>
+
+</div>
+<div class="transformer-train-status" id="training-status"></div>
+<div id="training-loss-plot"></div>
 </div>
 <style>
 #transformer-train-card {

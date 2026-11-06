@@ -433,7 +433,7 @@
 		sampling: "generative", decoding: "interactive", predict: "interactive",
 		linefit: "canvas", perceptron: "canvas", gradient: "plot",
 		optimizer: "compare", polyfit: "plot", activation: "plot",
-		datamix: "compare", filter: "stepper", convolution: "canvas",
+		datamix: "compare", filter: "stepper", convolution: "canvas", pooling: "interactive",
 		visionlayers: "canvas", receptive: "plot", vram: "calculator",
 		budget: "calculator", retrieval: "compare", ragspace: "canvas",
 		entropy: "plot", prompt: "generative", cot: "stepper",

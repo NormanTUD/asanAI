@@ -7184,3 +7184,68 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 	grid-template-columns: 1fr;
 	gap: 18px;
 }
+
+.pool-wrap {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	flex-wrap: wrap;
+	margin-top: 6px;
+}
+.pool-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 2.7rem);
+	gap: 6px;
+}
+.pool-grid--out { grid-template-columns: repeat(2, 3.2rem); }
+.pool-cell {
+	appearance: none;
+	width: 2.7rem;
+	height: 2.7rem;
+	padding: 0;
+	border: 1px solid var(--tm-line);
+	border-radius: 0;
+	background: var(--tm-paper-2);
+	color: var(--tm-ink);
+	font-family: var(--tm-mono);
+	font-size: 0.82rem;
+	cursor: pointer;
+}
+.pool-grid--out .pool-cell {
+	width: 3.2rem;
+	height: 3.2rem;
+	font-size: 1rem;
+	font-weight: 700;
+}
+.pool-cell.is-in-block {
+	background: color-mix(in srgb, var(--tm-green) 16%, var(--tm-paper-2));
+	border-color: var(--tm-green);
+}
+.pool-cell.is-selected { outline: 2px solid var(--tm-green); outline-offset: 1px; }
+.pool-grid--out .pool-cell.is-selected {
+	background: var(--tm-green);
+	color: #ffffff;
+}
+.pool-cell:focus-visible { outline: 2px solid var(--tm-blue); outline-offset: 2px; }
+.pool-label {
+	margin: 0 0 6px;
+	font-family: var(--tm-ui);
+	font-size: 0.62rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--tm-muted);
+}
+.pool-arrow {
+	font-size: 1.5rem;
+	line-height: 1;
+	color: var(--tm-muted);
+}
+.pool-readout {
+	margin: 12px 0 0;
+	font-family: var(--tm-mono);
+	font-size: 0.78rem;
+	color: var(--tm-petrol);
+}
+@media (max-width: 640px) {
+	.pool-wrap { gap: 12px; }
+}

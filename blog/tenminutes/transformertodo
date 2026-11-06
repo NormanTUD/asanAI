@@ -168,3 +168,9 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
       baut die URL nur noch auf Klick.
 - DONE Trainingsfenster auf der Elternseite wiederhergestellt (Button,
       Fensterliste, Vorhersagen, Toggle).
+- DONE Unembedding: Klick auf die Top-Logits im Plot hängt das Token an;
+      Token im tokenisierten Satz haben einen ×-Button zum Löschen.
+- DONE KV-Cache-Checkbox: echte inkrementelle Wiederverwendung der
+      Prefix-Keys/Values beim Anhängen eines Tokens, mit Statusanzeige.
+- DONE Reihenfolge der Hyperparameter-Seite: Architektur/Hyperparameter
+      zuerst, dann Trainingskorpus, dann Trainingskarte und Loss-Graph.

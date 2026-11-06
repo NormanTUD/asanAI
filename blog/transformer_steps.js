@@ -1617,6 +1617,154 @@
 	});
 	setInterval(enhanceLayerCards, 1200);
 
+	function kvStatus(mode, reused) {
+		var el = document.getElementById("tm-kv-cache-status");
+		if (!el) return;
+		if (!window.__tmKVCacheEnabled) {
+			el.textContent = DE() ? "Aus" : "Off";
+			return;
+		}
+		if (mode === "hit") {
+			el.textContent = DE()
+				? "An · " + reused + " Prefix-Tokens wiederverwendet, 1 neu berechnet"
+				: "On · reused " + reused + " prefix tokens, computed 1";
+		} else if (mode === "same") {
+			el.textContent = DE()
+				? "An · kompletter Cache wiederverwendet (" + reused + " Tokens)"
+				: "On · full cache reused (" + reused + " tokens)";
+		} else if (mode === "build") {
+			el.textContent = DE()
+				? "An · Cache für " + reused + " Tokens aufgebaut"
+				: "On · cache built for " + reused + " tokens";
+		} else {
+			el.textContent = DE() ? "An" : "On";
+		}
+	}
+	window.tmSetKVCacheStatus = kvStatus;
+
+	function initKVCacheToggle() {
+		var cb = document.getElementById("transformer-kv-cache");
+		if (!cb) return;
+		window.__tmKVCacheEnabled = !!cb.checked;
+		if (!cb._tmKVBound) {
+			cb._tmKVBound = true;
+			cb.addEventListener("change", function () {
+				window.__tmKVCacheEnabled = !!cb.checked;
+				window.__tmKVCache = null;
+				kvStatus("idle");
+				if (cb.checked && typeof window.run_transformer_demo === "function") {
+					setTimeout(function () { window.run_transformer_demo(); }, 0);
+				}
+			});
+		}
+		if (!window.__tmKVCacheEnabled) kvStatus("idle");
+	}
+
+	function kvDot(a, b) {
+		var sum = 0;
+		for (var i = 0; i < Math.min(a.length, b.length); i++) sum += (a[i] || 0) * (b[i] || 0);
+		return sum;
+	}
+
+	window.tmKVCachedForwardPass = function (tokens, weights, d_model, n_heads, n_layers) {
+		if (!window.__tmKVCacheEnabled || !window.__tmKVCacheEnabled) return null;
+		if (typeof embedTokensWithPE !== "function" || typeof calculateLayerNorm !== "function" ||
+			typeof matMul !== "function" || typeof matAdd !== "function" || typeof softmax !== "function" ||
+			typeof geluApprox !== "function" || typeof addPositionalEncoding !== "function" ||
+			typeof forwardOneLayer !== "function") return null;
+		if (!tokens || !tokens.length || !weights || !weights.length) return null;
+
+		var cache = window.__tmKVCache;
+		var sameWeights = cache && cache.weightsRef === weights && cache.d_model === d_model &&
+			cache.n_heads === n_heads && cache.n_layers === n_layers;
+		if (sameWeights && cache.tokens.length === tokens.length) {
+			var same = true;
+			for (var i = 0; i < tokens.length; i++) if (cache.tokens[i] !== tokens[i]) { same = false; break; }
+			if (same) {
+				kvStatus("same", tokens.length);
+				return cache.hFinal;
+			}
+		}
+		var canIncrement = sameWeights && cache.tokens.length + 1 === tokens.length;
+		if (canIncrement) {
+			for (var p = 0; p < cache.tokens.length; p++) {
+				if (cache.tokens[p] !== tokens[p]) { canIncrement = false; break; }
+			}
+		}
+		if (canIncrement) {
+			var last = tokens[tokens.length - 1];
+			var pos = tokens.length - 1;
+			var space = window.persistentEmbeddingSpace || {};
+			var embedding = (space[last] || new Array(d_model).fill(0)).slice();
+			var hNew = addPositionalEncoding(embedding, pos, d_model, 1);
+			var dk = d_model / n_heads;
+			for (var l = 0; l < n_layers; l++) {
+				var w = weights[l];
+				var cl = cache.layers[l];
+				if (!cl || cl.K.length !== pos) return null;
+				var norm = calculateLayerNorm([hNew], w.gamma, w.beta)[0];
+				var Q = matMul([norm], w.attention.query)[0];
+				var Knew = matMul([norm], w.attention.key)[0];
+				var Vnew = matMul([norm], w.attention.value)[0];
+				var keys = cl.K.concat([Knew]);
+				var vals = cl.V.concat([Vnew]);
+				var headContexts = [];
+				for (var h = 0; h < n_heads; h++) {
+					var off = h * dk;
+					var q = Q.slice(off, off + dk);
+					var scores = keys.map(function (k) { return kvDot(q, k.slice(off, off + dk)) / Math.sqrt(dk); });
+					var probs = softmax(scores);
+					var ctx = new Array(dk).fill(0);
+					for (var j = 0; j < vals.length; j++) {
+						for (var d = 0; d < dk; d++) ctx[d] += probs[j] * (vals[j][off + d] || 0);
+					}
+					headContexts.push(ctx);
+				}
+				var concat = [].concat.apply([], headContexts);
+				var projected = matMul([concat], w.attention.output)[0];
+				var hAttn = matAdd([hNew], [projected])[0];
+				var gamma2 = w.gamma2 || new Array(d_model).fill(1);
+				var beta2 = w.beta2 || new Array(d_model).fill(0);
+				var norm2 = calculateLayerNorm([hAttn], gamma2, beta2)[0];
+				var out1 = matMul([norm2], w.W1, w.b1)[0].map(geluApprox);
+				var out2 = matMul([out1], w.W2, w.b2)[0];
+				hNew = matAdd([hAttn], [out2])[0];
+				cl.K.push(Knew);
+				cl.V.push(Vnew);
+			}
+			cache.tokens.push(last);
+			cache.hFinal.push(hNew);
+			kvStatus("hit", tokens.length - 1);
+			return cache.hFinal;
+		}
+
+		// Cache miss: build K/V for the full sequence once.
+		var h = embedTokensWithPE(tokens, d_model);
+		var layers = [];
+		for (var l2 = 0; l2 < n_layers; l2++) {
+			var w2 = weights[l2];
+			var normH = calculateLayerNorm(h, w2.gamma, w2.beta);
+			layers.push({
+				K: matMul(normH, w2.attention.key),
+				V: matMul(normH, w2.attention.value)
+			});
+			var result = forwardOneLayer(h, w2, d_model, n_heads, tokens, null);
+			h = result.h_out;
+		}
+		window.__tmKVCache = {
+			tokens: tokens.slice(),
+			weightsRef: weights,
+			d_model: d_model,
+			n_heads: n_heads,
+			n_layers: n_layers,
+			layers: layers,
+			hFinal: h.slice()
+		};
+		kvStatus("build", tokens.length);
+		return h;
+	};
+	initKVCacheToggle();
+
 	window.TransformerSteps = {
 		init: function (hostId) {
 			var host = document.getElementById(hostId);
@@ -1746,9 +1894,29 @@
 				} else if (text) {
 					tokens = text.split(/\s+/);
 				}
-				unembedSentence.innerHTML = tokens.map(function (token) {
-					return '<span class="tm-unembed-sent-token">' + display(token) + '</span>';
+				unembedSentence.innerHTML = tokens.map(function (token, i) {
+					return '<span class="tm-unembed-sent-token">' + featureEsc(display(token)) + '<button type="button" class="tm-unembed-sent-remove" data-index="' + i + '" aria-label="' + (DE() ? "Token entfernen" : "Remove token") + '" title="' + (DE() ? "Token entfernen" : "Remove token") + '">×</button></span>';
 				}).join('') + '<span class="tm-unembed-sent-cursor" aria-hidden="true">▍</span>';
+			}
+			if (unembedSentence && !unembedSentence._tmRemoveBound) {
+				unembedSentence._tmRemoveBound = true;
+				unembedSentence.addEventListener("click", function (event) {
+					var btn = event.target.closest ? event.target.closest(".tm-unembed-sent-remove") : null;
+					if (!btn) return;
+					var idx = parseInt(btn.getAttribute("data-index"), 10);
+					var prompt = document.getElementById("transformer-master-token-input");
+					if (!prompt || isNaN(idx)) return;
+					var typeEl = document.getElementById("transformer-tokenizer-type");
+					var type = typeEl ? typeEl.value : "regex";
+					var tokens = (typeof window.tokenizeTextCore === "function")
+						? window.tokenizeTextCore(prompt.value, type)
+						: (prompt.value ? prompt.value.split(/\s+/) : []);
+					if (idx < 0 || idx >= tokens.length) return;
+					tokens.splice(idx, 1);
+					prompt.value = tokens.join("\u200B");
+					prompt.dispatchEvent(new Event("input", { bubbles: true }));
+					setTimeout(renderUnembedSentence, 250);
+				});
 			}
 			function sampleUnembed() {
 				var cached = window._cachedFinalProjection;
@@ -1808,6 +1976,28 @@
 				}
 			}
 			renderUnembedTokens();
+			if (canvases.unembed && !canvases.unembed._tmLogitClickBound) {
+				canvases.unembed._tmLogitClickBound = true;
+				canvases.unembed.style.cursor = "pointer";
+				canvases.unembed.setAttribute("tabindex", "0");
+				canvases.unembed.setAttribute("role", "button");
+				canvases.unembed.title = DE() ? "Auf einen Balken klicken, um das Token anzuhängen" : "Click a bar to append that token";
+				canvases.unembed.addEventListener("click", function (event) {
+					var words = window.__tmUnembedTop || [];
+					if (!words.length) return;
+					var rect = canvases.unembed.getBoundingClientRect();
+					var y = event.clientY - rect.top;
+					var x = event.clientX - rect.left;
+					var top = 18, pad = 16, left = 40;
+					var rowH = (rect.height - top - pad) / Math.max(1, words.length);
+					var idx = Math.floor((y - top) / rowH);
+					if (x < left || idx < 0 || idx >= words.length) return;
+					if (typeof window.select_suggested_word === "function") {
+						window.select_suggested_word(words[idx]);
+						setTimeout(renderUnembedSentence, 280);
+					}
+				});
+			}
 			host.setAttribute("data-demo-ready", "1");
 			renderLayerPreviews();
 			window.addEventListener("tm:theme", redraw);

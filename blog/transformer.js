@@ -242,6 +242,10 @@ function getTransformerConfig() {
 
 function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers, recordFinal) {
 	if (n_layers === undefined) n_layers = weights.length;
+	if (recordFinal && window.__tmKVCacheEnabled && typeof window.tmKVCachedForwardPass === "function") {
+		const cachedKV = window.tmKVCachedForwardPass(tokens, weights, d_model, n_heads, n_layers);
+		if (cachedKV) return cachedKV;
+	}
 	let h = embedTokensWithPE(tokens, d_model);
 
 	// Provenance: record the final (inference) pass under the 'R:' namespace so

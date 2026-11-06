@@ -81,7 +81,7 @@
 							<div class="demo-controls">
 								<button class="btn-demo btn-demo--green" type="button" data-conv-scan>Scan the kernel ▶</button>
 							</div>
-							<p class="demo-hint" data-conv-hint>Move the pointer over the stop sign. The kernel follows it. The feature map is the RGB composite; the formula below shows the R, G, and B sums separately, with the pixel values in their channel colour.</p>
+							<p class="demo-hint" data-conv-hint>Move the pointer over the stop sign. The kernel follows it. Each pixel is an RGB vector; the formula shows the 3×3 patch and the kernel, and sums them to one RGB output vector. The feature map is the RGB composite.</p>
 							<div class="chip-row" style="margin-top:12px">
 								<button class="chip is-on" type="button" data-kernel="edge">edge</button>
 								<button class="chip" type="button" data-kernel="blur">blur</button>
@@ -105,8 +105,44 @@
 						<div class="demo-foot">Source image: a stop sign in Victoria, Australia. Photo: Matthew Paul Argall, <a href="https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg" rel="noopener">CC0</a>.</div>
 					</div>
 
+					<section class="section-block" id="pooling">
+						<div class="section-kicker"><span class="sk-num">03</span> Pooling</div>
+						<h2 class="section-title">Shrink the map, keep the signal.</h2>
+						<div class="prose">
+							<p>Pooling compresses the map. A 2×2 window with stride 2 replaces each block with one number: max pooling keeps the strongest activation, average pooling keeps the mean. The map shrinks, the receptive field grows, and small shifts inside a window matter less. The price is exact position.</p>
+						</div>
+						<div class="demo demo--paper" data-demo="pooling">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Pooling: shrink the map <span>· demo</span></p>
+									<p class="demo-sub">A 2×2 window with stride 2 turns four numbers into one. Max keeps the strongest; average keeps the mean. Click a block to inspect it.</p>
+								</div>
+								<span class="demo-badge">2×2 · stride 2</span>
+							</div>
+							<div class="demo-body">
+								<div class="pool-wrap">
+									<div>
+										<p class="pool-label">Input · 4×4</p>
+										<div class="pool-grid" data-pool-input></div>
+									</div>
+									<span class="pool-arrow" aria-hidden="true">→</span>
+									<div>
+										<p class="pool-label">Output · 2×2</p>
+										<div class="pool-grid pool-grid--out" data-pool-output></div>
+									</div>
+								</div>
+								<div class="chip-row" data-pool-modes>
+									<button class="chip is-on" type="button" data-pool-mode="max">Max</button>
+									<button class="chip" type="button" data-pool-mode="avg">Average</button>
+								</div>
+								<p class="pool-readout" data-pool-readout>Block 1: max(3, 1, 5, 9) = 9</p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Pooling trades spatial detail for a smaller map and a little shift tolerance. Max keeps evidence, average keeps the summary.</span></div>
+						</div>
+					</section>
+
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

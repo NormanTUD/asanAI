@@ -108,6 +108,11 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();">
 	</div>
 
+	<div class="transformer-config-field">
+	    <label class="transformer-kv-label"><input type="checkbox" id="transformer-kv-cache"> KV cache</label>
+	    <p class="transformer-slider-note">Reuse the keys and values of earlier tokens when you append a token. Only the new token's query is computed; the next-token distribution is identical. <span id="tm-kv-cache-status" class="tm-kv-cache-status">Off</span></p>
+	</div>
+
 	<div style="display: none">
 	    <label style="font-weight: bold;">Tokenizer: </label>
 	    <select id="transformer-tokenizer-type" style="padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1;" onchange="debounced_run_transformer_demo()">
