@@ -6,10 +6,10 @@
 	<meta name="description" content="A ten-minute interactive tour of the transformer block: tokens, positions, attention, feed-forward, residual stream, logits, and sampling.">
 	<meta name="theme-color" content="#ffffff">
 	<title>The Whole Machine | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 	<link rel="stylesheet" href="assets/full/demos.css">
-	<link rel="stylesheet" href="../transformer_steps.css">
+	<link rel="stylesheet" href="../transformer_steps.css?v=<?php echo (int) @filemtime(__DIR__ . '/../transformer_steps.css'); ?>">
 </head>
 <body data-lesson="transformer" data-page="lesson" data-no-full-article>
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -289,59 +289,143 @@
 								for every layer, with the full formulas one level deeper.
 							</p>
 						</div>
-						<div class="tm-step-grid" id="transformer-step-visuals">
+<div class="demo-loader-status" id="demo-loader-status">
+<div class="demo-loader-head">
+<span class="demo-loader-title" id="demo-loader-title">The interactive demos load when you reach this section.</span>
+<span class="demo-loader-count" id="demo-loader-count"></span>
+</div>
+<div class="demo-loader-track" id="demo-loader-track" hidden><div class="demo-loader-fill" id="demo-loader-fill"></div></div>
+<div class="demo-loader-meta" id="demo-loader-meta" hidden>
+<span id="demo-loader-current"></span>
+<span id="demo-loader-percent"></span>
+</div>
+</div>
+						<div class="tm-step-grid lg-widescroll" id="transformer-step-visuals">
 							<section class="tm-step">
-								<h3>1 · Tokenize</h3>
-								<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
-								<canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
+				<div class="tm-step-head">
+					<h3>1 · Tokenize</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
 				<p class="tm-step-more">The tokenizer is a separate program trained before the model. It decides which strings become one id; the model itself only sees numbers.</p>
 				<div class="tm-step-formula" data-tex="T = [t_0,\, t_1,\, \dots,\, t_{n-1}]"></div>
-							</section>
+				<details class="tm-step-detail">
+					<summary>Tokenizer in detail</summary>
+					<div class="tm-step-detail-body">
+						<p>Tokens become integers, integers become vectors, and position tags each vector with its place in the sequence. Change the corpus or the tokenizer and the token stream, embedding map, and positional waves update.</p>
+						<div class="viz-container" id="transformer-viz-bpe"></div>
+					</div>
+				</details></div>
+			</section>
 							<section class="tm-step">
-								<h3>2 · Embed</h3>
-								<p>Each token becomes a point in the learned embedding space. The line follows the sentence; the faint cloud is the rest of the vocabulary.</p>
-								<canvas class="tm-step-canvas" id="tm-step-embed" aria-label="The embedding space with the sentence path"></canvas>
+				<div class="tm-step-head">
+					<h3>2 · Embed</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>Each token becomes a point in the learned embedding space. The line follows the sentence; the faint cloud is the rest of the vocabulary.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-embed" aria-label="The embedding space with the sentence path"></canvas>
 				<div class="tm-step-modes" data-step-modes="embed"></div>
 				<p class="tm-step-more">The embedding table is a learned matrix; each row is a token's starting vector. The positions are added in the next step.</p>
 				<div class="tm-step-formula" data-tex="h_0 = E[t] + p_i"></div>
-							</section>
+				<details class="tm-step-detail">
+					<summary>Embedding in detail</summary>
+					<div class="tm-step-detail-body">
+						<p>The embedding table maps each token id to a vector. The position is added after this lookup; the vector math below works on the current vocabulary.</p>
+						<div style="background: var(--mn-bg-subtle, #f8fafc); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
+<div id="transformer-plotly-space" style="width: 100%; height: 500px; background: var(--mn-surface, white); border-radius: 8px;"></div>
+<div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
+<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px; max-height: 420px; overflow-y: auto;"></div>
+<p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
+<input id="transformer-vector-math-input" oninput="debounced_vector_math()" onkeydown="if(event.key==='Enter'){event.preventDefault(); immediate_vector_math();}" placeholder="e.g., king - man + woman" style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" type="text"/>
+<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: var(--mn-surface, white); border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
+<em style="color: #94a3b8;">Enter an equation and press Enter...</em>
+</div>
+</div>
+					</div>
+				</details></div>
+			</section>
 							<section class="tm-step">
-								<h3>3 · Position</h3>
-								<p>The same token at a different slot gets a different fingerprint. Each row is a position; the waves are the sinusoidal encoding.</p>
-								<canvas class="tm-step-canvas" id="tm-step-position" aria-label="A heatmap of positional encodings"></canvas>
+				<div class="tm-step-head">
+					<h3>3 · Position</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>The same token at a different slot gets a different fingerprint. Each row is a position; the waves are the sinusoidal encoding.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-position" aria-label="A heatmap of positional encodings"></canvas>
 				<div class="tm-step-modes" data-step-modes="position"></div>
 				<p class="tm-step-more">Without a position signal, the same tokens in a different order would look identical. The waves give every slot a unique fingerprint.</p>
 				<div class="tm-step-formula" data-tex="PE_{(i,2k)} = \sin\left(\frac{i}{10000^{2k/d}}\right),\quad PE_{(i,2k+1)} = \cos\left(\frac{i}{10000^{2k/d}}\right)"></div>
-							</section>
+				<details class="tm-step-detail">
+					<summary>Positional encoding in detail</summary>
+					<div class="tm-step-detail-body">
+						<p>The heatmap above shows the pattern as a flat slice. The plots below show the same sinusoidal encoding as waves and as one vector per position.</p>
+						<div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+<div id="transformer-pe-shift-plot" style="width: 100%; height: 600px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+<div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
+						<div class="md" id="ifscalfactornotone" style="display:none">In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">0.1</span> because of the low dimensionality of our space.</div>
+					</div>
+				</details></div>
+			</section>
 							<section class="tm-step">
-								<h3>4 · Attend</h3>
-								<p>Attention lets every token read the others. Each arc is a weighted connection; a thicker line carries more information.</p>
-								<canvas class="tm-step-canvas" id="tm-step-attend" aria-label="Attention arcs between tokens"></canvas>
+				<div class="tm-step-head">
+					<h3>4 · Attend</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>Attention lets every token read the others. Each arc is a weighted connection; a thicker line carries more information.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-attend" aria-label="Attention arcs between tokens"></canvas>
+				<div class="tm-step-modes" data-step-modes="attend"></div>
 				<p class="tm-step-more">Attention is the only step where information moves between tokens. Everything else in the block works on one token at a time.</p>
 				<div class="tm-step-formula" data-tex="\operatorname{Attention}(Q,K,V) = \operatorname{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V"></div>
-							</section>
+				<details class="tm-step-detail"><summary>Attention in detail</summary><div class="tm-step-detail-body"><p>Attention is the only operation in the block that moves information between tokens. Each token projects its vector into a query, a key and a value. The dot product of a query and a key is a score; softmax turns the row of scores into weights that sum to one; the output is the weighted sum of the value vectors.</p><p>A layer runs several heads in parallel, each in its own subspace. Every head has one unit of attention to spend: if it puts 80% on one word, only 20% remains for the others. The layer cards below show the real weights and the attention web for each head.</p></div></details></div>
+			</section>
 							<section class="tm-step">
-								<h3>5 · Feed-forward</h3>
-								<p>The FFN transforms one token at a time. The bars are the hidden activations of the last token: the pattern the layer writes back.</p>
-								<canvas class="tm-step-canvas" id="tm-step-ffn" aria-label="Feed-forward hidden activations"></canvas>
+				<div class="tm-step-head">
+					<h3>5 · Feed-forward</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>The FFN transforms one token at a time. The heatmap shows the hidden activations for every token: the pattern the layer writes back.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-ffn" aria-label="Feed-forward hidden activations"></canvas>
 				<p class="tm-step-more">The FFN expands the vector, applies a nonlinearity, and contracts it. It cannot see other positions; attention has already copied their information in.</p>
 				<div class="tm-step-formula" data-tex="\operatorname{FFN}(x) = W_2\,\operatorname{GELU}(W_1x+b_1)+b_2"></div>
-							</section>
+				<details class="tm-step-detail"><summary>Feed-forward in detail</summary><div class="tm-step-detail-body"><p>The FFN works on one token at a time. It expands the vector to a wider hidden layer, applies GELU, and contracts it back. Attention decides what to look at; the FFN decides what to do with it.</p><p>Most of the model's parameters and much of its factual recall live in these matrices, but knowledge is distributed. The layer cards below show the real expansion, activation and compression for every layer.</p></div></details></div>
+			</section>
 							<section class="tm-step">
-								<h3>6 · Residual</h3>
-								<p>Every layer adds an attention update and an FFN update to the running stream. The heatmap shows how much each layer writes for each token.</p>
-								<canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
+				<div class="tm-step-head">
+					<h3>6 · Residual</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>Every layer adds an attention update and an FFN update to the running stream. The heatmap shows how much each layer writes for each token.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
 				<p class="tm-step-more">The residual stream is the running vector. Every layer reads it and writes an update; nothing is overwritten, so late layers can still use the original token.</p>
 				<div class="tm-step-formula" data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)"></div>
-							</section>
+				<details class="tm-step-detail"><summary>Residual stream in detail</summary><div class="tm-step-detail-body"><p>Each sublayer computes an update and adds it to the running vector: x_{n+1} = x_n + layer_{n+1}(x_n). Nothing is overwritten, so the original token stays available and gradients have a short path back.</p><p>The per-layer residual preview above shows how much attention and the FFN write for each token. The last layer's level 2 also shows the final h_last vector.</p></div></details></div>
+			</section>
 							<section class="tm-step">
-								<h3>7 · Unembed</h3>
-								<p>The final vector is compared with every vocabulary embedding. The bars are the model's shortlist for the next token.</p>
-								<canvas class="tm-step-canvas" id="tm-step-unembed" aria-label="Top next-token logits"></canvas>
+				<div class="tm-step-head">
+					<h3>7 · Unembed</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>The final vector is compared with every vocabulary embedding. The bars are the model's shortlist for the next token.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-unembed" aria-label="Top next-token logits"></canvas>
 				<p class="tm-step-more">The final vector is compared with every vocabulary embedding. Softmax turns the scores into probabilities; a decoding rule chooses one token.</p>
 				<div class="tm-step-formula" data-tex="p = \operatorname{softmax}(h_L W_U^\top)"></div>
-							</section>
+				<div class="tm-unembed-controls">
+					<label class="tm-unembed-temp">Temperature <input type="range" id="tm-unembed-temp" min="0.1" max="2" step="0.1" value="1"><output id="tm-unembed-temp-out">1.0</output></label>
+					<div class="tm-unembed-tokens" id="tm-unembed-tokens" role="group" aria-label="Append a token"></div>
+				</div>
+				<div class="tm-unembed-topk-row">
+					<label class="tm-unembed-topk">Top-k <input type="range" id="tm-unembed-topk" min="1" max="20" step="1" value="5"><output id="tm-unembed-topk-out">5</output></label>
+					<button type="button" class="tm-unembed-sample" id="tm-unembed-sample">Sample</button>
+					<span class="tm-unembed-sample-out" id="tm-unembed-sample-out"></span>
+				</div>
+				<div class="tm-unembed-sentence-wrap">
+					<span class="tm-unembed-sentence-label">Tokenized input</span>
+					<div class="tm-unembed-sentence" id="tm-unembed-sentence"></div>
+				</div>
+				<details class="tm-step-detail"><summary>From vectors to words</summary><div class="tm-step-detail-body"><p>The final vector is multiplied by the unembedding matrix, producing one logit per vocabulary entry. Softmax turns the logits into probabilities; temperature sharpens or flattens the distribution.</p><p>The output section below lets you change the temperature and click tokens to append them. The layer cards show the logit lens for every layer.</p></div></details></div>
+			</section>
 						</div>
+						<div id="inputlab" hidden></div>
 					</section>
 
 					<section class="section-block" id="before">
@@ -439,46 +523,8 @@
 
 						</section>
 
-					<section class="section-block" id="inputlab">
-						<div class="section-kicker"><span class="sk-num">06</span> Preparing the input</div>
-						<h2 class="section-title">From text to a stream of vectors.</h2>
-						<div class="prose">
-							<p>
-								Tokens become integers, integers become vectors, and position tags each
-								vector with its place in the sequence. Change the corpus or the tokenizer
-								and the token stream, embedding map, and positional waves update.
-							</p>
-						</div>
-<div class="demo-loader-status" id="demo-loader-status">
-<div class="demo-loader-head">
-<span class="demo-loader-title" id="demo-loader-title">The interactive demos load when you reach this section.</span>
-<span class="demo-loader-count" id="demo-loader-count"></span>
-</div>
-<div class="demo-loader-track" id="demo-loader-track" hidden><div class="demo-loader-fill" id="demo-loader-fill"></div></div>
-<div class="demo-loader-meta" id="demo-loader-meta" hidden>
-<span id="demo-loader-current"></span>
-<span id="demo-loader-percent"></span>
-</div>
-</div>
-<div class="viz-container" id="transformer-viz-bpe"></div>
-<div style="background: var(--mn-bg-subtle, #f8fafc); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
-<div id="transformer-plotly-space" style="width: 100%; height: 500px; background: var(--mn-surface, white); border-radius: 8px;"></div>
-<div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
-<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px; max-height: 420px; overflow-y: auto;"></div>
-<p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
-<input id="transformer-vector-math-input" oninput="debounced_vector_math()" onkeydown="if(event.key==='Enter'){event.preventDefault(); immediate_vector_math();}" placeholder="e.g., king - man + woman" style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" type="text"/>
-<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: var(--mn-surface, white); border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
-<em style="color: #94a3b8;">Enter an equation and press Enter...</em>
-</div>
-</div>
-<div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
-<div id="transformer-pe-shift-plot" style="width: 100%; height: 600px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
-<div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
-						<div class="md" id="ifscalfactornotone" style="display:none">In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">0.1</span> because of the low dimensionality of our space.</div>
-					</section>
-
 					<section class="section-block" id="block">
-						<div class="section-kicker"><span class="sk-num">07</span> Inside the block</div>
+						<div class="section-kicker"><span class="sk-num">06</span> Inside the block</div>
 						<h2 class="section-title">Two sublayers, one residual stream.</h2>
 						<div class="prose">
 							<p>
@@ -574,7 +620,7 @@
 					</section>
 
 					<section class="section-block" id="output">
-						<div class="section-kicker"><span class="sk-num">08</span> From vectors to words</div>
+						<div class="section-kicker"><span class="sk-num">07</span> From vectors to words</div>
 						<h2 class="section-title">Logits, softmax, and the stop token.</h2>
 						<div class="prose">
 							<p>
@@ -668,7 +714,7 @@
 					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">09</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">08</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -691,7 +737,7 @@
 	</div>
 
 
-	<script src="assets/site.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 	<script src="../temml.min.js"></script>
 	<script src="../transformer_steps.js?v=<?php echo (int) @filemtime(__DIR__ . '/../transformer_steps.js'); ?>"></script>
 	<script>

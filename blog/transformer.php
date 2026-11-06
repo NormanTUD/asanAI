@@ -194,59 +194,142 @@ cards below repeat the attention, feed-forward and residual steps for every laye
 with the full formulas one level deeper.
 </div>
 
-<div class="tm-step-grid" id="transformer-step-visuals">
+<div class="tm-step-grid lg-widescroll" id="transformer-step-visuals">
 	<section class="tm-step">
-		<h3>1 · Tokenize</h3>
-		<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
-		<canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
+				<div class="tm-step-head">
+					<h3>1 · Tokenize</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
 				<p class="tm-step-more">The tokenizer is a separate program trained before the model. It decides which strings become one id; the model itself only sees numbers.</p>
 				<div class="tm-step-formula" data-tex="T = [t_0,\, t_1,\, \dots,\, t_{n-1}]"></div>
-	</section>
+				<details class="tm-step-detail" id="tm-detail-tokenize"><summary>Tokenizer in detail</summary><div class="tm-step-detail-body"></div></details></div>
+			</section>
 	<section class="tm-step">
-		<h3>2 · Embed</h3>
-		<p>Each token becomes a point in the learned embedding space. The line follows the sentence; the faint cloud is the rest of the vocabulary.</p>
-		<canvas class="tm-step-canvas" id="tm-step-embed" aria-label="The embedding space with the sentence path"></canvas>
+				<div class="tm-step-head">
+					<h3>2 · Embed</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>Each token becomes a point in the learned embedding space. The line follows the sentence; the faint cloud is the rest of the vocabulary.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-embed" aria-label="The embedding space with the sentence path"></canvas>
 				<div class="tm-step-modes" data-step-modes="embed"></div>
 				<p class="tm-step-more">The embedding table is a learned matrix; each row is a token's starting vector. The positions are added in the next step.</p>
 				<div class="tm-step-formula" data-tex="h_0 = E[t] + p_i"></div>
-	</section>
+				<details class="tm-step-detail" id="tm-detail-embed"><summary>Embedding in detail</summary><div class="tm-step-detail-body"></div></details></div>
+			</section>
 	<section class="tm-step">
-		<h3>3 · Position</h3>
-		<p>The same token at a different slot gets a different fingerprint. Each row is a position; the waves are the sinusoidal encoding.</p>
-		<canvas class="tm-step-canvas" id="tm-step-position" aria-label="A heatmap of positional encodings"></canvas>
+				<div class="tm-step-head">
+					<h3>3 · Position</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>The same token at a different slot gets a different fingerprint. Each row is a position; the waves are the sinusoidal encoding.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-position" aria-label="A heatmap of positional encodings"></canvas>
 				<div class="tm-step-modes" data-step-modes="position"></div>
 				<p class="tm-step-more">Without a position signal, the same tokens in a different order would look identical. The waves give every slot a unique fingerprint.</p>
 				<div class="tm-step-formula" data-tex="PE_{(i,2k)} = \sin\left(\frac{i}{10000^{2k/d}}\right),\quad PE_{(i,2k+1)} = \cos\left(\frac{i}{10000^{2k/d}}\right)"></div>
-	</section>
+				<details class="tm-step-detail" id="tm-detail-position"><summary>Positional encoding in detail</summary><div class="tm-step-detail-body"></div></details></div>
+			</section>
 	<section class="tm-step">
-		<h3>4 · Attend</h3>
-		<p>Attention lets every token read the others. Each arc is a weighted connection; a thicker line carries more information.</p>
-		<canvas class="tm-step-canvas" id="tm-step-attend" aria-label="Attention arcs between tokens"></canvas>
+				<div class="tm-step-head">
+					<h3>4 · Attend</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>Attention lets every token read the others. Each arc is a weighted connection; a thicker line carries more information.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-attend" aria-label="Attention arcs between tokens"></canvas>
+				<div class="tm-step-modes" data-step-modes="attend"></div>
 				<p class="tm-step-more">Attention is the only step where information moves between tokens. Everything else in the block works on one token at a time.</p>
 				<div class="tm-step-formula" data-tex="\operatorname{Attention}(Q,K,V) = \operatorname{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V"></div>
-	</section>
+				<details class="tm-step-detail"><summary>Attention in detail</summary><div class="tm-step-detail-body"><p>Attention is the only operation in the block that moves information between tokens. Each token projects its vector into a query, a key and a value. The dot product of a query and a key is a score; softmax turns the row of scores into weights that sum to one; the output is the weighted sum of the value vectors.</p><p>A layer runs several heads in parallel, each in its own subspace. Every head has one unit of attention to spend: if it puts 80% on one word, only 20% remains for the others. The layer cards below show the real weights and the attention web for each head.</p></div></details></div>
+			</section>
 	<section class="tm-step">
-		<h3>5 · Feed-forward</h3>
-		<p>The FFN transforms one token at a time. The bars are the hidden activations of the last token: the pattern the layer writes back.</p>
-		<canvas class="tm-step-canvas" id="tm-step-ffn" aria-label="Feed-forward hidden activations"></canvas>
+				<div class="tm-step-head">
+					<h3>5 · Feed-forward</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>The FFN transforms one token at a time. The heatmap shows the hidden activations for every token: the pattern the layer writes back.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-ffn" aria-label="Feed-forward hidden activations"></canvas>
 				<p class="tm-step-more">The FFN expands the vector, applies a nonlinearity, and contracts it. It cannot see other positions; attention has already copied their information in.</p>
 				<div class="tm-step-formula" data-tex="\operatorname{FFN}(x) = W_2\,\operatorname{GELU}(W_1x+b_1)+b_2"></div>
-	</section>
+				<details class="tm-step-detail"><summary>Feed-forward in detail</summary><div class="tm-step-detail-body"><p>The FFN works on one token at a time. It expands the vector to a wider hidden layer, applies GELU, and contracts it back. Attention decides what to look at; the FFN decides what to do with it.</p><p>Most of the model's parameters and much of its factual recall live in these matrices, but knowledge is distributed. The layer cards below show the real expansion, activation and compression for every layer.</p></div></details></div>
+			</section>
 	<section class="tm-step">
-		<h3>6 · Residual</h3>
-		<p>Every layer adds an attention update and an FFN update to the running stream. The heatmap shows how much each layer writes for each token.</p>
-		<canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
+				<div class="tm-step-head">
+					<h3>6 · Residual</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>Every layer adds an attention update and an FFN update to the running stream. The heatmap shows how much each layer writes for each token.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
 				<p class="tm-step-more">The residual stream is the running vector. Every layer reads it and writes an update; nothing is overwritten, so late layers can still use the original token.</p>
 				<div class="tm-step-formula" data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)"></div>
-	</section>
+				<details class="tm-step-detail" id="tm-detail-residual"><summary>The residual stream in detail</summary><div class="tm-step-detail-body"><p>Each sublayer computes an update and adds it to the running vector: x_{n+1} = x_n + layer_{n+1}(x_n). Nothing is overwritten, so the original token stays available and gradients have a short path back.</p><p>The per-layer residual preview above shows how much attention and the FFN write for each token. The last layer's level 2 also shows the final h_last vector.</p></div></details></div>
+			</section>
 	<section class="tm-step">
-		<h3>7 · Unembed</h3>
-		<p>The final vector is compared with every vocabulary embedding. The bars are the model's shortlist for the next token.</p>
-		<canvas class="tm-step-canvas" id="tm-step-unembed" aria-label="Top next-token logits"></canvas>
+				<div class="tm-step-head">
+					<h3>7 · Unembed</h3>
+					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
+				</div>
+				<p>The final vector is compared with every vocabulary embedding. The bars are the model's shortlist for the next token.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-unembed" aria-label="Top next-token logits"></canvas>
 				<p class="tm-step-more">The final vector is compared with every vocabulary embedding. Softmax turns the scores into probabilities; a decoding rule chooses one token.</p>
 				<div class="tm-step-formula" data-tex="p = \operatorname{softmax}(h_L W_U^\top)"></div>
-	</section>
+				<div class="tm-unembed-controls">
+					<label class="tm-unembed-temp">Temperature <input type="range" id="tm-unembed-temp" min="0.1" max="2" step="0.1" value="1"><output id="tm-unembed-temp-out">1.0</output></label>
+					<div class="tm-unembed-tokens" id="tm-unembed-tokens" role="group" aria-label="Append a token"></div>
+				</div>
+				<div class="tm-unembed-topk-row">
+					<label class="tm-unembed-topk">Top-k <input type="range" id="tm-unembed-topk" min="1" max="20" step="1" value="5"><output id="tm-unembed-topk-out">5</output></label>
+					<button type="button" class="tm-unembed-sample" id="tm-unembed-sample">Sample</button>
+					<span class="tm-unembed-sample-out" id="tm-unembed-sample-out"></span>
+				</div>
+				<div class="tm-unembed-sentence-wrap">
+					<span class="tm-unembed-sentence-label">Tokenized input</span>
+					<div class="tm-unembed-sentence" id="tm-unembed-sentence"></div>
+				</div>
+				<details class="tm-step-detail"><summary>From vectors to words</summary><div class="tm-step-detail-body"><p>The final vector is multiplied by the unembedding matrix, producing one logit per vocabulary entry. Softmax turns the logits into probabilities; temperature sharpens or flattens the distribution.</p><p>The output section below lets you change the temperature and click tokens to append them. The layer cards show the logit lens for every layer.</p></div></details></div>
+			</section>
 </div>
+<script>
+(function () {
+	"use strict";
+	function movePrep() {
+		var source = document.getElementById('tm-prep-source');
+		if (!source) return;
+		var targets = {
+			tokenize: document.getElementById('tm-detail-tokenize'),
+			embed: document.getElementById('tm-detail-embed'),
+			position: document.getElementById('tm-detail-position'),
+			residual: document.getElementById('tm-detail-residual')
+		};
+		if (!targets.tokenize) return;
+		function body(key) {
+			var target = targets[key];
+			return target ? target.querySelector('.tm-step-detail-body') : null;
+		}
+		Array.prototype.slice.call(source.children).forEach(function (node) {
+			var text = (node.textContent || '').toLowerCase();
+			var id = node.id || '';
+			var target = 'tokenize';
+			if (id === 'transformer-viz-bpe' || text.indexOf('tokenization') >= 0 || text.indexOf('preparing the input') >= 0) target = 'tokenize';
+			else if (id === 'transformer-plotly-space' || (node.classList && node.classList.contains('transformer-viz-card')) || text.indexOf('embedding & the feature space') >= 0 || text.indexOf('one word is a vector') >= 0) target = 'embed';
+			else if (id.indexOf('transformer-pe-') === 0 || text.indexOf('positional encoding') >= 0 || text.indexOf('does positional encoding') >= 0) target = 'position';
+			else if (text.indexOf('the residual stream') >= 0 || text.indexOf('decoder-only architecture') >= 0) target = 'residual';
+			var dest = body(target);
+			if (dest) dest.appendChild(node);
+		});
+		source.remove();
+		window.dispatchEvent(new Event('resize'));
+		setTimeout(function () {
+			if (window.Plotly && Plotly.Plots) {
+				document.querySelectorAll('.js-plotly-plot').forEach(function (el) { Plotly.Plots.resize(el); });
+			}
+		}, 250);
+	}
+	function start() { setTimeout(movePrep, 1400); setTimeout(movePrep, 2800); }
+	if (document.readyState === 'complete') start();
+	else window.addEventListener('load', start);
+})();
+</script>
 <script src="transformer_steps.js?v=<?php echo filemtime(__DIR__ . '/transformer_steps.js'); ?>"></script>
 <script>
 (function () {
@@ -293,6 +376,7 @@ with the full formulas one level deeper.
 })();
 </script>
 
+<div id="tm-prep-source" style="position:absolute;left:-10000px;top:0;width:100%;" aria-hidden="true">
 <div class="md" id="step-input">
 ## Preparing the Input
 
@@ -497,6 +581,8 @@ This architecture is governed by the \cite[Information Bottleneck principle]{tis
 
 </div>
 
+
+</div>
 <div class="md" data-mathlevel="65" id="step-attention">
 ## Attention: Letting Tokens Talk
 

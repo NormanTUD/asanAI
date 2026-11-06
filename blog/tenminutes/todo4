@@ -1,0 +1,11 @@
+intuition:
+
+DONE "Kontext zieht das Wort an seinen Platz": schreib auch darüber dass man nicht nur einen solchen head hat, sondern hunderte, die auf alles mögliche achten können, über die gesamte länge des kontextes. jeder davon hat exakt eine einheit aufmerksamkeit, wenn er ein wort zu 80% beachtet, bleiben nur noch 20% die er auf alle anderen worte dann verteilen muss. das erlaubt dem system, sich schon irgendwie festzulegen, aber dabei dynamisch zu sein.
+
+DONE entferne "Nutze Geschlecht und Macht für jede Richtung einzeln", mach vr dem "Bedeutung wird zu Geometrie (Mikolov et al., 2013). Ähnliche Wörter liegen nah" den riesen space weg. geb dem irgendwie struktur, "bedeutung wird zu geometrie" als überschrift. mach geschlecht und macht weg. schreibe davon dass worte und ganze sätze als punkte in einem hochdimensionalem raum eine mannigfaltigkeit bietet, und dass die relationen untereinander so stark ähnlich sind dass man sie für übersetzung benutzen kann, indem man die pfade zur transformation des einen zum anderen findet. das erlauben dann die FFN zB im transformer. zeige dann die demo. " Aus den Wörtern (Tokens) und ihrer Lage zueinander lassen sich Übersetzungen ableiten, allein aus diesen Relationen. In echten Modellen ist das nicht nur komplexer, weil der Raum hochdimensional ist, sondern auch, weil es Tokens sind und keine ganzen Wörter. Was du siehst, sind sogenannte Mannigfaltigkeiten: Räume, in denen die Wortpunkte liegen. In der Nähe jedes Punktes sehen sie flach aus wie eine Ebene, als Ganzes können sie aber gekrümmt sein, ähnlich wie die Erdoberfläche für jemanden, der darauf steht. " webe das mit in den neuen text da oben ein, mach alles darüber. immer überschrift -> text -> demo -> überschrift -> text -> demo -> ...
+
+DONE "PE(pos,2i)=sin⁡(pos⏟Position100002i/d⏟Frequenz)PE(pos,2i+1)=cos⁡(pos100002i/d)⏟jede Dimension bekommt ihre eigene Welle" darum sind nicht gneug space sichtbar. mach das. und untne in der demo: was ist da das d? lass mich das auch einstellen
+
+DONE beim plot Vom flachen Ausschnitt zur 3D-Kurve in der intuition ist die kugel nicht "hinter" den gestrichelten linien wenn man das so dreht dass man von oben drauf guckt statt durch den "schlauch" den das bildet.  das teil muss sich wirklich so verhalten als wäre das ei nreales objekt von anderen realen objekten umgeben
+
+

@@ -3807,6 +3807,9 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 	// Initialize/update trajectory collector
 	initTrajectoryCollector(tokens, displayTokens, d_model, start_h);
 	recordTrajectoryLayerOutput(layerNum, end_h);
+	// Layer 1 is the embedding-to-block step; the user wants no migration
+	// subbox for it. Keep the trajectory data, skip the plot.
+	if (layerNum === 1) return;
 
 	// Determine parent container
 	const parentContainer = getMigrationParentContainer(layerNum, globalContainer);
@@ -5512,30 +5515,48 @@ function ensureLatexDebugDiv(id, plotDiv) {
 function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model, tokenStrings) {
 	const vocabRows = buildVocabTransitionRows(tokens, start_h, end_h, d_model);
 	const ts = tokenStrings || null;
-
-	let stageLabel = 'layer output';
-	const layerMatch = id.match(/migration-layer-(\d+)/);
-	if (layerMatch) {
-		stageLabel = `out layer ${parseInt(layerMatch[1])}`;
-	}
-
-	const hAfterMatrix = matrixToPmatrixLabeled(h_after, ts, stageLabel);
 	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+	const layerMatch = id.match(/migration-layer-(\d+)/);
+	const layerLabel = layerMatch
+		? (isDe ? `Schicht ${parseInt(layerMatch[1], 10)}` : `layer ${parseInt(layerMatch[1], 10)}`)
+		: (isDe ? 'Schicht' : 'layer');
+
+	let stageLabel = isDe ? 'Schicht-Ausgabe' : 'layer output';
+	if (layerMatch) {
+		stageLabel = isDe ? `Ausgabe Schicht ${parseInt(layerMatch[1], 10)}` : `out layer ${parseInt(layerMatch[1], 10)}`;
+	}
+	const hAfterMatrix = matrixToPmatrixLabeled(h_after, ts, stageLabel);
 	const interpNote = isDe
-		? 'Die linke Matrix ist der Hidden State $h_\\text{after}$ nach diesem Layer. Die rechte Gleichung projiziert ihn mit der Vokabular-Matrix $W_\\text{vocab}$ auf Wörter: Sie zeigt, welche Wörter der Layer nahelegt und wie sich diese Repräsentationen verschieben. In der Tabelle stehen gleiche Wörter ohne Prozentwerte; ↑/↓ zeigt, ob die Wahrscheinlichkeit steigt oder fällt, ein Wortwechsel steht als alt → neu. Jede Zeile gehört zu einer Token-Position; die Spalten sind die wahrscheinlichsten Wörter vor und nach der Projektion. Das ist Logit-Lens/Feature Migration und nur zur Interpretation; der Forward-Pass benutzt diese Projektion nicht.'
-		: 'The left matrix is the hidden state $h_\\text{after}$ after this layer. The equation on the right projects it with the vocabulary matrix $W_\\text{vocab}$ onto words: it shows which words the layer suggests and how those representations shift. In the table, unchanged words appear without percentages; ↑/↓ shows whether their probability rises or falls, and a word change appears as old → new. Each row belongs to one token position; the columns are the most likely words before and after the projection. This is logit lens/feature migration and only for interpretation; the forward pass does not use it.';
-	const latexString = `<div style="overflow-x: auto; overflow-y: hidden; max-width: 100%; padding-bottom: 10px;">
-<div style="display:block; margin:6px 0;">$$h_\\text{after} = ${hAfterMatrix}$$</div>
-<p style="font-size:.78rem; color:var(--mn-text-secondary, #475569); margin:8px 0; line-height:1.45;">${interpNote}</p>
-<div style="display:block; margin:6px 0;">$$h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$</div>
-</div>`;
+		? 'Die linke Matrix ist der Hidden State $h_\\text{after}$ nach diesem Layer. Die rechte Gleichung projiziert ihn mit der Vokabular-Matrix $W_\\text{vocab}$ auf Wörter: Sie zeigt, welche Wörter der Layer nahelegt und wie sich diese Repräsentationen verschieben. Das ist Logit-Lens/Feature Migration und nur zur Interpretation; der Forward-Pass benutzt diese Projektion nicht.'
+		: 'The left matrix is the hidden state $h_\\text{after}$ after this layer. The equation on the right projects it with the vocabulary matrix $W_\\text{vocab}$ onto words: it shows which words the layer suggests and how those representations shift. This is logit lens/feature migration and only for interpretation; the forward pass does not use it.';
+
+	function safe(value) {
+		return displayToken(String(value == null ? '' : value))
+			.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+	}
+	function topWords(vec, count) {
+		return tlab_get_top_vocab_list(vec, d_model).slice(0, count);
+	}
+	function chip(item, color) {
+		const pct = Math.max(0, Math.min(100, Math.round((item.prob || 0) * 100)));
+		return `<span class="tm-logit-chip" style="--tm-logit-color:${color}"><span class="tm-logit-word">${safe(item.word)}</span><span class="tm-logit-pct">${pct}%</span><i style="width:${pct}%"></i></span>`;
+	}
+	const rows = tokens.map((_, tIdx) => {
+		const before = topWords(start_h[tIdx], 3);
+		const after = topWords(end_h[tIdx], 3);
+		const label = ts && ts[tIdx] ? displayToken(ts[tIdx]) : displayToken(tlab_get_top_word_only(h_after[tIdx]));
+		return `<div class="tm-logit-row"><span class="tm-logit-token">${safe(label)}</span><div class="tm-logit-side">${before.map(function (w) { return chip(w, 'var(--tm-blue)'); }).join('')}</div><span class="tm-logit-arrow">→</span><div class="tm-logit-side">${after.map(function (w) { return chip(w, 'var(--tm-green)'); }).join('')}</div></div>`;
+	}).join('');
+
+	const compact = `<div class="tm-logit-lens"><div class="tm-logit-head"><span>${isDe ? 'Token' : 'token'}</span><span>${isDe ? 'vorher' : 'before'}</span><span>${isDe ? 'nachher' : 'after'}</span></div>${rows}</div>`;
+	const full = `<details class="tm-logit-full"><summary>${isDe ? 'Vollständige Logit-Lens-Matrix' : 'Full logit-lens matrix'}</summary><p class="tm-logit-note">${interpNote}</p><div style="overflow-x:auto; padding:8px 0;">$$h_\\text{after} = ${hAfterMatrix}$$</div><div style="overflow-x:auto; padding:8px 0;">$$h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$</div></details>`;
+	const html = `<div class="tm-logit-wrap"><div class="tm-logit-title">${isDe ? 'Logit-Linse · ' : 'Logit lens · '}${layerLabel}</div>${compact}${full}</div>`;
 
 	const latexDiv = ensureLatexDebugDiv(id, plotDiv);
-
-	if (latexDiv._lastLatexHash === latexString) return;
-	latexDiv._lastLatexHash = latexString;
-
-	heightLockedMathUpdate([latexDiv], [latexString]);
+	if (latexDiv._lastLatexHash === html) return;
+	latexDiv._lastLatexHash = html;
+	heightLockedMathUpdate([latexDiv], [html]);
 }
 
 function tlab_get_top_word_only(h_vec) {
@@ -7331,7 +7352,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	let stack = container.querySelector('.unified-layer-stack');
 	if (!stack) {
 		stack = document.createElement('div');
-		stack.className = 'unified-layer-stack';
+		stack.className = 'unified-layer-stack lg-widescroll';
 		container.appendChild(stack);
 	}
 
@@ -7339,6 +7360,26 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	if (document.getElementById(`${prefix}-card`)) return;
 
 	const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+	if (!container.querySelector('.tm-layer-toolbar')) {
+		const toolbar = document.createElement('div');
+		toolbar.className = 'tm-layer-toolbar';
+		const collapseAll = document.createElement('button');
+		collapseAll.type = 'button';
+		collapseAll.className = 'tm-layer-collapse-all';
+		collapseAll.textContent = isDe ? 'Alle Schichten einklappen' : 'Collapse all layers';
+		collapseAll.addEventListener('click', function () {
+			container.querySelectorAll('.tm-layer-card').forEach(function (card) {
+				const body = card.querySelector('.tm-layer-body');
+				const head = card.querySelector('.tm-layer-head');
+				if (body) body.hidden = true;
+				if (head) head.setAttribute('aria-expanded', 'false');
+				card.classList.remove('is-open');
+				card.querySelectorAll('.tm-layer-subbox').forEach(function (sub) { sub.open = false; });
+			});
+		});
+		toolbar.appendChild(collapseAll);
+		container.insertBefore(toolbar, stack);
+	}
 	const card = document.createElement('section');
 	card.id = `${prefix}-card`;
 	card.className = 'tm-layer-card';
@@ -7353,44 +7394,49 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 
 	const preview = document.createElement('div');
 	preview.className = 'tm-layer-preview';
-	preview.innerHTML = `<canvas id="${prefix}-residual-canvas" data-layer-idx="${layerIndex}" class="layer-residual-canvas" aria-label="${isDe ? 'Residual-Stream-Updates dieser Schicht pro Token' : 'Residual stream updates for this layer, per token'}"></canvas>`;
+	preview.innerHTML = `<canvas id="${prefix}-signal-canvas" data-layer-idx="${layerIndex}" class="layer-signal-canvas" aria-label="${isDe ? 'Signal und Transformation dieser Schicht, pro Token und Dimension' : 'Signal and transformation in this layer, per token and dimension'}"></canvas>`;
 	card.appendChild(preview);
+
+	const migration = layerIndex > 0 ? `
+	<details class="tm-layer-subbox" data-sub="migration">
+		<summary>${isDe ? 'Wohin die Punkte wandern' : 'Where the points move'}</summary>
+		<div class="tm-layer-subbox-body">
+			<p class="tm-level-text">${isDe ? 'Diese Schicht liest den laufenden Vektor und schreibt ein Update. Die Pfeile zeigen die Token-Vektoren vor dieser Schicht (grau) und danach (farbig), auf zwei Hauptkomponenten projiziert. Der Residual-Stream addiert das Update zum alten Vektor; nichts wird überschrieben.' : 'This layer reads the running vector and writes an update. The arrows show the token vectors before this layer (grey) and after it (coloured), projected onto two principal components. The residual stream adds the update to the old vector; nothing is overwritten.'}</p>
+			<canvas id="${prefix}-migration-canvas" data-layer-idx="${layerIndex}" class="tm-migration-canvas" aria-label="${isDe ? 'Pfeile zeigen, wohin sich die Token-Vektoren in dieser Schicht bewegen' : 'Arrows show where the token vectors move in this layer'}"></canvas>
+			<div id="${prefix}-migration-container" class="tm-migration-detail">
+				<p class="migration-parallel-note">${isDe ? 'Parallele Koordinaten: Jede Linie ist ein Token, jede senkrechte Achse eine Dimension. Der Weg der Linie zeigt, wie sich der Vektor des Tokens von Schicht zu Schicht verändert; so siehst du alle Dimensionen auf einmal, ohne sie auf zwei Achsen zu projizieren.' : 'Parallel coordinates: each line is one token, each vertical axis is one dimension. The path shows how the token vector changes from layer to layer, so you can see all dimensions at once without projecting them onto two axes.'}</p>
+			</div>
+		</div>
+	</details>` : '';
 
 	const body = document.createElement('div');
 	body.className = 'tm-layer-body';
 	body.hidden = true;
-	body.innerHTML = `
-    <div class="tm-level-rail" role="tablist" aria-label="${isDe ? 'Detailstufe' : 'Detail level'}">
-	<button type="button" class="tm-level-step is-active" data-level="0" role="tab" aria-selected="true">${isDe ? 'Wohin die Punkte wandern' : 'Where the points move'}</button>
-	<button type="button" class="tm-level-step" data-level="1" role="tab" aria-selected="false">Attention</button>
-	<button type="button" class="tm-level-step" data-level="2" role="tab" aria-selected="false">${isDe ? 'Formeln' : 'Formulas'}</button>
-    </div>
-    <div class="tm-level-pane" data-level="0">
-	<p class="tm-level-text">${isDe ? 'Diese Schicht liest den laufenden Vektor und schreibt ein Update. Die Pfeile zeigen die Token-Vektoren vor dieser Schicht (grau) und danach (farbig), auf zwei Hauptkomponenten projiziert. Der Residual-Stream addiert das Update zum alten Vektor; nichts wird überschrieben. Unten stehen dieselben Vektoren als parallele Koordinaten, damit du alle Dimensionen auf einmal siehst.' : 'This layer reads the running vector and writes an update. The arrows show the token vectors before this layer (grey) and after it (coloured), projected onto two principal components. The residual stream adds the update to the old vector; nothing is overwritten. Below, the same vectors appear as parallel coordinates, so you can see every dimension at once.'}</p>
-	<canvas id="${prefix}-migration-canvas" data-layer-idx="${layerIndex}" class="tm-migration-canvas" aria-label="${isDe ? 'Pfeile zeigen, wohin sich die Token-Vektoren in dieser Schicht bewegen' : 'Arrows show where the token vectors move in this layer'}"></canvas>
-	<div id="${prefix}-migration-container" class="tm-migration-detail">
-	    <p class="migration-parallel-note">${isDe ? 'Parallele Koordinaten: Jede Linie ist ein Token, jede senkrechte Achse eine Dimension. Der Weg der Linie zeigt, wie sich der Vektor des Tokens von Schicht zu Schicht verändert; so siehst du alle Dimensionen auf einmal, ohne sie auf zwei Achsen zu projizieren.' : 'Parallel coordinates: each line is one token, each vertical axis is one dimension. The path shows how the token vector changes from layer to layer, so you can see all dimensions at once without projecting them onto two axes.'}</p>
-	</div>
-    </div>
-    <div class="tm-level-pane" data-level="1" hidden>
-	<p class="tm-level-text">${isDe ? 'Attention lässt jedes Token die anderen lesen. Die Query fragt, was es sucht; der Key sagt, was ein anderes Token anbietet; der Value ist der Inhalt, der bei einem guten Match weitergegeben wird. Die Köpfe laufen parallel, jeder mit einer eigenen Frage. Die Bögen unten sind Attention-Gewichte: Eine dickere Linie trägt mehr Information. Die Tabs zeigen einen Kopf nach dem anderen.' : 'Attention lets every token read the others. The query asks what it is looking for; the key says what another token offers; the value is the content that travels when the match is good. The heads run in parallel, each with its own question. The arcs below are attention weights: a thicker line carries more information. The tabs show one head at a time.'}</p>
-	<p class="unified-layer-hint">${isDe ? 'Klicke auf ein Wort, um zu sehen, worauf es seine Attention richtet.' : 'Click a word to see where it focuses its attention.'}</p>
-	<div id="${prefix}-attention-heads"></div>
-    </div>
-    <div class="tm-level-pane" data-level="2" hidden>
-	<p class="tm-level-text">${isDe ? 'Hier stehen die exakten Matrizen, die diese Schicht gerechnet hat: Pre-LayerNorm, Query-, Key- und Value-Projektionen, die Softmax-Gewichte, der gewichtete Value-Mix, die Ausgabeprojektion, der Residual-Schritt, dann die FFN-Expansion, GELU und die Kompression. Jede Zeile ist eine Token-Position; jede Spalte eine Dimension. Die Formeln sind dieselben wie im Prosa-Teil, nur mit den echten Zahlen dieser Schicht.' : 'Here are the exact matrices this layer computed: pre-LayerNorm, the query, key and value projections, the softmax weights, the weighted value mix, the output projection, the residual add, then the FFN expansion, GELU and compression. Each row is a token position; each column is a dimension. These are the same equations as in the prose, with the real numbers of this layer.'}</p>
-	<div id="${prefix}-formula-body">
-	    <div id="${prefix}-layernorm-viz" class="tm-formula-block"></div>
-	    <div id="${prefix}-concat-viz" class="tm-formula-block"></div>
-	    <div id="${prefix}-h1-final-viz" class="tm-formula-block"></div>
-	    <p class="tm-formula-kicker">${isDe ? 'Feed-Forward-Netz:' : 'Feed-Forward Network:'}</p>
-	    <div id="${prefix}-step-1" class="math_transformer"></div>
-	    <div id="${prefix}-step-2" class="math_transformer"></div>
-	    <div id="${prefix}-step-3" class="math_transformer"></div>
-	    <div id="${prefix}-hlast" class="tm-hlast"></div>
-	</div>
-    </div>
-    `;
+	body.innerHTML = `<div class="tm-layer-subbox-stack">
+	${migration}
+	<details class="tm-layer-subbox" data-sub="attention">
+		<summary>Attention</summary>
+		<div class="tm-layer-subbox-body">
+			<p class="tm-level-text">${isDe ? 'Attention lässt jedes Token die anderen lesen. Die Query fragt, was es sucht; der Key sagt, was ein anderes Token anbietet; der Value ist der Inhalt, der bei einem guten Match weitergegeben wird. Die Köpfe laufen parallel, jeder mit einer eigenen Frage. Die Bögen unten sind Attention-Gewichte: Eine dickere Linie trägt mehr Information.' : 'Attention lets every token read the others. The query asks what it is looking for; the key says what another token offers; the value is the content that travels when the match is good. The heads run in parallel, each with its own question. The arcs below are attention weights: a thicker line carries more information.'}</p>
+			<canvas id="${prefix}-attention-lines" class="tm-layer-attention-lines" aria-label="${isDe ? 'Attention-Linien dieses Layers' : 'Attention lines for this layer'}"></canvas>
+			<p class="unified-layer-hint">${isDe ? 'Klicke auf ein Wort, um zu sehen, worauf es seine Attention richtet.' : 'Click a word to see where it focuses its attention.'}</p>
+			<div id="${prefix}-attention-heads"></div>
+		</div>
+	</details>
+	<details class="tm-layer-subbox" data-sub="ffn">
+		<summary>${isDe ? 'FFN / MLP' : 'FFN / MLP'}</summary>
+		<div class="tm-layer-subbox-body">
+			<p class="tm-level-text">${isDe ? 'Hier stehen die exakten Matrizen dieser Schicht: Pre-LayerNorm, Query-, Key- und Value-Projektionen, die Softmax-Gewichte, der gewichtete Value-Mix, die Ausgabeprojektion, der Residual-Schritt, dann die FFN-Expansion, GELU und die Kompression. Jede Zeile ist eine Token-Position; jede Spalte eine Dimension.' : 'Here are the exact matrices of this layer: pre-LayerNorm, the query, key and value projections, the softmax weights, the weighted value mix, the output projection, the residual add, then the FFN expansion, GELU and compression. Each row is a token position; each column is a dimension.'}</p>
+			<canvas id="${prefix}-ffn-heatmap" class="tm-layer-ffn-heatmap" aria-label="${isDe ? 'FFN-Aktivierungen für alle Tokens in dieser Schicht' : 'FFN activations for all tokens in this layer'}"></canvas>
+			<div id="${prefix}-formula-body">
+				<details class="tm-formula-step" open><summary>${isDe ? 'LayerNorm' : 'LayerNorm'}</summary><div id="${prefix}-layernorm-viz" class="tm-formula-block"></div></details>
+				<details class="tm-formula-step"><summary>${isDe ? 'Attention-Ausgabe + Residual' : 'Attention output + residual'}</summary><div id="${prefix}-concat-viz" class="tm-formula-block"></div><div id="${prefix}-h1-final-viz" class="tm-formula-block"></div></details>
+				<details class="tm-formula-step"><summary>${isDe ? 'FFN / MLP' : 'FFN / MLP'}</summary><p class="tm-formula-kicker">${isDe ? 'Feed-Forward-Netz:' : 'Feed-Forward Network:'}</p><div id="${prefix}-step-1" class="math_transformer"></div><div id="${prefix}-step-2" class="math_transformer"></div><div id="${prefix}-step-3" class="math_transformer"></div></details>
+				<details class="tm-formula-step"><summary>h_last</summary><div id="${prefix}-hlast" class="tm-hlast"></div></details>
+			</div>
+		</div>
+	</details>
+	</div>`;
 	card.appendChild(body);
 
 	head.addEventListener('click', function () {
@@ -7398,37 +7444,51 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 		body.hidden = !open;
 		head.setAttribute('aria-expanded', String(open));
 		card.classList.toggle('is-open', open);
-		if (open) setLayerLevel(layerIndex, 0);
 	});
-	body.querySelectorAll('.tm-level-step').forEach(function (btn) {
-		btn.addEventListener('click', function () {
-			setLayerLevel(layerIndex, parseInt(btn.dataset.level, 10));
+	body.querySelectorAll('.tm-layer-subbox').forEach(function (sub) {
+		sub.addEventListener('toggle', function () {
+			if (!sub.open) return;
+			const kind = sub.getAttribute('data-sub');
+			if (kind === 'migration') {
+				renderLayerMigration(layerIndex);
+				renderLayerMigrationPlot(layerIndex);
+			} else if (kind === 'attention') {
+				renderLayerAttentionLines(layerIndex);
+				renderLayerAttention(layerIndex);
+			} else if (kind === 'ffn') {
+				renderLayerFFNHeatmap(layerIndex);
+				renderLayerFormulas(layerIndex);
+			}
 		});
 	});
 	stack.appendChild(card);
 }
 
-function setLayerLevel(layerIdx, level) {
-	const card = _tmLayerCard(layerIdx);
-	if (!card) return;
-	card.querySelectorAll('.tm-level-step').forEach(function (btn) {
-		const active = parseInt(btn.dataset.level, 10) === level;
-		btn.classList.toggle('is-active', active);
-		btn.setAttribute('aria-selected', String(active));
-	});
-	card.querySelectorAll('.tm-level-pane').forEach(function (pane) {
-		pane.hidden = parseInt(pane.dataset.level, 10) !== level;
-	});
-	if (level === 0) {
-		if (window.TransformerSteps && window.TransformerSteps.renderLayerMigration) {
-			window.TransformerSteps.renderLayerMigration(`unified-layer-${layerIdx}-migration-canvas`, layerIdx);
-		}
-		renderLayerMigrationPlot(layerIdx);
-	} else if (level === 1) {
-		renderLayerAttention(layerIdx);
-	} else if (level === 2) {
-		renderLayerFormulas(layerIdx);
+function renderLayerMigration(layerIdx) {
+	const canvas = document.getElementById(`unified-layer-${layerIdx}-migration-canvas`);
+	if (canvas && window.TransformerSteps && window.TransformerSteps.renderLayerMigration) {
+		window.TransformerSteps.renderLayerMigration(canvas.id, layerIdx);
 	}
+}
+
+function refreshOpenLayerSubboxes() {
+	document.querySelectorAll('.tm-layer-subbox[open]').forEach(function (sub) {
+		const card = sub.closest('.tm-layer-card');
+		if (!card) return;
+		const idx = parseInt(card.dataset.layerIdx, 10);
+		if (isNaN(idx)) return;
+		const kind = sub.getAttribute('data-sub');
+		if (kind === 'migration') {
+			renderLayerMigration(idx);
+			renderLayerMigrationPlot(idx);
+		} else if (kind === 'attention') {
+			renderLayerAttentionLines(idx);
+			renderLayerAttention(idx);
+		} else if (kind === 'ffn') {
+			renderLayerFFNHeatmap(idx);
+			renderLayerFormulas(idx);
+		}
+	});
 }
 
 function openUnifiedLayer(layerIdx) {
@@ -7439,12 +7499,25 @@ function openUnifiedLayer(layerIdx) {
 	if (body) body.hidden = false;
 	if (head) head.setAttribute('aria-expanded', 'true');
 	card.classList.add('is-open');
-	setLayerLevel(layerIdx, 0);
 }
 
 window.showUnifiedLayer = function (layerIdx) {
 	openUnifiedLayer(layerIdx);
 };
+
+function renderLayerAttentionLines(layerIdx) {
+	const canvas = document.getElementById(`unified-layer-${layerIdx}-attention-lines`);
+	if (canvas && window.TransformerSteps && window.TransformerSteps.renderLayerAttentionLines) {
+		window.TransformerSteps.renderLayerAttentionLines(canvas.id, layerIdx);
+	}
+}
+
+function renderLayerFFNHeatmap(layerIdx) {
+	const canvas = document.getElementById(`unified-layer-${layerIdx}-ffn-heatmap`);
+	if (canvas && window.TransformerSteps && window.TransformerSteps.renderLayerFFNHeatmap) {
+		window.TransformerSteps.renderLayerFFNHeatmap(canvas.id, layerIdx);
+	}
+}
 
 function renderLayerAttention(layerIdx) {
 	const registryEntry = attentionRenderRegistry.get('unified-attention-engine');
@@ -7882,8 +7955,7 @@ if (!window.__tmLayerCardListener) {
 	window.addEventListener('tm:transformer-data', function () {
 		document.querySelectorAll('.tm-layer-card.is-open').forEach(function (card) {
 			var idx = parseInt(card.dataset.layerIdx, 10);
-			var active = card.querySelector('.tm-level-step.is-active');
-			if (!isNaN(idx) && active) setLayerLevel(idx, parseInt(active.dataset.level, 10));
+			if (!isNaN(idx)) refreshOpenLayerSubboxes();
 		});
 	});
 }

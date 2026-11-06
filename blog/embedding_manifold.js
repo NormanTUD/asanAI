@@ -604,6 +604,244 @@
 				setMode: setMode,
 				redraw: redraw
 			};
+		},
+		renderLine: function (hostId, options) {
+			var host = document.getElementById(hostId);
+			var data = options && options.data ? options.data : window.TM_EMBEDDING_MANIFOLD;
+			if (!host || !data) return null;
+			var de = DE();
+			var mode = options && options.mode === "token" ? "token" : "combined";
+			var payload = options && options.payload ? options.payload : (data.modes ? data.modes[mode] : data);
+			var scaled = centerScale(payload.coords);
+			var state = {
+				points: scaled.points,
+				radius: scaled.radius,
+				rotX: -0.35,
+				rotY: 0.65,
+				zoom: 1,
+				drag: null,
+				hover: -1,
+				api: null
+			};
+			host.innerHTML = "";
+			host.style.position = "relative";
+			var canvas = document.createElement("canvas");
+			canvas.className = "em-canvas";
+			canvas.setAttribute("tabindex", "0");
+			canvas.setAttribute("role", "img");
+			canvas.setAttribute("aria-label", (options && options.ariaLabel) || (de
+				? "Dreidimensionale Projektion der GPT-2-Token-Embeddings eines kurzen Textes, verbunden in Leserichtung"
+				: "Three-dimensional projection of the GPT-2 token embeddings of a short text, connected in reading order"));
+			host.appendChild(canvas);
+
+			var hint = document.createElement("p");
+			hint.className = "em-hint";
+			hint.textContent = (options && options.hint) || (de
+				? "Ziehe zum Drehen, scrolle zum Zoomen. Die Linie verbindet die Tokens in Leserichtung; die 3D-Lage ist eine PCA-Projektion."
+				: "Drag to rotate, scroll to zoom. The line connects the tokens in reading order; the 3D layout is a PCA projection.");
+			host.appendChild(hint);
+
+			function rotatePoint(p) {
+				var cy = Math.cos(state.rotY), sy = Math.sin(state.rotY);
+				var cx = Math.cos(state.rotX), sx = Math.sin(state.rotX);
+				var x1 = p[0] * cy + p[2] * sy;
+				var z1 = -p[0] * sy + p[2] * cy;
+				var y1 = p[1] * cx - z1 * sx;
+				var z2 = p[1] * sx + z1 * cx;
+				return [x1, y1, z2];
+			}
+			function project(p, w, h) {
+				var q = rotatePoint(p);
+				var scale = Math.min(w, h) * 0.42 * state.zoom / (state.radius || 1);
+				var perspective = 3.4;
+				var factor = perspective / (perspective + q[2]);
+				return {
+					x: w / 2 + q[0] * scale * factor,
+					y: h / 2 - q[1] * scale * factor,
+					z: q[2],
+					s: factor
+				};
+			}
+			function colorFor(index) {
+				var c = palette();
+				var stops = [c.blue, c.sky, c.green, c.lime, c.gold, c.lilac];
+				var t = index / Math.max(1, data.tokens.length - 1) * (stops.length - 1);
+				var i = Math.floor(t);
+				var f = t - i;
+				function hex(v) {
+					v = v.replace("#", "");
+					if (v.length === 3) v = v[0] + v[0] + v[1] + v[1] + v[2] + v[2];
+					return [parseInt(v.slice(0, 2), 16), parseInt(v.slice(2, 4), 16), parseInt(v.slice(4, 6), 16)];
+				}
+				var a = hex(stops[i]);
+				var b = hex(stops[Math.min(stops.length - 1, i + 1)]);
+				return "rgb(" + Math.round(a[0] + (b[0] - a[0]) * f) + "," +
+					Math.round(a[1] + (b[1] - a[1]) * f) + "," +
+					Math.round(a[2] + (b[2] - a[2]) * f) + ")";
+			}
+			function drawGrid(ctx, w, h) {
+				var c = palette();
+				var R = state.radius * 1.12;
+				var n = 4;
+				function seg(a, b) {
+					var p = project(a, w, h);
+					var q = project(b, w, h);
+					ctx.moveTo(p.x, p.y);
+					ctx.lineTo(q.x, q.y);
+				}
+				ctx.save();
+				ctx.strokeStyle = c.line;
+				ctx.lineWidth = 1;
+				ctx.globalAlpha = 0.45;
+				for (var i = 0; i <= n; i++) {
+					var t = -R + (2 * R) * i / n;
+					ctx.beginPath(); seg([-R, -R, t], [R, -R, t]); ctx.stroke();
+					ctx.beginPath(); seg([t, -R, -R], [t, -R, R]); ctx.stroke();
+				}
+				ctx.globalAlpha = 0.7;
+				ctx.lineWidth = 1.5;
+				ctx.strokeStyle = c.blue;
+				ctx.beginPath(); seg([-R, 0, 0], [R, 0, 0]); ctx.stroke();
+				ctx.strokeStyle = c.green;
+				ctx.beginPath(); seg([0, -R, 0], [0, R, 0]); ctx.stroke();
+				ctx.strokeStyle = c.sky;
+				ctx.beginPath(); seg([0, 0, -R], [0, 0, R]); ctx.stroke();
+				ctx.restore();
+				ctx.fillStyle = c.muted;
+				ctx.font = "600 9px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "center";
+				var px = project([R, 0, 0], w, h), py = project([0, R, 0], w, h), pz = project([0, 0, R], w, h);
+				ctx.fillText("x", px.x + 8, px.y - 5);
+				ctx.fillText("y", py.x + 8, py.y - 5);
+				ctx.fillText("z", pz.x + 8, pz.y - 5);
+			}
+			function draw(ctx, w, h) {
+				var c = palette();
+				ctx.clearRect(0, 0, w, h);
+				if (!state.points.length) return;
+				drawGrid(ctx, w, h);
+				var projected = state.points.map(function (p) { return project(p, w, h); });
+				if (projected.length > 1) {
+					ctx.beginPath();
+					ctx.moveTo(projected[0].x, projected[0].y);
+					for (var i = 1; i < projected.length; i++) {
+						ctx.lineTo(projected[i].x, projected[i].y);
+					}
+					ctx.lineCap = "round";
+					ctx.lineJoin = "round";
+					ctx.lineWidth = 5;
+					ctx.strokeStyle = c.ink;
+					ctx.globalAlpha = 0.35;
+					ctx.stroke();
+					ctx.lineWidth = 2.4;
+					ctx.strokeStyle = c.blue;
+					ctx.globalAlpha = 1;
+					ctx.stroke();
+				}
+				var order = projected.map(function (p, i) { return i; });
+				order.sort(function (a, b) { return projected[b].z - projected[a].z; });
+				order.forEach(function (idx) {
+					var p = projected[idx];
+					var r = (idx === state.hover ? 7 : 4.6) * Math.min(1.25, p.s);
+					var col = colorFor(idx);
+					ctx.beginPath();
+					ctx.arc(p.x, p.y, r + 4, 0, Math.PI * 2);
+					ctx.fillStyle = col;
+					ctx.globalAlpha = 0.14;
+					ctx.fill();
+					ctx.globalAlpha = 1;
+					ctx.beginPath();
+					ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+					ctx.fillStyle = col;
+					ctx.fill();
+					ctx.lineWidth = 1.4;
+					ctx.strokeStyle = c.paper;
+					ctx.stroke();
+				});
+				order.forEach(function (idx) {
+					var p = projected[idx];
+					var label = labelFor(data.tokens[idx], idx, de);
+					ctx.font = "600 " + (idx === state.hover ? 12 : 10) + "px Barlow, system-ui, sans-serif";
+					ctx.textAlign = "center";
+					ctx.textBaseline = "middle";
+					var tw = ctx.measureText(label).width;
+					ctx.globalAlpha = idx === state.hover ? 1 : 0.92;
+					ctx.fillStyle = c.paper;
+					ctx.fillRect(p.x - tw / 2 - 4, p.y - 22, tw + 8, 15);
+					ctx.globalAlpha = 1;
+					ctx.fillStyle = idx === state.hover ? c.ink : c.muted;
+					ctx.fillText(label, p.x, p.y - 15);
+				});
+				if (state.hover >= 0) {
+					var token = data.tokens[state.hover];
+					var info = "Token " + norm(token.display) +
+						" · " + (de ? "Position " : "position ") + (token.position + 1) +
+						" · id " + token.id;
+					ctx.font = "600 10px Barlow, system-ui, sans-serif";
+					ctx.textAlign = "left";
+					ctx.fillStyle = c.muted;
+					ctx.fillText(info, 12, h - 12);
+				}
+			}
+			function redraw() { if (state.api) state.api.redraw(); }
+			canvas.addEventListener("pointerdown", function (event) {
+				state.drag = { x: event.clientX, y: event.clientY, rotX: state.rotX, rotY: state.rotY };
+				canvas.setPointerCapture(event.pointerId);
+				canvas.style.cursor = "grabbing";
+			});
+			canvas.addEventListener("pointermove", function (event) {
+				if (state.drag) {
+					state.rotY = state.drag.rotY + (event.clientX - state.drag.x) * 0.008;
+					state.rotX = state.drag.rotX + (event.clientY - state.drag.y) * 0.008;
+					redraw();
+					return;
+				}
+				var rect = canvas.getBoundingClientRect();
+				var x = event.clientX - rect.left;
+				var y = event.clientY - rect.top;
+				var best = -1, bestDist = 22;
+				state.points.forEach(function (p, idx) {
+					var pr = project(p, rect.width, rect.height);
+					var d = Math.hypot(pr.x - x, pr.y - y);
+					if (d < bestDist) { bestDist = d; best = idx; }
+				});
+				if (best !== state.hover) { state.hover = best; redraw(); }
+			});
+			canvas.addEventListener("pointerup", function () {
+				state.drag = null;
+				canvas.style.cursor = "grab";
+			});
+			canvas.addEventListener("pointercancel", function () {
+				state.drag = null;
+				canvas.style.cursor = "grab";
+			});
+			canvas.addEventListener("pointerleave", function () {
+				state.hover = -1;
+				redraw();
+			});
+			canvas.addEventListener("wheel", function (event) {
+				event.preventDefault();
+				state.zoom = Math.max(0.45, Math.min(2.8, state.zoom * (event.deltaY > 0 ? 0.92 : 1.08)));
+				redraw();
+			}, { passive: false });
+			canvas.addEventListener("keydown", function (event) {
+				var handled = true;
+				if (event.key === "ArrowLeft") state.rotY -= 0.08;
+				else if (event.key === "ArrowRight") state.rotY += 0.08;
+				else if (event.key === "ArrowUp") state.rotX += 0.08;
+				else if (event.key === "ArrowDown") state.rotX -= 0.08;
+				else if (event.key === "+" || event.key === "=") state.zoom = Math.min(2.8, state.zoom * 1.08);
+				else if (event.key === "-") state.zoom = Math.max(0.45, state.zoom / 1.08);
+				else handled = false;
+				if (handled) { event.preventDefault(); redraw(); }
+			});
+			canvas.style.cursor = "grab";
+			state.api = initCanvas(canvas, draw);
+			host.setAttribute("data-demo-ready", "1");
+			var redrawTheme = function () { state.api.redraw(); };
+			window.addEventListener("tm:theme", redrawTheme);
+			if (window.__MN_DARK && window.__MN_DARK.onChange) window.__MN_DARK.onChange(redrawTheme);
+			return { redraw: redraw };
 		}
 	};
 

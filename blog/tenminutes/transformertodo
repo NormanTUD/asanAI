@@ -1,0 +1,151 @@
+transformertodo — Transformer-Seiten
+====================================
+
+Gilt für tenminutes/transformer.php und ../transformer.php.
+Ten Minutes ist bilingual (EN/DE); die Elternseite ist englisch.
+Nichts darf verloren gehen: jede Formel und jede Information muss durch
+genug Klicks wieder erreichbar sein.
+
+Rolle: visueller Lehrer. Die Visualisierungen sollen so schön und klar sein,
+dass man sich wundert, warum man das vorher nicht so gesehen hat. Viel Liebe
+und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
+
+## Seitenstruktur
+
+- [x] Jeder Schritt (1 · Tokenize bis 7 · Unembed) ist eine einklappbare
+      Vollbreiten-Box: Überschrift → kurzer Text → Formel → Live-Demo.
+      Die Box lässt sich immer wieder zu- und aufklappen.
+- [x] In den Boxen gibt es einklappbare Unterpunkte für die Details, die
+      früher in „Preparing the Input“ / „Inside the block“ standen.
+- [x] „Preparing the Input“ liegt in den Tokenize-/Embed-/Position-Boxen:
+      Tokenizer-Demo in Tokenize, Embedding-Raum + Vektorrechnung in Embed,
+      Positionswellen + Shift-Plots in Position. Jeweils ausklappbar.
+- [x] „5 · Feed-forward“ hat ausklappbare Unterpunkte.
+      Attention, Residual und Unembed haben ebenfalls welche.
+- [x] Die Schritt-Boxen nutzen 100 % des Containers (nicht 100vw).
+- [x] Den Code-/Output-Block nach „GPT.forward …“ in die Boxen verschoben:
+      Code-Tabs + Erklärung in „The model in code“, „Why the Diagonal“ in
+      Attend, MoE in FFN, „From Vectors to Words“ + Optionen in Unembed.
+- [ ] Reihenfolge: Text → Demo/Mathe → Text → Demo/Mathe, nicht ein langer
+      Prosablock vor allen Demos.
+- [x] „Alle Schichten einklappen“-Button; Standard ist eingeklappt, so dass
+      man nur die Signal-Übersichten sieht.
+
+## Layer-Karten
+
+- [x] Layer untereinander, nicht als Tabs.
+- [x] Jede Layer-Karte enthält nacheinander gruppierte Unterboxen:
+      Layer 1 → Attention → FFN/MLP → Layer 2 → Attention → FFN/MLP → …
+- [x] Layer 1 hat keine „Wohin die Punkte wandern“-Box; Attention + FFN/MLP.
+- [x] Ab Layer 2: „Wohin die Punkte wandern“ → Attention → FFN/MLP.
+- [x] Die Unterboxen sind nativ einklappbar; keine tiefen Accordion-Kaskaden.
+- [x] Pro Layer ein Signal-Übersichtsbild (Balken pro Token: Eingabe,
+      Attention-Update, FFN-Update), sichtbar wenn alle Layer eingeklappt sind.
+- [x] Token Trajectory bleibt sichtbar, auch wenn nichts aufgeklappt ist.
+- [ ] Die Signale zusätzlich als echten 3D-Plot für mehrere Tokens anbieten
+      (optional; die Balken-Übersicht ist der Default).
+- [x] Die Layer-Inhalte aus ffn-equations-container sind in den
+      aufeinanderfolgenden Layer-Unterboxen (Attention → Residual/LayerNorm → FFN/MLP).
+
+## Visualisierungen
+
+- [x] Jeder Schritt hat eine eigene Live-Canvas-Demo mit echten Daten.
+- [x] 1D/2D/3D roh, ohne PCA; PCA nur bei d > 3 und klar benannt.
+- [x] „Alle Dimensionen“ erscheint nur, wenn PCA verwendet wird.
+      Bis d = 3 gibt es keinen PCA-/„Alle Dimensionen“-Button.
+- [x] 3D-Ansichten haben Achsen, Tiefenwirkung und Drag-Rotation.
+- [x] Originaldaten über parallele Koordinaten, wenn PCA verwendet wird.
+- [x] „3 · Position“ zeigt die echten semantischen Vektoren
+      h0 = Token-Embedding + Position (roh bis 3D, sonst PCA). Die Heatmap
+      bleibt die PE-Heatmap.
+- [x] „4 · Attend“ zeigt einen echten Head aus Layer 1; eine Kopf-Auswahl
+      erlaubt jeden Head.
+- [x] „7 · Unembedding“ erlaubt direkt in der Box Token-Klicks und Temperatur.
+- [x] Die riesige Logit-Lens-Matrix ist eine kompakte Token-vorher/nachher-
+      Ansicht; die vollständige Matrix + Erklärung liegen in einem Detail.
+- [x] Die Visualisierungen aus intuition.php werden mit den echten Daten
+      dieses Modells wiederverwendet (Tokenize, Embed, Position, Attention,
+      FFN, Residual, Unembed).
+- [ ] Mehr Details aus intuition.php übernehmen, wo sie hier fehlen
+      (Q/K/V-Schritte, Softmax-Budget, Residual-Balken pro Token).
+- [x] Bei hohen Dimensionen wird der Parallel-Plot über die Modus-Leiste
+      angeboten und im Canvas benannt.
+- [x] „Klicke auf ein Wort …“ oberhalb jeder Attention-Schicht.
+- [x] Formeln erst beim Aufklappen rendern (Layer-Formeln).
+
+## Mathematik und Text
+
+- [ ] `$$…$$`-Formeln dürfen nummeriert werden (optional, noch offen).
+- [x] Inline-`$…$` bleibt inline und wird nicht in eine eigene Zeile gesetzt.
+      Beispiel: „Entry $S_{ij}=q_i^\top k_j$ is a scalar …“ fließt im Absatz.
+- [x] Das „Current h_last = […]“ (letzte Zeile der Ausgabematrix der letzten
+      Schicht) ist in der letzten Layer-Formelstufe eingewoben.
+- [x] Keine Formel und keine Erklärung aus den alten Abschnitten verlieren.
+      Alles ist über die Boxen und Unterpunkte erreichbar.
+- [x] Die Residual-Detailtexte werden in beiden Sprachen gerendert.
+
+## Performance
+
+- [x] Hohe Dimensionen: Formeln, Matrizen, Plotly/ECharts und Attention-DOM
+      erst beim Öffnen/Sichtbarwerden rendern.
+- [x] Layer standardmäßig eingeklappt.
+- [x] Token-Trajectory bei hohen Dimensionen kompakt (Dimensionspaar-Auswahl)
+      statt aller Paare gleichzeitig.
+- [ ] Prüfen, dass kein Renderer beim bloßen Scrollen unnötig rechnet.
+- [ ] Slider-Änderungen debouncen und veraltete Läufe abbrechen.
+
+## Elternseite ../transformer.php
+
+- [x] Dieselben Layer-Karten, Unterboxen und Schritt-Boxen.
+- [x] Dark Mode für die neuen Canvas-/3D-Visualisierungen.
+- [x] Der verschobene „Preparing the Input“-Inhalt wird nach dem DOM-Umzug
+      korrekt gerendert (Tabellen, Inline-Mathe, optionale Blöcke, Demos).
+- [x] Kein doppeltes Rendern, keine leeren Mathe-Platzhalter.
+- [x] Die alten optionalen Blöcke bleiben vollständig erreichbar.
+- [ ] Den Code-/Output-Block nach „GPT.forward“ ebenfalls per DOM-Umzug in
+      die Boxen holen (siehe Seitenstruktur).
+
+## Sprache und Höhe
+
+- [x] Ten Minutes ist bilingual; alle neuen Texte, Labels, Aria-Labels und
+      Canvas-Beschriftungen haben eine deutsche Fassung.
+- [ ] Höhenregel: bei keiner Interaktion darf ein Div seine Höhe ändern.
+      Ausnahmen: Transformer-Seiten und aktiv geöffnete Aufklapp-Elemente.
+- [ ] Height-Monkey-Test über alle Ten-Minutes-Seiten (außer Transformer)
+      laufen lassen und alle Ausreißer fixen.
+- [ ] Den Height-Test als letzte Station in die CI hängen.
+- [ ] Flaggen-Sprachumschalter (?lang bleibt) für alle Seiten.
+
+## Erledigt (Kurzliste)
+
+- DONE Schritt-Boxen Vollbreite, Text → Formel → Canvas, einklappbar.
+- DONE Tokenize/Embed/Position/Attention/FFN/Residual/Unembed mit Unterpunkten.
+- DONE Layer-Unterboxen (Attention → FFN/MLP) statt Tabs; Layer 1 ohne Migration.
+- DONE Signal-Übersicht pro Layer; „Alle Schichten einklappen“.
+- DONE Roh-1D/2D/3D ohne PCA, PCA nur d > 3, parallele Originaldaten.
+- DONE 3D-Achsen, Tiefenwirkung, Drag-Rotation.
+- DONE Position zeigt h0; Attend zeigt echte Heads; Unembed mit Token/Temperatur.
+- DONE Kompakte Logit-Lens-Ansicht mit vollständiger Matrix im Detail.
+- DONE Inline-Mathe bleibt inline; h_last eingewoben.
+- DONE Dark Mode, Scrollbar-Ausgleich, keine Konsolenfehler auf der Elternseite.
+- DONE Stoppschild-Demo geprüft; Sine-Fit-Demo (500 exakte Punkte, Zufallsstart,
+      Auto-Training im Blickfeld, fester roter Stop-Button, keine blauen Punkte).
+
+
+## Zuletzt ergänzt (aktueller Stand)
+
+- DONE „1 · Tokenize“: farbiger BPE-Plot direkt in der Box; keine Extra-Details.
+- DONE „2 · Embedding“: echter transformer-plotly-space-Plot in der Box; die
+      Tabelle/Vektorrechnung bleibt im aufgeklappten Detail.
+- DONE „3 · Position“: transformer-pe-shift-plot ist der Default; die alte
+      Kurve und die Modus-Leiste sind entfernt.
+- DONE „4 · Attend“: echter Head als Linienplot; alle Heads darunter.
+- DONE Layer-Blöcke: Signal rein/raus als Wasserfall pro Token, Attention-
+      Linienplot, FFN-Heatmap für alle Tokens, einzelne Formelblöcke.
+- DONE „6 · Residual“: h0 links, Layer-Updates in der Mitte, hN rechts;
+      klarer, was startet und was die Layer verändern.
+- DONE Token Trajectory als Überblick über den Layer-Boxen.
+- DONE „7 · Unembedding“: Output-Projektion im Detail; Token-Klicks,
+      tokenisierter Satz, Temperature + Top-k + Sample in der Box.
+- DONE „Das Problem war die Warteschlange“ in den Attend-Detailblock verschoben.
+- DONE Duplikate (Token-Builder, alter Temperaturblock) ausgeblendet.

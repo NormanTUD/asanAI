@@ -9,7 +9,6 @@
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 	<link rel="stylesheet" href="../embedding_manifold.css?v=<?php echo filemtime(__DIR__.'/../embedding_manifold.css'); ?>">
 	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
-	<link rel="stylesheet" href="../prism-tomorrow.min.css">
 </head>
 <body data-lesson="embeddinglab" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -224,27 +223,7 @@
 							</div>
 							<div class="demo-insight"><b><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Fazit' : 'Takeaway'; ?></b><span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz ist ein eindimensionaler Pfad, keine Wolke. Der Pfad lebt in einem viel größeren Raum; die 3D-Linie ist sein Schatten.' : 'A sentence is a one-dimensional path, not a cloud. The path lives in a much larger space; the 3D line is a shadow of it.'; ?></span></div>
 						</div>
-						<details class="em-code">
-							<summary><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Die Skripte, die die Daten erzeugt haben' : 'The scripts that made the data'; ?></summary>
-							<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
-							<p>Die Skripte laden GPT-2 nach <code>/tmp</code>, lesen die Token- und Positions-Embeddings, projizieren sie mit PCA auf drei Dimensionen und schreiben <code>embedding_manifold_data.js</code> und <code>poem_manifold_data.js</code>. Sie brauchen <code>uv</code>; die Abhängigkeiten stehen in <code>requirements.txt</code>.</p>
-							<pre><code class="language-bash">uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
-    blog/tools/embedding_manifold/embedding_manifold.py
-uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
-    blog/tools/embedding_manifold/poem_manifold.py</code></pre>
-							<p><button class="btn-demo" type="button" data-copy="#alice-script">Alice-Skript kopieren</button> <button class="btn-demo" type="button" data-copy="#poem-script">Gedicht-Skript kopieren</button></p>
-							<?php else: ?>
-							<p>The scripts download GPT-2 to <code>/tmp</code>, read the token and position embeddings, project them to three dimensions with PCA, and write <code>embedding_manifold_data.js</code> and <code>poem_manifold_data.js</code>. They need <code>uv</code>; the dependencies are in <code>requirements.txt</code>.</p>
-							<pre><code class="language-bash">uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
-    blog/tools/embedding_manifold/embedding_manifold.py
-uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
-    blog/tools/embedding_manifold/poem_manifold.py</code></pre>
-							<p><button class="btn-demo" type="button" data-copy="#alice-script">Copy Alice script</button> <button class="btn-demo" type="button" data-copy="#poem-script">Copy poem script</button></p>
-							<?php endif; ?>
-							<pre><code class="language-text"><?php echo htmlspecialchars((string) @file_get_contents(__DIR__ . '/../tools/embedding_manifold/requirements.txt'), ENT_QUOTES, 'UTF-8'); ?></code></pre>
-							<pre><code class="language-python" id="alice-script"><?php echo htmlspecialchars((string) @file_get_contents(__DIR__ . '/../tools/embedding_manifold/embedding_manifold.py'), ENT_QUOTES, 'UTF-8'); ?></code></pre>
-							<pre><code class="language-python" id="poem-script"><?php echo htmlspecialchars((string) @file_get_contents(__DIR__ . '/../tools/embedding_manifold/poem_manifold.py'), ENT_QUOTES, 'UTF-8'); ?></code></pre>
-						</details>
+
 
 					</section>
 
@@ -811,25 +790,28 @@ uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
 		var chips = Array.prototype.slice.call(document.querySelectorAll("#poem-lang [data-poem]"));
 		var fragmentNoteDe = "Die deutsche Linie zerfällt in Byte-Level-Tokens. Stücke wie „icht“ und „ig“ sind keine Wörter, sondern Wortfragmente.";
 		var fragmentNoteEn = "The German line is split into byte-level tokens. Pieces such as “icht” and “ig” are not words; they are word fragments.";
+		var blakeQuote = uiDe
+			? "„Der Narr sieht nicht denselben Baum, den ein Weiser sieht.“"
+			: "“The fool sees not the same tree that a wise man sees.”";
+		var blakeCite = uiDe
+			? "William Blake, Sprüche der Hölle, Die Hochzeit des Himmels und der Hölle (um 1790)."
+			: "William Blake, Proverbs of Hell, The Marriage of Heaven and Hell (c. 1790).";
+		var ringQuote = uiDe
+			? "„Die Löcher sind das Wichtigste am Sieb.“"
+			: "“The holes are the most important thing about a sieve.”";
+		var ringCite = uiDe
+			? "Joachim Ringelnatz (zugeschrieben). Die Zuschreibung ist verbreitet, aber nicht gesichert."
+			: "Joachim Ringelnatz (attributed). The attribution is common but not secure.";
+		var aliceQuote = uiDe
+			? "„" + aliceData.sentence.de + "“"
+			: "“" + aliceData.sentence.en + "”";
+		var aliceCite = uiDe
+			? "Lewis Carroll, Alice’s Abenteuer im Wunderland, übers. Antonie Zimmermann (1869), Kap. II. Englisch: „" + aliceData.sentence.en + "“, Alice’s Adventures in Wonderland (1865), Kap. II."
+			: "Lewis Carroll, Alice’s Adventures in Wonderland (1865), ch. II. German: „" + aliceData.sentence.de + "“, Alice’s Abenteuer im Wunderland, trans. Antonie Zimmermann (1869), ch. II.";
 		var sources = {
-			en: {
-				data: poemData.poems.en,
-				payload: poemData.poems.en,
-				quote: "“" + poemData.poems.en.sentence + "”",
-				cite: poemData.poems.en.author + ", " + poemData.poems.en.source + "."
-			},
-			de: {
-				data: poemData.poems.de,
-				payload: poemData.poems.de,
-				quote: "„" + poemData.poems.de.sentence + "“",
-				cite: poemData.poems.de.author + ". " + poemData.poems.de.note
-			},
-			alice: {
-				data: aliceData,
-				payload: aliceData.modes.combined,
-				quote: "„" + aliceData.sentence.de + "“",
-				cite: "Lewis Carroll, Alice’s Abenteuer im Wunderland, trans. Antonie Zimmermann (1869), ch. II. English: “" + aliceData.sentence.en + "”, Alice’s Adventures in Wonderland (1865), ch. II."
-			}
+			en: { data: poemData.poems.en, payload: poemData.poems.en, quote: blakeQuote, cite: blakeCite },
+			de: { data: poemData.poems.de, payload: poemData.poems.de, quote: ringQuote, cite: ringCite },
+			alice: { data: aliceData, payload: aliceData.modes.combined, quote: aliceQuote, cite: aliceCite }
 		};
 		function hint() {
 			return uiDe
@@ -874,7 +856,5 @@ uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
 		render(current);
 	})();
 	</script>
-	<script src="../prism.min.js" defer></script>
-	<script src="../prism-python.min.js" defer></script>
 </body>
 </html>

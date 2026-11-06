@@ -1,0 +1,22 @@
+training_data:
+
+DONE Schreibe einen Abschnitt darüber, dass perfekte Daten kohärent wären.
+
+- Zwei völlig neutrale Beobachter beschreiben denselben Sachverhalt, aber aus
+  einer anderen Perspektive. Wo sich die Perspektiven überlappen, müssten sie
+  identisch sein, wie bei einem Panoramafoto mit dem Handy: Die Überlappungen
+  zwischen zwei Aufnahmen müssen gleich oder sehr ähnlich sein.
+- Reale Daten sind so nicht. Menschen haben andere Meinungen, irren sich,
+  lügen, messen falsch, können nicht so genau formulieren, wie sie gern
+  würden, oder alles davon.
+- Deshalb sind Trainingsdaten nicht kohärent. Aber es ist ähnlich wie bei
+  Gauß und Ceres mit der Glockenkurve: Im Mittel haut es hin.
+- Zeige das noch einmal als Plot, diesmal klein und nur mit den Messdaten vs.
+  den Punkten, die man bekommt. Ein LLM findet etwas, das irgendwo dazwischen
+  liegt.
+- Die Wahl der Trainingsdaten ist auch die Wahl dessen, was das Netz dann
+  macht, und damit Teil des Weltbilds.
+- Bilingual (EN/DE), Plot im Ten-Minutes-Stil, Demo-/Plot-Audit und
+  Kontrastprüfung.
+
+DONE.
