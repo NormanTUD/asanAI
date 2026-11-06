@@ -205,8 +205,8 @@
 							</div>
 							<div class="demo-body">
 								<div class="chip-row" id="poem-lang">
-									<button class="chip is-on" type="button" data-poem="en">English · Blake</button>
-									<button class="chip" type="button" data-poem="de">Deutsch · Ringelnatz</button>
+									<button class="chip is-on" type="button" data-poem="en"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Englisch · Blake' : 'English · Blake'; ?></button>
+									<button class="chip" type="button" data-poem="de"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Deutsch · Ringelnatz' : 'German · Ringelnatz'; ?></button>
 								</div>
 								<div id="tm-poem-en" style="width:100%"></div>
 								<div id="tm-poem-de" style="width:100%" hidden></div>
