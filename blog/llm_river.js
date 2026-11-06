@@ -169,7 +169,7 @@ function _themeriver_render_residual_contrib(tokenIdx, d_model) {
 			textStyle: { fontSize: 12, color: themeColor('#1e293b'), fontWeight: 'bold' }
 		},
 		tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-		legend: { bottom: 0, textStyle: { fontSize: 10 } },
+		legend: { bottom: 0, textStyle: { fontSize: 10, color: themeColor('#334155') } },
 		grid: { top: 40, bottom: 42, left: 48, right: 16 },
 		xAxis: { type: 'category', data: layers, axisLabel: axisFont, axisLine: { lineStyle: { color: themeColor('#cbd5e1') } } },
 		yAxis: {
@@ -440,7 +440,21 @@ function _themeriver_ensure_dom(containerId) {
 	}
 
 	_themeriver_ensure_residual_block(parent);
+	_themeriver_relocate_into_transformer();
 }
+
+/* The Probability Flow belongs at the end of the Transformer block, not in a
+   separate container below the lesson. */
+function _themeriver_relocate_into_transformer() {
+	const body = document.querySelector('.tm-transformer-box .tm-step-body');
+	if (!body) return;
+	const wrapper = document.getElementById('themeriver-wrapper');
+	const residual = document.getElementById('themeriver-residual-block');
+	if (wrapper && wrapper.parentNode !== body) body.appendChild(wrapper);
+	if (residual && residual.parentNode !== body) body.appendChild(residual);
+}
+window.addEventListener('load', function () { setInterval(_themeriver_relocate_into_transformer, 1200); });
+
 
 /* The residual-write charts live in their own full-width block below the
    Probability Flow wrapper and before the following optional sections. */
@@ -452,13 +466,6 @@ function _themeriver_ensure_residual_block(parent) {
 	block.innerHTML = `
 	<div class="themeriver-residual-head">Residual stream writes per layer</div>
 	<div id="transformer-residual-contrib-plot" style="width:90%; margin:0 auto; height:280px;"></div>
-	<div class="themeriver-residual-head" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-		<span>Residual stream development (3D) — x = Dimension, depth = Token, height = Value (green high, red low)</span>
-		<label style="font-weight:400; font-size:.78rem; color:var(--mn-text-muted); margin-left:auto;">Stage
-			<select id="residual-3d-stage" class="themeriver-select" onchange="window._themeriver_render_residual_3d_from_select()"></select>
-		</label>
-	</div>
-	<div id="transformer-residual-stream-3d" style="width:90%; margin:0 auto; height:480px;"></div>
 	`;
 	parent.appendChild(block);
 }

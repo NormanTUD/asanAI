@@ -21,6 +21,7 @@
 		return {
 			dark: dark,
 			paper: css("--tm-paper", css("--mn-bg", dark ? "#071a22" : "#ffffff")),
+			paper2: css("--tm-paper-2", css("--mn-bg-subtle", dark ? "#0a222c" : "#ffffff")),
 			ink: css("--tm-ink", css("--mn-text", dark ? "#e9f2ee" : "#000000")),
 			muted: css("--tm-muted", css("--mn-text-muted", dark ? "#9db5b5" : "#627476")),
 			line: css("--tm-line", dark ? "rgba(238,247,244,.18)" : "rgba(0,75,111,.16)"),

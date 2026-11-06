@@ -1465,11 +1465,15 @@
 		var space = window.persistentEmbeddingSpace || {};
 		var words = Object.keys(space);
 		if (!words.length || !vec) return [];
+		var temperature = 1;
+		if (typeof getTransformerConfig === "function") {
+			try { temperature = Math.max(0.05, getTransformerConfig().temperature || 1); } catch (e) { temperature = 1; }
+		}
 		var scores = words.map(function (word) {
 			var row = space[word] || [];
 			var dot = 0;
 			for (var i = 0; i < vec.length; i++) dot += (vec[i] || 0) * (row[i] || 0);
-			return { word: word, score: dot };
+			return { word: word, score: dot / temperature };
 		});
 		var max = Math.max.apply(null, scores.map(function (s) { return s.score; }));
 		var exps = scores.map(function (s) { return Math.exp(s.score - max); });
@@ -2354,6 +2358,12 @@
 					card.remove();
 				});
 				boxBody.appendChild(context);
+				if (document.getElementById("step-attention")) {
+					var attnProse = document.createElement("details");
+					attnProse.className = "tm-step-detail tm-attention-prose";
+					attnProse.innerHTML = "<summary>" + (isDe ? "Attention: Wie Tokens miteinander reden" : "Attention: Letting Tokens Talk") + "</summary><div class='tm-step-detail-body'></div>";
+					boxBody.appendChild(attnProse);
+				}
 				// The old #block section keeps its prose, but the observer should
 				// now fire on the Transformer box at the top.
 				var oldBlock = document.getElementById("block");
@@ -2375,6 +2385,29 @@
 			if (layerContainer && boxNowBody && layerContainer.parentNode !== boxNowBody) boxNowBody.appendChild(layerContainer);
 			var contextBlock = boxNowBody ? boxNowBody.querySelector(".tm-transformer-context") : null;
 			if (contextBlock && boxNowBody.lastElementChild !== contextBlock) boxNowBody.appendChild(contextBlock);
+			var attnProse = boxNowBody ? boxNowBody.querySelector(".tm-attention-prose") : null;
+			if (attnProse && !moved.attentionProse) {
+				var attnStart = document.getElementById("step-attention");
+				var attnEnd = Array.prototype.slice.call(document.querySelectorAll(".optional")).filter(function (el) {
+					return /Gradient Clipping/i.test(el.getAttribute("data-headline") || "");
+				})[0];
+				if (attnStart && attnEnd) {
+					var attnBody = attnProse.querySelector(".tm-step-detail-body");
+					var node3 = attnStart;
+					while (node3 && node3 !== attnEnd) {
+						var next3 = node3.nextElementSibling;
+						attnBody.appendChild(node3);
+						node3 = next3;
+					}
+					attnBody.querySelectorAll(".md").forEach(function (m) { m.classList.add("no-markdown"); });
+					var h2 = attnBody.querySelector("#step-attention h2");
+					if (h2) h2.remove();
+					moved.attentionProse = true;
+				}
+			}
+			if (attnProse && layerContainer && attnProse.parentNode === boxNowBody && attnProse.nextElementSibling !== layerContainer) {
+				boxNowBody.insertBefore(attnProse, layerContainer);
+			}
 			// Token Trajectory is the opening picture of the block.
 			var traj = document.getElementById("transformer-trajectory-full-path-wrapper") || document.getElementById("transformer-trajectory-full-path");
 			if (traj && boxNowBody && traj.parentNode !== boxNowBody) {

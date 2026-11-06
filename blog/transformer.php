@@ -764,9 +764,7 @@ This systematic change in attention patterns can be categorized as follows:
 By switching between layers in a visualization, you can observe this transition from raw data processing to complex, abstracted analysis.
 </div>
 
-<div class="md">
-### Does the Model Build a Syntax Tree?
-
+<div class="optional md" data-headline="Does the Model Build a Syntax Tree?">
 The layer-depth progression above says the **middle layers** "begin to identify dependency arcs." That is a strong claim, and it deserves to be examined: does the model actually construct a *parse* — a syntactic structure it then manipulates — or does it only track shallow word co-occurrence? The honest answer is a **distributed, hierarchical syntactic representation**, built the way a CNN builds edges-then-objects: bottom-up, across depth, spread over many specialist heads. There is no single parse object sitting in one place.
 
 **Specialist heads, one per relation.** (\cite[Htut et al., 2019]{htu2019dependencies}) extracted implicit dependencies from BERT's attention and compared them to ground-truth Universal-Dependency trees. For several specific relation types there are heads that recover that dependency **significantly better than a baseline** — a head that tracks "subject," another that tracks "object," and so on. The crucial negative result: **no "generalist" head performs holistic parsing.** Syntax is not computed by one module; it is *partitioned across many heads*, each a proxy for one elementary relation. This is also what the reverse-engineered **indirect-object-identification circuit** shows in the mechanistic chapter (\cite[Wang et al., 2022]{wang2022interpretability}): the elementary binding step (copy the subject or object across distance to the governing verb) is implemented by a handful of heads, not by a tree.
@@ -835,9 +833,7 @@ $$
 As $h$ progresses from $h_0$ to $h_{N}$, the vector for “apple” might move from being near “fruit” to being near “tech company” based on the contextual “nudges” received in the Feature Space during each Attention and FFN cycle.
 </div>
 
-<div class="md">
-## The Modern Block: What Changed After 2017
-
+<div class="optional md" data-headline="The Modern Block: What Changed After 2017">
 The equations above describe the 2017 Transformer. Open a 2025 open-weight model, however, and the same two sublayers are wired slightly differently. None of these changes alters the big picture — attention mixes, the FFN computes, residuals carry — but together they define the “LLaMA-style” block that most open models now share.
 
 The years after 2017 split the family in two. \cite[Devlin et al. (2019)]{bert} kept the encoder and trained it bidirectionally with a masked-token objective, making fine-tuning on downstream tasks the default (\cite[Devlin et al., 2019]{bert}). \cite[Radford et al. (2019)]{gpt2} kept the decoder, scaled it, and showed that one autoregressive model could perform tasks zero-shot from its prompt (\cite[Radford et al., 2019]{gpt2}). Its largest variant — 48 layers, a model width of 1600, 1.5 billion parameters — also moved layer normalization to the input of each sub-block and scaled residual weights by the inverse square root of the layer count at initialization, the pre-norm arrangement described below. The split matters for this chapter: the causal mask you see here is the GPT branch, while BERT's bidirectional attention is the encoder branch.
@@ -1074,7 +1070,6 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 <div id="transformer-output-projection" style="background: var(--mn-surface, white); padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
 
 <div>
-	<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
 	<input type="hidden" id="transformer-master-token-input" value="the">
 <div class="tm-token-builder" id="transformer-token-builder">
 	<div class="tm-token-builder-head">
@@ -1092,26 +1087,6 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 ## The Whole Machine
 
 Zoom out: the full pipeline, how the model knows when to stop, and how the two operating modes differ.
-
-### How ChatGPT Actually Works: The Full Pipeline
-
-Here is the complete path a prompt takes through the system, from raw text to generated response:
-
-1. **Tokenization**, The input string is chopped into subword tokens using BPE. Each token is mapped to an integer ID. In GPT-2's byte-level BPE, “The cat sat” becomes `[464, 3797, 3332]`.
-
-2. **Embedding**, Each token ID is looked up in the embedding matrix $W_E$, producing a dense vector of dimension $d_{\text{model}}$. These vectors live in a semantic space where similar words are close together.
-
-3. **Positional Encoding**, A position signal is added to each embedding so the model knows the order of tokens. Without this, “dog bites man” and “man bites dog” would be identical to the model.
-
-4. **Transformer Layers ($N \times$)**, Each layer applies two sub-modules, with **residual connections** so the original information is never lost:
-   - **Multi-Head Self-Attention:** Each token queries all others, computes relevance scores, and gathers contextual information. Multiple heads run in parallel, each specializing in different linguistic relationships (syntax, semantics, coreference).
-   - **Feed-Forward Network (FFN):** Each token is processed independently through an expanding activation layer (detectors) and a contracting projection layer (knowledge retrieval). This is where memorized facts and patterns are applied.
-
-5. **Unembedding**, The final hidden state of the last token is multiplied by the unembedding matrix $W_U$ (often identical to $W_E$), producing a logit score for every word in the vocabulary.
-
-6. **Sampling**, Logits are scaled by temperature and passed through softmax to produce probabilities. A token is sampled from this distribution (greedy: pick the max; stochastic: sample proportionally). The sampled token is appended to the input, and the process repeats from step 1 until the model emits an end-of-sequence token.
-
-Every step is differentiable, every transformation is a matrix operation, and no component has access to anything beyond the current context window. The entire architecture is a single, differentiable function $f_\theta(\text{prompt}) \to \text{next token distribution}$.
 
 ### How Does the Model Know When to Stop?
 
@@ -1152,7 +1127,7 @@ While the architecture is identical in both modes, the behavior of the model dif
 | **Weights** | Frozen, never change | Updated via gradient descent |
 | **Dropout** | Not used in this model | Not used in this model |
 | **Normalization** | LayerNorm (feature-wise, no running stats) | LayerNorm (feature-wise, no running stats) |
-| **KV Cache** | Not used — the full context is recomputed every step | Not used (full sequence processed at once) |
+| **KV Cache** | Optional (checkbox in the hyperparameters) — reuse prefix keys/values | Not used (full sequence processed at once) |
 | **Gradients** | Not computed | Computed via backpropagation |
 | **Memory** | O(context²) attention matrix, recomputed each step | O(context²) attention matrix + stored activations for backprop |
 | **Parallelism** | Sequential (one token at a time) | Parallel (all tokens in the batch processed simultaneously) |

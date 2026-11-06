@@ -97,8 +97,8 @@
 					<div class="demo demo--paper" data-demo="prompt">
 						<div class="demo-head">
 							<div>
-								<p class="demo-title">Build a brief, narrow the answer <span>· demo</span></p>
-								<p class="demo-sub">Every constraint removes degrees of freedom. Toggle them and watch one answer pull ahead of the others: then sample from what is left.</p>
+								<p class="demo-title">Build a brief, narrow the possible answers <span>· demo</span></p>
+								<p class="demo-sub">Every constraint removes degrees of freedom. The boxes below are full answers the model could produce; toggle constraints and watch the probabilities shift, then sample one output.</p>
 							</div>
 							<span class="demo-badge">interactive</span>
 						</div>
@@ -109,12 +109,16 @@
 								<button class="chip" type="button" data-prompt="examples">Examples</button>
 								<button class="chip" type="button" data-prompt="constraints">Constraints</button>
 							</div>
-							<div class="demo-controls">
-								<span style="font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tm-muted)">Leading answer</span>
-								<div class="meter" style="flex:1 1 180px"><span data-prompt-meter></span></div>
-								<output data-prompt-value>...</output>
+							<div class="prompt-block">
+								<span class="prompt-block-label">Prompt</span>
+								<p class="entropy-preview" data-prompt-preview></p>
 							</div>
-							<p class="entropy-preview" data-prompt-preview></p>
+							<div class="prompt-completions-arrow" aria-hidden="true">↓</div>
+							<div class="prompt-completions-head">
+								<span class="prompt-completions-label">Possible completions</span>
+								<span class="prompt-completions-sub">Each box is one full answer the model could produce.</span>
+							</div>
+							<div class="prompt-variance" data-prompt-variance aria-label="Probability distribution over possible completions"></div>
 							<div class="retrieval-list" data-prompt-cands></div>
 							<div class="demo-controls">
 								<button class="btn-demo btn-demo--green" type="button" data-prompt-sample>Sample an answer →</button>

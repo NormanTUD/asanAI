@@ -732,6 +732,7 @@
 								distribution; one token is drawn. It is appended, and the next pass begins;
 								the loop ends when the model emits the special token <strong>&lt;|endoftext|&gt;</strong>.
 							</p>
+							<p><strong>Two players, one context.</strong> At the start, the user adds tokens one at a time; then the LLM takes a turn, then the user, then the LLM, and so on until the user stops. Both play the same game: each turn adds tokens to the shared context. The loop does not mean the model takes over; it is a back-and-forth in which either side can stop adding tokens.</p>
 							<p>
 								No step has a tidy fact database, and no step “understands” in the human
 								sense. Knowledge is distributed across the weights; meaning lives in the

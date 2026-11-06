@@ -3104,19 +3104,36 @@
 		var canvas = $("[data-negation-canvas]", root);
 		if (!canvas) return;
 		var pts = [
-			{ x: 0.72, y: 0.34, label: "happy", role: "happy" },
-			{ x: 0.46, y: 0.20, label: "not happy", role: "not" },
-			{ x: -0.54, y: -0.42, label: "sad", role: "sad" },
-			{ x: -0.18, y: -0.16, label: "unhappy", role: "unhappy" },
-			{ x: 0.60, y: 0.56, label: "joyful", role: "joyful" }
+			{ x: 0.72, y: 0.34, label: DEMO_DE ? "glücklich" : "happy", role: "happy" },
+			{ x: 0.46, y: 0.20, label: DEMO_DE ? "nicht glücklich" : "not happy", role: "not" },
+			{ x: -0.54, y: -0.42, label: DEMO_DE ? "traurig" : "sad", role: "sad" },
+			{ x: -0.18, y: -0.16, label: DEMO_DE ? "unglücklich" : "unhappy", role: "unhappy" },
+			{ x: 0.60, y: 0.56, label: DEMO_DE ? "freudig" : "joyful", role: "joyful" }
 		];
 		function draw(ctx, W, H) {
 			var c = colors();
 			var ox = W / 2, oy = H / 2 + 6;
 			var scale = Math.min(W, H) * 0.36;
 			ctx.clearRect(0, 0, W, H);
+			var bg = ctx.createLinearGradient(0, 0, W, H);
+			bg.addColorStop(0, c.paper);
+			bg.addColorStop(0.55, c.paper2);
+			bg.addColorStop(1, c.paper);
+			ctx.fillStyle = bg;
+			ctx.fillRect(0, 0, W, H);
+			var glow = ctx.createRadialGradient(W * 0.2, H * 0.16, 0, W * 0.2, H * 0.16, W * 0.6);
+			glow.addColorStop(0, c.dark ? "rgba(0,146,153,.18)" : "rgba(99,164,75,.10)");
+			glow.addColorStop(1, "rgba(0,0,0,0)");
+			ctx.fillStyle = glow;
+			ctx.fillRect(0, 0, W, H);
+			ctx.fillStyle = c.dark ? "rgba(238,247,244,.055)" : "rgba(0,75,111,.045)";
+			for (var dx = 14; dx < W; dx += 28) {
+				for (var dy = 14; dy < H; dy += 28) ctx.fillRect(dx, dy, 1, 1);
+			}
+			ctx.save();
 			ctx.strokeStyle = c.line;
 			ctx.lineWidth = 1;
+			ctx.setLineDash([2, 7]);
 			for (var gx = -4; gx <= 4; gx++) {
 				ctx.beginPath();
 				ctx.moveTo(ox + gx * scale / 4, oy - scale);
@@ -3127,6 +3144,7 @@
 				ctx.lineTo(ox + scale, oy + gx * scale / 4);
 				ctx.stroke();
 			}
+			ctx.setLineDash([]);
 			ctx.strokeStyle = c.lineStrong;
 			ctx.beginPath();
 			ctx.moveTo(ox - scale * 1.1, oy);
@@ -3134,27 +3152,39 @@
 			ctx.moveTo(ox, oy - scale * 1.1);
 			ctx.lineTo(ox, oy + scale * 1.1);
 			ctx.stroke();
+			ctx.restore();
 			var colorsByRole = { happy: c.green, not: c.sky, sad: c.coral, unhappy: c.gold, joyful: c.lime };
 			pts.forEach(function (p) {
 				var x = ox + p.x * scale, y = oy - p.y * scale;
 				ctx.strokeStyle = colorsByRole[p.role];
-				ctx.lineWidth = 1.4;
-				ctx.beginPath();
-				ctx.moveTo(ox, oy);
-				ctx.lineTo(x, y);
-				ctx.stroke();
-				ctx.beginPath();
-				ctx.arc(x, y, 5, 0, Math.PI * 2);
+				ctx.globalAlpha = 0.28;
+				ctx.lineWidth = 1.2;
+				ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(x, y); ctx.stroke();
+				ctx.globalAlpha = 1;
+				ctx.beginPath(); ctx.arc(x, y, 13, 0, Math.PI * 2);
+				ctx.fillStyle = colorsByRole[p.role];
+				ctx.globalAlpha = 0.12;
+				ctx.fill();
+				ctx.globalAlpha = 1;
+				ctx.beginPath(); ctx.arc(x, y, 5.5, 0, Math.PI * 2);
 				ctx.fillStyle = colorsByRole[p.role];
 				ctx.fill();
-				ctx.fillStyle = c.inkSoft;
+				ctx.lineWidth = 1.6; ctx.strokeStyle = c.paper; ctx.stroke();
 				ctx.font = "600 11px Barlow, system-ui, sans-serif";
-				ctx.fillText(p.label, x + 8, y - 6);
+				var tw = ctx.measureText(p.label).width;
+				var left = p.x >= 0;
+				var lx = x + (left ? 10 : -10);
+				var bx = left ? lx - 3 : lx - tw - 3;
+				ctx.fillStyle = c.dark ? "rgba(7,26,34,.78)" : "rgba(255,255,255,.82)";
+				ctx.fillRect(bx, y - 18, tw + 6, 16);
+				ctx.fillStyle = c.inkSoft;
+				ctx.textAlign = left ? "left" : "right";
+				ctx.fillText(p.label, lx, y - 6);
 			});
 			var happy = pts[0], notHappy = pts[1], sad = pts[2];
-			function seg(a, b, color, dash) {
+			function seg(a, b, color) {
 				ctx.save();
-				ctx.setLineDash(dash || []);
+				ctx.setLineDash([4, 4]);
 				ctx.strokeStyle = color;
 				ctx.lineWidth = 1.4;
 				ctx.beginPath();
@@ -3163,12 +3193,14 @@
 				ctx.stroke();
 				ctx.restore();
 			}
-			seg(happy, notHappy, c.sky, [4, 4]);
-			seg(happy, sad, c.coral, [4, 4]);
+			seg(happy, notHappy, c.sky);
+			seg(happy, sad, c.coral);
 			ctx.fillStyle = c.muted;
 			ctx.font = "600 10px Barlow, system-ui, sans-serif";
-			ctx.fillText("short distance: negation stays nearby", ox + 14, oy - scale * 0.86);
-			ctx.fillText("long distance: the opposite concept", ox - scale * 0.86, oy + scale * 0.92);
+			ctx.textAlign = "left";
+			ctx.fillText(DEMO_DE ? "kurze Distanz: Negation bleibt in der Nähe" : "short distance: negation stays nearby", 14, H - 16);
+			ctx.textAlign = "right";
+			ctx.fillText(DEMO_DE ? "lange Distanz: das Gegenteil" : "long distance: the opposite concept", W - 14, H - 16);
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
@@ -3550,6 +3582,7 @@
 		var sampleBtn = $("[data-prompt-sample]", root);
 		var tokenEl = $("[data-prompt-tokens]", root);
 		var sampledEl = $("[data-prompt-sampled]", root);
+		var variance = $("[data-prompt-variance]", root);
 		if (!chips.length || !candsEl) return;
 		var candidates = DEMO_DE ? [
 			{ name: "Knapper Fakt", text: "Sonnenlicht streut an Luftmolekülen. Kürzere blaue Wellenlängen streuen stärker, deshalb erreicht Blau deine Augen aus jeder Richtung.", base: 0.7, role: 0.2, format: 0.8, examples: 0.2, constraints: 0.5 },
@@ -3565,6 +3598,7 @@
 			{ name: "Ocean myth", text: "The sky is blue because it reflects the ocean.", base: 0.5, role: -0.8, format: -0.6, examples: -0.7, constraints: -2.0 }
 		];
 		var on = { role: true, format: false, examples: false, constraints: false };
+		var sampledIndex = -1;
 		var phrase = DEMO_DE ? {
 			role: "Du bist ein geduldiger Wissenschaftstutor.",
 			format: "Antworte in drei Stichpunkten.",
@@ -3591,24 +3625,34 @@
 			var order = probs.map(function (_, i) { return i; }).sort(function (a, b) { return probs[b] - probs[a]; });
 			if (meter) meter.style.width = (top * 100).toFixed(1) + "%";
 			if (value) value.textContent = Math.round(top * 100) + "%";
+			var accent = colors();
+			var palette = [accent.green, accent.sky, accent.gold, accent.coral, accent.lime];
+			if (variance) {
+				variance.innerHTML = order.map(function (i) {
+					return '<span style="width:' + (probs[i] * 100).toFixed(2) + '%;background:' + palette[i % palette.length] + '" title="' + escapeHtml(candidates[i].name) + ' · ' + Math.round(probs[i] * 100) + '%"></span>';
+				}).join("");
+			}
 			var active = Object.keys(on).filter(function (k) { return on[k]; });
 			if (preview) {
 				preview.innerHTML = (active.length ? active.map(function (k) { return escapeHtml(phrase[k]); }).join(" ") + "<br><br>" : "") + (DEMO_DE ? "Frage: Warum ist der Himmel blau?" : "Question: Why is the sky blue?");
 			}
 			candsEl.innerHTML = order.map(function (i) {
 				var c = candidates[i];
-				return '<div class="retrieval-item' + (i === order[0] ? " is-hit" : "") + '" style="animation-delay:' + (order.indexOf(i) * 28) + 'ms">' +
-					'<div><b>' + escapeHtml(c.name) + '</b><p>' + escapeHtml(c.text).replace(/\n/g, "<br>") + '</p></div>' +
-					'<span class="retrieval-score">' + Math.round(probs[i] * 100) + '%</span></div>';
+				var cls = "prompt-completion" + (i === order[0] ? " is-hit" : "") + (i === sampledIndex ? " is-sampled" : "");
+				return '<div class="' + cls + '" style="--pc:' + palette[i % palette.length] + ';animation-delay:' + (order.indexOf(i) * 28) + 'ms">' +
+					'<div class="prompt-completion-kicker">' + (DEMO_DE ? "Vervollständigung" : "Completion") + '</div>' +
+					'<p class="prompt-completion-text">' + escapeHtml(c.text).replace(/\n/g, "<br>") + '</p>' +
+					'<div class="prompt-completion-meta"><span>' + escapeHtml(c.name) + '</span><b>' + Math.round(probs[i] * 100) + '%</b></div></div>';
 			}).join("");
 			if (tokenEl) tokenEl.textContent = (8 + active.length * 11) + (DEMO_DE ? " Tokens" : " tokens");
-			if (sampledEl && !sampledEl.getAttribute("data-has")) sampledEl.textContent = DEMO_DE ? "Drücke auf Ziehen, um eine Antwort aus der aktuellen Verteilung zu ziehen." : "Press sample to draw an answer from the current distribution.";
+			if (sampledEl && sampledIndex < 0) sampledEl.textContent = DEMO_DE ? "Drücke auf Ziehen, um eine vollständige Vervollständigung aus der Verteilung zu ziehen." : "Press sample to draw one full completion from the distribution.";
 		}
 		chips.forEach(function (chip) {
 			chip.addEventListener("click", function () {
 				var key = chip.getAttribute("data-prompt");
 				on[key] = !on[key];
 				chip.classList.toggle("is-on", on[key]);
+				sampledIndex = -1;
 				if (sampledEl) sampledEl.removeAttribute("data-has");
 				render();
 			});
@@ -3621,18 +3665,20 @@
 				acc += w[i];
 				if (r <= acc) { pick = i; break; }
 			}
+			sampledIndex = pick;
+			if (sampledEl) sampledEl.setAttribute("data-has", "1");
+			render();
 			if (sampledEl) {
-				sampledEl.setAttribute("data-has", "1");
-				sampledEl.innerHTML = "<b>" + (DEMO_DE ? "Gezogen:" : "Sampled:") + "</b> " + escapeHtml(candidates[pick].text).replace(/\n/g, "<br>");
+				sampledEl.innerHTML = "<b>" + (DEMO_DE ? "Gezogene Ausgabe:" : "Sampled output:") + "</b> " + escapeHtml(candidates[pick].text).replace(/\n/g, "<br>");
 			}
 		});
 		function measureSampleHeight() {
 			if (!sampledEl) return;
 			var initial = DEMO_DE
-				? "Drücke auf Ziehen, um eine Antwort aus der aktuellen Verteilung zu ziehen."
-				: "Press sample to draw an answer from the current distribution.";
+				? "Drücke auf Ziehen, um eine vollständige Vervollständigung aus der Verteilung zu ziehen."
+				: "Press sample to draw one full completion from the distribution.";
 			var samples = [initial].concat(candidates.map(function (c) {
-				return "<b>" + (DEMO_DE ? "Gezogen:" : "Sampled:") + "</b> " + escapeHtml(c.text).replace(/\n/g, "<br>");
+				return "<b>" + (DEMO_DE ? "Gezogene Ausgabe:" : "Sampled output:") + "</b> " + escapeHtml(c.text).replace(/\n/g, "<br>");
 			}));
 			var old = sampledEl.innerHTML;
 			sampledEl.style.visibility = "hidden";

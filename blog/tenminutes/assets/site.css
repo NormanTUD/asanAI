@@ -7252,3 +7252,111 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 
 .vit-figure { margin: 22px 0; }
 .vit-figure svg { display: block; width: 100%; max-width: 520px; margin: 0 auto; }
+
+.prompt-block {
+	margin-top: 14px;
+	padding: 12px 14px;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-paper-2);
+}
+.prompt-block-label {
+	display: block;
+	margin-bottom: 5px;
+	font-family: var(--tm-ui);
+	font-size: 0.58rem;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--tm-muted);
+}
+.prompt-completions-arrow {
+	margin: 6px 0;
+	font-size: 1.15rem;
+	line-height: 1;
+	text-align: center;
+	color: var(--tm-muted);
+}
+.prompt-completions-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+.prompt-completions-label {
+	font-family: var(--tm-ui);
+	font-size: 0.6rem;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--tm-muted);
+}
+.prompt-completions-sub {
+	font-size: 0.72rem;
+	color: var(--tm-faint);
+}
+.prompt-variance {
+	display: flex;
+	height: 12px;
+	margin-top: 8px;
+	border: 1px solid var(--tm-line);
+	background: var(--tm-paper-2);
+	overflow: hidden;
+}
+.prompt-variance span {
+	display: block;
+	height: 100%;
+	min-width: 2px;
+}
+[data-prompt-cands] {
+	height: auto;
+	max-height: none;
+	margin-top: 10px;
+}
+.prompt-completion {
+	border: 1px solid var(--tm-line);
+	border-left: 3px solid var(--pc, var(--tm-green));
+	background: var(--tm-paper-2);
+	padding: 10px 12px;
+}
+.prompt-completion.is-hit {
+	border-color: var(--tm-green);
+	box-shadow: 0 0 0 1px var(--tm-green);
+}
+.prompt-completion.is-sampled {
+	background: color-mix(in srgb, var(--tm-green) 10%, var(--tm-paper-2));
+}
+.prompt-completion-kicker {
+	font-family: var(--tm-ui);
+	font-size: 0.54rem;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--tm-faint);
+}
+.prompt-completion-text {
+	margin: 4px 0 0;
+	font-size: 0.8rem;
+	line-height: 1.45;
+	color: var(--tm-ink-soft);
+}
+.prompt-completion-meta {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 10px;
+	margin-top: 6px;
+	font-size: 0.66rem;
+	color: var(--tm-muted);
+}
+.prompt-completion-meta b {
+	font-family: var(--tm-mono);
+	color: var(--tm-petrol);
+}
+
+.step-pane .prose-math,
+.step-pane .attn-sum,
+.step-pane .attn-matrix {
+	max-width: 100%;
+	overflow-x: auto;
+}
