@@ -53,7 +53,6 @@
 								<p class="demo-title">A forward pass in five steps <span>· demo</span></p>
 								<p class="demo-sub">Walk from tokens to the next-token distribution. Each step is a different kind of computation, not a database lookup.</p>
 							</div>
-							<span class="demo-badge">step through</span>
 						</div>
 						<div class="demo-body">
 							<div class="timeline-scroller">
