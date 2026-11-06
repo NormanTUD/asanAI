@@ -294,36 +294,45 @@
 								<h3>1 · Tokenize</h3>
 								<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
 								<canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
+				<p class="tm-step-more">The tokenizer is a separate program trained before the model. It decides which strings become one id; the model itself only sees numbers.</p>
 							</section>
 							<section class="tm-step">
 								<h3>2 · Embed</h3>
 								<p>Each token becomes a point in the learned embedding space. The line follows the sentence; the faint cloud is the rest of the vocabulary.</p>
 								<canvas class="tm-step-canvas" id="tm-step-embed" aria-label="The embedding space with the sentence path"></canvas>
+				<div class="tm-step-modes" data-step-modes="embed"></div>
+				<p class="tm-step-more">The embedding table is a learned matrix; each row is a token's starting vector. The positions are added in the next step.</p>
 							</section>
 							<section class="tm-step">
 								<h3>3 · Position</h3>
 								<p>The same token at a different slot gets a different fingerprint. Each row is a position; the waves are the sinusoidal encoding.</p>
 								<canvas class="tm-step-canvas" id="tm-step-position" aria-label="A heatmap of positional encodings"></canvas>
+				<div class="tm-step-modes" data-step-modes="position"></div>
+				<p class="tm-step-more">Without a position signal, the same tokens in a different order would look identical. The waves give every slot a unique fingerprint.</p>
 							</section>
 							<section class="tm-step">
 								<h3>4 · Attend</h3>
 								<p>Attention lets every token read the others. Each arc is a weighted connection; a thicker line carries more information.</p>
 								<canvas class="tm-step-canvas" id="tm-step-attend" aria-label="Attention arcs between tokens"></canvas>
+				<p class="tm-step-more">Attention is the only step where information moves between tokens. Everything else in the block works on one token at a time.</p>
 							</section>
 							<section class="tm-step">
 								<h3>5 · Feed-forward</h3>
 								<p>The FFN transforms one token at a time. The bars are the hidden activations of the last token: the pattern the layer writes back.</p>
 								<canvas class="tm-step-canvas" id="tm-step-ffn" aria-label="Feed-forward hidden activations"></canvas>
+				<p class="tm-step-more">The FFN expands the vector, applies a nonlinearity, and contracts it. It cannot see other positions; attention has already copied their information in.</p>
 							</section>
 							<section class="tm-step">
 								<h3>6 · Residual</h3>
 								<p>Every layer adds an attention update and an FFN update to the running stream. The heatmap shows how much each layer writes for each token.</p>
 								<canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
+				<p class="tm-step-more">The residual stream is the running vector. Every layer reads it and writes an update; nothing is overwritten, so late layers can still use the original token.</p>
 							</section>
 							<section class="tm-step">
 								<h3>7 · Unembed</h3>
 								<p>The final vector is compared with every vocabulary embedding. The bars are the model's shortlist for the next token.</p>
 								<canvas class="tm-step-canvas" id="tm-step-unembed" aria-label="Top next-token logits"></canvas>
+				<p class="tm-step-more">The final vector is compared with every vocabulary embedding. Softmax turns the scores into probabilities; a decoding rule chooses one token.</p>
 							</section>
 						</div>
 					</section>

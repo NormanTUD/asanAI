@@ -313,18 +313,14 @@
 																<div class="step-toolbar">
 																	<div class="step-chips">
 																		<button class="chip is-on" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
-																		<button class="chip" type="button" data-emb="Man + 2 * Power">Man + 2 · Power</button>
-																		<button class="chip" type="button" data-emb="Prince + Power">Prince + Power</button>
-																		<button class="chip" type="button" data-emb="gender">male ↔ female</button>
-																		<button class="chip" type="button" data-emb="power">power</button>
 																		<button class="chip" type="button" data-emb="directions">all directions</button>
 																	</div>
 																</div>
 																<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
-																<div class="step-out" id="iemb-out">The space has two semantic axes in this demo: <b>power</b> and <b>gender</b>. Choose an example to see where it lands.</div>
+																<div class="step-out" id="iemb-out">The space has two learned directions in this demo. Choose an example to see where it lands.</div>
 															</div>
-															<div class="prose-math emb-equation emb-formula" id="iemb-formula" data-tex-display="true" aria-live="polite"></div>
-															<p class="step-note">Meaning becomes geometry (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>). Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this demo uses two so you can see the idea.</p>
+															<h4 class="layer-subhead">Meaning becomes geometry</h4>
+															<p class="step-note">Words become points in a space. Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this demo uses two so you can see the idea. (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>)</p>
 															<div class="demo demo--paper" id="tm-dual-manifold-demo" style="margin-top:14px;">
 																<div class="demo-body">
 																	<div id="tm-dual-manifolds" style="width:100%;height:420px;">
@@ -426,6 +422,7 @@
 															<p class="step-note"><b>This step is an intuition, not a real attention head.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result: context changes the representation. It shows one simplified attention head, not the many heads and layers of a real model.</p>
 															<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the context, because the values it collects are different.</p>
 															<p class="step-note">Training data is full of typos, misspellings, and irregular spacing. Attention and the feed-forward network see both clean and noisy text, so they learn to route around the noise and still produce something useful from a misspelled token. The first layers are there to combine such evidence: if “york” follows, a layer can push “new” toward the city meaning, even when “new” is misspelled.</p>
+															<p class="step-note">A real model does not have one head; it has hundreds, and each can attend to something different across the whole context. Every head has exactly one unit of attention to spend. If it puts 80% on one word, only 20% remains for all the others. That is the useful tension: the budget forces the head to commit, but the weights are learned, so the commitment can shift with the context.</p>
 														</div>
 					</section>
 
@@ -625,12 +622,17 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">From logits to a probability distribution <span>· demo 08</span></p>
-									<p class="demo-sub">Real GPT-2 small scores for one prompt. The left side is the raw logit from each dot product; the right side is what softmax makes of it.</p>
+									<p class="demo-sub">Real GPT-2 small scores for two prompts. The left side is the raw logit from each dot product; the right side is what softmax makes of it. Switch the context and watch the whole distribution change.</p>
 								</div>
 								<span class="demo-badge">real GPT-2</span>
 							</div>
 							<div class="demo-body">
-								<p class="softmax-context"><span class="softmax-context-label">context</span> “As the spaceship was approaching <b>the</b>”</p>
+								<p class="softmax-context"><span class="softmax-context-label">context</span> <span id="softmax-context-text">“As the spaceship was approaching <b>the</b>”</span></p>
+								<div class="chip-row softmax-prompts" id="softmax-prompts">
+									<button class="chip is-on" type="button" data-softmax-prompt="spaceship">spaceship</button>
+									<button class="chip" type="button" data-softmax-prompt="planet">deserted planet</button>
+								</div>
+								<div class="prose-math softmax-logit-matrix" id="softmax-logit-matrix" data-tex-display="true"></div>
 								<div class="softmax-stage" id="softmax-stage">
 									<div class="softmax-col softmax-col--logits">
 										<div class="softmax-col-head"><span>token</span><span>logit</span></div>
@@ -655,7 +657,7 @@
 								<div class="demo-readout demo-readout--4">
 									<div><b>Hovered token</b><span id="softmax-token">—</span></div>
 									<div><b>Logit</b><span id="softmax-logit">—</span></div>
-									<div><b>exp(logit − max)</b><span id="softmax-exp">—</span></div>
+									<div><b>exp((logit − max) / T)</b><span id="softmax-exp">—</span></div>
 									<div><b>Probability</b><span id="softmax-prob">—</span></div>
 								</div>
 								<p class="demo-hint">Hover a token. The ribbon shows how its score becomes probability. The temperature slider changes only the softmax, not the logits.</p>
@@ -2940,6 +2942,206 @@
 			if (posApi) posApi.redraw();
 			if (attApi) attApi.redraw();
 		});
+	})();
+	</script>
+	<script>
+	(function () {
+		"use strict";
+		var stage = document.getElementById("softmax-stage");
+		if (!stage) return;
+		var DE = TM.lang() === "de";
+		var PROMPTS = {
+			spaceship: {
+				text: "“As the spaceship was approaching <b>the</b>”",
+				rows: [
+					{ token: "planet", logit: -92.8636474609375 },
+					{ token: "surface", logit: -94.18270874023438 },
+					{ token: "station", logit: -94.41707611083984 },
+					{ token: "moon", logit: -94.45668029785156 },
+					{ token: "Earth", logit: -94.46949005126953 },
+					{ token: "end", logit: -94.54924774169922 },
+					{ token: "ship", logit: -94.74138641357422 },
+					{ token: "edge", logit: -94.87800598144531 },
+					{ token: "star", logit: -94.9022216796875 },
+					{ token: "asteroid", logit: -94.97351837158203 }
+				]
+			},
+			planet: {
+				text: "“On the deserted planet they discovered <b>a</b>”",
+				rows: [
+					{ token: "strange", logit: -89.01858520507812 },
+					{ token: "mysterious", logit: -89.26126861572266 },
+					{ token: "planet", logit: -89.26339721679688 },
+					{ token: "large", logit: -89.2662124633789 },
+					{ token: "massive", logit: -89.29888916015625 },
+					{ token: "small", logit: -89.4354476928711 },
+					{ token: "new", logit: -89.59513092041016 },
+					{ token: "vast", logit: -89.6324462890625 },
+					{ token: "huge", logit: -89.85299682617188 },
+					{ token: "giant", logit: -90.060302734375 }
+				]
+			}
+		};
+		var logitsEl = document.getElementById("softmax-logits");
+		var probsEl = document.getElementById("softmax-probs");
+		var ribbons = document.getElementById("softmax-ribbons");
+		var tempInput = document.getElementById("softmax-temp");
+		var tempOut = document.getElementById("softmax-temp-out");
+		var contextEl = document.getElementById("softmax-context-text");
+		var readout = {
+			token: document.getElementById("softmax-token"),
+			logit: document.getElementById("softmax-logit"),
+			exp: document.getElementById("softmax-exp"),
+			prob: document.getElementById("softmax-prob")
+		};
+		var state = { key: "spaceship", temp: 1, hovered: 0 };
+		var lrows = [], lfills = [], prows = [], pfills = [], probs = [], exps = [];
+		function softmaxFor() {
+			var rows = PROMPTS[state.key].rows;
+			var logits = rows.map(function (d) { return d.logit; });
+			var max = Math.max.apply(null, logits);
+			var min = Math.min.apply(null, logits);
+			var t = state.temp || 1;
+			var ex = logits.map(function (v) { return Math.exp((v - max) / t); });
+			var sum = ex.reduce(function (a, b) { return a + b; }, 0);
+			return { max: max, min: min, ex: ex, sum: sum, probs: ex.map(function (e) { return e / sum; }) };
+		}
+		function makeRow(side, i) {
+			var row = document.createElement("div");
+			row.className = "softmax-row";
+			row.setAttribute("tabindex", "0");
+			var label = document.createElement("span");
+			label.className = "softmax-row-label";
+			var bar = document.createElement("span");
+			bar.className = "softmax-bar";
+			var fill = document.createElement("i");
+			bar.appendChild(fill);
+			var value = document.createElement("span");
+			value.className = "softmax-value";
+			if (side === "left") {
+				row.appendChild(label);
+				row.appendChild(bar);
+				row.appendChild(value);
+			} else {
+				row.appendChild(value);
+				row.appendChild(bar);
+				row.appendChild(label);
+			}
+			row.addEventListener("mouseenter", function () { setHover(i); });
+			row.addEventListener("focus", function () { setHover(i); });
+			row.addEventListener("blur", function () { setHover(0); });
+			row.addEventListener("click", function () { setHover(i); });
+			return { row: row, label: label, fill: fill };
+		}
+		function build() {
+			var rows = PROMPTS[state.key].rows;
+			logitsEl.innerHTML = "";
+			probsEl.innerHTML = "";
+			lrows = []; lfills = []; prows = []; pfills = [];
+			rows.forEach(function (d, i) {
+				var l = makeRow("left", i);
+				l.label.textContent = d.token;
+				logitsEl.appendChild(l.row);
+				lrows.push(l.row);
+				lfills.push(l.fill);
+				var p = makeRow("right", i);
+				p.label.textContent = d.token;
+				probsEl.appendChild(p.row);
+				prows.push(p.row);
+				pfills.push(p.fill);
+			});
+			contextEl.innerHTML = PROMPTS[state.key].text;
+		}
+		function fmt(v, n) { return Number(v).toFixed(n); }
+		function update() {
+			var res = softmaxFor();
+			var rows = PROMPTS[state.key].rows;
+			var maxP = Math.max.apply(null, res.probs) || 1;
+			var span = res.max - res.min || 1;
+			probs = res.probs;
+			exps = res.ex;
+			rows.forEach(function (d, i) {
+				lfills[i].style.width = (6 + (d.logit - res.min) / span * 94) + "%";
+				lrows[i].setAttribute("aria-label", d.token + " logit " + fmt(d.logit, 2));
+				pfills[i].style.width = (res.probs[i] / maxP * 100) + "%";
+				prows[i].querySelector(".softmax-value").textContent = (res.probs[i] * 100).toFixed(1) + "%";
+				prows[i].setAttribute("aria-label", d.token + " probability " + (res.probs[i] * 100).toFixed(1) + "%");
+			});
+			var matrix = document.getElementById("softmax-logit-matrix");
+			if (matrix) {
+				var vals = rows.map(function (d) { return d.logit; });
+				var tex = "\\underbrace{\\begin{pmatrix}\\underbrace{" + fmt(vals[0], 2) + "}_{\\text{" + (DE ? "höchster Logit" : "top logit") + "}}\\\\" + fmt(vals[1], 2) + "\\\\" + fmt(vals[2], 2) + "\\\\\\vdots\\\\" + fmt(vals[vals.length - 1], 2) + "\\end{pmatrix}}_{\\text{" + (DE ? "echte GPT-2-Logits, erste 10 von 50.257" : "real GPT-2 logits, first 10 of 50,257") + "}}";
+				matrix.setAttribute("data-tex", tex);
+				matrix.removeAttribute("data-tex-rendered");
+				if (TM.typesetMath) TM.typesetMath(matrix.parentNode);
+			}
+			updateReadout();
+			var start = performance.now();
+			function loop(now) {
+				drawRibbons();
+				if (now - start < 360) requestAnimationFrame(loop);
+			}
+			requestAnimationFrame(loop);
+		}
+		function setHover(i) {
+			state.hovered = i;
+			lrows.forEach(function (r, j) { r.classList.toggle("is-hot", j === i); });
+			prows.forEach(function (r, j) { r.classList.toggle("is-hot", j === i); });
+			updateReadout();
+			drawRibbons();
+		}
+		function updateReadout() {
+			var d = PROMPTS[state.key].rows[state.hovered];
+			if (!d) return;
+			readout.token.textContent = d.token;
+			readout.logit.textContent = fmt(d.logit, 2);
+			readout.exp.textContent = exps[state.hovered] != null ? fmt(exps[state.hovered], 3) : "—";
+			readout.prob.textContent = probs[state.hovered] != null ? (probs[state.hovered] * 100).toFixed(1) + "%" : "—";
+		}
+		function drawRibbons() {
+			if (!lfills.length) return;
+			var sr = stage.getBoundingClientRect();
+			var out = '<defs><linearGradient id="softmax-ribbon-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="var(--tm-green)"></stop><stop offset="100%" stop-color="var(--tm-petrol-mid)"></stop></linearGradient></defs>';
+			var maxP = Math.max.apply(null, probs) || 1;
+			lfills.forEach(function (fill, i) {
+				var lf = fill.getBoundingClientRect();
+				var pf = pfills[i].getBoundingClientRect();
+				var x1 = lf.right - sr.left;
+				var y1 = lf.top + lf.height / 2 - sr.top;
+				var x2 = pf.left - sr.left;
+				var y2 = pf.top + pf.height / 2 - sr.top;
+				var mid = (x1 + x2) / 2;
+				var p = probs[i] / maxP;
+				var w = 0.7 + p * 6.5;
+				var o = 0.12 + p * 0.78;
+				out += '<path d="M' + x1 + ' ' + y1 + ' C' + mid + ' ' + y1 + ' ' + mid + ' ' + y2 + ' ' + x2 + ' ' + y2 + '" stroke-width="' + w + '" opacity="' + o + '"' + (i === state.hovered ? ' class="is-hot"' : '') + '></path>';
+			});
+			ribbons.innerHTML = out;
+		}
+		function renderPrompt(key) {
+			state.key = key;
+			state.hovered = 0;
+			document.querySelectorAll("[data-softmax-prompt]").forEach(function (b) {
+				b.classList.toggle("is-on", b.getAttribute("data-softmax-prompt") === key);
+			});
+			build();
+			update();
+		}
+		document.querySelectorAll("[data-softmax-prompt]").forEach(function (b) {
+			b.addEventListener("click", function () { renderPrompt(b.getAttribute("data-softmax-prompt")); });
+		});
+		if (tempInput) {
+			tempInput.addEventListener("input", function () {
+				state.temp = Math.max(0.05, parseFloat(tempInput.value) || 1);
+				tempOut.textContent = state.temp.toFixed(2);
+				update();
+			});
+		}
+		window.addEventListener("resize", function () { drawRibbons(); });
+		window.addEventListener("tm:theme", function () { drawRibbons(); });
+		if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { drawRibbons(); });
+		build();
+		update();
 	})();
 	</script>
 </body>

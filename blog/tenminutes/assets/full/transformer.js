@@ -260,25 +260,31 @@ window.tmComputeStepTrace = function () {
 	window.__tmLayerTrace = [];
 	window.__tmFFNTrace = [];
 	var h = tokens;
-	for (var n = 0; n < n_layers; n++) {
-		var layer = window.currentWeights[n];
-		if (!layer) break;
-		var norm = calculateLayerNorm(h, layer.gamma, layer.beta);
-		var headData = causalMultiHeadAttention(norm, layer.attention, d_model, n_heads);
-		var concat = h.map(function (_, tIdx) {
-			return [].concat.apply([], headData.map(function (hd) { return hd.context[tIdx]; }));
-		});
-		var projected = matMul(concat, layer.attention.output);
-		var h_attn = matAdd(h, projected);
-		var h_out = run_ffn_block(h_attn, layer, true, n, tokenStrings);
-		window.__tmLayerTrace[n] = { h_in: h, h_attn: h_attn, h_out: h_out, headData: headData, tokenStrings: tokenStrings };
-		h = h_out;
+	window.__tmCollectLayerTrace = true;
+	try {
+		for (var n = 0; n < n_layers; n++) {
+			var layer = window.currentWeights[n];
+			if (!layer) break;
+			var norm = calculateLayerNorm(h, layer.gamma, layer.beta);
+			var headData = causalMultiHeadAttention(norm, layer.attention, d_model, n_heads);
+			var concat = h.map(function (_, tIdx) {
+				return [].concat.apply([], headData.map(function (hd) { return hd.context[tIdx]; }));
+			});
+			var projected = matMul(concat, layer.attention.output);
+			var h_attn = matAdd(h, projected);
+			var h_out = run_ffn_block(h_attn, layer, true, n, tokenStrings);
+			window.__tmLayerTrace[n] = { h_in: h, h_attn: h_attn, h_out: h_out, headData: headData, tokenStrings: tokenStrings };
+			h = h_out;
+		}
+	} finally {
+		window.__tmCollectLayerTrace = false;
 	}
 	window._cachedFinalProjection = {
 		h_final: h,
 		vocabulary: Object.keys(window.persistentEmbeddingSpace || {}),
 		d_model: d_model
 	};
+	for (var l = 0; l < n_layers; l++) ensureUnifiedLayerContainer(l, n_layers, 'mha-calculation-details');
 	window.dispatchEvent(new CustomEvent("tm:transformer-data"));
 	return true;
 };
@@ -2103,6 +2109,15 @@ function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_m
 	const projected = matMul(multiHeadOutput, Wo_layer0);
 	const h1 = matAdd(h0, projected);
 	const h2 = run_ffn_block(h1, layer, true, 0, knownTokens);
+	const ffn0 = (window.__tmFFNTrace || [])[0];
+	if (window.Prov && ffn0) {
+		window.Prov.recordFfn(0, {
+			gamma2: ffn0.gamma2, beta2: ffn0.beta2, norm2: ffn0.normed_h1,
+			W1: ffn0.W1, b1: ffn0.b1, outL1: ffn0.out_L1,
+			W2: ffn0.W2, b2: ffn0.b2, outFFN: ffn0.out_FFN,
+			h2: ffn0.h2, h1: ffn0.h1
+		});
+	}
 	if (window.Prov) window.Prov.recordLayer(0, {
 		d_model, n_heads,
 		h_in: h0,
@@ -2302,12 +2317,13 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 	// 3. Prepare migration/trajectory state
 	prepareMigrationState(needsReinit);
-	for (let l = 0; l < n_layers; l++) {
-		ensureUnifiedLayerContainer(l, n_layers, 'mha-calculation-details');
-	}
-
 	// 4. Core forward pass + visualization
-	renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
+	window.__tmCollectLayerTrace = true;
+	try {
+		renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
+	} finally {
+		window.__tmCollectLayerTrace = false;
+	}
 	window.dispatchEvent(new CustomEvent("tm:transformer-data"));
 }
 
@@ -2335,6 +2351,9 @@ function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, w
 	}
 
 	clearFFNEquationsContainer();
+	for (let l = 0; l < n_layers; l++) {
+		ensureUnifiedLayerContainer(l, n_layers, 'mha-calculation-details');
+	}
 
 	const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
 	create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
@@ -3382,12 +3401,11 @@ function clearFFNEquationsContainer() {
 	// Only do a full clear when the architecture config has changed
 	// (detected by comparing the number of existing layer tabs to n_layers).
 	const { n_layers } = getTransformerConfig();
-	const existingCards = container.querySelectorAll('.unified-layer-card');
+	const existingCards = container.querySelectorAll('.tm-layer-card');
 
 	if (existingCards.length === n_layers) {
-		container.querySelectorAll('.unified-layer-tab-content').forEach(div => {
-			div.dataset.ffnRendered = 'false';
-			const body = div.querySelector('[id$="-formula-body"]');
+		container.querySelectorAll('.tm-layer-card').forEach(card => {
+			const body = card.querySelector('[id$="-formula-body"]');
 			if (body) body.dataset.formulasRendered = 'false';
 		});
 		return;
@@ -3415,8 +3433,10 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, toke
 
 	const h2 = matAdd(h1, out_FFN);
 
-	if (!window.__tmFFNTrace) window.__tmFFNTrace = [];
-	window.__tmFFNTrace[layerIndex] = { h1, normed_h1, out_L1, out_FFN, h2, W1, b1, W2, b2, gamma2, beta2 };
+	if (window.__tmCollectLayerTrace) {
+		if (!window.__tmFFNTrace) window.__tmFFNTrace = [];
+		window.__tmFFNTrace[layerIndex] = { h1, normed_h1, out_L1, out_FFN, h2, W1, b1, W2, b2, gamma2, beta2 };
+	}
 
 	if (!skipRender) {
 		// Provenance: record the FFN sublayer values
@@ -3661,6 +3681,31 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 		const projected = matMul(concat, layer.attention.output);
 		const h_attn = matAdd(h_current, projected);
 		const h_out = run_ffn_block(h_attn, layer, true, n, tokenStrings);
+		if (window.Prov) {
+			window.Prov.recordLayer(n, {
+				d_model, n_heads,
+				h_in: h_current,
+				norm: normH,
+				gamma: layer.gamma,
+				beta: layer.beta,
+				Wo: layer.attention.output,
+				concat: concat,
+				proj: projected,
+				h1: h_attn,
+				tokens: tokenStrings,
+				headData: headData,
+				attention: layer.attention
+			});
+			const ffn = (window.__tmFFNTrace || [])[n];
+			if (ffn) {
+				window.Prov.recordFfn(n, {
+					gamma2: ffn.gamma2, beta2: ffn.beta2, norm2: ffn.normed_h1,
+					W1: ffn.W1, b1: ffn.b1, outL1: ffn.out_L1,
+					W2: ffn.W2, b2: ffn.b2, outFFN: ffn.out_FFN,
+					h2: ffn.h2, h1: ffn.h1
+				});
+			}
+		}
 		if (!window.__tmLayerTrace) window.__tmLayerTrace = [];
 		window.__tmLayerTrace[n] = { h_in: h_before_layer, h_attn, h_out, headData, tokenStrings, normH, concat, projected, Wo: layer.attention.output, gamma: layer.gamma, beta: layer.beta, ffn: (window.__tmFFNTrace || [])[n] };
 		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, h_out, n + 1, d_model, h_out, tokenStrings);
@@ -7828,5 +7873,17 @@ if (window.__MN_DARK) {
 			renderLossGraph();
 		}
 		updateArchitectureValidityUI();
+	});
+}
+
+/* Keep an open layer card in sync when a new forward pass arrives. */
+if (!window.__tmLayerCardListener) {
+	window.__tmLayerCardListener = true;
+	window.addEventListener('tm:transformer-data', function () {
+		document.querySelectorAll('.tm-layer-card.is-open').forEach(function (card) {
+			var idx = parseInt(card.dataset.layerIdx, 10);
+			var active = card.querySelector('.tm-level-step.is-active');
+			if (!isNaN(idx) && active) setLayerLevel(idx, parseInt(active.dataset.level, 10));
+		});
 	});
 }

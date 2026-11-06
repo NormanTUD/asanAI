@@ -25,6 +25,14 @@ DONE Active chips/buttons inside .step-pane use the ScaDS green background
 DONE Position bridge: replace the "second demo" paragraph with a styled,
      informative bridge (gradient + faint grid, semantic green) and move the
      drag hint into the demo itself
+DONE Final step: rewrite the last-token paragraph (whole context + meaning,
+     attention mixing, FFN relevance), add the dot-product and softmax
+     formulas, show real GPT-2 small logits in a pmatrix with ellipses, and
+     build the interactive logits→softmax ribbon demo with two real prompts,
+     hover readouts, and a temperature slider
+DONE Use the real GPT-2 small logits from the Transformer Explainer (Polo
+     Club, Georgia Tech), cite them in the demo foot, and keep the demo
+     bilingual
 DONE Neural typo note: add the "new" + "york" layer intuition
 
 Open — unified demo framework

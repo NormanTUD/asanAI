@@ -215,7 +215,7 @@
 		ctx.fillText(DE() ? tokens.length + " Tokens · Leserichtung →" : tokens.length + " tokens · reading order →", pad, h - 10);
 	}
 
-	function drawEmbed(ctx, w, h) {
+	function drawEmbedPca(ctx, w, h) {
 		var c = palette();
 		var vocab = vocabList();
 		var tokens = tokenList();
@@ -288,7 +288,7 @@
 		ctx.restore();
 	}
 
-	function drawPosition(ctx, w, h) {
+	function drawPositionHeatmap(ctx, w, h) {
 		var c = palette();
 		var tokens = tokenList();
 		var d = dModel();
@@ -321,6 +321,170 @@
 		ctx.textAlign = "left";
 		ctx.textBaseline = "alphabetic";
 		ctx.fillText(DE() ? "Position × Dimension · blau = negativ, gold = positiv" : "position × dimension · blue = negative, gold = positive", pad, 14);
+	}
+
+	function positionVectors(count, d) {
+		var out = [];
+		for (var pos = 0; pos < count; pos++) {
+			if (typeof window.computePositionalEncoding === 'function') {
+				out.push(window.computePositionalEncoding(pos, d));
+			} else {
+				var vec = [];
+				for (var i = 0; i < d; i++) {
+					var angle = pos / Math.pow(10000, (2 * Math.floor(i / 2)) / d);
+					vec.push(i % 2 === 0 ? Math.sin(angle) : Math.cos(angle));
+				}
+				out.push(vec);
+			}
+		}
+		return out;
+	}
+
+	function drawEmbedParallel(ctx, w, h) {
+		var c = palette();
+		var vocab = vocabList();
+		var tokens = tokenList();
+		ctx.clearRect(0, 0, w, h);
+		if (!vocab.length) return drawPlaceholder(ctx, w, h, DE() ? "Noch kein Embedding-Raum." : "No embedding space yet.");
+		var d = vocab[0].vec.length;
+		var min = Infinity, max = -Infinity;
+		vocab.forEach(function (item) {
+			item.vec.forEach(function (x) { min = Math.min(min, x); max = Math.max(max, x); });
+		});
+		var span = max - min || 1;
+		var pad = 24, left = pad, right = w - pad, top = 28, bottom = h - 34;
+		function px(dim) { return left + (d <= 1 ? 0 : (dim / (d - 1)) * (right - left)); }
+		function py(value) { return bottom - (value - min) / span * (bottom - top); }
+		ctx.strokeStyle = c.line;
+		ctx.lineWidth = 1;
+		ctx.beginPath(); ctx.moveTo(left, bottom); ctx.lineTo(right, bottom); ctx.stroke();
+		vocab.forEach(function (item) {
+			ctx.beginPath();
+			item.vec.forEach(function (value, dim) {
+				if (dim === 0) ctx.moveTo(px(dim), py(value)); else ctx.lineTo(px(dim), py(value));
+			});
+			ctx.strokeStyle = c.dark ? "rgba(157,181,181,.10)" : "rgba(0,75,111,.08)";
+			ctx.lineWidth = 1;
+			ctx.stroke();
+		});
+		tokens.forEach(function (token, t) {
+			var item = null;
+			for (var i = 0; i < vocab.length; i++) if (vocab[i].word === token) { item = vocab[i]; break; }
+			if (!item) return;
+			var col = mix(hex(c.blue), hex(c.lilac), t / Math.max(1, tokens.length - 1));
+			ctx.beginPath();
+			item.vec.forEach(function (value, dim) {
+				if (dim === 0) ctx.moveTo(px(dim), py(value)); else ctx.lineTo(px(dim), py(value));
+			});
+			ctx.strokeStyle = rgb(col);
+			ctx.lineWidth = 2.2;
+			ctx.stroke();
+			ctx.fillStyle = rgb(col);
+			ctx.font = "700 9px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "right";
+			ctx.fillText(fitText(ctx, display(token), 64), right - 4, py(item.vec[d - 1]) - 4);
+		});
+		ctx.fillStyle = c.muted;
+		ctx.font = "600 9px Barlow, system-ui, sans-serif";
+		ctx.textAlign = "left";
+		ctx.fillText(DE() ? "Alle Dimensionen · eine Linie pro Token · Originaldaten" : "all dimensions · one line per token · original data", pad, 15);
+		ctx.fillText("dim 0", left, h - 10);
+		ctx.textAlign = "right";
+		ctx.fillText("dim " + (d - 1), right, h - 10);
+	}
+
+	function drawPositionPca(ctx, w, h) {
+		var c = palette();
+		var tokens = tokenList();
+		var d = dModel();
+		ctx.clearRect(0, 0, w, h);
+		if (!tokens.length || !d) return drawPlaceholder(ctx, w, h, DE() ? "Noch keine Positionen." : "No positions yet.");
+		var vectors = positionVectors(tokens.length, d);
+		var coords = pca2(vectors);
+		var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+		coords.forEach(function (q) { minX = Math.min(minX, q[0]); maxX = Math.max(maxX, q[0]); minY = Math.min(minY, q[1]); maxY = Math.max(maxY, q[1]); });
+		var spanX = maxX - minX || 1, spanY = maxY - minY || 1;
+		var pad = 32;
+		function map(q) { return { x: pad + (q[0] - minX) / spanX * (w - pad * 2), y: h - pad - (q[1] - minY) / spanY * (h - pad * 2) }; }
+		ctx.strokeStyle = c.line;
+		ctx.beginPath(); ctx.moveTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.stroke();
+		ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h - pad); ctx.stroke();
+		ctx.beginPath();
+		coords.forEach(function (q, i) {
+			var p = map(q);
+			if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+		});
+		ctx.strokeStyle = c.green;
+		ctx.lineWidth = 2.2;
+		ctx.stroke();
+		coords.forEach(function (q, i) {
+			var p = map(q);
+			var col = mix(hex(c.blue), hex(c.gold), i / Math.max(1, coords.length - 1));
+			ctx.beginPath();
+			ctx.arc(p.x, p.y, 4.6, 0, Math.PI * 2);
+			ctx.fillStyle = rgb(col);
+			ctx.fill();
+			ctx.strokeStyle = c.paper;
+			ctx.lineWidth = 1.3;
+			ctx.stroke();
+			ctx.fillStyle = c.ink;
+			ctx.font = "700 9px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "center";
+			ctx.fillText("p" + i, p.x, p.y - 9);
+		});
+		ctx.textAlign = "left";
+		ctx.fillStyle = c.muted;
+		ctx.font = "600 9px Barlow, system-ui, sans-serif";
+		ctx.fillText(DE() ? "PCA-Projektion der Positionsvektoren · Kurve = Reihenfolge der Positionen" : "PCA projection of the position vectors · curve = position order", pad, 15);
+	}
+
+	function drawPositionParallel(ctx, w, h) {
+		var c = palette();
+		var tokens = tokenList();
+		var d = dModel();
+		ctx.clearRect(0, 0, w, h);
+		if (!tokens.length || !d) return drawPlaceholder(ctx, w, h, DE() ? "Noch keine Positionen." : "No positions yet.");
+		var vectors = positionVectors(tokens.length, d);
+		var min = -1.1, max = 1.1;
+		var pad = 24, left = pad, right = w - pad, top = 28, bottom = h - 34;
+		function px(dim) { return left + (d <= 1 ? 0 : (dim / (d - 1)) * (right - left)); }
+		function py(value) { return bottom - (value - min) / (max - min) * (bottom - top); }
+		ctx.strokeStyle = c.line;
+		ctx.beginPath(); ctx.moveTo(left, bottom); ctx.lineTo(right, bottom); ctx.stroke();
+		vectors.forEach(function (vec, pos) {
+			var col = mix(hex(c.blue), hex(c.gold), pos / Math.max(1, vectors.length - 1));
+			ctx.beginPath();
+			vec.forEach(function (value, dim) {
+				if (dim === 0) ctx.moveTo(px(dim), py(value)); else ctx.lineTo(px(dim), py(value));
+			});
+			ctx.strokeStyle = rgb(col);
+			ctx.globalAlpha = 0.85;
+			ctx.lineWidth = 1.6;
+			ctx.stroke();
+			ctx.globalAlpha = 1;
+			ctx.fillStyle = rgb(col);
+			ctx.font = "700 8px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "right";
+			ctx.fillText("p" + pos, right - 4, py(vec[d - 1]) - 3);
+		});
+		ctx.fillStyle = c.muted;
+		ctx.font = "600 9px Barlow, system-ui, sans-serif";
+		ctx.textAlign = "left";
+		ctx.fillText(DE() ? "Alle Dimensionen · eine Linie pro Position · Originaldaten" : "all dimensions · one line per position · original data", pad, 15);
+		ctx.fillText("dim 0", left, h - 10);
+		ctx.textAlign = "right";
+		ctx.fillText("dim " + (d - 1), right, h - 10);
+	}
+
+	function drawEmbed(ctx, w, h, mode) {
+		if (mode === "parallel") return drawEmbedParallel(ctx, w, h);
+		return drawEmbedPca(ctx, w, h);
+	}
+
+	function drawPosition(ctx, w, h, mode) {
+		if (mode === "pca") return drawPositionPca(ctx, w, h);
+		if (mode === "parallel") return drawPositionParallel(ctx, w, h);
+		return drawPositionHeatmap(ctx, w, h);
 	}
 
 	function averageAttention(trace) {
@@ -620,7 +784,7 @@
 		if (!trace || !tokens.length) {
 			return drawPlaceholder(ctx, w, h, DE() ? "Öffne eine Schicht, um ihren Residual-Stream zu sehen." : "Open a layer to see its residual stream.");
 		}
-		var shown = tokens.slice(0, 24);
+		var shown = tokens;
 		var pad = 14, left = 82, top = 26;
 		var rowH = (h - top - pad) / Math.max(1, shown.length);
 		var max = 0;
@@ -682,10 +846,7 @@
 		ctx.fillStyle = c.muted;
 		ctx.font = "600 9px Barlow, system-ui, sans-serif";
 		ctx.fillText(DE() ? "Norm des laufenden Vektors: grau = Eingabe, blau = nach Attention, grün = nach FFN" : "running-vector norm: grey = input, blue = after attention, green = after FFN", pad, 14);
-		if (tokens.length > shown.length) {
-			ctx.textAlign = "right";
-			ctx.fillText("+" + (tokens.length - shown.length) + (DE() ? " weitere Tokens" : " more tokens"), w - pad, h - 3);
-		}
+
 	}
 
 	function redrawLayerCanvases() {
@@ -733,14 +894,47 @@
 				residual: drawResidual,
 				unembed: drawUnembed
 			};
+			var stepModes = { embed: "pca", position: "heatmap" };
+			var modeLabels = {
+				embed: [
+					["pca", "PCA"],
+					["parallel", DE() ? "Alle Dimensionen" : "All dimensions"]
+				],
+				position: [
+					["heatmap", "Heatmap"],
+					["pca", DE() ? "PCA-Kurve" : "PCA curve"],
+					["parallel", DE() ? "Alle Dimensionen" : "All dimensions"]
+				]
+			};
 			var apis = {};
 			Object.keys(canvases).forEach(function (key) {
 				var canvas = canvases[key];
 				if (!canvas) return;
 				apis[key] = initCanvas(canvas, function (ctx, w, h) {
-					draws[key](ctx, w, h);
+					draws[key](ctx, w, h, stepModes[key]);
 				});
 			});
+			function buildStepModes() {
+				host.querySelectorAll("[data-step-modes]").forEach(function (modeHost) {
+					var key = modeHost.getAttribute("data-step-modes");
+					if (!modeLabels[key]) return;
+					modeHost.innerHTML = "";
+					modeLabels[key].forEach(function (pair) {
+						var btn = document.createElement("button");
+						btn.type = "button";
+						btn.className = "tm-step-mode" + (stepModes[key] === pair[0] ? " is-active" : "");
+						btn.textContent = pair[1];
+						btn.addEventListener("click", function () {
+							stepModes[key] = pair[0];
+							modeHost.querySelectorAll(".tm-step-mode").forEach(function (x) { x.classList.remove("is-active"); });
+							btn.classList.add("is-active");
+							if (apis[key]) apis[key].redraw();
+						});
+						modeHost.appendChild(btn);
+					});
+				});
+			}
+			buildStepModes();
 			var pending = null;
 			function redraw() {
 				if (pending) return;
