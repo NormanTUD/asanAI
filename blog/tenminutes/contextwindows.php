@@ -6,7 +6,7 @@
 	<meta name="description" content="What a context window is, why it is not human memory, and how attention cost shapes long conversations.">
 	<meta name="theme-color" content="#ffffff">
 	<title>The Memory It Can Hold | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-lesson="contextwindows" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -116,7 +116,7 @@
 		</div>
 	</main>
 
-	<script src="assets/site.js"></script>
-	<script src="assets/demos.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
+	<script src="assets/demos.js?v=<?php echo filemtime(__DIR__.'/assets/demos.js'); ?>"></script>
 </body>
 </html>
