@@ -2,6 +2,18 @@
 # links. The blog-wide auto_prepend has a path relative to the blog root and
 # does not resolve from this subdirectory, so point it at the local bootstrap
 # instead. .user.ini does the same for CGI/FPM.
+
+RewriteEngine On
+# Keep the blog-root pretty-URL rules (extensionless -> .php) active in this
+# subdirectory as well.
+RewriteOptions Inherit
+
+# A requested .html page that does not exist falls back to the pretty URL
+# (history.html -> history), which the blog root rewrites to history.php.
+# Real static .html files are still served.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} ^(.*)\.html$ [NC]
+RewriteRule ^ %1 [R=301,L]
 <IfModule mod_php8.c>
     php_value auto_prepend_file "bootstrap.php"
 </IfModule>
