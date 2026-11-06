@@ -2323,6 +2323,7 @@ function pruneOrphanedMigrationPlots() {
 
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	window.__tmLayerTrace = [];
+	window.__tmFFNTrace = [];
 	const config = getTransformerConfig();
 	const { d_model, n_heads, temperature, n_layers } = config;
 
@@ -3413,6 +3414,9 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, toke
 	const out_FFN = matMul(out_L1, W2, b2);
 
 	const h2 = matAdd(h1, out_FFN);
+
+	if (!window.__tmFFNTrace) window.__tmFFNTrace = [];
+	window.__tmFFNTrace[layerIndex] = { h1, normed_h1, out_L1, out_FFN, h2 };
 
 	if (!skipRender) {
 		// Provenance: record the FFN sublayer values

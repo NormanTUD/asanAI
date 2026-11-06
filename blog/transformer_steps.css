@@ -1,0 +1,42 @@
+/* Shared six-step canvas overview for the transformer lessons. */
+.tm-step-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	margin: 20px 0 8px;
+}
+
+.tm-step {
+	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: var(--tm-card, var(--mn-surface, #ffffff));
+	padding: 14px 16px 10px;
+	min-width: 0;
+}
+
+.tm-step h3 {
+	margin: 0 0 4px;
+	font: 700 0.95rem/1.25 "Barlow", "Open Sans", system-ui, sans-serif;
+	color: var(--tm-petrol, var(--mn-accent, #004b6f));
+}
+
+.tm-step p {
+	margin: 0 0 8px;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+	font: 400 0.8rem/1.45 "Open Sans", system-ui, sans-serif;
+	min-height: 3.5em;
+}
+
+.tm-step-canvas {
+	display: block;
+	width: 100%;
+	height: 235px;
+}
+
+@media (max-width: 820px) {
+	.tm-step-grid {
+		grid-template-columns: 1fr;
+	}
+	.tm-step-canvas {
+		height: 220px;
+	}
+}
