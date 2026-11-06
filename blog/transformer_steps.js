@@ -821,6 +821,21 @@
 		ctx.fillText(DE() ? "FFN-Hidden-Aktivierung des letzten Tokens (GELU) · grün positiv, lila negativ" : "FFN hidden activation of the last token (GELU) · green positive, lilac negative", pad, 16);
 	}
 
+	function drawCurlyGroup(ctx, x1, x2, y, height, color) {
+		var mid = (x1 + x2) / 2;
+		ctx.save();
+		ctx.strokeStyle = color;
+		ctx.lineWidth = 1.2;
+		ctx.beginPath();
+		ctx.moveTo(x1, y + height);
+		ctx.quadraticCurveTo(x1, y, mid, y);
+		ctx.quadraticCurveTo(x2, y, x2, y + height);
+		ctx.moveTo(mid, y);
+		ctx.lineTo(mid, y + height * 0.55);
+		ctx.stroke();
+		ctx.restore();
+	}
+
 	function drawResidual(ctx, w, h) {
 		var c = palette();
 		var trace = window.__tmLayerTrace || [];
@@ -828,7 +843,7 @@
 		ctx.clearRect(0, 0, w, h);
 		if (!trace.length || !tokens.length) return drawPlaceholder(ctx, w, h, DE() ? "Noch keine Residual-Daten." : "No residual data yet.");
 		var layers = trace.length;
-		var pad = 18, left = 78, top = 34;
+		var pad = 18, left = 78, top = 48;
 		var rows = tokens.length;
 		var cols = layers * 2 + 2;
 		var cw = (w - left - pad) / Math.max(1, cols);
@@ -863,10 +878,14 @@
 				ctx.fillStyle = "rgba(" + hex(c.green).join(",") + "," + (0.06 + f * 0.9) + ")";
 				ctx.fillRect(left + (2 + l * 2) * cw, y2, cw, ch);
 			}
+			var bx1 = left + (1 + l * 2) * cw + 2;
+			var bx2 = left + (3 + l * 2) * cw - 2;
+			var by = top - 16;
+			drawCurlyGroup(ctx, bx1, bx2, by, 8, c.muted);
 			ctx.fillStyle = c.muted;
 			ctx.font = "700 8px Barlow, system-ui, sans-serif";
 			ctx.textAlign = "center";
-			ctx.fillText("L" + (l + 1), left + (1.5 + l * 2) * cw, top - 10);
+			ctx.fillText("L" + (l + 1), (bx1 + bx2) / 2, by - 4);
 		}
 		ctx.fillStyle = c.ink;
 		ctx.font = "700 9px Barlow, system-ui, sans-serif";
@@ -1701,70 +1720,76 @@
 		}
 		// 4 · Transformer: one box after Position, with the token trajectory at
 		// the top, then the overview steps, then the stacked layer cards.
-		var posCard = stepByNumber(3);
-		if (posCard) {
-			var isDe = document.documentElement.lang === "de";
-			var attendCard = stepByNumber(4);
-			var ffnCard = stepByNumber(5);
-			var residualCard = stepByNumber(6);
-			var box = document.getElementById("tm-transformer-box");
-			if (!box) {
-				box = document.createElement("section");
-				box.className = "tm-step tm-transformer-box";
-				box.id = "tm-transformer-box";
-				box.innerHTML = '<div class="tm-step-head"><h3>' + (isDe ? "4 · Transformer" : "4 · Transformer") + '</h3><button class="tm-step-toggle" type="button" aria-expanded="true" aria-label="' + (isDe ? "Schritt einklappen" : "Collapse step") + '">−</button></div><p>' + (isDe ? "Der Block, der die Schichten stapelt. Die Token Trajectory zeigt, wie sich die Vektoren Schicht für Schicht verschieben; die Layer darunter zeigen Attention und FFN." : "The block that stacks the layers. The token trajectory shows how the vectors shift layer by layer; the layers below show attention and FFN.") + '</p><div class="tm-step-body" id="tm-transformer-body"></div>';
-				posCard.parentNode.insertBefore(box, posCard.nextSibling);
-				var toggle = box.querySelector(".tm-step-toggle");
-				toggle.addEventListener("click", function () {
-					var b = box.querySelector(".tm-step-body");
-					var open = b.hidden;
-					b.hidden = !open;
-					toggle.textContent = open ? "−" : "+";
-					toggle.setAttribute("aria-expanded", String(open));
-					toggle.setAttribute("aria-label", open ? (isDe ? "Schritt einklappen" : "Collapse step") : (isDe ? "Schritt ausklappen" : "Expand step"));
-					box.classList.toggle("is-collapsed", !open);
-					if (open) setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 60);
-				});
-			}
-			var boxBody = box.querySelector(".tm-step-body");
-			// Move the already-rendered overview cards into the Transformer box.
-			[[attendCard, isDe ? "Attention-Überblick" : "Attention overview"],
-			 [ffnCard, isDe ? "Feed-Forward-Überblick" : "Feed-forward overview"],
-			 [residualCard, isDe ? "Residual-Stream-Überblick" : "Residual stream overview"]].forEach(function (pair) {
-				var card = pair[0];
-				if (!card || !boxBody) return;
-				var h = card.querySelector("h3");
-				if (h) h.textContent = pair[1];
-				var b = card.querySelector(".tm-step-body");
-				if (b) b.hidden = true;
-				card.classList.add("is-collapsed");
-				var btn = card.querySelector(".tm-step-toggle");
-				if (btn) {
-					btn.textContent = "+";
-					btn.setAttribute("aria-expanded", "false");
-					btn.setAttribute("aria-label", isDe ? "Schritt ausklappen" : "Expand step");
+		if (!moved.transformer) {
+			var posCard = stepByNumber(3);
+			if (posCard) {
+				var isDe = document.documentElement.lang === "de";
+				var attendCard = stepByNumber(4);
+				var ffnCard = stepByNumber(5);
+				var residualCard = stepByNumber(6);
+				var box = document.getElementById("tm-transformer-box");
+				if (!box) {
+					box = document.createElement("section");
+					box.className = "tm-step tm-transformer-box";
+					box.id = "tm-transformer-box";
+					box.innerHTML = '<div class="tm-step-head"><h3>4 · Transformer</h3><button class="tm-step-toggle" type="button" aria-expanded="true" aria-label="' + (isDe ? "Schritt einklappen" : "Collapse step") + '">−</button></div><p>' + (isDe ? "Der Block, der die Schichten stapelt. Die Token Trajectory zeigt, wie sich die Vektoren Schicht für Schicht verschieben; die Layer darunter zeigen Attention und FFN." : "The block that stacks the layers. The token trajectory shows how the vectors shift layer by layer; the layers below show attention and FFN.") + '</p><div class="tm-step-body" id="tm-transformer-body"></div>';
+					posCard.parentNode.insertBefore(box, posCard.nextSibling);
+					var toggle = box.querySelector(".tm-step-toggle");
+					toggle.addEventListener("click", function () {
+						var b = box.querySelector(".tm-step-body");
+						var open = b.hidden;
+						b.hidden = !open;
+						toggle.textContent = open ? "−" : "+";
+						toggle.setAttribute("aria-expanded", String(open));
+						toggle.setAttribute("aria-label", open ? (isDe ? "Schritt einklappen" : "Collapse step") : (isDe ? "Schritt ausklappen" : "Expand step"));
+						box.classList.toggle("is-collapsed", !open);
+						if (open) setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 60);
+					});
 				}
-				boxBody.appendChild(card);
-			});
-			// Move the layer container into the box, after the overview cards.
+				var boxBody = box.querySelector(".tm-step-body");
+				// Move the already-rendered overview cards into the Transformer box.
+				[[attendCard, isDe ? "Attention-Überblick" : "Attention overview"],
+				 [ffnCard, isDe ? "Feed-Forward-Überblick" : "Feed-forward overview"],
+				 [residualCard, isDe ? "Residual-Stream-Überblick" : "Residual stream overview"]].forEach(function (pair) {
+					var card = pair[0];
+					if (!card || !boxBody) return;
+					var h = card.querySelector("h3");
+					if (h) h.textContent = pair[1];
+					var b = card.querySelector(".tm-step-body");
+					if (b) b.hidden = true;
+					card.classList.add("is-collapsed");
+					var btn = card.querySelector(".tm-step-toggle");
+					if (btn) {
+						btn.textContent = "+";
+						btn.setAttribute("aria-expanded", "false");
+						btn.setAttribute("aria-label", isDe ? "Schritt ausklappen" : "Expand step");
+					}
+					boxBody.appendChild(card);
+				});
+				// The old #block section keeps its prose, but the observer should
+				// now fire on the Transformer box at the top.
+				var oldBlock = document.getElementById("block");
+				if (oldBlock && oldBlock !== box) oldBlock.id = "block-source";
+				box.id = "block";
+				// Renumber the final step now that the overview cards left the grid.
+				var un = stepByNumber(7);
+				if (un) {
+					var uh = un.querySelector("h3");
+					if (uh && uh.textContent.trim().indexOf("7") === 0) uh.textContent = "5 · Unembedding";
+				}
+				moved.transformer = true;
+			}
+		}
+		var boxNow = document.querySelector(".tm-transformer-box");
+		if (boxNow) {
+			var boxNowBody = boxNow.querySelector(".tm-step-body");
 			var layerContainer = document.getElementById("ffn-equations-container");
-			if (layerContainer && layerContainer.parentNode !== boxBody) boxBody.appendChild(layerContainer);
+			if (layerContainer && boxNowBody && layerContainer.parentNode !== boxNowBody) boxNowBody.appendChild(layerContainer);
 			// Token Trajectory is the opening picture of the block.
 			var traj = document.getElementById("transformer-trajectory-full-path-wrapper") || document.getElementById("transformer-trajectory-full-path");
-			if (traj && boxBody && traj.parentNode !== boxBody) {
-				boxBody.insertBefore(traj, boxBody.firstChild);
+			if (traj && boxNowBody && traj.parentNode !== boxNowBody) {
+				boxNowBody.insertBefore(traj, boxNowBody.firstChild);
 				traj.style.width = "100%";
-			}
-			// The old #block section keeps its prose, but the observer should now
-			// fire on the Transformer box at the top.
-			var oldBlock = document.getElementById("block");
-			if (oldBlock && oldBlock !== box) oldBlock.id = "block-source";
-			box.id = "block";
-			// Renumber the final step now that the overview cards left the grid.
-			var un = stepByNumber(7);
-			if (un) {
-				var uh = un.querySelector("h3");
-				if (uh && uh.textContent.trim().indexOf("7") === 0) uh.textContent = isDe ? "5 · Unembedding" : "5 · Unembedding";
 			}
 		}
 		// 7 · Unembed: the real output projection belongs in the expanded box.
