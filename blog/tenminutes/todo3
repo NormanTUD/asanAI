@@ -1,17 +1,17 @@
 embeddinglab:
 
-kopiere die neuere der manifold hypothesis visualisierungen von ../embeddinglab.php hierher, ersetze "Vier Sprachen, ein gemeinsamer Token". ein satz ist eine solche mannigfaltigkeit übrigens. jeder mögliche kontext ist das.
+DONE kopiere die neuere der manifold hypothesis visualisierungen von ../embeddinglab.php hierher, ersetze "Vier Sprachen, ein gemeinsamer Token". ein satz ist eine solche mannigfaltigkeit übrigens. jeder mögliche kontext ist das.
 
 intuition:
 
-demo "Die autoregressive Schleife": "Die Temperatur formt zuerst die Verteilung; Top-p behält dann die kleinste Menge der sortierten Wörter, deren kumulierte Wahrscheinlichkeit 90 % erreicht, und zieht daraus. Die blassen Balken liegen außerhalb dieser Menge." ist länger als "Sampling zieht aus der ganzen Verteilung nach der Temperaturformung. Niedriges T verhält sich fast gierig; hohes T flacht die Verteilung ab und tauscht Kohärenz gegen Überraschung." daher springt das bild weil das div seine höhe verändert. hier im gilt: bei keiner interaktion darf ein div seine höhe dynamisch verändern. das ist optisch störend. lieber etwas mehr freiraum dazwischen lassen auf der maximalen höhe.
+DONE demo "Die autoregressive Schleife": "Die Temperatur formt zuerst die Verteilung; Top-p behält dann die kleinste Menge der sortierten Wörter, deren kumulierte Wahrscheinlichkeit 90 % erreicht, und zieht daraus. Die blassen Balken liegen außerhalb dieser Menge." ist länger als "Sampling zieht aus der ganzen Verteilung nach der Temperaturformung. Niedriges T verhält sich fast gierig; hohes T flacht die Verteilung ab und tauscht Kohärenz gegen Überraschung." daher springt das bild weil das div seine höhe verändert. hier im gilt: bei keiner interaktion darf ein div seine höhe dynamisch verändern. das ist optisch störend. lieber etwas mehr freiraum dazwischen lassen auf der maximalen höhe.
 
-in intuition: "Schritt 3 · Position Jeder Platz bekommt seinen eigenen Fingerabdruck" sollte eigenes kleines mini kapitel werden mit überschrift usw. zeige auch die formel.
+DONE in intuition: "Schritt 3 · Position Jeder Platz bekommt seinen eigenen Fingerabdruck" sollte eigenes kleines mini kapitel werden mit überschrift usw. zeige auch die formel.
 
-split "Six steps, one running vector." into multiple steps really with own headlines and so on. "Inside the model" should be its own sections, not a group of demos. write a little, then a demo, write a little, then a demo and so on. 
+DONE split "Six steps, one running vector." into multiple steps really with own headlines and so on. "Inside the model" should be its own sections, not a group of demos. write a little, then a demo, write a little, then a demo and so on. 
 
-same for all the other demos there. bilingual of course. make it fun and short to read, get info from the according ../ files but make it shorter.
+DONE same for all the other demos there. bilingual of course. make it fun and short to read, get info from the according ../ files but make it shorter.
 
-"Ein Filter gleitet über das Stoppschild": das kleine viereck im bild sollte sich mit de rmaus bewegen on move nicht on click. das bild sollte zentriert sein. der kernel zwischen inputbild und dem bild rechts. zeige unten die zahlen als 0-255 an, nciht 0-1. färbe die matrix ein dass es rgb ist.
+DONE "Ein Filter gleitet über das Stoppschild": das kleine viereck im bild sollte sich mit de rmaus bewegen on move nicht on click. das bild sollte zentriert sein. der kernel zwischen inputbild und dem bild rechts. zeige unten die zahlen als 0-255 an, nciht 0-1. färbe die matrix ein dass es rgb ist.
 
-"Ein Muster passt, ein Wert wird geschrieben": "reicherer Vektor" reicherer vektor oder spezifizischerer vektor
+DONE "Ein Muster passt, ein Wert wird geschrieben": "reicherer Vektor" reicherer vektor oder spezifizischerer vektor
