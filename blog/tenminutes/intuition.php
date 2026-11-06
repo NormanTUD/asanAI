@@ -569,14 +569,14 @@
 								Wenn Wörter Punkte im Raum sind, dann steckt die Bedeutung nicht im einzelnen Punkt, sondern in seiner Lage zu den anderen. Die Richtung von „Mann“ zu „Frau“ ist dieselbe wie von „König“ zu „Königin“. Solche wiederverwendbaren Richtungen lassen sich zwischen Sprachen übertragen: Die beiden Mannigfaltigkeiten haben dieselbe innere Geometrie, also kann man die eine durch Drehung, Scherung und Verschiebung auf die andere legen. Genau das ist die geometrische Seite einer Übersetzung.
 							</p>
 							<p>
-								Die Struktur liegt dabei schief im Raum, nicht nur gedreht: Eine Scherung kippt und verzerrt sie zusätzlich. Und Tokens sind nicht immer ganze Wörter, sondern können Wortteile sein. Dasselbe Stück wie <code>en</code> kommt in zehn Sprachen vor, deshalb können zehn verschiedene Mannigfaltigkeiten alle durch diesen einen Punkt laufen und trotzdem in unterschiedliche Richtungen mit anderen Wörtern weitergehen. Bei echten Embeddings ist das viel unordentlicher als in diesem theoretischen Bild, aber das Prinzip ist dasselbe.
+								Die Struktur liegt dabei schief im Raum, nicht nur gedreht: Eine Scherung kippt und verzerrt sie zusätzlich. Und Tokens sind nicht immer ganze Wörter, sondern können Wortteile sein. Dasselbe Stück wie <code>en</code> kommt in Englisch, Deutsch, Französisch und sogar Python vor, deshalb können vier verschiedene Mannigfaltigkeiten diesen Token teilen und trotzdem in unterschiedliche Richtungen mit anderen Wörtern weitergehen. Bei echten Embeddings ist das viel unordentlicher als in diesem theoretischen Bild, aber das Prinzip ist dasselbe.
 							</p>
 							<?php else: ?>
 							<p>
 								If words are points in space, meaning lives not in the point alone but in its position relative to the others. The direction from “man” to “woman” is the same as from “king” to “queen”. Those reusable directions can cross languages: two manifolds share the same internal geometry, so one can be rotated, sheared, and shifted onto the other. That is the geometric side of a translation.
 							</p>
 							<p>
-								The structure lies obliquely in space, not only rotated: a shear tilts and distorts it as well. And tokens are not always whole words; they can be pieces of words. The same piece such as <code>en</code> occurs in ten languages, so ten different manifolds can all pass through that one point and still leave it in different directions with different other words. Real embeddings are much messier than this theoretical picture, but the principle is the same.
+								The structure lies obliquely in space, not only rotated: a shear tilts and distorts it as well. And tokens are not always whole words; they can be pieces of words. The same piece such as <code>en</code> occurs in English, German, French and even Python, so four different manifolds can share that token and still leave it in different directions with different other words. Real embeddings are much messier than this theoretical picture, but the principle is the same.
 							</p>
 							<?php endif; ?>
 						</div>
@@ -719,7 +719,6 @@
 	<script src="assets/demos.js?v=20261104c"></script>
 	<script src="assets/space-morph.js?v=20261104"></script>
 	<script src="assets/word-meadow.js?v=20261105c"></script>
-	<script src="../plotly-2.24.1.min.js"></script>
 	<script src="../manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/../manifold_scenes.js'); ?>"></script>
 	<script>
 	(function () {

@@ -393,7 +393,7 @@ The deeper theoretical reason the path-finding framing works is the **\cite[Mani
 
 **Relations are what carry meaning.** A word is a point, but its meaning comes from where it sits relative to the other points. The direction “man → woman” is also the direction “king → queen”, and that reusable relation is what a translation can carry across languages: the two manifolds have the same internal geometry, so one can be rotated, sheared, and shifted onto the other. The alignment is a geometric operation, not a dictionary lookup.
 
-**Tokens can be shared.** Tokens are not always whole words; they can be pieces of words. The same piece, for example `en`, occurs in ten languages, so ten different manifolds can all pass through that one point while extending in different directions with different other words. That is why the ten surfaces below meet at `en` and still look different.
+**Tokens can be shared.** Tokens are not always whole words; they can be pieces of words. The same piece, for example `en`, occurs in English, German, French and even Python, so four different manifolds can all use that one token while extending in other directions with different other words. That is why the four surfaces below touch `en` at different points, cross each other, and still look related.
 
 **The structure lies obliquely in space.** Aligning two manifolds is not just a rotation: the same structure can be sheared, stretched, and tilted. The realistic case is even messier, because languages are not as clean in the data as this theoretical picture, but the principle is the same.
 </div>
@@ -448,8 +448,8 @@ The deeper theoretical reason the path-finding framing works is the **\cite[Mani
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div id="plot-language-manifolds" style="height: 620px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 12px;"></div>
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6;">
-        <b>Ten languages, one shared token.</b>
-        Each surface is a language manifold. They all pass through the token <code>en</code>, which appears as a piece of words in all ten languages, but the rest of each surface carries different words and therefore has a different shape, orientation, and skew. The colours only separate the languages; the point is the shared intersection and the different directions that leave it.
+        <b>Four languages, one shared token.</b>
+        The surfaces are English, German, French and Python. Each one carries the token <code>en</code>, but at a different contact point: sometimes in the middle, sometimes near an edge. The surfaces cross and lie at different angles, yet their shapes stay related. Only the token <code>en</code> is common to all four.
     </div>
 </section>
 

@@ -1,3 +1,5 @@
+was ich hier sage gilt für deutsch und englisch sofern es da zutrifft, prüfe das für jeden einzelnen. markiere was du gemacht hast schon indem du an den anfang der Zeile "DONE" schreibst
+
 history.php:
 
 "im Glanz der Sonne" löschen, das ist zu sehr prosa, eher "hinter der sonne".
@@ -21,3 +23,17 @@ schreib da sowas rein. dann kommt " Wir können jedes Problem lösen, indem wir 
 bei: "minimalneuron" schreib auch ein kapitel über den loss. erkläre, wie MSE (von gauß, siehe ceres in history) benutzt wird für einfache daten und dass das erlaubt, am anfang schnell in die richtige richtung ricthung zu gehen bis man in der nähe ist und dann man feiner arbeiten muss dmait man sich verbessert, weil man dann damit detailarbeit mcahen kann. dann erläuter auch categorical crossentropy kurz, ohne dass es zu mathematisch wird: da geht es darum, dass man kategorien hat und man will dass dinge in die kategorien richtig mit hoher wahrscheinlichkeit eingeordnet werden. daher bewertet man da erstmal ob es in der richtigen kategorie ist oder nicht, und dann wie gut es da ist, so dass es wenn es gut in der richtigen kategorie viel besser ist als wenn es unsicher aber in der richtigen kategorie ist und noch viel viel schlechter wenn man sicher und in der falschen kategorie ist. das braucht man. die ergebnisse des neuronalen netzes werden anhand dieser funktion bewertet, so dass man mit backpropagation und optimizern (lese dazu das backproplab in .. und optimizerlab aber halte dich da extrem kurz, das ist was für details, ncith für die tenminutes version) dann versucht bessere werte zu finden. dadurch bewegt man sich in einer hochdimensionalen loss-landschaft, wo jedes gewicht eine richtung ist, und die höhe der "berge" der loss, so dass man quasi versucht mit der kugel den berg runter. kopier dafür loss_landscape_resnet56_noskip.png hierher und zeige das. das ist ne (durch dimensionsreduktion auf 3d) runterreduzierte loss landscape, zitier sie richtig. man startet da irgendwo und schaut in welche richtung man sich bewegen muss, damit die kugel "runterrollt" und richtung lossminimierung geht. der loss ist der fehler, also wie falsch er liegt.
 
 "aber absichtlich: Jemand wählte einen": zeige da das lomewki tool bild aus ..
+
+"Ob sie überhaupt eine Bedeutung hat, weiß niemand." -> "Ob dieser Stein irgendeine Bedeutung hatte ist unbekannt"
+
+"Gedächtnis kann im Regal liegen.": nicht nur im Regal, im Außen
+
+"Datenbanken wiederholen dieselbe Bewegung" den selben gedanken
+
+"die die moderne Maschine speisen" nicht speisen sondern auf denen moderne maschinen basieren
+
+"Sanskrit-Prosodie" sowas könnte fett gedruckt sein
+
+"Fibonaccis Liber Abaci" und "Null" auch fett
+
+

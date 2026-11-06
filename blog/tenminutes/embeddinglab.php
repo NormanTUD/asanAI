@@ -179,18 +179,18 @@
 						<div class="prose">
 							<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
 							<p>
-								Tokens sind nicht immer ganze Wörter, sondern oft Wortteile. Deshalb können sich Sprachen einen Token teilen: Das Stück <code>en</code> kommt in zehn Sprachen vor, und zehn verschiedene Mannigfaltigkeiten können alle durch diesen einen Punkt laufen. Die übrigen Wörter auf jeder Fläche sind andere, also sieht jede Mannigfaltigkeit anders aus und liegt in einem anderen Winkel. Die Struktur ist dabei nicht nur gedreht, sondern auch geschert und gekippt, also schief im Raum. Bei echten Embeddings ist das viel unordentlicher als in diesem theoretischen Bild, aber das Prinzip ist dasselbe.
+								Tokens sind nicht immer ganze Wörter, sondern oft Wortteile. Deshalb können sich Sprachen einen Token teilen: Das Stück <code>en</code> kommt in Englisch, Deutsch, Französisch und sogar Python vor, und vier verschiedene Mannigfaltigkeiten können diesen Token teilen. Die übrigen Wörter auf jeder Fläche sind andere, also sieht jede Mannigfaltigkeit anders aus und liegt in einem anderen Winkel. Die Struktur ist dabei nicht nur gedreht, sondern auch geschert und gekippt, also schief im Raum. Bei echten Embeddings ist das viel unordentlicher als in diesem theoretischen Bild, aber das Prinzip ist dasselbe.
 							</p>
 							<?php else: ?>
 							<p>
-								Tokens are not always whole words; they are often pieces of words. That is why languages can share a token: the piece <code>en</code> occurs in ten languages, and ten different manifolds can all pass through that one point. The other words on each surface are different, so every manifold has a different shape and sits at a different angle. The structure is not only rotated but also sheared and tilted, so it lies obliquely in space. Real embeddings are much messier than this theoretical picture, but the principle is the same.
+								Tokens are not always whole words; they are often pieces of words. That is why languages can share a token: the piece <code>en</code> occurs in English, German, French and even Python, and four different manifolds can share that token. The other words on each surface are different, so every manifold has a different shape and sits at a different angle. The structure is not only rotated but also sheared and tilted, so it lies obliquely in space. Real embeddings are much messier than this theoretical picture, but the principle is the same.
 							</p>
 							<?php endif; ?>
 						</div>
 						<div class="demo demo--paper" id="tm-language-manifold-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Zehn Sprachen, ein gemeinsamer Token' : 'Ten languages, one shared token'; ?> <span>· demo 01c</span></p>
+									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Vier Sprachen, ein gemeinsamer Token' : 'Four languages, one shared token'; ?> <span>· demo 01c</span></p>
 									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Alle Flächen hängen an „en“; die anderen Wörter und die Form jeder Fläche unterscheiden sich.' : 'All surfaces meet at “en”; the other words and the shape of each surface differ.'; ?></p>
 								</div>
 								<span class="demo-badge">3D</span>
@@ -366,7 +366,6 @@
 
 	<script src="../temml.min.js"></script>
 	<script src="assets/site.js"></script>
-	<script src="../plotly-2.24.1.min.js"></script>
 	<script src="../manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/../manifold_scenes.js'); ?>"></script>
 	<script>
 	(function () {

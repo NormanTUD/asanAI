@@ -3758,6 +3758,18 @@ h2::after {
 		background-clip: border-box;
 		-webkit-text-fill-color: currentColor;
 	}
+	#contents h1 .glossary-term, #contents h2 .glossary-term,
+	#contents h3 .glossary-term, #contents h4 .glossary-term,
+	#contents h5 .glossary-term, #contents h6 .glossary-term,
+	.md h1 .glossary-term, .md h2 .glossary-term,
+	.md h3 .glossary-term, .md h4 .glossary-term,
+	.md h5 .glossary-term, .md h6 .glossary-term {
+		background-color: transparent;
+		background-image: none;
+		-webkit-background-clip: border-box;
+		background-clip: border-box;
+		-webkit-text-fill-color: currentColor;
+	}
 }
 
 .minimalneuron-page .smart-quote::before {
