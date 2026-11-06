@@ -4997,6 +4997,28 @@ html[data-theme="light"] .step-input {
 }
 .step-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .step-chips .chip { font-family: var(--tm-ui); font-size: 0.7rem; }
+.step-pane .chip {
+	color: var(--tm-petrol);
+	border-color: var(--tm-line-strong);
+	background: color-mix(in srgb, var(--tm-card) 70%, transparent);
+}
+.step-pane .chip:hover { color: var(--tm-petrol); border-color: var(--tm-green); }
+.step-pane .chip.is-on, .step-pane .chip[aria-pressed="true"] { color: #ffffff; }
+.step-pane .btn-demo {
+	color: var(--tm-petrol);
+	border-color: var(--tm-line-strong);
+	background: transparent;
+}
+.step-pane input[type="range"] { background: var(--tm-line-strong); }
+.step-pane input[type="range"]::-webkit-slider-thumb {
+	background: var(--tm-green);
+	border-color: var(--tm-card);
+	box-shadow: 0 0 0 3px rgba(99, 164, 75, 0.2);
+}
+.step-pane input[type="range"]::-moz-range-thumb {
+	background: var(--tm-green);
+	border-color: var(--tm-card);
+}
 .pos-legend {
 	display: flex;
 	flex-wrap: wrap;

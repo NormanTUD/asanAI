@@ -86,7 +86,7 @@
 			max = Math.max(max, Math.hypot(q[0], q[1], q[2]));
 			return q;
 		});
-		return centered.map(function (q) { return [q[0] / max, q[1] / max, q[2] / max]; });
+		return { points: centered, radius: max };
 	}
 
 	function graph(points, epsilon) {
@@ -303,7 +303,9 @@
 
 			function setup() {
 				var payload = data.modes[state.mode];
-				state.points = centerScale(payload.coords);
+				var scaled = centerScale(payload.coords);
+				state.points = scaled.points;
+				state.radius = scaled.radius;
 				var grid = payload.epsilon.grid;
 				var lo = grid[0].eps, hi = grid[grid.length - 1].eps;
 				slider.min = String(lo);
@@ -339,7 +341,7 @@
 
 			function project(p, w, h) {
 				var q = rotatePoint(p);
-				var scale = Math.min(w, h) * 0.72 * state.zoom;
+				var scale = Math.min(w, h) * 0.72 * state.zoom / (state.radius || 1);
 				var perspective = 3.4;
 				var factor = perspective / (perspective + q[2]);
 				return {

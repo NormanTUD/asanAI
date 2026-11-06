@@ -353,40 +353,46 @@
 						<h2 class="section-title">Every slot gets its own fingerprint</h2>
 						<div class="prose">
 							<p>Attention, explained in the next step, compares tokens with each other but has no built-in sense of order. Without a position signal, “man bites dog” and “dog bites man” contain exactly the same vectors and look identical. A positional encoding adds a distinct fingerprint to every slot, so order becomes part of the representation.</p>
+							<p>The classic sinusoidal encoding comes from <strong>Vaswani et al. (2017)</strong> in <a href="https://arxiv.org/abs/1706.03762" rel="noopener">Attention Is All You Need</a>. Here <strong>pos</strong> is the token’s position, <strong>i</strong> indexes a pair of dimensions (0, 1, 2, …), and <strong>d</strong> is the model dimension, the width of the vector. Each pair of dimensions oscillates at a different frequency: low dimensions change slowly, high dimensions quickly.</p>
 						</div>
-						<div class="prose-math" data-tex="\underbrace{\begin{aligned} PE_{(pos,2i)} &amp;= \sin\left(\frac{\underbrace{pos}_{\text{position}}}{\underbrace{10000^{2i/d}}_{\text{frequency}}}\right) \\ PE_{(pos,2i+1)} &amp;= \cos\left(\frac{pos}{10000^{2i/d}}\right) \end{aligned}}_{\text{each dimension gets its own wave}}" data-tex-de="\underbrace{\begin{aligned} PE_{(pos,2i)} &amp;= \sin\left(\frac{\underbrace{pos}_{\text{Position}}}{\underbrace{10000^{2i/d}}_{\text{Frequenz}}}\right) \\ PE_{(pos,2i+1)} &amp;= \cos\left(\frac{pos}{10000^{2i/d}}\right) \end{aligned}}_{\text{jede Dimension bekommt ihre eigene Welle}}" data-tex-display="true"></div>
+						<div class="prose-math" data-tex="\underbrace{\begin{aligned} PE_{(\text{pos},2i)} &amp;= \sin\left(\frac{\underbrace{\text{pos}}_{\text{position}}}{\underbrace{10000^{2i/d}}_{\text{frequency}}}\right) \\ PE_{(\text{pos},2i+1)} &amp;= \cos\left(\frac{\text{pos}}{10000^{2i/d}}\right) \end{aligned}}_{\text{each dimension gets its own wave}}" data-tex-de="\underbrace{\begin{aligned} PE_{(\text{pos},2i)} &amp;= \sin\left(\frac{\underbrace{\text{pos}}_{\text{Position}}}{\underbrace{10000^{2i/d}}_{\text{Frequenz}}}\right) \\ PE_{(\text{pos},2i+1)} &amp;= \cos\left(\frac{\text{pos}}{10000^{2i/d}}\right) \end{aligned}}_{\text{jede Dimension bekommt ihre eigene Welle}}" data-tex-display="true"></div>
 						<div class="step-pane" id="step-position">
-															<div class="step-stage">
-																<div class="step-toolbar">
-																	<label>Context length
-																		<input type="range" id="ipe-heat-context" min="16" max="128" step="8" value="64">
-																		<output id="ipe-heat-context-out">64</output>
-																	</label>
-																	<label>Dimensions
-																		<input type="range" id="ipe-heat-dims" min="2" max="64" step="2" value="24">
-																		<output id="ipe-heat-dims-out">24</output>
-																	</label>
-																</div>
-																<p class="step-note">The heatmap below shows the classic sinusoidal encoding: each position gets a fingerprint built from slow and fast waves.</p>
-																<canvas class="step-canvas" id="ipe-heatmap" style="height:220px" aria-label="A heatmap of classic sinusoidal positional encodings for a long context"></canvas>
-																<div class="pos-legend" aria-hidden="true">
-																	<span><i class="pl-neg"></i>−1</span>
-																	<span><i class="pl-zero"></i>0</span>
-																	<span><i class="pl-pos"></i>+1</span>
-																</div>
-																<div class="step-out" id="ipe-heat-out">Each row is one position; each column is one dimension.</div>
-																<div class="step-toolbar">
-																	<label>Position
-																		<input type="range" id="ipe-pos" min="0" max="1000" step="1" value="7">
-																		<output id="ipe-pos-out">7</output>
-																	</label>
-																	<button class="chip is-on" type="button" id="ipe-autorotate" aria-pressed="true">Auto-rotate view</button>
-																</div>
-																<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
-																<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
-															</div>
-															<p class="step-note">The plot shows the sinusoidal encoding as one vector for the selected position. The three axes are the first three dimensions; the blue sphere is the original word, and the arrow is its position vector. Move the slider and the point follows the curve. Drag the plot to rotate it. The demo computes 64 dimensions; a real model uses thousands.</p>
-														</div>
+							<div class="step-stage">
+								<div class="step-toolbar">
+									<label>Context length
+										<input type="range" id="ipe-heat-context" min="16" max="128" step="8" value="64">
+										<output id="ipe-heat-context-out">64</output>
+									</label>
+									<label>Dimensions
+										<input type="range" id="ipe-heat-dims" min="2" max="64" step="2" value="24">
+										<output id="ipe-heat-dims-out">24</output>
+									</label>
+								</div>
+								<p class="step-note">The heatmap below shows the classic sinusoidal encoding: each position gets a fingerprint built from slow and fast waves.</p>
+								<canvas class="step-canvas" id="ipe-heatmap" style="height:220px" aria-label="A heatmap of classic sinusoidal positional encodings for a long context"></canvas>
+								<div class="pos-legend" aria-hidden="true">
+									<span><i class="pl-neg"></i>−1</span>
+									<span><i class="pl-zero"></i>0</span>
+									<span><i class="pl-pos"></i>+1</span>
+								</div>
+								<div class="step-out" id="ipe-heat-out">Each row is one position; each column is one dimension.</div>
+							</div>
+							<div class="prose">
+								<p>The second demo shows the same pattern in three dimensions. The heatmap above is a flat slice; below, the same sinusoidal fingerprint is drawn as a real 3D curve. Move the position slider and watch the point travel along the curve. Drag the 3D view to rotate it and get a feel for the structure that the high-dimensional model is using. In a real model the same idea repeats in thousands of dimensions.</p>
+							</div>
+							<div class="step-stage">
+								<div class="step-toolbar">
+									<label>Position
+										<input type="range" id="ipe-pos" min="0" max="1000" step="1" value="7">
+										<output id="ipe-pos-out">7</output>
+									</label>
+									<button class="chip is-on" type="button" id="ipe-autorotate" aria-pressed="true">Auto-rotate view</button>
+								</div>
+								<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
+								<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
+							</div>
+							<p class="step-note">The plot shows the sinusoidal encoding as one vector for the selected position. The three axes are the first three dimensions; the blue sphere is the original word, and the arrow is its position vector. Move the slider and the point follows the curve. Drag the plot to rotate it. The demo computes 64 dimensions; a real model uses thousands.</p>
+						</div>
 					</section>
 
 					<section class="section-block" id="step-attention-section">
@@ -413,7 +419,7 @@
 															</div>
 															<p class="step-note"><b>This step is an intuition, not a real attention head.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result: context changes the representation. It shows one simplified attention head, not the many heads and layers of a real model.</p>
 															<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the context, because the values it collects are different.</p>
-															<p class="step-note">Training data is full of typos, misspellings, and irregular spacing. Attention and the feed-forward network see both clean and noisy text, so they learn to route around the noise and still produce something useful from a misspelled token.</p>
+															<p class="step-note">Training data is full of typos, misspellings, and irregular spacing. Attention and the feed-forward network see both clean and noisy text, so they learn to route around the noise and still produce something useful from a misspelled token. The first layers are there to combine such evidence: if “york” follows, a layer can push “new” toward the city meaning, even when “new” is misspelled.</p>
 														</div>
 					</section>
 
@@ -2575,7 +2581,7 @@
 			{ sentence: 'Nach dem Spaziergang im <span class="aw-river">Park</span> gehe ich zur <span class="aw-bank">Bank</span>, um mein <span class="aw-money">Geld</span> einzuzahlen.', contexts: ['river', 'money'], shift: [6.6, 5.6], weights: { bank: 0.25, river: 0.35, money: 0.4 }, caption: 'Beide Nachbarn ziehen; <b>Geld</b> bleibt etwas stärker, <b>Park</b> hebt die Bedeutung an.' }
 		] : [
 			{ sentence: 'I walk to the <span class="aw-bank">bank</span>.', contexts: [], shift: [5, 5], weights: { bank: 1, river: 0, money: 0 }, caption: 'No unambiguous context: <b>bank</b> stays in the middle, ambiguous.' },
-			{ sentence: 'I sit by the <span class="aw-river">river</span> on the <span class="aw-bank">bank</span>.', contexts: ['river'], shift: [3.2, 6.8], weights: { bank: 0.35, river: 0.65, money: 0 }, caption: '<b>River</b> is the neighbour → bank moves toward the water sense.' },
+			{ sentence: 'I sit on the sandy <span class="aw-river">river</span> <span class="aw-bank">bank</span>.', contexts: ['river'], shift: [3.2, 6.8], weights: { bank: 0.35, river: 0.65, money: 0 }, caption: '<b>River</b> is the neighbour → bank moves toward the water sense.' },
 			{ sentence: 'I bring my <span class="aw-money">money</span> to the <span class="aw-bank">bank</span>.', contexts: ['money'], shift: [7.2, 3.2], weights: { bank: 0.3, river: 0, money: 0.7 }, caption: '<b>Money</b> is the neighbour → bank moves toward finance.' },
 			{ sentence: 'After the walk by the <span class="aw-river">river</span> I go to the <span class="aw-bank">bank</span> to deposit my <span class="aw-money">money</span>.', contexts: ['river', 'money'], shift: [6.6, 5.6], weights: { bank: 0.25, river: 0.35, money: 0.4 }, caption: 'Both neighbours pull; <b>money</b> stays slightly stronger, <b>river</b> lifts the meaning.' }
 		];
@@ -2665,6 +2671,13 @@
 			document.querySelectorAll("[data-att]").forEach(function (b) {
 				b.classList.toggle("is-on", parseInt(b.getAttribute("data-att"), 10) === attIndex);
 			});
+			var outv = [0, 0];
+			["bank", "river", "money"].forEach(function (word) {
+				var w = ex.weights[word];
+				var p = attPos[word];
+				outv[0] += w * p[0];
+				outv[1] += w * p[1];
+			});
 			if (attMatrix) {
 				var cols = ["bank", "river", "money"];
 				var html = '<div class="am-title">' + (DE ? "Attention-Gewichte für " : "attention weights for ") + attLabel("bank") + "</div>";
@@ -2672,6 +2685,12 @@
 				cols.forEach(function (word) {
 					var pct = Math.round(ex.weights[word] * 100);
 					html += '<div class="am-cell"><b>' + attLabel(word) + "</b><span>" + pct + (DE ? " %" : "%") + '</span><span class="am-bar"><i style="width:' + pct + "%;background:" + attColors[word] + '"></i></span></div>';
+				});
+				html += "</div>";
+				html += '<div style="margin-top:8px;font-size:0.68rem;color:var(--tm-muted);display:flex;flex-wrap:wrap;gap:6px 14px;">';
+				cols.forEach(function (word) {
+					var p = attPos[word];
+					html += '<span><b>v<sub>' + attLabel(word) + "</sub></b> = (" + p[0].toFixed(2) + ", " + p[1].toFixed(2) + ")</span>";
 				});
 				html += "</div>";
 				attMatrix.innerHTML = html;
@@ -2682,7 +2701,8 @@
 				}).map(function (word) {
 					return ex.weights[word].toFixed(2) + "\\,v_{\\text{" + attLabel(word) + "}}";
 				});
-				var tex = "\\underbrace{\\underbrace{" + parts.join(" + ") + "}_{\\text{" + (DE ? "Summe der gewichteten Values" : "sum of the weighted values") + "}} = \\text{out}_{\\text{" + attLabel("bank") + "}}}_{\\text{" + (DE ? "was Bank aus dem Kontext mitnimmt" : "what bank takes from the context") + "}}";
+				var outTex = "\\begin{pmatrix}" + outv[0].toFixed(2) + "\\\\" + outv[1].toFixed(2) + "\\end{pmatrix}";
+				var tex = "\\underbrace{\\underbrace{" + parts.join(" + ") + "}_{\\text{" + (DE ? "Summe der gewichteten Values" : "sum of the weighted values") + "}} = \\underbrace{" + outTex + "}_{\\text{out}_{\\text{" + attLabel("bank") + "}}}}_{\\text{" + (DE ? "was Bank aus dem Kontext mitnimmt" : "what bank takes from the context") + "}}";
 				attSum.setAttribute("data-tex", tex);
 				attSum.removeAttribute("data-tex-rendered");
 				if (TM.typesetMath) TM.typesetMath(attSum.parentNode);

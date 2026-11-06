@@ -1,4 +1,5 @@
 <?php include_once("functions.php"); ?>
+<link rel="stylesheet" href="embedding_manifold.css?v=<?php echo (int) @filemtime(__DIR__ . '/embedding_manifold.css'); ?>">
 <!--
 COURSE_METADATA:
 title: Embeddings: The Geometry of Meaning
@@ -478,6 +479,67 @@ The deeper theoretical reason the path-finding framing works is the **\cite[Mani
     if (window.__MN_DARK && __MN_DARK.onChange) {
         __MN_DARK.onChange(function () { drawn = false; draw(); });
     }
+})();
+</script>
+
+<div class="md" data-mathlevel="45">
+## From a sentence to a shape
+
+Tokenize a sentence and each token becomes a vector. Add the position vector, and the sentence becomes a short path through the embedding space: one point per token, in reading order. That path is a one-dimensional manifold. Its shape records which tokens the model places near each other; its direction records the order of the sentence.
+
+The demo below uses a real GPT-2 embedding table. The German Alice sentence splits into 27 byte-level tokens; each token has 768 dimensions, and each position adds its own 768-dimensional vector. A projection onto the first three principal components makes the points visible. The projection is a shadow: distances and holes are those of the shadow, not of the full 768-dimensional space.
+
+The points become a shape through the **Vietoris–Rips complex**. Choose an epsilon, connect every pair of points closer than epsilon, and fill every triangle whose three edges are present. As epsilon grows, components merge, and loops appear and disappear. The loops are the holes; the number of components and the first Betti number summarize the shape.
+
+With real GPT-2 embeddings the sentence is a thin curve, so the filled complex closes quickly. At a small epsilon the 1-skeleton still shows loops; the gold line is one of them. Turn the triangles off to see the graph, and on again to see what the complex fills. This is a tool for inspection, not a proof about the meaning of the sentence.
+
+> “Wer in aller Welt bin ich? Ah, das ist das große Rätsel!”
+>
+> Lewis Carroll, *Alice’s Abenteuer im Wunderland*, trans. Antonie Zimmermann (1869), ch. II, spelling modernized. English: “Who in the world am I? Ah, that’s the great puzzle!”, *Alice’s Adventures in Wonderland* (1865), ch. II.
+</div>
+
+<section style="background: var(--mn-surface, #fff); border: 1px solid var(--mn-border, #e2e8f0); border-radius: 12px; padding: 20px; margin: 24px 0 40px;">
+	<div style="font: 600 1rem/1.4 Barlow, system-ui, sans-serif; color: var(--mn-text, #0f172a); margin-bottom: 4px;">A sentence as a Vietoris–Rips complex</div>
+	<p style="margin: 0 0 8px; color: var(--mn-text-muted, #64748b); font: 400 0.86rem/1.5 'Open Sans', system-ui, sans-serif;">Real GPT-2 embeddings projected to three dimensions. Move epsilon and watch edges, triangles and loops appear.</p>
+	<div id="plot-sentence-manifold"></div>
+</section>
+
+<div class="optional" data-headline="The script that made the data">
+<div class="md">
+The script downloads GPT-2 to `/tmp`, reads the token and position embeddings, projects them to three dimensions with PCA, and writes `embedding_manifold_data.js`. It needs `uv`; the dependencies are in `requirements.txt`.
+
+```bash
+uv run --with-requirements blog/tools/embedding_manifold/requirements.txt \
+    blog/tools/embedding_manifold/embedding_manifold.py
+```
+</div>
+<pre><code class="language-text"><?php echo htmlspecialchars((string) @file_get_contents(__DIR__ . '/tools/embedding_manifold/requirements.txt'), ENT_QUOTES, 'UTF-8'); ?></code></pre>
+<pre><code class="language-python"><?php echo htmlspecialchars((string) get_string_of_file_or_die(__DIR__ . '/tools/embedding_manifold/embedding_manifold.py'), ENT_QUOTES, 'UTF-8'); ?></code></pre>
+</div>
+
+<script src="embedding_manifold_data.js?v=<?php echo (int) @filemtime(__DIR__ . '/embedding_manifold_data.js'); ?>"></script>
+<script src="embedding_manifold.js?v=<?php echo (int) @filemtime(__DIR__ . '/embedding_manifold.js'); ?>"></script>
+<script>
+(function () {
+	var host = document.getElementById('plot-sentence-manifold');
+	if (!host || !window.EmbeddingManifold) return;
+	var ready = false;
+	function draw() {
+		if (ready) return;
+		ready = true;
+		window.EmbeddingManifold.render('plot-sentence-manifold', { mode: 'combined' });
+	}
+	if ('IntersectionObserver' in window) {
+		var io = new IntersectionObserver(function (entries) {
+			if (entries.some(function (e) { return e.isIntersecting; })) {
+				io.disconnect();
+				draw();
+			}
+		}, { rootMargin: '500px 0px' });
+		io.observe(host);
+	} else {
+		draw();
+	}
 })();
 </script>
 
