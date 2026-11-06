@@ -87,7 +87,7 @@
 							</p>
 						</div>
 
-						<div class="demo" id="tokenizer-demo">
+						<div class="demo demo--interactive" id="tokenizer-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Tokenize this <span>· demo 01</span></p>
@@ -163,7 +163,7 @@ training text, and stop at the target vocabulary size.
 							</p>
 						</div>
 
-						<div class="demo" id="language-demo">
+						<div class="demo demo--compare" id="language-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The same sentence, different tax <span>· demo 02</span></p>
