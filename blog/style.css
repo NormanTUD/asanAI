@@ -1175,9 +1175,9 @@ html.dark #transformer-pe-wave-plot,
 html.dark #transformer-pe-shift-plot,
 html.dark #transformer-trajectory-full-path,
 html.dark #transformer-trajectory-full-path-wrapper,
-html.dark [id$="-chart"],
-html.dark [id$="-plot"]:not(.echarts):not(canvas),
-html.dark [id^="plot-"] {
+html.dark [id$="-chart"]:not(h1, h2, h3, h4, h5, h6),
+html.dark [id$="-plot"]:not(.echarts):not(canvas):not(h1, h2, h3, h4, h5, h6),
+html.dark [id^="plot-"]:not(h1, h2, h3, h4, h5, h6) {
 	background: var(--mn-surface) !important;
 	color: var(--mn-text) !important;
 	border-color: var(--mn-border) !important;
@@ -1768,12 +1768,12 @@ html.dark .gem-tab-state:checked + .gem-tab-trigger {
 	color: var(--mn-accent) !important;
 }
 /* Plot containers with hardcoded white bg */
-html.dark [id$="-plot"],
-html.dark [id$="-chart"],
-html.dark [id$="-landscape"],
-html.dark [id$="-heatmap"],
-html.dark [id$="-viz"],
-html.dark [id$="-container"],
+html.dark [id$="-plot"]:not(h1, h2, h3, h4, h5, h6),
+html.dark [id$="-chart"]:not(h1, h2, h3, h4, h5, h6),
+html.dark [id$="-landscape"]:not(h1, h2, h3, h4, h5, h6),
+html.dark [id$="-heatmap"]:not(h1, h2, h3, h4, h5, h6),
+html.dark [id$="-viz"]:not(h1, h2, h3, h4, h5, h6),
+html.dark [id$="-container"]:not(h1, h2, h3, h4, h5, h6),
 html.dark .attention-layer-tabs,
 html.dark .head-tab-list {
 	background: var(--mn-surface) !important;

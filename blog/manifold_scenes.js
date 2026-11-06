@@ -133,28 +133,32 @@
 		});
 	}
 
+	// contact = the local (u,v) point of this manifold that carries "en".
+	// It always maps to the same world point (0,0,0), but sits in the middle
+	// of one surface and near an edge of another.
 	var LANGS = [
-		{ label: 'English', color: '#3b82f6', rot: 0.00, shear: 0.00, t: [-1.15, -0.55, 0.15],
+		{ label: 'English', color: '#3b82f6', rot: 0.00, shear: 0.00, contact: [0.0, 0.0],
 			words: ['open', 'meaning', 'sentence'] },
-		{ label: 'Deutsch', color: '#63a44b', rot: 0.85, shear: 0.26, t: [1.25, 0.62, -0.10],
+		{ label: 'Deutsch', color: '#63a44b', rot: 0.85, shear: 0.26, contact: [0.0, 1.35],
 			words: ['lernen', 'denken', 'Menge'] },
-		{ label: 'Français', color: '#9185be', rot: 1.55, shear: -0.22, t: [0.10, -1.25, 0.55],
+		{ label: 'Français', color: '#9185be', rot: 1.55, shear: -0.22, contact: [0.0, -1.35],
 			words: ['ensemble', 'entrer', 'prendre'] },
-		{ label: 'Python', color: '#9f9700', rot: 2.25, shear: 0.36, t: [0.35, 1.20, -0.45],
+		{ label: 'Python', color: '#9f9700', rot: 2.25, shear: 0.36, contact: [1.75, 0.0],
 			words: ['len', 'open', 'append'] }
 	];
 
 	function basePoint(u, v) { return [u, v, 0.42 * Math.sin(u * 1.05) * Math.cos(v * 1.05)]; }
 
 	function transformPoint(p, lang) {
-		var x = p[0], y = p[1], z = p[2];
+		var c = basePoint(lang.contact[0], lang.contact[1]);
+		var x = p[0] - c[0], y = p[1] - c[1], z = p[2] - c[2];
 		x += lang.shear * y;
 		y += lang.shear * 0.35 * z;
 		var cy = Math.cos(lang.rot), sy = Math.sin(lang.rot);
 		var x1 = cy * x - sy * y, y1 = sy * x + cy * y;
 		var cp = Math.cos(lang.rot * 0.55), sp = Math.sin(lang.rot * 0.55);
 		var y2 = cp * y1 - sp * z, z2 = sp * y1 + cp * z;
-		return [x1 + lang.t[0], y2 + lang.t[1], z2 + lang.t[2]];
+		return [x1, y2, z2];
 	}
 
 	window.ManifoldScenes = {
@@ -162,36 +166,91 @@
 			var div = document.getElementById(containerId);
 			if (!div) return;
 			var r = makeCanvas(div);
-			var specs = LANGS.map(function (lang) {
-				return {
-					color: lang.color, alpha: 0.30,
-					point: function (u, v) { return transformPoint(basePoint(u, v), lang); }
-				};
-			});
+			var TOKENS = {
+				English: ['op', 'en', 'mean', 'ing', 'sent', 'ence'],
+				Deutsch: ['lern', 'en', 'denk', 'en', 'Meng', 'e'],
+				'Français': ['ens', 'emble', 'ent', 'rer', 'prend', 're'],
+				Python: ['l', 'en', 'op', 'en', 'app', 'end']
+			};
 			function draw() {
 				var ctx = r.ctx, d = r.dims(), W = d[0], H = d[1];
 				ctx.clearRect(0, 0, W, H);
-				var P = drawSurfaces(r, specs);
-				var words = [];
+				var P = r.project;
+				var items = [];
+				var n = 7;
+
 				LANGS.forEach(function (lang) {
-					// The shared token "en" touches each manifold at a different
-					// point; the surfaces cross, only the token is common.
-					var contact = transformPoint([0, 0, 0], lang);
-					words.push({ pos: contact, text: 'en', color: ink(), r: 7, size: 15 });
-					lang.words.forEach(function (word, k) {
-						var uv = [[0.9, 0.45], [-0.9, -0.35], [0.15, -0.9]][k];
-						words.push({ pos: transformPoint(basePoint(uv[0], uv[1]), lang), text: word, color: lang.color, size: 10 });
-					});
-					var tag = transformPoint([-2, -1.5, 0], lang);
-					words.push({ pos: tag, text: lang.label, color: lang.color, r: 2, size: 12 });
+					var grid = [];
+					for (var i = 0; i < n; i++) {
+						grid.push([]);
+						for (var j = 0; j < n; j++) {
+							var u = -1.8 + 3.6 * i / (n - 1);
+							var v = -1.35 + 2.7 * j / (n - 1);
+							grid[i].push(transformPoint(basePoint(u, v), lang));
+						}
+					}
+					// A Vietoris-Rips-like triangulated complex: vertices, edges
+					// and 2-simplices, with no filled surface boundary.
+					for (var a = 0; a < n - 1; a++) {
+						for (var b = 0; b < n - 1; b++) {
+							var p0 = P(grid[a][b]), p1 = P(grid[a + 1][b]);
+							var p2 = P(grid[a + 1][b + 1]), p3 = P(grid[a][b + 1]);
+							items.push({ z: (p0[2] + p1[2] + p2[2] + p3[2]) / 4, kind: 'tri', ps: [p0, p1, p2, p3], color: mix(lang.color, 0.07) });
+							items.push({ z: (p0[2] + p1[2]) / 2, kind: 'line', a: p0, b: p1, color: mix(lang.color, 0.38) });
+							items.push({ z: (p0[2] + p3[2]) / 2, kind: 'line', a: p0, b: p3, color: mix(lang.color, 0.38) });
+						}
+					}
+					for (var x = 0; x < n; x++) {
+						for (var y = 0; y < n; y++) {
+							var pv = P(grid[x][y]);
+							items.push({ z: pv[2], kind: 'dot', p: pv, color: mix(lang.color, 0.85), rr: 1.8 });
+						}
+					}
 				});
-				drawWords(ctx, P, words);
+
+				// Tokens: every word is a chain of pieces; "en" is one shared
+				// vertex at the origin, so all four complexes meet there.
+				var tokenItems = [];
+				LANGS.forEach(function (lang) {
+					var list = TOKENS[lang.label] || lang.words;
+					list.forEach(function (tok, k) {
+						if (tok === 'en') return;
+						var ang = k * 1.9 + lang.rot;
+						var rad = 0.55 + (k % 3) * 0.22;
+						var pos = transformPoint(basePoint(lang.contact[0] + Math.cos(ang) * rad, lang.contact[1] + Math.sin(ang) * rad), lang);
+						tokenItems.push({ pos: pos, text: tok, color: lang.color });
+						items.push({ z: pos[2], kind: 'link', a: P(pos), b: P([0, 0, 0]), color: mix(lang.color, 0.22) });
+					});
+				});
+				items.sort(function (a, b) { return b.z - a.z; });
+				items.forEach(function (it) {
+					if (it.kind === 'tri') {
+						quad(ctx, it.ps, it.color, null);
+					} else if (it.kind === 'line' || it.kind === 'link') {
+						ctx.beginPath(); ctx.moveTo(it.a[0], it.a[1]); ctx.lineTo(it.b[0], it.b[1]);
+						ctx.strokeStyle = it.color; ctx.lineWidth = it.kind === 'link' ? 1 : 1.1; ctx.stroke();
+					} else if (it.kind === 'dot') {
+						ctx.beginPath(); ctx.arc(it.p[0], it.p[1], it.rr, 0, Math.PI * 2);
+						ctx.fillStyle = it.color; ctx.fill();
+					}
+				});
+
+				tokenItems.forEach(function (t) {
+					var p = P(t.pos);
+					ctx.beginPath(); ctx.arc(p[0], p[1], 2.6, 0, Math.PI * 2);
+					ctx.fillStyle = t.color; ctx.fill();
+					label(ctx, p[0], p[1] - 8, t.text, t.color, 9.5);
+				});
+				var en = P([0, 0, 0]);
+				ctx.beginPath(); ctx.arc(en[0], en[1], 6, 0, Math.PI * 2);
+				ctx.fillStyle = ink(); ctx.fill();
+				ctx.lineWidth = 2; ctx.strokeStyle = paper(); ctx.stroke();
+				label(ctx, en[0], en[1] - 13, 'en', ink(), 15);
 			}
 			r.setDraw(draw);
 			if (window.__MN_DARK && __MN_DARK.onChange) __MN_DARK.onChange(draw);
 			window.addEventListener('tm:theme', draw);
 		},
-
 		renderDual: function (containerId, controlsId) {
 			var div = document.getElementById(containerId);
 			if (!div) return;
