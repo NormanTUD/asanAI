@@ -7,7 +7,7 @@
 	<meta name="theme-color" content="#ffffff">
 	<title>A Very Brief History of AI | Ten Minutes</title>
 	<link rel="stylesheet" href="../Temml-Local.min.css">
-	<link rel="stylesheet" href="assets/site.css?v=20261104f">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-lesson="history" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -1002,7 +1002,7 @@
 
 
 	<script src="../temml.min.js"></script>
-	<script src="assets/site.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 	<script src="plotly-2.24.1.min.js"></script>
 	<script>
 	(function () {
