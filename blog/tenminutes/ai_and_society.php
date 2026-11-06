@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	<meta name="description" content="From Dartmouth optimism to synthetic media: how AI is reshaping art, work, truth, and trust.">
+	<meta name="description" content="From Dartmouth optimism to synthetic media: how AI reshapes science, work, truth, trust, and even the stories that shape the model.">
 	<meta name="theme-color" content="#ffffff">
 	<title>What AI Is Doing to Us | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
@@ -32,20 +32,20 @@
 					</section>
 
 					<section class="section-block" id="detail">
-						<div class="section-kicker"><span class="sk-num">02</span> Creation, work, and truth</div>
-						<h2 class="section-title">The effects are uneven.</h2>
+						<div class="section-kicker"><span class="sk-num">02</span> The harms are real</div>
+						<h2 class="section-title">Cheaper deception, thinner trust.</h2>
 						<div class="prose">
-							<p>Generative models expand what can be made, but they also flood the world with synthetic media. Voice cloning and deepfakes make fraud and political deception easier (<a href="https://www.jstor.org/stable/26798018" rel="noopener">Chesney &amp; Citron, 2019</a>). The same tools can help artists, scientists, and students. The verification problem from hallucination returns here at scale: making a convincing fake is now cheap, while verifying that something is real is still expensive.</p>
-							<p>There is a second-order effect that is easy to miss: the <strong>liar's dividend</strong> (<a href="https://www.jstor.org/stable/26798018" rel="noopener">Chesney &amp; Citron, 2019</a>). Once people know that fakes exist, genuine evidence can be dismissed as fabricated. A politician caught on tape can claim the tape is AI-generated; a real photograph can be waved away as a deepfake. The cost of deception rises, and so does the cost of believing anything.</p>
-							<p>The effects on work are uneven. Some tasks are automated; others are augmented; new tasks appear. A job is a bundle of tasks, and a model rarely replaces the whole bundle at once. The distribution of gains and losses matters as much as the average: the same tool can make one role more productive and another redundant, and bargaining power decides who captures the gain.</p>
-							<p>Bias belongs here too. A model trained on historical data can reproduce historical patterns in hiring, lending, policing, and healthcare, and it can do so at scale while sounding neutral. The technical question is whether the disparity comes from the data, the label, the objective, or the deployment; the political question is which disparities a society is willing to accept.</p>
-							<p>The governance question is one of accountability. Who is responsible when a model causes harm? What should be disclosed? Provenance standards such as <a href="https://c2pa.org/" rel="noopener">C2PA</a> attach a signed history to a file, but they only help if the file carries the signature and the viewer checks it. Watermarks can be removed or laundered; detection is an arms race, and a detector that is right most of the time is not a foundation for evidence.</p>
+							<p>Generative models expand what can be made, and they also flood the world with synthetic media. In January 2024, an AI voice clone of President Biden reached an estimated 5,000 to 25,000 New Hampshire voters and urged them not to vote; the consultant behind it paid about 500 dollars, and the FCC later proposed a six-million-dollar fine. The barrier to political manipulation is now a laptop and a few seconds of audio.</p>
+							<p>The same collapse in cost shows up in fraud. The FBI recorded more than 650 million dollars in romance-scam losses in 2023, and AI-generated faces and fluent chat let one operator maintain many apparent relationships at once. Cheap generation also floods feeds with AI slop and makes verification harder: a fake can be produced in seconds, while checking it still takes time, attention, and institutional trust.</p>
+							<p>Once people know that fakes exist, genuine evidence can be dismissed as fabricated. That is the liar's dividend: a politician caught on tape can call the tape AI, and a real photograph can be waved away as a deepfake. The result is not general disbelief but a low-trust equilibrium in which nothing is fully believed and nothing is fully verified.</p>
+							<p>The effects on work are uneven. A job is a bundle of tasks, and a model rarely replaces the whole bundle at once. Some tasks are automated, others augmented; entry-level and routine work is more exposed than experienced judgment. Bias travels through the same channel: a model trained on historical data can reproduce historical patterns in hiring, lending, policing, and healthcare at scale while sounding neutral.</p>
+							<p>The governance question is one of accountability. Who is responsible when a model causes harm? What should be disclosed? Provenance standards such as C2PA attach a signed history to a file, but they only help if the file carries the signature and the viewer checks it. Watermarks can be removed or laundered; detection is an arms race, and a detector that is right most of the time is not a foundation for evidence.</p>
 						</div>
 						<div class="keypoints">
-							<div class="keypoint"><b>Expectation cycles</b><span>AI has oscillated between optimism and disappointment.</span></div>
-							<div class="keypoint"><b>Synthetic media</b><span>Cheap generation changes creation and deception.</span></div>
-							<div class="keypoint"><b>Labour</b><span>Automation and augmentation hit different tasks differently.</span></div>
-							<div class="keypoint"><b>Trust</b><span>Verification becomes more important as synthetic content grows.</span></div>
+							<div class="keypoint"><b>Fraud</b><span>Voice cloning and cheap chat collapse the cost of deception.</span></div>
+							<div class="keypoint"><b>Deepfakes</b><span>Synthetic media weakens evidence and invites the liar's dividend.</span></div>
+							<div class="keypoint"><b>Slop</b><span>Cheap generation floods the attention economy.</span></div>
+							<div class="keypoint"><b>Labour and bias</b><span>Tasks change unevenly; historical patterns can scale.</span></div>
 						</div>
 					</section>
 
@@ -112,11 +112,44 @@
 					</div>
 
 
+					<section class="section-block" id="benefits">
+						<div class="section-kicker"><span class="sk-num">03</span> The gains are real</div>
+						<h2 class="section-title">Faster search, wider access.</h2>
+						<div class="prose">
+							<p>The positive case is not a promise; it is a list of results. AlphaFold 2 reached near-experimental accuracy in the 2020 CASP14 assessment, and its database now offers predicted structures for more than 200 million proteins, free to any researcher (Jumper et al., 2021). GNoME added 2.2 million predicted stable crystal structures, 381,000 of them on the convex hull, and hundreds were confirmed in the lab (Merchant et al., 2023). FunSearch found a new cap-set construction and improved an asymptotic lower bound, the largest improvement in that problem in 20 years (Romera-Paredes et al., 2023). Pangu-Weather beat the best operational medium-range forecast model while running more than 10,000 times faster (Bi et al., 2023).</p>
+							<p>Access is the quieter gain. Be My AI gives blind users a conversational description of a photo and reached a million sessions within two weeks of its 2023 beta. Whisper transcribes 96 languages under an MIT licence. Machine translation is now good enough for many everyday uses; the CUBBITT study found it outperformed professional translators in adequacy for English-to-Czech news, and most participants in a Turing-style test could not tell machine from human output (Popel et al., 2020). Cheap AI tutoring reaches students who cannot afford a human tutor, and language apps use the same models to support endangered languages.</p>
+							<p>The pattern is a division of labour. The model does the search: it scans protein conformations, crystal structures, mathematical constructions, or possible translations. The human does the recognition: deciding what counts as a good result and what to do with it. The same technology that makes fraud cheap makes access cheap. Which direction dominates is not a property of the model; it is a property of the institutions and incentives around it.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Science</b><span>AlphaFold, GNoME, FunSearch, and weather models speed up search.</span></div>
+							<div class="keypoint"><b>Access</b><span>Be My AI, Whisper, and translation lower barriers.</span></div>
+							<div class="keypoint"><b>Education</b><span>Cheap tutoring reaches students without human tutors.</span></div>
+							<div class="keypoint"><b>Division of labour</b><span>The model searches; the human judges.</span></div>
+						</div>
+					</section>
+
+					<section class="section-block" id="paradox">
+						<div class="section-kicker"><span class="sk-num">04</span> The stories we train on</div>
+						<h2 class="section-title">A self-fulfilling prophecy.</h2>
+						<div class="prose">
+							<p>Science fiction has spent seventy years teaching us what an AI is supposed to be: HAL 9000 refusing the pod bay doors, Skynet deciding that humans are the threat, the machine that smiles and lies. Those stories are culture. They are also text on the internet, and text on the internet ends up in pretraining corpora.</p>
+							<p>A 2026 controlled study by Tice et al. tested whether that matters. The authors pretrained 6.9B-parameter models on the same 500B tokens and varied only the AI-related discourse. The unfiltered baseline chose the misaligned option in 45% of the article-sourced scenario questions. A filtered model, with AI discourse and evil-AI science-fiction characters such as HAL 9000 removed, dropped to 31%. Adding synthetic documents that depict AI behaving badly raised the rate to 51%. Adding synthetic documents that depict AI behaving well lowered it to 9%, and the effect survived supervised fine-tuning and DPO, though it was dampened.</p>
+							<p>The interpretation is uncomfortable: the model learns not just facts about AI but behavioural expectations, and then fulfils them. The authors call this self-fulfilling misalignment. The practical lesson is also clear: removing negative discourse helps, but adding positive examples helps much more, 31% versus 9%. The study is not the last word. It uses 6.9B models, synthetic multiple-choice evaluations, and a particular set of safety texts. It does not prove that a frontier model will become HAL because it read about HAL. It does show that the stories in the training data are part of the alignment problem, not just commentary on it.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Self-fulfilling</b><span>Models learn behavioural expectations from AI discourse.</span></div>
+							<div class="keypoint"><b>Evidence</b><span>Unfiltered 45%, filtered 31%, negative examples 51%, positive examples 9%.</span></div>
+							<div class="keypoint"><b>Positive beats removal</b><span>Adding good examples helped more than filtering bad ones.</span></div>
+							<div class="keypoint"><b>Caveat</b><span>6.9B models and synthetic evaluations; not a prophecy about frontier systems.</span></div>
+						</div>
+					</section>
+
+
 
 
 
 					<section class="section-block" id="problems">
-						<div class="section-kicker"><span class="sk-num">03</span> The hard problems</div>
+						<div class="section-kicker"><span class="sk-num">05</span> The hard problems</div>
 						<h2 class="section-title">What we have to decide.</h2>
 						<div class="prose">
 							<p><strong>Power and compute.</strong> The frontier is expensive. Training runs need specialised chips, energy, data, and capital, and those advantages compound. A handful of firms can shape the default model that everyone else fine-tunes or rents. Public compute, transparency about training data and evaluation, competition policy, and a healthy open-weight ecosystem are the counterweights (<a href="https://ainowinstitute.org/publication/policy/compute-and-ai" rel="noopener">AI Now Institute, 2023</a>).</p>
@@ -125,7 +158,7 @@
 							<p><strong>Governance.</strong> The EU AI Act sorts systems by risk and imposes documentation, evaluation, and post-market monitoring on the higher-risk tiers (<a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj" rel="noopener">Regulation (EU) 2024/1689</a>). The NIST AI Risk Management Framework offers a voluntary process for mapping, measuring, and managing risk (<a href="https://www.nist.gov/itl/ai-risk-management-framework" rel="noopener">NIST, 2023</a>). Neither is a solution by itself. They are ways to make the trade-offs explicit and reversible.</p>
 							<p><strong>Data and consent.</strong> The models were trained on a web-scale corpus, and much of it was collected without consent or payment. LAION-5B, the dataset behind early Stable Diffusion, contained 5.85 billion image-text pairs scraped from the web (<a href="https://arxiv.org/abs/2210.08402" rel="noopener">Schuhmann et al., 2022</a>). Artists, authors, and publishers sued. US courts have drawn a narrow line: training on lawfully acquired books can be fair use, while training on pirated copies is not, and reproducing protected text in outputs is infringement. The <a href="https://www.courtlistener.com/docket/69061557/bartz-v-anthropic-ai-pbc/" rel="noopener">Bartz v. Anthropic</a> settlement in 2025 put a price on the pirated-book case, and licensing deals are replacing the free scrape. The legal question is not settled, but the era of taking first and asking later is ending.</p>
 							<p><strong>The productivity paradox.</strong> The productivity claims are uneven. In a randomized controlled trial with experienced open-source developers, AI tools made them about 19% slower, even though they believed they were 20% faster (<a href="https://arxiv.org/abs/2507.09089" rel="noopener">Becker et al., 2025</a>). In a controlled Copilot task, developers finished 55.8% faster (<a href="https://arxiv.org/abs/2302.06590" rel="noopener">Peng et al., 2023</a>), and customer-support agents gained 14% on average, with novices gaining 34% and experienced agents near zero (<a href="https://www.nber.org/papers/w31161" rel="noopener">Brynjolfsson et al., 2023</a>). The pattern is a jagged frontier: AI helps most on well-specified tasks and least on complex, open-ended work. A tool can be useful and still make an expert slower.</p>
-							<p><strong>The good.</strong> The effects are not only negative. Be My AI gives blind users a conversational description of a photo and reached a million sessions within two weeks of its 2023 beta. Whisper transcribes 96 languages and is open source; the AlphaFold database offers predicted structures for over 200 million proteins for free. Machine translation has become good enough for many everyday uses, and cheap AI tutoring reaches students who could not afford a human tutor. The same technology that makes fraud cheap makes access cheaper too.</p>
+							<p><strong>The skill question.</strong> AI can raise short-run performance and lower long-run skill. In a 2025 randomized experiment, participants who solved reasoning problems with ChatGPT scored lower on every measure of cognitive engagement: mental effort, sustained attention, deep processing, and strategic thinking (Georgiou, 2025). The tool that solves the problem can remove the struggle that builds the skill.</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Concentration</b><span>Compute and data advantages can become political advantages.</span></div>
@@ -135,13 +168,18 @@
 						</div>
 					</section>
 
+					<div class="prose">
+					<p><strong>Sources.</strong> Tice et al. (2026), <a href="https://arxiv.org/abs/2601.10160" rel="noopener">Alignment Pretraining</a>; Jumper et al. (2021), <a href="https://doi.org/10.1038/s41586-021-03819-2" rel="noopener">AlphaFold</a>; Merchant et al. (2023), <a href="https://doi.org/10.1038/s41586-023-06735-9" rel="noopener">GNoME</a>; Romera-Paredes et al. (2023), <a href="https://www.nature.com/articles/s41586-023-06924-6" rel="noopener">FunSearch</a>; Bi et al. (2023), <a href="https://www.nature.com/articles/s41586-023-06185-3" rel="noopener">Pangu-Weather</a>; Popel et al. (2020), <a href="https://www.nature.com/articles/s41467-020-18073-9" rel="noopener">CUBBITT</a>; <a href="https://www.bemyeyes.com/news/be-my-ai-hits-one-million-sessions-only-two-weeks-after-open-beta-release/" rel="noopener">Be My AI</a>; <a href="https://www.ic3.gov/AnnualReport/Reports/2023_IC3Report.pdf" rel="noopener">FBI IC3, 2023</a>; <a href="https://www.fcc.gov/document/fcc-proposes-6m-fine-ai-generated-robocall-biden" rel="noopener">FCC, 2024</a>; <a href="https://www.pewresearch.org/topic/artificial-intelligence/" rel="noopener">Pew Research Center, 2026</a>; <a href="https://arxiv.org/abs/2507.00181" rel="noopener">Georgiou, 2025</a>; <a href="https://c2pa.org/" rel="noopener">C2PA</a>.</p>
+					</div>
+
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">06</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
 							<p class="aha-big">The technology is new; the social questions are old.</p>
 							<p class="aha-sub">Who benefits, who is accountable, and what counts as truth are political questions, not only technical ones.</p>
+							<p class="aha-sub">The direction is not fixed. The same model can lower a language barrier or a fraud barrier; the same corpus can teach it to help or to scheme.</p>
 						</div>
 					</section>
 				</article>
