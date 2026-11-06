@@ -771,3 +771,103 @@
 .tm-formula-step .tm-formula-block {
 	margin-top: 10px;
 }
+
+/* Feature migration inside each layer: input/output plots and logit lens. */
+.tm-layer-intro {
+	margin: 0 0 14px;
+	color: var(--tm-ink-soft, var(--mn-text-secondary, #2c464d));
+	font-size: 0.9rem;
+	line-height: 1.55;
+}
+.tm-feature-wrap {
+	margin-top: 14px;
+}
+.tm-feature-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px 14px;
+	margin-bottom: 10px;
+	font-size: 0.82rem;
+	color: var(--tm-ink-soft, var(--mn-text-secondary, #2c464d));
+}
+.tm-feature-controls select {
+	max-width: 16rem;
+	padding: 4px 8px;
+	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: var(--tm-card, var(--mn-surface, #ffffff));
+	color: var(--tm-ink, var(--mn-text, #000000));
+	font: 600 0.8rem/1.2 "Open Sans", system-ui, sans-serif;
+}
+.tm-feature-note {
+	font-size: 0.76rem;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+}
+.tm-feature-plots {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+.tm-feature-plot {
+	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: var(--tm-card, var(--mn-surface, #ffffff));
+}
+.tm-feature-plot-title {
+	padding: 8px 12px 0;
+	font: 700 0.8rem/1.2 "Barlow", "Open Sans", system-ui, sans-serif;
+	color: var(--tm-petrol, var(--mn-accent, #004b6f));
+}
+.tm-feature-chart {
+	width: 100%;
+	height: 330px;
+}
+.tm-feature-empty {
+	margin: 0;
+	padding: 18px;
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+	font-size: 0.82rem;
+}
+.tm-logit-lens-host {
+	margin-top: 18px;
+}
+.tm-layer-hafter {
+	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: var(--tm-card, var(--mn-surface, #ffffff));
+	margin: 12px 0;
+}
+.tm-layer-hafter > summary {
+	cursor: pointer;
+	padding: 8px 12px;
+	font: 700 0.8rem/1.2 "Barlow", "Open Sans", system-ui, sans-serif;
+	color: var(--tm-petrol, var(--mn-accent, #004b6f));
+}
+.tm-hafter-scroll {
+	overflow: auto;
+	max-height: 260px;
+}
+.tm-hafter-table {
+	width: 100%;
+	border-collapse: collapse;
+	font: 600 0.72rem/1.2 "Open Sans", system-ui, sans-serif;
+	color: var(--tm-ink-soft, var(--mn-text-secondary, #2c464d));
+}
+.tm-hafter-table th,
+.tm-hafter-table td {
+	padding: 3px 6px;
+	border-bottom: 1px solid var(--tm-line, var(--mn-border, #e2e8f0));
+	text-align: right;
+	white-space: nowrap;
+}
+.tm-hafter-table th:first-child {
+	text-align: left;
+}
+.tm-hafter-table thead th {
+	color: var(--tm-muted, var(--mn-text-muted, #627476));
+	font-size: 0.68rem;
+}
+@media (max-width: 900px) {
+	.tm-feature-plots {
+		grid-template-columns: 1fr;
+	}
+}

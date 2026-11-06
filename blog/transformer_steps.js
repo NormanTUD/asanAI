@@ -128,6 +128,67 @@
 		});
 	}
 
+	function pca3(vectors) {
+		if (!vectors.length) return [];
+		var d = vectors[0].length;
+		if (d <= 3) {
+			return vectors.map(function (v) { return [v[0] || 0, v[1] || 0, v[2] || 0]; });
+		}
+		var mean = new Array(d).fill(0);
+		vectors.forEach(function (v) { for (var i = 0; i < d; i++) mean[i] += v[i] / vectors.length; });
+		var centered = vectors.map(function (v) { return v.map(function (x, i) { return x - mean[i]; }); });
+		var cov = [];
+		for (var i = 0; i < d; i++) {
+			cov.push(new Array(d).fill(0));
+			for (var j = 0; j < d; j++) {
+				var sum = 0;
+				for (var k = 0; k < centered.length; k++) sum += centered[k][i] * centered[k][j];
+				cov[i][j] = sum / Math.max(1, centered.length);
+			}
+		}
+		function multiply(m, v) {
+			var out = new Array(d).fill(0);
+			for (var i = 0; i < d; i++) for (var j = 0; j < d; j++) out[i] += m[i][j] * v[j];
+			return out;
+		}
+		function normalize(v) {
+			var n = Math.sqrt(v.reduce(function (a, x) { return a + x * x; }, 0)) || 1;
+			return v.map(function (x) { return x / n; });
+		}
+		function deflate(m, v, lambda) {
+			return m.map(function (row, i) {
+				return row.map(function (x, j) { return x - lambda * v[i] * v[j]; });
+			});
+		}
+		function component(m, start) {
+			var v = start;
+			for (var it = 0; it < 50; it++) v = normalize(multiply(m, v));
+			var lambda = v.reduce(function (a, x, i) { return a + x * multiply(m, v)[i]; }, 0);
+			return { v: v, lambda: lambda };
+		}
+		function sign(v) {
+			var best = 0;
+			for (var i = 0; i < v.length; i++) if (Math.abs(v[i]) > Math.abs(v[best])) best = i;
+			return v[best] < 0 ? v.map(function (x) { return -x; }) : v;
+		}
+		var v1 = new Array(d).fill(0); v1[0] = 1;
+		var p1 = component(cov, v1);
+		var m2 = deflate(cov, p1.v, p1.lambda);
+		var v2 = new Array(d).fill(0); v2[1 % d] = 1;
+		var p2 = component(m2, v2);
+		var m3 = deflate(m2, p2.v, p2.lambda);
+		var v3 = new Array(d).fill(0); v3[2 % d] = 1;
+		var p3 = component(m3, v3);
+		var a = sign(p1.v), b = sign(p2.v), c = sign(p3.v);
+		return centered.map(function (v) {
+			return [
+				v.reduce(function (sum, x, i) { return sum + x * a[i]; }, 0),
+				v.reduce(function (sum, x, i) { return sum + x * b[i]; }, 0),
+				v.reduce(function (sum, x, i) { return sum + x * c[i]; }, 0)
+			];
+		});
+	}
+
 	function project3(p, max, rotY, rotX) {
 		var x = (p[0] || 0) / max;
 		var y = (p[1] || 0) / max;
@@ -1232,6 +1293,330 @@
 		renderLayerPreviews();
 	});
 
+	var featureState = {};
+
+	function featureData(layerIdx) {
+		var trace = (window.__tmLayerTrace || [])[layerIdx];
+		if (!trace || !trace.h_in || !trace.h_out) return null;
+		var tokens = trace.tokenStrings || tokenList();
+		var n = Math.min(tokens.length, trace.h_in.length, trace.h_out.length);
+		if (!n) return null;
+		if (!featureState[layerIdx]) featureState[layerIdx] = { selected: n - 1 };
+		if (featureState[layerIdx].selected >= n) featureState[layerIdx].selected = n - 1;
+		return { trace: trace, tokens: tokens.slice(0, n), n: n, selected: featureState[layerIdx].selected };
+	}
+
+	function featureProjection(data) {
+		var d = data.trace.h_in[0].length;
+		var all = data.trace.h_in.slice(0, data.n).concat(data.trace.h_out.slice(0, data.n));
+		var coords;
+		if (d > 3) {
+			coords = pca3(all);
+			return {
+				in: coords.slice(0, data.n),
+				out: coords.slice(data.n),
+				is3d: true,
+				axes: ["PC 1 (PCA)", "PC 2 (PCA)", "PC 3 (PCA)"],
+				label: "PCA: d=" + d + " → 3D"
+			};
+		}
+		if (d === 3) {
+			coords = all.map(function (v) { return [v[0] || 0, v[1] || 0, v[2] || 0]; });
+			return {
+				in: coords.slice(0, data.n),
+				out: coords.slice(data.n),
+				is3d: true,
+				axes: ["Dim 0", "Dim 1", "Dim 2"],
+				label: DE() ? "Rohe Dimensionen · 3D" : "Raw dimensions · 3D"
+			};
+		}
+		if (d === 2) {
+			coords = all.map(function (v) { return [v[0] || 0, v[1] || 0]; });
+			return {
+				in: coords.slice(0, data.n),
+				out: coords.slice(data.n),
+				is3d: false,
+				axes: ["Dim 0", "Dim 1"],
+				label: DE() ? "Rohe Dimensionen · 2D" : "Raw dimensions · 2D"
+			};
+		}
+		coords = all.map(function (v) { return [v[0] || 0, 0]; });
+		return {
+			in: coords.slice(0, data.n),
+			out: coords.slice(data.n),
+			is3d: false,
+			axes: ["Dim 0", ""],
+			label: DE() ? "Rohe Dimension · 1D" : "Raw dimension · 1D"
+		};
+	}
+
+	function renderFeatureChart(el, coords, labels, selected, color, title, projection) {
+		if (!el || !window.echarts || !coords.length) return;
+		var c = palette();
+		var chart = echarts.getInstanceByDom(el) || echarts.init(el);
+		var data = coords.map(function (p, i) {
+			var isSel = i === selected;
+			return {
+				name: labels[i],
+				value: projection.is3d ? [p[0], p[1], p[2]] : [p[0], p[1]],
+				symbolSize: isSel ? 15 : 7,
+				itemStyle: {
+					color: isSel ? c.gold : color,
+					opacity: isSel ? 1 : 0.42,
+					borderColor: isSel ? c.ink : "transparent",
+					borderWidth: isSel ? 2 : 0
+				},
+				label: {
+					show: isSel,
+					position: "top",
+					formatter: labels[i],
+					color: c.ink,
+					fontSize: 11,
+					fontWeight: 700
+				}
+			};
+		});
+		var option;
+		if (projection.is3d) {
+			option = {
+				backgroundColor: "transparent",
+				title: {
+					text: title,
+					subtext: projection.label + (DE() ? " · ausgewählt: " : " · selected: ") + labels[selected],
+					left: "center",
+					textStyle: { fontSize: 13, color: c.ink, fontFamily: "Barlow, Open Sans, sans-serif" },
+					subtextStyle: { fontSize: 10, color: c.muted, fontFamily: "Open Sans, sans-serif" }
+				},
+				tooltip: { trigger: "item", confine: true },
+				xAxis3D: { type: "value", name: projection.axes[0], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } },
+				yAxis3D: { type: "value", name: projection.axes[1], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } },
+				zAxis3D: { type: "value", name: projection.axes[2], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } },
+				grid3D: {
+					boxWidth: 100, boxDepth: 100, boxHeight: 75,
+					viewControl: { alpha: 22, beta: 35, distance: 190 },
+					axisLine: { lineStyle: { color: c.line } },
+					splitLine: { lineStyle: { color: c.line } }
+				},
+				series: [{ type: "scatter3D", data: data, symbol: "circle", emphasis: { itemStyle: { color: c.gold } } }]
+			};
+		} else {
+			option = {
+				backgroundColor: "transparent",
+				title: {
+					text: title,
+					subtext: projection.label + (DE() ? " · ausgewählt: " : " · selected: ") + labels[selected],
+					left: "center",
+					textStyle: { fontSize: 13, color: c.ink, fontFamily: "Barlow, Open Sans, sans-serif" },
+					subtextStyle: { fontSize: 10, color: c.muted, fontFamily: "Open Sans, sans-serif" }
+				},
+				tooltip: { trigger: "item", confine: true },
+				grid: { top: 62, bottom: 38, left: 48, right: 18 },
+				xAxis: { type: "value", name: projection.axes[0], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted }, splitLine: { lineStyle: { color: c.line } } },
+				yAxis: { type: "value", name: projection.axes[1], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted }, splitLine: { lineStyle: { color: c.line } } },
+				series: [{ type: "scatter", data: data, symbol: "circle", emphasis: { itemStyle: { color: c.gold } } }]
+			};
+		}
+		chart.setOption(option, true);
+		chart.resize();
+	}
+
+	function renderLayerFeaturePlots(layerIdx) {
+		var data = featureData(layerIdx);
+		var prefix = "unified-layer-" + layerIdx;
+		var inputEl = document.getElementById(prefix + "-feature-input");
+		var outputEl = document.getElementById(prefix + "-feature-output");
+		var select = document.getElementById(prefix + "-feature-token");
+		var note = document.getElementById(prefix + "-feature-projection");
+		if (!data || !inputEl || !outputEl) {
+			if (inputEl) inputEl.innerHTML = "<p class='tm-feature-empty'>" + (DE() ? "Noch keine Layer-Daten." : "No layer data yet.") + "</p>";
+			if (outputEl) outputEl.innerHTML = "";
+			return;
+		}
+		if (select) {
+			var labels = data.tokens.map(function (t) { return display(t); });
+			if (select.options.length !== data.n) {
+				select.innerHTML = "";
+				labels.forEach(function (label, i) {
+					var opt = document.createElement("option");
+					opt.value = String(i);
+					opt.textContent = label;
+					select.appendChild(opt);
+				});
+			}
+			select.value = String(data.selected);
+			if (!select._tmFeatureBound) {
+				select._tmFeatureBound = true;
+				select.addEventListener("change", function () {
+					var idx = parseInt(select.value, 10);
+					if (isNaN(idx)) return;
+					featureState[layerIdx] = { selected: idx };
+					renderLayerFeaturePlots(layerIdx);
+				});
+			}
+		}
+		var labels = data.tokens.map(function (t) { return display(t); });
+		var proj = featureProjection(data);
+		if (note) note.textContent = proj.label;
+		renderFeatureChart(inputEl, proj.in, labels, data.selected, palette().blue, DE() ? "Eingabe in Schicht " + (layerIdx + 1) : "Input to layer " + (layerIdx + 1), proj);
+		renderFeatureChart(outputEl, proj.out, labels, data.selected, palette().green, DE() ? "Ausgabe von Schicht " + (layerIdx + 1) : "Output of layer " + (layerIdx + 1), proj);
+	}
+
+	function featureTopWords(vec, count) {
+		var space = window.persistentEmbeddingSpace || {};
+		var words = Object.keys(space);
+		if (!words.length || !vec) return [];
+		var scores = words.map(function (word) {
+			var row = space[word] || [];
+			var dot = 0;
+			for (var i = 0; i < vec.length; i++) dot += (vec[i] || 0) * (row[i] || 0);
+			return { word: word, score: dot };
+		});
+		var max = Math.max.apply(null, scores.map(function (s) { return s.score; }));
+		var exps = scores.map(function (s) { return Math.exp(s.score - max); });
+		var sum = exps.reduce(function (a, b) { return a + b; }, 0) || 1;
+		scores.forEach(function (s, i) { s.prob = exps[i] / sum; });
+		scores.sort(function (a, b) { return b.prob - a.prob; });
+		return scores.slice(0, count);
+	}
+
+	function featureEsc(value) {
+		return String(value == null ? "" : value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+	}
+
+	function logitChip(item, color) {
+		var pct = Math.max(0, Math.min(100, Math.round((item.prob || 0) * 100)));
+		return '<span class="tm-logit-chip" style="--tm-logit-color:' + color + '"><span class="tm-logit-word">' + featureEsc(display(item.word)) + '</span><span class="tm-logit-pct">' + pct + '%</span><i style="width:' + pct + '%"></i></span>';
+	}
+
+	function renderLayerLogitLens(layerIdx) {
+		var host = document.getElementById("unified-layer-" + layerIdx + "-logit-lens");
+		var data = featureData(layerIdx);
+		if (!host) return;
+		if (!data) {
+			host.innerHTML = "<p class='tm-feature-empty'>" + (DE() ? "Noch keine Layer-Daten." : "No layer data yet.") + "</p>";
+			return;
+		}
+		var trace = data.trace;
+		var tokens = data.tokens;
+		var labels = tokens.map(function (t) { return featureEsc(display(t)); });
+		var d = trace.h_out[0].length;
+		var head = "<div class='tm-logit-head'><span>" + (DE() ? "Token" : "token") + "</span><span>" + (DE() ? "vorher" : "before") + "</span><span>" + (DE() ? "nachher" : "after") + "</span></div>";
+		var rows = labels.map(function (label, i) {
+			var before = featureTopWords(trace.h_in[i], 3);
+			var after = featureTopWords(trace.h_out[i], 3);
+			return "<div class='tm-logit-row'><span class='tm-logit-token'>" + featureEsc(label) + "</span><div class='tm-logit-side'>" + before.map(function (w) { return logitChip(w, "var(--tm-blue)"); }).join("") + "</div><span class='tm-logit-arrow'>→</span><div class='tm-logit-side'>" + after.map(function (w) { return logitChip(w, "var(--tm-green)"); }).join("") + "</div></div>";
+		}).join("");
+		var matrixHead = "<tr><th>" + (DE() ? "Token" : "token") + "</th>" + Array.from({ length: d }, function (_, i) { return "<th>" + i + "</th>"; }).join("") + "</tr>";
+		var matrixRows = labels.map(function (label, i) {
+			return "<tr><th>" + featureEsc(label) + "</th>" + trace.h_out[i].map(function (v) { return "<td>" + (Number(v) || 0).toFixed(2) + "</td>"; }).join("") + "</tr>";
+		}).join("");
+		var title = DE() ? "Logit-Linse · Schicht " + (layerIdx + 1) : "Logit lens · layer " + (layerIdx + 1);
+		var note = DE()
+			? "Die Logit-Linse projiziert den Vektor nach dieser Schicht auf das Vokabular und vergleicht die Winkel. Sie zeigt, welches Wort das Modell erzeugen würde, wenn es hier aufhören würde; über die Schichten hinweg siehst du, wie sich die Repräsentation bewegt und ihre Meinung ein wenig ändert."
+			: "The logit lens projects the vector after this layer onto the vocabulary and compares the angles. It shows which word the model would produce if it stopped here; across layers you can watch the representation move and change its guess, at least a little.";
+		host.innerHTML = "<div class='tm-logit-wrap'><div class='tm-logit-title'>" + title + "</div>" +
+			"<details class='tm-layer-hafter' open><summary>" + (DE() ? "h_after · Hidden State nach Schicht " : "h_after · hidden state after layer ") + (layerIdx + 1) + "</summary><div class='tm-hafter-scroll'><table class='tm-hafter-table'><thead>" + matrixHead + "</thead><tbody>" + matrixRows + "</tbody></table></div></details>" +
+			"<p class='tm-logit-note'>" + note + "</p><div class='tm-logit-lens'>" + head + rows + "</div></div>";
+	}
+
+	function enhanceLayerCards() {
+		if (!window.__tmLayerTrace || !window.__tmLayerTrace.length) return;
+		Array.prototype.slice.call(document.querySelectorAll(".tm-layer-card")).forEach(function (card) {
+			if (card.getAttribute("data-tm-enhanced") === "1") return;
+			var idx = parseInt(card.getAttribute("data-layer-idx"), 10);
+			if (isNaN(idx)) return;
+			var body = card.querySelector(".tm-layer-body");
+			if (!body) return;
+			var isDe = DE();
+			if (!body.querySelector(".tm-layer-intro")) {
+				var intro = document.createElement("p");
+				intro.className = "tm-layer-intro";
+				intro.textContent = isDe
+					? "Attention verteilt Aufmerksamkeit anhand des Kontexts: Sie mischt die Tokens je nachdem, in welchem Kontext sie stehen. Das FFN verschiebt den Punkt danach im Raum mit der Information aus dem bisherigen Kontext. Die Vorschau oben zeigt, wie viel diese Schicht pro Token und Dimension schreibt."
+					: "Attention distributes attention based on context: it mixes the tokens depending on the context they are in. The FFN then shifts the point in space with the information from the previous context. The preview above shows how much this layer writes per token and dimension.";
+				body.insertBefore(intro, body.firstChild);
+			}
+			var stack = body.querySelector(".tm-layer-subbox-stack") || body;
+			var sub = card.querySelector('.tm-layer-subbox[data-sub="migration"]');
+			if (!sub) {
+				sub = document.createElement("details");
+				sub.className = "tm-layer-subbox";
+				sub.setAttribute("data-sub", "migration");
+				sub.innerHTML = "<summary>" + (isDe ? "Feature-Migration" : "Feature migration") + "</summary><div class='tm-layer-subbox-body'></div>";
+				stack.insertBefore(sub, stack.firstChild);
+			}
+			var summary = sub.querySelector("summary");
+			if (summary) summary.textContent = isDe ? "Feature-Migration" : "Feature migration";
+			var sb = sub.querySelector(".tm-layer-subbox-body");
+			if (!sb) return;
+			Array.prototype.slice.call(sb.querySelectorAll(".tm-migration-canvas")).forEach(function (el) { el.remove(); });
+			var oldDetail = sb.querySelector(".tm-migration-detail");
+			if (oldDetail) oldDetail.style.display = "none";
+			var lead = sb.querySelector(".tm-level-text");
+			if (!lead) {
+				lead = document.createElement("p");
+				lead.className = "tm-level-text";
+				sb.insertBefore(lead, sb.firstChild);
+			}
+			lead.textContent = isDe
+				? "Die beiden Plots zeigen die Token-Vektoren vor und nach der Schicht. Alle Tokens sind als Kontext zu sehen; das ausgewählte Token ist hervorgehoben. Standardmäßig ist das letzte Token ausgewählt. Für d_model > 3 nutzt der Plot eine PCA auf drei Dimensionen; das Label sagt immer PCA."
+				: "The two plots show the token vectors before and after the layer. All tokens are shown for context; the selected token is highlighted. The last token is selected by default. For d_model > 3 the plot uses PCA to three dimensions; the label always says PCA.";
+			if (!sb.querySelector(".tm-feature-wrap")) {
+				var wrap = document.createElement("div");
+				wrap.className = "tm-feature-wrap";
+				wrap.innerHTML = "<div class='tm-feature-controls'><label>" + (isDe ? "Token" : "Token") + " <select id='unified-layer-" + idx + "-feature-token'></select></label><span class='tm-feature-note' id='unified-layer-" + idx + "-feature-projection'></span></div>" +
+					"<div class='tm-feature-plots'><div class='tm-feature-plot'><div class='tm-feature-plot-title'>" + (isDe ? "Eingabe" : "Input") + "</div><div id='unified-layer-" + idx + "-feature-input' class='tm-feature-chart'></div></div>" +
+					"<div class='tm-feature-plot'><div class='tm-feature-plot-title'>" + (isDe ? "Ausgabe" : "Output") + "</div><div id='unified-layer-" + idx + "-feature-output' class='tm-feature-chart'></div></div></div>" +
+					"<div id='unified-layer-" + idx + "-logit-lens' class='tm-logit-lens-host'></div>";
+				sb.insertBefore(wrap, oldDetail || null);
+			}
+			if (!sub._tmFeatureBound) {
+				sub._tmFeatureBound = true;
+				sub.addEventListener("toggle", function () {
+					if (!sub.open) return;
+					setTimeout(function () {
+						renderLayerFeaturePlots(idx);
+						renderLayerLogitLens(idx);
+					}, 60);
+				});
+			}
+			card.setAttribute("data-tm-enhanced", "1");
+			if (sub.open) {
+				renderLayerFeaturePlots(idx);
+				renderLayerLogitLens(idx);
+			}
+		});
+	}
+	window.addEventListener("tm:theme", function () {
+		Object.keys(featureState).forEach(function (key) { renderLayerFeaturePlots(parseInt(key, 10)); });
+	});
+	window.addEventListener("resize", function () {
+		Object.keys(featureState).forEach(function (key) {
+			var inputEl = document.getElementById("unified-layer-" + key + "-feature-input");
+			var outputEl = document.getElementById("unified-layer-" + key + "-feature-output");
+			[inputEl, outputEl].forEach(function (el) {
+				if (!el || !window.echarts) return;
+				var chart = echarts.getInstanceByDom(el);
+				if (chart) chart.resize();
+			});
+		});
+	});
+	window.addEventListener("tm:transformer-data", function () {
+		setTimeout(function () {
+			enhanceLayerCards();
+			Array.prototype.slice.call(document.querySelectorAll('.tm-layer-subbox[data-sub="migration"][open]')).forEach(function (sub) {
+				var card = sub.closest(".tm-layer-card");
+				if (!card) return;
+				var idx = parseInt(card.getAttribute("data-layer-idx"), 10);
+				if (!isNaN(idx)) {
+					renderLayerFeaturePlots(idx);
+					renderLayerLogitLens(idx);
+				}
+			});
+		}, 350);
+	});
+	setInterval(enhanceLayerCards, 1200);
+
 	window.TransformerSteps = {
 		init: function (hostId) {
 			var host = document.getElementById(hostId);
@@ -1508,6 +1893,9 @@
 			}
 			canvas.setAttribute("data-layer-signal-ready", "1");
 		},
+		enhanceLayerCards: enhanceLayerCards,
+		renderLayerFeaturePlots: renderLayerFeaturePlots,
+		renderLayerLogitLens: renderLayerLogitLens,
 		renderLayerMigration: function (canvasId, layerIdx) {
 			var canvas = document.getElementById(canvasId);
 			if (!canvas) return;
@@ -1747,10 +2135,10 @@
 					});
 				}
 				var boxBody = box.querySelector(".tm-step-body");
-				// Move the already-rendered overview cards into the Transformer box.
-				[[attendCard, isDe ? "Attention-Überblick" : "Attention overview"],
-				 [ffnCard, isDe ? "Feed-Forward-Überblick" : "Feed-forward overview"],
-				 [residualCard, isDe ? "Residual-Stream-Überblick" : "Residual stream overview"]].forEach(function (pair) {
+				// Attention and FFN are shown inside the layers. Keep the
+				// residual overview and move the background notes into a
+				// compact context block instead of a top-level overview card.
+				[[residualCard, isDe ? "Residual-Stream-Überblick" : "Residual stream overview"]].forEach(function (pair) {
 					var card = pair[0];
 					if (!card || !boxBody) return;
 					var h = card.querySelector("h3");
@@ -1766,6 +2154,16 @@
 					}
 					boxBody.appendChild(card);
 				});
+				var context = document.createElement("details");
+				context.className = "tm-step-detail tm-transformer-context";
+				context.innerHTML = "<summary>" + (isDe ? "Hintergrund: Warum Attention die Rekurrenz ersetzte" : "Background: why attention replaced recurrence") + "</summary><div class='tm-step-detail-body'></div>";
+				var contextBody = context.querySelector(".tm-step-detail-body");
+				[attendCard, ffnCard].forEach(function (card) {
+					if (!card) return;
+					card.querySelectorAll(".tm-step-detail, .optional").forEach(function (el) { contextBody.appendChild(el); });
+					card.remove();
+				});
+				boxBody.appendChild(context);
 				// The old #block section keeps its prose, but the observer should
 				// now fire on the Transformer box at the top.
 				var oldBlock = document.getElementById("block");
@@ -1785,6 +2183,8 @@
 			var boxNowBody = boxNow.querySelector(".tm-step-body");
 			var layerContainer = document.getElementById("ffn-equations-container");
 			if (layerContainer && boxNowBody && layerContainer.parentNode !== boxNowBody) boxNowBody.appendChild(layerContainer);
+			var contextBlock = boxNowBody ? boxNowBody.querySelector(".tm-transformer-context") : null;
+			if (contextBlock && boxNowBody.lastElementChild !== contextBlock) boxNowBody.appendChild(contextBlock);
 			// Token Trajectory is the opening picture of the block.
 			var traj = document.getElementById("transformer-trajectory-full-path-wrapper") || document.getElementById("transformer-trajectory-full-path");
 			if (traj && boxNowBody && traj.parentNode !== boxNowBody) {
