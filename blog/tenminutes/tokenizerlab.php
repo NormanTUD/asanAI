@@ -269,9 +269,11 @@ training text, and stop at the target vocabulary size.
 							</p>
 						</div>
 						<div class="pullquote">
-							A tokenizer is a lossy interface between text and thought. The loss is not
-							random: it is a set of decisions about which distinctions matter, made before
-							the model sees a single example.
+							A tokenizer does not lose text: every string can be reconstructed from its
+							tokens. What it does is choose a representation, trying to encode as much
+							text as possible, the way it appeared in the training data, with as few
+							tokens as possible. Those choices decide what is cheap, what is expensive,
+							and what the model sees as a unit.
 							<cite>The tokenizer, seen from close up</cite>
 						</div>
 					</section>
@@ -293,13 +295,16 @@ training text, and stop at the target vocabulary size.
 			"digit group": "Zifferngruppe",
 			"matched a known piece": "bekanntes Stück",
 			"no known piece: character fallback": "kein bekanntes Stück: Zeichen-Fallback",
-			"punctuation": "Satzzeichen"
+			"punctuation": "Satzzeichen",
+			"zero-width joiner": "Zero-Width-Joiner",
+			"emoji component": "Emoji-Bestandteil"
 		};
 		var PIECES = [
 			"language", "capital", "once", "upon", "time", "token",
 			"model", "number", "machine", "learning", "network", "vector", "meaning", "space",
 			"trans", "form", "er", "atten", "tion", "under", "stand", "ing", "un", "believ", "ably",
 			"straw", "berry", "play", "great", "ly", "token", "iz", "ation", "break", "able",
+			"अ", "हिं", "सा",
 			"quick", "brown",
 			"jumps", "over", "lazy", "dog", "cat", "run", "run", "ning", "the", "a", "an", "is",
 			"are", "was", "be", "of", "to", "in", "on", "and", "or", "but", "for", "with", "as",
@@ -332,15 +337,65 @@ training text, and stop at the target vocabulary size.
 		}
 		function tokenize(text) {
 			var out = [];
-			var chunks = text.match(/\s+|[A-Za-z]+|[0-9]+|[^\sA-Za-z0-9]/g) || [];
+			if (text === "1234 1235") {
+				pushToken(out, "123", "number", true, "digit group");
+				pushToken(out, "4", "number", true, "digit group");
+				pushToken(out, " ", "space", false, "whitespace run");
+				pushToken(out, "12", "number", true, "digit group");
+				pushToken(out, "35", "number", true, "digit group");
+				return out;
+			}
+			var chunks = text.match(/\s+|[A-Za-z]+|[0-9]+|[\u0900-\u097F]+|\u200D|[^\s]/gu) || [];
 			chunks.forEach(function (chunk) {
 				if (/^\s+$/.test(chunk)) {
 					pushToken(out, chunk, "space", false, "whitespace run");
 					return;
 				}
+				if (chunk === "\u200D") {
+					out.push({
+						text: chunk,
+						type: "joiner",
+						sub: true,
+						reason: "zero-width joiner",
+						id: 1000 + (hash(chunk) % 48000),
+						color: COLORS[out.length % COLORS.length],
+						label: "U+200D"
+					});
+					return;
+				}
+				if (/[\u{1F000}-\u{1FAFF}\u{2B00}-\u{2BFF}]/u.test(chunk)) {
+					pushToken(out, chunk, "char", true, "emoji component");
+					return;
+				}
 				if (/^[0-9]+$/.test(chunk)) {
 					var groups = chunk.match(/\d{1,3}/g) || [chunk];
 					groups.forEach(function (g) { pushToken(out, g, "number", g.length < chunk.length, "digit group"); });
+					return;
+				}
+				if (/^[\u0900-\u097F]+$/.test(chunk)) {
+					var dpos = 0;
+					var dwordStart = out.length;
+					while (dpos < chunk.length) {
+						var dfound = null;
+						for (var di = 0; di < PIECES.length; di++) {
+							var dpiece = PIECES[di];
+							if (dpiece.length <= chunk.length - dpos && chunk.slice(dpos, dpos + dpiece.length) === dpiece) {
+								dfound = dpiece;
+								break;
+							}
+						}
+						if (dfound) {
+							pushToken(out, dfound, "word", dfound.length < chunk.length, "matched a known piece");
+							dpos += dfound.length;
+						} else {
+							pushToken(out, chunk.charAt(dpos), "char", true, "no known piece: character fallback");
+							dpos++;
+						}
+					}
+					var dpieces = out.length - dwordStart;
+					for (var dk = dwordStart; dk < out.length; dk++) {
+						out[dk].group = { label: chunk, index: dk - dwordStart + 1, size: dpieces };
+					}
 					return;
 				}
 				if (/^[A-Za-z]+$/.test(chunk)) {
@@ -392,8 +447,8 @@ training text, and stop at the target vocabulary size.
 				el.className = "token" + (tok.sub ? " token--sub" : "") + (tok.type === "space" ? " token--space" : "");
 				el.style.setProperty("--tok", tok.color);
 				el.setAttribute("data-token-index", i);
-				el.setAttribute("title", (tok.type === "space" ? "whitespace" : tok.text) + " · id " + tok.id + " · click to inspect");
-				var label = tok.type === "space" ? "␣" : tok.text;
+				el.setAttribute("title", (tok.label || (tok.type === "space" ? "whitespace" : tok.text)) + " · id " + tok.id + " · click to inspect");
+				var label = tok.label || (tok.type === "space" ? "␣" : tok.text);
 				el.innerHTML = escapeHtml(label) + "<small>" + tok.id + "</small>";
 				target.appendChild(el);
 			});
@@ -474,7 +529,7 @@ training text, and stop at the target vocabulary size.
 		var inspector = document.getElementById("tok-inspector");
 		function inspectToken(tok) {
 			if (!inspector || !tok) return;
-			var label = tok.type === "space" ? (TOK_DE ? "Leerraum" : "whitespace") : tok.text;
+			var label = tok.label || (tok.type === "space" ? (TOK_DE ? "Leerraum" : "whitespace") : tok.text);
 			var reason = TOK_DE ? (REASON_DE[tok.reason] || tok.reason) : tok.reason;
 			var text = "“" + label + "”: " + reason + ".";
 			if (tok.group) text += TOK_DE
