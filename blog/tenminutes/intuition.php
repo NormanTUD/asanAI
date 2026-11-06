@@ -41,6 +41,7 @@
 								reasoning. You may already use one on your phone: you type a question, and the
 								answer appears one word at a time.
 							</p>
+							<p>If you use a search engine’s AI summary, the answer may appear all at once instead of word by word: those answers are often cached. The advantage is that you no longer have to click through every possible website, because an automatic summary has already read them for you.</p>
 						</div>
 
 						<div class="demo demo--paper demo--interactive" id="phone-demo">
@@ -49,7 +50,7 @@
 									<p class="demo-title">The model in your pocket <span>· demo 01a</span></p>
 									<p class="demo-sub">A search box, a voice query, an AI answer and the links below it. The animation runs once when the demo comes into view.</p>
 								</div>
-								<span class="demo-badge">live</span>
+								
 							</div>
 							<div class="demo-body">
 								<div class="ia-stage">

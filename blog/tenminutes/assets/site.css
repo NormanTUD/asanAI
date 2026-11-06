@@ -7360,3 +7360,50 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 	max-width: 100%;
 	overflow-x: auto;
 }
+
+.season-layer {
+	position: fixed;
+	inset: 0;
+	width: 100vw;
+	height: 100vh;
+	pointer-events: none;
+}
+#season-fireworks { z-index: 65; }
+#season-snow { z-index: 70; }
+.season-santa {
+	position: fixed;
+	left: -20vw;
+	bottom: 8px;
+	z-index: 68;
+	width: 144px;
+	pointer-events: none;
+	animation: santaFly 24s linear infinite;
+	filter: drop-shadow(0 8px 10px rgba(0, 75, 111, 0.28));
+}
+.season-santa img {
+	display: block;
+	width: 100%;
+	height: auto;
+	image-rendering: pixelated;
+}
+@keyframes santaFly {
+	from { transform: translateX(0); }
+	to { transform: translateX(140vw); }
+}
+.season-credit {
+	margin: 14px 0 0;
+	font-family: var(--tm-ui);
+	font-size: 0.66rem;
+	color: var(--tm-muted);
+}
+.season-credit a { color: var(--tm-petrol); }
+@media (max-width: 640px) {
+	.season-santa { width: 96px; bottom: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.season-santa {
+		left: 50%;
+		transform: translateX(-50%);
+		animation: none;
+	}
+}
