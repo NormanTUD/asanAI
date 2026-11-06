@@ -6,7 +6,7 @@
 	<meta name="description" content="Thirty-one doors into AI: a guided calendar of ten-minute, interactive lessons.">
 	<meta name="theme-color" content="#ffffff">
 	<title>The 31-Door Calendar | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-page="advent">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -354,7 +354,7 @@
 		</div>
 	</footer>
 
-	<script src="assets/site.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 	<script>
 	(function () {
 		"use strict";
