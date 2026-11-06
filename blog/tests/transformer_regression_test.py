@@ -132,8 +132,8 @@ def test_static(results):
     )
     main_js = text("blog/transformer.js")
     results.check(
-        "token picker inserts word separators",
-        "needsSpace" in main_js and "needsSpace" in tm_js,
+        "token picker inserts word boundaries",
+        "TM_TOKEN_BOUNDARY" in main_js and "TM_TOKEN_BOUNDARY" in tm_js,
     )
     results.check(
         "h_last is rendered one component per row",

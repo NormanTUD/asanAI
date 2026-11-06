@@ -2453,9 +2453,9 @@ function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_
 window.select_suggested_word = (word) => {
 	const masterInput = document.getElementById('transformer-master-token-input');
 
-	// Check if input has content and does NOT end with a space
-	if (masterInput.value.length > 0 && !masterInput.value.endsWith(' ')) {
-		masterInput.value += ' ';
+	// Keep the token separate without inserting a visible space.
+	if (masterInput.value.length > 0 && !/[\s\u200B]$/.test(masterInput.value)) {
+		masterInput.value += TM_TOKEN_BOUNDARY;
 	}
 
 	masterInput.value += word;
@@ -2523,7 +2523,11 @@ function buildHLastSection(h_last) {
 		: "(the last layers' output matrix last line of the inference-data)";
 	return `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; text-align: center;">
     <span class="md">
-    <p class="logit_calc" style="text-align: center; margin-left: auto; margin-right: auto;">${head} $h_\\text{last} = \\begin{bmatrix} ${hLastRows} \\end{bmatrix}$ ${note}</p>\n`;
+    <div class="logit_calc" style="text-align: center; margin-left: auto; margin-right: auto;">
+    <p style="margin: 0 0 4px;">${head}</p>
+    $$h_\\text{last} = \\begin{bmatrix} ${hLastRows} \\end{bmatrix}$$
+    <p style="margin: 4px 0 0;">${note}</p>
+    </div>\n`;
 }
 
 function buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits) {
@@ -2729,7 +2733,8 @@ window.appendToken = (token) => {
 	if (token.startsWith('##')) {
 		input.value += token.replace('##', '');
 	} else {
-		input.value += (input.value ? " " : "") + token;
+		const boundary = (input.value && !/[\s\u200B]$/.test(input.value) && !/^\s/.test(token)) ? TM_TOKEN_BOUNDARY : '';
+		input.value += boundary + token;
 	}
 	// Trigger update
 	if (typeof render_token_picker_chips === 'function') render_token_picker_chips();
@@ -3039,6 +3044,9 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 // Updated Tokenizer to allow different containers
 
 const TM_EOS_TOKEN = '<|endoftext|>';
+// Invisible boundary between adjacent chips: keeps them as separate tokens
+// without inserting a visible space the reader did not type.
+const TM_TOKEN_BOUNDARY = '\u200B';
 
 function tokenizeTextCore(text, type) {
 	const raw = String(text == null ? '' : text);
@@ -3047,6 +3055,12 @@ function tokenizeTextCore(text, type) {
 	let i = 0;
 	while (i < cleaned.length) {
 		const ch = String.fromCodePoint(cleaned.codePointAt(i));
+		if (ch === TM_TOKEN_BOUNDARY) {
+			// Chip boundary, not a token: keeps adjacent chips separate
+			// without creating a space token.
+			i += ch.length;
+			continue;
+		}
 		if (/\s/u.test(ch)) {
 			tokens.push(ch);
 			i += ch.length;
@@ -3227,13 +3241,12 @@ function render_token_picker() {
 			var token = chip.getAttribute('data-token');
 			if (token == null || token === TM_EOS_TOKEN) return;
 			// Keep words as separate tokens: a non-space token appended after
-			// another word needs a separating space, or "the" + "king" becomes
-			// the single token "theking".
+			// another word gets an invisible boundary, not a visible space.
 			if (token.indexOf('##') === 0) {
 				input.value += token.slice(2);
 			} else {
-				var needsSpace = input.value && !/\s$/.test(input.value) && !/^\s/.test(token);
-				input.value += (needsSpace ? ' ' : '') + token;
+				var needsBoundary = input.value && !/[\s\u200B]$/.test(input.value) && !/^\s/.test(token);
+				input.value += (needsBoundary ? TM_TOKEN_BOUNDARY : '') + token;
 			}
 			input.dispatchEvent(new Event('input', { bubbles: true }));
 			render_token_picker_chips();
@@ -3251,7 +3264,7 @@ function render_token_picker() {
 			var tokens = tokenizeTextCore(input.value, type);
 			if (idx < 0 || idx >= tokens.length) return;
 			tokens.splice(idx, 1);
-			input.value = tokens.join('');
+			input.value = tokens.join(TM_TOKEN_BOUNDARY);
 			input.dispatchEvent(new Event('input', { bubbles: true }));
 			render_token_picker_chips();
 		});
@@ -7515,6 +7528,20 @@ window._themeriver_on_change = function () {
 	if (entry) _execute_themeriver_render(entry.d_model);
 };
 
+/* The final projection is often rendered while the page loader still hides
+   #contents (width 0). Re-run the math-scroll pass once it gets a real width
+   so wide matrices cannot stay unclamped and trip the layout guardrail. */
+function _observeOutputProjectionMath() {
+	const out = document.getElementById('transformer-output-projection');
+	if (!out || out._mathScrollObs || typeof ResizeObserver === 'undefined') return;
+	out._mathScrollObs = new ResizeObserver(() => {
+		if (out.clientWidth > 0 && typeof ensureDisplayMathScrollable === 'function') {
+			ensureDisplayMathScrollable(out);
+		}
+	});
+	out._mathScrollObs.observe(out);
+}
+
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
 
@@ -7527,6 +7554,7 @@ async function loadTransformerModule () {
 	updateArchitectureValidityUI();
 	run_transformer_demo();
 	bindTransformerRunURL();
+	_observeOutputProjectionMath();
 	window.addEventListener('blogPostLoadComplete', scrollToRunStep, { once: true });
 	scrollToRunStep();
 

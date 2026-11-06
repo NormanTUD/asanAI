@@ -2414,8 +2414,8 @@ window.select_suggested_word = (word) => {
 	if (typeof window.tmShowInferenceBusy === 'function') window.tmShowInferenceBusy();
 	requestAnimationFrame(function () {
 		setTimeout(function () {
-			if (masterInput.value.length > 0 && !masterInput.value.endsWith(' ')) {
-				masterInput.value += ' ';
+			if (masterInput.value.length > 0 && !/[\s\u200B]$/.test(masterInput.value)) {
+				masterInput.value += TM_TOKEN_BOUNDARY;
 			}
 			masterInput.value += word;
 			masterInput.dispatchEvent(new Event('input', { bubbles: true }));
@@ -2499,7 +2499,11 @@ function buildHLastSection(h_last) {
 		: "(the last layers' output matrix last line of the inference-data)";
 	return `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; text-align: center;">
     <span class="md">
-    <p class="logit_calc" style="text-align: center; margin-left: auto; margin-right: auto;">${head} $h_\\text{last} = \\begin{bmatrix} ${hLastRows} \\end{bmatrix}$ ${note}</p>\n`;
+    <div class="logit_calc" style="text-align: center; margin-left: auto; margin-right: auto;">
+    <p style="margin: 0 0 4px;">${head}</p>
+    $$h_\\text{last} = \\begin{bmatrix} ${hLastRows} \\end{bmatrix}$$
+    <p style="margin: 4px 0 0;">${note}</p>
+    </div>\n`;
 }
 
 function buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits) {
@@ -2715,7 +2719,8 @@ window.appendToken = (token) => {
 	if (token.startsWith('##')) {
 		input.value += token.replace('##', '');
 	} else {
-		input.value += (input.value ? " " : "") + token;
+		const boundary = (input.value && !/[\s\u200B]$/.test(input.value) && !/^\s/.test(token)) ? TM_TOKEN_BOUNDARY : '';
+		input.value += boundary + token;
 	}
 	// Trigger update
 	if (typeof render_token_picker_chips === 'function') render_token_picker_chips();
@@ -3025,6 +3030,9 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 // Updated Tokenizer to allow different containers
 
 const TM_EOS_TOKEN = '<|endoftext|>';
+// Invisible chip boundary, keeps adjacent chips as separate tokens
+// without inserting a visible space the reader did not type.
+const TM_TOKEN_BOUNDARY = '\u200B';
 
 function tokenizeTextCore(text, type) {
 	const raw = String(text == null ? '' : text);
@@ -3033,6 +3041,10 @@ function tokenizeTextCore(text, type) {
 	let i = 0;
 	while (i < cleaned.length) {
 		const ch = String.fromCodePoint(cleaned.codePointAt(i));
+		if (ch === TM_TOKEN_BOUNDARY) {
+			i += ch.length;
+			continue;
+		}
 		if (/\s/u.test(ch)) {
 			tokens.push(ch);
 			i += ch.length;
@@ -3227,8 +3239,8 @@ function render_token_picker() {
 				if (token.indexOf('##') === 0) {
 					input.value += token.slice(2);
 				} else {
-					var needsSpace = input.value && !/\s$/.test(input.value) && !/^\s/.test(token);
-					input.value += (needsSpace ? ' ' : '') + token;
+					var needsBoundary = input.value && !/[\s\u200B]$/.test(input.value) && !/^\s/.test(token);
+					input.value += (needsBoundary ? TM_TOKEN_BOUNDARY : '') + token;
 				}
 				input.dispatchEvent(new Event('input', { bubbles: true }));
 			});
@@ -3248,7 +3260,7 @@ function render_token_picker() {
 			if (idx < 0 || idx >= tokens.length) return;
 			runAfterBusyPaint(function () {
 				tokens.splice(idx, 1);
-				input.value = tokens.join('');
+				input.value = tokens.join(TM_TOKEN_BOUNDARY);
 				input.dispatchEvent(new Event('input', { bubbles: true }));
 			});
 		});
