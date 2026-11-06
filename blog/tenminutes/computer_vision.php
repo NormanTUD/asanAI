@@ -141,8 +141,27 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="vit">
+						<div class="section-kicker"><span class="sk-num">04</span> Patches as tokens</div>
+						<h2 class="section-title">The image becomes a sequence.</h2>
+						<div class="prose">
+							<p>A Vision Transformer (ViT) does not slide a kernel. It cuts the image into fixed patches, for example 16×16 pixels, flattens each patch into a vector, adds a position embedding, and treats the patches as tokens (<a href="https://arxiv.org/abs/2010.11929" rel="noopener">Dosovitskiy et al., 2020</a>). Self-attention lets every patch look at every other patch; the feed-forward network transforms each patch vector. A class token or a task head then reads the result.</p>
+							<p>Convolution is one inductive bias: locality and shared weights. A ViT has less built-in locality, so it usually needs more data or strong augmentation, but it can connect distant regions from the first layer. Modern systems often combine both: a convolutional stem before a transformer, or transformer blocks over patch tokens. The choice is a design trade-off, not a replacement.</p>
+						</div>
+						<figure class="vit-figure">
+							<svg viewBox="0 0 340 210" role="img" aria-label="An image split into a 4 by 4 grid of patches; the selected patch attends to the other patches">
+								<g><rect x="20" y="20" width="36" height="36" fill="#63a44b" opacity="0.82"/><rect x="66" y="20" width="36" height="36" fill="#5c9baf" opacity="0.82"/><rect x="112" y="20" width="36" height="36" fill="#009299" opacity="0.82"/><rect x="158" y="20" width="36" height="36" fill="#9f9700" opacity="0.82"/><rect x="20" y="66" width="36" height="36" fill="#869b55" opacity="0.82"/><rect x="66" y="66" width="36" height="36" fill="#1275ac" opacity="0.82"/><rect x="112" y="66" width="36" height="36" fill="#9185be" opacity="0.82"/><rect x="158" y="66" width="36" height="36" fill="#92a19a" opacity="0.82"/><rect x="20" y="112" width="36" height="36" fill="#63a44b" opacity="0.82"/><rect x="66" y="112" width="36" height="36" fill="#5c9baf" opacity="0.82"/><rect x="112" y="112" width="36" height="36" fill="#009299" opacity="0.82"/><rect x="158" y="112" width="36" height="36" fill="#9f9700" opacity="0.82"/><rect x="20" y="158" width="36" height="36" fill="#869b55" opacity="0.82"/><rect x="66" y="158" width="36" height="36" fill="#1275ac" opacity="0.82"/><rect x="112" y="158" width="36" height="36" fill="#9185be" opacity="0.82"/><rect x="158" y="158" width="36" height="36" fill="#92a19a" opacity="0.82"/></g>
+								<g><line x1="84" y1="84" x2="38" y2="38" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="84" y2="38" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="130" y2="38" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="176" y2="38" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="38" y2="84" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="130" y2="84" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="176" y2="84" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="38" y2="130" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="84" y2="130" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="130" y2="130" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="176" y2="130" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="38" y2="176" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="84" y2="176" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="130" y2="176" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/><line x1="84" y1="84" x2="176" y2="176" stroke="#1275ac" stroke-width="1.1" opacity="0.35"/></g>
+								<rect x="66" y="66" width="36" height="36" fill="none" stroke="#004b6f" stroke-width="2.4"/>
+								<text x="20" y="202" font-family="Barlow, system-ui, sans-serif" font-size="11" fill="#627476">4 × 4 patches</text>
+								<text x="240" y="202" font-family="Barlow, system-ui, sans-serif" font-size="11" fill="#627476">one token each</text>
+							</svg>
+							<figcaption>An image is cut into patches. Each patch becomes a token, and self-attention lets every token read every other token before the feed-forward network transforms it. Diagram: Ten Minutes, <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener">CC BY-SA 4.0</a>.</figcaption>
+						</figure>
+					</section>
+
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

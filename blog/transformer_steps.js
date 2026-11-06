@@ -1988,7 +1988,7 @@
 					var rect = canvases.unembed.getBoundingClientRect();
 					var y = event.clientY - rect.top;
 					var x = event.clientX - rect.left;
-					var top = 18, pad = 16, left = 40;
+					var top = 18, pad = 16, left = 0;
 					var rowH = (rect.height - top - pad) / Math.max(1, words.length);
 					var idx = Math.floor((y - top) / rowH);
 					if (x < left || idx < 0 || idx >= words.length) return;

@@ -693,11 +693,13 @@
 				ctx.strokeStyle = c.line;
 				ctx.lineWidth = 1;
 				ctx.globalAlpha = 0.45;
+				ctx.setLineDash([3, 6]);
 				for (var i = 0; i <= n; i++) {
 					var t = -R + (2 * R) * i / n;
 					ctx.beginPath(); seg([-R, -R, t], [R, -R, t]); ctx.stroke();
 					ctx.beginPath(); seg([t, -R, -R], [t, -R, R]); ctx.stroke();
 				}
+				ctx.setLineDash([]);
 				ctx.globalAlpha = 0.7;
 				ctx.lineWidth = 1.5;
 				ctx.strokeStyle = c.blue;
@@ -718,8 +720,28 @@
 			function draw(ctx, w, h) {
 				var c = palette();
 				ctx.clearRect(0, 0, w, h);
-				ctx.fillStyle = c.paper2;
+				var bg = ctx.createLinearGradient(0, 0, w, h);
+				bg.addColorStop(0, c.paper);
+				bg.addColorStop(0.55, c.paper2);
+				bg.addColorStop(1, c.paper);
+				ctx.fillStyle = bg;
 				ctx.fillRect(0, 0, w, h);
+				var glowA = ctx.createRadialGradient(w * 0.18, h * 0.12, 0, w * 0.18, h * 0.12, w * 0.52);
+				glowA.addColorStop(0, c.dark ? "rgba(0,146,153,.20)" : "rgba(99,164,75,.10)");
+				glowA.addColorStop(1, "rgba(0,0,0,0)");
+				ctx.fillStyle = glowA;
+				ctx.fillRect(0, 0, w, h);
+				var glowB = ctx.createRadialGradient(w * 0.86, h * 0.84, 0, w * 0.86, h * 0.84, w * 0.48);
+				glowB.addColorStop(0, c.dark ? "rgba(18,117,172,.18)" : "rgba(18,117,172,.08)");
+				glowB.addColorStop(1, "rgba(0,0,0,0)");
+				ctx.fillStyle = glowB;
+				ctx.fillRect(0, 0, w, h);
+				ctx.fillStyle = c.dark ? "rgba(238,247,244,.055)" : "rgba(0,75,111,.05)";
+				for (var dx = 14; dx < w; dx += 28) {
+					for (var dy = 14; dy < h; dy += 28) {
+						ctx.fillRect(dx, dy, 1, 1);
+					}
+				}
 				if (!state.points.length) return;
 				drawGrid(ctx, w, h);
 				var projected = state.points.map(function (p) { return project(p, w, h); });

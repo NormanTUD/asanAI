@@ -7249,3 +7249,6 @@ html[data-theme="light"] .demo input[type="range"]::-moz-range-thumb {
 @media (max-width: 640px) {
 	.pool-wrap { gap: 12px; }
 }
+
+.vit-figure { margin: 22px 0; }
+.vit-figure svg { display: block; width: 100%; max-width: 520px; margin: 0 auto; }
