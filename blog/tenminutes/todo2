@@ -70,4 +70,8 @@ entferne den satz "Grammatik wurde lange vor Maschinen studiert."
 
 "eine Nachricht trägt so viel Information, wie sie Unsicherheit entfernt"formulier  das neu ohne tragen
 
+"Word2vec (Mikolov et al., 2013) lernte einen Vektor" Word2vec soll fett gedruckt sein, es ist ein keyword.
+
+in "Die lange Vorgeschichte der Sprachtechnologie " ist "schrift" bei 3200vchr und protoschrift bei 1850vchr aber das macht doch keinen sinn es müsste andersrum sein checke das nochmal. bei "information"zeige und nenne shannon bild. bei embeddings erwähnst du firth aber firht sollte da ein eigener punkt sein, embeddings aber natürlich auch und das kann gern auf firth referenzieren
+
 
