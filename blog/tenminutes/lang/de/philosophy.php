@@ -42,7 +42,6 @@ return [
 		'Four questions about minds' => 'Vier Fragen über den Geist',
 		'· demo' => '· Demo',
 		'Behaviour, grounding, experience, and sentience are different questions. Select one.' => 'Verhalten, Grounding, Erfahrung und Empfindungsfähigkeit sind verschiedene Fragen. Wähle eine.',
-		'step through' => 'durchschreiten',
 		'Behaviour' => 'Verhalten',
 		'Mary' => 'Mary',
 		'Open' => 'Offen',

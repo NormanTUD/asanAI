@@ -43,7 +43,6 @@ return [
 		'Depth is not free. Gradients can vanish or explode, activations can become unstable, and training deep networks requires careful initialisation, normalisation, and residual connections. The architecture is powerful, but the optimisation is part of the story.' => 'Tiefe ist nicht kostenlos. Gradienten können verschwinden oder explodieren, Aktivierungen instabil werden, und das Training tiefer Netze braucht sorgfältige Initialisierung, Normalisierung und Residual-Verbindungen. Die Architektur ist mächtig, aber die Optimierung gehört zur Geschichte.',
 		'From one neuron to a hierarchy' => 'Von einem Neuron zur Hierarchie',
 		'Depth is composition. Select a step to see what the stack adds.' => 'Tiefe ist Komposition. Wähle einen Schritt, um zu sehen, was der Stapel hinzufügt.',
-		'step through' => 'durchschreiten',
 		'Neuron' => 'Neuron',
 		'Layer' => 'Schicht',
 		'Stack' => 'Stapel',

@@ -29,7 +29,6 @@ return [
 		'From raw model to assistant' => 'Vom rohen Modell zum Assistenten',
 		'· demo' => '· Demo',
 		'Post-training is a pipeline. Select a stage to see what it adds.' => 'Post-Training ist eine Pipeline. Wähle eine Stufe, um zu sehen, was sie hinzufügt.',
-		'step through' => 'durchschreiten',
 		'Base' => 'Basis',
 		'Prefs' => 'Präferenzen',
 		'Reason' => 'Reasoning',

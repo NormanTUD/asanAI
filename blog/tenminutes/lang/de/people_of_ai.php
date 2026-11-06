@@ -48,7 +48,6 @@ return [
 		'The recurring cast' => 'Die wiederkehrende Besetzung',
 		'· demo' => '· Demo',
 		'Select a person or a moment. The history is a relay, not a parade of lone geniuses.' => 'Wähle eine Person oder einen Moment. Die Geschichte ist ein Staffellauf, keine Parade einsamer Genies.',
-		'step through' => 'durchschreiten',
 		'Lovelace & Babbage' => 'Lovelace & Babbage',
 		'Alan Turing' => 'Alan Turing',
 		'McCulloch & Pitts' => 'McCulloch & Pitts',

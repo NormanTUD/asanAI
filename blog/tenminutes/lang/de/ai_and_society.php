@@ -35,7 +35,6 @@ return [
 		'Expectation cycles and consequences' => 'Erwartungszyklen und Konsequenzen',
 		'· demo' => '· Demo',
 		'The public relationship with AI has never been stable. Select an era to see what changed.' => 'Die öffentliche Beziehung zur KI war nie stabil. Wähle eine Ära, um zu sehen, was sich änderte.',
-		'step through' => 'durchschreiten',
 		'Dartmouth' => 'Dartmouth',
 		'1970s' => '1970er',
 		'First winter' => 'Erster Winter',

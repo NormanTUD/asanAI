@@ -58,6 +58,15 @@ return [
 		'The aha' => 'Der Aha-Moment',
 		'A model is a compressed reflection of its data.' => 'Ein Modell ist eine komprimierte Spiegelung seiner Daten.',
 		'Architecture sets the shape; data fills it with the world.' => 'Die Architektur legt die Form fest; die Daten füllen sie mit der Welt.',
+		'Coherence and noise' => 'Kohärenz und Rauschen',
+		'Perfect data would be coherent.' => 'Perfekte Daten wären kohärent.',
+		'Two perfectly neutral observers describing the same fact from different perspectives should agree wherever their views overlap. Think of a panorama photo taken with a phone: the overlapping strips must match, or the seam is visible. Perfect data would have that property everywhere.' => 'Zwei völlig neutrale Beobachter, die denselben Sachverhalt aus unterschiedlichen Perspektiven beschreiben, müssten überall dort übereinstimmen, wo sich ihre Sichten überlappen. Denk an ein Panoramafoto mit dem Handy: Die überlappenden Streifen müssen zusammenpassen, sonst sieht man die Naht. Perfekte Daten hätten diese Eigenschaft überall.',
+		'Real data does not. People have different opinions, make mistakes, lie, measure badly, and cannot always say exactly what they mean. Sometimes all at once. A corpus is therefore full of contradictions, gaps, and noise.' => 'Reale Daten haben sie nicht. Menschen haben unterschiedliche Meinungen, irren sich, lügen, messen schlecht und können nicht immer genau sagen, was sie meinen. Manchmal alles auf einmal. Ein Korpus ist deshalb voller Widersprüche, Lücken und Rauschen.',
+		'That does not make it useless. It is like Gauß and Ceres: individual observations scatter around the true orbit, but their errors cancel on average. A model trained on the corpus learns the middle of the cloud, not any single voice. It finds something between the measurements; the fit is the compromise, not a transcript.' => 'Das macht ihn nicht nutzlos. Es ist wie bei Gauß und Ceres: Die einzelnen Beobachtungen streuen um die wahre Bahn, aber ihre Fehler heben sich im Mittel auf. Ein Modell, das auf dem Korpus trainiert wird, lernt die Mitte der Wolke, nicht eine einzelne Stimme. Es findet etwas zwischen den Messungen; der Fit ist der Kompromiss, kein Protokoll.',
+		'The choice of training data is therefore also the choice of what the network does. A corpus is a worldview: what it includes, what it leaves out, and which voices it treats as normal.' => 'Die Wahl der Trainingsdaten ist deshalb auch die Wahl dessen, was das Netz tut. Ein Korpus ist ein Weltbild: was er enthält, was er weglässt und welche Stimmen er als normal behandelt.',
+		'Noisy measurements (blue) and the fitted path (green). The fit is not any single observation; it is the compromise between all of them.' => 'Verrauschte Messungen (blau) und der gefittete Pfad (grün). Der Fit ist keine einzelne Beobachtung; er ist der Kompromiss zwischen allen.',
+		'MEASUREMENTS' => 'MESSUNGEN',
+		'FIT' => 'FIT',
 	],
 	'attrs' => [
 		'Web · 55%' => 'Web · 55 %',
@@ -68,5 +77,6 @@ return [
 		'Math · 4%' => 'Mathe · 4 %',
 		'Conversation · 4%' => 'Gespräch · 4 %',
 		'Multimodal · 10%' => 'Multimodal · 10 %',
+		'Noisy measurements around a fitted path' => 'Verrauschte Messungen um einen gefitteten Pfad',
 	],
 ];

@@ -27,7 +27,6 @@ return [
 		'A forward pass in five steps' => 'Ein Vorwärtspass in fünf Schritten',
 		'· demo' => '· Demo',
 		'Walk from tokens to the next-token distribution. Each step is a different kind of computation, not a database lookup.' => 'Gehe von Tokens zur Nächste-Token-Verteilung. Jeder Schritt ist eine andere Art von Berechnung, kein Datenbank-Lookup.',
-		'step through' => 'durchschreiten',
 		'Tokens' => 'Tokens',
 		'Vectors' => 'Vektoren',
 		'Routing' => 'Routing',

@@ -60,7 +60,6 @@ return [
 		'The long prehistory of language technology' => 'Die lange Vorgeschichte der Sprachtechnologie',
 		'· demo' => '· Demo',
 		'Follow the path from listening and speech to writing, grammar, printing, information, and tokens. Each step made text more durable, more comparable, or more computable.' => 'Folge dem Weg vom Hören und Sprechen über Schrift, Grammatik, Druck, Information und Tokens. Jeder Schritt machte Text dauerhafter, vergleichbarer oder berechenbarer.',
-		'step by step' => 'Schritt für Schritt',
 		'Before speech' => 'Vor der Sprache',
 		'Listening' => 'Hören',
 		'c. 135,000 BCE' => 'ca. 135.000 v. Chr.',

@@ -109,7 +109,7 @@
 							</p>
 						</div>
 
-						<div class="demo" id="agent-demo" data-arrow-nav>
+						<div class="demo demo--interactive" id="agent-demo" data-arrow-nav>
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The agent loop <span>· demo 01</span></p>
@@ -266,7 +266,7 @@ opencode
 							</p>
 						</div>
 
-						<div class="demo" id="injection-demo">
+						<div class="demo demo--compare" id="injection-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Prompt injection <span>· demo 02</span></p>

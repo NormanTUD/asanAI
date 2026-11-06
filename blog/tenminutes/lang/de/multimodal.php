@@ -29,7 +29,6 @@ return [
 		'Two towers, one answer' => 'Zwei Türme, eine Antwort',
 		'· demo' => '· Demo',
 		'Multimodal models align separate spaces and then use them together. Select a stage.' => 'Multimodale Modelle richten getrennte Räume aus und nutzen sie dann zusammen. Wähle eine Stufe.',
-		'step through' => 'durchschreiten',
 		'Image' => 'Bild',
 		'Text' => 'Text',
 		'Align' => 'Ausrichten',
