@@ -46,8 +46,12 @@ entferne die überschrift "Das Perceptron war eine physische Maschine." und mach
 
 bei "Eine Faltung ist eine gleitende gewichtete Summe ": die merkmalskarte ist hier direkt ausgefüllt. der soll die beim schritt für shritt durchgehen erst ausfüllen. und er soll einen automatisch durchgehen button haben. wenn ich zwischen vertikale kanten und weichzeichnen hin und her schalte ist weil die formeln ganz leicht unterschiedlich hoch sind ide höhe anders worauf der rest der seite springt.  fixe das. das element mit der formel unter Position (0, 0): Die neun Produkte aus Bildausschnitt und Kernel ergeben 0.00. Die übrigen Zellen der Feature Map füllen sich, sobald der Kernel sie erreicht. muss die finale höhe von anfang an haben die es haben wird
 
-"Das hilft langreichweitigen Abhängigkeiten und füllt eine GPU viel besser als eine Schleife über die Sequenz. " du meinst long dependencies, das ist dem user aber nicht klar, schreibe darüber dass man vorher das problem hatte dass man wenn man das zehnte wort gelesen hat das erste schon wieder vergessen hat. mit attn passiert das nicht weil man alles parallel sieht.
+"Das hilft langreichweitigen Abhängigkeiten und füllt eine GPU viel besser als eine Schleife über die Sequenz. " du meinst long dependencies, das ist dem user aber nicht klar, schreibe darüber dass man vorher das problem hatte dass man wenn man das zehnte wort gelesen hat das erste schon wieder vergessen hat. mit attn passiert das nicht weil man alles parallel sieht. sage dass ein wort am anfang eines textes die bedeutung des letzten wortes beeinflussen kann, das ist eine long term dependency
 
 "jeder in seinem eigenen Unterraum, und ihre Ausgaben werden kombiniert." und jeder achtet auf seinen eigenen kram. worauf er achtet bringt sich der computer selbst bei, um einen möglichst geringen fehler zu haben
+
+benenne "Drei verschiedene Hebel " um: nenne es attention
+
+entferne den plot von "Strategie · Skalierung"
 
 
