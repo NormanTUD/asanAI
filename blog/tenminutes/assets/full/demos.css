@@ -354,32 +354,35 @@
 }
 
 /* ── Transformer demo sliders ─────────────────────────────────── */
+/* Draw the track on the input itself. The native pseudo-element track
+   is not rendered consistently across engines and looked white-on-white. */
 #transformer_config input[type="range"],
 #transformer-temperature {
 	-webkit-appearance: none;
 	appearance: none;
 	width: 100%;
-	height: 26px;
+	height: 12px;
 	margin: 6px 0;
 	padding: 0;
-	background: transparent;
+	border: 1px solid var(--tm-line-strong, #cbd5e1);
+	border-radius: 0;
 	cursor: pointer;
+	background: linear-gradient(to right,
+		var(--tm-green, #63a44b) 0 var(--tm-range-pct, 0%),
+		var(--tm-muted, #627476) var(--tm-range-pct, 0%) 100%);
 }
 #transformer_config input[type="range"]::-webkit-slider-runnable-track,
 #transformer-temperature::-webkit-slider-runnable-track {
-	height: 8px;
-	border: 1px solid var(--tm-line-strong, #cbd5e1);
-	border-radius: 0;
-	background: linear-gradient(to right,
-		var(--tm-green, #63a44b) 0 var(--tm-range-pct, 0%),
-		var(--tm-line-strong, #cbd5e1) var(--tm-range-pct, 0%) 100%);
+	height: 12px;
+	border: none;
+	background: transparent;
 }
 #transformer_config input[type="range"]::-webkit-slider-thumb,
 #transformer-temperature::-webkit-slider-thumb {
 	-webkit-appearance: none;
-	width: 20px;
-	height: 20px;
-	margin-top: -7px;
+	width: 18px;
+	height: 18px;
+	margin-top: -3px;
 	border: 2px solid var(--tm-card, #fff);
 	border-radius: 0;
 	background: var(--tm-green, #63a44b);
@@ -387,21 +390,14 @@
 }
 #transformer_config input[type="range"]::-moz-range-track,
 #transformer-temperature::-moz-range-track {
-	height: 8px;
-	border: 1px solid var(--tm-line-strong, #cbd5e1);
-	border-radius: 0;
-	background: var(--tm-line-strong, #cbd5e1);
-}
-#transformer_config input[type="range"]::-moz-range-progress,
-#transformer-temperature::-moz-range-progress {
-	height: 8px;
-	border-radius: 0;
-	background: var(--tm-green, #63a44b);
+	height: 12px;
+	border: none;
+	background: transparent;
 }
 #transformer_config input[type="range"]::-moz-range-thumb,
 #transformer-temperature::-moz-range-thumb {
-	width: 18px;
-	height: 18px;
+	width: 16px;
+	height: 16px;
 	border: 2px solid var(--tm-card, #fff);
 	border-radius: 0;
 	background: var(--tm-green, #63a44b);
@@ -495,3 +491,4 @@
 	animation: tm-inference-spin .7s linear infinite;
 }
 @keyframes tm-inference-spin { to { transform: rotate(360deg); } }
+

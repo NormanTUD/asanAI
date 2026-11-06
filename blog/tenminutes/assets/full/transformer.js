@@ -695,7 +695,9 @@ function show_nr_of_params() {
 	}
 
 	if (nrDiv) {
-		nrDiv.innerHTML = `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`;
+		nrDiv.innerHTML = _tmParamDe()
+			? `Das aktuelle Netz hat <b>${nr_params.toLocaleString()}</b> Parameter.`
+			: `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`;
 		nrDiv.style.display = 'block';
 	}
 
@@ -2113,7 +2115,7 @@ function _h1NamingForLayer(layerIndex) {
 	const hOutName = `h_{${base + 1}}`;
 	const hInStage = layerIndex === 0
 		? 'emb. + PE'
-		: `out layer ${layerIndex}`;
+		: (_tmParamDe() ? `Ausgabe Schicht ${layerIndex}` : `out layer ${layerIndex}`);
 	return { L, sup, hInName, hOutName, hInStage };
 }
 
@@ -3542,8 +3544,8 @@ function _ffnNaming(layerIndex) {
     const h1name = `h_{${base + 1}}`;
     const h2name = `h_{${base + 2}}`;
     const h1Stage = layerIndex === 0
-        ? 'after attn residual'
-        : `out layer ${layerIndex}`;
+        ? (_tmParamDe() ? 'nach Attention-Residual' : 'after attn residual')
+        : (_tmParamDe() ? `Ausgabe Schicht ${layerIndex}` : `out layer ${layerIndex}`);
     return { L, sup, h1name, h2name, h1Stage };
 }
 
@@ -3597,11 +3599,11 @@ function _buildFFNStep3Html(naming, h1, out_FFN, h2, ts) {
 
     return `
     <div style="margin-bottom:10px;">
-    <p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
-    $$ \\underbrace{${h2name}${sup}}_{\\text{Layer output}} = \\underbrace{${h1name}${sup}}_{\\text{${h1Stage}}} + \\underbrace{\\text{out}_{L2}${sup}}_{\\text{FFN output (compressed)}} $$
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>${_tmParamDe() ? 'Residual-Verbindung' : 'Residual connection'}</strong> ${_tmParamDe() ? '(Pre-LN: keine Normalisierung auf der Ausgabe der Unterschicht)' : '(Pre-LN: no normalization on sublayer output)'}:</p>
+    $$ \\underbrace{${h2name}${sup}}_{\\text{${_tmParamDe() ? 'Schicht-Ausgabe' : 'Layer output'}}} = \\underbrace{${h1name}${sup}}_{\\text{${h1Stage}}} + \\underbrace{\\text{out}_{L2}${sup}}_{\\text{${_tmParamDe() ? 'FFN-Ausgabe (komprimiert)' : 'FFN output (compressed)'}}} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h2, ts, 'layer output')}}_{${h2name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h1, ts, h1Stage)}}_{${h1name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{out}_{L2}${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(h2, ts, _tmParamDe() ? 'Schicht-Ausgabe' : 'layer output')}}_{${h2name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h1, ts, h1Stage)}}_{${h1name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, _tmParamDe() ? 'FFN-Ausgabe' : 'FFN output')}}_{\\text{out}_{L2}${sup}} $$
     </div>`;
 }
 
@@ -5448,10 +5450,10 @@ function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, 
 	const vocabRows = buildVocabTransitionRows(tokens, start_h, end_h, d_model);
 	const ts = tokenStrings || null;
 
-	let stageLabel = 'layer output';
+	let stageLabel = _tmParamDe() ? 'Schicht-Ausgabe' : 'layer output';
 	const layerMatch = id.match(/migration-layer-(\d+)/);
 	if (layerMatch) {
-		stageLabel = `out layer ${parseInt(layerMatch[1])}`;
+		stageLabel = _tmParamDe() ? `Ausgabe Schicht ${parseInt(layerMatch[1])}` : `out layer ${parseInt(layerMatch[1])}`;
 	}
 
 	const hAfterMatrix = matrixToPmatrixLabeled(h_after, ts, stageLabel);

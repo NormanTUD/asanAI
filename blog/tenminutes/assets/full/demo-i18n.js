@@ -187,6 +187,7 @@
 	var RE = [
 		[/^Epoch (\d+): Loss = ([\d.]+) \| ETA: ([\d:]+)$/, "Epoche $1: Fehler = $2 | Restzeit: $3"],
 		[/^Parameters: ([\d,]+)$/, "Parameter: $1"],
+		[/^The current network has ([\d,]+) parameters\.$/, "Das aktuelle Netz hat $1 Parameter."],
 		[/^Window (\d+):$/, "Fenster $1:"],
 		[/^Epoch (\d+)$/, "Epoche $1"],
 		[/^Layer (\d+)$/, "Schicht $1"],

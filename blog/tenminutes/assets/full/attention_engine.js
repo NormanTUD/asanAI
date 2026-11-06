@@ -61,29 +61,40 @@ class AttentionEngine {
 	}
 
 	_buildWhatHappensNextSection(n, d_k, d_model, n_heads) {
+		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+		const nextTitle = isDe ? 'Was als Nächstes passiert' : 'What Happens Next';
+		const intro = isDe
+			? `Die Kontextmatrix dieses Heads ist <b>einer von ${n_heads} Heads</b>. Alle Heads laufen parallel und erfassen unterschiedliche Beziehungen. Ihre Ausgaben werden dann:`
+			: `This head's context matrix is <b>one of ${n_heads} heads</b>. All heads run in parallel, each capturing different relationships. Their outputs are then:`;
+		const concat = isDe ? 'Konkateniert' : 'Concatenated';
+		const projection = isDe ? 'Ausgabeprojektion' : 'Output projection';
+		const added = isDe ? 'Addiert' : 'Added back';
+		const addedRest = isDe ? 'zur Eingabe über die Residual-Verbindung:' : 'to the input via the residual connection:';
+		const footer = isDe
+			? 'Konkatenation, Projektion und Residual-Schritt stehen in den Abschnitten unter dieser Head-Ansicht.'
+			: 'The concatenation, projection, and residual steps are shown in the sections below this head view.';
 		return `<div style="padding:12px; background:#f0fdf4; border:1px solid #10b981; border-radius:8px;">
-    <p style="font-weight:600; color:#065f46; margin-bottom:6px;">What Happens Next</p>
+    <p style="font-weight:600; color:#065f46; margin-bottom:6px;">${nextTitle}</p>
     <p style="font-size:0.85rem; color:#334155; margin-bottom:6px;">
-	This head's context matrix is <b>one of ${n_heads} heads</b>. All heads run in parallel, each
-	capturing different relationships. Their outputs are then:
+	${intro}
     </p>
     <ol style="font-size:0.85rem; color:#334155; margin:0 0 8px 20px; padding:0;">
 	<li style="margin-bottom:4px;">
-	    <b>Concatenated</b> along the $d_k$ dimension:
+	    <b>${concat}</b> ${isDe ? 'entlang der' : 'along the'} $d_k$ ${isDe ? 'Dimension' : 'dimension'}:
 	    $\\text{Concat}(\\text{head}_1, \\ldots, \\text{head}_{${n_heads}}) \\in \\mathbb{R}^{${n} \\times ${d_model}}$
 	</li>
 	<li style="margin-bottom:4px;">
-	    <b>Output projection</b> $W^O \\in \\mathbb{R}^{${d_model} \\times ${d_model}}$
-	    mixes head outputs:
+	    <b>${projection}</b> $W^O \\in \\mathbb{R}^{${d_model} \\times ${d_model}}$
+	    ${isDe ? 'mischt die Head-Ausgaben' : 'mixes head outputs'}:
 	    $\\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{heads}) \\cdot W^O$
 	</li>
 	<li style="margin-bottom:4px;">
-	    <b>Added back</b> to the input via the residual connection:
+	    <b>${added}</b> ${addedRest}
 	    $h_1 = h_0 + \\text{MHA}_{\\text{proj}}$
 	</li>
     </ol>
     <p style="font-size:0.8rem; color:#64748b;">
-	The concatenation, projection, and residual steps are shown in the sections below this head view.
+	${footer}
     </p>
 </div>`;
 	}
@@ -110,12 +121,12 @@ class AttentionEngine {
 		return `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
     <p style="font-weight:600; color:#1e40af; margin-bottom:6px;">${isDe ? 'Kontextmatrix für Head' : 'Context Matrix for Head'} ${headIdx + 1}</p>
     <p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">${contextText}</p>
-    $$ \\text{context}_i = \\sum_{j=0}^{i} \\underbrace{\\alpha_{i,j}}_{\\substack{\\text{attention} \\\\ \\text{weight}}} \\cdot \\underbrace{V_j}_{\\substack{\\text{Value vector} \\\\ \\text{of token } j}} $$
+    $$ \\text{context}_i = \\sum_{j=0}^{i} \\underbrace{\\alpha_{i,j}}_{\\substack{\\text{${isDe ? 'Attention' : 'attention'}} \\\\ \\text{${isDe ? 'Gewicht' : 'weight'}}}} \\cdot \\underbrace{V_j}_{\\substack{\\text{${isDe ? 'Value-Vektor' : 'Value vector'}} \\\\ \\text{${isDe ? 'von Token' : 'of token'} } j}} $$
     <p style="font-size:0.8rem; color:#64748b;">${producesText}</p>
     <p style="font-size:0.85rem; color:#334155; margin-bottom:4px;">${stackingText}</p>
     <p style="font-size:0.82rem; color:#64748b; margin-bottom:10px;">${matrixText}</p>
     <div style="overflow-x:auto;">
-    $$ \\underbrace{${contextMatrixTex}}_{\\text{head}_{${headIdx + 1}}\\;(${n} \\times ${d_k})} = \\underbrace{${weightMatrixTex}}_{\\substack{\\text{Attention Weights}\\;(${n} \\times ${n}) \\\\ \\text{rows}=\\text{query},\\; \\text{cols}=\\text{key}}} \\cdot \\underbrace{${vMatrixTex}}_{V_{${headIdx + 1}}\\;(${n} \\times ${d_k})} $$
+    $$ \\underbrace{${contextMatrixTex}}_{\\text{head}_{${headIdx + 1}}\\;(${n} \\times ${d_k})} = \\underbrace{${weightMatrixTex}}_{\\substack{\\text{${isDe ? 'Attention-Gewichte' : 'Attention Weights'}}\\;(${n} \\times ${n}) \\\\ \\text{${isDe ? 'Zeilen' : 'rows'}}=\\text{${isDe ? 'Query' : 'query'}},\\; \\text{${isDe ? 'Spalten' : 'cols'}}=\\text{${isDe ? 'Key' : 'key'}}}} \\cdot \\underbrace{${vMatrixTex}}_{V_{${headIdx + 1}}\\;(${n} \\times ${d_k})} $$
     </div>
 </div>`;
 	}
@@ -768,12 +779,19 @@ class AttentionEngine {
 	generateEquationsOnly(head) {
 		const { WQ, WK, WV } = head;
 		const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
+		const qLabel = isDe ? 'Query-Gewichte' : 'Query Weights';
+		const kLabel = isDe ? 'Key-Gewichte' : 'Key Weights';
+		const vLabel = isDe ? 'Value-Gewichte' : 'Value Weights';
+		const qText = isDe ? '"Wonach suche ich?"' : '"What am I looking for?"';
+		const kText = isDe ? '"Was enthalte ich?"' : '"What do I contain?"';
+		const vText = isDe ? '"Was biete ich an?"' : '"What do I offer?"';
 
 		return `
 <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:24px;">
-    <div>$$ \\underbrace{W_Q}_{\\substack{\\textbf{Query Weights} \\\\ \\text{"What am I looking for?"}}} = ${toMatrix(WQ)} $$</div>
-    <div>$$ \\underbrace{W_K}_{\\substack{\\textbf{Key Weights} \\\\ \\text{"What do I contain?"}}} = ${toMatrix(WK)} $$</div>
-    <div>$$ \\underbrace{W_V}_{\\substack{\\textbf{Value Weights} \\\\ \\text{"What do I offer?"}}} = ${toMatrix(WV)} $$</div>
+    <div>$$ \\underbrace{W_Q}_{\\substack{\\textbf{${qLabel}} \\\\ \\text{${qText}}}} = ${toMatrix(WQ)} $$</div>
+    <div>$$ \\underbrace{W_K}_{\\substack{\\textbf{${kLabel}} \\\\ \\text{${kText}}}} = ${toMatrix(WK)} $$</div>
+    <div>$$ \\underbrace{W_V}_{\\substack{\\textbf{${vLabel}} \\\\ \\text{${vText}}}} = ${toMatrix(WV)} $$</div>
 </div>
 `;
 	}
@@ -837,7 +855,7 @@ $$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{So
 </div>
 
 <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-Click a word to see where it focuses its attention.
+${(window.TM && TM.lang && TM.lang() === 'de') ? 'Klicke auf ein Wort, um zu sehen, worauf es seine Attention richtet.' : 'Click a word to see where it focuses its attention.'}
 </p>
 <div id="${webContainerId}" style="padding-top:20px;position:relative; height:200px; margin-bottom:20px; background: var(--mn-surface, #fcfdfe); border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; overflow-x:auto; overflow-y:hidden;">
 <canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; max-width:none; pointer-events:none; z-index:5;"></canvas>
@@ -1423,8 +1441,9 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		let html = '';
 
 		// Header
+		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
 		html += `<p style="font-weight:bold; color:#92400e; font-size:0.95rem; margin-bottom:12px;">
-	What Happens with the Attention Weights — Head ${headIdx + 1}, Layer ${L}
+	${isDe ? 'Was mit den Attention-Gewichten passiert' : 'What Happens with the Attention Weights'} — ${isDe ? 'Head' : 'Head'} ${headIdx + 1}, ${isDe ? 'Schicht' : 'Layer'} ${L}
     </p>`;
 
 		// Step 1: Context matrix equation with labeled matrices
