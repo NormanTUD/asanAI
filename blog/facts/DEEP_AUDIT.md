@@ -3,7 +3,7 @@
 - lessons: 99
 - claims: 7352
 - statements: 17199
-- relations: 52119
+- relations: 52122
 - uncovered years: 54
 - uncovered quantities: 6
 - uncited specific claims: 307
@@ -40,7 +40,7 @@
 | derivativelab | 22 | 58 | 214 | 0 | 0 |
 | differentiation | 21 | 82 | 300 | 0 | 0 |
 | diffusion | 33 | 171 | 417 | 0 | 1 |
-| embeddinglab | 25 | 546 | 1408 | 0 | 0 |
+| embeddinglab | 25 | 544 | 1406 | 0 | 0 |
 | evaluation | 36 | 132 | 435 | 2 | 0 |
 | fact_lookup | 37 | 213 | 560 | 0 | 0 |
 | finetuninglab | 50 | 102 | 360 | 0 | 0 |
@@ -98,7 +98,7 @@
 | security_inference | 10 | 37 | 123 | 0 | 0 |
 | software | 64 | 359 | 804 | 0 | 0 |
 | speech_audio | 23 | 33 | 137 | 1 | 0 |
-| statistics_i | 51 | 207 | 701 | 1 | 0 |
+| statistics_i | 51 | 209 | 706 | 1 | 0 |
 | statistics_ii | 27 | 109 | 432 | 11 | 0 |
 | symbolic_ai | 41 | 116 | 388 | 0 | 0 |
 | tokenizerlab | 23 | 146 | 399 | 4 | 0 |

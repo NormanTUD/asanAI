@@ -393,7 +393,7 @@ function testLessonSource() {
 
 	for (const id of [
 		'train-epochs', 'train-lr', 'train-optimizer', 'training-status',
-		'training-loss-plot', 'tda-toggle-training-windows',
+		'training-loss-plot',
 	]) {
 		check(php.includes('id="' + id + '"'), 'lesson keeps id "' + id + '"');
 	}

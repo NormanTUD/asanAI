@@ -13,3 +13,5 @@ split "Six steps, one running vector." into multiple steps really with own headl
 same for all the other demos there. bilingual of course. make it fun and short to read, get info from the according ../ files but make it shorter.
 
 "Ein Filter gleitet über das Stoppschild": das kleine viereck im bild sollte sich mit de rmaus bewegen on move nicht on click. das bild sollte zentriert sein. der kernel zwischen inputbild und dem bild rechts. zeige unten die zahlen als 0-255 an, nciht 0-1. färbe die matrix ein dass es rgb ist.
+
+"Ein Muster passt, ein Wert wird geschrieben": "reicherer Vektor" reicherer vektor oder spezifizischerer vektor

@@ -6,6 +6,14 @@ embeds the calendar, and `bootstrap.php` adds the date-gated full-lesson links.
 There is no build step and no package manager. The root `AGENTS.md` still
 applies; this file records choices that are specific to this directory.
 
+## Work with a todo list
+
+Use the opencode todo list (`todowrite`) for every multi-step task in this
+directory. Create it before the first edit, keep exactly one item in progress,
+and mark an item completed only after the change has been verified in both
+languages. When the user supplies a list or a `todo*` file, mirror every line
+as a todo item and keep the file's `DONE` markers in sync with the list.
+
 ## Typography and scads.ai visual match
 
 The Ten Minutes pages follow the public scads.ai theme, not the standalone
