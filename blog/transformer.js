@@ -16,7 +16,6 @@ const nr_fixed = 4;
 const posEmbedScalar = 1;
 let trainingDebounceTimer;
 const epsilon = 1e-6;
-window.currentTrainingWindows = [];
 const attentionRenderRegistry = new Map();
 const positionalShiftRegistry = new Map();
 const embeddingRenderRegistry = new Map();
@@ -617,20 +616,6 @@ function reset_graph() {
 		}
 	}
 	drawTrainingPlaceholder();
-	$("#show_training_sentences").hide();
-	const tw = document.getElementById('tda-toggle-training-windows');
-	if (tw) tw.innerText = 'Show training windows';
-}
-
-function toggleTrainingWindows() {
-	// User-controlled toggle: the auto-show used to add ~460px mid-page
-	// and shove every panel below down. The user now decides when to see it.
-	const box = document.getElementById('show_training_sentences');
-	const btn = document.getElementById('tda-toggle-training-windows');
-	if (!box) return;
-	const showing = getComputedStyle(box).display !== 'none';
-	box.style.display = showing ? 'none' : 'block';
-	if (btn) btn.innerText = showing ? 'Show training windows' : 'Hide training windows';
 }
 
 function computePositionalEncoding(pos, d_model, scalar = 1.0) {
@@ -1398,15 +1383,6 @@ function createOptimizer(optType, lr) {
 	return tf.train.sgd(lr);
 }
 
-function buildTrainingWindows(tokens, contextSize) {
-	window.currentTrainingWindows = [];
-	for (let startIdx = 0; startIdx < tokens.length - contextSize; startIdx++) {
-		const inputSlice  = tokens.slice(startIdx, startIdx + contextSize);
-		const targetSlice = tokens.slice(startIdx + 1, startIdx + contextSize + 1);
-		window.currentTrainingWindows.push({ input: inputSlice, target: targetSlice });
-	}
-}
-
 function computeAndApplyGradients(tokens, weightVars, d_model, n_layers, n_heads, allVars, optimizer, clipValue) {
 	const { value: cost, grads } = tf.variableGrads(
 		() => tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers, n_heads)),
@@ -1425,81 +1401,6 @@ function computeAndApplyGradients(tokens, weightVars, d_model, n_layers, n_heads
 	}
 
 	return cost;
-}
-
-function renderTrainingWindowPredictions(d_model, n_layers) {
-	const sentenceSpan = document.getElementById('current_training_sentence');
-	if (!sentenceSpan || window.currentTrainingWindows.length === 0) return;
-
-	const vocab     = Object.keys(window.persistentEmbeddingSpace);
-	const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
-	const { n_heads: n_heads_local } = getTransformerConfig();
-
-	const maxWordLen = Math.max(
-		...window.currentTrainingWindows.flatMap(w => w.target.map(t => t.length)),
-		...vocab.map(v => v.length),
-		1
-	);
-	const chipMinWidth = Math.max(250, maxWordLen * 9 + 70) + 'px';
-
-	const windowsHtml = window.currentTrainingWindows.map((w, idx) => {
-		const predictions = getPredictionsForWindow(w, vocab, embMatrix, d_model, n_heads_local, n_layers);
-		return renderSingleWindowHtml(w, predictions, idx, chipMinWidth);
-	}).join('');
-
-	sentenceSpan.innerHTML = windowsHtml;
-	// Don't auto-show: the training-windows block is large and would shove the
-	// entire page (and the TDA panel below) downward mid-training. Render the
-	// content but require the user to click "Show training windows" to see it.
-}
-
-function getPredictionsForWindow(w, vocab, embMatrix, d_model, n_heads, n_layers) {
-	const predictions = [];
-	try {
-		const h = runSimpleForwardPass(w.input, window.currentWeights, d_model, n_heads, n_layers);
-
-		for (let pos = 0; pos < h.length; pos++) {
-			const logits = embMatrix.map(embRow =>
-				h[pos].reduce((sum, val, k) => sum + val * embRow[k], 0));
-			const probs = softmax(logits);
-
-			let bestIdx = 0;
-			for (let j = 1; j < probs.length; j++) {
-				if (probs[j] > probs[bestIdx]) bestIdx = j;
-			}
-			predictions.push({ word: vocab[bestIdx], prob: probs[bestIdx] });
-		}
-	} catch (e) {
-		w.target.forEach(() => predictions.push({ word: '?', prob: 0 }));
-	}
-	return predictions;
-}
-
-function renderSingleWindowHtml(w, predictions, idx, chipMinWidth) {
-	const targetHtml = w.target.map((targetWord, pos) => {
-		const pred      = predictions[pos] || { word: '?', prob: 0 };
-		const isCorrect = pred.word === targetWord;
-		const icon      = isCorrect ? '✅' : '❌';
-		const probStr   = (pred.prob * 100).toFixed(1);
-		const bgColor   = isCorrect ? '#dcfce7' : '#fee2e2';
-		const dispTarget = displayToken(targetWord);
-		const dispPred   = displayToken(pred.word);
-
-		return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem; min-width:${chipMinWidth}; text-align:center; box-sizing:border-box;" title="Target: ${dispTarget} | Predicted: ${dispPred} (${probStr}%)">
-	${icon} <b>${escapeHtml(dispTarget)}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${escapeHtml(dispPred)}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
-    </span>`;
-	}).join('');
-
-	const dispInput = w.input.map(t => displayToken(t));
-
-	return `<div style="margin-bottom:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-family:monospace; font-size:0.85rem;">
-    <strong>Window ${idx + 1}:</strong>
-    [${dispInput.join(' ')}] →<br>
-    <div style="margin-top:4px; margin-left:10px;">
-	<span style="color:#64748b; font-size:0.75rem;">Expected vs Predicted:</span><br>
-	${targetHtml}
-    </div>
-    </div>`;
 }
 
 function formatETA(ms) {
@@ -1597,7 +1498,6 @@ function ensureWeightsAndEmbeddings(tokens, n_layers, d_model) {
 async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime) {
 	const clipValue = 1.0;
 	const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
-	buildTrainingWindows(tokens, thisContextSize);
 
 	// TDA live: snapshot the weights BEFORE the gradient step so we can
 	// compute the weight deltas (W_new - W_prev) for this epoch.
@@ -1612,9 +1512,6 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 
 	const lossValue = await cost.data();
 	window.lossHistory.push(lossValue[0]);
-
-	// Render predictions
-	renderTrainingWindowPredictions(d_model, n_layers);
 
 	// Progress & ETA
 	updateEpochProgress(epochIdx, totalEpochs, lossValue[0], startTime, status);

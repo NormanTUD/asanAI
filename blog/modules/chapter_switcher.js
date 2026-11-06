@@ -211,6 +211,9 @@
 		var css = [
 			'#chsw-dock { position: fixed; left: ' + LEFT_PAD + 'px; bottom: 20px; z-index: 9000; font-family: var(--mn-font-body); opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .4s ease .12s, visibility .4s ease .12s, transform .4s ease .12s; }',
 			'html.is-ready #chsw-dock { opacity: 1; visibility: visible; transform: translateY(0); }',
+			/* Keep the dock above the transformer training bar when it is
+			   visible; the bar publishes its height as a CSS custom property. */
+			'html:has(#training-progress-bar-container) #chsw-dock { bottom: calc(20px + var(--tlab-sticky-bar-height, 0px)); }',
 
 			'#chsw-pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px 6px 9px; border-radius: 999px; background: var(--mn-bg-glass); border: 1px solid var(--mn-border); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: var(--mn-shadow-md); cursor: pointer; color: var(--mn-text-secondary); font-family: var(--mn-font-body); transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; }',
 			'#chsw-pill:hover { border-color: var(--chsw-accent); transform: translateY(-1px); box-shadow: var(--mn-shadow-lg); }',

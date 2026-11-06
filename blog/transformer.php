@@ -219,15 +219,6 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	gap: 8px;
 	margin-left: auto;
 }
-#tda-toggle-training-windows {
-	padding: 4px 12px;
-	border-radius: 6px;
-	border: 1px solid var(--mn-border, #cbd5e1);
-	background: var(--mn-surface, #fff);
-	color: var(--mn-text, #0f172a);
-	cursor: pointer;
-	font-weight: 600;
-}
 .transformer-train-status {
 	min-height: 20px;
 	margin-top: 10px;
@@ -286,7 +277,6 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 		</div>
 		<div class="transformer-train-actions">
 			<button class="btn train-btn" onclick="train_transformer()" type="button">Train Model</button>
-			<button class="btn" id="tda-toggle-training-windows" onclick="toggleTrainingWindows()" type="button">Show training windows</button>
 		</div>
 	</div>
 	<div id="training-status" class="transformer-train-status"></div>
@@ -299,10 +289,6 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	if (typeof drawTrainingPlaceholder === 'function') drawTrainingPlaceholder();
 })();
 </script>
-
-<div id="show_training_sentences" style="display: none">
-	<p>Current Training Windows: <span id="current_training_sentence"></span></p><br>
-</div>
 
 <div class="md">
 ## Preparing the Input
