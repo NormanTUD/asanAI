@@ -331,14 +331,21 @@
 									<p class="step-note">Meaning becomes geometry (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>). Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this demo uses two so you can see the idea.</p>
 									<div class="demo demo--paper" id="tm-dual-manifold-demo" style="margin-top:14px;">
 										<div class="demo-body">
-											<div id="tm-dual-manifolds" style="width:100%;height:420px;"></div>
+											<div id="tm-dual-manifolds" style="width:100%;height:420px;">
+												<div class="tm-manifold-loading">
+													<span class="tm-spinner" aria-hidden="true"></span>
+													<span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Lade die Mannigfaltigkeiten …' : 'Loading the manifolds …'; ?></span>
+												</div>
+											</div>
 											<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;"></div>
 										</div>
 									</div>
 									<p class="meadow-caption" style="color:var(--tm-muted);margin-top:10px;">
 										<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
+										Aus den Wörtern (Tokens) und ihrer Lage zueinander lassen sich Übersetzungen ableiten, allein aus diesen Relationen. In echten Modellen ist das nicht nur komplexer, weil der Raum hochdimensional ist, sondern auch, weil es Tokens sind und keine ganzen Wörter.
 										Was du siehst, sind sogenannte <b>Mannigfaltigkeiten</b>: gekrümmte Flächen, auf denen die Wortpunkte liegen. In echten Modellen sind diese Flächen viel komplexer und hochdimensional; als Intuition ist das Bild trotzdem gut.
 										<?php else: ?>
+										The words (tokens) and their positions relative to each other are enough to derive translations, from those relations alone. In real models this is more complex not only because the space is high-dimensional, but also because they are tokens, not whole words.
 										What you see are so-called <b>manifolds</b>: curved surfaces on which the word points lie. In real models these surfaces are far more complex and high-dimensional; as an intuition the picture still works well.
 										<?php endif; ?>
 									</p>

@@ -435,7 +435,9 @@
 						aspectmode: 'data', bgcolor: isDark() ? '#0f172a' : '#ffffff'
 					}
 				};
-				Plotly.react(div, traces, layout, { displayModeBar: false, responsive: true });
+				var done = Plotly.react(div, traces, layout, { displayModeBar: false, responsive: true });
+				function clearLoader() { var l = div.querySelector('.tm-manifold-loading'); if (l) l.remove(); }
+				if (done && done.then) done.then(clearLoader); else clearLoader();
 			}
 
 			/* Update only the Japanese-dependent traces, so dragging a slider
