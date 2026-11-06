@@ -6,7 +6,7 @@
 	<meta name="description" content="The shelf: the compact Ten Minutes lessons plus a reference index.">
 	<meta name="theme-color" content="#ffffff">
 	<title>The Shelf | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-page="library">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -280,7 +280,7 @@
 		</div>
 	</footer>
 
-	<script src="assets/site.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 	<script>
 	(function () {
 		"use strict";

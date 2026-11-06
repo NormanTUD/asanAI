@@ -6,7 +6,7 @@
 	<meta name="description" content="Turing, grounding, Mary's Room, sentience, and what it would mean for a model to think.">
 	<meta name="theme-color" content="#ffffff">
 	<title>Minds, Meaning, and Machines | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-lesson="philosophy" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -189,8 +189,8 @@
 		});
 	})();
 	</script>
-	<script src="assets/site.js"></script>
-	<script src="assets/demos.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
+	<script src="assets/demos.js?v=<?php echo filemtime(__DIR__.'/assets/demos.js'); ?>"></script>
 	<script src="assets/chinese-room.js"></script>
 </body>
 </html>
