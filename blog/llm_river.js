@@ -101,6 +101,20 @@ function _execute_themeriver_render(d_model) {
 	_themeriver_render_residual_3d();
 }
 
+/* Charts are often created before the reader scrolls to them, when the
+   host still has no usable width. A ResizeObserver resizes them the moment
+   their real size is known (tab reveal, lazy scroll, window resize). */
+function _themeriver_observe_chart(container) {
+	if (!container || container._ecSizeObserver || typeof ResizeObserver === 'undefined') return;
+	container._ecSizeObserver = new ResizeObserver(function () {
+		const chart = echarts.getInstanceByDom(container);
+		if (chart && container.clientWidth > 0 && container.clientHeight > 0) {
+			try { chart.resize(); } catch (e) { /* disposed */ }
+		}
+	});
+	container._ecSizeObserver.observe(container);
+}
+
 /* Bar chart: how much each layer writes into the residual stream for the
    currently selected token, split into the attention and FFN sublayers. */
 function _themeriver_render_residual_contrib(tokenIdx, d_model) {
@@ -145,6 +159,7 @@ function _themeriver_render_residual_contrib(tokenIdx, d_model) {
 		container.innerHTML = '';
 		chart = echarts.init(container);
 	}
+	_themeriver_observe_chart(container);
 
 	const axisFont = { fontSize: 11, color: themeColor('#64748b') };
 	chart.setOption({
@@ -436,14 +451,14 @@ function _themeriver_ensure_residual_block(parent) {
 	block.className = 'themeriver-residual-block';
 	block.innerHTML = `
 	<div class="themeriver-residual-head">Residual stream writes per layer</div>
-	<div id="transformer-residual-contrib-plot" style="width:100%; height:280px;"></div>
+	<div id="transformer-residual-contrib-plot" style="width:90%; margin:0 auto; height:280px;"></div>
 	<div class="themeriver-residual-head" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
 		<span>Residual stream development (3D) — all tokens, all dimensions</span>
 		<label style="font-weight:400; font-size:.78rem; color:var(--mn-text-muted); margin-left:auto;">Stage
 			<select id="residual-3d-stage" class="themeriver-select" onchange="window._themeriver_render_residual_3d_from_select()"></select>
 		</label>
 	</div>
-	<div id="transformer-residual-stream-3d" style="width:100%; height:480px;"></div>
+	<div id="transformer-residual-stream-3d" style="width:90%; margin:0 auto; height:480px;"></div>
 	`;
 	parent.appendChild(block);
 }
@@ -472,6 +487,34 @@ window._themeriver_render_residual_3d_from_select = function () {
 function _themeriver_render_residual_3d() {
 	const container = document.getElementById('transformer-residual-stream-3d');
 	if (!container) return;
+
+	// The block is often created while the page loader still gives it zero
+	// width. ECharts GL cannot create its WebGL context then, so wait until
+	// the chart has a real size and is near the viewport.
+	if (container.clientWidth < 60) {
+		if (!container._ec3dDeferred) {
+			container._ec3dDeferred = true;
+			const retry = () => {
+				if (container.clientWidth < 60) return;
+				container._ec3dDeferred = false;
+				if (container._ec3dResizeObs) { container._ec3dResizeObs.disconnect(); container._ec3dResizeObs = null; }
+				if (container._ec3dIntersectObs) { container._ec3dIntersectObs.disconnect(); container._ec3dIntersectObs = null; }
+				_themeriver_render_residual_3d();
+			};
+			if (typeof ResizeObserver !== 'undefined') {
+				container._ec3dResizeObs = new ResizeObserver(retry);
+				container._ec3dResizeObs.observe(container);
+			}
+			if (typeof IntersectionObserver !== 'undefined') {
+				container._ec3dIntersectObs = new IntersectionObserver((entries) => {
+					if (entries.some((e) => e.isIntersecting)) retry();
+				});
+				container._ec3dIntersectObs.observe(container);
+			}
+		}
+		return;
+	}
+
 	const collector = window.tlab_trajectory_collector;
 	if (!collector || !collector.steps) {
 		if (window.PlotState) PlotState.empty(container, 'Residual stream', 'Run the demo to see the residual stream by token and dimension.');
@@ -490,36 +533,44 @@ function _themeriver_render_residual_3d() {
 	const d_model = data[0].length;
 	const labels = (collector.displayTokens || collector.tokens || []).map((t) => String(t).replace(/ /g, '␣'));
 	const dims = Array.from({ length: d_model }, (_, i) => 'd' + i);
-	const bars = [];
-	data.forEach((vec, ti) => {
-		vec.forEach((v, di) => {
-			if (Number.isFinite(v)) bars.push([di, ti, +v.toFixed(4)]);
-		});
-	});
+	const palette = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16', '#06b6d4', '#e11d48', '#a855f7', '#22c55e', '#eab308', '#0ea5e9', '#d946ef', '#64748b'];
 
 	let chart = echarts.getInstanceByDom(container);
+	if (chart && !container.querySelector('canvas')) { chart.dispose(); chart = null; }
 	if (!chart) chart = echarts.init(container);
-	chart.setOption({
-		tooltip: {
-			formatter: (p) => `dim ${p.value[0]} · token ${labels[p.value[1]] || p.value[1]}<br>value ${p.value[2]}`
-		},
-		xAxis3D: { type: 'category', data: dims, name: 'dimension' },
-		yAxis3D: { type: 'category', data: labels, name: 'token' },
-		zAxis3D: { type: 'value', name: 'value' },
-		grid3D: {
-			boxWidth: 220,
-			boxDepth: Math.max(80, Math.min(240, 26 * labels.length)),
-			boxHeight: 90,
-			viewControl: { projection: 'perspective', autoRotate: false, distance: 220 }
-		},
-		series: [{
-			type: 'bar3D',
-			data: bars,
-			shading: 'lambert',
-			itemStyle: { color: themeColor('#3b82f6'), opacity: 0.92 },
-			emphasis: { itemStyle: { color: themeColor('#f59e0b') } }
-		}]
-	}, true);
+	_themeriver_observe_chart(container);
+
+	const series = data.map((vec, ti) => ({
+		type: 'bar3D',
+		name: labels[ti] || ('token ' + ti),
+		data: vec.map((v, di) => [di, ti, Number.isFinite(v) ? +v.toFixed(4) : 0]),
+		shading: 'lambert',
+		itemStyle: { color: palette[ti % palette.length], opacity: 0.94 },
+		emphasis: { itemStyle: { color: themeColor('#f59e0b') } }
+	}));
+
+	try {
+		chart.setOption({
+			tooltip: {
+				formatter: (p) => `Dimension ${p.value[0]}<br>Token ${labels[p.value[1]] || p.value[1]}<br>Value ${p.value[2]}`
+			},
+			xAxis3D: { type: 'category', data: dims, name: 'Dimension', nameTextStyle: { color: themeColor('#64748b') } },
+			yAxis3D: { type: 'category', data: labels, name: 'Token', nameTextStyle: { color: themeColor('#64748b') } },
+			zAxis3D: { type: 'value', name: 'Value', nameTextStyle: { color: themeColor('#64748b') } },
+			grid3D: {
+				boxWidth: 220,
+				boxDepth: Math.max(80, Math.min(240, 26 * labels.length)),
+				boxHeight: 90,
+				viewControl: { projection: 'perspective', autoRotate: false, distance: 220 }
+			},
+			series: series
+		}, true);
+	} catch (e) {
+		try { chart.dispose(); } catch (err) { /* already gone */ }
+		container.innerHTML = '';
+		if (window.PlotState) PlotState.empty(container, 'Residual stream (3D)', 'This 3D view could not start in this browser. The 2D chart above still shows the layer writes.');
+		return;
+	}
 
 	if (!container._ecResidual3dResize) {
 		container._ecResidual3dResize = () => {
