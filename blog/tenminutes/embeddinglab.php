@@ -176,22 +176,44 @@
 							<div class="demo-insight"><b>Takeaway</b><span>Different languages can share one geometric structure. The labels differ; the relations between the concepts do not.</span></div>
 						</div>
 
+						<div class="demo demo--paper" id="tm-dual-manifold-demo" style="margin-top:22px">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Zwei Mannigfaltigkeiten, eine Geometrie' : 'Two manifolds, one geometry'; ?> <span>· demo 01c</span></p>
+									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Die neuere 3D-Ansicht: zwei Mannigfaltigkeiten mit derselben inneren Geometrie, nur gedreht und verschoben. Gleiche sie an und sieh, wie die entsprechenden Punkte zusammenfallen.' : 'The newer 3D view: two manifolds with the same internal geometry, only rotated and shifted. Align them and watch the corresponding points meet.'; ?></p>
+								</div>
+								<span class="demo-badge">3D</span>
+							</div>
+							<div class="demo-body">
+								<div id="tm-dual-manifolds" style="width:100%;height:460px;">
+									<div class="tm-manifold-loading">
+										<span class="tm-spinner" aria-hidden="true"></span>
+										<span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Lade die Mannigfaltigkeiten …' : 'Loading the manifolds …'; ?></span>
+									</div>
+								</div>
+								<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;min-height:118px;"></div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Zwei Sprachen können dieselbe Geometrie teilen. Eine Drehung und eine Verschiebung gleichen sie an, und die Relationen bleiben erhalten.' : 'Two languages can share the same geometry. A rotation and a shift align them, and the relations survive.'; ?></span></div>
+						</div>
+
 						<div class="prose">
 							<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
 							<p>
 								Tokens sind nicht immer ganze Wörter, sondern oft Wortteile. Deshalb können sich Sprachen einen Token teilen: Das Stück <code>en</code> kommt in Englisch, Deutsch, Französisch und sogar Python vor. Alle vier Mannigfaltigkeiten laufen durch denselben <code>en</code>-Punkt in der Mitte; jede farbige Fläche ist eine eigene Untermannigfaltigkeit der großen Mannigfaltigkeit und steht für eine andere Sprache. Jede Fläche trifft ihn an einer anderen Stelle ihrer eigenen Fläche: Mitte, Rand, oben oder unten. Auch die übrigen Wörter sind in einzelne Tokens zerlegt, etwa <code>op</code> + <code>en</code> für „open“ oder <code>mean</code> + <code>ing</code> für „meaning“. Jede farbige Fläche ist eine eigene Untermannigfaltigkeit der großen Mannigfaltigkeit und steht für eine andere Sprache. Die Struktur ist dabei nicht nur gedreht, sondern auch geschert und gekippt, also schief im Raum. Bei echten Embeddings ist das viel unordentlicher als in diesem theoretischen Bild, aber das Prinzip ist dasselbe.
 							</p>
+							<p>Ein Satz ist übrigens auch eine solche Mannigfaltigkeit. Jeder mögliche Kontext ist das.</p>
 							<?php else: ?>
 							<p>
 								Tokens are not always whole words; they are often pieces of words. That is why languages can share a token: the piece <code>en</code> occurs in English, German, French and even Python. All four manifolds pass through the same <code>en</code> point in the middle; each coloured surface is its own submanifold of the larger manifold and stands for a different language. Each meets it at a different place on its own sheet (centre, edge, top, or bottom). The other words are also split into tokens, for example <code>op</code> + <code>en</code> for “open” or <code>mean</code> + <code>ing</code> for “meaning”. Each coloured surface is its own submanifold of the larger manifold and stands for a different language. The structure is not only rotated but also sheared and tilted, so it lies obliquely in space. Real embeddings are much messier than this theoretical picture, but the principle is the same.
 							</p>
+							<p>A sentence is such a manifold too. Every possible context is one.</p>
 							<?php endif; ?>
 						</div>
 						<div class="demo demo--paper" id="tm-language-manifold-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Vier Sprachen, ein gemeinsamer Token' : 'Four languages, one shared token'; ?> <span>· demo 01c</span></p>
-									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Alle Flächen laufen durch dasselbe „en“ in der Mitte; die anderen Wörter sind ebenfalls einzelne Tokens und die Form jeder Fläche unterscheidet sich.' : 'All surfaces meet at “en”; the other words and the shape of each surface differ.'; ?></p>
+									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Satz ist eine Mannigfaltigkeit' : 'A sentence is a manifold'; ?> <span>· demo 01d</span></p>
+									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Jeder mögliche Kontext ist eine. Die Flächen unten zeigen, wie verschiedene Sprachen dieselbe Token-Mannigfaltigkeit teilen.' : 'Every possible context is one. The surfaces below show how different languages share the same token manifold.'; ?></p>
 								</div>
 								<span class="demo-badge">3D</span>
 							</div>
@@ -366,6 +388,7 @@
 
 	<script src="../temml.min.js"></script>
 	<script src="assets/site.js"></script>
+	<script src="../plotly-2.24.1.min.js"></script>
 	<script src="../manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/../manifold_scenes.js'); ?>"></script>
 	<script>
 	(function () {
@@ -384,6 +407,11 @@
 			io.observe(host);
 		} else { draw(); }
 		window.addEventListener('tm:theme', function () { drawn = false; draw(); });
+
+		var dualHost = document.getElementById('tm-dual-manifolds');
+		if (dualHost && window.ManifoldScenes && window.ManifoldScenes.renderDualPlotly) {
+			ManifoldScenes.renderDualPlotly('tm-dual-manifolds', 'tm-dual-controls');
+		}
 	})();
 	</script>
 	<script>

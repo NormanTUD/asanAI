@@ -780,6 +780,7 @@
 		var img = null;
 		var gw = 0, gh = 0;
 		var input = [];
+		var inputRGB = [];
 		var outCanvas = document.createElement("canvas");
 		var outCtx = outCanvas.getContext("2d");
 		var scanCell = 0;

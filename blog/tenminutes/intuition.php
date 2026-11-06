@@ -277,310 +277,308 @@
 								it.
 							</p>
 						</div>
-
-						<div class="demo" id="inside-demo">
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">Inside the model <span>· demos 02-07</span></p>
-									<p class="demo-sub">Follow one token through six steps. Each step is a small simplified demo, but the order and the division of labour are the real architecture.</p>
-								</div>
-								<span class="demo-badge">six steps</span>
-							</div>
-							<div class="demo-body">
-								<div class="step-pane" id="step-tokenize">
-									<p class="step-note step-lead">A token is not a word. Before the model can read anything, text is encoded as numbers. Every character has a Unicode code point, and an encoding turns that number into bytes. A byte-level tokenizer starts from all 256 possible bytes, so every piece of text is representable, including characters it never saw in training. Rare words split into <strong>subwords</strong>: pieces the vocabulary already knows. The tokenizer does not care about syllables or meaning. It might split “unbelievable” into “un”, “believ”, and “able”, and the same piece reappears in other words: the “un” in “unhappy” and in “unmarried” has the same id. New emoji still work because related emoji share their first bytes: most characters in the main emoji block begin with <code>F0 9F</code>. A space is a byte too, and it can be a token of its own.</p>
-									<div class="step-stage">
-										<div class="step-pane-head">
-											<span class="sp-kicker">Step 1 · Tokenize</span>
-											<h3 class="sp-title">Text becomes a sequence of ids</h3>
-										</div>
-										<div class="step-toolbar">
-											<div class="step-chips">
-												<button class="chip" type="button" data-tok="understanding">understanding</button>
-												<button class="chip" type="button" data-tok="unbreakable">unbreakable</button>
-												<button class="chip is-on" type="button" data-tok="sentence">The transformer is playing greatly</button>
-											</div>
-										</div>
-										<div class="token-chips" id="itok-out" aria-live="polite"></div>
-										<div class="demo-readout demo-readout--4" id="itok-stats"></div>
-									</div>
-									<p class="step-note">The demo shows the pieces and their ids. A real tokenizer learns its merge table from text, so frequent pieces become single tokens and rare ones split. That is how a fixed vocabulary can cover an open-ended set of strings. The ids carry no meaning on their own; they are addresses into an embedding table.</p>
-								</div>
-
-								<div class="step-pane" id="step-embed">
-									<p class="step-note step-lead">Each token id points to a vector of learned parameters. A real model uses thousands of dimensions, often around ten thousand; this demo uses two so the picture can be represented, but the principle is the same. The vector is the token's starting representation. The model learns these points from its training data (Wikipedia, books, web pages, code) and chooses the rules itself. Related tokens end up near each other, and directions carry relationships.</p>
-									<div class="step-stage">
-										<div class="step-pane-head">
-											<span class="sp-kicker">Step 2 · Embed</span>
-											<h3 class="sp-title">Ids become points in meaning space</h3>
-										</div>
-										<div class="step-toolbar">
-											<div class="step-chips">
-												<button class="chip is-on" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
-												<button class="chip" type="button" data-emb="Man + 2 * Power">Man + 2 · Power</button>
-												<button class="chip" type="button" data-emb="Prince + Power">Prince + Power</button>
-												<button class="chip" type="button" data-emb="gender">male ↔ female</button>
-												<button class="chip" type="button" data-emb="power">power</button>
-												<button class="chip" type="button" data-emb="directions">all directions</button>
-											</div>
-										</div>
-										<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
-										<div class="step-out" id="iemb-out">The space has two semantic axes in this demo: <b>power</b> and <b>gender</b>. Choose an example to see where it lands.</div>
-									</div>
-									<div class="prose-math emb-equation emb-formula" id="iemb-formula" data-tex-display="true" aria-live="polite"></div>
-									<p class="step-note">Meaning becomes geometry (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>). Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this demo uses two so you can see the idea.</p>
-									<div class="demo demo--paper" id="tm-dual-manifold-demo" style="margin-top:14px;">
-										<div class="demo-body">
-											<div id="tm-dual-manifolds" style="width:100%;height:420px;">
-												<div class="tm-manifold-loading">
-													<span class="tm-spinner" aria-hidden="true"></span>
-													<span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Lade die Mannigfaltigkeiten …' : 'Loading the manifolds …'; ?></span>
-												</div>
-											</div>
-											<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;min-height:118px;"></div>
-										</div>
-									</div>
-									<p class="meadow-caption" style="color:var(--tm-muted);margin-top:10px;">
-										<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
-										Aus den Wörtern (Tokens) und ihrer Lage zueinander lassen sich Übersetzungen ableiten, allein aus diesen Relationen. In echten Modellen ist das nicht nur komplexer, weil der Raum hochdimensional ist, sondern auch, weil es Tokens sind und keine ganzen Wörter.
-										Was du siehst, sind sogenannte <b>Mannigfaltigkeiten</b>: Räume, in denen die Wortpunkte liegen. In der Nähe jedes Punktes sehen sie flach aus wie eine Ebene, als Ganzes können sie aber gekrümmt sein, ähnlich wie die Erdoberfläche für jemanden, der darauf steht.
-										<?php else: ?>
-										The words (tokens) and their positions relative to each other are enough to derive translations, from those relations alone. In real models this is more complex not only because the space is high-dimensional, but also because they are tokens, not whole words.
-										What you see are so-called <b>manifolds</b>: spaces in which the word points lie. Near each point they look flat like a plane, but as a whole they can be curved, much like the Earth's surface looks flat from where you stand.
-										<?php endif; ?>
-									</p>
-								</div>
-
-								<div class="step-pane" id="step-position">
-									<p class="step-note step-lead">Attention, explained in the next step, compares tokens with each other but has no built-in sense of order. Without a position signal, “man bites dog” and “dog bites man” contain exactly the same vectors and look identical. A positional encoding adds a distinct fingerprint to every slot, so order becomes part of the representation.</p>
-									<div class="step-stage">
-										<div class="step-pane-head">
-											<span class="sp-kicker">Step 3 · Position</span>
-											<h3 class="sp-title">Every slot gets its own fingerprint</h3>
-										</div>
-										<div class="step-toolbar">
-											<label>Context length
-												<input type="range" id="ipe-heat-context" min="16" max="128" step="8" value="64">
-												<output id="ipe-heat-context-out">64</output>
-											</label>
-											<label>Dimensions
-												<input type="range" id="ipe-heat-dims" min="2" max="64" step="2" value="24">
-												<output id="ipe-heat-dims-out">24</output>
-											</label>
-										</div>
-										<p class="step-note">The heatmap below shows the classic sinusoidal encoding: each position gets a fingerprint built from slow and fast waves.</p>
-										<canvas class="step-canvas" id="ipe-heatmap" style="height:220px" aria-label="A heatmap of classic sinusoidal positional encodings for a long context"></canvas>
-										<div class="pos-legend" aria-hidden="true">
-											<span><i class="pl-neg"></i>−1</span>
-											<span><i class="pl-zero"></i>0</span>
-											<span><i class="pl-pos"></i>+1</span>
-										</div>
-										<div class="step-out" id="ipe-heat-out">Each row is one position; each column is one dimension.</div>
-										<div class="step-toolbar">
-											<label>Position
-												<input type="range" id="ipe-pos" min="0" max="1000" step="1" value="7">
-												<output id="ipe-pos-out">7</output>
-											</label>
-											<button class="chip is-on" type="button" id="ipe-autorotate" aria-pressed="true">Auto-rotate view</button>
-										</div>
-										<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
-										<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
-									</div>
-									<p class="step-note">The plot shows the sinusoidal encoding as one vector for the selected position. The three axes are the first three dimensions; the blue sphere is the original word, and the arrow is its position vector. Move the slider and the point follows the curve. Drag the plot to rotate it. The demo computes 64 dimensions; a real model uses thousands.</p>
-								</div>
-
-								<div class="step-pane" id="step-attention">
-									<p class="step-note step-lead">Attention lets each token look at the other tokens in the context, decide which ones matter for it, and pull their information into its own vector. That is how “bank” moves toward the river reading or the money reading. The demo shows one simplified attention head. A real layer runs many heads in parallel, each attending to something different: one to the previous word, another to the subject, another to a clue far back in the context. Their results are concatenated and projected back.</p>
-									<div class="step-stage">
-										<div class="step-pane-head">
-											<span class="sp-kicker">Step 4 · Attend</span>
-											<h3 class="sp-title">Context pulls the word into place</h3>
-										</div>
-										<div class="step-toolbar">
-											<div class="step-chips" id="iatt-examples">
-												<button class="chip is-on" type="button" data-att="0">no unambiguous context</button>
-												<button class="chip" type="button" data-att="1">river in context</button>
-												<button class="chip" type="button" data-att="2">money in context</button>
-												<button class="chip" type="button" data-att="3">both in context</button>
-											</div>
-										</div>
-										<div class="attn-sentence" id="iatt-sentence">I walk to the <span class="aw-bank">bank</span>.</div>
-										<canvas class="step-canvas" id="iatt-canvas" aria-label="Attention moving the embedding of bank toward the context"></canvas>
-										<div class="step-out" id="iatt-out">No unambiguous context: bank stays in the middle, ambiguous.</div>
-										<div class="attn-matrix" id="iatt-matrix" aria-live="polite"></div>
-										<div class="prose-math attn-sum" id="iatt-sum" data-tex-display="true"></div>
-									</div>
-									<p class="step-note"><b>This step is an intuition, not a real attention head.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result: context changes the representation. It shows one simplified attention head, not the many heads and layers of a real model.</p>
-									<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the context, because the values it collects are different.</p>
-									<p class="step-note">Training data is full of typos, misspellings, and irregular spacing. Attention and the feed-forward network see both clean and noisy text, so they learn to route around the noise and still produce something useful from a misspelled token.</p>
-								</div>
-
-								<div class="step-pane layer-pane" id="layer-detail">
-									<div class="step-pane-head">
-										<span class="sp-kicker">The layer in detail · the MLP</span>
-										<h3 class="sp-title">A projection, a bias, a bend</h3>
-									</div>
-									<p class="step-note step-lead">After attention, each token passes through a small network of its own: the feed-forward network, usually a multilayer perceptron (MLP). It first computes an affine projection, <span data-tex="Wx + b" data-tex-display="false"></span>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
-									<div class="layer-formula" data-tex="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{weight}\\\text{matrix}}}\,x + \underbrace{b}_{\text{bias}}\right)" data-tex-de="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{Gewichts-}\\\text{Matrix}}}\,x + \underbrace{b}_{\text{Bias}}\right)"></div>
-									<div class="collapse-card">
-										<div class="cc-label">Worked example · 2 inputs, 3 outputs</div>
-										<div class="collapse-math" data-tex="\begin{aligned} W &amp;= \begin{pmatrix} 1 &amp; 2 \\ 0 &amp; -1 \\ 2 &amp; 1 \end{pmatrix}, \quad x = \begin{pmatrix} 3 \\ 1 \end{pmatrix}, \quad b = \begin{pmatrix} 0 \\ 0 \\ -2 \end{pmatrix} \\[6pt] Wx &amp;= \begin{pmatrix} 1\cdot 3 + 2\cdot 1 \\ 0\cdot 3 + (-1)\cdot 1 \\ 2\cdot 3 + 1\cdot 1 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \\ 7 \end{pmatrix} \\[6pt] z = Wx + b &amp;= \begin{pmatrix} 5 \\ -1 \\ 7 \end{pmatrix} + \begin{pmatrix} 0 \\ 0 \\ -2 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \\ 5 \end{pmatrix} \\[6pt] \operatorname{ReLU}(z) &amp;= \begin{pmatrix} 5 \\ 0 \\ 5 \end{pmatrix} \end{aligned}"></div>
-										<p>Read <span data-tex="W" data-tex-display="false"></span> row by row: the first output mixes the inputs as <span data-tex="1\cdot 3 + 2\cdot 1" data-tex-display="false"></span>, the second as <span data-tex="0\cdot 3 + (-1)\cdot 1" data-tex-display="false"></span>, the third as <span data-tex="2\cdot 3 + 1\cdot 1" data-tex-display="false"></span>. The bias adds <span data-tex="0" data-tex-display="false"></span>, <span data-tex="0" data-tex-display="false"></span>, and <span data-tex="-2" data-tex-display="false"></span>, so <span data-tex="z = (5, -1, 5)" data-tex-display="false"></span>. ReLU, the activation introduced below, sends the negative entry to zero and leaves the other two unchanged. A real layer runs the same dot products and the same bend with thousands of rows and columns.</p>
-									</div>
-									<h4 class="layer-subhead">Depth without a nonlinearity</h4>
-									<div class="collapse-card">
-										<div class="cc-label">two dense layers without a nonlinearity</div>
-										<div class="collapse-math" id="collapse-math" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \\[4pt] W &amp;= W_2 W_1, \qquad b = W_2 b_1 + b_2 \end{aligned}"></div>
-										<p>Stack two projections, one after the other. The product <span data-tex="W_2 W_1" data-tex-display="false"></span> is itself a new single weight matrix: every row of <span data-tex="W_1" data-tex-display="false"></span> is mixed with the columns of <span data-tex="W_2" data-tex-display="false"></span>, and the result is a new matrix. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <span data-tex="W" data-tex-display="false"></span> maps d inputs directly to k outputs: the hidden layer has disappeared. The biases also merge into <span data-tex="W_2 b_1 + b_2" data-tex-display="false"></span>. Without a nonlinearity, two layers are exactly one layer with a combined <span data-tex="W" data-tex-display="false"></span>; depth without a nonlinearity adds no expressive power. That is why a nonlinear activation is needed.</p>
-									</div>
-									<h4 class="layer-subhead">Nonlinear activation functions</h4>
-									<div class="activation-card">
-										<div class="activation-copy">
-											<p>A <b>nonlinear activation function</b> is applied to each coordinate after the projection. It adds the nonlinearity that a stack of linear layers otherwise lacks.</p>
-											<p><span data-tex="\operatorname{ReLU}(z) = \max(0, z)" data-tex-display="false"></span> passes positive values unchanged and sends the entire negative half-space to zero. The graph is flat, then a straight rise: a hard fold at <span data-tex="z = 0" data-tex-display="false"></span>. Because many inputs become the same output, ReLU is not injective; it can change the topology of the representation.</p>
-											<p><b>Sigmoid</b> squashes every value into (0, 1); <b>tanh</b> squashes it into (-1, 1). Both are strictly increasing, so they bend smoothly without mapping distinct inputs to the same output. <b>GELU</b> is smooth but not monotonic: it dips slightly below zero, so it is also many-to-one. Other choices include SiLU/Swish, ELU, and gated variants such as SwiGLU.</p>
-										</div>
-										<div class="activation-plots" id="activation-plots">
-											<figure class="ap ap-relu">
-												<svg viewBox="0 0 60 44" role="img" aria-label="ReLU: zero for negative inputs, then a straight rise">
-													<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
-													<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
-													<path class="ap-curve" d="M2.00,28.67 L6.67,28.67 L11.33,28.67 L16.00,28.67 L20.67,28.67 L25.33,28.67 L30.00,28.67 L34.67,24.22 L39.33,19.78 L44.00,15.33 L48.67,10.89 L53.33,6.44 L58.00,2.00"></path>
-												</svg>
-												<figcaption><b>ReLU</b><span>flat, then a rise</span></figcaption>
-											</figure>
-											<figure class="ap ap-gelu">
-												<svg viewBox="0 0 60 44" role="img" aria-label="GELU: a smooth curve that dips slightly below zero">
-													<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
-													<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
-													<path class="ap-curve" d="M2.00,28.70 L6.67,28.80 L11.33,29.07 L16.00,29.56 L20.67,30.08 L25.33,30.04 L30.00,28.67 L34.67,25.59 L39.33,21.19 L44.00,16.22 L48.67,11.29 L53.33,6.58 L58.00,2.04"></path>
-												</svg>
-												<figcaption><b>GELU</b><span>smooth, small dip</span></figcaption>
-											</figure>
-											<figure class="ap ap-sigmoid">
-												<svg viewBox="0 0 60 44" role="img" aria-label="Sigmoid: an S-shaped curve between zero and one">
-													<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
-													<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
-													<path class="ap-curve" d="M2.00,28.25 L6.67,27.99 L11.33,27.61 L16.00,27.05 L20.67,26.28 L25.33,25.31 L30.00,24.22 L34.67,23.13 L39.33,22.17 L44.00,21.40 L48.67,20.84 L53.33,20.45 L58.00,20.20"></path>
-												</svg>
-												<figcaption><b>Sigmoid</b><span>S-shape, 0 to 1</span></figcaption>
-											</figure>
-											<figure class="ap ap-tanh">
-												<svg viewBox="0 0 60 44" role="img" aria-label="Tanh: an S-shaped curve between minus one and one">
-													<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
-													<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
-													<path class="ap-curve" d="M2.00,37.51 L6.67,37.44 L11.33,37.24 L16.00,36.71 L20.67,35.44 L25.33,32.77 L30.00,28.67 L34.67,24.56 L39.33,21.90 L44.00,20.62 L48.67,20.10 L53.33,19.90 L58.00,19.82"></path>
-												</svg>
-												<figcaption><b>tanh</b><span>S-shape, -1 to 1</span></figcaption>
-											</figure>
-										</div>
-									</div>
-									<h4 class="layer-subhead">Where the bend happens</h4>
-									<p class="step-note curve-intro">After attention has placed each token in context, the MLP works on that token on its own. It projects the vector, adds a bias, and applies a nonlinearity. A smooth activation bends the surrounding space instead of only stretching it; ReLU folds it along a crease at <span data-tex="z = 0" data-tex-display="false"></span>. This moves the token toward a region where the next token is easier to separate.</p>
-									<div class="demo demo--paper ism-panel" data-arrow-nav style="margin-top:14px">
-										<div class="demo-head">
-											<div>
-												<p class="demo-title">Watch the MLP bend the space <span>· demo 07</span></p>
-												<p class="demo-sub">A straight line is the easiest separator, but it is not always possible in the original space. The MLP lifts the points into a new plane where it becomes possible. In an LLM the same idea runs in thousands of dimensions and helps the model isolate and represent internal states.</p>
-											</div>
-											<span class="demo-badge">drag / step</span>
-										</div>
-										<div class="demo-body">
-											<div id="ism-copy" class="ism-copy" aria-live="polite">
-												<div id="ism-title" class="ism-title"></div>
-												<div id="ism-body" class="ism-body"></div>
-											</div>
-											<div id="ism-wrap" class="ism-wrap" style="height:clamp(360px, 55vw, 480px)">
-												<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
-											</div>
-											<div class="ism-controls">
-												<button type="button" id="ism-prev" data-arrow-prev class="ism-btn" aria-label="Previous step">←</button>
-												<button type="button" id="ism-next" data-arrow-next class="ism-btn" aria-label="Next step">→</button>
-												<div id="ism-dots" class="ism-dots" aria-hidden="true"></div>
-												<span id="ism-counter" class="ism-counter">1 / 7</span>
-											</div>
-										</div>
-										<div class="demo-insight"><b>Takeaway</b><span>The layers in an MLP lift the points into a higher-dimensional space where a straight line can separate what was inseparable before. They change the space in which the cut is made.</span></div>
-									</div>
-									<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into one that a straight line can separate, which in higher dimensions means a plane or hyperplane.</p>
-									<p class="step-note">An MLP also translates the representation. Its affine step can move a feature into a region where the next layer can use it; separation and translation are two descriptions of the same learned transformation.</p>
-									<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>).</p>
-								</div>
-
-								<div class="step-pane" id="step-ffn">
-									<p class="step-note step-lead">A feed-forward network works on each token separately. It expands the vector into a wider hidden layer, applies an activation, and projects back to the original width. Attention mixes information across tokens; the feed-forward part does the per-token computation. The patterns below are a strongly simplified picture of which regions the network activates for a given context; they are not stored rules.</p>
-									<div class="step-stage">
-										<div class="step-pane-head">
-											<span class="sp-kicker">Step 5 · Feed-forward</span>
-											<h3 class="sp-title">A pattern matches, a value is written</h3>
-										</div>
-										<div class="step-toolbar">
-											<div class="step-chips" id="iffn-scenarios">
-												<button class="chip is-on" type="button" data-ffn="fruit">I ate the apple</button>
-												<button class="chip" type="button" data-ffn="tech">I bought an Apple laptop</button>
-											</div>
-										</div>
-										<div class="ffn-grid">
-											<div class="ffn-col">
-												<div class="ffn-col-head">Residual stream</div>
-												<div class="ffn-pill is-fire">“Apple” + context</div>
-											</div>
-											<div class="ffn-col">
-												<div class="ffn-col-head">Patterns in W₁</div>
-												<div class="ffn-list" id="iffn-keys"></div>
-											</div>
-											<div class="ffn-col">
-												<div class="ffn-col-head">Next-token pull in W₂</div>
-												<div class="ffn-list" id="iffn-values"></div>
-											</div>
-											<div class="ffn-col">
-												<div class="ffn-col-head">Written back</div>
-												<div class="ffn-pill is-fire">richer vector</div>
-											</div>
-										</div>
-										<div class="step-out" id="iffn-out"></div>
-										<p class="step-note ffn-caveat"><b>What is simplified:</b> a real FFN has no labelled keys or values. The “patterns” are learned directions in W₁; the “pull” is a learned direction in W₂ that changes the next-token distribution. The labels are a simplified picture, not stored rules.</p>
-									</div>
-								</div>
-
-								<div class="step-pane" id="step-residual">
-									<p class="step-note step-lead">Every layer reads the same running vector, the residual stream, computes an update, and adds it back. Think of the stream as a shared notebook that any layer can write to. Earlier notes stay in place; later layers read the original entry plus everything written since. The rule is <span data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)" data-tex-display="false"></span>: the new state is the old state plus a change. Each attention block contains many heads, and each MLP contains several layers; the diagram folds them into one step at a time.</p>
-									<div class="step-stage">
-										<div class="step-pane-head">
-											<span class="sp-kicker">Step 6 · Residual</span>
-											<h3 class="sp-title">Every layer adds to the same stream</h3>
-										</div>
-										<figure class="res-notebook">
-											<div class="res-nb-page">
-												<p class="res-nb-sentence"><span class="res-nb-emb">The</span> <span class="res-nb-emb res-nb-att">cat</span> <span class="res-nb-emb res-nb-mlp">sat</span> on the <span class="res-nb-emb">mat</span> because <span class="res-nb-emb res-nb-att">she</span> was <span class="res-nb-emb res-nb-mlp">tired</span>.</p>
-												<p class="res-nb-note res-nb-note--emb"><b>Embedding</b> every word becomes a vector.</p>
-												<p class="res-nb-note res-nb-note--att"><b>Attention</b> “she” points back to “cat”.</p>
-												<p class="res-nb-note res-nb-note--mlp"><b>MLP</b> “tired” explains why the cat sat.</p>
-											</div>
-											<figcaption>One shared page. Each layer writes in its own color, and earlier notes stay readable.</figcaption>
-										</figure>
-										<div class="res-stream">
-											<div class="res-layers" id="ires-layers"></div>
-											<div class="res-panel">
-												<div class="res-bars" id="ires-bars"></div>
-												<div class="res-vector" id="ires-vector" aria-live="polite"></div>
-												<div class="res-legend"><span><i></i> running stream</span><span id="ires-out"></span></div>
-												<div class="prose-math" data-tex="\underbrace{x_{n+1}}_{\text{new stream}} = \underbrace{x_n}_{\text{running stream}} + \underbrace{\operatorname{layer}_{n+1}(x_n)}_{\text{what this layer writes}}" data-tex-de="\underbrace{x_{n+1}}_{\text{neuer Stream}} = \underbrace{x_n}_{\text{laufender Stream}} + \underbrace{\operatorname{layer}_{n+1}(x_n)}_{\text{was diese Schicht schreibt}}" data-tex-display="true"></div>
-											</div>
-										</div>
-									</div>
-									<p class="step-note">The addition is the point. Nothing is overwritten, so the original signal survives, and gradients have a short path back through the sum. That is a large part of why very deep networks train at all. The numbers under the bars are the same sum written out one coordinate at a time.</p>
-								</div>
-							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>Tokens become vectors, positions add where each token sits, attention mixes context, the feed-forward network computes, and the residual stream carries the result to the next layer.</span></div>
-							<div class="demo-foot">
-								The steps are small models. The real pipeline uses thousands of
-								dimensions, many heads, and dozens of layers. The order and the division of
-								labour stay the same.
-							</div>
-						</div>
 					</section>
 
+
+					<section class="section-block" id="step-tokenize-section">
+						<div class="section-kicker">Step 1 · Tokenize</div>
+						<h2 class="section-title">Text becomes a sequence of ids</h2>
+						<div class="prose">
+							<p>A token is not a word. Before the model can read anything, text is encoded as numbers. Every character has a Unicode code point, and an encoding turns that number into bytes. A byte-level tokenizer starts from all 256 possible bytes, so every piece of text is representable, including characters it never saw in training. Rare words split into <strong>subwords</strong>: pieces the vocabulary already knows. The tokenizer does not care about syllables or meaning. It might split “unbelievable” into “un”, “believ”, and “able”, and the same piece reappears in other words: the “un” in “unhappy” and in “unmarried” has the same id. New emoji still work because related emoji share their first bytes: most characters in the main emoji block begin with <code>F0 9F</code>. A space is a byte too, and it can be a token of its own.</p>
+						</div>
+						<div class="step-pane" id="step-tokenize">
+															<div class="step-stage">
+																<div class="step-toolbar">
+																	<div class="step-chips">
+																		<button class="chip" type="button" data-tok="understanding">understanding</button>
+																		<button class="chip" type="button" data-tok="unbreakable">unbreakable</button>
+																		<button class="chip is-on" type="button" data-tok="sentence">The transformer is playing greatly</button>
+																	</div>
+																</div>
+																<div class="token-chips" id="itok-out" aria-live="polite"></div>
+																<div class="demo-readout demo-readout--4" id="itok-stats"></div>
+															</div>
+															<p class="step-note">The demo shows the pieces and their ids. A real tokenizer learns its merge table from text, so frequent pieces become single tokens and rare ones split. That is how a fixed vocabulary can cover an open-ended set of strings. The ids carry no meaning on their own; they are addresses into an embedding table.</p>
+														</div>
+					</section>
+
+					<section class="section-block" id="step-embed-section">
+						<div class="section-kicker">Step 2 · Embed</div>
+						<h2 class="section-title">Ids become points in meaning space</h2>
+						<div class="prose">
+							<p>Each token id points to a vector of learned parameters. A real model uses thousands of dimensions, often around ten thousand; this demo uses two so the picture can be represented, but the principle is the same. The vector is the token's starting representation. The model learns these points from its training data (Wikipedia, books, web pages, code) and chooses the rules itself. Related tokens end up near each other, and directions carry relationships.</p>
+						</div>
+						<div class="step-pane" id="step-embed">
+															<div class="step-stage">
+																<div class="step-toolbar">
+																	<div class="step-chips">
+																		<button class="chip is-on" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
+																		<button class="chip" type="button" data-emb="Man + 2 * Power">Man + 2 · Power</button>
+																		<button class="chip" type="button" data-emb="Prince + Power">Prince + Power</button>
+																		<button class="chip" type="button" data-emb="gender">male ↔ female</button>
+																		<button class="chip" type="button" data-emb="power">power</button>
+																		<button class="chip" type="button" data-emb="directions">all directions</button>
+																	</div>
+																</div>
+																<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
+																<div class="step-out" id="iemb-out">The space has two semantic axes in this demo: <b>power</b> and <b>gender</b>. Choose an example to see where it lands.</div>
+															</div>
+															<div class="prose-math emb-equation emb-formula" id="iemb-formula" data-tex-display="true" aria-live="polite"></div>
+															<p class="step-note">Meaning becomes geometry (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>). Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Use the <b>gender</b> and <b>power</b> buttons to see each direction on its own; the arrows are labelled directly. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this demo uses two so you can see the idea.</p>
+															<div class="demo demo--paper" id="tm-dual-manifold-demo" style="margin-top:14px;">
+																<div class="demo-body">
+																	<div id="tm-dual-manifolds" style="width:100%;height:420px;">
+																		<div class="tm-manifold-loading">
+																			<span class="tm-spinner" aria-hidden="true"></span>
+																			<span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Lade die Mannigfaltigkeiten …' : 'Loading the manifolds …'; ?></span>
+																		</div>
+																	</div>
+																	<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;min-height:118px;"></div>
+																</div>
+															</div>
+															<p class="meadow-caption" style="color:var(--tm-muted);margin-top:10px;">
+																<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
+																Aus den Wörtern (Tokens) und ihrer Lage zueinander lassen sich Übersetzungen ableiten, allein aus diesen Relationen. In echten Modellen ist das nicht nur komplexer, weil der Raum hochdimensional ist, sondern auch, weil es Tokens sind und keine ganzen Wörter.
+																Was du siehst, sind sogenannte <b>Mannigfaltigkeiten</b>: Räume, in denen die Wortpunkte liegen. In der Nähe jedes Punktes sehen sie flach aus wie eine Ebene, als Ganzes können sie aber gekrümmt sein, ähnlich wie die Erdoberfläche für jemanden, der darauf steht.
+																<?php else: ?>
+																The words (tokens) and their positions relative to each other are enough to derive translations, from those relations alone. In real models this is more complex not only because the space is high-dimensional, but also because they are tokens, not whole words.
+																What you see are so-called <b>manifolds</b>: spaces in which the word points lie. Near each point they look flat like a plane, but as a whole they can be curved, much like the Earth's surface looks flat from where you stand.
+																<?php endif; ?>
+															</p>
+														</div>
+					</section>
+
+					<section class="section-block" id="step-position-section">
+						<div class="section-kicker">Step 3 · Position</div>
+						<h2 class="section-title">Every slot gets its own fingerprint</h2>
+						<div class="prose">
+							<p>Attention, explained in the next step, compares tokens with each other but has no built-in sense of order. Without a position signal, “man bites dog” and “dog bites man” contain exactly the same vectors and look identical. A positional encoding adds a distinct fingerprint to every slot, so order becomes part of the representation.</p>
+						</div>
+						<div class="prose-math" data-tex="\underbrace{\begin{aligned} PE_{(pos,2i)} &amp;= \sin\left(\frac{\underbrace{pos}_{\text{position}}}{\underbrace{10000^{2i/d}}_{\text{frequency}}}\right) \\ PE_{(pos,2i+1)} &amp;= \cos\left(\frac{pos}{10000^{2i/d}}\right) \end{aligned}}_{\text{each dimension gets its own wave}}" data-tex-de="\underbrace{\begin{aligned} PE_{(pos,2i)} &amp;= \sin\left(\frac{\underbrace{pos}_{\text{Position}}}{\underbrace{10000^{2i/d}}_{\text{Frequenz}}}\right) \\ PE_{(pos,2i+1)} &amp;= \cos\left(\frac{pos}{10000^{2i/d}}\right) \end{aligned}}_{\text{jede Dimension bekommt ihre eigene Welle}}" data-tex-display="true"></div>
+						<div class="step-pane" id="step-position">
+															<div class="step-stage">
+																<div class="step-toolbar">
+																	<label>Context length
+																		<input type="range" id="ipe-heat-context" min="16" max="128" step="8" value="64">
+																		<output id="ipe-heat-context-out">64</output>
+																	</label>
+																	<label>Dimensions
+																		<input type="range" id="ipe-heat-dims" min="2" max="64" step="2" value="24">
+																		<output id="ipe-heat-dims-out">24</output>
+																	</label>
+																</div>
+																<p class="step-note">The heatmap below shows the classic sinusoidal encoding: each position gets a fingerprint built from slow and fast waves.</p>
+																<canvas class="step-canvas" id="ipe-heatmap" style="height:220px" aria-label="A heatmap of classic sinusoidal positional encodings for a long context"></canvas>
+																<div class="pos-legend" aria-hidden="true">
+																	<span><i class="pl-neg"></i>−1</span>
+																	<span><i class="pl-zero"></i>0</span>
+																	<span><i class="pl-pos"></i>+1</span>
+																</div>
+																<div class="step-out" id="ipe-heat-out">Each row is one position; each column is one dimension.</div>
+																<div class="step-toolbar">
+																	<label>Position
+																		<input type="range" id="ipe-pos" min="0" max="1000" step="1" value="7">
+																		<output id="ipe-pos-out">7</output>
+																	</label>
+																	<button class="chip is-on" type="button" id="ipe-autorotate" aria-pressed="true">Auto-rotate view</button>
+																</div>
+																<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
+																<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
+															</div>
+															<p class="step-note">The plot shows the sinusoidal encoding as one vector for the selected position. The three axes are the first three dimensions; the blue sphere is the original word, and the arrow is its position vector. Move the slider and the point follows the curve. Drag the plot to rotate it. The demo computes 64 dimensions; a real model uses thousands.</p>
+														</div>
+					</section>
+
+					<section class="section-block" id="step-attention-section">
+						<div class="section-kicker">Step 4 · Attend</div>
+						<h2 class="section-title">Context pulls the word into place</h2>
+						<div class="prose">
+							<p>Attention lets each token look at the other tokens in the context, decide which ones matter for it, and pull their information into its own vector. That is how “bank” moves toward the river reading or the money reading. The demo shows one simplified attention head. A real layer runs many heads in parallel, each attending to something different: one to the previous word, another to the subject, another to a clue far back in the context. Their results are concatenated and projected back.</p>
+						</div>
+						<div class="step-pane" id="step-attention">
+															<div class="step-stage">
+																<div class="step-toolbar">
+																	<div class="step-chips" id="iatt-examples">
+																		<button class="chip is-on" type="button" data-att="0">no unambiguous context</button>
+																		<button class="chip" type="button" data-att="1">river in context</button>
+																		<button class="chip" type="button" data-att="2">money in context</button>
+																		<button class="chip" type="button" data-att="3">both in context</button>
+																	</div>
+																</div>
+																<div class="attn-sentence" id="iatt-sentence">I walk to the <span class="aw-bank">bank</span>.</div>
+																<canvas class="step-canvas" id="iatt-canvas" aria-label="Attention moving the embedding of bank toward the context"></canvas>
+																<div class="step-out" id="iatt-out">No unambiguous context: bank stays in the middle, ambiguous.</div>
+																<div class="attn-matrix" id="iatt-matrix" aria-live="polite"></div>
+																<div class="prose-math attn-sum" id="iatt-sum" data-tex-display="true"></div>
+															</div>
+															<p class="step-note"><b>This step is an intuition, not a real attention head.</b> A real attention head computes query, key, and value vectors, turns their dot products into weights with a softmax, and sums the <em>value</em> vectors. It does not literally pick up the token's own embedding and slide it across the page. The moving dot is a teaching picture of the result: context changes the representation. It shows one simplified attention head, not the many heads and layers of a real model.</p>
+															<p class="step-note">The query/key/value language is worth demystifying: the query is what a token is looking for, the key is what each token advertises, and the value is what it passes on when the match is good. Attention is a soft lookup, not a database. The same word can end up in a different place depending on the context, because the values it collects are different.</p>
+															<p class="step-note">Training data is full of typos, misspellings, and irregular spacing. Attention and the feed-forward network see both clean and noisy text, so they learn to route around the noise and still produce something useful from a misspelled token.</p>
+														</div>
+					</section>
+
+					<section class="section-block" id="layer-detail-section">
+						<div class="section-kicker">The layer in detail · the MLP</div>
+						<h2 class="section-title">A projection, a bias, a bend</h2>
+						<div class="prose">
+							<p>After attention, each token passes through a small network of its own: the feed-forward network, usually a multilayer perceptron (MLP). It first computes an affine projection, <span data-tex="Wx + b" data-tex-display="false"></span>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
+						</div>
+						<div class="step-pane layer-pane" id="layer-detail">
+															<div class="layer-formula" data-tex="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{weight}\\\text{matrix}}}\,x + \underbrace{b}_{\text{bias}}\right)" data-tex-de="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{Gewichts-}\\\text{Matrix}}}\,x + \underbrace{b}_{\text{Bias}}\right)"></div>
+															<div class="collapse-card">
+																<div class="cc-label">Worked example · 2 inputs, 3 outputs</div>
+																<div class="collapse-math" data-tex="\begin{aligned} W &amp;= \begin{pmatrix} 1 &amp; 2 \\ 0 &amp; -1 \\ 2 &amp; 1 \end{pmatrix}, \quad x = \begin{pmatrix} 3 \\ 1 \end{pmatrix}, \quad b = \begin{pmatrix} 0 \\ 0 \\ -2 \end{pmatrix} \\[6pt] Wx &amp;= \begin{pmatrix} 1\cdot 3 + 2\cdot 1 \\ 0\cdot 3 + (-1)\cdot 1 \\ 2\cdot 3 + 1\cdot 1 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \\ 7 \end{pmatrix} \\[6pt] z = Wx + b &amp;= \begin{pmatrix} 5 \\ -1 \\ 7 \end{pmatrix} + \begin{pmatrix} 0 \\ 0 \\ -2 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \\ 5 \end{pmatrix} \\[6pt] \operatorname{ReLU}(z) &amp;= \begin{pmatrix} 5 \\ 0 \\ 5 \end{pmatrix} \end{aligned}"></div>
+																<p>Read <span data-tex="W" data-tex-display="false"></span> row by row: the first output mixes the inputs as <span data-tex="1\cdot 3 + 2\cdot 1" data-tex-display="false"></span>, the second as <span data-tex="0\cdot 3 + (-1)\cdot 1" data-tex-display="false"></span>, the third as <span data-tex="2\cdot 3 + 1\cdot 1" data-tex-display="false"></span>. The bias adds <span data-tex="0" data-tex-display="false"></span>, <span data-tex="0" data-tex-display="false"></span>, and <span data-tex="-2" data-tex-display="false"></span>, so <span data-tex="z = (5, -1, 5)" data-tex-display="false"></span>. ReLU, the activation introduced below, sends the negative entry to zero and leaves the other two unchanged. A real layer runs the same dot products and the same bend with thousands of rows and columns.</p>
+															</div>
+															<h4 class="layer-subhead">Depth without a nonlinearity</h4>
+															<div class="collapse-card">
+																<div class="cc-label">two dense layers without a nonlinearity</div>
+																<div class="collapse-math" id="collapse-math" data-tex="\begin{aligned} \operatorname{dense}_2(\operatorname{dense}_1(x)) &amp;= W_2(W_1 x + b_1) + b_2 \\ &amp;= (W_2 W_1)x + (W_2 b_1 + b_2) \\ &amp;= Wx + b \\[4pt] W &amp;= W_2 W_1, \qquad b = W_2 b_1 + b_2 \end{aligned}"></div>
+																<p>Stack two projections, one after the other. The product <span data-tex="W_2 W_1" data-tex-display="false"></span> is itself a new single weight matrix: every row of <span data-tex="W_1" data-tex-display="false"></span> is mixed with the columns of <span data-tex="W_2" data-tex-display="false"></span>, and the result is a new matrix. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <span data-tex="W" data-tex-display="false"></span> maps d inputs directly to k outputs: the hidden layer has disappeared. The biases also merge into <span data-tex="W_2 b_1 + b_2" data-tex-display="false"></span>. Without a nonlinearity, two layers are exactly one layer with a combined <span data-tex="W" data-tex-display="false"></span>; depth without a nonlinearity adds no expressive power. That is why a nonlinear activation is needed.</p>
+															</div>
+															<h4 class="layer-subhead">Nonlinear activation functions</h4>
+															<div class="activation-card">
+																<div class="activation-copy">
+																	<p>A <b>nonlinear activation function</b> is applied to each coordinate after the projection. It adds the nonlinearity that a stack of linear layers otherwise lacks.</p>
+																	<p><span data-tex="\operatorname{ReLU}(z) = \max(0, z)" data-tex-display="false"></span> passes positive values unchanged and sends the entire negative half-space to zero. The graph is flat, then a straight rise: a hard fold at <span data-tex="z = 0" data-tex-display="false"></span>. Because many inputs become the same output, ReLU is not injective; it can change the topology of the representation.</p>
+																	<p><b>Sigmoid</b> squashes every value into (0, 1); <b>tanh</b> squashes it into (-1, 1). Both are strictly increasing, so they bend smoothly without mapping distinct inputs to the same output. <b>GELU</b> is smooth but not monotonic: it dips slightly below zero, so it is also many-to-one. Other choices include SiLU/Swish, ELU, and gated variants such as SwiGLU.</p>
+																</div>
+																<div class="activation-plots" id="activation-plots">
+																	<figure class="ap ap-relu">
+																		<svg viewBox="0 0 60 44" role="img" aria-label="ReLU: zero for negative inputs, then a straight rise">
+																			<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
+																			<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
+																			<path class="ap-curve" d="M2.00,28.67 L6.67,28.67 L11.33,28.67 L16.00,28.67 L20.67,28.67 L25.33,28.67 L30.00,28.67 L34.67,24.22 L39.33,19.78 L44.00,15.33 L48.67,10.89 L53.33,6.44 L58.00,2.00"></path>
+																		</svg>
+																		<figcaption><b>ReLU</b><span>flat, then a rise</span></figcaption>
+																	</figure>
+																	<figure class="ap ap-gelu">
+																		<svg viewBox="0 0 60 44" role="img" aria-label="GELU: a smooth curve that dips slightly below zero">
+																			<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
+																			<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
+																			<path class="ap-curve" d="M2.00,28.70 L6.67,28.80 L11.33,29.07 L16.00,29.56 L20.67,30.08 L25.33,30.04 L30.00,28.67 L34.67,25.59 L39.33,21.19 L44.00,16.22 L48.67,11.29 L53.33,6.58 L58.00,2.04"></path>
+																		</svg>
+																		<figcaption><b>GELU</b><span>smooth, small dip</span></figcaption>
+																	</figure>
+																	<figure class="ap ap-sigmoid">
+																		<svg viewBox="0 0 60 44" role="img" aria-label="Sigmoid: an S-shaped curve between zero and one">
+																			<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
+																			<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
+																			<path class="ap-curve" d="M2.00,28.25 L6.67,27.99 L11.33,27.61 L16.00,27.05 L20.67,26.28 L25.33,25.31 L30.00,24.22 L34.67,23.13 L39.33,22.17 L44.00,21.40 L48.67,20.84 L53.33,20.45 L58.00,20.20"></path>
+																		</svg>
+																		<figcaption><b>Sigmoid</b><span>S-shape, 0 to 1</span></figcaption>
+																	</figure>
+																	<figure class="ap ap-tanh">
+																		<svg viewBox="0 0 60 44" role="img" aria-label="Tanh: an S-shaped curve between minus one and one">
+																			<line class="ap-axis" x1="2" y1="28.67" x2="58" y2="28.67"></line>
+																			<line class="ap-axis" x1="30" y1="2" x2="30" y2="42"></line>
+																			<path class="ap-curve" d="M2.00,37.51 L6.67,37.44 L11.33,37.24 L16.00,36.71 L20.67,35.44 L25.33,32.77 L30.00,28.67 L34.67,24.56 L39.33,21.90 L44.00,20.62 L48.67,20.10 L53.33,19.90 L58.00,19.82"></path>
+																		</svg>
+																		<figcaption><b>tanh</b><span>S-shape, -1 to 1</span></figcaption>
+																	</figure>
+																</div>
+															</div>
+															<h4 class="layer-subhead">Where the bend happens</h4>
+															<p class="step-note curve-intro">After attention has placed each token in context, the MLP works on that token on its own. It projects the vector, adds a bias, and applies a nonlinearity. A smooth activation bends the surrounding space instead of only stretching it; ReLU folds it along a crease at <span data-tex="z = 0" data-tex-display="false"></span>. This moves the token toward a region where the next token is easier to separate.</p>
+															<div class="demo demo--paper ism-panel" data-arrow-nav style="margin-top:14px">
+																<div class="demo-head">
+																	<div>
+																		<p class="demo-title">Watch the MLP bend the space <span>· demo 07</span></p>
+																		<p class="demo-sub">A straight line is the easiest separator, but it is not always possible in the original space. The MLP lifts the points into a new plane where it becomes possible. In an LLM the same idea runs in thousands of dimensions and helps the model isolate and represent internal states.</p>
+																	</div>
+																	<span class="demo-badge">drag / step</span>
+																</div>
+																<div class="demo-body">
+																	<div id="ism-copy" class="ism-copy" aria-live="polite">
+																		<div id="ism-title" class="ism-title"></div>
+																		<div id="ism-body" class="ism-body"></div>
+																	</div>
+																	<div id="ism-wrap" class="ism-wrap" style="height:clamp(360px, 55vw, 480px)">
+																		<canvas id="ism-canvas" style="display:block;width:100%;height:100%" aria-label="An animated point cloud: a coral core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a coral core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
+																	</div>
+																	<div class="ism-controls">
+																		<button type="button" id="ism-prev" data-arrow-prev class="ism-btn" aria-label="Previous step">←</button>
+																		<button type="button" id="ism-next" data-arrow-next class="ism-btn" aria-label="Next step">→</button>
+																		<div id="ism-dots" class="ism-dots" aria-hidden="true"></div>
+																		<span id="ism-counter" class="ism-counter">1 / 7</span>
+																	</div>
+																</div>
+																<div class="demo-insight"><b>Takeaway</b><span>The layers in an MLP lift the points into a higher-dimensional space where a straight line can separate what was inseparable before. They change the space in which the cut is made.</span></div>
+															</div>
+															<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into one that a straight line can separate, which in higher dimensions means a plane or hyperplane.</p>
+															<p class="step-note">An MLP also translates the representation. Its affine step can move a feature into a region where the next layer can use it; separation and translation are two descriptions of the same learned transformation.</p>
+															<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>).</p>
+														</div>
+					</section>
+
+					<section class="section-block" id="step-ffn-section">
+						<div class="section-kicker">Step 5 · Feed-forward</div>
+						<h2 class="section-title">A pattern matches, a value is written</h2>
+						<div class="prose">
+							<p>A feed-forward network works on each token separately. It expands the vector into a wider hidden layer, applies an activation, and projects back to the original width. Attention mixes information across tokens; the feed-forward part does the per-token computation. The patterns below are a strongly simplified picture of which regions the network activates for a given context; they are not stored rules.</p>
+						</div>
+						<div class="step-pane" id="step-ffn">
+															<div class="step-stage">
+																<div class="step-toolbar">
+																	<div class="step-chips" id="iffn-scenarios">
+																		<button class="chip is-on" type="button" data-ffn="fruit">I ate the apple</button>
+																		<button class="chip" type="button" data-ffn="tech">I bought an Apple laptop</button>
+																	</div>
+																</div>
+																<div class="ffn-grid">
+																	<div class="ffn-col">
+																		<div class="ffn-col-head">Residual stream</div>
+																		<div class="ffn-pill is-fire">“Apple” + context</div>
+																	</div>
+																	<div class="ffn-col">
+																		<div class="ffn-col-head">Patterns in W₁</div>
+																		<div class="ffn-list" id="iffn-keys"></div>
+																	</div>
+																	<div class="ffn-col">
+																		<div class="ffn-col-head">Next-token pull in W₂</div>
+																		<div class="ffn-list" id="iffn-values"></div>
+																	</div>
+																	<div class="ffn-col">
+																		<div class="ffn-col-head">Written back</div>
+																		<div class="ffn-pill is-fire">richer vector</div>
+																	</div>
+																</div>
+																<div class="step-out" id="iffn-out"></div>
+																<p class="step-note ffn-caveat"><b>What is simplified:</b> a real FFN has no labelled keys or values. The “patterns” are learned directions in W₁; the “pull” is a learned direction in W₂ that changes the next-token distribution. The labels are a simplified picture, not stored rules.</p>
+															</div>
+														</div>
+					</section>
+
+					<section class="section-block" id="step-residual-section">
+						<div class="section-kicker">Step 6 · Residual</div>
+						<h2 class="section-title">Every layer adds to the same stream</h2>
+						<div class="prose">
+							<p>Every layer reads the same running vector, the residual stream, computes an update, and adds it back. Think of the stream as a shared notebook that any layer can write to. Earlier notes stay in place; later layers read the original entry plus everything written since. The rule is <span data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)" data-tex-display="false"></span>: the new state is the old state plus a change. Each attention block contains many heads, and each MLP contains several layers; the diagram folds them into one step at a time.</p>
+						</div>
+						<div class="step-pane" id="step-residual">
+															<div class="step-stage">
+																<figure class="res-notebook">
+																	<div class="res-nb-page">
+																		<p class="res-nb-sentence"><span class="res-nb-emb">The</span> <span class="res-nb-emb res-nb-att">cat</span> <span class="res-nb-emb res-nb-mlp">sat</span> on the <span class="res-nb-emb">mat</span> because <span class="res-nb-emb res-nb-att">she</span> was <span class="res-nb-emb res-nb-mlp">tired</span>.</p>
+																		<p class="res-nb-note res-nb-note--emb"><b>Embedding</b> every word becomes a vector.</p>
+																		<p class="res-nb-note res-nb-note--att"><b>Attention</b> “she” points back to “cat”.</p>
+																		<p class="res-nb-note res-nb-note--mlp"><b>MLP</b> “tired” explains why the cat sat.</p>
+																	</div>
+																	<figcaption>One shared page. Each layer writes in its own color, and earlier notes stay readable.</figcaption>
+																</figure>
+																<div class="res-stream">
+																	<div class="res-layers" id="ires-layers"></div>
+																	<div class="res-panel">
+																		<div class="res-bars" id="ires-bars"></div>
+																		<div class="res-vector" id="ires-vector" aria-live="polite"></div>
+																		<div class="res-legend"><span><i></i> running stream</span><span id="ires-out"></span></div>
+																		<div class="prose-math" data-tex="\underbrace{x_{n+1}}_{\text{new stream}} = \underbrace{x_n}_{\text{running stream}} + \underbrace{\operatorname{layer}_{n+1}(x_n)}_{\text{what this layer writes}}" data-tex-de="\underbrace{x_{n+1}}_{\text{neuer Stream}} = \underbrace{x_n}_{\text{laufender Stream}} + \underbrace{\operatorname{layer}_{n+1}(x_n)}_{\text{was diese Schicht schreibt}}" data-tex-display="true"></div>
+																	</div>
+																</div>
+															</div>
+															<p class="step-note">The addition is the point. Nothing is overwritten, so the original signal survives, and gradients have a short path back through the sum. That is a large part of why very deep networks train at all. The numbers under the bars are the same sum written out one coordinate at a time.</p>
+														</div>
+					</section>
 					<section class="section-block" id="meadow">
 						<div class="section-kicker"><span class="sk-num">04</span> The last step</div>
 						<h2 class="section-title">The final vector picks a word.</h2>
@@ -1000,10 +998,10 @@
 			var max = 0;
 			candidates.forEach(function (text) {
 				why.textContent = text;
-				max = Math.max(max, why.offsetHeight);
+				max = Math.max(max, why.getBoundingClientRect().height);
 			});
 			why.textContent = previous;
-			if (max) why.style.minHeight = max + "px";
+			if (max) why.style.minHeight = (Math.ceil(max) + 1) + "px";
 		}
 		function setTemp(value) {
 			temp = Math.max(0.05, Math.min(1.8, value));
