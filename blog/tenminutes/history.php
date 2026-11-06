@@ -53,7 +53,7 @@
 								of them at once.
 							</p>
 						</div>
-						<div class="demo demo--paper" id="ceres-demo">
+						<div class="demo demo--paper demo--plot" id="ceres-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Ceres: truth vs. noisy observations</p>
@@ -150,7 +150,7 @@
 							</p>
 						</div>
 
-						<div class="demo demo--paper timeline-shell" id="timeline-demo" data-arrow-nav>
+						<div class="demo demo--paper demo--timeline timeline-shell" id="timeline-demo" data-arrow-nav>
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Sixteen turning points <span>· demo 01</span></p>
@@ -514,7 +514,7 @@
 								margins.
 							</p>
 						</div>
-						<div class="demo demo--paper" id="gate-demo">
+						<div class="demo demo--paper demo--canvas" id="gate-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Why XOR broke the single layer <span>· demo 03</span></p>
@@ -679,7 +679,7 @@
 								read handwritten digits, first on ZIP codes for the U.S. Postal Service
 								and later on bank checks.
 							</p>
-						<div class="demo demo--paper" id="conv-demo">
+						<div class="demo demo--paper demo--canvas" id="conv-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">A convolution is a sliding weighted sum <span>· demo 04</span></p>
@@ -849,7 +849,7 @@
 							</p>
 						</div>
 
-						<div class="demo demo--paper llm-demo" id="llm-demo">
+						<div class="demo demo--paper demo--interactive llm-demo" id="llm-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">Attention <span>· demo 02</span></p>
