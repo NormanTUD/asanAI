@@ -1699,14 +1699,73 @@
 			}
 			unBody.querySelectorAll('.md').forEach(function (m) { m.classList.add('no-markdown'); });
 		}
-		// Token Trajectory: put it above the layer blocks (move the wrapper,
-		// which carries the visibility toggle, not just the chart).
-		var traj = document.getElementById("transformer-trajectory-full-path-wrapper") || document.getElementById("transformer-trajectory-full-path");
-		var container = document.getElementById("ffn-equations-container");
-		var stack = container ? container.querySelector(".unified-layer-stack") : null;
-		if (traj && container && stack && traj.parentNode !== container) {
-			container.insertBefore(traj, stack);
-			traj.style.width = "100%";
+		// 4 · Transformer: one box after Position, with the token trajectory at
+		// the top, then the overview steps, then the stacked layer cards.
+		var posCard = stepByNumber(3);
+		if (posCard) {
+			var isDe = document.documentElement.lang === "de";
+			var attendCard = stepByNumber(4);
+			var ffnCard = stepByNumber(5);
+			var residualCard = stepByNumber(6);
+			var box = document.getElementById("tm-transformer-box");
+			if (!box) {
+				box = document.createElement("section");
+				box.className = "tm-step tm-transformer-box";
+				box.id = "tm-transformer-box";
+				box.innerHTML = '<div class="tm-step-head"><h3>' + (isDe ? "4 · Transformer" : "4 · Transformer") + '</h3><button class="tm-step-toggle" type="button" aria-expanded="true" aria-label="' + (isDe ? "Schritt einklappen" : "Collapse step") + '">−</button></div><p>' + (isDe ? "Der Block, der die Schichten stapelt. Die Token Trajectory zeigt, wie sich die Vektoren Schicht für Schicht verschieben; die Layer darunter zeigen Attention und FFN." : "The block that stacks the layers. The token trajectory shows how the vectors shift layer by layer; the layers below show attention and FFN.") + '</p><div class="tm-step-body" id="tm-transformer-body"></div>';
+				posCard.parentNode.insertBefore(box, posCard.nextSibling);
+				var toggle = box.querySelector(".tm-step-toggle");
+				toggle.addEventListener("click", function () {
+					var b = box.querySelector(".tm-step-body");
+					var open = b.hidden;
+					b.hidden = !open;
+					toggle.textContent = open ? "−" : "+";
+					toggle.setAttribute("aria-expanded", String(open));
+					toggle.setAttribute("aria-label", open ? (isDe ? "Schritt einklappen" : "Collapse step") : (isDe ? "Schritt ausklappen" : "Expand step"));
+					box.classList.toggle("is-collapsed", !open);
+					if (open) setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 60);
+				});
+			}
+			var boxBody = box.querySelector(".tm-step-body");
+			// Move the already-rendered overview cards into the Transformer box.
+			[[attendCard, isDe ? "Attention-Überblick" : "Attention overview"],
+			 [ffnCard, isDe ? "Feed-Forward-Überblick" : "Feed-forward overview"],
+			 [residualCard, isDe ? "Residual-Stream-Überblick" : "Residual stream overview"]].forEach(function (pair) {
+				var card = pair[0];
+				if (!card || !boxBody) return;
+				var h = card.querySelector("h3");
+				if (h) h.textContent = pair[1];
+				var b = card.querySelector(".tm-step-body");
+				if (b) b.hidden = true;
+				card.classList.add("is-collapsed");
+				var btn = card.querySelector(".tm-step-toggle");
+				if (btn) {
+					btn.textContent = "+";
+					btn.setAttribute("aria-expanded", "false");
+					btn.setAttribute("aria-label", isDe ? "Schritt ausklappen" : "Expand step");
+				}
+				boxBody.appendChild(card);
+			});
+			// Move the layer container into the box, after the overview cards.
+			var layerContainer = document.getElementById("ffn-equations-container");
+			if (layerContainer && layerContainer.parentNode !== boxBody) boxBody.appendChild(layerContainer);
+			// Token Trajectory is the opening picture of the block.
+			var traj = document.getElementById("transformer-trajectory-full-path-wrapper") || document.getElementById("transformer-trajectory-full-path");
+			if (traj && boxBody && traj.parentNode !== boxBody) {
+				boxBody.insertBefore(traj, boxBody.firstChild);
+				traj.style.width = "100%";
+			}
+			// The old #block section keeps its prose, but the observer should now
+			// fire on the Transformer box at the top.
+			var oldBlock = document.getElementById("block");
+			if (oldBlock && oldBlock !== box) oldBlock.id = "block-source";
+			box.id = "block";
+			// Renumber the final step now that the overview cards left the grid.
+			var un = stepByNumber(7);
+			if (un) {
+				var uh = un.querySelector("h3");
+				if (uh && uh.textContent.trim().indexOf("7") === 0) uh.textContent = isDe ? "5 · Unembedding" : "5 · Unembedding";
+			}
 		}
 		// 7 · Unembed: the real output projection belongs in the expanded box.
 		// The duplicate token builder and temperature block stay hidden; the

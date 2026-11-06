@@ -718,6 +718,8 @@
 			function draw(ctx, w, h) {
 				var c = palette();
 				ctx.clearRect(0, 0, w, h);
+				ctx.fillStyle = c.paper2;
+				ctx.fillRect(0, 0, w, h);
 				if (!state.points.length) return;
 				drawGrid(ctx, w, h);
 				var projected = state.points.map(function (p) { return project(p, w, h); });
@@ -737,6 +739,24 @@
 					ctx.strokeStyle = c.blue;
 					ctx.globalAlpha = 1;
 					ctx.stroke();
+					for (var a = 0; a + 1 < projected.length; a++) {
+						var p0 = projected[a], p1 = projected[a + 1];
+						var dx = p1.x - p0.x, dy = p1.y - p0.y;
+						var len = Math.hypot(dx, dy);
+						if (len < 18) continue;
+						var mx = p0.x + dx * 0.58, my = p0.y + dy * 0.58;
+						var ux = dx / len, uy = dy / len;
+						var size = 6;
+						ctx.beginPath();
+						ctx.moveTo(mx + ux * size, my + uy * size);
+						ctx.lineTo(mx - ux * size * 0.4 - uy * size * 0.55, my - uy * size * 0.4 + ux * size * 0.55);
+						ctx.lineTo(mx - ux * size * 0.4 + uy * size * 0.55, my - uy * size * 0.4 - ux * size * 0.55);
+						ctx.closePath();
+						ctx.fillStyle = c.blue;
+						ctx.globalAlpha = 0.95;
+						ctx.fill();
+					}
+					ctx.globalAlpha = 1;
 				}
 				var order = projected.map(function (p, i) { return i; });
 				order.sort(function (a, b) { return projected[b].z - projected[a].z; });
@@ -774,13 +794,25 @@
 				});
 				if (state.hover >= 0) {
 					var token = data.tokens[state.hover];
-					var info = "Token " + norm(token.display) +
+					var hp = projected[state.hover];
+					var info = norm(token.display) +
 						" · " + (de ? "Position " : "position ") + (token.position + 1) +
 						" · id " + token.id;
-					ctx.font = "600 10px Barlow, system-ui, sans-serif";
+					ctx.font = "700 11px Barlow, system-ui, sans-serif";
+					var tw = ctx.measureText(info).width;
+					var bx = Math.max(10, Math.min(w - tw - 26, hp.x - tw / 2 - 8));
+					var by = Math.max(10, hp.y - 48);
+					ctx.fillStyle = c.paper;
+					ctx.strokeStyle = c.blue;
+					ctx.lineWidth = 1;
+					ctx.beginPath();
+					ctx.rect(bx, by, tw + 16, 23);
+					ctx.fill();
+					ctx.stroke();
+					ctx.fillStyle = c.ink;
 					ctx.textAlign = "left";
-					ctx.fillStyle = c.muted;
-					ctx.fillText(info, 12, h - 12);
+					ctx.textBaseline = "middle";
+					ctx.fillText(info, bx + 8, by + 12);
 				}
 			}
 			function redraw() { if (state.api) state.api.redraw(); }

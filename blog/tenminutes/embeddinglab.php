@@ -201,7 +201,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Ein Gedicht ist eine Linie' : 'A poem is a line'; ?> <span>· demo 01d</span></p>
-									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Drei kurze Texte, jeder ein eindimensionaler Pfad durch den 768-dimensionalen Embedding-Raum von GPT-2. Wechsle das Beispiel, um die Linien zu vergleichen.' : 'Three short texts, each a one-dimensional path through GPT-2’s 768-dimensional embedding space. Switch examples to compare the lines.'; ?></p>
+									<p class="demo-sub"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Drei kurze Texte, jeder ein eindimensionaler Pfad durch den 768-dimensionalen Embedding-Raum von GPT-2. Jeder Punkt ist ein Token plus seine Position; die Linie folgt der Leserichtung. Die 3D-Ansicht ist eine PCA-Projektion, also ein Schatten der 768 Dimensionen; die Achsen x/y/z sind nur Orientierung. Fahre über einen Punkt, um das Token zu sehen.' : 'Three short texts, each a one-dimensional path through GPT-2’s 768-dimensional embedding space. Each point is a token plus its position; the line follows reading order. The 3D view is a PCA projection, a shadow of the 768 dimensions; the x/y/z axes are only orientation. Hover a point to see the token.'; ?></p>
 								</div>
 								<span class="demo-badge"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'echtes GPT-2' : 'real GPT-2'; ?></span>
 							</div>
