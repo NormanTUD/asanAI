@@ -305,43 +305,42 @@
 					<section class="section-block" id="step-embed-section">
 						<div class="section-kicker">Step 2 · Embed</div>
 						<h2 class="section-title">Ids become points in meaning space</h2>
+						<h4 class="layer-subhead">Meaning becomes geometry</h4>
 						<div class="prose">
-							<p>Each token id points to a vector of learned parameters. A real model uses thousands of dimensions, often around ten thousand; this demo uses two so the picture can be represented, but the principle is the same. The vector is the token's starting representation. The model learns these points from its training data (Wikipedia, books, web pages, code) and chooses the rules itself. Related tokens end up near each other, and directions carry relationships.</p>
+							<p>Each token id points to a vector of learned parameters. A real model uses thousands of dimensions, often around ten thousand; this demo uses two so the picture can be represented, but the principle is the same. The vector is the token's starting representation. The model learns these points from its training data (Wikipedia, books, web pages, code) and chooses the rules itself. Words become points in a space: similar words sit close together, and a <b>direction</b> can carry a relationship, such as the arrow from man to woman being the same arrow as king to queen. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>)</p>
 						</div>
 						<div class="step-pane" id="step-embed">
-															<div class="step-stage">
-																<div class="step-toolbar">
-																	<div class="step-chips">
-																		<button class="chip is-on" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
-																		<button class="chip" type="button" data-emb="directions">all directions</button>
-																	</div>
-																</div>
-																<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with two learned directions"></canvas>
-																<div class="step-out" id="iemb-out">The space has two learned directions in this demo. Choose an example to see where it lands.</div>
-															</div>
-															<h4 class="layer-subhead">Meaning becomes geometry</h4>
-															<p class="step-note">Words become points in a space. Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. Real embeddings use thousands of dimensions; this demo uses two so you can see the idea. (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>)</p>
-															<div class="demo demo--paper" id="tm-dual-manifold-demo" style="margin-top:14px;">
-																<div class="demo-body">
-																	<div id="tm-dual-manifolds" style="width:100%;height:420px;">
-																		<div class="tm-manifold-loading">
-																			<span class="tm-spinner" aria-hidden="true"></span>
-																			<span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Lade die Mannigfaltigkeiten …' : 'Loading the manifolds …'; ?></span>
-																		</div>
-																	</div>
-																	<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;min-height:118px;"></div>
-																</div>
-															</div>
-															<p class="meadow-caption" style="color:var(--tm-muted);margin-top:10px;">
-																<?php if (function_exists('tm_lang') && tm_lang() === 'de'): ?>
-																Aus den Wörtern (Tokens) und ihrer Lage zueinander lassen sich Übersetzungen ableiten, allein aus diesen Relationen. In echten Modellen ist das nicht nur komplexer, weil der Raum hochdimensional ist, sondern auch, weil es Tokens sind und keine ganzen Wörter.
-																Was du siehst, sind sogenannte <b>Mannigfaltigkeiten</b>: Räume, in denen die Wortpunkte liegen. In der Nähe jedes Punktes sehen sie flach aus wie eine Ebene, als Ganzes können sie aber gekrümmt sein, ähnlich wie die Erdoberfläche für jemanden, der darauf steht.
-																<?php else: ?>
-																The words (tokens) and their positions relative to each other are enough to derive translations, from those relations alone. In real models this is more complex not only because the space is high-dimensional, but also because they are tokens, not whole words.
-																What you see are so-called <b>manifolds</b>: spaces in which the word points lie. Near each point they look flat like a plane, but as a whole they can be curved, much like the Earth's surface looks flat from where you stand.
-																<?php endif; ?>
-															</p>
-														</div>
+							<div class="step-stage">
+								<div class="step-toolbar">
+									<div class="step-chips">
+										<button class="chip is-on" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
+										<button class="chip" type="button" data-emb="Man + 2 * Power">Man + 2 · Power</button>
+										<button class="chip" type="button" data-emb="Prince + Power">Prince + Power</button>
+										<button class="chip" type="button" data-emb="gender">male ↔ female</button>
+										<button class="chip" type="button" data-emb="power">power</button>
+										<button class="chip" type="button" data-emb="directions">all directions</button>
+									</div>
+								</div>
+								<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with two learned directions"></canvas>
+								<div class="step-out" id="iemb-out">The space has two learned directions in this demo. Choose an example to see where it lands.</div>
+							</div>
+						</div>
+						<h4 class="layer-subhead">From relations to translation</h4>
+						<div class="prose">
+							<p>Words and whole sentences are points in a high-dimensional space, and the points form a <b>manifold</b>: near each point it looks flat like a plane, but as a whole it can be curved, much like the Earth's surface from where you stand. The relations between the points are similar enough that they can be used for translation: the path from one word or sentence to another can be transformed into the corresponding path in another language. In a transformer, the feed-forward networks help learn such transformations.</p>
+							<p>The words (tokens) and their positions relative to each other are enough to derive translations, from those relations alone. In real models this is more complex not only because the space is high-dimensional, but also because they are tokens, not whole words.</p>
+						</div>
+						<div class="demo demo--paper" id="tm-dual-manifold-demo">
+							<div class="demo-body">
+								<div id="tm-dual-manifolds" style="width:100%;height:420px;">
+									<div class="tm-manifold-loading">
+										<span class="tm-spinner" aria-hidden="true"></span>
+										<span><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Lade die Mannigfaltigkeiten …' : 'Loading the manifolds …'; ?></span>
+									</div>
+								</div>
+								<div id="tm-dual-controls" style="max-width:520px;margin:8px auto 0;min-height:118px;"></div>
+							</div>
+						</div>
 					</section>
 
 					<section class="section-block" id="step-position-section">
@@ -351,7 +350,7 @@
 							<p>Attention, explained in the next step, compares tokens with each other but has no built-in sense of order. Without a position signal, “man bites dog” and “dog bites man” contain exactly the same vectors and look identical. A positional encoding adds a distinct fingerprint to every slot, so order becomes part of the representation.</p>
 							<p>The classic sinusoidal encoding comes from <strong>Vaswani et al. (2017)</strong> in <a href="https://arxiv.org/abs/1706.03762" rel="noopener">Attention Is All You Need</a>. Here <strong>pos</strong> is the token’s position, <strong>i</strong> indexes a pair of dimensions (0, 1, 2, …), and <strong>d</strong> is the model dimension, the width of the vector. Each pair of dimensions oscillates at a different frequency: low dimensions change slowly, high dimensions quickly.</p>
 						</div>
-						<div class="prose-math" data-tex="\underbrace{\begin{aligned} PE_{(\text{pos},2i)} &amp;= \sin\left(\frac{\underbrace{\text{pos}}_{\text{position}}}{\underbrace{10000^{2i/d}}_{\text{frequency}}}\right) \\ PE_{(\text{pos},2i+1)} &amp;= \cos\left(\frac{\text{pos}}{10000^{2i/d}}\right) \end{aligned}}_{\text{each dimension gets its own wave}}" data-tex-de="\underbrace{\begin{aligned} PE_{(\text{pos},2i)} &amp;= \sin\left(\frac{\underbrace{\text{pos}}_{\text{Position}}}{\underbrace{10000^{2i/d}}_{\text{Frequenz}}}\right) \\ PE_{(\text{pos},2i+1)} &amp;= \cos\left(\frac{\text{pos}}{10000^{2i/d}}\right) \end{aligned}}_{\text{jede Dimension bekommt ihre eigene Welle}}" data-tex-display="true"></div>
+						<div class="prose-math pos-formula" data-tex="\underbrace{\begin{aligned} PE_{(\text{pos},2i)} &amp;= \sin\left(\frac{\underbrace{\text{pos}}_{\text{position}}}{\underbrace{10000^{2i/d}}_{\text{frequency}}}\right) \\ PE_{(\text{pos},2i+1)} &amp;= \cos\left(\frac{\text{pos}}{10000^{2i/d}}\right) \end{aligned}}_{\text{each dimension gets its own wave}}" data-tex-de="\underbrace{\begin{aligned} PE_{(\text{pos},2i)} &amp;= \sin\left(\frac{\underbrace{\text{pos}}_{\text{Position}}}{\underbrace{10000^{2i/d}}_{\text{Frequenz}}}\right) \\ PE_{(\text{pos},2i+1)} &amp;= \cos\left(\frac{\text{pos}}{10000^{2i/d}}\right) \end{aligned}}_{\text{jede Dimension bekommt ihre eigene Welle}}" data-tex-display="true"></div>
 						<div class="step-pane" id="step-position">
 							<div class="step-stage">
 								<div class="step-toolbar">
@@ -359,7 +358,7 @@
 										<input type="range" id="ipe-heat-context" min="16" max="128" step="8" value="64">
 										<output id="ipe-heat-context-out">64</output>
 									</label>
-									<label>Dimensions
+									<label>Visible dimensions
 										<input type="range" id="ipe-heat-dims" min="2" max="64" step="2" value="24">
 										<output id="ipe-heat-dims-out">24</output>
 									</label>
@@ -386,6 +385,10 @@
 									<label>Position
 										<input type="range" id="ipe-pos" min="0" max="1000" step="1" value="7">
 										<output id="ipe-pos-out">7</output>
+									</label>
+									<label>Model dimension d
+										<input type="range" id="ipe-d-model" min="8" max="256" step="8" value="64">
+										<output id="ipe-d-model-out">64</output>
 									</label>
 									<button class="chip is-on" type="button" id="ipe-autorotate" aria-pressed="true">Auto-rotate view</button>
 								</div>
@@ -1925,19 +1928,19 @@
 		}
 		function embDefault() {
 			return DE
-				? 'Der Raum hat in dieser Demo zwei semantische Achsen: <b>Macht</b> und <b>Geschlecht</b>. Wähle ein Beispiel, um zu sehen, wo es landet.'
-				: 'The space has two semantic axes in this demo: <b>power</b> and <b>gender</b>. Choose an example to see where it lands.';
+				? 'Der Raum hat in dieser Demo zwei gelernte Richtungen. Wähle ein Beispiel, um zu sehen, wo es landet.'
+				: 'The space has two learned directions in this demo. Choose an example to see where it lands.';
 		}
 		function embDirText(mode) {
 			if (mode === "gender") return DE
-				? 'Die <b>Geschlechtsrichtung</b> (grün) ist dieselbe von Mann zu Frau und von König zu Königin. Sie ist eine gelernte Richtung, keine benannte Achse.'
-				: 'The <b>gender</b> direction (green) is the same from man to woman and from king to queen. It is a learned direction, not a named axis.';
+				? 'Eine gelernte Richtung verbindet Mann und Frau sowie König und Königin. Sie ist eine Richtung im Raum, keine benannte Achse.'
+				: 'One learned direction connects man and woman, and king and queen. It is a direction in the space, not a named axis.';
 			if (mode === "power") return DE
-				? 'Die <b>Machtrichtung</b> (gold) ist dieselbe entlang Mann → Prinz → König und Frau → Prinzessin → Königin. Das Modell lernt sie aus den Daten.'
-				: 'The <b>power</b> direction (gold) is the same along man → prince → king and woman → princess → queen. The model learns it from the data.';
+				? 'Eine andere gelernte Richtung führt von Mann zu Prinz zu König und von Frau zu Prinzessin zu Königin. Das Modell lernt sie aus den Daten.'
+				: 'Another learned direction moves from man to prince to king and from woman to princess to queen. The model learns it from the data.';
 			return DE
-				? 'Die <b>Geschlechtsrichtung</b> (grün) ist dieselbe von Mann zu Frau und von König zu Königin. Die <b>Machtrichtung</b> (gold) ist dieselbe entlang Mann → Prinz → König. Bedeutung lebt in Positionen und Richtungen.'
-				: 'The <b>gender</b> arrow (green) is the same from man to woman and from king to queen. The <b>power</b> arrow (gold) is the same along man → prince → king. Meaning lives in positions and in directions.';
+				? 'Zwei gelernte Richtungen: Eine verbindet Mann und Frau, König und Königin; eine andere führt von Mann zu Prinz zu König. Bedeutung lebt in Positionen und Richtungen.'
+				: 'Two learned directions: one connects man and woman, king and queen; another moves from man to prince to king. Meaning lives in positions and in directions.';
 		}
 		function embDirTex(mode) {
 			function vec(word) {
@@ -2022,11 +2025,11 @@
 			ctx.fillStyle = c.muted;
 			ctx.font = "600 10px Barlow, system-ui, sans-serif";
 			ctx.textAlign = "left";
-			ctx.fillText((DE ? "Macht" : "Power") + " →", mx(embRange.x1) - 52, my(0) - 8);
+			ctx.fillText((DE ? "Richtung A" : "direction A") + " →", mx(embRange.x1) - 72, my(0) - 8);
 			ctx.save();
 			ctx.translate(mx(0) - 8, my(embRange.y0) + 40);
 			ctx.rotate(-Math.PI / 2);
-			ctx.fillText((DE ? "Geschlecht" : "Gender") + " →", 0, 0);
+			ctx.fillText((DE ? "Richtung B" : "direction B") + " →", 0, 0);
 			ctx.restore();
 
 			var highlighted = ["man", "woman", "prince", "king"];
@@ -2092,11 +2095,11 @@
 				var green = c.dark ? "#869b55" : "#63a44b";
 				var gold = "#9f9700";
 				if (embDirMode === "gender" || embDirMode === "all") {
-					arrow(embSpace.Man, embSpace.Woman, green, DE ? "Geschlecht" : "gender");
+					arrow(embSpace.Man, embSpace.Woman, green, DE ? "Richtung B" : "direction B");
 					arrow(embSpace.King, embSpace.Queen, green, "");
 				}
 				if (embDirMode === "power" || embDirMode === "all") {
-					arrow(embSpace.Man, embSpace.Prince, gold, DE ? "mehr Macht" : "more power");
+					arrow(embSpace.Man, embSpace.Prince, gold, DE ? "Richtung A" : "direction A");
 					arrow(embSpace.Prince, embSpace.King, gold, "");
 					arrow(embSpace.Woman, embSpace.Princess, gold, "");
 					arrow(embSpace.Princess, embSpace.Queen, gold, "");

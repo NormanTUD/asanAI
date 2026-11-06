@@ -271,6 +271,27 @@ with the full formulas one level deeper.
 	}
 })();
 </script>
+<script>
+(function () {
+	function renderStepMath() {
+		if (!window.temml) return;
+		document.querySelectorAll('#transformer-step-visuals [data-tex]').forEach(function (el) {
+			if (el.getAttribute('data-tex-rendered') === '1') return;
+			var tex = el.getAttribute('data-tex');
+			var display = el.getAttribute('data-tex-display') !== 'false';
+			try {
+				el.innerHTML = temml.renderToString(tex, { displayMode: display });
+				el.setAttribute('data-tex-rendered', '1');
+			} catch (e) {
+				el.textContent = tex;
+			}
+		});
+	}
+	if (document.readyState === 'complete') renderStepMath();
+	else window.addEventListener('load', renderStepMath);
+	setTimeout(renderStepMath, 900);
+})();
+</script>
 
 <div class="md" id="step-input">
 ## Preparing the Input
