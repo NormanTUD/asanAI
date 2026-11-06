@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="assets/site.css">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 	<link rel="stylesheet" href="assets/full/demos.css">
+	<link rel="stylesheet" href="../transformer_steps.css">
 </head>
 <body data-lesson="transformer" data-page="lesson" data-no-full-article>
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -42,6 +43,13 @@
 						<p>
 							This is the hardest chapter in the calendar. The following days become
 							lighter again.
+						</p>
+						<p>
+							This model is browser-sized on purpose. A browser is far too weak to train a
+							good language model; the point is to inspect and follow every calculation,
+							step by step. A model worth using needs terabytes of data and compute.
+							<strong>Play with the sliders:</strong> moving the width, the heads, the depth
+							and the context is part of understanding what the architecture does.
 						</p>
 					</div>
 
@@ -270,8 +278,58 @@
 							</p>
 						</div>
 					</section>
+					<section class="section-block" id="six-steps">
+						<div class="section-kicker"><span class="sk-num">02</span> The six steps</div>
+						<h2 class="section-title">The whole route, visible at once.</h2>
+						<div class="prose">
+							<p>
+								These are the six steps from the intuition chapter, now driven by the real
+								numbers of the tiny model above. Read the heading, then look at the picture.
+								The layer cards below repeat the attention, feed-forward and residual steps
+								for every layer, with the full formulas one level deeper.
+							</p>
+						</div>
+						<div class="tm-step-grid" id="transformer-step-visuals">
+							<section class="tm-step">
+								<h3>1 · Tokenize</h3>
+								<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
+								<canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
+							</section>
+							<section class="tm-step">
+								<h3>2 · Embed</h3>
+								<p>Each token becomes a point in the learned embedding space. The line follows the sentence; the faint cloud is the rest of the vocabulary.</p>
+								<canvas class="tm-step-canvas" id="tm-step-embed" aria-label="The embedding space with the sentence path"></canvas>
+							</section>
+							<section class="tm-step">
+								<h3>3 · Position</h3>
+								<p>The same token at a different slot gets a different fingerprint. Each row is a position; the waves are the sinusoidal encoding.</p>
+								<canvas class="tm-step-canvas" id="tm-step-position" aria-label="A heatmap of positional encodings"></canvas>
+							</section>
+							<section class="tm-step">
+								<h3>4 · Attend</h3>
+								<p>Attention lets every token read the others. Each arc is a weighted connection; a thicker line carries more information.</p>
+								<canvas class="tm-step-canvas" id="tm-step-attend" aria-label="Attention arcs between tokens"></canvas>
+							</section>
+							<section class="tm-step">
+								<h3>5 · Feed-forward</h3>
+								<p>The FFN transforms one token at a time. The bars are the hidden activations of the last token: the pattern the layer writes back.</p>
+								<canvas class="tm-step-canvas" id="tm-step-ffn" aria-label="Feed-forward hidden activations"></canvas>
+							</section>
+							<section class="tm-step">
+								<h3>6 · Residual</h3>
+								<p>Every layer adds an attention update and an FFN update to the running stream. The heatmap shows how much each layer writes for each token.</p>
+								<canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
+							</section>
+							<section class="tm-step">
+								<h3>7 · Unembed</h3>
+								<p>The final vector is compared with every vocabulary embedding. The bars are the model's shortlist for the next token.</p>
+								<canvas class="tm-step-canvas" id="tm-step-unembed" aria-label="Top next-token logits"></canvas>
+							</section>
+						</div>
+					</section>
+
 					<section class="section-block" id="before">
-						<div class="section-kicker"><span class="sk-num">02</span> Before 2017</div>
+						<div class="section-kicker"><span class="sk-num">03</span> Before 2017</div>
 						<h2 class="section-title">The problem was the queue.</h2>
 						<div class="prose">
 							<p>

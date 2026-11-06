@@ -124,6 +124,21 @@
 		});
 	}
 
+	function fitCopyHeight() {
+		const copy = copyEl("ism-copy");
+		if (!copy) return;
+		const previous = copy.style.minHeight;
+		copy.style.minHeight = "0px";
+		let max = 0;
+		copy.querySelectorAll(".ism-scene").forEach(function (el) {
+			const active = el.classList.contains("is-active");
+			if (!active) el.style.display = "block";
+			max = Math.max(max, el.getBoundingClientRect().height);
+			if (!active) el.style.display = "";
+		});
+		copy.style.minHeight = max ? (Math.ceil(max) + 1) + "px" : previous;
+	}
+
 	function renderCopy() {
 		const counter = copyEl("ism-counter");
 		if (counter) counter.textContent = (cur + 1) + " / " + SCENES.length;
@@ -624,6 +639,7 @@
 		buildDots();
 		buildSceneStack();
 		renderCopy();
+		fitCopyHeight();
 		bindDrag();
 
 		const nextBtn = copyEl("ism-next");
@@ -631,8 +647,10 @@
 		if (nextBtn) nextBtn.addEventListener("click", next);
 		if (prevBtn) prevBtn.addEventListener("click", prev);
 
+		window.addEventListener("resize", fitCopyHeight);
 		window.addEventListener("resize", requestDraw);
 		window.addEventListener("tm:theme", requestDraw);
+		if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitCopyHeight);
 		if (window.ResizeObserver) new ResizeObserver(requestDraw).observe(wrap);
 		observe();
 	}

@@ -6520,7 +6520,7 @@ input[type="range"]:focus-visible { outline: 2px solid var(--tm-green); outline-
 /* ── space-curvature demo ─────────────────────────────────── */
 .ism-copy {
 	max-width: 640px;
-	min-height: 12em;
+	min-height: 4.5em;
 	margin: 0 auto 14px;
 	text-align: center;
 	display: grid;

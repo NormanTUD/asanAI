@@ -492,8 +492,7 @@
 																		<p class="demo-title">Watch the MLP bend the space <span>· demo 07</span></p>
 																		<p class="demo-sub">A straight line is the easiest separator, but it is not always possible in the original space. The MLP lifts the points into a new plane where it becomes possible. In an LLM the same idea runs in thousands of dimensions and helps the model isolate and represent internal states.</p>
 																	</div>
-																	<span class="demo-badge">drag / step</span>
-																</div>
+										</div>
 																<div class="demo-body">
 																	<div id="ism-copy" class="ism-copy" aria-live="polite">
 																		<div id="ism-title" class="ism-title"></div>
