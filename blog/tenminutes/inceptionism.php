@@ -6,7 +6,7 @@
 	<meta name="description" content="How Inceptionism turns a frozen classifier around: gradient ascent on the input, layer by layer, to see what the network has learned.">
 	<meta name="theme-color" content="#ffffff">
 	<title>What the Network Dreams | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-lesson="inceptionism" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -101,6 +101,6 @@
 		</div>
 	</main>
 
-	<script src="assets/site.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 </body>
 </html>
