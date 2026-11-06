@@ -55,7 +55,7 @@
 						<figcaption>One image, several prompts: SAM segments whatever you point at, zero-shot. Image: Alexander Kirillov et al. (Meta AI), <a href="https://github.com/facebookresearch/segment-anything" rel="noopener">Apache-2.0</a>.</figcaption>
 					</figure>
 
-					<div class="demo demo--paper" data-demo="convolution">
+					<div class="demo demo--paper demo--canvas" data-demo="convolution">
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">A filter slides over the stop sign <span>· demo</span></p>
