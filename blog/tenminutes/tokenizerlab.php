@@ -6,7 +6,7 @@
 	<meta name="description" content="Pick a word, a number, or a script and watch a demo tokenizer split it. See why spelling, numbers, and languages pay different token costs.">
 	<meta name="theme-color" content="#ffffff">
 	<title>Chopping Text into Tokens | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-lesson="tokenizerlab" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -284,7 +284,7 @@ training text, and stop at the target vocabulary size.
 		</div>
 	</main>
 
-	<script src="assets/site.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
 	<script>
 	(function () {
 		"use strict";

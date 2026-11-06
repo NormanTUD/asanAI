@@ -6,7 +6,7 @@
 	<meta name="description" content="Quantization, GGUF, llama.cpp, and what it takes to run a capable model on a laptop.">
 	<meta name="theme-color" content="#ffffff">
 	<title>Running a Model Yourself | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-lesson="running_locally" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -190,7 +190,7 @@ ollama list</code></pre>
 		});
 	})();
 	</script>
-	<script src="assets/site.js"></script>
-	<script src="assets/demos.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
+	<script src="assets/demos.js?v=<?php echo filemtime(__DIR__.'/assets/demos.js'); ?>"></script>
 </body>
 </html>
