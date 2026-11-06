@@ -1,0 +1,101 @@
+# Prompt: vereinheitliche alle Demos im Blog mit dem ScaDS.AI-Farbsystem
+
+Du arbeitest im Repository `asanai`, zuerst in `blog/tenminutes/`, danach im
+restlichen `blog/`. Ziel ist ein einheitliches, hochwertiges Demo-Framework:
+Jede Demo soll ohne eigenes CSS nur über eine Shell-Klasse wie
+`<div class="demo demo--interactive"> ... </div>` funktionieren. Inhalt und
+Didaktik bleiben unverändert; du änderst nur Shell, Abstände, Farben,
+Typografie und Interaktions-Chrome.
+
+## Verbindliche Farben und Bedeutungen (ScaDS.AI)
+
+Diese Farben sind keine Dekoration. Wähle die Farbe, die zur Sache passt;
+andere Farben nur mit ausdrücklich genanntem Grund.
+
+- Schwarz `#000000`: Text, Struktur, neutrale Betonung
+- Dunkelblau `#004B6F`: primäre UI, Links, Überschriften
+- Grün `#63a44b`: Signal, Erfolg, positiv
+- Blau `#1275ac`: sekundäre UI, Hover, Interaktion
+- Teal `#009299`: Living Lab, sehr interaktiv
+- Lila `#9185be`: Responsible AI
+- Light Blue `#5c9baf`: Applied AI and Big Data
+- Grau `#92a19a`: Big Data Analytics and Engineering
+- Light Green `#869B55`: AI Algorithms and Methods
+- Gelb `#9F9700`: Architecture, Scalability and Security
+
+Neutrale Flächen bleiben Weiß bzw. die bestehenden `--tm-*`-Tokens. Kein
+CDN, keine neuen Abhängigkeiten, kein Build-Schritt.
+
+## Ist-Zustand, den du zuerst prüfst
+
+- `blog/tenminutes/assets/site.css` enthält viele Einzelregeln für einzelne
+  Demos. Manche Demos haben einen blauen Hintergrund, andere ein Grid, andere
+  gar keinen; Slider verlieren auf weißem Grund ihren Track.
+- `blog/tenminutes/intuition.php` ist die Referenzseite: „Die Wiese der Wörter“
+  nutzt ein Grid, „Jede Schicht addiert zum selben Stream“ einen blauen
+  Hintergrund, die MLP-Demo einen eigenen Verlauf.
+- Die Demos liegen teils als `data-demo` in `assets/demos.js`, teils als
+  seitenspezifisches JS vor. Ihre Shells sind nicht vereinheitlicht.
+
+## Zielarchitektur
+
+1. **Eine Basis-Shell** in `assets/site.css`:
+   - `.demo` (Fläche, Rahmen, Radius, Schatten, Farbvariablen)
+   - `.demo__head`, `.demo__body`, `.demo__controls`, `.demo__readout`,
+     `.demo__note`, `.demo__badge`
+   - Ein einziger Hintergrund: sanfter vertikaler Verlauf plus sehr dezentes
+     Grid (Mischung aus „Wiese der Wörter“ und MLP-Demo), über
+     `background-image` mit `linear-gradient` und einer feinen
+     `repeating-linear-gradient`-Linie. Dark Mode bekommt eine eigene,
+     kontrastreiche Variante.
+2. **Modifier, die von der Basis erben** (keine Copy-Paste-Styles):
+   - `.demo--interactive` (Teal-Akzent, Living Lab)
+   - `.demo--canvas` (Canvas/Plot, ruhige Fläche)
+   - `.demo--stepper` (Schritt-Navigation)
+   - `.demo--timeline` (horizontale/vertikale Zeitachse)
+   - `.demo--calculator` (Eingaben + Readout)
+   - `.demo--compare` (zwei Spalten)
+   - `.demo--generative` (Textausgabe)
+3. **Ein Slider-Stil für alle Demos**: sichtbarer Track auf Weiß
+   (`--tm-line-strong`), grüner Thumb, Fokusring, Dark-Mode-Variante.
+   Keine Demo darf den transparenten Default-Track erben.
+4. **Ein Chip-/Button-/Readout-/Caption-Stil**. Entferne seitenspezifische
+   Duplikate, wenn sie die Basis nur nachbauen.
+5. **Header-Regel**: keine „drag / step“-/„ziehen / Schritt“-Badges am Anfang.
+   Nur inhaltlich bedeutsame Badges (z. B. „3D“, „live“, „illustrativ“).
+6. **Vertikaler Rhythmus**: kein großer Leerraum zwischen Erklärtext und
+   Grafik. Feste Höhen nur, wenn sie gemessen werden (wie `fitCopyHeight`);
+   kein Springen bei Interaktion.
+
+## Vorgehen
+
+1. Inventarisiere alle Demos in `blog/tenminutes/*.php` und `assets/*.js`.
+   Ordne jede Demo einem Modifier zu. Notiere Sonderfälle.
+2. Baue die Basisklassen und Modifier in `assets/site.css`. Nutze
+   `var(--tm-*)`; halte `TM.colors()`-Fallbacks synchron.
+3. Migriere `intuition.php` zuerst vollständig als Referenz:
+   - gleiche Fläche, gleicher Verlauf, gleiches Grid für alle Demos
+   - semantische Akzente je Demo-Typ
+   - Slider/Chips/Buttons/Readouts konsistent
+   - beide Sprachen und beide Themes prüfen
+4. Migriere danach `embeddinglab.php`, `history.php`, `computer_vision.php`,
+   `tokenizerlab.php`, `minimalneuron.php`, `language.php` und die übrigen
+   Seiten. Entferne dabei nur Shell-/Style-Duplikate, keine Inhalte.
+5. Prüfe jede Seite mit `?lang=de` und `?lang=en` bei 1200 px und 390 px:
+   - keine Console-Errors, kein horizontaler Overflow
+   - alle `[data-tex]` gerendert
+   - Slider sichtbar, Chips sichtbar, Canvas nicht leer
+   - Fokus/Kontrast in Light und Dark
+6. Zum Schluss `python3 blog/tools/check_all.py --fast` ausführen und die
+   Rohausgabe berichten. Wenn du Top-Level-Lektionen, `literature.js` oder den
+   Chunker geändert hast, den vollen `check_all.py`-Lauf inklusive
+   Index-Rebuild machen.
+
+## Grenzen
+
+- Keine neuen Abhängigkeiten, kein CDN, kein Build-Schritt.
+- Keine Inhalts-, Zahlen- oder Zitatänderungen.
+- Deutsche und englische Fassung immer gemeinsam pflegen.
+- Bestehende IDs/Klassen, die JS erwartet, nicht brechen; neue Klassen
+  additiv einführen.
+- Farben nur aus der obigen semantischen Palette; Ausnahmen begründen.

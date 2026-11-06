@@ -1,0 +1,60 @@
+todo_worker — Ten Minutes design / demo work
+
+Rules:
+- One task per line. When finished, prefix the line with "DONE ".
+- Every change must be checked in English and German.
+- Colour meanings are in AGENTS.md; use the ScaDS.AI semantic palette.
+- Do not change lesson content while restyling; only the shell, spacing, colour,
+  and interaction chrome.
+
+DONE Document the ScaDS.AI colour meanings in AGENTS.md
+DONE MLP demo: reduce the gap between the explanation and the canvas; fit the
+     copy height to the tallest scene instead of a fixed 12em
+DONE Remove the "drag / step" badge from the MLP demo
+DONE Make slider tracks visible inside .step-pane (paper background)
+DONE Position formula: \text{pos}, define i and d, cite Vaswani et al. (2017),
+     split the heatmap and 3D demos, add a transition and drag hint
+DONE Attention: restore the four example chips (visible on paper), use the
+     river/sandbank example in English, colour the relevant words
+DONE Attention formula: show every value vector, every weight, the
+     coordinate-wise arithmetic, and the result with underbraces so it can be
+     hand-calculated
+DONE Attention formula: use percentages labelled "Aufmerksamkeit", compact
+     vector pairs, and a smaller type size
+DONE Active chips/buttons inside .step-pane use the ScaDS green background
+DONE Position bridge: replace the "second demo" paragraph with a styled,
+     informative bridge (gradient + faint grid, semantic green) and move the
+     drag hint into the demo itself
+DONE Neural typo note: add the "new" + "york" layer intuition
+
+Open — unified demo framework
+- Inventory every demo in blog/tenminutes (and then blog/) by type: interactive
+  chips, canvas, Plotly/ECharts, stepper, timeline, calculator, comparison,
+  generative, drag/scroll.
+- Define one base shell in assets/site.css, for example `.demo`, `.demo__head`,
+  `.demo__body`, `.demo__controls`, `.demo__readout`, `.demo__note`,
+  `.demo__badge`. New pages should only need
+  `<div class="demo demo--interactive"> ... </div>`.
+- Add modifier classes that inherit from the base: `.demo--interactive`
+  (teal), `.demo--canvas`, `.demo--plot`, `.demo--stepper`, `.demo--timeline`,
+  `.demo--calculator`, `.demo--compare`, `.demo--generative`.
+- One shared surface: a soft vertical brand gradient plus a faint grid,
+  inspired by "The meadow of words" and "Watch the MLP bend the space".
+  Use the semantic palette; no random accent hues.
+- One shared slider style for every demo (visible track on white, green thumb,
+  focus ring, dark-mode variant). No demo may inherit the transparent default
+  track by accident.
+- One shared chip/button/readout/caption style; remove per-page one-offs that
+  duplicate the base.
+- Standardise demo headers: no "drag / step" or "ziehen / Schritt" badges at
+  the start; keep only meaningful status/metadata badges.
+- Standardise vertical rhythm: no large empty gaps between copy and figure;
+  stable heights without hidden jumps.
+- Migrate intuition.php first as the reference page, then embeddinglab.php,
+  history.php, computer_vision.php, tokenizerlab.php, and the remaining pages.
+- Check light and dark mode, 390px width, reduced motion, keyboard focus, and
+  both languages after each page.
+- Keep `TM.colors()` fallbacks in sync; canvas/Plotly demos must re-render on
+  `tm:theme`.
+- Run `python3 blog/tools/check_all.py --fast` and the demo audit before
+  marking this done.

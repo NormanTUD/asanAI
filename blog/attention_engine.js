@@ -408,6 +408,20 @@ class AttentionEngine {
 		}
 	}
 
+	renderLayer(layerIdx) {
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		if (!registry || !registry.layers[layerIdx]) return;
+		const layerData = registry.layers[layerIdx];
+		const attnSection = document.getElementById(`unified-layer-${layerIdx}-attention-heads`);
+		if (!attnSection) return;
+		const existingHeadTabList = attnSection.querySelector('.head-tab-list');
+		if (!existingHeadTabList) {
+			this._buildUnifiedLayerHeadTabs(attnSection, layerIdx, layerData.headData);
+		} else {
+			this._updateUnifiedLayerHeadTabs(existingHeadTabList, layerIdx, layerData.headData);
+		}
+	}
+
 	executeActualRender(headData, tokens) {
 		if (!tokens.length) return;
 

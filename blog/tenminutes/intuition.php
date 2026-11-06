@@ -377,8 +377,13 @@
 								</div>
 								<div class="step-out" id="ipe-heat-out">Each row is one position; each column is one dimension.</div>
 							</div>
-							<div class="prose">
-								<p>The second demo shows the same pattern in three dimensions. The heatmap above is a flat slice; below, the same sinusoidal fingerprint is drawn as a real 3D curve. Move the position slider and watch the point travel along the curve. Drag the 3D view to rotate it and get a feel for the structure that the high-dimensional model is using. In a real model the same idea repeats in thousands of dimensions.</p>
+							<div class="pos-bridge">
+								<span class="pos-bridge-kicker">Same pattern, one dimension higher</span>
+								<h3 class="pos-bridge-title">From the flat slice to the 3D curve</h3>
+								<p>The heatmap above shows the pattern as a flat slice: position across, dimension up. Below, the same sinusoidal fingerprint is drawn as a real 3D curve. The shape does not change; only the number of dimensions does. In a real model this curve becomes a surface in thousands of dimensions.</p>
+								<div class="pos-bridge-flow" aria-hidden="true">
+									<span>position × dimension</span><i>→</i><span>3D curve</span><i>→</i><span>N dimensions</span>
+								</div>
 							</div>
 							<div class="step-stage">
 								<div class="step-toolbar">
@@ -388,6 +393,7 @@
 									</label>
 									<button class="chip is-on" type="button" id="ipe-autorotate" aria-pressed="true">Auto-rotate view</button>
 								</div>
+								<p class="step-note pos-drag-hint">Move the slider to travel along the curve; drag the view to rotate it.</p>
 								<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
 								<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
 							</div>

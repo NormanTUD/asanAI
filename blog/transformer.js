@@ -2113,62 +2113,36 @@ function prepareMigrationState(needsReinit) {
 }
 
 function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads) {
-	multiLayerAttentionRegistry.clear();
-
-	const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
-
-	const headData = causalMultiHeadAttention(normH0, weights[0]["attention"], d_model, n_heads);
-
-	// Use per-layer unified containers for layer 0
-	ensureFFNLayerContainers(0);
-
-	// Register attention engine with a virtual container ID that maps to unified tabs
+	const layer = weights[0];
+	const normH0 = calculateLayerNorm(h0, layer.gamma, layer.beta);
+	const headData = causalMultiHeadAttention(normH0, layer.attention, d_model, n_heads);
 	const virtualContainerId = "unified-attention-engine";
-	const engine = new AttentionEngine({
-		d_model, n_heads,
-		containerId: virtualContainerId,
-		weights: weights[0]["attention"]
-	});
+	const engine = new AttentionEngine({ d_model, n_heads, containerId: virtualContainerId, weights: layer.attention });
 	engine.forward(normH0, tokensWithPositional, knownTokens);
-
 	const regEntry = attentionRenderRegistry.get(virtualContainerId);
 	if (regEntry) { regEntry.headData = headData; regEntry.rendered = false; }
-
-	const multiHeadOutput = updateConcatenationDisplayForLayer(headData, tokensWithPositional, 0, knownTokens);
-
-	// Also still update the old global container for backward compat
-	updateConcatenationDisplay(headData, tokensWithPositional, knownTokens);
-
-	const Wo_layer0 = weights[0]["attention"]["output"];
+	const multiHeadOutput = h0.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
+	const Wo_layer0 = layer.attention.output;
 	const projected = matMul(multiHeadOutput, Wo_layer0);
 	const h1 = matAdd(h0, projected);
-
-	// Provenance: record all intermediate values of the attention sublayer
-	if (window.Prov) {
-		window.Prov.recordLayer(0, {
-			d_model, n_heads,
-			h_in: h0,
-			norm: normH0,
-			gamma: weights[0]["gamma"],
-			beta: weights[0]["beta"],
-			Wo: Wo_layer0,
-			concat: multiHeadOutput,
-			proj: projected,
-			h1,
-			tokens: knownTokens,
-			headData,
-			attention: weights[0]["attention"]
-		});
-	}
-
-	render_h1_logic_for_layer(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], Wo_layer0, 0, knownTokens);
-
-	// Keep old global render for backward compat
-	render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], Wo_layer0, knownTokens);
-
-	const h2 = run_ffn_block(h1, weights[0], false, 0, knownTokens);
+	const h2 = run_ffn_block(h1, layer, true, 0, knownTokens);
+	if (window.Prov) window.Prov.recordLayer(0, {
+		d_model, n_heads,
+		h_in: h0,
+		norm: normH0,
+		gamma: layer.gamma,
+		beta: layer.beta,
+		Wo: Wo_layer0,
+		concat: multiHeadOutput,
+		proj: projected,
+		h1,
+		tokens: knownTokens,
+		headData,
+		attention: layer.attention
+	});
 	if (!window.__tmLayerTrace) window.__tmLayerTrace = [];
-	window.__tmLayerTrace[0] = { h_in: h0, h_attn: h1, h_out: h2, headData, tokenStrings: knownTokens };
+	window.__tmLayerTrace[0] = { h_in: h0, h_attn: h1, h_out: h2, headData, tokenStrings: knownTokens, normH: normH0, concat: multiHeadOutput, projected, Wo: Wo_layer0, gamma: layer.gamma, beta: layer.beta, ffn: (window.__tmFFNTrace || [])[0] };
+	ensureFFNLayerContainers(0);
 	return h2;
 }
 
@@ -2224,12 +2198,10 @@ function buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts,
 }
 
 function renderAttentionDetails() {
-	const virtualContainerId = "unified-attention-engine";
-	const registryEntry = attentionRenderRegistry.get(virtualContainerId);
-	if (registryEntry && registryEntry.instance) {
-		registryEntry.rendered = false;
-		registryEntry.instance.executeActualRender(registryEntry.headData, registryEntry.tokens);
-	}
+	const open = document.querySelector('.unified-layer-card[open]');
+	if (!open) return;
+	const layerIdx = parseInt(open.dataset.layerIdx, 10);
+	if (!isNaN(layerIdx)) renderLayerAttention(layerIdx);
 }
 
 function renderTrajectoryPlot(d_model) {
@@ -2349,6 +2321,9 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 	// 3. Prepare migration/trajectory state
 	prepareMigrationState(needsReinit);
+	for (let l = 0; l < n_layers; l++) {
+		ensureUnifiedLayerContainer(l, n_layers, 'mha-calculation-details');
+	}
 
 	// 4. Core forward pass + visualization
 	renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
@@ -3382,17 +3357,17 @@ function clearFFNEquationsContainer() {
 	// Only do a full clear when the architecture config has changed
 	// (detected by comparing the number of existing layer tabs to n_layers).
 	const { n_layers } = getTransformerConfig();
-	const existingTabs = container.querySelectorAll('.unified-layer-tab-btn');
+	const existingCards = container.querySelectorAll('.unified-layer-card');
 
-	if (existingTabs.length === n_layers) {
-		// FIX: Tabs already exist with correct count — keep them, just mark FFN as needing update
+	if (existingCards.length === n_layers) {
 		container.querySelectorAll('.unified-layer-tab-content').forEach(div => {
 			div.dataset.ffnRendered = 'false';
+			const body = div.querySelector('[id$="-formula-body"]');
+			if (body) body.dataset.formulasRendered = 'false';
 		});
 		return;
 	}
 
-	// Architecture changed — full clear so unified tabs get rebuilt fresh
 	container.innerHTML = '';
 }
 
@@ -3647,20 +3622,25 @@ function _renderTemmlOnElements(elements) {
 
 function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights, startLayer = 0, tokenStrings = null) {
 	let h_current = h_initial;
-
 	for (let n = startLayer; n < total_depth; n++) {
-		const h_before_layer = JSON.parse(JSON.stringify(h_current));
-
-		// tokenStrings is now threaded into forwardOneLayer
-		const result = forwardOneLayer(h_current, this_weights[n], d_model, n_heads, tokenStrings, "unified-attention-engine", n);
+		const layer = this_weights[n];
+		const h_before_layer = h_current.map(row => row.slice());
+		const normH = calculateLayerNorm(h_current, layer.gamma, layer.beta);
+		const headData = causalMultiHeadAttention(normH, layer.attention, d_model, n_heads);
+		const virtualContainerId = "unified-attention-engine";
+		const engine = new AttentionEngine({ d_model, n_heads, containerId: virtualContainerId, weights: layer.attention });
+		engine.forward(normH, tokenStrings || h_current, tokenStrings);
+		const regEntry = attentionRenderRegistry.get(virtualContainerId);
+		if (regEntry) { regEntry.headData = headData; regEntry.rendered = false; }
+		const concat = h_current.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
+		const projected = matMul(concat, layer.attention.output);
+		const h_attn = matAdd(h_current, projected);
+		const h_out = run_ffn_block(h_attn, layer, true, n, tokenStrings);
 		if (!window.__tmLayerTrace) window.__tmLayerTrace = [];
-		window.__tmLayerTrace[n] = { h_in: h_before_layer, h_attn: result.h_attn, h_out: result.h_out, headData: result.headData, tokenStrings };
-
-		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, result.h_out, n + 1, d_model, result.h_out, tokenStrings);
-
-		h_current = result.h_out;
+		window.__tmLayerTrace[n] = { h_in: h_before_layer, h_attn, h_out, headData, tokenStrings, normH, concat, projected, Wo: layer.attention.output, gamma: layer.gamma, beta: layer.beta, ffn: (window.__tmFFNTrace || [])[n] };
+		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, h_out, n + 1, d_model, h_out, tokenStrings);
+		h_current = h_out;
 	}
-
 	return h_current;
 }
 
@@ -3811,10 +3791,6 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 		PlotState.loadingMarkup('Loading feature migration plot...')
 	);
 
-	const plotDiv = document.getElementById(id);
-	if (plotDiv) {
-		tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model, tokenStrings);
-	}
 }
 
 function getMigrationDisplayTokens(tokens, tokenStrings) {
@@ -3967,29 +3943,7 @@ function ensureMigrationPlotDiv(id, d_model, existingVfEnabled, parentContainer)
 }
 
 function getTrajectoryPlotHeight(d_model) {
-	if (d_model <= 3) {
-		return 850;
-	}
-
-	const nPairs = (d_model * (d_model - 1)) / 2;
-
-	// Measure the actual container width to match the CSS grid layout:
-	// grid-template-columns: repeat(auto-fill, minmax(400px, 1fr))
-	const migrationContainer = document.getElementById('transformer-migration-plots-container');
-	const containerWidth = migrationContainer
-		? migrationContainer.getBoundingClientRect().width
-		: 800; // fallback
-
-	// Subtract padding (the grid has padding:10px on each side)
-	const availableWidth = Math.max(400, containerWidth - 20);
-
-	// auto-fill with minmax(400px, 1fr): how many 400px columns fit?
-	const cols = Math.max(1, Math.floor(availableWidth / 400));
-	const rows = Math.ceil(nPairs / cols);
-
-	// Each slice div is 400px tall + 15px gap between rows
-	// Plus the heading (~60px) and container padding
-	return 60 + rows * 400 + Math.max(0, rows - 1) * 15 + 20;
+	return d_model <= 3 ? 850 : 520;
 }
 
 window.addEventListener('resize', debounce(() => {
@@ -5030,7 +4984,7 @@ function _traj_ensure_heading(trajDiv, pairCount) {
 		heading.style.cssText = "text-align:center; padding:15px 10px 5px; font-size:1rem; color:#1e40af; width:100%;";
 		trajDiv.prepend(heading);  // Use prepend to ensure it's ABOVE the grid
 	}
-	heading.innerHTML = `<b>Token Trajectory — 2D Projections (${pairCount} dimension pairs)</b>`;
+	heading.innerHTML = `<b>Token Trajectory — choose a dimension pair (${pairCount} possible)</b>`;
 	return heading;
 }
 
@@ -5183,15 +5137,59 @@ function _traj_render_single_slice(grid, tokens, labels, dataPoints, dimA, dimB,
 }
 
 // ─── Main function: now a clean orchestrator ───
+function _traj_high_dim_pair_score(dataPoints, dimA, dimB) {
+	let n = 0, sumA = 0, sumB = 0, sumA2 = 0, sumB2 = 0;
+	dataPoints.forEach(p => {
+		(p.data || []).forEach(v => {
+			if (!v) return;
+			const a = v[dimA] || 0, b = v[dimB] || 0;
+			sumA += a; sumB += b; sumA2 += a * a; sumB2 += b * b; n++;
+		});
+	});
+	if (!n) return 0;
+	return (sumA2 / n - (sumA / n) ** 2) + (sumB2 / n - (sumB / n) ** 2);
+}
+
 function _traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab) {
 	const pairs = _traj_generate_dimension_pairs(d_model);
-
 	_traj_ensure_heading(trajDiv, pairs.length);
-	const grid = _traj_ensure_grid(trajDiv);
 
-	pairs.forEach(([dimA, dimB]) => {
-		_traj_render_single_slice(grid, tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab);
-	});
+	let controls = trajDiv.querySelector('[data-traj-controls]');
+	if (!controls) {
+		controls = document.createElement('div');
+		controls.setAttribute('data-traj-controls', 'true');
+		controls.style.cssText = 'display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; justify-content:center; padding:4px 10px 12px;';
+		controls.innerHTML = '<label style="font:600 0.82rem Barlow, system-ui, sans-serif; color:#1e40af;">Dimension pair: <select data-traj-pair style="padding:4px 8px; border:1px solid #93c5fd; border-radius:6px; background:#fff;"></select></label>';
+		trajDiv.appendChild(controls);
+	}
+	const select = controls.querySelector('[data-traj-pair]');
+	if (!select) return;
+
+	const best = pairs.reduce((acc, pair) => {
+		const score = _traj_high_dim_pair_score(dataPoints, pair[0], pair[1]);
+		return (!acc || score > acc.score) ? { pair, score } : acc;
+	}, null).pair;
+
+	if (!select.options.length) {
+		pairs.forEach(pair => {
+			const option = document.createElement('option');
+			option.value = pair[0] + ',' + pair[1];
+			option.textContent = `Dim ${pair[0]} / Dim ${pair[1]}`;
+			select.appendChild(option);
+		});
+	}
+	select.value = best[0] + ',' + best[1];
+
+	const grid = _traj_ensure_grid(trajDiv);
+	function renderPair(a, b) {
+		grid.innerHTML = '';
+		_traj_render_single_slice(grid, tokens, labels, dataPoints, a, b, embSnap, snapVocab);
+	}
+	select.onchange = function () {
+		const parts = select.value.split(',').map(Number);
+		renderPair(parts[0], parts[1]);
+	};
+	renderPair(best[0], best[1]);
 }
 
 function _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab) {
@@ -7282,165 +7280,148 @@ function matrixToPmatrixLabeled(matrix, tokenStrings, stageLabel) {
 	return `\\left(\\begin{array}{${colSpec}} ${rows}${footer} \\end{array}\\right)`;
 }
 
+function _tmLayerCard(layerIdx) {
+	return document.getElementById(`unified-layer-${layerIdx}-card`);
+}
+
 function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	const container = document.getElementById('ffn-equations-container');
 	if (!container) return;
 
 	container.style.overflowAnchor = 'none';
-
-	let tabsWrapper = container.querySelector('.unified-layer-tabs');
-
-	if (!tabsWrapper) {
-		tabsWrapper = document.createElement('div');
-		tabsWrapper.className = 'unified-layer-tabs';
-		tabsWrapper.style.cssText = 'border:1px solid #3b82f6; border-radius:8px; overflow:hidden; margin-top:20px; overflow-anchor:none;';
-
-		const tabList = document.createElement('div');
-		tabList.className = 'unified-tab-list';
-		tabList.style.cssText = 'background:#dbeafe; display:flex; border-bottom:2px solid #3b82f6; flex-wrap:wrap;';
-
-		tabsWrapper.appendChild(tabList);
-		container.appendChild(tabsWrapper);
+	let stack = container.querySelector('.unified-layer-stack');
+	if (!stack) {
+		stack = document.createElement('div');
+		stack.className = 'unified-layer-stack';
+		stack.style.cssText = 'margin-top:20px; display:flex; flex-direction:column; gap:12px;';
+		container.appendChild(stack);
 	}
 
-	const tabList = tabsWrapper.querySelector('.unified-tab-list');
 	const prefix = `unified-layer-${layerIndex}`;
+	if (document.getElementById(`${prefix}-card`)) return;
 
-	// FIX: If the tab button already exists, don't recreate it
-	if (document.getElementById(`${prefix}-tab-btn`)) {
-		return;
-	}
+	const card = document.createElement('details');
+	card.id = `${prefix}-card`;
+	card.className = 'unified-layer-card';
+	card.dataset.layerIdx = layerIndex;
+	card.style.cssText = 'border:1px solid #3b82f6; border-radius:10px; overflow:hidden; background:#fff;';
 
-	const isActive = (layerIndex === window._activeUnifiedLayerIdx);
-
-	const btn = document.createElement('button');
-	btn.id = `${prefix}-tab-btn`;
-	btn.className = 'unified-layer-tab-btn';
-	btn.textContent = `Layer ${layerIndex + 1}`;
-	btn.style.cssText = `padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-    background:${isActive ? '#fff' : '#bfdbfe'};
-    font-weight:${isActive ? 'bold' : 'normal'};`;
-	btn.onclick = () => showUnifiedLayer(layerIndex);
-	tabList.appendChild(btn);
+	const summary = document.createElement('summary');
+	summary.className = 'unified-layer-summary';
+	summary.style.cssText = 'cursor:pointer; padding:12px 16px; background:#dbeafe; font-weight:700; display:flex; align-items:center; justify-content:space-between; gap:10px;';
+	summary.innerHTML = `<span>Layer ${layerIndex + 1}</span><span class="unified-layer-status" style="font-weight:600; font-size:0.78rem; color:#1e40af;"></span>`;
+	card.appendChild(summary);
 
 	const contentDiv = document.createElement('div');
 	contentDiv.id = `${prefix}-content`;
 	contentDiv.className = 'unified-layer-tab-content';
 	contentDiv.dataset.layerIdx = layerIndex;
 	contentDiv.dataset.rendered = 'false';
-	contentDiv.style.display = isActive ? 'block' : 'none';
+	contentDiv.style.display = 'block';
 	contentDiv.style.padding = '15px';
 	contentDiv.style.background = themeColor('#f8f9ff');
 	contentDiv.style.overflowAnchor = 'none';
-
 	contentDiv.innerHTML = `
-    <!-- ===== ATTENTION SECTION ===== -->
-    <div style="margin-bottom: 24px;">
-	<div id="${prefix}-layernorm-viz" style="margin-top: 10px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
-	<div id="${prefix}-attention-heads" style="margin-top: 16px;"></div>
-	<div id="${prefix}-concat-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;"></div>
-	<div id="${prefix}-h1-final-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #8b5cf6; border-radius: 12px; background: #f5f3ff; overflow-x: auto;"></div>
+    <div style="margin-bottom: 18px;">
+	<p class="unified-layer-hint" style="font-size:0.82rem; color:#475569; margin:0 0 10px;">${(window.TM && TM.lang && TM.lang() === 'de') ? 'Klicke auf ein Wort, um zu sehen, worauf es seine Attention richtet.' : 'Click a word to see where it focuses its attention.'}</p>
+	<div id="${prefix}-attention-heads" style="margin-top: 4px;"></div>
     </div>
-
-    <!-- ===== FFN SECTION ===== -->
-    <div>
-	<p style="color: #f59e0b; margin: 0 0 12px 0; font-size: 0.95rem;">
-	    Feed-Forward Network:
-	</p>
-	<div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
-	<div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
-	<div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
-    </div>
-
-    <!-- ===== MIGRATION PLOT (per-layer) ===== -->
-    <div id="${prefix}-migration-container" style="margin-top: 24px;">
-    </div>
+    <details id="${prefix}-formulas" class="layer-formulas" style="border:1px solid #93c5fd; border-radius:8px; background:#fff; margin-top:12px;">
+	<summary style="cursor:pointer; padding:10px 14px; font-weight:700; color:#1e40af; background:#eff6ff;">Formulas and matrices</summary>
+	<div id="${prefix}-formula-body" style="padding:14px;">
+	    <div id="${prefix}-layernorm-viz" style="margin-top: 10px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
+	    <div id="${prefix}-concat-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;"></div>
+	    <div id="${prefix}-h1-final-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #8b5cf6; border-radius: 12px; background: #f5f3ff; overflow-x: auto;"></div>
+	    <p style="color: #f59e0b; margin: 18px 0 12px 0; font-size: 0.95rem;">Feed-Forward Network:</p>
+	    <div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
+	    <div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
+	    <div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
+	    <div id="${prefix}-migration-container" style="margin-top: 24px;">
+		<p class="migration-parallel-note" style="font-size:0.8rem; color:#475569; margin:0 0 10px; line-height:1.5;">${(window.TM && TM.lang && TM.lang() === 'de') ? 'Parallele Koordinaten: Jede Linie ist ein Token, jede senkrechte Achse eine Dimension. Der Weg der Linie zeigt, wie sich der Vektor des Tokens von Schicht zu Schicht verändert; so siehst du alle Dimensionen auf einmal, ohne sie auf zwei Achsen zu projizieren.' : 'Parallel coordinates: each line is one token, each vertical axis is one dimension. The path shows how the token vector changes from layer to layer, so you can see all dimensions at once without projecting them onto two axes.'}</p>
+	    </div>
+	</div>
+    </details>
     `;
+	card.appendChild(contentDiv);
 
-	tabsWrapper.appendChild(contentDiv);
+	card.addEventListener('toggle', function () {
+		if (!card.open) return;
+		openUnifiedLayer(layerIndex);
+	});
+	const formulas = contentDiv.querySelector(`#${prefix}-formulas`);
+	if (formulas) {
+		formulas.addEventListener('toggle', function () {
+			if (formulas.open) renderLayerFormulas(layerIndex);
+		});
+	}
+	stack.appendChild(card);
 }
 
-window.showUnifiedLayer = function(layerIdx) {
+function openUnifiedLayer(layerIdx) {
 	window._activeUnifiedLayerIdx = layerIdx;
-
-	const container = document.getElementById('ffn-equations-container');
-	if (!container) return;
-
-	// Hide all layer contents
-	container.querySelectorAll('.unified-layer-tab-content').forEach(div => {
-		div.style.display = 'none';
-	});
-	container.querySelectorAll('.unified-layer-tab-btn').forEach(btn => {
-		btn.style.background = '#bfdbfe';
-		btn.style.fontWeight = 'normal';
-	});
-
-	// Show selected layer
-	const contentDiv = document.getElementById(`unified-layer-${layerIdx}-content`);
-	if (contentDiv) {
-		contentDiv.style.display = 'block';
-
-		// Deferred FFN rendering
-		if (contentDiv.dataset.ffnRendered === 'false' && contentDiv._deferredFFNData) {
-			const d = contentDiv._deferredFFNData;
-			const hash = _ffnContentHash(d.h1, d.normed_h1, d.out_L1, d.out_FFN, d.h2, d.gamma, d.beta);
-			contentDiv._lastFFNHash = hash;
-			_writeFFNContent(
-				`unified-layer-${layerIdx}`,
-				d.h1, d.normed_h1, d.W1, d.b1, d.out_L1,
-				d.W2, d.b2, d.out_FFN, d.h2, d.gamma, d.beta, d.layerIndex,
-				d.tokenStrings
-			);
-			contentDiv.dataset.ffnRendered = 'true';
-		}
+	const card = _tmLayerCard(layerIdx);
+	if (card) {
+		const status = card.querySelector('.unified-layer-status');
+		if (status) status.textContent = (window.TM && TM.lang && TM.lang() === 'de') ? 'offen' : 'open';
 	}
+	renderLayerAttention(layerIdx);
+	const formulas = document.getElementById(`unified-layer-${layerIdx}-formulas`);
+	if (formulas && formulas.open) renderLayerFormulas(layerIdx);
+}
 
-	// Highlight active tab button
-	const activeBtn = document.getElementById(`unified-layer-${layerIdx}-tab-btn`);
-	if (activeBtn) {
-		activeBtn.style.background = themeColor('#ffffff');
-		activeBtn.style.fontWeight = 'bold';
+window.showUnifiedLayer = function (layerIdx) {
+	const card = _tmLayerCard(layerIdx);
+	if (card) {
+		card.open = true;
+		openUnifiedLayer(layerIdx);
 	}
+};
 
-	// Trigger attention head rendering for this layer
+function renderLayerAttention(layerIdx) {
 	const registryEntry = attentionRenderRegistry.get('unified-attention-engine');
-	if (registryEntry && registryEntry.instance) {
+	if (!registryEntry || !registryEntry.instance) return;
+	if (typeof registryEntry.instance.renderLayer === 'function') {
+		registryEntry.instance.renderLayer(layerIdx);
+	} else {
 		const mhaRegistry = multiLayerAttentionRegistry.get('unified-attention-engine');
 		if (mhaRegistry && mhaRegistry.layers[layerIdx]) {
-			const attnSection = document.getElementById(`unified-layer-${layerIdx}-attention-heads`);
-			if (attnSection && !attnSection.querySelector('.head-tab-list')) {
-				registryEntry.instance.executeActualRender(registryEntry.headData, registryEntry.tokens);
-			} else {
-				registryEntry.instance._renderLayerContent(layerIdx);
+			registryEntry.instance.executeActualRender(registryEntry.headData, registryEntry.tokens);
+		}
+	}
+}
+
+function renderLayerFormulas(layerIdx) {
+	const trace = (window.__tmLayerTrace || [])[layerIdx];
+	if (!trace) return;
+	const prefix = `unified-layer-${layerIdx}`;
+	const body = document.getElementById(`${prefix}-formula-body`);
+	if (!body || body.dataset.formulasRendered === 'true') return;
+	const tokens = trace.tokenStrings || [];
+	if (trace.headData && trace.concat) {
+		updateConcatenationDisplayForLayer(trace.headData, tokens, layerIdx, tokens);
+	}
+	if (trace.normH && trace.Wo) {
+		render_h1_logic_for_layer(trace.h_in, trace.normH, trace.concat, trace.gamma, trace.beta, trace.Wo, layerIdx, tokens);
+	}
+	const ffn = trace.ffn || (window.__tmFFNTrace || [])[layerIdx];
+	if (ffn) {
+		render_ffn(ffn.h1, ffn.normed_h1, ffn.W1, ffn.b1, ffn.out_L1, ffn.W2, ffn.b2, ffn.out_FFN, ffn.h2, ffn.gamma2, ffn.beta2, layerIdx, tokens);
+	}
+	const migrationId = `migration-layer-${layerIdx + 1}`;
+	const migrationData = transformerLabVisMigrationDataRegistry.get(migrationId);
+	if (migrationData) {
+		const plotDiv = document.getElementById(migrationId);
+		if (plotDiv) {
+			tlab_render_latex_matrix(migrationId, plotDiv, migrationData.tokens, migrationData.start_h, migrationData.end_h, migrationData.h_after, migrationData.d_model, migrationData.tokenStrings);
+			if (isElementInViewport(plotDiv)) {
+				render_migration_logic(migrationId, migrationData.tokens, migrationData.start_h, migrationData.end_h, migrationData.layerNum, migrationData.d_model, migrationData.h_after, migrationData.tokenStrings);
+				migrationData.rendered = true;
 			}
 		}
 	}
-
-	// Trigger migration plot rendering for this layer
-	const migrationId = `migration-layer-${layerIdx + 1}`;
-	const migrationData = transformerLabVisMigrationDataRegistry.get(migrationId);
-	if (migrationData && !migrationData.rendered) {
-		const plotDiv = document.getElementById(migrationId);
-		if (plotDiv) {
-			render_migration_logic(
-				migrationId,
-				migrationData.tokens,
-				migrationData.start_h,
-				migrationData.end_h,
-				migrationData.layerNum,
-				migrationData.d_model,
-				migrationData.h_after,
-				migrationData.tokenStrings
-			);
-			migrationData.rendered = true;
-		}
-	}
-
-	const activeContent = document.getElementById(`unified-layer-${layerIdx}-content`);
-	if (activeContent) {
-		_renderTemmlOnElements([activeContent]);
-	}
-};
+	body.dataset.formulasRendered = 'true';
+	_renderTemmlOnElements([body]);
+}
 
 function ensureFFNLayerContainers(layerIndex) {
 	// Delegate to the unified layer container system

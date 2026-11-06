@@ -40,3 +40,71 @@
 		height: 220px;
 	}
 }
+
+/* Layer cards: stacked, closed by default, with a calm reveal. */
+.unified-layer-card > summary {
+	list-style: none;
+}
+
+.unified-layer-card > summary::-webkit-details-marker {
+	display: none;
+}
+
+.unified-layer-card > summary::after {
+	content: "⌄";
+	font-size: 1.05rem;
+	line-height: 1;
+	transition: transform 0.2s ease;
+}
+
+.unified-layer-card[open] > summary::after {
+	transform: rotate(180deg);
+}
+
+.unified-layer-card[open] {
+	box-shadow: 0 10px 28px var(--tm-shadow, rgba(0, 75, 111, 0.08));
+}
+
+.unified-layer-card .unified-layer-tab-content {
+	animation: tmLayerIn 0.22s ease both;
+}
+
+.layer-formulas > summary {
+	list-style: none;
+}
+
+.layer-formulas > summary::-webkit-details-marker {
+	display: none;
+}
+
+.layer-formulas > summary::before {
+	content: "▸";
+	display: inline-block;
+	margin-right: 6px;
+	transition: transform 0.18s ease;
+}
+
+.layer-formulas[open] > summary::before {
+	transform: rotate(90deg);
+}
+
+@keyframes tmLayerIn {
+	from { opacity: 0; transform: translateY(-4px); }
+	to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.unified-layer-card .unified-layer-tab-content,
+	.unified-layer-card > summary::after,
+	.layer-formulas > summary::before {
+		animation: none;
+		transition: none;
+	}
+}
+
+/* Wide matrices scroll inside the layer, never out of the reading column. */
+.unified-layer-tab-content [id$="-formula-body"],
+.unified-layer-tab-content .math_transformer {
+	max-width: 100%;
+	overflow-x: auto;
+}
