@@ -1018,7 +1018,7 @@ function inferDModelFromBreakdowns(layerBreakdowns) {
 function buildParamTableHeader() {
 	return `<table style="width:100%; border-collapse:collapse; font-family:'Inter',sans-serif; font-size:0.8rem;">
     <thead>
-    <tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
+    <tr style="background:var(--tm-wash, #f1f5f9); border-bottom:2px solid var(--tm-line-strong, #cbd5e1); color:var(--tm-ink, #000);">
 	<th style="padding:6px 10px; text-align:left;">${_tmParamDe() ? 'Komponente' : 'Component'}</th>
 	<th style="padding:6px 10px; text-align:right;">${_tmParamDe() ? 'Parameter' : 'Parameters'}</th>
 	<th style="padding:6px 10px; text-align:right;">${_tmParamDe() ? '% der Gesamtzahl' : '% of Total'}</th>
@@ -1029,11 +1029,11 @@ function buildParamTableHeader() {
 }
 
 function buildEmbeddingRow(embeddingParams, vocabSize, d_model, fmt, pct) {
-	return `<tr style="background:#eef2ff; border-bottom:1px solid #e2e8f0;">
-    <td style="padding:6px 10px; font-weight:600; color:#6366f1;">Embeddings</td>
+	return `<tr style="background:color-mix(in srgb, var(--tm-blue, #1275ac) 12%, transparent); border-bottom:1px solid var(--tm-line, #e2e8f0);">
+    <td style="padding:6px 10px; font-weight:600; color:var(--tm-blue, #1275ac);">Embeddings</td>
     <td style="padding:6px 10px; text-align:right; font-weight:600;">${fmt(embeddingParams)}</td>
     <td style="padding:6px 10px; text-align:right;">${pct(embeddingParams)}%</td>
-    <td style="padding:6px 10px; color:#64748b;">${vocabSize} × ${d_model || '?'}</td>
+    <td style="padding:6px 10px; color:var(--tm-muted, #64748b);">${vocabSize} × ${d_model || '?'}</td>
     </tr>`;
 }
 
@@ -1042,33 +1042,33 @@ function buildAllLayerRows(layerBreakdowns, fmt, pct) {
 }
 
 function buildSingleLayerRows(lb, fmt, pct) {
-	let html = `<tr style="background:#f8fafc; border-bottom:1px solid #f1f5f9;">
+	let html = `<tr style="background:var(--tm-wash, #f8fafc); border-bottom:1px solid var(--tm-line, #f1f5f9); color:var(--tm-ink, #000);">
 	<td style="padding:6px 10px; font-weight:600;" colspan="4">${_tmParamDe() ? 'Schicht' : 'Layer'} ${lb.layer} — ${fmt(lb.total)} ${_tmParamDe() ? 'Parameter' : 'params'} (${pct(lb.total)}%)</td>
     </tr>`;
 
 	html += buildLayerSubRow('Attention (Q+K+V+O)', '#3b82f6', lb.attention.total, '4 × (d×d)', fmt, pct);
 	html += buildLayerSubRow('FFN (W₁+b₁+W₂+b₂)', '#f59e0b', lb.ffn.total, 'd×4d + 4d + 4d×d + d', fmt, pct);
-	html += buildLayerSubRow('LayerNorm (γ+β ×2)', '#10b981', lb.norm.total, '4 × d', fmt, pct, 'border-bottom:1px solid #e2e8f0;');
+	html += buildLayerSubRow('LayerNorm (γ+β ×2)', '#10b981', lb.norm.total, '4 × d', fmt, pct, 'border-bottom:1px solid var(--tm-line, #e2e8f0);');
 
 	return html;
 }
 
-function buildLayerSubRow(label, color, total, shape, fmt, pct, extraStyle = 'border-bottom:1px solid #f1f5f9;') {
+function buildLayerSubRow(label, color, total, shape, fmt, pct, extraStyle = 'border-bottom:1px solid var(--tm-line, #f1f5f9);') {
 	return `<tr style="${extraStyle}">
 	<td style="padding:4px 10px 4px 30px; color:${color};">${label}</td>
 	<td style="padding:4px 10px; text-align:right;">${fmt(total)}</td>
 	<td style="padding:4px 10px; text-align:right;">${pct(total)}%</td>
-	<td style="padding:4px 10px; color:#64748b;">${shape}</td>
+	<td style="padding:4px 10px; color:var(--tm-muted, #64748b);">${shape}</td>
     </tr>`;
 }
 
 function buildTotalRow(grandTotal, totalAttn, totalFFN, fmt, pct) {
 	const attnVsFFN = totalAttn > 0 ? (totalFFN / totalAttn).toFixed(1) : '—';
-	return `<tr style="background:#f0fdf4; border-top:2px solid #10b981; font-weight:700;">
+	return `<tr style="background:color-mix(in srgb, var(--tm-green, #63a44b) 14%, transparent); border-top:2px solid var(--tm-green, #63a44b); font-weight:700;">
     <td style="padding:8px 10px;">${_tmParamDe() ? 'Gesamt' : 'Total'}</td>
     <td style="padding:8px 10px; text-align:right;">${fmt(grandTotal)}</td>
     <td style="padding:8px 10px; text-align:right;">100%</td>
-    <td style="padding:8px 10px; color:#064e3b; font-weight:normal; font-size:0.75rem;">
+    <td style="padding:8px 10px; color:var(--tm-green-deep, #004b6f); font-weight:normal; font-size:0.75rem;">
 	${_tmParamDe() ? `FFN ist ${attnVsFFN}× so groß wie Attention` : `FFN is ${attnVsFFN}× the size of Attention`}
     </td>
     </tr>`;
