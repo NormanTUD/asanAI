@@ -2636,26 +2636,17 @@ $$
 }
 
 function ensureProjectionSubContainers(container) {
-	let chipsDiv = document.getElementById('tlab-final-chips');
-	let detailsDiv = document.getElementById('tlab-final-details');
+	// The prediction chips were removed; the available-token palette is the
+	// single place to append tokens. Keep only the formula details panel.
+	const oldResults = document.getElementById('tlab-final-results');
+	if (oldResults) oldResults.remove();
 
-	if (!chipsDiv || !detailsDiv) {
-		const isDe = !!(window.TM && TM.lang && TM.lang() === 'de');
-		const resultLabel = isDe
-			? 'Nächste Tokens – klicke ein Ergebnis an, um es an den Prompt anzuhängen:'
-			: 'Next tokens – click a result to append it to the prompt:';
-		container.innerHTML = `
-	    <div id="tlab-final-details"></div>
-	    <div id="tlab-final-results" style="margin-top:16px; padding-top:12px; border-top:1px solid var(--mn-border, #e2e8f0); text-align:left;">
-		<p style="font-size:.82rem; color:var(--mn-text-secondary, #334155); margin:0 0 8px;">${resultLabel}</p>
-		<div id="tlab-final-chips"></div>
-	    </div>
-	`;
-		chipsDiv = document.getElementById('tlab-final-chips');
+	let detailsDiv = document.getElementById('tlab-final-details');
+	if (!detailsDiv) {
+		container.innerHTML = `<div id="tlab-final-details"></div>`;
 		detailsDiv = document.getElementById('tlab-final-details');
 	}
-
-	return { chipsDiv, detailsDiv };
+	return { detailsDiv };
 }
 
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
@@ -2663,14 +2654,13 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
     if (!container) return;
 
     const h_last = h_final[h_final.length - 1];
-    const { logits, predictions } = computeFinalPredictions(h_last, vocabulary, d_model, temperature);
-    const { chipsDiv, detailsDiv } = ensureProjectionSubContainers(container);
+    const { logits } = computeFinalPredictions(h_last, vocabulary, d_model, temperature);
+    const { detailsDiv } = ensureProjectionSubContainers(container);
 
-    chipsDiv.innerHTML = buildPredictionChipsHtml(predictions.filter(function (p) { return p.word !== TM_EOS_TOKEN; }), temperature);
     detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
 
     // SCOPED rendering — do NOT call global render_temml()
-    _renderTemmlOnElements([chipsDiv, detailsDiv]);
+    _renderTemmlOnElements([detailsDiv]);
 
     // Provenance: record the final stage and annotate the rendered numbers
     if (window.Prov) {

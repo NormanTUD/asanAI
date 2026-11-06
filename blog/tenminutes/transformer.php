@@ -567,7 +567,7 @@
 <div id="transformer-output-projection" style="background: var(--mn-surface, white); padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
 <div>
 <label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
-<input id="transformer-master-token-input" type="hidden" value="the"/>
+<input id="transformer-master-token-input" type="hidden" value="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'der' : 'the'; ?>"/>
 <div class="tm-token-builder" id="transformer-token-builder">
 	<div class="tm-token-builder-head">
 		<span class="tm-token-builder-label">Token-only input</span>
