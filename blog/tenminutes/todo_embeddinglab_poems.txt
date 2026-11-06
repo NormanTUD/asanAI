@@ -81,3 +81,20 @@ DONE Versioned space-morph.js and embedding_manifold.css as well, and added the
 DONE Audit: intuition, embeddinglab, minimalneuron, and training_data pass
      EN/DE at 390 px and 1200 px, light and dark, with no console errors and
      zero horizontal overflow.
+
+Third pass — poem demo rendering and quote translations
+
+DONE Restored EmbeddingManifold.renderLine (it had been lost while editing the
+     wrong draw function). The Vietoris-Rips render() is untouched.
+
+DONE Poem plot: simple floor grid plus three coloured axes (x/y/z), no cube
+     faces or complex patterns. The token path is a straight, clearly visible
+     polyline (dark underlay plus blue stroke), so the words are connected.
+
+DONE Removed the entire "The scripts that made the data" details block and the
+     Prism CSS/JS. Both languages now have no big code block on the page.
+
+DONE Translated quote and citation for all three poem examples in both
+     languages: Blake, Ringelnatz, and Alice. English pages show English
+     versions, German pages German versions; the original-language note stays
+     in the citation for Alice.

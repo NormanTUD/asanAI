@@ -1673,6 +1673,7 @@
 				codeBody.appendChild(node);
 				node = next;
 			}
+			codeBody.querySelectorAll('.md').forEach(function (m) { m.classList.add('no-markdown'); });
 		}
 		var attendDetail = detailBySummary(/Attention in detail|Attention im Detail/i);
 		var ffnDetail = detailBySummary(/Feed-forward in detail|Feed-Forward im Detail/i);
@@ -1696,6 +1697,7 @@
 				unBody.appendChild(node2);
 				node2 = next2;
 			}
+			unBody.querySelectorAll('.md').forEach(function (m) { m.classList.add('no-markdown'); });
 		}
 		// Token Trajectory: put it above the layer blocks (move the wrapper,
 		// which carries the visibility toggle, not just the chart).

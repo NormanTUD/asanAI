@@ -69,6 +69,7 @@ function warn(id, msg) {
 
 function getTopLevelMdContainers() {
 	return Array.from(document.querySelectorAll('.md')).filter(container => {
+		if (container.classList.contains('no-markdown')) return false;
 		let parent = container.parentElement;
 		while (parent) {
 			if (parent.classList && parent.classList.contains('md')) {
