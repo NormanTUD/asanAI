@@ -361,15 +361,15 @@
 					<h3>3 · Position</h3>
 					<button class="tm-step-toggle" type="button" aria-expanded="true" data-no-height-test aria-label="Collapse step">−</button>
 				</div>
-				<p>The same token at a different slot gets a different fingerprint. Each row is a position; the waves are the sinusoidal encoding.</p>
-				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-position" aria-label="A heatmap of positional encodings"></canvas>
+				<p>The plot shows the semantic vector h0 = token embedding + position. Up to three dimensions are shown raw; above that a PCA reduces it to three and the label says so.</p>
+				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-position" aria-label="Semantic vectors: token embedding plus position"></canvas>
 				<div class="tm-step-modes" data-step-modes="position"></div>
-				<p class="tm-step-more">Without a position signal, the same tokens in a different order would look identical. The waves give every slot a unique fingerprint.</p>
+				<p class="tm-step-more">Without a position signal, the same tokens in a different order would look identical. The position vector gives every slot a unique fingerprint.</p>
 				<div class="tm-step-formula" data-tex="PE_{(i,2k)} = \sin\left(\frac{i}{10000^{2k/d}}\right),\quad PE_{(i,2k+1)} = \cos\left(\frac{i}{10000^{2k/d}}\right)"></div>
 				<details class="tm-step-detail">
 					<summary>Positional encoding in detail</summary>
 					<div class="tm-step-detail-body">
-						<p>The heatmap above shows the pattern as a flat slice. The plots below show the same sinusoidal encoding as waves and as one vector per position.</p>
+						<p>The plot above shows the semantic vector h0, not the raw sinusoidal pattern. Up to three dimensions are raw; above that the plot uses PCA to three dimensions and labels it. The plots below show the sinusoidal encoding as waves and the shift for each position.</p>
 						<div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
 <div id="transformer-pe-shift-plot" style="width: 100%; height: 600px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
 <div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>

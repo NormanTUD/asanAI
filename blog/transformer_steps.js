@@ -1301,9 +1301,9 @@
 		var tokens = trace.tokenStrings || tokenList();
 		var n = Math.min(tokens.length, trace.h_in.length, trace.h_out.length);
 		if (!n) return null;
-		if (!featureState[layerIdx]) featureState[layerIdx] = { selected: n - 1 };
+		if (!featureState[layerIdx]) featureState[layerIdx] = { selected: n - 1, allDims: false };
 		if (featureState[layerIdx].selected >= n) featureState[layerIdx].selected = n - 1;
-		return { trace: trace, tokens: tokens.slice(0, n), n: n, selected: featureState[layerIdx].selected };
+		return { trace: trace, tokens: tokens.slice(0, n), n: n, selected: featureState[layerIdx].selected, allDims: !!featureState[layerIdx].allDims };
 	}
 
 	function featureProjection(data) {
@@ -1327,7 +1327,7 @@
 				out: coords.slice(data.n),
 				is3d: true,
 				axes: ["Dim 0", "Dim 1", "Dim 2"],
-				label: DE() ? "Rohe Dimensionen · 3D" : "Raw dimensions · 3D"
+				label: ""
 			};
 		}
 		if (d === 2) {
@@ -1337,7 +1337,7 @@
 				out: coords.slice(data.n),
 				is3d: false,
 				axes: ["Dim 0", "Dim 1"],
-				label: DE() ? "Rohe Dimensionen · 2D" : "Raw dimensions · 2D"
+				label: ""
 			};
 		}
 		coords = all.map(function (v) { return [v[0] || 0, 0]; });
@@ -1346,7 +1346,7 @@
 			out: coords.slice(data.n),
 			is3d: false,
 			axes: ["Dim 0", ""],
-			label: DE() ? "Rohe Dimension · 1D" : "Raw dimension · 1D"
+			label: ""
 		};
 	}
 
@@ -1382,7 +1382,7 @@
 				backgroundColor: "transparent",
 				title: {
 					text: title,
-					subtext: projection.label + (DE() ? " · ausgewählt: " : " · selected: ") + labels[selected],
+					subtext: (projection.label ? projection.label + " · " : "") + (DE() ? "ausgewählt: " : "selected: ") + labels[selected],
 					left: "center",
 					textStyle: { fontSize: 13, color: c.ink, fontFamily: "Barlow, Open Sans, sans-serif" },
 					subtextStyle: { fontSize: 10, color: c.muted, fontFamily: "Open Sans, sans-serif" }
@@ -1465,7 +1465,7 @@
 			backgroundColor: "transparent",
 			title: {
 				text: (DE() ? "Feature-Migration · Schicht " : "Feature migration · layer ") + (layerIdx + 1),
-				subtext: projection.label + (DE() ? " · alle Tokens, Pfeil = Eingabe → Ausgabe" : " · all tokens, arrow = input → output"),
+				subtext: (projection.label ? projection.label + " · " : "") + (DE() ? "alle Tokens, Pfeil = Eingabe → Ausgabe" : "all tokens, arrow = input → output"),
 				left: "center",
 				textStyle: { fontSize: 13, color: c.ink, fontFamily: "Barlow, Open Sans, sans-serif" },
 				subtextStyle: { fontSize: 10, color: c.muted, fontFamily: "Open Sans, sans-serif" }
@@ -1652,13 +1652,13 @@
 				sb.insertBefore(lead, sb.firstChild);
 			}
 			lead.textContent = isDe
-				? "Die Feature-Migration zeigt für alle Tokens, wie die Schicht ihre Vektoren verschiebt: jeder Pfeil läuft von der Eingabe zur Ausgabe. Bis d_model = 3 sind das die rohen Dimensionen; darüber wird mit PCA auf drei Dimensionen reduziert, und das Label sagt das ausdrücklich. Im tiefen Untermenü kannst du zusätzlich die echten Layer-Bewegungen für ein einzelnes Token ansehen."
-				: "Feature migration shows how the layer moves every token: each arrow runs from the input to the output. Up to d_model = 3 these are the raw dimensions; above that PCA reduces to three dimensions, and the label says so explicitly. The deep submenu additionally shows the real layer movements for a single token.";
+				? "Diese Schicht liest den laufenden Vektor und schreibt ein Update. Jeder Pfeil läuft von der Eingabe zur Ausgabe; das tiefe Untermenü zeigt die Bewegung eines einzelnen Tokens."
+				: "This layer reads the running vector and writes an update. Each arrow runs from the input to the output; the deep submenu shows one token's movement.";
 			if (!sb.querySelector(".tm-feature-wrap")) {
 				var wrap = document.createElement("div");
 				wrap.className = "tm-feature-wrap";
 				wrap.innerHTML = "<div class='tm-feature-primary'><span class='tm-feature-note' id='unified-layer-" + idx + "-feature-projection'></span><div id='unified-layer-" + idx + "-feature-arrows' class='tm-feature-arrows'></div></div>" +
-					"<details class='tm-feature-real'><summary>" + (isDe ? "Echte Layer-Bewegungen (ausgewähltes Token)" : "Real layer movements (selected token)") + "</summary><div class='tm-feature-real-body'><div class='tm-feature-controls'><label>" + (isDe ? "Token" : "Token") + " <select id='unified-layer-" + idx + "-feature-token'></select></label></div>" +
+					"<details class='tm-feature-real'><summary>" + (isDe ? "Echte Layer-Bewegungen (ausgewähltes Token)" : "Real layer movements (selected token)") + "</summary><div class='tm-feature-real-body'><div class='tm-feature-controls'><label>" + (isDe ? "Token" : "Token") + " <select id='unified-layer-" + idx + "-feature-token'></select></label><button type='button' class='tm-feature-all-dims' id='unified-layer-" + idx + "-feature-all-dims' hidden>" + (isDe ? "Alle Dimensionen" : "All dimensions") + "</button></div>" +
 					"<div class='tm-feature-plots'><div class='tm-feature-plot'><div class='tm-feature-plot-title'>" + (isDe ? "Eingabe" : "Input") + "</div><div id='unified-layer-" + idx + "-feature-input' class='tm-feature-chart'></div></div>" +
 					"<div class='tm-feature-plot'><div class='tm-feature-plot-title'>" + (isDe ? "Ausgabe" : "Output") + "</div><div id='unified-layer-" + idx + "-feature-output' class='tm-feature-chart'></div></div></div></div></details>" +
 					"<div id='unified-layer-" + idx + "-logit-lens' class='tm-logit-lens-host'></div>";
@@ -2412,7 +2412,7 @@
 					box = document.createElement("section");
 					box.className = "tm-step tm-transformer-box";
 					box.id = "tm-transformer-box";
-					box.innerHTML = '<div class="tm-step-head"><h3>4 · Transformer</h3><button class="tm-step-toggle" type="button" aria-expanded="true" aria-label="' + (isDe ? "Schritt einklappen" : "Collapse step") + '">−</button></div><p>' + (isDe ? "Der Block, der die Schichten stapelt. Die Token Trajectory zeigt, wie sich die Vektoren Schicht für Schicht verschieben; die Layer darunter zeigen Attention und FFN." : "The block that stacks the layers. The token trajectory shows how the vectors shift layer by layer; the layers below show attention and FFN.") + '</p><div class="tm-step-body" id="tm-transformer-body"></div>';
+					box.innerHTML = '<div class="tm-step-head"><h3>4 · Transformer</h3><button class="tm-step-toggle" type="button" aria-expanded="true" aria-label="' + (isDe ? "Schritt einklappen" : "Collapse step") + '">−</button></div><p>' + (isDe ? "Jede Schicht liest den laufenden Vektor, lässt Attention Information zwischen den Tokens austauschen, addiert das Ergebnis zum Vektor, und das FFN transformiert jeden Token einzeln, bevor es wieder addiert wird. Die Token Trajectory zeigt die Vektoren Schicht für Schicht; darunter stehen die Layer mit ihren Attention- und FFN-Schritten." : "Each layer reads the running vector, lets attention exchange information between tokens, adds the result back, and the FFN transforms each token on its own before adding it back. The token trajectory shows the vectors layer by layer; below are the layers with their attention and FFN steps.") + '</p><div class="tm-step-body" id="tm-transformer-body"></div>';
 					posCard.parentNode.insertBefore(box, posCard.nextSibling);
 					var toggle = box.querySelector(".tm-step-toggle");
 					toggle.addEventListener("click", function () {

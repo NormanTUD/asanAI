@@ -119,6 +119,7 @@
 							<span class="demo-badge">interactive</span>
 						</div>
 						<div class="demo-body">
+							<p class="cr-link"><?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'Die Schrift ist Inuktitut. <a href="https://de.wikipedia.org/wiki/Inuktitut" rel="noopener">Lies über Inuktitut</a>.' : 'The script is Inuktitut. <a href="https://en.wikipedia.org/wiki/Inuktitut" rel="noopener">Read about Inuktitut</a>.'; ?></p>
 							<div class="cr-room" id="cr-room">
 								<div class="cr-round">Round <span id="cr-round-num">1</span> of <span id="cr-total-rounds">6</span></div>
 								<div class="cr-label">A note slides under the door:</div>

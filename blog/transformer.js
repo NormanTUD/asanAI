@@ -193,6 +193,7 @@ function lockArchitectureControls(lock) {
 		'transformer-heads',             // n_heads
 		'transformer-depth',             // n_layers
 		'transformer-context-size',      // context size
+		'transformer-ffn-size',          // FFN hidden width
 		'transformer-tokenizer-type',    // tokenizer
 
 		// Training hyperparameters (safe, but locked by request)
