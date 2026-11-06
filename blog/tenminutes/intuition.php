@@ -309,6 +309,29 @@
 						<div class="prose">
 							<p>Each token id points to a vector of learned parameters. A real model uses thousands of dimensions, often around ten thousand; this demo uses two so the picture can be represented, but the principle is the same. The vector is the token's starting representation. The model learns these points from its training data (Wikipedia, books, web pages, code) and chooses the rules itself. Words become points in a space: similar words sit close together, and a <b>direction</b> can carry a relationship, such as the arrow from man to woman being the same arrow as king to queen. A “dimension” is just one number in the vector; the axes here are labelled for humans, while a real model's axes are unlabelled directions that no single word owns. (<a href="https://arxiv.org/abs/1301.3781" rel="noopener">Mikolov et al., 2013</a>)</p>
 						</div>
+						<div class="prose">
+							<p>Start with one axis. Temperature can order words from cold to hot, but it cannot separate “lukewarm” from “bright”: on a single line they would have to share a coordinate. A second, independent axis adds a relation that the first does not contain. Embeddings use hundreds of axes for exactly this reason: each one can carry a distinction the others cannot.</p>
+						</div>
+						<div class="demo demo--paper demo--plot" id="oned-twod-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">From one axis to two <span>· demo</span></p>
+									<p class="demo-sub">One axis orders words by temperature. A second axis separates lukewarm from bright, so the same words can carry more relations.</p>
+								</div>
+							</div>
+							<div class="demo-body">
+								<div class="oned-twod-grid">
+									<div>
+										<canvas id="i1d-canvas" class="demo-canvas" style="height:170px" aria-label="A temperature line with Freezing at -30, Cold at 5, Lukewarm at 30, and Hot at 100"></canvas>
+										<p class="meadow-caption" style="color:var(--tm-muted)">1D: temperature</p>
+									</div>
+									<div>
+										<canvas id="i2d-canvas" class="demo-canvas" style="height:240px" aria-label="A two-dimensional plane with temperature on the horizontal axis and brightness on the vertical axis, showing cold, lukewarm, hot, and bright as separate points"></canvas>
+										<p class="meadow-caption" style="color:var(--tm-muted)">2D: temperature + brightness</p>
+									</div>
+								</div>
+							</div>
+						</div>
 						<div class="step-pane" id="step-embed">
 							<div class="step-stage">
 								<div class="step-toolbar">
@@ -612,13 +635,14 @@
 							</p>
 							<div class="prose-math" data-tex="\underbrace{\text{logit}_i = \underbrace{h}_{\text{context vector}} \cdot \underbrace{w_i}_{\text{token direction}}}_{\text{how much the context points toward token }i}" data-tex-de="\underbrace{\text{logit}_i = \underbrace{h}_{\text{Kontextvektor}} \cdot \underbrace{w_i}_{\text{Token-Richtung}}}_{\text{wie stark der Kontext auf Token }i\text{ zeigt}}" data-tex-display="true"></div>
 							<p>
-								The logits are not probabilities. The model turns them into a
-								distribution with the <strong>softmax</strong>: exponentiate every
-								logit, then divide by the sum. The order stays the same, but
-								differences are exaggerated: the largest score gets the most
-								probability, and the long tail shrinks.
+								The logits are not probabilities. A logit is a raw score: larger
+								means the model finds that token more plausible, but the values
+								are unbounded and do not sum to one. The softmax turns the
+								scores into a distribution. It exponentiates every logit and
+								divides each by the normalizer Z, the sum of all exponentiated
+								logits. Z makes the probabilities add up to one.
 							</p>
-							<div class="prose-math" data-tex="\underbrace{p_i = \frac{\exp(\underbrace{\text{logit}_i}_{\text{score}})}{\underbrace{\sum_j \exp(\text{logit}_j)}_{\text{normalizer}}}}_{\text{softmax: scores become probabilities}}" data-tex-de="\underbrace{p_i = \frac{\exp(\underbrace{\text{logit}_i}_{\text{Score}})}{\underbrace{\sum_j \exp(\text{logit}_j)}_{\text{Normalisierer}}}}_{\text{Softmax: Scores werden zu Wahrscheinlichkeiten}}" data-tex-display="true"></div>
+							<div class="prose-math" data-tex="p_i = \frac{\exp(\text{logit}_i)}{Z}" data-tex-de="p_i = \frac{\exp(\text{Logit}_i)}{Z}" data-tex-display="true"></div>
 						</div>
 
 						<div class="demo demo--paper demo--plot softmax-demo" id="softmax-demo">
@@ -3135,7 +3159,7 @@
 			var matrix = document.getElementById("softmax-logit-matrix");
 			if (matrix) {
 				var vals = rows.map(function (d) { return d.logit; });
-				var tex = "\\underbrace{\\begin{pmatrix}\\underbrace{" + fmt(vals[0], 2) + "}_{\\text{" + (DE ? "höchster Logit" : "top logit") + "}}\\\\" + fmt(vals[1], 2) + "\\\\" + fmt(vals[2], 2) + "\\\\\\vdots\\\\" + fmt(vals[vals.length - 1], 2) + "\\end{pmatrix}}_{\\text{" + (DE ? "echte GPT-2-Logits, erste 10 von 50.257" : "real GPT-2 logits, first 10 of 50,257") + "}}";
+				var tex = "\\underbrace{\\begin{pmatrix}\\underbrace{" + fmt(vals[0], 2) + "}_{\\text{" + (DE ? "höchster Logit" : "top logit") + "}}\\\\" + fmt(vals[1], 2) + "\\\\" + fmt(vals[2], 2) + "\\\\\\vdots\\\\" + fmt(vals[vals.length - 1], 2) + "\\end{pmatrix}}_{\\text{" + (DE ? "echte GPT-2-Logits, die zehn höchsten von 50.257" : "real GPT-2 logits, top 10 of 50,257") + "}}";
 				matrix.setAttribute("data-tex", tex);
 				matrix.removeAttribute("data-tex-rendered");
 				if (TM.typesetMath) TM.typesetMath(matrix.parentNode);
@@ -3338,6 +3362,87 @@
 				window.__tmHeightsReserved = true;
 			}, 220);
 		});
+	})();
+	</script>
+	<script>
+	(function () {
+		"use strict";
+		var de = TM.lang() === "de";
+		var line = document.getElementById("i1d-canvas");
+		if (line && TM.numberLine) {
+			var c = TM.colors();
+			TM.numberLine(line, {
+				min: -40,
+				max: 110,
+				points: [
+					{ value: -30, label: de ? "Gefrierpunkt" : "Freezing", color: c.sky },
+					{ value: 5, label: de ? "Kalt" : "Cold", color: c.blue },
+					{ value: 30, label: de ? "Lauwarm" : "Lukewarm", color: c.green },
+					{ value: 100, label: de ? "Heiß" : "Hot", color: c.gold }
+				],
+				ops: [
+					{ from: 30, to: 100, label: de ? "Heiß − Lauwarm = 70" : "Hot − Lukewarm = 70", color: c.gold },
+					{ from: 5, to: 30, label: de ? "Lauwarm − Kalt = 25" : "Lukewarm − Cold = 25", color: c.green }
+				]
+			});
+		}
+		var plane = document.getElementById("i2d-canvas");
+		if (plane) {
+			var api = TM.initCanvas(plane, function (ctx, w, h) {
+				var c = TM.colors();
+				var padL = 48, padR = 24, padT = 18, padB = 38;
+				var pw = w - padL - padR, ph = h - padT - padB;
+				var xMin = -5, xMax = 110, yMin = -10, yMax = 110;
+				function X(v) { return padL + (v - xMin) / (xMax - xMin) * pw; }
+				function Y(v) { return padT + (yMax - v) / (yMax - yMin) * ph; }
+				ctx.clearRect(0, 0, w, h);
+				ctx.strokeStyle = c.dark ? "rgba(238,247,244,.08)" : "rgba(0,75,111,.08)";
+				ctx.lineWidth = 1;
+				for (var gx = 0; gx <= 100; gx += 25) {
+					ctx.beginPath(); ctx.moveTo(X(gx), Y(0)); ctx.lineTo(X(gx), Y(100)); ctx.stroke();
+				}
+				for (var gy = 0; gy <= 100; gy += 25) {
+					ctx.beginPath(); ctx.moveTo(X(0), Y(gy)); ctx.lineTo(X(100), Y(gy)); ctx.stroke();
+				}
+				ctx.strokeStyle = c.dark ? "rgba(238,247,244,.3)" : "rgba(0,75,111,.35)";
+				ctx.lineWidth = 1.4;
+				ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(110), Y(0)); ctx.stroke();
+				ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(0), Y(105)); ctx.stroke();
+				ctx.setLineDash([4, 4]);
+				ctx.strokeStyle = c.line;
+				ctx.beginPath(); ctx.moveTo(X(30), Y(0)); ctx.lineTo(X(30), Y(100)); ctx.stroke();
+				ctx.setLineDash([]);
+				var pts = [
+					{ x: 5, y: 20, label: de ? "kalt" : "cold", color: c.blue },
+					{ x: 30, y: 20, label: de ? "lauwarm" : "lukewarm", color: c.green },
+					{ x: 100, y: 20, label: de ? "heiß" : "hot", color: c.gold },
+					{ x: 30, y: 100, label: de ? "hell" : "bright", color: c.lime },
+					{ x: 30, y: 0, label: de ? "dunkel" : "dark", color: c.faint }
+				];
+				pts.forEach(function (p) {
+					var x = X(p.x), y = Y(p.y);
+					ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2);
+					ctx.fillStyle = p.color; ctx.fill();
+					ctx.lineWidth = 2; ctx.strokeStyle = c.paper; ctx.stroke();
+					ctx.fillStyle = c.ink;
+					ctx.font = "600 10px Barlow, system-ui, sans-serif";
+					ctx.textAlign = "center";
+					var dy = p.y >= 95 ? -12 : (p.y <= 5 ? 16 : -10);
+					ctx.fillText(p.label, x, y + dy);
+				});
+				ctx.fillStyle = c.muted;
+				ctx.font = "600 10px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "center";
+				ctx.fillText(de ? "Temperatur" : "temperature", padL + pw / 2, h - 10);
+				ctx.save();
+				ctx.translate(12, padT + ph / 2);
+				ctx.rotate(-Math.PI / 2);
+				ctx.textAlign = "center";
+				ctx.fillText(de ? "Helligkeit" : "brightness", 0, 0);
+				ctx.restore();
+			});
+			window.addEventListener("tm:theme", function () { api.redraw(); });
+		}
 	})();
 	</script>
 </body>
