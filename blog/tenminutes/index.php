@@ -27,6 +27,11 @@ function tm_parse_sim_date(?string $raw): ?DateTimeImmutable {
 
 $simRaw = $_GET['date'] ?? $_GET['datum'] ?? null;
 $today = tm_parse_sim_date($simRaw) ?? new DateTimeImmutable('today');
+$monthDay = $today->format('m-d');
+$showSnow = ((int) $today->format('n') === 12) || ((int) $today->format('n') === 1 && (int) $today->format('j') <= 6);
+$showSanta = $monthDay === '12-24';
+$showFireworks = in_array($monthDay, ['12-31', '01-01'], true);
+$showSeasonal = $showSnow || $showSanta || $showFireworks;
 $unlockStart = new DateTimeImmutable('2026-12-01');
 $unlocked = 31;
 if ($today >= $unlockStart) {
@@ -127,7 +132,7 @@ $simDateLabel = $today->format('j F Y');
 	<title>End-of-Year AI Calendar | Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
-<body data-page="calendar">
+<body data-page="calendar"<?php if ($showSnow) echo ' data-snow="1"'; ?><?php if ($showSanta) echo ' data-santa="1"'; ?><?php if ($showFireworks) echo ' data-fireworks="1"'; ?>>
 	<div class="readbar" aria-hidden="true"><span></span></div>
 
 	<main id="main">
@@ -151,11 +156,19 @@ $simDateLabel = $today->format('j F Y');
 				<div id="calendar-doors">
 <?php echo $calendarHtml; ?>
 				</div>
+				<?php if ($showSanta): ?>
+				<p class="season-credit"><?php echo $isDe ? 'Weihnachtsmann-Schlitten-Sprite: ' : 'Santa sleigh sprite: '; ?><a href="https://opengameart.org/content/holiday-expansion-set" rel="noopener">ZomBCool</a>, <a href="https://creativecommons.org/publicdomain/zero/1.0/" rel="noopener">CC0</a>.</p>
+				<?php endif; ?>
 			</section>
 		</div>
 	</main>
 
+	<?php if ($showSnow): ?><canvas class="season-layer" id="season-snow" aria-hidden="true"></canvas><?php endif; ?>
+	<?php if ($showFireworks): ?><canvas class="season-layer" id="season-fireworks" aria-hidden="true"></canvas><?php endif; ?>
+	<?php if ($showSanta): ?><div class="season-santa" aria-hidden="true"><img src="../santa_sleigh_pixel.png" alt=""></div><?php endif; ?>
+
 	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
+	<?php if ($showSeasonal): ?><script src="assets/seasonal.js?v=<?php echo filemtime(__DIR__.'/assets/seasonal.js'); ?>"></script><?php endif; ?>
 	<script>
 	(function () {
 		"use strict";
