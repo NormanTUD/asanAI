@@ -174,3 +174,12 @@ und Mühe, Designregeln aus AGENTS.md, keine neuen Akzentfarben.
       Prefix-Keys/Values beim Anhängen eines Tokens, mit Statusanzeige.
 - DONE Reihenfolge der Hyperparameter-Seite: Architektur/Hyperparameter
       zuerst, dann Trainingskorpus, dann Trainingskarte und Loss-Graph.
+- DONE Probability Flow steht am Ende des Transformer-Blocks; der alte
+      3D-Residualblock und das „Input (Inference):“-Label sind entfernt.
+- DONE Dark Mode: Attention/FFN-Legende im Residual-Write-Chart lesbar.
+- DONE Doppelte „How ChatGPT Actually Works“-Pipeline entfernt; der Inhalt
+      steckt in den Schritt-Boxen. „Modern Block“ und „Syntax Tree“ sind
+      optionale Blöcke.
+- DONE Attention-Prosa („Letting Tokens Talk“, Masked Self-Attention,
+      Concatenation Definition, Single-/Multi-Head) in ein Detail direkt
+      vor den Layern verschoben.
