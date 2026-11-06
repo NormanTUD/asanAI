@@ -2,8 +2,8 @@
 
 - lessons: 99
 - claims: 7352
-- statements: 17194
-- relations: 52114
+- statements: 17199
+- relations: 52119
 - uncovered years: 54
 - uncovered quantities: 6
 - uncited specific claims: 307
@@ -40,7 +40,7 @@
 | derivativelab | 22 | 58 | 214 | 0 | 0 |
 | differentiation | 21 | 82 | 300 | 0 | 0 |
 | diffusion | 33 | 171 | 417 | 0 | 1 |
-| embeddinglab | 25 | 539 | 1398 | 0 | 0 |
+| embeddinglab | 25 | 546 | 1408 | 0 | 0 |
 | evaluation | 36 | 132 | 435 | 2 | 0 |
 | fact_lookup | 37 | 213 | 560 | 0 | 0 |
 | finetuninglab | 50 | 102 | 360 | 0 | 0 |
@@ -107,7 +107,7 @@
 | training_infrastructure | 32 | 55 | 239 | 0 | 0 |
 | trainingdynamics | 23 | 29 | 140 | 0 | 0 |
 | traininglab | 15 | 7 | 67 | 0 | 0 |
-| transformer | 32 | 262 | 848 | 0 | 0 |
+| transformer | 32 | 260 | 843 | 0 | 0 |
 | unexpected_capabilities | 40 | 274 | 578 | 4 | 1 |
 | untold_history_i | 520 | 458 | 1503 | 3 | 0 |
 | untold_history_ii | 672 | 643 | 2012 | 6 | 0 |

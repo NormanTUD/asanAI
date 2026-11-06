@@ -449,7 +449,7 @@ The deeper theoretical reason the path-finding framing works is the **\cite[Mani
     <div id="plot-language-manifolds" style="height: 620px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 12px;"></div>
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6;">
         <b>Four languages, one shared token.</b>
-        The surfaces are English, German, French and Python. All four pass through the same <code>en</code> point in the middle; that shared token is <code>en</code> in this example. Each manifold meets it at a different place on its own sheet (centre, edge, top, or bottom). The other words are also split into tokens, for example <code>op</code> + <code>en</code> for “open” or <code>mean</code> + <code>ing</code> for “meaning”. The drawing is a simplicial, Vietoris–Rips-like complex: points, edges and triangles distributed through space, not filled surfaces. Only the token <code>en</code> is common to all four.
+        Each coloured surface is its own submanifold inside the larger embedding manifold, and each one stands for a different language: English, German, French and Python. They all share the token <code>en</code> but meet it at a different place on their own sheet (centre, edge, top, or bottom). The other words are also split into tokens, for example <code>op</code> + <code>en</code> for “open” or <code>mean</code> + <code>ing</code> for “meaning”. Only the token <code>en</code> is common to all four.
     </div>
 </section>
 

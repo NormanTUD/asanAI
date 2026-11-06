@@ -324,6 +324,134 @@
 				});
 			}
 			window.addEventListener('tm:theme', function () { r.request(); });
+		},
+
+		/* The original, prettier Plotly dual-manifold animation from the
+		   main embeddinglab. Used by tenminutes/intuition. */
+		renderDualPlotly: function (containerId, controlsId) {
+			var div = document.getElementById(containerId);
+			if (!div || typeof Plotly === 'undefined') return;
+			var state = { rot: 55, sep: 5, corr: true, paths: true };
+
+			function zAt(u, v) { return 0.3 * (u * u - v * v) + 0.15 * Math.sin(2 * u) * Math.cos(2 * v); }
+			function enPos(u, v) { return [u, v, zAt(u, v)]; }
+			function jpPos(u, v) {
+				var x = u, y = v, z = zAt(u, v);
+				var rad = state.rot * Math.PI / 180;
+				return [x * Math.cos(rad) - y * Math.sin(rad), x * Math.sin(rad) + y * Math.cos(rad), z + state.sep];
+			}
+			var words = [
+				{ en: 'king', jp: '王様', u: 1.2, v: -0.6, c: '#f59e0b' },
+				{ en: 'queen', jp: '女王', u: 1.2, v: 0.6, c: '#f59e0b' },
+				{ en: 'man', jp: '男', u: -0.5, v: -0.6, c: '#3b82f6' },
+				{ en: 'woman', jp: '女', u: -0.5, v: 0.6, c: '#3b82f6' },
+				{ en: 'prince', jp: '王子', u: 0.4, v: -0.6, c: '#10b981' },
+				{ en: 'princess', jp: '王女', u: 0.4, v: 0.6, c: '#10b981' }
+			];
+			function surface(posFn) {
+				var n = 26, x = [], y = [], z = [];
+				for (var i = 0; i < n; i++) {
+					var u = -2 + 4 * i / (n - 1), rx = [], ry = [], rz = [];
+					for (var j = 0; j < n; j++) {
+						var v = -1.5 + 3 * j / (n - 1), p = posFn(u, v);
+						rx.push(p[0]); ry.push(p[1]); rz.push(p[2]);
+					}
+					x.push(rx); y.push(ry); z.push(rz);
+				}
+				return { x: x, y: y, z: z };
+			}
+			function draw() {
+				var traces = [
+					Object.assign({ type: 'surface', opacity: 0.4, showscale: false, hoverinfo: 'skip', name: 'English',
+						colorscale: [[0, 'rgba(191,219,254,0.7)'], [1, 'rgba(96,165,250,0.7)']],
+						contours: { x: { show: true, color: 'rgba(59,130,246,0.15)' }, y: { show: true, color: 'rgba(59,130,246,0.15)' }, z: { show: false } } }, surface(enPos)),
+					Object.assign({ type: 'surface', opacity: 0.4, showscale: false, hoverinfo: 'skip', name: '日本語',
+						colorscale: [[0, 'rgba(187,247,208,0.7)'], [1, 'rgba(74,222,128,0.7)']],
+						contours: { x: { show: true, color: 'rgba(16,185,129,0.15)' }, y: { show: true, color: 'rgba(16,185,129,0.15)' }, z: { show: false } } }, surface(jpPos))
+				];
+				var enX = [], enY = [], enZ = [], jpX = [], jpY = [], jpZ = [], enT = [], jpT = [], cs = [];
+				words.forEach(function (w) {
+					var a = enPos(w.u, w.v), b = jpPos(w.u, w.v);
+					enX.push(a[0]); enY.push(a[1]); enZ.push(a[2]); enT.push(w.en);
+					jpX.push(b[0]); jpY.push(b[1]); jpZ.push(b[2]); jpT.push(w.jp); cs.push(w.c);
+					if (state.corr) traces.push({ type: 'scatter3d', x: [a[0], b[0]], y: [a[1], b[1]], z: [a[2], b[2]],
+						mode: 'lines', line: { color: 'rgba(139,92,246,0.5)', width: 3, dash: 'dash' }, hoverinfo: 'skip' });
+				});
+				traces.push({ type: 'scatter3d', x: enX, y: enY, z: enZ, mode: 'markers+text', text: enT, textposition: 'top center',
+					textfont: { size: 11, color: '#1e40af' }, marker: { size: 7, color: cs, line: { width: 1, color: paper() } }, name: 'English words', hovertemplate: '<b>%{text}</b> (English)<extra></extra>' });
+				traces.push({ type: 'scatter3d', x: jpX, y: jpY, z: jpZ, mode: 'markers+text', text: jpT, textposition: 'bottom center',
+					textfont: { size: 11, color: '#065f46' }, marker: { size: 7, symbol: 'diamond', color: cs, line: { width: 1, color: paper() } }, name: 'Japanese words (日本語)', hovertemplate: '<b>%{text}</b> (日本語)<extra></extra>' });
+
+				if (state.paths) {
+					var pathWords = ['man', 'king', 'queen'], steps = 25;
+					var enPX = [], enPY = [], enPZ = [], jpPX = [], jpPY = [], jpPZ = [];
+					for (var seg = 0; seg < pathWords.length - 1; seg++) {
+						var from = words.find(function (w) { return w.en === pathWords[seg]; });
+						var to = words.find(function (w) { return w.en === pathWords[seg + 1]; });
+						for (var s = 0; s <= steps; s++) {
+							var t = s / steps, iu = from.u + t * (to.u - from.u), iv = from.v + t * (to.v - from.v);
+							var ea = enPos(iu, iv), ja = jpPos(iu, iv);
+							enPX.push(ea[0]); enPY.push(ea[1]); enPZ.push(ea[2]);
+							jpPX.push(ja[0]); jpPY.push(ja[1]); jpPZ.push(ja[2]);
+						}
+					}
+					traces.push({ type: 'scatter3d', x: enPX, y: enPY, z: enPZ, mode: 'lines', line: { width: 7, color: '#3b82f6' }, name: 'English: man → king → queen', hoverinfo: 'skip' });
+					traces.push({ type: 'scatter3d', x: jpPX, y: jpPY, z: jpPZ, mode: 'lines', line: { width: 7, color: '#10b981' }, name: 'Japanese: 男 → 王様 → 女王', hoverinfo: 'skip' });
+				}
+
+				var layout = {
+					margin: { l: 0, r: 0, b: 0, t: 0 }, showlegend: true,
+					legend: { x: 0.01, y: 0.99, bgcolor: isDark() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)', bordercolor: isDark() ? '#1e293b' : '#e2e8f0', borderwidth: 1, font: { size: 10 } },
+					paper_bgcolor: 'rgba(0,0,0,0)',
+					scene: {
+						xaxis: { showgrid: true, gridcolor: isDark() ? '#1e293b' : '#f1f5f9', zeroline: false, showticklabels: false, title: '' },
+						yaxis: { showgrid: true, gridcolor: isDark() ? '#1e293b' : '#f1f5f9', zeroline: false, showticklabels: false, title: '' },
+						zaxis: { showgrid: true, gridcolor: isDark() ? '#1e293b' : '#f1f5f9', zeroline: false, showticklabels: false, title: '' },
+						camera: { eye: { x: 1.5, y: 1.8, z: 1.2 } },
+						aspectmode: 'data', bgcolor: isDark() ? '#0f172a' : '#ffffff'
+					}
+				};
+				Plotly.react(div, traces, layout, { displayModeBar: false, responsive: true });
+			}
+			var controls = controlsId ? document.getElementById(controlsId) : null;
+			if (controls && !controls._built) {
+				controls._built = true;
+				controls.innerHTML =
+					'<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:.82rem;color:var(--tm-muted,#64748b);">' +
+					'<label>Rotation <input type="range" id="ms-rot" min="0" max="180" step="1" value="55" style="width:120px;vertical-align:middle"><output id="ms-rot-out">55°</output></label>' +
+					'<label>Separation <input type="range" id="ms-sep" min="0" max="8" step="0.1" value="5" style="width:120px;vertical-align:middle"><output id="ms-sep-out">5.0</output></label>' +
+					'</div>' +
+					'<div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:8px;font-size:.82rem;color:var(--tm-muted,#64748b);">' +
+					'<label><input type="checkbox" id="ms-corr" checked> Correspondence lines</label>' +
+					'<label><input type="checkbox" id="ms-paths" checked> Translation paths</label>' +
+					'<button type="button" class="btn-demo btn-demo--green" id="ms-align">Align ▶</button>' +
+					'<button type="button" class="btn-demo" id="ms-reset">Reset</button></div>';
+				var rot = controls.querySelector('#ms-rot'), sep = controls.querySelector('#ms-sep');
+				rot.addEventListener('input', function () { state.rot = parseFloat(this.value); controls.querySelector('#ms-rot-out').textContent = Math.round(state.rot) + '°'; draw(); });
+				sep.addEventListener('input', function () { state.sep = parseFloat(this.value); controls.querySelector('#ms-sep-out').textContent = state.sep.toFixed(1); draw(); });
+				controls.querySelector('#ms-corr').addEventListener('change', function () { state.corr = this.checked; draw(); });
+				controls.querySelector('#ms-paths').addEventListener('change', function () { state.paths = this.checked; draw(); });
+				controls.querySelector('#ms-reset').addEventListener('click', function () {
+					state.rot = 55; state.sep = 5; rot.value = 55; sep.value = 5;
+					controls.querySelector('#ms-rot-out').textContent = '55°'; controls.querySelector('#ms-sep-out').textContent = '5.0'; draw();
+				});
+				controls.querySelector('#ms-align').addEventListener('click', function () {
+					var t0 = performance.now(), r0 = state.rot, s0 = state.sep;
+					function step(now) {
+						var k = Math.min(1, (now - t0) / 900), e = 1 - Math.pow(1 - k, 3);
+						state.rot = r0 * (1 - e); state.sep = s0 * (1 - e);
+						rot.value = state.rot; sep.value = state.sep;
+						controls.querySelector('#ms-rot-out').textContent = Math.round(state.rot) + '°';
+						controls.querySelector('#ms-sep-out').textContent = state.sep.toFixed(1);
+						draw();
+						if (k < 1) requestAnimationFrame(step);
+					}
+					requestAnimationFrame(step);
+				});
+			}
+			draw();
+			window.addEventListener('tm:theme', draw);
+			if (window.__MN_DARK && __MN_DARK.onChange) __MN_DARK.onChange(draw);
 		}
 	};
 })();
