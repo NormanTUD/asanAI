@@ -178,12 +178,12 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">A sine learned inside a band <span>· demo</span></p>
-									<p class="demo-sub">A real dense network sees only the blue band. Train it and watch what it does outside, from -100 to 100; the inset zooms into the band.</p>
+									<p class="demo-sub">A real dense network sees only the blue band. Train it and see what it does outside its training range.</p>
 								</div>
 								<span class="demo-badge">extrapolation</span>
 							</div>
 							<div class="demo-body">
-								<canvas class="demo-canvas demo-canvas--lg" id="sinfit-canvas" style="height:440px" aria-label="A dense neural network fitted to sine points inside a narrow band, and its behaviour outside the band"></canvas>
+								<canvas class="demo-canvas demo-canvas--lg" id="sinfit-canvas" style="height:360px" aria-label="A dense neural network fitted to sine points inside a narrow band, and its behaviour outside the band"></canvas>
 								<p class="demo-hint sinfit-loss-label">Training loss (MSE): <b id="sinfit-loss-value">—</b></p>
 								<canvas class="demo-canvas sinfit-loss-canvas" id="sinfit-loss" style="height:96px" aria-label="Training loss over epochs"></canvas>
 								<div class="demo-controls">
@@ -293,7 +293,7 @@
 		}
 		function refreshPredictions() {
 			state.fullX = [];
-			for (var x = -100; x <= 100.0001; x += 0.25) state.fullX.push(x);
+			for (var x = -50; x <= 50.0001; x += 0.25) state.fullX.push(x);
 			state.fullY = predictArray(state.fullX);
 			state.bandX = [];
 			for (var x2 = -10; x2 <= 10.0001; x2 += 0.1) state.bandX.push(x2);
@@ -415,7 +415,7 @@
 			var c = TM.colors();
 			var padL = 58, padR = 24, padT = 22, padB = 40;
 			var pw = w - padL - padR, ph = h - padT - padB;
-			var xMin = -100, xMax = 100, yMin = -4, yMax = 4;
+			var xMin = -50, xMax = 50, yMin = -4, yMax = 4;
 			function X(x) { return padL + (x - xMin) / (xMax - xMin) * pw; }
 			function Y(y) { return padT + (yMax - y) / (yMax - yMin) * ph; }
 			ctx.clearRect(0, 0, w, h);
@@ -427,7 +427,7 @@
 
 			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.07)" : "rgba(0,75,111,.07)";
 			ctx.lineWidth = 1;
-			for (var gx = -100; gx <= 100; gx += 20) {
+			for (var gx = -50; gx <= 50; gx += 10) {
 				ctx.beginPath(); ctx.moveTo(X(gx), padT); ctx.lineTo(X(gx), padT + ph); ctx.stroke();
 			}
 			for (var gy = -4; gy <= 4; gy += 1) {
@@ -436,7 +436,7 @@
 			ctx.fillStyle = c.muted;
 			ctx.font = "600 10px Barlow, system-ui, sans-serif";
 			ctx.textAlign = "center";
-			[-100, -50, 0, 50, 100].forEach(function (v) { ctx.fillText(String(v), X(v), h - 16); });
+			[-50, -25, 0, 25, 50].forEach(function (v) { ctx.fillText(String(v), X(v), h - 16); });
 			ctx.textAlign = "right";
 			[-4, -2, 0, 2, 4].forEach(function (v) { ctx.fillText(String(v), padL - 8, Y(v) + 3); });
 			ctx.textAlign = "center";
