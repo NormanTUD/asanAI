@@ -6,7 +6,7 @@
 	<meta name="description" content="From Dartmouth optimism to synthetic media: how AI reshapes science, work, truth, trust, and even the stories that shape the model.">
 	<meta name="theme-color" content="#ffffff">
 	<title>What AI Is Doing to Us | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 </head>
 <body data-lesson="ai_and_society" data-page="lesson">
 	<div class="readbar" aria-hidden="true"><span></span></div>
@@ -187,7 +187,7 @@
 		</div>
 	</main>
 
-	<script src="assets/site.js"></script>
-	<script src="assets/demos.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
+	<script src="assets/demos.js?v=<?php echo filemtime(__DIR__.'/assets/demos.js'); ?>"></script>
 </body>
 </html>
