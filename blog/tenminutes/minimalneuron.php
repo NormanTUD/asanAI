@@ -7,7 +7,7 @@
 	<meta name="theme-color" content="#ffffff">
 	<title>A Tiny Example Network | Ten Minutes</title>
 	<link rel="stylesheet" href="../Temml-Local.min.css">
-	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 	<style>
 		#sinfit-train-btn {
 			min-width: 232px;
@@ -222,8 +222,8 @@
 
 	<script src="../temml.min.js"></script>
 	<script src="../tf.min.js"></script>
-	<script src="assets/site.js"></script>
-	<script src="assets/demos.js"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
+	<script src="assets/demos.js?v=<?php echo filemtime(__DIR__.'/assets/demos.js'); ?>"></script>
 	<script>
 	(function () {
 		"use strict";
