@@ -76,7 +76,6 @@
 								<p class="demo-title">The recurring cast <span>· demo</span></p>
 								<p class="demo-sub">Select a person or a moment. The history is a relay, not a parade of lone geniuses.</p>
 							</div>
-							<span class="demo-badge">step through</span>
 						</div>
 						<div class="demo-body">
 							<div class="timeline-scroller">
