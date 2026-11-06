@@ -7323,6 +7323,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	contentDiv.style.overflowAnchor = 'none';
 	contentDiv.innerHTML = `
     <div style="margin-bottom: 18px;">
+	<canvas id="${prefix}-residual-canvas" class="layer-residual-canvas" aria-label="${(window.TM && TM.lang && TM.lang() === 'de') ? 'Residual-Stream-Updates dieser Schicht pro Token' : 'Residual stream updates for this layer, per token'}"></canvas>
 	<p class="unified-layer-hint" style="font-size:0.82rem; color:#475569; margin:0 0 10px;">${(window.TM && TM.lang && TM.lang() === 'de') ? 'Klicke auf ein Wort, um zu sehen, worauf es seine Attention richtet.' : 'Click a word to see where it focuses its attention.'}</p>
 	<div id="${prefix}-attention-heads" style="margin-top: 4px;"></div>
     </div>
@@ -7365,6 +7366,10 @@ function openUnifiedLayer(layerIdx) {
 		if (status) status.textContent = (window.TM && TM.lang && TM.lang() === 'de') ? 'offen' : 'open';
 	}
 	renderLayerAttention(layerIdx);
+	const residualCanvas = document.getElementById(`unified-layer-${layerIdx}-residual-canvas`);
+	if (residualCanvas && window.TransformerSteps && window.TransformerSteps.renderLayerResidual) {
+		window.TransformerSteps.renderLayerResidual(residualCanvas.id, layerIdx);
+	}
 	const formulas = document.getElementById(`unified-layer-${layerIdx}-formulas`);
 	if (formulas && formulas.open) renderLayerFormulas(layerIdx);
 }

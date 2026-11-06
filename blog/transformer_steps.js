@@ -529,6 +529,92 @@
 		ctx.fillText(DE() ? "Top-Logits des letzten Tokens" : "top logits of the last token", pad, 12);
 	}
 
+	var layerCanvasRegistry = {};
+
+	function drawLayerResidual(ctx, w, h, layerIdx) {
+		var c = palette();
+		var trace = (window.__tmLayerTrace || [])[layerIdx];
+		var tokens = tokenList();
+		ctx.clearRect(0, 0, w, h);
+		if (!trace || !tokens.length) {
+			return drawPlaceholder(ctx, w, h, DE() ? "Öffne eine Schicht, um ihren Residual-Stream zu sehen." : "Open a layer to see its residual stream.");
+		}
+		var shown = tokens.slice(0, 24);
+		var pad = 14, left = 82, top = 26;
+		var rowH = (h - top - pad) / Math.max(1, shown.length);
+		var max = 0;
+		shown.forEach(function (_, i) {
+			max = Math.max(max, norm(trace.h_in[i] || []), norm(trace.h_attn[i] || []), norm(trace.h_out[i] || []));
+		});
+		max = max || 1;
+		var x0 = left, x1 = w - pad;
+		function px(value) { return x0 + (value / max) * (x1 - x0); }
+		ctx.strokeStyle = c.line;
+		ctx.lineWidth = 1;
+		ctx.beginPath();
+		ctx.moveTo(x0, top - 8);
+		ctx.lineTo(x0, h - pad);
+		ctx.stroke();
+		shown.forEach(function (token, i) {
+			var y = top + i * rowH + rowH / 2;
+			var n0 = norm(trace.h_in[i] || []);
+			var n1 = norm(trace.h_attn[i] || []);
+			var n2 = norm(trace.h_out[i] || []);
+			ctx.strokeStyle = c.line;
+			ctx.globalAlpha = 0.55;
+			ctx.beginPath();
+			ctx.moveTo(x0, y);
+			ctx.lineTo(x1, y);
+			ctx.stroke();
+			ctx.globalAlpha = 1;
+			ctx.strokeStyle = c.blue;
+			ctx.lineWidth = 2.2;
+			ctx.beginPath();
+			ctx.moveTo(px(n0), y);
+			ctx.lineTo(px(n1), y);
+			ctx.stroke();
+			ctx.strokeStyle = c.green;
+			ctx.beginPath();
+			ctx.moveTo(px(n1), y);
+			ctx.lineTo(px(n2), y);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.arc(px(n0), y, 2.6, 0, Math.PI * 2);
+			ctx.fillStyle = c.muted;
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(px(n1), y, 3.2, 0, Math.PI * 2);
+			ctx.fillStyle = c.blue;
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(px(n2), y, 3.2, 0, Math.PI * 2);
+			ctx.fillStyle = c.green;
+			ctx.fill();
+			ctx.fillStyle = c.ink;
+			ctx.font = "600 9px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "right";
+			ctx.textBaseline = "middle";
+			ctx.fillText(fitText(ctx, display(token), 74), left - 7, y);
+		});
+		ctx.textBaseline = "alphabetic";
+		ctx.textAlign = "left";
+		ctx.fillStyle = c.muted;
+		ctx.font = "600 9px Barlow, system-ui, sans-serif";
+		ctx.fillText(DE() ? "Norm des laufenden Vektors: grau = Eingabe, blau = nach Attention, grün = nach FFN" : "running-vector norm: grey = input, blue = after attention, green = after FFN", pad, 14);
+		if (tokens.length > shown.length) {
+			ctx.textAlign = "right";
+			ctx.fillText("+" + (tokens.length - shown.length) + (DE() ? " weitere Tokens" : " more tokens"), w - pad, h - 3);
+		}
+	}
+
+	function redrawLayerCanvases() {
+		Object.keys(layerCanvasRegistry).forEach(function (key) {
+			layerCanvasRegistry[key].api.redraw();
+		});
+	}
+	window.addEventListener('tm:theme', redrawLayerCanvases);
+	window.addEventListener('tm:transformer-data', redrawLayerCanvases);
+
 	window.TransformerSteps = {
 		init: function (hostId) {
 			var host = document.getElementById(hostId);
@@ -582,6 +668,22 @@
 			}, 500);
 			redraw();
 			return { redraw: redraw };
+		},
+		renderLayerResidual: function (canvasId, layerIdx) {
+			var canvas = document.getElementById(canvasId);
+			if (!canvas) return;
+			var entry = layerCanvasRegistry[canvasId];
+			if (!entry) {
+				entry = { layerIdx: layerIdx, api: null };
+				entry.api = initCanvas(canvas, function (ctx, w, h) {
+					drawLayerResidual(ctx, w, h, entry.layerIdx);
+				});
+				layerCanvasRegistry[canvasId] = entry;
+			} else {
+				entry.layerIdx = layerIdx;
+				entry.api.redraw();
+			}
+			canvas.setAttribute('data-layer-residual-ready', '1');
 		}
 	};
 })();
