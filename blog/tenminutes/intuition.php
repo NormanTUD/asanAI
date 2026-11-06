@@ -2446,6 +2446,7 @@
 			ctx.fillText((DE ? "Position " : "position ") + "m = " + pos, w - 14, 18);
 			ctx.textAlign = "left";
 
+			var pillData = [];
 			POS_LABELS.forEach(function (label, i) {
 				var plus = [0, 0, 0];
 				var minus = [0, 0, 0];
@@ -2459,72 +2460,120 @@
 				ctx.strokeStyle = posRgba(c[POS_COLORS[i]], 0.5);
 				ctx.lineWidth = 1.4;
 				ctx.stroke();
-				posPill(ctx, c, w, h, a.x, a.y, c[POS_COLORS[i]], label);
+				pillData.push({ x: a.x, y: a.y, color: c[POS_COLORS[i]], text: label });
 			});
+
+			var primitives = [];
+			function addLine(ax, ay, az, bx, by, bz, color, width, dash) {
+				primitives.push({
+					z: (az + bz) / 2,
+					draw: function (ctx) {
+						ctx.save();
+						if (dash) ctx.setLineDash(dash);
+						ctx.beginPath();
+						ctx.moveTo(ax, ay);
+						ctx.lineTo(bx, by);
+						ctx.strokeStyle = color;
+						ctx.lineWidth = width;
+						ctx.lineCap = "round";
+						ctx.stroke();
+						ctx.restore();
+					}
+				});
+			}
+			function addCircle(x, y, z, r, fill, stroke, strokeWidth) {
+				primitives.push({
+					z: z,
+					draw: function (ctx) {
+						ctx.beginPath();
+						ctx.arc(x, y, r, 0, Math.PI * 2);
+						if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+						if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = strokeWidth || 1; ctx.stroke(); }
+					}
+				});
+			}
 
 			if (posShown > 0.01) {
 				var steps = Math.max(2, Math.min(240, Math.floor(posShown)));
-				ctx.beginPath();
-				for (var i = 0; i <= steps; i++) {
+				var prev = project(posVector(0));
+				for (var i = 1; i <= steps; i++) {
 					var t = posShown * i / steps;
 					var q = project(posVector(t));
-					if (i === 0) ctx.moveTo(q.x, q.y);
-					else ctx.lineTo(q.x, q.y);
+					addLine(prev.x, prev.y, prev.z, q.x, q.y, q.z, posRgba(c.sky, 0.42), 1.6);
+					prev = q;
 				}
-				ctx.strokeStyle = posRgba(c.sky, 0.42);
-				ctx.lineWidth = 1.6;
-				ctx.stroke();
 			}
 
 			var v = posVector(posShown);
 			var tip = project(v);
+			var origin = project([0, 0, 0]);
 			v.forEach(function (val, i) {
 				var foot = [0, 0, 0];
 				foot[i] = val;
 				var f = project(foot);
-				ctx.save();
-				ctx.setLineDash([4, 4]);
-				ctx.beginPath();
-				ctx.moveTo(tip.x, tip.y);
-				ctx.lineTo(f.x, f.y);
-				ctx.strokeStyle = posRgba(c[POS_COLORS[i]], 0.55);
-				ctx.lineWidth = 1;
-				ctx.stroke();
-				ctx.restore();
-				ctx.beginPath();
-				ctx.arc(f.x, f.y, 2.6, 0, Math.PI * 2);
-				ctx.fillStyle = c[POS_COLORS[i]];
-				ctx.fill();
+				var last = tip;
+				for (var k = 1; k <= 16; k++) {
+					var u = k / 16;
+					var p = {
+						x: tip.x + (f.x - tip.x) * u,
+						y: tip.y + (f.y - tip.y) * u,
+						z: tip.z + (f.z - tip.z) * u
+					};
+					addLine(last.x, last.y, last.z, p.x, p.y, p.z, posRgba(c[POS_COLORS[i]], 0.55), 1, [4, 4]);
+					last = p;
+				}
+				addCircle(f.x, f.y, f.z, 2.6, c[POS_COLORS[i]], null, 0);
 			});
 
-			ctx.beginPath();
-			ctx.moveTo(cx, cy);
-			ctx.lineTo(tip.x, tip.y);
-			ctx.strokeStyle = posRgba(c.green, 0.9);
-			ctx.lineWidth = 2.6;
-			ctx.stroke();
-			posGlow(ctx, tip.x, tip.y, 22, c.green, 0.3);
-			ctx.beginPath();
-			ctx.arc(tip.x, tip.y, 6, 0, Math.PI * 2);
-			ctx.fillStyle = c.green;
-			ctx.fill();
-			ctx.strokeStyle = c.card;
-			ctx.lineWidth = 2;
-			ctx.stroke();
+			var last = origin;
+			for (var k = 1; k <= 20; k++) {
+				var u = k / 20;
+				var p = {
+					x: origin.x + (tip.x - origin.x) * u,
+					y: origin.y + (tip.y - origin.y) * u,
+					z: origin.z + (tip.z - origin.z) * u
+				};
+				addLine(last.x, last.y, last.z, p.x, p.y, p.z, posRgba(c.green, 0.9), 2.6);
+				last = p;
+			}
+
+			primitives.push({
+				z: tip.z,
+				draw: function (ctx) {
+					posGlow(ctx, tip.x, tip.y, 22, c.green, 0.3);
+					ctx.beginPath();
+					ctx.arc(tip.x, tip.y, 6, 0, Math.PI * 2);
+					ctx.fillStyle = c.green;
+					ctx.fill();
+					ctx.strokeStyle = c.card;
+					ctx.lineWidth = 2;
+					ctx.stroke();
+				}
+			});
 
 			var ballRadius = Math.max(10, unit * 0.12);
-			var ball = ctx.createRadialGradient(cx - ballRadius * 0.4, cy - ballRadius * 0.45, ballRadius * 0.12, cx, cy, ballRadius);
-			ball.addColorStop(0, c.dark ? "#f2fbf8" : "#ffffff");
-			ball.addColorStop(0.36, c.sky);
-			ball.addColorStop(0.72, c.petrol);
-			ball.addColorStop(1, "#000000");
-			ctx.fillStyle = ball;
-			ctx.beginPath();
-			ctx.arc(cx, cy, ballRadius, 0, Math.PI * 2);
-			ctx.fill();
-			ctx.strokeStyle = posRgba(c.sky, 0.55);
-			ctx.lineWidth = 1;
-			ctx.stroke();
+			primitives.push({
+				z: origin.z,
+				draw: function (ctx) {
+					var ball = ctx.createRadialGradient(cx - ballRadius * 0.4, cy - ballRadius * 0.45, ballRadius * 0.12, cx, cy, ballRadius);
+					ball.addColorStop(0, c.dark ? "#f2fbf8" : "#ffffff");
+					ball.addColorStop(0.36, c.sky);
+					ball.addColorStop(0.72, c.petrol);
+					ball.addColorStop(1, "#000000");
+					ctx.fillStyle = ball;
+					ctx.beginPath();
+					ctx.arc(cx, cy, ballRadius, 0, Math.PI * 2);
+					ctx.fill();
+					ctx.strokeStyle = posRgba(c.sky, 0.55);
+					ctx.lineWidth = 1;
+					ctx.stroke();
+				}
+			});
+
+			primitives.sort(function (a, b) { return a.z - b.z; });
+			primitives.forEach(function (p) { p.draw(ctx); });
+
+			pillData.forEach(function (p) { posPill(ctx, c, w, h, p.x, p.y, p.color, p.text); });
 
 			ctx.textAlign = "center";
 			ctx.font = "600 10px Barlow, system-ui, sans-serif";
