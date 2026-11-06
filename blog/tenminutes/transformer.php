@@ -295,6 +295,7 @@
 								<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
 								<canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
 				<p class="tm-step-more">The tokenizer is a separate program trained before the model. It decides which strings become one id; the model itself only sees numbers.</p>
+				<div class="tm-step-formula" data-tex="T = [t_0,\, t_1,\, \dots,\, t_{n-1}]"></div>
 							</section>
 							<section class="tm-step">
 								<h3>2 · Embed</h3>
@@ -302,6 +303,7 @@
 								<canvas class="tm-step-canvas" id="tm-step-embed" aria-label="The embedding space with the sentence path"></canvas>
 				<div class="tm-step-modes" data-step-modes="embed"></div>
 				<p class="tm-step-more">The embedding table is a learned matrix; each row is a token's starting vector. The positions are added in the next step.</p>
+				<div class="tm-step-formula" data-tex="h_0 = E[t] + p_i"></div>
 							</section>
 							<section class="tm-step">
 								<h3>3 · Position</h3>
@@ -309,30 +311,35 @@
 								<canvas class="tm-step-canvas" id="tm-step-position" aria-label="A heatmap of positional encodings"></canvas>
 				<div class="tm-step-modes" data-step-modes="position"></div>
 				<p class="tm-step-more">Without a position signal, the same tokens in a different order would look identical. The waves give every slot a unique fingerprint.</p>
+				<div class="tm-step-formula" data-tex="PE_{(i,2k)} = \sin\left(\frac{i}{10000^{2k/d}}\right),\quad PE_{(i,2k+1)} = \cos\left(\frac{i}{10000^{2k/d}}\right)"></div>
 							</section>
 							<section class="tm-step">
 								<h3>4 · Attend</h3>
 								<p>Attention lets every token read the others. Each arc is a weighted connection; a thicker line carries more information.</p>
 								<canvas class="tm-step-canvas" id="tm-step-attend" aria-label="Attention arcs between tokens"></canvas>
 				<p class="tm-step-more">Attention is the only step where information moves between tokens. Everything else in the block works on one token at a time.</p>
+				<div class="tm-step-formula" data-tex="\operatorname{Attention}(Q,K,V) = \operatorname{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V"></div>
 							</section>
 							<section class="tm-step">
 								<h3>5 · Feed-forward</h3>
 								<p>The FFN transforms one token at a time. The bars are the hidden activations of the last token: the pattern the layer writes back.</p>
 								<canvas class="tm-step-canvas" id="tm-step-ffn" aria-label="Feed-forward hidden activations"></canvas>
 				<p class="tm-step-more">The FFN expands the vector, applies a nonlinearity, and contracts it. It cannot see other positions; attention has already copied their information in.</p>
+				<div class="tm-step-formula" data-tex="\operatorname{FFN}(x) = W_2\,\operatorname{GELU}(W_1x+b_1)+b_2"></div>
 							</section>
 							<section class="tm-step">
 								<h3>6 · Residual</h3>
 								<p>Every layer adds an attention update and an FFN update to the running stream. The heatmap shows how much each layer writes for each token.</p>
 								<canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
 				<p class="tm-step-more">The residual stream is the running vector. Every layer reads it and writes an update; nothing is overwritten, so late layers can still use the original token.</p>
+				<div class="tm-step-formula" data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)"></div>
 							</section>
 							<section class="tm-step">
 								<h3>7 · Unembed</h3>
 								<p>The final vector is compared with every vocabulary embedding. The bars are the model's shortlist for the next token.</p>
 								<canvas class="tm-step-canvas" id="tm-step-unembed" aria-label="Top next-token logits"></canvas>
 				<p class="tm-step-more">The final vector is compared with every vocabulary embedding. Softmax turns the scores into probabilities; a decoding rule chooses one token.</p>
+				<div class="tm-step-formula" data-tex="p = \operatorname{softmax}(h_L W_U^\top)"></div>
 							</section>
 						</div>
 					</section>

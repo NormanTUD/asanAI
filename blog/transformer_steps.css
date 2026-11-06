@@ -342,3 +342,12 @@
 	font: 400 0.78rem/1.5 "Open Sans", system-ui, sans-serif;
 	min-height: 3em;
 }
+
+.tm-step-formula {
+	margin: 8px 0 0;
+	padding: 8px 12px;
+	border: 1px solid var(--tm-line, var(--mn-border, #cbd5e1));
+	background: var(--tm-paper-2, var(--mn-bg-subtle, #f8fafc));
+	overflow-x: auto;
+	min-height: 48px;
+}

@@ -316,7 +316,7 @@
 																		<button class="chip" type="button" data-emb="directions">all directions</button>
 																	</div>
 																</div>
-																<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
+																<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with two learned directions"></canvas>
 																<div class="step-out" id="iemb-out">The space has two learned directions in this demo. Choose an example to see where it lands.</div>
 															</div>
 															<h4 class="layer-subhead">Meaning becomes geometry</h4>
