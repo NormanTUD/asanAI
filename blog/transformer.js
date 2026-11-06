@@ -1281,14 +1281,16 @@ function run_transformer_demo(activeId = null) {
 
 	// 1. Tokenize both for logic
 	const trainingTokens = transformer_tokenize_render(trainingInput.value, null);
-	const masterTokens = transformer_tokenize_render(masterInput.value, null);
+	// The inference prompt has no EOS: the next token is predicted from the
+	// last real prompt token, not from a marker the model never saw as input.
+	const masterTokens = transformer_tokenize_render(masterInput.value, null, false);
 
 	// 2. BPE visualization: respect the toggle mode
 	const vizMode = window.tlabVisualizationMode || 'train';
 	const vizSourceValue = (vizMode === 'inference')
 		? masterInput.value
 		: trainingInput.value;
-	const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe");
+	const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe", vizMode !== 'inference');
 
 	// 3. Run the network
 	run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
@@ -3230,11 +3232,15 @@ function render_token_picker() {
 	render_token_picker_chips();
 }
 
-function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") {
+function transformer_tokenize_render(text, containerId = "transformer-viz-bpe", appendEos = true) {
 	const typeElement = document.getElementById('transformer-tokenizer-type');
 	const type = typeElement ? typeElement.value : 'regex';
 
-	const tokens = tokenizeText(text, type);
+	// Training corpora end with EOS so the model learns when to stop.
+	// Inference prompts must NOT carry it: the next-token distribution is
+	// read from the last real prompt token, and EOS was never trained as an
+	// input token, so appending it made the model predict EOS right away.
+	const tokens = appendEos ? tokenizeText(text, type) : tokenizeTextCore(text, type);
 
 	const container = document.getElementById(containerId);
 	const signature = tokens.join('\u0001');

@@ -73,6 +73,7 @@
 				'<div class="mnz-feedback" aria-live="polite"></div>' +
 				'<div class="mnz-foot"><span class="mnz-hint">Question ' + (i + 1) + " of " + Q.length + " · one try per question</span></div>";
 			body.querySelectorAll(".mnz-opt").forEach((b) => b.addEventListener("click", () => answer(parseInt(b.dataset.o, 10), b)));
+			if (root._mnzReserveFeedback) root._mnzReserveFeedback();
 		}
 
 		function answer(o, btn) {
@@ -129,6 +130,28 @@
 		}
 
 		show();
+
+		/* Reserve the tallest possible explanation before it is shown, so
+		   answering a question cannot push the content below it down. */
+		function reserveFeedbackHeight() {
+			const fb = body.querySelector(".mnz-feedback");
+			if (!fb) return;
+			const width = fb.getBoundingClientRect().width;
+			if (!width) return;
+			const longest = Q.reduce((a, q) =>
+				((q.explain || "").length > (a.explain || "").length ? q : a), Q[0] || {});
+			const probe = document.createElement("div");
+			probe.className = "mnz-explain";
+			probe.style.cssText = "position:absolute;left:-99999px;top:0;visibility:hidden;box-sizing:border-box;";
+			probe.style.width = width + "px";
+			probe.innerHTML = "<b>Not quite.</b> " + fmt(longest.explain || "");
+			document.body.appendChild(probe);
+			const h = probe.offsetHeight;
+			probe.remove();
+			fb.style.minHeight = (h + 2) + "px";
+		}
+		root._mnzReserveFeedback = reserveFeedbackHeight;
+		reserveFeedbackHeight();
 	}
 
 	function mountAll() {

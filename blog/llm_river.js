@@ -89,6 +89,7 @@ function _execute_themeriver_render(d_model) {
 	// Render chart
 	let chart = echarts.getInstanceByDom(container);
 	if (!chart) chart = echarts.init(container);
+	container.setAttribute('data-d-model', String(d_model));
 
 	chart.setOption(
 		_themeriver_build_option(riverData, stages, tokenLabel, tokenIdx, showOther),
@@ -96,6 +97,79 @@ function _execute_themeriver_render(d_model) {
 	);
 
 	_themeriver_wire_resize(container);
+	_themeriver_render_residual_contrib(tokenIdx, d_model);
+}
+
+/* Bar chart: how much each layer writes into the residual stream for the
+   currently selected token, split into the attention and FFN sublayers. */
+function _themeriver_render_residual_contrib(tokenIdx, d_model) {
+	const container = document.getElementById('transformer-residual-contrib-plot');
+	if (!container) return;
+	const empty = (msg) => {
+		if (window.PlotState) PlotState.empty(container, 'Residual stream', msg);
+		else container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--mn-text-muted);">' + msg + '</div>';
+	};
+
+	const weights = window.currentWeights;
+	const collector = window.tlab_trajectory_collector;
+	if (!Array.isArray(weights) || !weights.length || !collector || !collector.tokens) {
+		empty('Train the model to see what each layer adds to the residual stream.');
+		return;
+	}
+
+	const tokens = collector.tokens;
+	const pos = Math.max(0, Math.min(tokenIdx, tokens.length - 1));
+	const n_heads = getTransformerConfig().n_heads;
+	const layers = [];
+	const attnWrites = [];
+	const ffnWrites = [];
+	let h = embedTokensWithPE(tokens, d_model);
+	const norm = (v) => Math.sqrt(v.reduce((sum, x) => sum + x * x, 0));
+
+	for (let l = 0; l < weights.length; l++) {
+		const res = forwardOneLayer(h, weights[l], d_model, n_heads, tokens, null);
+		const attnDiff = res.h_attn[pos].map((v, i) => v - h[pos][i]);
+		const ffnDiff = res.h_out[pos].map((v, i) => v - res.h_attn[pos][i]);
+		layers.push('L' + (l + 1));
+		attnWrites.push(+norm(attnDiff).toFixed(4));
+		ffnWrites.push(+norm(ffnDiff).toFixed(4));
+		h = res.h_out;
+	}
+
+	let chart = echarts.getInstanceByDom(container);
+	if (!chart) chart = echarts.init(container);
+
+	const axisFont = { fontSize: 11, color: themeColor('#64748b') };
+	chart.setOption({
+		title: {
+			text: 'What each layer adds to h for "' + (collector.displayTokens || tokens)[pos] + '"',
+			left: 'center',
+			textStyle: { fontSize: 12, color: themeColor('#1e293b'), fontWeight: 'bold' }
+		},
+		tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+		legend: { bottom: 0, textStyle: { fontSize: 10 } },
+		grid: { top: 40, bottom: 42, left: 48, right: 16 },
+		xaxis: { type: 'category', data: layers, axisLabel: axisFont, axisLine: { lineStyle: { color: themeColor('#cbd5e1') } } },
+		yaxis: {
+			type: 'value',
+			name: '‖write‖',
+			nameTextStyle: axisFont,
+			axisLabel: axisFont,
+			splitLine: { lineStyle: { color: themeColor('#e2e8f0') } }
+		},
+		series: [
+			{ name: 'Attention', type: 'bar', data: attnWrites, itemStyle: { color: themeColor('#3b82f6') } },
+			{ name: 'FFN', type: 'bar', data: ffnWrites, itemStyle: { color: themeColor('#8b5cf6') } }
+		]
+	}, true);
+
+	if (!container._ecResidualResize) {
+		container._ecResidualResize = () => {
+			const c = echarts.getInstanceByDom(container);
+			if (c) c.resize();
+		};
+		window.addEventListener('resize', container._ecResidualResize);
+	}
 }
 
 /**
@@ -239,6 +313,15 @@ function _themeriver_wire_resize(container) {
 		if (c) c.resize();
 	};
 	window.addEventListener('resize', container._ecThemeRiverResize);
+
+	if (window.__MN_DARK && !window._themeriverThemeBound) {
+		window._themeriverThemeBound = true;
+		__MN_DARK.onChange(() => {
+			const el = document.getElementById('transformer-themeriver-plot');
+			const dm = el ? parseInt(el.getAttribute('data-d-model') || '0') : 0;
+			if (dm) _execute_themeriver_render(dm);
+		});
+	}
 }
 
 /**
@@ -330,6 +413,8 @@ function _themeriver_ensure_dom(containerId) {
 	    <span style="color:${themeColor('#7c3aed')}; font-size:0.8rem;">words</span>
 	</div>
 	<div id="${containerId}" style="width:100%; height:520px;"></div>
+	<div class="themeriver-residual-head">Residual stream writes per layer</div>
+	<div id="transformer-residual-contrib-plot" style="width:100%; height:240px;"></div>
     `;
 	//                                              ↑ 520px statt 420px
 	parent.appendChild(wrapper);

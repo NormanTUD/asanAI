@@ -148,6 +148,14 @@
 	overflow-x: auto;
 }
 
+/* Residual-stream contribution chart inside the Probability Flow wrapper */
+.themeriver-residual-head {
+	padding: 14px 16px 0;
+	font-weight: 700;
+	color: var(--mn-text);
+	font-size: .9rem;
+}
+
 @media (max-width: 640px) {
 	.transformer-train-actions {
 		margin-left: 0;

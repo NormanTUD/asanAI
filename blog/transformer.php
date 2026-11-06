@@ -1050,7 +1050,7 @@ While the architecture is identical in both modes, the behavior of the model dif
 	<!-- Attractor / repeller emergence across layers -->
 	<div style="margin-top: 14px;">
 		<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Attractor &amp; repeller emergence across layers</div>
-		<div id="tda-live-sweep-summary" style="font-size: 0.78rem; color: var(--mn-text-muted, #64748b); margin-bottom: 6px; line-height: 1.5;"></div>
+		<div id="tda-live-sweep-summary" style="font-size: 0.78rem; color: var(--mn-text-muted, #64748b); margin-bottom: 6px; line-height: 1.5; overflow-wrap: anywhere; max-width: 100%;"></div>
 		<div id="tda-live-sweep" style="width: 100%; height: 300px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 	</div>
 
@@ -1078,8 +1078,7 @@ While the architecture is identical in both modes, the behavior of the model dif
 	</div>
 
 	<details style="margin-top: 14px; font-size: 0.85rem; color: var(--mn-text-muted, #475569);">
-		<summary style="cursor: pointer; font-weight: 700; color: var(--mn-text, #334155);">❓ How to read the phase diagram</summary>
-		<div style="padding: 10px 14px; background: var(--mn-bg-subtle, #f8fafc); border-radius: 8px; line-height: 1.6;">
+		<summary style="cursor: pointer; font-weight: 700; color: var(--mn-text, #334155);">❓ How to read the phase diagram</summary>		<div style="padding: 10px 14px; background: var(--mn-bg-subtle, #f8fafc); border-radius: 8px; line-height: 1.6;">
 			<p style="margin: 0 0 8px 0;"><b>The idea:</b> run a point (a token's hidden state) through one more transformer layer and look at the “push” it gets. Repeat this on a grid of points and you get a <b>vector field</b>, a map of how the network moves states around.</p>
 			<ul style="margin: 0; padding-left: 20px;">
 				<li><b style="color:#2563eb;">Blue cones / arrows</b> = the state is <i>pulled in</i> (negative divergence → an <b>attractor</b>). Hidden states that get pulled in and stay = the “meanings” the model converges to.</li>
@@ -1094,7 +1093,6 @@ While the architecture is identical in both modes, the behavior of the model dif
 </details>
 </details>
 <br>
-<script src="transformer_layer_summary.js?v=<?php echo filemtime(__DIR__.'/transformer_layer_summary.js'); ?>"></script>
 </div>
 </div>
 
