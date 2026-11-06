@@ -40,4 +40,6 @@ bei: "minimalneuron" schreib auch ein kapitel über den loss. erkläre, wie MSE 
 
 " Maschinen waren in schwächeren Sinnen programmierbar. " programmierbarkeit geht zurück auf Ismail al-Jazari usw zurück, also sehr weit zurück
 
+"Die Lernregel war nicht Backpropagation:" entfenre diesen teilsatz
 
+entferne die überschrift "Das Perceptron war eine physische Maschine." und mach lieber "das perzeptron" aber vor "Das Perceptron aktualisierte seine Gewichte direkt aus dem Fehler, Schicht für Schicht, weshalb". schreib davor aber kurz was über frank rosenblatt, verschiebe das von später hierhin, und verschiebe auch das bild von ihm hierher.

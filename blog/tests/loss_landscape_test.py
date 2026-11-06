@@ -165,6 +165,7 @@ def run() -> int:
         with sync_playwright() as pw:
             browser = pw.chromium.launch(headless=True)
             ctx = browser.new_context()
+            ctx.add_cookies([{"name": "theme", "value": "dark", "url": f"http://localhost:{PORT}"}])
             page = ctx.new_page()
 
             page.on("console", lambda m: console_errors.append(f"{m.type}: {m.text}") if m.type == "error" else None)
@@ -180,6 +181,35 @@ def run() -> int:
                 page.goto(URL, wait_until="networkidle", timeout=30000)
             except PWTimeout:
                 failures.append("page.goto timed out after 30s")
+
+            page.wait_for_timeout(3000)
+
+            headings = page.evaluate("""() => {
+                return [...document.querySelectorAll('#contents h1, #contents h2, #contents h3, #contents h4, #contents h5, #contents h6')].map(h => {
+                    const style = getComputedStyle(h);
+                    return {
+                        text: h.textContent.trim().slice(0, 60),
+                        clip: style.webkitBackgroundClip,
+                        image: style.backgroundImage,
+                        terms: [...h.querySelectorAll('.glossary-term')].map(t => ({
+                            text: t.textContent,
+                            fill: getComputedStyle(t).webkitTextFillColor
+                        }))
+                    };
+                });
+            }""")
+
+            for h in headings:
+                if h["clip"] != "text" or h["image"] == "none":
+                    failures.append(
+                        f"heading '{h['text']}' lost its gradient paint "
+                        f"(clip={h['clip']}, image={h['image'][:40]})"
+                    )
+                for t in h["terms"]:
+                    if t["fill"] in ("rgba(0, 0, 0, 0)", "transparent", ""):
+                        failures.append(
+                            f"glossary term '{t['text']}' in heading '{h['text']}' is transparent"
+                        )
 
             try:
                 page.wait_for_function(
