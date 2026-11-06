@@ -59,7 +59,6 @@
 								<p class="demo-title">Four questions about minds <span>· demo</span></p>
 								<p class="demo-sub">Behaviour, grounding, experience, and sentience are different questions. Select one.</p>
 							</div>
-							<span class="demo-badge">step through</span>
 						</div>
 						<div class="demo-body">
 							<div class="timeline-scroller">
@@ -77,7 +76,7 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Behaviour, grounding, and experience are separate questions.</span></div>
 					</div>
 
-					<div class="demo demo--paper wg-demo">
+					<div class="demo demo--paper demo--interactive wg-demo">
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">Winograd Schema <span>· demo</span></p>
@@ -102,7 +101,7 @@
 						</div>
 					</div>
 
-					<div class="demo demo--paper cr-sim" id="cr-sim">
+					<div class="demo demo--paper demo--interactive cr-sim" id="cr-sim">
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">The Chinese Room <span>· demo</span></p>
