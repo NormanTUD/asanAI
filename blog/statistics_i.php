@@ -158,6 +158,7 @@ To find Ceres, Gauß worked from the **errors** of the measurements. He assumed 
 		<span class="label-right">Worse&nbsp;Telescopes</span>
     </div>
 </div>
+<p class="stat-hint"><em>Synthetic data, not Piazzi's actual measurements. The plot is here to show the idea.</em></p>
 
 <div class="statlab-section">
     <div class="md">
