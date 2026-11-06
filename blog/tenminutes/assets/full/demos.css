@@ -145,7 +145,28 @@
 	overflow: auto;
 }
 .logit_calc { overflow-x: auto; }
-#transformer-output-projection { text-align: center; }
+#transformer-output-projection {
+	text-align: center;
+	overflow-x: auto;
+}
+#transformer-output-projection #tlab-final-details {
+	width: max-content;
+	min-width: 100%;
+}
+#transformer-output-projection div[style*="overflow-x"],
+#transformer-output-projection .logit_calc {
+	overflow: visible;
+	max-width: none;
+	width: max-content;
+}
+#transformer-output-projection .tml-display {
+	overflow: visible;
+}
+#transformer-output-projection span.md {
+	overflow: visible;
+	width: max-content;
+	display: block;
+}
 #transformer-output-projection .logit_calc {
 	display: block;
 	width: 100%;
