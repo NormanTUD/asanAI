@@ -156,6 +156,33 @@
 	font-size: .9rem;
 }
 
+/* The final projection stacks very wide logit/probability matrices. Give
+   the whole panel one horizontal scroller instead of a scrollbar per
+   equation, so the reader can drag the block sideways. */
+#transformer-output-projection {
+	overflow-x: auto;
+}
+#transformer-output-projection #tlab-final-details {
+	width: max-content;
+	min-width: 100%;
+}
+#transformer-output-projection .math-scroll,
+#transformer-output-projection div[style*="overflow-x"] {
+	overflow: visible;
+	max-width: none;
+	width: max-content;
+	display: inline-block;
+}
+#transformer-output-projection .cl-eq,
+#transformer-output-projection span.md {
+	overflow: visible;
+	width: max-content;
+	display: block;
+}
+#transformer-output-projection .tml-display {
+	overflow: visible;
+}
+
 @media (max-width: 640px) {
 	.transformer-train-actions {
 		margin-left: 0;
