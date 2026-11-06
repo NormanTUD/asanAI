@@ -654,6 +654,16 @@
 			.replace(/"/g, '&quot;');
 	}
 
+	/* Badge text for visible spans. Keeps the plain-English label but wraps
+	   LaTeX-looking identifiers (h_{in}[0][:], h_1[...]) in inline math so
+	   Temml can typeset the subscript instead of printing the braces. */
+	function _badgeHtml(s) {
+		if (typeof s !== 'string') s = String(s);
+		return htmlSafe(s).replace(/(h(?:_\{[^}]+\}|_[A-Za-z0-9]+)(?:\[[^\]]*\])*)/g, function (m) {
+			return '$' + m + '$';
+		});
+	}
+
 	function _ub(tex, label) {
 		return '\\underbrace{' + tex + '}_{' + _under(label) + '}';
 	}
@@ -2372,7 +2382,7 @@
 				'<span class="prov-trace-idx">' + (ix + 1) + '</span>' +
 				'<span class="prov-trace-name">$' + n.name + '$</span>' +
 				'<span class="prov-trace-val">' + fmt(n.value) + '</span>' +
-				'<span class="prov-trace-badge">' + texSafe(n.badge) + '</span>' +
+				'<span class="prov-trace-badge">' + _badgeHtml(n.badge) + '</span>' +
 				'</span>' +
 				(hasF ? '<span class="prov-trace-formula" data-tex="' + attrSafe(n.formula) + '"></span>' : '') +
 				'</div>';
@@ -2908,7 +2918,7 @@
 			}
 			parts.push('<div class="prov-deriv-step' + (st.node.id === d.root.id ? ' prov-deriv-root' : '') + '" data-prov-go="' + attrSafe(st.node.id) + '" title="' + texSafe(st.node.badge) + '">' +
 				'<div class="prov-deriv-meta">$' + st.node.name + '$ &nbsp;<b>' + fmt(st.node.value) + '</b> &nbsp;' +
-				'<span class="prov-deriv-badge">' + texSafe(st.node.badge) + '</span></div>' +
+				'<span class="prov-deriv-badge">' + _badgeHtml(st.node.badge) + '</span></div>' +
 				'<div class="prov-deriv-formula" data-tex="' + attrSafe(st.node.formula) + '"></div>' +
 				'</div>');
 		}
@@ -2986,7 +2996,7 @@
 
 		var parts = [];
 		parts.push('<div class="prov-head">' +
-			'<span class="prov-badge">' + texSafe(node.badge) + '</span>' +
+			'<span class="prov-badge">' + _badgeHtml(node.badge) + '</span>' +
 			'<span class="prov-title">$' + node.name + '$</span>' +
 			'<div class="prov-actions">' +
 			(_history.length > 1 ? '<button class="prov-btn" data-prov-act="back" title="Back">&larr;</button>' : '') +
@@ -3094,6 +3104,9 @@
 
 	S.hide = function () {
 		if (_tooltip) _tooltip.style.display = 'none';
+		var active = document.querySelector('.prov-cell.prov-active');
+		if (active) active.classList.remove('prov-active');
+		S._activeCell = null;
 	};
 
 	S.pin = function (on) {
@@ -3136,6 +3149,12 @@
 			else if (a === 'back') { _history.pop(); _renderCurrent(); }
 		});
 		_tooltip.addEventListener('mouseover', function () { _clearHide(); });
+		_tooltip.addEventListener('mouseleave', function () {
+			if (S._pinned) return;
+			_hideTimer = setTimeout(function () {
+				if (!S._pinned) S.hide();
+			}, 200);
+		});
 		document.body.appendChild(_tooltip);
 	}
 
@@ -3180,23 +3199,12 @@
 	}
 
 	function _onDocClick(e) {
-		/* Clicking on an annotated number pins the tooltip and opens the
-		   Light Cone view directly. Hover is reserved for a quick peek at
-		   the formula; click commits to a deeper analysis. */
+		/* Hover opens the quick-peek tooltip; a click on an annotated cell
+		   must neither pin it nor jump into the Light Cone view, otherwise
+		   the popup cannot be dismissed by simply moving the mouse away.
+		   Pinning stays available through the explicit Pin button. */
 		var cell = e.target && e.target.closest ? e.target.closest('[data-prov-id]') : null;
-		if (cell) {
-			if (_timer) { clearTimeout(_timer); _timer = null; }
-			_clearHide();
-			S._activeCell = cell;
-			var active = document.querySelector('.prov-cell.prov-active');
-			if (active) active.classList.remove('prov-active');
-			cell.classList.add('prov-active');
-			S._pinned = true;
-			_traceView = 'cone';
-			S.show(cell.getAttribute('data-prov-id'));
-			e.stopPropagation();
-			return;
-		}
+		if (cell) return;
 		if (S._pinned) return;
 		if (e.target && e.target.closest && e.target.closest('#prov-tooltip')) return;
 		S.hide();

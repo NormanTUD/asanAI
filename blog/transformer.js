@@ -2548,7 +2548,7 @@ function buildEntropyLatex(probs, scaledProbs, vocabSize, temperature) {
     const entropyScaled = computeEntropyBits(scaledProbs);
     const maxEntropy = Math.log2(vocabSize);
 
-    return `<div style="overflow-x:auto; padding:10px 0;">
+    return `<div class="lg-scroll" style="padding:10px 0;">
 $$
 \\underbrace{H_{T=1}}_{\\substack{\\text{Entropy of} \\\\ \\text{unscaled distribution} \\\\ \\text{(Temperature = 1)}}} = ${entropyOrig.toFixed(4)} \\text{ bits}, \\quad
 \\underbrace{H_{T=${temperature.toFixed(1)}}}_{\\substack{\\text{Entropy after} \\\\ \\text{temperature scaling} \\\\ \\text{(T = ${temperature.toFixed(1)})}}} = ${entropyScaled.toFixed(4)} \\text{ bits}, \\quad
