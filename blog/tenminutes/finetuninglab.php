@@ -53,7 +53,6 @@
 								<p class="demo-title">From raw model to assistant <span>· demo</span></p>
 								<p class="demo-sub">Post-training is a pipeline. Select a stage to see what it adds.</p>
 							</div>
-							<span class="demo-badge">step through</span>
 						</div>
 						<div class="demo-body">
 							<div class="timeline-scroller">
