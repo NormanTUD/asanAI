@@ -359,7 +359,7 @@
 					</section>
 
 					<section class="section-block" id="pipeline">
-						<div class="section-kicker"><span class="sk-num">03</span> The pipeline</div>
+						<div class="section-kicker"><span class="sk-num">04</span> The pipeline</div>
 						<h2 class="section-title">From text to a distribution.</h2>
 						<div class="prose">
 							<p>
@@ -394,7 +394,7 @@
 					</section>
 
 					<section class="section-block" id="layerlens">
-						<div class="section-kicker"><span class="sk-num">04</span> The layer lens</div>
+						<div class="section-kicker"><span class="sk-num">05</span> The layer lens</div>
 						<h2 class="section-title">A word changes its meaning with depth.</h2>
 						<div class="prose">
 							<p>
@@ -424,7 +424,7 @@
 						</section>
 
 					<section class="section-block" id="inputlab">
-						<div class="section-kicker"><span class="sk-num">05</span> Preparing the input</div>
+						<div class="section-kicker"><span class="sk-num">06</span> Preparing the input</div>
 						<h2 class="section-title">From text to a stream of vectors.</h2>
 						<div class="prose">
 							<p>
@@ -462,7 +462,7 @@
 					</section>
 
 					<section class="section-block" id="block">
-						<div class="section-kicker"><span class="sk-num">06</span> Inside the block</div>
+						<div class="section-kicker"><span class="sk-num">07</span> Inside the block</div>
 						<h2 class="section-title">Two sublayers, one residual stream.</h2>
 						<div class="prose">
 							<p>
@@ -558,7 +558,7 @@
 					</section>
 
 					<section class="section-block" id="output">
-						<div class="section-kicker"><span class="sk-num">07</span> From vectors to words</div>
+						<div class="section-kicker"><span class="sk-num">08</span> From vectors to words</div>
 						<h2 class="section-title">Logits, softmax, and the stop token.</h2>
 						<div class="prose">
 							<p>
@@ -652,7 +652,7 @@
 					</section>
 
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">08</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">09</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
@@ -677,6 +677,30 @@
 
 	<script src="assets/site.js"></script>
 	<script src="../temml.min.js"></script>
+	<script src="../transformer_steps.js?v=<?php echo (int) @filemtime(__DIR__ . '/../transformer_steps.js'); ?>"></script>
+	<script>
+	(function () {
+		var host = document.getElementById('transformer-step-visuals');
+		if (!host || !window.TransformerSteps) return;
+		var ready = false;
+		function init() {
+			if (ready) return;
+			ready = true;
+			window.TransformerSteps.init('transformer-step-visuals');
+		}
+		if ('IntersectionObserver' in window) {
+			var io = new IntersectionObserver(function (entries) {
+				if (entries.some(function (e) { return e.isIntersecting; })) {
+					io.disconnect();
+					init();
+				}
+			}, { rootMargin: '400px 0px' });
+			io.observe(host);
+		} else {
+			init();
+		}
+	})();
+	</script>
 
 
 

@@ -244,6 +244,45 @@ function getTransformerConfig() {
 	};
 }
 
+/* Lightweight forward pass for the six-step overview: no DOM, no Plotly,
+   no matrix rendering. It fills window.__tmLayerTrace / __tmFFNTrace so the
+   step canvases are live even before the reader reaches the heavy layer panels. */
+window.tmComputeStepTrace = function () {
+	if (!window.__tmInputState || !window.currentWeights) return false;
+	var state = window.__tmInputState;
+	var config = state.config || getTransformerConfig();
+	var d_model = config.d_model;
+	var n_heads = config.n_heads;
+	var n_layers = config.n_layers;
+	var tokens = state.tokensWithPositional;
+	var tokenStrings = state.knownTokens;
+	if (!tokens || !tokens.length || !window.currentWeights.length) return false;
+	window.__tmLayerTrace = [];
+	window.__tmFFNTrace = [];
+	var h = tokens;
+	for (var n = 0; n < n_layers; n++) {
+		var layer = window.currentWeights[n];
+		if (!layer) break;
+		var norm = calculateLayerNorm(h, layer.gamma, layer.beta);
+		var headData = causalMultiHeadAttention(norm, layer.attention, d_model, n_heads);
+		var concat = h.map(function (_, tIdx) {
+			return [].concat.apply([], headData.map(function (hd) { return hd.context[tIdx]; }));
+		});
+		var projected = matMul(concat, layer.attention.output);
+		var h_attn = matAdd(h, projected);
+		var h_out = run_ffn_block(h_attn, layer, true, n, tokenStrings);
+		window.__tmLayerTrace[n] = { h_in: h, h_attn: h_attn, h_out: h_out, headData: headData, tokenStrings: tokenStrings };
+		h = h_out;
+	}
+	window._cachedFinalProjection = {
+		h_final: h,
+		vocabulary: Object.keys(window.persistentEmbeddingSpace || {}),
+		d_model: d_model
+	};
+	window.dispatchEvent(new CustomEvent("tm:transformer-data"));
+	return true;
+};
+
 function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers, recordFinal) {
 	if (n_layers === undefined) n_layers = weights.length;
 	let h = embedTokensWithPE(tokens, d_model);
@@ -1295,6 +1334,7 @@ function run_transformer_demo(activeId = null, inputOnly = false) {
 		const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
 		const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
 		window.__tmInputState = { h0, tokensWithPositional, knownTokens, trainingTokens, masterTokens, vocabulary, config };
+		if (window.tmComputeStepTrace) window.tmComputeStepTrace();
 		show_nr_of_params();
 		if (window.__tmBusyInference && typeof window.tmHideInferenceBusy === 'function') window.tmHideInferenceBusy();
 		return;

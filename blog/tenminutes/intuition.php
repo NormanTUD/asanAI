@@ -2695,13 +2695,26 @@
 				attMatrix.innerHTML = html;
 			}
 			if (attSum) {
-				var parts = ["bank", "river", "money"].filter(function (word) {
+				function vec(word) {
+					var p = attPos[word];
+					return "\\begin{pmatrix}" + p[0].toFixed(2) + "\\\\" + p[1].toFixed(2) + "\\end{pmatrix}";
+				}
+				var words = ["bank", "river", "money"].filter(function (word) {
 					return ex.weights[word] > 0;
-				}).map(function (word) {
-					return ex.weights[word].toFixed(2) + "\\,v_{\\text{" + attLabel(word) + "}}";
 				});
+				var weighted = words.map(function (word) {
+					return "\\underbrace{" + ex.weights[word].toFixed(2) + "}_{\\text{" + (DE ? "Gewicht" : "weight") + "}}\\underbrace{" + vec(word) + "}_{v_{\\text{" + attLabel(word) + "}}}";
+				});
+				var xTerms = [], yTerms = [];
+				words.forEach(function (word) {
+					var w = ex.weights[word].toFixed(2);
+					var p = attPos[word];
+					xTerms.push(w + "\\cdot " + p[0].toFixed(2));
+					yTerms.push(w + "\\cdot " + p[1].toFixed(2));
+				});
+				var arithmetic = "\\begin{pmatrix}" + xTerms.join(" + ") + "\\\\" + yTerms.join(" + ") + "\\end{pmatrix}";
 				var outTex = "\\begin{pmatrix}" + outv[0].toFixed(2) + "\\\\" + outv[1].toFixed(2) + "\\end{pmatrix}";
-				var tex = "\\underbrace{\\underbrace{" + parts.join(" + ") + "}_{\\text{" + (DE ? "Summe der gewichteten Values" : "sum of the weighted values") + "}} = \\underbrace{" + outTex + "}_{\\text{out}_{\\text{" + attLabel("bank") + "}}}}_{\\text{" + (DE ? "was Bank aus dem Kontext mitnimmt" : "what bank takes from the context") + "}}";
+				var tex = "\\underbrace{\\begin{aligned} \\text{out}_{\\text{" + attLabel("bank") + "}} &= " + weighted.join(" + ") + " \\\\ &= " + arithmetic + " = \\underbrace{" + outTex + "}_{\\text{" + (DE ? "gewichtete Summe" : "weighted sum") + "}} \\end{aligned}}_{\\text{" + (DE ? "was Bank aus dem Kontext mitnimmt" : "what bank takes from the context") + "}}";
 				attSum.setAttribute("data-tex", tex);
 				attSum.removeAttribute("data-tex-rendered");
 				if (TM.typesetMath) TM.typesetMath(attSum.parentNode);

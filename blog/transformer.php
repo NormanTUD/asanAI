@@ -19,6 +19,7 @@ featured: true
 <script src="provenance.js?v=<?php echo filemtime(__DIR__.'/provenance.js'); ?>"></script>
 <script src="tda_live.js?v=<?php echo filemtime(__DIR__.'/tda_live.js'); ?>"></script>
 <link rel="stylesheet" href="transformer.css?v=<?php echo filemtime(__DIR__.'/transformer.css'); ?>">
+<link rel="stylesheet" href="transformer_steps.css?v=<?php echo filemtime(__DIR__.'/transformer_steps.css'); ?>">
 
 <!--
 https://nlp.seas.harvard.edu/2018/04/03/attention.html
@@ -34,12 +35,16 @@ https://arxiv.org/html/2505.11611v1
 Until now, this course has built one part of a machine at a time: [tokenization](tokenizerlab.php) chops text into integers, [embeddings](embeddinglab.php) turn the integers into vectors, [positional encoding](positionalembeddingslab.php) marks their order, [attention](attentionlab.php) lets tokens exchange information, the **FFN** transforms each token, the **unembedding** reads the result back out as a word, and the [loss](losslab.php), [backpropagation](backproplab.php) and [optimizer](optimizerlab.php) make the stack learn. This chapter assembles those parts into one machine and runs it. Every section below is one of those parts, shown as an equation and as its behavior on the live model; the chapter that introduced a part is linked where it first appears.
 
 An LLM is not a cloud: at this scale it is a stack of matrix multiplications that
-fits entirely in your browser. The demo below trains one on the text you type, and
-the rest of the chapter walks through that same run — every step of the machinery,
-from tokenization over attention to the FFN block, the unembedding and the loss, is
-executed on screen and shown where its equation is derived. The hyperparameters
-below are the $d_{\text{model}}$, $h$ and $N$ of those equations: move any of them
-by one step and the change shows up, visibly, in the equations and plots that follow.
+fits entirely in your browser. A browser is far too weak to train a good language
+model; this demo is for inspecting and following the computation step by step, not
+for building a useful model. Real models need terabytes of data and compute. The
+demo below trains one on the text you type, and the rest of the chapter walks
+through that same run — every step of the machinery, from tokenization over
+attention to the FFN block, the unembedding and the loss, is executed on screen and
+shown where its equation is derived. The hyperparameters below are the
+$d_{\text{model}}$, $h$ and $N$ of those equations: move any of them by one step and
+the change shows up, visibly, in the equations and plots that follow. **Play with
+the sliders:** moving them is part of understanding what the architecture does.
 </div>
 
 <div class="md" id="step-config">
@@ -177,6 +182,77 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	// Keep the loss panel mounted at a fixed height from the first paint and
 	// show a readable placeholder so training never shifts the page.
 	if (typeof drawTrainingPlaceholder === 'function') drawTrainingPlaceholder();
+})();
+</script>
+
+<div class="md">
+## The six steps, live
+
+These are the six steps from the intuition chapter, now driven by the real numbers
+of the tiny model above. Read the heading, then look at the picture. The layer
+cards below repeat the attention, feed-forward and residual steps for every layer,
+with the full formulas one level deeper.
+</div>
+
+<div class="tm-step-grid" id="transformer-step-visuals">
+	<section class="tm-step">
+		<h3>1 · Tokenize</h3>
+		<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
+		<canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
+	</section>
+	<section class="tm-step">
+		<h3>2 · Embed</h3>
+		<p>Each token becomes a point in the learned embedding space. The line follows the sentence; the faint cloud is the rest of the vocabulary.</p>
+		<canvas class="tm-step-canvas" id="tm-step-embed" aria-label="The embedding space with the sentence path"></canvas>
+	</section>
+	<section class="tm-step">
+		<h3>3 · Position</h3>
+		<p>The same token at a different slot gets a different fingerprint. Each row is a position; the waves are the sinusoidal encoding.</p>
+		<canvas class="tm-step-canvas" id="tm-step-position" aria-label="A heatmap of positional encodings"></canvas>
+	</section>
+	<section class="tm-step">
+		<h3>4 · Attend</h3>
+		<p>Attention lets every token read the others. Each arc is a weighted connection; a thicker line carries more information.</p>
+		<canvas class="tm-step-canvas" id="tm-step-attend" aria-label="Attention arcs between tokens"></canvas>
+	</section>
+	<section class="tm-step">
+		<h3>5 · Feed-forward</h3>
+		<p>The FFN transforms one token at a time. The bars are the hidden activations of the last token: the pattern the layer writes back.</p>
+		<canvas class="tm-step-canvas" id="tm-step-ffn" aria-label="Feed-forward hidden activations"></canvas>
+	</section>
+	<section class="tm-step">
+		<h3>6 · Residual</h3>
+		<p>Every layer adds an attention update and an FFN update to the running stream. The heatmap shows how much each layer writes for each token.</p>
+		<canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
+	</section>
+	<section class="tm-step">
+		<h3>7 · Unembed</h3>
+		<p>The final vector is compared with every vocabulary embedding. The bars are the model's shortlist for the next token.</p>
+		<canvas class="tm-step-canvas" id="tm-step-unembed" aria-label="Top next-token logits"></canvas>
+	</section>
+</div>
+<script src="transformer_steps.js?v=<?php echo filemtime(__DIR__ . '/transformer_steps.js'); ?>"></script>
+<script>
+(function () {
+	var host = document.getElementById('transformer-step-visuals');
+	if (!host || !window.TransformerSteps) return;
+	var ready = false;
+	function init() {
+		if (ready) return;
+		ready = true;
+		window.TransformerSteps.init('transformer-step-visuals');
+	}
+	if ('IntersectionObserver' in window) {
+		var io = new IntersectionObserver(function (entries) {
+			if (entries.some(function (e) { return e.isIntersecting; })) {
+				io.disconnect();
+				init();
+			}
+		}, { rootMargin: '400px 0px' });
+		io.observe(host);
+	} else {
+		init();
+	}
 })();
 </script>
 
