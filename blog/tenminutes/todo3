@@ -8,4 +8,8 @@ demo "Die autoregressive Schleife": "Die Temperatur formt zuerst die Verteilung;
 
 in intuition: "Schritt 3 · Position Jeder Platz bekommt seinen eigenen Fingerabdruck" sollte eigenes kleines mini kapitel werden mit überschrift usw. zeige auch die formel.
 
+split "Six steps, one running vector." into multiple steps really with own headlines and so on. "Inside the model" should be its own sections, not a group of demos. write a little, then a demo, write a little, then a demo and so on. 
+
+same for all the other demos there. bilingual of course. make it fun and short to read, get info from the according ../ files but make it shorter.
+
 
