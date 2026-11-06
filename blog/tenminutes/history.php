@@ -313,8 +313,8 @@
 						</figure>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">If reasoning can be written, it can be mechanised.</p>
-							<p class="aha-sub">Leibniz left the thinking machine to later centuries. What he supplied was the wager that thought might be written down as calculation.</p>
+							<p class="aha-big">A notation can turn an argument into arithmetic.</p>
+							<p class="aha-sub">Leibniz did not build the thinking machine. He bet that a universal notation would make disagreement a calculation, and that bet is the ancestor of every formal language since.</p>
 						</div>
 					</section>
 
