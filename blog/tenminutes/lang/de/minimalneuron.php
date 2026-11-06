@@ -74,7 +74,7 @@ return [
 		'Fit the band, miss the world.' => 'Das Band fitten, die Welt verfehlen.',
 		'The model only sees noisy points of a sine wave between -10 and 10. It can fit them perfectly and still know nothing about what happens outside. Train it and watch the curve leave the sine behind.' => 'Das Modell sieht nur verrauschte Punkte einer Sinuswelle zwischen -10 und 10. Es kann sie perfekt fitten und weiß trotzdem nichts darüber, was außerhalb passiert. Trainiere es und sieh, wie die Kurve den Sinus hinter sich lässt.',
 		'A sine learned inside a band' => 'Eine Sinuswelle, gelernt in einem Band',
-		'A real dense network sees only the blue band. Train it and watch what it does outside, from -100 to 100; the inset zooms into the band.' => 'Ein echtes dichtes Netz sieht nur das blaue Band. Trainiere es und sieh, was es außerhalb tut, von -100 bis 100; die Inset-Ansicht zoomt ins Band.',
+		'A real dense network sees only the blue band. Train it and see what it does outside its training range.' => 'Ein echtes dichtes Netz sieht nur das blaue Band. Trainiere es und sieh, was es außerhalb seines Trainingsbereichs macht.',
 		'Train 100 epochs →' => '100 Epochen trainieren →',
 		'The blue band is all the model ever sees. Train it a few times: the fit can improve inside the band while drifting away outside. The best training error is not a good model.' => 'Das blaue Band ist alles, was das Modell je sieht. Trainiere es ein paar Mal: Der Fit kann im Band besser werden und draußen abdriften. Der kleinste Trainingsfehler ist kein gutes Modell.',
 		'Inside the band' => 'Im Band',
