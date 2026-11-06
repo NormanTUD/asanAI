@@ -1326,9 +1326,6 @@ function run_transformer_demo(activeId = null) {
 		});
 	}
 
-	// Keep the address bar in sync with the current run (cheap + debounced).
-	if (typeof scheduleRunUrlSync === 'function') scheduleRunUrlSync();
-
 	// Keep the Probability Flow residual-write chart in step with the new
 	// weights/token position (the river itself may already be rendered).
 	if (typeof _themeriver_render_residual_contrib === 'function' &&
@@ -1347,8 +1344,6 @@ function run_transformer_demo(activeId = null) {
    Prompt + architecture + training settings live in many controls; this
    unifies them in the URL so a reader can copy a link to the exact run. */
 const TRANSFORMER_RUN_KEYS = ['d', 'h', 'n', 'c', 't', 'train', 'prompt', 'epochs', 'lr', 'opt'];
-let _runUrlTimer = null;
-let _lastRunUrl = null;
 
 function collectTransformerRun() {
 	const cfg = getTransformerConfig();
@@ -1455,34 +1450,6 @@ function transformerRunParams() {
 	put('train', cfg.train);
 	put('prompt', cfg.prompt);
 	return params;
-}
-
-function scheduleRunUrlSync() {
-	if (_runUrlTimer) clearTimeout(_runUrlTimer);
-	_runUrlTimer = setTimeout(() => {
-		_runUrlTimer = null;
-		const qs = transformerRunParams().toString();
-		if (qs === _lastRunUrl) return;
-		_lastRunUrl = qs;
-		try {
-			history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
-		} catch (e) { /* history unavailable */ }
-	}, 300);
-}
-
-function bindTransformerRunURL() {
-	const root = document.getElementById('transformer_site');
-	if (!root || root._runUrlBound) return;
-	root._runUrlBound = true;
-	const onChange = (e) => {
-		const t = e.target;
-		if (!t || !t.closest) return;
-		if (t.closest('#transformer_config, #transformer-train-card, #transformer-training-data')) {
-			scheduleRunUrlSync();
-		}
-	};
-	root.addEventListener('input', onChange);
-	root.addEventListener('change', onChange);
 }
 
 function scrollToRunStep(attempt) {
@@ -7796,7 +7763,6 @@ async function loadTransformerModule () {
 	updateTrainButtonState();
 	updateArchitectureValidityUI();
 	run_transformer_demo();
-	bindTransformerRunURL();
 	_observeOutputProjectionMath();
 	window.addEventListener('blogPostLoadComplete', scrollToRunStep, { once: true });
 	scrollToRunStep();

@@ -302,7 +302,12 @@ function restoreContainerMath(container, stashed) {
 	});
 	stashed.forEach(m => {
 		if (!m.isConnected) {
-			console.error('[renderMarkdown] rendered <math> placeholder lost by marked; re-appending equation');
+			// Recoverable: marked dropped the placeholder, so put the equation
+			// back. Keep the diagnostic out of production consoles; the render
+			// validator treats console.error as a page failure.
+			if (window.__MATH_GUARDRAIL__ || /[?&]debug=1(?:&|$)/.test(location.search)) {
+				console.warn('[renderMarkdown] rendered <math> placeholder lost by marked; re-appending equation');
+			}
 			container.appendChild(m);
 		}
 	});

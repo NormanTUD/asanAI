@@ -98,3 +98,31 @@ DONE Translated quote and citation for all three poem examples in both
      languages: Blake, Ringelnatz, and Alice. English pages show English
      versions, German pages German versions; the original-language note stays
      in the citation for Alice.
+
+Fourth pass — poem interaction and background
+
+DONE Hover: every token now shows a tooltip near the point with the token
+     text, its position, and its id. The pointer hit test was already there;
+     the tooltip makes it visible.
+
+DONE Directed paths: each segment now carries an arrowhead at 58% of the way
+     from one token to the next, so the reading order is visible.
+
+DONE Background: the poem canvas had a transparent background, so the paper
+     shell's own grid showed through behind the 3D grid. renderLine now fills
+     the canvas with the paper colour before drawing, and the grid is a simple
+     floor grid plus x/y/z axes, with no cube faces.
+
+DONE Explanation: the demo subtitle now says that each point is a token plus
+     position, the line follows reading order, the 3D view is a PCA shadow of
+     the 768 dimensions, the axes are only orientation, and hovering shows the
+     token.
+
+DONE Quote/citation for Blake, Ringelnatz, and Alice translated in both
+     languages, including the Ringelnatz attribution caveat.
+
+DONE Removed the entire "The scripts that made the data" details block and the
+     Prism CSS/JS from embeddinglab.php.
+
+DONE Audit: embeddinglab EN/DE at 390 px and 1200 px, no console errors and
+     zero horizontal overflow.

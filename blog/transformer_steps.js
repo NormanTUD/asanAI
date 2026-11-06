@@ -1723,7 +1723,7 @@
 		if (!moved.transformer) {
 			var posCard = stepByNumber(3);
 			if (posCard) {
-				var isDe = document.documentElement.lang === "de";
+				var isDe = !!(window.TM && window.TM.lang && window.TM.lang() === "de");
 				var attendCard = stepByNumber(4);
 				var ffnCard = stepByNumber(5);
 				var residualCard = stepByNumber(6);
