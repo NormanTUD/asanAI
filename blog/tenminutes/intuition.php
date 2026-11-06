@@ -43,7 +43,7 @@
 							</p>
 						</div>
 
-						<div class="demo demo--paper" id="phone-demo">
+						<div class="demo demo--paper demo--interactive" id="phone-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The model in your pocket <span>· demo 01a</span></p>
@@ -148,7 +148,7 @@
 							</p>
 						</div>
 
-						<div class="demo" id="next-token-demo">
+						<div class="demo demo--generative" id="next-token-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The autoregressive loop <span>· demo 01</span></p>
@@ -205,7 +205,7 @@
 								shapes the distribution before any of these choices: low values concentrate
 								it, high values flatten it.
 							</p>
-							<div class="demo demo--paper" id="truth-tunnel-demo">
+							<div class="demo demo--paper demo--canvas" id="truth-tunnel-demo">
 								<div class="demo-head">
 									<div>
 										<p class="demo-title">The truth tunnel <span>· demo 01b</span></p>
@@ -330,7 +330,7 @@
 							<p>Words and whole sentences are points in a high-dimensional space, and the points form a <b>manifold</b>: near each point it looks flat like a plane, but as a whole it can be curved, much like the Earth's surface from where you stand. The relations between the points are similar enough that they can be used for translation: the path from one word or sentence to another can be transformed into the corresponding path in another language. In a transformer, the feed-forward networks help learn such transformations.</p>
 							<p>The words (tokens) and their positions relative to each other are enough to derive translations, from those relations alone. In real models this is more complex not only because the space is high-dimensional, but also because they are tokens, not whole words.</p>
 						</div>
-						<div class="demo demo--paper" id="tm-dual-manifold-demo">
+						<div class="demo demo--paper demo--canvas" id="tm-dual-manifold-demo">
 							<div class="demo-body">
 								<div id="tm-dual-manifolds" style="width:100%;height:420px;">
 									<div class="tm-manifold-loading">
@@ -492,7 +492,7 @@
 															</div>
 															<h4 class="layer-subhead">Where the bend happens</h4>
 															<p class="step-note curve-intro">After attention has placed each token in context, the MLP works on that token on its own. It projects the vector, adds a bias, and applies a nonlinearity. A smooth activation bends the surrounding space instead of only stretching it; ReLU folds it along a crease at <span data-tex="z = 0" data-tex-display="false"></span>. This moves the token toward a region where the next token is easier to separate.</p>
-															<div class="demo demo--paper ism-panel" data-arrow-nav style="margin-top:14px">
+															<div class="demo demo--paper demo--canvas ism-panel" data-arrow-nav style="margin-top:14px">
 																<div class="demo-head">
 																	<div>
 																		<p class="demo-title">Watch the MLP bend the space <span>· demo 07</span></p>
@@ -621,7 +621,7 @@
 							<div class="prose-math" data-tex="\underbrace{p_i = \frac{\exp(\underbrace{\text{logit}_i}_{\text{score}})}{\underbrace{\sum_j \exp(\text{logit}_j)}_{\text{normalizer}}}}_{\text{softmax: scores become probabilities}}" data-tex-de="\underbrace{p_i = \frac{\exp(\underbrace{\text{logit}_i}_{\text{Score}})}{\underbrace{\sum_j \exp(\text{logit}_j)}_{\text{Normalisierer}}}}_{\text{Softmax: Scores werden zu Wahrscheinlichkeiten}}" data-tex-display="true"></div>
 						</div>
 
-						<div class="demo demo--paper softmax-demo" id="softmax-demo">
+						<div class="demo demo--paper demo--plot softmax-demo" id="softmax-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">From logits to a probability distribution <span>· demo 08</span></p>
@@ -672,13 +672,12 @@
 							<p><strong>The meadow of words.</strong> The meadow shows how the model divides the space into cells. After all the layers, the model has a vector for each token, and every token in the vocabulary owns the region of that space closest to it. The image is two-dimensional, while a real model works in thousands of dimensions, but the principle is the same: the vocabulary forms bubbles, and every thought falls into one of them or near its border. The closer the thought is to a word's centre, the more likely that word is; near the edges the estimate becomes less precise. Inside the model, the thought is a precise vector; the vocabulary can only answer with whole cells, so the model can represent a distinction more finely than it can express it in one token. Temperature and top-k change how large the candidate set is. Move the pointer and the thought lands in a cell, or on a seam where two words are almost equally near.</p>
 						</div>
 
-						<div class="demo demo--paper" id="meadow-demo">
+						<div class="demo demo--paper demo--canvas" id="meadow-demo">
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The meadow of words <span>· demo 09</span></p>
 									<p class="demo-sub">Every word owns a cell. Move the pointer; the thought falls into the nearest cell. The golden seams are where two words are equally near.</p>
 								</div>
-								<span class="demo-badge">move me</span>
 							</div>
 							<div class="demo-body">
 								<canvas class="demo-canvas" id="meadow-canvas" style="aspect-ratio:560/196;height:auto" aria-label="A Voronoi field of words. Move the pointer to place a thought."></canvas>
@@ -3213,6 +3212,7 @@
 	<script>
 	(function () {
 		"use strict";
+		window.__tmHeightsReserved = false;
 		function sleep(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
 		function setMin(selector, height) {
 			var el = document.querySelector(selector);
@@ -3260,8 +3260,9 @@
 				setMin("#iemb-out", maxEmbOut);
 				setMin("#iemb-formula", maxEmbFormula);
 			}
-			var posSliders = ["#ipe-heat-context", "#ipe-heat-dims", "#ipe-pos"];
-			var maxHeatOut = 0, maxPosOut = 0;
+			var posSliders = ["#ipe-heat-context", "#ipe-heat-dims", "#ipe-pos", "#ipe-d-model"];
+			var maxHeatOut = 0, maxPosOut = 0, maxPosPane = 0;
+			var posPane = document.getElementById("step-position");
 			for (var ps = 0; ps < posSliders.length; ps++) {
 				var slider = document.querySelector(posSliders[ps]);
 				if (!slider) continue;
@@ -3275,12 +3276,15 @@
 					var posOut = document.getElementById("ipe-out");
 					if (heatOut) maxHeatOut = Math.max(maxHeatOut, heatOut.offsetHeight);
 					if (posOut) maxPosOut = Math.max(maxPosOut, posOut.offsetHeight);
+					if (posPane) maxPosPane = Math.max(maxPosPane, posPane.offsetHeight);
 				}
 				slider.value = original;
 				slider.dispatchEvent(new Event("input", { bubbles: true }));
 			}
-			setMin("#ipe-heat-out", maxHeatOut);
-			setMin("#ipe-out", maxPosOut);
+			var mobile = window.innerWidth < 640;
+			setMin("#ipe-heat-out", Math.max(maxHeatOut, mobile ? 150 : 90));
+			setMin("#ipe-out", Math.max(maxPosOut, mobile ? 120 : 80));
+			if (maxPosPane) setMin("#step-position", maxPosPane + (mobile ? 180 : 80));
 			var attChips = Array.prototype.slice.call(document.querySelectorAll("[data-att]"));
 			if (attChips.length) {
 				var activeAtt = attChips.filter(function (c) { return c.classList.contains("is-on"); })[0] || attChips[0];
@@ -3314,17 +3318,24 @@
 				setMin("#softmax-logit-matrix", maxMatrix);
 			}
 		}
-		function start() {
-			if (document.fonts && document.fonts.ready) document.fonts.ready.then(reserve);
-			else reserve();
+		async function start() {
+			window.__tmHeightsReserved = false;
+			if (document.fonts && document.fonts.ready) await document.fonts.ready;
+			await sleep(700);
+			await reserve();
+			await sleep(700);
+			await reserve();
+			window.__tmHeightsReserved = true;
 		}
 		window.addEventListener("load", start);
 		var timer = null;
 		window.addEventListener("resize", function () {
 			clearTimeout(timer);
-			timer = setTimeout(function () {
-				if (document.fonts && document.fonts.ready) document.fonts.ready.then(reserve);
-				else reserve();
+			timer = setTimeout(async function () {
+				window.__tmHeightsReserved = false;
+				if (document.fonts && document.fonts.ready) await document.fonts.ready;
+				await reserve();
+				window.__tmHeightsReserved = true;
 			}, 220);
 		});
 	})();
