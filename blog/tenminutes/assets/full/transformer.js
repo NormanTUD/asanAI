@@ -2104,6 +2104,8 @@ function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_m
 	render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], Wo_layer0, knownTokens);
 
 	const h2 = run_ffn_block(h1, weights[0], false, 0, knownTokens);
+	if (!window.__tmLayerTrace) window.__tmLayerTrace = [];
+	window.__tmLayerTrace[0] = { h_in: h0, h_attn: h1, h_out: h2, headData, tokenStrings: knownTokens };
 	return h2;
 }
 
@@ -2259,6 +2261,7 @@ function pruneOrphanedMigrationPlots() {
 }
 
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
+	window.__tmLayerTrace = [];
 	const config = getTransformerConfig();
 	const { d_model, n_heads, temperature, n_layers } = config;
 
@@ -2289,6 +2292,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 	// 4. Core forward pass + visualization
 	renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
+	window.dispatchEvent(new CustomEvent("tm:transformer-data"));
 }
 
 function getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary) {
@@ -3630,6 +3634,8 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 
 		// tokenStrings is now threaded into forwardOneLayer
 		const result = forwardOneLayer(h_current, this_weights[n], d_model, n_heads, tokenStrings, "unified-attention-engine", n);
+		if (!window.__tmLayerTrace) window.__tmLayerTrace = [];
+		window.__tmLayerTrace[n] = { h_in: h_before_layer, h_attn: result.h_attn, h_out: result.h_out, headData: result.headData, tokenStrings };
 
 		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, result.h_out, n + 1, d_model, result.h_out, tokenStrings);
 
