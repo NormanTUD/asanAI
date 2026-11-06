@@ -312,7 +312,7 @@
 				controls.querySelector('#ms-align').addEventListener('click', function () {
 					var t0 = performance.now(), r0 = state.rot, s0 = state.skew;
 					function step(now) {
-						var k = Math.min(1, (now - t0) / 800), e = 1 - Math.pow(1 - k, 3);
+						var k = Math.min(1, (now - t0) / 5000), e = 1 - Math.pow(1 - k, 3);
 						state.rot = r0 * (1 - e); state.skew = s0 * (1 - e);
 						rot.value = state.rot; skew.value = state.skew;
 						controls.querySelector('#ms-rot-out').textContent = Math.round(state.rot) + '°';
@@ -488,7 +488,7 @@
 				controls.querySelector('#ms-align').addEventListener('click', function () {
 					var t0 = performance.now(), r0 = state.rot, s0 = state.sep;
 					function step(now) {
-						var k = Math.min(1, (now - t0) / 900), e = 1 - Math.pow(1 - k, 3);
+						var k = Math.min(1, (now - t0) / 5000), e = 1 - Math.pow(1 - k, 3);
 						state.rot = r0 * (1 - e); state.sep = s0 * (1 - e);
 						rot.value = state.rot; sep.value = state.sep;
 						controls.querySelector('#ms-rot-out').textContent = Math.round(state.rot) + '°';
