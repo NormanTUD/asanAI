@@ -43,17 +43,48 @@
 						<div class="prose">
 							<p>
 								In 1801 Giuseppe Piazzi spotted Ceres, the first asteroid, and then
-								lost it in the sun's glare after 41 days of observation. Carl
-								Friedrich Gauß treated the noisy positions as a whole and assumed
-								the true orbit lay in the middle of the errors. His method of least
-								squares minimised the squared distance between the observations and
-								the orbit, and it predicted where Ceres would reappear. The move is
+								lost it behind the Sun after 41 days of observation. Carl
+								Friedrich Gauß treated the noisy positions as <em>one</em> whole and
+								assumed the true orbit lay in the middle of the errors. His method of
+								least squares minimised the squared distance between the observations
+								and the orbit, and it predicted where Ceres would reappear. The move is
 								the one a model repeats when it fits weights to noisy data: no single
 								measurement is trusted, and the fit is chosen to be closest to all
 								of them at once.
 							</p>
 						</div>
+						<div class="demo demo--paper" id="ceres-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Ceres: truth vs. noisy observations</p>
+									<p class="demo-sub">A true orbit, a cloud of noisy measurements, and the bell curve of their errors. Move the slider to see how a better telescope narrows the spread.</p>
+								</div>
+								<span class="demo-badge">interactive</span>
+							</div>
+							<div class="demo-body">
+								<div id="ceres-plot" class="ceres-plot" role="img" aria-label="A true orbit with noisy observations and the distribution of their errors"></div>
+								<div class="demo-controls ceres-controls">
+									<label class="ceres-slider" for="ceres-sigma">
+										<span>Better telescopes</span>
+										<input type="range" id="ceres-sigma" min="0.1" max="2" step="0.1" value="2">
+										<span>Worse telescopes</span>
+									</label>
+									<button class="btn-demo btn-demo--green" type="button" id="ceres-resample">New sample</button>
+								</div>
+								<p class="demo-hint"><em>Synthetic data, not Piazzi's measurements. The plot is here to show the idea.</em></p>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Least squares does not trust a single measurement. It picks the curve that stays closest to all of them at once, and that same rule still trains modern models.</span></div>
+						</div>
 						<div class="prose">
+							<p>
+								The same arithmetic reappears in every trained network. A model is a
+								curve, and the data are noisy points; training chooses the weights whose
+								predictions are, on average, closest to the observations. Nobody planned
+								this reuse. Least squares came from astronomy, and it entered machine
+								learning only because the same problem, fitting a simple curve through
+								imperfect measurements, kept returning. A path that looks obvious in
+								retrospect was not visible from the telescope.
+							</p>
 							<p>
 								The way to modern <strong>LLM</strong> was not a straight line, but a sum of
 								developments that were never meant to meet: <strong>least squares</strong>,
@@ -69,12 +100,32 @@
 							<p>
 								The deeper history is a history of <strong>abstraction</strong>: human effort
 								drawn away from the direct task and handed to a mechanism. It begins roughly
-								3.3 million years ago with the first stone tools, continues through the wheel
-								and Heron of Alexandria’s programmable cart, and crosses from the physical to
-								the cognitive when thought itself becomes a formal calculus a machine can run.
-								The claim is not that AI was inevitable. It is that the same move repeats at
-								every scale: hand a task to a mechanism, then treat the mechanism as the new
-								primitive.
+								3.3 million years ago with the first <strong>stone tools</strong>, continues
+								through the <strong>wheel</strong> and <strong>Heron of Alexandria's
+								programmable cart</strong>, and crosses from the physical to the cognitive
+								when thought itself becomes a formal calculus a machine can run.
+							</p>
+							<p>
+								The claim is not that all these steps had to lead to the AI we have today.
+								It is that modern AI is a node in a densely woven network of events that met
+								here and in many other places, and that each of those events was itself a
+								starting point for further nodes. The network is not a ladder. It is a
+								process in which the many become one, and the one becomes part of a new many.
+								Alfred North Whitehead described reality this way in <em>Process and Reality</em>
+								(1929): “The many become one, and are increased by one.” Everything is a
+								process, and everything is connected to everything else.
+							</p>
+							<p>
+								What we look at here is an abstraction of the capabilities of the mind, not
+								the physical performance of the machine. Modern computers have an enormous
+								amount of computing power. AI gives us a way to address that power that feels
+								natural to us, because it lines up with how we think.
+							</p>
+							<p>
+								The old joke about computing says it exactly. Each layer hands the work to
+								something else, and the layer beneath becomes the new primitive. The history
+								below follows those layers, and the demos show what one of them looks like
+								when you take it apart.
 							</p>
 						</div>
 						<div class="pullquote">
@@ -128,9 +179,15 @@
 								struck flakes from it. They are the oldest known <strong>stone tools</strong>. The date
 								comes from the stratigraphy and radiometric dating of the surrounding layers;
 								the interpretation of the flakes as deliberately made, rather than naturally
-								broken, is argued from the pattern of strikes.
+								broken, is argued from the pattern of strikes. A later Acheulean handaxe,
+								shaped on both faces to a mental template, shows how far the same habit
+								travelled.
 							</p>
 						</div>
+						<figure>
+							<img src="../acheulean_handaxe.jpg" alt="Acheulean handaxes from the Kariandusi site in Kenya" loading="lazy">
+							<figcaption>Acheulean handaxes from the Kariandusi site in Kenya, a later stone-tool tradition than Lomekwi. Image: Xmd5a, <a href="https://commons.wikimedia.org/wiki/File:Kariandusi_Acheulean_Tools.jpg" rel="noopener">CC BY-SA 4.0</a>.</figcaption>
+						</figure>
 						<div class="prose">
 							<p>
 								Geometric marks come later. A <strong>zig-zag incised into a river shell at
@@ -152,7 +209,7 @@
 								<strong>75,000 years ago</strong>
 								(<a href="https://pubmed.ncbi.nlm.nih.gov/11786608/" rel="noopener">Henshilwood
 								et al.</a>). The surface is divided into a regular network of cells: order
-								made visible. If it has a meaning at all, no one can read it.
+								made visible. Whether this stone had any meaning is unknown.
 							</p>
 						</div>
 						<figure>
@@ -161,8 +218,8 @@
 						</figure>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">Memory can sit on a shelf.</p>
-							<p class="aha-sub">A notch in a bone keeps a count beyond the moment of counting. Ledgers, catalogues and databases repeat the same move: they put the number somewhere you can come back to.</p>
+							<p class="aha-big">Memory can live outside the mind.</p>
+							<p class="aha-sub">A notch in a bone keeps a count beyond the moment of counting. Ledgers, catalogues and databases repeat the same thought: they put the number somewhere you can come back to.</p>
 						</div>
 					</section>
 
@@ -171,17 +228,18 @@
 						<h2 class="section-title">Reason and speech become calculi.</h2>
 						<div class="prose">
 							<p>
-								The number systems that feed the modern machine grew out of several separate
-								inventions: <strong>place value</strong> (Babylonian, c. 2000 BCE),
+								The number systems on which modern machines are built grew out of several
+								separate inventions: <strong>place value</strong> (Babylonian, c. 2000 BCE),
 								<strong>zero as a number with arithmetic rules</strong> (Brahmagupta, 628 CE),
 								<strong>negative quantities</strong> (Han-dynasty Chinese linear-equation
 								texts), and <strong>decimal fractions</strong> (Stevin, 1585, building on
 								earlier Arabic work). Babylonian place value was base 60, which is why an
-								hour still has sixty minutes and a circle 360 degrees. Pingala’s Sanskrit
-								prosody (c. 3rd-1st century BCE) uses a binary-like scheme for metres (the
-								mapping to 0 and 1 is a later reading) and Leibniz later formalised binary
-								notation. Zero reached Europe through Fibonacci’s Liber Abaci
-								(1202), which popularised the Indian-Arabic numerals.
+								hour still has sixty minutes and a circle 360 degrees. Pingala’s
+								<strong>Sanskrit prosody</strong> (c. 3rd-1st century BCE) uses a
+								binary-like scheme for metres (the mapping to 0 and 1 is a later reading)
+								and Leibniz later formalised binary notation. <strong>Zero</strong> reached
+								Europe through Fibonacci’s <strong>Liber Abaci</strong> (1202), which
+								popularised the Indian-Arabic numerals.
 							</p>
 							<p>
 								Modern hardware inherits the positional idea, then makes its own
@@ -265,8 +323,9 @@
 						<h2 class="section-title">The machine learns to follow a stored plan.</h2>
 						<div class="prose">
 							<p>
-								Babbage designs the <strong>Analytical Engine</strong>, with a store, a mill, and
-								punched-card input. It was never completed in his lifetime; the design, not a
+								Babbage designs the <strong>Analytical Engine</strong>, with a store, a mill
+								(his name for the arithmetic unit, the ancestor of the CPU), and punched-card
+								input. It was never completed in his lifetime; the design, not a
 								working machine, is what survived. Ada Lovelace sees further than the machine’s
 								builder: the Engine can manipulate <em>symbols</em>, not only numbers, and she
 								writes the first published algorithm intended for it.
@@ -288,8 +347,11 @@
 								(1941) is the first functional, programmable, fully automatic digital computer,
 								built from 2,000 telephone relays; he also designs <em>Plankalkül</em>, an early
 								high-level language. “First” depends on the definition: the Z3 was
-								electromechanical, not electronic, and other machines were programmable in
-								weaker senses.
+								electromechanical, not electronic. Programmability itself reaches further
+								back: <strong>Ismail al-Jazari</strong> described programmable automata in
+								the twelfth century, and <strong>Heron of Alexandria's</strong> pinned cart
+								is older still. The Z3 was the first fully automatic digital computer, not
+								the first programmable machine.
 							</p>
 							<figure style="max-width: 560px; margin: 20px auto;">
 								<img src="assets/img/konrad-zuse-1992.jpg" alt="Portrait of Konrad Zuse, 1992" loading="lazy">
@@ -413,10 +475,24 @@
 								grid of 400 photocells formed its retina, and electric motors turned the
 								potentiometers that held the weights. Its follow-on, <em>Tobermory</em>, was
 								designed for speech recognition.</p>
-							<p>The learning rule was not backpropagation:
-								the perceptron updated its weights directly from the error, one layer at a
+							<h3>The perceptron</h3>
+							<p>
+								Frank Rosenblatt was a psychologist at Cornell. He built the perceptron
+								as a machine that learns from examples rather than from explicit rules.
+								His work is the hinge between “a program does what it is told” and “a model
+								learns from what it sees.” He died in a sailing accident in 1971, two years
+								after the critique that helped push the field into the first AI winter.
+							</p>
+							<figure style="max-width: 360px; margin: 20px auto;">
+								<img src="../frank_rosenblatt_portrait.jpg" alt="Portrait of Frank Rosenblatt" loading="lazy">
+								<figcaption>Frank Rosenblatt. Anonymous / Heinz Nixdorf MuseumsForum, <a href="https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" rel="noopener">CC BY-SA 4.0</a>.</figcaption>
+							</figure>
+							<p>
+								The perceptron updated its weights directly from the error, one layer at a
 								time, which is why it could not learn the internal representations a deep
-								network needs.
+								network needs. Its descendants are in every transformer today. The
+								perceptron ran into the limits of one layer, limited data, and limited
+								compute. Learning from data survived the disappointment.
 							</p>
 							<p>
 								The press heard “a machine that will walk, talk, see, write, reproduce itself
@@ -451,28 +527,6 @@
 								</div>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>A single layer is one straight cut. XOR needs two cuts, and that is why a hidden layer helps.</span></div>
-						</div>
-						<div class="profile-spotlight">
-							<figure>
-								<img src="../frank_rosenblatt_portrait.jpg" alt="Portrait of Frank Rosenblatt" loading="lazy">
-								<figcaption class="ps-credit">Frank Rosenblatt. Anonymous / Heinz Nixdorf MuseumsForum, <a href="https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" rel="noopener">CC BY-SA 4.0</a>.</figcaption>
-							</figure>
-							<div>
-								<span class="ps-kicker">Spotlight · 1928-1971</span>
-								<h3>The perceptron was a physical machine.</h3>
-								<p>
-									Motor-driven potentiometers whose resistance was the weight, wired
-									to photocells, nudged after every mistake. Rosenblatt’s work is the hinge
-									between “a program does what it is told” and “a model learns from what it
-									sees.” He died in a sailing accident in 1971, two years after the critique
-									that helped push the field into the first AI winter.
-								</p>
-								<p>
-									The descendants of that machine are in every transformer today. The
-									perceptron ran into the limits of one layer, limited data, and limited
-									compute. Learning from data survived the disappointment.
-								</p>
-							</div>
 						</div>
 						<div class="split-figure">
 							<figure>
@@ -641,6 +695,7 @@
 							</div>
 							<div class="demo-controls">
 								<button class="btn-demo btn-demo--green" type="button" id="conv-step">Next position →</button>
+								<button class="btn-demo" type="button" id="conv-auto" aria-pressed="false">Auto run ▶</button>
 								<button class="chip is-on" type="button" data-kernel="edges">Vertical edges</button>
 								<button class="chip" type="button" data-kernel="blur">Blur</button>
 							</div>
@@ -693,8 +748,13 @@
 								of earlier sequence models with <strong>self-attention</strong>: in one
 								layer, every token can look at every other token, and the computation for all
 								positions runs in parallel. The path between two distant tokens becomes a
-								single hop. That helps long-range dependencies, and it fills a GPU far better
-								than a loop over the sequence.
+								single hop. Earlier sequence models read one token at a time, so by the time
+								they reached the tenth word the first was already fading from the state they
+								carried. A word at the beginning of a text can change the meaning of the last
+								word, and that is what a long-range dependency is. Attention lets every token
+								see every other token at once, so the first word is still there when the last
+								one is processed. It also fills a GPU far better than a loop over the
+								sequence.
 							</p>
 							<p>
 								The mechanism is a learned routing operation. Each token is projected into a
@@ -708,7 +768,8 @@
 								answer it is supposed to predict. With the mask on, each token may attend only
 								to itself and the past, which is exactly the signal used to train a model to
 								complete a sentence. Several heads run in parallel, each in its own subspace,
-								and their outputs are combined.
+								and their outputs are combined. Each head looks at its own material, and what
+								it looks at is learned by the model itself to keep the error small.
 							</p>
 							<p>
 								Attention is one half of the block. Each sublayer is wrapped in a
@@ -782,10 +843,10 @@
 						<div class="demo demo--paper llm-demo" id="llm-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">Three different levers <span>· demo 02</span></p>
+									<p class="demo-title">Attention <span>· demo 02</span></p>
 									<p class="demo-sub">Attention is a mechanism, pretraining is an objective, scale is how much compute and data the run uses.</p>
 								</div>
-								<span class="demo-badge">three levers</span>
+								<span class="demo-badge">attention</span>
 							</div>
 							<div class="demo-body">
 								<div class="llm-pane is-on" data-llm-pane="attention">
@@ -853,24 +914,12 @@
 
 								<div class="llm-pane is-on" data-llm-pane="scale">
 									<h4 class="llm-pane-title">Strategy · Scale</h4>
-									<p class="llm-note">For a fixed compute budget, the best model size changes: a large model with too few tokens loses to a smaller, better-trained one. The curves use a Chinchilla-style scaling law; the numbers are illustrative.</p>
-									<div class="llm-scale-legend">
-										<span><i style="background:var(--tm-sky)"></i>1B params</span>
-										<span><i style="background:var(--tm-green)"></i>7B params</span>
-										<span><i style="background:var(--tm-coral)"></i>70B params</span>
-									</div>
-									<svg class="llm-scale-chart" id="llm-scale-chart" viewBox="0 0 640 310" role="img" aria-label="Loss against training compute for three model sizes"></svg>
-									<div class="llm-scale-controls">
-										<label for="llm-scale-slider">compute budget</label>
-										<input id="llm-scale-slider" type="range" min="0" max="100" value="50">
-										<span class="llm-scale-val" id="llm-scale-val"></span>
-									</div>
-									<div class="llm-scale-readout" id="llm-scale-readout"></div>
+									<p class="llm-note">For a fixed compute budget, the best model size changes: a large model with too few tokens loses to a smaller, better-trained one. The Chinchilla experiments made this trade-off explicit, and later models often spend more tokens per parameter.</p>
 								</div>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Attention is the mechanism, pretraining is the objective, scale is how much compute and data the run uses.</span></div>
 							<div class="demo-foot">
-								Toy sentence, toy attention weights, and a Chinchilla-style scaling law. The point is the mechanism, not the exact numbers.
+								Toy sentence and toy attention weights. The point is the mechanism, not the exact numbers.
 							</div>
 						</div>
 
@@ -945,9 +994,141 @@
 
 	<script src="../temml.min.js"></script>
 	<script src="assets/site.js"></script>
+	<script src="plotly-2.24.1.min.js"></script>
 	<script>
 	(function () {
 		"use strict";
+
+		var ceresRoot = document.getElementById("ceres-plot");
+		if (ceresRoot && window.Plotly) {
+			var CERES_DE = TM.lang() === "de";
+			var ceresSigma = document.getElementById("ceres-sigma");
+			var ceresResample = document.getElementById("ceres-resample");
+			var ceresData = { path: [], obs: [], err: [] };
+
+			function ceresRgba(hex, alpha) {
+				hex = String(hex || "").replace("#", "");
+				if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+				var n = parseInt(hex, 16);
+				if (isNaN(n)) return "rgba(18,117,172," + alpha + ")";
+				return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + alpha + ")";
+			}
+
+			function ceresSample() {
+				var sigma = parseFloat(ceresSigma.value);
+				var path = [];
+				for (var i = 0; i <= 10; i += 0.2) {
+					path.push({ x: i, y: Math.sin(i / 2) * 3 + 5 });
+				}
+				var obs = [];
+				var err = [];
+				for (var j = 0; j < 150; j++) {
+					var x = Math.random() * 10;
+					var trueY = Math.sin(x / 2) * 3 + 5;
+					var u = 0, v = 0;
+					while (u === 0) u = Math.random();
+					while (v === 0) v = Math.random();
+					var noise = sigma * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+					obs.push({ x: x, y: trueY + noise });
+					err.push(noise);
+				}
+				ceresData = { path: path, obs: obs, err: err };
+			}
+
+			function ceresDraw() {
+				var c = TM.colors();
+				var sigma = parseFloat(ceresSigma.value);
+				var xBell = [];
+				var yBell = [];
+				for (var i = -4; i <= 4; i += 0.1) {
+					xBell.push(i);
+					yBell.push((1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow(i / sigma, 2)));
+				}
+				var traces = [
+					{
+						x: ceresData.path.map(function (p) { return p.x; }),
+						y: ceresData.path.map(function (p) { return p.y; }),
+						mode: "lines", name: CERES_DE ? "Wahre Bahn" : "True orbit",
+						line: { color: c.green, width: 3, shape: "spline" }
+					},
+					{
+						x: ceresData.obs.map(function (p) { return p.x; }),
+						y: ceresData.obs.map(function (p) { return p.y; }),
+						mode: "markers", name: CERES_DE ? "Beobachtungen" : "Observations",
+						marker: {
+							color: c.blue,
+							size: 5,
+							opacity: 0.55,
+							line: { color: ceresRgba(c.blue, 0.3), width: 1 }
+						}
+					},
+					{
+						x: ceresData.err,
+						type: "histogram",
+						name: CERES_DE ? "Fehlerverteilung" : "Error distribution",
+						histnorm: "probability density",
+						marker: { color: ceresRgba(c.blue, 0.35), line: { color: ceresRgba(c.blue, 0.6), width: 1 } },
+						xaxis: "x2", yaxis: "y2",
+						nbinsx: 20
+					},
+					{
+						x: xBell, y: yBell, mode: "lines", name: CERES_DE ? "Theorie" : "Theoretical curve",
+						line: { color: c.coral, width: 2.5 },
+						xaxis: "x2", yaxis: "y2"
+					}
+				];
+				var layout = {
+					grid: { rows: 1, columns: 2, pattern: "independent" },
+					paper_bgcolor: "rgba(0,0,0,0)",
+					plot_bgcolor: "rgba(0,0,0,0)",
+					font: { color: c.ink, family: "Open Sans, sans-serif", size: 12 },
+					title: { text: CERES_DE ? "Ceres: Wahrheit vs. verrauschte Beobachtungen" : "Ceres: truth vs. noisy observations", font: { color: c.ink } },
+					xaxis: {
+						title: { text: CERES_DE ? "Zeit / Bogen" : "Time / arc" },
+						domain: [0, 0.58],
+						gridcolor: c.line,
+						zerolinecolor: c.lineStrong
+					},
+					yaxis: {
+						title: { text: CERES_DE ? "Himmelsposition" : "Celestial position" },
+						anchor: "x1",
+						gridcolor: c.line,
+						zerolinecolor: c.lineStrong
+					},
+					xaxis2: {
+						title: { text: CERES_DE ? "Residuum (Δ)" : "Residual error (Δ)" },
+						domain: [0.68, 1],
+						range: [-4, 4],
+						gridcolor: c.line,
+						zerolinecolor: c.lineStrong
+					},
+					yaxis2: {
+						title: { text: CERES_DE ? "Wahrscheinlichkeitsdichte" : "Probability density" },
+						anchor: "x2",
+						gridcolor: c.line,
+						zerolinecolor: c.lineStrong
+					},
+					showlegend: false,
+					height: 500,
+					margin: { t: 52, b: 50, l: 50, r: 20 }
+				};
+				Plotly.react(ceresRoot, traces, layout, { displayModeBar: false, responsive: true });
+			}
+
+			ceresSigma.addEventListener("input", function () {
+				ceresSample();
+				ceresDraw();
+			});
+			if (ceresResample) {
+				ceresResample.addEventListener("click", function () {
+					ceresSample();
+					ceresDraw();
+				});
+			}
+			window.addEventListener("tm:theme", ceresDraw);
+			ceresSample();
+			ceresDraw();
+		}
 
 		var gateRoot = document.getElementById("gate-plot");
 		if (gateRoot) {
@@ -1345,8 +1526,10 @@
 			var convReadout = document.getElementById("conv-readout");
 			var convFormula = document.getElementById("conv-formula");
 			var convMode = "edges";
-			var convPos = 0;
+			var convPos = -1;
 			var convVisited = {};
+			var convTimer = null;
+			var convAuto = document.getElementById("conv-auto");
 			function convCell(value, cls) {
 				var el = document.createElement("div");
 				el.className = "conv-cell" + (cls ? " " + cls : "");
@@ -1371,11 +1554,13 @@
 			}
 			function convRender() {
 				var k = CONV_KERNELS[convMode];
-				var row = Math.floor(convPos / 3), col = convPos % 3;
+				var hasPos = convPos >= 0;
+				var row = hasPos ? Math.floor(convPos / 3) : -1;
+				var col = hasPos ? convPos % 3 : -1;
 				convImage.innerHTML = "";
 				for (var r = 0; r < 5; r++) {
 					for (var c = 0; c < 5; c++) {
-						var inPatch = r >= row && r < row + 3 && c >= col && c < col + 3;
+						var inPatch = hasPos && r >= row && r < row + 3 && c >= col && c < col + 3;
 						var cell = convCell(CONV_IMG[r][c], (CONV_IMG[r][c] ? "is-one" : "") + (inPatch ? " is-patch" : ""));
 						convImage.appendChild(cell);
 					}
@@ -1387,15 +1572,17 @@
 					});
 				});
 				convOutput.innerHTML = "";
-				convVisited[convPos] = true;
+				if (hasPos) convVisited[convPos] = true;
 				var values = [];
 				for (var orow = 0; orow < 3; orow++) {
 					for (var ocol = 0; ocol < 3; ocol++) {
 						var sum = 0;
 						for (var i = 0; i < 3; i++) for (var j = 0; j < 3; j++) sum += CONV_IMG[orow + i][ocol + j] * k[i][j];
 						values.push(sum);
-						var seen = !!convVisited[orow * 3 + ocol];
-						var out = convCell(seen ? sum.toFixed(2) : "?", (orow === row && ocol === col ? "is-current" : "") + (seen ? "" : " is-unvisited"));
+						var idx = orow * 3 + ocol;
+						var seen = !!convVisited[idx];
+						var isCurrent = hasPos && orow === row && ocol === col;
+						var out = convCell(seen ? sum.toFixed(2) : "?", (isCurrent ? "is-current" : "") + (seen ? "" : " is-unvisited"));
 						if (seen) {
 							var heat = Math.min(1, Math.abs(sum) / 3);
 							out.style.background = "color-mix(in srgb, var(--tm-green) " + (heat * 72) + "%, var(--tm-paper-2))";
@@ -1404,21 +1591,53 @@
 					}
 				}
 				if (convReadout) {
-					var total = values[convPos];
-					convReadout.textContent = CONV_DE
-						? "Position (" + row + ", " + col + "): Die neun Produkte aus Bildausschnitt und Kernel ergeben " + total.toFixed(2) + ". Die übrigen Zellen der Feature Map füllen sich, sobald der Kernel sie erreicht."
-						: "Position (" + row + ", " + col + "): the nine products of patch and kernel add up to " + total.toFixed(2) + ". The other feature-map cells fill in as the kernel reaches them.";
+					if (!hasPos) {
+						convReadout.textContent = CONV_DE
+							? "Noch keine Position berechnet. Klicke auf „Nächste Position“, um den Kernel auf (0, 0) anzuwenden."
+							: "No position computed yet. Press Next position to apply the kernel at (0, 0).";
+					} else {
+						var total = values[convPos];
+						convReadout.textContent = CONV_DE
+							? "Position (" + row + ", " + col + "): Die neun Produkte aus Bildausschnitt und Kernel ergeben " + total.toFixed(2) + ". Die Zellen der Feature Map füllen sich Schritt für Schritt."
+							: "Position (" + row + ", " + col + "): the nine products of patch and kernel add up to " + total.toFixed(2) + ". The feature-map cells fill in step by step.";
+					}
 				}
 				if (convFormula) {
-					convFormula.setAttribute("data-tex", convFormulaTex(k, row, col, values[convPos]));
-					convFormula.removeAttribute("data-tex-rendered");
-					if (TM.typesetMath) TM.typesetMath(convFormula.parentNode);
+					if (hasPos) {
+						convFormula.setAttribute("data-tex", convFormulaTex(k, row, col, values[convPos]));
+						convFormula.removeAttribute("data-tex-rendered");
+						if (TM.typesetMath) TM.typesetMath(convFormula.parentNode);
+					} else {
+						convFormula.removeAttribute("data-tex");
+						convFormula.innerHTML = "";
+					}
 				}
+			}
+			function convStopAuto() {
+				if (convTimer) {
+					clearInterval(convTimer);
+					convTimer = null;
+				}
+				if (convAuto) {
+					convAuto.classList.remove("is-on");
+					convAuto.setAttribute("aria-pressed", "false");
+					convAuto.textContent = CONV_DE ? "Automatisch ▶" : "Auto run ▶";
+				}
+			}
+			function convAdvance() {
+				if (convPos >= 8) {
+					convPos = -1;
+					convVisited = {};
+				}
+				convPos += 1;
+				convRender();
+				if (convPos >= 8) convStopAuto();
 			}
 			document.querySelectorAll("[data-kernel]").forEach(function (btn) {
 				btn.addEventListener("click", function () {
+					convStopAuto();
 					convMode = btn.getAttribute("data-kernel");
-					convPos = 0;
+					convPos = -1;
 					convVisited = {};
 					document.querySelectorAll("[data-kernel]").forEach(function (b) { b.classList.toggle("is-on", b === btn); });
 					convRender();
@@ -1426,8 +1645,24 @@
 			});
 			var convStep = document.getElementById("conv-step");
 			if (convStep) convStep.addEventListener("click", function () {
-				convPos = (convPos + 1) % 9;
-				convRender();
+				convStopAuto();
+				convAdvance();
+			});
+			if (convAuto) convAuto.addEventListener("click", function () {
+				if (convTimer) {
+					convStopAuto();
+					return;
+				}
+				convAuto.classList.add("is-on");
+				convAuto.setAttribute("aria-pressed", "true");
+				convAuto.textContent = CONV_DE ? "Pause ❚❚" : "Pause ❚❚";
+				if (convPos >= 8) {
+					convPos = -1;
+					convVisited = {};
+					convRender();
+				}
+				convAdvance();
+				if (convPos < 8) convTimer = setInterval(convAdvance, 750);
 			});
 			convRender();
 		}
@@ -1771,89 +2006,6 @@
 		}
 		renderPretrain();
 
-		/* ── scale ────────────────────────────────────────────── */
-		var SCALE = { E: 1.69, A: 406.4, B: 410.7, alpha: 0.34, beta: 0.28, xMin: 20, xMax: 24, yMin: 1.7, yMax: 3.9 };
-		var MODELS = [
-			{ key: "small", label: "1B", N: 1e9, color: "var(--tm-sky)" },
-			{ key: "medium", label: "7B", N: 7e9, color: "var(--tm-green)" },
-			{ key: "large", label: "70B", N: 7e10, color: "var(--tm-coral)" }
-		];
-		var chart = document.getElementById("llm-scale-chart");
-		var slider = document.getElementById("llm-scale-slider");
-		var scaleVal = document.getElementById("llm-scale-val");
-		var scaleReadout = document.getElementById("llm-scale-readout");
-		var SUP = { 20: "²⁰", 21: "²¹", 22: "²²", 23: "²³", 24: "²⁴" };
-
-		function lossAt(N, C) {
-			var D = C / (6 * N);
-			return SCALE.E + SCALE.A / Math.pow(N, SCALE.alpha) + SCALE.B / Math.pow(D, SCALE.beta);
-		}
-		function fmtCompute(C) {
-			return "10^" + (Math.round(Math.log10(C) * 10) / 10) + " FLOPs";
-		}
-		function fmtTokens(D) {
-			var unit = LLM_DE ? " Tokens" : " tokens";
-			if (D >= 1e12) return (D / 1e12).toFixed(1) + "T" + unit;
-			if (D >= 1e9) return (D / 1e9).toFixed(0) + "B" + unit;
-			if (D >= 1e6) return (D / 1e6).toFixed(0) + "M" + unit;
-			return Math.round(D) + unit;
-		}
-		function drawScale() {
-			if (!chart || !slider) return;
-			var t = parseInt(slider.value, 10) / 100;
-			var C = Math.pow(10, SCALE.xMin + (SCALE.xMax - SCALE.xMin) * t);
-			var W = 640, H = 310, L = 52, R = 92, T = 16, B = 54;
-			var pw = W - L - R, ph = H - T - B;
-			function xOf(logc) { return L + (logc - SCALE.xMin) / (SCALE.xMax - SCALE.xMin) * pw; }
-			function yOf(v) { return T + (SCALE.yMax - v) / (SCALE.yMax - SCALE.yMin) * ph; }
-			var out = [];
-			for (var gx = SCALE.xMin; gx <= SCALE.xMax; gx++) {
-				var px = xOf(gx);
-				out.push('<line class="llm-grid-line" x1="' + px + '" y1="' + T + '" x2="' + px + '" y2="' + (T + ph) + '"></line>');
-				out.push('<text x="' + px + '" y="' + (H - 30) + '" text-anchor="middle">10' + (SUP[gx] || ("^" + gx)) + '</text>');
-			}
-			for (var gy = 1.8; gy <= 3.8; gy += 0.4) {
-				var py = yOf(gy);
-				out.push('<line class="llm-grid-line" x1="' + L + '" y1="' + py + '" x2="' + (L + pw) + '" y2="' + py + '"></line>');
-				out.push('<text x="' + (L - 8) + '" y="' + (py + 3) + '" text-anchor="end">' + gy.toFixed(1) + '</text>');
-			}
-			out.push('<line class="llm-axis" x1="' + L + '" y1="' + (T + ph) + '" x2="' + (L + pw) + '" y2="' + (T + ph) + '"></line>');
-			out.push('<line class="llm-axis" x1="' + L + '" y1="' + T + '" x2="' + L + '" y2="' + (T + ph) + '"></line>');
-			out.push('<text x="' + (L + pw / 2) + '" y="' + (H - 6) + '" text-anchor="middle">' + (LLM_DE ? "Trainings-Compute →" : "training compute →") + '</text>');
-			out.push('<text x="14" y="' + (T + ph / 2) + '" text-anchor="middle" transform="rotate(-90 14 ' + (T + ph / 2) + ')">' + (LLM_DE ? "Loss" : "loss") + '</text>');
-			var current = MODELS.map(function (m) {
-				var D = C / (6 * m.N);
-				return { m: m, loss: lossAt(m.N, C), tokens: D };
-			});
-			var best = current.reduce(function (a, b) { return b.loss < a.loss ? b : a; }, current[0]);
-			current.forEach(function (item) {
-				var pts = [];
-				for (var i = 0; i <= 40; i++) {
-					var lc = SCALE.xMin + (SCALE.xMax - SCALE.xMin) * i / 40;
-					var cc = Math.pow(10, lc);
-					pts.push((i === 0 ? "M" : "L") + xOf(lc).toFixed(1) + " " + yOf(lossAt(item.m.N, cc)).toFixed(1));
-				}
-				out.push('<path class="llm-scale-line llm-scale-line--' + item.m.key + '" d="' + pts.join(" ") + '"></path>');
-			});
-			var cx = xOf(Math.log10(C));
-			out.push('<line class="llm-scale-marker" x1="' + cx + '" y1="' + T + '" x2="' + cx + '" y2="' + (T + ph) + '"></line>');
-			current.forEach(function (item) {
-				var cy = yOf(item.loss);
-				var isBest = item === best;
-				out.push('<circle class="llm-scale-dot' + (isBest ? ' llm-scale-dot--best' : '') + '" cx="' + cx + '" cy="' + cy + '" r="' + (isBest ? 5.5 : 3.8) + '" style="fill:' + item.m.color + '"></circle>');
-			});
-			chart.innerHTML = out.join("");
-			if (scaleVal) scaleVal.textContent = fmtCompute(C);
-			if (scaleReadout) {
-				scaleReadout.innerHTML = current.map(function (item) {
-					return '<span class="llm-scale-pill' + (item === best ? ' is-best' : '') + '"><b>' + item.m.label + '</b> · ' + (LLM_DE ? "Loss " : "loss ") + item.loss.toFixed(2) + '</span>';
-				}).join("") + '<span class="llm-scale-pill">' + (LLM_DE ? "am besten: " : "best: ") + '<b>' + best.m.label + '</b>, ' + fmtTokens(best.tokens) + '</span>';
-			}
-		}
-		if (slider) {
-			slider.addEventListener("input", drawScale);
-			drawScale();
-		}
 	})();
 	</script>
 </body>
