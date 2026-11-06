@@ -109,6 +109,14 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	</div>
 
 	<div class="transformer-config-field">
+	    <label class="transformer-slider-label">FFN hidden size (d_ff): </label>
+	    <span id="ffn-val" class="transformer-slider-value">12</span>
+	    <p class="transformer-slider-note"><b>Effect:</b> Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.</p>
+	    <input type="range" id="transformer-ffn-size" min="1" max="64" step="1" value="12"
+		oninput="syncTransformerSettings('ffn')">
+	</div>
+
+	<div class="transformer-config-field">
 	    <label class="transformer-kv-label"><input type="checkbox" id="transformer-kv-cache"> KV cache</label>
 	    <p class="transformer-slider-note">Reuse the keys and values of earlier tokens when you append a token. Only the new token's query is computed; the next-token distribution is identical. <span id="tm-kv-cache-status" class="tm-kv-cache-status">Off</span></p>
 	</div>
@@ -272,7 +280,7 @@ with the full formulas one level deeper.
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
 				<p class="tm-step-more">The residual stream is the running vector. Every layer reads it and writes an update; nothing is overwritten, so late layers can still use the original token.</p>
 				<div class="tm-step-formula" data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)"></div>
-				<details class="tm-step-detail" id="tm-detail-residual"><summary>The residual stream in detail</summary><div class="tm-step-detail-body"><p>Each sublayer computes an update and adds it to the running vector: x_{n+1} = x_n + layer_{n+1}(x_n). Nothing is overwritten, so the original token stays available and gradients have a short path back.</p><p>The per-layer residual preview above shows how much attention and the FFN write for each token. The last layer's level 2 also shows the final h_last vector.</p></div></details></div>
+				<details class="tm-step-detail" id="tm-detail-residual"><summary>The residual stream in detail</summary><div class="tm-step-detail-body"><p>Each sublayer computes an update and adds it to the running vector: x_{n+1} = x_n + layer_{n+1}(x_n). Nothing is overwritten, so the original token stays available and gradients have a short path back.</p><p>The per-layer residual preview above shows how much attention and the FFN write for each token. The last layer's level 2 also shows the final h_last vector.</p><p>The block input and output keep the same d_model width; the FFN expands to d_ff inside and compresses back. That is the width where it has room to work.</p><p class="tm-dim-readout" id="tm-dim-readout"></p></div></details></div>
 			</section>
 	<section class="tm-step">
 				<div class="tm-step-head">
@@ -393,7 +401,7 @@ with the full formulas one level deeper.
 A transformer never sees text — only a stream of vectors it can move around. This part turns a raw sentence into that stream: chop it into tokens, look each one up as a vector, tag each vector with its position, and see where the whole stream flows.
 
 ### Tokenization
-The journey of a sentence begins with **Tokenization**, which decomposes raw text into **tokens**. Real LLMs would use **Byte-Pair Encoding** (**BPE**), as this approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language. BPE is, at heart, a **data-compression** algorithm from \citeyear{gage1994bpe} \cite{gage1994bpe}: it repeatedly fuses the most frequent adjacent pair into one new symbol, so frequent (often long) patterns collapse into a single **short ID** while rare material stays a **long** run of symbols — which is why the token stream is usually much shorter than the raw text it losslessly encodes, and why the same rules pointed at a file literally compress it. But since our embedding space and the amount of data browsers can process is too small for **BPE**, we stick with word-wise tokenization.
+The journey of a sentence begins with **Tokenization**, which decomposes raw text into **tokens**. Real LLMs would use **Byte-Pair Encoding** (**BPE**), as this approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language. BPE is, at heart, a **data-compression** algorithm from \citeyear{gage1994bpe} \cite{gage1994bpe}: it repeatedly fuses the most frequent adjacent pair into one new symbol, so frequent (often long) patterns collapse into a single **short ID** while rare material stays a **long** run of symbols — which is why the token stream is usually much shorter than the raw text it losslessly encodes, and why the same rules pointed at a file literally compress it. But since our embedding space and the amount of data browsers can process is too small for **BPE**, we stick with word-wise tokenization. How many tokens the vocabulary has is another hyperparameter in BPE; this demo does not expose it because it tokenizes word by word and the model is too small for real BPE.
 </div>
 
 <div id="transformer-viz-bpe" class="viz-container"></div>

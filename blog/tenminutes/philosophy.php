@@ -53,7 +53,10 @@
 						<figcaption>Alan Turing, 1951. Photo: Elliott &amp; Fry, <a href="https://commons.wikimedia.org/wiki/File:Alan_Turing_(1951).jpg" rel="noopener">public domain</a>.</figcaption>
 					</figure>
 
-					<div class="demo demo--paper timeline-shell" data-demo="timeline" data-arrow-nav>
+										<h4 class="layer-subhead">Four questions, not one</h4>
+					<div class="prose"><p>Keep the questions separate: what the system does, what its symbols mean, what it is like to be it, and how we should treat it. The timeline maps those questions, not one verdict.</p></div>
+
+<div class="demo demo--paper timeline-shell" data-demo="timeline" data-arrow-nav>
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">Four questions about minds <span>· demo</span></p>
@@ -76,7 +79,10 @@
 						<div class="demo-insight"><b>Takeaway</b><span>Behaviour, grounding, and experience are separate questions.</span></div>
 					</div>
 
-					<div class="demo demo--paper demo--interactive wg-demo">
+										<h4 class="layer-subhead">One word, two worlds</h4>
+					<div class="prose"><p>A pronoun can resolve in two ways because the situation differs by one word. The demo asks whether the model uses a world model or only a surface pattern.</p></div>
+
+<div class="demo demo--paper demo--interactive wg-demo">
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">Winograd Schema <span>· demo</span></p>
@@ -101,7 +107,10 @@
 						</div>
 					</div>
 
-					<div class="demo demo--paper demo--interactive cr-sim" id="cr-sim">
+										<h4 class="layer-subhead">Inside the room</h4>
+					<div class="prose"><p>Searle’s room tests the difference between following rules and understanding. You are the rule-follower; the rulebook is the program.</p></div>
+
+<div class="demo demo--paper demo--interactive cr-sim" id="cr-sim">
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">The Chinese Room <span>· demo</span></p>
@@ -163,8 +172,35 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="theories">
+						<div class="section-kicker"><span class="sk-num">04</span> Consciousness and the map</div>
+						<h2 class="section-title">Many theories, one open question.</h2>
+						<div class="prose">
+							<p>Theories of consciousness disagree about what consciousness is. Global workspace theory says a state becomes conscious when it is broadcast to many processes; integrated information theory assigns a number, Phi, to how unified a system’s causal structure is; higher-order theories say a state is conscious when a higher-level representation points at it; predictive processing treats perception as controlled prediction; the attention schema theory says the brain models its own attention; illusionism says phenomenal consciousness is an introspective illusion; panpsychism treats experience as fundamental. They do not agree on what would count as evidence.</p>
+							<p>Two distinctions keep the discussion honest. Access consciousness is information being available to report and control; phenomenal consciousness is there being something it is like (Block, 1995; Nagel, 1974). A model can have access and report without phenomenal experience. Anthropic’s 2026 J-space work found a small internal workspace in Claude whose contents a J-lens can read; it looks like an access workspace, not proof of felt experience. The residual stream is a functional cousin of a global workspace: a shared vector every layer reads and writes.</p>
+							<p>Qualia are the felt properties of experience: the redness of red, the pain of pain. Representationalism says qualia represent properties; relationalism says they depend on an organism’s relation to the world; illusionism says the concept is confused; panpsychism says experience is intrinsic. Artificial qualia would be engineered representations with the right functional role. If qualia are functional, that might be enough; if they need a biological substrate or intrinsic properties, it is not. No accepted test decides the question.</p>
+							<p>Ask where AI comes from and the answer spreads. The course’s knowledge map makes that literal: every lesson is a node, shared citations and concepts are edges, and the map is never finished because each new lesson adds nodes and edges. The long history is the untold history; the whole course is the blog. At the end, the honest position is a map with open edges: we can trace how we got here, and we cannot yet say why there is a here at all.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Global workspace</b><span>Conscious access is information broadcast to many processes.</span></div>
+							<div class="keypoint"><b>IIT</b><span>Consciousness is a unified cause-effect structure, measured as Phi.</span></div>
+							<div class="keypoint"><b>J-space</b><span>A readable internal workspace in Claude looks like access, not proof of experience.</span></div>
+							<div class="keypoint"><b>Qualia</b><span>The felt properties of experience; no test decides whether a machine has them.</span></div>
+						</div>
+						<div class="jocax-box">
+							<h3>Why is there anything at all?</h3>
+							<p>One proposal comes from João Carlos Holland de Barcellos (“Jocax”). Imagine a “Jocaxian nothingness”: not empty space governed by laws, but the absence of all rules. If no rule forbids something, something can appear. It is a metaphysical proposal, not an established result; its value is that it makes the question thinkable without pretending it is solved.</p>
+						</div>
+						<div class="map-links">
+							<a href="../untold_history.php">The untold history</a>
+							<a href="../knowledge_map.php">The unfinishable map</a>
+							<a href="../index.php">The whole blog</a>
+						</div>
+						<p class="source-note">Further reading: <a href="https://doi.org/10.2307/2183914" rel="noopener">Nagel (1974)</a>; <a href="https://doi.org/10.1017/S0140525X00038129" rel="noopener">Block (1995)</a>; <a href="https://plato.stanford.edu/entries/consciousness/" rel="noopener">SEP, Consciousness</a>; <a href="https://plato.stanford.edu/entries/qualia/" rel="noopener">SEP, Qualia</a>; <a href="https://www.anthropic.com/research/global-workspace" rel="noopener">Anthropic, J-space (2026)</a>; <a href="https://archive.org/details/universe-jocax-eng" rel="noopener">Jocax, The Universe According to Jocax</a>.</p>
+					</section>
+
 					<section class="section-block" id="takeaway">
-						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
+						<div class="section-kicker"><span class="sk-num">05</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>

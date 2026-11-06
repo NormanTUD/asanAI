@@ -78,7 +78,11 @@
 	var currentRound = 0;
 	var score = 0;
 	var timerInterval = null;
-	var roundStartTime = 0;
+	var timerElapsed = 0;
+	var timerStart = 0;
+	var timerRunning = false;
+	var timerEnabled = false;
+	var visible = false;
 
 	function $(id) { return document.getElementById(id); }
 	function shuffle(list) {
@@ -89,17 +93,35 @@
 		}
 		return a;
 	}
-	function startTimer() {
-		roundStartTime = performance.now();
+	function updateTimer() {
 		var el = $("cr-timer-val");
+		if (!el) return;
+		var value = timerElapsed + (timerRunning ? (performance.now() - timerStart) / 1000 : 0);
+		el.textContent = value.toFixed(1);
+	}
+	function startTimer() {
+		if (!visible || !timerEnabled || timerRunning) return;
+		timerStart = performance.now();
+		timerRunning = true;
 		clearInterval(timerInterval);
-		timerInterval = setInterval(function () {
-			if (el) el.textContent = ((performance.now() - roundStartTime) / 1000).toFixed(1);
-		}, 100);
+		timerInterval = setInterval(updateTimer, 100);
+		updateTimer();
+	}
+	function pauseTimer() {
+		if (!timerRunning) return;
+		timerElapsed += (performance.now() - timerStart) / 1000;
+		timerRunning = false;
+		clearInterval(timerInterval);
+		updateTimer();
+	}
+	function resetTimer() {
+		pauseTimer();
+		timerElapsed = 0;
+		updateTimer();
 	}
 	function stopTimer() {
-		clearInterval(timerInterval);
-		return (performance.now() - roundStartTime) / 1000;
+		pauseTimer();
+		return timerElapsed;
 	}
 	function renderRound() {
 		var r = rounds[currentRound];
@@ -137,6 +159,8 @@
 		});
 
 		$("cr-feedback").textContent = "";
+		timerEnabled = true;
+		resetTimer();
 		startTimer();
 	}
 	function disableOptions() {
@@ -179,6 +203,7 @@
 		}
 	}
 	function showReveal() {
+		timerEnabled = false;
 		stopTimer();
 		$("cr-room").hidden = true;
 		$("cr-reveal").hidden = false;
@@ -219,6 +244,16 @@
 		var revealBtn = $("cr-reveal-translations");
 		if (restart) restart.addEventListener("click", start);
 		if (revealBtn) revealBtn.addEventListener("click", revealTranslations);
+		if ("IntersectionObserver" in window) {
+			var host = $("cr-sim") || $("cr-room");
+			new IntersectionObserver(function (entries) {
+				visible = !!(entries[0] && entries[0].isIntersecting && entries[0].intersectionRatio > 0.12);
+				if (visible) startTimer();
+				else pauseTimer();
+			}, { threshold: [0, 0.12, 0.5] }).observe(host);
+		} else {
+			visible = true;
+		}
 		start();
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

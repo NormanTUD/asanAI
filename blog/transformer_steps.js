@@ -1420,6 +1420,79 @@
 		chart.resize();
 	}
 
+	function renderFeatureArrows(el, layerIdx, data, projection) {
+		if (!el || !window.echarts || !projection || !projection.in.length) return;
+		var c = palette();
+		var chart = echarts.getInstanceByDom(el) || echarts.init(el);
+		var labels = data.tokens.map(function (t) { return display(t); });
+		var series = [];
+		for (var i = 0; i < data.n; i++) {
+			var sel = i === data.selected;
+			var col = sel ? c.gold : rgb(mix(hex(c.blue), hex(c.lilac), i / Math.max(1, data.n - 1)));
+			if (projection.is3d) {
+				var from = projection.in[i], to = projection.out[i];
+				series.push({
+					name: labels[i],
+					type: "line3D",
+					data: [from, to],
+					lineStyle: { width: sel ? 5 : 2.4, color: col, opacity: sel ? 1 : 0.72 }
+				});
+				if (typeof _add3DArrowheadSeries === "function") {
+					_add3DArrowheadSeries(series, from, to, col, { lineWidth: sel ? 6 : 4, maxHeadLen: 0.45, spreadRatio: 0.35, name: labels[i] });
+				}
+				series.push({
+					name: labels[i],
+					type: "scatter3D",
+					data: [{ value: from, itemStyle: { color: col }, _tmPoint: "in" }],
+					symbolSize: sel ? 9 : 5,
+					label: { show: sel, formatter: labels[i], color: c.ink, fontSize: 10, fontWeight: 700 }
+				});
+			} else {
+				var a = projection.in[i], b = projection.out[i];
+				series.push({
+					name: labels[i],
+					type: "line",
+					data: [[a[0], a[1]], [b[0], b[1]]],
+					symbol: ["circle", "arrow"],
+					symbolSize: sel ? 9 : 5,
+					lineStyle: { width: sel ? 4 : 2, color: col, opacity: sel ? 1 : 0.72 },
+					itemStyle: { color: col },
+					label: { show: sel, formatter: labels[i], position: "end", color: c.ink, fontSize: 10, fontWeight: 700 }
+				});
+			}
+		}
+		var option = {
+			backgroundColor: "transparent",
+			title: {
+				text: (DE() ? "Feature-Migration · Schicht " : "Feature migration · layer ") + (layerIdx + 1),
+				subtext: projection.label + (DE() ? " · alle Tokens, Pfeil = Eingabe → Ausgabe" : " · all tokens, arrow = input → output"),
+				left: "center",
+				textStyle: { fontSize: 13, color: c.ink, fontFamily: "Barlow, Open Sans, sans-serif" },
+				subtextStyle: { fontSize: 10, color: c.muted, fontFamily: "Open Sans, sans-serif" }
+			},
+			tooltip: { trigger: "item", confine: true },
+			series: series,
+			animation: false
+		};
+		if (projection.is3d) {
+			option.xAxis3D = { type: "value", name: projection.axes[0], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } };
+			option.yAxis3D = { type: "value", name: projection.axes[1], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } };
+			option.zAxis3D = { type: "value", name: projection.axes[2], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted } };
+			option.grid3D = {
+				boxWidth: 100, boxDepth: 100, boxHeight: 75,
+				viewControl: { alpha: 22, beta: 35, distance: 190 },
+				axisLine: { lineStyle: { color: c.line } },
+				splitLine: { lineStyle: { color: c.line } }
+			};
+		} else {
+			option.grid = { top: 62, bottom: 38, left: 48, right: 24 };
+			option.xAxis = { type: "value", name: projection.axes[0], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted }, splitLine: { lineStyle: { color: c.line } } };
+			option.yAxis = { type: "value", name: projection.axes[1], nameTextStyle: { color: c.muted }, axisLabel: { color: c.muted }, splitLine: { lineStyle: { color: c.line } } };
+		}
+		chart.setOption(option, true);
+		chart.resize();
+	}
+
 	function renderLayerFeaturePlots(layerIdx) {
 		var data = featureData(layerIdx);
 		var prefix = "unified-layer-" + layerIdx;
@@ -1457,6 +1530,7 @@
 		var labels = data.tokens.map(function (t) { return display(t); });
 		var proj = featureProjection(data);
 		if (note) note.textContent = proj.label;
+		renderFeatureArrows(document.getElementById(prefix + "-feature-arrows"), layerIdx, data, proj);
 		renderFeatureChart(inputEl, proj.in, labels, data.selected, palette().blue, DE() ? "Eingabe in Schicht " + (layerIdx + 1) : "Input to layer " + (layerIdx + 1), proj);
 		renderFeatureChart(outputEl, proj.out, labels, data.selected, palette().green, DE() ? "Ausgabe von Schicht " + (layerIdx + 1) : "Output of layer " + (layerIdx + 1), proj);
 	}
@@ -1523,7 +1597,22 @@
 			"<p class='tm-logit-note'>" + note + "</p><div class='tm-logit-lens'>" + head + rows + "</div></div>";
 	}
 
+	function updateDimensionReadout() {
+		var el = document.getElementById("tm-dim-readout");
+		if (!el) return;
+		var cfg = (typeof getTransformerConfig === "function") ? getTransformerConfig() : {};
+		var trace = (window.__tmLayerTrace || [])[0];
+		var ffn = (window.__tmFFNTrace || [])[0];
+		var dIn = trace && trace.h_in && trace.h_in[0] ? trace.h_in[0].length : (cfg.d_model || 0);
+		var dHidden = ffn && ffn.out_L1 && ffn.out_L1[0] ? ffn.out_L1[0].length : (cfg.d_ff || dIn * 4);
+		var dOut = trace && trace.h_out && trace.h_out[0] ? trace.h_out[0].length : (cfg.d_model || 0);
+		el.textContent = DE()
+			? "Gemessen: h_in = " + dIn + " → FFN-Hidden = " + dHidden + " → h_out = " + dOut + ". Attention bleibt bei d_model; nur das FFN erweitert und komprimiert wieder."
+			: "Measured: h_in = " + dIn + " → FFN hidden = " + dHidden + " → h_out = " + dOut + ". Attention stays at d_model; only the FFN expands and compresses back.";
+	}
+
 	function enhanceLayerCards() {
+		updateDimensionReadout();
 		if (!window.__tmLayerTrace || !window.__tmLayerTrace.length) return;
 		Array.prototype.slice.call(document.querySelectorAll(".tm-layer-card")).forEach(function (card) {
 			if (card.getAttribute("data-tm-enhanced") === "1") return;
@@ -1563,14 +1652,15 @@
 				sb.insertBefore(lead, sb.firstChild);
 			}
 			lead.textContent = isDe
-				? "Die beiden Plots zeigen die Token-Vektoren vor und nach der Schicht. Alle Tokens sind als Kontext zu sehen; das ausgewählte Token ist hervorgehoben. Standardmäßig ist das letzte Token ausgewählt. Für d_model > 3 nutzt der Plot eine PCA auf drei Dimensionen; das Label sagt immer PCA."
-				: "The two plots show the token vectors before and after the layer. All tokens are shown for context; the selected token is highlighted. The last token is selected by default. For d_model > 3 the plot uses PCA to three dimensions; the label always says PCA.";
+				? "Die Feature-Migration zeigt für alle Tokens, wie die Schicht ihre Vektoren verschiebt: jeder Pfeil läuft von der Eingabe zur Ausgabe. Bis d_model = 3 sind das die rohen Dimensionen; darüber wird mit PCA auf drei Dimensionen reduziert, und das Label sagt das ausdrücklich. Im tiefen Untermenü kannst du zusätzlich die echten Layer-Bewegungen für ein einzelnes Token ansehen."
+				: "Feature migration shows how the layer moves every token: each arrow runs from the input to the output. Up to d_model = 3 these are the raw dimensions; above that PCA reduces to three dimensions, and the label says so explicitly. The deep submenu additionally shows the real layer movements for a single token.";
 			if (!sb.querySelector(".tm-feature-wrap")) {
 				var wrap = document.createElement("div");
 				wrap.className = "tm-feature-wrap";
-				wrap.innerHTML = "<div class='tm-feature-controls'><label>" + (isDe ? "Token" : "Token") + " <select id='unified-layer-" + idx + "-feature-token'></select></label><span class='tm-feature-note' id='unified-layer-" + idx + "-feature-projection'></span></div>" +
+				wrap.innerHTML = "<div class='tm-feature-primary'><span class='tm-feature-note' id='unified-layer-" + idx + "-feature-projection'></span><div id='unified-layer-" + idx + "-feature-arrows' class='tm-feature-arrows'></div></div>" +
+					"<details class='tm-feature-real'><summary>" + (isDe ? "Echte Layer-Bewegungen (ausgewähltes Token)" : "Real layer movements (selected token)") + "</summary><div class='tm-feature-real-body'><div class='tm-feature-controls'><label>" + (isDe ? "Token" : "Token") + " <select id='unified-layer-" + idx + "-feature-token'></select></label></div>" +
 					"<div class='tm-feature-plots'><div class='tm-feature-plot'><div class='tm-feature-plot-title'>" + (isDe ? "Eingabe" : "Input") + "</div><div id='unified-layer-" + idx + "-feature-input' class='tm-feature-chart'></div></div>" +
-					"<div class='tm-feature-plot'><div class='tm-feature-plot-title'>" + (isDe ? "Ausgabe" : "Output") + "</div><div id='unified-layer-" + idx + "-feature-output' class='tm-feature-chart'></div></div></div>" +
+					"<div class='tm-feature-plot'><div class='tm-feature-plot-title'>" + (isDe ? "Ausgabe" : "Output") + "</div><div id='unified-layer-" + idx + "-feature-output' class='tm-feature-chart'></div></div></div></div></details>" +
 					"<div id='unified-layer-" + idx + "-logit-lens' class='tm-logit-lens-host'></div>";
 				sb.insertBefore(wrap, oldDetail || null);
 			}
@@ -1582,6 +1672,13 @@
 						renderLayerFeaturePlots(idx);
 						renderLayerLogitLens(idx);
 					}, 60);
+				});
+			}
+			var realBox = sb.querySelector(".tm-feature-real");
+			if (realBox && !realBox._tmFeatureBound) {
+				realBox._tmFeatureBound = true;
+				realBox.addEventListener("toggle", function () {
+					if (realBox.open) setTimeout(function () { renderLayerFeaturePlots(idx); }, 60);
 				});
 			}
 			card.setAttribute("data-tm-enhanced", "1");
@@ -1608,6 +1705,7 @@
 	window.addEventListener("tm:transformer-data", function () {
 		setTimeout(function () {
 			enhanceLayerCards();
+			updateDimensionReadout();
 			Array.prototype.slice.call(document.querySelectorAll('.tm-layer-subbox[data-sub="migration"][open]')).forEach(function (sub) {
 				var card = sub.closest(".tm-layer-card");
 				if (!card) return;
@@ -1791,7 +1889,7 @@
 				residual: drawResidual,
 				unembed: drawUnembed
 			};
-			var stepModes = { embed: "pca", position: "heatmap", attend: "0" };
+			var stepModes = { embed: "pca", position: "pca", attend: "0" };
 			var apis = {};
 			Object.keys(canvases).forEach(function (key) {
 				var canvas = canvases[key];
@@ -1807,10 +1905,10 @@
 				var labels = { embed: [], position: [], attend: [] };
 				if (d > 3) {
 					labels.embed = [["pca", "PCA"], ["parallel", DE() ? "Alle Dimensionen" : "All dimensions"]];
-					labels.position = [["heatmap", "Heatmap"], ["pca", DE() ? "PCA-Kurve" : "PCA curve"], ["parallel", DE() ? "Alle Dimensionen" : "All dimensions"]];
-				} else if (d > 0) {
-					labels.position = [["heatmap", "Heatmap"], ["pca", DE() ? "Kurve" : "Curve"]];
 				}
+				// Position shows the semantic vector (h0 = token + position)
+				// in raw dimensions up to 3D and PCA above that; no heatmap
+				// or curve switch, so the view is not hidden behind a mode.
 				if (heads) {
 					labels.attend = Array.from({ length: heads }, function (_, i) { return [String(i), "Head " + (i + 1)]; });
 				}
@@ -1820,7 +1918,7 @@
 				var labels = stepModeLabels();
 				if (dModel() <= 3) {
 					if (stepModes.embed === "parallel") stepModes.embed = "pca";
-					if (stepModes.position === "parallel") stepModes.position = "heatmap";
+					stepModes.position = "pca";
 				}
 				["embed", "position", "attend"].forEach(function (key) {
 					var list = labels[key] || [];

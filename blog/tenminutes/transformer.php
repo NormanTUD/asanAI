@@ -91,6 +91,12 @@
 <input id="transformer-context-size" max="256" min="2" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();" step="1" style="width: 100%;" type="range" value="32"/>
 </div>
 <div style="margin-bottom: 15px;">
+<label style="font-weight: bold;">FFN hidden size (d_ff): </label>
+<span id="ffn-val" style="font-weight: bold; color: #3b82f6;">12</span>
+<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">Width of the expanded hidden layer inside the feed-forward network. The block input and output both stay at d_model; the FFN expands to d_ff and compresses back.</p>
+<input id="transformer-ffn-size" max="64" min="1" oninput="syncTransformerSettings('ffn')" step="1" style="width: 100%;" type="range" value="12"/>
+</div>
+<div style="margin-bottom: 15px;">
 <label style="font-weight: bold; display: flex; align-items: center; gap: 8px;"><input id="transformer-kv-cache" type="checkbox"/> KV cache</label>
 <p style="font-size: 0.75rem; color: #64748b; margin: 4px 0;">Reuse the keys and values of earlier tokens when you append a token. Only the new token's query is computed; the next-token distribution is identical. <span id="tm-kv-cache-status">Off</span></p>
 </div>
@@ -312,7 +318,7 @@
 				</div>
 				<p>Text becomes tokens. The order is the sentence; the number under each token is its vocabulary index in this demo.</p>
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-tokenize" aria-label="The token stream in reading order"></canvas>
-				<p class="tm-step-more">The tokenizer is a separate program trained before the model. It decides which strings become one id; the model itself only sees numbers.</p>
+				<p class="tm-step-more">The tokenizer is a separate program trained before the model. It decides which strings become one id; the model itself only sees numbers. It is built to compress text: frequent patterns are replaced by shorter patterns, so the vocabulary can represent as much different text as possible with as few tokens. In BPE, the vocabulary size is another hyperparameter; here it is not, because this demo tokenizes word by word and the models are too small for real BPE.</p>
 				<div class="tm-step-formula" data-tex="T = [t_0,\, t_1,\, \dots,\, t_{n-1}]"></div>
 				<details class="tm-step-detail">
 					<summary>Tokenizer in detail</summary>
@@ -341,10 +347,11 @@
 <div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
 <div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px; max-height: 420px; overflow-y: auto;"></div>
 <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
-<input id="transformer-vector-math-input" oninput="debounced_vector_math()" onkeydown="if(event.key==='Enter'){event.preventDefault(); immediate_vector_math();}" placeholder="e.g., king - man + woman" style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" type="text"/>
+<input id="transformer-vector-math-input" oninput="debounced_vector_math()" onkeydown="if(event.key==='Enter'){event.preventDefault(); immediate_vector_math();}" placeholder="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'z. B. könig - königin + land' : 'e.g., king - man + woman'; ?>" value="<?php echo function_exists('tm_lang') && tm_lang() === 'de' ? 'könig - königin + land' : 'king - man + woman'; ?>" style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);" type="text"/>
 <div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: var(--mn-surface, white); border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
 <em style="color: #94a3b8;">Enter an equation and press Enter...</em>
 </div>
+<p class="tm-vector-note" style="font-size: 0.82rem; color: #64748b; margin-top: 10px;">The classic analogy “king − man + woman = queen” will not look clean here: the tiny German corpus has no “mann” or “frau”, and a model trained on one sentence has not learned such relations. Real transformers trained on large corpora get much closer.</p>
 </div>
 					</div>
 				</details></div>
@@ -402,7 +409,7 @@
 				<div class="tm-step-body"><canvas class="tm-step-canvas" id="tm-step-residual" aria-label="Residual stream updates per layer and token"></canvas>
 				<p class="tm-step-more">The residual stream is the running vector. Every layer reads it and writes an update; nothing is overwritten, so late layers can still use the original token.</p>
 				<div class="tm-step-formula" data-tex="x_{n+1} = x_n + \operatorname{layer}_{n+1}(x_n)"></div>
-				<details class="tm-step-detail"><summary>Residual stream in detail</summary><div class="tm-step-detail-body"><p>Each sublayer computes an update and adds it to the running vector: x_{n+1} = x_n + layer_{n+1}(x_n). Nothing is overwritten, so the original token stays available and gradients have a short path back.</p><p>The per-layer residual preview above shows how much attention and the FFN write for each token. The last layer's level 2 also shows the final h_last vector.</p></div></details></div>
+				<details class="tm-step-detail"><summary>Residual stream in detail</summary><div class="tm-step-detail-body"><p>Each sublayer computes an update and adds it to the running vector: x_{n+1} = x_n + layer_{n+1}(x_n). Nothing is overwritten, so the original token stays available and gradients have a short path back.</p><p>The per-layer residual preview above shows how much attention and the FFN write for each token. The last layer's level 2 also shows the final h_last vector.</p><p>The block input and output keep the same d_model width; the FFN expands to d_ff inside and compresses back. That is the width where it has room to work.</p><p class="tm-dim-readout" id="tm-dim-readout"></p></div></details></div>
 			</section>
 							<section class="tm-step">
 				<div class="tm-step-head">

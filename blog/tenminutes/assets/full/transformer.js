@@ -236,11 +236,14 @@ function matAdd(A, B) {
 }
 
 function getTransformerConfig() {
+	const d_model = parseInt(document.getElementById('transformer-dimension-model')?.value) || 3;
+	const d_ff = parseInt(document.getElementById('transformer-ffn-size')?.value) || d_model * 4;
 	return {
-		d_model:     parseInt(document.getElementById('transformer-dimension-model')?.value)  || 3,
+		d_model:     d_model,
 		n_heads:     parseInt(document.getElementById('transformer-heads')?.value)             || 1,
 		n_layers:    parseInt(document.getElementById('transformer-depth')?.value)             || 1,
 		temperature: parseFloat(document.getElementById('transformer-temperature')?.value)     || 1.0,
+		d_ff:        Math.max(1, d_ff),
 	};
 }
 
@@ -799,8 +802,7 @@ function _executeParamBreakdownRender() {
 }
 
 function renderParamBreakdown(weights) {
-	const { d_model, n_heads } = getTransformerConfig();
-	const d_ff = d_model * 4;
+	const { d_model, n_heads, d_ff } = getTransformerConfig();
 	const n_layers = weights.length;
 
 	// Count embedding parameters
@@ -1446,9 +1448,13 @@ function refreshTrainingDemos() {
 	}
 }
 
-function get_init_weights(n_layers, d_model) {
+function get_init_weights(n_layers, d_model, d_ff) {
 	const weights = [];
-	const d_ff = d_model * 4;
+	if (!d_ff) {
+		const cfg = getTransformerConfig();
+		d_ff = (cfg && cfg.d_ff) || d_model * 4;
+	}
+	d_ff = Math.max(1, parseInt(d_ff, 10) || d_model * 4);
 
 	for (let n = 0; n < n_layers; n++) {
 		weights.push({
@@ -1986,15 +1992,18 @@ function renderLossGraph() {
 }
 
 function handleWeightReinit(d_model, n_heads, n_layers) {
+	const d_ff = getTransformerConfig().d_ff;
 	const needsReinit = !window.currentWeights ||
 		window.currentWeights.length !== n_layers ||
 		window.last_d_model !== d_model ||
-		window.last_n_heads !== n_heads;
+		window.last_n_heads !== n_heads ||
+		window.last_d_ff !== d_ff;
 
 	if (needsReinit) {
-		window.currentWeights = get_init_weights(n_layers, d_model);
+		window.currentWeights = get_init_weights(n_layers, d_model, d_ff);
 		window.last_d_model = d_model;
 		window.last_n_heads = n_heads;
+		window.last_d_ff = d_ff;
 		window._cachedFinalProjection = null;
 		window._tmSelectedProbCache = null;
 
@@ -3420,7 +3429,7 @@ function clearFFNEquationsContainer() {
 
 function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, tokenStrings = null) {
 	const d_model = h1[0].length;
-	const d_ff = d_model * 4;
+	const d_ff = (params.W1 && params.W1[0] && params.W1[0].length) || d_model * 4;
 
 	let W1 = assertShape('W1', params.W1, d_model, d_ff);
 	let b1 = assertShape('b1', params.b1, d_ff, 1);
@@ -5966,6 +5975,13 @@ function syncTransformerSettings(trigger) {
 	// Just update the labels to reflect whatever the user chose.
 	document.getElementById('dim-val').innerText = d_model;
 	document.getElementById('heads-val').innerText = h;
+	const ffnSlider = document.getElementById('transformer-ffn-size');
+	const ffnVal = document.getElementById('ffn-val');
+	if (ffnSlider) {
+		const d_ff = Math.max(1, parseInt(ffnSlider.value) || d_model * 4);
+		if (ffnVal) ffnVal.innerText = d_ff;
+		window.last_d_ff = d_ff;
+	}
 
 	// Clear stale weights so the next valid run reinitializes cleanly
 	window.currentWeights = null;
@@ -6328,13 +6344,13 @@ function _vmDoMath(updatePlot) {
     const space = window.persistentEmbeddingSpace;
 
     if (!hasValidEmbeddingSpace(space)) {
-        _vmRenderResult("<em style='color: #94a3b8;'>Enter an equation...</em>");
+        _vmRenderResult("<em style='color: #94a3b8;'>" + (_tmParamDe() ? "Gib eine Gleichung ein..." : "Enter an equation...") + "</em>");
         return;
     }
 
     const vocabKeys = Object.keys(space);
     if (vocabKeys.length === 0) {
-        _vmRenderResult("<em style='color: #94a3b8;'>No vocabulary loaded yet.</em>");
+        _vmRenderResult("<em style='color: #94a3b8;'>" + (_tmParamDe() ? "Noch kein Vokabular geladen." : "No vocabulary loaded yet.") + "</em>");
         return;
     }
 
@@ -6342,7 +6358,7 @@ function _vmDoMath(updatePlot) {
     const tokens = tokenizeVectorMathInput(inputVal);
 
     if (!tokens || tokens.length === 0) {
-        _vmRenderResult("<em style='color: #94a3b8;'>Enter an equation...</em>");
+        _vmRenderResult("<em style='color: #94a3b8;'>" + (_tmParamDe() ? "Gib eine Gleichung ein..." : "Enter an equation...") + "</em>");
         if (updatePlot) {
             _execute_embedding_render(d_model, null, []);
         }
