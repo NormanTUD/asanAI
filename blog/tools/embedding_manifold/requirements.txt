@@ -1,0 +1,4 @@
+huggingface_hub>=0.24
+safetensors>=0.4
+tokenizers>=0.15
+numpy>=1.26
