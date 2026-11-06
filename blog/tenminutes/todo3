@@ -5,3 +5,7 @@ kopiere die neuere der manifold hypothesis visualisierungen von ../embeddinglab.
 intuition:
 
 demo "Die autoregressive Schleife": "Die Temperatur formt zuerst die Verteilung; Top-p behält dann die kleinste Menge der sortierten Wörter, deren kumulierte Wahrscheinlichkeit 90 % erreicht, und zieht daraus. Die blassen Balken liegen außerhalb dieser Menge." ist länger als "Sampling zieht aus der ganzen Verteilung nach der Temperaturformung. Niedriges T verhält sich fast gierig; hohes T flacht die Verteilung ab und tauscht Kohärenz gegen Überraschung." daher springt das bild weil das div seine höhe verändert. hier im gilt: bei keiner interaktion darf ein div seine höhe dynamisch verändern. das ist optisch störend. lieber etwas mehr freiraum dazwischen lassen auf der maximalen höhe.
+
+in intuition: "Schritt 3 · Position Jeder Platz bekommt seinen eigenen Fingerabdruck" sollte eigenes kleines mini kapitel werden mit überschrift usw. zeige auch die formel.
+
+
