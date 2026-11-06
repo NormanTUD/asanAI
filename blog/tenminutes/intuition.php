@@ -6,7 +6,7 @@
 	<meta name="description" content="A ten-minute interactive introduction to next-token prediction, the loop behind large language models.">
 	<meta name="theme-color" content="#ffffff">
 	<title>One Word at a Time | Ten Minutes</title>
-	<link rel="stylesheet" href="assets/site.css?v=20261105b">
+	<link rel="stylesheet" href="assets/site.css?v=<?php echo filemtime(__DIR__.'/assets/site.css'); ?>">
 	<link rel="stylesheet" href="../Temml-Local.min.css">
 </head>
 <body data-lesson="intuition" data-page="lesson">
@@ -316,7 +316,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">From one axis to two <span>· demo</span></p>
-									<p class="demo-sub">One axis orders words by temperature. A second axis separates lukewarm from bright, so the same words can carry more relations.</p>
+									<p class="demo-sub">One axis orders words by temperature. The embedding demo below adds a second direction, so the same words can carry more relations.</p>
 								</div>
 							</div>
 							<div class="demo-body">
@@ -325,10 +325,7 @@
 										<canvas id="i1d-canvas" class="demo-canvas" style="height:170px" aria-label="A temperature line with Freezing at -30, Cold at 5, Lukewarm at 30, and Hot at 100"></canvas>
 										<p class="meadow-caption" style="color:var(--tm-muted)">1D: temperature</p>
 									</div>
-									<div>
-										<canvas id="i2d-canvas" class="demo-canvas" style="height:240px" aria-label="A two-dimensional plane with temperature on the horizontal axis and brightness on the vertical axis, showing cold, lukewarm, hot, and bright as separate points"></canvas>
-										<p class="meadow-caption" style="color:var(--tm-muted)">2D: temperature + brightness</p>
-									</div>
+
 								</div>
 							</div>
 						</div>
@@ -398,7 +395,7 @@
 							<div class="pos-bridge">
 								<span class="pos-bridge-kicker">Same pattern, one dimension higher</span>
 								<h3 class="pos-bridge-title">From the flat slice to the 3D curve</h3>
-								<p>The heatmap above shows the pattern as a flat slice: position across, dimension up. Below, the same sinusoidal fingerprint is drawn as a real 3D curve. The shape does not change; only the number of dimensions does. In a real model this curve becomes a surface in thousands of dimensions.</p>
+								<p>The heatmap above shows the pattern as a flat slice: position across, dimension up. Below, the same sinusoidal fingerprint is drawn as a real 3D curve. Here d = 3, so the curve is exactly three-dimensional. The shape does not change; only the number of dimensions does. In a real model this curve becomes a surface in thousands of dimensions.</p>
 								<div class="pos-bridge-flow" aria-hidden="true">
 									<span>position × dimension</span><i>→</i><span>3D curve</span><i>→</i><span>N dimensions</span>
 								</div>
@@ -409,17 +406,13 @@
 										<input type="range" id="ipe-pos" min="0" max="1000" step="1" value="7">
 										<output id="ipe-pos-out">7</output>
 									</label>
-									<label>Model dimension d
-										<input type="range" id="ipe-d-model" min="8" max="256" step="8" value="64">
-										<output id="ipe-d-model-out">64</output>
-									</label>
 									<button class="chip is-on" type="button" id="ipe-autorotate" aria-pressed="true">Auto-rotate view</button>
 								</div>
 								<p class="step-note pos-drag-hint">Move the slider to travel along the curve; drag the view to rotate it.</p>
 								<canvas class="step-canvas" id="ipe-canvas" style="height:380px" aria-label="A single sinusoidal positional-encoding vector for one token: three dimensions as axes, one point on the curve"></canvas>
 								<div class="step-out" id="ipe-out">One token at position <b>7</b>.</div>
 							</div>
-							<p class="step-note">The plot shows the sinusoidal encoding as one vector for the selected position. The three axes are the first three dimensions; the blue sphere is the original word, and the arrow is its position vector. Move the slider and the point follows the curve. Drag the plot to rotate it. The demo computes 64 dimensions; a real model uses thousands.</p>
+							<p class="step-note">The plot shows the sinusoidal encoding as one vector for the selected position. The three axes are the first three dimensions; the blue sphere is the original word, and the arrow is its position vector. Move the slider and the point follows the curve. Drag the plot to rotate it. The curve uses d = 3 here; a real model uses thousands of dimensions.</p>
 						</div>
 					</section>
 
@@ -461,9 +454,9 @@
 						<div class="step-pane layer-pane" id="layer-detail">
 															<div class="layer-formula" data-tex="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{weight}\\\text{matrix}}}\,x + \underbrace{b}_{\text{bias}}\right)" data-tex-de="\operatorname{layer}(x) = \operatorname{activation}\!\left(\underbrace{W}_{\substack{\text{Gewichts-}\\\text{Matrix}}}\,x + \underbrace{b}_{\text{Bias}}\right)"></div>
 															<div class="collapse-card">
-																<div class="cc-label">Worked example · 2 inputs, 3 outputs</div>
-																<div class="collapse-math" data-tex="\begin{aligned} W &amp;= \begin{pmatrix} 1 &amp; 2 \\ 0 &amp; -1 \\ 2 &amp; 1 \end{pmatrix}, \quad x = \begin{pmatrix} 3 \\ 1 \end{pmatrix}, \quad b = \begin{pmatrix} 0 \\ 0 \\ -2 \end{pmatrix} \\[6pt] Wx &amp;= \begin{pmatrix} 1\cdot 3 + 2\cdot 1 \\ 0\cdot 3 + (-1)\cdot 1 \\ 2\cdot 3 + 1\cdot 1 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \\ 7 \end{pmatrix} \\[6pt] z = Wx + b &amp;= \begin{pmatrix} 5 \\ -1 \\ 7 \end{pmatrix} + \begin{pmatrix} 0 \\ 0 \\ -2 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \\ 5 \end{pmatrix} \\[6pt] \operatorname{ReLU}(z) &amp;= \begin{pmatrix} 5 \\ 0 \\ 5 \end{pmatrix} \end{aligned}"></div>
-																<p>Read <span data-tex="W" data-tex-display="false"></span> row by row: the first output mixes the inputs as <span data-tex="1\cdot 3 + 2\cdot 1" data-tex-display="false"></span>, the second as <span data-tex="0\cdot 3 + (-1)\cdot 1" data-tex-display="false"></span>, the third as <span data-tex="2\cdot 3 + 1\cdot 1" data-tex-display="false"></span>. The bias adds <span data-tex="0" data-tex-display="false"></span>, <span data-tex="0" data-tex-display="false"></span>, and <span data-tex="-2" data-tex-display="false"></span>, so <span data-tex="z = (5, -1, 5)" data-tex-display="false"></span>. ReLU, the activation introduced below, sends the negative entry to zero and leaves the other two unchanged. A real layer runs the same dot products and the same bend with thousands of rows and columns.</p>
+																<div class="cc-label">Worked example · 2 inputs, 2 outputs</div>
+																<div class="collapse-math" data-tex="\begin{aligned} W &amp;= \begin{pmatrix} 1 &amp; 2 \\ 0 &amp; -1 \end{pmatrix}, \quad x = \begin{pmatrix} 3 \\ 1 \end{pmatrix}, \quad b = \begin{pmatrix} 0 \\ -2 \end{pmatrix} \\[6pt] Wx &amp;= \begin{pmatrix} 1\cdot 3 + 2\cdot 1 \\ 0\cdot 3 + (-1)\cdot 1 \end{pmatrix} = \begin{pmatrix} 5 \\ -1 \end{pmatrix} \\[6pt] z = Wx + b &amp;= \begin{pmatrix} 5 \\ -1 \end{pmatrix} + \begin{pmatrix} 0 \\ -2 \end{pmatrix} = \begin{pmatrix} 5 \\ -3 \end{pmatrix} \\[6pt] \operatorname{ReLU}(z) &amp;= \begin{pmatrix} 5 \\ 0 \end{pmatrix} \end{aligned}"></div>
+																<p>Read <span data-tex="W" data-tex-display="false"></span> row by row: the first output mixes the inputs as <span data-tex="1\cdot 3 + 2\cdot 1" data-tex-display="false"></span>, the second as <span data-tex="0\cdot 3 + (-1)\cdot 1" data-tex-display="false"></span>. The bias adds <span data-tex="0" data-tex-display="false"></span> and <span data-tex="-2" data-tex-display="false"></span>, so <span data-tex="z = (5, -3)" data-tex-display="false"></span>. ReLU, the activation introduced below, sends the negative entry to zero and leaves the other unchanged. A real layer can be much larger, but the rule is the same: each output is a dot product plus a bias, then the activation.</p>
 															</div>
 															<h4 class="layer-subhead">Depth without a nonlinearity</h4>
 															<div class="collapse-card">
@@ -793,9 +786,9 @@
 	</main>
 
 	<script src="../temml.min.js"></script>
-	<script src="assets/site.js?v=20261104"></script>
-	<script src="assets/demos.js?v=20261104c"></script>
-	<script src="assets/space-morph.js?v=20261104"></script>
+	<script src="assets/site.js?v=<?php echo filemtime(__DIR__.'/assets/site.js'); ?>"></script>
+	<script src="assets/demos.js?v=<?php echo filemtime(__DIR__.'/assets/demos.js'); ?>"></script>
+	<script src="assets/space-morph.js?v=<?php echo filemtime(__DIR__.'/assets/space-morph.js'); ?>"></script>
 	<script src="assets/word-meadow.js?v=20261105c"></script>
 	<script src="../plotly-2.24.1.min.js"></script>
 	<script src="../manifold_scenes.js?v=<?php echo filemtime(__DIR__.'/../manifold_scenes.js'); ?>"></script>
@@ -2375,7 +2368,7 @@
 		var posApi = null;
 		var pos = 7;
 		var posShown = 7;
-		var POS_D_MODEL = 64;
+		var POS_D_MODEL = 3;
 		var POS_COLORS = ["green", "blue", "gold"];
 		var POS_LABELS = ["d0", "d1", "d2"];
 		var posReduce = TM.prefersReduced();
@@ -2645,20 +2638,6 @@
 					posRenderOut();
 					if (posApi) posApi.redraw();
 				});
-			}
-			var posDModel = document.getElementById("ipe-d-model");
-			var posDModelOut = document.getElementById("ipe-d-model-out");
-			if (posDModel) {
-				posDModel.addEventListener("input", function () {
-					var d = TM.clamp(parseInt(posDModel.value, 10) || 64, 8, 256);
-					POS_D_MODEL = d;
-					HEAT_D_MODEL = d;
-					if (posDModelOut) posDModelOut.textContent = String(d);
-					posRenderOut();
-					if (posApi) posApi.redraw();
-					if (heatApi) heatApi.redraw();
-				});
-				if (posDModelOut) posDModelOut.textContent = String(POS_D_MODEL);
 			}
 			var posAutoBtn = document.getElementById("ipe-autorotate");
 			if (posAutoBtn) {
@@ -3284,7 +3263,7 @@
 				setMin("#iemb-out", maxEmbOut);
 				setMin("#iemb-formula", maxEmbFormula);
 			}
-			var posSliders = ["#ipe-heat-context", "#ipe-heat-dims", "#ipe-pos", "#ipe-d-model"];
+			var posSliders = ["#ipe-heat-context", "#ipe-heat-dims", "#ipe-pos"];
 			var maxHeatOut = 0, maxPosOut = 0, maxPosPane = 0;
 			var posPane = document.getElementById("step-position");
 			for (var ps = 0; ps < posSliders.length; ps++) {
@@ -3385,63 +3364,6 @@
 					{ from: 5, to: 30, label: de ? "Lauwarm − Kalt = 25" : "Lukewarm − Cold = 25", color: c.green }
 				]
 			});
-		}
-		var plane = document.getElementById("i2d-canvas");
-		if (plane) {
-			var api = TM.initCanvas(plane, function (ctx, w, h) {
-				var c = TM.colors();
-				var padL = 48, padR = 24, padT = 18, padB = 38;
-				var pw = w - padL - padR, ph = h - padT - padB;
-				var xMin = -5, xMax = 110, yMin = -10, yMax = 110;
-				function X(v) { return padL + (v - xMin) / (xMax - xMin) * pw; }
-				function Y(v) { return padT + (yMax - v) / (yMax - yMin) * ph; }
-				ctx.clearRect(0, 0, w, h);
-				ctx.strokeStyle = c.dark ? "rgba(238,247,244,.08)" : "rgba(0,75,111,.08)";
-				ctx.lineWidth = 1;
-				for (var gx = 0; gx <= 100; gx += 25) {
-					ctx.beginPath(); ctx.moveTo(X(gx), Y(0)); ctx.lineTo(X(gx), Y(100)); ctx.stroke();
-				}
-				for (var gy = 0; gy <= 100; gy += 25) {
-					ctx.beginPath(); ctx.moveTo(X(0), Y(gy)); ctx.lineTo(X(100), Y(gy)); ctx.stroke();
-				}
-				ctx.strokeStyle = c.dark ? "rgba(238,247,244,.3)" : "rgba(0,75,111,.35)";
-				ctx.lineWidth = 1.4;
-				ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(110), Y(0)); ctx.stroke();
-				ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(0), Y(105)); ctx.stroke();
-				ctx.setLineDash([4, 4]);
-				ctx.strokeStyle = c.line;
-				ctx.beginPath(); ctx.moveTo(X(30), Y(0)); ctx.lineTo(X(30), Y(100)); ctx.stroke();
-				ctx.setLineDash([]);
-				var pts = [
-					{ x: 5, y: 20, label: de ? "kalt" : "cold", color: c.blue },
-					{ x: 30, y: 20, label: de ? "lauwarm" : "lukewarm", color: c.green },
-					{ x: 100, y: 20, label: de ? "heiß" : "hot", color: c.gold },
-					{ x: 30, y: 100, label: de ? "hell" : "bright", color: c.lime },
-					{ x: 30, y: 0, label: de ? "dunkel" : "dark", color: c.faint }
-				];
-				pts.forEach(function (p) {
-					var x = X(p.x), y = Y(p.y);
-					ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2);
-					ctx.fillStyle = p.color; ctx.fill();
-					ctx.lineWidth = 2; ctx.strokeStyle = c.paper; ctx.stroke();
-					ctx.fillStyle = c.ink;
-					ctx.font = "600 10px Barlow, system-ui, sans-serif";
-					ctx.textAlign = "center";
-					var dy = p.y >= 95 ? -12 : (p.y <= 5 ? 16 : -10);
-					ctx.fillText(p.label, x, y + dy);
-				});
-				ctx.fillStyle = c.muted;
-				ctx.font = "600 10px Barlow, system-ui, sans-serif";
-				ctx.textAlign = "center";
-				ctx.fillText(de ? "Temperatur" : "temperature", padL + pw / 2, h - 10);
-				ctx.save();
-				ctx.translate(12, padT + ph / 2);
-				ctx.rotate(-Math.PI / 2);
-				ctx.textAlign = "center";
-				ctx.fillText(de ? "Helligkeit" : "brightness", 0, 0);
-				ctx.restore();
-			});
-			window.addEventListener("tm:theme", function () { api.redraw(); });
 		}
 	})();
 	</script>
