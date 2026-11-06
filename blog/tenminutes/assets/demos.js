@@ -828,14 +828,14 @@
 			for (var i = 0; i < 3; i++) {
 				var cells = [];
 				for (var j = 0; j < 3; j++) {
-					var p = input[sy + i][sx + j];
+					var p = Math.round(input[sy + i][sx + j] * 255);
 					var kv = k[i][j];
 					total += p * kv;
-					cells.push(p.toFixed(2) + "\\cdot(" + kernelValue(kv) + ")");
+					cells.push(p + "\\cdot(" + kernelValue(kv) + ")");
 				}
 				rows.push(cells.join(" & "));
 			}
-			var tex = "\\underbrace{\\underbrace{\\begin{matrix}" + rows.join(" \\\\ ") + "\\end{matrix}}_{\\text{" + (DEMO_DE ? "neun Produkte" : "nine products") + "}} = " + total.toFixed(2) + "}_{\\text{" + (DEMO_DE ? "Ausgabe an " : "output at ") + "(" + sx + "," + sy + ")}}";
+			var tex = "\\underbrace{\\underbrace{\\begin{matrix}" + rows.join(" \\\\ ") + "\\end{matrix}}_{\\text{" + (DEMO_DE ? "neun Produkte" : "nine products") + "}} = " + Math.round(total) + "}_{\\text{" + (DEMO_DE ? "Ausgabe an " : "output at ") + "(" + sx + "," + sy + ")}}";
 			formulaEl.setAttribute("data-tex", tex);
 			formulaEl.removeAttribute("data-tex-rendered");
 			if (window.TM && TM.typesetMath) TM.typesetMath(formulaEl.parentNode);
@@ -857,10 +857,31 @@
 			}
 			return out;
 		}
+		function convRGB(kernel) {
+			var out = [];
+			for (var y = 1; y < gh - 1; y++) {
+				var row = [];
+				for (var x = 1; x < gw - 1; x++) {
+					var r = 0, g = 0, b = 0;
+					for (var ky = -1; ky <= 1; ky++) {
+						for (var kx = -1; kx <= 1; kx++) {
+							var px = inputRGB[y + ky][x + kx];
+							var kv = kernel[ky + 1][kx + 1];
+							r += px[0] * kv;
+							g += px[1] * kv;
+							b += px[2] * kv;
+						}
+					}
+					row.push([r, g, b]);
+				}
+				out.push(row);
+			}
+			return out;
+		}
 		function draw(ctx, W, H) {
 			var c = colors();
 			ctx.clearRect(0, 0, W, H);
-			var pad = 18, gap = 36;
+			var pad = 18, gap = 118;
 			if (!imageLoaded || !img || !gw || !gh) {
 				ctx.fillStyle = c.muted;
 				ctx.font = "600 11px Barlow, system-ui, sans-serif";
@@ -874,7 +895,8 @@
 			var maxIH = H - pad * 2 - 26;
 			var scale = Math.min(maxIW / gw, maxIH / gh);
 			var iw = gw * scale, ih = gh * scale;
-			var ox = pad, oy = pad + 18;
+			var ox = Math.max(pad, (W - (iw * 2 + gap)) / 2);
+			var oy = pad + 18;
 			var ox2 = ox + iw + gap;
 			lastGeom = { ox: ox, oy: oy, iw: iw, ih: ih, ox2: ox2, ow: ow, oh: oh, gw: gw, gh: gh };
 			ctx.fillStyle = c.muted;
@@ -882,27 +904,57 @@
 			ctx.fillText(DEMO_DE ? "Eingabe · Stoppschild" : "input · stop sign", ox, pad + 4);
 			ctx.fillText((DEMO_DE ? "Feature-Map · " : "feature map · ") + current, ox2, pad + 4);
 			ctx.drawImage(img, ox, oy, iw, ih);
-			var out = conv(kernels[current]);
-			var mn = Infinity, mx = -Infinity;
+			var kSize = Math.min(72, gap - 24);
+			var kx0 = ox + iw + (gap - kSize) / 2;
+			var ky0 = oy + (ih - kSize) / 2;
+			var kCell = kSize / 3;
+			ctx.save();
+			ctx.font = "600 9px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			ctx.fillStyle = c.muted;
+			ctx.fillText(DEMO_DE ? "Kernel" : "kernel", kx0 + kSize / 2, ky0 - 8);
+			for (var ki = 0; ki < 3; ki++) {
+				for (var kj = 0; kj < 3; kj++) {
+					var kv = kernels[current][ki][kj];
+					var t = Math.max(-1, Math.min(1, kv / 4));
+					var kpx = kx0 + kj * kCell;
+					var kpy = ky0 + ki * kCell;
+					ctx.fillStyle = t >= 0
+						? "rgba(99,164,75," + (0.16 + 0.34 * t) + ")"
+						: "rgba(145,133,190," + (0.16 + 0.34 * -t) + ")";
+					ctx.fillRect(kpx + 1, kpy + 1, kCell - 2, kCell - 2);
+					ctx.strokeStyle = c.line;
+					ctx.lineWidth = 1;
+					ctx.strokeRect(kpx + 1, kpy + 1, kCell - 2, kCell - 2);
+					ctx.fillStyle = c.ink;
+					ctx.fillText(kernelValue(kv), kpx + kCell / 2, kpy + kCell / 2);
+				}
+			}
+			ctx.restore();
+			var out = convRGB(kernels[current]);
+			var mn = [Infinity, Infinity, Infinity];
+			var mx = [-Infinity, -Infinity, -Infinity];
 			out.forEach(function (row) {
-				row.forEach(function (v) {
-					if (v < mn) mn = v;
-					if (v > mx) mx = v;
+				row.forEach(function (px) {
+					for (var ch = 0; ch < 3; ch++) {
+						if (px[ch] < mn[ch]) mn[ch] = px[ch];
+						if (px[ch] > mx[ch]) mx[ch] = px[ch];
+					}
 				});
 			});
-			var span = mx - mn || 1;
 			outCanvas.width = ow;
 			outCanvas.height = oh;
 			var id = outCtx.createImageData(ow, oh);
 			var data = id.data;
 			for (var y = 0; y < oh; y++) {
 				for (var x = 0; x < ow; x++) {
-					var t = (out[y][x] - mn) / span;
-					var v = Math.round(t * 255);
+					var px = out[y][x];
 					var i = (y * ow + x) * 4;
-					data[i] = v;
-					data[i + 1] = v;
-					data[i + 2] = v;
+					for (var ch = 0; ch < 3; ch++) {
+						var span = mx[ch] - mn[ch] || 1;
+						data[i + ch] = Math.round((px[ch] - mn[ch]) / span * 255);
+					}
 					data[i + 3] = 255;
 				}
 			}
@@ -941,13 +993,17 @@
 			var data;
 			try { data = octx.getImageData(0, 0, gw, gh).data; } catch (err) { return; }
 			input = [];
+			inputRGB = [];
 			for (var y = 0; y < gh; y++) {
 				var row = [];
+				var rowRGB = [];
 				for (var x = 0; x < gw; x++) {
 					var i = (y * gw + x) * 4;
 					row.push((data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114) / 255);
+					rowRGB.push([data[i], data[i + 1], data[i + 2]]);
 				}
 				input.push(row);
+				inputRGB.push(rowRGB);
 			}
 			imageLoaded = true;
 			updateFormula();
@@ -964,7 +1020,7 @@
 				api.redraw();
 			});
 		});
-		canvas.addEventListener("click", function (ev) {
+		function handlePointerMove(ev) {
 			if (!lastGeom || !imageLoaded) return;
 			var rect = canvas.getBoundingClientRect();
 			var x = ev.clientX - rect.left;
@@ -985,10 +1041,18 @@
 			}
 			sx = Math.max(0, Math.min(ow - 1, sx));
 			sy = Math.max(0, Math.min(oh - 1, sy));
-			scanCell = sy * ow + sx;
+			var nextCell = sy * ow + sx;
+			if (nextCell === scanCell) return;
+			if (scanTimer) {
+				clearInterval(scanTimer);
+				scanTimer = null;
+				if (scanBtn) scanBtn.textContent = DEMO_DE ? "Kernel scannen ▶" : "Scan the kernel ▶";
+			}
+			scanCell = nextCell;
 			updateFormula();
 			api.redraw();
-		});
+		}
+		canvas.addEventListener(window.PointerEvent ? "pointermove" : "mousemove", handlePointerMove);
 		if (scanBtn) scanBtn.addEventListener("click", function () {
 			if (scanTimer) {
 				clearInterval(scanTimer);

@@ -59,7 +59,7 @@
 						<div class="demo-head">
 							<div>
 								<p class="demo-title">A filter slides over the stop sign <span>· demo</span></p>
-								<p class="demo-sub">The kernel is a tiny learned pattern. Pick one and scan the 3×3 window across the real stop sign.</p>
+								<p class="demo-sub">The kernel is a tiny learned pattern. Pick one and move the mouse across the real stop sign.</p>
 							</div>
 							<span class="demo-badge">live</span>
 						</div>
@@ -68,7 +68,7 @@
 							<div class="demo-controls">
 								<button class="btn-demo btn-demo--green" type="button" data-conv-scan>Scan the kernel ▶</button>
 							</div>
-							<p class="demo-hint" data-conv-hint>The kernel slides over the real stop sign. The feature map on the right is the actual output of the convolution.</p>
+							<p class="demo-hint" data-conv-hint>Move the pointer over the stop sign. The kernel follows it, and the feature map on the right is the actual output, colored by RGB channel.</p>
 							<div class="chip-row" style="margin-top:12px">
 								<button class="chip is-on" type="button" data-kernel="edge">edge</button>
 								<button class="chip" type="button" data-kernel="blur">blur</button>
